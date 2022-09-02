@@ -9,6 +9,8 @@ project(Vision)
 set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
 set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 
+set(OCARINA_BUILD_TESTS FALSE)
+
 add_subdirectory(src)
 
 add_executable(Vision main.cpp)
