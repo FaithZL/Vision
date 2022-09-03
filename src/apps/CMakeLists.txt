@@ -1,0 +1,1 @@
+vision_add_application(vision-gui SOURCES vision.cpp)
