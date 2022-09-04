@@ -21,4 +21,3 @@ endfunction()
 
 add_subdirectory(src)
 
-add_executable(Vision main.cpp)
