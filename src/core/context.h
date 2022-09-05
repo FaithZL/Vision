@@ -3,3 +3,9 @@
 //
 
 #pragma once
+
+#include "ocarina/src/rhi/context.h"
+
+namespace vision {
+
+}

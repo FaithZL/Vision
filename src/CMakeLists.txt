@@ -1,5 +1,4 @@
 
-include_directories(ext/cxxopts/include)
 
 add_subdirectory(ocarina)
 add_subdirectory(ext)
