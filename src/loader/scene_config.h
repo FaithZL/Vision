@@ -9,7 +9,6 @@
 namespace vision {
 
 class SceneConfig {
-
 };
 
-}
+}// namespace vision
