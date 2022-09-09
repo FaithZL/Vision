@@ -19,10 +19,9 @@ private:
     DataWrap _data;
 
 public:
-    void load(const fs::path &fn) {
-
-    }
-
+    SceneParser() = default;
+    SceneParser(const fs::path &fn) { load(fn); }
+    void load(const fs::path &fn);
     shared_ptr<SceneConfig> parse() const noexcept;
 };
 }// namespace vision
