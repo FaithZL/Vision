@@ -6,12 +6,12 @@
 
 #include "ocarina/src/core/stl.h"
 #include "ext/nlohmann/json.hpp"
+#include "scene_config.h"
 
 using namespace ocarina;
 
 namespace vision {
 
-class SceneConfig;
 using DataWrap = nlohmann::json;
 
 class SceneParser {
@@ -22,6 +22,6 @@ public:
     SceneParser() = default;
     SceneParser(const fs::path &fn) { load(fn); }
     void load(const fs::path &fn);
-    shared_ptr<SceneConfig> parse() const noexcept;
+    unique_ptr<SceneConfig> parse() const noexcept;
 };
 }// namespace vision

@@ -119,8 +119,8 @@ void SceneParser::load(const fs::path &fn) {
     }
 }
 
-shared_ptr<SceneConfig> SceneParser::parse() const noexcept {
-    auto ret = make_shared<SceneConfig>();
+unique_ptr<SceneConfig> SceneParser::parse() const noexcept {
+    auto ret = make_unique<SceneConfig>();
     return ret;
 }
 

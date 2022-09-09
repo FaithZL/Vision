@@ -3,7 +3,14 @@
 //
 
 #include "scene_config.h"
+#include "scene_parser.h"
+
 
 namespace vision {
 
+unique_ptr<SceneConfig> SceneConfig::from_json(const fs::path &path) {
+    SceneParser parser(path);
+    return parser.parse();
 }
+
+}// namespace vision

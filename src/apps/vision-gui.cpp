@@ -5,6 +5,8 @@
 #include <iostream>
 #include "core/cli_parser.h"
 #include "ocarina/src/core/stl.h"
+#include "loader/scene_parser.h"
+#include "loader/scene_config.h"
 
 using namespace ocarina;
 
@@ -15,6 +17,10 @@ int execute(int argc, char *argv[]){
         cli_parser.print_help();
         return 0;
     }
+    vision::SceneParser parser(cli_parser.scene_file());
+
+
+
     return 0;
 }
 

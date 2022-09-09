@@ -4,11 +4,16 @@
 
 #pragma once
 
-#include "ocarina/src/core/basic_types.h"
+#include "core/basic_types.h"
+#include "core/stl.h"
 
 namespace vision {
+using namespace ocarina;
+struct SceneConfig {
+public:
 
-class SceneConfig {
+
+    static unique_ptr<SceneConfig> from_json(const fs::path &path);
 };
 
 }// namespace vision
