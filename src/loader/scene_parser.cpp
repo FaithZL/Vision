@@ -118,6 +118,7 @@ void SceneParser::load(const fs::path &fn) {
         OC_ERROR("unknown file extension name: ", fn.extension());
     }
 }
+
 shared_ptr<SceneConfig> SceneParser::parse() const noexcept {
     auto ret = make_shared<SceneConfig>();
     return ret;
