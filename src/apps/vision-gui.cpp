@@ -8,11 +8,16 @@
 
 using namespace ocarina;
 
-int main(int argc, char *argv[]) {
+int execute(int argc, char *argv[]){
     fs::path path(argv[0]);
-
     vision::CLIParser cli_parser(argc, argv);
-
-    std::cout << "Hello, World!" << std::endl;
+    if (argc == 1) {
+        cli_parser.print_help();
+        return 0;
+    }
     return 0;
+}
+
+int main(int argc, char *argv[]) {
+    return execute(argc, argv);
 }
