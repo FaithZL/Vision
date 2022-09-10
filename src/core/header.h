@@ -3,3 +3,7 @@
 //
 
 #pragma once
+
+#include "ext/nlohmann/json.hpp"
+
+using DataWrap = nlohmann::json;
