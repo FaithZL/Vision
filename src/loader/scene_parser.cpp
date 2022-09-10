@@ -5,7 +5,7 @@
 #include <fstream>
 #include "ocarina/src/core/logging.h"
 #include "scene_parser.h"
-#include "scene_config.h"
+#include "scene_desc.h"
 
 namespace vision {
 
@@ -119,8 +119,8 @@ void SceneParser::load(const fs::path &fn) {
     }
 }
 
-unique_ptr<SceneConfig> SceneParser::parse() const noexcept {
-    auto ret = make_unique<SceneConfig>();
+unique_ptr<SceneDesc> SceneParser::parse() const noexcept {
+    auto ret = make_unique<SceneDesc>();
     return ret;
 }
 

@@ -9,11 +9,11 @@
 
 namespace vision {
 using namespace ocarina;
-struct SceneConfig {
+struct SceneDesc {
 public:
 
 
-    static unique_ptr<SceneConfig> from_json(const fs::path &path);
+    static unique_ptr<SceneDesc> from_json(const fs::path &path);
 };
 
 }// namespace vision

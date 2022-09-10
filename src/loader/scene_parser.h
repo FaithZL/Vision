@@ -6,7 +6,7 @@
 
 #include "ocarina/src/core/stl.h"
 
-#include "scene_config.h"
+#include "scene_desc.h"
 
 using namespace ocarina;
 
@@ -20,6 +20,6 @@ public:
     SceneParser() = default;
     explicit SceneParser(const fs::path &fn) { load(fn); }
     void load(const fs::path &fn);
-    unique_ptr<SceneConfig> parse() const noexcept;
+    unique_ptr<SceneDesc> parse() const noexcept;
 };
 }// namespace vision

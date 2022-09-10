@@ -6,7 +6,7 @@
 #include "core/cli_parser.h"
 #include "ocarina/src/core/stl.h"
 #include "loader/scene_parser.h"
-#include "loader/scene_config.h"
+#include "loader/scene_desc.h"
 
 using namespace ocarina;
 
