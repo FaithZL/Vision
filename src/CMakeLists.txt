@@ -6,6 +6,15 @@ add_subdirectory(core)
 add_subdirectory(math)
 add_subdirectory(loader)
 add_subdirectory(apps)
+
+add_subdirectory(filters)
+add_subdirectory(lights)
+add_subdirectory(lightsamplers)
+add_subdirectory(materials)
+add_subdirectory(samplers)
+add_subdirectory(sensors)
+add_subdirectory(textures)
+
 add_library(vision-all INTERFACE)
 
 target_link_libraries(vision-all INTERFACE
