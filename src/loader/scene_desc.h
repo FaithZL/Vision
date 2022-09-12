@@ -13,6 +13,7 @@ struct SceneDesc {
 public:
 
 
+public:
     static unique_ptr<SceneDesc> from_json(const fs::path &path);
 };
 
