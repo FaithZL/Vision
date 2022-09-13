@@ -18,7 +18,9 @@ protected:
 public:
     string name;
 
-protected:
+public:
+    Description() = default;
+
     explicit Description(string_view type, const string &name)
         : _type(type), name(name) {}
 };
@@ -28,6 +30,7 @@ public:
     uint spp{};
 
 public:
+    SamplerDesc() = default;
     explicit SamplerDesc(const string &name) : Description("Sampler", name) {}
 };
 

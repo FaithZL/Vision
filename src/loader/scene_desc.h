@@ -21,6 +21,7 @@ public:
     vector<unique_ptr<TextureDesc>> texture_desc;
 
 public:
+    SceneDesc() = default;
     static unique_ptr<SceneDesc> from_json(const fs::path &path);
 };
 
