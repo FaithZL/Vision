@@ -20,6 +20,6 @@ public:
     SceneParser() = default;
     explicit SceneParser(const fs::path &fn) { load(fn); }
     void load(const fs::path &fn);
-    unique_ptr<SceneDesc> parse() const noexcept;
+    [[nodiscard]] unique_ptr<SceneDesc> parse() const noexcept;
 };
 }// namespace vision
