@@ -7,6 +7,7 @@
 #include "core/basic_types.h"
 #include "core/stl.h"
 #include "descriptions.h"
+#include "shape.h"
 
 namespace vision {
 using namespace ocarina;
@@ -17,8 +18,9 @@ public:
     FilterDesc filter_desc;
     LightSamplerDesc light_sampler_desc;
     IntegratorDesc integrator_desc;
-    vector<unique_ptr<MaterialDesc>> material_desc;
-    vector<unique_ptr<TextureDesc>> texture_desc;
+    vector<MaterialDesc> material_desc;
+    vector<TextureDesc> texture_desc;
+
 
 public:
     SceneDesc() = default;
