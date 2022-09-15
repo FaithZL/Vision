@@ -17,7 +17,7 @@ struct Mesh : public Shape {
     vector<float3> positions;
     vector<float2> tex_coords;
     vector<Triangle> triangles;
-    uint mat_idx{uint(-1)};
+    uint mat_idx{InvalidUI32};
 };
 
 }// namespace vision
