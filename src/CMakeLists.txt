@@ -15,6 +15,7 @@ add_subdirectory(materials)
 add_subdirectory(samplers)
 add_subdirectory(sensors)
 add_subdirectory(textures)
+add_subdirectory(tests)
 
 add_library(vision-all INTERFACE)
 

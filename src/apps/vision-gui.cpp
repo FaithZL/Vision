@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include "core/cli_parser.h"
-#include "ocarina/src/core/stl.h"
 #include "loader/scene_parser.h"
 #include "loader/scene_desc.h"
+#include "core/stl.h"
 
 using namespace ocarina;
 

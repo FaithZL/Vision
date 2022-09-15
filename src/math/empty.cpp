@@ -4,4 +4,5 @@
 
 #include "constants.h"
 #include "optics.h"
+#include "interval.h"
 #include "box.h"
