@@ -6,13 +6,17 @@
 
 #include "core/basic_types.h"
 #include "dsl/common.h"
+#include "core/concepts.h"
+#include "box.h"
 
 namespace vision {
 using namespace ocarina;
 
 inline namespace transform {
 
-[[nodiscard]] constexpr float4x4 translation(float3 t) noexcept {
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] constexpr float4x4 translation(const T &t) noexcept {
     return make_float4x4(
         1.f, 0.f, 0.f, 0.f,
         0.f, 1.f, 0.f, 0.f,
@@ -20,23 +24,33 @@ inline namespace transform {
         t.x, t.y, t.z, 1.f);
 }
 
-[[nodiscard]] constexpr float4x4 translation(float x, float y, float z) noexcept {
+template<typename T>
+requires is_scalar_expr_v<T>
+[[nodiscard]] constexpr float4x4 translation(const T &x, const T &y, const T &z) noexcept {
     return translation(make_float3(x, y, z));
 }
 
-[[nodiscard]] constexpr float4x4 scale(float3 s) noexcept {
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] constexpr float4x4 scale(const T &s) noexcept {
     return make_float4x4(
         s.x, 0.f, 0.f, 0.f,
         0.f, s.y, 0.f, 0.f,
         0.f, 0.f, s.z, 0.f,
         0.f, 0.f, 0.f, 1.f);
 }
-[[nodiscard]] constexpr float4x4 scale(float x, float y, float z) noexcept { return scale(make_float3(x, y, z)); }
-[[nodiscard]] constexpr float4x4 scale(float s) noexcept { return scale(make_float3(s)); }
+
+template<typename T>
+requires is_scalar_expr_v<T>
+[[nodiscard]] constexpr float4x4 scale(const T &x, const T &y, const T &z) noexcept { return scale(make_float3(x, y, z)); }
+
+template<typename T>
+requires is_scalar_expr_v<T>
+[[nodiscard]] constexpr float4x4 scale(const T &s) noexcept { return scale(make_float3(s)); }
 
 [[nodiscard]] inline float4x4 perspective(float fov_y, float z_near, float z_far, bool radian = false) noexcept {
     fov_y = radian ? fov_y : radians(fov_y);
-    float inv_tan = 1 / std::tan(fov_y / 2.f);
+    float inv_tan = 1 / tan(fov_y / 2.f);
     auto mat = make_float4x4(
         inv_tan, 0, 0, 0,
         0, inv_tan, 0, 0,
@@ -98,6 +112,47 @@ requires is_matrix4_v<expr_value_t<M>> && is_vector3_expr_v<T>
 [[nodiscard]] auto apply_vector(const M &m, const T &vec) noexcept {
     auto mat3x3 = make_float3x3(m);
     return mat3x3 * vec;
+}
+
+template<typename M, typename T>
+requires is_matrix4_v<expr_value_t<M>> && is_vector3_expr_v<T>
+[[nodiscard]] auto apply_point(const M &m, const T &point) noexcept {
+    auto homo_point = make_float4(point, 1.f);
+    return make_float3(m * homo_point);
+}
+
+template<typename M, typename T>
+requires is_matrix4_v<expr_value_t<M>> && is_vector3_expr_v<T>
+[[nodiscard]] auto apply_normal(const M &m, const T &normal) noexcept {
+    return make_float3(transpose(inverse(m)) * make_float4(normal, 0.f));
+}
+
+template<typename M, typename TRay>
+requires std::is_same_v<expr_value_t<TRay>, Ray>
+[[nodiscard]] auto apply_ray(const M &m, TRay ray) noexcept {
+    ray.update_origin(apply_point(m, ray.origin()));
+    ray.update_direction(apply_vector(m, ray.direction()));
+    return ray;
+}
+
+[[nodiscard]] Box3f apply_box(float4x4 mat, const Box3f &b) noexcept {
+    float3 minPoint = make_float3(mat[3][0], mat[3][1], mat[3][2]);
+    float3 maxPoint = minPoint;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            float e = mat[j][i];
+            float p1 = e * b.lower[j];
+            float p2 = e * b.upper[j];
+            if (p1 > p2) {
+                minPoint[i] += p2;
+                maxPoint[i] += p1;
+            } else {
+                minPoint[i] += p1;
+                maxPoint[i] += p2;
+            }
+        }
+    }
+    return Box3f(minPoint, maxPoint);
 }
 
 }// namespace transform
