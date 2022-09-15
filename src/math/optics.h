@@ -7,9 +7,10 @@
 #include "ocarina/src/core/basic_types.h"
 #include "ocarina/src/dsl/common.h"
 
+namespace vision {
 using namespace ocarina;
 
-namespace vision {
+inline namespace optics {
 template<typename T>
 requires ocarina::is_vector3_v<expr_value_t<T>>
 [[nodiscard]] T reflect(const T &wo, const T &n) {
@@ -26,4 +27,7 @@ template<typename T, typename U>
 [[nodiscard]] auto fresnel_schlick(const T &R0, const U &cos_theta) {
     return lerp(schlick_weight(cos_theta), R0, T{1.f});
 }
+
+}// namespace optics
+
 }// namespace vision

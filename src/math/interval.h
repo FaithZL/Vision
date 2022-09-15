@@ -5,6 +5,7 @@
 #pragma once
 
 #include "core/basic_types.h"
+#include "core/concepts.h"
 
 namespace vision {
 using namespace ocarina;
@@ -61,21 +62,21 @@ template<typename T>
 }
 
 template<typename T>
-[[nodiscard]] interval<T> operator-(const interval<T> &a, const T &b) {
+[[nodiscard]] bool operator!=(const interval<T> &a, const interval<T> &b) { return !(a == b); }
+}// namespace math
+}// namespace vision
+
+template<typename T>
+[[nodiscard]] vision::interval<T> operator*(const vision::interval<T> &a, const T &b) {
+    return vision::build_interval<T>(a.begin * b, a.end * b);
+}
+
+template<typename T>
+[[nodiscard]] vision::interval<T> operator-(const vision::interval<T> &a, const T &b) {
     return interval<T>(a.begin - b, a.end - b);
 }
 
 template<typename T>
-[[nodiscard]] interval<T> operator*(const interval<T> &a, const T &b) {
-    return build_interval<T>(a.begin * b, a.end * b);
-}
-
-template<typename T>
-[[nodiscard]] bool operator==(const interval<T> &a, const interval<T> &b) {
+[[nodiscard]] bool operator==(const vision::interval<T> &a, const vision::interval<T> &b) {
     return a.begin == b.begin && a.end == b.end;
 }
-
-template<typename T>
-[[nodiscard]] bool operator!=(const interval<T> &a, const interval<T> &b) { return !(a == b); }
-}// namespace math
-}// namespace vision

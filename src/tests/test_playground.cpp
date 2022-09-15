@@ -7,15 +7,14 @@
 #include "math/constants.h"
 
 using namespace vision;
-using namespace ocarina;
 
 int main(int argc, char *argv[]) {
 
     cout << empty_range_upper<double>() << endl;
 
-    Box3f box(make_float3(0), make_float3(1));
-
-    auto p =  box.lerp(make_float3(0.5f));
+//    Box3f box(make_float3(0), make_float3(1));
+//
+//    auto p =  box.lerp(make_float3(0.5f));
 
     return 0;
 }

@@ -8,6 +8,7 @@
 #include "core/basic_types.h"
 
 namespace vision {
+using namespace ocarina;
 inline namespace constants {
 
 struct NegInfTy {
