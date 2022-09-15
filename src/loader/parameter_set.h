@@ -125,9 +125,8 @@ private:
 public:
     ParameterSet() = default;
 
-    explicit ParameterSet(const DataWrap &json,
-                          const string &key = "") : _data(json),
-                                                    _key(key) {}
+    ParameterSet(const DataWrap &json, const string &key = "")
+        : _data(json), _key(key) {}
 
     void setJson(const DataWrap &json) { _data = json; }
 

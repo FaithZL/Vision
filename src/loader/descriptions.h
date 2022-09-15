@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include <utility>
+
 #include "core/stl.h"
 #include "core/basic_types.h"
+#include "parameter_set.h"
 
 namespace vision {
 
@@ -20,12 +23,13 @@ public:
 
 public:
     Description() = default;
-
-    explicit Description(string_view type, const string &name)
-        : _type(type), name(name) {}
-
-    virtual void init(const DataWrap &data) noexcept = 0;
+    explicit Description(string_view type, string name)
+        : _type(type), name(std::move(name)) {}
+    virtual void init(const ParameterSet &ps) noexcept = 0;
 };
+#define VISION_DESC_COMMON(type) \
+    type##Desc() = default;      \
+    explicit type##Desc(string name) : Description(#type, std::move(name)) {}
 
 struct TransformDesc : public Description {
 public:
@@ -43,12 +47,12 @@ public:
     float3 target_pos{};
 
 public:
-    void init(const DataWrap &data) noexcept override;
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct ShapeDesc : public Description {
 public:
-    void init(const DataWrap &data) noexcept override;
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct SamplerDesc : public Description {
@@ -56,24 +60,47 @@ public:
     uint spp{};
 
 public:
-    SamplerDesc() = default;
-    explicit SamplerDesc(const string &name) : Description("Sampler", name) {}
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(Sampler)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
-
 struct FilterDesc : public Description {
-    void init(const DataWrap &data) noexcept override;
+public:
+    float2 radius;
+    // for gaussian filter
+    float sigma{};
+    // for sinc filter
+    float tau{};
+    // for mitchell filter
+    float b{}, c{};
+
+public:
+    VISION_DESC_COMMON(Filter)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
+struct FilmDesc : public Description {
+public:
+    int state{0};
+    int tone_map{0};
+    uint2 resolution{};
+
+public:
+    VISION_DESC_COMMON(Film)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct SensorDesc : public Description {
 public:
-    FilterDesc filter_desc;
+    TransformDesc transform_desc;
+    float fov_y{};
+    float velocity{};
+    float focal_distance{5.f};
+    float lens_radius{0.f};
 
 public:
-    SensorDesc() = default;
-    explicit SensorDesc(const string &name) : Description("Sensor", name) {}
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(Sensor)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct IntegratorDesc : public Description {
@@ -83,29 +110,30 @@ public:
     float rr_threshold = 1;
 
 public:
-    IntegratorDesc() = default;
-    explicit IntegratorDesc(const string &name) : Description("Integrator", name) {}
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(Integrator)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct MaterialDesc : public Description {
 public:
 public:
-    MaterialDesc() = default;
-    MaterialDesc(const string &name) : Description("Material", name) {}
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(Material)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct LightDesc : public Description {
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(Light)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct TextureDesc : public Description {
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(Texture)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct LightSamplerDesc : public Description {
-    void init(const DataWrap &data) noexcept override;
+    VISION_DESC_COMMON(LightSampler)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 }// namespace vision
