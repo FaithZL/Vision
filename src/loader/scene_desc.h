@@ -20,7 +20,7 @@ public:
     IntegratorDesc integrator_desc;
     vector<MaterialDesc> material_desc;
     vector<TextureDesc> texture_desc;
-
+    vector<ShapeDesc> shape_desc;
 
 public:
     SceneDesc() = default;

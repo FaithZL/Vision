@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include "core/cli_parser.h"
-#include "loader/scene_parser.h"
 #include "loader/scene_desc.h"
 #include "core/stl.h"
 
@@ -17,8 +16,6 @@ int execute(int argc, char *argv[]){
         cli_parser.print_help();
         return 0;
     }
-    vision::SceneParser parser(cli_parser.scene_file());
-
 
 
     return 0;
