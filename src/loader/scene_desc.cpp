@@ -108,10 +108,20 @@ namespace detail {
 
 }// namespace detail
 
+void SceneDesc::init(const DataWrap &data) noexcept {
+    integrator_desc.init(data.value("integrator", DataWrap()));
+    light_sampler_desc.init(data.value("light_sampler", DataWrap()));
+    sampler_desc.init(data.value("sampler", DataWrap()));
+    sensor_desc.init(data.value("camera", DataWrap()));
+
+}
+
 unique_ptr<SceneDesc> SceneDesc::from_json(const fs::path &path) {
     auto scene_desc = make_unique<SceneDesc>();
     DataWrap data = detail::create_json_from_file(path);
+    scene_desc->init(data);
     return scene_desc;
 }
+
 
 }// namespace vision

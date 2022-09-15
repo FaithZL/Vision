@@ -43,16 +43,12 @@ public:
     float3 target_pos{};
 
 public:
-    void init(const DataWrap &data) noexcept override {
-
-    }
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct ShapeDesc : public Description {
 public:
-    void init(const DataWrap &data) noexcept override {
-
-    }
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct SamplerDesc : public Description {
@@ -62,22 +58,22 @@ public:
 public:
     SamplerDesc() = default;
     explicit SamplerDesc(const string &name) : Description("Sampler", name) {}
+    void init(const DataWrap &data) noexcept override;
+};
 
-    void init(const DataWrap &data) noexcept override {
 
-    }
+struct FilterDesc : public Description {
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct SensorDesc : public Description {
-    void init(const DataWrap &data) noexcept override {
+public:
+    FilterDesc filter_desc;
 
-    }
-};
-
-struct FilterDesc : public Description {
-    void init(const DataWrap &data) noexcept override {
-
-    }
+public:
+    SensorDesc() = default;
+    explicit SensorDesc(const string &name) : Description("Sensor", name) {}
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct IntegratorDesc : public Description {
@@ -87,33 +83,29 @@ public:
     float rr_threshold = 1;
 
 public:
-    void init(const DataWrap &data) noexcept override {
-
-    }
+    IntegratorDesc() = default;
+    explicit IntegratorDesc(const string &name) : Description("Integrator", name) {}
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct MaterialDesc : public Description {
-    void init(const DataWrap &data) noexcept override {
-
-    }
+public:
+public:
+    MaterialDesc() = default;
+    MaterialDesc(const string &name) : Description("Material", name) {}
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct LightDesc : public Description {
-    void init(const DataWrap &data) noexcept override {
-
-    }
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct TextureDesc : public Description {
-    void init(const DataWrap &data) noexcept override {
-
-    }
+    void init(const DataWrap &data) noexcept override;
 };
 
 struct LightSamplerDesc : public Description {
-    void init(const DataWrap &data) noexcept override {
-
-    }
+    void init(const DataWrap &data) noexcept override;
 };
 
 }// namespace vision

@@ -8,6 +8,7 @@
 #include "core/stl.h"
 
 using namespace ocarina;
+using namespace vision;
 
 int execute(int argc, char *argv[]){
     fs::path path(argv[0]);
@@ -16,6 +17,8 @@ int execute(int argc, char *argv[]){
         cli_parser.print_help();
         return 0;
     }
+
+    auto scene_desc = SceneDesc::from_json(cli_parser.scene_file());
 
 
     return 0;
