@@ -16,7 +16,7 @@ inline namespace transform {
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] constexpr float4x4 translation(const T &t) noexcept {
+[[nodiscard]] constexpr auto translation(const T &t) noexcept {
     return make_float4x4(
         1.f, 0.f, 0.f, 0.f,
         0.f, 1.f, 0.f, 0.f,
@@ -26,13 +26,13 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_scalar_expr_v<T>
-[[nodiscard]] constexpr float4x4 translation(const T &x, const T &y, const T &z) noexcept {
+[[nodiscard]] constexpr auto translation(const T &x, const T &y, const T &z) noexcept {
     return translation(make_float3(x, y, z));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] constexpr float4x4 scale(const T &s) noexcept {
+[[nodiscard]] constexpr auto scale(const T &s) noexcept {
     return make_float4x4(
         s.x, 0.f, 0.f, 0.f,
         0.f, s.y, 0.f, 0.f,
@@ -42,11 +42,11 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_scalar_expr_v<T>
-[[nodiscard]] constexpr float4x4 scale(const T &x, const T &y, const T &z) noexcept { return scale(make_float3(x, y, z)); }
+[[nodiscard]] constexpr auto scale(const T &x, const T &y, const T &z) noexcept { return scale(make_float3(x, y, z)); }
 
 template<typename T>
 requires is_scalar_expr_v<T>
-[[nodiscard]] constexpr float4x4 scale(const T &s) noexcept { return scale(make_float3(s)); }
+[[nodiscard]] constexpr auto scale(const T &s) noexcept { return scale(make_float3(s)); }
 
 [[nodiscard]] inline float4x4 perspective(float fov_y, float z_near, float z_far, bool radian = false) noexcept {
     fov_y = radian ? fov_y : radians(fov_y);
@@ -109,33 +109,33 @@ requires is_scalar_expr_v<T>
 
 template<typename M, typename T>
 requires is_matrix4_v<expr_value_t<M>> && is_vector3_expr_v<T>
-[[nodiscard]] auto apply_vector(const M &m, const T &vec) noexcept {
+[[nodiscard]] auto transform_vector(const M &m, const T &vec) noexcept {
     auto mat3x3 = make_float3x3(m);
     return mat3x3 * vec;
 }
 
 template<typename M, typename T>
 requires is_matrix4_v<expr_value_t<M>> && is_vector3_expr_v<T>
-[[nodiscard]] auto apply_point(const M &m, const T &point) noexcept {
+[[nodiscard]] auto transform_point(const M &m, const T &point) noexcept {
     auto homo_point = make_float4(point, 1.f);
     return make_float3(m * homo_point);
 }
 
 template<typename M, typename T>
 requires is_matrix4_v<expr_value_t<M>> && is_vector3_expr_v<T>
-[[nodiscard]] auto apply_normal(const M &m, const T &normal) noexcept {
+[[nodiscard]] auto transform_normal(const M &m, const T &normal) noexcept {
     return make_float3(transpose(inverse(m)) * make_float4(normal, 0.f));
 }
 
 template<typename M, typename TRay>
 requires std::is_same_v<expr_value_t<TRay>, Ray>
-[[nodiscard]] auto apply_ray(const M &m, TRay ray) noexcept {
-    ray.update_origin(apply_point(m, ray.origin()));
-    ray.update_direction(apply_vector(m, ray.direction()));
+[[nodiscard]] auto transform_ray(const M &m, TRay ray) noexcept {
+    ray.update_origin(transform_point(m, ray.origin()));
+    ray.update_direction(transform_vector(m, ray.direction()));
     return ray;
 }
 
-[[nodiscard]] Box3f apply_box(float4x4 mat, const Box3f &b) noexcept {
+[[nodiscard]] Box3f transform_box(float4x4 mat, const Box3f &b) noexcept {
     float3 minPoint = make_float3(mat[3][0], mat[3][1], mat[3][2]);
     float3 maxPoint = minPoint;
     for (int i = 0; i < 3; ++i) {
@@ -152,9 +152,37 @@ requires std::is_same_v<expr_value_t<TRay>, Ray>
             }
         }
     }
-    return Box3f(minPoint, maxPoint);
+    return {minPoint, maxPoint};
 }
 
 }// namespace transform
+
+template<typename TMat>
+requires is_matrix4_v<expr_value_t<TMat>>
+struct Transform {
+private:
+    TMat _mat;
+
+public:
+    explicit Transform(const TMat &mat) : _mat(mat) {}
+    [[nodiscard]] TMat mat4x4() const noexcept { return _mat; }
+    [[nodiscard]] auto inv_mat4x4() const noexcept { return inverse(_mat); }
+    [[nodiscard]] auto mat3x3() const noexcept { return make_float3x3(_mat); }
+    [[nodiscard]] auto inv_mat3x3() const noexcept { return inverse(mat3x3()); }
+    template<typename M>
+    [[nodiscard]] auto operator*(const Transform<M> &other) const noexcept { return Transform(_mat * other._mat); }
+    template<typename T>
+    requires is_vector3_expr_v<T>
+    [[nodiscard]] auto apply_vector(const T &vec) noexcept { return transform_vector(_mat, vec); }
+    template<typename T>
+    requires is_vector3_expr_v<T>
+    [[nodiscard]] auto apply_point(const T &point) noexcept { return transform_point(_mat, point); }
+    template<typename M, typename T>
+    requires is_vector3_expr_v<T>
+    [[nodiscard]] auto apply_normal(const T &normal) noexcept { return transform_normal(_mat, normal); }
+    template<typename TRay>
+    requires std::is_same_v<expr_value_t<TRay>, Ray>
+    [[nodiscard]] auto apply_ray(TRay &&ray) noexcept { return transform_ray(_mat, OC_FORWARD(ray)); }
+};
 
 }// namespace vision

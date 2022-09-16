@@ -33,8 +33,10 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
         auto rr = rotation(r.xyz(), r.w);
         auto ss = scale(param["s"].as_float3(make_float3(1.f)));
         mat = tt * rr * ss;
-    } else {
+    } else if (name == "mat4x4"){
         mat = param["mat4x4"].as_float4x4(make_float4x4(1.f));
+    } else {
+        OC_ERROR("transform type error ", name);
     }
 }
 
