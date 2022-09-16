@@ -4,38 +4,41 @@
 
 #include "descriptions.h"
 #include "parameter_set.h"
+#include "core/macro_map.h"
 
 namespace vision {
 
 #define VISION_PARAMS_INITIAL(member_name) \
-    member_name = param[#member_name].as<decltype(member_name)>(member_name);
+    this->member_name = param[#member_name].as<decltype(member_name)>(member_name);
+
+#define VISION_PARAMS_LIST_INITIAL(...) MAP(VISION_PARAMS_INITIAL, ##__VA_ARGS__)
 
 void TransformDesc::init(const ParameterSet &ps) noexcept {
     name = ps["type"].as_string("look_at");
     ParameterSet param = ps["param"];
     if (name == "look_at") {
-        position = param["position"].as_float3();
-        up = param["up"].as_float3();
-        target_pos = param["target_pos"].as_float3();
+        VISION_PARAMS_LIST_INITIAL(position, up, target_pos)
     } else if (name == "yaw_pitch") {
-        position = param["position"].as<float3>();
-        yaw = param["yaw"].as_float();
-        pitch = param["pitch"].as<decltype(pitch)>(pitch);
-//        pitch = param["pitch"].as_float();
-//        VISION_PARAMS_INITIAL(pitch)
+        VISION_PARAMS_LIST_INITIAL(position, yaw, pitch)
+    } else if (name == "trs") {
+        VISION_PARAMS_LIST_INITIAL(t, r, s)
     }
 }
 void ShapeDesc::init(const ParameterSet &ps) noexcept {
 }
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
+    name = ps["type"].as_string("IndependentSampler");
+    ParameterSet param = ps["param"];
+    VISION_PARAMS_INITIAL(spp)
 }
 void FilterDesc::init(const ParameterSet &ps) noexcept {
+    name = ps["type"].as_string("BoxFilter");
+    ParameterSet param = ps["param"];
 }
 void SensorDesc::init(const ParameterSet &ps) noexcept {
     name = ps["type"].as_string("ThinLensCamera");
     ParameterSet param = ps["param"];
-    velocity = param["velocity"].as_float(5.f);
-    fov_y = param["fov_y"].as_float(20.f);
+    VISION_PARAMS_LIST_INITIAL(velocity, fov_y, focal_distance, lens_radius)
     transform_desc.init(param["transform"]);
     filter_desc.init(param["filter"]);
     film_desc.init(param["film"]);
@@ -43,9 +46,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     name = ps["type"].as_string("PTIntegrator");
     ParameterSet param = ps["param"];
-    max_depth = param["max_depth"].as_uint(10);
-    min_depth = param["min_depth"].as_uint(0);
-    rr_threshold = param["rr_threshold"].as_float(1);
+    VISION_PARAMS_LIST_INITIAL(max_depth, min_depth, rr_threshold)
 }
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
 }
@@ -56,5 +57,10 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 }
 void FilmDesc::init(const ParameterSet &ps) noexcept {
+    VISION_PARAMS_LIST_INITIAL(resolution)
 }
+
+#undef VISION_PARAMS_INITIAL
+#undef VISION_PARAMS_LIST_INITIAL
+
 }// namespace vision
