@@ -34,17 +34,14 @@ private:
                               this->at(1).as_##type(),  \
                               this->at(2).as_##type()); \
     }
-#define VISION_MAKE_AS_TYPE_VEC4(type)                                          \
-    OC_NODISCARD type##4 _as_##type##4() const {                                \
-        return make_##type##4(this->at(0).as_##type(),                          \
-                              this->at(1).as_##type(),                          \
-                              this->at(2).as_##type(),                          \
-                              this->at(3).as_##type());                         \
-    }                                                                           \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type##4>, int> = 0> \
-    T _as() const {                                                             \
-        return _as_##type##4();                                                 \
+#define VISION_MAKE_AS_TYPE_VEC4(type)                  \
+    OC_NODISCARD type##4 _as_##type##4() const {        \
+        return make_##type##4(this->at(0).as_##type(),  \
+                              this->at(1).as_##type(),  \
+                              this->at(2).as_##type(),  \
+                              this->at(3).as_##type()); \
     }
+
 #define VISION_MAKE_AS_TYPE_VEC(type) \
     VISION_MAKE_AS_TYPE_VEC2(type)    \
     VISION_MAKE_AS_TYPE_VEC3(type)    \
@@ -178,31 +175,33 @@ public:
         return ret;
     }
 
-#define VISION_MAKE_AS_TYPE_SCALAR(type)                                     \
-    OC_NODISCARD type as_##type(type val = type()) const {                   \
-        try {                                                                \
-            if (_data.is_null()) _data = val;                                \
-            return _as_##type();                                             \
-        } catch (const std::exception &e) {                                  \
-            return val;                                                      \
-        }                                                                    \
-    }                                                                        \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type>, int> = 0> \
-    [[nodiscard]] T as(T t = T{}) const {                                    \
-        return as_##type(t);                                                 \
+#define VISION_MAKE_AS_TYPE_SCALAR(type)                   \
+    OC_NODISCARD type as_##type(type val = type()) const { \
+        try {                                              \
+            if (_data.is_null()) _data = val;              \
+            return _as_##type();                           \
+        } catch (const std::exception &e) {                \
+            return val;                                    \
+        }                                                  \
+    }                                                      \
+    template<typename T>                                   \
+    requires std::is_same_v<T, type>                       \
+    [[nodiscard]] T as(T t = T{}) const {                  \
+        return as_##type(t);                               \
     }
 
-#define VISION_MAKE_AS_TYPE_VEC_DIM(type, dim)                                               \
+#define VISION_MAKE_AS_TYPE_VEC_DIM(type, dim)                                                 \
     OC_NODISCARD type##dim as_##type##dim(type##dim val = make_##type##dim()) const noexcept { \
-        try {                                                                                \
-            return _as_##type##dim();                                                        \
-        } catch (const std::exception &e) {                                                  \
-            return val;                                                                      \
-        }                                                                                    \
-    }                                                                                        \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type##dim>, int> = 0>            \
-    [[nodiscard]] T as(T t = T{}) const {                                                    \
-        return as_##type##dim(t);                                                            \
+        try {                                                                                  \
+            return _as_##type##dim();                                                          \
+        } catch (const std::exception &e) {                                                    \
+            return val;                                                                        \
+        }                                                                                      \
+    }                                                                                          \
+    template<typename T>                                                                       \
+    requires std::is_same_v<T, type##dim>                                                      \
+    [[nodiscard]] T as(T t = T{}) const {                                                      \
+        return as_##type##dim(t);                                                              \
     }
 
 #define VISION_MAKE_AS_TYPE_MAT_DIM(type, dim)                                                                                 \
@@ -213,7 +212,8 @@ public:
             return val;                                                                                                        \
         }                                                                                                                      \
     }                                                                                                                          \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type##dim##x##dim>, int> = 0>                                      \
+    template<typename T>                                                                                                       \
+    requires std::is_same_v<T, type##dim##x##dim>                                                                              \
     [[nodiscard]] T as(T t = T{}) const {                                                                                      \
         return as_##type##dim##x##dim(t);                                                                                      \
     }
