@@ -51,8 +51,23 @@ private:
     VISION_MAKE_AS_TYPE_VEC4(type)
 
 #define VISION_MAKE_AS_TYPE_MAT(type) \
+    VISION_MAKE_AS_TYPE_MAT2X2(type)  \
     VISION_MAKE_AS_TYPE_MAT3X3(type)  \
     VISION_MAKE_AS_TYPE_MAT4X4(type)
+
+#define VISION_MAKE_AS_TYPE_MAT2X2(type)                       \
+    OC_NODISCARD float2x2 _as_##type##2x2() const {            \
+        if (_data.size() == 2) {                               \
+            return make_##type##2x2(                           \
+                this->at(0)._as_##type##2(),                   \
+                this->at(1)._as_##type##2());                  \
+        } else {                                               \
+            return make_##type##2x2(this->at(0)._as_##type(),  \
+                                    this->at(1)._as_##type(),  \
+                                    this->at(2)._as_##type(),  \
+                                    this->at(3)._as_##type()); \
+        }                                                      \
+    }
 
 #define VISION_MAKE_AS_TYPE_MAT3X3(type)                       \
     OC_NODISCARD float3x3 _as_##type##3x3() const {            \
@@ -173,86 +188,61 @@ public:
         }                                                                    \
     }                                                                        \
     template<typename T, std::enable_if_t<std::is_same_v<T, type>, int> = 0> \
-    T as(T t = T{}) const {                                                  \
+    [[nodiscard]] T as(T t = T{}) const {                                    \
         return as_##type(t);                                                 \
     }
 
-#define VISION_MAKE_AS_TYPE_VEC2(type)                                                 \
-    OC_NODISCARD type##2 as_##type##2(type##2 val = make_##type##2()) const noexcept { \
-        try {                                                                          \
-            return _as_##type##2();                                                    \
-        } catch (const std::exception &e) {                                            \
-            return val;                                                                \
-        }                                                                              \
-    }                                                                                  \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type##2>, int> = 0>        \
-    T as(T t = T{}) const {                                                            \
-        return as_##type##2(t);                                                        \
-    }
-#define VISION_MAKE_AS_TYPE_VEC3(type)                                                 \
-    OC_NODISCARD type##3 as_##type##3(type##3 val = make_##type##3()) const noexcept { \
-        try {                                                                          \
-            return _as_##type##3();                                                    \
-        } catch (const std::exception &e) {                                            \
-            return val;                                                                \
-        }                                                                              \
-    }                                                                                  \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type##3>, int> = 0>        \
-    T as(T t = T{}) const {                                                            \
-        return as_##type##3(t);                                                        \
-    }
-#define VISION_MAKE_AS_TYPE_VEC4(type)                                                 \
-    OC_NODISCARD type##4 as_##type##4(type##4 val = make_##type##4()) const noexcept { \
-        try {                                                                          \
-            return _as_##type##4();                                                    \
-        } catch (const std::exception &e) {                                            \
-            return val;                                                                \
-        }                                                                              \
-    }                                                                                  \
-    template<typename T, std::enable_if_t<std::is_same_v<T, type##4>, int> = 0>        \
-    T as(T t = T{}) const {                                                            \
-        return as_##type##4(t);                                                        \
-    }
-#define VISION_MAKE_AS_TYPE_MAT3X3(type)                                                       \
-    OC_NODISCARD type##3x3 as_##type##3x3(type##3x3 val = make_##type##3x3()) const noexcept { \
-        try {                                                                                  \
-            return _as_##type##3x3();                                                          \
-        } catch (const std::exception &e) {                                                    \
-            return val;                                                                        \
-        }                                                                                      \
-    }
-#define VISION_MAKE_AS_TYPE_MAT4X4(type)                                                       \
-    OC_NODISCARD type##4x4 as_##type##4x4(type##4x4 val = make_##type##4x4()) const noexcept { \
-        try {                                                                                  \
-            return _as_##type##4x4();                                                          \
-        } catch (const std::exception &e) {                                                    \
-            return val;                                                                        \
-        }                                                                                      \
+#define VISION_MAKE_AS_TYPE_VEC_DIM(type, dim)                                               \
+    OC_NODISCARD type##dim as_##type##dim(type##dim val = make_##type##dim()) const noexcept { \
+        try {                                                                                \
+            return _as_##type##dim();                                                        \
+        } catch (const std::exception &e) {                                                  \
+            return val;                                                                      \
+        }                                                                                    \
+    }                                                                                        \
+    template<typename T, std::enable_if_t<std::is_same_v<T, type##dim>, int> = 0>            \
+    [[nodiscard]] T as(T t = T{}) const {                                                    \
+        return as_##type##dim(t);                                                            \
     }
 
-    VISION_MAKE_AS_TYPE_MAT3X3(float)
-    VISION_MAKE_AS_TYPE_MAT4X4(float)
+#define VISION_MAKE_AS_TYPE_MAT_DIM(type, dim)                                                                                 \
+    OC_NODISCARD type##dim##x##dim as_##type##dim##x##dim(type##dim##x##dim val = make_##type##dim##x##dim()) const noexcept { \
+        try {                                                                                                                  \
+            return _as_##type##dim##x##dim();                                                                                  \
+        } catch (const std::exception &e) {                                                                                    \
+            return val;                                                                                                        \
+        }                                                                                                                      \
+    }                                                                                                                          \
+    template<typename T, std::enable_if_t<std::is_same_v<T, type##dim##x##dim>, int> = 0>                                      \
+    [[nodiscard]] T as(T t = T{}) const {                                                                                      \
+        return as_##type##dim##x##dim(t);                                                                                      \
+    }
+
+#define VISION_MAKE_AS_TYPE_MAT(type)    \
+    VISION_MAKE_AS_TYPE_MAT_DIM(type, 2) \
+    VISION_MAKE_AS_TYPE_MAT_DIM(type, 3) \
+    VISION_MAKE_AS_TYPE_MAT_DIM(type, 4)
+
+    VISION_MAKE_AS_TYPE_MAT(float)
     VISION_MAKE_AS_TYPE_SCALAR(float)
     VISION_MAKE_AS_TYPE_SCALAR(uint)
     VISION_MAKE_AS_TYPE_SCALAR(bool)
     VISION_MAKE_AS_TYPE_SCALAR(int)
     VISION_MAKE_AS_TYPE_SCALAR(string)
 
-#define VISION_MAKE_AS_TYPE_VEC(type) \
-    VISION_MAKE_AS_TYPE_VEC2(type)    \
-    VISION_MAKE_AS_TYPE_VEC3(type)    \
-    VISION_MAKE_AS_TYPE_VEC4(type)
+#define VISION_MAKE_AS_TYPE_VEC(type)    \
+    VISION_MAKE_AS_TYPE_VEC_DIM(type, 2) \
+    VISION_MAKE_AS_TYPE_VEC_DIM(type, 3) \
+    VISION_MAKE_AS_TYPE_VEC_DIM(type, 4)
     VISION_MAKE_AS_TYPE_VEC(int)
     VISION_MAKE_AS_TYPE_VEC(uint)
     VISION_MAKE_AS_TYPE_VEC(float)
 
 #undef VISION_MAKE_AS_TYPE_SCALAR
 #undef VISION_MAKE_AS_TYPE_VEC
-#undef VISION_MAKE_AS_TYPE_VEC2
-#undef VISION_MAKE_AS_TYPE_VEC3
-#undef VISION_MAKE_AS_TYPE_VEC4
-#undef VISION_MAKE_AS_TYPE_MAT3X3
-#undef VISION_MAKE_AS_TYPE_MAT4X4
+#undef VISION_MAKE_AS_TYPE_VEC_DIM
+#undef VISION_MAKE_AS_TYPE_MAT
+#undef VISION_MAKE_AS_TYPE_MAT_DIM
 };
 
 }// namespace vision
