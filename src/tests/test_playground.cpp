@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
     float4x4 mat = scale(2);
     Transform tsf = Transform(mat);
 
+    auto m = rotation(make_float3(1.f), 30.f, false);
+
     vec = tsf.apply_point(vec);
 
     Kernel kernel = [&]() {

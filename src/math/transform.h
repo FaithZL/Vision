@@ -48,9 +48,10 @@ template<typename T>
 requires is_scalar_expr_v<T>
 [[nodiscard]] constexpr auto scale(const T &s) noexcept { return scale(make_float3(s)); }
 
-[[nodiscard]] inline float4x4 perspective(float fov_y, float z_near, float z_far, bool radian = false) noexcept {
-    fov_y = radian ? fov_y : radians(fov_y);
-    float inv_tan = 1 / tan(fov_y / 2.f);
+template<typename T, typename B>
+[[nodiscard]] inline auto perspective(T fov_y, const T &z_near, const T &z_far, B radian = false) noexcept {
+    fov_y = select(radian, fov_y, radians(fov_y));
+    T inv_tan = 1 / tan(fov_y / 2.f);
     auto mat = make_float4x4(
         inv_tan, 0, 0, 0,
         0, inv_tan, 0, 0,
@@ -59,13 +60,14 @@ requires is_scalar_expr_v<T>
     return mat;
 }
 
-[[nodiscard]] inline float4x4 rotation(const float3 axis, float angle, bool radian = false) noexcept {
-    angle = radian ? angle : radians(angle);
+template<typename V, typename T, typename B>
+[[nodiscard]] inline auto rotation(const V &axis, T angle, B radian = false) noexcept {
+    angle = ocarina::select(radian, angle, radians(angle));
 
-    float c = cos(angle);
-    float s = sin(angle);
-    float3 a = normalize(axis);
-    float3 t = (1.0f - c) * a;
+    T c = cos(angle);
+    T s = sin(angle);
+    V a = normalize(axis);
+    V t = (1.0f - c) * a;
 
     auto mat = make_float4x4(
         c + t.x * a.x, t.x * a.y + s * a.z, t.x * a.z - s * a.y, 0.0f,
@@ -90,7 +92,7 @@ requires is_scalar_expr_v<T>
 
 [[nodiscard]] inline float4x4 trs(float3 t, float4 r, float3 s) {
     auto T = translation(t);
-    auto R = rotation(make_float3(r), r.w);
+    auto R = rotation(make_float3(r), r.w, false);
     auto S = scale(s);
     return T * R * S;
 }

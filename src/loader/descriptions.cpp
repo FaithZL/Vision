@@ -28,11 +28,10 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
         auto tt = translation(param["position"].as_float3(make_float3(0.f)));
         mat = tt * pitch_t * yaw_t;
     } else if (name == "trs") {
-        auto tt = translation(param["t"].as_float3(make_float3(0.f)));
+        float3 t = param["t"].as_float3(make_float3(0.f));
         float4 r = param["r"].as_float4(make_float4(1, 0, 0, 0));
-        auto rr = rotation(r.xyz(), r.w);
-        auto ss = scale(param["s"].as_float3(make_float3(1.f)));
-        mat = tt * rr * ss;
+        float3 s = param["s"].as_float3(make_float3(1.f));
+        mat = trs(t, r, s);
     } else if (name == "mat4x4"){
         mat = param["mat4x4"].as_float4x4(make_float4x4(1.f));
     } else {
