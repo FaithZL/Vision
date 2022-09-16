@@ -34,19 +34,7 @@ public:
 
 struct TransformDesc : public Description {
 public:
-    float3 t{make_float3(0.f)};
-    float4 r{make_float4(1, 0, 0, 0)};
-    float3 s{make_float3(1.f)};
-
     float4x4 mat{make_float4x4(1.f)};
-
-    float3 position{make_float3(0.f)};
-    float yaw{0.f};
-    float pitch{0.f};
-
-    float3 up{make_float3(0, 1, 0)};
-    float3 target_pos{make_float3(0, 0, 1)};
-
 public:
     void init(const ParameterSet &ps) noexcept override;
 };
