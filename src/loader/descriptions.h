@@ -34,18 +34,18 @@ public:
 
 struct TransformDesc : public Description {
 public:
-    float3 t;
-    float4 r;
-    float3 s;
+    float3 t{make_float3(0.f)};
+    float4 r{make_float4(1, 0, 0, 0)};
+    float3 s{make_float3(1.f)};
 
-    float4x4 mat;
+    float4x4 mat{make_float4x4(1.f)};
 
-    float3 position;
-    float yaw{};
-    float pitch{};
+    float3 position{make_float3(0.f)};
+    float yaw{0.f};
+    float pitch{0.f};
 
-    float3 up{};
-    float3 target_pos{};
+    float3 up{make_float3(0, 1, 0)};
+    float3 target_pos{make_float3(0, 0, 1)};
 
 public:
     void init(const ParameterSet &ps) noexcept override;
@@ -67,7 +67,7 @@ public:
 
 struct FilterDesc : public Description {
 public:
-    float2 radius;
+    float2 radius{make_float2(1.f)};
     // for gaussian filter
     float sigma{};
     // for sinc filter
@@ -84,7 +84,7 @@ struct FilmDesc : public Description {
 public:
     int state{0};
     int tone_map{0};
-    uint2 resolution{};
+    uint2 resolution{make_uint2(500)};
 
 public:
     VISION_DESC_COMMON(Film)
@@ -94,8 +94,8 @@ public:
 struct SensorDesc : public Description {
 public:
     TransformDesc transform_desc;
-    float fov_y{};
-    float velocity{};
+    float fov_y{20};
+    float velocity{5};
     float focal_distance{5.f};
     float lens_radius{0.f};
     FilterDesc filter_desc;
@@ -108,9 +108,9 @@ public:
 
 struct IntegratorDesc : public Description {
 public:
-    uint max_depth = 10;
-    uint min_depth = 5;
-    float rr_threshold = 1;
+    uint max_depth{10};
+    uint min_depth{5};
+    float rr_threshold{1};
 
 public:
     VISION_DESC_COMMON(Integrator)

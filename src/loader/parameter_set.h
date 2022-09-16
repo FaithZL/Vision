@@ -173,8 +173,8 @@ public:
         }                                                                    \
     }                                                                        \
     template<typename T, std::enable_if_t<std::is_same_v<T, type>, int> = 0> \
-    T as() const {                                                           \
-        return as_##type();                                                  \
+    T as(T t = T{}) const {                                                  \
+        return as_##type(t);                                                 \
     }
 
 #define VISION_MAKE_AS_TYPE_VEC2(type)                                                 \
@@ -186,8 +186,8 @@ public:
         }                                                                              \
     }                                                                                  \
     template<typename T, std::enable_if_t<std::is_same_v<T, type##2>, int> = 0>        \
-    T as() const {                                                                     \
-        return as_##type##2();                                                         \
+    T as(T t = T{}) const {                                                            \
+        return as_##type##2(t);                                                        \
     }
 #define VISION_MAKE_AS_TYPE_VEC3(type)                                                 \
     OC_NODISCARD type##3 as_##type##3(type##3 val = make_##type##3()) const noexcept { \
@@ -198,8 +198,8 @@ public:
         }                                                                              \
     }                                                                                  \
     template<typename T, std::enable_if_t<std::is_same_v<T, type##3>, int> = 0>        \
-    T as() const {                                                                     \
-        return as_##type##3();                                                         \
+    T as(T t = T{}) const {                                                            \
+        return as_##type##3(t);                                                        \
     }
 #define VISION_MAKE_AS_TYPE_VEC4(type)                                                 \
     OC_NODISCARD type##4 as_##type##4(type##4 val = make_##type##4()) const noexcept { \
@@ -210,8 +210,8 @@ public:
         }                                                                              \
     }                                                                                  \
     template<typename T, std::enable_if_t<std::is_same_v<T, type##4>, int> = 0>        \
-    T as() const {                                                                     \
-        return as_##type##4();                                                         \
+    T as(T t = T{}) const {                                                            \
+        return as_##type##4(t);                                                        \
     }
 #define VISION_MAKE_AS_TYPE_MAT3X3(type)                                                       \
     OC_NODISCARD type##3x3 as_##type##3x3(type##3x3 val = make_##type##3x3()) const noexcept { \
