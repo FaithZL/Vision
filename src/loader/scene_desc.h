@@ -15,8 +15,6 @@ struct SceneDesc {
 public:
     SensorDesc sensor_desc;
     SamplerDesc sampler_desc;
-    FilterDesc filter_desc;
-    FilmDesc film_desc;
     LightSamplerDesc light_sampler_desc;
     IntegratorDesc integrator_desc;
     vector<MaterialDesc> material_desc;

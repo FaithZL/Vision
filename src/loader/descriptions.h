@@ -23,12 +23,13 @@ public:
 
 public:
     Description() = default;
-    explicit Description(string_view type, string name)
+    Description(string_view type, string name)
         : _type(type), name(std::move(name)) {}
+    explicit Description(string_view type) : _type(type) {}
     virtual void init(const ParameterSet &ps) noexcept = 0;
 };
-#define VISION_DESC_COMMON(type) \
-    type##Desc() = default;      \
+#define VISION_DESC_COMMON(type)         \
+    type##Desc() : Description(#type) {} \
     explicit type##Desc(string name) : Description(#type, std::move(name)) {}
 
 struct TransformDesc : public Description {
@@ -97,6 +98,8 @@ public:
     float velocity{};
     float focal_distance{5.f};
     float lens_radius{0.f};
+    FilterDesc filter_desc;
+    FilmDesc film_desc;
 
 public:
     VISION_DESC_COMMON(Sensor)

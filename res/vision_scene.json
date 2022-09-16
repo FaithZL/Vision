@@ -407,7 +407,7 @@
                     12,
                     4
                 ],
-                "scale" : 1
+                "scale": 1
             }
         }
     ],
@@ -421,102 +421,53 @@
             "spp": 1
         }
     },
-    "camera": [
-        {
-            "type": "ThinLensCamera",
-            "name" : "view1",
-            "param": {
-                "fov_y": 19.5,
-                "velocity": 5,
-                "transform": {
-                    "type": "look_at",
-                    "param": {
-                        "position": [
-                            0,
-                            1,
-                            6.8
-                        ],
-                        "up": [
-                            0,
-                            1,
-                            0
-                        ],
-                        "target_pos": [
-                            0,
-                            1,
-                            0
-                        ]
-                    }
-                },
-                "film": {
-                    "param": {
-                        "resolution": [
-                            768,
-                            768
-                        ],
-                        "fb_state": 0,
-                        "tone_map": 0
-                    }
-                },
-                "filter": {
-                    "type": "BoxFilter",
-                    "param": {
-                        "radius": [
-                            0.5,
-                            0.5
-                        ]
-                    }
+    "camera": {
+        "type": "ThinLensCamera",
+        "name": "view1",
+        "param": {
+            "fov_y": 19.5,
+            "velocity": 5,
+            "transform": {
+                "type": "look_at",
+                "param": {
+                    "position": [
+                        0,
+                        1,
+                        6.8
+                    ],
+                    "up": [
+                        0,
+                        1,
+                        0
+                    ],
+                    "target_pos": [
+                        0,
+                        1,
+                        0
+                    ]
                 }
-            }
-        },
-        {
-            "type": "ThinLensCamera",
-            "name" : "view2",
-            "param": {
-                "fov_y": 19.5,
-                "velocity": 5,
-                "transform": {
-                    "type": "look_at",
-                    "param": {
-                        "position": [
-                            0,
-                            1,
-                            5.8
-                        ],
-                        "up": [
-                            0,
-                            1,
-                            0
-                        ],
-                        "target_pos": [
-                            0,
-                            1,
-                            0
-                        ]
-                    }
-                },
-                "film": {
-                    "param": {
-                        "resolution": [
-                            768,
-                            768
-                        ],
-                        "fb_state": 0,
-                        "tone_map": 0
-                    }
-                },
-                "filter": {
-                    "type": "BoxFilter",
-                    "param": {
-                        "radius": [
-                            0.5,
-                            0.5
-                        ]
-                    }
+            },
+            "film": {
+                "param": {
+                    "resolution": [
+                        768,
+                        768
+                    ],
+                    "fb_state": 0,
+                    "tone_map": 0
+                }
+            },
+            "filter": {
+                "type": "BoxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
                 }
             }
         }
-    ],
+    },
     "integrator": {
         "type": "PT",
         // "type": "WavefrontPT",
@@ -526,9 +477,9 @@
             "rr_threshold": 1
         }
     },
-    "debug" : {
+    "debug": {
         // "pixel" : [60, 79],
-        "MIS_mode" : 2
+        "MIS_mode": 2
     },
     "output": {
         "fn": "cornell-box-mg.png",
