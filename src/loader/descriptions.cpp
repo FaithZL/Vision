@@ -57,6 +57,7 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 }
 void FilmDesc::init(const ParameterSet &ps) noexcept {
+    ParameterSet param = ps["param"];
     VISION_PARAMS_LIST_INITIAL(resolution)
 }
 
