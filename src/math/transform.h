@@ -48,10 +48,10 @@ template<typename T>
 requires is_scalar_expr_v<T>
 [[nodiscard]] constexpr auto scale(const T &s) noexcept { return scale(make_float3(s)); }
 
-template<typename T, typename B>
-[[nodiscard]] inline auto perspective(T fov_y, const T &z_near, const T &z_far, B radian = false) noexcept {
+template<typename F, typename B>
+[[nodiscard]] inline auto perspective(F fov_y, const F &z_near, const F &z_far, B radian = false) noexcept {
     fov_y = select(radian, fov_y, radians(fov_y));
-    T inv_tan = 1 / tan(fov_y / 2.f);
+    F inv_tan = 1 / tan(fov_y / 2.f);
     auto mat = make_float4x4(
         inv_tan, 0, 0, 0,
         0, inv_tan, 0, 0,
@@ -60,12 +60,12 @@ template<typename T, typename B>
     return mat;
 }
 
-template<typename V, typename T, typename B>
-[[nodiscard]] inline auto rotation(const V &axis, T angle, B radian = false) noexcept {
+template<typename V, typename F, typename B>
+[[nodiscard]] inline auto rotation(const V &axis, F angle, B radian = false) noexcept {
     angle = ocarina::select(radian, angle, radians(angle));
 
-    T c = cos(angle);
-    T s = sin(angle);
+    F c = cos(angle);
+    F s = sin(angle);
     V a = normalize(axis);
     V t = (1.0f - c) * a;
 
@@ -78,30 +78,35 @@ template<typename V, typename T, typename B>
     return mat;
 }
 
-[[nodiscard]] inline float4x4 rotation_x(float angle, bool radian = false) noexcept {
+template<typename F, typename B>
+[[nodiscard]] inline auto rotation_x(F angle, B radian = false) noexcept {
     return rotation(make_float3(1, 0, 0), angle, radian);
 }
 
-[[nodiscard]] inline float4x4 rotation_y(float angle, bool radian = false) noexcept {
+template<typename F, typename B>
+[[nodiscard]] inline auto rotation_y(F angle, B radian = false) noexcept {
     return rotation(make_float3(0, 1, 0), angle, radian);
 }
 
-[[nodiscard]] inline float4x4 rotation_z(float angle, bool radian = false) noexcept {
+template<typename F, typename B>
+[[nodiscard]] inline auto rotation_z(F angle, B radian = false) noexcept {
     return rotation(make_float3(0, 0, 1), angle, radian);
 }
 
-[[nodiscard]] inline float4x4 trs(float3 t, float4 r, float3 s) {
+template<typename F3, typename F4>
+[[nodiscard]] inline auto TRS(F3 t, F4 r, F3 s) {
     auto T = translation(t);
     auto R = rotation(make_float3(r), r.w, false);
     auto S = scale(s);
     return T * R * S;
 }
 
-[[nodiscard]] inline float4x4 look_at(float3 eye, float3 target_pos, float3 up) noexcept {
-    float3 fwd = normalize(target_pos - eye);
-    float3 right = normalize(cross(up, fwd));
+template<typename F3>
+[[nodiscard]] inline auto look_at(F3 eye, F3 target_pos, F3 up) noexcept {
+    F3 fwd = normalize(target_pos - eye);
+    F3 right = normalize(cross(up, fwd));
     up = normalize(cross(fwd, right));
-    float4x4 mat = make_float4x4(
+    auto mat = make_float4x4(
         right.x, right.y, right.z, 0.f,
         up.x, up.y, up.z, 0.f,
         fwd.x, fwd.y, fwd.z, 0.f,
@@ -174,17 +179,32 @@ public:
     template<typename M>
     [[nodiscard]] auto operator*(const Transform<M> &other) const noexcept { return Transform(_mat * other._mat); }
     template<typename T>
-    requires is_vector3_expr_v<T>
     [[nodiscard]] auto apply_vector(const T &vec) noexcept { return transform_vector(_mat, vec); }
     template<typename T>
-    requires is_vector3_expr_v<T>
     [[nodiscard]] auto apply_point(const T &point) noexcept { return transform_point(_mat, point); }
     template<typename M, typename T>
-    requires is_vector3_expr_v<T>
     [[nodiscard]] auto apply_normal(const T &normal) noexcept { return transform_normal(_mat, normal); }
     template<typename TRay>
-    requires std::is_same_v<expr_value_t<TRay>, Ray>
     [[nodiscard]] auto apply_ray(TRay &&ray) noexcept { return transform_ray(_mat, OC_FORWARD(ray)); }
+
+public:
+#define VISION_MAKE_TRANSFORM_CREATOR(func_name)                   \
+    template<typename... Args>                                     \
+    [[nodiscard]] static auto func_name(Args &&...args) noexcept { \
+        return Transform(vision::func_name(OC_FORWARD(args)...));  \
+    }
+
+    VISION_MAKE_TRANSFORM_CREATOR(translation)
+    VISION_MAKE_TRANSFORM_CREATOR(scale)
+    VISION_MAKE_TRANSFORM_CREATOR(rotation)
+    VISION_MAKE_TRANSFORM_CREATOR(rotation_x)
+    VISION_MAKE_TRANSFORM_CREATOR(rotation_y)
+    VISION_MAKE_TRANSFORM_CREATOR(rotation_z)
+    VISION_MAKE_TRANSFORM_CREATOR(perspective)
+    VISION_MAKE_TRANSFORM_CREATOR(look_at)
+    VISION_MAKE_TRANSFORM_CREATOR(TRS)
+
+#undef VISION_MAKE_TRANSFORM_CREATOR
 };
 
 }// namespace vision

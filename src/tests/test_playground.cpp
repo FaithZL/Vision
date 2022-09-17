@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
     float4x4 mat = scale(2);
     Transform tsf = Transform(mat);
 
+    auto ttt = Transform<float4x4>::scale(0.1f);
+
     auto m = rotation(make_float3(1.f), 30.f, false);
 
     vec = tsf.apply_point(vec);
@@ -28,8 +30,8 @@ int main(int argc, char *argv[]) {
     Kernel kernel = [&]() {
         Var s = 2.f;
         Float3 vec = make_float3(s);
-        Float4x4 mat = make_float4x4(s);
-        vec = Transform(mat).apply_vector(vec);
+        auto ttt =Transform<Float4x4>::scale(s);
+        vec = ttt.apply_vector(vec);
     };
     auto shader = device.compile(kernel);
     return 0;

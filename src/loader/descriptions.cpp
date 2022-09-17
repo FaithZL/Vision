@@ -23,15 +23,15 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
         float3 target_pos = param["target_pos"].as_float3(make_float3(0, 0, 1));
         mat = look_at(position, target_pos, up);
     } else if (name == "yaw_pitch") {
-        auto yaw_t = rotation_y(param["yaw"].as_float(0.f));
-        auto pitch_t = rotation_x(param["pitch"].as_float(0.f));
+        auto yaw_t = rotation_y(param["yaw"].as_float(0.f), false);
+        auto pitch_t = rotation_x(param["pitch"].as_float(0.f), false);
         auto tt = translation(param["position"].as_float3(make_float3(0.f)));
         mat = tt * pitch_t * yaw_t;
     } else if (name == "trs") {
         float3 t = param["t"].as_float3(make_float3(0.f));
         float4 r = param["r"].as_float4(make_float4(1, 0, 0, 0));
         float3 s = param["s"].as_float3(make_float3(1.f));
-        mat = trs(t, r, s);
+        mat = TRS(t, r, s);
     } else if (name == "mat4x4"){
         mat = param["mat4x4"].as_float4x4(make_float4x4(1.f));
     } else {
