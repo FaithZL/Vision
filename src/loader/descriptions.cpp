@@ -51,6 +51,7 @@ void SamplerDesc::init(const ParameterSet &ps) noexcept {
 void FilterDesc::init(const ParameterSet &ps) noexcept {
     name = ps["type"].as_string("BoxFilter");
     ParameterSet param = ps["param"];
+    VISION_PARAMS_INITIAL(radius)
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {

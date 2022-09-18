@@ -9,6 +9,7 @@
 #include "core/stl.h"
 #include "core/basic_types.h"
 #include "parameter_set.h"
+#include "math/geometry.h"
 
 namespace vision {
 
@@ -41,6 +42,28 @@ public:
 
 struct ShapeDesc : public Description {
 public:
+    TransformDesc o2w;
+    float3 emission{make_float3(0.f)};
+    string material_name;
+    mutable string fn;
+    bool smooth{false};
+    bool swap_handed{};
+    uint subdiv_level{};
+
+    // quad param
+    float width{};
+    float height{};
+
+    // cube param
+    float x{1},y{1},z{1};
+
+    // mesh param
+    mutable std::vector<float2> tex_coords;
+    mutable std::vector<float3> positions;
+    mutable std::vector<float3> normals;
+    mutable std::vector<Triangle> triangles;
+public:
+    VISION_DESC_COMMON(Shape)
     void init(const ParameterSet &ps) noexcept override;
 };
 
