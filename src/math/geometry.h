@@ -106,11 +106,13 @@ public:
         ocarina::coordinate_system(z, x, y);
     }
 
-    [[nodiscard]] vec_ty to_local(vec_ty world_v) const noexcept {
-        return vec_ty(dot(world_v, x), dot(world_v, y), dot(world_v, z));
+    template<typename TVec>
+    [[nodiscard]] auto to_local(const TVec &world_v) const noexcept {
+        return make_float3(dot(world_v, x), dot(world_v, y), dot(world_v, z));
     }
 
-    [[nodiscard]] vec_ty to_world(vec_ty local_v) const noexcept {
+    template<typename TVec>
+    [[nodiscard]] auto to_world(const TVec & local_v) const noexcept {
         return x * local_v.x + y * local_v.y + z * local_v.z;
     }
 

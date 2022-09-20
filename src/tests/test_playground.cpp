@@ -7,6 +7,7 @@
 #include "rhi/common.h"
 #include "core/string_util.h"
 #include "math/transform.h"
+#include "math/geometry.h"
 #include "math/constants.h"
 
 using namespace vision;
@@ -28,10 +29,10 @@ int main(int argc, char *argv[]) {
     vec = tsf.apply_point(vec);
 
     Kernel kernel = [&]() {
-        Var s = 2.f;
-        Float3 vec = make_float3(s);
-        auto ttt =Transform<Float4x4>::scale(s);
-        vec = ttt.apply_vector(vec);
+        Var f3 = make_float3(1,2,1);
+        Frame frame = Frame(f3);
+
+        f3 = frame.to_world(f3);
     };
     auto shader = device.compile(kernel);
     return 0;
