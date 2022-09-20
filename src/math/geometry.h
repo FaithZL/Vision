@@ -8,6 +8,7 @@
 #include "dsl/struct.h"
 
 namespace vision {
+using namespace ocarina;
 inline namespace geometry {
 struct Triangle {
     uint i, j, k;
@@ -30,27 +31,63 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] auto abs_cos_theta(const T &v) noexcept{ return ocarina::abs(v.z); }
+[[nodiscard]] extract_element_t<T> abs_cos_theta(const T &v) noexcept { return ocarina::abs(v.z); }
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] auto sin_theta_2(const T &v)noexcept { return 1.0f - cos_theta_2(v); }
+[[nodiscard]] extract_element_t<T> sin_theta_2(const T &v) noexcept { return 1.0f - cos_theta_2(v); }
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] auto sin_theta(const T &v)noexcept {
+[[nodiscard]] auto sin_theta(const T &v) noexcept {
     auto temp = sin_theta_2(v);
     return select(temp <= 0.f, 0.f, sqrt(temp));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] auto tan_theta(const T &v) noexcept {
-    auto sin_theta2 = 1 - cos_theta_2(v);
-    if (sin_theta2 <= 0.0f) {
-        return 0.0f;
+[[nodiscard]] extract_element_t<T> tan_theta(const T &v) noexcept {
+    extract_element_t<T> sin_theta2 = 1 - cos_theta_2(v);
+    return select(sin_theta2 <= 0.f, 0.f, sqrt(sin_theta2) / cos_theta(v));
+}
+
+template<typename T, typename Ret = extract_element_t<T>>
+requires is_vector3_expr_v<T>
+[[nodiscard]] Ret tan_theta_2(const T &v) noexcept {
+    Ret cos_theta2 = cos_theta_2(v);
+    Ret sin_theta2 = 1.f - cos_theta2;
+    return select(sin_theta2 <= 0.f, 0.f, sin_theta2 / cos_theta2);
+}
+
+template<typename T, typename scalar_t = extract_element_t<T>>
+requires is_vector3_expr_v<T>
+[[nodiscard]] scalar_t sin_phi(const T &v) noexcept {
+    scalar_t sinTheta = sin_theta(v);
+    return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1, 1));
+}
+
+template<typename T, typename scalar_t = extract_element_t<T>>
+requires is_vector3_expr_v<T>
+[[nodiscard]] scalar_t cos_phi(const T &v) noexcept {
+    scalar_t sinTheta = sin_theta(v);
+    if (sinTheta == (scalar_t)0) {
+        return 1.f;
     }
-    return std::sqrt(sin_theta2) / cos_theta(v);
+    return clamp(v.x / sinTheta, -1.f, 1.f);
+}
+
+template<typename T, typename scalar_t = extract_element_t<T>>
+requires is_vector3_expr_v<T>
+[[nodiscard]] scalar_t sin_phi_2(const T &v) {
+    scalar_t sinTheta2 = sin_theta_2(v);
+    return select(sinTheta2 == 0.f, 0.f, clamp(sqr(v.y) / sinTheta2, 0.f, 1.f));
+}
+
+template<typename T, typename scalar_t = extract_element_t<T>>
+requires is_vector3_expr_v<T>
+[[nodiscard]] scalar_t cos_phi_2(const T &v) {
+    scalar_t sinTheta2 = sin_theta_2(v);
+    return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
 }
 
 template<typename T>
@@ -76,11 +113,22 @@ public:
     [[nodiscard]] vec_ty to_world(vec_ty local_v) const noexcept {
         return x * local_v.x + y * local_v.y + z * local_v.z;
     }
+
+    template<typename U>
+    [[nodiscard]] auto operator==(const Frame<U> &frame) const noexcept {
+        return frame.x == x && frame.y == y && frame.z == z;
+    }
+
+    template<typename U>
+    [[nodiscard]] auto operator!=(const Frame<U> &frame) const {
+        return !operator==(frame);
+    }
 };
 }// namespace geometry
 }// namespace vision
 
 namespace vision {
+using namespace ocarina;
 inline namespace geometry {
 struct Vertex {
     //todo compress
@@ -93,6 +141,7 @@ struct Vertex {
 OC_STRUCT(vision::Vertex, position, normal, tex_coord){};
 
 namespace vision {
+using namespace ocarina;
 inline namespace geometry {
 struct Mesh {
     uint vertex_offset;
