@@ -59,10 +59,10 @@ requires is_vector3_expr_v<T>
     return select(sin_theta2 <= 0.f, 0.f, sin_theta2 / cos_theta2);
 }
 
-template<typename T, typename scalar_t = extract_element_t<T>>
+template<typename T, typename Ret = extract_element_t<T>>
 requires is_vector3_expr_v<T>
-[[nodiscard]] scalar_t sin_phi(const T &v) noexcept {
-    scalar_t sinTheta = sin_theta(v);
+[[nodiscard]] Ret sin_phi(const T &v) noexcept {
+    Ret sinTheta = sin_theta(v);
     return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1, 1));
 }
 
