@@ -31,11 +31,11 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] extract_element_t<T> abs_cos_theta(const T &v) noexcept { return ocarina::abs(v.z); }
+[[nodiscard]] scalar_t<T> abs_cos_theta(const T &v) noexcept { return ocarina::abs(v.z); }
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] extract_element_t<T> sin_theta_2(const T &v) noexcept { return 1.0f - cos_theta_2(v); }
+[[nodiscard]] scalar_t<T> sin_theta_2(const T &v) noexcept { return 1.0f - cos_theta_2(v); }
 
 template<typename T>
 requires is_vector3_expr_v<T>
@@ -46,12 +46,12 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] extract_element_t<T> tan_theta(const T &v) noexcept {
-    extract_element_t<T> sin_theta2 = 1 - cos_theta_2(v);
+[[nodiscard]] scalar_t<T> tan_theta(const T &v) noexcept {
+    scalar_t<T> sin_theta2 = 1 - cos_theta_2(v);
     return select(sin_theta2 <= 0.f, 0.f, sqrt(sin_theta2) / cos_theta(v));
 }
 
-template<typename T, typename Ret = extract_element_t<T>>
+template<typename T, typename Ret = scalar_t<T>>
 requires is_vector3_expr_v<T>
 [[nodiscard]] Ret tan_theta_2(const T &v) noexcept {
     Ret cos_theta2 = cos_theta_2(v);
@@ -59,14 +59,14 @@ requires is_vector3_expr_v<T>
     return select(sin_theta2 <= 0.f, 0.f, sin_theta2 / cos_theta2);
 }
 
-template<typename T, typename Ret = extract_element_t<T>>
+template<typename T, typename Ret = scalar_t<T>>
 requires is_vector3_expr_v<T>
 [[nodiscard]] Ret sin_phi(const T &v) noexcept {
     Ret sinTheta = sin_theta(v);
     return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1, 1));
 }
 
-template<typename T, typename Ret = extract_element_t<T>>
+template<typename T, typename Ret = scalar_t<T>>
 requires is_vector3_expr_v<T>
 [[nodiscard]] Ret cos_phi(const T &v) noexcept {
     Ret sinTheta = sin_theta(v);
@@ -76,14 +76,14 @@ requires is_vector3_expr_v<T>
     return clamp(v.x / sinTheta, -1.f, 1.f);
 }
 
-template<typename T, typename Ret = extract_element_t<T>>
+template<typename T, typename Ret = scalar_t<T>>
 requires is_vector3_expr_v<T>
 [[nodiscard]] Ret sin_phi_2(const T &v) {
     Ret sinTheta2 = sin_theta_2(v);
     return select(sinTheta2 == 0.f, 0.f, clamp(sqr(v.y) / sinTheta2, 0.f, 1.f));
 }
 
-template<typename T, typename Ret = extract_element_t<T>>
+template<typename T, typename Ret = scalar_t<T>>
 requires is_vector3_expr_v<T>
 [[nodiscard]] Ret cos_phi_2(const T &v) {
     Ret sinTheta2 = sin_theta_2(v);
