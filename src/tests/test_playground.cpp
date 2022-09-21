@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     Context context(path.parent_path());
     Device device = context.create_device("cuda");
     Stream stream = device.create_stream();
-
+    context.clear_cache();
     float3 vec = make_float3(2);
     float4x4 mat = scale(2);
     Transform tsf = Transform(mat);
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
         Var f3 = make_float3(1,2,1);
         Frame frame = Frame(f3);
 
-        f3 = frame.to_world(f3);
+        f3 = frame.to_local(f3);
     };
     auto shader = device.compile(kernel);
     return 0;
