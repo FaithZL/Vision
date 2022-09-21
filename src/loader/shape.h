@@ -13,11 +13,10 @@ namespace vision {
 struct Shape {};
 
 struct Mesh : public Shape {
-    vector<float3> normals;
-    vector<float3> positions;
-    vector<float2> tex_coords;
+    vector<Vertex> vertices;
     vector<Triangle> triangles;
     uint mat_idx{InvalidUI32};
+    uint light_idx{InvalidUI32};
 };
 
 }// namespace vision

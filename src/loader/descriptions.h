@@ -5,7 +5,6 @@
 #pragma once
 
 #include <utility>
-
 #include "core/stl.h"
 #include "core/basic_types.h"
 #include "parameter_set.h"
@@ -46,7 +45,7 @@ public:
     TransformDesc o2w;
     float3 emission{make_float3(0.f)};
     string material_name;
-    mutable string fn;
+    string fn;
     bool smooth{false};
     bool swap_handed{};
     uint subdiv_level{};
@@ -58,14 +57,16 @@ public:
     // cube param
     float x{1},y{1},z{1};
 
+    // sphere param
+    float radius;
+
     // mesh param
-    mutable std::vector<float2> tex_coords;
-    mutable std::vector<float3> positions;
-    mutable std::vector<float3> normals;
-    mutable std::vector<Triangle> triangles;
+    mutable vector<Vertex> vertices;
+    mutable vector<Triangle> triangles;
 public:
     VISION_DESC_COMMON(Shape)
     void init(const ParameterSet &ps) noexcept override;
+    [[nodiscard]] bool operator == (const ShapeDesc &other) const noexcept;
 };
 
 struct SamplerDesc : public Description {

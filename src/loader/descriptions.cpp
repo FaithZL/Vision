@@ -32,15 +32,36 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
         float4 r = param["r"].as_float4(make_float4(1, 0, 0, 0));
         float3 s = param["s"].as_float3(make_float3(1.f));
         mat = TRS(t, r, s);
-    } else if (sub_type == "mat4x4"){
-        mat = param["mat4x4"].as_float4x4(make_float4x4(1.f));
+    } else if (sub_type == "matrix4x4") {
+        mat = param["matrix4x4"].as_float4x4(make_float4x4(1.f));
     } else {
         OC_ERROR("transform type error ", sub_type);
     }
 }
 
 void ShapeDesc::init(const ParameterSet &ps) noexcept {
+    sub_type = ps["type"].as_string();
+    name = ps["name"].as_string();
+    ParameterSet param = ps["param"];
+    o2w.init(param["transform"]);
+    if (sub_type == "model") {
 
+    } else if (sub_type == "quad") {
+        VISION_PARAMS_LIST_INITIAL(width, height)
+    } else if (sub_type == "quad_y") {
+        VISION_PARAMS_LIST_INITIAL(width, height)
+    } else if (sub_type == "cube") {
+
+    } else if (sub_type == "sphere") {
+
+    }
+}
+
+bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
+    return fn == other.fn &&
+           sub_type == other.sub_type &&
+           smooth == other.smooth &&
+           swap_handed == other.swap_handed;
 }
 
 void SamplerDesc::init(const ParameterSet &ps) noexcept {

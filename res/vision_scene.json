@@ -416,7 +416,7 @@
         "type": "UniformLightSampler"
     },
     "sampler": {
-        "type": "PCGSampler",
+        "type": "IndependentSampler",
         "param": {
             "spp": 1
         }
