@@ -17,14 +17,16 @@ public:
     SamplerDesc sampler_desc;
     LightSamplerDesc light_sampler_desc;
     IntegratorDesc integrator_desc;
-    vector<MaterialDesc> material_desc;
-    vector<TextureDesc> texture_desc;
-    vector<ShapeDesc> shape_desc;
-    vector<LightDesc> light_desc;
+    vector<MaterialDesc> material_descs;
+    vector<ShapeDesc> shape_descs;
+    vector<LightDesc> light_descs;
 
 public:
     SceneDesc() = default;
     static unique_ptr<SceneDesc> from_json(const fs::path &path);
+    void init_material_descs(const DataWrap &materials) noexcept;
+    void init_shape_descs(const DataWrap &shapes) noexcept;
+    void init_light_descs(const DataWrap &lights) noexcept;
     void init(const DataWrap &data) noexcept;
 };
 

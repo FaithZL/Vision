@@ -20,12 +20,13 @@ protected:
     string_view _type;
 
 public:
+    string sub_type;
     string name;
 
 public:
     Description() = default;
     Description(string_view type, string name)
-        : _type(type), name(std::move(name)) {}
+        : _type(type), sub_type(std::move(name)) {}
     explicit Description(string_view type) : _type(type) {}
     virtual void init(const ParameterSet &ps) noexcept = 0;
 };
@@ -128,8 +129,20 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct TextureDesc : public Description {
+public:
+    float4 val;
+    string fn;
+
+public:
+    VISION_DESC_COMMON(Texture)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct MaterialDesc : public Description {
 public:
+    TextureDesc color;
+
 public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
@@ -137,11 +150,6 @@ public:
 
 struct LightDesc : public Description {
     VISION_DESC_COMMON(Light)
-    void init(const ParameterSet &ps) noexcept override;
-};
-
-struct TextureDesc : public Description {
-    VISION_DESC_COMMON(Texture)
     void init(const ParameterSet &ps) noexcept override;
 };
 

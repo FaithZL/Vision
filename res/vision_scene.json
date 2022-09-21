@@ -469,7 +469,7 @@
         }
     },
     "integrator": {
-        "type": "PT",
+        "type": "PTIntegrator",
         // "type": "WavefrontPT",
         "param": {
             "min_depth": 0,
