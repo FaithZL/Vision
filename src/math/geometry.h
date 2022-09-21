@@ -66,27 +66,27 @@ requires is_vector3_expr_v<T>
     return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1, 1));
 }
 
-template<typename T, typename scalar_t = extract_element_t<T>>
+template<typename T, typename Ret = extract_element_t<T>>
 requires is_vector3_expr_v<T>
-[[nodiscard]] scalar_t cos_phi(const T &v) noexcept {
-    scalar_t sinTheta = sin_theta(v);
-    if (sinTheta == (scalar_t)0) {
+[[nodiscard]] Ret cos_phi(const T &v) noexcept {
+    Ret sinTheta = sin_theta(v);
+    if (sinTheta == 0.f) {
         return 1.f;
     }
     return clamp(v.x / sinTheta, -1.f, 1.f);
 }
 
-template<typename T, typename scalar_t = extract_element_t<T>>
+template<typename T, typename Ret = extract_element_t<T>>
 requires is_vector3_expr_v<T>
-[[nodiscard]] scalar_t sin_phi_2(const T &v) {
-    scalar_t sinTheta2 = sin_theta_2(v);
+[[nodiscard]] Ret sin_phi_2(const T &v) {
+    Ret sinTheta2 = sin_theta_2(v);
     return select(sinTheta2 == 0.f, 0.f, clamp(sqr(v.y) / sinTheta2, 0.f, 1.f));
 }
 
-template<typename T, typename scalar_t = extract_element_t<T>>
+template<typename T, typename Ret = extract_element_t<T>>
 requires is_vector3_expr_v<T>
-[[nodiscard]] scalar_t cos_phi_2(const T &v) {
-    scalar_t sinTheta2 = sin_theta_2(v);
+[[nodiscard]] Ret cos_phi_2(const T &v) {
+    Ret sinTheta2 = sin_theta_2(v);
     return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
 }
 
