@@ -108,7 +108,7 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_array()) {
         val = make_float4(ps.as_float3(), 0.f);
     } else if (ps.data().is_object()) {
-
+        fn = ps["fn"].as_string();
     }
 }
 
