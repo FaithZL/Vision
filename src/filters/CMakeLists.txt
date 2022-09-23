@@ -1,0 +1,1 @@
+vision_add_plugin(box CATEGORY filter SOURCES box.cpp)

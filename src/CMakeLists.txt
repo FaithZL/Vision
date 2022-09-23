@@ -1,10 +1,18 @@
 
+function(vision_add_plugin name)
+    cmake_parse_arguments(PLUGIN "" "CATEGORY" "SOURCES" ${ARGN})
+    set(lib_name vision-${PLUGIN_CATEGORY}-${name})
+
+    add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
+
+endfunction()
 
 add_subdirectory(ocarina)
 add_subdirectory(ext)
-add_subdirectory(core)
-add_subdirectory(math)
 add_subdirectory(description)
+add_subdirectory(core)
+add_subdirectory(base)
+add_subdirectory(math)
 add_subdirectory(apps)
 
 add_subdirectory(filters)
