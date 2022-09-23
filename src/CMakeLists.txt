@@ -4,7 +4,7 @@ add_subdirectory(ocarina)
 add_subdirectory(ext)
 add_subdirectory(core)
 add_subdirectory(math)
-add_subdirectory(loader)
+add_subdirectory(description)
 add_subdirectory(apps)
 
 add_subdirectory(filters)
@@ -20,6 +20,6 @@ add_subdirectory(tests)
 add_library(vision-all INTERFACE)
 
 target_link_libraries(vision-all INTERFACE
-        vision-loader
+        vision-description
         vision-math
         vision-core)
