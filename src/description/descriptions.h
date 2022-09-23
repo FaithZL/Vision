@@ -28,6 +28,9 @@ public:
         : _type(type), sub_type(std::move(name)) {}
     explicit Description(string_view type) : _type(type) {}
     virtual void init(const ParameterSet &ps) noexcept = 0;
+    [[nodiscard]] string plugin_name() const noexcept {
+        return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
+    }
 };
 #define VISION_DESC_COMMON(type)         \
     type##Desc() : Description(#type) {} \

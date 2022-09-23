@@ -66,13 +66,13 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 }
 
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("IndependentSampler");
+    sub_type = ps["type"].as_string("Independent");
     ParameterSet param = ps["param"];
     VISION_PARAMS_INITIAL(spp)
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("BoxFilter");
+    sub_type = ps["type"].as_string("Box");
     ParameterSet param = ps["param"];
     VISION_PARAMS_INITIAL(radius)
 }
@@ -93,9 +93,9 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("MatteMaterial");
+    sub_type = ps["type"].as_string("Matte");
     ParameterSet param = ps["param"];
-    if (sub_type == "MatteMaterial") {
+    if (sub_type == "Matte") {
         color.init(param["color"]);
     }
 }
@@ -113,7 +113,7 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("UniformLightSampler");
+    sub_type = ps["type"].as_string("Uniform");
 }
 
 void FilmDesc::init(const ParameterSet &ps) noexcept {
