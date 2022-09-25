@@ -7,4 +7,7 @@
 
 namespace vision {
 
-}
+class BoxFilter : public Filter {
+};
+
+}// namespace vision
