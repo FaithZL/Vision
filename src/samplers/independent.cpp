@@ -5,5 +5,9 @@
 #include "base/sampler.h"
 
 namespace vision {
+using namespace ocarina;
 
-}
+class IndependentSampler : public Sampler {
+};
+
+}// namespace vision

@@ -3,3 +3,11 @@
 //
 
 #pragma once
+
+#include "dsl/common.h"
+#include "scene_node.h"
+
+namespace vision {
+class Sampler : public SceneNode {
+};
+}// namespace vision

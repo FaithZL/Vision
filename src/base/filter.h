@@ -22,7 +22,7 @@ private:
 
 public:
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
-    [[nodiscard]] float evaluate(float2 p) const noexcept = 0;
+    [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
 };
 
 }// namespace vision

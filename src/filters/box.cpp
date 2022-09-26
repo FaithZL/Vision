@@ -11,3 +11,4 @@ class BoxFilter : public Filter {
 };
 
 }// namespace vision
+
