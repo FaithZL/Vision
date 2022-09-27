@@ -40,6 +40,9 @@ target_link_libraries(vision-all INTERFACE
         vision-description
         vision-base
         vision-filters
+        vision-lightsamplers
+        vision-sensors
+        vision-materials
         vision-samplers
         vision-math
         vision-core)
