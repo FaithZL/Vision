@@ -66,19 +66,19 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 }
 
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("Independent");
+    sub_type = ps["type"].as_string("independent");
     ParameterSet param = ps["param"];
     VISION_PARAMS_INITIAL(spp)
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("Box");
+    sub_type = ps["type"].as_string("box");
     ParameterSet param = ps["param"];
     VISION_PARAMS_INITIAL(radius)
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("ThinLensCamera");
+    sub_type = ps["type"].as_string("thin_lens");
     ParameterSet param = ps["param"];
     VISION_PARAMS_LIST_INITIAL(velocity, fov_y, focal_distance, lens_radius)
     transform_desc.init(param["transform"]);
@@ -87,13 +87,13 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("PTIntegrator");
+    sub_type = ps["type"].as_string("pt");
     ParameterSet param = ps["param"];
     VISION_PARAMS_LIST_INITIAL(max_depth, min_depth, rr_threshold)
 }
 
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("Matte");
+    sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
     if (sub_type == "Matte") {
         color.init(param["color"]);
@@ -113,7 +113,7 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
-    sub_type = ps["type"].as_string("Uniform");
+    sub_type = ps["type"].as_string("uniform");
 }
 
 void FilmDesc::init(const ParameterSet &ps) noexcept {

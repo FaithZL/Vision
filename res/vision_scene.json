@@ -2,7 +2,7 @@
     "textures": [],
     "materials": [
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "LeftWall",
             "param": {
                 "color": [
@@ -13,7 +13,7 @@
             }
         },
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "RightWall",
             "param": {
                 "color": [
@@ -24,7 +24,7 @@
             }
         },
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "Floor",
             "param": {
                 "color": [
@@ -35,7 +35,7 @@
             }
         },
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "Ceiling",
             "param": {
                 "color": [
@@ -46,7 +46,7 @@
             }
         },
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "BackWall",
             "param": {
                 "color": [
@@ -57,7 +57,7 @@
             }
         },
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "ShortBox",
             "param": {
                 // "roughness" : [0.002]
@@ -69,7 +69,7 @@
             }
         },
         {
-            "type": "MatteMaterial",
+            "type": "matte",
             "name": "TallBox",
             "param": {
                 // "roughness" : [0.002]
@@ -413,16 +413,16 @@
     ],
     "lights": [],
     "light_sampler": {
-        "type": "UniformLightSampler"
+        "type": "uniform"
     },
     "sampler": {
-        "type": "IndependentSampler",
+        "type": "independent",
         "param": {
             "spp": 1
         }
     },
     "camera": {
-        "type": "ThinLensCamera",
+        "type": "thin_lens",
         "name": "view1",
         "param": {
             "fov_y": 19.5,
@@ -458,7 +458,7 @@
                 }
             },
             "filter": {
-                "type": "BoxFilter",
+                "type": "box",
                 "param": {
                     "radius": [
                         0.5,
@@ -469,7 +469,7 @@
         }
     },
     "integrator": {
-        "type": "PTIntegrator",
+        "type": "pt",
         // "type": "WavefrontPT",
         "param": {
             "min_depth": 0,
