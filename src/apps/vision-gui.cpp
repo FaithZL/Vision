@@ -6,6 +6,7 @@
 #include "core/cli_parser.h"
 #include "description/scene_desc.h"
 #include "core/stl.h"
+#include "rhi/context.h"
 
 using namespace ocarina;
 using namespace vision;
@@ -13,6 +14,7 @@ using namespace vision;
 int execute(int argc, char *argv[]){
     fs::path path(argv[0]);
     vision::CLIParser cli_parser(argc, argv);
+    Context context(path.parent_path());
     if (argc == 1) {
         cli_parser.print_help();
         return 0;

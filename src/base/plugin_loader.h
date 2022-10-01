@@ -3,3 +3,13 @@
 //
 
 #pragma once
+
+#include "core/stl.h"
+#include "rhi/dynamic_module.h"
+
+namespace vision {
+class PluginLoader {
+private:
+
+};
+}
