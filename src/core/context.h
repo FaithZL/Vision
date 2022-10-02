@@ -6,11 +6,20 @@
 
 #include "core/stl.h"
 #include "rhi/context.h"
+#include "cli_parser.h"
 
 namespace vision {
 
 class Context : public ocarina::Context {
+public:
+    using Super = ocarina::Context;
 
+private:
+    CLIParser _cli_parser;
+
+public:
+    explicit Context(int argc, char **argv,
+                     ocarina::string_view cache_dir = ".cache");
 };
 
 }// namespace vision
