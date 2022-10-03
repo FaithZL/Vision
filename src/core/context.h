@@ -20,6 +20,9 @@ private:
 public:
     explicit Context(int argc, char **argv,
                      ocarina::string_view cache_dir = ".cache");
+    const CLIParser &cli_parser() const noexcept { return _cli_parser; }
+
+
 };
 
 }// namespace vision
