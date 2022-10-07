@@ -27,6 +27,7 @@ public:
     [[nodiscard]] vec_ty dp_du() const noexcept { return this->x; }
     [[nodiscard]] vec_ty dp_dv() const noexcept { return this->y; }
     [[nodiscard]] vec_ty normal() const noexcept { return this->z; }
+    [[nodiscard]] boolean_t<T> valid() const noexcept { return any(normal() != 0.f); }
 };
 
 template<typename T>
@@ -41,6 +42,9 @@ public:
     vec_ty wo;
     scalar_ty time;
     UVN<vec_ty> g_uvn;
+
+public:
+    [[nodiscard]] boolean_t<T> on_surface() const noexcept { return g_uvn.valid(); }
 };
 
 }// namespace vision

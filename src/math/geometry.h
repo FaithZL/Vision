@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/basic_types.h"
-#include "dsl/struct.h"
+#include "dsl/common.h"
 
 namespace vision {
 using namespace ocarina;
@@ -88,6 +88,18 @@ requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> cos_phi_2(const T &v) {
     scalar_t<T> sinTheta2 = sin_theta_2(v);
     return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
+}
+
+Ray spawn_ray(float3 pos, float3 normal, float3 dir) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    float3 org = offset_ray_origin(pos, normal);
+    return Ray(pos, dir);
+}
+
+Var<Ray> spawn_ray(Float3 pos, Float3 normal, Float3 dir) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    Float3 org = offset_ray_origin(pos, normal);
+    return make_ray(pos, dir);
 }
 
 template<typename T>
