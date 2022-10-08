@@ -102,6 +102,13 @@ Var<Ray> spawn_ray(Float3 pos, Float3 normal, Float3 dir) {
     return make_ray(pos, dir);
 }
 
+Ray spawn_ray_to(float3 p_start, float3 n_start, float3 p_target) {
+    float3 dir = p_target - p_start;
+    float3 org = offset_ray_origin(p_start, n_start);
+    n_start *= dot(n_start, dir) > 0 ? 1.f : -1.f;
+    return Ray(org, dir, 1 - ShadowEpsilon);
+}
+
 template<typename T>
 requires is_vector3_expr_v<T>
 struct Frame {

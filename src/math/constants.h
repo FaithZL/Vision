@@ -11,6 +11,8 @@ namespace vision {
 using namespace ocarina;
 inline namespace constants {
 
+constexpr float shadow_epsilon = 0.0001f;
+
 struct NegInfTy {
     operator double() const { return -std::numeric_limits<double>::infinity(); }
     operator float() const { return -std::numeric_limits<float>::infinity(); }
