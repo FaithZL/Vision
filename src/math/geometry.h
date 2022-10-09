@@ -90,23 +90,30 @@ requires is_vector3_expr_v<T>
     return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
 }
 
-Ray spawn_ray(float3 pos, float3 normal, float3 dir) {
+inline Ray spawn_ray(float3 pos, float3 normal, float3 dir) {
     normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
     float3 org = offset_ray_origin(pos, normal);
     return Ray(pos, dir);
 }
 
-Var<Ray> spawn_ray(Float3 pos, Float3 normal, Float3 dir) {
+inline Var<Ray> spawn_ray(Float3 pos, Float3 normal, Float3 dir) {
     normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
     Float3 org = offset_ray_origin(pos, normal);
     return make_ray(pos, dir);
 }
 
-Ray spawn_ray_to(float3 p_start, float3 n_start, float3 p_target) {
+inline Ray spawn_ray_to(float3 p_start, float3 n_start, float3 p_target) {
     float3 dir = p_target - p_start;
     float3 org = offset_ray_origin(p_start, n_start);
-    n_start *= dot(n_start, dir) > 0 ? 1.f : -1.f;
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
     return Ray(org, dir, 1 - ShadowEpsilon);
+}
+
+inline Var<Ray> spawn_ray_to(Float3 p_start, Float3 n_start, Float3 p_target) {
+    Float3 dir = p_target - p_start;
+    Float3 org = offset_ray_origin(p_start, n_start);
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    return make_ray(org, dir, 1 - ShadowEpsilon);
 }
 
 template<typename T>
