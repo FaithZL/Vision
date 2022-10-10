@@ -45,6 +45,15 @@ public:
 
 public:
     [[nodiscard]] boolean_t<T> on_surface() const noexcept { return g_uvn.valid(); }
+    [[nodiscard]] ray_t<T> spawn_ray(const vec_ty &dir) const noexcept {
+        return vision::spawn_ray(pos, g_uvn.normal(), dir);
+    }
+    [[nodiscard]] ray_t<T> spawn_ray_to(const vec_ty &p) const noexcept {
+        return vision::spawn_ray_to(pos, g_uvn, p);
+    }
+    [[nodiscard]] ray_t<T> spawn_ray_to(const Interaction<T> &it) const noexcept {
+        return vision::spawn_ray_to(pos, g_uvn.normal(), it.pos, it.g_uvn.normal());
+    }
 };
 
 }// namespace vision
