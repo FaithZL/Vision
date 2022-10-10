@@ -44,6 +44,7 @@ public:
     UVN<vec_ty> g_uvn;
 
 public:
+    Interaction() = default;
     [[nodiscard]] boolean_t<T> on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] ray_t<T> spawn_ray(const vec_ty &dir) const noexcept {
         return vision::spawn_ray(pos, g_uvn.normal(), dir);

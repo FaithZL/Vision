@@ -12,6 +12,8 @@ using namespace ocarina;
 inline namespace geometry {
 struct Triangle {
     uint i, j, k;
+    Triangle(uint i, uint j, uint k) : i(i), j(j), k(k) {}
+    Triangle() = default;
 };
 }
 }// namespace vision::geometry
@@ -94,7 +96,7 @@ template<typename T>
 [[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir) {
     normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
     T org = offset_ray_origin(pos, normal);
-    return make_ray(pos, dir);
+    return make_ray(org, dir);
 }
 
 template<typename T>
@@ -107,11 +109,11 @@ template<typename T>
 
 template<typename T>
 [[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target, T n_target) {
-    float3 dir = p_target - p_start;
+    T dir = p_target - p_start;
     n_target *= select(dot(n_target, -dir) > 0, 1.f, -1.f);
     p_target = offset_ray_origin(p_target, n_target);
     n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
-    float3 org = offset_ray_origin(p_start, n_start);
+    T org = offset_ray_origin(p_start, n_start);
     return make_ray(org, dir, 1 - ShadowEpsilon);
 }
 
@@ -123,6 +125,7 @@ public:
     vec_ty x, y, z;
 
 public:
+    Frame() = default;
     Frame(const T &x, const T &y, const T &z)
         : x(x), y(y), z(z) {}
 
