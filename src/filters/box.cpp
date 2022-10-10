@@ -22,4 +22,4 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS(vision::BoxFilter)
+VS_MAKE_CLASS_CREATOR(vision::BoxFilter)

@@ -116,6 +116,25 @@ inline Var<Ray> spawn_ray_to(Float3 p_start, Float3 n_start, Float3 p_target) {
     return make_ray(org, dir, 1 - ShadowEpsilon);
 }
 
+inline Ray spawn_ray_to(float3 p_start, float3 n_start, float3 p_target, float3 n_target) {
+    float3 dir = p_target - p_start;
+    n_target *= select(dot(n_target, -dir) > 0, 1.f, -1.f);
+    p_target = offset_ray_origin(p_target, n_target);
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    float3 org = offset_ray_origin(p_start, n_start);
+    return Ray(org, dir, 1 - ShadowEpsilon);
+}
+
+inline Var<Ray> spawn_ray_to(Float3 p_start, Float3 n_start, Float3 p_target, Float3 n_target) {
+    Float3 dir = p_target - p_start;
+    n_target *= select(dot(n_target, -dir) > 0, 1.f, -1.f);
+    p_target = offset_ray_origin(p_target, n_target);
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    Float3 org = offset_ray_origin(p_start, n_start);
+    return make_ray(org, dir, 1 - ShadowEpsilon);
+}
+
+
 template<typename T>
 requires is_vector3_expr_v<T>
 struct Frame {

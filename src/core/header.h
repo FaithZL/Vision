@@ -30,7 +30,7 @@ using DataWrap = nlohmann::json;
 #define VS_IMPORT_API VS_EXTERN_C
 #endif
 
-#define VS_MAKE_CLASS(Class)                                                                      \
+#define VS_MAKE_CLASS_CREATOR(Class)                                                              \
     VS_EXPORT_API Class *create(vision::Description *desc) {                                      \
         return ocarina::new_with_allocator<vision::BoxFilter>(dynamic_cast<Class::Desc *>(desc)); \
     }                                                                                             \
