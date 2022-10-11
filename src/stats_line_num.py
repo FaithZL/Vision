@@ -28,10 +28,12 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
         if "ocarina" in fn:
             continue
         try:
-            # print(file)
-            
             f = open(fn, "r")
-            count += len(f.readlines())
+
+            num = len(f.readlines())
+            # print(file , num)
+            
+            count += num
         except :
             print(fn)
 

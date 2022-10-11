@@ -6,13 +6,21 @@
 
 #include "core/stl.h"
 #include "rhi/context.h"
+#include "description/descriptions.h"
 #include "cli_parser.h"
 
 namespace vision {
 
+class SceneNode;
+
+using namespace ocarina;
+
 class Context : public ocarina::Context {
 public:
     using Super = ocarina::Context;
+    using PluginCreator = SceneNode *(Description *);
+    using PluginDeleter = void(SceneNode *);
+    using PluginHandle = ocarina::unique_ptr<SceneNode, PluginDeleter *>;
 
 private:
     CLIParser _cli_parser;
@@ -21,7 +29,7 @@ public:
     explicit Context(int argc, char **argv,
                      ocarina::string_view cache_dir = ".cache");
     const CLIParser &cli_parser() const noexcept { return _cli_parser; }
-
+    [[nodiscard]] PluginHandle load_plugin(Description *desc);
 
 };
 
