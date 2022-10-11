@@ -8,17 +8,11 @@
 #include "node.h"
 #include "math/transform.h"
 #include "filter.h"
+#include "sample.h"
 #include "descriptions/node_desc.h"
 
 namespace vision {
 using namespace ocarina;
-
-struct SensorSample {
-    Float2 p_film;
-    Float2 p_lens;
-    Float time;
-    Float filter_weight{1.f};
-};
 
 class Sensor : public Node {
 protected:
@@ -26,6 +20,7 @@ protected:
 
 public:
     explicit Sensor(SensorDesc *desc) : Node(desc->name) {}
+    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 
 struct CameraData {
@@ -67,6 +62,7 @@ public:
     [[nodiscard]] virtual float fov_y() const noexcept = 0;
     virtual void set_fov_y(float val) noexcept = 0;
     virtual void update_fov_y(float val) noexcept = 0;
+    virtual void update_device_data() noexcept = 0;
 };
 
 }// namespace vision

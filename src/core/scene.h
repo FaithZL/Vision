@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "base/filter.h"
+#include "base/sensor.h"
 #include "descriptions/scene_desc.h"
 
 namespace vision {

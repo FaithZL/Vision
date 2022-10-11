@@ -142,7 +142,7 @@ requires std::is_same_v<expr_value_t<TRay>, Ray>
     return ray;
 }
 
-[[nodiscard]] Box3f transform_box(float4x4 mat, const Box3f &b) noexcept {
+[[nodiscard]] inline Box3f transform_box(float4x4 mat, const Box3f &b) noexcept {
     float3 minPoint = make_float3(mat[3][0], mat[3][1], mat[3][2]);
     float3 maxPoint = minPoint;
     for (int i = 0; i < 3; ++i) {
