@@ -7,6 +7,7 @@
 #include "core/basic_types.h"
 #include "node.h"
 #include "math/transform.h"
+#include "filter.h"
 #include "descriptions/node_desc.h"
 
 namespace vision {
@@ -21,11 +22,22 @@ struct SensorSample {
 
 class Sensor : public Node {
 protected:
+    Filter *_filter{};
+
+public:
     explicit Sensor(SensorDesc *desc) : Node(desc->name) {}
-    [[nodiscard]] virtual float3 forward() const noexcept = 0;
-    [[nodiscard]] virtual float3 up() const noexcept = 0;
-    [[nodiscard]] virtual float3 right() const noexcept = 0;
-    [[nodiscard]] virtual float3 position() const noexcept = 0;
+};
+
+struct CameraData {
+    float3 position;
+    float fov_y{20.f};
+    float yaw{};
+    float pitch{};
+    float velocity{5.f};
+    float sensitivity{1.f};
+    float4x4 raster_to_screen{};
+    float4x4 camera_to_screen{};
+    float4x4 raster_to_camera{};
 };
 
 class Camera : public Sensor {
@@ -40,15 +52,21 @@ protected:
     constexpr static float3 right_vec = make_float3(1, 0, 0);
     constexpr static float3 up_vec = make_float3(0, 1, 0);
     constexpr static float3 forward_vec = make_float3(0, 0, 1);
-    float3 _position;
-    float _fov_y{0};
-    float _yaw{};
-    float _pitch{};
-    float _velocity{};
-    float _sensitivity{1.f};
-    Transform<float4x4> _raster_to_screen{};
-    Transform<float4x4> _camera_to_screen{};
-    Transform<float4x4> _raster_to_camera{};
+
+public:
+    [[nodiscard]] virtual float3 forward() const noexcept = 0;
+    [[nodiscard]] virtual float3 up() const noexcept = 0;
+    [[nodiscard]] virtual float3 right() const noexcept = 0;
+    [[nodiscard]] virtual float3 position() const noexcept = 0;
+    [[nodiscard]] virtual float yaw() const noexcept = 0;
+    virtual void set_yaw(float yaw) noexcept = 0;
+    virtual void update_yaw(float val) noexcept = 0;
+    [[nodiscard]] virtual float pitch() const noexcept = 0;
+    virtual void set_pitch(float pitch) noexcept = 0;
+    virtual void update_pitch(float val) noexcept = 0;
+    [[nodiscard]] virtual float fov_y() const noexcept = 0;
+    virtual void set_fov_y(float val) noexcept = 0;
+    virtual void update_fov_y(float val) noexcept = 0;
 };
 
 }// namespace vision
