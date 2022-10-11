@@ -7,10 +7,16 @@
 #include "core/stl.h"
 
 namespace vision {
+
+class Description;
+
 class SceneNode {
 private:
     ocarina::string _name;
 
+public:
+    using Creator = SceneNode *(Description *);
+    using Deleter = void(SceneNode *);
 public:
     SceneNode() = default;
     SceneNode(const ocarina::string &name) : _name(name) {}

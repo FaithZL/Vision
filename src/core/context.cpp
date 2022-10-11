@@ -13,8 +13,8 @@ Context::Context(int argc, char **argv, ocarina::string_view cache_dir)
 
 Context::PluginHandle Context::load_plugin(Description *desc) {
     const DynamicModule *module = obtain_module(desc->plugin_name());
-    auto creator = reinterpret_cast<PluginCreator *>(module->function_ptr("create"));
-    auto deleter = reinterpret_cast<PluginDeleter *>(module->function_ptr("destroy"));
+    auto creator = reinterpret_cast<SceneNode::Creator *>(module->function_ptr("create"));
+    auto deleter = reinterpret_cast<SceneNode::Deleter *>(module->function_ptr("destroy"));
     return PluginHandle(creator(desc), deleter);
 }
 }

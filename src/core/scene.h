@@ -3,3 +3,14 @@
 //
 
 #pragma once
+
+#include "base/filter.h"
+
+namespace vision {
+
+class Scene {
+private:
+
+};
+
+}

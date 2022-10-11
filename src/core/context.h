@@ -8,19 +8,18 @@
 #include "rhi/context.h"
 #include "description/descriptions.h"
 #include "cli_parser.h"
+#include "base/scene_node.h"
 
 namespace vision {
 
-class SceneNode;
+//class SceneNode;
 
 using namespace ocarina;
 
 class Context : public ocarina::Context {
 public:
     using Super = ocarina::Context;
-    using PluginCreator = SceneNode *(Description *);
-    using PluginDeleter = void(SceneNode *);
-    using PluginHandle = ocarina::unique_ptr<SceneNode, PluginDeleter *>;
+    using PluginHandle = ocarina::unique_ptr<SceneNode, SceneNode::Deleter *>;
 
 private:
     CLIParser _cli_parser;
