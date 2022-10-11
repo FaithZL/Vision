@@ -19,7 +19,7 @@ private:
 
 public:
     explicit Scene(vision::Context *ctx);
-    void prepare(SceneDesc scene_desc);
+    void prepare(const SceneDesc& scene_desc);
 };
 
 }// namespace vision

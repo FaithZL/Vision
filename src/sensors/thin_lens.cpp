@@ -6,5 +6,6 @@
 #include "base/sensor.h"
 
 namespace vision {
-
+class ThinLensCamera : public Camera {
+};
 }

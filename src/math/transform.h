@@ -171,6 +171,7 @@ private:
     TMat _mat;
 
 public:
+    Transform() = default;
     explicit Transform(const TMat &mat) : _mat(mat) {}
     [[nodiscard]] TMat mat4x4() const noexcept { return _mat; }
     [[nodiscard]] auto inv_mat4x4() const noexcept { return inverse(_mat); }
