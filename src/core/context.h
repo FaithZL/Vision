@@ -6,7 +6,7 @@
 
 #include "core/stl.h"
 #include "rhi/context.h"
-#include "description/descriptions.h"
+#include "descriptions/node_desc.h"
 #include "cli_parser.h"
 #include "base/node.h"
 

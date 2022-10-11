@@ -6,7 +6,7 @@
 
 #include "core/basic_types.h"
 #include "core/stl.h"
-#include "descriptions.h"
+#include "node_desc.h"
 #include "shape.h"
 
 namespace vision {

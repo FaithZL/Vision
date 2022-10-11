@@ -2,7 +2,7 @@
 // Created by Zero on 10/09/2022.
 //
 
-#include "description/descriptions.h"
+#include "descriptions/node_desc.h"
 #include "base/filter.h"
 
 namespace vision {
@@ -21,4 +21,4 @@ public:
 };
 }// namespace vision
 
-//VS_MAKE_CLASS_CREATOR(vision::BoxFilter)
+VS_MAKE_CLASS_CREATOR(vision::BoxFilter)

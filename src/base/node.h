@@ -26,4 +26,12 @@ public:
     virtual ~Node() = default;
     [[nodiscard]] ocarina::string name() const noexcept { return _name; }
 };
-}
+}// namespace vision
+
+#define VS_MAKE_CLASS_CREATOR(Class)                                                  \
+    VS_EXPORT_API Class *create(vision::NodeDesc *desc) {                             \
+        return ocarina::new_with_allocator<Class>(dynamic_cast<Class::Desc *>(desc)); \
+    }                                                                                 \
+    OC_EXPORT_API void destroy(Class *obj) {                                          \
+        ocarina::delete_with_allocator(obj);                                          \
+    }

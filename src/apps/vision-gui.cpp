@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "core/cli_parser.h"
-#include "description/scene_desc.h"
+#include "descriptions/scene_desc.h"
 #include "core/stl.h"
 #include "rhi/context.h"
 

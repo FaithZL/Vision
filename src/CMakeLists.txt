@@ -18,7 +18,7 @@ endfunction()
 
 add_subdirectory(ocarina)
 add_subdirectory(ext)
-add_subdirectory(description)
+add_subdirectory(descriptions)
 add_subdirectory(core)
 add_subdirectory(base)
 add_subdirectory(math)
