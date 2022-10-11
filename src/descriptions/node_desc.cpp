@@ -40,6 +40,7 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void ShapeDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string();
     name = ps["name"].as_string();
     ParameterSet param = ps["param"];
@@ -66,18 +67,21 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 }
 
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("independent");
     ParameterSet param = ps["param"];
     VISION_PARAMS_INITIAL(spp)
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("box");
     ParameterSet param = ps["param"];
     VISION_PARAMS_INITIAL(radius)
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
     ParameterSet param = ps["param"];
     VISION_PARAMS_LIST_INITIAL(velocity, fov_y, focal_distance, lens_radius)
@@ -87,12 +91,14 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
     ParameterSet param = ps["param"];
     VISION_PARAMS_LIST_INITIAL(max_depth, min_depth, rr_threshold)
 }
 
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
     if (sub_type == "Matte") {
@@ -101,10 +107,11 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
-
+    NodeDesc::init(ps);
 }
 
 void TextureDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     if (ps.data().is_array()) {
         val = make_float4(ps.as_float3(), 0.f);
     } else if (ps.data().is_object()) {
@@ -113,10 +120,12 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("uniform");
 }
 
 void FilmDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
     ParameterSet param = ps["param"];
     VISION_PARAMS_LIST_INITIAL(resolution)
 }

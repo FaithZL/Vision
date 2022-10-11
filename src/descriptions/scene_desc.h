@@ -23,7 +23,7 @@ public:
 
 public:
     SceneDesc() = default;
-    static unique_ptr<SceneDesc> from_json(const fs::path &path);
+    static SceneDesc from_json(const fs::path &path);
     void init_material_descs(const DataWrap &materials) noexcept;
     void init_shape_descs(const DataWrap &shapes) noexcept;
     void init_light_descs(const DataWrap &lights) noexcept;

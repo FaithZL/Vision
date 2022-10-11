@@ -417,6 +417,7 @@
     },
     "sampler": {
         "type": "independent",
+        "name" : "sampler0",
         "param": {
             "spp": 1
         }

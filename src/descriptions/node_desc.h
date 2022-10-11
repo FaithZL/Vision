@@ -27,7 +27,7 @@ public:
     NodeDesc(string_view type, string name)
         : _type(type), sub_type(std::move(name)) {}
     explicit NodeDesc(string_view type) : _type(type) {}
-    virtual void init(const ParameterSet &ps) noexcept = 0;
+    virtual void init(const ParameterSet &ps) noexcept { name = ps["name"].as_string(); };
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
     }

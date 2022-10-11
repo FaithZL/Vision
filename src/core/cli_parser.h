@@ -34,14 +34,14 @@ public:
     CLIParser(int argc, char **argv);
     void init(int argc, char **argv);
     [[nodiscard]] string cli_positional_option() const;
-    void print_help();
+    void print_help() const noexcept;
     [[nodiscard]] bool clear_cache() noexcept;
     [[nodiscard]] string backend() noexcept;
     [[nodiscard]] fs::path working_path(const fs::path &name = {}) noexcept;
     [[nodiscard]] fs::path runtime_path(const fs::path &name = {}) noexcept;
     [[nodiscard]] fs::path input_path(const fs::path &name = {}) noexcept;
-    [[nodiscard]] fs::path scene_file() noexcept;
-    [[nodiscard]] fs::path scene_path() noexcept;
+    [[nodiscard]] fs::path scene_file() const noexcept;
+    [[nodiscard]] fs::path scene_path() const noexcept;
     [[nodiscard]] fs::path output_dir() noexcept;
 };
 

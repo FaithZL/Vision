@@ -142,10 +142,10 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     init_material_descs(data.value("materials", DataWrap()));
 }
 
-unique_ptr<SceneDesc> SceneDesc::from_json(const fs::path &path) {
-    auto scene_desc = make_unique<SceneDesc>();
+SceneDesc SceneDesc::from_json(const fs::path &path) {
+    SceneDesc scene_desc;
     DataWrap data = detail::create_json_from_file(path);
-    scene_desc->init(data);
+    scene_desc.init(data);
     return scene_desc;
 }
 

@@ -6,21 +6,20 @@
 #include "core/cli_parser.h"
 #include "descriptions/scene_desc.h"
 #include "core/stl.h"
-#include "rhi/context.h"
+#include "core/context.h"
 
 using namespace ocarina;
 using namespace vision;
 
 int execute(int argc, char *argv[]){
-    fs::path path(argv[0]);
-    vision::CLIParser cli_parser(argc, argv);
-    Context context(path.parent_path());
+    vision::Context context(argc, argv);
     if (argc == 1) {
-        cli_parser.print_help();
+        context.cli_parser().print_help();
         return 0;
     }
+    context.prepare();
 
-    auto scene_desc = SceneDesc::from_json(cli_parser.scene_file());
+//    auto scene_desc = SceneDesc::from_json(cli_parser.scene_file());
 
 
     return 0;

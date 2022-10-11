@@ -50,7 +50,7 @@ const cxxopts::ParseResult &CLIParser::_parse_result() const noexcept  {
     return *_parsed_cli_options;
 }
 
-void CLIParser::print_help() {
+void CLIParser::print_help() const noexcept {
     cout << _cli_options.help() << endl;
 }
 
@@ -102,7 +102,7 @@ fs::path CLIParser::runtime_path(const fs::path &name) noexcept {
     return _runtime_dir() / name;
 }
 
-fs::path CLIParser::scene_path() noexcept {
+fs::path CLIParser::scene_path() const noexcept {
     return scene_file().parent_path();
 }
 
@@ -116,7 +116,7 @@ fs::path CLIParser::output_dir() noexcept {
     return _output_dir;
 }
 
-fs::path CLIParser::scene_file() noexcept {
+fs::path CLIParser::scene_file() const noexcept {
     return fs::canonical(_parse_result()["scene"].as<std::string>());
 }
 
@@ -127,6 +127,7 @@ bool CLIParser::clear_cache() noexcept {
 string CLIParser::backend() noexcept {
     return _parse_result()["device"].as<std::string>();
 }
+
 string CLIParser::cli_positional_option() const {
     return _parse_result()["positional"].as<string>();
 }
