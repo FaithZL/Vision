@@ -11,10 +11,10 @@ Context::Context(int argc, char **argv, ocarina::string_view cache_dir)
       _cli_parser(argc, argv) {
 }
 
-Context::PluginHandle Context::load_plugin(Description *desc) {
+Node::Handle Context::load_plugin(NodeDesc *desc) {
     const DynamicModule *module = obtain_module(desc->plugin_name());
-    auto creator = reinterpret_cast<SceneNode::Creator *>(module->function_ptr("create"));
-    auto deleter = reinterpret_cast<SceneNode::Deleter *>(module->function_ptr("destroy"));
-    return PluginHandle(creator(desc), deleter);
+    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
+    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+    return {creator(desc), deleter};
 }
 }

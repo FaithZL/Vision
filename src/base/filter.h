@@ -5,7 +5,7 @@
 #pragma once
 
 #include "dsl/common.h"
-#include "scene_node.h"
+#include "node.h"
 #include "description/descriptions.h"
 
 namespace vision {
@@ -16,7 +16,7 @@ struct FilterSample {
     Float weight;
 };
 
-class Filter : public SceneNode {
+class Filter : public Node {
 public:
     using Desc = FilterDesc;
 
@@ -24,7 +24,7 @@ protected:
     float2 _radius;
 
 public:
-    explicit Filter(FilterDesc *desc) : SceneNode(desc->name), _radius(desc->radius) {}
+    explicit Filter(FilterDesc *desc) : Node(desc->name), _radius(desc->radius) {}
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
 };

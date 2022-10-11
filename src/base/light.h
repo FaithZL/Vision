@@ -5,7 +5,7 @@
 #pragma once
 
 #include "interaction.h"
-#include "scene_node.h"
+#include "node.h"
 
 namespace vision {
 
@@ -17,7 +17,7 @@ enum class LightType : uint8_t {
     Infinite
 };
 
-class Light : public SceneNode {
+class Light : public Node {
 protected:
     const LightType _type{LightType::Area};
 

@@ -5,9 +5,9 @@
 #pragma once
 
 #include "dsl/common.h"
-#include "scene_node.h"
+#include "node.h"
 
 namespace vision {
-class Sampler : public SceneNode {
+class Sampler : public Node {
 };
 }// namespace vision

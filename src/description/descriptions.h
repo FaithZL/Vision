@@ -14,7 +14,7 @@ namespace vision {
 
 using namespace ocarina;
 
-struct Description {
+struct NodeDesc {
 protected:
     string_view _type;
 
@@ -23,27 +23,27 @@ public:
     string name;
 
 public:
-    Description() = default;
-    Description(string_view type, string name)
+    NodeDesc() = default;
+    NodeDesc(string_view type, string name)
         : _type(type), sub_type(std::move(name)) {}
-    explicit Description(string_view type) : _type(type) {}
+    explicit NodeDesc(string_view type) : _type(type) {}
     virtual void init(const ParameterSet &ps) noexcept = 0;
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
     }
 };
 #define VISION_DESC_COMMON(type)         \
-    type##Desc() : Description(#type) {} \
-    explicit type##Desc(string name) : Description(#type, std::move(name)) {}
+    type##Desc() : NodeDesc(#type) {} \
+    explicit type##Desc(string name) : NodeDesc(#type, std::move(name)) {}
 
-struct TransformDesc : public Description {
+struct TransformDesc : public NodeDesc {
 public:
     float4x4 mat{make_float4x4(1.f)};
 public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct ShapeDesc : public Description {
+struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
     float3 emission{make_float3(0.f)};
@@ -72,7 +72,7 @@ public:
     [[nodiscard]] bool operator == (const ShapeDesc &other) const noexcept;
 };
 
-struct SamplerDesc : public Description {
+struct SamplerDesc : public NodeDesc {
 public:
     uint spp{};
 
@@ -81,7 +81,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct FilterDesc : public Description {
+struct FilterDesc : public NodeDesc {
 public:
     float2 radius{make_float2(1.f)};
     // for gaussian filter
@@ -96,7 +96,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct FilmDesc : public Description {
+struct FilmDesc : public NodeDesc {
 public:
     int state{0};
     int tone_map{0};
@@ -107,7 +107,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct SensorDesc : public Description {
+struct SensorDesc : public NodeDesc {
 public:
     TransformDesc transform_desc;
     float fov_y{20};
@@ -122,7 +122,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct IntegratorDesc : public Description {
+struct IntegratorDesc : public NodeDesc {
 public:
     uint max_depth{10};
     uint min_depth{5};
@@ -133,7 +133,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct TextureDesc : public Description {
+struct TextureDesc : public NodeDesc {
 public:
     float4 val;
     string fn;
@@ -143,7 +143,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct MaterialDesc : public Description {
+struct MaterialDesc : public NodeDesc {
 public:
     TextureDesc color;
 
@@ -152,12 +152,12 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct LightDesc : public Description {
+struct LightDesc : public NodeDesc {
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct LightSamplerDesc : public Description {
+struct LightSamplerDesc : public NodeDesc {
     VISION_DESC_COMMON(LightSampler)
     void init(const ParameterSet &ps) noexcept override;
 };
