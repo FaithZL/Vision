@@ -49,6 +49,9 @@ protected:
     constexpr static float3 forward_vec = make_float3(0, 0, 1);
 
 public:
+    explicit Camera(SensorDesc *desc, CameraData *data)
+        : Sensor(desc) { init(*data, desc); }
+    void init(CameraData &data, const SensorDesc *desc) noexcept;
     [[nodiscard]] virtual float3 forward() const noexcept = 0;
     [[nodiscard]] virtual float3 up() const noexcept = 0;
     [[nodiscard]] virtual float3 right() const noexcept = 0;
