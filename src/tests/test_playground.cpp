@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     float4x4 mat = scale(2);
     Transform tsf = Transform(mat);
 
-    auto ttt = Transform<float4x4>::scale(0.1f);
+    auto ttt = Transform(scale(0.1f));
 
     auto m = rotation(make_float3(1.f), 30.f, false);
 
