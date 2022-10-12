@@ -26,6 +26,9 @@ public:
     //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 
+}// namespace vision
+
+namespace vision {
 struct CameraData {
     float3 position;
     float fov_y{20.f};
@@ -37,6 +40,13 @@ struct CameraData {
     float4x4 camera_to_screen{};
     float4x4 raster_to_camera{};
 };
+}// namespace vision
+
+OC_STRUCT(vision::CameraData, position, fov_y, yaw, pitch,
+          velocity, sensitivity, raster_to_screen, camera_to_screen,
+          raster_to_camera){};
+
+namespace vision {
 
 class Camera : public Sensor {
 public:
@@ -51,29 +61,31 @@ protected:
     constexpr static float3 up_vec = make_float3(0, 1, 0);
     constexpr static float3 forward_vec = make_float3(0, 0, 1);
 
+    CameraData _data;
+
 public:
-    explicit Camera(const SensorDesc *desc, CameraData *data)
-        : Sensor(desc) { init(data, desc); }
-    void init(CameraData *data, const SensorDesc *desc) noexcept;
+    explicit Camera(const SensorDesc *desc)
+        : Sensor(desc) { init(desc); }
+    void init(const SensorDesc *desc) noexcept;
     void update_mat(CameraData *data, float4x4 m) noexcept;
-    //    [[nodiscard]] virtual float3 forward() const noexcept = 0;
-    //    [[nodiscard]] virtual float3 up() const noexcept = 0;
-    //    [[nodiscard]] virtual float3 right() const noexcept = 0;
-    //    [[nodiscard]] virtual float3 position() const noexcept = 0;
-    //    [[nodiscard]] virtual float yaw() const noexcept = 0;
-    //    virtual void set_yaw(float yaw) noexcept = 0;
-    //    virtual void update_yaw(float val) noexcept = 0;
-    //    [[nodiscard]] virtual float pitch() const noexcept = 0;
-    //    virtual void set_pitch(float pitch) noexcept = 0;
-    //    virtual void update_pitch(float val) noexcept = 0;
-    //    [[nodiscard]] virtual float fov_y() const noexcept = 0;
-    //    virtual void set_fov_y(float val) noexcept = 0;
-    //    virtual void update_fov_y(float val) noexcept = 0;
-    //    virtual void update_device_data() noexcept = 0;
+    [[nodiscard]] float3 forward() const noexcept;
+    [[nodiscard]] float3 up() const noexcept;
+    [[nodiscard]] float3 right() const noexcept;
+    [[nodiscard]] float3 position() const noexcept;
+    [[nodiscard]] float yaw() const noexcept;
+    void set_yaw(float yaw) noexcept;
+    void update_yaw(float val) noexcept;
+    [[nodiscard]] float pitch() const noexcept;
+    void set_pitch(float pitch) noexcept;
+    void update_pitch(float val) noexcept;
+    [[nodiscard]] float fov_y() const noexcept;
+    void set_fov_y(float val) noexcept;
+    void update_fov_y(float val) noexcept;
+    virtual void update_device_data() noexcept;
     template<typename Scalar>
     [[nodiscard]] matrix4_t<Scalar> camera_to_world_rotation(const Scalar &yaw, const Scalar &pitch) {
         matrix4_t<Scalar> horizontal = rotation_y(yaw, false);
-        matrix4_t<Scalar> vertical = rotation_x(-pitch,false);
+        matrix4_t<Scalar> vertical = rotation_x(-pitch, false);
         return horizontal * vertical;
     }
 

@@ -6,10 +6,10 @@
 
 namespace vision {
 using namespace ocarina;
-void Camera::init(CameraData *data, const SensorDesc *desc) noexcept {
-    data->velocity = desc->velocity;
-    data->fov_y = desc->fov_y;
-    update_mat(data, desc->transform_desc.mat);
+void Camera::init( const SensorDesc *desc) noexcept {
+    _data.velocity = desc->velocity;
+    _data.fov_y = desc->fov_y;
+//    update_mat(data, desc->transform_desc.mat);
 }
 
 void Camera::update_mat(CameraData *data, float4x4 m) noexcept {
@@ -17,6 +17,10 @@ void Camera::update_mat(CameraData *data, float4x4 m) noexcept {
     data->pitch = -degrees(std::atan2(m[1][2], m[1][1]));
     data->yaw = degrees(-std::atan2(m[2][0], m[0][0]));
     data->position = make_float3(m[3]);
+}
+
+void Camera::update_device_data() noexcept {
+
 }
 
 }// namespace vision
