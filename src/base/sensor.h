@@ -19,7 +19,7 @@ protected:
     Filter *_filter{};
 
 public:
-    explicit Sensor(SensorDesc *desc) : Node(desc->name) {}
+    explicit Sensor(const SensorDesc *desc) : Node(desc->name) {}
     [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 
@@ -49,7 +49,7 @@ protected:
     constexpr static float3 forward_vec = make_float3(0, 0, 1);
 
 public:
-    explicit Camera(SensorDesc *desc, CameraData *data)
+    explicit Camera(const SensorDesc *desc, CameraData *data)
         : Sensor(desc) { init(*data, desc); }
     void init(CameraData &data, const SensorDesc *desc) noexcept;
     [[nodiscard]] virtual float3 forward() const noexcept = 0;

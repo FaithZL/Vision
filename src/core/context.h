@@ -35,14 +35,14 @@ public:
     [[nodiscard]] CLIParser &cli_parser() noexcept { return _cli_parser; }
     [[nodiscard]] const Scene *scene() const noexcept { return &_scene; }
     [[nodiscard]] Scene *scene() noexcept { return &_scene; }
-    [[nodiscard]] Node *load_node(NodeDesc *desc);
+    [[nodiscard]] Node *load_node(const NodeDesc *desc);
     template<typename T, typename desc_ty>
-    [[nodiscard]] T *load(desc_ty *desc) noexcept {
+    [[nodiscard]] T *load(const desc_ty *desc) noexcept {
         auto ret = dynamic_cast<T*>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc->name);
         return ret;
     }
-    [[nodiscard]] Filter *load_filter(FilterDesc *desc);
+    [[nodiscard]] Filter *load_filter(const FilterDesc *desc);
 };
 
 }// namespace vision

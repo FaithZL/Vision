@@ -21,7 +21,7 @@ private:
     ThinLensCameraData _data;
 
 public:
-    explicit ThinLensCamera(SensorDesc *desc)
+    explicit ThinLensCamera(const SensorDesc *desc)
         : Camera(desc, &_data) {
 
     }

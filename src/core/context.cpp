@@ -17,7 +17,7 @@ void Context::prepare() noexcept {
     _scene.prepare(scene_desc);
 }
 
-Node* Context::load_node(NodeDesc *desc) {
+Node* Context::load_node(const NodeDesc *desc) {
     const DynamicModule *module = obtain_module(desc->plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
     auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
@@ -25,7 +25,7 @@ Node* Context::load_node(NodeDesc *desc) {
     return _all_nodes.back().get();
 }
 
-Filter *Context::load_filter(FilterDesc *desc) {
+Filter *Context::load_filter(const FilterDesc *desc) {
     return load<Filter>(desc);
 }
 
