@@ -67,7 +67,7 @@ template<typename V, typename F, typename B>
     F c = cos(angle);
     F s = sin(angle);
     V a = normalize(axis);
-    V t = (1.0f - c) * a;
+    vec3_t<F> t = (1.0f - c) * a;
 
     auto mat = make_float4x4(
         c + t.x * a.x, t.x * a.y + s * a.z, t.x * a.z - s * a.y, 0.0f,

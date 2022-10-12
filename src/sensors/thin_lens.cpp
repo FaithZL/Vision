@@ -23,9 +23,10 @@ private:
 public:
     explicit ThinLensCamera(const SensorDesc *desc)
         : Camera(desc, &_data) {
-
+        _data.focal_distance = desc->focal_distance;
+        _data.lens_radius = desc->lens_radius;
     }
 };
 }// namespace vision
 
-//VS_MAKE_CLASS_CREATOR(vision)
+VS_MAKE_CLASS_CREATOR(vision::ThinLensCamera)

@@ -43,6 +43,7 @@ public:
         return ret;
     }
     [[nodiscard]] Filter *load_filter(const FilterDesc *desc);
+    [[nodiscard]] Camera *load_camera(const SensorDesc *desc);
 };
 
 }// namespace vision

@@ -15,12 +15,15 @@ namespace vision {
 using namespace ocarina;
 
 class Sensor : public Node {
+public:
+    using Desc = SensorDesc;
+
 protected:
     Filter *_filter{};
 
 public:
     explicit Sensor(const SensorDesc *desc) : Node(desc->name) {}
-    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
+    //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 
 struct CameraData {
@@ -50,22 +53,50 @@ protected:
 
 public:
     explicit Camera(const SensorDesc *desc, CameraData *data)
-        : Sensor(desc) { init(*data, desc); }
-    void init(CameraData &data, const SensorDesc *desc) noexcept;
-    [[nodiscard]] virtual float3 forward() const noexcept = 0;
-    [[nodiscard]] virtual float3 up() const noexcept = 0;
-    [[nodiscard]] virtual float3 right() const noexcept = 0;
-    [[nodiscard]] virtual float3 position() const noexcept = 0;
-    [[nodiscard]] virtual float yaw() const noexcept = 0;
-    virtual void set_yaw(float yaw) noexcept = 0;
-    virtual void update_yaw(float val) noexcept = 0;
-    [[nodiscard]] virtual float pitch() const noexcept = 0;
-    virtual void set_pitch(float pitch) noexcept = 0;
-    virtual void update_pitch(float val) noexcept = 0;
-    [[nodiscard]] virtual float fov_y() const noexcept = 0;
-    virtual void set_fov_y(float val) noexcept = 0;
-    virtual void update_fov_y(float val) noexcept = 0;
-    virtual void update_device_data() noexcept = 0;
+        : Sensor(desc) { init(data, desc); }
+    void init(CameraData *data, const SensorDesc *desc) noexcept;
+    void update_mat(CameraData *data, float4x4 m) noexcept;
+    //    [[nodiscard]] virtual float3 forward() const noexcept = 0;
+    //    [[nodiscard]] virtual float3 up() const noexcept = 0;
+    //    [[nodiscard]] virtual float3 right() const noexcept = 0;
+    //    [[nodiscard]] virtual float3 position() const noexcept = 0;
+    //    [[nodiscard]] virtual float yaw() const noexcept = 0;
+    //    virtual void set_yaw(float yaw) noexcept = 0;
+    //    virtual void update_yaw(float val) noexcept = 0;
+    //    [[nodiscard]] virtual float pitch() const noexcept = 0;
+    //    virtual void set_pitch(float pitch) noexcept = 0;
+    //    virtual void update_pitch(float val) noexcept = 0;
+    //    [[nodiscard]] virtual float fov_y() const noexcept = 0;
+    //    virtual void set_fov_y(float val) noexcept = 0;
+    //    virtual void update_fov_y(float val) noexcept = 0;
+    //    virtual void update_device_data() noexcept = 0;
+    template<typename Scalar>
+    [[nodiscard]] matrix4_t<Scalar> camera_to_world_rotation(const Scalar &yaw, const Scalar &pitch) {
+        matrix4_t<Scalar> horizontal = rotation_y(yaw, false);
+        matrix4_t<Scalar> vertical = rotation_x(-pitch,false);
+        return horizontal * vertical;
+    }
+
+    template<typename Scalar>
+    [[nodiscard]] vec3_t<Scalar> forward(const Scalar &yaw, const Scalar &pitch) {
+        return transform_vector(camera_to_world_rotation(yaw, pitch), forward_vec);
+    }
+
+    template<typename Scalar>
+    [[nodiscard]] vec3_t<Scalar> up(const Scalar &yaw, const Scalar &pitch) {
+        return transform_vector(camera_to_world_rotation(yaw, pitch), up_vec);
+    }
+
+    template<typename Scalar>
+    [[nodiscard]] vec3_t<Scalar> right(const Scalar &yaw, const Scalar &pitch) {
+        return transform_vector(camera_to_world_rotation(yaw, pitch), right_vec);
+    }
+
+    template<typename Vec, typename Scalar>
+    [[nodiscard]] matrix4_t<Scalar> camera_to_world(const Vec &pos, const Scalar &yaw, const Scalar &pitch) {
+        matrix4_t<Vec> translate = translation(pos);
+        return translate * camera_to_world_rotation(yaw, pitch);
+    }
 };
 
 }// namespace vision
