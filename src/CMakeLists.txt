@@ -24,6 +24,7 @@ add_subdirectory(base)
 add_subdirectory(math)
 add_subdirectory(apps)
 
+add_subdirectory(films)
 add_subdirectory(filters)
 add_subdirectory(samplers)
 add_subdirectory(lights)
@@ -34,17 +35,25 @@ add_subdirectory(sensors)
 add_subdirectory(textures)
 add_subdirectory(tests)
 
-add_library(vision-all INTERFACE)
-
-target_link_libraries(vision-all INTERFACE
-        vision-description
-        vision-base
+add_library(vision-plugins INTERFACE)
+target_link_libraries(vision-plugins INTERFACE
         vision-filters
         vision-lightsamplers
         vision-sensors
         vision-lights
+        vision-films
         vision-integrators
         vision-materials
-        vision-samplers
+        vision-samplers)
+
+add_library(vision-main INTERFACE)
+target_link_libraries(vision-main INTERFACE
+        vision-description
+        vision-base
         vision-math
         vision-core)
+
+add_library(vision-all INTERFACE)
+target_link_libraries(vision-all INTERFACE
+        vision-main
+        vision-plugins)
