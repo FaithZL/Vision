@@ -6,4 +6,6 @@
 
 namespace vision {
 
+void Film::prepare(RenderPipeline *pipeline) noexcept {
+}
 }
