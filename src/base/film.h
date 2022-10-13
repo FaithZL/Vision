@@ -14,7 +14,6 @@ class Film : public Node {
 private:
     uint2 _resolution;
 
-
 public:
     [[nodiscard]] uint _pixel_index(uint2 pixel) const { return pixel.y * _resolution.x + pixel.x; }
     [[nodiscard]] uint2 resolution() const noexcept { return _resolution; }

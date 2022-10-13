@@ -11,6 +11,8 @@ namespace vision {
 
 class NodeDesc;
 
+class RenderPipeline;
+
 class Node {
 private:
     ocarina::string _name;
@@ -23,7 +25,7 @@ public:
 public:
     Node() = default;
     explicit Node(ocarina::string name) : _name(std::move(name)) {}
-//    virtual void prepare()
+    virtual void prepare(RenderPipeline *pipeline) noexcept {}
     virtual ~Node() = default;
     [[nodiscard]] ocarina::string name() const noexcept { return _name; }
 };
