@@ -23,6 +23,7 @@ public:
 public:
     Node() = default;
     explicit Node(ocarina::string name) : _name(std::move(name)) {}
+//    virtual void prepare()
     virtual ~Node() = default;
     [[nodiscard]] ocarina::string name() const noexcept { return _name; }
 };

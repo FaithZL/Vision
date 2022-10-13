@@ -16,13 +16,13 @@ OC_STRUCT(vision::ThinLensCameraData, focal_distance, lens_radius){};
 namespace vision {
 class ThinLensCamera : public Camera {
 private:
-    ThinLensCameraData _data;
+    ThinLensCameraData _host_data;
 
 public:
     explicit ThinLensCamera(const SensorDesc *desc)
         : Camera(desc) {
-        _data.focal_distance = desc->focal_distance;
-        _data.lens_radius = desc->lens_radius;
+        _host_data.focal_distance = desc->focal_distance;
+        _host_data.lens_radius = desc->lens_radius;
     }
 };
 }// namespace vision
