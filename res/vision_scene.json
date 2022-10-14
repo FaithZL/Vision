@@ -449,6 +449,7 @@
                 }
             },
             "film": {
+                "type" : "rgb",
                 "param": {
                     "resolution": [
                         768,

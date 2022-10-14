@@ -15,8 +15,9 @@ private:
     uint2 _resolution;
 
 public:
-    void prepare(RenderPipeline *pipeline) noexcept override;
-    [[nodiscard]] uint _pixel_index(uint2 pixel) const { return pixel.y * _resolution.x + pixel.x; }
+    explicit Film(const FilmDesc *desc) : Node(desc), _resolution(desc->resolution) {}
+    [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
+    [[nodiscard]] uint pixel_index(uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     [[nodiscard]] uint2 resolution() const noexcept { return _resolution; }
 };
 }// namespace vision

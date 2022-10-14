@@ -22,7 +22,7 @@ protected:
     Filter *_filter{};
 
 public:
-    explicit Sensor(const SensorDesc *desc) : Node(desc->name) {}
+    explicit Sensor(const SensorDesc *desc) : Node(desc) {}
     //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 

@@ -6,10 +6,9 @@
 
 #include <utility>
 #include "core/stl.h"
+#include "descriptions/node_desc.h"
 
 namespace vision {
-
-class NodeDesc;
 
 class RenderPipeline;
 
@@ -24,7 +23,7 @@ public:
 
 public:
     Node() = default;
-    explicit Node(ocarina::string name) : _name(std::move(name)) {}
+    explicit Node(const NodeDesc *desc) : _name(desc->name) {}
     virtual void prepare(RenderPipeline *pipeline) noexcept {}
     virtual ~Node() = default;
     [[nodiscard]] ocarina::string name() const noexcept { return _name; }

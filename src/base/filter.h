@@ -24,7 +24,7 @@ protected:
     float2 _radius;
 
 public:
-    explicit Filter(const FilterDesc *desc) : Node(desc->name), _radius(desc->radius) {}
+    explicit Filter(const FilterDesc *desc) : Node(desc), _radius(desc->radius) {}
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
 };
