@@ -6,4 +6,11 @@
 
 namespace vision {
 
-}
+class AreaLight : public Light {
+public:
+    explicit AreaLight(const LightDesc *desc) : Light(desc, LightType::Area) {}
+};
+
+}// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::AreaLight)
