@@ -4,6 +4,7 @@
 
 #include "sensor.h"
 #include "core/context.h"
+#include "core/render_pipeline.h"
 
 namespace vision {
 using namespace ocarina;
@@ -12,6 +13,11 @@ Sensor::Sensor(const SensorDesc *desc)
     : Node(desc),
       _filter(desc->ctx->load_filter(&desc->filter_desc)),
       _film(desc->ctx->load_film(&desc->film_desc)) {}
+
+void Sensor::prepare(RenderPipeline *rp) noexcept {
+    _filter->prepare(rp);
+    _film->prepare(rp);
+}
 
 void Camera::init(const SensorDesc *desc) noexcept {
     _velocity = desc->velocity;

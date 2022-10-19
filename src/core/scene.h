@@ -16,10 +16,10 @@ class Context;
 class Scene {
 private:
     vision::Context *_context{nullptr};
-
+    Camera *_camera{nullptr};
 public:
     explicit Scene(vision::Context *ctx);
-    void prepare(const SceneDesc& scene_desc);
+    void init(const SceneDesc& scene_desc);
 };
 
 }// namespace vision

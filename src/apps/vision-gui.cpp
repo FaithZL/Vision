@@ -17,7 +17,12 @@ int execute(int argc, char *argv[]){
         context.cli_parser().print_help();
         return 0;
     }
-    context.prepare();
+    Device device = context.create_device("cuda");
+    SceneDesc scene_desc = context.parse_file();
+
+    RenderPipeline rp = context.create_pipeline(&device);
+    rp.init_scene(scene_desc);
+//    context.prepare();
 
 //    auto scene_desc = SceneDesc::from_json(cli_parser.scene_file());
 

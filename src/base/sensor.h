@@ -24,6 +24,7 @@ protected:
 
 public:
     explicit Sensor(const SensorDesc *desc);
+    void prepare(RenderPipeline *rp) noexcept override;
     void set_filter(Filter *filter) noexcept { _filter = filter; }
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
     void set_film(Film *film) noexcept { _film = film; }

@@ -12,9 +12,8 @@ Context::Context(int argc, char **argv, ocarina::string_view cache_dir)
       _cli_parser(argc, argv) {
 }
 
-void Context::prepare() noexcept {
-    auto scene_desc = SceneDesc::from_json(cli_parser().scene_file());
-    _scene.prepare(scene_desc);
+SceneDesc Context::parse_file() const noexcept {
+    return SceneDesc::from_json(cli_parser().scene_file());
 }
 
 Node* Context::load_node(const NodeDesc *desc) {

@@ -10,7 +10,7 @@ namespace vision {
 Scene::Scene(vision::Context *ctx)
     : _context(ctx) {}
 
-void Scene::prepare(const SceneDesc& scene_desc) {
+void Scene::init(const SceneDesc& scene_desc) {
     scene_desc.sensor_desc.ctx = _context;
     auto camera = _context->load_camera(&scene_desc.sensor_desc);
 //    static_assert(is_float_element_v<expr_value_t<Var<float>>>);

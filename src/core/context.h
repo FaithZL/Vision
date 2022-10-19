@@ -11,6 +11,7 @@
 #include "base/node.h"
 #include "scene.h"
 #include "descriptions/node_desc.h"
+#include "render_pipeline.h"
 
 namespace vision {
 
@@ -25,16 +26,17 @@ public:
 private:
     CLIParser _cli_parser;
     vector<Node::Handle> _all_nodes;
-    Scene _scene{this};
 
 public:
     explicit Context(int argc, char **argv,
                      ocarina::string_view cache_dir = ".cache");
     void prepare() noexcept;
+    [[nodiscard]] SceneDesc parse_file() const noexcept;
+    [[nodiscard]] RenderPipeline create_pipeline(Device *device) {
+        return RenderPipeline(device, this);
+    }
     [[nodiscard]] const CLIParser &cli_parser() const noexcept { return _cli_parser; }
     [[nodiscard]] CLIParser &cli_parser() noexcept { return _cli_parser; }
-    [[nodiscard]] const Scene *scene() const noexcept { return &_scene; }
-    [[nodiscard]] Scene *scene() noexcept { return &_scene; }
     [[nodiscard]] Node *load_node(const NodeDesc *desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty *desc) noexcept {

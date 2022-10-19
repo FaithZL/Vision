@@ -3,6 +3,7 @@
 //
 
 #include "base/sensor.h"
+#include "core/render_pipeline.h"
 
 namespace vision {
 struct ThinLensCameraData {
@@ -23,6 +24,9 @@ public:
         : Camera(desc) {
         _host_data.focal_distance = desc->focal_distance;
         _host_data.lens_radius = desc->lens_radius;
+    }
+    void prepare(RenderPipeline *rp) noexcept override {
+        Camera::prepare(rp);
     }
 };
 }// namespace vision

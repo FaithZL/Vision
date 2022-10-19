@@ -24,7 +24,7 @@ public:
 public:
     Node() = default;
     explicit Node(const NodeDesc *desc) : _name(desc->name) {}
-    virtual void prepare(RenderPipeline *pipeline) noexcept {}
+    virtual void prepare(RenderPipeline *rp) noexcept {}
     virtual ~Node() = default;
     [[nodiscard]] ocarina::string name() const noexcept { return _name; }
 };
