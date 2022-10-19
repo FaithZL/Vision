@@ -13,7 +13,7 @@
 namespace vision {
 
 using namespace ocarina;
-
+class Context;
 struct NodeDesc {
 protected:
     string_view _type;
@@ -21,6 +21,7 @@ protected:
 public:
     string sub_type;
     string name;
+    mutable vision::Context *ctx{nullptr};
 
 public:
     NodeDesc() = default;

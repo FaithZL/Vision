@@ -3,10 +3,17 @@
 //
 
 #include "sensor.h"
+#include "core/context.h"
 
 namespace vision {
 using namespace ocarina;
-void Camera::init( const SensorDesc *desc) noexcept {
+
+Sensor::Sensor(const SensorDesc *desc)
+    : Node(desc),
+      _filter(desc->ctx->load_filter(&desc->filter_desc)),
+      _film(desc->ctx->load_film(&desc->film_desc)) {}
+
+void Camera::init(const SensorDesc *desc) noexcept {
     _velocity = desc->velocity;
     _host_data.fov_y = desc->fov_y;
     update_mat(desc->transform_desc.mat);
@@ -24,13 +31,13 @@ void Camera::update_device_data() noexcept {
 
 }
 
-float4x4 Camera::camera_to_world_rotation() noexcept {
+float4x4 Camera::camera_to_world_rotation() const noexcept {
     float4x4 horizontal = rotation_y<H>(yaw());
     float4x4 vertical = rotation_x<H>(-pitch());
     return horizontal * vertical;
 }
 
-float4x4 Camera::camera_to_world() noexcept {
+float4x4 Camera::camera_to_world() const noexcept {
     float4x4 translate = translation(position());
     return translate * camera_to_world_rotation();
 }

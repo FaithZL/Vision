@@ -23,11 +23,12 @@ protected:
     Film *_film{};
 
 public:
-    explicit Sensor(const SensorDesc *desc) : Node(desc) {}
+    explicit Sensor(const SensorDesc *desc);
     void set_filter(Filter *filter) noexcept { _filter = filter; }
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
     void set_film(Film *film) noexcept { _film = film; }
     [[nodiscard]] Film *film() noexcept { return _film; }
+    [[nodiscard]] uint2 resolution() noexcept { return _film->resolution(); }
     //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 
@@ -88,8 +89,8 @@ public:
     }
     void update_fov_y(float val) noexcept { set_fov_y(fov_y() + val); }
     virtual void update_device_data() noexcept;
-    [[nodiscard]] float4x4 camera_to_world() noexcept;
-    [[nodiscard]] float4x4 camera_to_world_rotation() noexcept;
+    [[nodiscard]] float4x4 camera_to_world() const noexcept;
+    [[nodiscard]] float4x4 camera_to_world_rotation() const noexcept;
     [[nodiscard]] float3 forward() const noexcept;
     [[nodiscard]] float3 up() const noexcept;
     [[nodiscard]] float3 right() const noexcept;

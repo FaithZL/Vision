@@ -9,9 +9,6 @@ namespace vision {
 using namespace ocarina;
 
 class RGBFilm : public Film {
-public:
-    using Desc = FilmDesc;
-
 private:
     Buffer<float4> _radiance_buffer;
 
@@ -19,6 +16,9 @@ public:
     explicit RGBFilm(const FilmDesc *desc) : Film(desc) {}
     void prepare(RenderPipeline *rp) noexcept override {
         _radiance_buffer = rp->device().create_buffer<float4>(pixel_num());
+    }
+    void add_sample(Uint2 pixel, Float4 val, Uint frame_index) noexcept override {
+
     }
 };
 
