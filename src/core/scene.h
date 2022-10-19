@@ -20,6 +20,7 @@ private:
 public:
     explicit Scene(vision::Context *ctx);
     void init(const SceneDesc& scene_desc);
+    void prepare(RenderPipeline *rp) noexcept;
 };
 
 }// namespace vision

@@ -22,6 +22,7 @@ public:
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
+    void prepare() noexcept { _scene.prepare(this); }
 };
 
 }// namespace vision
