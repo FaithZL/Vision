@@ -12,4 +12,3 @@ endfunction()
 
 vision_add_test(test-playground SOURCES test_playground.cpp)
 vision_add_test(test-spawn_ray SOURCES test_spawn_ray.cpp)
-vision_add_test(test-desc SOURCES test_desc.cpp)

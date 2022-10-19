@@ -8,8 +8,8 @@
 #include "node.h"
 #include "math/transform.h"
 #include "filter.h"
+#include "film.h"
 #include "sample.h"
-#include "descriptions/node_desc.h"
 
 namespace vision {
 using namespace ocarina;
@@ -20,9 +20,14 @@ public:
 
 protected:
     Filter *_filter{};
+    Film *_film{};
 
 public:
     explicit Sensor(const SensorDesc *desc) : Node(desc) {}
+    void set_filter(Filter *filter) noexcept { _filter = filter; }
+    [[nodiscard]] Filter *filter() noexcept { return _filter; }
+    void set_film(Film *film) noexcept { _film = film; }
+    [[nodiscard]] Film *film() noexcept { return _film; }
     //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };
 

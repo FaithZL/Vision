@@ -38,12 +38,13 @@ public:
     [[nodiscard]] Node *load_node(const NodeDesc *desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty *desc) noexcept {
-        auto ret = dynamic_cast<T*>(load_node(desc));
+        auto ret = dynamic_cast<T *>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc->name);
         return ret;
     }
-    [[nodiscard]] Filter *load_filter(const FilterDesc *desc);
-    [[nodiscard]] Camera *load_camera(const SensorDesc *desc);
+    [[nodiscard]] Camera *load_camera(const SensorDesc *desc) { return load<Camera>(desc); }
+    [[nodiscard]] Filter *load_filter(const FilterDesc *desc) { return load<Filter>(desc); }
+    [[nodiscard]] Film *load_film(const FilmDesc *desc) { return load<Film>(desc); }
 };
 
 }// namespace vision

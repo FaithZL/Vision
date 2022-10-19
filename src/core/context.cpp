@@ -25,11 +25,4 @@ Node* Context::load_node(const NodeDesc *desc) {
     return _all_nodes.back().get();
 }
 
-Filter *Context::load_filter(const FilterDesc *desc) {
-    return load<Filter>(desc);
-}
-Camera *Context::load_camera(const SensorDesc *desc) {
-    return load<Camera>(desc);
-}
-
 }// namespace vision
