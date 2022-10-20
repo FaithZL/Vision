@@ -6,4 +6,9 @@
 
 namespace vision {
 
-}
+RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
+    : _device(device),
+      _context(context),
+      _scene(context) {}
+
+}// namespace vision

@@ -23,9 +23,6 @@ int execute(int argc, char *argv[]){
     RenderPipeline rp = context.create_pipeline(&device);
     rp.init_scene(scene_desc);
     rp.prepare();
-//    context.prepare();
-
-//    auto scene_desc = SceneDesc::from_json(cli_parser.scene_file());
 
 
     return 0;

@@ -42,6 +42,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-sensors
         vision-lights
         vision-films
+        vision-textures
         vision-integrators
         vision-materials
         vision-samplers)

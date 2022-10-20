@@ -5,6 +5,7 @@
 #pragma once
 
 #include "base/sensor.h"
+#include "base/lightsampler.h"
 #include "descriptions/scene_desc.h"
 
 namespace vision {
@@ -18,6 +19,7 @@ private:
     vision::Context *_context{nullptr};
     vector<Node::Handle> _all_nodes;
     Camera *_camera{nullptr};
+    LightSampler *_light_sampler{nullptr};
 
 public:
     explicit Scene(vision::Context *ctx);
@@ -33,6 +35,7 @@ public:
     [[nodiscard]] Camera *load_camera(const SensorDesc *desc) { return load<Camera>(desc); }
     [[nodiscard]] Filter *load_filter(const FilterDesc *desc) { return load<Filter>(desc); }
     [[nodiscard]] Film *load_film(const FilmDesc *desc) { return load<Film>(desc); }
+    [[nodiscard]] LightSampler *load_light_sampler(const LightSamplerDesc *desc) { return load<LightSampler>(desc); }
 };
 
 }// namespace vision
