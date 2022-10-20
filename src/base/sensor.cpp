@@ -11,8 +11,8 @@ using namespace ocarina;
 
 Sensor::Sensor(const SensorDesc *desc)
     : Node(desc),
-      _filter(desc->ctx->load_filter(&desc->filter_desc)),
-      _film(desc->ctx->load_film(&desc->film_desc)) {}
+      _filter(desc->scene->load_filter(&desc->filter_desc)),
+      _film(desc->scene->load_film(&desc->film_desc)) {}
 
 void Sensor::prepare(RenderPipeline *rp) noexcept {
     _filter->prepare(rp);

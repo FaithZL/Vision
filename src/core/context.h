@@ -25,28 +25,14 @@ public:
 
 private:
     CLIParser _cli_parser;
-    vector<Node::Handle> _all_nodes;
 
 public:
     explicit Context(int argc, char **argv,
                      ocarina::string_view cache_dir = ".cache");
-    void prepare() noexcept;
     [[nodiscard]] SceneDesc parse_file() const noexcept;
-    [[nodiscard]] RenderPipeline create_pipeline(Device *device) {
-        return RenderPipeline(device, this);
-    }
+    [[nodiscard]] RenderPipeline create_pipeline(Device *device) { return {device, this}; }
     [[nodiscard]] const CLIParser &cli_parser() const noexcept { return _cli_parser; }
     [[nodiscard]] CLIParser &cli_parser() noexcept { return _cli_parser; }
-    [[nodiscard]] Node *load_node(const NodeDesc *desc);
-    template<typename T, typename desc_ty>
-    [[nodiscard]] T *load(const desc_ty *desc) noexcept {
-        auto ret = dynamic_cast<T *>(load_node(desc));
-        OC_ERROR_IF(ret == nullptr, "error node load ", desc->name);
-        return ret;
-    }
-    [[nodiscard]] Camera *load_camera(const SensorDesc *desc) { return load<Camera>(desc); }
-    [[nodiscard]] Filter *load_filter(const FilterDesc *desc) { return load<Filter>(desc); }
-    [[nodiscard]] Film *load_film(const FilmDesc *desc) { return load<Film>(desc); }
 };
 
 }// namespace vision

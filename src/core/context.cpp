@@ -16,12 +16,4 @@ SceneDesc Context::parse_file() const noexcept {
     return SceneDesc::from_json(cli_parser().scene_file());
 }
 
-Node* Context::load_node(const NodeDesc *desc) {
-    const DynamicModule *module = obtain_module(desc->plugin_name());
-    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-    _all_nodes.emplace_back(creator(desc), deleter);
-    return _all_nodes.back().get();
-}
-
 }// namespace vision
