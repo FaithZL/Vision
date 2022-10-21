@@ -47,10 +47,24 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct TextureDesc : public NodeDesc {
+public:
+    float4 val;
+    string fn;
+
+public:
+    VISION_DESC_COMMON(Texture)
+    void init(const ParameterSet &ps) noexcept override;
+    [[nodiscard]] bool valid_emission() const noexcept {
+        return any(val != 0.f) || !fn.empty();
+    }
+};
+
+
 struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
-    float3 emission{make_float3(0.f)};
+    TextureDesc emission;
     string material_name;
     string fn;
     bool smooth{false};
@@ -138,15 +152,6 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct TextureDesc : public NodeDesc {
-public:
-    float4 val;
-    string fn;
-
-public:
-    VISION_DESC_COMMON(Texture)
-    void init(const ParameterSet &ps) noexcept override;
-};
 
 struct MaterialDesc : public NodeDesc {
 public:

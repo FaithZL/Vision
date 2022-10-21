@@ -45,6 +45,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     name = ps["name"].as_string();
     ParameterSet param = ps["param"];
     o2w.init(param["transform"]);
+    emission.init(param["emission"]);
     if (sub_type == "model") {
         VISION_PARAMS_LIST_INITIAL(smooth, swap_handed)
         fn = param["fn"].as_string();
