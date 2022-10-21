@@ -10,6 +10,7 @@
 #include "base/sampler.h"
 #include "base/shape.h"
 #include "base/lightsampler.h"
+#include "base/material.h"
 
 namespace vision {
 
@@ -25,6 +26,7 @@ private:
     Sampler *_sampler{nullptr};
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
+    vector<Material *> _materials;
 
 public:
     explicit Scene(vision::Context *ctx);
@@ -37,12 +39,16 @@ public:
         OC_ERROR_IF(ret == nullptr, "error node load ", desc->name);
         return ret;
     }
-    [[nodiscard]] Camera *load_camera(const SensorDesc *desc) { return load<Camera>(desc); }
-    [[nodiscard]] Filter *load_filter(const FilterDesc *desc) { return load<Filter>(desc); }
-    [[nodiscard]] Film *load_film(const FilmDesc *desc) { return load<Film>(desc); }
-    [[nodiscard]] Sampler *load_sampler(const SamplerDesc *desc) { return load<Sampler>(desc); }
-    [[nodiscard]] LightSampler *load_light_sampler(const LightSamplerDesc *desc) { return load<LightSampler>(desc); }
-    [[nodiscard]] Shape *load_shape(const ShapeDesc *desc) { return load<Shape>(desc); }
+    void load_shapes(const vector<ShapeDesc> &descs) noexcept {
+        for (const ShapeDesc &desc : descs) {
+            _shapes.push_back(load<Shape>(&desc));
+        }
+    }
+    void load_materials(const vector<MaterialDesc> &material_descs) noexcept {
+        for (const MaterialDesc &desc : material_descs) {
+            _materials.push_back(load<Material>(&desc));
+        }
+    }
 };
 
 }// namespace vision

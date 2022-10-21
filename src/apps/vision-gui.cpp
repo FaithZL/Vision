@@ -18,6 +18,7 @@ int execute(int argc, char *argv[]){
         return 0;
     }
     Device device = context.create_device("cuda");
+    device.init_rtx();
     SceneDesc scene_desc = context.parse_file();
 
     RenderPipeline rp = context.create_pipeline(&device);

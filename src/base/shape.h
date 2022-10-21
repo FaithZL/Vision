@@ -18,9 +18,12 @@ public:
 
 public:
     Box3f aabb;
+    float4x4 o2w;
 
 public:
-    explicit Shape(const ShapeDesc *desc) : Node(desc) {}
+    explicit Shape(const ShapeDesc *desc) : Node(desc) {
+        o2w = desc->o2w.mat;
+    }
 };
 
 struct Mesh : public Shape {

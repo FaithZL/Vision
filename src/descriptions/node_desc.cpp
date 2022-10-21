@@ -99,7 +99,7 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
-    if (sub_type == "Matte") {
+    if (sub_type == "matte") {
         color.init(param["color"]);
     }
 }
