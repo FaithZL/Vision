@@ -8,11 +8,19 @@
 #include "core/basic_types.h"
 #include "dsl/rtx_type.h"
 #include "node.h"
+#include "math/box.h"
 
 namespace vision {
 
 struct Shape : public Node {
+public:
     using Desc = ShapeDesc;
+
+public:
+    Box3f aabb;
+
+public:
+    explicit Shape(const ShapeDesc *desc) : Node(desc) {}
 };
 
 struct Mesh : public Shape {
@@ -32,6 +40,9 @@ public:
     vector<Triangle> triangles;
     uint mat_idx{InvalidUI32};
     uint light_idx{InvalidUI32};
+
+public:
+    explicit Mesh(const ShapeDesc *desc) : Shape(desc) {}
 };
 
 }// namespace vision
