@@ -22,6 +22,7 @@ void Scene::init(const SceneDesc& scene_desc) {
     scene_desc.sensor_desc.scene = this;
     _camera = load_camera(&scene_desc.sensor_desc);
     _light_sampler = load_light_sampler(&scene_desc.light_sampler_desc);
+    _sampler = load_sampler(&scene_desc.sampler_desc);
 }
 
 void Scene::prepare(RenderPipeline *rp) noexcept {

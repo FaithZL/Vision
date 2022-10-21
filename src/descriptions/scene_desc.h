@@ -7,7 +7,6 @@
 #include "core/basic_types.h"
 #include "core/stl.h"
 #include "node_desc.h"
-#include "shape.h"
 
 namespace vision {
 using namespace ocarina;

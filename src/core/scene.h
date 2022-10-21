@@ -4,9 +4,11 @@
 
 #pragma once
 
-#include "base/sensor.h"
-#include "base/lightsampler.h"
 #include "descriptions/scene_desc.h"
+#include "base/node.h"
+#include "base/sensor.h"
+#include "base/sampler.h"
+#include "base/lightsampler.h"
 
 namespace vision {
 
@@ -19,6 +21,7 @@ private:
     vision::Context *_context{nullptr};
     vector<Node::Handle> _all_nodes;
     Camera *_camera{nullptr};
+    Sampler *_sampler{nullptr};
     LightSampler *_light_sampler{nullptr};
 
 public:
@@ -35,6 +38,7 @@ public:
     [[nodiscard]] Camera *load_camera(const SensorDesc *desc) { return load<Camera>(desc); }
     [[nodiscard]] Filter *load_filter(const FilterDesc *desc) { return load<Filter>(desc); }
     [[nodiscard]] Film *load_film(const FilmDesc *desc) { return load<Film>(desc); }
+    [[nodiscard]] Sampler *load_sampler(const SamplerDesc *desc) { return load<Sampler>(desc); }
     [[nodiscard]] LightSampler *load_light_sampler(const LightSamplerDesc *desc) { return load<LightSampler>(desc); }
 };
 
