@@ -33,11 +33,13 @@ add_subdirectory(integrators)
 add_subdirectory(materials)
 add_subdirectory(sensors)
 add_subdirectory(textures)
+add_subdirectory(shapes)
 add_subdirectory(tests)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
         vision-filters
+        vision-shapes
         vision-lightsamplers
         vision-sensors
         vision-lights

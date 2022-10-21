@@ -50,8 +50,6 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         fn = param["fn"].as_string();
     } else if (sub_type == "quad") {
         VISION_PARAMS_LIST_INITIAL(width, height)
-    } else if (sub_type == "quad_y") {
-        VISION_PARAMS_LIST_INITIAL(width, height)
     } else if (sub_type == "cube") {
         VISION_PARAMS_LIST_INITIAL(x, y, z)
     } else if (sub_type == "sphere") {

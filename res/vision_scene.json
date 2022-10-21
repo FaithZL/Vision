@@ -83,7 +83,7 @@
     ],
     "shapes": [
         {
-            "type": "quad_y",
+            "type": "quad",
             "name": "shape_0",
             "param": {
                 "width": 1.0,
@@ -123,7 +123,7 @@
             }
         },
         {
-            "type": "quad_y",
+            "type": "quad",
             "name": "shape_1",
             "param": {
                 "width": 1.0,
@@ -163,7 +163,7 @@
             }
         },
         {
-            "type": "quad_y",
+            "type": "quad",
             "name": "shape_2",
             "param": {
                 "width": 1.0,
@@ -203,7 +203,7 @@
             }
         },
         {
-            "type": "quad_y",
+            "type": "quad",
             "name": "shape_3",
             "param": {
                 "width": 1.0,
@@ -243,7 +243,7 @@
             }
         },
         {
-            "type": "quad_y",
+            "type": "quad",
             "name": "shape_4",
             "param": {
                 "width": 1.0,
@@ -365,7 +365,7 @@
             }
         },
         {
-            "type": "quad_y",
+            "type": "quad",
             "name": "shape_7",
             "param": {
                 "width": 1.0,

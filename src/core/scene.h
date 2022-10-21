@@ -8,6 +8,7 @@
 #include "base/node.h"
 #include "base/sensor.h"
 #include "base/sampler.h"
+#include "base/shape.h"
 #include "base/lightsampler.h"
 
 namespace vision {
@@ -23,6 +24,7 @@ private:
     Camera *_camera{nullptr};
     Sampler *_sampler{nullptr};
     LightSampler *_light_sampler{nullptr};
+    vector<Shape *> _shapes;
 
 public:
     explicit Scene(vision::Context *ctx);
@@ -40,6 +42,7 @@ public:
     [[nodiscard]] Film *load_film(const FilmDesc *desc) { return load<Film>(desc); }
     [[nodiscard]] Sampler *load_sampler(const SamplerDesc *desc) { return load<Sampler>(desc); }
     [[nodiscard]] LightSampler *load_light_sampler(const LightSamplerDesc *desc) { return load<LightSampler>(desc); }
+    [[nodiscard]] Shape *load_shape(const ShapeDesc *desc) { return load<Shape>(desc); }
 };
 
 }// namespace vision

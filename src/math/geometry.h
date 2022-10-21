@@ -169,20 +169,3 @@ struct Vertex {
 }
 }// namespace vision::geometry
 OC_STRUCT(vision::Vertex, position, normal, tex_coord){};
-
-namespace vision {
-using namespace ocarina;
-inline namespace geometry {
-struct Mesh {
-    uint vertex_offset;
-    uint triangle_offset;
-    uint vertex_count;
-    uint triangle_count;
-    uint distribute_idx;
-    uint material_idx;
-    uint light_idx;
-};
-}
-}// namespace vision::geometry
-OC_STRUCT(vision::Mesh, vertex_offset, triangle_offset, vertex_count,
-          triangle_count, distribute_idx, material_idx, light_idx){};
