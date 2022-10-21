@@ -5,6 +5,7 @@ add_library(vision-core SHARED ${SOURCE_FILES})
 target_link_libraries(vision-core PUBLIC
         ocarina
         vision-ext
+        vision-base
         vision-description
         ocarina-include)
 

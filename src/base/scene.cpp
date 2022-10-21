@@ -3,7 +3,7 @@
 //
 
 #include "scene.h"
-#include "context.h"
+#include "core/context.h"
 
 namespace vision {
 

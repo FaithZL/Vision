@@ -4,7 +4,7 @@
 
 #include "base/material.h"
 #include "base/texture.h"
-#include "core/scene.h"
+#include "base/scene.h"
 
 namespace vision {
 class MatteMaterial : public Material {

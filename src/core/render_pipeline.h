@@ -5,7 +5,7 @@
 #pragma once
 
 #include "rhi/common.h"
-#include "scene.h"
+#include "base/scene.h"
 #include "rhi/window.h"
 
 namespace vision {

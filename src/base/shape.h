@@ -24,7 +24,7 @@ public:
     Texture *emission{};
 
 public:
-    explicit Shape(const ShapeDesc *desc) {}
+    explicit Shape(const ShapeDesc *desc);
 };
 
 struct Mesh : public Shape {

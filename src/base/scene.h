@@ -41,6 +41,7 @@ public:
     }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept {
         for (const ShapeDesc &desc : descs) {
+            desc.scene = this;
             _shapes.push_back(load<Shape>(&desc));
         }
     }
