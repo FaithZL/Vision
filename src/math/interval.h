@@ -6,6 +6,7 @@
 
 #include "core/basic_types.h"
 #include "core/concepts.h"
+#include "math/constants.h"
 
 namespace vision {
 using namespace ocarina;
@@ -19,8 +20,8 @@ struct interval {
     T end;
 
     inline interval()
-        : begin(empty_bounds_lower<T>()),
-          end(empty_bounds_upper<T>()) {}
+        : begin(empty_range_lower<T>()),
+          end(empty_range_upper<T>()) {}
 
     inline interval(T begin, T end) : begin(begin), end(end) {}
 

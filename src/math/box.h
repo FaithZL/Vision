@@ -37,13 +37,13 @@ public:
         return TBox(min(lower, other.lower), max(upper, other.upper));
     }
 
-    [[nodiscard]] TBox &extend(const vector_t &other) {
+    TBox &extend(const vector_t &other) {
         lower = min(lower, other);
         upper = max(upper, other);
         return *this;
     }
 
-    [[nodiscard]] TBox &extend(const TBox &other) {
+    TBox &extend(const TBox &other) {
         lower = min(lower, other.lower);
         upper = max(upper, other.upper);
         return *this;

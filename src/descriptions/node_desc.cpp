@@ -53,7 +53,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     } else if (sub_type == "cube") {
         VISION_PARAMS_LIST_INITIAL(x, y, z)
     } else if (sub_type == "sphere") {
-        VISION_PARAMS_LIST_INITIAL(radius)
+        VISION_PARAMS_LIST_INITIAL(radius, sub_div)
     }
 }
 

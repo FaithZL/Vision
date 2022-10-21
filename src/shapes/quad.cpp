@@ -11,7 +11,10 @@ public:
     using Super = vision::Mesh;
 
 public:
-    explicit Quad(const ShapeDesc *desc) : Super(desc) {}
+    explicit Quad(const ShapeDesc *desc) : Super(desc) {
+        init(desc);
+    }
+
     void init(const ShapeDesc *desc) noexcept {
         float width = desc->width / 2;
         float height = desc->height / 2;
@@ -19,6 +22,18 @@ public:
                          make_float3(width, 0, -height),
                          make_float3(-width, 0, height),
                          make_float3(-width, 0, -height)};
+
+        for (auto p : P) { aabb.extend(p); }
+        vector<float3> N(4, make_float3(0, 0, 0));
+        vector<float2> UV{make_float2(1, 1),
+                          make_float2(1, 0),
+                          make_float2(0, 1),
+                          make_float2(0, 0)};
+        for (int i = 0; i < P.size(); ++i) {
+            vertices.emplace_back(P[i], N[i], UV[i]);
+            aabb.extend(P[i]);
+        }
+        triangles = {Triangle{1, 0, 2}, Triangle{1, 2, 3}};
     }
 };
 

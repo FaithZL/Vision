@@ -10,18 +10,6 @@
 namespace vision {
 using namespace ocarina;
 inline namespace geometry {
-struct Triangle {
-    uint i, j, k;
-    Triangle(uint i, uint j, uint k) : i(i), j(j), k(k) {}
-    Triangle() = default;
-};
-}
-}// namespace vision::geometry
-OC_STRUCT(vision::Triangle, i, j, k){};
-
-namespace vision {
-using namespace ocarina;
-inline namespace geometry {
 
 template<typename T>
 requires is_vector3_expr_v<T>
@@ -160,11 +148,28 @@ public:
 namespace vision {
 using namespace ocarina;
 inline namespace geometry {
+struct Triangle {
+    uint i, j, k;
+    Triangle(uint i, uint j, uint k) : i(i), j(j), k(k) {}
+    Triangle() = default;
+};
+}// namespace geometry
+}// namespace vision
+OC_STRUCT(vision::Triangle, i, j, k){};
+
+namespace vision {
+using namespace ocarina;
+inline namespace geometry {
 struct Vertex {
+public:
     //todo compress
     float3 position;
     float3 normal;
-    float3 tex_coord;
+    float2 tex_coord;
+
+public:
+    Vertex(float3 p, float3 n, float2 uv)
+        : position(p), normal(n), tex_coord(uv) {}
 };
 }
 }// namespace vision::geometry

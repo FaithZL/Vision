@@ -51,18 +51,19 @@ public:
     string material_name;
     string fn;
     bool smooth{false};
-    bool swap_handed{};
-    uint subdiv_level{};
+    bool swap_handed{false};
+    uint subdiv_level{0};
 
     // quad param
-    float width{};
-    float height{};
+    float width{1};
+    float height{1};
 
     // cube param
     float x{1},y{1},z{1};
 
     // sphere param
-    float radius;
+    float radius{1};
+    uint sub_div{60};
 
     // mesh param
     mutable vector<Vertex> vertices;
