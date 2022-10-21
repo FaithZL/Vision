@@ -46,6 +46,7 @@ public:
     }
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept {
         for (const MaterialDesc &desc : material_descs) {
+            desc.scene = this;
             _materials.push_back(load<Material>(&desc));
         }
     }

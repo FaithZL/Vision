@@ -21,10 +21,10 @@ Node* Scene::load_node(const NodeDesc *desc) {
 void Scene::init(const SceneDesc& scene_desc) {
     scene_desc.sensor_desc.scene = this;
     _camera = load<Camera>(&scene_desc.sensor_desc);
+    load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
     _light_sampler = load<LightSampler>(&scene_desc.light_sampler_desc);
     _sampler = load<Sampler>(&scene_desc.sampler_desc);
-    load_materials(scene_desc.material_descs);
 }
 
 void Scene::prepare(RenderPipeline *rp) noexcept {
