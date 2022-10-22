@@ -7,6 +7,9 @@
 #include "node.h"
 
 namespace vision {
+
+class RenderPipeline;
+
 class Integrator : public Node {
 public:
     using Desc = IntegratorDesc;
@@ -23,5 +26,6 @@ public:
           _min_depth(desc.min_depth),
           _rr_threshold(desc.rr_threshold) {}
 
+    virtual void render(RenderPipeline *rp) const noexcept = 0;
 };
 }// namespace vision

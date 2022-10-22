@@ -28,7 +28,7 @@ int execute(int argc, char *argv[]){
 
     auto window = context.create_window("vision", rp.resolution());
     auto image_io = ImageIO::pure_color(make_float4(1,0,0,1), ColorSpace::LINEAR, rp.resolution());
-    window->run([&](double) {
+    window->run([&](double dt) {
         window->set_background(image_io.pixel_ptr<float4>());
     });
 

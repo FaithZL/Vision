@@ -9,6 +9,7 @@
 #include "base/sensor.h"
 #include "base/sampler.h"
 #include "base/shape.h"
+#include "base/integrator.h"
 #include "base/lightsampler.h"
 #include "base/material.h"
 
@@ -24,6 +25,7 @@ private:
     vector<Node::Handle> _all_nodes;
     Camera *_camera{nullptr};
     Sampler *_sampler{nullptr};
+    Integrator *_integrator{nullptr};
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     vector<Material *> _materials;
@@ -36,6 +38,8 @@ public:
     [[nodiscard]] auto camera() noexcept { return _camera; }
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
+    [[nodiscard]] auto integrator() const noexcept { return _integrator; }
+    [[nodiscard]] auto integrator() noexcept { return _integrator; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {

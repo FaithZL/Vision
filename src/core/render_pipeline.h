@@ -15,7 +15,7 @@ private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
-    unique_ptr<float4[]> _view_buffer;
+    unique_ptr<float4[]> _render_buffer;
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
@@ -25,9 +25,10 @@ public:
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void prepare() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
-    void download_result(void *host_ptr);
+    void download_result();
     void build_accel();
-    void render();
+    const float4 *buffer() const { return _render_buffer.get(); }
+    void render(double dt);
 };
 
 }// namespace vision

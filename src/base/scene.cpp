@@ -25,6 +25,7 @@ void Scene::init(const SceneDesc& scene_desc) {
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
+    _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
 

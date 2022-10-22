@@ -13,11 +13,20 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _context(context),
       _scene(context) {}
 
-void RenderPipeline::download_result(void *host_ptr) {
-    //    _scene
+void RenderPipeline::download_result() {
+    _scene.film()->copy_to(_render_buffer.get());
 }
+
 void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     _view_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
 }
+
+void RenderPipeline::build_accel() {
+}
+
+void RenderPipeline::render(double dt) {
+
+}
+
 }// namespace vision
