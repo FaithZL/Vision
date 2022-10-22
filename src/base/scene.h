@@ -30,7 +30,7 @@ private:
 
 public:
     explicit Scene(vision::Context *ctx);
-    void init(const SceneDesc& scene_desc);
+    void init(const SceneDesc &scene_desc);
     void prepare(RenderPipeline *rp) noexcept;
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
@@ -39,18 +39,10 @@ public:
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
-    void load_shapes(const vector<ShapeDesc> &descs) noexcept {
-        for (const ShapeDesc &desc : descs) {
-            desc.scene = this;
-            _shapes.push_back(load<Shape>(desc));
-        }
-    }
-    void load_materials(const vector<MaterialDesc> &material_descs) noexcept {
-        for (const MaterialDesc &desc : material_descs) {
-            desc.scene = this;
-            _materials.push_back(load<Material>(desc));
-        }
-    }
+    void load_shapes(const vector<ShapeDesc> &descs) noexcept;
+    void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
+    Light *load_light(const LightDesc &desc) noexcept;
+    void load_lights(const vector<LightDesc> &descs) noexcept;
 };
 
 }// namespace vision

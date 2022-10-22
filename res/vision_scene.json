@@ -402,11 +402,18 @@
                         ]
                     }
                 },
-                "emission": [
-                    17,
-                    12,
-                    4
-                ]
+                "emission": {
+                    "type" : "area",
+                    "param" : {
+                        "color": [
+                            17,
+                            12,
+                            4
+                        ],
+                        "two_sided": false,
+                        "scale": 1
+                    }
+                }
             }
         }
     ],
@@ -416,7 +423,7 @@
     },
     "sampler": {
         "type": "independent",
-        "name" : "sampler0",
+        "name": "sampler0",
         "param": {
             "spp": 1
         }
@@ -448,7 +455,7 @@
                 }
             },
             "film": {
-                "type" : "rgb",
+                "type": "rgb",
                 "param": {
                     "resolution": [
                         768,
@@ -460,7 +467,7 @@
             },
             "filter": {
                 "type": "box",
-                "name" : "boxFilter",
+                "name": "boxFilter",
                 "param": {
                     "radius": [
                         0.5,

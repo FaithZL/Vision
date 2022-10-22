@@ -43,7 +43,7 @@ public:
     vector<Triangle> triangles;
 
 public:
-    explicit Mesh(const ShapeDesc &desc) : Shape(desc) {}
+    explicit Mesh(const ShapeDesc &desc);
 };
 
 }// namespace vision

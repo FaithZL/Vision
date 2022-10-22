@@ -64,8 +64,13 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     bool two_sided{false};
+    float scale{1.f};
+    TextureDesc color;
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
+    [[nodiscard]] bool valid() const noexcept {
+        return !sub_type.empty();
+    }
 };
 
 struct ShapeDesc : public NodeDesc {

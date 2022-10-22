@@ -32,4 +32,32 @@ void Scene::prepare(RenderPipeline *rp) noexcept {
     _sampler->prepare(rp);
 }
 
+void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept {
+    for (const MaterialDesc &desc : material_descs) {
+        desc.scene = this;
+        _materials.push_back(load<Material>(desc));
+    }
+}
+
+void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
+    for (const ShapeDesc &desc : descs) {
+        desc.scene = this;
+        _shapes.push_back(load<Shape>(desc));
+    }
+}
+
+Light *Scene::load_light(const LightDesc &desc) noexcept {
+    OC_ASSERT(_light_sampler != nullptr);
+    auto ret = load<Light>(desc);
+    _light_sampler->add_light(ret);
+    return ret;
+}
+
+void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
+    for (const LightDesc &desc : descs) {
+        desc.scene = this;
+        load_light(desc);
+    }
+}
+
 }// namespace vision

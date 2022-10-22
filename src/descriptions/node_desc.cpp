@@ -45,7 +45,9 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     name = ps["name"].as_string();
     ParameterSet param = ps["param"];
     o2w.init(param["transform"]);
-    emission.init(param["emission"]);
+    if (param.contains("emission")) {
+        emission.init(param["emission"]);
+    }
     if (sub_type == "model") {
         VISION_PARAMS_LIST_INITIAL(smooth, swap_handed)
         fn = param["fn"].as_string();
@@ -107,6 +109,9 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("area");
+    ParameterSet param = ps["param"];
+    VISION_PARAMS_LIST_INITIAL(scale, two_sided)
 }
 
 void TextureDesc::init(const ParameterSet &ps) noexcept {
