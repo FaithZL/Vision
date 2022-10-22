@@ -36,13 +36,14 @@ public:
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
     }
 };
-#define VISION_DESC_COMMON(type)         \
+#define VISION_DESC_COMMON(type)      \
     type##Desc() : NodeDesc(#type) {} \
     explicit type##Desc(string name) : NodeDesc(#type, std::move(name)) {}
 
 struct TransformDesc : public NodeDesc {
 public:
     float4x4 mat{make_float4x4(1.f)};
+
 public:
     void init(const ParameterSet &ps) noexcept override;
 };
@@ -60,7 +61,6 @@ public:
     }
 };
 
-
 struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
@@ -76,7 +76,7 @@ public:
     float height{1};
 
     // cube param
-    float x{1},y{1},z{1};
+    float x{1}, y{1}, z{1};
 
     // sphere param
     float radius{1};
@@ -85,10 +85,11 @@ public:
     // mesh param
     mutable vector<Vertex> vertices;
     mutable vector<Triangle> triangles;
+
 public:
     VISION_DESC_COMMON(Shape)
     void init(const ParameterSet &ps) noexcept override;
-    [[nodiscard]] bool operator == (const ShapeDesc &other) const noexcept;
+    [[nodiscard]] bool operator==(const ShapeDesc &other) const noexcept;
 };
 
 struct SamplerDesc : public NodeDesc {
@@ -152,7 +153,6 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-
 struct MaterialDesc : public NodeDesc {
 public:
     TextureDesc color;
@@ -163,6 +163,8 @@ public:
 };
 
 struct LightDesc : public NodeDesc {
+public:
+    bool two_sided{false};
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
 };

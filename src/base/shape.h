@@ -22,9 +22,11 @@ public:
     float4x4 o2w;
     uint mat_idx{InvalidUI32};
     Texture *emission{};
+    uint inst_id{InvalidUI32};
 
 public:
     explicit Shape(const ShapeDesc *desc);
+    virtual size_t sub_shape_num() const noexcept { return 1; }
 };
 
 struct Mesh : public Shape {
@@ -34,9 +36,6 @@ public:
         uint triangle_offset;
         uint vertex_count;
         uint triangle_count;
-        uint distribute_idx;
-        uint material_idx;
-        uint light_idx;
     };
 
 public:
@@ -50,4 +49,4 @@ public:
 }// namespace vision
 
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset, vertex_count,
-          triangle_count, distribute_idx, material_idx, light_idx){};
+          triangle_count){};
