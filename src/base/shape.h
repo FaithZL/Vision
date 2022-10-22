@@ -9,7 +9,7 @@
 #include "dsl/rtx_type.h"
 #include "node.h"
 #include "math/box.h"
-#include "texture.h"
+#include "light.h"
 
 namespace vision {
 
@@ -20,9 +20,6 @@ public:
 public:
     Box3f aabb;
     float4x4 o2w;
-    uint mat_idx{InvalidUI32};
-    Texture *emission{};
-    uint inst_id{InvalidUI32};
 
 public:
     explicit Shape(const ShapeDesc *desc);
@@ -39,6 +36,9 @@ public:
     };
 
 public:
+    uint mat_idx{InvalidUI32};
+    Light *emission{};
+    uint inst_id{InvalidUI32};
     vector<Vertex> vertices;
     vector<Triangle> triangles;
 

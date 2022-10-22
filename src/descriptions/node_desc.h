@@ -61,10 +61,17 @@ public:
     }
 };
 
+struct LightDesc : public NodeDesc {
+public:
+    bool two_sided{false};
+    VISION_DESC_COMMON(Light)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
-    TextureDesc emission;
+    LightDesc emission;
     string material_name;
     string fn;
     bool smooth{false};
@@ -159,13 +166,6 @@ public:
 
 public:
     VISION_DESC_COMMON(Material)
-    void init(const ParameterSet &ps) noexcept override;
-};
-
-struct LightDesc : public NodeDesc {
-public:
-    bool two_sided{false};
-    VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
 };
 
