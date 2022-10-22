@@ -20,9 +20,11 @@ void RenderPipeline::download_result() {
 void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     _render_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
+    build_accel();
 }
 
 void RenderPipeline::build_accel() {
+
 }
 
 void RenderPipeline::render(double dt) {
