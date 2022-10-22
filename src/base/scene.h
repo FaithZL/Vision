@@ -29,6 +29,7 @@ private:
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     vector<Material *> _materials;
+    friend class RenderPipeline;
 
 public:
     explicit Scene(vision::Context *ctx);

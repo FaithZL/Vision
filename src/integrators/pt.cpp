@@ -10,7 +10,7 @@ class PathTracingIntegrator : public Integrator {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc) : Integrator(desc) {}
 
-    void render(const RenderPipeline *rp) const noexcept override {
+    void render(RenderPipeline *rp) const noexcept override {
 
     }
 };

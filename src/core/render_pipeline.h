@@ -27,7 +27,7 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
     void build_accel();
-    const float4 *buffer() const { return _render_buffer.get(); }
+    [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }
     void render(double dt);
 };
 

@@ -25,13 +25,14 @@ int execute(int argc, char *argv[]){
     RenderPipeline rp = context.create_pipeline(&device);
     rp.init_scene(scene_desc);
     rp.prepare();
+    rp.build_accel();
 
     auto window = context.create_window("vision", rp.resolution());
     auto image_io = ImageIO::pure_color(make_float4(1,0,0,1), ColorSpace::LINEAR, rp.resolution());
     window->run([&](double dt) {
-        window->set_background(image_io.pixel_ptr<float4>());
+        rp.render(dt);
+        window->set_background(rp.buffer());
     });
-
 
     return 0;
 }
