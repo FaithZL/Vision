@@ -34,7 +34,12 @@ void Camera::update_mat(float4x4 m) noexcept {
 }
 
 void Camera::update_device_data() noexcept {
+    _device_data.upload_immediately(&_host_data);
+}
 
+void Camera::prepare(RenderPipeline *rp) noexcept {
+    Sensor::prepare(rp);
+    _device_data = rp->device().create_buffer<CameraData>(1);
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {

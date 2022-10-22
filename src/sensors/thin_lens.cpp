@@ -18,15 +18,20 @@ namespace vision {
 class ThinLensCamera : public Camera {
 private:
     ThinLensCameraData _host_data;
-
+    Buffer<ThinLensCameraData> _device_data;
 public:
     explicit ThinLensCamera(const SensorDesc &desc)
         : Camera(desc) {
         _host_data.focal_distance = desc.focal_distance;
         _host_data.lens_radius = desc.lens_radius;
     }
+    void update_device_data() noexcept override {
+        Camera::update_device_data();
+        _device_data.upload_immediately(&_host_data);
+    }
     void prepare(RenderPipeline *rp) noexcept override {
         Camera::prepare(rp);
+        _device_data = rp->device().create_buffer<ThinLensCameraData>(1);
     }
 };
 }// namespace vision
