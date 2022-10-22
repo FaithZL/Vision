@@ -15,6 +15,7 @@ private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
+    unique_ptr<float4[]> _view_buffer;
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
@@ -22,7 +23,7 @@ public:
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
-    void prepare() noexcept { _scene.prepare(this); }
+    void prepare() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result(void *host_ptr);
     void build_accel();

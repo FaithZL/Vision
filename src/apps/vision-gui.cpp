@@ -7,6 +7,7 @@
 #include "descriptions/scene_desc.h"
 #include "core/stl.h"
 #include "core/context.h"
+#include "util/image_io.h"
 
 using namespace ocarina;
 using namespace vision;
@@ -24,6 +25,12 @@ int execute(int argc, char *argv[]){
     RenderPipeline rp = context.create_pipeline(&device);
     rp.init_scene(scene_desc);
     rp.prepare();
+
+    auto window = context.create_window("vision", rp.resolution());
+    auto image_io = ImageIO::pure_color(make_float4(1,0,0,1), ColorSpace::LINEAR, rp.resolution());
+    window->run([&](double) {
+        window->set_background(image_io.pixel_ptr<float4>());
+    });
 
 
     return 0;

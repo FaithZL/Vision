@@ -14,7 +14,10 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _scene(context) {}
 
 void RenderPipeline::download_result(void *host_ptr) {
-//    _scene
+    //    _scene
 }
-
+void RenderPipeline::prepare() noexcept {
+    _scene.prepare(this);
+    _view_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
+}
 }// namespace vision
