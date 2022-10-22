@@ -17,6 +17,6 @@ protected:
     uint _spp{1u};
 
 public:
-    explicit Sampler(const SamplerDesc *desc) : Node(desc), _spp(desc->spp) {}
+    explicit Sampler(const SamplerDesc &desc) : Node(desc), _spp(desc.spp) {}
 };
 }// namespace vision

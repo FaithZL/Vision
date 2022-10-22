@@ -8,7 +8,7 @@ namespace vision {
 
 class Model : public Shape {
 public:
-    explicit Model(const ShapeDesc *desc) : Shape(desc) {}
+    explicit Model(const ShapeDesc &desc) : Shape(desc) {}
 };
 
 }// namespace vision

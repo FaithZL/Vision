@@ -25,7 +25,7 @@ protected:
     const LightType _type{LightType::Area};
 
 public:
-    explicit Light(const LightDesc *desc, LightType light_type)
+    explicit Light(const LightDesc &desc, LightType light_type)
         : Node(desc), _type(light_type) {}
 };
 }// namespace vision

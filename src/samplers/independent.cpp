@@ -9,7 +9,7 @@ using namespace ocarina;
 
 class IndependentSampler : public Sampler {
 public:
-    explicit IndependentSampler(const SamplerDesc *desc) : Sampler(desc) {}
+    explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
 };
 
 }// namespace vision

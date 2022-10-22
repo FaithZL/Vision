@@ -17,11 +17,11 @@ protected:
     float _rr_threshold;
 
 public:
-    explicit Integrator(const IntegratorDesc *desc)
+    explicit Integrator(const IntegratorDesc &desc)
         : Node(desc),
-          _max_depth(desc->max_depth),
-          _min_depth(desc->min_depth),
-          _rr_threshold(desc->rr_threshold) {}
+          _max_depth(desc.max_depth),
+          _min_depth(desc.min_depth),
+          _rr_threshold(desc.rr_threshold) {}
 
 };
 }// namespace vision

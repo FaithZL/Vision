@@ -4,8 +4,6 @@
 
 #include "base/shape.h"
 
-#include "base/shape.h"
-
 namespace vision {
 
 class Cube : public vision::Mesh {
@@ -13,13 +11,13 @@ public:
     using Super = vision::Mesh;
 
 public:
-    explicit Cube(const ShapeDesc *desc) : Super(desc) {
+    explicit Cube(const ShapeDesc &desc) : Super(desc) {
         init(desc);
     }
-    void init(const ShapeDesc *desc) noexcept {
-        float x = desc->x;
-        float y = desc->y;
-        float z = desc->z;
+    void init(const ShapeDesc &desc) noexcept {
+        float x = desc.x;
+        float y = desc.y;
+        float z = desc.z;
         y = y == 0 ? x : y;
         z = z == 0 ? y : z;
         x = x / 2.f;

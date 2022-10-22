@@ -12,8 +12,8 @@ private:
     Texture *_color{};
 
 public:
-    explicit MatteMaterial(const MaterialDesc *desc)
-        : Material(desc), _color(desc->scene->load<Texture>(&desc->color)) {}
+    explicit MatteMaterial(const MaterialDesc &desc)
+        : Material(desc), _color(desc.scene->load<Texture>(desc.color)) {}
 };
 }// namespace vision
 

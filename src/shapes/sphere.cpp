@@ -11,17 +11,17 @@ public:
     using Super = vision::Mesh;
 
 public:
-    explicit Sphere(const ShapeDesc *desc) : Super(desc) {
+    explicit Sphere(const ShapeDesc &desc) : Super(desc) {
         init(desc);
     }
-    void init(const ShapeDesc *desc) noexcept {
-        float radius = desc->radius;
+    void init(const ShapeDesc &desc) noexcept {
+        float radius = desc.radius;
         vector<float3> positions;
         vector<float3> normals;
         vector<float2> tex_coords;
         vector<Triangle> triangles;
         Box3f aabb(make_float3(-radius), float3(radius));
-        uint theta_div = desc->sub_div;
+        uint theta_div = desc.sub_div;
         uint phi_div = 2 * theta_div;
         positions.push_back(make_float3(0, radius, 0));
         normals.push_back(make_float3(0, 1, 0));

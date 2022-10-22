@@ -13,7 +13,7 @@ private:
     Buffer<float4> _radiance_buffer;
 
 public:
-    explicit RGBFilm(const FilmDesc *desc) : Film(desc) {}
+    explicit RGBFilm(const FilmDesc &desc) : Film(desc) {}
     void prepare(RenderPipeline *rp) noexcept override {
         _radiance_buffer = rp->device().create_buffer<float4>(pixel_num());
     }

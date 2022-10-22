@@ -20,10 +20,10 @@ private:
     ThinLensCameraData _host_data;
 
 public:
-    explicit ThinLensCamera(const SensorDesc *desc)
+    explicit ThinLensCamera(const SensorDesc &desc)
         : Camera(desc) {
-        _host_data.focal_distance = desc->focal_distance;
-        _host_data.lens_radius = desc->lens_radius;
+        _host_data.focal_distance = desc.focal_distance;
+        _host_data.lens_radius = desc.lens_radius;
     }
     void prepare(RenderPipeline *rp) noexcept override {
         Camera::prepare(rp);

@@ -12,9 +12,9 @@ private:
     bool _two_sided{false};
 
 public:
-    explicit AreaLight(const LightDesc *desc)
+    explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
-        _two_sided{desc->two_sided}{}
+        _two_sided{desc.two_sided}{}
 };
 
 }// namespace vision

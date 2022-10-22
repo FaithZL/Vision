@@ -9,20 +9,20 @@
 namespace vision {
 using namespace ocarina;
 
-Sensor::Sensor(const SensorDesc *desc)
+Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
-      _filter(desc->scene->load<Filter>(&desc->filter_desc)),
-      _film(desc->scene->load<Film>(&desc->film_desc)) {}
+      _filter(desc.scene->load<Filter>(desc.filter_desc)),
+      _film(desc.scene->load<Film>(desc.film_desc)) {}
 
 void Sensor::prepare(RenderPipeline *rp) noexcept {
     _filter->prepare(rp);
     _film->prepare(rp);
 }
 
-void Camera::init(const SensorDesc *desc) noexcept {
-    _velocity = desc->velocity;
-    _host_data.fov_y = desc->fov_y;
-    update_mat(desc->transform_desc.mat);
+void Camera::init(const SensorDesc &desc) noexcept {
+    _velocity = desc.velocity;
+    _host_data.fov_y = desc.fov_y;
+    update_mat(desc.transform_desc.mat);
 }
 
 void Camera::update_mat(float4x4 m) noexcept {

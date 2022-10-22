@@ -7,7 +7,7 @@
 namespace vision {
 class UniformLightSampler : public LightSampler {
 public:
-    explicit UniformLightSampler(const LightSamplerDesc *desc) : LightSampler(desc) {}
+    explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
     [[nodiscard]] Float PMF(const Uint &id) const noexcept override { return 1.f / light_num(); }
     [[nodiscard]] SampledLight sample(const Float &u) const noexcept override {
         SampledLight ret;

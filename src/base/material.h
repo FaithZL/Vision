@@ -12,6 +12,6 @@ public:
     using Desc = MaterialDesc;
 
 public:
-    explicit Material(const MaterialDesc *desc) : Node(desc) {}
+    explicit Material(const MaterialDesc &desc) : Node(desc) {}
 };
 }// namespace vision

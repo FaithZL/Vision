@@ -8,7 +8,7 @@
 namespace vision {
 class PathTracingIntegrator : public Integrator {
 public:
-    explicit PathTracingIntegrator(const IntegratorDesc *desc) : Integrator(desc) {}
+    explicit PathTracingIntegrator(const IntegratorDesc &desc) : Integrator(desc) {}
 };
 }
 

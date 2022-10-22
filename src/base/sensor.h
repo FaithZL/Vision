@@ -23,7 +23,7 @@ protected:
     Film *_film{};
 
 public:
-    explicit Sensor(const SensorDesc *desc);
+    explicit Sensor(const SensorDesc &desc);
     void prepare(RenderPipeline *rp) noexcept override;
     void set_filter(Filter *filter) noexcept { _filter = filter; }
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
@@ -65,9 +65,9 @@ protected:
     CameraData _host_data;
 
 public:
-    explicit Camera(const SensorDesc *desc)
+    explicit Camera(const SensorDesc &desc)
         : Sensor(desc) { init(desc); }
-    void init(const SensorDesc *desc) noexcept;
+    void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     [[nodiscard]] float3 position() const noexcept { return _position; }
     [[nodiscard]] float3 move(float3 delta) noexcept { _position += delta; }

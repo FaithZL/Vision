@@ -6,8 +6,8 @@
 #include "scene.h"
 
 namespace vision {
-Shape::Shape(const ShapeDesc *desc) : Node(desc) {
-    o2w = desc->o2w.mat;
+Shape::Shape(const ShapeDesc &desc) : Node(desc) {
+    o2w = desc.o2w.mat;
 
 }
 }// namespace vision

@@ -22,7 +22,7 @@ public:
     float4x4 o2w;
 
 public:
-    explicit Shape(const ShapeDesc *desc);
+    explicit Shape(const ShapeDesc &desc);
     virtual size_t sub_shape_num() const noexcept { return 1; }
 };
 
@@ -43,7 +43,7 @@ public:
     vector<Triangle> triangles;
 
 public:
-    explicit Mesh(const ShapeDesc *desc) : Shape(desc) {}
+    explicit Mesh(const ShapeDesc &desc) : Shape(desc) {}
 };
 
 }// namespace vision

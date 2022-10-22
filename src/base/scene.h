@@ -32,23 +32,23 @@ public:
     explicit Scene(vision::Context *ctx);
     void init(const SceneDesc& scene_desc);
     void prepare(RenderPipeline *rp) noexcept;
-    [[nodiscard]] Node *load_node(const NodeDesc *desc);
+    [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
-    [[nodiscard]] T *load(const desc_ty *desc) noexcept {
+    [[nodiscard]] T *load(const desc_ty &desc) noexcept {
         auto ret = dynamic_cast<T *>(load_node(desc));
-        OC_ERROR_IF(ret == nullptr, "error node load ", desc->name);
+        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept {
         for (const ShapeDesc &desc : descs) {
             desc.scene = this;
-            _shapes.push_back(load<Shape>(&desc));
+            _shapes.push_back(load<Shape>(desc));
         }
     }
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept {
         for (const MaterialDesc &desc : material_descs) {
             desc.scene = this;
-            _materials.push_back(load<Material>(&desc));
+            _materials.push_back(load<Material>(desc));
         }
     }
 };
