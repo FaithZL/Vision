@@ -23,6 +23,10 @@ public:
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void prepare() noexcept { _scene.prepare(this); }
+    [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
+    void download_result(void *host_ptr);
+    void build_accel();
+    void render();
 };
 
 }// namespace vision

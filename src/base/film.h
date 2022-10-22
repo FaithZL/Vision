@@ -20,8 +20,9 @@ private:
 public:
     explicit Film(const FilmDesc &desc) : Node(desc), _resolution(desc.resolution) {}
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
-    [[nodiscard]] uint pixel_index(uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
+    [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     [[nodiscard]] uint2 resolution() const noexcept { return _resolution; }
     virtual void add_sample(Uint2 pixel, Float4 val, Uint frame_index) noexcept = 0;
+    virtual void copy_to(void *host_ptr) const noexcept = 0;
 };
 }// namespace vision

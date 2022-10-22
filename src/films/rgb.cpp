@@ -18,7 +18,11 @@ public:
         _radiance_buffer = rp->device().create_buffer<float4>(pixel_num());
     }
     void add_sample(Uint2 pixel, Float4 val, Uint frame_index) noexcept override {
-
+        Uint index = pixel_index(pixel);
+        _radiance_buffer.write(index, val);
+    }
+    void copy_to(void *host_ptr) const noexcept override {
+        _radiance_buffer.download_immediately(host_ptr);
     }
 };
 

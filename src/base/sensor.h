@@ -28,7 +28,8 @@ public:
     void set_filter(Filter *filter) noexcept { _filter = filter; }
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
     void set_film(Film *film) noexcept { _film = film; }
-    [[nodiscard]] Film *film() noexcept { return _film; }
+    [[nodiscard]] auto film() noexcept { return _film; }
+    [[nodiscard]] auto film() const noexcept { return _film; }
     [[nodiscard]] uint2 resolution() noexcept { return _film->resolution(); }
     //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
 };

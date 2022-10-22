@@ -32,6 +32,10 @@ public:
     explicit Scene(vision::Context *ctx);
     void init(const SceneDesc &scene_desc);
     void prepare(RenderPipeline *rp) noexcept;
+    [[nodiscard]] auto camera() const noexcept { return _camera; }
+    [[nodiscard]] auto camera() noexcept { return _camera; }
+    [[nodiscard]] auto film() noexcept { return camera()->film(); }
+    [[nodiscard]] auto film() const noexcept { return camera()->film(); }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {
