@@ -111,7 +111,12 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(scale, two_sided)
+
+    if (sub_type == "area") {
+        VISION_PARAMS_LIST_INITIAL(scale, two_sided)
+    } else if (sub_type == "point") {
+        VISION_PARAMS_LIST_INITIAL(position)
+    }
 }
 
 void TextureDesc::init(const ParameterSet &ps) noexcept {
@@ -127,6 +132,12 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("uniform");
+    ParameterSet param = ps["param"];
+    for (const DataWrap &data : param["lights"].data()) {
+        LightDesc light_desc;
+        light_desc.init(data);
+        light_descs.push_back(light_desc);
+    }
 }
 
 void FilmDesc::init(const ParameterSet &ps) noexcept {

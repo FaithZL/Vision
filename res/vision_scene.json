@@ -417,9 +417,19 @@
             }
         }
     ],
-    "lights": [],
     "light_sampler": {
-        "type": "uniform"
+        "type": "uniform",
+        "param" : {
+            "lights": [
+                {
+                    "type" : "point",
+                    "param" :{
+                        "color" : [1,0,1],
+                        "position" : [1,2,3]
+                    }
+                }
+            ]
+        }
     },
     "sampler": {
         "type": "independent",

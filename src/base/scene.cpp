@@ -19,6 +19,7 @@ Node* Scene::load_node(const NodeDesc &desc) {
 }
 
 void Scene::init(const SceneDesc& scene_desc) {
+    scene_desc.light_sampler_desc.scene = this;
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
     scene_desc.sensor_desc.scene = this;
     _camera = load<Camera>(scene_desc.sensor_desc);

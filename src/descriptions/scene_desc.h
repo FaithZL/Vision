@@ -18,14 +18,12 @@ public:
     IntegratorDesc integrator_desc;
     vector<MaterialDesc> material_descs;
     vector<ShapeDesc> shape_descs;
-    vector<LightDesc> light_descs;
 
 public:
     SceneDesc() = default;
     static SceneDesc from_json(const fs::path &path);
     void init_material_descs(const DataWrap &materials) noexcept;
     void init_shape_descs(const DataWrap &shapes) noexcept;
-    void init_light_descs(const DataWrap &lights) noexcept;
     void init(const DataWrap &data) noexcept;
 };
 

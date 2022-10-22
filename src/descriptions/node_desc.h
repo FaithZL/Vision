@@ -63,9 +63,16 @@ public:
 
 struct LightDesc : public NodeDesc {
 public:
+    // common
+    TextureDesc color;
+
+    // area light
     bool two_sided{false};
     float scale{1.f};
-    TextureDesc color;
+
+    // point light
+    float3 position;
+
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] bool valid() const noexcept {
@@ -175,6 +182,8 @@ public:
 };
 
 struct LightSamplerDesc : public NodeDesc {
+public:
+    vector<LightDesc> light_descs;
     VISION_DESC_COMMON(LightSampler)
     void init(const ParameterSet &ps) noexcept override;
 };
