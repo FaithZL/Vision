@@ -6,18 +6,16 @@
 #include "core/render_pipeline.h"
 
 namespace vision {
-struct LensData {
-    float focal_distance{};
-    float lens_radius{0.f};
-};
-}// namespace vision
-
-OC_STRUCT(vision::LensData, focal_distance, lens_radius){};
-
-namespace vision {
 class ThinLensCamera : public Camera {
+public:
+    struct LensData {
+        float focal_distance{};
+        float lens_radius{0.f};
+    };
+
 private:
     Managed<LensData> _lens_data{1};
+
 public:
     explicit ThinLensCamera(const SensorDesc &desc)
         : Camera(desc) {
@@ -31,9 +29,11 @@ public:
     }
     void prepare(RenderPipeline *rp) noexcept override {
         Camera::prepare(rp);
-        _lens_data.device() = rp->device().create_buffer<LensData>(1);
+        _lens_data.reset_device_buffer(rp->device(), 1);
     }
 };
 }// namespace vision
+
+OC_STRUCT(vision::ThinLensCamera::LensData, focal_distance, lens_radius){};
 
 VS_MAKE_CLASS_CREATOR(vision::ThinLensCamera)

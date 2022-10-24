@@ -37,20 +37,16 @@ public:
 }// namespace vision
 
 namespace vision {
-struct CameraData {
-    float fov_y{20.f};
-    float4x4 c2w;
-};
-}// namespace vision
-
-OC_STRUCT(vision::CameraData, fov_y, c2w){};
-
-namespace vision {
 
 class Camera : public Sensor {
 public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
+
+    struct Data {
+        float fov_y{20.f};
+        float4x4 c2w;
+    };
 
 protected:
     constexpr static float pitch_max = 80.f;
@@ -63,7 +59,7 @@ protected:
     float _pitch{};
     float _velocity{5.f};
     float _sensitivity{1.f};
-    Managed<CameraData> _data{1};
+    Managed<Data> _data{1};
 
 public:
     explicit Camera(const SensorDesc &desc)
@@ -100,3 +96,5 @@ public:
 };
 
 }// namespace vision
+
+OC_STRUCT(vision::Camera::Data, fov_y, c2w){};
