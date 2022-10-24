@@ -19,13 +19,25 @@ using namespace ocarina;
 
 class Context;
 
-struct RenderData {
-    // for device render
+struct DeviceData {
+public:
+    Device *device;
     Managed<Vertex> vertices;
     Managed<Triangle> triangles;
     Managed<Shape::Handle> instances;
-    Managed<Mesh::Handle> meshes;
+    Managed<Mesh::Handle> mesh_handles;
     Managed<float4x4> transforms;
+    vector<ocarina::Mesh> meshes;
+    ocarina::Accel accel;
+
+public:
+    explicit DeviceData(Device *device = nullptr)
+        : device(device) {}
+
+    template<typename...Args>
+    void add_mesh(Args &&...args) noexcept {
+        meshes.push_back(device->create_mesh(OC_FORWARD(args)...));
+    }
 };
 
 class Scene {

@@ -16,7 +16,7 @@ private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
-    RenderData _render_data;
+    DeviceData _device_data{_device};
     unique_ptr<float4[]> _render_buffer;
 
 public:

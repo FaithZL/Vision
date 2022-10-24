@@ -13,7 +13,7 @@
 
 namespace vision {
 
-struct RenderData;
+struct DeviceData;
 
 struct Shape : public Node {
 public:
@@ -32,7 +32,7 @@ public:
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
-    virtual void fill_render_data(RenderData &data, size_t *inst_id) const noexcept {}
+    virtual void fill_device_data(DeviceData &data, size_t *inst_id) const noexcept = 0;
 };
 
 }// namespace vision
@@ -58,7 +58,7 @@ public:
 public:
     explicit Mesh(const ShapeDesc &desc);
     Mesh() = default;
-    void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override;
+    void fill_device_data(DeviceData &data, size_t *inst_id) const noexcept override;
 };
 
 }// namespace vision

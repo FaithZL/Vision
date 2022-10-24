@@ -11,7 +11,8 @@ namespace vision {
 RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
     : _device(device),
       _context(context),
-      _scene(context) {}
+      _scene(context),
+      _device_data(device) {}
 
 void RenderPipeline::download_result() {
     _scene.film()->copy_to(_render_buffer.get());
@@ -20,7 +21,7 @@ void RenderPipeline::download_result() {
 void RenderPipeline::prepare_device_data() noexcept {
     size_t inst_id = 0u;
     for (const Shape *shape : _scene._shapes) {
-        shape->fill_render_data(_render_data, &inst_id);
+        shape->fill_device_data(_device_data, &inst_id);
     }
 }
 
