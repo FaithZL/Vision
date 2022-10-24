@@ -3,6 +3,7 @@
 //
 
 #include "base/shape.h"
+#include "math/transform.h"
 
 namespace vision {
 
@@ -58,7 +59,7 @@ public:
         };
         for (int i = 0; i < P.size(); ++i) {
             vertices.emplace_back(P[i], N[i], UVs[i]);
-            aabb.extend(P[i]);
+            aabb.extend(transform_point<H>(o2w, P[i]));
         }
     }
 };

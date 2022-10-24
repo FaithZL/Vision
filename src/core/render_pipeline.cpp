@@ -17,14 +17,21 @@ void RenderPipeline::download_result() {
     _scene.film()->copy_to(_render_buffer.get());
 }
 
+void RenderPipeline::prepare_device_data() noexcept {
+    size_t inst_id = 0u;
+    for (const Shape *shape : _scene._shapes) {
+        shape->fill_render_data(_render_data, &inst_id);
+    }
+}
+
 void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
+    prepare_device_data();
     _render_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
     build_accel();
 }
 
 void RenderPipeline::build_accel() {
-
 }
 
 void RenderPipeline::render(double dt) {

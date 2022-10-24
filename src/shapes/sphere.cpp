@@ -3,6 +3,7 @@
 //
 
 #include "base/shape.h"
+#include "math/transform.h"
 
 namespace vision {
 
@@ -42,6 +43,7 @@ public:
                 float x = cos(phi) * r;
                 float z = sin(phi) * r;
                 float3 p = make_float3(x, y, z);
+                aabb.extend(transform_point<H>(o2w, p));
                 positions.push_back(p);
                 float2 t = make_float2(u, v);
                 tex_coords.push_back(t);

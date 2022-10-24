@@ -13,6 +13,8 @@
 
 namespace vision {
 
+class RenderData;
+
 struct Shape : public Node {
 public:
     using Desc = ShapeDesc;
@@ -29,7 +31,7 @@ public:
 
 public:
     explicit Shape(const ShapeDesc &desc);
-    [[nodiscard]] virtual size_t sub_shape_num() const noexcept { return 1; }
+    virtual void fill_render_data(RenderData &data, size_t *inst_id) const noexcept = 0;
 };
 
 }// namespace vision
@@ -55,6 +57,9 @@ public:
 
 public:
     explicit Mesh(const ShapeDesc &desc);
+
+    void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override {
+    }
 };
 
 }// namespace vision

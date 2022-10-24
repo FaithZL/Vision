@@ -10,11 +10,23 @@
 
 namespace vision {
 using namespace ocarina;
+
+
+struct RenderData {
+    // for device render
+    Managed<Vertex> _vertices;
+    Managed<Triangle> _triangles;
+    Managed<Shape::Handle> _instances;
+    Managed<Mesh::Handle> _meshes;
+    Managed<float4x4> _transforms;
+};
+
 class RenderPipeline {
 private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
+    RenderData _render_data;
     unique_ptr<float4[]> _render_buffer;
 
 public:
@@ -24,6 +36,7 @@ public:
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void prepare() noexcept;
+    void prepare_device_data() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
     void build_accel();

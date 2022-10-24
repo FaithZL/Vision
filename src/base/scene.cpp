@@ -34,7 +34,6 @@ void Scene::prepare(RenderPipeline *rp) noexcept {
     _camera->prepare(rp);
     _sampler->prepare(rp);
     _camera->update_device_data();
-
 }
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept {
