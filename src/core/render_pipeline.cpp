@@ -20,7 +20,7 @@ void RenderPipeline::download_result() {
 void RenderPipeline::prepare_device_data() noexcept {
     size_t inst_id = 0u;
     for (const Shape *shape : _scene._shapes) {
-//        shape->fill_render_data(_render_data, &inst_id);
+        shape->fill_render_data(_render_data, &inst_id);
     }
 }
 

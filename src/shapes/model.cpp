@@ -15,7 +15,7 @@ public:
 
     void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override {
         for (const Mesh &mesh : _meshes) {
-//            mesh.fill_render_data(data, inst_id);
+            mesh.fill_render_data(data, inst_id);
         }
     }
 };

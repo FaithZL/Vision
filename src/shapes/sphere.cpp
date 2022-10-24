@@ -85,7 +85,6 @@ public:
             Triangle tri{vert_end, vert_end - idx2, vert_end - idx1};
             triangles.push_back(tri);
         }
-
     }
 };
 

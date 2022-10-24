@@ -17,8 +17,8 @@ Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {
     }
 }
 
-//void Mesh::fill_render_data(RenderData &data, size_t *inst_id) const noexcept {
-//
-//}
+void Mesh::fill_render_data(RenderData &data, size_t *inst_id) const noexcept {
+
+}
 
 }// namespace vision
