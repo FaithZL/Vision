@@ -109,7 +109,7 @@ template<EPort p = EPort::D>
 }
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> MIS_weight(const oc_int<p> &nf,
+[[nodiscard]] oc_float<p> mis_weight(const oc_int<p> &nf,
                                      const oc_float<p> &f_PDF,
                                      const oc_int<p> &ng,
                                      const oc_float<p> &g_PDF) {
@@ -117,9 +117,17 @@ template<EPort p = EPort::D>
 }
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> MIS_weight(const oc_float<p> &f_PDF,
+[[nodiscard]] oc_float<p> mis_weight(const oc_float<p> &f_PDF,
                                      const oc_float<p> &g_PDF) {
-    return MIS_weight<p>(1, f_PDF, 1, g_PDF);
+    return mis_weight<p>(1, f_PDF, 1, g_PDF);
+}
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> robust_mis_weight(const oc_float<p> &f_PDF,
+                                            const oc_float<p> &g_PDF) {
+    return select(f_PDF > g_PDF,
+                  1.f / (1.f + sqr(g_PDF / f_PDF)),
+                  1.f - 1.f / (1.f + sqr(f_PDF / g_PDF)));
 }
 
 }// namespace vision
