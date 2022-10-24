@@ -32,7 +32,7 @@ public:
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
-    virtual void fill_render_data(RenderData &data, size_t *inst_id) const noexcept = 0;
+    virtual void fill_render_data(RenderData &data, size_t *inst_id) const noexcept {}
 };
 
 }// namespace vision
@@ -58,7 +58,7 @@ public:
 public:
     explicit Mesh(const ShapeDesc &desc);
     Mesh() = default;
-    void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override;
+    void fill_render_data(RenderData &data, size_t *inst_id) const noexcept {}
 };
 
 }// namespace vision

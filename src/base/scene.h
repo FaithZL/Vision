@@ -19,6 +19,14 @@ using namespace ocarina;
 
 class Context;
 
+struct RenderData {
+    // for device render
+    Managed<Vertex> _vertices;
+    Managed<Triangle> _triangles;
+    Managed<Shape::Handle> _instances;
+    Managed<Mesh::Handle> _meshes;
+    Managed<float4x4> _transforms;
+};
 
 class Scene {
 private:
