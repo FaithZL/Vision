@@ -7,11 +7,16 @@
 namespace vision {
 
 class Model : public Shape {
+private:
+    vector<Mesh> _meshes;
+
 public:
     explicit Model(const ShapeDesc &desc) : Shape(desc) {}
 
     void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override {
-
+        for (const Mesh &mesh : _meshes) {
+            mesh.fill_render_data(data, inst_id);
+        }
     }
 };
 

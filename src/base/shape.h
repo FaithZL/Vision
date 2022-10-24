@@ -31,6 +31,7 @@ public:
 
 public:
     explicit Shape(const ShapeDesc &desc);
+    Shape() = default;
     virtual void fill_render_data(RenderData &data, size_t *inst_id) const noexcept = 0;
 };
 
@@ -51,15 +52,13 @@ public:
 public:
     uint mat_idx{InvalidUI32};
     Light *emission{};
-    uint inst_id{InvalidUI32};
     vector<Vertex> vertices;
     vector<Triangle> triangles;
 
 public:
     explicit Mesh(const ShapeDesc &desc);
-
-    void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override {
-    }
+    Mesh() = default;
+    void fill_render_data(RenderData &data, size_t *inst_id) const noexcept override;
 };
 
 }// namespace vision
