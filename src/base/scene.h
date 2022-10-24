@@ -21,11 +21,11 @@ class Context;
 
 struct RenderData {
     // for device render
-    Managed<Vertex> _vertices;
-    Managed<Triangle> _triangles;
-    Managed<Shape::Handle> _instances;
-    Managed<Mesh::Handle> _meshes;
-    Managed<float4x4> _transforms;
+    Managed<Vertex> vertices;
+    Managed<Triangle> triangles;
+    Managed<Shape::Handle> instances;
+    Managed<Mesh::Handle> meshes;
+    Managed<float4x4> transforms;
 };
 
 class Scene {
