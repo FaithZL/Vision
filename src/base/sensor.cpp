@@ -20,8 +20,9 @@ void Sensor::prepare(RenderPipeline *rp) noexcept {
 }
 
 void Camera::init(const SensorDesc &desc) noexcept {
+    _data.emplace_back();
     _velocity = desc.velocity;
-    _host_data.fov_y = desc.fov_y;
+    _data->fov_y = desc.fov_y;
     update_mat(desc.transform_desc.mat);
 }
 
@@ -30,16 +31,16 @@ void Camera::update_mat(float4x4 m) noexcept {
     _pitch = -degrees(std::atan2(m[1][2], m[1][1]));
     _yaw = degrees(-std::atan2(m[2][0], m[0][0]));
     _position = make_float3(m[3]);
-    _host_data.c2w = camera_to_world();
+    _data->c2w = camera_to_world();
 }
 
 void Camera::update_device_data() noexcept {
-    _device_data.upload_immediately(&_host_data);
+    _data.upload_immediately();
 }
 
 void Camera::prepare(RenderPipeline *rp) noexcept {
     Sensor::prepare(rp);
-    _device_data = rp->device().create_buffer<CameraData>(1);
+    _data.device() = rp->device().create_buffer<CameraData>(1);
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {
@@ -54,15 +55,15 @@ float4x4 Camera::camera_to_world() const noexcept {
 }
 
 float3 Camera::forward() const noexcept {
-    return _host_data.c2w[2].xyz();
+    return _data->c2w[2].xyz();
 }
 
 float3 Camera::up() const noexcept {
-    return _host_data.c2w[1].xyz();
+    return _data->c2w[1].xyz();
 }
 
 float3 Camera::right() const noexcept {
-    return _host_data.c2w[0].xyz();
+    return _data->c2w[0].xyz();
 }
 
 }// namespace vision

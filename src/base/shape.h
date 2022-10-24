@@ -23,7 +23,7 @@ public:
 
 public:
     explicit Shape(const ShapeDesc &desc);
-    virtual size_t sub_shape_num() const noexcept { return 1; }
+    [[nodiscard]] virtual size_t sub_shape_num() const noexcept { return 1; }
 };
 
 struct Mesh : public Shape {

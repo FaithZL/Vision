@@ -6,32 +6,32 @@
 #include "core/render_pipeline.h"
 
 namespace vision {
-struct ThinLensCameraData {
+struct LensData {
     float focal_distance{};
     float lens_radius{0.f};
 };
 }// namespace vision
 
-OC_STRUCT(vision::ThinLensCameraData, focal_distance, lens_radius){};
+OC_STRUCT(vision::LensData, focal_distance, lens_radius){};
 
 namespace vision {
 class ThinLensCamera : public Camera {
 private:
-    ThinLensCameraData _host_data;
-    Buffer<ThinLensCameraData> _device_data;
+    Managed<LensData> _lens_data{1};
 public:
     explicit ThinLensCamera(const SensorDesc &desc)
         : Camera(desc) {
-        _host_data.focal_distance = desc.focal_distance;
-        _host_data.lens_radius = desc.lens_radius;
+        _lens_data.emplace_back();
+        _lens_data->focal_distance = desc.focal_distance;
+        _lens_data->lens_radius = desc.lens_radius;
     }
     void update_device_data() noexcept override {
         Camera::update_device_data();
-        _device_data.upload_immediately(&_host_data);
+        _lens_data.upload_immediately();
     }
     void prepare(RenderPipeline *rp) noexcept override {
         Camera::prepare(rp);
-        _device_data = rp->device().create_buffer<ThinLensCameraData>(1);
+        _lens_data.device() = rp->device().create_buffer<LensData>(1);
     }
 };
 }// namespace vision

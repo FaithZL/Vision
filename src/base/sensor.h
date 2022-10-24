@@ -63,8 +63,7 @@ protected:
     float _pitch{};
     float _velocity{5.f};
     float _sensitivity{1.f};
-    CameraData _host_data;
-    Buffer<CameraData> _device_data;
+    Managed<CameraData> _data{1};
 
 public:
     explicit Camera(const SensorDesc &desc)
@@ -80,14 +79,14 @@ public:
     [[nodiscard]] float pitch() const noexcept { return _pitch; }
     void set_pitch(float pitch) noexcept { _pitch = pitch; }
     void update_pitch(float val) noexcept { set_pitch(pitch() + val); }
-    [[nodiscard]] float fov_y() const noexcept { return _host_data.fov_y; }
+    [[nodiscard]] float fov_y() const noexcept { return _data->fov_y; }
     void set_fov_y(float new_fov_y) noexcept {
         if (new_fov_y > fov_max) {
-            _host_data.fov_y = fov_max;
+            _data->fov_y = fov_max;
         } else if (new_fov_y < fov_min) {
-            _host_data.fov_y = fov_min;
+            _data->fov_y = fov_min;
         } else {
-            _host_data.fov_y = new_fov_y;
+            _data->fov_y = new_fov_y;
         }
     }
     void update_fov_y(float val) noexcept { set_fov_y(fov_y() + val); }
