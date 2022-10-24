@@ -21,11 +21,22 @@ public:
     Box3f aabb;
     float4x4 o2w;
 
+    struct Handle {
+        uint mat_id;
+        uint light_id;
+        uint mesh_id;
+    };
+
 public:
     explicit Shape(const ShapeDesc &desc);
     [[nodiscard]] virtual size_t sub_shape_num() const noexcept { return 1; }
 };
 
+}// namespace vision
+
+OC_STRUCT(vision::Shape::Handle, mat_id, light_id, mesh_id) {};
+
+namespace vision {
 struct Mesh : public Shape {
 public:
     struct Handle {

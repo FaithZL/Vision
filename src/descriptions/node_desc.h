@@ -175,6 +175,8 @@ public:
 struct MaterialDesc : public NodeDesc {
 public:
     TextureDesc color;
+    TextureDesc ior;
+    TextureDesc roughness;
 
 public:
     VISION_DESC_COMMON(Material)

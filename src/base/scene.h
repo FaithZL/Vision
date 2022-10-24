@@ -30,7 +30,14 @@ private:
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     vector<Material *> _materials;
-    vector<Mesh::Handle> _meshes;
+
+    // for device render
+    Managed<Vertex> _vertices;
+    Managed<Triangle> _triangles;
+    Managed<Shape::Handle> _instances;
+    Managed<Mesh::Handle> _meshes;
+    Managed<float4x4> _transforms;
+
     friend class RenderPipeline;
 
 public:

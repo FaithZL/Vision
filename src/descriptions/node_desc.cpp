@@ -102,8 +102,12 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
+    color.init(param["color"]);
     if (sub_type == "matte") {
-        color.init(param["color"]);
+
+    } else if (sub_type == "glass") {
+        ior.init(param["ior"]);
+        roughness.init(param["roughness"]);
     }
 }
 
