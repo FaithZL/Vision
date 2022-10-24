@@ -20,8 +20,8 @@ public:
     vector_t lower, upper;
 
 public:
-    TBox() : lower(empty_range_lower<scalar_t>()),
-             upper(empty_range_upper<scalar_t>()) {}
+    TBox() : lower(empty_range_upper<scalar_t>()),
+             upper(empty_range_lower<scalar_t>()) {}
 
     explicit inline TBox(const vector_t &v)
         : lower(v), upper(v) {}
@@ -49,51 +49,51 @@ public:
         return *this;
     }
 
-    [[nodiscard]] interval<scalar_t> get_slab(const uint32_t dim) {
+    [[nodiscard]] interval<scalar_t> get_slab(const uint32_t dim) noexcept {
         return interval<scalar_t>(lower[dim], upper[dim]);
     }
 
-    [[nodiscard]] vector_t offset(vector_t p) const {
+    [[nodiscard]] vector_t offset(vector_t p) const noexcept {
         return (p - lower) / span();
     }
 
-    [[nodiscard]] bool contains(const vector_t &point) const {
+    [[nodiscard]] bool contains(const vector_t &point) const noexcept {
         return all(point >= lower) && all(upper >= point);
     }
 
-    [[nodiscard]] bool contains(const TBox &other) const {
+    [[nodiscard]] bool contains(const TBox &other) const noexcept {
         return all(other.lower >= lower) && all(upper >= other.upper);
     }
 
-    [[nodiscard]] bool overlap(const TBox &other) const {
+    [[nodiscard]] bool overlap(const TBox &other) const noexcept {
         return contains(other.lower) || contains(other.upper);
     }
 
-    [[nodiscard]] scalar_t radius() const {
+    [[nodiscard]] scalar_t radius() const noexcept {
         return length(upper - lower) * 0.5f;
     }
 
-    [[nodiscard]] vector_t lerp(vector_t t) const {
+    [[nodiscard]] vector_t lerp(vector_t t) const noexcept {
         return ocarina::lerp(t, lower, upper);
     }
 
-    [[nodiscard]] vector_t center() const {
+    [[nodiscard]] vector_t center() const noexcept {
         return (lower + upper) * 0.5f;
     }
 
-    [[nodiscard]] vector_t span() const {
+    [[nodiscard]] vector_t span() const noexcept {
         return upper - lower;
     }
 
-    [[nodiscard]] vector_t size() const {
+    [[nodiscard]] vector_t size() const noexcept {
         return upper - lower;
     }
 
-    [[nodiscard]] scalar_t volume() const {
+    [[nodiscard]] scalar_t volume() const noexcept {
         return ocarina::volume(upper - lower);
     }
 
-    [[nodiscard]] scalar_t area() const {
+    [[nodiscard]] scalar_t area() const noexcept {
         static_assert(N == 2 || N == 3);
         vector_t diag = upper - lower;
         if constexpr (N == 2) {
@@ -103,11 +103,11 @@ public:
         }
     }
 
-    [[nodiscard]] bool empty() const {
+    [[nodiscard]] bool empty() const noexcept {
         return any(upper < lower);
     }
 
-    [[nodiscard]] auto advance(Vector<scalar_t, 2> p) const {
+    [[nodiscard]] auto advance(Vector<scalar_t, 2> p) const noexcept {
         ++p.x;
         if (p.x == upper.x) {
             p.x = lower.x;
@@ -117,7 +117,7 @@ public:
     }
 
     template<typename Func>
-    void for_each(Func func) const {
+    void for_each(Func func) const noexcept {
         static_assert(std::is_integral_v<scalar_t> || std::is_unsigned_v<scalar_t>,
                       "scalar_t must be unsigned or integral!");
         auto p = lower;

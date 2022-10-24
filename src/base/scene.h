@@ -22,13 +22,15 @@ class Context;
 class Scene {
 private:
     vision::Context *_context{nullptr};
-    vector<Node::Handle> _all_nodes;
+    vector<Node::Wrapper> _all_nodes;
+    Box3f _aabb;
     Camera *_camera{nullptr};
     Sampler *_sampler{nullptr};
     Integrator *_integrator{nullptr};
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     vector<Material *> _materials;
+    vector<Mesh::Handle> _meshes;
     friend class RenderPipeline;
 
 public:

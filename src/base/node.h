@@ -19,7 +19,7 @@ private:
 public:
     using Creator = Node *(const NodeDesc &);
     using Deleter = void(Node *);
-    using Handle = ocarina::unique_ptr<Node, Node::Deleter *>;
+    using Wrapper = ocarina::unique_ptr<Node, Node::Deleter *>;
 
 public:
     Node() = default;
