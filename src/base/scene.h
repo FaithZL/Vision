@@ -26,7 +26,6 @@ public:
     Managed<Triangle> triangles;
     Managed<Shape::Handle> instances;
     Managed<Mesh::Handle> mesh_handles;
-    Managed<float4x4> transforms;
     vector<ocarina::Mesh> meshes;
     ocarina::Accel accel;
 

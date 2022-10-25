@@ -10,6 +10,17 @@ namespace vision {
 void DeviceData::accept(const vector<Vertex> &vert,
                         const vector<Triangle> &tri, float4x4 o2w) {
 
+    Mesh::Handle mesh_handle{.vertex_offset = (uint)vertices.host().size(),
+                             .triangle_offset = (uint)triangles.host().size()};
+
+    vertices.append(vert);
+    triangles.append(tri);
+
+    Shape::Handle inst{.light_id = InvalidUI32,
+                        .mesh_id = (uint)mesh_handles.host().size(),
+                        .o2w = o2w};
+    instances.push_back(inst);
+    mesh_handles.push_back(mesh_handle);
 }
 
 Scene::Scene(vision::Context *ctx)

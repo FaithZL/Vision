@@ -32,6 +32,7 @@ void RenderPipeline::prepare() noexcept {
 }
 
 void RenderPipeline::build_accel() {
+
 }
 
 void RenderPipeline::render(double dt) {
