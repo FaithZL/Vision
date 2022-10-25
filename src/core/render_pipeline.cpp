@@ -22,19 +22,22 @@ void RenderPipeline::prepare_device_data() noexcept {
     for (const Shape *shape : _scene._shapes) {
         shape->fill_device_data(_device_data);
     }
+    _device_data.reset_device_buffer();
     _device_data.build_meshes();
     _device_data.upload();
     _device_data.build_accel();
 }
 
+void RenderPipeline::compile_shaders() noexcept {
+}
+
 void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     prepare_device_data();
+    compile_shaders();
     _render_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
 }
 
 void RenderPipeline::render(double dt) {
-
 }
-
 }// namespace vision

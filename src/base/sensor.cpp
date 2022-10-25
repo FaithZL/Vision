@@ -26,6 +26,10 @@ void Camera::init(const SensorDesc &desc) noexcept {
     update_mat(desc.transform_desc.mat);
 }
 
+RaySample Camera::generate_ray(const SensorSample &ss) const noexcept {
+    return {};
+}
+
 void Camera::update_mat(float4x4 m) noexcept {
     float sy = sqrt(sqr(m[2][1]) + sqr(m[2][2]));
     _pitch = -degrees(std::atan2(m[1][2], m[1][1]));

@@ -23,8 +23,6 @@ void DeviceData::accept(const vector<Vertex> &vert,
 }
 
 void DeviceData::build_meshes() {
-    reset_device_buffer();
-
     for (const auto &inst : instances) {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = mesh_handles[mesh_id];

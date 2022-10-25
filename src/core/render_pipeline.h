@@ -25,9 +25,12 @@ public:
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
+    [[nodiscard]] DeviceData &device_data() noexcept { return _device_data; }
+    [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void prepare() noexcept;
     void prepare_device_data() noexcept;
+    void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
     [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }

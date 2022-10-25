@@ -31,7 +31,7 @@ public:
     [[nodiscard]] auto film() noexcept { return _film; }
     [[nodiscard]] auto film() const noexcept { return _film; }
     [[nodiscard]] uint2 resolution() noexcept { return _film->resolution(); }
-    //    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) = 0;
+    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 
 }// namespace vision
@@ -93,6 +93,7 @@ public:
     [[nodiscard]] float3 forward() const noexcept;
     [[nodiscard]] float3 up() const noexcept;
     [[nodiscard]] float3 right() const noexcept;
+    [[nodiscard]] RaySample generate_ray(const SensorSample &ss) const noexcept override;
 };
 
 }// namespace vision

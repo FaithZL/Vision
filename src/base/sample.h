@@ -18,7 +18,7 @@ struct SensorSample {
 };
 
 struct RaySample {
-    Var<Ray> ray;
+    OCRay ray;
     Float weight;
 };
 
