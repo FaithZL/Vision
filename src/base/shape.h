@@ -24,20 +24,20 @@ public:
     float4x4 o2w;
 
     struct Handle {
-        uint mat_id;
-        uint light_id;
-        uint mesh_id;
+        uint light_id{InvalidUI32};
+        uint mesh_id{InvalidUI32};
+        float4x4 o2w;
     };
 
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
-    virtual void fill_device_data(DeviceData &data, size_t *inst_id) const noexcept = 0;
+    virtual void fill_device_data(DeviceData &data) const noexcept = 0;
 };
 
 }// namespace vision
 
-OC_STRUCT(vision::Shape::Handle, mat_id, light_id, mesh_id) {};
+OC_STRUCT(vision::Shape::Handle, light_id, mesh_id, o2w){};
 
 namespace vision {
 struct Mesh : public Shape {
@@ -58,7 +58,7 @@ public:
 public:
     explicit Mesh(const ShapeDesc &desc);
     Mesh() = default;
-    void fill_device_data(DeviceData &data, size_t *inst_id) const noexcept override;
+    void fill_device_data(DeviceData &data) const noexcept override;
 };
 
 }// namespace vision

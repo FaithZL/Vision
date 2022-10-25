@@ -34,10 +34,7 @@ public:
     explicit DeviceData(Device *device = nullptr)
         : device(device) {}
 
-    template<typename...Args>
-    void add_mesh(Args &&...args) noexcept {
-        meshes.push_back(device->create_mesh(OC_FORWARD(args)...));
-    }
+    void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, float4x4 o2w);
 };
 
 class Scene {

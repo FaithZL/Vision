@@ -17,12 +17,8 @@ Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {
     }
 }
 
-void Mesh::fill_device_data(DeviceData &data, size_t *inst_id) const noexcept {
-
-    data.vertices.append(vertices);
-    data.triangles.append(triangles);
-    data.add_mesh(data.vertices.device(), data.triangles.device());
-    *inst_id += 1;
+void Mesh::fill_device_data(DeviceData &data) const noexcept {
+    data.accept(vertices, triangles, o2w);
 }
 
 }// namespace vision
