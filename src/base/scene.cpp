@@ -26,16 +26,17 @@ void DeviceData::accept(const vector<Vertex> &vert,
 void DeviceData::build_meshes() {
     reset_device_buffer();
 
-    for (int i = 0; i < mesh_handles.host().size(); ++i) {
-        const auto &mesh_handle = mesh_handles[i];
+    for (const auto &inst : instances) {
+        uint mesh_id = inst.mesh_id;
+        const auto &mesh_handle = mesh_handles[mesh_id];
         ocarina::Mesh mesh;
-        if (i == mesh_handles.host().size() - 1) {
+        if (mesh_id == mesh_handles.host().size() - 1) {
             // last element
             BufferView<Vertex> verts = vertices.device().view(mesh_handle.vertex_offset, 0);
             BufferView<Triangle> tris = triangles.device().view(mesh_handle.triangle_offset, 0);
             mesh = device->create_mesh(verts, tris);
         } else {
-            const auto &next_mesh_handle = mesh_handles[i + 1];
+            const auto &next_mesh_handle = mesh_handles[mesh_id + 1];
             uint vert_count = next_mesh_handle.vertex_offset - mesh_handle.vertex_offset;
             uint tri_count = next_mesh_handle.triangle_offset - mesh_handle.triangle_offset;
             BufferView<Vertex> verts = vertices.device().view(mesh_handle.vertex_offset, vert_count);
@@ -57,11 +58,17 @@ void DeviceData::upload() const {
 }
 
 void DeviceData::build_accel() {
+    accel = device->create_accel();
     Stream stream = device->create_stream();
-    for (auto &mesh : meshes) {
+    for (int i = 0; i < meshes.size(); ++i) {
+        Shape::Handle inst = instances[i];
+        ocarina::Mesh &mesh = meshes[i];
         stream << mesh.build_bvh();
+        accel.add_mesh(mesh, inst.o2w);
     }
-
+    stream << accel.build_bvh();
+    stream << synchronize();
+    stream << commit();
 }
 
 Scene::Scene(vision::Context *ctx)
