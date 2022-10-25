@@ -22,17 +22,15 @@ void RenderPipeline::prepare_device_data() noexcept {
     for (const Shape *shape : _scene._shapes) {
         shape->fill_device_data(_device_data);
     }
+    _device_data.build_meshes();
+    _device_data.upload();
+    _device_data.build_accel();
 }
 
 void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     prepare_device_data();
     _render_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
-    build_accel();
-}
-
-void RenderPipeline::build_accel() {
-
 }
 
 void RenderPipeline::render(double dt) {

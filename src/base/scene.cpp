@@ -17,10 +17,51 @@ void DeviceData::accept(const vector<Vertex> &vert,
     triangles.append(tri);
 
     Shape::Handle inst{.light_id = InvalidUI32,
-                        .mesh_id = (uint)mesh_handles.host().size(),
-                        .o2w = o2w};
+                       .mesh_id = (uint)mesh_handles.host().size(),
+                       .o2w = o2w};
     instances.push_back(inst);
     mesh_handles.push_back(mesh_handle);
+}
+
+void DeviceData::build_meshes() {
+    reset_device_buffer();
+
+    for (int i = 0; i < mesh_handles.host().size(); ++i) {
+        const auto &mesh_handle = mesh_handles[i];
+        ocarina::Mesh mesh;
+        if (i == mesh_handles.host().size() - 1) {
+            // last element
+            BufferView<Vertex> verts = vertices.device().view(mesh_handle.vertex_offset, 0);
+            BufferView<Triangle> tris = triangles.device().view(mesh_handle.triangle_offset, 0);
+            mesh = device->create_mesh(verts, tris);
+        } else {
+            const auto &next_mesh_handle = mesh_handles[i + 1];
+            uint vert_count = next_mesh_handle.vertex_offset - mesh_handle.vertex_offset;
+            uint tri_count = next_mesh_handle.triangle_offset - mesh_handle.triangle_offset;
+            BufferView<Vertex> verts = vertices.device().view(mesh_handle.vertex_offset, vert_count);
+            BufferView<Triangle> tris = triangles.device().view(mesh_handle.triangle_offset, tri_count);
+            mesh = device->create_mesh(verts, tris);
+        }
+        meshes.push_back(std::move(mesh));
+    }
+}
+
+void DeviceData::upload() const {
+    Stream stream = device->create_stream();
+    stream << vertices.upload()
+           << triangles.upload()
+           << mesh_handles.upload()
+           << instances.upload()
+           << synchronize();
+    stream << commit();
+}
+
+void DeviceData::build_accel() {
+    Stream stream = device->create_stream();
+    for (auto &mesh : meshes) {
+        stream << mesh.build_bvh();
+    }
+
 }
 
 Scene::Scene(vision::Context *ctx)

@@ -34,6 +34,15 @@ public:
         : device(device) {}
 
     void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, float4x4 o2w);
+    void reset_device_buffer() {
+        vertices.reset_device_buffer(*device);
+        triangles.reset_device_buffer(*device);
+        instances.reset_device_buffer(*device);
+        mesh_handles.reset_device_buffer(*device);
+    }
+    void build_meshes();
+    void build_accel();
+    void upload() const;
 };
 
 class Scene {

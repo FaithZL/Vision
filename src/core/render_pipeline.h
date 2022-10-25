@@ -29,7 +29,6 @@ public:
     void prepare_device_data() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
-    void build_accel();
     [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }
     void render(double dt);
 };
