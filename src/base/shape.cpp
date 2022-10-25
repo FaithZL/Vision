@@ -4,6 +4,7 @@
 
 #include "shape.h"
 #include "scene.h"
+#include "device_data.h"
 
 namespace vision {
 

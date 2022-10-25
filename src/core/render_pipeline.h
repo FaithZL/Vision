@@ -6,6 +6,7 @@
 
 #include "rhi/common.h"
 #include "base/scene.h"
+#include "base/device_data.h"
 #include "rhi/window.h"
 
 namespace vision {
