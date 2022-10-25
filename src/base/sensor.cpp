@@ -22,12 +22,19 @@ void Sensor::prepare(RenderPipeline *rp) noexcept {
 void Camera::init(const SensorDesc &desc) noexcept {
     _data.emplace_back();
     _velocity = desc.velocity;
-    _data->fov_y = desc.fov_y;
+    _fov_y = desc.fov_y;
     update_mat(desc.transform_desc.mat);
 }
 
 RaySample Camera::generate_ray(const SensorSample &ss) const noexcept {
-    return {};
+    uint2 res = _film->resolution();
+    Var<Data> data = _data.read(0);
+    Float2 p = (ss.p_film * 2.f - make_float2(res)) * data.tan_fov_y_over2 / float(res.y);
+    Float3 dir = normalize(p.x * right() - p.y * up() + forward());
+    RaySample ret;
+    ret.ray = make_ray(position(), dir);
+    ret.weight = 1.f;
+    return ret;
 }
 
 void Camera::update_mat(float4x4 m) noexcept {

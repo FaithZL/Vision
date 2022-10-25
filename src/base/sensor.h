@@ -44,7 +44,7 @@ public:
     constexpr static float fov_min = 15.f;
 
     struct Data {
-        float fov_y{20.f};
+        float tan_fov_y_over2{};
         float4x4 c2w;
     };
 
@@ -59,6 +59,7 @@ protected:
     float _pitch{};
     float _velocity{5.f};
     float _sensitivity{1.f};
+    float _fov_y{20.f};
     Managed<Data> _data{1};
 
 public:
@@ -75,15 +76,16 @@ public:
     [[nodiscard]] float pitch() const noexcept { return _pitch; }
     void set_pitch(float pitch) noexcept { _pitch = pitch; }
     void update_pitch(float val) noexcept { set_pitch(pitch() + val); }
-    [[nodiscard]] float fov_y() const noexcept { return _data->fov_y; }
+    [[nodiscard]] float fov_y() const noexcept { return _fov_y; }
     void set_fov_y(float new_fov_y) noexcept {
         if (new_fov_y > fov_max) {
-            _data->fov_y = fov_max;
+            _fov_y = fov_max;
         } else if (new_fov_y < fov_min) {
-            _data->fov_y = fov_min;
+            _fov_y = fov_min;
         } else {
-            _data->fov_y = new_fov_y;
+            _fov_y = new_fov_y;
         }
+        _data->tan_fov_y_over2 = tan(radians(_fov_y) * 0.5f);
     }
     void update_fov_y(float val) noexcept { set_fov_y(fov_y() + val); }
     virtual void update_device_data() noexcept;
@@ -98,4 +100,4 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Camera::Data, fov_y, c2w){};
+OC_STRUCT(vision::Camera::Data, tan_fov_y_over2, c2w){};
