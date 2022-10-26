@@ -10,6 +10,10 @@ using namespace ocarina;
 class IndependentSampler : public Sampler {
 public:
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
+
+    [[nodiscard]] Float next_1d() const noexcept override {
+        return 0.f;
+    }
 };
 
 }// namespace vision

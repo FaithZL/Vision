@@ -168,6 +168,7 @@ public:
     float2 tex_coord;
 
 public:
+    Vertex() = default;
     Vertex(float3 p, float3 n, float2 uv)
         : position(p), normal(n), tex_coord(uv) {}
 };

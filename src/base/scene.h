@@ -19,6 +19,9 @@ using namespace ocarina;
 
 class Context;
 
+#define MAKE_GETTER(member)                                          \
+    [[nodiscard]] auto member() const noexcept { return _##member; } \
+    [[nodiscard]] auto member() noexcept { return _##member; }
 
 class Scene {
 private:
@@ -38,12 +41,12 @@ public:
     explicit Scene(vision::Context *ctx);
     void init(const SceneDesc &scene_desc);
     void prepare(RenderPipeline *rp) noexcept;
-    [[nodiscard]] auto camera() const noexcept { return _camera; }
-    [[nodiscard]] auto camera() noexcept { return _camera; }
+    MAKE_GETTER(integrator)
+    MAKE_GETTER(camera)
+    MAKE_GETTER(sampler)
+    MAKE_GETTER(light_sampler)
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
-    [[nodiscard]] auto integrator() const noexcept { return _integrator; }
-    [[nodiscard]] auto integrator() noexcept { return _integrator; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {

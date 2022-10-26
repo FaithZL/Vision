@@ -26,6 +26,7 @@ public:
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
+    [[nodiscard]] Scene &scene() noexcept { return _scene; }
     [[nodiscard]] DeviceData &device_data() noexcept { return _device_data; }
     [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
