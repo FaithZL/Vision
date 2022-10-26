@@ -20,6 +20,7 @@ protected:
     uint _max_depth;
     uint _min_depth;
     float _rr_threshold;
+    ocarina::Kernel<signature> _kernel;
     ocarina::Shader<signature> _shader;
 
 public:

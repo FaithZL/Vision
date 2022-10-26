@@ -12,10 +12,10 @@ public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc) : Integrator(desc) {}
 
     void compile_shader(RenderPipeline *rp) noexcept override {
-        Kernel kernel = [&]() -> void{
+        _kernel = [&]() -> void{
             print("wori");
         };
-        _shader = rp->device().compile(kernel);
+        _shader = rp->device().compile(_kernel);
         int i = 0;
 
     }
