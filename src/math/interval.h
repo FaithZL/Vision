@@ -62,10 +62,9 @@ template<typename T>
     return interval<T>(max(a.begin, b.begin), min(a.end, b.end));
 }
 
-template<typename T>
-[[nodiscard]] bool operator!=(const interval<T> &a, const interval<T> &b) { return !(a == b); }
 }// namespace math
 }// namespace vision
+
 
 template<typename T>
 [[nodiscard]] vision::interval<T> operator*(const vision::interval<T> &a, const T &b) {
@@ -80,4 +79,10 @@ template<typename T>
 template<typename T>
 [[nodiscard]] bool operator==(const vision::interval<T> &a, const vision::interval<T> &b) {
     return a.begin == b.begin && a.end == b.end;
+}
+
+template<typename T>
+[[nodiscard]] bool operator!=(const vision::interval<T> &a,
+    const vision::interval<T> &b) {
+    return !(a == b);
 }
