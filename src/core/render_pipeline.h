@@ -37,7 +37,8 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
     [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }
-    void render(double dt);
+    void update() noexcept { _scene.update(); }
+    void render(double dt) noexcept;
 };
 
 }// namespace vision

@@ -32,7 +32,7 @@ RaySample Camera::generate_ray(const SensorSample &ss) const noexcept {
     Float2 p = (ss.p_film * 2.f - make_float2(res)) * data.tan_fov_y_over2 / float(res.y);
     Float3 dir = normalize(p.x * right() - p.y * up() + forward());
     RaySample ret;
-    ret.ray = make_ray(position(), dir);
+    ret.ray = make_ray(data.c2w[3].xyz(), dir);
     ret.weight = 1.f;
     return ret;
 }
@@ -46,6 +46,7 @@ void Camera::update_mat(float4x4 m) noexcept {
 }
 
 void Camera::update_device_data() noexcept {
+    _data->c2w = camera_to_world();
     _data.upload_immediately();
 }
 

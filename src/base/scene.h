@@ -58,6 +58,7 @@ public:
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
+    void update() noexcept;
 };
 
 }// namespace vision

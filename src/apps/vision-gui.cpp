@@ -29,9 +29,41 @@ int execute(int argc, char *argv[]){
     rp.init_scene(scene_desc);
     rp.prepare();
 
-    auto window = context.create_window("vision", rp.resolution());
-    auto image_io = ImageIO::pure_color(make_float4(1,0,0,1), ColorSpace::LINEAR, rp.resolution());
+    Window::Wrapper window = context.create_window("vision", rp.resolution());
+
+    window->set_key_callback([&](int key, int action) {
+        double dt = window->dt();
+        Camera *camera = rp.scene().camera();
+        float3 forward = camera->forward();
+        float3 up = camera->up();
+        float3 right = camera->right();
+        float distance = camera->velocity() * dt;
+        switch (key) {
+            case 'W':
+                camera->move(forward * distance);
+                break;
+            case 'A':
+                camera->move(-right * distance);
+                break;
+            case 'S':
+                camera->move(-forward * distance);
+                break;
+            case 'D':
+                camera->move(right * distance);
+                break;
+            case 'Q':
+                camera->move(-up * distance);
+                break;
+            case 'E':
+                camera->move(up * distance);
+                break;
+            default:
+                break;
+        }
+    });
+
     window->run([&](double dt) {
+        rp.update();
         rp.render(dt);
         rp.download_result();
         window->set_background(rp.buffer());

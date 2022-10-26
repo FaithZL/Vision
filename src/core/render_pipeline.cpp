@@ -40,7 +40,7 @@ void RenderPipeline::prepare() noexcept {
     _render_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
 }
 
-void RenderPipeline::render(double dt) {
+void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
 }
 }// namespace vision
