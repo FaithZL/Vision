@@ -32,7 +32,7 @@ public:
             Var v0 = data.vertices.read(tri.i + mesh.vertex_offset);
             Var v1 = data.vertices.read(tri.j + mesh.vertex_offset);
             Var v2 = data.vertices.read(tri.k + mesh.vertex_offset);
-            Var pos = triangle_lerp(hit.bary, v0.position, v1.position, v2.position);
+            Var pos = hit->triangle_lerp(v0.position, v1.position, v2.position);
             Var normal = triangle_lerp(hit.bary, v0.normal, v1.normal, v2.normal);
             normal = transform_normal(inst.o2w, normal);
             Var tex_coord = triangle_lerp(hit.bary, v0.tex_coord, v1.tex_coord, v2.tex_coord);

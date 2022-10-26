@@ -60,14 +60,12 @@ void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
 
 
 void App::on_cursor_move(float2 pos) noexcept {
-    cout << pos.x << endl;
     int2 delta = make_int2(pos) - _last_cursor_pos;
     if (_right_key_press && nonzero(_last_cursor_pos)) {
         update_camera_view(delta.x, -delta.y);
     }
     _last_cursor_pos = make_int2(pos);
 }
-
 
 void App::on_mouse_event(int button, int action, float2 pos) noexcept {
     if (button == 0) {
