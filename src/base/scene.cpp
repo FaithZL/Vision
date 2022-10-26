@@ -4,6 +4,7 @@
 
 #include "scene.h"
 #include "core/context.h"
+#include "rhi/dynamic_module.h"
 
 namespace vision {
 

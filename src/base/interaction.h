@@ -60,7 +60,6 @@ struct SurfaceInteraction : public Interaction<p> {
     oc_float<p> prim_area{0.f};
     oc_uint<p> light_id{InvalidUI32};
     oc_uint<p> mat_id{InvalidUI32};
-    oc_float<p> du_dx{0}, dv_dx{0}, du_dy{0}, dv_dy{0};
     [[nodiscard]] oc_bool<p> has_emission() const noexcept { return light_id != InvalidUI32; }
     [[nodiscard]] oc_bool<p> has_material() const noexcept { return mat_id != InvalidUI32; }
 };

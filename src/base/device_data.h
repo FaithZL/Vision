@@ -6,6 +6,7 @@
 
 #include "rhi/common.h"
 #include "shape.h"
+#include "interaction.h"
 
 namespace vision {
 using namespace ocarina;
@@ -28,5 +29,7 @@ public:
     void build_meshes();
     void build_accel();
     void upload() const;
+    [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
+    [[nodiscard]] SurfaceInteraction<D> compute_surface_interaction(const OCHit &hit) const noexcept;
 };
 }// namespace vision

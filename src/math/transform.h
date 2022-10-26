@@ -179,7 +179,7 @@ public:
     [[nodiscard]] auto apply_vector(const T &vec) noexcept { return transform_vector<port_v<TMat, T>>(_mat, vec); }
     template<typename T>
     [[nodiscard]] auto apply_point(const T &point) noexcept { return transform_point<port_v<TMat, T>>(_mat, point); }
-    template<typename M, typename T>
+    template<typename T>
     [[nodiscard]] auto apply_normal(const T &normal) noexcept { return transform_normal<port_v<TMat, T>>(_mat, normal); }
     template<typename T>
     [[nodiscard]] auto apply_ray(T &&ray) noexcept { return transform_ray<port_v<TMat, T>>(_mat, OC_FORWARD(ray)); }

@@ -26,16 +26,8 @@ public:
                 camera->film()->add_sample(pixel, make_float4(0,0,0,1), 0);
                 $return();
             };
-            Var inst = data.instances.read(hit.inst_id);
-            Var mesh = data.mesh_handles.read(inst.mesh_id);
-            Var tri = data.triangles.read(hit.prim_id + mesh.triangle_offset);
-            Var v0 = data.vertices.read(tri.i + mesh.vertex_offset);
-            Var v1 = data.vertices.read(tri.j + mesh.vertex_offset);
-            Var v2 = data.vertices.read(tri.k + mesh.vertex_offset);
-            Var pos = hit->triangle_lerp(v0.position, v1.position, v2.position);
-            Var normal = triangle_lerp(hit.bary, v0.normal, v1.normal, v2.normal);
-            normal = normalize(transform_normal(inst.o2w, normal));
-            Var tex_coord = triangle_lerp(hit.bary, v0.tex_coord, v1.tex_coord, v2.tex_coord);
+            auto si = data.compute_surface_interaction(hit);
+            Float3 normal = si.g_uvn.normal();
             normal = (normal + 1.f) / 2.f;
             camera->film()->add_sample(pixel,make_float4(normal, Var(1.f)) , 0);
         };

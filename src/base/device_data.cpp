@@ -3,6 +3,7 @@
 //
 
 #include "device_data.h"
+#include "math/transform.h"
 
 namespace vision {
 
@@ -73,6 +74,29 @@ void DeviceData::build_accel() {
     stream << accel.build_bvh();
     stream << synchronize();
     stream << commit();
+}
+
+SurfaceInteraction<D> DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
+    SurfaceInteraction<D> ret;
+    Var inst = instances.read(hit.inst_id);
+    Var mesh = mesh_handles.read(inst.mesh_id);
+    auto o2w = Transform(inst.o2w);
+    Var tri = triangles.read(mesh.triangle_offset + hit.prim_id);
+    auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
+    Float3 pos = hit->lerp(v0.position, v1.position, v2.position);
+    Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
+    Float2 uv = hit->lerp(v0.tex_coord, v1.tex_coord, v2.tex_coord);
+    ret.g_uvn.z = normalize(o2w.apply_normal(normal));
+    ret.pos = pos;
+    ret.uv = uv;
+    return ret;
+}
+
+array<Var<Vertex>, 3> DeviceData::get_vertices(const Var<Triangle> &tri,
+                                               const Uint &offset) const noexcept {
+    return {vertices.read(offset + tri.i),
+            vertices.read(offset + tri.j),
+            vertices.read(offset + tri.k)};
 }
 
 }// namespace vision
