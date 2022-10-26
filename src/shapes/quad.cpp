@@ -25,7 +25,7 @@ public:
                          make_float3(-width, 0, -height)};
 
         for (auto p : P) { aabb.extend(p); }
-        vector<float3> N(4, make_float3(0, 0, 0));
+        vector<float3> N(4, make_float3(0, 1, 0));
         vector<float2> UV{make_float2(1, 1),
                           make_float2(1, 0),
                           make_float2(0, 1),

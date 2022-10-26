@@ -34,15 +34,10 @@ public:
             Var v2 = data.vertices.read(tri.k + mesh.vertex_offset);
             Var pos = triangle_lerp(hit.bary, v0.position, v1.position, v2.position);
             Var normal = triangle_lerp(hit.bary, v0.normal, v1.normal, v2.normal);
+            normal = transform_normal(inst.o2w, normal);
             Var tex_coord = triangle_lerp(hit.bary, v0.tex_coord, v1.tex_coord, v2.tex_coord);
             normal = (normal + 1.f) / 2.f;
-            Float4 val;
-            val.x = tex_coord.x;
-//            val.x = 1;
-val.y = tex_coord.y;
-            val.z = 0;
-            val.w = 1.f;
-            camera->film()->add_sample(pixel,val , 0);
+            camera->film()->add_sample(pixel,make_float4(normal, Var(1.f)) , 0);
         };
         _shader = rp->device().compile(_kernel);
         int i = 0;
