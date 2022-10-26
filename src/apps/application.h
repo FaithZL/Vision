@@ -20,6 +20,9 @@ public:
     Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
     RenderPipeline rp;
+    int2 _last_cursor_pos = make_int2(0);
+    bool _left_key_press{false};
+    bool _right_key_press{false};
 
 public:
     App(int argc, char *argv[])
@@ -32,6 +35,7 @@ public:
     void prepare() noexcept;
     void update(double dt) noexcept;
     void register_event() noexcept;
+    void update_camera_view(float d_yaw, float d_pitch) noexcept;
     void on_key_event(int key, int action) noexcept;
     void on_mouse_event(int button, int action, float2 pos) noexcept;
     void on_scroll_event(float2 scroll) noexcept;

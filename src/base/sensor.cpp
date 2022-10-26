@@ -30,9 +30,10 @@ RaySample Camera::generate_ray(const SensorSample &ss) const noexcept {
     uint2 res = _film->resolution();
     Var<Data> data = _data.read(0);
     Float2 p = (ss.p_film * 2.f - make_float2(res)) * data.tan_fov_y_over2 / float(res.y);
-    Float3 dir = normalize(p.x * right() - p.y * up() + forward());
+    Float4x4 c2w = data.c2w;
+    Float3 dir = normalize(p.x * c2w[0].xyz() - p.y * c2w[1].xyz() + c2w[2].xyz());
     RaySample ret;
-    ret.ray = make_ray(data.c2w[3].xyz(), dir);
+    ret.ray = make_ray(c2w[3].xyz(), dir);
     ret.weight = 1.f;
     return ret;
 }

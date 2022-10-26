@@ -67,6 +67,8 @@ public:
         : Sensor(desc) { init(desc); }
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
+    void set_sensitivity(float v) noexcept { _sensitivity = v; }
+    [[nodiscard]] float sensitivity() noexcept { return _sensitivity; }
     [[nodiscard]] float3 position() const noexcept { return _position; }
     void move(float3 delta) noexcept { _position += delta; }
     [[nodiscard]] float yaw() const noexcept { return _yaw; }
