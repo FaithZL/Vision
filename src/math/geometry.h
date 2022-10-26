@@ -122,13 +122,19 @@ public:
         ocarina::coordinate_system(z, x, y);
     }
 
+    void set(const vec_ty &x_, const vec_ty &y_, const vec_ty &z_) {
+        x = x_;
+        y = y_;
+        z = z_;
+    }
+
     template<typename TVec>
     [[nodiscard]] auto to_local(const TVec &world_v) const noexcept {
         return make_float3(dot(world_v, x), dot(world_v, y), dot(world_v, z));
     }
 
     template<typename TVec>
-    [[nodiscard]] auto to_world(const TVec & local_v) const noexcept {
+    [[nodiscard]] auto to_world(const TVec &local_v) const noexcept {
         return x * local_v.x + y * local_v.y + z * local_v.z;
     }
 
@@ -163,15 +169,15 @@ inline namespace geometry {
 struct Vertex {
 public:
     //todo compress
-    float3 position;
+    float3 pos;
     float3 normal;
-    float2 tex_coord;
+    float2 uv;
 
 public:
     Vertex() = default;
     Vertex(float3 p, float3 n, float2 uv)
-        : position(p), normal(n), tex_coord(uv) {}
+        : pos(p), normal(n), uv(uv) {}
 };
-}
-}// namespace vision::geometry
-OC_STRUCT(vision::Vertex, position, normal, tex_coord){};
+}// namespace geometry
+}// namespace vision
+OC_STRUCT(vision::Vertex, pos, normal, uv){};

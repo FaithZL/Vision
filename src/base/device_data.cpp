@@ -77,19 +77,63 @@ void DeviceData::build_accel() {
 }
 
 SurfaceInteraction<D> DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
-    SurfaceInteraction<D> ret;
+    SurfaceInteraction<D> si;
     Var inst = instances.read(hit.inst_id);
     Var mesh = mesh_handles.read(inst.mesh_id);
     auto o2w = Transform(inst.o2w);
     Var tri = triangles.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
-    Float3 pos = hit->lerp(v0.position, v1.position, v2.position);
-    Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
-    Float2 uv = hit->lerp(v0.tex_coord, v1.tex_coord, v2.tex_coord);
-    ret.g_uvn.z = normalize(o2w.apply_normal(normal));
-    ret.pos = pos;
-    ret.uv = uv;
-    return ret;
+
+    {
+        // compute pos
+        Var p0 = o2w.apply_point(v0.pos);
+        Var p1 = o2w.apply_point(v1.pos);
+        Var p2 = o2w.apply_point(v2.pos);
+        Float3 pos = hit->lerp(p0, p1, p2);
+        si.pos = pos;
+
+        // compute geometry uvn
+        Float3 dp02 = p0 - p2;
+        Float3 dp12 = p1 - p2;
+        Float3 ng_un = cross(dp02, dp12);
+        si.prim_area = 0.5f * length(ng_un);
+        Float2 duv02 = v0.uv - v2.uv;
+        Float2 duv12 = v1.uv - v2.uv;
+        Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
+        Bool degenerate_uv = abs(det) < float(1e-8);
+        Float3 dp_du, dp_dv;
+
+        $if(!degenerate_uv) {
+            Float inv_det = 1 / det;
+            dp_du = (duv12[1] * dp02 - duv02[1] * dp12) * inv_det;
+            dp_dv = (-duv12[0] * dp02 + duv02[0] * dp12) * inv_det;
+        }
+        $else {
+            dp_du = normalize(p1 - p0);
+            dp_dv = normalize(p2 - p0);
+        };
+        Float3 ng = normalize(ng_un);
+        Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
+
+        si.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
+    }
+
+    {
+        Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
+
+        $if(is_zero(normal)) {
+            si.s_uvn = si.g_uvn;
+        } $else {
+            Float3 ns = normalize(o2w.apply_normal(normal));
+            Float3 ss = si.g_uvn.dp_du();
+            Float3 st = normalize(cross(ns, ss));
+            ss = cross(st, ns);
+            si.s_uvn.set(ss, st, ns);
+        };
+    }
+    Float2 uv = hit->lerp(v0.uv, v1.uv, v2.uv);
+    si.uv = uv;
+    return si;
 }
 
 array<Var<Vertex>, 3> DeviceData::get_vertices(const Var<Triangle> &tri,

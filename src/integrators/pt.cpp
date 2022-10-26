@@ -27,7 +27,7 @@ public:
                 $return();
             };
             auto si = data.compute_surface_interaction(hit);
-            Float3 normal = si.g_uvn.normal();
+            Float3 normal = si.s_uvn.normal();
             normal = (normal + 1.f) / 2.f;
             camera->film()->add_sample(pixel,make_float4(normal, Var(1.f)) , 0);
         };
