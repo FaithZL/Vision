@@ -20,6 +20,7 @@ int execute(int argc, char *argv[]){
         context.cli_parser().print_help();
         return 0;
     }
+    context.clear_cache();
     Device device = context.create_device("cuda");
     device.init_rtx();
     SceneDesc scene_desc = context.parse_file();

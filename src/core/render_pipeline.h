@@ -19,6 +19,7 @@ private:
     Scene _scene;
     DeviceData _device_data{_device};
     unique_ptr<float4[]> _render_buffer;
+    Stream _stream;
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
@@ -29,6 +30,7 @@ public:
     [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void prepare() noexcept;
+    [[nodiscard]] Stream &stream() noexcept { return _stream; }
     void prepare_device_data() noexcept;
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
