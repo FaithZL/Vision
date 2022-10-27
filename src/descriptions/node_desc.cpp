@@ -85,7 +85,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
     ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(velocity, fov_y, focal_distance, lens_radius)
+    VISION_PARAMS_LIST_INITIAL(velocity, fov_y, focal_distance, lens_radius, sensitivity)
     transform_desc.init(param["transform"]);
     filter_desc.init(param["filter"]);
     film_desc.init(param["film"]);

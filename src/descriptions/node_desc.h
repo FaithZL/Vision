@@ -151,6 +151,7 @@ public:
     TransformDesc transform_desc;
     float fov_y{20};
     float velocity{5};
+    float sensitivity{0.5};
     float focal_distance{5.f};
     float lens_radius{0.f};
     FilterDesc filter_desc;

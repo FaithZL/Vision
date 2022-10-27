@@ -442,6 +442,7 @@
         "type": "thin_lens",
         "name": "view1",
         "param": {
+            "sensitivity" : 0.5,
             "fov_y": 19.5,
             "velocity": 5,
             "transform": {

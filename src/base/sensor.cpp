@@ -22,6 +22,7 @@ void Sensor::prepare(RenderPipeline *rp) noexcept {
 void Camera::init(const SensorDesc &desc) noexcept {
     _data.emplace_back();
     _velocity = desc.velocity;
+    _sensitivity = desc.sensitivity;
     set_fov_y(desc.fov_y);
     update_mat(desc.transform_desc.mat);
 }

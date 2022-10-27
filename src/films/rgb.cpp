@@ -18,7 +18,6 @@ public:
         _radiance = rp->device().create_image(resolution(), PixelStorage::FLOAT4);
     }
     void add_sample(Uint2 pixel, Float4 val, Uint frame_index) noexcept override {
-        Uint index = pixel_index(pixel);
         _radiance.write(pixel, val);
     }
     void copy_to(void *host_ptr) const noexcept override {

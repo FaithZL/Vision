@@ -18,7 +18,8 @@ public:
         Accel &accel = rp->device_data().accel;
         _kernel = [&]() -> void {
             Uint2 pixel = dispatch_idx().xy();
-            SensorSample ss = sampler->sensor_sample(dispatch_idx().xy());
+            sampler->start_pixel_sample(pixel, 0, 0);
+            SensorSample ss = sampler->sensor_sample(pixel);
             auto [ray, weight] = camera->generate_ray(ss);
             Var hit = accel.trace_closest(ray);
             Var p = ray->direction();
