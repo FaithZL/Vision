@@ -12,6 +12,7 @@
 #include "base/integrator.h"
 #include "base/lightsampler.h"
 #include "base/material.h"
+#include "base/distribution.h"
 
 namespace vision {
 
@@ -34,6 +35,7 @@ private:
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     vector<Material *> _materials;
+    DistributionDesc _distribution_desc;
 
     friend class RenderPipeline;
 

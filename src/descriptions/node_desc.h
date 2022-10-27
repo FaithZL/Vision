@@ -193,6 +193,7 @@ public:
 
 struct DistributionDesc : public NodeDesc {
 public:
+    VISION_DESC_COMMON(Distribution)
     void init(const ParameterSet &ps) noexcept override;
 };
 

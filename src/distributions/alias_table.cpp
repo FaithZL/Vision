@@ -23,7 +23,7 @@ private:
 public:
     explicit AliasTable(const DistributionDesc &desc) : Distribution(desc) {}
 
-    void build(vector<float> weights) {
+    void build(vector<float> weights) noexcept override {
         auto sum = std::reduce(weights.cbegin(), weights.cend(), 0.0);
         auto ratio = static_cast<double>(weights.size()) / sum;
         static thread_local vector<uint> over;
