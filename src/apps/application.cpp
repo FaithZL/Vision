@@ -42,11 +42,13 @@ void App::on_key_event(int key, int action) noexcept {
             camera->move(up * distance);
             break;
         default:
-            break;
+            return;
     }
+    need_update = true;
 }
 
 void App::on_scroll_event(float2 scroll) noexcept {
+    need_update = true;
     Camera *camera = rp.scene().camera();
     camera->update_fov_y(scroll.y);
 }
@@ -65,6 +67,7 @@ void App::on_cursor_move(float2 pos) noexcept {
         return;
     }
     float2 delta = pos - last_cursor_pos;
+    last_cursor_pos = pos;
     if (right_key_press) {
         update_camera_view(delta.x, -delta.y);
     } else if (left_key_press) {
@@ -76,8 +79,10 @@ void App::on_cursor_move(float2 pos) noexcept {
         delta.y *= -1;
         float3 dir = forward * delta.y + right * delta.x;
         camera->move(dir);
+    } else {
+        return;
     }
-    last_cursor_pos = pos;
+    need_update = true;
 }
 
 void App::on_mouse_event(int button, int action, float2 pos) noexcept {
@@ -88,7 +93,11 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
 }
 
 void App::update(double dt) noexcept {
-    rp.update();
+    rp.upload_data();
+    if (need_update) {
+        need_update = false;
+        rp.update();
+    }
     rp.render(dt);
     rp.download_result();
     window->set_background(rp.buffer());

@@ -14,7 +14,7 @@ class RenderPipeline;
 class Integrator : public Node {
 public:
     using Desc = IntegratorDesc;
-    using signature = void();
+    using signature = void(uint);
 
 protected:
     uint _max_depth;

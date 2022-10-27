@@ -42,5 +42,6 @@ void RenderPipeline::prepare() noexcept {
 
 void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
+    ++_frame_index;
 }
 }// namespace vision

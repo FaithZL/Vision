@@ -67,7 +67,7 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
     }
 }
 
-void Scene::update() noexcept {
+void Scene::upload_data() noexcept {
     _camera->update_device_data();
 }
 

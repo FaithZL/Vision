@@ -23,6 +23,7 @@ public:
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};
+    bool need_update{false};
 
 public:
     App(int argc, char *argv[])
@@ -30,8 +31,9 @@ public:
           device(context.create_device("cuda")),
           rp(context.create_pipeline(&device)) {
         device.init_rtx();
-        if (context.cli_parser().clear_cache())
+        if (context.cli_parser().clear_cache()) {
             context.clear_cache();
+        }
     }
     void prepare() noexcept;
     void update(double dt) noexcept;

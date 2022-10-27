@@ -20,6 +20,7 @@ private:
     DeviceData _device_data{_device};
     unique_ptr<float4[]> _render_buffer;
     Stream _stream;
+    uint _frame_index{};
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
@@ -30,6 +31,8 @@ public:
     [[nodiscard]] DeviceData &device_data() noexcept { return _device_data; }
     [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
+    void update() noexcept { _frame_index = 0;}
+    [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     void prepare() noexcept;
     [[nodiscard]] Stream &stream() noexcept { return _stream; }
     void prepare_device_data() noexcept;
@@ -37,7 +40,7 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
     [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }
-    void update() noexcept { _scene.update(); }
+    void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
 };
 
