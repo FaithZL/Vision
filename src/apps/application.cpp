@@ -4,6 +4,7 @@
 
 #include "application.h"
 #include "core/basic_types.h"
+#include "ext/imgui/imgui.h"
 
 namespace vision {
 using namespace ocarina;

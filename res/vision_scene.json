@@ -438,6 +438,10 @@
             "spp": 1
         }
     },
+    "distribution" :{
+        "type" : "alias_table"
+        // "type" : "dichotomy"
+    },
     "camera": {
         "type": "thin_lens",
         "name": "view1",

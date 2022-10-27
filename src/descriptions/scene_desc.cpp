@@ -128,6 +128,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap()));
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
     sampler_desc.init(data.value("sampler", DataWrap()));
+    distribution_desc.init(data.value("distribution", DataWrap()));
     sensor_desc.init(data.value("camera", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));

@@ -151,6 +151,11 @@ void FilmDesc::init(const ParameterSet &ps) noexcept {
     VISION_PARAMS_LIST_INITIAL(resolution)
 }
 
+void DistributionDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("alias_table");
+}
+
 #undef VISION_PARAMS_INITIAL
 #undef VISION_PARAMS_LIST_INITIAL
 

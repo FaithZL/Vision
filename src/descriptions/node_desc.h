@@ -191,4 +191,9 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct DistributionDesc : public NodeDesc {
+public:
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 }// namespace vision
