@@ -10,18 +10,20 @@
 #include "util/image_io.h"
 #include "core/logging.h"
 #include "application.h"
+#include "math/util.h"
+#include "dsl/common.h"
 
 using namespace ocarina;
 using namespace vision;
 
-int execute(int argc, char *argv[]){
+int execute(int argc, char *argv[]) {
     App app(argc, argv);
     if (argc == 1) {
         app.context.cli_parser().print_help();
         return 0;
     }
     app.prepare();
-    return app.run();;
+    return app.run();
 }
 
 int main(int argc, char *argv[]) {
