@@ -20,6 +20,7 @@ protected:
 
 public:
     explicit Sampler(const SamplerDesc &desc) : Node(desc), _spp(desc.spp) {}
+    virtual void prepare(RenderPipeline *rp) noexcept = 0;
     [[nodiscard]] virtual Float next_1d() const noexcept = 0;
     [[nodiscard]] virtual Float2 next_2d() const noexcept { return make_float2(next_1d(), next_1d()); }
     [[nodiscard]] SensorSample sensor_sample(const Uint2 &pixel, const Filter *filter = nullptr) {

@@ -85,15 +85,15 @@ SurfaceInteraction<D> DeviceData::compute_surface_interaction(const OCHit &hit) 
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
 
     {
-        // compute pos
-        Var p0 = o2w.apply_point(v0.pos);
+        $comment(compute pos)
+            Var p0 = o2w.apply_point(v0.pos);
         Var p1 = o2w.apply_point(v1.pos);
         Var p2 = o2w.apply_point(v2.pos);
         Float3 pos = hit->lerp(p0, p1, p2);
         si.pos = pos;
 
-        // compute geometry uvn
-        Float3 dp02 = p0 - p2;
+        $comment(compute geometry uvn)
+            Float3 dp02 = p0 - p2;
         Float3 dp12 = p1 - p2;
         Float3 ng_un = cross(dp02, dp12);
         si.prim_area = 0.5f * length(ng_un);
@@ -119,8 +119,8 @@ SurfaceInteraction<D> DeviceData::compute_surface_interaction(const OCHit &hit) 
     }
 
     {
-        Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
-
+        $comment(compute shading uvn)
+            Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
         $if(is_zero(normal)) {
             si.s_uvn = si.g_uvn;
         } $else {
