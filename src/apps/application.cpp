@@ -60,19 +60,30 @@ void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
 
 
 void App::on_cursor_move(float2 pos) noexcept {
-    int2 delta = make_int2(pos) - _last_cursor_pos;
-    if (_right_key_press && nonzero(_last_cursor_pos)) {
-        update_camera_view(delta.x, -delta.y);
+    if (is_zero(last_cursor_pos)) {
+        last_cursor_pos = pos;
+        return;
     }
-    _last_cursor_pos = make_int2(pos);
+    float2 delta = pos - last_cursor_pos;
+    if (right_key_press) {
+        update_camera_view(delta.x, -delta.y);
+    } else if (left_key_press) {
+        double dt = window->dt();
+        Camera *camera = rp.scene().camera();
+        float3 forward = camera->forward();
+        float3 right = camera->right();
+        delta *= 0.05f;
+        delta.y *= -1;
+        float3 dir = forward * delta.y + right * delta.x;
+        camera->move(dir);
+    }
+    last_cursor_pos = pos;
 }
 
 void App::on_mouse_event(int button, int action, float2 pos) noexcept {
-    if (button == 0) {
-        _left_key_press = bool(action);
-    }
-    if (button == 1) {
-        _right_key_press = bool(action);
+    switch (button) {
+        case 0: left_key_press = bool(action); break;
+        case 1: right_key_press = bool(action); break;
     }
 }
 

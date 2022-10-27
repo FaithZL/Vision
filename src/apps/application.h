@@ -20,9 +20,9 @@ public:
     Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
     RenderPipeline rp;
-    int2 _last_cursor_pos = make_int2(0);
-    bool _left_key_press{false};
-    bool _right_key_press{false};
+    float2 last_cursor_pos = make_float2(0);
+    bool left_key_press{false};
+    bool right_key_press{false};
 
 public:
     App(int argc, char *argv[])
@@ -30,7 +30,8 @@ public:
           device(context.create_device("cuda")),
           rp(context.create_pipeline(&device)) {
         device.init_rtx();
-        context.clear_cache();
+        if (context.cli_parser().clear_cache())
+            context.clear_cache();
     }
     void prepare() noexcept;
     void update(double dt) noexcept;
