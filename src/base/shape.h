@@ -35,6 +35,7 @@ public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
     virtual void fill_device_data(DeviceData &data) const noexcept = 0;
+    [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
 };
 
 }// namespace vision
@@ -58,6 +59,7 @@ public:
     explicit Mesh(const ShapeDesc &desc);
     Mesh() = default;
     void fill_device_data(DeviceData &data) const noexcept override;
+    [[nodiscard]] vector<float> surface_area() const noexcept override;
 };
 
 }// namespace vision

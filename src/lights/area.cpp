@@ -3,6 +3,7 @@
 //
 
 #include "base/light.h"
+#include "core/render_pipeline.h"
 
 namespace vision {
 
@@ -10,6 +11,7 @@ class AreaLight : public Light {
 private:
     uint _inst_idx{InvalidUI32};
     bool _two_sided{false};
+    Distribution *_distribution{nullptr};
 
 public:
     explicit AreaLight(const LightDesc &desc)
@@ -17,7 +19,9 @@ public:
           _two_sided{desc.two_sided}, _inst_idx(desc.inst_id) {}
 
     void prepare(RenderPipeline *rp) noexcept override {
-        
+        _distribution = rp->scene().load_distribution();
+        Shape *shape = rp->scene().get_shape(_inst_idx);
+        int i = 0;
     }
 };
 

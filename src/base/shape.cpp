@@ -23,4 +23,10 @@ void Mesh::fill_device_data(DeviceData &data) const noexcept {
     data.accept(vertices, triangles, o2w);
 }
 
+vector<float> Mesh::surface_area() const noexcept {
+    vector<float> ret;
+
+    return ret;
+}
+
 }// namespace vision

@@ -64,6 +64,7 @@ public:
     Light *load_light(const LightDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
     void upload_data() noexcept;
+    [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }
 };
 
 }// namespace vision
