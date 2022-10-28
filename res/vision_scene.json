@@ -424,7 +424,7 @@
                 {
                     "type" : "point",
                     "param" :{
-                        "color" : [1,0,1],
+                        "intensity" : [1,0,1],
                         "position" : [1,2,3]
                     }
                 }

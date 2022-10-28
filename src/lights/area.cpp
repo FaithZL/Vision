@@ -15,6 +15,10 @@ public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           _two_sided{desc.two_sided}, _inst_idx(desc.inst_id) {}
+
+    void prepare(RenderPipeline *rp) noexcept override {
+        
+    }
 };
 
 }// namespace vision

@@ -123,11 +123,6 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
         shape_desc.init(shapes[i]);
         shape_descs.push_back(shape_desc);
     }
-    for (const DataWrap &elm : shapes) {
-        ShapeDesc shape_desc;
-        shape_desc.init(elm);
-        shape_descs.push_back(shape_desc);
-    }
 }
 
 void SceneDesc::init(const DataWrap &data) noexcept {

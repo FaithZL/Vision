@@ -7,13 +7,13 @@
 namespace vision {
 class PointLight : public Light {
 private:
-    float4 _intensity;
+    float3 _intensity;
     float3 _position;
 
 public:
     explicit PointLight(const LightDesc &desc)
         : Light(desc, LightType::DeltaPosition),
-          _intensity(desc.color.val),
+          _intensity(desc.intensity),
           _position(desc.position) {}
 };
 }// namespace vision

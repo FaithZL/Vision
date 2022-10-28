@@ -57,6 +57,8 @@ public:
         return ret;
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
+    void build_distributions(RenderPipeline *rp) noexcept;
+    [[nodiscard]] Distribution *load_distribution() noexcept { return load<Distribution>(_distribution_desc); }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;

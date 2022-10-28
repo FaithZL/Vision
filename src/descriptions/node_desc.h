@@ -73,6 +73,7 @@ public:
 
     // point light
     float3 position;
+    float3 intensity{};
 
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
