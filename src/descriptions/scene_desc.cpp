@@ -109,10 +109,11 @@ namespace detail {
 }// namespace detail
 
 void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
-    for (const DataWrap &elm : materials) {
+    for (uint i = 0; i < materials.size(); ++i) {
         MaterialDesc md;
-        md.init(elm);
+        md.init(materials[i]);
         material_descs.push_back(md);
+        mat_name_to_id[md.name] = i;
     }
 }
 
@@ -121,6 +122,7 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
         ShapeDesc shape_desc;
         shape_desc.index = i;
         shape_desc.init(shapes[i]);
+        shape_desc.mat_id = mat_name_to_id[shape_desc.material_name];
         shape_descs.push_back(shape_desc);
     }
 }
@@ -131,8 +133,8 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sampler_desc.init(data.value("sampler", DataWrap()));
     distribution_desc.init(data.value("distribution", DataWrap()));
     sensor_desc.init(data.value("camera", DataWrap()));
-    init_shape_descs(data.value("shapes", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));
+    init_shape_descs(data.value("shapes", DataWrap()));
 }
 
 SceneDesc SceneDesc::from_json(const fs::path &path) {

@@ -79,6 +79,18 @@
                     0.68
                 ]
             }
+        },
+        {
+            "type": "matte",
+            "name": "Black",
+            "param": {
+                // "roughness" : [0.002]
+                "color": [
+                    0,
+                    0,
+                    0
+                ]
+            }
         }
     ],
     "shapes": [
@@ -370,7 +382,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": null,
+                "material": "Black",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {

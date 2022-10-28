@@ -87,6 +87,7 @@ public:
     TransformDesc o2w;
     LightDesc emission;
     string material_name;
+    uint mat_id{InvalidUI32};
     uint index{InvalidUI32};
     string fn;
     bool smooth{false};

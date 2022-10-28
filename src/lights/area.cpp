@@ -21,7 +21,9 @@ public:
     void prepare(RenderPipeline *rp) noexcept override {
         _distribution = rp->scene().load_distribution();
         Shape *shape = rp->scene().get_shape(_inst_idx);
-        int i = 0;
+        vector<float> weights = shape->surface_area();
+        _distribution->build(std::move(weights));
+        _distribution->prepare(rp);
     }
 };
 

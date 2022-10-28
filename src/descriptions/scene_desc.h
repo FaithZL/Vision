@@ -19,6 +19,7 @@ public:
     DistributionDesc distribution_desc;
     vector<MaterialDesc> material_descs;
     vector<ShapeDesc> shape_descs;
+    map<string, uint> mat_name_to_id;
 
 public:
     SceneDesc() = default;

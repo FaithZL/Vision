@@ -4,6 +4,7 @@
 
 #include "base/distribution.h"
 #include "rhi/common.h"
+#include "core/render_pipeline.h"
 
 namespace vision {
 struct AliasEntry {
@@ -22,7 +23,12 @@ private:
 
 public:
     explicit AliasTable(const DistributionDesc &desc) : Distribution(desc) {}
-
+    void prepare(RenderPipeline *rp) noexcept override {
+        _table.reset_device_buffer(rp->device());
+        _func.reset_device_buffer(rp->device());
+        _table.upload_immediately();
+        _func.upload_immediately();
+    }
     void build(vector<float> weights) noexcept override {
         auto sum = std::reduce(weights.cbegin(), weights.cend(), 0.0);
         auto ratio = static_cast<double>(weights.size()) / sum;
