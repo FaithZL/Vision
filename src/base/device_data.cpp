@@ -76,8 +76,8 @@ void DeviceData::build_accel() {
     stream << commit();
 }
 
-SurfaceInteraction<D> DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
-    SurfaceInteraction<D> si;
+SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
+    SurfaceInteraction si;
     Var inst = instances.read(hit.inst_id);
     Var mesh = mesh_handles.read(inst.mesh_id);
     auto o2w = Transform(inst.o2w);
