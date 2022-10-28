@@ -148,6 +148,13 @@ public:
         return !operator==(frame);
     }
 };
+
+template<typename T, typename U>
+requires is_vector3_expr_v<T> && is_vector3_expr_v<U>
+[[nodiscard]] condition_t<bool, T, U> same_hemisphere(const T &w1, const U &w2) noexcept {
+    return w1.z * w2.z > 0;
+}
+
 }// namespace geometry
 }// namespace vision
 
