@@ -46,6 +46,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
     o2w.init(param["transform"]);
     if (param.contains("emission")) {
+        emission.inst_id = index;
         emission.init(param["emission"]);
     }
     if (sub_type == "model") {

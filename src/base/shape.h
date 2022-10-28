@@ -22,9 +22,11 @@ public:
 public:
     Box3f aabb;
     float4x4 o2w;
-
+    uint light_id{InvalidUI32};
+    uint mat_id{InvalidUI32};
     struct Handle {
         uint light_id{InvalidUI32};
+        uint mat_id{InvalidUI32};
         uint mesh_id{InvalidUI32};
         float4x4 o2w;
     };
@@ -37,7 +39,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Shape::Handle, light_id, mesh_id, o2w){};
+OC_STRUCT(vision::Shape::Handle, light_id, mat_id, mesh_id, o2w){};
 
 namespace vision {
 struct Mesh : public Shape {
@@ -48,7 +50,6 @@ public:
     };
 
 public:
-    uint mat_idx{InvalidUI32};
     Light *emission{};
     vector<Vertex> vertices;
     vector<Triangle> triangles;

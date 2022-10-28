@@ -60,7 +60,7 @@ public:
         _func.set_host(std::move(weights));
         _table.set_host(std::move(table));
     }
-    [[nodiscard]] size_t size() const noexcept override { return _func.host().size(); }
+    [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
     [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return _func.read(i); }
     [[nodiscard]] Float PDF(const Uint &i) const noexcept override {
         return integral() > 0 ? func_at(i) / integral() : Var(0.f);

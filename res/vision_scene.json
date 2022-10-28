@@ -473,8 +473,8 @@
                 "type": "rgb",
                 "param": {
                     "resolution": [
-                        768,
-                        768
+                        1024,
+                        1024
                     ],
                     "fb_state": 0,
                     "tone_map": 0

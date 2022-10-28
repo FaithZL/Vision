@@ -21,6 +21,7 @@ private:
     unique_ptr<float4[]> _render_buffer;
     Stream _stream;
     uint _frame_index{};
+    double _total_time{};
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
@@ -31,7 +32,7 @@ public:
     [[nodiscard]] DeviceData &device_data() noexcept { return _device_data; }
     [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
-    void update() noexcept { _frame_index = 0;}
+    void update() noexcept { _frame_index = 0; _total_time = 0; }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     void prepare() noexcept;
     [[nodiscard]] Stream &stream() noexcept { return _stream; }

@@ -37,11 +37,9 @@ public:
 
     void render(RenderPipeline *rp) const noexcept override {
         Stream &stream = rp->stream();
-        Clock clk;
         stream << _shader(rp->frame_index()).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
-        cout << clk.elapse_ms() << endl;
     }
 };
 }// namespace vision

@@ -14,6 +14,7 @@ Shape::Shape(const ShapeDesc &desc) : Node(desc) {
 
 Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {
     if (desc.emission.valid()) {
+        light_id = desc.scene->light_num();
         emission = desc.scene->load_light(desc.emission);
     }
 }

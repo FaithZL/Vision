@@ -56,6 +56,7 @@ public:
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
+    [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;

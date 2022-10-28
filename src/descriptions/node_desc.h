@@ -69,6 +69,7 @@ public:
     // area light
     bool two_sided{false};
     float scale{1.f};
+    uint inst_id{InvalidUI32};
 
     // point light
     float3 position;
@@ -85,6 +86,7 @@ public:
     TransformDesc o2w;
     LightDesc emission;
     string material_name;
+    uint index{InvalidUI32};
     string fn;
     bool smooth{false};
     bool swap_handed{false};

@@ -117,6 +117,12 @@ void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
 }
 
 void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
+    for (uint i = 0; i < shapes.size(); ++i) {
+        ShapeDesc shape_desc;
+        shape_desc.index = i;
+        shape_desc.init(shapes[i]);
+        shape_descs.push_back(shape_desc);
+    }
     for (const DataWrap &elm : shapes) {
         ShapeDesc shape_desc;
         shape_desc.init(elm);

@@ -15,12 +15,12 @@ public:
     using Desc = DistributionDesc;
 
 protected:
-    float _integral;
+    float _integral{};
 
 public:
     explicit Distribution(const DistributionDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
-    [[nodiscard]] virtual size_t size() const noexcept = 0;
+    [[nodiscard]] virtual uint size() const noexcept = 0;
     [[nodiscard]] virtual float integral() const noexcept { return _integral; }
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
