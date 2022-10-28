@@ -43,8 +43,8 @@ public:
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
         return vision::spawn_ray(pos, g_uvn.normal(), dir);
     }
-    [[nodiscard]] OCRay spawn_ray_to(const Float3 &pos) const noexcept {
-        return vision::spawn_ray_to(pos, g_uvn.normal(), pos);
+    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
+        return vision::spawn_ray_to(pos, g_uvn.normal(), p);
     }
     [[nodiscard]] OCRay spawn_ray_to(const Interaction &it) const noexcept {
         return vision::spawn_ray_to(pos, g_uvn.normal(), it.pos, it.g_uvn.normal());
@@ -72,6 +72,16 @@ struct SurfacePoint {
         : pos(it.pos), ng(it.g_uvn.normal()) {}
     explicit SurfacePoint(const SurfaceInteraction &it)
         : pos(it.pos), ng(it.g_uvn.normal()) {}
+
+    [[nodiscard]] OCRay spawn_ray(Float3 dir) const {
+        return vision::spawn_ray(pos, ng, dir);
+    }
+    [[nodiscard]] OCRay spawn_ray_to(Float3 p) const {
+        return vision::spawn_ray_to(pos, ng, p);
+    }
+    [[nodiscard]] OCRay spawn_ray_to(const SurfacePoint &lsc) const {
+        return vision::spawn_ray_to(pos, ng, lsc.pos, lsc.ng);
+    }
 };
 
 struct GeometrySurfacePoint : public SurfacePoint {
