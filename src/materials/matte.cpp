@@ -17,15 +17,15 @@ public:
     MatteBSDF(const SurfaceInteraction &si, const Float3 &kr)
         : BSDF(si), _bxdf(kr) {}
 
-    [[nodiscard]] Float PDF_(Float3 wo, Float3 wi) const noexcept override {
+    [[nodiscard]] Float PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.PDF(wo, wi);
     }
 
-    [[nodiscard]] Float3 eval_(Float3 wo, Float3 wi) const noexcept override {
+    [[nodiscard]] Float3 eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.eval(wo, wi);
     }
 
-    [[nodiscard]] BSDFSample sample_(Float3 wo, Float uc, Float2 u) const noexcept override {
+    [[nodiscard]] BSDFSample sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
         return _bxdf.sample(wo, u);
     }
 };
