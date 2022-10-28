@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
         Var dir = make_float3(1,1,1);
         Var n1 = make_float3(0,1,0);
 //        Var n2 = make_float3(1,0,0);
-        Interaction<D> it;
+        Interaction it;
         it.pos = org;
         it.g_uvn.z = n1;
         $comment(spawn_ray)

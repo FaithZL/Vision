@@ -11,7 +11,7 @@ private:
 
 public:
     explicit ConstantTexture(const TextureDesc &desc) : Texture(desc), _val(desc.val) {}
-    [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override { return _val; }
+    [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override { return _val; }
 };
 }// namespace vision
 

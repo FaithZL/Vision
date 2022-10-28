@@ -19,6 +19,10 @@ public:
           _color(desc.scene->load<Texture>(desc.color)),
           _ior(desc.scene->load<Texture>(desc.ior)),
           _roughness(desc.scene->load<Texture>(desc.roughness)) {}
+
+    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+        return nullptr;
+    }
 };
 }// namespace vision
 

@@ -7,6 +7,7 @@
 #include "node.h"
 #include "sample.h"
 #include "interaction.h"
+#include "core/stl.h"
 
 namespace vision {
 
@@ -20,6 +21,7 @@ protected:
     [[nodiscard]] virtual Float3 eval_(Float3 wo, Float3 wi) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_(Float3 wo, Float uc, Float2 u) const noexcept = 0;
 public:
+    BSDF() = default;
     explicit BSDF(const SurfaceInteraction &si)
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
 
@@ -37,6 +39,7 @@ public:
         Float3 wo = shading_frame.to_local(world_wo);
         BSDFSample ret = sample_(wo, uc, u);
         ret.wi = shading_frame.to_local(ret.wi);
+        ret.val *= abs_dot(shading_frame.z, ret.wi);
         return ret;
     }
 };
@@ -45,8 +48,8 @@ class Material : public Node {
 public:
     using Desc = MaterialDesc;
 
-
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept = 0;
 };
 }// namespace vision

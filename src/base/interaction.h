@@ -111,12 +111,33 @@ struct LightEvalContext : public GeometrySurfacePoint {
 struct LightSampleContext : public SurfacePoint {
     Float3 ns;
     LightSampleContext() = default;
-    explicit LightSampleContext(const Interaction &it)
+    LightSampleContext(const Interaction &it)
         : SurfacePoint(it), ns(it.g_uvn.normal()) {}
-    explicit LightSampleContext(const SurfaceInteraction &it)
+    LightSampleContext(const SurfaceInteraction &it)
         : SurfacePoint(it), ns(it.s_uvn.normal()) {}
     LightSampleContext(Float3 p, Float3 ng, Float3 ns)
         : SurfacePoint{p, ng}, ns(ns) {}
+};
+
+struct TextureEvalContext {
+    Float3 pos;
+    Float2 uv;
+    TextureEvalContext() = default;
+    TextureEvalContext(const SurfaceInteraction &si)
+        : pos(si.pos), uv(si.uv) {}
+};
+
+struct MaterialEvalContext : public TextureEvalContext {
+    Float3 wo;
+    Float3 ng, ns;
+    Float3 dp_dus;
+    MaterialEvalContext() = default;
+    MaterialEvalContext(const SurfaceInteraction &si)
+        : TextureEvalContext(si),
+          wo(si.wo),
+          ng(si.g_uvn.normal()),
+          ns(si.s_uvn.normal()),
+          dp_dus(si.s_uvn.dp_du()) {}
 };
 
 }// namespace vision
