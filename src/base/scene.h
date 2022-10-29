@@ -36,13 +36,14 @@ private:
     vector<Shape *> _shapes;
     vector<Material *> _materials;
     DistributionDesc _distribution_desc;
-
+    RenderPipeline *_rp{nullptr};
     friend class RenderPipeline;
 
 public:
-    explicit Scene(vision::Context *ctx);
+    explicit Scene(vision::Context *ctx, RenderPipeline *rp);
     void init(const SceneDesc &scene_desc);
     void prepare(RenderPipeline *rp) noexcept;
+    [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)
     MAKE_GETTER(sampler)
@@ -52,6 +53,7 @@ public:
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {
+        desc.scene = this;
         auto ret = dynamic_cast<T *>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;

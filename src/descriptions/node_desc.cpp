@@ -119,6 +119,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
 
     if (sub_type == "area") {
+        color.init(param["color"]);
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point") {
         VISION_PARAMS_LIST_INITIAL(position, intensity)

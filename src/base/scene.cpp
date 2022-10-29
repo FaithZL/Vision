@@ -8,8 +8,9 @@
 
 namespace vision {
 
-Scene::Scene(vision::Context *ctx)
-    : _context(ctx) {}
+Scene::Scene(vision::Context *ctx, RenderPipeline *rp)
+    : _context(ctx),
+      _rp(rp) {}
 
 Node *Scene::load_node(const NodeDesc &desc) {
     const DynamicModule *module = _context->obtain_module(desc.plugin_name());
@@ -19,11 +20,11 @@ Node *Scene::load_node(const NodeDesc &desc) {
     return _all_nodes.back().get();
 }
 
-void Scene::init(const SceneDesc& scene_desc) {
+RenderPipeline *Scene::render_pipeline() noexcept { return _rp; }
+
+void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
-    scene_desc.light_sampler_desc.scene = this;
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
-    scene_desc.sensor_desc.scene = this;
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
@@ -48,14 +49,12 @@ void Scene::build_distributions(RenderPipeline *rp) noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept {
     for (const MaterialDesc &desc : material_descs) {
-        desc.scene = this;
         _materials.push_back(load<Material>(desc));
     }
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
     for (const ShapeDesc &desc : descs) {
-        desc.scene = this;
         auto shape = load<Shape>(desc);
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
@@ -71,7 +70,6 @@ Light *Scene::load_light(const LightDesc &desc) noexcept {
 
 void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
     for (const LightDesc &desc : descs) {
-        desc.scene = this;
         load_light(desc);
     }
 }
