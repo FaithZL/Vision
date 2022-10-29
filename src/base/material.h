@@ -21,40 +21,33 @@ public:
 
 protected:
     [[nodiscard]] virtual Float PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept;
-    [[nodiscard]] virtual Float3 eval_(Float3 wo, Float3 wi,Uchar flag) const noexcept;
-    [[nodiscard]] virtual BSDFSample sample_(Float3 wo, Float uc, Float2 u,Uchar flag) const noexcept;
-
+    [[nodiscard]] virtual Float3 eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept;
+    template<typename Func>
+    void for_each(Func &&func) noexcept {
+        for (UP<BxDF> &bxdf : _bxdfs) {
+            func(bxdf.get());
+        }
+    }
+    template<typename Func>
+    void for_each(Func &&func) const noexcept {
+        for (const UP<BxDF> &bxdf : _bxdfs) {
+            func(bxdf.get());
+        }
+    }
 public:
     BSDF() = default;
     explicit BSDF(const SurfaceInteraction &si)
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
-
-    template<typename T, typename ...Args>
-    void emplace_bxdf(Args &&...args) noexcept {
-        _bxdfs.push_back(make_unique<T>(OC_FORWARD(args)...));
-    }
-
-    void add_bxdf(UP<BxDF> bxdf) noexcept {
-        _bxdfs.push_back(std::move(bxdf));
-    }
-
-    [[nodiscard]] virtual Float PDF(Float3 world_wo, Float3 world_wi,Uchar flag) const noexcept  {
-        Float3 wo = shading_frame.to_local(world_wo);
-        Float3 wi = shading_frame.to_local(world_wi);
-        return PDF_(wo, wi, flag);
-    }
-    [[nodiscard]] virtual Float3 eval(Float3 world_wo, Float3 world_wi,Uchar flag) const noexcept {
-        Float3 wo = shading_frame.to_local(world_wo);
-        Float3 wi = shading_frame.to_local(world_wi);
-        return eval_(wo, wi,flag);
-    }
-    [[nodiscard]] virtual BSDFSample sample(Float3 world_wo, Float uc, Float2 u,Uchar flag) const noexcept {
-        Float3 wo = shading_frame.to_local(world_wo);
-        BSDFSample ret = sample_(wo, uc, u,flag);
-        ret.wi = shading_frame.to_local(ret.wi);
-        ret.val *= abs_dot(shading_frame.z, ret.wi);
-        return ret;
-    }
+    template<typename T, typename... Args>
+    void emplace_bxdf(Args &&...args) noexcept { _bxdfs.push_back(make_unique<T>(OC_FORWARD(args)...)); }
+    void add_bxdf(UP<BxDF> bxdf) noexcept { _bxdfs.push_back(std::move(bxdf)); }
+    [[nodiscard]] Int match_num(Uchar bxdf_flag) const noexcept;
+    [[nodiscard]] Uchar flag() const noexcept;
+    [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
+    [[nodiscard]] virtual Float PDF(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual Float3 eval(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept;
 };
 
 class Material : public Node {

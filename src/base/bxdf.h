@@ -41,7 +41,9 @@ protected:
 public:
     explicit BxDF(Uchar flag) : _flag(flag) {}
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi) const noexcept;
+    [[nodiscard]] virtual Float safe_PDF(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual Float3 eval(Float3 wo, Float3 wi) const noexcept = 0;
+    [[nodiscard]] virtual Float3 safe_eval(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }
     [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {

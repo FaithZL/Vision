@@ -10,7 +10,15 @@
 namespace vision {
 
 Float BxDF::PDF(Float3 wo, Float3 wi) const noexcept {
-    return select(same_hemisphere(wo, wi), cosine_hemisphere_PDF(wi.z), 0.f);
+    return cosine_hemisphere_PDF(wi.z);
+}
+
+Float BxDF::safe_PDF(Float3 wo, Float3 wi) const noexcept {
+    return select(same_hemisphere(wo, wi), PDF(wo, wi), 0.f);
+}
+
+Float3 BxDF::safe_eval(Float3 wo, Float3 wi) const noexcept {
+    return select(same_hemisphere(wo, wi), eval(wo, wi), make_float3(0.f));
 }
 
 BSDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
