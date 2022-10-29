@@ -15,6 +15,9 @@ public:
         ret.PMF = 1.f / light_num();
         return ret;
     }
+    [[nodiscard]] SampledLight sample(const LightSampleContext &lsc, const Float &u) const noexcept override {
+        return sample(u);
+    }
 };
 }
 

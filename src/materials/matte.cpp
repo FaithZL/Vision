@@ -9,26 +9,6 @@
 
 namespace vision {
 
-class MatteBSDF : public BSDF {
-private:
-    LambertReflection _bxdf;
-
-public:
-    MatteBSDF(const SurfaceInteraction &si, const Float3 &kr)
-        : BSDF(si), _bxdf(kr) {}
-
-    [[nodiscard]] Float PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        return _bxdf.PDF(wo, wi);
-    }
-
-    [[nodiscard]] Float3 eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        return _bxdf.eval(wo, wi);
-    }
-
-    [[nodiscard]] BSDFSample sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
-        return _bxdf.sample(wo, u);
-    }
-};
 
 class MatteMaterial : public Material {
 private:
@@ -39,7 +19,10 @@ public:
         : Material(desc), _color(desc.scene->load<Texture>(desc.color)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
-        return make_unique<MatteBSDF>(si, _color->eval(si).xyz());
+        auto ret = make_unique<BSDF>(si);
+        Float3 kr = _color ? _color->eval(si).xyz() : make_float3(0.f);
+        ret->emplace_bxdf<LambertReflection>(kr);
+        return ret;
     }
 };
 }// namespace vision
