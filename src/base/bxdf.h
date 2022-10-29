@@ -8,7 +8,7 @@
 
 namespace vision {
 using namespace ocarina;
-struct BSDFSample {
+struct BxDFSample {
     Float3 val;
     Float pdf{-1.f};
     Float3 wi;
@@ -38,6 +38,23 @@ public:
         static constexpr uchar All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
     };
 
+    struct Evaluation {
+        Float3 val;
+        Float pdf{-1.f};
+        [[nodiscard]] Bool valid() const noexcept {
+            return pdf >= 0.f;
+        }
+    };
+
+    struct Sample {
+        Evaluation eval;
+        Float3 wi;
+        Uchar flags;
+        [[nodiscard]] Bool valid() const noexcept {
+            return eval.valid();
+        }
+    };
+
 protected:
     Uchar _flag;
 
@@ -47,7 +64,7 @@ public:
     [[nodiscard]] virtual Float safe_PDF(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual Float3 eval(Float3 wo, Float3 wi) const noexcept = 0;
     [[nodiscard]] virtual Float3 safe_eval(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u) const noexcept;
+    [[nodiscard]] virtual BxDFSample sample(Float3 wo, Float2 u) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }
     [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {
         return ((_flag & bxdf_flag) == _flag);

@@ -21,6 +21,16 @@ class Light : public Node {
 public:
     using Desc = LightDesc;
 
+    struct Evaluation {
+        Float3 val;
+        Float pdf;
+    };
+
+    struct Sample {
+        Evaluation eval;
+        Float wi;
+    };
+
 protected:
     const LightType _type{LightType::Area};
 

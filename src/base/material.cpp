@@ -54,8 +54,8 @@ Float3 BSDF::eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept {
     return ret;
 }
 
-BSDFSample BSDF::sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
-    BSDFSample ret;
+BxDFSample BSDF::sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
+    BxDFSample ret;
     Int num = match_num(flag);
     $if(num > 0) {
         Int comp = min(cast<int>(floor(uc * num)), num - 1);
@@ -84,9 +84,9 @@ Float3 BSDF::eval(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept {
     return eval_(wo, wi, flag);
 }
 
-BSDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept {
+BxDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
-    BSDFSample ret = sample_(wo, uc, u, flag);
+    BxDFSample ret = sample_(wo, uc, u, flag);
     ret.wi = shading_frame.to_local(ret.wi);
     ret.val *= abs_dot(shading_frame.z, ret.wi);
     return ret;
