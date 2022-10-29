@@ -5,6 +5,7 @@
 #pragma once
 
 #include "dsl/common.h"
+#include "sample.h"
 
 namespace vision {
 using namespace ocarina;
@@ -38,22 +39,14 @@ public:
         static constexpr uchar All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
     };
 
-    struct Evaluation {
-        Float3 val;
-        Float pdf{-1.f};
-        [[nodiscard]] Bool valid() const noexcept {
-            return pdf >= 0.f;
-        }
-    };
-
-    struct Sample {
-        Evaluation eval;
-        Float3 wi;
-        Uchar flags;
-        [[nodiscard]] Bool valid() const noexcept {
-            return eval.valid();
-        }
-    };
+//    struct Sample {
+//        Evaluation eval;
+//        Float3 wi;
+//        Uchar flags;
+//        [[nodiscard]] Bool valid() const noexcept {
+//            return eval.valid();
+//        }
+//    };
 
 protected:
     Uchar _flag;

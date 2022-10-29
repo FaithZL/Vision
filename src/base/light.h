@@ -6,6 +6,7 @@
 
 #include "interaction.h"
 #include "node.h"
+#include "sample.h"
 
 namespace vision {
 
@@ -20,11 +21,6 @@ enum class LightType : uint8_t {
 class Light : public Node {
 public:
     using Desc = LightDesc;
-
-    struct Evaluation {
-        Float3 val;
-        Float pdf;
-    };
 
     struct Sample {
         Evaluation eval;

@@ -21,8 +21,8 @@ public:
     Float3 ng;
 
 protected:
-    [[nodiscard]] virtual Float PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept;
-    [[nodiscard]] virtual Float3 eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual BxDFSample sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
@@ -46,8 +46,7 @@ public:
     [[nodiscard]] Int match_num(Uchar bxdf_flag) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept;
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
-    [[nodiscard]] virtual Float PDF(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
-    [[nodiscard]] virtual Float3 eval(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual Evaluation evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual BxDFSample sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept;
 };
 

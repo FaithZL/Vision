@@ -29,7 +29,7 @@ Uchar BSDF::combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept {
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
-Float BSDF::PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+Float BSDF::PDF(Float3 wo, Float3 wi, Uchar flag) const noexcept {
     flag = combine_flag(wo, wi, flag);
     Float ret{0.f};
     Int match_count{0};
@@ -42,7 +42,7 @@ Float BSDF::PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept {
     return select(match_count > 0, ret / cast<float>(match_count), 0);
 }
 
-Float3 BSDF::eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+Float3 BSDF::f(Float3 wo, Float3 wi, Uchar flag) const noexcept {
     Float3 ret{make_float3(0.f)};
     $if(wo.z != 0) {
         for_each([&](const BxDF *bxdf) {
@@ -72,24 +72,18 @@ BxDFSample BSDF::sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexce
     return ret;
 }
 
-Float BSDF::PDF(ocarina::Float3 world_wo, ocarina::Float3 world_wi, ocarina::Uchar flag) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
-    Float3 wi = shading_frame.to_local(world_wi);
-    return PDF_(wo, wi, flag);
-}
-
-Float3 BSDF::eval(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
-    Float3 wi = shading_frame.to_local(world_wi);
-    return eval_(wo, wi, flag);
-}
-
 BxDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     BxDFSample ret = sample_(wo, uc, u, flag);
     ret.wi = shading_frame.to_local(ret.wi);
     ret.val *= abs_dot(shading_frame.z, ret.wi);
     return ret;
+}
+
+Evaluation BSDF::evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    Float3 wi = shading_frame.to_local(world_wi);
+    return {f(wo, wi, flag), PDF(wo, wi, flag)};
 }
 
 }// namespace vision
