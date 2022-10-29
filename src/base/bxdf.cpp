@@ -13,25 +13,34 @@ Float BxDF::PDF(Float3 wo, Float3 wi) const noexcept {
     return cosine_hemisphere_PDF(wi.z);
 }
 
-Float BxDF::safe_PDF(Float3 wo, Float3 wi) const noexcept {
-    return select(same_hemisphere(wo, wi), PDF(wo, wi), 0.f);
+Evaluation BxDF::evaluate(Float3 wo, Float3 wi) const noexcept {
+    return {f(wo, wi), PDF(wo, wi)};
 }
 
-Float3 BxDF::safe_eval(Float3 wo, Float3 wi) const noexcept {
-    return select(same_hemisphere(wo, wi), eval(wo, wi), make_float3(0.f));
+Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
+    return same_hemisphere(wo, wi);
+}
+
+Evaluation BxDF::safe_evaluate(Float3 wo, Float3 wi) const noexcept {
+    Evaluation ret;
+    Bool s = safe(wo, wi);
+    ret.val = select(s, f(wo, wi), make_float3(1.f));
+    ret.pdf = select(s, PDF(wo, wi), 0.f);
+    return ret;
+}
+
+Float3 LambertReflection::f(Float3 wo, Float3 wi) const noexcept {
+    return Kr * InvPi;
 }
 
 BxDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
     BxDFSample ret;
     ret.wi = square_to_cosine_hemisphere(u);
     wo.z = select(wo.z < 0.f, -wo.z, wo.z);
-    ret.val = eval(wo, ret.wi);
+    ret.val = f(wo, ret.wi);
     ret.pdf = PDF(wo, ret.wi);
     return ret;
 }
 
-Float3 LambertReflection::eval(Float3 wo, Float3 wi) const noexcept {
-    return Kr * InvPi;
-}
 
 }// namespace vision
