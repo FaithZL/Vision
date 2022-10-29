@@ -5,7 +5,6 @@
 #pragma once
 
 #include "node.h"
-#include "sample.h"
 #include "interaction.h"
 #include "core/stl.h"
 #include "bxdf.h"

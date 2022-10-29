@@ -9,10 +9,21 @@
 #include "math/transform.h"
 #include "filter.h"
 #include "film.h"
-#include "sample.h"
 
 namespace vision {
 using namespace ocarina;
+
+struct SensorSample {
+    Float2 p_film;
+    Float2 p_lens;
+    Float time;
+    Float filter_weight{1.f};
+};
+
+struct RaySample {
+    OCRay ray;
+    Float weight;
+};
 
 class Sensor : public Node {
 public:

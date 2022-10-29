@@ -6,7 +6,7 @@
 
 #include "dsl/common.h"
 #include "node.h"
-#include "sample.h"
+#include "sensor.h"
 #include "filter.h"
 
 namespace vision {
