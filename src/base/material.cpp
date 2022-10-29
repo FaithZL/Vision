@@ -31,18 +31,45 @@ Uchar BSDF::combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept {
 
 Float BSDF::PDF_(Float3 wo, Float3 wi, Uchar flag) const noexcept {
     flag = combine_flag(wo, wi, flag);
-
-
-
-    return ocarina::Float();
+    Float ret{0.f};
+    Int match_count{0};
+    for_each([&](const BxDF *bxdf) {
+        $if (bxdf->match_flag(flag)) {
+            match_count += 1;
+            ret += bxdf->safe_PDF(wo, wi);
+        };
+    });
+    return select(match_count > 0, ret / cast<float>(match_count), 0);
 }
 
 Float3 BSDF::eval_(Float3 wo, Float3 wi, Uchar flag) const noexcept {
-    return ocarina::Float3();
+    Float3 ret{make_float3(0.f)};
+    $if(wo.z != 0) {
+        for_each([&](const BxDF *bxdf) {
+            $if(bxdf->match_flag(flag)) {
+                ret += bxdf->safe_eval(wo, wi);
+            };
+        });
+    };
+    return ret;
 }
 
 BSDFSample BSDF::sample_(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
-    return BSDFSample();
+    BSDFSample ret;
+    Int num = match_num(flag);
+    $if(num > 0) {
+        Int comp = min(cast<int>(floor(uc * num)), num - 1);
+        Int count = 0;
+        for_each([&](const BxDF *bxdf) {
+            $if(bxdf->match_flag(flag)) {
+                $if(count == comp) {
+                    ret = bxdf->sample(wo, u);
+                };
+                count += 1;
+            };
+        });
+    };
+    return ret;
 }
 
 Float BSDF::PDF(ocarina::Float3 world_wo, ocarina::Float3 world_wi, ocarina::Uchar flag) const noexcept {

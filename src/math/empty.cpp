@@ -10,3 +10,4 @@
 #include "geometry.h"
 #include "warp.h"
 #include "util.h"
+#include "sampling.h"

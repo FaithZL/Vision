@@ -8,6 +8,7 @@
 #include "interaction.h"
 #include "core/stl.h"
 #include "bxdf.h"
+#include "math/sampling.h"
 
 namespace vision {
 

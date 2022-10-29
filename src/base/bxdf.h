@@ -10,9 +10,12 @@ namespace vision {
 using namespace ocarina;
 struct BSDFSample {
     Float3 val;
-    Float pdf;
+    Float pdf{-1.f};
     Float3 wi;
     Uchar flags;
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdf >= 0.f;
+    }
 };
 
 class BxDF {
