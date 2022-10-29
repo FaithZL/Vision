@@ -21,7 +21,7 @@ public:
     Float3 ng;
 
 protected:
-    [[nodiscard]] virtual BxDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
         for (UP<BxDF> &bxdf : _bxdfs) {
@@ -46,7 +46,7 @@ public:
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] virtual Evaluation evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual Evaluation evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept;
-    [[nodiscard]] virtual BxDFSample sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept;
 };
 
 class Material : public Node {

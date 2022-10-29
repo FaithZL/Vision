@@ -9,14 +9,25 @@ class UniformLightSampler : public LightSampler {
 public:
     explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
     [[nodiscard]] Float PMF(const Uint &id) const noexcept override { return 1.f / light_num(); }
-    [[nodiscard]] SampledLight sample(const Float &u) const noexcept override {
+    [[nodiscard]] SampledLight select_light(const Float &u) const noexcept override {
         SampledLight ret;
         ret.light_id = min(u * float(light_num()), float(light_num()) - 1);
         ret.PMF = 1.f / light_num();
         return ret;
     }
-    [[nodiscard]] SampledLight sample(const LightSampleContext &lsc, const Float &u) const noexcept override {
-        return sample(u);
+    [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
+        return select_light(u);
+    }
+
+    [[nodiscard]] LightSample sample(const Float &u_light,
+                                     const Float &u_surface) const noexcept override {
+        LightSample ret;
+        return ret;
+    }
+    [[nodiscard]] LightSample sample(const LightSampleContext &lsc, const Float &u_light,
+                                     const Float &u_surface) const noexcept override {
+        LightSample ret;
+        return ret;
     }
 };
 }

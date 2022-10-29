@@ -33,12 +33,11 @@ Float3 LambertReflection::f(Float3 wo, Float3 wi) const noexcept {
     return Kr * InvPi;
 }
 
-BxDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
-    BxDFSample ret;
+BSDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
+    BSDFSample ret;
     ret.wi = square_to_cosine_hemisphere(u);
     wo.z = select(wo.z < 0.f, -wo.z, wo.z);
-    ret.val = f(wo, ret.wi);
-    ret.pdf = PDF(wo, ret.wi);
+    ret.eval = evaluate(wo, ret.wi);
     return ret;
 }
 

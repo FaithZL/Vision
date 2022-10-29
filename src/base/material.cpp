@@ -29,8 +29,8 @@ Uchar BSDF::combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept {
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
-BxDFSample BSDF::sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
-    BxDFSample ret;
+BSDFSample BSDF::sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
+    BSDFSample ret;
     Int num = match_num(flag);
     $if(num > 0) {
         Int comp = min(cast<int>(floor(uc * num)), num - 1);
@@ -47,11 +47,11 @@ BxDFSample BSDF::sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const n
     return ret;
 }
 
-BxDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept {
+BSDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
-    BxDFSample ret = sample_local(wo, uc, u, flag);
+    BSDFSample ret = sample_local(wo, uc, u, flag);
     ret.wi = shading_frame.to_local(ret.wi);
-    ret.val *= abs_dot(shading_frame.z, ret.wi);
+    ret.eval.val *= abs_dot(shading_frame.z, ret.wi);
     return ret;
 }
 
