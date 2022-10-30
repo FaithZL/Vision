@@ -15,7 +15,7 @@ class RenderPipeline;
 class Node {
 protected:
     ocarina::string _name;
-    Scene *_scene{nullptr};
+    mutable Scene *_scene{nullptr};
 
 public:
     using Creator = Node *(const NodeDesc &);

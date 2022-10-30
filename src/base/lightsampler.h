@@ -33,7 +33,7 @@ public:
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &id) const noexcept = 0;
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float& u) const noexcept = 0;
     [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, const Float& u_light,
-                                             const Float& u_surface) const noexcept = 0;
+                                             const Float2& u_surface) const noexcept = 0;
     template<typename Func>
     void for_each(Func &&func) noexcept {
         for (Light *light : _lights) {

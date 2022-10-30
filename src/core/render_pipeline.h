@@ -43,6 +43,17 @@ public:
     [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
+    template<typename T>
+    void dispatch(const Uint &id, const vector<T *> &lst, const std::function<void(T *)> &func) {
+        if (lst.empty()) [[unlikely]] {
+            return;
+        }
+        $switch(id) {
+            for (int i = 0; i < lst.size(); ++i) {
+                $case(id) { func(lst[i]); };
+            }
+        };
+    }
 };
 
 }// namespace vision

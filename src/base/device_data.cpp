@@ -142,5 +142,18 @@ array<Var<Vertex>, 3> DeviceData::get_vertices(const Var<Triangle> &tri,
             vertices.read(offset + tri.j),
             vertices.read(offset + tri.k)};
 }
+LightEvalContext DeviceData::compute_light_eval_context(const Uint &inst_id,
+                                                        const Uint &prim_id,
+                                                        const Float2 &bary) const noexcept {
+    OCHit hit;
+    hit.inst_id = inst_id;
+    hit.prim_id = prim_id;
+    hit.bary = bary;
+    // todo
+    SurfaceInteraction si = compute_surface_interaction(hit);
+    LightEvalContext ret(si);
+    ret.PDF_pos = 1 / si.prim_area;
+    return ret;
+}
 
 }// namespace vision
