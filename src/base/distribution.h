@@ -29,12 +29,12 @@ public:
      * @param u uniform
      * @return offset, PMF, u_remapped
      */
-    [[nodiscard]] virtual tuple<Int, Float, Float> sample_discrete(Float u) const noexcept = 0;
+    [[nodiscard]] virtual tuple<Uint, Float, Float> sample_discrete(Float u) const noexcept = 0;
     /**
      * @param u uniform
      * @return ret, PDF, offset
      */
-    [[nodiscard]] virtual tuple<Float, Float, Int> sample_continuous(Float u) const noexcept = 0;
+    [[nodiscard]] virtual tuple<Float, Float, Uint> sample_continuous(Float u) const noexcept = 0;
 };
 
 }// namespace vision

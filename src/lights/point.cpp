@@ -25,7 +25,7 @@ public:
         return 0.f;
     }
 
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, const Float2 &u) const noexcept override {
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
         LightSample ret;
         LightEvalContext p_light;
         p_light.pos = _position;

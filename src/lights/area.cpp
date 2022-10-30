@@ -41,8 +41,12 @@ public:
         return select(isinf(ret), 0.f, ret);
     }
 
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, const Float2 &u) const noexcept override {
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
         LightSample ret;
+        DeviceData &data = _scene->render_pipeline()->device_data();
+        auto [prim_id, pmf, u_remapping] = _distribution->sample_discrete(u.x);
+        u.x = u_remapping;
+        Float2 bary = square_to_triangle(u);
         return ret;
     }
 

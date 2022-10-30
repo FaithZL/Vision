@@ -31,7 +31,7 @@ public:
 
     [[nodiscard]] virtual Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
     [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, const Float2 &u) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept = 0;
     [[nodiscard]] virtual Evaluation evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept {
         return {Li(p_ref, p_light), PDF_Li(p_ref, p_light)};
     }

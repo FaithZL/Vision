@@ -13,7 +13,7 @@ namespace vision {
 class RenderPipeline;
 
 class Node {
-private:
+protected:
     ocarina::string _name;
     Scene *_scene{nullptr};
 
