@@ -104,7 +104,7 @@ struct LightEvalContext : public GeometrySurfacePoint {
         : GeometrySurfacePoint(gsp), PDF_pos(PDF_pos) {}
     LightEvalContext(Float3 p, Float3 ng, Float2 uv, Float PDF_pos)
         : GeometrySurfacePoint{p, ng, uv}, PDF_pos(PDF_pos) {}
-    explicit LightEvalContext(const SurfaceInteraction &si)
+    LightEvalContext(const SurfaceInteraction &si)
         : GeometrySurfacePoint{si, si.uv}, PDF_pos(si.PDF_pos) {}
 };
 

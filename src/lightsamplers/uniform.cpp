@@ -23,7 +23,7 @@ public:
         LightSample ret;
         SampledLight sampled_light = select_light(lsc, u_light);
         RenderPipeline *rp = _scene->render_pipeline();
-        rp->dispatch<Light>(sampled_light.light_id, _lights, [&](Light *light) {
+        rp->dispatch<Light>(sampled_light.light_id, _lights, [&](const Light *light) {
             ret = light->sample_Li(lsc, u_surface);
             ret.eval.pdf *= sampled_light.PMF;
         });

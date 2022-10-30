@@ -44,13 +44,14 @@ public:
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
     template<typename T>
-    void dispatch(const Uint &id, const vector<T *> &lst, const std::function<void(T *)> &func) {
+    void dispatch(const Uint &id, const vector<T *> &lst, const std::function<void(const T *)> &func) {
         if (lst.empty()) [[unlikely]] {
+            OC_ERROR("lst is empty");
             return;
         }
         $switch(id) {
             for (int i = 0; i < lst.size(); ++i) {
-                $case(id) { func(lst[i]); };
+                $case(id) { func(lst[i]); $break; };
             }
         };
     }

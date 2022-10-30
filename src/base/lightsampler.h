@@ -31,9 +31,11 @@ public:
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
     void add_light(Light *light) noexcept { _lights.push_back(light); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &id) const noexcept = 0;
-    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float& u) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, const Float& u_light,
-                                             const Float2& u_surface) const noexcept = 0;
+    [[nodiscard]] virtual Evaluation evaluate_hit(const LightSampleContext &p_ref, const SurfaceInteraction &si) const noexcept;
+    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, const Float &u_light,
+                                             const Float2 &u_surface) const noexcept = 0;
+    void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
         for (Light *light : _lights) {
