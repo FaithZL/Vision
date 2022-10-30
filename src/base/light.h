@@ -29,9 +29,11 @@ public:
     explicit Light(const LightDesc &desc, LightType light_type)
         : Node(desc), _type(light_type) {}
 
-    [[nodiscard]] virtual Float3 Li(const LightSampleContext &lsc) const noexcept = 0;
-//    [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &lsc, const LightEvalContext &lec) const noexcept = 0;
-//    [[nodiscard]] virtual Evaluation evaluate(const LightSampleContext &lsc, const LightEvalContext &lec) const noexcept = 0;
-//    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &lsc, const Float2 &u) const noexcept = 0;
+    [[nodiscard]] virtual Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, const Float2 &u) const noexcept = 0;
+    [[nodiscard]] virtual Evaluation evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept {
+        return {Li(p_ref, p_light), PDF_Li(p_ref, p_light)};
+    }
 };
 }// namespace vision

@@ -16,8 +16,24 @@ public:
           _intensity(desc.intensity),
           _position(desc.position) {}
 
-    [[nodiscard]] Float3 Li(const LightSampleContext &lsc) const noexcept override {
-        return _intensity / length_squared(lsc.pos - _position);
+    [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
+                            const LightEvalContext &p_light) const noexcept override {
+        return _intensity / length_squared(p_ref.pos - _position);
+    }
+    [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
+                               const LightEvalContext &p_light) const noexcept override {
+        return 0.f;
+    }
+
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, const Float2 &u) const noexcept override {
+        LightSample ret;
+        LightEvalContext p_light;
+        p_light.pos = _position;
+        ret.eval = evaluate(p_ref, p_light);
+        Float3 wi_un = _position - p_ref.pos;
+        ret.wi = normalize(wi_un);
+        ret.distance = length(wi_un);
+        return ret;
     }
 };
 }// namespace vision
