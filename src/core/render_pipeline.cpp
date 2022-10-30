@@ -45,7 +45,7 @@ void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
     double ms = clk.elapse_ms();
     _total_time += ms;
-    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+//    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
 }
 }// namespace vision

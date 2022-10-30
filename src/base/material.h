@@ -43,6 +43,7 @@ public:
     void add_bxdf(UP<BxDF> bxdf) noexcept { _bxdfs.push_back(std::move(bxdf)); }
     [[nodiscard]] Int match_num(Uchar bxdf_flag) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept;
+    [[nodiscard]] Float3 albedo() const noexcept { return _bxdfs[0]->albedo(); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] virtual Evaluation evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual Evaluation evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept;

@@ -8,7 +8,7 @@
 namespace vision {
 
 void DeviceData::accept(const vector<Vertex> &vert,
-                        const vector<Triangle> &tri, float4x4 o2w) {
+                        const vector<Triangle> &tri, float4x4 o2w, uint mat_id, uint light_id) {
 
     Mesh::Handle mesh_handle{.vertex_offset = (uint)vertices.host().size(),
                              .triangle_offset = (uint)triangles.host().size()};
@@ -16,7 +16,8 @@ void DeviceData::accept(const vector<Vertex> &vert,
     vertices.append(vert);
     triangles.append(tri);
 
-    Shape::Handle inst{.light_id = InvalidUI32,
+    Shape::Handle inst{.light_id = light_id,
+                       .mat_id = mat_id,
                        .mesh_id = (uint)mesh_handles.host().size(),
                        .o2w = o2w};
     instances.push_back(inst);
@@ -84,7 +85,8 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
     auto o2w = Transform(inst.o2w);
     Var tri = triangles.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
-
+    si.light_id = inst.light_id;
+    si.mat_id = inst.mat_id;
     {
         $comment(compute pos)
             Var p0 = o2w.apply_point(v0.pos);

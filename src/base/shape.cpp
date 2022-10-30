@@ -22,7 +22,7 @@ Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {
 }
 
 void Mesh::fill_device_data(DeviceData &data) const noexcept {
-    data.accept(vertices, triangles, o2w);
+    data.accept(vertices, triangles, o2w, mat_id, light_id);
 }
 
 vector<float> Mesh::surface_area() const noexcept {
