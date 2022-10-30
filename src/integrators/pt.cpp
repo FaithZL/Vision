@@ -10,7 +10,8 @@ namespace vision {
 using namespace ocarina;
 class PathTracingIntegrator : public Integrator {
 public:
-    explicit PathTracingIntegrator(const IntegratorDesc &desc) : Integrator(desc) {
+    explicit PathTracingIntegrator(const IntegratorDesc &desc)
+        : Integrator(desc) {
         _mis_weight = mis_weight<D>;
     }
 
@@ -24,27 +25,55 @@ public:
             Uint2 pixel = dispatch_idx().xy();
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel);
-            auto [ray, weight] = camera->generate_ray(ss);
-
+            RaySample rs = camera->generate_ray(ss);
+            Var ray = rs.ray;
 //            Float bsdf_pdf = eval(1e16f);
-//            Float3 L = make_float3(0.f);
-//            Float3 throughput = make_float3(0.f);
-//            $for(bounces, 0, _max_depth){
+//            Float3 Li = make_float3(0.f);
+//            Float3 throughput = make_float3(1.f);
+//            $for(bounces, 0, _max_depth) {
 //                Var hit = accel.trace_closest(ray);
+//                comment("miss");
 //                $if(hit->is_miss()) {
 //                    $break;
 //                };
-//
 //                auto si = data.compute_surface_interaction(hit);
+//                si.wo = normalize(-ray->direction());
+//
+//                comment("hit light");
 //                $if(si.has_emission()) {
-////                    Evaluation eval = light_sampler->evaluate_hit(si, )
+//                    LightSampleContext p_ref;
+//                    p_ref.pos = ray->origin();
+//                    p_ref.ng = ray->direction();
+//                    Evaluation eval = light_sampler->evaluate_hit(p_ref, si);
+//                    Li += eval.val * throughput * _mis_weight(bsdf_pdf, eval.pdf);
 //                };
+//
+//                comment("estimate direct lighting");
+//                comment("sample light");
+//                LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
+//                Bool occluded = accel.trace_any(make_ray(ray->origin(), light_sample.wi, light_sample.distance));
+//                comment("sample bsdf");
+//                BSDFSample bsdf_sample;
+//                rp->dispatch<Material>(si.mat_id, rp->scene().materials(),
+//                                       [&](const Material *material) {
+//                    UP<BSDF> bsdf = material->get_BSDF(si);
+//                    Evaluation bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
+//                    $if(!occluded) {
+//                        Li += throughput * light_sample.eval.val * bsdf_eval.val
+//                              * _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf)
+//                              / light_sample.eval.pdf;
+//                    };
+//
+//                    bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+//
+//                });
+//                throughput *= bsdf_sample.eval.val / bsdf_sample.eval.pdf;
+//                ray = si.spawn_ray(bsdf_sample.wi);
 //            };
 
             Var hit = accel.trace_closest(ray);
-            Var p = ray->direction();
             $if(hit->is_miss()) {
-                camera->film()->add_sample(pixel, make_float4(0, 0, 0, 1), 0);
+                camera->film()->add_sample(pixel, make_float3(0), 0);
                 $return();
             };
             auto si = data.compute_surface_interaction(hit);

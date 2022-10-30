@@ -20,6 +20,7 @@ public:
     explicit BxDF(Uchar flag) : _flag(flag) {}
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi) const noexcept = 0;
+    [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual Evaluation evaluate(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual Evaluation safe_evaluate(Float3 wo, Float3 wi) const noexcept;
@@ -38,6 +39,7 @@ public:
     explicit LambertReflection(Float3 kr)
         : BxDF(select(is_zero(kr), BxDFFlag::Unset, BxDFFlag::DiffRefl)),
           Kr(kr) {}
+    [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
 };
 

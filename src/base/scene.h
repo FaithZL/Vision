@@ -50,6 +50,7 @@ public:
     MAKE_GETTER(light_sampler)
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
+    [[nodiscard]] const vector<Material *>& materials() const noexcept { return _materials; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {

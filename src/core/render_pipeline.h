@@ -51,7 +51,7 @@ public:
         }
         $switch(id) {
             for (int i = 0; i < lst.size(); ++i) {
-                $case(id) { func(lst[i]); $break; };
+                $case(i) { func(lst[i]); $break; };
             }
         };
     }

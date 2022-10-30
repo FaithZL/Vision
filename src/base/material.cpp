@@ -68,7 +68,7 @@ Evaluation BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept
             ret.pdf += pdf;
         };
     });
-    ret.pdf = select(match_count > 0, ret.pdf / cast<float>(match_count), 0);
+    ret.pdf = select(match_count > 0, ret.pdf / cast<float>(match_count), 0.f);
 
     return ret;
 }

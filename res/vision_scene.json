@@ -433,13 +433,13 @@
         "type": "uniform",
         "param" : {
             "lights": [
-                {
-                    "type" : "point",
-                    "param" :{
-                        "intensity" : [1,0,1],
-                        "position" : [1,2,3]
-                    }
-                }
+                // {
+                //     "type" : "point",
+                //     "param" :{
+                //         "intensity" : [1,0,1],
+                //         "position" : [1,2,3]
+                //     }
+                // }
             ]
         }
     },
