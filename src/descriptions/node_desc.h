@@ -64,7 +64,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     // common
-    TextureDesc color;
+    TextureDesc radiance;
 
     // area light
     bool two_sided{false};

@@ -15,5 +15,6 @@ public:
 public:
     explicit Texture(const TextureDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tev) const noexcept = 0;
+    [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
 };
 }// namespace vision

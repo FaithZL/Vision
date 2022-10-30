@@ -13,13 +13,20 @@ private:
     uint _inst_idx{InvalidUI32};
     bool _two_sided{false};
     Distribution *_distribution{nullptr};
-    Texture * _color{nullptr};
+    Texture *_radiance{nullptr};
 
 public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           _two_sided{desc.two_sided}, _inst_idx(desc.inst_id) {
-        _color = desc.scene->load<Texture>(desc.color);
+        _radiance = desc.scene->load<Texture>(desc.radiance);
+    }
+
+    [[nodiscard]] Float3 L(const LightEvalContext &lec, const Float3 &w) const {
+        if (_two_sided) {
+            return _radiance->eval(lec.uv).xyz();
+        }
+        return select(dot(w, lec.ng) > 0, _radiance->eval(lec.uv).xyz(), make_float3(0.f));
     }
 
     [[nodiscard]] Float3 Li(const LightSampleContext &lsc) const noexcept override {

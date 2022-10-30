@@ -417,7 +417,7 @@
                 "emission": {
                     "type" : "area",
                     "param" : {
-                        "color": [
+                        "radiance": [
                             17,
                             12,
                             4
