@@ -78,6 +78,7 @@ void DeviceData::build_accel() {
 
 SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
     SurfaceInteraction si;
+    si.prim_id = hit.prim_id;
     Var inst = instances.read(hit.inst_id);
     Var mesh = mesh_handles.read(inst.mesh_id);
     auto o2w = Transform(inst.o2w);
@@ -152,7 +153,6 @@ LightEvalContext DeviceData::compute_light_eval_context(const Uint &inst_id,
     // todo
     SurfaceInteraction si = compute_surface_interaction(hit);
     LightEvalContext ret(si);
-    ret.PDF_pos = 1 / si.prim_area;
     return ret;
 }
 

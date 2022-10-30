@@ -17,6 +17,8 @@ Evaluation LightSampler::evaluate_hit(const LightSampleContext &p_ref,
                                       const SurfaceInteraction &si) const noexcept {
     Evaluation ret;
     dispatch_light(si.light_id, [&](const Light *light) {
+        LightEvalContext p_light{si};
+        p_light.PDF_pos *= light->PMF(si.prim_id);
         ret = light->evaluate(p_ref, si);
     });
     Float pmf = PMF(p_ref, si.light_id);

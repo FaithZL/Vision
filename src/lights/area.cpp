@@ -23,6 +23,10 @@ public:
         _radiance = desc.scene->load<Texture>(desc.radiance);
     }
 
+    [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
+        return _distribution->PMF(prim_id);
+    }
+
     [[nodiscard]] Float3 L(const LightEvalContext &p_light, const Float3 &w) const {
         if (_two_sided) {
             return _radiance->eval(p_light.uv).xyz();

@@ -4,16 +4,20 @@
 
 #include "base/integrator.h"
 #include "core/render_pipeline.h"
+#include "math/warp.h"
 
 namespace vision {
 using namespace ocarina;
 class PathTracingIntegrator : public Integrator {
 public:
-    explicit PathTracingIntegrator(const IntegratorDesc &desc) : Integrator(desc) {}
+    explicit PathTracingIntegrator(const IntegratorDesc &desc) : Integrator(desc) {
+        _mis_weight = mis_weight<D>;
+    }
 
     void compile_shader(RenderPipeline *rp) noexcept override {
         Camera *camera = rp->scene().camera();
         Sampler *sampler = rp->scene().sampler();
+        LightSampler *light_sampler = rp->scene().light_sampler();
         DeviceData &data = rp->device_data();
         Accel &accel = rp->device_data().accel;
         _kernel = [&](Uint frame_index) -> void {
@@ -21,6 +25,22 @@ public:
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel);
             auto [ray, weight] = camera->generate_ray(ss);
+
+//            Float bsdf_pdf = eval(1e16f);
+//            Float3 L = make_float3(0.f);
+//            Float3 throughput = make_float3(0.f);
+//            $for(bounces, 0, _max_depth){
+//                Var hit = accel.trace_closest(ray);
+//                $if(hit->is_miss()) {
+//                    $break;
+//                };
+//
+//                auto si = data.compute_surface_interaction(hit);
+//                $if(si.has_emission()) {
+////                    Evaluation eval = light_sampler->evaluate_hit(si, )
+//                };
+//            };
+
             Var hit = accel.trace_closest(ray);
             Var p = ray->direction();
             $if(hit->is_miss()) {

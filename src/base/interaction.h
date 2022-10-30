@@ -54,8 +54,8 @@ public:
 struct SurfaceInteraction : public Interaction {
     Float2 uv;
     UVN<Float3> s_uvn;
-    Float PDF_pos{-1.f};
     Float prim_area{0.f};
+    Uint prim_id{InvalidUI32};
     Uint light_id{InvalidUI32};
     Uint mat_id{InvalidUI32};
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
@@ -105,7 +105,7 @@ struct LightEvalContext : public GeometrySurfacePoint {
     LightEvalContext(Float3 p, Float3 ng, Float2 uv, Float PDF_pos)
         : GeometrySurfacePoint{p, ng, uv}, PDF_pos(PDF_pos) {}
     LightEvalContext(const SurfaceInteraction &si)
-        : GeometrySurfacePoint{si, si.uv}, PDF_pos(si.PDF_pos) {}
+        : GeometrySurfacePoint{si, si.uv}, PDF_pos(1.f / si.prim_area) {}
 };
 
 struct LightSampleContext : public SurfacePoint {
