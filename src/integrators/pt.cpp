@@ -24,6 +24,7 @@ public:
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
+            Bool debug = all(pixel == make_uint2(512, 10));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel);
             RaySample rs = camera->generate_ray(ss);
@@ -31,12 +32,14 @@ public:
             Float bsdf_pdf = eval(1e16f);
             Float3 Li = make_float3(0.f);
             Float3 throughput = make_float3(1.f);
+
             $for(bounces, 0, _max_depth) {
                 Var hit = accel.trace_closest(ray);
                 comment("miss");
                 $if(hit->is_miss()) {
                     $break;
                 };
+
                 auto si = data.compute_surface_interaction(hit);
                 si.wo = normalize(-ray->direction());
 
@@ -52,7 +55,10 @@ public:
                 comment("estimate direct lighting");
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
-                Bool occluded = accel.trace_any(si.spawn_ray(light_sample.wi * light_sample.distance*0.99f));
+                OCRay shadow_ray = si.spawn_ray(light_sample.wi * light_sample.distance*0.99f);
+                shadow_ray.dir_max.w = 1;
+                Bool occluded = accel.trace_any(shadow_ray);
+
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
                 Evaluation bsdf_eval;
@@ -66,7 +72,11 @@ public:
                     $break;
                 };
                 Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
-                Li += throughput * light_sample.eval.f * bsdf_eval.f * weight / light_sample.eval.pdf;
+                $if(!occluded) {
+                    Float3 Ld = make_float3(0.f);
+                    Ld = throughput * light_sample.eval.f * bsdf_eval.f * weight / light_sample.eval.pdf;
+                    Li += Ld;
+                };
                 throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
 
                 Float rr = sampler->next_1d();
@@ -78,6 +88,7 @@ public:
                     };
                     throughput /= q;
                 };
+                bsdf_pdf = bsdf_sample.eval.pdf;
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
 

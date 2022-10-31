@@ -50,7 +50,7 @@ BSDFSample BSDF::sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const n
 BSDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     BSDFSample ret = sample_local(wo, uc, u, flag);
-    ret.wi = shading_frame.to_local(ret.wi);
+    ret.wi = shading_frame.to_world(ret.wi);
     ret.eval.f *= abs_dot(shading_frame.z, ret.wi);
     return ret;
 }
@@ -76,7 +76,9 @@ Evaluation BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept
 Evaluation BSDF::evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
-    return evaluate_local(wo, wi, flag);
+    Evaluation ret = evaluate_local(wo, wi, flag);
+    ret.f *= abs_dot(shading_frame.z, world_wi);
+    return ret;
 }
 
 }// namespace vision
