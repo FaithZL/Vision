@@ -49,7 +49,8 @@ public:
                     p_ref.pos = ray->origin();
                     p_ref.ng = ray->direction();
                     Evaluation eval = light_sampler->evaluate_hit(p_ref, si);
-                    Li += eval.f * throughput * _mis_weight(bsdf_pdf, eval.pdf);
+                    Float weight = _mis_weight(bsdf_pdf, eval.pdf);
+                    Li += eval.f * throughput * weight;
                 };
 
                 comment("estimate direct lighting");
@@ -89,16 +90,6 @@ public:
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
 
-
-
-//            Var hit = accel.trace_closest(ray);
-//            $if(hit->is_miss()) {
-//                camera->film()->add_sample(pixel, make_float3(0), 0);
-//                $return();
-//            };
-//            auto si = data.compute_surface_interaction(hit);
-//            Float3 normal = si.s_uvn.normal();
-//            normal = (normal + 1.f) / 2.f;
             camera->film()->add_sample(pixel, Li, frame_index);
         };
         _shader = rp->device().compile(_kernel);
