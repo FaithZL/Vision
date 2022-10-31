@@ -10,7 +10,7 @@
 namespace vision {
 
 Float BxDF::PDF(Float3 wo, Float3 wi) const noexcept {
-    return cosine_hemisphere_PDF(wi.z);
+    return cosine_hemisphere_PDF(abs_cos_theta(wi));
 }
 
 Evaluation BxDF::evaluate(Float3 wo, Float3 wi) const noexcept {
@@ -36,7 +36,7 @@ Float3 LambertReflection::f(Float3 wo, Float3 wi) const noexcept {
 BSDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
     BSDFSample ret;
     ret.wi = square_to_cosine_hemisphere(u);
-    wo.z = select(wo.z < 0.f, -wo.z, wo.z);
+    ret.wi.z = select(wo.z < 0.f, -ret.wi.z, ret.wi.z);
     ret.eval = evaluate(wo, ret.wi);
     return ret;
 }

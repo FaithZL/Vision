@@ -55,23 +55,18 @@ public:
                 Bool occluded = accel.trace_any(si.spawn_ray(light_sample.wi * light_sample.distance*0.99f));
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
+                Evaluation bsdf_eval;
                 rp->dispatch<Material>(si.mat_id, rp->scene().materials(),
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
-                    Evaluation bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
-
-                    $if( bsdf_eval.valid()) {
-                        Li += throughput * light_sample.eval.f * bsdf_eval.f * _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf)
-                              / light_sample.eval.pdf;
-                    } $else {
-                        print("wori");
-                    };
-
+                    bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
-//                    $if(!bsdf_sample.valid()) {
-//                        print("{},{},{}", si.pos.x, si.pos.y, bsdf_sample.eval.pdf);
-//                    };
                 });
+                $if(!bsdf_eval.valid()) {
+                    $break;
+                };
+                Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
+                Li += throughput * light_sample.eval.f * bsdf_eval.f * weight / light_sample.eval.pdf;
                 throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
 
                 Float rr = sampler->next_1d();

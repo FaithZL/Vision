@@ -29,7 +29,7 @@ struct BxDFFlag {
 
 struct Evaluation {
     Float3 f;
-    Float pdf{-1.f};
+    Float pdf{0.f};
     [[nodiscard]] Bool valid() const noexcept {
         return pdf > 0.f;
     }
