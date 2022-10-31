@@ -19,7 +19,7 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref,
     dispatch_light(si.light_id, [&](const Light *light) {
         LightEvalContext p_light{si};
         p_light.PDF_pos *= light->PMF(si.prim_id);
-        ret = light->evaluate(p_ref, si);
+        ret = light->evaluate(p_ref, p_light);
     });
     Float pmf = PMF(p_ref, si.light_id);
     ret.pdf *= pmf;

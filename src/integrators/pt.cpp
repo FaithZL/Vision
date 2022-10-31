@@ -50,6 +50,7 @@ public:
                     p_ref.ng = ray->direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, si);
                     Float weight = _mis_weight(bsdf_pdf, eval.pdf);
+//                    weight = 1;
                     Li += eval.L * throughput * weight;
                 };
 
@@ -71,22 +72,22 @@ public:
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
                     $if(!occluded && bsdf_eval.valid()) {
-                        Float3 Ld = throughput * light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
-                        Li += Ld;
+                        Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
+                        Li += throughput * Ld;
                     };
                     bsdf_pdf = bsdf_sample.eval.pdf;
                     throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
                 });
 
-                Float rr = sampler->next_1d();
-                Float mp = max_comp(throughput);
-                $if(mp < _rr_threshold) {
-                    Float q = min(0.95f, mp);
-                    $if(q < rr) {
-                        $break;
-                    };
-                    throughput /= q;
-                };
+//                Float rr = sampler->next_1d();
+//                Float mp = max_comp(throughput);
+//                $if(mp < _rr_threshold) {
+//                    Float q = min(0.95f, mp);
+//                    $if(q < rr) {
+//                        $break;
+//                    };
+//                    throughput /= q;
+//                };
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
 
