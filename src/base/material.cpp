@@ -51,7 +51,7 @@ BSDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const n
     Float3 wo = shading_frame.to_local(world_wo);
     BSDFSample ret = sample_local(wo, uc, u, flag);
     ret.wi = shading_frame.to_local(ret.wi);
-    ret.eval.val *= abs_dot(shading_frame.z, ret.wi);
+    ret.eval.f *= abs_dot(shading_frame.z, ret.wi);
     return ret;
 }
 
@@ -64,7 +64,7 @@ Evaluation BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept
         $if (bxdf->match_flag(flag)) {
             match_count += 1;
             auto [val, pdf] = bxdf->safe_evaluate(wo, wi);
-            ret.val += val;
+            ret.f += val;
             ret.pdf += pdf;
         };
     });

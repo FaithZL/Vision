@@ -24,7 +24,7 @@ Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
 Evaluation BxDF::safe_evaluate(Float3 wo, Float3 wi) const noexcept {
     Evaluation ret;
     Bool s = safe(wo, wi);
-    ret.val = select(s, f(wo, wi), make_float3(1.f));
+    ret.f = select(s, f(wo, wi), make_float3(0.f));
     ret.pdf = select(s, PDF(wo, wi), 0.f);
     return ret;
 }

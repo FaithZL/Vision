@@ -13,7 +13,7 @@
 namespace vision {
 
 struct BSDF {
-private:
+protected:
     vector<UP<BxDF>> _bxdfs;
 
 public:

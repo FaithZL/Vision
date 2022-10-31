@@ -21,6 +21,7 @@ public:
         LightSampler *light_sampler = rp->scene().light_sampler();
         DeviceData &data = rp->device_data();
         Accel &accel = rp->device_data().accel;
+
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
             sampler->start_pixel_sample(pixel, frame_index, 0);
@@ -45,29 +46,43 @@ public:
                     p_ref.pos = ray->origin();
                     p_ref.ng = ray->direction();
                     Evaluation eval = light_sampler->evaluate_hit(p_ref, si);
-                    Li += eval.val * throughput * _mis_weight(bsdf_pdf, eval.pdf);
+                    Li += eval.f * throughput * _mis_weight(bsdf_pdf, eval.pdf);
                 };
 
                 comment("estimate direct lighting");
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
-                Bool occluded = accel.trace_any(make_ray(ray->origin(), light_sample.wi, light_sample.distance));
+                Bool occluded = accel.trace_any(si.spawn_ray(light_sample.wi * light_sample.distance*0.99f));
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
                 rp->dispatch<Material>(si.mat_id, rp->scene().materials(),
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
                     Evaluation bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
-                    $if(!occluded) {
-                        Li += throughput * light_sample.eval.val * bsdf_eval.val
-                              * _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf)
+
+                    $if( bsdf_eval.valid()) {
+                        Li += throughput * light_sample.eval.f * bsdf_eval.f * _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf)
                               / light_sample.eval.pdf;
+                    } $else {
+                        print("wori");
                     };
 
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
-
+//                    $if(!bsdf_sample.valid()) {
+//                        print("{},{},{}", si.pos.x, si.pos.y, bsdf_sample.eval.pdf);
+//                    };
                 });
-                throughput *= bsdf_sample.eval.val / bsdf_sample.eval.pdf;
+                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
+
+                Float rr = sampler->next_1d();
+                Float mp = max_comp(throughput);
+                $if(mp < _rr_threshold) {
+                    Float q = min(0.95f, mp);
+                    $if(q < rr) {
+                        $break;
+                    };
+                    throughput /= q;
+                };
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
 
