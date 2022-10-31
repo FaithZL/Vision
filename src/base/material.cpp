@@ -55,8 +55,8 @@ BSDFSample BSDF::sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const n
     return ret;
 }
 
-Evaluation BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
-    Evaluation ret;
+BSDFEval BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+    BSDFEval ret;
     flag = combine_flag(wo, wi, flag);
 
     Int match_count{0};
@@ -73,10 +73,10 @@ Evaluation BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept
     return ret;
 }
 
-Evaluation BSDF::evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept {
+BSDFEval BSDF::evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
-    Evaluation ret = evaluate_local(wo, wi, flag);
+    BSDFEval ret = evaluate_local(wo, wi, flag);
     ret.f *= abs_dot(shading_frame.z, world_wi);
     return ret;
 }

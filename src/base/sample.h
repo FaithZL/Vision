@@ -27,7 +27,7 @@ struct BxDFFlag {
     static constexpr uchar All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
 };
 
-struct Evaluation {
+struct BSDFEval {
     Float3 f;
     Float pdf{0.f};
     [[nodiscard]] Bool valid() const noexcept {
@@ -35,8 +35,16 @@ struct Evaluation {
     }
 };
 
+struct LightEval {
+    Float3 L;
+    Float pdf{0.f};
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdf > 0.f;
+    }
+};
+
 struct BSDFSample {
-    Evaluation eval;
+    BSDFEval eval;
     Float3 wi;
     Uchar flags;
     [[nodiscard]] Bool valid() const noexcept {
@@ -45,7 +53,7 @@ struct BSDFSample {
 };
 
 struct LightSample {
-    Evaluation eval;
+    LightEval eval;
     Float3 wi;
     Float distance;
     [[nodiscard]] Bool valid() const noexcept {

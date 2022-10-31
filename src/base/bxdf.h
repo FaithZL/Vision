@@ -22,8 +22,8 @@ public:
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual Evaluation evaluate(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual Evaluation safe_evaluate(Float3 wo, Float3 wi) const noexcept;
+    [[nodiscard]] virtual BSDFEval evaluate(Float3 wo, Float3 wi) const noexcept;
+    [[nodiscard]] virtual BSDFEval safe_evaluate(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }
     [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {

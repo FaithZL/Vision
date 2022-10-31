@@ -13,9 +13,9 @@ LightSampler::LightSampler(const LightSamplerDesc &desc) : Node(desc) {
     }
 }
 
-Evaluation LightSampler::evaluate_hit(const LightSampleContext &p_ref,
+LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref,
                                       const SurfaceInteraction &si) const noexcept {
-    Evaluation ret;
+    LightEval ret;
     dispatch_light(si.light_id, [&](const Light *light) {
         LightEvalContext p_light{si};
         p_light.PDF_pos *= light->PMF(si.prim_id);

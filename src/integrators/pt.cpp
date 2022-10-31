@@ -48,9 +48,9 @@ public:
                     LightSampleContext p_ref;
                     p_ref.pos = ray->origin();
                     p_ref.ng = ray->direction();
-                    Evaluation eval = light_sampler->evaluate_hit(p_ref, si);
+                    LightEval eval = light_sampler->evaluate_hit(p_ref, si);
                     Float weight = _mis_weight(bsdf_pdf, eval.pdf);
-                    Li += eval.f * throughput * weight;
+                    Li += eval.L * throughput * weight;
                 };
 
                 comment("estimate direct lighting");
@@ -66,12 +66,12 @@ public:
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
 
-                    Evaluation bsdf_eval;
+                    BSDFEval bsdf_eval;
                     bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
                     $if(!occluded && bsdf_eval.valid()) {
-                        Float3 Ld = throughput * light_sample.eval.f * bsdf_eval.f * weight / light_sample.eval.pdf;
+                        Float3 Ld = throughput * light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
                         Li += Ld;
                     };
                     bsdf_pdf = bsdf_sample.eval.pdf;

@@ -22,7 +22,7 @@ public:
 
 protected:
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept;
-    [[nodiscard]] virtual Evaluation evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
         for (UP<BxDF> &bxdf : _bxdfs) {
@@ -46,7 +46,7 @@ public:
     [[nodiscard]] Uchar flag() const noexcept;
     [[nodiscard]] Float3 albedo() const noexcept { return _bxdfs[0]->albedo(); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
-    [[nodiscard]] virtual Evaluation evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFEval evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept;
 };
 

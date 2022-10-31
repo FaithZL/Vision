@@ -13,7 +13,7 @@ Float BxDF::PDF(Float3 wo, Float3 wi) const noexcept {
     return cosine_hemisphere_PDF(abs_cos_theta(wi));
 }
 
-Evaluation BxDF::evaluate(Float3 wo, Float3 wi) const noexcept {
+BSDFEval BxDF::evaluate(Float3 wo, Float3 wi) const noexcept {
     return {f(wo, wi), PDF(wo, wi)};
 }
 
@@ -21,8 +21,8 @@ Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
     return same_hemisphere(wo, wi);
 }
 
-Evaluation BxDF::safe_evaluate(Float3 wo, Float3 wi) const noexcept {
-    Evaluation ret;
+BSDFEval BxDF::safe_evaluate(Float3 wo, Float3 wi) const noexcept {
+    BSDFEval ret;
     Bool s = safe(wo, wi);
     ret.f = select(s, f(wo, wi), make_float3(0.f));
     ret.pdf = select(s, PDF(wo, wi), 0.f);
