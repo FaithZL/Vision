@@ -24,7 +24,7 @@ public:
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            Bool debug = all(pixel == make_uint2(512, 10));
+            Bool debug = all(pixel == make_uint2(750, 870));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel);
             RaySample rs = camera->generate_ray(ss);
@@ -61,23 +61,21 @@ public:
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                Evaluation bsdf_eval;
                 rp->dispatch<Material>(si.mat_id, rp->scene().materials(),
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
+
+                    Evaluation bsdf_eval;
                     bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+                    Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
+                    $if(!occluded && bsdf_eval.valid()) {
+                        Float3 Ld = throughput * light_sample.eval.f * bsdf_eval.f * weight / light_sample.eval.pdf;
+                        Li += Ld;
+                    };
+                    bsdf_pdf = bsdf_sample.eval.pdf;
+                    throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
                 });
-                $if(!bsdf_eval.valid()) {
-                    $break;
-                };
-                Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
-                $if(!occluded) {
-                    Float3 Ld = make_float3(0.f);
-                    Ld = throughput * light_sample.eval.f * bsdf_eval.f * weight / light_sample.eval.pdf;
-                    Li += Ld;
-                };
-                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
 
                 Float rr = sampler->next_1d();
                 Float mp = max_comp(throughput);
@@ -88,9 +86,10 @@ public:
                     };
                     throughput /= q;
                 };
-                bsdf_pdf = bsdf_sample.eval.pdf;
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
+
+
 
 //            Var hit = accel.trace_closest(ray);
 //            $if(hit->is_miss()) {
