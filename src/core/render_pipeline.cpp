@@ -5,6 +5,7 @@
 #include "render_pipeline.h"
 #include "base/sensor.h"
 #include "base/scene.h"
+#include "context.h"
 
 namespace vision {
 
@@ -16,7 +17,7 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _stream(device->create_stream()) {}
 
 void RenderPipeline::download_result() {
-    _scene.film()->copy_to(_render_buffer.get());
+    _scene.film()->copy_to(_render_image.pixel_ptr());
 }
 
 void RenderPipeline::prepare_device_data() noexcept {
@@ -37,7 +38,7 @@ void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     prepare_device_data();
     compile_shaders();
-    _render_buffer.reset(new_array<float4>(_scene.film()->pixel_num()));
+    _render_image = ImageIO::pure_color(make_float4(0,0,0,1), ColorSpace::LINEAR, resolution());
 }
 
 void RenderPipeline::render(double dt) noexcept {
@@ -45,6 +46,9 @@ void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
     double ms = clk.elapse_ms();
     _total_time += ms;
+    if (_frame_index == 100) {
+        _render_image.save(_context->scene_directory() / "test_cbox.png");
+    }
     cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
 }

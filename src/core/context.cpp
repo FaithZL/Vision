@@ -16,4 +16,8 @@ SceneDesc Context::parse_file() const noexcept {
     return SceneDesc::from_json(cli_parser().scene_file());
 }
 
+fs::path Context::scene_directory() const noexcept {
+    return cli_parser().scene_file().parent_path();
+}
+
 }// namespace vision

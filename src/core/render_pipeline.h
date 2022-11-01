@@ -8,6 +8,7 @@
 #include "base/scene.h"
 #include "base/device_data.h"
 #include "rhi/window.h"
+#include "util/image_io.h"
 
 namespace vision {
 using namespace ocarina;
@@ -18,7 +19,7 @@ private:
     vision::Context *_context;
     Scene _scene;
     DeviceData _device_data{_device};
-    unique_ptr<float4[]> _render_buffer;
+    ImageIO _render_image;
     Stream _stream;
     uint _frame_index{};
     double _total_time{};
@@ -40,7 +41,7 @@ public:
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result();
-    [[nodiscard]] const float4 *buffer() const { return _render_buffer.get(); }
+    [[nodiscard]] const float4 *buffer() const { return _render_image.pixel_ptr<float4>(); }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
     template<typename T>

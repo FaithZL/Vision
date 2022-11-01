@@ -30,6 +30,7 @@ public:
     explicit Context(int argc, char **argv,
                      ocarina::string_view cache_dir = ".cache");
     [[nodiscard]] SceneDesc parse_file() const noexcept;
+    [[nodiscard]] fs::path scene_directory() const noexcept;
     [[nodiscard]] RenderPipeline create_pipeline(Device *device) { return {device, this}; }
     [[nodiscard]] const CLIParser &cli_parser() const noexcept { return _cli_parser; }
     [[nodiscard]] CLIParser &cli_parser() noexcept { return _cli_parser; }
