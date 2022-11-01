@@ -51,7 +51,7 @@ public:
         auto [prim_id, pmf, u_remapping] = _distribution->sample_discrete(u.x);
         u.x = u_remapping;
         Float2 bary = square_to_triangle(u);
-        LightEvalContext p_light = data.compute_light_eval_context(_inst_idx, prim_id, u);
+        LightEvalContext p_light = data.compute_light_eval_context(_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
         Float3 wi_un = p_light.pos - p_ref.pos;
         ret.eval = evaluate(p_ref, p_light);
