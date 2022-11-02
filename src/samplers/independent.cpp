@@ -28,7 +28,9 @@ public:
     }
 
     [[nodiscard]] Float next_1d() noexcept override {
-        return _lcg(*_state);
+        Float ret = _lcg(*_state);
+        print("next_1d  {}   _state {}", ret, *_state);
+        return ret;
     }
 };
 

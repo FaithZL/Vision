@@ -30,6 +30,8 @@ public:
     [[nodiscard]] SensorSample sensor_sample(const Uint2 &pixel, const Filter *filter = nullptr) {
         SensorSample ss;
         ss.p_film = make_float2(pixel) + next_2d();
+        ss.p_lens = next_2d();
+        ss.time = next_1d();
         return ss;
     }
 };

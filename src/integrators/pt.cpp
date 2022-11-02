@@ -24,10 +24,9 @@ public:
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            pixel = make_uint2(678, 78);
-            Bool debug = all(pixel == make_uint2(678, 78));
+            pixel = make_uint2(508, 66);
+            Bool debug = all(pixel == make_uint2(508, 66));
             sampler->start_pixel_sample(pixel, frame_index, 0);
-            print("{}", sampler->next_1d());
             SensorSample ss = sampler->sensor_sample(pixel);
             ss.p_film = make_float2(pixel);
             RaySample rs = camera->generate_ray(ss);
