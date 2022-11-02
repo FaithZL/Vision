@@ -24,7 +24,6 @@ public:
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            pixel = make_uint2(508, 66);
             Bool debug = all(pixel == make_uint2(508, 66));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel);
@@ -74,7 +73,6 @@ public:
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
-                    print("w({},{},{}), f({},{},{}), {}", w.x,w.y,w.z, f.x,f.y,f.z, bsdf_sample.eval.pdf);
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
                     $if(!occluded && bsdf_eval.valid()) {
                         Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
@@ -86,8 +84,7 @@ public:
                 $if(!bsdf_sample.valid()) {
                     break_();
                 };
-//                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
-//                print("{},{},{}", throughput.x, throughput.y, throughput.z);
+                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
 //                Float rr = sampler->next_1d();
 //                Float mp = max_comp(throughput);
 //                $if(mp < _rr_threshold) {
@@ -106,10 +103,9 @@ public:
 
     void render(RenderPipeline *rp) const noexcept override {
         Stream &stream = rp->stream();
-        stream << _shader(rp->frame_index()).dispatch(1);
+        stream << _shader(rp->frame_index()).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
-        exit(0);
     }
 };
 }// namespace vision

@@ -591,7 +591,7 @@
         // "type": "WavefrontPT",
         "param": {
             "min_depth": 0,
-            "max_depth": 1,
+            "max_depth": 5,
             "rr_threshold": 1
         }
     },
