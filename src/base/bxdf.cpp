@@ -25,12 +25,12 @@ BSDFEval BxDF::safe_evaluate(Float3 wo, Float3 wi) const noexcept {
     BSDFEval ret;
     Bool s = safe(wo, wi);
     ret.f = select(s, f(wo, wi), make_float3(0.f));
-    ret.pdf = select(s, PDF(wo, wi), 0.f);
+    ret.pdf = select(s, PDF(wo, wi), 1.f);
     return ret;
 }
 
 Float3 LambertReflection::f(Float3 wo, Float3 wi) const noexcept {
-    return Kr * InvPi;
+    return Kr * InvPi * abs_cos_theta(wi);
 }
 
 BSDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {

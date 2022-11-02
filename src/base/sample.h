@@ -56,6 +56,7 @@ struct LightSample {
     LightEval eval;
     Float3 wi;
     Float distance;
+    Float3 lec;
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }

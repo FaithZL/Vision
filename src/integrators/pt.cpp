@@ -24,9 +24,12 @@ public:
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            Bool debug = all(pixel == make_uint2(750, 870));
+            pixel = make_uint2(678, 78);
+            Bool debug = all(pixel == make_uint2(678, 78));
             sampler->start_pixel_sample(pixel, frame_index, 0);
+            print("{}", sampler->next_1d());
             SensorSample ss = sampler->sensor_sample(pixel);
+            ss.p_film = make_float2(pixel);
             RaySample rs = camera->generate_ray(ss);
             Var ray = rs.ray;
             Float bsdf_pdf = eval(1e16f);
@@ -70,15 +73,22 @@ public:
                     BSDFEval bsdf_eval;
                     bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+                    Float3 w = bsdf_sample.wi;
+                    Float3 f = bsdf_sample.eval.f;
+                    print("w({},{},{}), f({},{},{}), {}", w.x,w.y,w.z, f.x,f.y,f.z, bsdf_sample.eval.pdf);
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
                     $if(!occluded && bsdf_eval.valid()) {
                         Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
                         Li += throughput * Ld;
                     };
-                    bsdf_pdf = bsdf_sample.eval.pdf;
-                    throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
-                });
 
+                });
+                bsdf_pdf = bsdf_sample.eval.pdf;
+                $if(!bsdf_sample.valid()) {
+                    break_();
+                };
+//                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
+//                print("{},{},{}", throughput.x, throughput.y, throughput.z);
 //                Float rr = sampler->next_1d();
 //                Float mp = max_comp(throughput);
 //                $if(mp < _rr_threshold) {
@@ -90,7 +100,6 @@ public:
 //                };
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
-
             camera->film()->add_sample(pixel, Li, frame_index);
         };
         _shader = rp->device().compile(_kernel);
@@ -98,9 +107,10 @@ public:
 
     void render(RenderPipeline *rp) const noexcept override {
         Stream &stream = rp->stream();
-        stream << _shader(rp->frame_index()).dispatch(rp->resolution());
+        stream << _shader(rp->frame_index()).dispatch(1);
         stream << synchronize();
         stream << commit();
+        exit(0);
     }
 };
 }// namespace vision

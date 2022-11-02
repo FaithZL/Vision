@@ -46,10 +46,10 @@ void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
     double ms = clk.elapse_ms();
     _total_time += ms;
-    if (_frame_index == 100) {
-        _render_image.save(_context->scene_directory() / "test_cbox.png");
+    if (_frame_index == 128) {
+//        _render_image.save(_context->scene_directory() / "test_cbox.png");
     }
-    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+//    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
 }
 }// namespace vision

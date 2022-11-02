@@ -20,7 +20,11 @@ public:
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
 
     void start_pixel_sample(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
+        auto t1 = _tea(pixel.x, pixel.y);
+        auto t2 = _tea(sample_index, dim);
+        auto t3 = tea(t1, t2);
         _state = _tea(_tea(pixel.x, pixel.y), _tea(sample_index, dim));
+        print("({},{})  t1 {} t2 {} t3 {}  ------------", pixel.x, pixel.y,  t1, t2, t3);
     }
 
     [[nodiscard]] Float next_1d() noexcept override {
