@@ -51,7 +51,6 @@ public:
                     p_ref.ng = ray->direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, si);
                     Float weight = _mis_weight(bsdf_pdf, eval.pdf);
-//                    weight = 1;
                     Li += eval.L * throughput * weight;
                 };
 
@@ -82,12 +81,12 @@ public:
                 });
                 bsdf_pdf = bsdf_sample.eval.pdf;
                 $if(!bsdf_sample.valid()) {
-                    break_();
+                    $break;
                 };
                 throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
 //                Float rr = sampler->next_1d();
 //                Float mp = max_comp(throughput);
-//                $if(mp < _rr_threshold) {
+//                $if(mp < _rr_threshold && bounces >= _min_depth) {
 //                    Float q = min(0.95f, mp);
 //                    $if(q < rr) {
 //                        $break;

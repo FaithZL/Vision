@@ -54,6 +54,9 @@ public:
             for (int i = 0; i < lst.size(); ++i) {
                 $case(i) { func(lst[i]); $break; };
             }
+            $default {
+                unreachable();
+            };
         };
     }
 };

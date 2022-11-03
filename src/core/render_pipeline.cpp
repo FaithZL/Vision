@@ -49,7 +49,7 @@ void RenderPipeline::render(double dt) noexcept {
     if (_frame_index == 128) {
 //        _render_image.save(_context->scene_directory() / "test_cbox.png");
     }
-//    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
 }
 }// namespace vision

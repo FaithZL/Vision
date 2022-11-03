@@ -116,8 +116,6 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
             dp_dv = normalize(p2 - p0);
         };
         Float3 ng = normalize(ng_un);
-        Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
-
         si.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
     }
 
