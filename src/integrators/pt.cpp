@@ -73,7 +73,7 @@ public:
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
-                    $if(!occluded && bsdf_eval.valid()) {
+                    $if(!occluded && bsdf_eval.valid() && light_sample.valid()) {
                         Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
                         Li += throughput * Ld;
                     };
@@ -84,15 +84,15 @@ public:
                     $break;
                 };
                 throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
-//                Float rr = sampler->next_1d();
-//                Float mp = max_comp(throughput);
-//                $if(mp < _rr_threshold && bounces >= _min_depth) {
-//                    Float q = min(0.95f, mp);
-//                    $if(q < rr) {
-//                        $break;
-//                    };
-//                    throughput /= q;
-//                };
+                Float rr = sampler->next_1d();
+                Float mp = max_comp(throughput);
+                $if(mp < _rr_threshold && bounces >= _min_depth) {
+                    Float q = min(0.95f, mp);
+                    $if(q < rr) {
+                        $break;
+                    };
+                    throughput /= q;
+                };
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
             camera->film()->add_sample(pixel, Li, frame_index);

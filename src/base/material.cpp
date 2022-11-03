@@ -32,18 +32,18 @@ Uchar BSDF::combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept {
 BSDFSample BSDF::sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
     BSDFSample ret;
     Int num = match_num(flag);
-    $if(num > 0) {
+//    $if(num > 0) {
         Int comp = min(cast<int>(floor(uc * num)), num - 1);
         Int count = 0;
         for_each([&](const BxDF *bxdf) {
-            $if(bxdf->match_flag(flag)) {
-                $if(count == comp) {
+//            $if(bxdf->match_flag(flag)) {
+//                $if(count == comp) {
                     ret = bxdf->sample(wo, u);
-                };
+//                };
                 count += 1;
-            };
+//            };
         });
-    };
+//    };
     return ret;
 }
 
@@ -60,12 +60,12 @@ BSDFEval BSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
 
     Int match_count{0};
     for_each([&](const BxDF *bxdf) {
-        $if (bxdf->match_flag(flag)) {
+//        $if (bxdf->match_flag(flag)) {
             match_count += 1;
             auto [val, pdf] = bxdf->safe_evaluate(wo, wi);
             ret.f += val;
             ret.pdf += pdf;
-        };
+//        };
     });
     ret.pdf = select(match_count > 0, ret.pdf / cast<float>(match_count), 0.f);
 
