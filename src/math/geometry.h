@@ -176,15 +176,39 @@ inline namespace geometry {
 struct Vertex {
 public:
     //todo compress
-    float3 pos;
-    float3 normal;
-    float2 uv;
+    array<float, 3> pos;
+    array<float, 3> n;
+    array<float, 2> uv;
 
 public:
     Vertex() = default;
     Vertex(float3 p, float3 n, float2 uv)
-        : pos(p), normal(n), uv(uv) {}
+        : pos{p.x, p.y, p.z}, n{n.x, n.y, n.z}, uv{uv.x, uv.y} {}
+
+    [[nodiscard]] auto position() const noexcept {
+        return make_float3(pos[0], pos[1], pos[2]);
+    }
+
+    [[nodiscard]] auto normal() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
+
+    [[nodiscard]] auto tex_coord() const noexcept {
+        return make_float2(uv[0], uv[1]);
+    }
 };
 }// namespace geometry
 }// namespace vision
-OC_STRUCT(vision::Vertex, pos, normal, uv){};
+OC_STRUCT(vision::Vertex, pos, n, uv){
+    [[nodiscard]] auto position() const noexcept {
+        return make_float3(pos[0], pos[1], pos[2]);
+    }
+
+    [[nodiscard]] auto normal() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
+
+    [[nodiscard]] Float2 tex_coord() const noexcept {
+        return make_float2(uv[0], uv[1]);
+    }
+};

@@ -89,9 +89,9 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
     si.mat_id = inst.mat_id;
     {
         $comment(compute pos)
-            Var p0 = o2w.apply_point(v0.pos);
-        Var p1 = o2w.apply_point(v1.pos);
-        Var p2 = o2w.apply_point(v2.pos);
+            Var p0 = o2w.apply_point(v0->position());
+        Var p1 = o2w.apply_point(v1->position());
+        Var p2 = o2w.apply_point(v2->position());
         Float3 pos = hit->lerp(p0, p1, p2);
         si.pos = pos;
 
@@ -100,8 +100,8 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
         Float3 dp12 = p1 - p2;
         Float3 ng_un = cross(dp02, dp12);
         si.prim_area = 0.5f * length(ng_un);
-        Float2 duv02 = v0.uv - v2.uv;
-        Float2 duv12 = v1.uv - v2.uv;
+        Float2 duv02 = v0->tex_coord() - v2->tex_coord();
+        Float2 duv12 = v1->tex_coord() - v2->tex_coord();
         Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
         Bool degenerate_uv = abs(det) < float(1e-8);
         Float3 dp_du, dp_dv;
@@ -121,7 +121,7 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
 
     {
         $comment(compute shading uvn)
-            Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
+        Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
         $if(is_zero(normal)) {
             si.s_uvn = si.g_uvn;
         } $else {
@@ -132,7 +132,7 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
             si.s_uvn.set(ss, st, ns);
         };
     }
-    Float2 uv = hit->lerp(v0.uv, v1.uv, v2.uv);
+    Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
     si.uv = uv;
     return si;
 }
