@@ -79,20 +79,20 @@ public:
                     };
 
                 });
-                bsdf_pdf = bsdf_sample.eval.pdf;
-                $if(!bsdf_sample.valid()) {
+                Float lum = luminance(throughput);
+                $if(!bsdf_sample.valid() || lum == 0.f) {
                     $break;
                 };
                 throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
-                Float rr = sampler->next_1d();
-                Float mp = max_comp(throughput);
-                $if(mp < _rr_threshold && bounces >= _min_depth) {
-                    Float q = min(0.95f, mp);
+                $if(lum < _rr_threshold && bounces >= _min_depth) {
+                    Float q = min(0.95f, lum);
+                    Float rr = sampler->next_1d();
                     $if(q < rr) {
                         $break;
                     };
                     throughput /= q;
                 };
+                bsdf_pdf = bsdf_sample.eval.pdf;
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
             camera->film()->add_sample(pixel, Li, frame_index);
