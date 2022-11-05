@@ -66,20 +66,25 @@ struct SurfacePoint {
     Float3 pos;
     Float3 ng;
     SurfacePoint() = default;
-    SurfacePoint(Float3 p, Float3 n)
+    SurfacePoint(const Float3 &p, const Float3 &n)
         : pos(p), ng(n) {}
     explicit SurfacePoint(const Interaction &it)
         : pos(it.pos), ng(it.g_uvn.normal()) {}
     explicit SurfacePoint(const SurfaceInteraction &it)
         : pos(it.pos), ng(it.g_uvn.normal()) {}
 
-    [[nodiscard]] OCRay spawn_ray(Float3 dir) const {
+    [[nodiscard]] Float3 robust_pos(const Float3 &dir) const noexcept {
+        Float factor = select(dot(ng, dir) > 0, 1.f, -1.f);
+        return offset_ray_origin(pos, ng * factor);
+    }
+
+    [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
         return vision::spawn_ray(pos, ng, dir);
     }
-    [[nodiscard]] OCRay spawn_ray_to(Float3 p) const {
+    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept{
         return vision::spawn_ray_to(pos, ng, p);
     }
-    [[nodiscard]] OCRay spawn_ray_to(const SurfacePoint &lsc) const {
+    [[nodiscard]] OCRay spawn_ray_to(const SurfacePoint &lsc) const noexcept{
         return vision::spawn_ray_to(pos, ng, lsc.pos, lsc.ng);
     }
 };

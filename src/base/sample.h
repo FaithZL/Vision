@@ -54,9 +54,7 @@ struct BSDFSample {
 
 struct LightSample {
     LightEval eval;
-    Float3 wi;
-    Float distance;
-    Float3 lec;
+    Float3 p_light;
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }

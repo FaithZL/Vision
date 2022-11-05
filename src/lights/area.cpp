@@ -55,8 +55,7 @@ public:
         p_light.PDF_pos *= pmf;
         Float3 wi_un = p_light.pos - p_ref.pos;
         ret.eval = evaluate(p_ref, p_light);
-        ret.wi = normalize(wi_un);
-        ret.distance = length(wi_un);
+        ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
     }
 

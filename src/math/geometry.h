@@ -90,8 +90,8 @@ template<typename T>
 template<typename T>
 [[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target) {
     T dir = p_target - p_start;
-    T org = offset_ray_origin(p_start, n_start);
     n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(p_start, n_start);
     return make_ray(org, dir, 1 - ShadowEpsilon);
 }
 
@@ -208,7 +208,7 @@ OC_STRUCT(vision::Vertex, pos, n, uv){
         return make_float3(n[0], n[1], n[2]);
     }
 
-    [[nodiscard]] Float2 tex_coord() const noexcept {
+    [[nodiscard]] auto tex_coord() const noexcept {
         return make_float2(uv[0], uv[1]);
     }
 };

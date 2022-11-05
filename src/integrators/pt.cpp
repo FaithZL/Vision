@@ -57,8 +57,7 @@ public:
                 comment("estimate direct lighting");
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
-                OCRay shadow_ray = si.spawn_ray(light_sample.wi * light_sample.distance*0.99f);
-                shadow_ray.dir_max.w = 1;
+                OCRay shadow_ray = si.spawn_ray_to(light_sample.p_light);
                 Bool occluded = accel.trace_any(shadow_ray);
 
                 comment("sample bsdf");
@@ -68,7 +67,8 @@ public:
                     UP<BSDF> bsdf = material->get_BSDF(si);
 
                     BSDFEval bsdf_eval;
-                    bsdf_eval = bsdf->evaluate(si.wo, light_sample.wi, BxDFFlag::All);
+                    Float3 wi = normalize(light_sample.p_light - si.pos);
+                    bsdf_eval = bsdf->evaluate(si.wo, wi, BxDFFlag::All);
                     bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
