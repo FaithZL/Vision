@@ -4,7 +4,7 @@
 
 #include "shape.h"
 #include "scene.h"
-#include "device_data.h"
+#include "geometry.h"
 
 namespace vision {
 
@@ -21,7 +21,7 @@ Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {
     }
 }
 
-void Mesh::fill_device_data(DeviceData &data) const noexcept {
+void Mesh::fill_geometry(Geometry &data) const noexcept {
     data.accept(vertices, triangles, o2w, mat_id, light_id);
 }
 

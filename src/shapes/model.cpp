@@ -13,9 +13,9 @@ private:
 public:
     explicit Model(const ShapeDesc &desc) : Shape(desc) {}
 
-    void fill_device_data(DeviceData &data) const noexcept override {
+    void fill_geometry(Geometry &data) const noexcept override {
         for (const Mesh &mesh : _meshes) {
-            mesh.fill_device_data(data);
+            mesh.fill_geometry(data);
         }
     }
 

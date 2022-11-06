@@ -13,7 +13,7 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
     : _device(device),
       _context(context),
       _scene(context, this),
-      _device_data(device),
+      _geometry(device),
       _stream(device->create_stream()) {}
 
 void RenderPipeline::download_result() {
@@ -22,12 +22,12 @@ void RenderPipeline::download_result() {
 
 void RenderPipeline::prepare_device_data() noexcept {
     for (const Shape *shape : _scene._shapes) {
-        shape->fill_device_data(_device_data);
+        shape->fill_geometry(_geometry);
     }
-    _device_data.reset_device_buffer();
-    _device_data.build_meshes();
-    _device_data.upload();
-    _device_data.build_accel();
+    _geometry.reset_device_buffer();
+    _geometry.build_meshes();
+    _geometry.upload();
+    _geometry.build_accel();
 }
 
 void RenderPipeline::compile_shaders() noexcept {
@@ -49,16 +49,20 @@ void RenderPipeline::render(double dt) noexcept {
     cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
 }
+
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
-    return device_data().accel.trace_closest(ray);
+    return geometry().accel.trace_closest(ray);
 }
+
 Bool RenderPipeline::trace_any(const OCRay &ray) const noexcept {
-    return device_data().accel.trace_any(ray);
+    return geometry().accel.trace_any(ray);
 }
+
 SurfaceInteraction RenderPipeline::compute_surface_interaction(const OCHit &hit) const noexcept {
-    return device_data().compute_surface_interaction(hit);
+    return geometry().compute_surface_interaction(hit);
 }
+
 LightEvalContext RenderPipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {
-    return device_data().compute_light_eval_context(inst_id, prim_id, bary);
+    return geometry().compute_light_eval_context(inst_id, prim_id, bary);
 }
 }// namespace vision

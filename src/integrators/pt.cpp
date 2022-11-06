@@ -31,15 +31,16 @@ public:
             Float bsdf_pdf = eval(1e16f);
             Float3 Li = make_float3(0.f);
             Float3 throughput = make_float3(1.f);
+            Geometry &geometry = rp->geometry();
 
             $for(bounces, 0, _max_depth) {
-                Var hit = rp->trace_closest(ray);
+                Var hit = geometry.trace_closest(ray);
                 comment("miss");
                 $if(hit->is_miss()) {
                     $break;
                 };
 
-                auto si = rp->compute_surface_interaction(hit);
+                auto si = geometry.compute_surface_interaction(hit);
                 si.wo = normalize(-ray->direction());
 
                 comment("hit light");
@@ -56,7 +57,7 @@ public:
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
                 OCRay shadow_ray = si.spawn_ray_to(light_sample.p_light);
-                Bool occluded = rp->trace_any(shadow_ray);
+                Bool occluded = geometry.trace_any(shadow_ray);
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;

@@ -6,7 +6,7 @@
 
 #include "rhi/common.h"
 #include "base/scene.h"
-#include "base/device_data.h"
+#include "base/geometry.h"
 #include "rhi/window.h"
 #include "util/image_io.h"
 
@@ -18,7 +18,7 @@ private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
-    DeviceData _device_data{_device};
+    Geometry _geometry{_device};
     ImageIO _render_image;
     Stream _stream;
     uint _frame_index{};
@@ -30,8 +30,8 @@ public:
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
-    [[nodiscard]] DeviceData &device_data() noexcept { return _device_data; }
-    [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
+    [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
+    [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void update() noexcept { _frame_index = 0; _total_time = 0; }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
