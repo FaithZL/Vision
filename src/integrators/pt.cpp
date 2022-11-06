@@ -16,9 +16,9 @@ public:
     }
 
     void compile_shader(RenderPipeline *rp) noexcept override {
-        Camera *camera = rp->scene().camera();
-        Sampler *sampler = rp->scene().sampler();
-        LightSampler *light_sampler = rp->scene().light_sampler();
+        Camera *camera = _scene->camera();
+        Sampler *sampler = _scene->sampler();
+        LightSampler *light_sampler = _scene->light_sampler();
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
@@ -61,7 +61,7 @@ public:
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                rp->dispatch<Material>(si.mat_id, rp->scene().materials(),
+                _scene->materials().dispatch(si.mat_id,
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
 

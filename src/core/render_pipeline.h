@@ -52,22 +52,6 @@ public:
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
-    template<typename T>
-    void dispatch(const Uint &id, const vector<T *> &lst, const std::function<void(const T *)> &func) {
-        if (lst.empty()) [[unlikely]] { OC_ERROR("lst is empty"); }
-        $switch(id) {
-            for (int i = 0; i < lst.size(); ++i) {
-                $case(i) {
-                    func(lst[i]);
-                    $break;
-                };
-            }
-            $default {
-                unreachable();
-                $break;
-            };
-        };
-    }
 };
 
 }// namespace vision
