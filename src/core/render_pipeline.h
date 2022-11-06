@@ -44,15 +44,23 @@ public:
     [[nodiscard]] const float4 *buffer() const { return _render_image.pixel_ptr<float4>(); }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
+
+    // for dsl
+    [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
+    [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
+    [[nodiscard]] SurfaceInteraction compute_surface_interaction(const OCHit &hit) const noexcept;
+    [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
+                                                              const Uint &prim_id,
+                                                              const Float2 &bary) const noexcept;
     template<typename T>
     void dispatch(const Uint &id, const vector<T *> &lst, const std::function<void(const T *)> &func) {
-        if (lst.empty()) [[unlikely]] {
-            OC_ERROR("lst is empty");
-            return;
-        }
+        if (lst.empty()) [[unlikely]] { OC_ERROR("lst is empty"); }
         $switch(id) {
             for (int i = 0; i < lst.size(); ++i) {
-                $case(i) { func(lst[i]); $break; };
+                $case(i) {
+                    func(lst[i]);
+                    $break;
+                };
             }
             $default {
                 unreachable();

@@ -46,10 +46,19 @@ void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
     double ms = clk.elapse_ms();
     _total_time += ms;
-    if (_frame_index == 128) {
-//        _render_image.save(_context->scene_directory() / "test_cbox.png");
-    }
     cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
+}
+OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
+    return device_data().accel.trace_closest(ray);
+}
+Bool RenderPipeline::trace_any(const OCRay &ray) const noexcept {
+    return device_data().accel.trace_any(ray);
+}
+SurfaceInteraction RenderPipeline::compute_surface_interaction(const OCHit &hit) const noexcept {
+    return device_data().compute_surface_interaction(hit);
+}
+LightEvalContext RenderPipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {
+    return device_data().compute_light_eval_context(inst_id, prim_id, bary);
 }
 }// namespace vision

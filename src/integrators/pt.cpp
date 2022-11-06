@@ -19,8 +19,6 @@ public:
         Camera *camera = rp->scene().camera();
         Sampler *sampler = rp->scene().sampler();
         LightSampler *light_sampler = rp->scene().light_sampler();
-        DeviceData &data = rp->device_data();
-        Accel &accel = rp->device_data().accel;
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
@@ -35,13 +33,13 @@ public:
             Float3 throughput = make_float3(1.f);
 
             $for(bounces, 0, _max_depth) {
-                Var hit = accel.trace_closest(ray);
+                Var hit = rp->trace_closest(ray);
                 comment("miss");
                 $if(hit->is_miss()) {
                     $break;
                 };
 
-                auto si = data.compute_surface_interaction(hit);
+                auto si = rp->compute_surface_interaction(hit);
                 si.wo = normalize(-ray->direction());
 
                 comment("hit light");
@@ -58,7 +56,7 @@ public:
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
                 OCRay shadow_ray = si.spawn_ray_to(light_sample.p_light);
-                Bool occluded = accel.trace_any(shadow_ray);
+                Bool occluded = rp->trace_any(shadow_ray);
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;

@@ -13,11 +13,10 @@ using namespace ocarina;
 
 class BxDF {
 protected:
-    //todo
-    Uchar _flag;
+    uchar _flag;
 
 public:
-    explicit BxDF(Uchar flag) : _flag(flag) {}
+    explicit BxDF(uchar flag) : _flag(flag) {}
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
@@ -37,7 +36,7 @@ private:
 
 public:
     explicit LambertReflection(Float3 kr)
-        : BxDF(select(is_zero(kr), BxDFFlag::Unset, BxDFFlag::DiffRefl)),
+        : BxDF(BxDFFlag::DiffRefl),
           Kr(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
