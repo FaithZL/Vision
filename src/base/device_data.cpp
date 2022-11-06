@@ -77,7 +77,7 @@ void DeviceData::build_accel() {
     stream << commit();
 }
 
-SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
+SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
     SurfaceInteraction si;
     si.prim_id = hit.prim_id;
     Var inst = instances.read(hit.inst_id);
@@ -87,25 +87,24 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     si.light_id = inst.light_id;
     si.mat_id = inst.mat_id;
-    {
-        $comment(compute pos)
-            Var p0 = o2w.apply_point(v0->position());
-        Var p1 = o2w.apply_point(v1->position());
-        Var p2 = o2w.apply_point(v2->position());
-        Float3 pos = hit->lerp(p0, p1, p2);
-        si.pos = pos;
+    comment("compute pos");
+    Var p0 = o2w.apply_point(v0->position());
+    Var p1 = o2w.apply_point(v1->position());
+    Var p2 = o2w.apply_point(v2->position());
+    Float3 pos = hit->lerp(p0, p1, p2);
+    si.pos = pos;
 
-        $comment(compute geometry uvn)
-            Float3 dp02 = p0 - p2;
-        Float3 dp12 = p1 - p2;
-        Float3 ng_un = cross(dp02, dp12);
-        si.prim_area = 0.5f * length(ng_un);
+    comment("compute geometry uvn");
+    Float3 dp02 = p0 - p2;
+    Float3 dp12 = p1 - p2;
+    Float3 ng_un = cross(dp02, dp12);
+    si.prim_area = 0.5f * length(ng_un);
+    if (is_complete) {
         Float2 duv02 = v0->tex_coord() - v2->tex_coord();
         Float2 duv12 = v1->tex_coord() - v2->tex_coord();
         Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
         Bool degenerate_uv = abs(det) < float(1e-8);
         Float3 dp_du, dp_dv;
-
         $if(!degenerate_uv) {
             Float inv_det = 1 / det;
             dp_du = (duv12[1] * dp02 - duv02[1] * dp12) * inv_det;
@@ -117,14 +116,17 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
         };
         Float3 ng = normalize(ng_un);
         si.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
+    } else {
+        si.g_uvn.set(normalize(dp02), normalize(dp12), normalize(ng_un));
     }
 
-    {
-        $comment(compute shading uvn)
+    if (is_complete) {
+        comment("compute shading uvn");
         Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
         $if(is_zero(normal)) {
             si.s_uvn = si.g_uvn;
-        } $else {
+        }
+        $else {
             Float3 ns = normalize(o2w.apply_normal(normal));
             Float3 ss = si.g_uvn.dp_du();
             Float3 st = normalize(cross(ns, ss));
@@ -151,7 +153,7 @@ LightEvalContext DeviceData::compute_light_eval_context(const Uint &inst_id,
     hit.prim_id = prim_id;
     hit.bary = bary;
     // todo
-    SurfaceInteraction si = compute_surface_interaction(hit);
+    SurfaceInteraction si = compute_surface_interaction(hit, false);
     LightEvalContext ret(si);
     return ret;
 }
