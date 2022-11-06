@@ -5,7 +5,6 @@
 #include "base/material.h"
 #include "base/texture.h"
 #include "base/scene.h"
-#include "base/bxdf.h"
 
 namespace vision {
 

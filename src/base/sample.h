@@ -28,7 +28,7 @@ struct BxDFFlag {
 };
 
 struct BSDFEval {
-    Float3 f;
+    Float3 f{make_float3(0.f)};
     Float pdf{0.f};
     [[nodiscard]] Bool valid() const noexcept {
         return pdf > 0.f;
@@ -36,7 +36,7 @@ struct BSDFEval {
 };
 
 struct LightEval {
-    Float3 L;
+    Float3 L{make_float3(0.f)};
     Float pdf{0.f};
     [[nodiscard]] Bool valid() const noexcept {
         return pdf > 0.f;
@@ -45,8 +45,8 @@ struct LightEval {
 
 struct BSDFSample {
     BSDFEval eval;
-    Float3 wi;
-    Uchar flags;
+    Float3 wi{make_float3(0.f)};
+    Uchar flags{BxDFFlag::Unset};
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }
@@ -54,7 +54,7 @@ struct BSDFSample {
 
 struct LightSample {
     LightEval eval;
-    Float3 p_light;
+    Float3 p_light{make_float3(0.f)};
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }

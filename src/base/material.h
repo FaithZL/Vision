@@ -18,14 +18,22 @@ public:
     Float3 ng;
 
 protected:
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept = 0;
-    [[nodiscard]] virtual BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept = 0;
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
+        BSDFSample ret;
+        return ret;
+    }
+    [[nodiscard]] virtual BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+        BSDFEval ret;
+        ret.f = make_float3(0.f);
+        ret.pdf = 1.f;
+        return ret;
+    }
 
 public:
     BSDF() = default;
     explicit BSDF(const SurfaceInteraction &si)
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
-    [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
+    [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] virtual BSDFEval evaluate(Float3 world_wo, Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 world_wo, Float uc, Float2 u, Uchar flag) const noexcept;
@@ -37,6 +45,8 @@ public:
 
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept = 0;
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept {
+        return make_unique<BSDF>(si);
+    }
 };
 }// namespace vision

@@ -29,7 +29,6 @@ public:
     void build_meshes();
     void build_accel();
     void upload() const;
-    [[nodiscard]]
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
