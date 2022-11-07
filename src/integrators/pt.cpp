@@ -24,8 +24,7 @@ public:
             Uint2 pixel = dispatch_idx().xy();
             Bool debug = all(pixel == make_uint2(508, 66));
             sampler->start_pixel_sample(pixel, frame_index, 0);
-            SensorSample ss = sampler->sensor_sample(pixel);
-            ss.p_film = make_float2(pixel);
+            SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RaySample rs = camera->generate_ray(ss);
             Var ray = rs.ray;
             Float bsdf_pdf = eval(1e16f);
@@ -94,7 +93,7 @@ public:
                 bsdf_pdf = bsdf_sample.eval.pdf;
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
-            camera->film()->add_sample(pixel, Li, frame_index);
+            camera->film()->add_sample(pixel, Li * rs.weight, frame_index);
         };
         _shader = rp->device().compile(_kernel);
     }
