@@ -1,6 +1,25 @@
 add_subdirectory(cxxopts)
 target_include_directories(cxxopts INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/cxxopts/include)
 
+#set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
+#set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+#set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+#set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+#set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
+#set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
+#set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT ON CACHE BOOL "" FORCE)
+add_subdirectory(assimp)
+#set_target_properties(assimp PROPERTIES UNITY_BUILD OFF)
+#if (UNIX AND NOT APPLE)
+#    target_compile_definitions(assimp PRIVATE USE_FILE32API=1)
+#endif ()
+#if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND
+#        CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15.0)
+#    target_compile_options(assimp PRIVATE -Wno-deprecated-non-prototype)
+#endif ()
+add_library(vision-ext-assimp_config INTERFACE)
+target_link_libraries(vision-ext-assimp_config INTERFACE assimp::assimp)
+
 add_library(vision-ext INTERFACE)
 target_link_libraries(vision-ext INTERFACE
         cxxopts)
