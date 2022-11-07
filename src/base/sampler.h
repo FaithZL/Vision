@@ -27,7 +27,7 @@ public:
         Float y = next_1d();
         return make_float2(x, y);
     }
-    [[nodiscard]] SensorSample sensor_sample(const Uint2 &pixel, const Filter *filter = nullptr) {
+    [[nodiscard]] SensorSample sensor_sample(const Uint2 &pixel, const Filter *filter) {
         SensorSample ss;
         FilterSample fs = filter->sample(next_2d());
         ss.p_film = make_float2(pixel) + make_float2(0.5f) + fs.p;
