@@ -20,6 +20,7 @@ public:
     vector<MaterialDesc> material_descs;
     vector<ShapeDesc> shape_descs;
     map<string, uint> mat_name_to_id;
+    fs::path scene_path;
 
 public:
     SceneDesc() = default;

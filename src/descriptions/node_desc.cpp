@@ -15,6 +15,9 @@ namespace vision {
 #define VISION_PARAMS_LIST_INITIAL(...) MAP(VISION_PARAMS_INITIAL, ##__VA_ARGS__)
 
 void TransformDesc::init(const ParameterSet &ps) noexcept {
+    if (ps.data().is_null()) {
+        return;
+    }
     sub_type = ps["type"].as_string("look_at");
     ParameterSet param = ps["param"];
     if (sub_type == "look_at") {
@@ -44,15 +47,16 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string();
     name = ps["name"].as_string();
     ParameterSet param = ps["param"];
-    o2w.init(param["transform"]);
+    o2w.init(param.data().value("transform", DataWrap()));
     material_name = param["material"].as_string("");
     if (param.contains("emission")) {
         emission.inst_id = index;
         emission.init(param["emission"]);
     }
     if (sub_type == "model") {
-        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed)
+        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed, flip_uv)
         fn = param["fn"].as_string();
+        fn = scene_path / fn;
     } else if (sub_type == "quad") {
         VISION_PARAMS_LIST_INITIAL(width, height)
     } else if (sub_type == "cube") {

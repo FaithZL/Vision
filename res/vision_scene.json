@@ -175,6 +175,14 @@
             }
         },
         {
+            "type" : "model",
+            "name" : "box",
+            "param" : {
+                "material": "BackWall",
+                "fn" : "cube.obj"
+            }
+        },
+        {
             "type": "quad",
             "name": "shape_2",
             "param": {

@@ -121,6 +121,7 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     for (uint i = 0; i < shapes.size(); ++i) {
         ShapeDesc shape_desc;
         shape_desc.index = i;
+        shape_desc.scene_path = scene_path;
         shape_desc.init(shapes[i]);
         shape_desc.mat_id = mat_name_to_id[shape_desc.material_name];
         shape_descs.push_back(shape_desc);
@@ -139,6 +140,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
 
 SceneDesc SceneDesc::from_json(const fs::path &path) {
     SceneDesc scene_desc;
+    scene_desc.scene_path = path.parent_path();
     DataWrap data = detail::create_json_from_file(path);
     scene_desc.init(data);
     return scene_desc;
