@@ -19,8 +19,8 @@ public:
         load(desc);
     }
 
-    const aiScene *load_scene(const fs::path &fn, Assimp::Importer &ai_importer,
-                              bool swap_handed, bool smooth, bool flip_uv) {
+    [[nodiscard]] const aiScene *load_scene(const fs::path &fn, Assimp::Importer &ai_importer,
+                                            bool swap_handed, bool smooth, bool flip_uv) {
         ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
                                        aiComponent_COLORS |
                                            aiComponent_BONEWEIGHTS |
@@ -53,11 +53,68 @@ public:
         return ai_scene;
     }
 
+    [[nodiscard]] vector<Mesh> process_mesh(const aiScene *ai_scene, uint32_t subdiv_level) {
+        std::vector<Mesh> meshes;
+        vector<aiMesh *> ai_meshes(ai_scene->mNumMeshes);
+        if (subdiv_level != 0u) {
+            auto subdiv = Assimp::Subdivider::Create(Assimp::Subdivider::CATMULL_CLARKE);
+            subdiv->Subdivide(ai_scene->mMeshes, ai_scene->mNumMeshes, ai_meshes.data(), subdiv_level);
+        } else {
+            std::copy(ai_scene->mMeshes, ai_scene->mMeshes + ai_scene->mNumMeshes, ai_meshes.begin());
+        }
+        meshes.reserve(ai_meshes.size());
+        for (const auto &ai_mesh : ai_meshes) {
+            Box3f aabb;
+            vector<Vertex> vertices;
+            vertices.reserve(ai_mesh->mNumVertices);
+            for (int i = 0; i < ai_mesh->mNumVertices; ++i) {
+                auto ai_position = ai_mesh->mVertices[i];
+                auto ai_normal = ai_mesh->mNormals[i];
+                float3 position = make_float3(ai_position.x, ai_position.y, ai_position.z);
+                aabb.extend(position);
+                float3 normal = make_float3(ai_normal.x, ai_normal.y, ai_normal.z);
+                float2 tex_coord;
+                if (ai_mesh->mTextureCoords[0] != nullptr) {
+                    auto ai_tex_coord = ai_mesh->mTextureCoords[0][i];
+                    tex_coord = make_float2(ai_tex_coord.x, ai_tex_coord.y);
+                } else {
+                    tex_coord = make_float2(0.f);
+                }
+                vertices.emplace_back(position, normal, tex_coord);
+            }
+
+            vector<Triangle> triangle;
+            triangle.reserve(ai_mesh->mNumFaces);
+            for (int i = 0; i < ai_mesh->mNumFaces; ++i) {
+                auto ai_face = ai_mesh->mFaces[i];
+                if (ai_face.mNumIndices == 3) {
+                    triangle.emplace_back(ai_face.mIndices[0],
+                                          ai_face.mIndices[1],
+                                          ai_face.mIndices[2]);
+                } else if (ai_face.mNumIndices == 4) {
+                    triangle.emplace_back(ai_face.mIndices[0],
+                                          ai_face.mIndices[1],
+                                          ai_face.mIndices[2]);
+                    triangle.emplace_back(ai_face.mIndices[0],
+                                          ai_face.mIndices[2],
+                                          ai_face.mIndices[3]);
+                } else {
+                    OC_WARNING("Only triangles and quads supported: ", ai_mesh->mName.data, " num is ",
+                                     ai_face.mNumIndices);
+                    continue;
+                }
+            }
+            meshes.emplace_back(std::move(vertices), std::move(triangle));
+        }
+        return meshes;
+    }
+
     void load(const ShapeDesc &desc) noexcept {
         fs::path directory = desc.fn.parent_path();
         Assimp::Importer ai_importer;
         const aiScene *ai_scene = load_scene(desc.fn, ai_importer, desc.swap_handed,
                                              desc.smooth, desc.flip_uv);
+        _meshes = process_mesh(ai_scene, desc.subdiv_level);
     }
 
     void fill_geometry(Geometry &data) const noexcept override {
