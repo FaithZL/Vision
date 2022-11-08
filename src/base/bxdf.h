@@ -6,6 +6,7 @@
 
 #include "dsl/common.h"
 #include "sample.h"
+#include "microfacet.h"
 
 namespace vision {
 using namespace ocarina;
