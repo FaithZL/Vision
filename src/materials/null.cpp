@@ -3,7 +3,6 @@
 //
 
 #include "base/material.h"
-#include "base/texture.h"
 #include "base/scene.h"
 
 namespace vision {

@@ -53,17 +53,14 @@ template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> sin_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1, 1));
+    return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> cos_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    if (sinTheta == 0.f) {
-        return 1.f;
-    }
-    return clamp(v.x / sinTheta, -1.f, 1.f);
+    return select(sinTheta == 0.f, 1.f,clamp(v.x / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>

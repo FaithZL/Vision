@@ -157,22 +157,24 @@ template<EPort p = EPort::D>
             oc_float<p> alpha2 = 1.f / (sqr(cos_phi / alpha_x) + sqr(sin_phi / alpha_y));
             oc_float<p> tan_theta_2 = alpha2 * u[0] / (1 - u[0]);
             cos_theta = 1 / sqrt(1 + tan_theta_2);
-            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
+//            oc_float<p> sin_theta = safe_sqrt(Var(1 - sqr(cos_theta)));
+            oc_float<p> sin_theta = safe_sqrt(1.f);
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
             return wh;
         }
         case Beckmann: {
             oc_float<p> tan_theta_2, phi;
-            oc_float<p> log_sample = log(1 - u[0]);
-            oc_assert(!isinf(log_sample));
+            oc_float<p> log_sample = log(Var<float>(1 - u[0]));
+            oc_assert(!isinf(log_sample), "inf log sample");
             phi = atan(alpha_y / alpha_x *
                        tan(_2Pi * u[1] + PiOver2));
             phi = select(u[1] > .5f, phi + Pi, phi);
             oc_float<p> sin_phi = sin(phi), cos_phi = cos(phi);
             tan_theta_2 = -log_sample / (sqr(cos_phi / alpha_x) + sqr(sin_phi / alpha_y));
             oc_float<p> cos_theta = 1 / sqrt(1 + tan_theta_2);
-            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
+//            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
+            oc_float<p> sin_theta = safe_sqrt(Float(1));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
             return wh;

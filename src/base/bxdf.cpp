@@ -41,5 +41,28 @@ BSDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
     return ret;
 }
 
+Float3 MicrofacetReflection::f(Float3 wo, Float3 wi) const noexcept {
+    Float cos_theta_o = cos_theta(wo);
+    Float cos_theta_i = cos_theta(wi);
+    Float3 wh = normalize(wo + wi);
+    wh = face_forward(wh, make_float3(0, 0, 1));
+    Float3 F = eval_fresnel(abs_dot(wo, wh), _fresnel_type);
+    Float3 fr = _microfacet.BRDF(wo, wh, wi, F, cos_theta_i, cos_theta_o);
+    return fr * Kr;
+}
 
+Float MicrofacetReflection::PDF(Float3 wo, Float3 wi) const noexcept {
+    Float3 wh = normalize(wo + wi);
+    return _microfacet.PDF_wi_reflection(wo, wh);
+}
+
+BSDFSample MicrofacetReflection::sample(Float3 wo, Float2 u) const noexcept {
+    BSDFSample ret;
+    Float3 wh = _microfacet.sample_wh(wo, u);
+    Float3 wi = reflect(wo, wh);
+    ret.eval = evaluate(wo, wi);
+    ret.wi = wi;
+    ret.flags = flag();
+    return ret;
+}
 }// namespace vision

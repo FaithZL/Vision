@@ -134,7 +134,13 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
         sub_type = "constant";
-        val = make_float4(ps.as_float3(), 0.f);
+        if (ps.data().size() == 2) {
+            val = make_float4(ps.as_float2(), 0.f, 0.f);
+        } else if (ps.data().size() == 3) {
+            val = make_float4(ps.as_float3(), 0.f);
+        } else {
+            val = ps.as_float4();
+        }
     } else if (ps.data().is_object()) {
         fn = ps["fn"].as_string();
     }
