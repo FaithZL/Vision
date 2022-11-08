@@ -237,7 +237,7 @@ template<EPort p = EPort::D>
                                 const oc_float<p> &cos_theta_i, const oc_float<p> &cos_theta_o,
                                 const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float3<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * Fr * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
-//    oc_assert(none(isnan(ret)) && all(ret > 0.f), "invalid brdf !");
+    oc_assert(!has_invalid(ret) && all(ret > 0.f), "invalid brdf ! {}  {}", cos_theta_o, cos_theta_i);
     return ret;
 }
 
@@ -264,7 +264,7 @@ template<EPort p = EPort::D>
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float3<p> ft = numerator / denom;
     oc_float<p> factor = rcp(sqr(eta));
-//    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf !");
+    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf !");
     return ft * factor;
 }
 

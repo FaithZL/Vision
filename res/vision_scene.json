@@ -21,7 +21,7 @@
                     1,
                     1
                 ],
-                "roughness" : [0.01,0.01]
+                "roughness" : [0.001,0.001]
             }
         },
         {
@@ -321,7 +321,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "ShortBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
