@@ -157,8 +157,7 @@ template<EPort p = EPort::D>
             oc_float<p> alpha2 = 1.f / (sqr(cos_phi / alpha_x) + sqr(sin_phi / alpha_y));
             oc_float<p> tan_theta_2 = alpha2 * u[0] / (1 - u[0]);
             cos_theta = 1 / sqrt(1 + tan_theta_2);
-//            oc_float<p> sin_theta = safe_sqrt(Var(1 - sqr(cos_theta)));
-            oc_float<p> sin_theta = safe_sqrt(1.f);
+            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
             return wh;
@@ -173,8 +172,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_phi = sin(phi), cos_phi = cos(phi);
             tan_theta_2 = -log_sample / (sqr(cos_phi / alpha_x) + sqr(sin_phi / alpha_y));
             oc_float<p> cos_theta = 1 / sqrt(1 + tan_theta_2);
-//            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
-            oc_float<p> sin_theta = safe_sqrt(Float(1));
+            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
             return wh;
@@ -238,8 +236,8 @@ template<EPort p = EPort::D>
 [[nodiscard]] oc_float3<p> BRDF(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi, oc_float3<p> Fr,
                                 const oc_float<p> &cos_theta_i, const oc_float<p> &cos_theta_o,
                                 const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
-    auto ret = D_<p>(wh, alpha_x, alpha_y, type) * Fr * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
-    oc_assert(!invalid(ret) && all(ret > 0.f), "invalid brdf !");
+    oc_float3<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * Fr * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
+//    oc_assert(none(isnan(ret)) && all(ret > 0.f), "invalid brdf !");
     return ret;
 }
 
@@ -266,7 +264,7 @@ template<EPort p = EPort::D>
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float3<p> ft = numerator / denom;
     oc_float<p> factor = rcp(sqr(eta));
-    oc_assert(!invalid(ft) && all(ft > 0.f), "invalid btdf !");
+//    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf !");
     return ft * factor;
 }
 
