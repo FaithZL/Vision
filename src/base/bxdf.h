@@ -77,4 +77,24 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u) const noexcept override;
 };
 
+class MicrofacetTransmission : public BxDF {
+private:
+    Float3 Kt;
+    Microfacet<D> _microfacet;
+    FresnelType _fresnel_type;
+
+public:
+    explicit MicrofacetTransmission(Float3 color, Float ax, Float ay,
+                                    FresnelType fresnel_type,
+                                    MicrofacetType microfacet_type = GGX)
+        : BxDF(BxDFFlag::Reflection), Kt(color),
+          _microfacet(ax, ay, microfacet_type),
+          _fresnel_type(fresnel_type) {}
+
+    [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
+    [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
+    [[nodiscard]] Float PDF(Float3 wo, Float3 wi) const noexcept override;
+    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u) const noexcept override;
+};
+
 }// namespace vision
