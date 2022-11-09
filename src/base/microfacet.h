@@ -321,26 +321,27 @@ public:
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Fr,
-                                    oc_float<p> cos_theta_i, oc_float<p> cos_theta_o) const noexcept {
+    [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
+        oc_float<p> cos_theta_i = cos_theta(wi);
+        oc_float<p> cos_theta_o = cos_theta(wo);
         return microfacet::BRDF<p>(wo, wh, wi, Fr, cos_theta_i, cos_theta_o, _alpha_x, _alpha_y, _type);
     }
 
-    [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Fr,
-                                    oc_float<p> cos_theta_i, oc_float<p> cos_theta_o) const noexcept {
+    [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
         oc_float3<p> wh = normalize(wo + wi);
-        return BRDF(wo, wh, wi, Fr, cos_theta_i, cos_theta_o);
+        return BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Ft,
-                                    oc_float<p> cos_theta_i, oc_float<p> cos_theta_o, oc_float<p> eta) const noexcept {
+    [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
+                                    oc_float3<p> Ft, oc_float<p> eta) const noexcept {
+        oc_float<p> cos_theta_i = cos_theta(wi);
+        oc_float<p> cos_theta_o = cos_theta(wo);
         return microfacet::BTDF<p>(wo, wh, wi, Ft, cos_theta_i, cos_theta_o, eta, _alpha_x, _alpha_y, _type);
     }
 
-    [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Ft,
-                                    oc_float<p> cos_theta_i, oc_float<p> cos_theta_o, oc_float<p> eta) const noexcept {
+    [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
-        return BTDF(wo, wh, wi, Ft, cos_theta_i, cos_theta_o, eta);
+        return BTDF(wo, wh, wi, Ft, eta);
     }
 };
 

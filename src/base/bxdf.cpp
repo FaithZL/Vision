@@ -47,7 +47,7 @@ Float3 MicrofacetReflection::f(Float3 wo, Float3 wi) const noexcept {
     Float3 wh = normalize(wo + wi);
     wh = face_forward(wh, make_float3(0, 0, 1));
     Float3 F = eval_fresnel(abs_dot(wo, wh), _fresnel_type);
-    Float3 fr = _microfacet.BRDF(wo, wh, wi, F, cos_theta_i, cos_theta_o);
+    Float3 fr = _microfacet.BRDF(wo, wh, wi, F);
     return fr * Kr * abs_cos_theta(wi);
 }
 

@@ -143,6 +143,9 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
         }
     } else if (ps.data().is_object()) {
         fn = ps["fn"].as_string();
+    } else if (ps.data().is_number()) {
+        sub_type = "constant";
+        val = make_float4(ps.as_float(1.f));
     }
 }
 
