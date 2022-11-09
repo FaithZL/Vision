@@ -44,19 +44,19 @@ BSDFSample BxDF::sample(Float3 wo, Float2 u) const noexcept {
 Float3 MicrofacetReflection::f(Float3 wo, Float3 wi) const noexcept {
     Float3 wh = normalize(wo + wi);
     wh = face_forward(wh, make_float3(0, 0, 1));
-    Float3 F = eval_fresnel(abs_dot(wo, wh), _fresnel_type);
-    Float3 fr = _microfacet.BRDF(wo, wh, wi, F);
+    Float3 F = _fresnel->evaluate(cos_theta(wi));
+    Float3 fr = _microfacet->BRDF(wo, wh, wi, F);
     return fr * Kr * abs_cos_theta(wi);
 }
 
 Float MicrofacetReflection::PDF(Float3 wo, Float3 wi) const noexcept {
     Float3 wh = normalize(wo + wi);
-    return _microfacet.PDF_wi_reflection(wo, wh);
+    return _microfacet->PDF_wi_reflection(wo, wh);
 }
 
 BSDFSample MicrofacetReflection::sample(Float3 wo, Float2 u) const noexcept {
     BSDFSample ret;
-    Float3 wh = _microfacet.sample_wh(wo, u);
+    Float3 wh = _microfacet->sample_wh(wo, u);
     Float3 wi = reflect(wo, wh);
     ret.eval = evaluate(wo, wi);
     ret.wi = wi;

@@ -8,6 +8,7 @@
 #include "sample.h"
 #include "microfacet.h"
 #include "math/optics.h"
+#include "fresnel.h"
 
 namespace vision {
 using namespace ocarina;
@@ -61,16 +62,15 @@ public:
 class MicrofacetReflection : public BxDF {
 private:
     Float3 Kr;
-    Microfacet<D> _microfacet;
-    FresnelType _fresnel_type;
+    shared_ptr<Fresnel> _fresnel;
+    shared_ptr<Microfacet<D>> _microfacet;
 
 public:
-    explicit MicrofacetReflection(Float3 color, Float ax, Float ay,
-                                  FresnelType fresnel_type,
-                                  MicrofacetType microfacet_type = GGX)
+    MicrofacetReflection(Float3 color, const shared_ptr<Microfacet<D>> &m,
+                         const shared_ptr<Fresnel> &f)
         : BxDF(BxDFFlag::Reflection), Kr(color),
-          _microfacet(ax, ay, microfacet_type),
-          _fresnel_type(fresnel_type) {}
+          _microfacet(m), _fresnel(f) {}
+
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi) const noexcept override;
@@ -80,16 +80,14 @@ public:
 class MicrofacetTransmission : public BxDF {
 private:
     Float3 Kt;
-    Microfacet<D> _microfacet;
-    FresnelType _fresnel_type;
+    shared_ptr<Fresnel> _fresnel;
+    shared_ptr<Microfacet<D>> _microfacet;
 
 public:
-    explicit MicrofacetTransmission(Float3 color, Float ax, Float ay,
-                                    FresnelType fresnel_type,
-                                    MicrofacetType microfacet_type = GGX)
+    MicrofacetTransmission(Float3 color, const shared_ptr<Microfacet<D>> &m,
+                           const shared_ptr<Fresnel> &f)
         : BxDF(BxDFFlag::Reflection), Kt(color),
-          _microfacet(ax, ay, microfacet_type),
-          _fresnel_type(fresnel_type) {}
+          _microfacet(m), _fresnel(f) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;

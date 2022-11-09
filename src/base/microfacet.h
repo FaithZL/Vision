@@ -293,6 +293,8 @@ private:
     MicrofacetType _type{GGX};
 
 public:
+    explicit Microfacet(oc_float2<p> alpha, MicrofacetType type = GGX)
+        : _alpha_x(alpha.x), _alpha_y(alpha.y), _type(type) {}
     Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
         : _alpha_x(ax), _alpha_y(ay) {}
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(_alpha_x, _alpha_y); }

@@ -13,8 +13,8 @@ private:
     MicrofacetReflection _bxdf;
 
 public:
-    explicit MirrorBSDF(const SurfaceInteraction &si, Float3 kr, Float ax, Float ay)
-        : BSDF(si), _bxdf(kr, ax, ay, FresnelType::NoOp, GGX) {}
+    MirrorBSDF(const SurfaceInteraction &si, MicrofacetReflection bxdf)
+        : BSDF(si), _bxdf(std::move(bxdf)) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi);
@@ -38,8 +38,10 @@ public:
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 kr = _color ? _color->eval(si).xyz() : make_float3(0.f);
         Float2 alpha = _roughness ? _roughness->eval(si).xy() : make_float2(0.001f);
-        auto ret = make_unique<MirrorBSDF>(si, kr, alpha.x, alpha.y);
-        return ret;
+        auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
+        auto fresnel = make_shared<FresnelNoOp>();
+        MicrofacetReflection bxdf(kr, microfacet, fresnel);
+        return make_unique<MirrorBSDF>(si, move(bxdf));
     }
 };
 
