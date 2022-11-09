@@ -81,8 +81,8 @@ int main(int argc, char *argv[]) {
         Float3 wo = normalize(make_float3(1,1,0.6));
         auto wh = mf.sample_wh(wo, u);
 //        wh = make_float3(0,0,1);
-        auto pdf = mf.PDF_wh(wo, wh);
-        print("{} ----", pdf);
+//        auto pdf = mf.PDF_wh(wo, wh);
+//        print("{} ----", pdf);
         print("{} {} {}", wh.x, wh.y, wh.z);
 
 //        Var org = make_float3(0,0,0);
