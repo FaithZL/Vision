@@ -362,7 +362,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "TallBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
