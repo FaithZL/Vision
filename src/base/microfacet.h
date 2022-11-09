@@ -8,6 +8,7 @@
 #include "dsl/common.h"
 #include "math/base.h"
 #include "math/geometry.h"
+#include "math/optics.h"
 
 namespace vision {
 using namespace ocarina;
@@ -117,7 +118,7 @@ template<EPort p = EPort::D>
  */
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> G1(const oc_float3<p> &w, oc_float<p> alpha_x, oc_float<p> alpha_y, MicrofacetType type = GGX) {
-    oc_float<p> ret = 1 / (1 + lambda(w, alpha_x, alpha_y, type));
+    oc_float<p> ret = 1 / (1 + lambda<p>(w, alpha_x, alpha_y, type));
     return ret;
 }
 
@@ -164,7 +165,7 @@ template<EPort p = EPort::D>
         }
         case Beckmann: {
             oc_float<p> tan_theta_2, phi;
-            oc_float<p> log_sample = log(Var<float>(1 - u[0]));
+            oc_float<p> log_sample = log(1 - u[0]);
             oc_assert(!isinf(log_sample), "inf log sample");
             phi = atan(alpha_y / alpha_x *
                        tan(_2Pi * u[1] + PiOver2));
@@ -237,7 +238,7 @@ template<EPort p = EPort::D>
                                 const oc_float<p> &cos_theta_i, const oc_float<p> &cos_theta_o,
                                 const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float3<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * Fr * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
-    oc_assert(!has_invalid(ret) && all(ret > 0.f), "invalid brdf ! {}  {}", cos_theta_o, cos_theta_i);
+//    oc_assert(!has_invalid(ret) && all(ret > 0.f), "invalid brdf ! {}  {}", cos_theta_o, cos_theta_i);
     return ret;
 }
 
@@ -322,7 +323,7 @@ public:
 
     [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Fr,
                                     oc_float<p> cos_theta_i, oc_float<p> cos_theta_o) const noexcept {
-        return microfacet::BRDF(wo, wh, wi, Fr, cos_theta_i, cos_theta_o, _alpha_x, _alpha_y, _type);
+        return microfacet::BRDF<p>(wo, wh, wi, Fr, cos_theta_i, cos_theta_o, _alpha_x, _alpha_y, _type);
     }
 
     [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Fr,
@@ -333,7 +334,7 @@ public:
 
     [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Ft,
                                     oc_float<p> cos_theta_i, oc_float<p> cos_theta_o, oc_float<p> eta) const noexcept {
-        return microfacet::BTDF(wo, wh, wi, Ft, cos_theta_i, cos_theta_o, eta, _alpha_x, _alpha_y, _type);
+        return microfacet::BTDF<p>(wo, wh, wi, Ft, cos_theta_i, cos_theta_o, eta, _alpha_x, _alpha_y, _type);
     }
 
     [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Ft,

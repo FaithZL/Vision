@@ -10,6 +10,7 @@
 #include "math/geometry.h"
 #include "math/constants.h"
 #include "base/interaction.h"
+#include "base/microfacet.h"
 
 using namespace vision;
 using namespace ocarina;
@@ -72,19 +73,33 @@ int main(int argc, char *argv[]) {
 
 
     Kernel kernel = [&]() {
-        Var org = make_float3(0,0,0);
-        Var dir = make_float3(1,1,1);
-        Var n1 = make_float3(0,1,0);
-//        Var n2 = make_float3(1,0,0);
-        Interaction it;
-        it.pos = org;
-        it.g_uvn.z = n1;
-        $comment(spawn_ray)
-        Var ray = it.spawn_ray(dir);
-//        Var ray = vision::spawn_ray_to(org, dir, n1, n2);
-        Var hit= accel.trace_closest(ray);
+        Float2 u = make_float2(0.28, 0.28);
+        Float ax = 0.01f;
+        Float ay = 0.01f;
+
+        Microfacet<D> mf(ax, ay);
+        Float3 wo = normalize(make_float3(1,1,0.6));
+        auto wh = mf.sample_wh(wo, u);
+//        wh = make_float3(0,0,1);
+        auto pdf = mf.PDF_wh(wo, wh);
+        print("{} ----", pdf);
+        print("{} {} {}", wh.x, wh.y, wh.z);
+
+//        Var org = make_float3(0,0,0);
+//        Var dir = make_float3(1,1,1);
+//        Var n1 = make_float3(0,1,0);
+////        Var n2 = make_float3(1,0,0);
+//        Interaction it;
+//        it.pos = org;
+//        it.g_uvn.z = n1;
+//        $comment(spawn_ray)
+//        Var ray = it.spawn_ray(dir);
+////        Var ray = vision::spawn_ray_to(org, dir, n1, n2);
+//        Var hit= accel.trace_closest(ray);
 
     };
     auto shader = device.compile(kernel);
+//    Stream stream = device.create_stream();
+    stream << shader.dispatch(1) << synchronize() << commit();
     return 0;
 }
