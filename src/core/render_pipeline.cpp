@@ -38,7 +38,7 @@ void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     prepare_device_data();
     compile_shaders();
-    _render_image = ImageIO::pure_color(make_float4(0,0,0,1), ColorSpace::LINEAR, resolution());
+    _render_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, resolution());
 }
 
 void RenderPipeline::render(double dt) noexcept {
@@ -46,6 +46,9 @@ void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
     double ms = clk.elapse_ms();
     _total_time += ms;
+//    if (_frame_index == 1024) {
+//        _render_image.save(_context->scene_directory() / "test_cbox.png");
+//    }
     cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
 }

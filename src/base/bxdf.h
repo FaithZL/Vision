@@ -86,7 +86,7 @@ private:
 public:
     MicrofacetTransmission(Float3 color, const shared_ptr<Microfacet<D>> &m,
                            const shared_ptr<Fresnel> &f)
-        : BxDF(BxDFFlag::Reflection), Kt(color),
+        : BxDF(BxDFFlag::Transmission), Kt(color),
           _microfacet(m), _fresnel(f) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }

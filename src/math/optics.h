@@ -22,7 +22,7 @@ template<EPort p = D>
 refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta) noexcept {
     oc_float<p> cos_theta_i = dot(n, wi);
     oc_assert(cos_theta_i > 0, "refract error ! {}", cos_theta_i);
-    oc_float<p> sin_theta_i_2 = max(0, 1 - sqr(cos_theta_i));
+    oc_float<p> sin_theta_i_2 = max(0.f, 1 - sqr(cos_theta_i));
     oc_float<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
     oc_bool<p> valid = select(sin_theta_t_2 >= 1, false, true);
 
