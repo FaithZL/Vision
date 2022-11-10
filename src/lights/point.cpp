@@ -31,8 +31,7 @@ public:
         p_light.pos = _position;
         ret.eval = evaluate(p_ref, p_light);
         Float3 wi_un = _position - p_ref.pos;
-        ret.wi = normalize(wi_un);
-        ret.distance = length(wi_un);
+        ret.p_light = p_light.pos;
         return ret;
     }
 };

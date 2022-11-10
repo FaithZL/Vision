@@ -53,17 +53,14 @@ template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> sin_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1, 1));
+    return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> cos_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    if (sinTheta == 0.f) {
-        return 1.f;
-    }
-    return clamp(v.x / sinTheta, -1.f, 1.f);
+    return select(sinTheta == 0.f, 1.f,clamp(v.x / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>
@@ -90,8 +87,8 @@ template<typename T>
 template<typename T>
 [[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target) {
     T dir = p_target - p_start;
-    T org = offset_ray_origin(p_start, n_start);
     n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(p_start, n_start);
     return make_ray(org, dir, 1 - ShadowEpsilon);
 }
 
@@ -103,6 +100,36 @@ template<typename T>
     n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
     T org = offset_ray_origin(p_start, n_start);
     return make_ray(org, dir, 1 - ShadowEpsilon);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> sin_theta, oc_float<p> cos_theta,
+                                               oc_float<p> sin_phi, oc_float<p> cos_phi) {
+    return make_float3(sin_theta * cos_phi, sin_theta * sin_phi, cos_theta);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> sin_theta, oc_float<p> cos_theta,
+                                               oc_float<p> phi) {
+    return make_float3(sin_theta * cos(phi), sin_theta * sin(phi), cos_theta);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> theta, oc_float<p> phi) {
+    return spherical_direction(sin(theta), cos(theta), phi);
+}
+
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] auto spherical_theta(const T &v) {
+    return safe_acos(v.z);
+}
+
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] auto spherical_phi(const T &v) {
+    auto p = atan2(v.y, v.x);
+    return select((p < 0), (p + 2 * Pi), p);
 }
 
 template<typename T>
@@ -176,15 +203,39 @@ inline namespace geometry {
 struct Vertex {
 public:
     //todo compress
-    float3 pos;
-    float3 normal;
-    float2 uv;
+    array<float, 3> pos;
+    array<float, 3> n;
+    array<float, 2> uv;
 
 public:
     Vertex() = default;
     Vertex(float3 p, float3 n, float2 uv)
-        : pos(p), normal(n), uv(uv) {}
+        : pos{p.x, p.y, p.z}, n{n.x, n.y, n.z}, uv{uv.x, uv.y} {}
+
+    [[nodiscard]] auto position() const noexcept {
+        return make_float3(pos[0], pos[1], pos[2]);
+    }
+
+    [[nodiscard]] auto normal() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
+
+    [[nodiscard]] auto tex_coord() const noexcept {
+        return make_float2(uv[0], uv[1]);
+    }
 };
 }// namespace geometry
 }// namespace vision
-OC_STRUCT(vision::Vertex, pos, normal, uv){};
+OC_STRUCT(vision::Vertex, pos, n, uv){
+    [[nodiscard]] auto position() const noexcept {
+        return make_float3(pos[0], pos[1], pos[2]);
+    }
+
+    [[nodiscard]] auto normal() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
+
+    [[nodiscard]] auto tex_coord() const noexcept {
+        return make_float2(uv[0], uv[1]);
+    }
+};

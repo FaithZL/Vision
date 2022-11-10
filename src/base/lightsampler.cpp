@@ -27,8 +27,7 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref,
 }
 
 void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
-    RenderPipeline *rp = _scene->render_pipeline();
-    rp->dispatch<Light>(id, _lights, func);
+    _lights.dispatch(id, func);
 }
 
 }// namespace vision

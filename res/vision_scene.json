@@ -13,6 +13,18 @@
             }
         },
         {
+            "type": "mirror",
+            "name": "Mirror",
+            "param": {
+                "color": [
+                    1,
+                    1,
+                    1
+                ],
+                "roughness" :0.0001
+            }
+        },
+        {
             "type": "matte",
             "name": "RightWall",
             "param": {
@@ -174,6 +186,14 @@
                 }
             }
         },
+        // {
+        //     "type" : "model",
+        //     "name" : "box",
+        //     "param" : {
+        //         "material": "BackWall",
+        //         "fn" : "cube.obj"
+        //     }
+        // },
         {
             "type": "quad",
             "name": "shape_2",
@@ -301,7 +321,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "ShortBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -342,7 +362,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "TallBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {

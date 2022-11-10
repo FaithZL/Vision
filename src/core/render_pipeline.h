@@ -6,7 +6,7 @@
 
 #include "rhi/common.h"
 #include "base/scene.h"
-#include "base/device_data.h"
+#include "base/geometry.h"
 #include "rhi/window.h"
 #include "util/image_io.h"
 
@@ -18,7 +18,7 @@ private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
-    DeviceData _device_data{_device};
+    Geometry _geometry{_device};
     ImageIO _render_image;
     Stream _stream;
     uint _frame_index{};
@@ -30,8 +30,8 @@ public:
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
-    [[nodiscard]] DeviceData &device_data() noexcept { return _device_data; }
-    [[nodiscard]] const DeviceData &device_data() const noexcept { return _device_data; }
+    [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
+    [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void update() noexcept { _frame_index = 0; _total_time = 0; }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
@@ -44,22 +44,14 @@ public:
     [[nodiscard]] const float4 *buffer() const { return _render_image.pixel_ptr<float4>(); }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
-    template<typename T>
-    void dispatch(const Uint &id, const vector<T *> &lst, const std::function<void(const T *)> &func) {
-        if (lst.empty()) [[unlikely]] {
-            OC_ERROR("lst is empty");
-            return;
-        }
-        $switch(id) {
-            for (int i = 0; i < lst.size(); ++i) {
-                $case(i) { func(lst[i]); $break; };
-            }
-            $default {
-                unreachable();
-                $break;
-            };
-        };
-    }
+
+    // for dsl
+    [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
+    [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
+    [[nodiscard]] SurfaceInteraction compute_surface_interaction(const OCHit &hit) const noexcept;
+    [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
+                                                              const Uint &prim_id,
+                                                              const Float2 &bary) const noexcept;
 };
 
 }// namespace vision

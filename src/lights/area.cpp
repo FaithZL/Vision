@@ -47,16 +47,15 @@ public:
 
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
         LightSample ret;
-        DeviceData &data = _scene->render_pipeline()->device_data();
+        auto rp = _scene->render_pipeline();
         auto [prim_id, pmf, u_remapping] = _distribution->sample_discrete(u.x);
         u.x = u_remapping;
         Float2 bary = square_to_triangle(u);
-        LightEvalContext p_light = data.compute_light_eval_context(_inst_idx, prim_id, bary);
+        LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
         Float3 wi_un = p_light.pos - p_ref.pos;
         ret.eval = evaluate(p_ref, p_light);
-        ret.wi = normalize(wi_un);
-        ret.distance = length(wi_un);
+        ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
     }
 

@@ -2,12 +2,12 @@
 // Created by Zero on 25/10/2022.
 //
 
-#include "device_data.h"
+#include "geometry.h"
 #include "math/transform.h"
 
 namespace vision {
 
-void DeviceData::accept(const vector<Vertex> &vert,
+void Geometry::accept(const vector<Vertex> &vert,
                         const vector<Triangle> &tri, float4x4 o2w, uint mat_id, uint light_id) {
 
     Mesh::Handle mesh_handle{.vertex_offset = (uint)vertices.host().size(),
@@ -24,7 +24,7 @@ void DeviceData::accept(const vector<Vertex> &vert,
     mesh_handles.push_back(mesh_handle);
 }
 
-void DeviceData::build_meshes() {
+void Geometry::build_meshes() {
     for (const auto &inst : instances) {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = mesh_handles[mesh_id];
@@ -46,14 +46,14 @@ void DeviceData::build_meshes() {
     }
 }
 
-void DeviceData::reset_device_buffer() {
+void Geometry::reset_device_buffer() {
     vertices.reset_device_buffer(*device);
     triangles.reset_device_buffer(*device);
     instances.reset_device_buffer(*device);
     mesh_handles.reset_device_buffer(*device);
 }
 
-void DeviceData::upload() const {
+void Geometry::upload() const {
     Stream stream = device->create_stream();
     stream << vertices.upload()
            << triangles.upload()
@@ -63,7 +63,7 @@ void DeviceData::upload() const {
     stream << commit();
 }
 
-void DeviceData::build_accel() {
+void Geometry::build_accel() {
     accel = device->create_accel();
     Stream stream = device->create_stream();
     for (int i = 0; i < meshes.size(); ++i) {
@@ -77,7 +77,7 @@ void DeviceData::build_accel() {
     stream << commit();
 }
 
-SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) const noexcept {
+SurfaceInteraction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
     SurfaceInteraction si;
     si.prim_id = hit.prim_id;
     Var inst = instances.read(hit.inst_id);
@@ -87,25 +87,24 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     si.light_id = inst.light_id;
     si.mat_id = inst.mat_id;
-    {
-        $comment(compute pos)
-            Var p0 = o2w.apply_point(v0.pos);
-        Var p1 = o2w.apply_point(v1.pos);
-        Var p2 = o2w.apply_point(v2.pos);
-        Float3 pos = hit->lerp(p0, p1, p2);
-        si.pos = pos;
+    comment("compute pos");
+    Var p0 = o2w.apply_point(v0->position());
+    Var p1 = o2w.apply_point(v1->position());
+    Var p2 = o2w.apply_point(v2->position());
+    Float3 pos = hit->lerp(p0, p1, p2);
+    si.pos = pos;
 
-        $comment(compute geometry uvn)
-            Float3 dp02 = p0 - p2;
-        Float3 dp12 = p1 - p2;
-        Float3 ng_un = cross(dp02, dp12);
-        si.prim_area = 0.5f * length(ng_un);
-        Float2 duv02 = v0.uv - v2.uv;
-        Float2 duv12 = v1.uv - v2.uv;
+    comment("compute geometry uvn");
+    Float3 dp02 = p0 - p2;
+    Float3 dp12 = p1 - p2;
+    Float3 ng_un = cross(dp02, dp12);
+    si.prim_area = 0.5f * length(ng_un);
+    if (is_complete) {
+        Float2 duv02 = v0->tex_coord() - v2->tex_coord();
+        Float2 duv12 = v1->tex_coord() - v2->tex_coord();
         Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
         Bool degenerate_uv = abs(det) < float(1e-8);
         Float3 dp_du, dp_dv;
-
         $if(!degenerate_uv) {
             Float inv_det = 1 / det;
             dp_du = (duv12[1] * dp02 - duv02[1] * dp12) * inv_det;
@@ -117,14 +116,17 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
         };
         Float3 ng = normalize(ng_un);
         si.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
+    } else {
+        si.g_uvn.set(normalize(dp02), normalize(dp12), normalize(ng_un));
     }
 
-    {
-        $comment(compute shading uvn)
-            Float3 normal = hit->lerp(v0.normal, v1.normal, v2.normal);
+    if (is_complete) {
+        comment("compute shading uvn");
+        Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
         $if(is_zero(normal)) {
             si.s_uvn = si.g_uvn;
-        } $else {
+        }
+        $else {
             Float3 ns = normalize(o2w.apply_normal(normal));
             Float3 ss = si.g_uvn.dp_du();
             Float3 st = normalize(cross(ns, ss));
@@ -132,18 +134,25 @@ SurfaceInteraction DeviceData::compute_surface_interaction(const OCHit &hit) con
             si.s_uvn.set(ss, st, ns);
         };
     }
-    Float2 uv = hit->lerp(v0.uv, v1.uv, v2.uv);
+    Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
     si.uv = uv;
     return si;
 }
 
-array<Var<Vertex>, 3> DeviceData::get_vertices(const Var<Triangle> &tri,
+OCHit Geometry::trace_closest(const OCRay &ray) const noexcept {
+    return accel.trace_closest(ray);
+}
+Bool Geometry::trace_any(const OCRay &ray) const noexcept {
+    return accel.trace_any(ray);
+}
+
+array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
                                                const Uint &offset) const noexcept {
     return {vertices.read(offset + tri.i),
             vertices.read(offset + tri.j),
             vertices.read(offset + tri.k)};
 }
-LightEvalContext DeviceData::compute_light_eval_context(const Uint &inst_id,
+LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
                                                         const Uint &prim_id,
                                                         const Float2 &bary) const noexcept {
     OCHit hit;
@@ -151,7 +160,7 @@ LightEvalContext DeviceData::compute_light_eval_context(const Uint &inst_id,
     hit.prim_id = prim_id;
     hit.bary = bary;
     // todo
-    SurfaceInteraction si = compute_surface_interaction(hit);
+    SurfaceInteraction si = compute_surface_interaction(hit, false);
     LightEvalContext ret(si);
     return ret;
 }

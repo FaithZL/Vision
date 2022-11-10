@@ -13,7 +13,7 @@
 
 namespace vision {
 
-struct DeviceData;
+struct Geometry;
 
 struct Shape : public Node {
 public:
@@ -34,7 +34,7 @@ public:
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
-    virtual void fill_device_data(DeviceData &data) const noexcept = 0;
+    virtual void fill_geometry(Geometry &data) const noexcept = 0;
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
 };
 
@@ -57,8 +57,10 @@ public:
 
 public:
     explicit Mesh(const ShapeDesc &desc);
+    Mesh(vector<Vertex> vert, vector<Triangle> tri)
+        : vertices(std::move(vert)), triangles(std::move(tri)) {}
     Mesh() = default;
-    void fill_device_data(DeviceData &data) const noexcept override;
+    void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_area() const noexcept override;
 };
 

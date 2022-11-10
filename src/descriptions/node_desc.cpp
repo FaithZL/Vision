@@ -15,6 +15,9 @@ namespace vision {
 #define VISION_PARAMS_LIST_INITIAL(...) MAP(VISION_PARAMS_INITIAL, ##__VA_ARGS__)
 
 void TransformDesc::init(const ParameterSet &ps) noexcept {
+    if (ps.data().is_null()) {
+        return;
+    }
     sub_type = ps["type"].as_string("look_at");
     ParameterSet param = ps["param"];
     if (sub_type == "look_at") {
@@ -44,15 +47,16 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string();
     name = ps["name"].as_string();
     ParameterSet param = ps["param"];
-    o2w.init(param["transform"]);
+    o2w.init(param.data().value("transform", DataWrap()));
     material_name = param["material"].as_string("");
     if (param.contains("emission")) {
         emission.inst_id = index;
         emission.init(param["emission"]);
     }
     if (sub_type == "model") {
-        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed)
+        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed, flip_uv)
         fn = param["fn"].as_string();
+        fn = scene_path / fn;
     } else if (sub_type == "quad") {
         VISION_PARAMS_LIST_INITIAL(width, height)
     } else if (sub_type == "cube") {
@@ -105,8 +109,8 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
     color.init(param["color"]);
-    if (sub_type == "matte") {
-
+    if (sub_type == "mirror") {
+        roughness.init(param["roughness"]);
     } else if (sub_type == "glass") {
         ior.init(param["ior"]);
         roughness.init(param["roughness"]);
@@ -130,9 +134,18 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
         sub_type = "constant";
-        val = make_float4(ps.as_float3(), 0.f);
+        if (ps.data().size() == 2) {
+            val = make_float4(ps.as_float2(), 0.f, 0.f);
+        } else if (ps.data().size() == 3) {
+            val = make_float4(ps.as_float3(), 0.f);
+        } else {
+            val = ps.as_float4();
+        }
     } else if (ps.data().is_object()) {
         fn = ps["fn"].as_string();
+    } else if (ps.data().is_number()) {
+        sub_type = "constant";
+        val = make_float4(ps.as_float(1.f));
     }
 }
 

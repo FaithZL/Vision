@@ -35,7 +35,7 @@ RaySample Camera::generate_ray(const SensorSample &ss) const noexcept {
     Float3 dir = normalize(p.x * c2w[0].xyz() - p.y * c2w[1].xyz() + c2w[2].xyz());
     RaySample ret;
     ret.ray = make_ray(c2w[3].xyz(), dir);
-    ret.weight = 1.f;
+    ret.weight = ss.filter_weight;
     return ret;
 }
 

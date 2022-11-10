@@ -89,8 +89,10 @@ public:
     string material_name;
     uint mat_id{InvalidUI32};
     uint index{InvalidUI32};
-    string fn;
+    fs::path fn;
+    fs::path scene_path;
     bool smooth{false};
+    bool flip_uv{false};
     bool swap_handed{false};
     uint subdiv_level{0};
 

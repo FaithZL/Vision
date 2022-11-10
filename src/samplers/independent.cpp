@@ -13,8 +13,8 @@ using namespace ocarina;
 class IndependentSampler : public Sampler {
 private:
     optional<Uint> _state{};
-    Callable<float(uint &)> _lcg{lcg<D>};
-    Callable<uint(uint, uint)> _tea{tea<D>};
+    Callable<canonical_signature_t<decltype(lcg<H>)>> _lcg{lcg<D>};
+    Callable<canonical_signature_t<decltype(tea<H>)>> _tea{tea<D>};
 
 public:
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}

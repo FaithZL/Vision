@@ -4,7 +4,7 @@
 
 #include "shape.h"
 #include "scene.h"
-#include "device_data.h"
+#include "geometry.h"
 
 namespace vision {
 
@@ -21,16 +21,16 @@ Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {
     }
 }
 
-void Mesh::fill_device_data(DeviceData &data) const noexcept {
+void Mesh::fill_geometry(Geometry &data) const noexcept {
     data.accept(vertices, triangles, o2w, mat_id, light_id);
 }
 
 vector<float> Mesh::surface_area() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : triangles) {
-        float3 v0 = transform_point<H>(o2w, vertices[tri.i].pos);
-        float3 v1 = transform_point<H>(o2w, vertices[tri.j].pos);
-        float3 v2 = transform_point<H>(o2w, vertices[tri.k].pos);
+        float3 v0 = transform_point<H>(o2w, vertices[tri.i].position());
+        float3 v1 = transform_point<H>(o2w, vertices[tri.j].position());
+        float3 v2 = transform_point<H>(o2w, vertices[tri.k].position());
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;
