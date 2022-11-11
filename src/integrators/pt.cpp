@@ -65,8 +65,8 @@ public:
 
                     BSDFEval bsdf_eval;
                     Float3 wi = normalize(light_sample.p_light - si.pos);
-                    bsdf_eval = bsdf->evaluate(si.wo, wi, BxDFFlag::All);
-                    bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+                    bsdf_eval = bsdf->evaluate(wi, BxDFFlag::All);
+                    bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
