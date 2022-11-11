@@ -53,7 +53,6 @@ public:
         Float2 bary = square_to_triangle(u);
         LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
-        Float3 wi_un = p_light.pos - p_ref.pos;
         ret.eval = evaluate(p_ref, p_light);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
