@@ -159,7 +159,6 @@ LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
     hit.inst_id = inst_id;
     hit.prim_id = prim_id;
     hit.bary = bary;
-    // todo
     SurfaceInteraction si = compute_surface_interaction(hit, false);
     LightEvalContext ret(si);
     return ret;

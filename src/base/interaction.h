@@ -60,6 +60,7 @@ struct SurfaceInteraction : public Interaction {
     Uint mat_id{InvalidUI32};
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
+    [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
 };
 
 struct SurfacePoint {
