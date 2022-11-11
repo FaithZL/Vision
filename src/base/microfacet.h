@@ -161,6 +161,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
+            CHECK_UNIT_VEC(wh)
             return wh;
         }
         case Beckmann: {
@@ -176,6 +177,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
+            CHECK_UNIT_VEC(wh)
             return wh;
         }
         default:

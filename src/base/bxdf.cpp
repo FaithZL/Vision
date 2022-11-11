@@ -58,7 +58,7 @@ BSDFSample MicrofacetReflection::sample(Float3 wo, Float2 u) const noexcept {
     BSDFSample ret;
     Float3 wh = _microfacet->sample_wh(wo, u);
     Float3 wi = reflect(wo, wh);
-    ret.eval = evaluate(wo, wi);
+    ret.eval = safe_evaluate(wo, wi);
     ret.wi = wi;
     ret.flags = flag();
     return ret;
