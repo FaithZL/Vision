@@ -128,6 +128,15 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     }
 }
 
+void SceneDesc::process_materials() noexcept {
+//    vector<MaterialDesc> mats = move(material_descs);
+    vector<uint64_t> vec;
+    for (const auto &mat : material_descs) {
+        vec.push_back(mat.hash());
+    }
+    int i = 0;
+}
+
 void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap()));
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
@@ -136,6 +145,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sensor_desc.init(data.value("camera", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
+    process_materials();
 }
 
 SceneDesc SceneDesc::from_json(const fs::path &path) {

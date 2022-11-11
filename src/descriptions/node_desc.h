@@ -6,6 +6,7 @@
 
 #include <utility>
 #include "core/stl.h"
+#include "core/hash.h"
 #include "core/basic_types.h"
 #include "parameter_set.h"
 #include "math/geometry.h"
@@ -14,7 +15,7 @@ namespace vision {
 
 using namespace ocarina;
 class Scene;
-struct NodeDesc {
+struct NodeDesc : public Hashable {
 protected:
     string_view _type;
 
@@ -22,6 +23,11 @@ public:
     string sub_type;
     string name;
     mutable Scene *scene{nullptr};
+
+protected:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(_type, hash64(sub_type));
+    }
 
 public:
     NodeDesc() = default;
@@ -34,6 +40,9 @@ public:
     };
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
+    }
+    [[nodiscard]] virtual bool operator==(const NodeDesc &other) const noexcept {
+        return hash() == other.hash();
     }
 };
 #define VISION_DESC_COMMON(type)      \
@@ -58,6 +67,9 @@ public:
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] bool valid_emission() const noexcept {
         return any(val != 0.f) || !fn.empty();
+    }
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(NodeDesc::_compute_hash(), fn, val);
     }
 };
 
@@ -188,6 +200,9 @@ public:
 public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(NodeDesc::_compute_hash(), color, ior, roughness);
+    }
 };
 
 struct LightSamplerDesc : public NodeDesc {
