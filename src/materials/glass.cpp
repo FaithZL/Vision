@@ -24,16 +24,31 @@ public:
     [[nodiscard]] Float3 albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
+        auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
         $if(same_hemisphere(wo, wi)) {
-            ret = _refl.evaluate(wo, wi, _fresnel->clone());
-        } $else {
-            ret = _trans.evaluate(wo, wi, _fresnel->clone());
+            ret = _refl.evaluate(wo, wi, fresnel);
+        }
+        $else {
+            ret = _trans.evaluate(wo, wi, fresnel);
         };
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
         BSDFSample ret;
+        auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        $if(uc < fr) {
+            ret = _refl.sample(wo, u, fresnel);
+            ret.eval.pdf *= fr;
+        }
+        $else {
+            ret = _trans.sample(wo, u, fresnel);
+            ret.eval.pdf *= 1 - fr;
+        };
         return ret;
     }
 };
