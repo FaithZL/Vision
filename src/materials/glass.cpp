@@ -41,7 +41,6 @@ public:
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-//        fr = 0.f;
         $if(uc < fr) {
             ret = _refl.sample(wo, u, fresnel);
             ret.eval.pdf *= fr;
