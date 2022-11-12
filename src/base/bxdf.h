@@ -47,14 +47,12 @@ public:
 class MicrofacetReflection : public BxDF {
 private:
     Float3 Kr;
-    shared_ptr<Fresnel> _fresnel;
     shared_ptr<Microfacet<D>> _microfacet;
 
 public:
-    MicrofacetReflection(Float3 color, const shared_ptr<Microfacet<D>> &m,
-                         const shared_ptr<Fresnel> &f)
+    MicrofacetReflection(Float3 color, const shared_ptr<Microfacet<D>> &m)
         : BxDF(BxDFFlag::Reflection), Kr(color),
-          _microfacet(m), _fresnel(f) {}
+          _microfacet(m) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
@@ -65,15 +63,11 @@ public:
 class MicrofacetTransmission : public BxDF {
 private:
     Float3 Kt;
-    shared_ptr<Fresnel> _fresnel;
     shared_ptr<Microfacet<D>> _microfacet;
 
 public:
-    MicrofacetTransmission(Float3 color, const shared_ptr<Microfacet<D>> &m,
-                           const shared_ptr<Fresnel> &f)
-        : BxDF(BxDFFlag::Transmission), Kt(color),
-          _microfacet(m), _fresnel(f) {}
-
+    MicrofacetTransmission(Float3 color, const shared_ptr<Microfacet<D>> &m)
+        : BxDF(BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;

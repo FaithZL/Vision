@@ -10,22 +10,24 @@ namespace vision {
 
 class GlassBSDF : public BSDF {
 private:
+    SP<Fresnel> _fresnel;
     MicrofacetReflection _refl;
     MicrofacetTransmission _trans;
 
 public:
     GlassBSDF(const SurfaceInteraction &si,
-              MicrofacetReflection refl,
+              const SP<Fresnel> &fresnel,
+                  MicrofacetReflection refl,
               MicrofacetTransmission trans)
-        : BSDF(si), _refl(move(refl)), _trans(move(trans)) {}
+        : BSDF(si), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
         $if(same_hemisphere(wo, wi)) {
-            ret = _refl.evaluate(wo, wi,nullptr);
+            ret = _refl.evaluate(wo, wi,_fresnel);
         } $else {
-            ret = _trans.evaluate(wo, wi,nullptr);
+            ret = _trans.evaluate(wo, wi,_fresnel);
         };
         return ret;
     }
@@ -55,9 +57,9 @@ public:
         Float2 alpha = _roughness ? _roughness->eval(si).xy() : make_float2(0.001f);
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(ior);
-        MicrofacetReflection refl(color, microfacet, fresnel);
-        MicrofacetTransmission trans(color, microfacet, fresnel);
-        return make_unique<GlassBSDF>(si, move(refl), move(trans));
+        MicrofacetReflection refl(color, microfacet);
+        MicrofacetTransmission trans(color, microfacet);
+        return make_unique<GlassBSDF>(si, fresnel, move(refl), move(trans));
     }
 };
 }// namespace vision
