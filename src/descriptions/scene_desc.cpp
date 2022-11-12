@@ -130,7 +130,6 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
 }
 
 void SceneDesc::process_materials() noexcept {
-    return;
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;
 
@@ -150,6 +149,13 @@ void SceneDesc::process_materials() noexcept {
     for (ShapeDesc &sd : shape_descs) {
         sd.mat_id = index_map[sd.mat_hash];
     }
+//    auto m = material_descs;
+//    for (int i = 0; i < 50; ++i) {
+//        for (int j = 0; j < m.size(); ++j) {
+//            material_descs.push_back(m[j]);
+//        }
+//    }
+//    int i = 0;
 }
 
 void SceneDesc::init(const DataWrap &data) noexcept {
