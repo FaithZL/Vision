@@ -27,7 +27,7 @@ public:
 
 class MatteMaterial : public Material {
 private:
-    Texture *_color{};
+    const Texture *_color{};
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)

@@ -10,7 +10,7 @@ namespace vision {
 
 class GlassBSDF : public BSDF {
 private:
-    SP<Fresnel> _fresnel;
+    SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
     MicrofacetTransmission _trans;
 
@@ -25,9 +25,9 @@ public:
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
         $if(same_hemisphere(wo, wi)) {
-            ret = _refl.evaluate(wo, wi,_fresnel);
+            ret = _refl.evaluate(wo, wi, _fresnel->clone());
         } $else {
-            ret = _trans.evaluate(wo, wi,_fresnel);
+            ret = _trans.evaluate(wo, wi, _fresnel->clone());
         };
         return ret;
     }
@@ -40,9 +40,9 @@ public:
 
 class GlassMaterial : public Material {
 private:
-    Texture *_color{};
-    Texture *_ior{};
-    Texture *_roughness{};
+    const Texture *_color{};
+    const Texture *_ior{};
+    const Texture *_roughness{};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)

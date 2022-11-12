@@ -10,7 +10,7 @@ namespace vision {
 
 class MirrorBSDF : public BSDF {
 private:
-    SP<Fresnel> _fresnel;
+    SP<const Fresnel> _fresnel;
     MicrofacetReflection _bxdf;
 
 public:
@@ -18,18 +18,18 @@ public:
         : BSDF(si), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        return _bxdf.safe_evaluate(wo, wi, _fresnel);
+        return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
                                           Uchar flag) const noexcept override {
-        return _bxdf.sample(wo, u, _fresnel);
+        return _bxdf.sample(wo, u, _fresnel->clone());
     }
 };
 
 class MirrorMaterial : public Material {
 private:
-    Texture *_color{};
-    Texture *_roughness{};
+    const Texture *_color{};
+    const Texture *_roughness{};
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)

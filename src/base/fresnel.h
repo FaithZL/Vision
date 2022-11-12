@@ -17,6 +17,9 @@ public:
         OC_ERROR("ior only dielectric material !");
         return 1;
     }
+    virtual void correct_eta(Float cos_theta) noexcept {
+        OC_ERROR("correct_eta only dielectric material !");
+    }
     [[nodiscard]] virtual SP<Fresnel> clone() const noexcept = 0;
 };
 
@@ -26,8 +29,11 @@ private:
 
 public:
     explicit FresnelDielectric(Float ior) : _eta(ior) {}
-    [[nodiscard]] Float3 evaluate(Float cos_theta) const noexcept override {
-        Float fr = fresnel_dielectric<D>(cos_theta, select(cos_theta > 0, _eta, rcp(_eta)));
+    void correct_eta(Float cos_theta) noexcept override {
+        _eta = select(cos_theta > 0, _eta, rcp(_eta));
+    }
+    [[nodiscard]] Float3 evaluate(Float abs_cos_theta) const noexcept override {
+        Float fr = fresnel_dielectric<D>(abs_cos_theta, _eta);
         return make_float3(fr);
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
