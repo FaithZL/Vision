@@ -88,7 +88,9 @@ int main(int argc, char *argv[]) {
         Float3 w = bs.eval.f;
         print("({},{},{})  {}", w.x, w.y, w.z, bs.eval.pdf);
         w = bs.wi;
-        print("({},{},{})  ", w.x, w.y, w.z);
+        print("({},{},{})  ", w.x, w.y, fresnel->evaluate(wo.z)[0]);
+
+
 
     };
     auto shader = device.compile(kernel);

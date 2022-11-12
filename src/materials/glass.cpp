@@ -41,6 +41,7 @@ public:
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+//        fr = 0.f;
         $if(uc < fr) {
             ret = _refl.sample(wo, u, fresnel);
             ret.eval.pdf *= fr;
@@ -72,7 +73,7 @@ public:
         Float2 alpha = _roughness ? _roughness->eval(si).xy() : make_float2(0.001f);
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(ior);
-        MicrofacetReflection refl(make_float3(0.f), microfacet);
+        MicrofacetReflection refl(color, microfacet);
         MicrofacetTransmission trans(color, microfacet);
         return make_unique<GlassBSDF>(si, fresnel, move(refl), move(trans));
     }
