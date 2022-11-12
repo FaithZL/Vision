@@ -74,7 +74,7 @@ Float3 MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) cons
     wh = face_forward(wh, make_float3(0, 0, 1));
     Float3 F = fresnel->evaluate(abs_dot(wo, wh));
     Float3 tr = _microfacet->BTDF(wo, wh, wi, make_float3(1) - F, eta);
-    return select(dot(wo, wh) * dot(wi, wh) > 0, make_float3(0.f), tr * Kt);
+    return select(dot(wo, wh) * dot(wi, wh) > 0, make_float3(0.f), tr * Kt * abs_cos_theta(wi));
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
@@ -89,7 +89,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Float2 u, SP<Fresnel> fresn
     Float3 wh = _microfacet->sample_wh(wo, u);
     auto [valid, wi] = refract(wo, wh, fresnel->eta());
     ret.eval = safe_evaluate(wo, wi, fresnel);
-    ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
+    ret.eval.pdf = select(valid && dot(wh, wo) > 0, ret.eval.pdf, 0.f);
     ret.wi = wi;
     ret.flags = flag();
     return ret;

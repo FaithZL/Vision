@@ -269,7 +269,7 @@ template<EPort p = EPort::D>
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float3<p> ft = numerator / denom;
     oc_float<p> factor = rcp(sqr(eta));
-    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf({},{},{}) ! ", ft.x, ft.y, ft.z);
+//    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf({},{},{}) ! ", ft.x, ft.y, ft.z);
     return ft * factor;
 }
 
