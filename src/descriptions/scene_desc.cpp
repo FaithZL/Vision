@@ -130,6 +130,7 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
 }
 
 void SceneDesc::process_materials() noexcept {
+    return;
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;
 

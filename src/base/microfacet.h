@@ -300,7 +300,7 @@ public:
     explicit Microfacet(oc_float2<p> alpha, MicrofacetType type = GGX)
         : _alpha_x(alpha.x), _alpha_y(alpha.y), _type(type) {}
     Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
-        : _alpha_x(ax), _alpha_y(ay) {}
+        : _alpha_x(ax), _alpha_y(ay), _type(type) {}
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(_alpha_x, _alpha_y); }
     [[nodiscard]] oc_float<p> D_(oc_float3<p> wh) const noexcept { return microfacet::D_<p>(wh, _alpha_x, _alpha_y, _type); }
     [[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {

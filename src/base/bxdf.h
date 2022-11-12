@@ -89,6 +89,7 @@ public:
         : BxDF(BxDFFlag::Transmission), Kt(color),
           _microfacet(m), _fresnel(f) {}
 
+    [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi) const noexcept override;

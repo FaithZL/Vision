@@ -64,6 +64,10 @@ BSDFSample MicrofacetReflection::sample(Float3 wo, Float2 u) const noexcept {
     return ret;
 }
 
+Bool MicrofacetTransmission::safe(Float3 wo, Float3 wi) const noexcept {
+    return !same_hemisphere(wo, wi);
+}
+
 Float3 MicrofacetTransmission::f(Float3 wo, Float3 wi) const noexcept {
     Float ior = _fresnel->ior();
     Float3 wh = normalize(wo + wi * ior);
@@ -84,7 +88,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Float2 u) const noexcept {
     BSDFSample ret;
     Float3 wh = _microfacet->sample_wh(wo, u);
     auto [valid, wi] = refract(wo, wh,_fresnel->ior());
-    ret.eval = evaluate(wo, wi);
+    ret.eval = safe_evaluate(wo, wi);
     ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
     ret.flags = flag();
