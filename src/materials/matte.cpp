@@ -17,11 +17,11 @@ public:
         : BSDF(si), _bxdf(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        return _bxdf.safe_evaluate(wo, wi);
+        return _bxdf.safe_evaluate(wo, wi, nullptr);
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
                             Uchar flag) const noexcept override {
-        return _bxdf.sample(wo, u);
+        return _bxdf.sample(wo, u,nullptr);
     }
 };
 

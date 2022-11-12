@@ -13,34 +13,19 @@
 namespace vision {
 using namespace ocarina;
 
-enum FresnelType : uint8_t {
-    NoOp = 0,
-    Dielectric,
-    DisneyFr,
-    Conductor
-};
-
-inline Float3 eval_fresnel(Float cos_theta, FresnelType type) noexcept {
-    switch (type) {
-        case NoOp:
-            return make_float3(1.f);
-    }
-    return make_float3(1.f);
-}
-
 class BxDF {
 protected:
     uchar _flag;
 
 public:
     explicit BxDF(uchar flag) : _flag(flag) {}
-    [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual BSDFEval evaluate(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual BSDFEval safe_evaluate(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u) const noexcept;
+    [[nodiscard]] virtual BSDFEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual BSDFEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }
     [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {
         return ((_flag & bxdf_flag) == _flag);
@@ -56,7 +41,7 @@ public:
         : BxDF(BxDFFlag::DiffRefl),
           Kr(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
+    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
 };
 
 class MicrofacetReflection : public BxDF {
@@ -72,9 +57,9 @@ public:
           _microfacet(m), _fresnel(f) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] Float PDF(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u) const noexcept override;
+    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
 };
 
 class MicrofacetTransmission : public BxDF {
@@ -91,9 +76,9 @@ public:
 
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] Float PDF(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u) const noexcept override;
+    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
 };
 
 }// namespace vision

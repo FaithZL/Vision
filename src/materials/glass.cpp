@@ -23,9 +23,9 @@ public:
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
         $if(same_hemisphere(wo, wi)) {
-            ret = _refl.evaluate(wo, wi);
+            ret = _refl.evaluate(wo, wi,nullptr);
         } $else {
-            ret = _trans.evaluate(wo, wi);
+            ret = _trans.evaluate(wo, wi,nullptr);
         };
         return ret;
     }
