@@ -51,9 +51,10 @@ public:
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 color = _color ? _color->eval(si).xyz() : make_float3(0.f);
+        Float ior = _ior ? _ior->eval(si).x : 1.5f;
         Float2 alpha = _roughness ? _roughness->eval(si).xy() : make_float2(0.001f);
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelNoOp>();
+        auto fresnel = make_shared<FresnelDielectric>(ior);
         MicrofacetReflection refl(color, microfacet, fresnel);
         MicrofacetTransmission trans(color, microfacet, fresnel);
         return make_unique<GlassBSDF>(si, move(refl), move(trans));

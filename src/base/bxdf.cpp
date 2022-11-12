@@ -69,25 +69,25 @@ Bool MicrofacetTransmission::safe(Float3 wo, Float3 wi) const noexcept {
 }
 
 Float3 MicrofacetTransmission::f(Float3 wo, Float3 wi) const noexcept {
-    Float ior = _fresnel->ior();
-    Float3 wh = normalize(wo + wi * ior);
+    Float eta = _fresnel->eta();
+    Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     Float3 F = _fresnel->evaluate(abs_dot(wo, wh));
-    Float3 tr = _microfacet->BTDF(wo, wh, wi, make_float3(1) - F, ior);
+    Float3 tr = _microfacet->BTDF(wo, wh, wi, make_float3(1) - F, eta);
     return select(dot(wo, wh) * dot(wi, wh) > 0, make_float3(0.f), tr * Kt);
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi) const noexcept {
-    Float ior = _fresnel->ior();
-    Float3 wh = normalize(wo + wi * ior);
+    Float eta = _fresnel->eta();
+    Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
-    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, ior));
+    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
 }
 
 BSDFSample MicrofacetTransmission::sample(Float3 wo, Float2 u) const noexcept {
     BSDFSample ret;
     Float3 wh = _microfacet->sample_wh(wo, u);
-    auto [valid, wi] = refract(wo, wh,_fresnel->ior());
+    auto [valid, wi] = refract(wo, wh,_fresnel->eta());
     ret.eval = safe_evaluate(wo, wi);
     ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
