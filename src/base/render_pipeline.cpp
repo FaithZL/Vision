@@ -5,7 +5,7 @@
 #include "render_pipeline.h"
 #include "base/sensor.h"
 #include "base/scene.h"
-#include "context.h"
+#include "core/context.h"
 
 namespace vision {
 

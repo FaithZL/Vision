@@ -11,7 +11,7 @@
 #include "base/node.h"
 #include "base/scene.h"
 #include "descriptions/node_desc.h"
-#include "render_pipeline.h"
+#include "base/render_pipeline.h"
 
 namespace vision {
 

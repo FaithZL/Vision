@@ -3,7 +3,7 @@
 //
 
 #include "base/light.h"
-#include "core/render_pipeline.h"
+#include "base/render_pipeline.h"
 #include "base/texture.h"
 #include "math/warp.h"
 

@@ -15,7 +15,7 @@ private:
 
 public:
     ImagePool() = default;
-    
+
 };
 
 }

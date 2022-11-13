@@ -64,14 +64,16 @@ public:
     string fn;
     ColorSpace color_space;
 
+protected:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(NodeDesc::_compute_hash(), fn, val, color_space);
+    }
+
 public:
     VISION_DESC_COMMON(Texture)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] bool valid_emission() const noexcept {
         return any(val != 0.f) || !fn.empty();
-    }
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(NodeDesc::_compute_hash(), fn, val);
     }
 };
 
