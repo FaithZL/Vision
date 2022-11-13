@@ -23,6 +23,7 @@ public:
     string sub_type;
     string name;
     mutable Scene *scene{nullptr};
+    mutable fs::path scene_path;
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -61,6 +62,7 @@ struct TextureDesc : public NodeDesc {
 public:
     float4 val;
     string fn;
+    ColorSpace color_space;
 
 public:
     VISION_DESC_COMMON(Texture)
@@ -103,7 +105,6 @@ public:
     uint64_t mat_hash{InvalidUI32};
     uint index{InvalidUI32};
     fs::path fn;
-    fs::path scene_path;
     bool smooth{false};
     bool flip_uv{false};
     bool swap_handed{false};

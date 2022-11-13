@@ -2,10 +2,10 @@
     "textures": [],
     "materials": [
         {
-            "type": "matte",
-            "name": "LeftWall",
-            "param": {
-                "color": [
+            "type" : "matte",
+            "name" : "LeftWall",
+            "param" : {
+                "color" : [
                     0.63,
                     0.065,
                     0.05
@@ -13,15 +13,25 @@
             }
         },
         {
-            "type": "mirror",
-            "name": "Mirror",
-            "param": {
-                "color": [
+            "type" : "matte",
+            "name" : "image",
+            "param" : {
+                "color" : {
+                    "fn" : "test.png",
+                    "ColorSpace" : "linear"
+                }
+            }
+        },
+        {
+            "type" : "mirror",
+            "name" : "Mirror",
+            "param" : {
+                "color" : [
                     1,
                     1,
                     1
                 ],
-                "roughness" :0.001
+                "roughness" : 0.001
             }
         },
         {

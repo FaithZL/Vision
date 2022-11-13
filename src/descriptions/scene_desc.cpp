@@ -111,6 +111,7 @@ namespace detail {
 void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
     for (uint i = 0; i < materials.size(); ++i) {
         MaterialDesc md;
+        md.scene_path = scene_path;
         md.init(materials[i]);
         material_descs.push_back(md);
         mat_name_to_id[md.name] = i;
@@ -130,32 +131,25 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
 }
 
 void SceneDesc::process_materials() noexcept {
-    map<uint64_t, MaterialDesc> mat_map;
-    map<uint64_t, uint> index_map;
-
-    auto is_contain = [&](uint64_t key) -> bool {
-        return mat_map.find(key) != mat_map.end();
-    };
-    auto mats = move(material_descs);
-    for (const ShapeDesc &sd : shape_descs) {
-        uint index = material_descs.size();
-        MaterialDesc md = mats[sd.mat_id];
-        if (!is_contain(sd.mat_hash)) {
-            mat_map.insert(make_pair(sd.mat_hash, md));
-            material_descs.push_back(md);
-            index_map.insert(make_pair(sd.mat_hash, index));
-        }
-    }
-    for (ShapeDesc &sd : shape_descs) {
-        sd.mat_id = index_map[sd.mat_hash];
-    }
-//    auto m = material_descs;
-//    for (int i = 0; i < 50; ++i) {
-//        for (int j = 0; j < m.size(); ++j) {
-//            material_descs.push_back(m[j]);
+//    map<uint64_t, MaterialDesc> mat_map;
+//    map<uint64_t, uint> index_map;
+//
+//    auto is_contain = [&](uint64_t key) -> bool {
+//        return mat_map.find(key) != mat_map.end();
+//    };
+//    auto mats = move(material_descs);
+//    for (const ShapeDesc &sd : shape_descs) {
+//        uint index = material_descs.size();
+//        MaterialDesc md = mats[sd.mat_id];
+//        if (!is_contain(sd.mat_hash)) {
+//            mat_map.insert(make_pair(sd.mat_hash, md));
+//            material_descs.push_back(md);
+//            index_map.insert(make_pair(sd.mat_hash, index));
 //        }
 //    }
-//    int i = 0;
+//    for (ShapeDesc &sd : shape_descs) {
+//        sd.mat_id = index_map[sd.mat_hash];
+//    }
 }
 
 void SceneDesc::init(const DataWrap &data) noexcept {

@@ -108,11 +108,15 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
+    color.scene_path = scene_path;
     color.init(param["color"]);
     if (sub_type == "mirror") {
+        roughness.scene_path = scene_path;
         roughness.init(param["roughness"]);
     } else if (sub_type == "glass") {
+        ior.scene_path = scene_path;
         ior.init(param["ior"]);
+        roughness.scene_path = scene_path;
         roughness.init(param["roughness"]);
     }
 }
@@ -142,7 +146,9 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
             val = ps.as_float4();
         }
     } else if (ps.data().is_object()) {
-        fn = ps["fn"].as_string();
+        sub_type = "image";
+        fn = (scene_path / ps["fn"].as_string()).string();
+        color_space = ps["color_space"].as_string("linear") == "linear" ? ColorSpace::LINEAR : ColorSpace::SRGB;
     } else if (ps.data().is_number()) {
         sub_type = "constant";
         val = make_float4(ps.as_float(1.f));
