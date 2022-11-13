@@ -4,7 +4,7 @@
 
 #include "sensor.h"
 #include "core/context.h"
-#include "core/render_pipeline.h"
+#include "render_pipeline.h"
 
 namespace vision {
 using namespace ocarina;

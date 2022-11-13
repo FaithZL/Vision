@@ -28,6 +28,7 @@ public:
     void init_material_descs(const DataWrap &materials) noexcept;
     void init_shape_descs(const DataWrap &shapes) noexcept;
     void init(const DataWrap &data) noexcept;
+    void process_materials() noexcept;
 };
 
 }// namespace vision

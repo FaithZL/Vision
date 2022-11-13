@@ -9,6 +9,7 @@
 #include "base/geometry.h"
 #include "rhi/window.h"
 #include "util/image_io.h"
+#include "image_pool.h"
 
 namespace vision {
 using namespace ocarina;
@@ -22,6 +23,7 @@ private:
     ImageIO _render_image;
     Stream _stream;
     uint _frame_index{};
+    ImagePool _image_pool;
     double _total_time{};
 
 public:

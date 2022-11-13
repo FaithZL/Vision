@@ -10,25 +10,26 @@ namespace vision {
 
 class MirrorBSDF : public BSDF {
 private:
+    SP<const Fresnel> _fresnel;
     MicrofacetReflection _bxdf;
 
 public:
-    MirrorBSDF(const SurfaceInteraction &si, MicrofacetReflection bxdf)
-        : BSDF(si), _bxdf(std::move(bxdf)) {}
+    MirrorBSDF(const SurfaceInteraction &si, const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
+        : BSDF(si), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        return _bxdf.safe_evaluate(wo, wi);
+        return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
                                           Uchar flag) const noexcept override {
-        return _bxdf.sample(wo, u);
+        return _bxdf.sample(wo, u, _fresnel->clone());
     }
 };
 
 class MirrorMaterial : public Material {
 private:
-    Texture *_color{};
-    Texture *_roughness{};
+    const Texture *_color{};
+    const Texture *_roughness{};
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
@@ -40,8 +41,8 @@ public:
         Float2 alpha = _roughness ? _roughness->eval(si).xy() : make_float2(0.001f);
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>();
-        MicrofacetReflection bxdf(kr, microfacet, fresnel);
-        return make_unique<MirrorBSDF>(si, move(bxdf));
+        MicrofacetReflection bxdf(kr, microfacet);
+        return make_unique<MirrorBSDF>(si, fresnel, move(bxdf));
     }
 };
 

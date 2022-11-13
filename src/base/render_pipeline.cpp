@@ -5,7 +5,7 @@
 #include "render_pipeline.h"
 #include "base/sensor.h"
 #include "base/scene.h"
-#include "context.h"
+#include "core/context.h"
 
 namespace vision {
 
@@ -46,11 +46,8 @@ void RenderPipeline::render(double dt) noexcept {
     _scene.integrator()->render(this);
     double ms = clk.elapse_ms();
     _total_time += ms;
-//    if (_frame_index == 1024) {
-//        _render_image.save(_context->scene_directory() / "test_cbox.png");
-//    }
-    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     ++_frame_index;
+    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
 }
 
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
@@ -62,7 +59,7 @@ Bool RenderPipeline::trace_any(const OCRay &ray) const noexcept {
 }
 
 SurfaceInteraction RenderPipeline::compute_surface_interaction(const OCHit &hit) const noexcept {
-    return geometry().compute_surface_interaction(hit);
+    return geometry().compute_surface_interaction(hit, true);
 }
 
 LightEvalContext RenderPipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {

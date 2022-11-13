@@ -3,7 +3,7 @@
 //
 
 #include "base/integrator.h"
-#include "core/render_pipeline.h"
+#include "base/render_pipeline.h"
 #include "math/warp.h"
 
 namespace vision {
@@ -31,6 +31,7 @@ public:
             Float3 Li = make_float3(0.f);
             Float3 throughput = make_float3(1.f);
             Geometry &geometry = rp->geometry();
+            Float eta_scale = 1.f;
 
             $for(bounces, 0, _max_depth) {
                 Var hit = geometry.trace_closest(ray);
@@ -39,8 +40,7 @@ public:
                     $break;
                 };
 
-                auto si = geometry.compute_surface_interaction(hit);
-                si.wo = normalize(-ray->direction());
+                SurfaceInteraction si = geometry.compute_surface_interaction(hit, ray);
 
                 comment("hit light");
                 $if(si.has_emission()) {
@@ -66,8 +66,8 @@ public:
 
                     BSDFEval bsdf_eval;
                     Float3 wi = normalize(light_sample.p_light - si.pos);
-                    bsdf_eval = bsdf->evaluate(si.wo, wi, BxDFFlag::All);
-                    bsdf_sample = bsdf->sample(si.wo, sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+                    bsdf_eval = bsdf->evaluate(wi, BxDFFlag::All);
+                    bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
                     Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
@@ -77,7 +77,8 @@ public:
                     };
 
                 });
-                Float lum = luminance(throughput);
+                eta_scale *= sqr(bsdf_sample.eta);
+                Float lum = luminance(throughput * eta_scale);
                 $if(!bsdf_sample.valid() || lum == 0.f) {
                     $break;
                 };

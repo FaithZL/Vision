@@ -3,7 +3,7 @@
 //
 
 #include "base/lightsampler.h"
-#include "core/render_pipeline.h"
+#include "base/render_pipeline.h"
 
 namespace vision {
 class UniformLightSampler : public LightSampler {

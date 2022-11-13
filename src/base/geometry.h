@@ -37,6 +37,11 @@ public:
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
     [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
-    [[nodiscard]] SurfaceInteraction compute_surface_interaction(const OCHit &hit, bool is_complete = true) const noexcept;
+    [[nodiscard]] SurfaceInteraction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
+    [[nodiscard]] SurfaceInteraction compute_surface_interaction(const OCHit &hit, const OCRay &ray) const noexcept {
+        auto ret = compute_surface_interaction(hit, true);
+        ret.wo = normalize(-ray->direction());
+        return ret;
+    }
 };
 }// namespace vision

@@ -3,7 +3,7 @@
 //
 
 #include "base/film.h"
-#include "core/render_pipeline.h"
+#include "base/render_pipeline.h"
 #include "math/base.h"
 
 namespace vision {

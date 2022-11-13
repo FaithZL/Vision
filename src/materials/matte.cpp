@@ -17,17 +17,17 @@ public:
         : BSDF(si), _bxdf(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        return _bxdf.safe_evaluate(wo, wi);
+        return _bxdf.safe_evaluate(wo, wi, nullptr);
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
-                            Uchar flag) const noexcept override {
-        return _bxdf.sample(wo, u);
+                                          Uchar flag) const noexcept override {
+        return _bxdf.sample(wo, u, nullptr);
     }
 };
 
 class MatteMaterial : public Material {
 private:
-    Texture *_color{};
+    const Texture *_color{};
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
@@ -35,8 +35,7 @@ public:
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 kr = _color ? _color->eval(si).xyz() : make_float3(0.f);
-        auto ret = make_unique<MatteBSDF>(si, kr);
-        return ret;
+        return make_unique<MatteBSDF>(si, kr);
     }
 };
 }// namespace vision

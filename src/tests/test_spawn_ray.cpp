@@ -10,7 +10,7 @@
 #include "math/geometry.h"
 #include "math/constants.h"
 #include "base/interaction.h"
-#include "base/microfacet.h"
+#include "base/bxdf.h"
 
 using namespace vision;
 using namespace ocarina;
@@ -74,28 +74,23 @@ int main(int argc, char *argv[]) {
 
     Kernel kernel = [&]() {
         Float2 u = make_float2(0.28, 0.28);
-        Float ax = 0.01f;
-        Float ay = 0.01f;
+        Float ax = 0.001f;
+        Float ay = 0.001f;
+        Float eta = 1.5f;
 
-        Microfacet<D> mf(ax, ay);
-        Float3 wo = normalize(make_float3(1,1,0.6));
-        auto wh = mf.sample_wh(wo, u);
-//        wh = make_float3(0,0,1);
-//        auto pdf = mf.PDF_wh(wo, wh);
-//        print("{} ----", pdf);
-        print("{} {} {}", wh.x, wh.y, wh.z);
+        Float3 wo = normalize(make_float3(1,0,0.6));
 
-//        Var org = make_float3(0,0,0);
-//        Var dir = make_float3(1,1,1);
-//        Var n1 = make_float3(0,1,0);
-////        Var n2 = make_float3(1,0,0);
-//        Interaction it;
-//        it.pos = org;
-//        it.g_uvn.z = n1;
-//        $comment(spawn_ray)
-//        Var ray = it.spawn_ray(dir);
-////        Var ray = vision::spawn_ray_to(org, dir, n1, n2);
-//        Var hit= accel.trace_closest(ray);
+        auto mf = make_shared<Microfacet<D>>(ax, ay);
+        MicrofacetTransmission mt(make_float3(1.f), mf);
+
+        auto fresnel = make_shared<FresnelDielectric>(1.5f);
+        BSDFSample bs = mt.sample(wo, u, fresnel);
+        Float3 w = bs.eval.f;
+        print("({},{},{})  {}", w.x, w.y, w.z, bs.eval.pdf);
+        w = bs.wi;
+        print("({},{},{})  ", w.x, w.y, fresnel->evaluate(wo.z)[0]);
+
+
 
     };
     auto shader = device.compile(kernel);

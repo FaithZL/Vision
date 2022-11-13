@@ -47,6 +47,7 @@ struct BSDFSample {
     BSDFEval eval;
     Float3 wi{make_float3(0.f)};
     Uchar flags{BxDFFlag::Unset};
+    Float eta{1.f};
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }
