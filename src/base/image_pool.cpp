@@ -6,4 +6,11 @@
 
 namespace vision {
 
+ImageWrapper &ImagePool::obtain_image(const TextureDesc &desc) noexcept {
+    uint64_t hash = desc.hash();
+//    if (is_contain(hash)) {
+        return _images[hash];
+//    }
+
+}
 }
