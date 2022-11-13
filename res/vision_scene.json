@@ -209,14 +209,14 @@
                 }
             }
         },
-        // {
-        //     "type" : "model",
-        //     "name" : "box",
-        //     "param" : {
-        //         "material": "BackWall",
-        //         "fn" : "cube.obj"
-        //     }
-        // },
+//         {
+//             "type" : "model",
+//             "name" : "box",
+//             "param" : {
+//                 "material": "BackWall",
+//                 "fn" : "cube.obj"
+//             }
+//         },
         {
             "type": "quad",
             "name": "shape_2",
@@ -345,8 +345,8 @@
                 "y": 1,
                 "z": 1,
 //                "material": "ShortBox",
-                "material" : "Glass",
-//                "material": "Mirror",
+//                "material" : "Glass",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
