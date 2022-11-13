@@ -34,6 +34,9 @@ public:
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
+    [[nodiscard]] ImageWrapper &obtain_image(const TextureDesc &desc) noexcept {
+        return _image_pool.obtain_image(desc);
+    }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
     void update() noexcept { _frame_index = 0; _total_time = 0; }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }

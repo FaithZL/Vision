@@ -13,18 +13,16 @@ using namespace ocarina;
 class IndependentSampler : public Sampler {
 private:
     optional<Uint> _state{};
-    Callable<canonical_signature_t<decltype(lcg<H>)>> _lcg{lcg<D>};
-    Callable<canonical_signature_t<decltype(tea<H>)>> _tea{tea<D>};
 
 public:
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
 
     void start_pixel_sample(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
-        _state = _tea(_tea(pixel.x, pixel.y), _tea(sample_index, dim));
+        _state = tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim));
     }
 
     [[nodiscard]] Float next_1d() noexcept override {
-        Float ret = _lcg(*_state);
+        Float ret = lcg<D>(*_state);
         return ret;
     }
 };

@@ -12,7 +12,6 @@ class PathTracingIntegrator : public Integrator {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : Integrator(desc) {
-        _mis_weight = mis_weight<D>;
     }
 
     void compile_shader(RenderPipeline *rp) noexcept override {
@@ -48,7 +47,7 @@ public:
                     p_ref.pos = ray->origin();
                     p_ref.ng = ray->direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, si);
-                    Float weight = _mis_weight(bsdf_pdf, eval.pdf);
+                    Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
                     Li += eval.L * throughput * weight;
                 };
 
@@ -70,7 +69,7 @@ public:
                     bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
-                    Float weight = _mis_weight(light_sample.eval.pdf, bsdf_eval.pdf);
+                    Float weight = mis_weight<D>(light_sample.eval.pdf, bsdf_eval.pdf);
                     $if(!occluded && bsdf_eval.valid() && light_sample.valid()) {
                         Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
                         Li += throughput * Ld;
