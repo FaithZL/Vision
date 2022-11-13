@@ -130,7 +130,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
         radiance.init(param["radiance"]);
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point") {
-        VISION_PARAMS_LIST_INITIAL(position, intensity)
+        VISION_PARAMS_LIST_INITIAL(position, intensity, scale)
     }
 }
 
@@ -148,7 +148,9 @@ void TextureDesc::init(const ParameterSet &ps) noexcept {
     } else if (ps.data().is_object()) {
         sub_type = "image";
         fn = (scene_path / ps["fn"].as_string()).string();
-        color_space = ps["color_space"].as_string("linear") == "linear" ? ColorSpace::LINEAR : ColorSpace::SRGB;
+        color_space = ps["color_space"].as_string() == "linear" ?
+                          ColorSpace::LINEAR :
+                          ColorSpace::SRGB;
     } else if (ps.data().is_number()) {
         sub_type = "constant";
         val = make_float4(ps.as_float(1.f));
