@@ -4,19 +4,27 @@
 
 #include "base/texture.h"
 #include "rhi/common.h"
+#include "base/render_pipeline.h"
 
 namespace vision {
 using namespace ocarina;
 class ImageTexture : public Texture {
 private:
-    Image _image;
+    const ImageWrapper &_image_wrapper;
     float4 _val;
 
 public:
     explicit ImageTexture(const TextureDesc &desc)
-        : Texture(desc) {}
-    [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override { return _val; }
-    [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override { return _val; }
+        : Texture(desc),
+          _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {
+        _image_wrapper.upload_immediately();
+    }
+    [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override {
+        return eval(tev.uv);
+    }
+    [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override {
+        return _image_wrapper.image().sample<float4>(uv);
+    }
 };
 }// namespace vision
 

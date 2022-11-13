@@ -6,16 +6,37 @@
 
 #include "rhi/common.h"
 #include "descriptions/node_desc.h"
+#include "util/image_io.h"
 
 namespace vision {
 using namespace ocarina;
-class ImagePool {
+
+class ImageWrapper {
 private:
-    map<uint64_t, Image> _images;
+    ImageIO _image_io;
+    Image _image;
 
 public:
-    ImagePool() = default;
+    ImageWrapper() = default;
+    ImageWrapper(ImageIO image_io, Image image) : _image_io(move(image_io)), _image(move(image)) {}
+    [[nodiscard]] Image &image() noexcept { return _image; }
+    [[nodiscard]] const Image &image() const noexcept { return _image; }
+    [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device *device);
+    [[nodiscard]] ImageUploadCommand *upload() const noexcept;
+    [[nodiscard]] ImageDownloadCommand *download() noexcept;
+    void upload_immediately() const noexcept;
+    void download_immediately() noexcept;
+};
 
+class ImagePool {
+private:
+    Device *_device{nullptr};
+    map<uint64_t, ImageWrapper> _images;
+
+public:
+    explicit ImagePool(Device *device) : _device(device) {}
+    [[nodiscard]] ImageWrapper &obtain_image(const TextureDesc &desc) noexcept;
+    [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
 
 }

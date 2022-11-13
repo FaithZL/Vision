@@ -15,11 +15,12 @@ private:
     bool _two_sided{false};
     Distribution *_distribution{nullptr};
     Texture *_radiance{nullptr};
+    float _scale{1.f};
 
 public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
-          _two_sided{desc.two_sided}, _inst_idx(desc.inst_id) {
+          _two_sided{desc.two_sided}, _inst_idx(desc.inst_id), _scale(desc.scale) {
         _radiance = desc.scene->load<Texture>(desc.radiance);
     }
 
@@ -28,10 +29,11 @@ public:
     }
 
     [[nodiscard]] Float3 L(const LightEvalContext &p_light, const Float3 &w) const {
+        Float3 radiance = _radiance->eval(p_light.uv).xyz() * _scale;
         if (_two_sided) {
-            return _radiance->eval(p_light.uv).xyz();
+            return radiance;
         }
-        return select(dot(w, p_light.ng) > 0, _radiance->eval(p_light.uv).xyz(), make_float3(0.f));
+        return select(dot(w, p_light.ng) > 0, radiance, make_float3(0.f));
     }
 
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,

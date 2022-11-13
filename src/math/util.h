@@ -6,11 +6,12 @@
 
 #include "core/basic_types.h"
 #include "dsl/common.h"
+#include "core/header.h"
 
 namespace vision {
 
 template<EPort p = D, uint N = 4>
-[[nodiscard]] oc_uint<p> tea(oc_uint<p> val0, oc_uint<p> val1) {
+[[nodiscard]] oc_uint<p> tea_impl(oc_uint<p> val0, oc_uint<p> val1) {
     oc_uint<p> v0 = val0;
     oc_uint<p> v1 = val1;
     oc_uint<p> s0 = 0;
@@ -21,13 +22,15 @@ template<EPort p = D, uint N = 4>
     }
     return v0;
 }
+VS_MAKE_CALLABLE(tea)
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> lcg(oc_uint<p> &state) noexcept {
+[[nodiscard]] oc_float<p> lcg_impl(oc_uint<p> &state) noexcept {
     constexpr auto lcg_a = 1664525u;
     constexpr auto lcg_c = 1013904223u;
     state = lcg_a * state + lcg_c;
     return ((state & 0x00ffffffu) * 1.f) * (1.f / static_cast<float>(0x01000000u));
 }
+VS_MAKE_CALLABLE(lcg)
 
 }// namespace vision

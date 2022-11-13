@@ -29,3 +29,14 @@ using DataWrap = nlohmann::json;
 #define VS_EXPORT_API VS_EXTERN_C [[gnu::visibility("default")]]
 #define VS_IMPORT_API VS_EXTERN_C
 #endif
+
+#define VS_MAKE_CALLABLE(func)                          \
+    template<EPort p = EPort::D, typename... Args>      \
+    [[nodiscard]] auto func(Args &&...args) {           \
+        if constexpr (p == EPort::D) {                  \
+            static Callable impl = func##_impl<p>;      \
+            return impl(OC_FORWARD(args)...);           \
+        } else {                                        \
+            return func##_impl<p>(OC_FORWARD(args)...); \
+        }                                               \
+    }
