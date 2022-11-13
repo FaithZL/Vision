@@ -91,6 +91,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Float2 u, SP<Fresnel> fresn
     ret.eval = safe_evaluate(wo, wi, fresnel);
     ret.eval.pdf = select(valid && dot(wh, wo) > 0, ret.eval.pdf, 0.f);
     ret.wi = wi;
+    ret.eta = (fresnel->eta());
     ret.flags = flag();
     return ret;
 }

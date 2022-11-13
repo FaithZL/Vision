@@ -31,6 +31,7 @@ public:
             Float3 Li = make_float3(0.f);
             Float3 throughput = make_float3(1.f);
             Geometry &geometry = rp->geometry();
+            Float eta_scale = 1.f;
 
             $for(bounces, 0, _max_depth) {
                 Var hit = geometry.trace_closest(ray);
@@ -76,7 +77,8 @@ public:
                     };
 
                 });
-                Float lum = luminance(throughput);
+                eta_scale *= sqr(bsdf_sample.eta);
+                Float lum = luminance(throughput * eta_scale);
                 $if(!bsdf_sample.valid() || lum == 0.f) {
                     $break;
                 };
