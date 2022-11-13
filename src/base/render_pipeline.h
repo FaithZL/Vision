@@ -23,7 +23,7 @@ private:
     ImageIO _render_image;
     Stream _stream;
     uint _frame_index{};
-    ImagePool _image_pool;
+    ImagePool _image_pool{_device};
     double _total_time{};
 
 public:
