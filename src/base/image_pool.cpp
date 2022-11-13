@@ -20,6 +20,14 @@ ImageUploadCommand *ImageWrapper::upload() const noexcept {
     return _image.upload(_image_io.pixel_ptr());
 }
 
+void ImageWrapper::upload_immediately() const noexcept {
+    _image.upload_immediately(_image_io.pixel_ptr());
+}
+
+void ImageWrapper::download_immediately() noexcept {
+    _image.download_immediately(_image_io.pixel_ptr());
+}
+
 ImageWrapper &ImagePool::obtain_image(const TextureDesc &desc) noexcept {
     uint64_t hash = desc.hash();
     if (!is_contain(hash)) {
