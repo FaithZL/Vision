@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "ocarina/src/core/basic_types.h"
-#include "ocarina/src/dsl/common.h"
+#include "core/basic_types.h"
+#include "dsl/common.h"
+#include "math/complex.h"
 
 namespace vision {
 using namespace ocarina;
@@ -49,7 +50,32 @@ template<EPort p = D>
     oc_float<p> cos_theta_t = safe_sqrt(1 - sin_theta_t_2);
     oc_float<p> r_parl = (eta * abs_cos_theta_i - cos_theta_t) / (eta * abs_cos_theta_i + cos_theta_t);
     oc_float<p> r_perp = (abs_cos_theta_i - eta * cos_theta_t) / (abs_cos_theta_i + eta * cos_theta_t);
-    return select(sin_theta_t_2 >= 1, 1.f, (sqr(r_parl) + sqr(r_perp)) / 2);
+    return select(sin_theta_t_2 >= 1, 1.f, (sqr(r_parl) + sqr(r_perp)) * 0.5f);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, Complex<p> eta) noexcept {
+    oc_float<p> sin_theta_i_2 = 1 - sqr(cos_theta_i);
+    Complex<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
+    Complex<p> cos_theta_t = sqrt(1.f - sin_theta_t_2);
+
+    Complex<p> r_parl = (eta * cos_theta_i - cos_theta_t) / (eta * cos_theta_i + cos_theta_t);
+    Complex<p> r_perp = (cos_theta_i - eta * cos_theta_t) / (cos_theta_i + eta * cos_theta_t);
+    return (norm_sqr(r_parl) + norm_sqr(r_perp)) * .5f;
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, oc_float<p> eta, oc_float<p> k) noexcept {
+    return fresnel_complex<p>(cos_theta_i, Complex<p>(eta, k));
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> fresnel_complex(oc_float<p> cos_theta_i, oc_float3<p> eta, oc_float3<p> k) noexcept {
+    oc_float3<p> ret;
+    for (int i = 0; i < 3; ++i) {
+        ret[i] = fresnel_complex(cos_theta_i, eta[i], k[i]);
+    }
+    return ret;
 }
 
 }// namespace optics

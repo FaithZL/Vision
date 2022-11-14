@@ -29,17 +29,22 @@ public:
 };
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> norm(const Complex<p> &z) {
+[[nodiscard]] oc_float<p> norm_sqr(const Complex<p> &z) {
     return z.re * z.re + z.im * z.im;
 }
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> abs(const Complex<p> &z) {
-    return sqrt(norm(z));
+[[nodiscard]] oc_float<p> norm(const Complex<p> &z) {
+    return sqrt(norm_sqr(z));
 }
 
 template<EPort p = D>
-[[nodiscard]] Complex<p> sqrt(const Complex<p> &z) {
+[[nodiscard]] oc_float<p> abs(const Complex<p> &z) {
+    return norm(z);
+}
+
+template<EPort p = D>
+[[nodiscard]] Complex<p> complex_sqrt(const Complex<p> &z) {
     oc_float<p> n = abs(z);
     oc_float<p> t1 = sqrt(0.5f * (n + abs(z.re)));
     oc_float<p> t2 = 0.5f * z.im / t1;
