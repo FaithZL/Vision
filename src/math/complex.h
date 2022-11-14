@@ -16,21 +16,26 @@ public:
 
 public:
     explicit Complex(oc_float<p> re, oc_float<p> im = 0.f) : re(re), im(im) {}
-    [[nodiscard]] Complex operator-() const { return {-re, -im}; }
-    [[nodiscard]] Complex operator+(Complex z) const { return {re + z.re, im + z.im}; }
-    [[nodiscard]] Complex operator-(Complex z) const { return {re - z.re, im - z.im}; }
-    [[nodiscard]] Complex operator*(Complex z) const {
-        return {re * z.re - im * z.im, re * z.im + im * z.re};
+    [[nodiscard]] Complex<p> operator-() const { return {-re, -im}; }
+    [[nodiscard]] Complex<p> operator+(Complex<p> z) const { return Complex<p>{re + z.re, im + z.im}; }
+    [[nodiscard]] Complex<p> operator-(Complex<p> z) const { return Complex<p>{re - z.re, im - z.im}; }
+    [[nodiscard]] Complex<p> operator*(Complex<p> z) const {
+        return Complex<p>(re * z.re - im * z.im, re * z.im + im * z.re);
     }
-    [[nodiscard]] Complex operator/(Complex z) const {
+    [[nodiscard]] Complex<p> operator/(Complex<p> z) const {
         oc_float<p> scale = 1 / (z.re * z.re + z.im * z.im);
-        return {scale * (re * z.re + im * z.im), scale * (im * z.re - re * z.im)};
+        return Complex<p>(scale * (re * z.re + im * z.im), scale * (im * z.re - re * z.im));
     }
 };
 
 template<EPort p = D>
 [[nodiscard]] oc_float<p> norm_sqr(const Complex<p> &z) {
     return z.re * z.re + z.im * z.im;
+}
+
+template<EPort p = D>
+[[nodiscard]] Complex<p> complex_sqr(const Complex<p> &z) {
+    return z * z;
 }
 
 template<EPort p = D>
@@ -58,25 +63,25 @@ template<EPort p = D>
 
 template<ocarina::EPort p = ocarina::EPort::D>
 [[nodiscard]] vision::Complex<p> operator+(ocarina::oc_float<p> value, vision::Complex<p> z) {
-    return Complex<p>(value) + z;
+    return vision::Complex<p>(value) + z;
 }
 
 template<ocarina::EPort p = ocarina::EPort::D>
 [[nodiscard]] vision::Complex<p> operator-(ocarina::oc_float<p> value, vision::Complex<p> z) {
-    return Complex<p>(value) - z;
+    return vision::Complex<p>(value) - z;
 }
 
 template<ocarina::EPort p = ocarina::EPort::D>
 [[nodiscard]] vision::Complex<p> operator*(ocarina::oc_float<p> value, vision::Complex<p> z) {
-    return Complex<p>(value) * z;
+    return vision::Complex<p>(value) * z;
 }
 
 template<ocarina::EPort p = ocarina::EPort::D>
 [[nodiscard]] vision::Complex<p> operator*(vision::Complex<p> z, ocarina::oc_float<p> value) {
-    return Complex<p>(value) * z;
+    return vision::Complex<p>(value) * z;
 }
 
 template<ocarina::EPort p = ocarina::EPort::D>
 [[nodiscard]] vision::Complex<p> operator/(ocarina::oc_float<p> value, vision::Complex<p> z) {
-    return Complex(value) / z;
+    return vision::Complex<p>(value) / z;
 }

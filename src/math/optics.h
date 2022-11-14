@@ -56,8 +56,8 @@ template<EPort p = D>
 template<EPort p = D>
 [[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, Complex<p> eta) noexcept {
     oc_float<p> sin_theta_i_2 = 1 - sqr(cos_theta_i);
-    Complex<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
-    Complex<p> cos_theta_t = sqrt(1.f - sin_theta_t_2);
+    Complex<p> sin_theta_t_2 = sin_theta_i_2 / complex_sqr(eta);
+    Complex<p> cos_theta_t = complex_sqrt(1.f - sin_theta_t_2);
 
     Complex<p> r_parl = (eta * cos_theta_i - cos_theta_t) / (eta * cos_theta_i + cos_theta_t);
     Complex<p> r_perp = (cos_theta_i - eta * cos_theta_t) / (cos_theta_i + eta * cos_theta_t);
