@@ -44,7 +44,7 @@ template<typename T, typename U>
 }
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> fresnel_dielectric(oc_float<p> abs_cos_theta_i, oc_float<p> eta) noexcept {
+[[nodiscard]] oc_float<p> fresnel_dielectric_impl(oc_float<p> abs_cos_theta_i, oc_float<p> eta) noexcept {
     oc_float<p> sin_theta_i_2 = 1 - sqr(abs_cos_theta_i);
     oc_float<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
     oc_float<p> cos_theta_t = safe_sqrt(1 - sin_theta_t_2);
@@ -52,6 +52,7 @@ template<EPort p = D>
     oc_float<p> r_perp = (abs_cos_theta_i - eta * cos_theta_t) / (abs_cos_theta_i + eta * cos_theta_t);
     return select(sin_theta_t_2 >= 1, 1.f, (sqr(r_parl) + sqr(r_perp)) * 0.5f);
 }
+VS_MAKE_CALLABLE(fresnel_dielectric)
 
 template<EPort p = D>
 [[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, Complex<p> eta) noexcept {
