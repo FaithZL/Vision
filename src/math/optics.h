@@ -19,7 +19,7 @@ requires ocarina::is_vector3_v<expr_value_t<T>>
 }
 
 template<EPort p = D>
-[[nodiscard]] pair<oc_bool<p>, oc_float3<p>>
+[[nodiscard]] tuple<oc_bool<p>, oc_float3<p>>
 refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta) noexcept {
     oc_float<p> cos_theta_i = dot(n, wi);
 //    oc_assert(cos_theta_i > 0, "refract error ! {}", cos_theta_i);
@@ -29,7 +29,7 @@ refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta) noexcept {
 
     oc_float<p> cos_theta_t = safe_sqrt(1 - sin_theta_t_2);
     oc_float3<p> wt = -wi / eta + (cos_theta_i / eta - cos_theta_t) * n;
-    return make_pair(valid, wt);
+    return {valid, wt};
 }
 
 template<typename T>
