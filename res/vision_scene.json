@@ -48,6 +48,14 @@
             }
         },
         {
+            "type" : "metal",
+            "name" : "metal",
+            "param" : {
+                "metal_name" : "Ag",
+                "roughness" : 0.001
+            }
+        },
+        {
             "type": "matte",
             "name": "RightWall",
             "param": {
@@ -387,7 +395,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Mirror",
+                "material": "metal",
 //                "material" : "Glass",
 //                "material": "TallBox",
                 "transform": {

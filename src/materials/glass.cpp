@@ -58,13 +58,15 @@ private:
     const Texture *_color{};
     const Texture *_ior{};
     const Texture *_roughness{};
+    bool _remapping_roughness{false};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
           _color(desc.scene->load<Texture>(desc.color)),
           _ior(desc.scene->load<Texture>(desc.ior)),
-          _roughness(desc.scene->load<Texture>(desc.roughness)) {}
+          _roughness(desc.scene->load<Texture>(desc.roughness)),
+          _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 color = _color ? _color->eval(si).xyz() : make_float3(0.f);

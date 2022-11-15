@@ -5,6 +5,7 @@
 #include "node_desc.h"
 #include "parameter_set.h"
 #include "core/macro_map.h"
+#include "metal_ior_data.h"
 #include "math/transform.h"
 
 namespace vision {
@@ -110,6 +111,7 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
     color.scene_path = scene_path;
     color.init(param["color"]);
+    VISION_PARAMS_LIST_INITIAL(remapping_roughness)
     if (sub_type == "mirror") {
         roughness.scene_path = scene_path;
         roughness.init(param["roughness"]);
@@ -118,6 +120,31 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
         ior.init(param["ior"]);
         roughness.scene_path = scene_path;
         roughness.init(param["roughness"]);
+    } else if (sub_type == "metal") {
+        VISION_PARAMS_LIST_INITIAL(metal_name)
+        roughness.scene_path = scene_path;
+        roughness.init(param["roughness"]);
+        if (metal_name.empty()) {
+            eta.scene_path = scene_path;
+            eta.init(param["eta"]);
+            k.scene_path = scene_path;
+            k.init(param["k"]);
+        } else {
+            auto get_ior = [](const string &name) -> pair<float3, float3> {
+                for (int i = 0; i < sizeof(complex_ior_list); ++i) {
+                    ComplexIor elm = complex_ior_list[i];
+                    if (elm.name == name) {
+                        return {elm.eta, elm.k};
+                    }
+                }
+                OC_WARNING("unknown metal name ", name);
+                ComplexIor elm = complex_ior_list[0];
+                return {elm.eta, elm.k};
+            };
+            auto [eta_, k_] = get_ior(metal_name);
+            eta.init(DataWrap({eta_.x, eta_.y, eta_.z}));
+            k.init(DataWrap({k_.x, k_.y, k_.z}));
+        }
     }
 }
 

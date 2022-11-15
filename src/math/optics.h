@@ -14,7 +14,7 @@ using namespace ocarina;
 inline namespace optics {
 template<typename T>
 requires ocarina::is_vector3_v<expr_value_t<T>>
-[[nodiscard]] T reflect(const T &wo, const T &n) noexcept {
+[[nodiscard]] condition_t<float3, T> reflect(const T &wo, const T &n) noexcept {
     return -wo + 2 * dot(wo, n) * n;
 }
 
@@ -33,8 +33,8 @@ refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta) noexcept {
 }
 
 template<typename T>
-[[nodiscard]] T schlick_weight(const T &cos_theta) noexcept {
-    T m = clamp(1.f - cos_theta, 0.f, 1.f);
+[[nodiscard]] auto schlick_weight(const T &cos_theta) noexcept {
+    condition_t<float, T> m = clamp(1.f - cos_theta, 0.f, 1.f);
     return Pow<5>(m);
 }
 

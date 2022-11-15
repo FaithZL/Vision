@@ -62,7 +62,7 @@ struct TextureDesc : public NodeDesc {
 public:
     float4 val;
     string fn;
-    ColorSpace color_space;
+    ColorSpace color_space{ColorSpace::SRGB};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -200,6 +200,12 @@ public:
     TextureDesc color;
     TextureDesc ior;
     TextureDesc roughness;
+
+    string metal_name{"Ag"};
+    TextureDesc eta;
+    TextureDesc k;
+
+    bool remapping_roughness{false};
 
 public:
     VISION_DESC_COMMON(Material)
