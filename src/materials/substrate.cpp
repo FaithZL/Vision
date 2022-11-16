@@ -43,8 +43,7 @@ public:
         return ret;
     }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-        Float3 ret = fr * f_specular(wo, wi) + (1 - fr) * f_diffuse(wo, wi);
+        Float3 ret = f_specular(wo, wi) + f_diffuse(wo, wi);
         return ret * abs_cos_theta(wi);
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
