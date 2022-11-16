@@ -15,6 +15,7 @@ private:
     Float3 _color;
 
 public:
+    Diffuse() = default;
     explicit Diffuse(Float3 color)
         : BxDF(BxDFFlag::DiffRefl),
           _color(color) {}
@@ -32,6 +33,7 @@ private:
     Float _roughness;
 
 public:
+    FakeSS() = default;
     explicit FakeSS(Float3 color, Float r)
         : BxDF(BxDFFlag::DiffRefl),
           _color(color),
@@ -58,6 +60,7 @@ private:
     Float _roughness;
 
 public:
+    Retro() = default;
     explicit Retro(Float3 color, Float r)
         : BxDF(BxDFFlag::DiffRefl),
           _color(color),
@@ -83,6 +86,7 @@ private:
     Float3 _color;
 
 public:
+    Sheen() = default;
     explicit Sheen(Float3 kr)
         : BxDF(BxDFFlag::DiffRefl),
           _color(kr) {}
@@ -115,6 +119,7 @@ private:
     Float _gloss;
 
 public:
+    ClearCoat() = default;
     ClearCoat(Float weight, Float gloss)
         : BxDF(BxDFFlag::GlossyRefl),
           _weight(weight),
@@ -177,6 +182,21 @@ public:
 }// namespace disney
 
 class PrincipledBSDF : public BSDF {
+private:
+    SP<const Fresnel> _fresnel{};
+    Diffuse _diffuse;
+    FakeSS _fake_ss;
+    Retro _retro;
+    Sheen _sheen;
+    MicrofacetReflection _specular;
+    ClearCoat _clear_coat;
+    MicrofacetTransmission _spec_trans;
+
+public:
+    PrincipledBSDF(const SurfaceInteraction &si, Float3 color, Float metallic, Float eta, Float roughness,
+                   Float specular_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
+                   Float clearcoat_gloss, Float specular_trans, Float flatness, Float diffuse_trans) {
+    }
 };
 
 class DisneyMaterial : public Material {
@@ -191,10 +211,32 @@ private:
     const Texture *_sheen_tint{};
     const Texture *_clearcoat{};
     const Texture *_clearcoat_gloss{};
-    const Texture *_specular_trans{};
+    const Texture *_spec_trans{};
     const Texture *_flatness{};
-    const Texture *_diffuse_trans{};
+    const Texture *_diff_trans{};
     bool _thin;
+
+public:
+    explicit DisneyMaterial(const MaterialDesc &desc)
+        : Material(desc), _color(desc.scene->load<Texture>(desc.color)),
+          _metallic(desc.scene->load<Texture>(desc.metallic)),
+          _eta(desc.scene->load<Texture>(desc.eta)),
+          _roughness(desc.scene->load<Texture>(desc.roughness)),
+          _specular_tint(desc.scene->load<Texture>(desc.specular_tint)),
+          _anisotropic(desc.scene->load<Texture>(desc.anisotropic)),
+          _sheen(desc.scene->load<Texture>(desc.sheen)),
+          _sheen_tint(desc.scene->load<Texture>(desc.sheen_tint)),
+          _clearcoat(desc.scene->load<Texture>(desc.clearcoat)),
+          _clearcoat_gloss(desc.scene->load<Texture>(desc.clearcoat_gloss)),
+          _spec_trans(desc.scene->load<Texture>(desc.spec_trans)),
+          _flatness(desc.scene->load<Texture>(desc.flatness)),
+          _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
+
+    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+        return nullptr;
+    }
 };
 
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::DisneyMaterial)

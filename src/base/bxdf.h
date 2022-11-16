@@ -18,7 +18,7 @@ protected:
     uchar _flag;
 
 public:
-    explicit BxDF(uchar flag) : _flag(flag) {}
+    explicit BxDF(uchar flag = BxDFFlag::Unset) : _flag(flag) {}
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
@@ -50,6 +50,7 @@ private:
     SP<Microfacet<D>> _microfacet;
 
 public:
+    MicrofacetReflection() = default;
     MicrofacetReflection(Float3 color, const SP<Microfacet<D>> &m)
         : BxDF(BxDFFlag::Reflection), Kr(color),
           _microfacet(m) {}
@@ -66,6 +67,7 @@ private:
     SP<Microfacet<D>> _microfacet;
 
 public:
+    MicrofacetTransmission() = default;
     MicrofacetTransmission(Float3 color, const SP<Microfacet<D>> &m)
         : BxDF(BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;

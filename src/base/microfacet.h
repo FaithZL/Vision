@@ -22,13 +22,22 @@ inline namespace microfacet {
 
 template<EPort p = D>
 [[nodiscard]] oc_float<p> roughness_to_alpha(oc_float<p> roughness) {
-    roughness = max(roughness, oc_float<p>(1e-3));
-    oc_float<p> x = log(roughness);
-    return 1.62142f +
-           0.819955f * x +
-           0.1734f * Pow<2>(x) +
-           0.0171201f * Pow<3>(x) +
-           0.000640711f * Pow<4>(x);
+    return sqr(roughness);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float2<p> roughness_to_alpha(oc_float2<p> roughness) {
+    return sqr(roughness);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float<p> alpha_to_roughness(oc_float<p> alpha) {
+    return sqrt(alpha);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float2<p> alpha_to_roughness(oc_float2<p> alpha) {
+    return sqrt(alpha);
 }
 
 /**

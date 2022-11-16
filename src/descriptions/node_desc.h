@@ -229,7 +229,7 @@ public:
     TextureDesc sheen{0.f};
     TextureDesc sheen_tint{0.f};
     TextureDesc clearcoat{0.f};
-    TextureDesc clearcoat_roughness{0.f};
+    TextureDesc clearcoat_gloss{0.f};
     TextureDesc spec_trans{0.f};
     TextureDesc scatter_distance{0.f};
     TextureDesc flatness{0.f};
