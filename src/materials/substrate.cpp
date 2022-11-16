@@ -100,8 +100,8 @@ private:
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(desc.scene->load<Texture>(desc.Rd)),
-          _spec(desc.scene->load<Texture>(desc.Rs)),
+        : Material(desc), _diff(desc.scene->load<Texture>(desc.color)),
+          _spec(desc.scene->load<Texture>(desc.spec)),
           _roughness(desc.scene->load<Texture>(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 

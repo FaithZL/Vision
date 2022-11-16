@@ -78,6 +78,23 @@
             }
         },
         {
+            "type": "substrate",
+            "name": "substrate",
+            "param": {
+                "roughness" : 0.1,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
             "type": "matte",
             "name": "Ceiling",
             "param": {
@@ -353,7 +370,7 @@
                 "y": 1,
                 "z": 1,
 //                "material": "ShortBox",
-                "material" : "Glass",
+                "material" : "substrate",
 //                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",

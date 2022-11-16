@@ -211,8 +211,7 @@ public:
     TextureDesc k;
 
     // for substrate
-    TextureDesc Rd;
-    TextureDesc Rs;
+    TextureDesc spec;
 
 public:
     VISION_DESC_COMMON(Material)
