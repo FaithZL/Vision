@@ -42,17 +42,18 @@ public:
         Float ret = _microfacet->PDF_wi_reflection(wo, wh);
         return ret;
     }
-
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 ret = f_specular(wo, wi) + f_diffuse(wo, wi);
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        Float3 ret = fr * f_specular(wo, wi) + (1 - fr) * f_diffuse(wo, wi);
         return ret * abs_cos_theta(wi);
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        return 0.5f * (PDF_diffuse(wo, wi) + PDF_specular(wo, wi));
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        return (1.f - fr) * PDF_diffuse(wo, wi) + fr * PDF_specular(wo, wi);
     }
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
         BSDFSample ret;
-        Float fr = 0.5f;
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(u.x < fr) {
             u.x = remapping(u.x, 0.f, fr);
             Float3 wh = _microfacet->sample_wh(wo, u);

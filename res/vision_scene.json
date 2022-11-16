@@ -81,7 +81,7 @@
             "type": "substrate",
             "name": "substrate",
             "param": {
-                "roughness" : 0.1,
+                "roughness" : 0.001,
                 "specular": [
                     0.04,
                     0.04,
