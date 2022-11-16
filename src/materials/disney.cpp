@@ -154,6 +154,26 @@ public:
     }
 };
 
+class FresnelDisney : public Fresnel {
+private:
+    Float3 R0;
+    Float _metallic;
+    Float _eta;
+
+public:
+    FresnelDisney(const Float3 &R0, Float metallic, Float eta)
+        : R0(R0), _metallic(metallic), _eta(eta) {}
+    [[nodiscard]] Float3 evaluate(Float cos_theta) const noexcept override {
+        return lerp(make_float3(_metallic),
+                    make_float3(fresnel_dielectric(cos_theta, _eta)),
+                    fresnel_schlick(R0, cos_theta));
+    }
+    [[nodiscard]] Float eta() const noexcept override { return _eta; }
+    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
+        return make_shared<FresnelDisney>(R0, _metallic, _eta);
+    }
+};
+
 }// namespace disney
 
 class PrincipledBSDF : public BSDF {

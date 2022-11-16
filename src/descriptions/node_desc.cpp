@@ -168,6 +168,9 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void TextureDesc::init(const ParameterSet &ps) noexcept {
+    if (ps.data().is_null()) {
+        return;
+    }
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
         sub_type = "constant";

@@ -60,7 +60,7 @@ public:
 
 struct TextureDesc : public NodeDesc {
 public:
-    float4 val;
+    float4 val{};
     string fn;
     ColorSpace color_space{ColorSpace::SRGB};
 
@@ -70,7 +70,16 @@ protected:
     }
 
 public:
-    VISION_DESC_COMMON(Texture)
+    TextureDesc() : NodeDesc("Texture") { sub_type = "constant"; }
+    explicit TextureDesc(string name) : NodeDesc("Texture", std::move(name)) {}
+    explicit TextureDesc(float v)
+        : NodeDesc("Texture"), val(make_float4(v)) { sub_type = "constant"; }
+    explicit TextureDesc(float2 v)
+        : NodeDesc("Texture"), val(make_float4(v, 0, 0)) { sub_type = "constant"; }
+    explicit TextureDesc(float3 v)
+        : NodeDesc("Texture"), val(make_float4(v, 0)) { sub_type = "constant"; }
+    explicit TextureDesc(float4 v)
+        : NodeDesc("Texture"), val(v) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] bool valid_emission() const noexcept {
         return any(val != 0.f) || !fn.empty();
@@ -199,11 +208,11 @@ struct MaterialDesc : public NodeDesc {
 public:
     // common
     TextureDesc color;
-    TextureDesc roughness;
+    TextureDesc roughness{1.f};
     bool remapping_roughness{false};
 
     // for glass
-    TextureDesc ior;
+    TextureDesc ior{1.5f};
 
     // for metal
     string metal_name{"Ag"};
@@ -211,7 +220,21 @@ public:
     TextureDesc k;
 
     // for substrate
-    TextureDesc spec;
+    TextureDesc spec{0.05f};
+
+    // for disney
+    TextureDesc metallic{0.5f};
+    TextureDesc specular_tint{0.0f};
+    TextureDesc anisotropic{0.0f};
+    TextureDesc sheen{0.f};
+    TextureDesc sheen_tint{0.f};
+    TextureDesc clearcoat{0.f};
+    TextureDesc clearcoat_roughness{0.f};
+    TextureDesc spec_trans{0.f};
+    TextureDesc scatter_distance{0.f};
+    TextureDesc flatness{0.f};
+    TextureDesc diff_trans{0.5f};
+    bool thin{false};
 
 public:
     VISION_DESC_COMMON(Material)
