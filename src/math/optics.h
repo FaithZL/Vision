@@ -38,9 +38,16 @@ template<typename T>
     return Pow<5>(m);
 }
 
-template<typename T, typename U>
-[[nodiscard]] auto fresnel_schlick(const T &R0, const U &cos_theta) noexcept {
-    return lerp(T(schlick_weight(cos_theta)), R0, T{1.f});
+template<EPort p = D>
+[[nodiscard]] oc_float<p> fresnel_schlick(const oc_float<p> &R0,
+                                          const oc_float<p> &cos_theta) noexcept {
+    return lerp(schlick_weight(cos_theta), R0, 1.f);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> fresnel_schlick(const oc_float3<p> &R0,
+                                           const oc_float<p> &cos_theta) noexcept {
+    return lerp(make_float3(schlick_weight(cos_theta)), R0, make_float3(1.f));
 }
 
 template<EPort p = D>
