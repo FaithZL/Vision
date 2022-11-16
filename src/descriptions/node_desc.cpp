@@ -111,19 +111,16 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
     color.scene_path = scene_path;
     color.init(param["color"]);
+    roughness.scene_path = scene_path;
+    roughness.init(param["roughness"]);
     VISION_PARAMS_LIST_INITIAL(remapping_roughness)
     if (sub_type == "mirror") {
-        roughness.scene_path = scene_path;
-        roughness.init(param["roughness"]);
+
     } else if (sub_type == "glass") {
         ior.scene_path = scene_path;
         ior.init(param["ior"]);
-        roughness.scene_path = scene_path;
-        roughness.init(param["roughness"]);
     } else if (sub_type == "metal") {
         VISION_PARAMS_LIST_INITIAL(metal_name)
-        roughness.scene_path = scene_path;
-        roughness.init(param["roughness"]);
         if (metal_name.empty()) {
             eta.scene_path = scene_path;
             eta.init(param["eta"]);
@@ -146,11 +143,11 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
             k.init(DataWrap({k_.x, k_.y, k_.z}));
         }
     } else if (sub_type == "substrate") {
-        roughness.scene_path = scene_path;
-        roughness.init(param["roughness"]);
         spec.scene_path = scene_path;
         spec.init(param["specular"]);
         int i = 0;
+    } else if (sub_type == "disney") {
+
     }
 }
 
