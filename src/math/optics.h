@@ -40,7 +40,7 @@ template<typename T>
 
 template<typename T, typename U>
 [[nodiscard]] auto fresnel_schlick(const T &R0, const U &cos_theta) noexcept {
-    return lerp(schlick_weight(cos_theta), R0, T{1.f});
+    return lerp(T(schlick_weight(cos_theta)), R0, T{1.f});
 }
 
 template<EPort p = D>

@@ -30,11 +30,13 @@ class MirrorMaterial : public Material {
 private:
     const Texture *_color{};
     const Texture *_roughness{};
+    bool _remapping_roughness{false};
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc), _color(desc.scene->load<Texture>(desc.color)),
-          _roughness(desc.scene->load<Texture>(desc.roughness)) {}
+          _roughness(desc.scene->load<Texture>(desc.roughness)),
+          _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 kr = _color ? _color->eval(si).xyz() : make_float3(0.f);

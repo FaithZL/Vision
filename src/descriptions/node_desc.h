@@ -197,15 +197,22 @@ public:
 
 struct MaterialDesc : public NodeDesc {
 public:
+    // common
     TextureDesc color;
-    TextureDesc ior;
     TextureDesc roughness;
+    bool remapping_roughness{false};
 
+    // for glass
+    TextureDesc ior;
+
+    // for metal
     string metal_name{"Ag"};
     TextureDesc eta;
     TextureDesc k;
 
-    bool remapping_roughness{false};
+    // for substrate
+    TextureDesc Rd;
+    TextureDesc Rs;
 
 public:
     VISION_DESC_COMMON(Material)

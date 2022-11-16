@@ -47,10 +47,10 @@ public:
 class MicrofacetReflection : public BxDF {
 private:
     Float3 Kr;
-    shared_ptr<Microfacet<D>> _microfacet;
+    SP<Microfacet<D>> _microfacet;
 
 public:
-    MicrofacetReflection(Float3 color, const shared_ptr<Microfacet<D>> &m)
+    MicrofacetReflection(Float3 color, const SP<Microfacet<D>> &m)
         : BxDF(BxDFFlag::Reflection), Kr(color),
           _microfacet(m) {}
 
@@ -63,10 +63,10 @@ public:
 class MicrofacetTransmission : public BxDF {
 private:
     Float3 Kt;
-    shared_ptr<Microfacet<D>> _microfacet;
+    SP<Microfacet<D>> _microfacet;
 
 public:
-    MicrofacetTransmission(Float3 color, const shared_ptr<Microfacet<D>> &m)
+    MicrofacetTransmission(Float3 color, const SP<Microfacet<D>> &m)
         : BxDF(BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
