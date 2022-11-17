@@ -242,10 +242,22 @@ public:
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
-        Float3 color = _color ? _color->eval(si).xyz() : make_float3(0.f);
-        Float eta = _eta ? _eta->eval(si).x : 1.5f;
-//        Float roughness = _roughness ? _roughness
-        return nullptr;
+        Float3 color = eval_tex(_color, si, 0.f).xyz();
+        Float metallic = eval_tex(_metallic, si, 1.5f).x;
+        Float eta = eval_tex(_eta, si, 1.5f).x;
+        Float roughness = eval_tex(_roughness, si, 0.5f).x;
+        Float spec_tint = eval_tex(_spec_tint, si, 0.f).x;
+        Float anisotropic = eval_tex(_anisotropic, si, 0.f).x;
+        Float sheen = eval_tex(_sheen, si, 0.f).x;
+        Float sheen_tint = eval_tex(_sheen_tint, si, 0.f).x;
+        Float clearcoat = eval_tex(_clearcoat, si, 0.f).x;
+        Float clearcoat_alpha = eval_tex(_clearcoat_alpha, si, 0.f).x;
+        Float spec_trans = eval_tex(_spec_trans, si, 0.f).x;
+        Float flatness = eval_tex(_flatness, si, 0.f).x;
+        Float diff_trans = eval_tex(_diff_trans, si, 0.f).x;
+        return make_unique<PrincipledBSDF>(si, color, metallic, eta, roughness, spec_tint, anisotropic,
+                                           sheen, sheen_tint, clearcoat, clearcoat_alpha,
+                                           spec_trans, flatness, diff_trans);
     }
 };
 
