@@ -197,6 +197,15 @@ public:
                    Float spec_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
                    Float clearcoat_alpha, Float spec_trans, Float flatness, Float diff_trans) {
     }
+    [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
+    [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
+        BSDFEval ret;
+        return ret;
+    }
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
+        BSDFSample ret;
+        return ret;
+    }
 };
 
 class DisneyMaterial : public Material {
@@ -233,6 +242,9 @@ public:
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+        Float3 color = _color ? _color->eval(si).xyz() : make_float3(0.f);
+        Float eta = _eta ? _eta->eval(si).x : 1.5f;
+//        Float roughness = _roughness ? _roughness
         return nullptr;
     }
 };

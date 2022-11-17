@@ -5,26 +5,24 @@
             "type" : "disney",
             "name" : "disney",
             "param" : {
-                "param" : {
-                    "color" : [
-                        1, 1, 1,
-                        1.0
-                    ],
-                    "ior" : 1.9,
-                    "roughness" : 0.5,
-                    "metallic" : 0,
-                    "spec_tint" : 0.9,
-                    "anisotropic" : 0,
-                    "sheen" : 0.9,
-                    "sheen_tint" : 0.9,
-                    "clearcoat" : 0.59,
-                    "clearcoat_alpha" : 0.38,
-                    "spec_trans" : 0,
-                    "flatness" : 0.98,
-                    "scatter_distance" : [0, 0, 0],
-                    "diff_trans" : 0.11,
-                    "thin" : false
-                }
+                "color" : [
+                    1, 1, 1,
+                    1.0
+                ],
+                "ior" : 1.9,
+                "roughness" : 0.5,
+                "metallic" : 0,
+                "spec_tint" : 0.9,
+                "anisotropic" : 0,
+                "sheen" : 0.9,
+                "sheen_tint" : 0.9,
+                "clearcoat" : 0.59,
+                "clearcoat_alpha" : 0.38,
+                "spec_trans" : 0,
+                "flatness" : 0.98,
+                "scatter_distance" : [0, 0, 0],
+                "diff_trans" : 0.11,
+                "thin" : false
             }
         },
         {

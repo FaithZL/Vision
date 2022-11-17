@@ -8,6 +8,7 @@
 #include "interaction.h"
 #include "core/stl.h"
 #include "bxdf.h"
+#include "texture.h"
 #include "math/sampling.h"
 
 namespace vision {
@@ -46,6 +47,10 @@ public:
 
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
+    [[nodiscard]] static Float4 eval_tex(const Texture *tex, const TextureEvalContext &ctx,
+                                   float4 val = make_float4(0.f)) noexcept {
+        return tex ? tex->eval(ctx) : Var(val);
+    }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept {
         return make_unique<BSDF>(si);
     }

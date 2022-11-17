@@ -106,9 +106,9 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
-        Float3 Rd = _diff ? _diff->eval(si).xyz() : make_float3(0.f);
-        Float3 Rs = _spec ? _spec->eval(si).xyz() : make_float3(0.f);
-        Float2 alpha = _roughness ? _roughness->eval(si).xy() : make_float2(0.001f);
+        Float3 Rd = eval_tex(_diff, si).xyz();
+        Float3 Rs = eval_tex(_spec, si).xyz();
+        Float2 alpha = eval_tex(_roughness, si, make_float4(0.001f)).xy();
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(1.5f);
         FresnelBlend bxdf(Rd, Rs, microfacet);

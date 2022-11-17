@@ -215,11 +215,11 @@ public:
     TextureDesc roughness{1.f};
     bool remapping_roughness{false};
 
-    // for glass
+    // for glass and disney
     TextureDesc ior{1.5f};
 
     // for metal
-    string metal_name{"Ag"};
+    string metal_name{""};
     TextureDesc eta;
     TextureDesc k;
 
