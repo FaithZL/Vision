@@ -108,7 +108,7 @@ public:
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 Rd = eval_tex(_diff, si).xyz();
         Float3 Rs = eval_tex(_spec, si).xyz();
-        Float2 alpha = eval_tex(_roughness, si, make_float4(0.001f)).xy();
+        Float2 alpha = eval_tex(_roughness, si, 0.001f).xy();
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(1.5f);
         FresnelBlend bxdf(Rd, Rs, microfacet);

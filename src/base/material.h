@@ -47,9 +47,20 @@ public:
 
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
+    template<typename T = float4>
     [[nodiscard]] static Float4 eval_tex(const Texture *tex, const TextureEvalContext &ctx,
-                                   float4 val = make_float4(0.f)) noexcept {
-        return tex ? tex->eval(ctx) : Var(val);
+                                         T val = T{}) noexcept {
+        float4 default_val = make_float4(0);
+        if constexpr (is_scalar_v<T>) {
+            default_val = make_float4(val);
+        } else if constexpr (is_vector2_v<T>) {
+            default_val = make_float4(val, 0, 0);
+        } else if constexpr (is_vector3_v<T>) {
+            default_val = make_float4(val, 0);
+        } else {
+            default_val = val;
+        }
+        return tex ? tex->eval(ctx) : Float4(val);
     }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept {
         return make_unique<BSDF>(si);
