@@ -113,23 +113,23 @@ public:
     return 1 / (cos_theta + sqrt(alpha2 + cos_theta_2 - alpha2 * cos_theta_2));
 }
 
-class ClearCoat : public BxDF {
+class Clearcoat : public BxDF {
 private:
     Float _weight;
-    Float _gloss;
+    Float _alpha;
 
 public:
-    ClearCoat() = default;
-    ClearCoat(Float weight, Float gloss)
+    Clearcoat() = default;
+    Clearcoat(Float weight, Float alpha)
         : BxDF(BxDFFlag::GlossyRefl),
           _weight(weight),
-          _gloss(gloss) {}
+          _alpha(alpha) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return make_float3(_weight); }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float3 wh = wi + wo;
         Bool valid = !is_zero(wh);
         wh = normalize(wh);
-        Float Dr = GTR1(abs_cos_theta(wh), _gloss);
+        Float Dr = GTR1(abs_cos_theta(wh), _alpha);
         Float Fr = fresnel_schlick((0.04f), dot(wo, wh));
         Float Gr = smithG_GGX(abs_cos_theta(wo), 0.25f) * smithG_GGX(abs_cos_theta(wi), 0.25f);
         Float ret = _weight * Gr * Fr * Dr * 0.25f;
@@ -139,12 +139,12 @@ public:
         Float3 wh = wi + wo;
         Bool valid = !is_zero(wh);
         wh = normalize(wh);
-        Float Dr = GTR1(abs_cos_theta(wh), _gloss);
+        Float Dr = GTR1(abs_cos_theta(wh), _alpha);
         Float ret = Dr * abs_cos_theta(wh) / (4 * dot(wo, wh));
         return select(valid, ret, 0.f);
     }
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
-        Float alpha2 = sqr(_gloss);
+        Float alpha2 = sqr(_alpha);
         Float cos_theta = safe_sqrt((1 - pow(alpha2, 1 - u[0])) / (1 - alpha2));
         Float sin_theta = safe_sqrt(1 - sqr(cos_theta));
         Float phi = 2 * Pi * u[1];
@@ -189,13 +189,13 @@ private:
     Retro _retro;
     Sheen _sheen;
     MicrofacetReflection _specular;
-    ClearCoat _clear_coat;
+    Clearcoat _clearcoat;
     MicrofacetTransmission _spec_trans;
 
 public:
     PrincipledBSDF(const SurfaceInteraction &si, Float3 color, Float metallic, Float eta, Float roughness,
-                   Float specular_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
-                   Float clearcoat_gloss, Float specular_trans, Float flatness, Float diffuse_trans) {
+                   Float spec_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
+                   Float clearcoat_alpha, Float spec_trans, Float flatness, Float diff_trans) {
     }
 };
 
@@ -205,12 +205,12 @@ private:
     const Texture *_metallic{};
     const Texture *_eta{};
     const Texture *_roughness{};
-    const Texture *_specular_tint{};
+    const Texture *_spec_tint{};
     const Texture *_anisotropic{};
     const Texture *_sheen{};
     const Texture *_sheen_tint{};
     const Texture *_clearcoat{};
-    const Texture *_clearcoat_gloss{};
+    const Texture *_clearcoat_alpha{};
     const Texture *_spec_trans{};
     const Texture *_flatness{};
     const Texture *_diff_trans{};
@@ -220,14 +220,14 @@ public:
     explicit DisneyMaterial(const MaterialDesc &desc)
         : Material(desc), _color(desc.scene->load<Texture>(desc.color)),
           _metallic(desc.scene->load<Texture>(desc.metallic)),
-          _eta(desc.scene->load<Texture>(desc.eta)),
+          _eta(desc.scene->load<Texture>(desc.ior)),
           _roughness(desc.scene->load<Texture>(desc.roughness)),
-          _specular_tint(desc.scene->load<Texture>(desc.specular_tint)),
+          _spec_tint(desc.scene->load<Texture>(desc.spec_tint)),
           _anisotropic(desc.scene->load<Texture>(desc.anisotropic)),
           _sheen(desc.scene->load<Texture>(desc.sheen)),
           _sheen_tint(desc.scene->load<Texture>(desc.sheen_tint)),
           _clearcoat(desc.scene->load<Texture>(desc.clearcoat)),
-          _clearcoat_gloss(desc.scene->load<Texture>(desc.clearcoat_gloss)),
+          _clearcoat_alpha(desc.scene->load<Texture>(desc.clearcoat_alpha)),
           _spec_trans(desc.scene->load<Texture>(desc.spec_trans)),
           _flatness(desc.scene->load<Texture>(desc.flatness)),
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}

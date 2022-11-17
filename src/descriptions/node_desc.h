@@ -81,6 +81,10 @@ public:
     explicit TextureDesc(float4 v)
         : NodeDesc("Texture"), val(v) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
+    void init(const ParameterSet &ps, fs::path scene_path) noexcept {
+        this->scene_path = scene_path;
+        init(ps);
+    }
     [[nodiscard]] bool valid_emission() const noexcept {
         return any(val != 0.f) || !fn.empty();
     }
@@ -224,12 +228,12 @@ public:
 
     // for disney
     TextureDesc metallic{0.5f};
-    TextureDesc specular_tint{0.0f};
+    TextureDesc spec_tint{0.0f};
     TextureDesc anisotropic{0.0f};
     TextureDesc sheen{0.f};
     TextureDesc sheen_tint{0.f};
     TextureDesc clearcoat{0.f};
-    TextureDesc clearcoat_gloss{0.f};
+    TextureDesc clearcoat_alpha{0.f};
     TextureDesc spec_trans{0.f};
     TextureDesc scatter_distance{0.f};
     TextureDesc flatness{0.f};

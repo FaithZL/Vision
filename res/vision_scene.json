@@ -2,6 +2,32 @@
     "textures": [],
     "materials": [
         {
+            "type" : "disney",
+            "name" : "disney",
+            "param" : {
+                "param" : {
+                    "color" : [
+                        1, 1, 1,
+                        1.0
+                    ],
+                    "ior" : 1.9,
+                    "roughness" : 0.5,
+                    "metallic" : 0,
+                    "spec_tint" : 0.9,
+                    "anisotropic" : 0,
+                    "sheen" : 0.9,
+                    "sheen_tint" : 0.9,
+                    "clearcoat" : 0.59,
+                    "clearcoat_alpha" : 0.38,
+                    "spec_trans" : 0,
+                    "flatness" : 0.98,
+                    "scatter_distance" : [0, 0, 0],
+                    "diff_trans" : 0.11,
+                    "thin" : false
+                }
+            }
+        },
+        {
             "type" : "matte",
             "name" : "LeftWall",
             "param" : {
@@ -51,8 +77,8 @@
             "type" : "metal",
             "name" : "metal",
             "param" : {
-                "metal_name" : "Ag",
-                "roughness" : 0.001
+                "metal_name" : "Cu",
+                "roughness" : 0.01
             }
         },
         {
@@ -82,7 +108,7 @@
             "name": "substrate",
             "param": {
                 "roughness" : 0.001,
-                "specular": [
+                "spec": [
                     0.04,
                     0.04,
                     0.04
@@ -372,6 +398,7 @@
 //                "material": "ShortBox",
                 "material" : "substrate",
 //                "material": "Mirror",
+//                "material": "Glass",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -413,6 +440,7 @@
                 "y": 1,
                 "z": 1,
                 "material": "metal",
+//                "material": "Mirror",
 //                "material" : "Glass",
 //                "material": "TallBox",
                 "transform": {

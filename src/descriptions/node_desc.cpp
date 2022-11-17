@@ -105,50 +105,55 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     VISION_PARAMS_LIST_INITIAL(max_depth, min_depth, rr_threshold)
 }
 
+namespace detail {
+[[nodiscard]] pair<float3, float3> get_ior(const string &name) {
+    for (int i = 0; i < sizeof(complex_ior_list); ++i) {
+        ComplexIor elm = complex_ior_list[i];
+        if (elm.name == name) {
+            return {elm.eta, elm.k};
+        }
+    }
+    OC_WARNING("unknown metal name ", name);
+    ComplexIor elm = complex_ior_list[0];
+    return {elm.eta, elm.k};
+}
+}// namespace detail
+
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
-    color.scene_path = scene_path;
-    color.init(param["color"]);
-    roughness.scene_path = scene_path;
-    roughness.init(param["roughness"]);
-    VISION_PARAMS_LIST_INITIAL(remapping_roughness)
-    if (sub_type == "mirror") {
+    VISION_PARAMS_LIST_INITIAL(remapping_roughness, thin)
 
-    } else if (sub_type == "glass") {
-        ior.scene_path = scene_path;
-        ior.init(param["ior"]);
-    } else if (sub_type == "metal") {
-        VISION_PARAMS_LIST_INITIAL(metal_name)
-        if (metal_name.empty()) {
-            eta.scene_path = scene_path;
-            eta.init(param["eta"]);
-            k.scene_path = scene_path;
-            k.init(param["k"]);
-        } else {
-            auto get_ior = [](const string &name) -> pair<float3, float3> {
-                for (int i = 0; i < sizeof(complex_ior_list); ++i) {
-                    ComplexIor elm = complex_ior_list[i];
-                    if (elm.name == name) {
-                        return {elm.eta, elm.k};
-                    }
-                }
-                OC_WARNING("unknown metal name ", name);
-                ComplexIor elm = complex_ior_list[0];
-                return {elm.eta, elm.k};
-            };
-            auto [eta_, k_] = get_ior(metal_name);
-            eta.init(DataWrap({eta_.x, eta_.y, eta_.z}));
-            k.init(DataWrap({k_.x, k_.y, k_.z}));
-        }
-    } else if (sub_type == "substrate") {
-        spec.scene_path = scene_path;
-        spec.init(param["specular"]);
-        int i = 0;
-    } else if (sub_type == "disney") {
+#define VS_TEXTURE_DESC_INIT(attr_name) \
+    attr_name.init(param[#attr_name], scene_path);
 
+    VS_TEXTURE_DESC_INIT(color)
+    VS_TEXTURE_DESC_INIT(roughness)
+    VS_TEXTURE_DESC_INIT(ior)
+    VS_TEXTURE_DESC_INIT(eta)
+    VS_TEXTURE_DESC_INIT(k)
+    VS_TEXTURE_DESC_INIT(spec)
+    VS_TEXTURE_DESC_INIT(metallic)
+    VS_TEXTURE_DESC_INIT(spec_tint)
+    VS_TEXTURE_DESC_INIT(anisotropic)
+    VS_TEXTURE_DESC_INIT(sheen)
+    VS_TEXTURE_DESC_INIT(sheen_tint)
+    VS_TEXTURE_DESC_INIT(clearcoat)
+    VS_TEXTURE_DESC_INIT(clearcoat_alpha)
+    VS_TEXTURE_DESC_INIT(spec_trans)
+    VS_TEXTURE_DESC_INIT(scatter_distance)
+    VS_TEXTURE_DESC_INIT(flatness)
+    VS_TEXTURE_DESC_INIT(diff_trans)
+
+    VISION_PARAMS_LIST_INITIAL(metal_name)
+    if (!metal_name.empty()) {
+        auto [eta_, k_] = detail::get_ior(metal_name);
+        eta.init(DataWrap({eta_.x, eta_.y, eta_.z}));
+        k.init(DataWrap({k_.x, k_.y, k_.z}));
     }
+
+#undef VS_TEXTURE_DESC_INIT
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
