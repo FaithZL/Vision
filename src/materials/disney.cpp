@@ -195,7 +195,16 @@ private:
 public:
     PrincipledBSDF(const SurfaceInteraction &si, Float3 color, Float metallic, Float eta, Float roughness,
                    Float spec_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
-                   Float clearcoat_alpha, Float spec_trans, Float flatness, Float diff_trans) {
+                   Float clearcoat_alpha, Float spec_trans, Float flatness, Float diff_trans) : BSDF(si) {
+        Float diffuse_weight = (1 - metallic) * (1 - spec_trans);
+        Float lum = luminance(color);
+        Float3 color_tint = select(lum > 0, color / lum, make_float3(1.f));
+        Float3 color_sheen_tint = select(sheen > 0,
+                                         lerp(make_float3(sheen_tint), make_float3(1.f), color_tint),
+                                         make_float3(0.f));
+        Float3 R0 = lerp(metallic,
+                         schlick_R0_from_eta(eta) * lerp(Float3(spec_tint), Float3(1.f), color_sheen_tint),
+                         color);
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {

@@ -50,6 +50,11 @@ template<EPort p = D>
     return lerp(make_float3(schlick_weight(cos_theta)), R0, make_float3(1.f));
 }
 
+template<typename T>
+[[nodiscard]] scalar_t<T> schlick_R0_from_eta(const T &eta) {
+    return sqr(eta - 1) / sqr(eta + 1);
+}
+
 template<EPort p = D>
 [[nodiscard]] oc_float<p> fresnel_dielectric_impl(oc_float<p> abs_cos_theta_i, oc_float<p> eta) noexcept {
     oc_float<p> sin_theta_i_2 = 1 - sqr(abs_cos_theta_i);
