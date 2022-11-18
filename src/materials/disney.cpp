@@ -185,10 +185,10 @@ class PrincipledBSDF : public BSDF {
 private:
     SP<const Fresnel> _fresnel{};
     Diffuse _diffuse;
-    FakeSS _fake_ss;
+//    FakeSS _fake_ss;
     Retro _retro;
     Sheen _sheen;
-    MicrofacetReflection _specular;
+    MicrofacetReflection _spec_refl;
     Clearcoat _clearcoat;
     MicrofacetTransmission _spec_trans;
 
@@ -202,9 +202,24 @@ public:
         Float3 color_sheen_tint = select(sheen > 0,
                                          lerp(make_float3(sheen_tint), make_float3(1.f), color_tint),
                                          make_float3(0.f));
-        Float3 R0 = lerp(metallic,
+        Float3 R0 = lerp(Float3(metallic),
                          schlick_R0_from_eta(eta) * lerp(Float3(spec_tint), Float3(1.f), color_sheen_tint),
                          color);
+        Float dt = diff_trans * 0.5f;
+        Float aspect = safe_sqrt(1 - anisotropic * 0.9f);
+
+        _diffuse = Diffuse(diffuse_weight * color);
+//        _fake_ss = FakeSS(diffuse_weight * flatness * (1 - dt) * color, roughness);
+        _retro = Retro(diffuse_weight * color, roughness);
+        _sheen = Sheen(diffuse_weight * sheen * color_sheen_tint);
+
+        Float ax = max(0.001f, sqr(roughness) / aspect);
+        Float ay = max(0.001f, sqr(roughness) * aspect);
+
+        SP<Microfacet<D>> microfacet = make_shared<Microfacet<D>>(ax, ay, MicrofacetType::Disney);
+        _spec_refl = MicrofacetReflection(make_float3(1.f), microfacet);
+        _clearcoat = Clearcoat(clearcoat, clearcoat_alpha);
+        _spec_trans = MicrofacetTransmission(spec_trans * sqrt(color), microfacet);
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
@@ -260,7 +275,7 @@ public:
         Float sheen = eval_tex(_sheen, si, 0.f).x;
         Float sheen_tint = eval_tex(_sheen_tint, si, 0.f).x;
         Float clearcoat = eval_tex(_clearcoat, si, 0.f).x;
-        Float clearcoat_alpha = eval_tex(_clearcoat_alpha, si, 0.f).x;
+        Float clearcoat_alpha = lerp(eval_tex(_clearcoat_alpha, si, 0.f).x, 0.001f, 1.f);
         Float spec_trans = eval_tex(_spec_trans, si, 0.f).x;
         Float flatness = eval_tex(_flatness, si, 0.f).x;
         Float diff_trans = eval_tex(_diff_trans, si, 0.f).x;
