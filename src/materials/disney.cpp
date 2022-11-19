@@ -185,45 +185,70 @@ class PrincipledBSDF : public BSDF {
 private:
     SP<const Fresnel> _fresnel{};
     Diffuse _diffuse;
-//    FakeSS _fake_ss;
     Retro _retro;
     Sheen _sheen;
     MicrofacetReflection _spec_refl;
     Clearcoat _clearcoat;
     MicrofacetTransmission _spec_trans;
 
+    // todo optimize invalid lobe
+    // sampling strategy
+    static constexpr size_t max_sampling_strategy_num = 4u;
+    array<Float, max_sampling_strategy_num> _sampling_weights;
+    uint _sampling_strategy{max_sampling_strategy_num};
+    uint _diffuse_index{0};
+    uint _spec_refl_index{1};
+    uint _clearcoat_index{2};
+    uint _spec_trans_index{3};
+
 public:
     PrincipledBSDF(const SurfaceInteraction &si, Float3 color, Float metallic, Float eta, Float roughness,
                    Float spec_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
                    Float clearcoat_alpha, Float spec_trans, Float flatness, Float diff_trans) : BSDF(si) {
         Float diffuse_weight = (1 - metallic) * (1 - spec_trans);
-        Float lum = luminance(color);
-        Float3 color_tint = select(lum > 0, color / lum, make_float3(1.f));
+        Float color_lum = luminance(color);
+        Float3 color_tint = select(color_lum > 0, color / color_lum, make_float3(1.f));
+        Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
         Float3 color_sheen_tint = select(sheen > 0,
                                          lerp(make_float3(sheen_tint), make_float3(1.f), color_tint),
                                          make_float3(0.f));
+        Float SchlickR0 = schlick_R0_from_eta(eta);
         Float3 R0 = lerp(Float3(metallic),
-                         schlick_R0_from_eta(eta) * lerp(Float3(spec_tint), Float3(1.f), color_sheen_tint),
+                         SchlickR0 * lerp(Float3(spec_tint), Float3(1.f), color_sheen_tint),
                          color);
         Float dt = diff_trans * 0.5f;
         Float aspect = safe_sqrt(1 - anisotropic * 0.9f);
+        Float tint_lum = color_lum * tint_weight;
 
+        Float sampling_diffuse_weight = diffuse_weight * color_lum + diffuse_weight * sheen;
+
+        _fresnel = make_shared<FresnelDisney>(R0, metallic, eta);
         _diffuse = Diffuse(diffuse_weight * color);
-//        _fake_ss = FakeSS(diffuse_weight * flatness * (1 - dt) * color, roughness);
         _retro = Retro(diffuse_weight * color, roughness);
         _sheen = Sheen(diffuse_weight * sheen * color_sheen_tint);
+        _sampling_weights[_diffuse_index] = saturate(sampling_diffuse_weight);
 
         Float ax = max(0.001f, sqr(roughness) / aspect);
         Float ay = max(0.001f, sqr(roughness) * aspect);
 
         SP<Microfacet<D>> microfacet = make_shared<Microfacet<D>>(ax, ay, MicrofacetType::Disney);
         _spec_refl = MicrofacetReflection(make_float3(1.f), microfacet);
+        Float Cspec0_lum = lerp(lerp(1.f, tint_lum, spec_tint) * SchlickR0, color_lum, metallic);
+        _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
+
         _clearcoat = Clearcoat(clearcoat, clearcoat_alpha);
-        _spec_trans = MicrofacetTransmission(spec_trans * sqrt(color), microfacet);
+        _sampling_weights[_clearcoat_index] = saturate(clearcoat * fresnel_schlick(.04f, 1.f));
+
+        Float Cst_weight = (1.f - metallic) * spec_trans;
+        Float3 Cst = Cst_weight * sqrt(color);
+        Float Cst_lum = Cst_weight * sqrt(color_lum);
+        _spec_trans = MicrofacetTransmission(Cst, microfacet);
+        _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
+        
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
