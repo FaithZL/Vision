@@ -227,7 +227,7 @@ public:
     TextureDesc spec{0.05f};
 
     // for disney
-    TextureDesc metallic{0.5f};
+    TextureDesc metallic{0.f};
     TextureDesc spec_tint{0.0f};
     TextureDesc anisotropic{0.0f};
     TextureDesc sheen{0.f};
@@ -237,7 +237,7 @@ public:
     TextureDesc spec_trans{0.f};
     TextureDesc scatter_distance{0.f};
     TextureDesc flatness{0.f};
-    TextureDesc diff_trans{0.5f};
+    TextureDesc diff_trans{0.f};
     bool thin{false};
 
 public:
