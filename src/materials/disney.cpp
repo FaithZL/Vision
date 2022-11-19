@@ -244,15 +244,75 @@ public:
         Float Cst_lum = Cst_weight * sqrt(color_lum);
         _spec_trans = MicrofacetTransmission(Cst, microfacet);
         _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
+
+        Uint sum_weights = 0u;
+        for (int i = 0; i < max_sampling_strategy_num; ++i) {
+            sum_weights += _sampling_weights[i];
+        }
+        Float inv_sum_weights = select(sum_weights == 0, 0.f, 1.f / sum_weights);
+        for (int i = 0; i < max_sampling_strategy_num; ++i) {
+            _sampling_weights[i] *= inv_sum_weights;
+        }
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
-        
+        Float3 f = make_float3(0.f);
+        Float pdf = 0.f;
+        auto fresnel = _fresnel->clone();
+        $if(same_hemisphere(wo, wi)) {
+            Float3 diffuse_f = _diffuse.f(wo, wi, fresnel) + _retro.f(wo, wi, fresnel) + _sheen.f(wo, wi, fresnel);
+            Float diffuse_pdf = _diffuse.PDF(wo, wi, fresnel) + _retro.PDF(wo, wi, fresnel) + _sheen.PDF(wo, wi, fresnel);
+            f = diffuse_f;
+            pdf = _sampling_weights[_diffuse_index] * diffuse_pdf;
+
+            f += _spec_refl.f(wo, wi, fresnel);
+            pdf += _sampling_weights[_spec_refl_index] * _spec_refl.PDF(wo, wi, fresnel);
+
+            f += _clearcoat.f(wo, wi, fresnel);
+            pdf += _sampling_weights[_spec_trans_index] * _spec_trans.PDF(wo, wi, fresnel);
+        }
+        $else {
+            f = _spec_trans.f(wo, wi, fresnel);
+            pdf = _sampling_weights[_spec_trans_index] * _spec_trans.PDF(wo, wi, fresnel);
+        };
+        ret.f = f * abs_cos_theta(wi);
+        ret.pdf = pdf;
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
         BSDFSample ret;
+
+        Uint sampling_strategy = 0u;
+        Float sum_weights = 0.f;
+        for (uint i = 0; i < max_sampling_strategy_num; ++i) {
+            sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+            sum_weights += _sampling_weights[i];
+        }
+        Float3 wi;
+        Float3 f;
+        Float pdf;
+        $switch(sampling_strategy) {
+            $case(_diffuse_index) {
+
+                $break;
+            };
+            $case(_spec_refl_index) {
+
+                $break;
+            };
+            $case(_clearcoat_index) {
+                $break;
+            };
+            $case(_spec_trans_index) {
+                $break;
+            };
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+
         return ret;
     }
 };
