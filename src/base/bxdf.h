@@ -26,7 +26,7 @@ public:
     [[nodiscard]] virtual BSDFEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual BSDFEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] virtual Float3 sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }
     [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {
         return ((_flag & bxdf_flag) == _flag);
@@ -59,6 +59,7 @@ public:
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
 };
 
@@ -75,6 +76,7 @@ public:
     [[nodiscard]] Float3 albedo() const noexcept override { return Kt; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
 };
 

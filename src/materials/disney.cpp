@@ -292,9 +292,10 @@ public:
         Float3 wi;
         Float3 f;
         Float pdf;
+        auto fresnel = _fresnel->clone();
         $switch(sampling_strategy) {
             $case(_diffuse_index) {
-
+//                wi = _diffuse.sample_wi(wo, u, fresnel);
                 $break;
             };
             $case(_spec_refl_index) {

@@ -43,6 +43,11 @@ struct LightEval {
     }
 };
 
+struct SampledDirection {
+    Float3 wi;
+    Bool valid;
+};
+
 struct BSDFSample {
     BSDFEval eval;
     Float3 wi{make_float3(0.f)};
