@@ -168,6 +168,9 @@ private:
 public:
     FresnelDisney(const Float3 &R0, Float metallic, Float eta)
         : R0(R0), _metallic(metallic), _eta(eta) {}
+    void correct_eta(Float cos_theta) noexcept override {
+        _eta = select(cos_theta > 0, _eta, rcp(_eta));
+    }
     [[nodiscard]] Float3 evaluate(Float cos_theta) const noexcept override {
         return lerp(make_float3(_metallic),
                     make_float3(fresnel_dielectric(cos_theta, _eta)),
@@ -259,7 +262,8 @@ public:
         }
         Float inv_sum_weights = select(sum_weights == 0, 0.f, 1.f / sum_weights);
         for (int i = 0; i < max_sampling_strategy_num; ++i) {
-            _sampling_weights[i] *= inv_sum_weights;
+                        _sampling_weights[i] *= inv_sum_weights;
+            _sampling_weights[i] = 0.25f;
         }
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
@@ -268,6 +272,8 @@ public:
         Float3 f = make_float3(0.f);
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
         $if(same_hemisphere(wo, wi)) {
             f = f_diffuse(wo, wi, fresnel);
             pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
@@ -298,6 +304,8 @@ public:
         Float3 f;
         Float pdf;
         auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
         SampledDirection sampled_direction;
         $switch(sampling_strategy) {
             $case(_diffuse_index) {
