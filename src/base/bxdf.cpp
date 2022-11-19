@@ -43,7 +43,7 @@ BSDFSample BxDF::sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept
 }
 
 Float3 LambertReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    return Kr * InvPi * abs_cos_theta(wi);
+    return Kr * InvPi;
 }
 
 Float3 MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
@@ -51,7 +51,7 @@ Float3 MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const 
     wh = face_forward(wh, make_float3(0, 0, 1));
     Float3 F = fresnel->evaluate(abs_dot(wo, wh));
     Float3 fr = _microfacet->BRDF(wo, wh, wi, F);
-    return fr * Kr * abs_cos_theta(wi);
+    return fr * Kr;
 }
 
 Float MicrofacetReflection::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
@@ -79,7 +79,7 @@ Float3 MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) cons
     wh = face_forward(wh, make_float3(0, 0, 1));
     Float3 F = fresnel->evaluate(abs_dot(wo, wh));
     Float3 tr = _microfacet->BTDF(wo, wh, wi, make_float3(1) - F, eta);
-    return select(dot(wo, wh) * dot(wi, wh) > 0, make_float3(0.f), tr * Kt * abs_cos_theta(wi));
+    return select(dot(wo, wh) * dot(wi, wh) > 0, make_float3(0.f), tr * Kt);
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {

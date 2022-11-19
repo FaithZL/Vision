@@ -44,7 +44,7 @@ public:
     }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float3 ret = f_specular(wo, wi) + f_diffuse(wo, wi);
-        return ret * abs_cos_theta(wi);
+        return ret;
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
@@ -57,7 +57,7 @@ public:
             u.x = remapping(u.x, 0.f, fr);
             Float3 wh = _microfacet->sample_wh(wo, u);
             ret.wi = reflect(wo, wh);
-            ret.eval.f = f_specular(wo, ret.wi) * abs_cos_theta(ret.wi);
+            ret.eval.f = f_specular(wo, ret.wi);
             ret.eval.pdf = PDF_specular(wo, ret.wi);
             ret.eval.pdf = select(safe(wo, ret.wi), ret.eval.pdf, 0.f) * fr;
         }
@@ -65,7 +65,7 @@ public:
             u.x = remapping(u.x, fr, 1.f);
             ret.wi = square_to_cosine_hemisphere(u);
             ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
-            ret.eval.f = f_diffuse(wo, ret.wi) * abs_cos_theta(ret.wi);
+            ret.eval.f = f_diffuse(wo, ret.wi);
             ret.eval.pdf = PDF_diffuse(wo, ret.wi) * (1 - fr);
         };
         return ret;

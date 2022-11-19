@@ -276,7 +276,7 @@ public:
             f = _spec_trans.f(wo, wi, fresnel);
             pdf = _sampling_weights[_spec_trans_index] * _spec_trans.PDF(wo, wi, fresnel);
         };
-        ret.f = f * abs_cos_theta(wi);
+        ret.f = f;
         ret.pdf = pdf;
         return ret;
     }
