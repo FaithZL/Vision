@@ -10,9 +10,9 @@
                     1.0
                 ],
                 "ior" : 1.9,
-                "roughness" : 0.5,
-                "metallic" : 0,
-                "spec_tint" : 0.9,
+                "roughness" : 0.1,
+                "metallic" : 1,
+                "spec_tint" : 0.0,
                 "anisotropic" : 0,
                 "sheen" : 0.9,
                 "sheen_tint" : 0.9,
@@ -394,7 +394,8 @@
                 "y": 1,
                 "z": 1,
 //                "material": "ShortBox",
-                "material" : "substrate",
+//                "material" : "substrate",
+                "material" : "disney",
 //                "material": "Mirror",
 //                "material": "Glass",
                 "transform": {

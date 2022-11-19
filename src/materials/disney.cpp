@@ -201,6 +201,14 @@ private:
     uint _clearcoat_index{2};
     uint _spec_trans_index{3};
 
+private:
+    [[nodiscard]] Float3 f_diffuse(Float3 wo, Float3 wi, const SP<Fresnel> &fresnel) const noexcept {
+        return _diffuse.f(wo, wi, fresnel) + _retro.f(wo, wi, fresnel) + _sheen.f(wo, wi, fresnel);
+    }
+    [[nodiscard]] Float PDF_diffuse(Float3 wo, Float3 wi, const SP<Fresnel> &fresnel) const noexcept {
+        return _diffuse.PDF(wo, wi, fresnel) + _retro.PDF(wo, wi, fresnel) + _sheen.PDF(wo, wi, fresnel);
+    }
+
 public:
     PrincipledBSDF(const SurfaceInteraction &si, Float3 color, Float metallic, Float eta, Float roughness,
                    Float spec_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
@@ -261,10 +269,8 @@ public:
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();
         $if(same_hemisphere(wo, wi)) {
-            Float3 diffuse_f = _diffuse.f(wo, wi, fresnel) + _retro.f(wo, wi, fresnel) + _sheen.f(wo, wi, fresnel);
-            Float diffuse_pdf = _diffuse.PDF(wo, wi, fresnel) + _retro.PDF(wo, wi, fresnel) + _sheen.PDF(wo, wi, fresnel);
-            f = diffuse_f;
-            pdf = _sampling_weights[_diffuse_index] * diffuse_pdf;
+            f = f_diffuse(wo, wi, fresnel);
+            pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
 
             f += _spec_refl.f(wo, wi, fresnel);
             pdf += _sampling_weights[_spec_refl_index] * _spec_refl.PDF(wo, wi, fresnel);
@@ -289,23 +295,25 @@ public:
             sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
             sum_weights += _sampling_weights[i];
         }
-        Float3 wi;
         Float3 f;
         Float pdf;
         auto fresnel = _fresnel->clone();
+        SampledDirection sampled_direction;
         $switch(sampling_strategy) {
             $case(_diffuse_index) {
-//                wi = _diffuse.sample_wi(wo, u, fresnel);
+                sampled_direction = _diffuse.sample_wi(wo, u, fresnel);
                 $break;
             };
             $case(_spec_refl_index) {
-
+                sampled_direction = _spec_refl.sample_wi(wo, u, fresnel);
                 $break;
             };
             $case(_clearcoat_index) {
+                sampled_direction = _clearcoat.sample_wi(wo, u, fresnel);
                 $break;
             };
             $case(_spec_trans_index) {
+                sampled_direction = _spec_trans.sample_wi(wo, u, fresnel);
                 $break;
             };
             $default {
@@ -313,7 +321,9 @@ public:
                 $break;
             };
         };
-
+        ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
+        ret.wi = sampled_direction.wi;
+        ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
         return ret;
     }
 };
