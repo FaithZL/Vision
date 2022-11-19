@@ -29,16 +29,21 @@ BSDFEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const no
     return ret;
 }
 
-Float3 LambertReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    return Kr * InvPi * abs_cos_theta(wi);
+Float3 BxDF::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
+    Float3 wi = square_to_cosine_hemisphere(u);;
+    wi.z = select(wo.z < 0.f, -wi.z, wi.z);
+    return wi;
 }
 
 BSDFSample BxDF::sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret;
-    ret.wi = square_to_cosine_hemisphere(u);
-    ret.wi.z = select(wo.z < 0.f, -ret.wi.z, ret.wi.z);
+    ret.wi = sample_wi(wo, u, fresnel);
     ret.eval = evaluate(wo, ret.wi, fresnel);
     return ret;
+}
+
+Float3 LambertReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+    return Kr * InvPi * abs_cos_theta(wi);
 }
 
 Float3 MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
