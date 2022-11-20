@@ -39,8 +39,8 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
-        Float3 kr = eval_tex(_color, si).xyz();
-        Float2 alpha = eval_tex(_roughness, si, 0.0001f).xy();
+        Float3 kr = Texture::eval(_color, si).xyz();
+        Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>();
         MicrofacetReflection bxdf(kr, microfacet);

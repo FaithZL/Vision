@@ -34,7 +34,7 @@ public:
         : Material(desc), _color(desc.scene->load<Texture>(desc.color)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
-        Float3 kr = eval_tex(_color, si).xyz();
+        Float3 kr = Texture::eval(_color, si).xyz();
         return make_unique<MatteBSDF>(si, kr);
     }
 };

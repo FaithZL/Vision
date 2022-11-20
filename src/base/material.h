@@ -41,22 +41,6 @@ public:
     [[nodiscard]] virtual BSDFSample sample(Float uc, Float2 u, Uchar flag) const noexcept;
 };
 
-template<typename T = float4>
-[[nodiscard]] Float4 eval_tex(const Texture *tex, const TextureEvalContext &ctx,
-                              T val = T{}) noexcept {
-    float4 default_val = make_float4(0);
-    if constexpr (is_scalar_v<T>) {
-        default_val = make_float4(val);
-    } else if constexpr (is_vector2_v<T>) {
-        default_val = make_float4(val, 0, 0);
-    } else if constexpr (is_vector3_v<T>) {
-        default_val = make_float4(val, 0);
-    } else {
-        default_val = val;
-    }
-    return tex ? tex->eval(ctx) : Float4(val);
-}
-
 class Material : public Node {
 public:
     using Desc = MaterialDesc;
