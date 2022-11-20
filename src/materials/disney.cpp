@@ -213,6 +213,73 @@ private:
     }
 
 public:
+    PrincipledBSDF(const SurfaceInteraction &si, const Texture *color_tex, const Texture *metallic_tex, const Texture *eta_tex,
+                   const Texture *roughness_tex, const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
+                   const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
+                   const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
+        : BSDF(si) {
+        Float3 color = eval_tex(color_tex, si).xyz() * 0.f;
+        Float color_lum = luminance(color);
+        Float metallic = eval_tex(metallic_tex, si).x;
+        Float spec_trans = eval_tex(spec_trans_tex, si).x;
+        Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
+        Float flatness = eval_tex(flatness_tex, si).x;
+        Float roughness = eval_tex(roughness_tex, si).x;
+        Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
+        Float3 tint = clamp(color * tint_weight, make_float3(0.f), make_float3(1.f));
+        Float tint_lum = color_lum * tint_weight;
+
+        Float Cdiff_weight = diffuse_weight * (1.f - flatness);
+        Float3 Cdiff = color * Cdiff_weight;
+
+        _diffuse = Diffuse(Cdiff);
+        _retro = Retro(Cdiff, roughness);
+
+        Float sampling_weight = diffuse_weight * color_lum;
+        Float sheen = eval_tex(sheen_tex, si).x;
+        Float sheen_tint = eval_tex(sheen_tint_tex, si).x;
+        Float Csheen_weight = diffuse_weight * sheen;
+        Float3 Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
+        _sheen = Sheen(Csheen);
+        _sampling_weights[_diffuse_index] = saturate(sampling_weight);
+
+        Float spec_tint = eval_tex(spec_tint_tex, si).x;
+        Float eta = eval_tex(eta_tex, si).x;
+        Float SchlickR0 = schlick_R0_from_eta(eta);
+        Float3 Cspec0 = lerp(make_float3(metallic), lerp(make_float3(spec_tint), make_float3(1.f), tint) * SchlickR0, color);
+
+        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta);
+        Float anisotropic = eval_tex(anisotropic_tex, si).x;
+        Float aspect = sqrt(1 - anisotropic * 0.9f);
+        Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
+                                   max(0.001f, sqr(roughness) * aspect));
+        auto microfacet = make_shared<Microfacet<D>>(alpha, MicrofacetType::Disney);
+        _spec_refl = MicrofacetReflection(make_float3(1.f), microfacet);
+
+        Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
+        _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
+
+        Float cc = eval_tex(clearcoat_tex, si).x;
+        Float cc_alpha = lerp(eval_tex(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
+        _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
+
+        Float Cst_weight = (1.f - metallic) * spec_trans;
+        Float3 Cst = Cst_weight * sqrt(color);
+        _spec_trans = MicrofacetTransmission(Cst, microfacet);
+        Float Cst_lum = Cst_weight * sqrt(color_lum);
+        _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
+
+        Float sum_weights = 0.f;
+        for (uint i = 0u; i < max_sampling_strategy_num; i++) {
+            sum_weights += _sampling_weights[i];
+        }
+        auto inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
+        for (auto &s : _sampling_weights) {
+//            s *= inv_sum_weights;
+            s = 0.25f;
+        }
+    }
+
     PrincipledBSDF(const SurfaceInteraction &si, Float3 color, Float metallic, Float eta, Float roughness,
                    Float spec_tint, Float anisotropic, Float sheen, Float sheen_tint, Float clearcoat,
                    Float clearcoat_alpha, Float spec_trans, Float flatness, Float diff_trans) : BSDF(si) {
@@ -261,10 +328,14 @@ public:
             sum_weights += _sampling_weights[i];
         }
         Float inv_sum_weights = select(sum_weights == 0, 0.f, 1.f / sum_weights);
-        for (int i = 0; i < max_sampling_strategy_num; ++i) {
-                        _sampling_weights[i] *= inv_sum_weights;
-            _sampling_weights[i] = 0.25f;
+        for (auto &s : _sampling_weights) {
+            //            s *= inv_sum_weights;
+            s = 0.25f;
         }
+//        for (int i = 0; i < max_sampling_strategy_num; ++i) {
+//            _sampling_weights[i] *= inv_sum_weights;
+//            _sampling_weights[i] = 0.25f;
+//        }
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
@@ -370,23 +441,29 @@ public:
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
-        Float3 color = eval_tex(_color, si, 0.f).xyz();
-        Float metallic = eval_tex(_metallic, si, 1.5f).x;
-        Float eta = eval_tex(_eta, si, 1.5f).x;
-        Float roughness = eval_tex(_roughness, si, 0.5f).x;
-        Float spec_tint = eval_tex(_spec_tint, si, 0.f).x;
-        Float anisotropic = eval_tex(_anisotropic, si, 0.f).x;
-        Float sheen = eval_tex(_sheen, si, 0.f).x;
-        Float sheen_tint = eval_tex(_sheen_tint, si, 0.f).x;
-        Float clearcoat = eval_tex(_clearcoat, si, 0.f).x;
-        Float clearcoat_alpha = lerp(eval_tex(_clearcoat_alpha, si, 0.f).x, 0.001f, 1.f);
-        Float spec_trans = eval_tex(_spec_trans, si, 0.f).x;
-        Float flatness = eval_tex(_flatness, si, 0.f).x;
-        Float diff_trans = eval_tex(_diff_trans, si, 0.f).x;
-        return make_unique<PrincipledBSDF>(si, color, metallic, eta, roughness, spec_tint, anisotropic,
-                                           sheen, sheen_tint, clearcoat, clearcoat_alpha,
-                                           spec_trans, flatness, diff_trans);
+        return make_unique<PrincipledBSDF>(si, _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic,
+                                           _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
+                                           _spec_trans, _flatness, _diff_trans);
     }
+
+//    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+//        Float3 color = eval_tex(_color, si, 0.f).xyz();
+//        Float metallic = eval_tex(_metallic, si, 1.5f).x;
+//        Float eta = eval_tex(_eta, si, 1.5f).x;
+//        Float roughness = eval_tex(_roughness, si, 0.5f).x;
+//        Float spec_tint = eval_tex(_spec_tint, si, 0.f).x;
+//        Float anisotropic = eval_tex(_anisotropic, si, 0.f).x;
+//        Float sheen = eval_tex(_sheen, si, 0.f).x;
+//        Float sheen_tint = eval_tex(_sheen_tint, si, 0.f).x;
+//        Float clearcoat = eval_tex(_clearcoat, si, 0.f).x;
+//        Float clearcoat_alpha = lerp(eval_tex(_clearcoat_alpha, si, 0.f).x, 0.001f, 1.f);
+//        Float spec_trans = eval_tex(_spec_trans, si, 0.f).x;
+//        Float flatness = eval_tex(_flatness, si, 0.f).x;
+//        Float diff_trans = eval_tex(_diff_trans, si, 0.f).x;
+//        return make_unique<PrincipledBSDF>(si, color, metallic, eta, roughness, spec_tint, anisotropic,
+//                                           sheen, sheen_tint, clearcoat, clearcoat_alpha,
+//                                           spec_trans, flatness, diff_trans);
+//    }
 };
 
 }// namespace vision
