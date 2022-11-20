@@ -218,7 +218,7 @@ public:
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
         : BSDF(si) {
-        Float3 color = eval_tex(color_tex, si).xyz() * 0.f;
+        Float3 color = eval_tex(color_tex, si).xyz();
         Float color_lum = luminance(color);
         Float metallic = eval_tex(metallic_tex, si).x;
         Float spec_trans = eval_tex(spec_trans_tex, si).x;
