@@ -9,7 +9,6 @@
 #include "core/stl.h"
 #include "bxdf.h"
 #include "texture.h"
-#include "math/sampling.h"
 
 namespace vision {
 

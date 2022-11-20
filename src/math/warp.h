@@ -12,6 +12,12 @@ namespace vision {
 
 using namespace ocarina;
 
+template<EPort p = D>
+[[nodiscard]] oc_float<p> remapping(const oc_float<p> &a,
+                                    const oc_float<p> &low,
+                                    const oc_float<p> &high) {
+    return (a - low) / (high - low);
+}
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float2<p> square_to_disk_impl(const oc_float2<p> &u) {

@@ -6,7 +6,6 @@
 #include "base/texture.h"
 #include "base/scene.h"
 #include "math/warp.h"
-#include "math/sampling.h"
 
 namespace vision {
 
