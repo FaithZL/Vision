@@ -244,7 +244,11 @@ public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(NodeDesc::_compute_hash(), color, ior, roughness);
+        return hash64(NodeDesc::_compute_hash(), color, roughness,
+                      remapping_roughness, ior, eta, k, spec, metallic,
+                      spec_tint, anisotropic, sheen, sheen_tint, clearcoat,
+                      clearcoat_alpha, spec_trans, scatter_distance, flatness,
+                      diff_trans, thin);
     }
 };
 
