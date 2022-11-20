@@ -11,7 +11,6 @@ using namespace ocarina;
 class ImageTexture : public Texture {
 private:
     const ImageWrapper &_image_wrapper;
-    float4 _val;
 
 public:
     explicit ImageTexture(const TextureDesc &desc)

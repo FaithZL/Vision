@@ -190,6 +190,7 @@ private:
     Diffuse _diffuse;
     Retro _retro;
     Sheen _sheen;
+    FakeSS _fake_ss;
     MicrofacetReflection _spec_refl;
     Clearcoat _clearcoat;
     MicrofacetTransmission _spec_trans;
@@ -206,10 +207,10 @@ private:
 
 private:
     [[nodiscard]] Float3 f_diffuse(Float3 wo, Float3 wi, const SP<Fresnel> &fresnel) const noexcept {
-        return _diffuse.f(wo, wi, fresnel) + _retro.f(wo, wi, fresnel) + _sheen.f(wo, wi, fresnel);
+        return _diffuse.f(wo, wi, fresnel) + _retro.f(wo, wi, fresnel) + _sheen.f(wo, wi, fresnel) + _fake_ss.f(wo, wi, fresnel);
     }
     [[nodiscard]] Float PDF_diffuse(Float3 wo, Float3 wi, const SP<Fresnel> &fresnel) const noexcept {
-        return _diffuse.PDF(wo, wi, fresnel) + _retro.PDF(wo, wi, fresnel) + _sheen.PDF(wo, wi, fresnel);
+        return _diffuse.PDF(wo, wi, fresnel) + _retro.PDF(wo, wi, fresnel) + _sheen.PDF(wo, wi, fresnel) + _fake_ss.PDF(wo, wi, fresnel);
     }
 
 public:
@@ -231,9 +232,13 @@ public:
 
         Float Cdiff_weight = diffuse_weight * (1.f - flatness);
         Float3 Cdiff = color * Cdiff_weight;
-
+        
         _diffuse = Diffuse(Cdiff);
         _retro = Retro(Cdiff, roughness);
+
+        Float Css_weight = diffuse_weight * flatness;
+        Float3 Css = Css_weight * color;
+        _fake_ss = FakeSS(Css, roughness);
 
         Float sampling_weight = diffuse_weight * color_lum;
         Float sheen = Texture::eval(sheen_tex, si).x;
