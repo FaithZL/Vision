@@ -19,6 +19,7 @@ public:
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {
         _image_wrapper.upload_immediately();
     }
+    [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override {
         return eval(tev.uv);
     }
