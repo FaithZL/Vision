@@ -32,6 +32,9 @@ public:
     [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
         return tex ? tex->is_zero() : true;
     }
+    [[nodiscard]] static bool nonzero(const Texture *tex) noexcept {
+        return !is_zero(tex);
+    }
 
 public:
     explicit Texture(const TextureDesc &desc) : Node(desc) {}

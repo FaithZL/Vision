@@ -187,30 +187,51 @@ public:
 class PrincipledBSDF : public BSDF {
 private:
     SP<const Fresnel> _fresnel{};
-    Diffuse _diffuse;
-    Retro _retro;
-    Sheen _sheen;
-    FakeSS _fake_ss;
-    MicrofacetReflection _spec_refl;
-    Clearcoat _clearcoat;
-    MicrofacetTransmission _spec_trans;
+    optional<Diffuse> _diffuse{};
+    optional<Retro> _retro{};
+    optional<Sheen> _sheen{};
+    optional<FakeSS> _fake_ss{};
+    optional<MicrofacetReflection> _spec_refl{};
+    optional<Clearcoat> _clearcoat{};
+    optional<MicrofacetTransmission> _spec_trans{};
 
-    // todo optimize invalid lobe
     // sampling strategy
     static constexpr size_t max_sampling_strategy_num = 4u;
     array<Float, max_sampling_strategy_num> _sampling_weights;
-    uint _sampling_strategy{max_sampling_strategy_num};
-    uint _diffuse_index{0};
-    uint _spec_refl_index{1};
-    uint _clearcoat_index{2};
-    uint _spec_trans_index{3};
+    uint _sampling_strategy{InvalidUI32};
+    uint _diffuse_index{InvalidUI32};
+    uint _spec_refl_index{InvalidUI32};
+    uint _clearcoat_index{InvalidUI32};
+    uint _spec_trans_index{InvalidUI32};
+    uint _sampling_strategy_num{0u};
 
 private:
-    [[nodiscard]] Float3 f_diffuse(Float3 wo, Float3 wi, const SP<Fresnel> &fresnel) const noexcept {
-        return _diffuse.f(wo, wi, fresnel) + _retro.f(wo, wi, fresnel) + _sheen.f(wo, wi, fresnel) + _fake_ss.f(wo, wi, fresnel);
+    template<typename T, typename... Args>
+    [[nodiscard]] Float3 lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
+        if (lobe.has_value()) {
+            return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
+        }
+        return make_float3(0.f);
     }
-    [[nodiscard]] Float PDF_diffuse(Float3 wo, Float3 wi, const SP<Fresnel> &fresnel) const noexcept {
-        return _diffuse.PDF(wo, wi, fresnel) + _retro.PDF(wo, wi, fresnel) + _sheen.PDF(wo, wi, fresnel) + _fake_ss.PDF(wo, wi, fresnel);
+
+    template<typename T, typename... Args>
+    [[nodiscard]] Float lobe_PDF(const optional<T> &lobe, Args &&...args) const noexcept {
+        if (lobe.has_value()) {
+            return OC_FORWARD(lobe)->PDF(OC_FORWARD(args)...);
+        }
+        return 0.f;
+    }
+
+    template<typename... Args>
+    [[nodiscard]] Float3 f_diffuse(Args &&...args) const noexcept {
+        return lobe_f(_diffuse, OC_FORWARD(args)...) + lobe_f(_retro, OC_FORWARD(args)...) +
+               lobe_f(_sheen, OC_FORWARD(args)...) + lobe_f(_fake_ss, OC_FORWARD(args)...);
+    }
+
+    template<typename... Args>
+    [[nodiscard]] Float PDF_diffuse(Args &&...args) const noexcept {
+        return lobe_PDF(_diffuse, OC_FORWARD(args)...) + lobe_PDF(_retro, OC_FORWARD(args)...) +
+               lobe_PDF(_sheen, OC_FORWARD(args)...) + lobe_PDF(_fake_ss, OC_FORWARD(args)...);
     }
 
 public:
@@ -232,20 +253,24 @@ public:
 
         Float Cdiff_weight = diffuse_weight * (1.f - flatness);
         Float3 Cdiff = color * Cdiff_weight;
-        
+
         _diffuse = Diffuse(Cdiff);
         _retro = Retro(Cdiff, roughness);
-
-        Float Css_weight = diffuse_weight * flatness;
-        Float3 Css = Css_weight * color;
-        _fake_ss = FakeSS(Css, roughness);
+        if (Texture::nonzero(flatness_tex)) {
+            Float Css_weight = diffuse_weight * flatness;
+            Float3 Css = Css_weight * color;
+            _fake_ss = FakeSS(Css, roughness);
+        }
 
         Float sampling_weight = diffuse_weight * color_lum;
-        Float sheen = Texture::eval(sheen_tex, si).x;
-        Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
-        Float Csheen_weight = diffuse_weight * sheen;
-        Float3 Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
-        _sheen = Sheen(Csheen);
+        if (Texture::nonzero(sheen_tex)) {
+            Float sheen = Texture::eval(sheen_tex, si).x;
+            Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
+            Float Csheen_weight = diffuse_weight * sheen;
+            Float3 Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
+            _sheen = Sheen(Csheen);
+        }
+        _diffuse_index = _sampling_strategy_num++;
         _sampling_weights[_diffuse_index] = saturate(sampling_weight);
 
         Float spec_tint = Texture::eval(spec_tint_tex, si).x;
@@ -260,31 +285,38 @@ public:
                                    max(0.001f, sqr(roughness) * aspect));
         auto microfacet = make_shared<Microfacet<D>>(alpha, MicrofacetType::Disney);
         _spec_refl = MicrofacetReflection(make_float3(1.f), microfacet);
-
         Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
+        _spec_refl_index = _sampling_strategy_num++;
         _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
 
-        Float cc = Texture::eval(clearcoat_tex, si).x;
-        Float cc_alpha = lerp(Texture::eval(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
-        _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
+        if (Texture::nonzero(clearcoat_tex)) {
+            Float cc = Texture::eval(clearcoat_tex, si).x;
+            Float cc_alpha = lerp(Texture::eval(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
+            _clearcoat = Clearcoat(cc, cc_alpha);
+            _clearcoat_index = _sampling_strategy_num++;
+            _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
+        }
 
-        Float Cst_weight = (1.f - metallic) * spec_trans;
-        Float3 Cst = Cst_weight * sqrt(color);
-        _spec_trans = MicrofacetTransmission(Cst, microfacet);
-        Float Cst_lum = Cst_weight * sqrt(color_lum);
-        _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
+        if (Texture::nonzero(spec_trans_tex)) {
+            Float Cst_weight = (1.f - metallic) * spec_trans;
+            Float3 Cst = Cst_weight * sqrt(color);
+            _spec_trans = MicrofacetTransmission(Cst, microfacet);
+            Float Cst_lum = Cst_weight * sqrt(color_lum);
+            _spec_trans_index = _sampling_strategy_num++;
+            _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
+        }
 
         Float sum_weights = 0.f;
-        for (uint i = 0u; i < max_sampling_strategy_num; i++) {
+        for (uint i = 0u; i < _sampling_strategy_num; i++) {
             sum_weights += _sampling_weights[i];
         }
         auto inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
-        for (auto &s : _sampling_weights) {
-//            s *= inv_sum_weights;
-            s = 0.25f;
+        for (uint i = 0u; i < _sampling_strategy_num; i++) {
+//            _sampling_weights[i] *= inv_sum_weights;
+            _sampling_weights[i] = 0.5f;
         }
     }
-    [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse.albedo(); }
+    [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         BSDFEval ret;
         Float3 f = make_float3(0.f);
@@ -296,15 +328,19 @@ public:
             f = f_diffuse(wo, wi, fresnel);
             pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
 
-            f += _spec_refl.f(wo, wi, fresnel);
-            pdf += _sampling_weights[_spec_refl_index] * _spec_refl.PDF(wo, wi, fresnel);
+            f += _spec_refl->f(wo, wi, fresnel);
+//            pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
 
-            f += _clearcoat.f(wo, wi, fresnel);
-            pdf += _sampling_weights[_spec_trans_index] * _spec_trans.PDF(wo, wi, fresnel);
+            if (_clearcoat.has_value()) {
+                f += _clearcoat->f(wo, wi, fresnel);
+                pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
+            }
         }
         $else {
-            f = _spec_trans.f(wo, wi, fresnel);
-            pdf = _sampling_weights[_spec_trans_index] * _spec_trans.PDF(wo, wi, fresnel);
+            if (_spec_trans.has_value()) {
+                f = _spec_trans->f(wo, wi, fresnel);
+                pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
+            }
         };
         ret.f = f;
         ret.pdf = pdf;
@@ -315,7 +351,7 @@ public:
 
         Uint sampling_strategy = 0u;
         Float sum_weights = 0.f;
-        for (uint i = 0; i < max_sampling_strategy_num; ++i) {
+        for (uint i = 0; i < _sampling_strategy_num; ++i) {
             sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
             sum_weights += _sampling_weights[i];
         }
@@ -325,28 +361,32 @@ public:
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         SampledDirection sampled_direction;
-        $switch(sampling_strategy) {
-            $case(_diffuse_index) {
-                sampled_direction = _diffuse.sample_wi(wo, u, fresnel);
-                $break;
-            };
-            $case(_spec_refl_index) {
-                sampled_direction = _spec_refl.sample_wi(wo, u, fresnel);
-                $break;
-            };
-            $case(_clearcoat_index) {
-                sampled_direction = _clearcoat.sample_wi(wo, u, fresnel);
-                $break;
-            };
-            $case(_spec_trans_index) {
-                sampled_direction = _spec_trans.sample_wi(wo, u, fresnel);
-                $break;
-            };
-            $default {
-                unreachable();
-                $break;
-            };
-        };
+//        $switch(sampling_strategy) {
+//            $case(_diffuse_index) {
+                sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
+//                $break;
+//            };
+//            $case(_spec_refl_index) {
+//                sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
+//                $break;
+//            };
+//            if (_clearcoat.has_value()) {
+//                $case(_clearcoat_index) {
+//                    sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
+//                    $break;
+//                };
+//            }
+//            if (_spec_trans.has_value()) {
+//                $case(_spec_trans_index) {
+//                    sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
+//                    $break;
+//                };
+//            }
+//            $default {
+//                unreachable();
+//                $break;
+//            };
+//        };
         ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
         ret.wi = sampled_direction.wi;
         ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
