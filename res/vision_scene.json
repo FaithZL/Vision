@@ -1,30 +1,30 @@
 {
     "textures": [],
     "materials": [
-        {
-            "type" : "disney",
-            "name" : "disney",
-            "param" : {
-                "color" : [
-                    1, 1, 1,
-                    1.0
-                ],
-                "ior" : 1.5,
-                "roughness" : 0.01,
-                "metallic" : 0,
-                "spec_tint" : 0.0,
-                "anisotropic" : 0,
-                "sheen" : 0,
-                "sheen_tint" : 0,
-                "clearcoat" : 0,
-                "clearcoat_alpha" : 0,
-                "spec_trans" : 0.99,
-                "flatness" : 0.98,
-                "scatter_distance" : [0, 0, 0],
-                "diff_trans" : 0.11,
-                "thin" : false
-            }
-        },
+    //    {
+    //        "type" : "disney",
+    //        "name" : "mix",
+    //        "param" : {
+    //            "color" : [
+    //                1, 1, 1,
+    //                1.0
+    //            ],
+    //            "ior" : 1.5,
+    //            "roughness" : 0.01,
+    //            "metallic" : 0,
+    //            "spec_tint" : 0.0,
+    //            "anisotropic" : 0,
+    //            "sheen" : 0,
+    //            "sheen_tint" : 0,
+    //            "clearcoat" : 0,
+    //            "clearcoat_alpha" : 0,
+    //            "spec_trans" : 0.99,
+    //            "flatness" : 0.98,
+    //            "scatter_distance" : [0, 0, 0],
+    //            "diff_trans" : 0.11,
+    //            "thin" : false
+    //        }
+    //    },
         {
             "type" : "disney",
             "name" : "LeftWall",
@@ -36,49 +36,49 @@
                 ]
             }
         },
-        {
-            "type" : "matte",
-            "name" : "image",
-            "param" : {
-                "color" : {
-                    "fn" : "test.png",
-                    "ColorSpace" : "linear"
-                }
-            }
-        },
-        {
-            "type" : "mirror",
-            "name" : "Mirror",
-            "param" : {
-                "color" : [
-                    1,
-                    1,
-                    1
-                ],
-                "roughness" : 0.001
-            }
-        },
-        {
-            "type": "glass",
-            "name": "Glass",
-            "param": {
-                "color": [
-                    1,
-                    1,
-                    1
-                ],
-                "ior": 1.5,
-                "roughness" :0.001
-            }
-        },
-        {
-            "type" : "metal",
-            "name" : "metal",
-            "param" : {
-                "metal_name" : "Cu",
-                "roughness" : 0.01
-            }
-        },
+        // {
+        //     "type" : "disney",
+        //     "name" : "image",
+        //     "param" : {
+        //         "color" : {
+        //             "fn" : "test.png",
+        //             "ColorSpace" : "linear"
+        //         }
+        //     }
+        // },
+        // {
+        //     "type" : "mirror",
+        //     "name" : "Mirror",
+        //     "param" : {
+        //         "color" : [
+        //             1,
+        //             1,
+        //             1
+        //         ],
+        //         "roughness" : 0.001
+        //     }
+        // },
+        // {
+        //     "type": "glass",
+        //     "name": "Glass",
+        //     "param": {
+        //         "color": [
+        //             1,
+        //             1,
+        //             1
+        //         ],
+        //         "ior": 1.5,
+        //         "roughness" :0.001
+        //     }
+        // },
+        // {
+        //     "type" : "metal",
+        //     "name" : "metal",
+        //     "param" : {
+        //         "metal_name" : "Cu",
+        //         "roughness" : 0.01
+        //     }
+        // },
         {
             "type": "disney",
             "name": "RightWall",
@@ -101,23 +101,23 @@
                 ]
             }
         },
-        {
-            "type": "substrate",
-            "name": "substrate",
-            "param": {
-                "roughness" : 0.001,
-                "spec": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
-                "color": [
-                    0.725,
-                    0.71,
-                    0.68
-                ]
-            }
-        },
+        // {
+        //     "type": "substrate",
+        //     "name": "substrate",
+        //     "param": {
+        //         "roughness" : 0.001,
+        //         "spec": [
+        //             0.04,
+        //             0.04,
+        //             0.04
+        //         ],
+        //         "color": [
+        //             0.725,
+        //             0.71,
+        //             0.68
+        //         ]
+        //     }
+        // },
         {
             "type": "disney",
             "name": "Ceiling",
@@ -165,7 +165,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "Matte",
             "name": "Black",
             "param": {
                 // "roughness" : [0.002]

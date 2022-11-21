@@ -21,9 +21,12 @@ public:
           _color(color) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float Fo = schlick_weight(abs_cos_theta(wo));
-        Float Fi = schlick_weight(abs_cos_theta(wi));
-        return _color * InvPi * (1 - 0.5f * Fo) * (1 - 0.5f * Fi);
+        static Callable impl = [](Float3 wo, Float3 wi) {
+            Float Fo = schlick_weight(abs_cos_theta(wo));
+            Float Fi = schlick_weight(abs_cos_theta(wi));
+            return InvPi * (1 - 0.5f * Fo) * (1 - 0.5f * Fi);
+        };
+        return _color * impl(wi, wi);
     }
 };
 
@@ -40,17 +43,20 @@ public:
           _roughness(r) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 wh = wi + wo;
-        Bool valid = !is_zero(wh);
-        wh = normalize(wh);
-        Float cos_theta_d = dot(wi, wh);
-        Float Fss90 = sqr(cos_theta_d) * _roughness;
-        Float Fo = schlick_weight(abs_cos_theta(wo));
-        Float Fi = schlick_weight(abs_cos_theta(wi));
-        Float Fss = lerp(Fo, 1.f, Fss90) * lerp(Fi, 1.f, Fss90);
-        Float ss = 1.25f * (Fss * (1 / (abs_cos_theta(wo) + abs_cos_theta(wi)) - .5f) + .5f);
-        Float3 ret = _color * InvPi * ss;
-        return select(valid, ret, make_float3(0));
+        static Callable impl = [](Float3 wo, Float3 wi, Float roughness) {
+            Float3 wh = wi + wo;
+            Bool valid = !is_zero(wh);
+            wh = normalize(wh);
+            Float cos_theta_d = dot(wi, wh);
+            Float Fss90 = sqr(cos_theta_d) * roughness;
+            Float Fo = schlick_weight(abs_cos_theta(wo));
+            Float Fi = schlick_weight(abs_cos_theta(wi));
+            Float Fss = lerp(Fo, 1.f, Fss90) * lerp(Fi, 1.f, Fss90);
+            Float ss = 1.25f * (Fss * (1 / (abs_cos_theta(wo) + abs_cos_theta(wi)) - .5f) + .5f);
+            Float ret = InvPi * ss;
+            return select(valid, ret, 0.f);
+        };
+        return _color * impl(wo, wi, _roughness);
     }
 };
 
@@ -67,17 +73,20 @@ public:
           _roughness(r) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 wh = wi + wo;
-        Bool valid = !is_zero(wh);
-        wh = normalize(wh);
-        Float cos_theta_d = dot(wi, wh);
+        static Callable impl = [](Float3 wo, Float3 wi, Float roughness) {
+            Float3 wh = wi + wo;
+            Bool valid = !is_zero(wh);
+            wh = normalize(wh);
+            Float cos_theta_d = dot(wi, wh);
 
-        Float Fo = schlick_weight(abs_cos_theta(wo));
-        Float Fi = schlick_weight(abs_cos_theta(wi));
-        Float Rr = 2 * _roughness * sqr(cos_theta_d);
+            Float Fo = schlick_weight(abs_cos_theta(wo));
+            Float Fi = schlick_weight(abs_cos_theta(wi));
+            Float Rr = 2 * roughness * sqr(cos_theta_d);
 
-        Float3 ret = _color * InvPi * Rr * (Fo + Fi + Fo * Fi * (Rr - 1));
-        return select(valid, ret, make_float3(0));
+            Float ret = InvPi * Rr * (Fo + Fi + Fo * Fi * (Rr - 1));
+            return select(valid, ret, 0.f);
+        };
+        return _color * impl(wo, wi, _roughness);
     }
 };
 
@@ -92,25 +101,34 @@ public:
           _color(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 wh = wi + wo;
-        Bool valid = !is_zero(wh);
-        wh = normalize(wh);
-        Float cos_theta_d = dot(wi, wh);
-        Float3 ret = _color * schlick_weight(cos_theta_d);
-        return select(valid, ret, make_float3(0));
+        static Callable impl = [](Float3 wo, Float3 wi) {
+            Float3 wh = wi + wo;
+            Bool valid = !is_zero(wh);
+            wh = normalize(wh);
+            Float cos_theta_d = dot(wi, wh);
+            Float ret = schlick_weight(cos_theta_d);
+            return select(valid, ret, 0.f);
+        };
+        return _color * impl(wo, wi);
     }
 };
 
 [[nodiscard]] Float GTR1(Float cos_theta, Float alpha) {
-    Float alpha2 = sqr(alpha);
-    return (alpha2 - 1) /
-           (Pi * log(alpha2) * (1 + (alpha2 - 1) * sqr(cos_theta)));
+    static Callable impl = [](Float cos_theta, Float alpha) {
+        Float alpha2 = sqr(alpha);
+        return (alpha2 - 1) /
+               (Pi * log(alpha2) * (1 + (alpha2 - 1) * sqr(cos_theta)));
+    };
+    return impl(cos_theta, alpha);
 }
 
 [[nodiscard]] Float smithG_GGX(Float cos_theta, Float alpha) {
-    Float alpha2 = sqr(alpha);
-    Float cos_theta_2 = sqr(cos_theta);
-    return 1 / (cos_theta + sqrt(alpha2 + cos_theta_2 - alpha2 * cos_theta_2));
+    static Callable impl = [](Float cos_theta, Float alpha) {
+        Float alpha2 = sqr(alpha);
+        Float cos_theta_2 = sqr(cos_theta);
+        return 1 / (cos_theta + sqrt(alpha2 + cos_theta_2 - alpha2 * cos_theta_2));
+    };
+    return impl(cos_theta, alpha);
 }
 
 class Clearcoat : public BxDF {
@@ -126,31 +144,44 @@ public:
           _alpha(alpha) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return make_float3(_weight); }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 wh = wi + wo;
-        Bool valid = !is_zero(wh);
-        wh = normalize(wh);
-        Float Dr = GTR1(abs_cos_theta(wh), _alpha);
-        Float Fr = fresnel_schlick((0.04f), dot(wo, wh));
-        Float Gr = smithG_GGX(abs_cos_theta(wo), 0.25f) * smithG_GGX(abs_cos_theta(wi), 0.25f);
-        Float ret = _weight * Gr * Fr * Dr * 0.25f;
-        return make_float3(select(valid, ret, 0.f));
+        static Callable impl = [](Float3 wo, Float3 wi, Float weight, Float alpha) {
+            Float3 wh = wi + wo;
+            Bool valid = !is_zero(wh);
+            wh = normalize(wh);
+            Float Dr = GTR1(abs_cos_theta(wh), alpha);
+            Float Fr = fresnel_schlick((0.04f), dot(wo, wh));
+            Float Gr = smithG_GGX(abs_cos_theta(wo), 0.25f) * smithG_GGX(abs_cos_theta(wi), 0.25f);
+            Float ret = weight * Gr * Fr * Dr * 0.25f;
+            return make_float3(select(valid, ret, 0.f));
+        };
+        return impl(wo, wi, _weight, _alpha);
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 wh = wi + wo;
-        Bool valid = !is_zero(wh);
-        wh = normalize(wh);
-        Float Dr = GTR1(abs_cos_theta(wh), _alpha);
-        Float ret = Dr * abs_cos_theta(wh) / (4 * dot(wo, wh));
-        return select(valid, ret, 0.f);
+        static Callable impl = [](Float3 wo, Float3 wi, Float alpha) {
+            Float3 wh = wi + wo;
+            Bool valid = !is_zero(wh);
+            wh = normalize(wh);
+            Float Dr = GTR1(abs_cos_theta(wh), alpha);
+            Float ret = Dr * abs_cos_theta(wh) / (4 * dot(wo, wh));
+            return select(valid, ret, 0.f);
+        };
+        return impl(wo, wi, _alpha);
+    }
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
+        static Callable impl = [](Float3 wo, Float2 u, Float alpha) {
+            Float alpha2 = sqr(alpha);
+            Float cos_theta = safe_sqrt((1 - pow(alpha2, 1 - u[0])) / (1 - alpha2));
+            Float sin_theta = safe_sqrt(1 - sqr(cos_theta));
+            Float phi = 2 * Pi * u[1];
+            Float3 wh = spherical_direction(sin_theta, cos_theta, phi);
+            wh = select(same_hemisphere(wo, wh), wh, -wh);
+            return reflect(wo, wh);
+        };
+        Float3 wi = impl(wo, u, _alpha);
+        return {wi, true};
     }
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
-        Float alpha2 = sqr(_alpha);
-        Float cos_theta = safe_sqrt((1 - pow(alpha2, 1 - u[0])) / (1 - alpha2));
-        Float sin_theta = safe_sqrt(1 - sqr(cos_theta));
-        Float phi = 2 * Pi * u[1];
-        Float3 wh = spherical_direction(sin_theta, cos_theta, phi);
-        wh = select(same_hemisphere(wo, wh), wh, -wh);
-        Float3 wi = reflect(wo, wh);
+        auto [wi, valid] = sample_wi(wo, u, fresnel);
         BSDFSample ret;
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
@@ -333,8 +364,10 @@ public:
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         $if(same_hemisphere(wo, wi)) {
-            f = f_diffuse(wo, wi, fresnel);
-            pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
+            if (_diffuse_index != InvalidUI32) {
+                f = f_diffuse(wo, wi, fresnel);
+                pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
+            }
 
             f += _spec_refl->f(wo, wi, fresnel);
             pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
