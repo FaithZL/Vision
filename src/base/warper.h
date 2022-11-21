@@ -10,15 +10,15 @@
 
 namespace vision {
 
-class Distribution : public Node {
+class Warper : public Node {
 public:
-    using Desc = DistributionDesc;
+    using Desc = WarperDesc;
 
 protected:
     float _integral{};
 
 public:
-    explicit Distribution(const DistributionDesc &desc) : Node(desc) {}
+    explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     [[nodiscard]] virtual uint size() const noexcept = 0;
     [[nodiscard]] virtual float integral() const noexcept { return _integral; }

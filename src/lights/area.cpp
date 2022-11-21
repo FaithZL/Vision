@@ -13,7 +13,7 @@ class AreaLight : public Light {
 private:
     uint _inst_idx{InvalidUI32};
     bool _two_sided{false};
-    Distribution *_distribution{nullptr};
+    Warper *_distribution{nullptr};
     Texture *_radiance{nullptr};
     float _scale{1.f};
 

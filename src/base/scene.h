@@ -12,7 +12,7 @@
 #include "base/integrator.h"
 #include "base/lightsampler.h"
 #include "base/material.h"
-#include "base/distribution.h"
+#include "base/warper.h"
 
 namespace vision {
 
@@ -35,7 +35,7 @@ private:
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     Polymorphic<Material *> _materials;
-    DistributionDesc _distribution_desc;
+    WarperDesc _distribution_desc;
     RenderPipeline *_rp{nullptr};
     friend class RenderPipeline;
 
@@ -61,7 +61,7 @@ public:
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void build_distributions(RenderPipeline *rp) noexcept;
-    [[nodiscard]] Distribution *load_distribution() noexcept { return load<Distribution>(_distribution_desc); }
+    [[nodiscard]] Warper *load_distribution() noexcept { return load<Warper>(_distribution_desc); }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;

@@ -2,7 +2,7 @@
 // Created by Zero on 27/10/2022.
 //
 
-#include "base/distribution.h"
+#include "base/warper.h"
 #include "rhi/common.h"
 #include "base/render_pipeline.h"
 
@@ -16,13 +16,13 @@ struct AliasEntry {
 OC_STRUCT(vision::AliasEntry, prob, alias){};
 
 namespace vision {
-class AliasTable : public Distribution {
+class AliasTable : public Warper {
 private:
     Managed<AliasEntry> _table;
     Managed<float> _func;
 
 public:
-    explicit AliasTable(const DistributionDesc &desc) : Distribution(desc) {}
+    explicit AliasTable(const WarperDesc &desc) : Warper(desc) {}
     void prepare(RenderPipeline *rp) noexcept override {
         _table.reset_device_buffer(rp->device());
         _func.reset_device_buffer(rp->device());

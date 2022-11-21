@@ -259,9 +259,9 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct DistributionDesc : public NodeDesc {
+struct WarperDesc : public NodeDesc {
 public:
-    VISION_DESC_COMMON(Distribution)
+    VISION_DESC_COMMON(Warper)
     void init(const ParameterSet &ps) noexcept override;
 };
 

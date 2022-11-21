@@ -16,7 +16,7 @@ public:
     SamplerDesc sampler_desc;
     LightSamplerDesc light_sampler_desc;
     IntegratorDesc integrator_desc;
-    DistributionDesc distribution_desc;
+    WarperDesc distribution_desc;
     vector<MaterialDesc> material_descs;
     vector<ShapeDesc> shape_descs;
     map<string, uint> mat_name_to_id;

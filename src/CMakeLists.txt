@@ -34,7 +34,7 @@ add_subdirectory(materials)
 add_subdirectory(sensors)
 add_subdirectory(textures)
 add_subdirectory(shapes)
-add_subdirectory(distributions)
+add_subdirectory(warpers)
 add_subdirectory(tests)
 
 add_library(vision-plugins INTERFACE)
@@ -47,7 +47,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-films
         vision-textures
         vision-integrators
-        vision-distributions
+        vision-warpers
         vision-materials
         vision-samplers)
 
