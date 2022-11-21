@@ -253,24 +253,34 @@ public:
         Float Cdiff_weight = diffuse_weight * (1.f - flatness);
         Float3 Cdiff = color * Cdiff_weight;
 
-        _diffuse = Diffuse(Cdiff);
-        _retro = Retro(Cdiff, roughness);
+        bool has_diffuse = false;
+
+        if (Texture::nonzero(color_tex)) {
+            _diffuse = Diffuse(Cdiff);
+            _retro = Retro(Cdiff, roughness);
+            has_diffuse = true;
+        }
+
         if (Texture::nonzero(flatness_tex)) {
             Float Css_weight = diffuse_weight * flatness;
             Float3 Css = Css_weight * color;
             _fake_ss = FakeSS(Css, roughness);
+            has_diffuse = true;
         }
 
-        Float sampling_weight = diffuse_weight * color_lum;
         if (Texture::nonzero(sheen_tex)) {
             Float sheen = Texture::eval(sheen_tex, si).x;
             Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
             Float Csheen_weight = diffuse_weight * sheen;
             Float3 Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
             _sheen = Sheen(Csheen);
+            has_diffuse = true;
         }
-        _diffuse_index = _sampling_strategy_num++;
-        _sampling_weights[_diffuse_index] = saturate(sampling_weight);
+
+        if (has_diffuse) {
+            _diffuse_index = _sampling_strategy_num++;
+            _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
+        }
 
         Float spec_tint = Texture::eval(spec_tint_tex, si).x;
         Float eta = Texture::eval(eta_tex, si).x;
@@ -360,10 +370,12 @@ public:
         fresnel->correct_eta(cos_theta_o);
         SampledDirection sampled_direction;
         $switch(sampling_strategy) {
-            $case(_diffuse_index) {
-                sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
-                $break;
-            };
+            if (_diffuse.has_value()) {
+                $case(_diffuse_index) {
+                    sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
+                    $break;
+                };
+            }
             $case(_spec_refl_index) {
                 sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
                 $break;
