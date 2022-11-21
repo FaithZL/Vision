@@ -230,8 +230,7 @@ private:
 
     template<typename... Args>
     [[nodiscard]] Float PDF_diffuse(Args &&...args) const noexcept {
-        return lobe_PDF(_diffuse, OC_FORWARD(args)...) + lobe_PDF(_retro, OC_FORWARD(args)...) +
-               lobe_PDF(_sheen, OC_FORWARD(args)...) + lobe_PDF(_fake_ss, OC_FORWARD(args)...);
+        return lobe_PDF(_diffuse, OC_FORWARD(args)...);
     }
 
 public:
@@ -310,10 +309,9 @@ public:
         for (uint i = 0u; i < _sampling_strategy_num; i++) {
             sum_weights += _sampling_weights[i];
         }
-        auto inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
+        Float inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
         for (uint i = 0u; i < _sampling_strategy_num; i++) {
-//            _sampling_weights[i] *= inv_sum_weights;
-            _sampling_weights[i] = 0.5f;
+            _sampling_weights[i] *= inv_sum_weights;
         }
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse->albedo(); }
@@ -329,7 +327,7 @@ public:
             pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
 
             f += _spec_refl->f(wo, wi, fresnel);
-//            pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
+            pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
 
             if (_clearcoat.has_value()) {
                 f += _clearcoat->f(wo, wi, fresnel);
@@ -361,32 +359,32 @@ public:
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         SampledDirection sampled_direction;
-//        $switch(sampling_strategy) {
-//            $case(_diffuse_index) {
+        $switch(sampling_strategy) {
+            $case(_diffuse_index) {
                 sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
-//                $break;
-//            };
-//            $case(_spec_refl_index) {
-//                sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
-//                $break;
-//            };
-//            if (_clearcoat.has_value()) {
-//                $case(_clearcoat_index) {
-//                    sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
-//                    $break;
-//                };
-//            }
-//            if (_spec_trans.has_value()) {
-//                $case(_spec_trans_index) {
-//                    sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
-//                    $break;
-//                };
-//            }
-//            $default {
-//                unreachable();
-//                $break;
-//            };
-//        };
+                $break;
+            };
+            $case(_spec_refl_index) {
+                sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
+                $break;
+            };
+            if (_clearcoat.has_value()) {
+                $case(_clearcoat_index) {
+                    sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
+                    $break;
+                };
+            }
+            if (_spec_trans.has_value()) {
+                $case(_spec_trans_index) {
+                    sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
+                    $break;
+                };
+            }
+            $default {
+                unreachable();
+                $break;
+            };
+        };
         ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
         ret.wi = sampled_direction.wi;
         ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
