@@ -13,7 +13,7 @@ class AreaLight : public Light {
 private:
     uint _inst_idx{InvalidUI32};
     bool _two_sided{false};
-    Warper *_distribution{nullptr};
+    Warper *_warper{nullptr};
     Texture *_radiance{nullptr};
     float _scale{1.f};
 
@@ -25,7 +25,7 @@ public:
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
-        return _distribution->PMF(prim_id);
+        return _warper->PMF(prim_id);
     }
 
     [[nodiscard]] Float3 L(const LightEvalContext &p_light, const Float3 &w) const {
@@ -50,7 +50,7 @@ public:
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
         LightSample ret;
         auto rp = _scene->render_pipeline();
-        auto [prim_id, pmf, u_remapping] = _distribution->sample_discrete(u.x);
+        auto [prim_id, pmf, u_remapping] = _warper->sample_discrete(u.x);
         u.x = u_remapping;
         Float2 bary = square_to_triangle(u);
         LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx, prim_id, bary);
@@ -61,11 +61,11 @@ public:
     }
 
     void prepare(RenderPipeline *rp) noexcept override {
-        _distribution = rp->scene().load_distribution();
+        _warper = rp->scene().load_distribution();
         Shape *shape = rp->scene().get_shape(_inst_idx);
         vector<float> weights = shape->surface_area();
-        _distribution->build(std::move(weights));
-        _distribution->prepare(rp);
+        _warper->build(std::move(weights));
+        _warper->prepare(rp);
     }
 };
 
