@@ -301,6 +301,23 @@ def convert_cube(shape_input, index):
     }
     return ret
 
+def convert_mesh(shape_input, index):
+    fn = shape_input["file"]
+    fn = fn[:-4] + ".obj"
+    bsdf = shape_input["bsdf"]
+    bsdf = None if type(bsdf) == dict else bsdf
+    ret = {
+        "type" : "model",
+        "name" : "shape_" + str(index),
+        "param" : {
+            "fn" : fn,
+            # "swap_handed" : True,
+            "smooth" : shape_input.get("smooth", True),
+            "material" : bsdf,
+            "transform" : convert_shape_transform(shape_input["transform"])
+        }
+    }
+    return ret
 
 def convert_shapes(scene_input):
     shape_outputs = []
@@ -311,7 +328,11 @@ def convert_shapes(scene_input):
             shape_output = convert_quad(shape_input, i)
         elif shape_input["type"] == "cube":    
             shape_output = convert_cube(shape_input, i)
-
+        elif shape_input["type"] == "disk":
+            shape_output = convert_quad(shape_input, i)
+        elif shape_input["type"] == "mesh":
+            shape_output = convert_mesh(shape_input, i)
+            
         if "emission" in shape_input or "power" in shape_input:
             convert_light(shape_input, shape_output)
         if shape_output:
@@ -354,8 +375,8 @@ def convert_lightsampler(scene_input):
     return ret
 
 def main():
-    fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
-    # fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
+    fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
     parent = os.path.dirname(fn)
     output_fn = os.path.join(parent, "vision_scene.json")
 

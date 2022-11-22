@@ -104,7 +104,9 @@ public:
                     continue;
                 }
             }
-            meshes.emplace_back(std::move(vertices), std::move(triangle));
+            Mesh mesh(std::move(vertices), std::move(triangle));
+            mesh.mat_id = mat_id;
+            meshes.push_back(mesh);
         }
         return meshes;
     }

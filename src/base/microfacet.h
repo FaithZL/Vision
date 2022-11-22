@@ -170,7 +170,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
-            CHECK_UNIT_VEC(wh)
+//            CHECK_UNIT_VEC(wh)
             return wh;
         }
         case Beckmann: {
@@ -186,7 +186,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
-            CHECK_UNIT_VEC(wh)
+//            CHECK_UNIT_VEC(wh)
             return wh;
         }
         default:
@@ -214,7 +214,7 @@ template<EPort p = EPort::D>
                                             const oc_float3<p> &wo,
                                             const oc_float3<p> &wh) {
     oc_float<p> ret = pdf_wh / (4 * abs_dot(wo, wh));
-    oc_assert(!invalid(ret), "invalid pdf reflection {}", ret);
+//    oc_assert(!invalid(ret), "invalid pdf reflection {}", ret);
     return ret;
 }
 
@@ -240,7 +240,7 @@ template<EPort p = EPort::D>
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh));
     oc_float<p> dwh_dwi = abs_dot(wi, wh) / denom;
     oc_float<p> ret = PDF_wh * dwh_dwi;
-    oc_assert(!invalid(ret), "invalid pdf transmission {}", ret);
+//    oc_assert(!invalid(ret), "invalid pdf transmission {}", ret);
     return ret;
 }
 
