@@ -243,8 +243,8 @@
     "camera": {
         "tonemap": "gamma",
         "resolution": [
-            768,
-            768
+            1024,
+            1024
         ],
         "reconstruction_filter": "tent",
         "transform": {
@@ -270,7 +270,7 @@
     "integrator": {
         "type": "path_tracer",
         "min_bounces": 0,
-        "max_bounces": 64,
+        "max_bounces": 16,
         "enable_consistency_checks": false,
         "enable_two_sided_shading": true,
         "enable_light_sampling": true,

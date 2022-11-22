@@ -122,9 +122,11 @@ def convert_mirror(mat_input):
 
 def convert_null_material(mat_input):
     ret = {
-        "type": "null",
+        "type": "matte",
         "name": mat_input["name"],
-        "param": {}
+        "param": {
+            "color" : [0,0,0]
+        }
     }
     return ret
 
@@ -283,6 +285,21 @@ def convert_light(shape_input, shape_output):
         convert_envmap(shape_input, shape_output)
     else:
         convert_area_light(shape_input, shape_output)
+        
+def convert_cube(shape_input, index):
+    ret = {
+        "type" : "cube",
+        "name" : "shape_" + str(index),
+        "param" : {
+            "x" : 1,
+            "y" : 1,
+            "z" : 1,
+            # "swap_handed" : True,
+            "material" : shape_input["bsdf"],
+            "transform" : convert_shape_transform(shape_input["transform"], -1)
+        }
+    }
+    return ret
 
 
 def convert_shapes(scene_input):
@@ -292,7 +309,9 @@ def convert_shapes(scene_input):
         shape_output = None
         if shape_input["type"] == "quad":
             shape_output = convert_quad(shape_input, i)
-            
+        elif shape_input["type"] == "cube":    
+            shape_output = convert_cube(shape_input, i)
+
         if "emission" in shape_input or "power" in shape_input:
             convert_light(shape_input, shape_output)
         if shape_output:
