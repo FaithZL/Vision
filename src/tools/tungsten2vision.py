@@ -212,8 +212,92 @@ def convert_sampler(scene_input):
     }
     return ret
 
+
+def rotateZXY(R):
+    return glm.rotate(R.y, (0, 1, 0)) * glm.rotate(R.x, (1, 0, 0)) * glm.rotate(R.z, (0, 0, 1)) 
+
+def convert_srt(S, R, T):
+    return glm.translate(T) * rotateZXY(R) * glm.scale(S)
+
+def convert_shape_transform(transform, scale=1):
+    T = glm.vec3(transform.get("position", [0,0,0]))
+    R = glm.radians(glm.vec3(transform.get("rotation", [0,0,0])))
+    S = glm.vec3(transform.get("scale", [1,1,1]))
+    M = convert_srt(S, R, T)
+    M = glm.scale(glm.vec3([-1,1,1])) * M
+    matrix4x4 = []
+    for i in M:
+        arr = []
+        matrix4x4.append(arr)
+        for j in i:
+            arr.append(j)
+            
+    ret = {
+        "type" : "matrix4x4",
+        "param" : {
+            "matrix4x4" : matrix4x4
+        }
+    }
+    return ret
+
+def convert_quad(shape_input, index):
+    ret = {
+        "type" : "quad",
+        "name" : "shape_" + str(index),
+        "param" : {
+            "width": 1.0,
+            "height": 1.0,
+            "material" : shape_input["bsdf"],
+            # "swap_handed" : True,
+            "transform" : convert_shape_transform(shape_input["transform"], -1)
+        }
+    }
+    return ret
+
+
+def get_emission(shape):
+    if "emission" in shape:
+        return convert_vec(shape["emission"], 3)
+    else:
+        power_scale = 100 * glm.pi()
+        power = convert_vec(shape["power"], 3)
+        emission = glm.vec3(power) / power_scale;
+        return [emission[0], emission[1], emission[2]]
+
+def convert_area_light(shape_input, shape_output):
+    shape_output["param"]["emission"] = {
+        "type" : "area",
+        "param" : {
+            "radiance" : get_emission(shape_input),
+            "two_sided" : False,
+            "scale" : 1
+        }
+    }
+
+def convert_envmap(shape_input, shape_output):
+    assert False
+
+def convert_light(shape_input, shape_output):
+    type = shape_input["type"]
+    if type == "infinite_sphere":
+        convert_envmap(shape_input, shape_output)
+    else:
+        convert_area_light(shape_input, shape_output)
+
+
 def convert_shapes(scene_input):
-    return []
+    shape_outputs = []
+    shape_inputs = scene_input["primitives"]
+    for i, shape_input in enumerate(shape_inputs):
+        shape_output = None
+        if shape_input["type"] == "quad":
+            shape_output = convert_quad(shape_input, i)
+            
+        if "emission" in shape_input or "power" in shape_input:
+            convert_light(shape_input, shape_output)
+        if shape_output:
+            shape_outputs.append(shape_output)
+    return shape_outputs
 
 def convert_materials(scene_input):
     mat_inputs = scene_input["bsdfs"]
@@ -251,8 +335,8 @@ def convert_lightsampler(scene_input):
     return ret
 
 def main():
-    # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
-    fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
     parent = os.path.dirname(fn)
     output_fn = os.path.join(parent, "vision_scene.json")
 
