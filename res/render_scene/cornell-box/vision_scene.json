@@ -1,0 +1,94 @@
+{
+    "materials": [
+        {
+            "type": "matte",
+            "name": "LeftWall",
+            "param": {
+                "color": [
+                    0.63,
+                    0.065,
+                    0.05
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "RightWall",
+            "param": {
+                "color": [
+                    0.14,
+                    0.45,
+                    0.091
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Floor",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Ceiling",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "BackWall",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "ShortBox",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "TallBox",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "null",
+            "name": "Light",
+            "param": {}
+        }
+    ],
+    "shapes": [],
+    "sampler": {},
+    "camera": {},
+    "light_sampler": {},
+    "warper": {
+        "type": "alias_table"
+    },
+    "integrator": {}
+}

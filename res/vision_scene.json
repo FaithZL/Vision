@@ -1,5 +1,4 @@
 {
-    "textures": [],
     "materials": [
     //    {
     //        "type" : "disney",
@@ -165,16 +164,9 @@
             }
         },
         {
-            "type": "Matte",
+            "type": "null",
             "name": "Black",
-            "param": {
-                // "roughness" : [0.002]
-                "color": [
-                    0,
-                    0,
-                    0
-                ]
-            }
+            "param": { }
         }
     ],
     "shapes": [
