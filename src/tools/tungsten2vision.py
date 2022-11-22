@@ -132,7 +132,7 @@ def convert_null_material(mat_input):
 
 def convert_disney(mat_input):
     ret = {
-        "type" : "DisneyMaterial",
+        "type" : "disney",
         "name" : mat_input["name"],
         "param" : {
             "color" : convert_vec(mat_input.get("albedo", 1), 3),
@@ -226,7 +226,7 @@ def convert_shape_transform(transform, scale=1):
     R = glm.radians(glm.vec3(transform.get("rotation", [0,0,0])))
     S = glm.vec3(transform.get("scale", [1,1,1]))
     M = convert_srt(S, R, T)
-    M = glm.scale(glm.vec3([-scale,1,1])) * M
+    M = glm.scale(glm.vec3([-1,1,1])) * M
     matrix4x4 = []
     for i in M:
         arr = []
@@ -314,7 +314,7 @@ def convert_mesh(shape_input, index):
             # "swap_handed" : True,
             "smooth" : shape_input.get("smooth", True),
             "material" : bsdf,
-            "transform" : convert_shape_transform(shape_input["transform"], -1)
+            "transform" : convert_shape_transform(shape_input["transform"], 1)
         }
     }
     return ret
@@ -376,7 +376,8 @@ def convert_lightsampler(scene_input):
 
 def main():
     # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
-    fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    fn = 'res\\render_scene\\kitchen\\tungsten_scene.json'
     parent = os.path.dirname(fn)
     output_fn = os.path.join(parent, "vision_scene.json")
 
