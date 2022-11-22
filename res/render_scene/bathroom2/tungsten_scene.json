@@ -1,0 +1,975 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+            "name": "Wall",
+            "albedo": 0.578596,
+            "type": "lambert"
+        },
+        {
+            "name": "Mirror",
+            "albedo": 0.578596,
+            "type": "mirror"
+        },
+        {
+            "name": "StainlessRough",
+            "albedo": 0.578596,
+            "type": "rough_conductor",
+            "distribution": "ggx",
+            "roughness": 0.01,
+            "material": "Al"
+        },
+        {
+            "name": "Towel",
+            "albedo": 0.578596,
+            "type": "lambert"
+        },
+        {
+            "name": "BlackWoodLacquer",
+            "albedo": 0.05,
+            "type": "rough_plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0,
+            "distribution": "ggx",
+            "roughness": 0.1
+        },
+        {
+            "name": "Wood",
+            "albedo": "textures/WoodPanel.png",
+            "type": "rough_plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0,
+            "distribution": "ggx",
+            "roughness": 0.1
+        },
+        {
+            "name": "WoodFloor",
+            "albedo": "textures/WoodFloor.jpg",
+            "type": "rough_plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0,
+            "distribution": "ggx",
+            "roughness": 0.1
+        },
+        {
+            "name": "Label",
+            "albedo": "textures/Label.png",
+            "type": "lambert"
+        },
+        {
+            "name": "RoughGlass",
+            "albedo": 0.578596,
+            "type": "rough_dielectric",
+            "ior": 1.5,
+            "distribution": "ggx",
+            "enable_refraction": true,
+            "roughness": 0.1
+        },
+        {
+            "name": "Plastic",
+            "albedo": 0.578596,
+            "type": "plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0
+        },
+        {
+            "name": "DarkPlastic",
+            "albedo": 0.05,
+            "type": "lambert"
+        },
+        {
+            "name": "Bin",
+            "albedo": 0.578596,
+            "type": "mirror"
+        },
+        {
+            "name": "WallRight",
+            "albedo": 0.578596,
+            "type": "lambert"
+        },
+        {
+            "name": "DarkBorder",
+            "albedo": 0.05,
+            "type": "lambert"
+        },
+        {
+            "name": "Trims",
+            "albedo": 0.578596,
+            "type": "lambert"
+        },
+        {
+            "name": "Ceramic",
+            "albedo": 0.578596,
+            "type": "plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh029.wo3",
+            "bsdf": "RoughGlass"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh038.wo3",
+            "bsdf": "Plastic"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh036.wo3",
+            "bsdf": "Label"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh028.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh035.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh016.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh026.wo3",
+            "bsdf": "Towel"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh021.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh023.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh020.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh032.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh019.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh033.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh056.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh018.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh030.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh051.wo3",
+            "bsdf": "BlackWoodLacquer"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh043.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh015.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh059.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh039.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh027.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh055.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh024.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh031.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh022.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh040.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh041.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh017.wo3",
+            "bsdf": "Mirror"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh042.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh044.wo3",
+            "bsdf": "Towel"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh047.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh034.wo3",
+            "bsdf": "DarkPlastic"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh049.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh025.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh037.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh050.wo3",
+            "bsdf": "Towel"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh052.wo3",
+            "bsdf": "Towel"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh054.wo3",
+            "bsdf": "Bin"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh053.wo3",
+            "bsdf": "DarkPlastic"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh057.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh058.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh060.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh014.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh013.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh012.wo3",
+            "bsdf": "StainlessRough"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh011.wo3",
+            "bsdf": "Ceramic"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh010.wo3",
+            "bsdf": "Ceramic"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh009.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh007.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh006.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh005.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh004.wo3",
+            "bsdf": "Ceramic"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh003.wo3",
+            "bsdf": "DarkBorder"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh002.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh001.wo3",
+            "bsdf": "WoodFloor"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh008.wo3",
+            "bsdf": "WallRight"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh046.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh045.wo3",
+            "bsdf": "Mirror"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh000.wo3",
+            "bsdf": "Trims"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh048.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.5878720283508301,
+                    17.100000381469727,
+                    51.901798248291016
+                ],
+                "scale": 35.5546989440918,
+                "rotation": [
+                    90.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.5878720283508301,
+                    17.100000381469727,
+                    52.89999771118164
+                ],
+                "scale": 39.110198974609375,
+                "rotation": [
+                    90.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.5878720283508301,
+                    35.89999771118164,
+                    15.399999618530273
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -19.38789939880371,
+                    17.399999618530273,
+                    15.399999618530273
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    -179.99998474121094,
+                    90.0
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    18.13800048828125,
+                    17.399999618530273,
+                    15.399900436401367
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    -179.99998474121094,
+                    90.0
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.5878720283508301,
+                    -1.2999999523162842,
+                    15.399999618530273
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.58787602186203,
+                    -0.07850909978151321,
+                    15.399999618530273
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -17.503599166870117,
+                    17.399999618530273,
+                    15.399999618530273
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    -179.99998474121094,
+                    90.0
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    17.19729995727539,
+                    17.399999618530273,
+                    15.399900436401367
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    -179.99998474121094,
+                    90.0
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.5878750085830688,
+                    34.15409851074219,
+                    15.399999618530273
+                ],
+                "scale": [
+                    39.110198974609375,
+                    39.110198974609375,
+                    76.26499938964844
+                ],
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "lambert"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -1.6504895687103271,
+                    21.179363250732422,
+                    -22.777523040771484
+                ],
+                "scale": [
+                    9.025029182434082,
+                    7.72084379196167,
+                    10.69359016418457
+                ],
+                "rotation": [
+                    90.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "emission": [
+                125.0,
+                100.0,
+                75.0
+            ],
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        }
+    ],
+    "camera": {
+        "tonemap": "filmic",
+        "resolution": [
+            1280,
+            720
+        ],
+        "reconstruction_filter": "tent",
+        "transform": {
+            "position": [
+                4.443147659301758,
+                16.934431076049805,
+                49.91023254394531
+            ],
+            "look_at": [
+                -2.5734899044036865,
+                9.991769790649414,
+                -10.588199615478516
+            ],
+            "up": [
+                0.0,
+                1.0,
+                0.0
+            ]
+        },
+        "type": "pinhole",
+        "fov": 60.0
+    },
+    "integrator": {
+        "min_bounces": 0,
+        "max_bounces": 64,
+        "enable_consistency_checks": false,
+        "enable_two_sided_shading": true,
+        "type": "path_tracer",
+        "enable_light_sampling": true,
+        "enable_volume_light_sampling": true
+    },
+    "renderer": {
+        "overwrite_output_files": true,
+        "adaptive_sampling": true,
+        "enable_resume_render": false,
+        "stratified_sampler": true,
+        "scene_bvh": true,
+        "spp": 64,
+        "spp_step": 16,
+        "checkpoint_interval": "0",
+        "timeout": "0",
+        "output_file": "bathroom2.png",
+        "resume_render_file": "TungstenRenderState.dat",
+        "hdr_output_file": "bathroom2.exr"
+    }
+}

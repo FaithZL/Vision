@@ -1,0 +1,618 @@
+{
+    "media": [
+        {
+            "name": "green",
+            "phase_function": {
+                "type": "isotropic"
+            },
+            "max_bounces": 1024,
+            "type": "homogeneous",
+            "sigma_a": [
+                0.5,
+                0.20000000298023224,
+                0.4000000059604645
+            ],
+            "sigma_s": 0.0,
+            "density": 1.0
+        }
+    ],
+    "bsdfs": [
+        {
+            "name": "Glass",
+            "albedo": 1.0,
+            "type": "dielectric",
+            "ior": 1.5,
+            "enable_refraction": true
+        },
+        {
+            "name": "Wood",
+            "albedo": "textures/wood5.jpg",
+            "type": "rough_plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0,
+            "distribution": "ggx",
+            "roughness": 0.1
+        },
+        {
+            "name": "FloorTiles",
+            "albedo": "textures/Tiles.jpg",
+            "type": "rough_plastic",
+            "ior": 1.5,
+            "thickness": 1.0,
+            "sigma_a": 0.0,
+            "distribution": "ggx",
+            "roughness": 0.01
+        },
+        {
+            "name": "Wall",
+            "albedo": 0.893289,
+            "type": "lambert"
+        },
+        {
+            "name": "Wallpaper",
+            "albedo": "textures/Wallpaper.jpg",
+            "type": "lambert"
+        },
+        {
+            "name": "SpotHolder",
+            "albedo": 1.0,
+            "type": "lambert"
+        },
+        {
+            "name": "Metal",
+            "albedo": 1.0,
+            "type": "rough_conductor",
+            "distribution": "ggx",
+            "roughness": 0.1,
+            "material": "Al"
+        },
+        {
+            "name": "Chrome",
+            "albedo": 1.0,
+            "type": "rough_conductor",
+            "distribution": "ggx",
+            "roughness": 0.1,
+            "material": "Cr"
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh008.wo3",
+            "bsdf": "SpotHolder"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh004.wo3",
+            "bsdf": "SpotHolder"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh003.wo3",
+            "bsdf": "SpotHolder"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh006.wo3",
+            "bsdf": "SpotHolder"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh012.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": true,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh013.wo3",
+            "bsdf": "SpotHolder"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh010.wo3",
+            "bsdf": "Chrome"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh015.wo3",
+            "bsdf": "Chrome"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh002.wo3",
+            "bsdf": "Chrome"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh007.wo3",
+            "bsdf": "Chrome"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh005.wo3",
+            "bsdf": "Metal"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh016.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh017.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh018.wo3",
+            "bsdf": "Wallpaper"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh011.wo3",
+            "bsdf": "FloorTiles"
+        },
+        {
+            "transform": {},
+            "int_medium": "green",
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh014.wo3",
+            "bsdf": "Glass"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh001.wo3",
+            "bsdf": "Wood"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh000.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {},
+            "type": "mesh",
+            "smooth": false,
+            "backface_culling": false,
+            "recompute_normals": false,
+            "file": "models/Mesh009.wo3",
+            "bsdf": "Wall"
+        },
+        {
+            "transform": {
+                "position": [
+                    1.8070319890975952,
+                    5.610289096832275,
+                    1.4979950189590454
+                ],
+                "scale": 0.10491610318422318,
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "emission": 1.5,
+            "type": "disk",
+            "cone_angle": 90.0,
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -1.5106041431427002,
+                    5.610289096832275,
+                    1.4979950189590454
+                ],
+                "scale": 0.10491566359996796,
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "emission": 1.5,
+            "type": "disk",
+            "cone_angle": 90.0,
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -4.828241348266602,
+                    5.610289096832275,
+                    1.4979950189590454
+                ],
+                "scale": 0.10491558909416199,
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "emission": 1.5,
+            "type": "disk",
+            "cone_angle": 90.0,
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -8.145877838134766,
+                    5.610289096832275,
+                    1.4979950189590454
+                ],
+                "scale": 0.10491587221622467,
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "emission": 1.5,
+            "type": "disk",
+            "cone_angle": 90.0,
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -11.463517189025879,
+                    5.610289096832275,
+                    1.4979950189590454
+                ],
+                "scale": 0.10491868108510971,
+                "rotation": [
+                    0.0,
+                    179.99998474121094,
+                    -179.99998474121094
+                ]
+            },
+            "emission": 1.5,
+            "type": "disk",
+            "cone_angle": 90.0,
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -4.927103042602539,
+                    5.541969299316406,
+                    -2.9932379722595215
+                ],
+                "scale": [
+                    0.13707971572875977,
+                    0.018790913745760918,
+                    -0.13708019256591797
+                ],
+                "rotation": [
+                    0.0,
+                    -90.0,
+                    -90.0
+                ]
+            },
+            "emission": 1.5,
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -2.3422961235046387,
+                    3.9691739082336426,
+                    -2.9932379722595215
+                ],
+                "scale": [
+                    0.13707995414733887,
+                    0.018790913745760918,
+                    -0.13707995414733887
+                ],
+                "rotation": [
+                    0.0,
+                    -90.0,
+                    -90.0
+                ]
+            },
+            "emission": 1.5,
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    0.09953000396490097,
+                    2.5207910537719727,
+                    -2.993238925933838
+                ],
+                "scale": [
+                    0.13707995414733887,
+                    0.018790919333696365,
+                    -0.13707999885082245
+                ],
+                "rotation": [
+                    0.0,
+                    -90.0,
+                    -90.0
+                ]
+            },
+            "emission": 1.5,
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    2.5506396293640137,
+                    1.1002609729766846,
+                    -2.9932401180267334
+                ],
+                "scale": [
+                    0.13707995414733887,
+                    0.01879078336060047,
+                    -0.13707900047302246
+                ],
+                "rotation": [
+                    0.0,
+                    -90.0,
+                    -90.0
+                ]
+            },
+            "emission": 1.5,
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -6.580517768859863,
+                    9.927168846130371,
+                    3.885404586791992
+                ],
+                "scale": [
+                    3.064229726791382,
+                    39.81578063964844,
+                    12.993731498718262
+                ],
+                "rotation": [
+                    0.0,
+                    90.0,
+                    107.91244506835938
+                ]
+            },
+            "power": 200.0,
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -2.3958899974823,
+                    2.51810884475708,
+                    3.443751096725464
+                ],
+                "scale": [
+                    6.462972164154053,
+                    33.08522033691406,
+                    5.119195938110352
+                ],
+                "rotation": [
+                    -90.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "emission": [
+                4.575004577636719,
+                3.5907576084136963,
+                1.5497708320617676
+            ],
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -14.09379768371582,
+                    2.5352909564971924,
+                    1.5435864925384521
+                ],
+                "scale": [
+                    2.9091391563415527,
+                    14.280311584472656,
+                    -4.908775806427002
+                ],
+                "rotation": [
+                    90.0,
+                    0.0,
+                    90.0
+                ]
+            },
+            "emission": [
+                4.575004577636719,
+                3.5907576084136963,
+                1.5497708320617676
+            ],
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        },
+        {
+            "transform": {
+                "position": [
+                    -1.4336243867874146,
+                    -2.8563129901885986,
+                    -1.321337103843689
+                ],
+                "scale": [
+                    3.064230442047119,
+                    19.493453979492188,
+                    -6.36161470413208
+                ],
+                "rotation": [
+                    0.0,
+                    90.0,
+                    -179.99998474121094
+                ]
+            },
+            "power": 200.0,
+            "type": "quad",
+            "bsdf": {
+                "albedo": 1.0,
+                "type": "null"
+            }
+        }
+    ],
+    "camera": {
+        "tonemap": "filmic",
+        "resolution": 1024,
+        "reconstruction_filter": "tent",
+        "transform": {
+            "position": [
+                6.9118194580078125,
+                1.6516278982162476,
+                2.5541365146636963
+            ],
+            "look_at": [
+                2.328019380569458,
+                1.6516276597976685,
+                0.33640459179878235
+            ],
+            "up": [
+                0.0,
+                1.0,
+                0.0
+            ]
+        },
+        "type": "pinhole",
+        "fov": 70.0
+    },
+    "integrator": {
+        "min_bounces": 0,
+        "max_bounces": 64,
+        "enable_consistency_checks": false,
+        "enable_two_sided_shading": true,
+        "type": "path_tracer",
+        "enable_light_sampling": true,
+        "enable_volume_light_sampling": true
+    },
+    "renderer": {
+        "overwrite_output_files": true,
+        "adaptive_sampling": true,
+        "enable_resume_render": false,
+        "stratified_sampler": true,
+        "scene_bvh": true,
+        "spp": 64,
+        "spp_step": 16,
+        "checkpoint_interval": "0",
+        "timeout": "0",
+        "output_file": "staircase2.png",
+        "resume_render_file": "TungstenRenderState.dat",
+        "hdr_output_file": "staircase2.exr"
+    }
+}

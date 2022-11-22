@@ -1,0 +1,293 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+            "name": "LeftWall",
+            "albedo": [
+                0.63,
+                0.065,
+                0.05
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "RightWall",
+            "albedo": [
+                0.14,
+                0.45,
+                0.091
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "Floor",
+            "albedo": [
+                0.725,
+                0.71,
+                0.68
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "Ceiling",
+            "albedo": [
+                0.725,
+                0.71,
+                0.68
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "BackWall",
+            "albedo": [
+                0.725,
+                0.71,
+                0.68
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "ShortBox",
+            "albedo": [
+                0.725,
+                0.71,
+                0.68
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "TallBox",
+            "albedo": [
+                0.725,
+                0.71,
+                0.68
+            ],
+            "type": "lambert"
+        },
+        {
+            "name": "Light",
+            "albedo": 1,
+            "type": "null"
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {
+                "scale": [
+                    2,
+                    4,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    90,
+                    0
+                ]
+            },
+            "type": "quad",
+            "bsdf": "Floor"
+        },
+        {
+            "transform": {
+                "position": [
+                    0,
+                    2,
+                    0
+                ],
+                "scale": [
+                    2,
+                    4,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    -180
+                ]
+            },
+            "type": "quad",
+            "bsdf": "Ceiling"
+        },
+        {
+            "transform": {
+                "position": [
+                    0,
+                    1,
+                    -1
+                ],
+                "scale": [
+                    2,
+                    4,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    90,
+                    90
+                ]
+            },
+            "type": "quad",
+            "bsdf": "BackWall"
+        },
+        {
+            "transform": {
+                "position": [
+                    1,
+                    1,
+                    0
+                ],
+                "scale": [
+                    2,
+                    4,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    180,
+                    90
+                ]
+            },
+            "type": "quad",
+            "bsdf": "RightWall"
+        },
+        {
+            "transform": {
+                "position": [
+                    -1,
+                    1,
+                    0
+                ],
+                "scale": [
+                    2,
+                    4,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    90
+                ]
+            },
+            "type": "quad",
+            "bsdf": "LeftWall"
+        },
+        {
+            "transform": {
+                "position": [
+                    0.328631,
+                    0.3,
+                    0.374592
+                ],
+                "scale": [
+                    0.594811,
+                    0.604394,
+                    0.6
+                ],
+                "rotation": [
+                    90,
+                    90,
+                    -163.36
+                ]
+            },
+            "type": "cube",
+            "bsdf": "ShortBox"
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.335439,
+                    0.6,
+                    -0.291415
+                ],
+                "scale": [
+                    0.607289,
+                    0.597739,
+                    1.2
+                ],
+                "rotation": [
+                    90,
+                    180,
+                    160.812
+                ]
+            },
+            "type": "cube",
+            "bsdf": "TallBox"
+        },
+        {
+            "transform": {
+                "position": [
+                    -0.005,
+                    1.98,
+                    -0.03
+                ],
+                "scale": [
+                    0.47,
+                    0.1786,
+                    0.38
+                ],
+                "rotation": [
+                    0,
+                    180,
+                    180
+                ]
+            },
+            "emission": [
+                17,
+                12,
+                4
+            ],
+            "type": "quad",
+            "bsdf": "Light"
+        }
+    ],
+    "camera": {
+        "tonemap": "gamma",
+        "resolution": [
+            768,
+            768
+        ],
+        "reconstruction_filter": "tent",
+        "transform": {
+            "position": [
+                0,
+                1,
+                6.8
+            ],
+            "look_at": [
+                0,
+                1,
+                0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "type": "pinhole",
+        "fov": 19.5
+    },
+    "integrator": {
+        "type": "path_tracer",
+        "min_bounces": 0,
+        "max_bounces": 64,
+        "enable_consistency_checks": false,
+        "enable_two_sided_shading": true,
+        "enable_light_sampling": true,
+        "enable_volume_light_sampling": true
+    },
+    "renderer": {
+        "output_file": "cornell-box.png",
+        "resume_render_file": "TungstenRenderState.dat",
+        "overwrite_output_files": true,
+        "adaptive_sampling": true,
+        "enable_resume_render": false,
+        "stratified_sampler": true,
+        "scene_bvh": true,
+        "spp": 0,
+        "spp_step": 16,
+        "checkpoint_interval": "0",
+        "timeout": "0",
+        "hdr_output_file": "cornell-box.exr"
+    }
+}
