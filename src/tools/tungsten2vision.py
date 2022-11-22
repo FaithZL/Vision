@@ -259,20 +259,21 @@ def convert_quad(shape_input, index):
 
 def get_emission(shape):
     if "emission" in shape:
-        return convert_vec(shape["emission"], 3)
+        return convert_vec(shape["emission"], 3), 1
     else:
         power_scale = 100 * glm.pi()
         power = convert_vec(shape["power"], 3)
         emission = glm.vec3(power) / power_scale;
-        return [emission[0], emission[1], emission[2]]
+        return [emission[0], emission[1], emission[2]], 30
 
 def convert_area_light(shape_input, shape_output):
+    emission, scale = get_emission(shape_input)
     shape_output["param"]["emission"] = {
         "type" : "area",
         "param" : {
-            "radiance" : get_emission(shape_input),
+            "radiance" : emission,
             "two_sided" : False,
-            "scale" : 1
+            "scale" : scale
         }
     }
 
