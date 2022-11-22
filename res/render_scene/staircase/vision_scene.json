@@ -1,0 +1,458 @@
+{
+    "materials": [
+        {
+            "type": "substrate",
+            "name": "WoodFloor",
+            "param": {
+                "color": {
+                    "fn": "textures/WoodFloor.jpg",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "WoodStairs",
+            "param": {
+                "color": {
+                    "fn": "textures/WoodPanel.jpg",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "WoodChair",
+            "param": {
+                "color": {
+                    "fn": "textures/Wood.jpg",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "WoodLamp",
+            "param": {
+                "color": {
+                    "fn": "textures/WoodChair.jpg",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Lampshade",
+            "param": {
+                "color": {
+                    "fn": "textures/Fabric.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "metal",
+            "name": "Brass",
+            "param": {
+                "metal_name": "VN",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "metal",
+            "name": "BrushedAluminium",
+            "param": {
+                "metal_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "ChairSeat",
+            "param": {
+                "color": [
+                    0.11764699965715408,
+                    0.05490199849009514,
+                    0.06666669994592667
+                ]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "Glass",
+            "param": {
+                "ior": 1.5,
+                "roughness": [
+                    0,
+                    0
+                ],
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "MagnoliaPaint",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "WhitePaint",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.2,
+                    0.2
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Painting1",
+            "param": {
+                "color": {
+                    "fn": "textures/Painting1.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Painting2",
+            "param": {
+                "color": {
+                    "fn": "textures/Painting2.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Painting3",
+            "param": {
+                "color": {
+                    "fn": "textures/Painting3.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Black",
+            "param": {
+                "color": [
+                    0.01,
+                    0.01,
+                    0.01
+                ]
+            }
+        },
+        {
+            "type": "metal",
+            "name": "StainlessSteel",
+            "param": {
+                "metal_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Emission",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Candles",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "metal",
+            "name": "Gold",
+            "param": {
+                "metal_name": "Au",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "WhitePaint2",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "White",
+            "param": {
+                "color": [
+                    0.691535,
+                    0.691535,
+                    0.691535
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "WhitePlastic",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "metal",
+            "name": "Copper",
+            "param": {
+                "metal_name": "Li",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Wallpaper",
+            "param": {
+                "color": {
+                    "fn": "textures/Wallpaper.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        }
+    ],
+    "shapes": [],
+    "sampler": {
+        "type": "independent",
+        "name": "sampler0",
+        "param": {
+            "spp": 1
+        }
+    },
+    "camera": {
+        "type": "thin_lens",
+        "param": {
+            "fov_y": 35.0,
+            "name": "view1",
+            "velocity": 5,
+            "transform": {
+                "type": "look_at",
+                "param": {
+                    "position": [
+                        0.03242092579603195,
+                        1.526729941368103,
+                        4.881969451904297
+                    ],
+                    "up": [
+                        0.0,
+                        1.0,
+                        0.0
+                    ],
+                    "target_pos": [
+                        -0.018809299916028976,
+                        1.8286099433898926,
+                        -1.8112800121307373
+                    ]
+                }
+            },
+            "film": {
+                "type": "rgb",
+                "param": {
+                    "resolution": [
+                        720,
+                        1280
+                    ],
+                    "fb_state": 0
+                }
+            },
+            "filter": {
+                "type": "box",
+                "name": "boxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            }
+        }
+    },
+    "warper": {
+        "type": "alias_table"
+    },
+    "integrator": {
+        "type": "pt",
+        "param": {
+            "min_depth": 0,
+            "max_depth": 64,
+            "rr_threshold": 1
+        }
+    },
+    "light_sampler": {
+        "type": "uniform",
+        "param": {
+            "lights": []
+        }
+    }
+}

@@ -84,11 +84,76 @@
         }
     ],
     "shapes": [],
-    "sampler": {},
-    "camera": {},
-    "light_sampler": {},
+    "sampler": {
+        "type": "independent",
+        "name": "sampler0",
+        "param": {
+            "spp": 1
+        }
+    },
+    "camera": {
+        "type": "thin_lens",
+        "param": {
+            "fov_y": 19.5,
+            "name": "view1",
+            "velocity": 5,
+            "transform": {
+                "type": "look_at",
+                "param": {
+                    "position": [
+                        0,
+                        1,
+                        6.8
+                    ],
+                    "up": [
+                        0,
+                        1,
+                        0
+                    ],
+                    "target_pos": [
+                        0,
+                        1,
+                        0
+                    ]
+                }
+            },
+            "film": {
+                "type": "rgb",
+                "param": {
+                    "resolution": [
+                        768,
+                        768
+                    ],
+                    "fb_state": 0
+                }
+            },
+            "filter": {
+                "type": "box",
+                "name": "boxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            }
+        }
+    },
     "warper": {
         "type": "alias_table"
     },
-    "integrator": {}
+    "integrator": {
+        "type": "pt",
+        "param": {
+            "min_depth": 0,
+            "max_depth": 64,
+            "rr_threshold": 1
+        }
+    },
+    "light_sampler": {
+        "type": "uniform",
+        "param": {
+            "lights": []
+        }
+    }
 }

@@ -7,7 +7,6 @@ from sys import argv
 import os
 import glm
 
-g_textures = []
 g_lights = []
 
 table = {
@@ -17,6 +16,7 @@ table = {
     "linear" : 3,
 }
 
+
 def write_scene(scene_output, filepath):
     with open(filepath, "w") as outputfile:
         json.dump(scene_output, outputfile, indent=4)
@@ -25,7 +25,11 @@ def write_scene(scene_output, filepath):
 
 def parse_attr(attr):
     if type(attr) == str:
-        try_add_textures(attr)
+        ret = {
+            "fn" : attr,
+            "color_space" : "srgb"
+        }
+        return ret
     return attr
 
 def convert_vec(value, dim=3):
@@ -149,18 +153,67 @@ def convert_disney(mat_input):
     return ret
 
 def convert_camera(scene_input):
-    return {}
+    camera_input = scene_input["camera"]
+    transform = camera_input["transform"]
+    ret = {
+        "type" : "thin_lens",
+        "param" : {
+            "fov_y" : camera_input["fov"],
+            "name": "view1",
+            "velocity" : 5,
+            "transform" : {
+                "type" : "look_at",
+                "param": {
+                    "position" : transform["position"],
+                    "up" : transform["up"],
+                    "target_pos" : transform["look_at"]
+                }
+            },
+            "film" : {
+                "type": "rgb",
+                "param" : {
+                    "resolution" : convert_vec(camera_input.get("resolution", [768, 768]), 2),
+                    "fb_state": 0
+                }
+            },
+            "filter": {
+                "type": "box",
+                "name": "boxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            }
+        },
+    }
+    return ret
 
 def convert_integrator(scene_input):
-    return {}
+    integrator = scene_input["integrator"]
+    ret = {
+        "type" : "pt",
+        "param" : {
+			"min_depth" : integrator["min_bounces"],
+			"max_depth" : integrator["max_bounces"],
+			"rr_threshold" : 1
+		}
+    }
+    return ret
 
 def convert_sampler(scene_input):
-    return {}
+    ret = {
+        "type": "independent",
+        "name": "sampler0",
+        "param": {
+            "spp": 1
+        }
+    }
+    return ret
 
 def convert_shapes(scene_input):
     return []
-
-
 
 def convert_materials(scene_input):
     mat_inputs = scene_input["bsdfs"]
@@ -189,10 +242,17 @@ def convert_materials(scene_input):
     return mat_outputs
 
 def convert_lightsampler(scene_input):
-    return {}
+    ret = {
+        "type" : "uniform",
+        "param" : {
+            "lights": g_lights
+        }
+    }
+    return ret
 
 def main():
-    fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
+    fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
     parent = os.path.dirname(fn)
     output_fn = os.path.join(parent, "vision_scene.json")
 
@@ -204,11 +264,11 @@ def main():
         "shapes" : convert_shapes(scene_input),
         "sampler" : convert_sampler(scene_input),
         "camera" : convert_camera(scene_input),
-        "light_sampler" : convert_lightsampler(scene_input),
         "warper" :{
             "type" : "alias_table"
         },
         "integrator" : convert_integrator(scene_input),
+        "light_sampler" : convert_lightsampler(scene_input),
     }
     write_scene(scene_output, output_fn)
     
