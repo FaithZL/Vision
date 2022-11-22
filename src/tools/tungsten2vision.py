@@ -226,7 +226,7 @@ def convert_shape_transform(transform, scale=1):
     R = glm.radians(glm.vec3(transform.get("rotation", [0,0,0])))
     S = glm.vec3(transform.get("scale", [1,1,1]))
     M = convert_srt(S, R, T)
-    M = glm.scale(glm.vec3([-1,1,1])) * M
+    M = glm.scale(glm.vec3([-scale,1,1])) * M
     matrix4x4 = []
     for i in M:
         arr = []
@@ -314,7 +314,7 @@ def convert_mesh(shape_input, index):
             # "swap_handed" : True,
             "smooth" : shape_input.get("smooth", True),
             "material" : bsdf,
-            "transform" : convert_shape_transform(shape_input["transform"])
+            "transform" : convert_shape_transform(shape_input["transform"], -1)
         }
     }
     return ret

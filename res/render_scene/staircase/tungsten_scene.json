@@ -7190,7 +7190,7 @@
     },
     "integrator": {
         "min_bounces": 0,
-        "max_bounces": 64,
+        "max_bounces": 8,
         "enable_consistency_checks": false,
         "enable_two_sided_shading": true,
         "type": "path_tracer",

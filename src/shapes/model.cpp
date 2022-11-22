@@ -106,6 +106,7 @@ public:
             }
             Mesh mesh(std::move(vertices), std::move(triangle));
             mesh.mat_id = mat_id;
+            mesh.o2w = o2w;
             meshes.push_back(mesh);
         }
         return meshes;
