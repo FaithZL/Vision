@@ -108,6 +108,7 @@ public:
         Float3 Rd = Texture::eval(_diff, si).xyz();
         Float3 Rs = Texture::eval(_spec, si).xyz();
         Float2 alpha = Texture::eval(_roughness, si, 0.001f).xy();
+        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(1.5f);
         FresnelBlend bxdf(Rd, Rs, microfacet);

@@ -41,6 +41,7 @@ public:
     [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
         Float3 kr = Texture::eval(_color, si).xyz();
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
+        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>();
         MicrofacetReflection bxdf(kr, microfacet);
