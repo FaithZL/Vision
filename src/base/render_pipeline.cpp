@@ -20,6 +20,13 @@ void RenderPipeline::download_result() {
     _scene.film()->copy_to(_render_image.pixel_ptr());
 }
 
+void RenderPipeline::change_resolution(uint2 res) noexcept {
+    auto film = _scene.camera()->film();
+    film->set_resolution(res);
+    film->prepare(this);
+    _render_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, resolution());
+}
+
 void RenderPipeline::prepare_device_data() noexcept {
     for (const Shape *shape : _scene._shapes) {
         shape->fill_geometry(_geometry);

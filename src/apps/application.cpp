@@ -48,6 +48,10 @@ void App::on_key_event(int key, int action) noexcept {
     need_update = true;
 }
 
+void App::on_window_size_change(uint2 size) noexcept {
+    rp.change_resolution(size);
+}
+
 void App::on_scroll_event(float2 scroll) noexcept {
     need_update = true;
     Camera *camera = rp.scene().camera();
@@ -123,6 +127,9 @@ void App::register_event() noexcept {
     });
     window->set_scroll_callback([&]<typename... Args>(Args && ...args) {
         on_scroll_event(OC_FORWARD(args)...);
+    });
+    window->set_window_size_callback([&]<typename... Args>(Args && ...args) {
+        on_window_size_change(OC_FORWARD(args)...);
     });
 }
 

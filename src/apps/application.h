@@ -40,6 +40,7 @@ public:
     void register_event() noexcept;
     void update_camera_view(float d_yaw, float d_pitch) noexcept;
     void on_key_event(int key, int action) noexcept;
+    void on_window_size_change(uint2 size) noexcept;
     void on_mouse_event(int button, int action, float2 pos) noexcept;
     void on_scroll_event(float2 scroll) noexcept;
     void on_cursor_move(float2 pos) noexcept;
