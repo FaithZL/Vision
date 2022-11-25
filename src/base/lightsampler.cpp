@@ -17,6 +17,7 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref,
                                       const SurfaceInteraction &si) const noexcept {
     LightEval ret;
     dispatch_light(si.light_id, [&](const Light *light) {
+        if (light->type() != LightType::Area) { return ;}
         LightEvalContext p_light{si};
         p_light.PDF_pos *= light->PMF(si.prim_id);
         ret = light->evaluate(p_ref, p_light);

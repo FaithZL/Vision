@@ -378,7 +378,10 @@ def convert_lightsampler(scene_input):
 def main():
     # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
     # fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
-    fn = 'res\\render_scene\\kitchen\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\kitchen\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\coffee\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\staircase2\\tungsten_scene.json'
+    fn = 'res\\render_scene\\bathroom2\\tungsten_scene.json'
     parent = os.path.dirname(fn)
     output_fn = os.path.join(parent, "vision_scene.json")
 

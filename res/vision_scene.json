@@ -140,10 +140,10 @@
             }
         },
         {
-            "type": "disney",
+            "type": "mirror",
             "name": "ShortBox",
             "param": {
-                // "roughness" : [0.002]
+                 "roughness" : 0.002,
                 "color": [
                     0.725,
                     0.71,
