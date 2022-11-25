@@ -69,12 +69,13 @@ public:
                     bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
                     Float3 f = bsdf_sample.eval.f;
-                    Float weight = mis_weight<D>(light_sample.eval.pdf, bsdf_eval.pdf);
+                    Bool is_delta_light = light_sample.eval.pdf == -1.f;
+                    Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, bsdf_eval.pdf));
+                    light_sample.eval.pdf = select(is_delta_light, 1.f, light_sample.eval.pdf);
                     $if(!occluded && bsdf_eval.valid() && light_sample.valid()) {
                         Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
                         Li += throughput * Ld;
                     };
-
                 });
                 eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = luminance(throughput * eta_scale);

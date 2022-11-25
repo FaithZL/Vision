@@ -229,7 +229,6 @@ private:
     // sampling strategy
     static constexpr size_t max_sampling_strategy_num = 4u;
     array<Float, max_sampling_strategy_num> _sampling_weights;
-    uint _sampling_strategy{InvalidUI32};
     uint _diffuse_index{InvalidUI32};
     uint _spec_refl_index{InvalidUI32};
     uint _clearcoat_index{InvalidUI32};
