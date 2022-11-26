@@ -166,6 +166,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point") {
         VISION_PARAMS_LIST_INITIAL(position, intensity, scale)
+        intensity *= scale;
     }
 }
 
