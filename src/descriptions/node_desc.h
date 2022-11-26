@@ -104,6 +104,10 @@ public:
     float3 position;
     float3 intensity{};
 
+    // spotlight
+    float angle{90};
+    float soft_angle{20};
+
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] bool valid() const noexcept {

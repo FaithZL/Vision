@@ -52,6 +52,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     material_name = param["material"].as_string("");
     if (param.contains("emission")) {
         emission.inst_id = index;
+        emission.scene_path = scene_path;
         emission.init(param["emission"]);
     }
     if (sub_type == "model") {
@@ -162,7 +163,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
 
     if (sub_type == "area") {
-        radiance.init(param["radiance"]);
+        radiance.init(param["radiance"], scene_path);
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point") {
         VISION_PARAMS_LIST_INITIAL(position, intensity, scale)
