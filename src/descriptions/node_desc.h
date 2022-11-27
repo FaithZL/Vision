@@ -92,7 +92,7 @@ public:
 
 struct LightDesc : public NodeDesc {
 public:
-    // common
+    // for area light and projector
     TextureDesc radiance;
 
     // area light
@@ -104,9 +104,12 @@ public:
     float3 position;
     float3 intensity{};
 
-    // spotlight
+    // for spotlight and projector
     float angle{90};
-    float soft_angle{20};
+    float falloff{20};
+
+    // projector
+    float ratio{0.f};
 
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;

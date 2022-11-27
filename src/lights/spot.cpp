@@ -10,8 +10,9 @@ private:
     float3 _intensity;
     float3 _position;
     float3 _direction;
-    float _outer_angle;
-    float _inner_angle;
+    float _angle;
+    // falloff angle range
+    float _falloff;
 
 public:
     explicit SpotLight(const LightDesc &desc)
