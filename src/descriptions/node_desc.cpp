@@ -170,6 +170,9 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
         angle = clamp(angle, 1, 89);
         falloff = clamp(falloff, 0, angle);
         intensity *= scale;
+    } else if (sub_type == "projector") {
+        radiance.init(param["radiance"], scene_path);
+        VISION_PARAMS_LIST_INITIAL(o2w, scale, angle)
     }
 }
 

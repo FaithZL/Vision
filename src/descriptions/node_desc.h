@@ -109,8 +109,9 @@ public:
     float falloff{10};
     float3 direction{make_float3(0, 0, 1)};
 
-    // projector
+    // for projector width / height
     float ratio{0.f};
+    float4x4 o2w;
 
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;

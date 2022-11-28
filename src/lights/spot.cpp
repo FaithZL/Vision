@@ -36,7 +36,6 @@ public:
                             const LightEvalContext &p_light) const noexcept override {
         Float3 w_un = p_ref.pos - _position;
         Float3 w = normalize(w_un);
-//        float cos_angle = cos(_angle);
         return _intensity / length_squared(w_un) * falloff(dot(_direction, w));
     }
 };
