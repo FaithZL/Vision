@@ -129,18 +129,18 @@
             }
         },
         {
-            "type": "matte",
+            "type": "disney",
             "name": "BackWall",
             "param": {
-//                "color": [
-//                    0.725,
-//                    0.71,
-//                    0.68
-//                ],
-                "color": {
-                    "fn":"Painting3.jpg",
-                    "color_space" : "srgb"
-                },
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ],
+//                "color": {
+//                    "fn":"Painting3.jpg",
+//                    "color_space" : "srgb"
+//                },
                 "ior" : 1.5,
                 "roughness" : 1,
                 "metallic" : 0,
@@ -590,7 +590,7 @@
 //                            "color_space" : "srgb"
 //                        },
                         "two_sided": false,
-                        "scale": 1
+                        "scale": 0.1
                     }
                 }
             }
@@ -600,38 +600,38 @@
         "type": "uniform",
         "param" : {
             "lights": [
-//                {
-//                    "type" : "projector",
-//                    "param" :{
-//                        "angle" : 10,
-//                        "intensity" : {
-//                            "fn":"Painting3.jpg",
-//                            "color_space" : "srgb"
-//                        },
-//                        "ratio": 1,
-//                        "transform" :  {
-//                            "type": "look_at",
-//                            "param": {
-//                                "position": [
-//                                    0,
-//                                    1,
-//                                    6.8
-//                                ],
-//                                "up": [
-//                                    0,
-//                                    1,
-//                                    0
-//                                ],
-//                                "target_pos": [
-//                                    0,
-//                                    1,
-//                                    0
-//                                ]
-//                            }
-//                        },
-//                        "scale" : 3
-//                    }
-//                }
+                {
+                    "type" : "projector",
+                    "param" :{
+                        "angle" : 10,
+                        "intensity" : {
+                            "fn":"Painting3.jpg",
+                            "color_space" : "srgb"
+                        },
+                        "ratio": 1,
+                        "transform" :  {
+                            "type": "look_at",
+                            "param": {
+                                "position": [
+                                    0,
+                                    1,
+                                    6.8
+                                ],
+                                "up": [
+                                    0,
+                                    1,
+                                    0
+                                ],
+                                "target_pos": [
+                                    0,
+                                    1,
+                                    0
+                                ]
+                            }
+                        },
+                        "scale" : 3
+                    }
+                }
 //                {
 //                    "type" : "spot",
 //                    "param" :{
