@@ -20,15 +20,24 @@ public:
           _intensity(desc.intensity),
           _position(desc.position),
           _angle(radians(desc.angle)),
-          _falloff(desc.falloff),
+          _falloff(radians(desc.falloff)),
           _direction(normalize(desc.direction)) {}
     [[nodiscard]] float3 position() const noexcept override { return _position; }
+    [[nodiscard]] Float falloff(Float cos_theta) const noexcept {
+        float falloff_start = max(0.f, _angle - _falloff);
+        float cos_angle = cos(_angle);
+        float cos_falloff_start = cos(falloff_start);
+        cos_theta = clamp(cos_theta, cos_angle, cos_falloff_start);
+        Float factor = (cos_theta - cos_angle) / (cos_falloff_start - cos_angle);
+        Float ret = Pow<4>(factor);
+        return ret;
+    }
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
         Float3 w_un = p_ref.pos - _position;
         Float3 w = normalize(w_un);
-        float cos_angle = cos(_angle);
-        return select(dot(_direction, w) > cos_angle, _intensity / length_squared(w_un), make_float3(0.f));
+//        float cos_angle = cos(_angle);
+        return _intensity / length_squared(w_un) * falloff(dot(_direction, w));
     }
 };
 }// namespace vision
