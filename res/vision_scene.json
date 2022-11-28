@@ -576,13 +576,17 @@
                 "emission": {
                     "type" : "area",
                     "param" : {
-                        "radiance": [
-                            17,
-                            12,
-                            4
-                        ],
+//                        "radiance": [
+//                            17,
+//                            12,
+//                            4
+//                        ],
+                        "radiance" : {
+                            "fn":"Painting3.jpg",
+                            "color_space" : "srgb"
+                        },
                         "two_sided": false,
-                        "scale": 1
+                        "scale": 10
                     }
                 }
             }
@@ -592,49 +596,49 @@
         "type": "uniform",
         "param" : {
             "lights": [
+                {
+                    "type" : "projector",
+                    "param" :{
+                        "angle" : 10,
+                        "intensity" : {
+                            "fn":"Painting3.jpg",
+                            "color_space" : "srgb"
+                        },
+                        "ratio": 1,
+                        "transform" :  {
+                            "type": "look_at",
+                            "param": {
+                                "position": [
+                                    0,
+                                    1,
+                                    6.8
+                                ],
+                                "up": [
+                                    0,
+                                    1,
+                                    0
+                                ],
+                                "target_pos": [
+                                    0,
+                                    1,
+                                    0
+                                ]
+                            }
+                        },
+                        "scale" : 3
+                    }
+                }
 //                {
-//                    "type" : "projector",
+//                    "type" : "spot",
 //                    "param" :{
-//                        "angle" : 10,
-//                        "intensity" : {
-//                            "fn":"Painting3.jpg",
-//                            "color_space" : "srgb"
-//                        },
-//                        "ratio": 1,
-//                        "transform" :  {
-//                            "type": "look_at",
-//                            "param": {
-//                                "position": [
-//                                    0,
-//                                    1,
-//                                    6.8
-//                                ],
-//                                "up": [
-//                                    0,
-//                                    1,
-//                                    0
-//                                ],
-//                                "target_pos": [
-//                                    0,
-//                                    1,
-//                                    0
-//                                ]
-//                            }
-//                        },
+//                        "angle" : 20,
+//                        "falloff": 2,
+//                        "direction": [0,-1,0],
+//                        "intensity" : [1,1,1],
+//                        "position" : [-0.5,1.9,0],
 //                        "scale" : 1
 //                    }
 //                }
-                {
-                    "type" : "spot",
-                    "param" :{
-                        "angle" : 20,
-                        "falloff": 2,
-                        "direction": [0,-1,0],
-                        "intensity" : [1,1,1],
-                        "position" : [-0.5,1.9,0],
-                        "scale" : 1
-                    }
-                }
 //            ,
 //                {
 //                    "type" : "point",
