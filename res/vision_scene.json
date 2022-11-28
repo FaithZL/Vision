@@ -592,14 +592,17 @@
         "type": "uniform",
         "param" : {
             "lights": [
-//                {
-//                    "type" : "point",
-//                    "param" :{
-//                        "intensity" : [1,1,1],
-//                        "position" : [0.5,1.9,0],
-//                        "scale" : 1
-//                    }
-//                }
+                {
+                    "type" : "spot",
+                    "param" :{
+                        "angle" : 30,
+                        "falloff": 5,
+                        "direction": [0,-1,0],
+                        "intensity" : [1,1,1],
+                        "position" : [0.5,1.9,0],
+                        "scale" : 1
+                    }
+                }
 //            ,
 //                {
 //                    "type" : "point",

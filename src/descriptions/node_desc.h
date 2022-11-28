@@ -105,8 +105,9 @@ public:
     float3 intensity{};
 
     // for spotlight and projector
-    float angle{90};
-    float falloff{20};
+    float angle{45};
+    float falloff{10};
+    float3 direction{make_float3(0, 0, 1)};
 
     // projector
     float ratio{0.f};

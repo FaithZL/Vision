@@ -38,4 +38,25 @@ public:
         return {Li(p_ref, p_light), PDF_Li(p_ref, p_light)};
     }
 };
+
+class IPointLight : public Light {
+public:
+    explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
+    [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
+                               const LightEvalContext &p_light) const noexcept override {
+        // using -1 for delta position light
+        return -1.f;
+    }
+    [[nodiscard]] virtual float3 position() const noexcept = 0;
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
+        LightSample ret;
+        LightEvalContext p_light;
+        p_light.pos = position();
+        ret.eval = evaluate(p_ref, p_light);
+        Float3 wi_un = position() - p_ref.pos;
+        ret.p_light = p_light.pos;
+        return ret;
+    }
+};
+
 }// namespace vision

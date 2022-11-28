@@ -165,8 +165,8 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     if (sub_type == "area") {
         radiance.init(param["radiance"], scene_path);
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
-    } else if (sub_type == "point") {
-        VISION_PARAMS_LIST_INITIAL(position, intensity, scale)
+    } else if (sub_type == "point" || sub_type == "spot") {
+        VISION_PARAMS_LIST_INITIAL(position, intensity, scale, angle, falloff, direction)
         intensity *= scale;
     }
 }

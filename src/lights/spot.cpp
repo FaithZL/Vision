@@ -5,7 +5,7 @@
 #include "base/light.h"
 
 namespace vision {
-class SpotLight : public Light {
+class SpotLight : public IPointLight {
 private:
     float3 _intensity;
     float3 _position;
@@ -16,28 +16,19 @@ private:
 
 public:
     explicit SpotLight(const LightDesc &desc)
-        : Light(desc, LightType::DeltaPosition),
+        : IPointLight(desc),
           _intensity(desc.intensity),
-          _position(desc.position) {}
-
+          _position(desc.position),
+          _angle(radians(desc.angle)),
+          _falloff(desc.falloff),
+          _direction(normalize(desc.direction)) {}
+    [[nodiscard]] float3 position() const noexcept override { return _position; }
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
-        return _intensity / length_squared(p_ref.pos - _position);
-    }
-    [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
-                               const LightEvalContext &p_light) const noexcept override {
-        // using -1 for delta position light
-        return -1.f;
-    }
-
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
-        LightSample ret;
-        LightEvalContext p_light;
-        p_light.pos = _position;
-        ret.eval = evaluate(p_ref, p_light);
-        Float3 wi_un = _position - p_ref.pos;
-        ret.p_light = p_light.pos;
-        return ret;
+        Float3 w_un = p_ref.pos - _position;
+        Float3 w = normalize(w_un);
+        float cos_angle = cos(_angle);
+        return select(dot(_direction, w) > cos_angle, _intensity / length_squared(w_un), make_float3(0.f));
     }
 };
 }// namespace vision
