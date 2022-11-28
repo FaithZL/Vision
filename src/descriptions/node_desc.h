@@ -93,7 +93,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     // for area light and projector
-    TextureDesc radiance;
+    TextureDesc texture_desc;
 
     // area light
     bool two_sided{false};
@@ -111,7 +111,7 @@ public:
 
     // for projector width / height
     float ratio{0.f};
-    float4x4 o2w;
+    TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)
     void init(const ParameterSet &ps) noexcept override;

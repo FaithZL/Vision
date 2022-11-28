@@ -19,7 +19,7 @@ public:
         : IPointLight(desc),
           _ratio(desc.ratio),
           _angle_y(desc.angle),
-          _o2w(desc.o2w),
+          _o2w(desc.o2w.mat),
           _scale(desc.scale) {
     }
     [[nodiscard]] float3 position() const noexcept override { return _o2w[3].xyz(); }

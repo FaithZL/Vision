@@ -25,6 +25,9 @@ public:
     [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override {
         return _image_wrapper.image().sample<float4>(uv);
     }
+    [[nodiscard]] uint2 resolution() const noexcept override {
+        return _image_wrapper.image().resolution();
+    }
 };
 }// namespace vision
 

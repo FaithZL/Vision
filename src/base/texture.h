@@ -41,6 +41,7 @@ public:
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tev) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
+    [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
 }// namespace vision

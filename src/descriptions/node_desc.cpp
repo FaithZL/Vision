@@ -163,7 +163,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
 
     if (sub_type == "area") {
-        radiance.init(param["radiance"], scene_path);
+        texture_desc.init(param["radiance"], scene_path);
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point" || sub_type == "spot") {
         VISION_PARAMS_LIST_INITIAL(position, intensity, scale, angle, falloff, direction)
@@ -171,8 +171,9 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
         falloff = clamp(falloff, 0, angle);
         intensity *= scale;
     } else if (sub_type == "projector") {
-        radiance.init(param["radiance"], scene_path);
-        VISION_PARAMS_LIST_INITIAL(o2w, scale, angle)
+        VISION_PARAMS_LIST_INITIAL(scale, angle, ratio)
+        texture_desc.init(param["radiance"], scene_path);
+        o2w.init(param.data().value("transform", DataWrap()));
     }
 }
 
