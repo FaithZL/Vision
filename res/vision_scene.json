@@ -596,6 +596,10 @@
                     "type" : "projector",
                     "param" :{
                         "angle" : 20,
+                        "intensity" : {
+                            "fn":"Painting3.jpg",
+                            "color_space" : "srgb"
+                        },
                         "ratio": 1,
                         "o2w" :  {
                             "type": "look_at",

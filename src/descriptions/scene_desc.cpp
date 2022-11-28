@@ -157,6 +157,7 @@ void SceneDesc::process_materials() noexcept {
 
 void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap()));
+    light_sampler_desc.scene_path = scene_path;
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
     sampler_desc.init(data.value("sampler", DataWrap()));
     warper_desc.init(data.value("warper", DataWrap()));

@@ -172,7 +172,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
         intensity *= scale;
     } else if (sub_type == "projector") {
         VISION_PARAMS_LIST_INITIAL(scale, angle, ratio)
-        texture_desc.init(param["radiance"], scene_path);
+        texture_desc.init(param["intensity"], scene_path);
         o2w.init(param.data().value("transform", DataWrap()));
     }
 }
@@ -209,6 +209,7 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
     for (const DataWrap &data : param["lights"].data()) {
         LightDesc light_desc;
+        light_desc.scene_path = scene_path;
         light_desc.init(data);
         light_descs.push_back(light_desc);
     }

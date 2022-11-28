@@ -4,6 +4,7 @@
 
 #include "base/light.h"
 #include "base/texture.h"
+#include "base/render_pipeline.h"
 
 namespace vision {
 class Projector : public IPointLight {
@@ -21,6 +22,11 @@ public:
           _angle_y(desc.angle),
           _o2w(desc.o2w.mat),
           _scale(desc.scale) {
+        _intensity = desc.scene->load<Texture>(desc.texture_desc);
+        if (_ratio == 0) {
+            uint2 res = _intensity->resolution();
+            _ratio = float(res.x) / res.y;
+        }
     }
     [[nodiscard]] float3 position() const noexcept override { return _o2w[3].xyz(); }
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
