@@ -35,7 +35,7 @@ private:
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     Polymorphic<Material *> _materials;
-    WarperDesc _distribution_desc;
+    WarperDesc _warper_desc;
     RenderPipeline *_rp{nullptr};
     friend class RenderPipeline;
 
@@ -60,8 +60,8 @@ public:
         return ret;
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
-    void build_distributions(RenderPipeline *rp) noexcept;
-    [[nodiscard]] Warper *load_distribution() noexcept { return load<Warper>(_distribution_desc); }
+    void build_warpers(RenderPipeline *rp) noexcept;
+    [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc); }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;

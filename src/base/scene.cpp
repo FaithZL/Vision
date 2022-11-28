@@ -29,7 +29,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
     _integrator = load<Integrator>(scene_desc.integrator_desc);
-    _distribution_desc = scene_desc.warper_desc;
+    _warper_desc = scene_desc.warper_desc;
 
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
@@ -38,10 +38,10 @@ void Scene::prepare(RenderPipeline *rp) noexcept {
     _camera->prepare(rp);
     _sampler->prepare(rp);
     _camera->update_device_data();
-    build_distributions(rp);
+    build_warpers(rp);
 }
 
-void Scene::build_distributions(RenderPipeline *rp) noexcept {
+void Scene::build_warpers(RenderPipeline *rp) noexcept {
     _light_sampler->for_each([&](Light *light) noexcept {
         light->prepare(rp);
     });
