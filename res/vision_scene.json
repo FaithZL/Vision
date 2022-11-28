@@ -129,14 +129,18 @@
             }
         },
         {
-            "type": "disney",
+            "type": "matte",
             "name": "BackWall",
             "param": {
-                "color": [
-                    0.725,
-                    0.71,
-                    0.68
-                ],
+//                "color": [
+//                    0.725,
+//                    0.71,
+//                    0.68
+//                ],
+                "color": {
+                    "fn":"Painting3.jpg",
+                    "color_space" : "srgb"
+                },
                 "ior" : 1.5,
                 "roughness" : 1,
                 "metallic" : 0,
@@ -576,17 +580,17 @@
                 "emission": {
                     "type" : "area",
                     "param" : {
-//                        "radiance": [
-//                            17,
-//                            12,
-//                            4
-//                        ],
-                        "radiance" : {
-                            "fn":"Painting3.jpg",
-                            "color_space" : "srgb"
-                        },
+                        "radiance": [
+                            17,
+                            12,
+                            4
+                        ],
+//                        "radiance" : {
+//                            "fn":"Painting3.jpg",
+//                            "color_space" : "srgb"
+//                        },
                         "two_sided": false,
-                        "scale": 70
+                        "scale": 1
                     }
                 }
             }
