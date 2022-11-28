@@ -586,7 +586,7 @@
                             "color_space" : "srgb"
                         },
                         "two_sided": false,
-                        "scale": 10
+                        "scale": 70
                     }
                 }
             }
@@ -596,38 +596,38 @@
         "type": "uniform",
         "param" : {
             "lights": [
-                {
-                    "type" : "projector",
-                    "param" :{
-                        "angle" : 10,
-                        "intensity" : {
-                            "fn":"Painting3.jpg",
-                            "color_space" : "srgb"
-                        },
-                        "ratio": 1,
-                        "transform" :  {
-                            "type": "look_at",
-                            "param": {
-                                "position": [
-                                    0,
-                                    1,
-                                    6.8
-                                ],
-                                "up": [
-                                    0,
-                                    1,
-                                    0
-                                ],
-                                "target_pos": [
-                                    0,
-                                    1,
-                                    0
-                                ]
-                            }
-                        },
-                        "scale" : 3
-                    }
-                }
+//                {
+//                    "type" : "projector",
+//                    "param" :{
+//                        "angle" : 10,
+//                        "intensity" : {
+//                            "fn":"Painting3.jpg",
+//                            "color_space" : "srgb"
+//                        },
+//                        "ratio": 1,
+//                        "transform" :  {
+//                            "type": "look_at",
+//                            "param": {
+//                                "position": [
+//                                    0,
+//                                    1,
+//                                    6.8
+//                                ],
+//                                "up": [
+//                                    0,
+//                                    1,
+//                                    0
+//                                ],
+//                                "target_pos": [
+//                                    0,
+//                                    1,
+//                                    0
+//                                ]
+//                            }
+//                        },
+//                        "scale" : 3
+//                    }
+//                }
 //                {
 //                    "type" : "spot",
 //                    "param" :{

@@ -18,6 +18,8 @@ public:
     void prepare(RenderPipeline *rp) noexcept override {
         _radiance = rp->device().create_image(resolution(), PixelStorage::FLOAT4);
         _frame = rp->device().create_image(resolution(), PixelStorage::FLOAT4);
+        rp->clear_image(_radiance);
+        rp->clear_image(_frame);
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);

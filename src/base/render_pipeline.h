@@ -21,18 +21,22 @@ private:
     Scene _scene;
     Geometry _geometry{_device};
     ImageIO _render_image;
-    Stream _stream;
+    mutable Stream _stream;
     uint _frame_index{};
     ImagePool _image_pool{_device};
     double _total_time{};
+    using image_clear_signature = void(Image);
+    ocarina::Kernel<image_clear_signature> _kernel;
+    ocarina::Shader<image_clear_signature> _shader;
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
+    void clear_image(Image &image) const noexcept;
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
-    [[nodiscard]] void change_resolution(uint2 res) noexcept;
+    void change_resolution(uint2 res) noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] ImageWrapper &obtain_image(const TextureDesc &desc) noexcept {

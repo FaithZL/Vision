@@ -14,7 +14,18 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _context(context),
       _scene(context, this),
       _geometry(device),
-      _stream(device->create_stream()) {}
+      _stream(device->create_stream()) {
+    _kernel = [&](ImageVar image) {
+        Uint2 pixel = dispatch_idx().xy();
+        image.write(pixel, make_float4(0.f));
+    };
+    _shader = _device->compile(_kernel);
+}
+
+void RenderPipeline::clear_image(Image &image) const noexcept {
+    _stream << _shader(image).dispatch(image.resolution())
+            << synchronize() << commit();
+}
 
 void RenderPipeline::download_result() {
     _scene.film()->copy_to(_render_image.pixel_ptr());
