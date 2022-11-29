@@ -37,4 +37,20 @@ public:
     [[nodiscard]] virtual tuple<Float, Float, Uint> sample_continuous(Float u) const noexcept = 0;
 };
 
+class Warper2D : public Node {
+private:
+    WarperDesc _desc;
+    vector<Warper *> _conditional_v;
+    Warper *_marginal{};
+
+public:
+    explicit Warper2D(const WarperDesc &desc) : Node(desc) {}
+    void build(vector<float> weights, uint2 res) noexcept;
+    [[nodiscard]] Float func_at(Uint2 coord) const noexcept;
+    [[nodiscard]] Float PDF(Float2 p) const noexcept;
+    [[nodiscard]] Float PMF(Uint2 coord) const noexcept;
+    [[nodiscard]] float integral() const noexcept;
+    [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept;
+};
+
 }// namespace vision
