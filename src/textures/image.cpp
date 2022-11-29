@@ -28,6 +28,9 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.image().resolution();
     }
+    void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {
+        _image_wrapper.host_image().for_each_pixel(func);
+    }
 };
 }// namespace vision
 

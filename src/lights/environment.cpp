@@ -41,12 +41,34 @@ public:
     [[nodiscard]] vector<float> calculate_weights() noexcept {
         uint2 res = _texture->resolution();
         vector<float> weights(res.x * res.y, 0);
-
+        _texture->for_each_pixel([&](const std::byte *pixel, int idx, PixelStorage pixel_storage) {
+            float f = 0;
+            float v = idx / res.y + 0.5f;
+            float theta = v / res.x;
+            float sinTheta = std::sin(Pi * theta);
+            switch (pixel_storage) {
+                case PixelStorage::FLOAT4: {
+                    float4 val = *(reinterpret_cast<const float4 *>(pixel));
+                    f = luminance(val.xyz());
+                    break;
+                }
+                case PixelStorage::BYTE4: {
+                    uchar4 val = *(reinterpret_cast<const uchar4 *>(pixel));
+                    float4 f4 = make_float4(val) / 255.f;
+                    f = luminance(f4.xyz());
+                    break;
+                }
+                default:
+                    break;
+            }
+            weights[idx] = f * sinTheta;
+        });
         return weights;
     }
 
     void prepare(RenderPipeline *rp) noexcept override {
-
+        vector<float> weights = calculate_weights();
+        warper.build(rp, weights, _texture->resolution());
     }
 };
 

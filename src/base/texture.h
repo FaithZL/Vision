@@ -5,6 +5,7 @@
 #pragma once
 
 #include "node.h"
+#include "util/image_io.h"
 #include "interaction.h"
 
 namespace vision {
@@ -41,6 +42,9 @@ public:
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tev) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
+    virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
+        OC_ERROR("call error");
+    }
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 

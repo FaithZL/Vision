@@ -45,6 +45,7 @@ private:
 public:
     Warper2D() = default;
     void build(RenderPipeline *rp, vector<float> weights, uint2 res) noexcept;
+    void prepare(RenderPipeline *rp) noexcept override;
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept;
     [[nodiscard]] Float PDF(Float2 p) const noexcept;
     [[nodiscard]] Float PMF(Uint2 coord) const noexcept;
