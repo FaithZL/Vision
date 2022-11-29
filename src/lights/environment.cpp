@@ -37,6 +37,17 @@ public:
         // todo
         return LightSample{};
     }
+
+    [[nodiscard]] vector<float> calculate_weights() noexcept {
+        uint2 res = _texture->resolution();
+        vector<float> weights(res.x * res.y, 0);
+
+        return weights;
+    }
+
+    void prepare(RenderPipeline *rp) noexcept override {
+
+    }
 };
 
 }// namespace vision

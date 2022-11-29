@@ -21,6 +21,8 @@ public:
     ImageWrapper(ImageIO image_io, Image image) : _image_io(move(image_io)), _image(move(image)) {}
     [[nodiscard]] Image &image() noexcept { return _image; }
     [[nodiscard]] const Image &image() const noexcept { return _image; }
+    [[nodiscard]] const ImageIO &host_image() const noexcept { return _image_io; }
+    [[nodiscard]] ImageIO &host_image() noexcept { return _image_io; }
     [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device *device);
     [[nodiscard]] ImageUploadCommand *upload() const noexcept;
     [[nodiscard]] ImageDownloadCommand *download() noexcept;
