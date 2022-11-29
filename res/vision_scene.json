@@ -601,6 +601,24 @@
         "param" : {
             "lights": [
                 {
+                    "type": "environment",
+                    "param" : {
+                        "texture" : {
+                            "fn": "spruit_sunrise_2k.hdr",
+                            "color_space": "srgb"
+                        },
+                        "o2w" : {
+                            "type": "yaw_pitch",
+                            "param": {
+                                "yaw" : 0,
+                                "pitch": 90
+                            }
+                        },
+                        "scale": 1
+                    }
+                }
+                ,
+                {
                     "type" : "projector",
                     "param" :{
                         "angle" : 5,
@@ -609,7 +627,7 @@
                             "color_space" : "srgb"
                         },
                         "ratio": 1,
-                        "transform" :  {
+                        "o2w" :  {
                             "type": "look_at",
                             "param": {
                                 "position": [

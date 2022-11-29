@@ -111,6 +111,8 @@ public:
 
     // for projector width / height
     float ratio{0.f};
+
+    // for environment and projector
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)

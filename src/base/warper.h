@@ -39,13 +39,12 @@ public:
 
 class Warper2D : public Node {
 private:
-    WarperDesc _desc;
     vector<Warper *> _conditional_v;
     Warper *_marginal{};
 
 public:
-    explicit Warper2D(const WarperDesc &desc) : Node(desc) {}
-    void build(vector<float> weights, uint2 res) noexcept;
+    Warper2D() = default;
+    void build(RenderPipeline *rp, vector<float> weights, uint2 res) noexcept;
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept;
     [[nodiscard]] Float PDF(Float2 p) const noexcept;
     [[nodiscard]] Float PMF(Uint2 coord) const noexcept;

@@ -173,7 +173,11 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     } else if (sub_type == "projector") {
         VISION_PARAMS_LIST_INITIAL(scale, angle, ratio)
         texture_desc.init(param["intensity"], scene_path);
-        o2w.init(param.data().value("transform", DataWrap()));
+        o2w.init(param.data().value("o2w", DataWrap()));
+    } else if (sub_type == "environment") {
+        VISION_PARAMS_LIST_INITIAL(scale)
+        texture_desc.init(param["texture"], scene_path);
+        o2w.init(param.data().value("o2w", DataWrap()));
     }
 }
 
