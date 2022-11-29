@@ -2,7 +2,7 @@
 // Created by Zero on 28/10/2022.
 //
 
-#include "bxdf.h"
+#include "scattering.h"
 #include "math/geometry.h"
 #include "math/warp.h"
 #include "core/constants.h"

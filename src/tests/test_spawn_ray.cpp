@@ -10,7 +10,7 @@
 #include "math/geometry.h"
 #include "math/constants.h"
 #include "base/interaction.h"
-#include "base/bxdf.h"
+#include "base/scattering.h"
 
 using namespace vision;
 using namespace ocarina;

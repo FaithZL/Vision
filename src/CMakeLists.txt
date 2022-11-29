@@ -31,6 +31,7 @@ add_subdirectory(lights)
 add_subdirectory(lightsamplers)
 add_subdirectory(integrators)
 add_subdirectory(materials)
+add_subdirectory(mediums)
 add_subdirectory(sensors)
 add_subdirectory(textures)
 add_subdirectory(shapes)
@@ -49,6 +50,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-integrators
         vision-warpers
         vision-materials
+        vision-mediums
         vision-samplers)
 
 add_library(vision-main INTERFACE)

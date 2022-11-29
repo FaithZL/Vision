@@ -7,7 +7,7 @@
 #include "node.h"
 #include "interaction.h"
 #include "core/stl.h"
-#include "bxdf.h"
+#include "scattering.h"
 #include "texture.h"
 
 namespace vision {
