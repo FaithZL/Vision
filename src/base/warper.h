@@ -48,7 +48,6 @@ public:
     void prepare(RenderPipeline *rp) noexcept override;
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept;
     [[nodiscard]] Float PDF(Float2 p) const noexcept;
-    [[nodiscard]] Float PMF(Uint2 coord) const noexcept;
     [[nodiscard]] float integral() const noexcept;
     [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept;
 };

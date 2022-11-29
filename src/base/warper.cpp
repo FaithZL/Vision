@@ -31,7 +31,25 @@ void Warper2D::build(RenderPipeline *rp, vector<float> weights, uint2 res) noexc
 }
 
 void Warper2D::prepare(RenderPipeline *rp) noexcept {
-    int i = 0;
+    _marginal->prepare(rp);
+    for (auto &v : _conditional_v) {
+        v->prepare(rp);
+    }
+}
+
+//Float Warper2D::func_at(Uint2 coord) const noexcept {
+//    Warper *row = _conditional_v[coord.y];
+//    return row->func_at(coord.x);
+//}
+//
+//Float Warper2D::PDF(Float2 p) const noexcept {
+//    Uint iu = clamp(cast<uint>(p[0] * _conditional_v[0]->size()), 0u, _conditional_v[0]->size() - 1u);
+//    Uint iv = clamp(cast<uint>(p[1] * _marginal->size()), 0u, _marginal->size() - 1u);
+//    return _conditional_v[iv]->func_at(iu) /
+//}
+
+float Warper2D::integral() const noexcept {
+    return _marginal->integral();
 }
 
 }// namespace vision

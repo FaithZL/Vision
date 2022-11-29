@@ -69,6 +69,7 @@ public:
     void prepare(RenderPipeline *rp) noexcept override {
         vector<float> weights = calculate_weights();
         warper.build(rp, weights, _texture->resolution());
+        warper.prepare(rp);
     }
 };
 
