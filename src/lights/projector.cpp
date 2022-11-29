@@ -32,14 +32,15 @@ public:
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
         Float3 p = transform_point(inverse(_o2w), p_ref.pos);
-        Float d = length(p);
+        Float d2 = length_squared(p);
         Bool valid = p.z > 0;
         p = p / p.z;
         float tan_y = tan(_angle_y);
         float tan_x = _ratio * tan_y;
-        Float u = (p.x + tan_x) / (2 * tan_x);
-        Float v = (p.y + tan_y) / (2 * tan_y);
-        return select(valid, _intensity->eval(make_float2(u,v)).xyz() / d * _scale, make_float3(0.f));
+        float2 tan_xy = make_float2(tan_x, tan_y);
+        Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
+        valid = valid && all(uv >= 0.f && uv <= 1.f);
+        return select(valid, _intensity->eval(uv).xyz() / d2 * _scale, make_float3(0.f));
     }
 };
 }// namespace vision

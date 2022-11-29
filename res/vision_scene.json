@@ -603,7 +603,7 @@
                 {
                     "type" : "projector",
                     "param" :{
-                        "angle" : 10,
+                        "angle" : 5,
                         "intensity" : {
                             "fn":"Painting3.jpg",
                             "color_space" : "srgb"
