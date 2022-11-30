@@ -7,7 +7,8 @@
 
 namespace vision {
 
-LightSampler::LightSampler(const LightSamplerDesc &desc) : Node(desc) {
+LightSampler::LightSampler(const LightSamplerDesc &desc)
+    : Node(desc), _env_prob(clamp(desc.env_prob, 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
         Light *light = desc.scene->load<Light>(light_desc);
         add_light(light);
@@ -15,6 +16,9 @@ LightSampler::LightSampler(const LightSamplerDesc &desc) : Node(desc) {
             _env_light = light;
         }
     }
+    std::sort(_lights.begin(), _lights.end(), [&](Light *a, Light *b) {
+        return a->type() > b->type();
+    });
 }
 
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref,

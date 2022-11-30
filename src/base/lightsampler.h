@@ -25,6 +25,7 @@ public:
 protected:
     Polymorphic<Light *> _lights;
     Light * _env_light{};
+    float _env_prob{};
 
 public:
     explicit LightSampler(const LightSamplerDesc &desc);

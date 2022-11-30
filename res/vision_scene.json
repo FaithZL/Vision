@@ -599,7 +599,41 @@
     "light_sampler": {
         "type": "uniform",
         "param" : {
+            "env_prob" : 0.5,
             "lights": [
+                {
+                    "type" : "projector",
+                    "param" :{
+                        "angle" : 5,
+                        "intensity" : {
+                            "fn":"Painting3.jpg",
+                            "color_space" : "srgb"
+                        },
+                        "ratio": 1,
+                        "o2w" :  {
+                            "type": "look_at",
+                            "param": {
+                                "position": [
+                                    0,
+                                    1,
+                                    6.8
+                                ],
+                                "up": [
+                                    0,
+                                    1,
+                                    0
+                                ],
+                                "target_pos": [
+                                    0,
+                                    1,
+                                    0
+                                ]
+                            }
+                        },
+                        "scale" : 90
+                    }
+                }
+                ,
                 {
                     "type": "environment",
                     "param" : {

@@ -12,9 +12,9 @@ namespace vision {
 
 // LightType Definition
 enum class LightType {
+    Area,
     DeltaPosition,
     DeltaDirection,
-    Area,
     Infinite
 };
 
