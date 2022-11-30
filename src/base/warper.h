@@ -18,6 +18,7 @@ protected:
     float _integral{};
 
 public:
+    Warper() = default;
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     [[nodiscard]] virtual uint size() const noexcept = 0;

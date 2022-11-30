@@ -7,13 +7,18 @@
 namespace vision {
 
 class AliasTable2D : public Warper2D {
+private:
+    AliasTable _impl;
+    uint2 _resolution;
+
 public:
     explicit AliasTable2D(const WarperDesc &desc) : Warper2D(desc) {
     }
     void prepare(RenderPipeline *rp) noexcept override {
-        
+
     }
     void build(RenderPipeline *rp, vector<float> weights, uint2 res) noexcept override {
+
     }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
         return 0;
