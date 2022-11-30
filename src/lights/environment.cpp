@@ -51,6 +51,17 @@ public:
         return select(sin_theta == 0, 0.f, pdf);
     }
 
+    [[nodiscard]] LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+        Float3 world_dir = normalize(p_light.pos - p_ref.pos);
+        Float3 local_dir = transform_vector(_w2o, world_dir);
+        Float theta = spherical_theta(local_dir);
+        Float phi = spherical_phi(local_dir);
+        Float sin_theta = sin(theta);
+        Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
+        Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
+        return {.L = L(local_dir), .pdf = select(sin_theta == 0, 0.f, pdf)};
+    }
+
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
         LightSample ret;
         auto [uv, pdf_map, coord] = _warper->sample_continuous(u);

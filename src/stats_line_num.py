@@ -42,22 +42,4 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
         num_file += 1
 
 
-# print(count, num_file)
-
-import math
-
-Inv2Pi = 1 / (2 * math.pi)
-InvPi = 1 / math.pi
-
-def spherical_phi(x, y):
-    p = math.atan2(y, x);
-    return p + 2 * math.pi if p < 0 else p
-
-def spherical_theta(z):
-    return math.acos(z);
-
-u = spherical_phi(-0.086723,0.132887) * Inv2Pi
-
-v = spherical_theta(-0.981263) * InvPi
-
-print(u, v)
+print(count, num_file)
