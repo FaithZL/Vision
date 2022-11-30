@@ -633,24 +633,24 @@
                         "scale" : 90
                     }
                 }
-                ,
-                {
-                    "type": "environment",
-                    "param" : {
-                        "texture" : {
-                            "fn": "spruit_sunrise_2k.hdr",
-                            "color_space": "linear"
-                        },
-                        "o2w" : {
-                            "type": "yaw_pitch",
-                            "param": {
-                                "yaw" : 90,
-                                "pitch": 0
-                            }
-                        },
-                        "scale": 1
-                    }
-                }
+//                ,
+//                {
+//                    "type": "environment",
+//                    "param" : {
+//                        "texture" : {
+//                            "fn": "spruit_sunrise_2k.hdr",
+//                            "color_space": "linear"
+//                        },
+//                        "o2w" : {
+//                            "type": "yaw_pitch",
+//                            "param": {
+//                                "yaw" : 90,
+//                                "pitch": 0
+//                            }
+//                        },
+//                        "scale": 0
+//                    }
+//                }
 //                ,
 //                {
 //                    "type" : "projector",

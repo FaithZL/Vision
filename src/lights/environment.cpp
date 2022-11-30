@@ -32,7 +32,7 @@ public:
 
     [[nodiscard]] Float3 L(Float3 local_dir) const {
         Float2 uv = UV(local_dir);
-        return _texture->eval(uv).xyz();
+        return _texture->eval(uv).xyz() * _scale;
     }
 
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
