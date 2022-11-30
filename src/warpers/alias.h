@@ -1,10 +1,12 @@
 //
-// Created by Zero on 27/10/2022.
+// Created by Zero on 30/11/2022.
 //
 
-#include "base/warper.h"
+#pragma once
+
 #include "rhi/common.h"
 #include "base/render_pipeline.h"
+#include "base/warper.h"
 
 namespace vision {
 struct AliasEntry {
@@ -96,5 +98,3 @@ public:
     }
 };
 }// namespace vision
-
-VS_MAKE_CLASS_CREATOR(vision::AliasTable)

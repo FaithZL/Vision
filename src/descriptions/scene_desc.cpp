@@ -160,7 +160,8 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     light_sampler_desc.scene_path = scene_path;
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
     sampler_desc.init(data.value("sampler", DataWrap()));
-    warper_desc.init(data.value("warper", DataWrap()));
+    warper_desc = WarperDesc("Warper");
+    warper_desc.sub_type = "alias";
     sensor_desc.init(data.value("camera", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));

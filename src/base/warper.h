@@ -38,18 +38,13 @@ public:
 };
 
 class Warper2D : public Node {
-private:
-    uint2 _resolution;
-    Warper *_impl{};
-
 public:
     Warper2D() = default;
-    void build(RenderPipeline *rp, vector<float> weights, uint2 res) noexcept;
-    void prepare(RenderPipeline *rp) noexcept override;
-    [[nodiscard]] Float func_at(Uint2 coord) const noexcept;
-    [[nodiscard]] Float PDF(Float2 p) const noexcept;
-    [[nodiscard]] float integral() const noexcept;
-    [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept;
+    virtual void build(RenderPipeline *rp, vector<float> weights, uint2 res) noexcept = 0;
+    [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
+    [[nodiscard]] virtual float integral() const noexcept = 0;
+    [[nodiscard]] virtual tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept = 0;
 };
 
 }// namespace vision
