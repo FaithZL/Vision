@@ -36,6 +36,14 @@ public:
                 Var hit = geometry.trace_closest(ray);
                 comment("miss");
                 $if(hit->is_miss()) {
+                    if (light_sampler->env_light()) {
+                        LightSampleContext p_ref;
+                        p_ref.pos = ray->origin();
+                        p_ref.ng = ray->direction();
+                        LightEval eval = light_sampler->evaluate_miss(p_ref, ray->direction());
+                        Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
+                        Li += eval.L * throughput * weight;
+                    }
                     $break;
                 };
 

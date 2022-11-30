@@ -71,6 +71,7 @@ public:
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
+    [[nodiscard]] float world_range() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }
 };

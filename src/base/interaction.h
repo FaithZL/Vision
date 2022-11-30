@@ -67,6 +67,7 @@ struct SurfacePoint {
     Float3 pos;
     Float3 ng;
     SurfacePoint() = default;
+    explicit SurfacePoint(const Float3 &p) : pos(p) {}
     SurfacePoint(const Float3 &p, const Float3 &n)
         : pos(p), ng(n) {}
     explicit SurfacePoint(const Interaction &it)
@@ -93,6 +94,7 @@ struct SurfacePoint {
 struct GeometrySurfacePoint : public SurfacePoint {
     Float2 uv{};
     GeometrySurfacePoint() = default;
+    explicit GeometrySurfacePoint(const Float3 &p) : SurfacePoint(p) {}
     explicit GeometrySurfacePoint(const Interaction &it, Float2 uv)
         : SurfacePoint(it), uv(uv) {}
     GeometrySurfacePoint(Float3 p, Float3 ng, Float2 uv)
@@ -106,6 +108,7 @@ struct GeometrySurfacePoint : public SurfacePoint {
 struct LightEvalContext : public GeometrySurfacePoint {
     Float PDF_pos{};
     LightEvalContext() = default;
+    explicit LightEvalContext(const Float3 &p) : GeometrySurfacePoint(p) {}
     LightEvalContext(const GeometrySurfacePoint &gsp, Float PDF_pos)
         : GeometrySurfacePoint(gsp), PDF_pos(PDF_pos) {}
     LightEvalContext(Float3 p, Float3 ng, Float2 uv, Float PDF_pos)

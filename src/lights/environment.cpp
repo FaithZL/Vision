@@ -11,7 +11,7 @@ namespace vision {
 
 class EnvironmentLight : public Light {
 private:
-    Warper2D *_warper;
+    Warper2D *_warper{};
     float4x4 _w2o;
     float _scale{1.f};
     Texture *_texture{nullptr};
@@ -19,12 +19,15 @@ private:
 public:
     explicit EnvironmentLight(const LightDesc &desc)
         : Light(desc, LightType::Infinite),
-          _w2o(inverse(desc.o2w.mat)),
           _scale(desc.scale),
-          _texture(desc.scene->load<Texture>(desc.texture_desc)) {}
+          _texture(desc.scene->load<Texture>(desc.texture_desc)) {
+        float4x4 o2w = desc.o2w.mat;
+        float4x4 rx = rotation_x<H>(90);
+        _w2o = inverse(o2w * rx);
+    }
 
     [[nodiscard]] Float2 UV(Float3 local_dir) const {
-        return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_phi(local_dir) * InvPi);
+        return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
 
     [[nodiscard]] Float3 L(Float3 local_dir) const {
@@ -56,11 +59,10 @@ public:
         Float sin_theta = sin(theta);
         Float cos_theta = cos(theta);
         Float3 direction = spherical_direction(sin_theta, cos_theta, phi);
-        direction = normalize(transform_vector(_w2o, direction));
+        direction = normalize(transform_vector(inverse(_w2o), direction));
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
-        Float3 pos = p_ref.pos + direction;
-        LightEvalContext p_light;
-        p_light.pos = pos;
+        Float3 pos = p_ref.pos + direction * _scene->world_range();
+        LightEvalContext p_light{pos};
         ret.eval = evaluate(p_ref, p_light);
         ret.p_light = pos;
         return ret;
@@ -89,6 +91,7 @@ public:
                 default:
                     break;
             }
+            f = 1.f;
             weights[idx] = f * sinTheta;
         });
         return weights;
