@@ -39,8 +39,8 @@ public:
 
 class Warper2D : public Node {
 private:
-    vector<Warper *> _conditional_v;
-    Warper *_marginal{};
+    uint2 _resolution;
+    Warper *_impl{};
 
 public:
     Warper2D() = default;

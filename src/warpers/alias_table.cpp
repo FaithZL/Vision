@@ -30,8 +30,8 @@ public:
         _func.upload_immediately();
     }
     void build(vector<float> weights) noexcept override {
-        auto sum = std::reduce(weights.cbegin(), weights.cend(), 0.0);
-        auto ratio = static_cast<double>(weights.size()) / sum;
+        double sum = std::reduce(weights.cbegin(), weights.cend(), 0.0);
+        double ratio = static_cast<double>(weights.size()) / sum;
         static thread_local vector<uint> over;
         static thread_local vector<uint> under;
         over.clear();
