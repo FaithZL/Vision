@@ -65,15 +65,24 @@ public:
     [[nodiscard]] Float PDF(Float2 p) const noexcept override {
         Uint iu = clamp(cast<uint>(p.x * _resolution.x), 0u, _resolution.x - 1);
         Uint iv = clamp(cast<uint>(p.y * _resolution.y), 0u, _resolution.y - 1);
-        return func_at(make_uint2(iu, iv)) / integral();
+        return integral() > 0 ? func_at(make_uint2(iu, iv)) / integral() : Var(0.f);
     }
     [[nodiscard]] float integral() const noexcept override {
         return _marginal.integral();
     }
     [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept override {
-        auto [d1, pdf1, iv] = _marginal.sample_continuous(u.y);
-        Uint offset = _resolution.x * iv;
-        return {};
+        // sample v
+        auto [fv, pdf_v, iv] = _marginal.sample_continuous(u.y);
+
+        // sample u
+        Uint buffer_offset = _resolution.x * iv;
+        auto [iu, u_remapped] = detail::offset_u_remapped(buffer_offset, u.x, _conditional_v_tables, _resolution.x);
+
+        Float fu = (iu + u_remapped) / _resolution.x;
+        Float integral_u = _marginal._func.read(iv);
+        Float func_u = _conditional_v_weights.read(buffer_offset + iu);
+        Float pdf_u = select(integral_u > 0, func_u / integral_u, 0.f);
+        return {make_float2(fu, fv), pdf_u * pdf_v, make_uint2(iu, iv)};
     }
 };
 
