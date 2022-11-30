@@ -18,10 +18,14 @@ struct AliasEntry {
 OC_STRUCT(vision::AliasEntry, prob, alias){};
 
 namespace vision {
+
+class AliasTable2D;
+
 class AliasTable : public Warper {
 private:
     Managed<AliasEntry> _table;
     Managed<float> _func;
+    friend class AliasTable2D;
 
 public:
     AliasTable() = default;
@@ -86,16 +90,26 @@ void AliasTable::build(vector<float> weights) noexcept {
 [[nodiscard]] Float AliasTable::PMF(const Uint &i) const noexcept {
     return integral() > 0 ? (func_at(i) / (integral() * size())) : Var(0.f);
 }
-[[nodiscard]] tuple<Uint, Float> AliasTable::offset_u_remapped(Float u) const noexcept {
-    u = u * float(size());
-    Uint offset = min(cast<uint>(u), uint(size() - 1));
-    u = min(u - offset, OneMinusEpsilon);
-    Var alias_entry = _table.read(offset);
-    offset = select(u < alias_entry.prob, offset, alias_entry.alias);
+
+namespace detail {
+
+[[nodiscard]] tuple<Uint, Float> offset_u_remapped(Uint buffer_offset, Float u,
+                                                   const Managed<AliasEntry> &table, size_t size) noexcept {
+    u = u * float(size);
+    Uint idx = min(cast<uint>(u), uint(size - 1));
+    u = min(u - idx, OneMinusEpsilon);
+    Var alias_entry = table.read(buffer_offset + idx);
+    idx = select(u < alias_entry.prob, idx, alias_entry.alias);
     Float u_remapped = select(u < alias_entry.prob,
                               min(u / alias_entry.prob, OneMinusEpsilon),
                               min((1 - u) / (1 - alias_entry.prob), OneMinusEpsilon));
-    return {offset, u_remapped};
+    return {idx, u_remapped};
+}
+
+}// namespace detail
+
+[[nodiscard]] tuple<Uint, Float> AliasTable::offset_u_remapped(Float u) const noexcept {
+    return detail::offset_u_remapped(0, u, _table, size());
 }
 [[nodiscard]] tuple<Float, Float, Uint> AliasTable::sample_continuous(Float u) const noexcept {
     auto [offset, u_remapped] = offset_u_remapped(u);
