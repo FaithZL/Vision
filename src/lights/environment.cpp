@@ -58,12 +58,13 @@ public:
         Float phi = uv[0] * _2Pi;
         Float sin_theta = sin(theta);
         Float cos_theta = cos(theta);
-        Float3 direction = spherical_direction(sin_theta, cos_theta, phi);
-        direction = normalize(transform_vector(inverse(_w2o), direction));
+        Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
+        Float3 world_dir = normalize(transform_vector(inverse(_w2o), local_dir));
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
-        Float3 pos = p_ref.pos + direction * _scene->world_range();
+        Float3 pos = p_ref.pos + world_dir * _scene->world_range();
         LightEvalContext p_light{pos};
-        ret.eval = evaluate(p_ref, p_light);
+        ret.eval.L = L(local_dir);
+        ret.eval.pdf = pdf_dir;
         ret.p_light = pos;
         return ret;
     }
@@ -91,7 +92,6 @@ public:
                 default:
                     break;
             }
-            f = 1.f;
             weights[idx] = f * sinTheta;
         });
         return weights;
