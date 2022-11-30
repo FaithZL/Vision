@@ -62,6 +62,11 @@ public:
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void build_warpers(RenderPipeline *rp) noexcept;
     [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc); }
+    [[nodiscard]] Warper2D *load_warper2d() noexcept {
+        WarperDesc warper_desc = _warper_desc;
+        warper_desc.sub_type += "2d";
+        return load<Warper2D>(warper_desc);
+    }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;

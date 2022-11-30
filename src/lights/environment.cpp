@@ -11,7 +11,7 @@ namespace vision {
 
 class EnvironmentLight : public Light {
 private:
-//    Warper2D warper;
+    Warper2D *_warper;
     float4x4 _o2w;
     float _scale{1.f};
     Texture *_texture{nullptr};
@@ -68,8 +68,10 @@ public:
 
     void prepare(RenderPipeline *rp) noexcept override {
         vector<float> weights = calculate_weights();
-//        warper.build(rp, weights, _texture->resolution());
-//        warper.prepare(rp);
+        Scene &scene = rp->scene();
+        _warper = scene.load_warper2d();
+        _warper->build(rp, weights, _texture->resolution());
+        _warper->prepare(rp);
     }
 };
 
