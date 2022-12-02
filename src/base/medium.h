@@ -6,7 +6,8 @@
 
 #include "dsl/common.h"
 #include "math/optics.h"
-#include "descriptions/node_desc.h"
+#include "node.h"
+#include "interaction.h"
 
 namespace vision {
 using namespace ocarina;
@@ -46,15 +47,15 @@ public:
     [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
 };
 
-
-class Medium {
+class Medium : public Node {
 public:
     using Desc = MediumDesc;
 
 public:
+    explicit Medium(const MediumDesc &desc) : Node(desc) {}
     virtual ~Medium() {}
     virtual Float3 tr(const OCRay &ray, Sampler &sampler) const noexcept = 0;
-    virtual Float3 sample(const OCRay &ray, Sampler &sampler, MediumInterface *mi) const noexcept = 0;
+//    virtual pair<Float3, Inter> sample(const OCRay &ray, Sampler &sampler) const noexcept = 0;
 };
 
 
