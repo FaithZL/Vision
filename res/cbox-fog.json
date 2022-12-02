@@ -1,0 +1,804 @@
+{
+    "materials": [
+        {
+            "type" : "disney",
+            "name" : "mix",
+            "param" : {
+                "color" : [
+                    1, 1, 1,
+                    1.0
+                ],
+                "ior" : 1.5,
+                "roughness" : 0.01,
+                "metallic" : 0,
+                "spec_tint" : 0.0,
+                "anisotropic" : 0,
+                "sheen" : 0,
+                "sheen_tint" : 0,
+                "clearcoat" : 0,
+                "clearcoat_alpha" : 0,
+                "spec_trans" : 0.99,
+                "flatness" : 0.98,
+                "scatter_distance" : [0, 0, 0],
+                "diff_trans" : 0.11,
+                "thin" : false
+            }
+        },
+        {
+            "type" : "matte",
+            "name" : "LeftWall",
+            "param" : {
+                "color" : [
+                    0.63,
+                    0.065,
+                    0.05
+                ]
+            }
+        },
+        // {
+        //     "type" : "disney",
+        //     "name" : "image",
+        //     "param" : {
+        //         "color" : {
+        //             "fn" : "test.png",
+        //             "ColorSpace" : "linear"
+        //         }
+        //     }
+        // },
+        // {
+        //     "type" : "mirror",
+        //     "name" : "Mirror",
+        //     "param" : {
+        //         "color" : [
+        //             1,
+        //             1,
+        //             1
+        //         ],
+        //         "roughness" : 0.001
+        //     }
+        // },
+        // {
+        //     "type": "glass",
+        //     "name": "Glass",
+        //     "param": {
+        //         "color": [
+        //             1,
+        //             1,
+        //             1
+        //         ],
+        //         "ior": 1.5,
+        //         "roughness" :0.001
+        //     }
+        // },
+        // {
+        //     "type" : "metal",
+        //     "name" : "metal",
+        //     "param" : {
+        //         "metal_name" : "Cu",
+        //         "roughness" : 0.01
+        //     }
+        // },
+        {
+            "type": "matte",
+            "name": "RightWall",
+            "param": {
+                "color": [
+                    0.14,
+                    0.45,
+                    0.091
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Floor",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        // {
+        //     "type": "substrate",
+        //     "name": "substrate",
+        //     "param": {
+        //         "roughness" : 0.001,
+        //         "spec": [
+        //             0.04,
+        //             0.04,
+        //             0.04
+        //         ],
+        //         "color": [
+        //             0.725,
+        //             0.71,
+        //             0.68
+        //         ]
+        //     }
+        // },
+        {
+            "type": "matte",
+            "name": "Ceiling",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "BackWall",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ],
+                //                "color": {
+                //                    "fn":"Painting3.jpg",
+                //                    "color_space" : "srgb"
+                //                },
+                "ior" : 1.5,
+                "roughness" : 1,
+                "metallic" : 0,
+                "spec_tint" : 0.0,
+                "anisotropic" : 0,
+                "sheen" : 0,
+                "sheen_tint" : 0,
+                "clearcoat" : 0,
+                "clearcoat_alpha" : 0,
+                "spec_trans" :0 ,
+                "flatness" : 0,
+                "scatter_distance" : [0, 0, 0],
+                "diff_trans" : 0,
+                "thin" : false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "ShortBox",
+            "param": {
+                "roughness" : 0.002,
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "TallBox",
+            "param": {
+                // "roughness" : [0.002]
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "null",
+            "name": "Black",
+            "param": { }
+        }
+    ],
+    "shapes": [
+        {
+            "type": "quad",
+            "name": "shape_0",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "Floor",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                8.742277657347586e-08,
+                                0.0,
+                                -2.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                3.999999761581421,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                -2.0,
+                                0.0,
+                                -8.742277657347586e-08,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "quad",
+            "name": "shape_1",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "Ceiling",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                2.0,
+                                1.7484555314695172e-07,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                3.4969110629390343e-07,
+                                -4.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                2.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                2.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        //         {
+        //             "type" : "model",
+        //             "name" : "box",
+        //             "param" : {
+        //                 "material": "BackWall",
+        //                 "fn" : "cube.obj"
+        //             }
+        //         },
+        {
+            "type": "quad",
+            "name": "shape_2",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "BackWall",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                -3.82137093032941e-15,
+                                1.9999998807907104,
+                                8.742277657347586e-08,
+                                0.0
+                            ],
+                            [
+                                -1.7484555314695172e-07,
+                                -1.74845538936097e-07,
+                                4.0,
+                                0.0
+                            ],
+                            [
+                                -1.9999998807907104,
+                                0.0,
+                                -8.74227694680485e-08,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                -1.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "quad",
+            "name": "shape_3",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "LeftWall",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                -8.742277657347586e-08,
+                                2.0,
+                                -7.64274186065882e-15,
+                                0.0
+                            ],
+                            [
+                                -4.0,
+                                -1.7484555314695172e-07,
+                                -3.4969110629390343e-07,
+                                0.0
+                            ],
+                            [
+                                1.74845538936097e-07,
+                                0.0,
+                                -1.9999998807907104,
+                                0.0
+                            ],
+                            [
+                                1.0,
+                                1.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "quad",
+            "name": "shape_4",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "RightWall",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                8.742277657347586e-08,
+                                2.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                4.0,
+                                -1.7484555314695172e-07,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.9999998807907104,
+                                0.0
+                            ],
+                            [
+                                -1.0,
+                                1.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "cube",
+            "name": "shape_5",
+            "param": {
+                "x": 1,
+                "y": 1,
+                "z": 1,
+                "material": "ShortBox",
+                //                "material" : "substrate",
+                // "material" : "disney",
+                //                "material": "Mirror",
+                //                "material": "Glass",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                0.17032849788665771,
+                                7.4452954912374025e-09,
+                                0.5699020028114319,
+                                0.0
+                            ],
+                            [
+                                0.5790837407112122,
+                                2.531255205440175e-08,
+                                -0.17307265102863312,
+                                0.0
+                            ],
+                            [
+                                2.622683403785686e-08,
+                                -0.5999999642372131,
+                                1.146411342626294e-15,
+                                0.0
+                            ],
+                            [
+                                -0.3286310136318207,
+                                0.2990000001192092896,
+                                0.37459200620651245,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "cube",
+            "name": "shape_6",
+            "param": {
+                "x": 1,
+                "y": 1,
+                "z": 1,
+                //                "material": "metal",
+                //                "material": "Mirror",
+                //                "material" : "Glass",
+                "material": "TallBox",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                -0.5735511779785156,
+                                -8.724662770021041e-09,
+                                -0.1995970755815506,
+                                0.0
+                            ],
+                            [
+                                -0.19645826518535614,
+                                2.467646353920827e-08,
+                                0.564531683921814,
+                                0.0
+                            ],
+                            [
+                                -4.5856449469887026e-15,
+                                -1.1999999284744263,
+                                5.245366452300004e-08,
+                                0.0
+                            ],
+                            [
+                                0.335438996553421,
+                                0.59890000238418579,
+                                -0.2914150059223175,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    ,
+        //        {
+        //            "type": "quad",
+        //            "name": "shape_7",
+        //            "param": {
+        //                "width": 0.3,
+        //                "height": 0.3,
+        //                "material": "Black",
+        //                "transform": {
+        //                    "type": "matrix4x4",
+        //                    "param": {
+        //                        "matrix4x4": [
+        //                            [
+        //                                -0.4699999988079071,
+        //                                -4.108870399477382e-08,
+        //                                -4.108870399477382e-08,
+        //                                0.0
+        //                            ],
+        //                            [
+        //                                1.56137076601226e-08,
+        //                                -0.1785999983549118,
+        //                                1.3649937003794234e-15,
+        //                                0.0
+        //                            ],
+        //                            [
+        //                                3.3220654671595184e-08,
+        //                                0.0,
+        //                                -0.3799999952316284,
+        //                                0.0
+        //                            ],
+        //                            [
+        //                                -0,
+        //                                1.9800000190734863,
+        //                                -0.029999999329447746,
+        //                                1.0
+        //                            ]
+        //                        ]
+        //                    }
+        //                },
+        //                "emission": {
+        //                    "type" : "area",
+        //                    "param" : {
+        //                        "radiance": [
+        //                            17,
+        //                            12,
+        //                            4
+        //                        ],
+        //                        "two_sided": false,
+        //                        "scale": 10
+        //                    }
+        //                }
+        //            }
+        //        }
+        {
+            "type": "quad",
+            "name": "shape_7",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                -0.4699999988079071,
+                                -4.108870399477382e-08,
+                                -4.108870399477382e-08,
+                                0.0
+                            ],
+                            [
+                                1.56137076601226e-08,
+                                -0.1785999983549118,
+                                1.3649937003794234e-15,
+                                0.0
+                            ],
+                            [
+                                3.3220654671595184e-08,
+                                0.0,
+                                -0.3799999952316284,
+                                0.0
+                            ],
+                            [
+                                0,
+                                1.9800000190734863,
+                                -0.029999999329447746,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            ,
+                "emission": {
+                    "type" : "area",
+                    "param" : {
+                        "radiance": [
+                            17,
+                            12,
+                            4
+                        ],
+                        //                        "radiance" : {
+                        //                            "fn":"Painting3.jpg",
+                        //                            "color_space" : "srgb"
+                        //                        },
+                        "two_sided": false,
+                        "scale": 1
+                    }
+                }
+            }
+        }
+    ],
+    "light_sampler": {
+        "type": "uniform",
+        "param" : {
+            "env_prob" : 0.5,
+            "lights": [
+                //                {
+                //                    "type" : "projector",
+                //                    "param" :{
+                //                        "angle" : 5,
+                //                        "intensity" : {
+                //                            "fn":"Painting3.jpg",
+                //                            "color_space" : "srgb"
+                //                        },
+                //                        "ratio": 1,
+                //                        "o2w" :  {
+                //                            "type": "look_at",
+                //                            "param": {
+                //                                "position": [
+                //                                    0,
+                //                                    1,
+                //                                    6.8
+                //                                ],
+                //                                "up": [
+                //                                    0,
+                //                                    1,
+                //                                    0
+                //                                ],
+                //                                "target_pos": [
+                //                                    0,
+                //                                    1,
+                //                                    0
+                //                                ]
+                //                            }
+                //                        },
+                //                        "scale" : 90
+                //                    }
+                //                }
+                //                ,
+                //                {
+                //                    "type": "environment",
+                //                    "param" : {
+                //                        "texture" : {
+                //                            "fn": "spruit_sunrise_2k.hdr",
+                //                            "color_space": "linear"
+                //                        },
+                //                        "o2w" : {
+                //                            "type": "yaw_pitch",
+                //                            "param": {
+                //                                "yaw" : 90,
+                //                                "pitch": 0
+                //                            }
+                //                        },
+                //                        "scale": 0
+                //                    }
+                //                }
+                //                ,
+                //                {
+                //                    "type" : "projector",
+                //                    "param" :{
+                //                        "angle" : 5,
+                //                        "intensity" : {
+                //                            "fn":"Painting3.jpg",
+                //                            "color_space" : "srgb"
+                //                        },
+                //                        "ratio": 1,
+                //                        "o2w" :  {
+                //                            "type": "look_at",
+                //                            "param": {
+                //                                "position": [
+                //                                    0,
+                //                                    1,
+                //                                    6.8
+                //                                ],
+                //                                "up": [
+                //                                    0,
+                //                                    1,
+                //                                    0
+                //                                ],
+                //                                "target_pos": [
+                //                                    0,
+                //                                    1,
+                //                                    0
+                //                                ]
+                //                            }
+                //                        },
+                //                        "scale" : 90
+                //                    }
+                //                }
+                //                {
+                //                    "type" : "spot",
+                //                    "param" :{
+                //                        "angle" : 20,
+                //                        "falloff": 2,
+                //                        "direction": [0,-1,0],
+                //                        "intensity" : [1,1,1],
+                //                        "position" : [-0.5,1.9,0],
+                //                        "scale" : 1
+                //                    }
+                //                }
+                //            ,
+                //                {
+                //                    "type" : "point",
+                //                    "param" :{
+                //                        "intensity" : [1,1,1],
+                //                        "position" : [-0.5,1.9,0],
+                //                        "scale": 0
+                //                    }
+                //                }
+            ]
+        }
+    },
+    "sampler": {
+        "type": "independent",
+        "name": "sampler0",
+        "param": {
+            "spp": 1
+        }
+    },
+    "warper" :{
+        "type" : "alias_table"
+        // "type" : "dichotomy"
+    },
+    "camera": {
+        "type": "thin_lens",
+        "name": "view1",
+        "param": {
+            "sensitivity" : 0.5,
+            "fov_y": 19.5,
+            "velocity": 5,
+            "transform": {
+                "type": "look_at",
+                "param": {
+                    "position": [
+                        0,
+                        1,
+                        6.8
+                    ],
+                    "up": [
+                        0,
+                        1,
+                        0
+                    ],
+                    "target_pos": [
+                        0,
+                        1,
+                        0
+                    ]
+                }
+            },
+            "film": {
+                "type": "rgb",
+                "param": {
+                    "resolution": [
+                        1024,
+                        1024
+                    ],
+                    "fb_state": 0,
+                    "tone_map": 0
+                }
+            },
+            "filter": {
+                "type": "box",
+                "name": "boxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            }
+        }
+    },
+    "integrator" : {
+        "type" : "pt",
+        // "type": "WavefrontPT",
+        "param" : {
+            "min_depth" : 0,
+            "max_depth" : 16,
+            "rr_threshold" : 1
+        }
+    },
+    "mediums" : [
+        {
+            "type" : "homogeneous",
+            "name" :"fog",
+            "param" : {
+                "g" : 0,
+                "sigma_a" : [0.0, 0.0, 0.0],
+                "sigma_s" : [0.8, 0.8, 0.8]
+            }
+        }
+    ],
+    "debug" : {
+        // "pixel" : [60, 79],
+        "MIS_mode" : 2
+    },
+    "output" : {
+        "fn" : "cornell-box-mg.png",
+        // "fn": "cornell-box-wf.png",
+        "spp" : 0,
+        // "albedo" : true,
+        // "normal" : true,
+        // "normal_remapping" : true,
+        "tone_map": 0
+    }
+}

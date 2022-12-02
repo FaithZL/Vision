@@ -12,6 +12,7 @@
 #include "base/integrator.h"
 #include "base/lightsampler.h"
 #include "base/material.h"
+#include "base/medium.h"
 #include "base/warper.h"
 
 namespace vision {
@@ -35,6 +36,7 @@ private:
     LightSampler *_light_sampler{nullptr};
     vector<Shape *> _shapes;
     Polymorphic<Material *> _materials;
+    Polymorphic<Medium *> _mediums;
     WarperDesc _warper_desc;
     RenderPipeline *_rp{nullptr};
     friend class RenderPipeline;
@@ -51,6 +53,7 @@ public:
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
     [[nodiscard]] const auto& materials() const noexcept { return _materials; }
+    [[nodiscard]] const auto& mediums() const noexcept { return _mediums; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {
