@@ -6,6 +6,7 @@
 
 #include "dsl/common.h"
 #include "math/optics.h"
+#include "descriptions/node_desc.h"
 
 namespace vision {
 using namespace ocarina;
@@ -30,5 +31,31 @@ public:
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept override;
 };
+
+class Sampler;
+
+struct MediumInterface {
+public:
+    Uint inside{InvalidUI32};
+    Uint outside{InvalidUI32};
+
+public:
+    MediumInterface() = default;
+    MediumInterface(Uint in, Uint out) : inside(in), outside(out) {}
+    explicit MediumInterface(Uint medium_id): inside(medium_id), outside(medium_id) {}
+    [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
+};
+
+
+class Medium {
+public:
+    using Desc = MediumDesc;
+
+public:
+    virtual ~Medium() {}
+    virtual Float3 tr(const OCRay &ray, Sampler &sampler) const noexcept = 0;
+    virtual Float3 sample(const OCRay &ray, Sampler &sampler, MediumInterface *mi) const noexcept = 0;
+};
+
 
 }// namespace vision

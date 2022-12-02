@@ -130,6 +130,14 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     }
 }
 
+void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
+    for (const auto & medium : mediums) {
+        MediumDesc desc;
+        desc.init(medium);
+        medium_descs.push_back(desc);
+    }
+}
+
 void SceneDesc::process_materials() noexcept {
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;
@@ -164,6 +172,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     warper_desc.sub_type = "alias";
     sensor_desc.init(data.value("camera", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));
+    init_medium_descs(data.value("mediums", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
     output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();

@@ -768,23 +768,34 @@
             }
         }
     },
-    "integrator": {
-        "type": "pt",
+    "integrator" : {
+        "type" : "pt",
         // "type": "WavefrontPT",
-        "param": {
-            "min_depth": 0,
-            "max_depth": 16,
-            "rr_threshold": 1
+        "param" : {
+            "min_depth" : 0,
+            "max_depth" : 16,
+            "rr_threshold" : 1
         }
     },
-    "debug": {
+    "mediums" : [
+        {
+            "type" : "homogeneous",
+            "name" :"fog",
+            "param" : {
+                "g" : 0,
+                "sigma_a" : [0.0, 0.0, 0.0],
+                "sigma_s" : [0.8, 0.8, 0.8]
+            }
+        }
+    ],
+    "debug" : {
         // "pixel" : [60, 79],
-        "MIS_mode": 2
+        "MIS_mode" : 2
     },
-    "output": {
-        "fn": "cornell-box-mg.png",
+    "output" : {
+        "fn" : "cornell-box-mg.png",
         // "fn": "cornell-box-wf.png",
-        "spp": 0,
+        "spp" : 0,
         // "albedo" : true,
         // "normal" : true,
         // "normal_remapping" : true,

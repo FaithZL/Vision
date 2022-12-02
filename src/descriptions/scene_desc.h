@@ -18,6 +18,7 @@ public:
     IntegratorDesc integrator_desc;
     WarperDesc warper_desc;
     vector<MaterialDesc> material_descs;
+    vector<MediumDesc> medium_descs;
     vector<ShapeDesc> shape_descs;
     OutputDesc output_desc;
     map<string, uint> mat_name_to_id;
@@ -28,6 +29,7 @@ public:
     static SceneDesc from_json(const fs::path &path);
     void init_material_descs(const DataWrap &materials) noexcept;
     void init_shape_descs(const DataWrap &shapes) noexcept;
+    void init_medium_descs(const DataWrap &mediums) noexcept;
     void init(const DataWrap &data) noexcept;
     void process_materials() noexcept;
 };

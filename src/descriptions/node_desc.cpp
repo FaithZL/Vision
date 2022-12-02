@@ -157,6 +157,13 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
 #undef VS_TEXTURE_DESC_INIT
 }
 
+void MediumDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("homogeneous");
+    ParameterSet param = ps["param"];
+    VISION_PARAMS_LIST_INITIAL(g, sigma_a, sigma_s)
+}
+
 void LightDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("area");
