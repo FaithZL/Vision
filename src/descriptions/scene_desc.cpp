@@ -124,8 +124,13 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
         shape_desc.index = i;
         shape_desc.scene_path = scene_path;
         shape_desc.init(shapes[i]);
-        shape_desc.mat_id = mat_name_to_id[shape_desc.material_name];
-        shape_desc.mat_hash = material_descs[shape_desc.mat_id].hash();
+        if (mat_name_to_id.contains(shape_desc.material_name)) {
+            shape_desc.mat_id = mat_name_to_id[shape_desc.material_name];
+            shape_desc.mat_hash = material_descs[shape_desc.mat_id].hash();
+        } else {
+            shape_desc.mat_id = InvalidUI32;
+            shape_desc.mat_hash = InvalidUI64;
+        }
         shape_descs.push_back(shape_desc);
     }
 }
@@ -144,6 +149,10 @@ void SceneDesc::process_materials() noexcept {
     auto mats = move(material_descs);
     for (const ShapeDesc &sd : shape_descs) {
         uint index = material_descs.size();
+        if (sd.mat_id == InvalidUI32) {
+
+            continue;
+        }
         MaterialDesc md = mats[sd.mat_id];
         if (!mat_map.contains(sd.mat_hash)) {
             mat_map.insert(make_pair(sd.mat_hash, md));
@@ -152,6 +161,9 @@ void SceneDesc::process_materials() noexcept {
         }
     }
     for (ShapeDesc &sd : shape_descs) {
+        if (sd.mat_id == InvalidUI32) {
+            continue;
+        }
         sd.mat_id = index_map[sd.mat_hash];
     }
 //    auto m = material_descs;

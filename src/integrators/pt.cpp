@@ -32,7 +32,7 @@ public:
             Geometry &geometry = rp->geometry();
             Float eta_scale = 1.f;
 
-            $for(bounces, 0, _max_depth) {
+            $for(&bounces, 0, _max_depth) {
                 Var hit = geometry.trace_closest(ray);
                 comment("miss");
                 $if(hit->is_miss()) {
@@ -48,6 +48,12 @@ public:
                 };
 
                 Interaction si = geometry.compute_surface_interaction(hit, ray);
+                $if(!si.has_scatter()) {
+                    comment("process no material interaction");
+                    ray = si.spawn_ray(ray->direction());
+                    bounces -= 1;
+                    $continue;
+                };
 
                 comment("hit light");
                 $if(si.has_emission()) {
