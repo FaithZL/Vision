@@ -232,6 +232,12 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("alias_table");
 }
 
+void OutputDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    spp = ps["spp"].as_uint(0u);
+    fn = (scene_path / ps["fn"].as_string()).string();
+}
+
 #undef VISION_PARAMS_INITIAL
 #undef VISION_PARAMS_LIST_INITIAL
 

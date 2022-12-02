@@ -19,6 +19,7 @@ public:
     WarperDesc warper_desc;
     vector<MaterialDesc> material_descs;
     vector<ShapeDesc> shape_descs;
+    OutputDesc output_desc;
     map<string, uint> mat_name_to_id;
     fs::path scene_path;
 

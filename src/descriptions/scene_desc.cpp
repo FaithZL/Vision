@@ -165,6 +165,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sensor_desc.init(data.value("camera", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
+    output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();
 }
 

@@ -277,4 +277,16 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct OutputDesc : public NodeDesc {
+public:
+    string fn;
+    uint spp{};
+    VISION_DESC_COMMON(Output)
+    void init(const ParameterSet &ps, fs::path scene_path) noexcept {
+        this->scene_path = move(scene_path);
+        init(ps);
+    }
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 }// namespace vision

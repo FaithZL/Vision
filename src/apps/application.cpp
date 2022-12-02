@@ -103,8 +103,7 @@ void App::update(double dt) noexcept {
         need_update = false;
         rp.update();
     }
-    rp.render(dt);
-    rp.download_result();
+    rp.render_to_image(dt);
     window->set_background(rp.buffer());
 }
 

@@ -54,6 +54,10 @@ public:
     [[nodiscard]] const float4 *buffer() const { return _render_image.pixel_ptr<float4>(); }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
+    void render_to_image(double dt) {
+        render(dt);
+        download_result();
+    }
 
     // for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
