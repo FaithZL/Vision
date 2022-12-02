@@ -28,9 +28,9 @@ void Scene::init(const SceneDesc &scene_desc) {
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
+    load_mediums(scene_desc.medium_descs);
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _warper_desc = scene_desc.warper_desc;
-
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
 
@@ -58,6 +58,13 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
         auto shape = load<Shape>(desc);
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
+    }
+}
+
+void Scene::load_mediums(const vector<MediumDesc> &descs) noexcept {
+    for (const MediumDesc &desc : descs) {
+        auto medium = load<Medium>(desc);
+        _mediums.push_back(medium);
     }
 }
 

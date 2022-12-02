@@ -11,8 +11,7 @@ using namespace ocarina;
 class PathTracingIntegrator : public Integrator {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
-        : Integrator(desc) {
-    }
+        : Integrator(desc) {}
 
     void compile_shader(RenderPipeline *rp) noexcept override {
         Camera *camera = _scene->camera();

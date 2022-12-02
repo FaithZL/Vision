@@ -71,6 +71,7 @@ public:
         return load<Warper2D>(warper_desc);
     }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
+    void load_mediums(const vector<MediumDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
