@@ -20,7 +20,6 @@ private:
     vision::Context *_context;
     Scene _scene;
     Geometry _geometry{_device};
-    ImageIO _render_image;
     mutable Stream _stream;
     uint _frame_index{};
     ImagePool _image_pool{_device};
@@ -50,15 +49,15 @@ public:
     void prepare_device_data() noexcept;
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
-    void download_result();
-    [[nodiscard]] const float4 *buffer() const { return _render_image.pixel_ptr<float4>(); }
+    void download_result(void *ptr) noexcept {
+        _scene.film()->copy_to(ptr);
+    }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
-    void render_to_image(double dt) {
+    void render_to_image(double dt, void *ptr) {
         render(dt);
-        download_result();
+        download_result(ptr);
     }
-
     // for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;

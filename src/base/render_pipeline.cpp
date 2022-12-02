@@ -27,15 +27,10 @@ void RenderPipeline::clear_image(Image &image) const noexcept {
             << synchronize() << commit();
 }
 
-void RenderPipeline::download_result() {
-    _scene.film()->copy_to(_render_image.pixel_ptr());
-}
-
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();
     film->set_resolution(res);
     film->prepare(this);
-    _render_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, resolution());
 }
 
 void RenderPipeline::prepare_device_data() noexcept {
@@ -56,7 +51,6 @@ void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
     prepare_device_data();
     compile_shaders();
-    _render_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, resolution());
 }
 
 void RenderPipeline::render(double dt) noexcept {
