@@ -47,7 +47,7 @@ public:
                     $break;
                 };
 
-                SurfaceInteraction si = geometry.compute_surface_interaction(hit, ray);
+                Interaction si = geometry.compute_surface_interaction(hit, ray);
 
                 comment("hit light");
                 $if(si.has_emission()) {

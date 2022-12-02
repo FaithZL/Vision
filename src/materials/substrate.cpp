@@ -77,7 +77,7 @@ private:
     FresnelBlend _bxdf;
 
 public:
-    SubstrateBSDF(const SurfaceInteraction &si, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
+    SubstrateBSDF(const Interaction &si, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
         : BSDF(si), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
@@ -104,7 +104,7 @@ public:
           _roughness(desc.scene->load<Texture>(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
         Float3 Rd = Texture::eval(_diff, si).xyz();
         Float3 Rs = Texture::eval(_spec, si).xyz();
         Float2 alpha = Texture::eval(_roughness, si, 0.001f).xy();

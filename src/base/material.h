@@ -32,7 +32,7 @@ protected:
 
 public:
     BSDF() = default;
-    explicit BSDF(const SurfaceInteraction &si)
+    explicit BSDF(const Interaction &si)
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()), world_wo(si.wo) {}
     [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
@@ -46,7 +46,7 @@ public:
 
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept {
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si) const noexcept {
         return make_unique<BSDF>(si);
     }
 };

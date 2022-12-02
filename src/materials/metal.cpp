@@ -29,7 +29,7 @@ private:
     MicrofacetReflection _refl;
 
 public:
-    MetalBSDF(const SurfaceInteraction &si,
+    MetalBSDF(const Interaction &si,
               const SP<Fresnel> &fresnel,
               MicrofacetReflection refl)
         : BSDF(si), _fresnel(fresnel), _refl(move(refl)) {}
@@ -58,7 +58,7 @@ public:
           _roughness(desc.scene->load<Texture>(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
         Float3 kr = make_float3(1.f);
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));

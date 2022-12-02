@@ -26,6 +26,10 @@ public:
         return make_float3(0.f);
     }
 
+    [[nodiscard]] pair<Float3, Interaction> sample(const OCRay &ray, Sampler &sampler) const noexcept override {
+        return {};
+    }
+
 };
 
 }// namespace vision

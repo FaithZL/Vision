@@ -13,7 +13,7 @@ private:
     LambertReflection _bxdf;
 
 public:
-    explicit MatteBSDF(const SurfaceInteraction &si, const Float3 &kr)
+    explicit MatteBSDF(const Interaction &si, const Float3 &kr)
         : BSDF(si), _bxdf(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
@@ -33,7 +33,7 @@ public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(desc.scene->load<Texture>(desc.color)) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
         Float3 kr = Texture::eval(_color, si).xyz();
         return make_unique<MatteBSDF>(si, kr);
     }

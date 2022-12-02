@@ -77,8 +77,8 @@ void Geometry::build_accel() {
     stream << commit();
 }
 
-SurfaceInteraction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
-    SurfaceInteraction si;
+Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
+    Interaction si;
     si.prim_id = hit.prim_id;
     Var inst = instances.read(hit.inst_id);
     Var mesh = mesh_handles.read(inst.mesh_id);
@@ -159,7 +159,7 @@ LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
     hit.inst_id = inst_id;
     hit.prim_id = prim_id;
     hit.bary = bary;
-    SurfaceInteraction si = compute_surface_interaction(hit, false);
+    Interaction si = compute_surface_interaction(hit, false);
     LightEvalContext ret(si);
     return ret;
 }

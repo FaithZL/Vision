@@ -22,7 +22,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
 }
 
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref,
-                                      const SurfaceInteraction &si) const noexcept {
+                                      const Interaction &si) const noexcept {
     LightEval ret;
     dispatch_light(si.light_id, [&](const Light *light) {
         if (light->type() != LightType::Area) { return; }

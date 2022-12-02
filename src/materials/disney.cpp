@@ -264,7 +264,7 @@ private:
     }
 
 public:
-    PrincipledBSDF(const SurfaceInteraction &si, const Texture *color_tex, const Texture *metallic_tex, const Texture *eta_tex,
+    PrincipledBSDF(const Interaction &si, const Texture *color_tex, const Texture *metallic_tex, const Texture *eta_tex,
                    const Texture *roughness_tex, const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
@@ -469,7 +469,7 @@ public:
           _flatness(desc.scene->load<Texture>(desc.flatness)),
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const SurfaceInteraction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
         return make_unique<PrincipledBSDF>(si, _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic,
                                            _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
                                            _spec_trans, _flatness, _diff_trans);
