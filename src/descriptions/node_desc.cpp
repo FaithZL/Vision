@@ -241,6 +241,9 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
 
 void OutputDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
+    if (ps.data().is_null()) {
+        return;
+    }
     spp = ps["spp"].as_uint(0u);
     fn = (scene_path / ps["fn"].as_string()).string();
 }
