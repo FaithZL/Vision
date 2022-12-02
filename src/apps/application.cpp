@@ -106,6 +106,14 @@ void App::update(double dt) noexcept {
     }
     rp.render_to_image(dt, radiance_image.pixel_ptr());
     window->set_background(radiance_image.pixel_ptr<float4>());
+    check_and_save();
+}
+
+void App::check_and_save() noexcept {
+    OutputDesc desc = scene_desc.output_desc;
+    if (rp.frame_index() == desc.spp) {
+        radiance_image.save(desc.fn);
+    }
 }
 
 int App::run() noexcept {
