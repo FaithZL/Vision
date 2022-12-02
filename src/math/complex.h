@@ -8,6 +8,7 @@
 #include "dsl/common.h"
 
 namespace vision {
+using namespace ocarina;
 template<EPort p = D>
 struct Complex {
 public:

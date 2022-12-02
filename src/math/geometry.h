@@ -118,6 +118,12 @@ template<EPort p = D>
 [[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> theta, oc_float<p> phi) {
     return spherical_direction(sin(theta), cos(theta), phi);
 }
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> sin_theta, oc_float<p> cos_theta, oc_float<p> phi,
+                                               const oc_float3<p> &x, const oc_float3<p> &y,
+                                               const oc_float3<p> &z) {
+    return sin_theta * cos(phi) * x + sin_theta * sin(phi) * y + cos_theta * z;
+}
 
 template<typename T>
 requires is_vector3_expr_v<T>
