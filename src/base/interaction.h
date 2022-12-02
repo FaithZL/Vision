@@ -42,11 +42,11 @@ public:
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
     Uint light_id{InvalidUI32};
-    Uint mat_id{InvalidUI32};
+    Uint scatter_id{InvalidUI32};
 
 public:
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
-    [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
+    [[nodiscard]] Bool has_scatter() const noexcept { return scatter_id != InvalidUI32; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {

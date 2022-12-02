@@ -67,7 +67,7 @@ public:
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                _scene->materials().dispatch(si.mat_id,
+                _scene->materials().dispatch(si.scatter_id,
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
 
