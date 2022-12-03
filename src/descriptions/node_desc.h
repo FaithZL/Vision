@@ -124,10 +124,13 @@ public:
 
 struct ShapeDesc : public NodeDesc {
 public:
+    struct NameID {
+        string name;
+        uint id{InvalidUI32};
+    };
     TransformDesc o2w;
     LightDesc emission;
-    string material_name;
-    uint mat_id{InvalidUI32};
+    NameID material;
     uint64_t mat_hash{InvalidUI32};
     uint index{InvalidUI32};
     fs::path fn;

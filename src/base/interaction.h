@@ -40,6 +40,8 @@ public:
     MediumInterface(Uchar in, Uchar out) : inside(in), outside(out) {}
     explicit MediumInterface(Uchar medium_id) : inside(medium_id), outside(medium_id) {}
     [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
+    [[nodiscard]] Bool has_inside() const noexcept { return inside != InvalidUI8; }
+    [[nodiscard]] Bool has_outside() const noexcept { return outside != InvalidUI8; }
 };
 
 struct Interaction {

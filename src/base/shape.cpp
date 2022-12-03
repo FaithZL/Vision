@@ -10,7 +10,7 @@ namespace vision {
 
 Shape::Shape(const ShapeDesc &desc)
     : Node(desc),
-      mat_id(desc.mat_id) {
+      mat_id(desc.material.id) {
     o2w = desc.o2w.mat;
 }
 

@@ -22,6 +22,7 @@ public:
     vector<ShapeDesc> shape_descs;
     OutputDesc output_desc;
     map<string, uint> mat_name_to_id;
+    map<string, uint> medium_name_to_id;
     fs::path scene_path;
 
 public:

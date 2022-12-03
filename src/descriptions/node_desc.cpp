@@ -49,7 +49,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     name = ps["name"].as_string();
     ParameterSet param = ps["param"];
     o2w.init(param.data().value("transform", DataWrap()));
-    material_name = param["material"].as_string("");
+    material.name = param["material"].as_string("");
     if (param.contains("emission")) {
         emission.inst_id = index;
         emission.scene_path = scene_path;
