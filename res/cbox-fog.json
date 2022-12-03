@@ -287,14 +287,14 @@
         {
             "type": "quad",
             "name": "shape_2",
-            "medium": {
-                "inside" : "fog",
-                "outside" : "fog"
-            },
             "param": {
                 "width": 1.0,
                 "height": 1.0,
                 "material": "BackWall",
+                "medium": {
+                    "inside" : "fog",
+                    "outside" : "fog"
+                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -801,6 +801,7 @@
             "sensitivity" : 0.5,
             "fov_y": 19.5,
             "velocity": 5,
+            "medium" : "fog",
             "transform": {
                 "type": "look_at",
                 "param": {

@@ -15,6 +15,21 @@ namespace vision {
 
 using namespace ocarina;
 class Scene;
+
+struct NameID {
+public:
+    using map_ty = map<string, uint>;
+
+public:
+    string name;
+    uint id{InvalidUI32};
+    void fill_id(map_ty name_to_id) {
+        if (name_to_id.contains(name)) {
+            id = name_to_id[name];
+        }
+    }
+};
+
 struct NodeDesc : public Hashable {
 protected:
     string_view _type;
@@ -124,13 +139,11 @@ public:
 
 struct ShapeDesc : public NodeDesc {
 public:
-    struct NameID {
-        string name;
-        uint id{InvalidUI32};
-    };
     TransformDesc o2w;
     LightDesc emission;
     NameID material;
+    NameID inside_medium;
+    NameID outside_medium;
     uint64_t mat_hash{InvalidUI32};
     uint index{InvalidUI32};
     fs::path fn;
@@ -205,6 +218,7 @@ public:
     float lens_radius{0.f};
     FilterDesc filter_desc;
     FilmDesc film_desc;
+    NameID medium;
 
 public:
     VISION_DESC_COMMON(Sensor)

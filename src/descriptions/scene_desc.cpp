@@ -120,18 +120,24 @@ void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
 
 void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     for (uint i = 0; i < shapes.size(); ++i) {
-        ShapeDesc shape_desc;
-        shape_desc.index = i;
-        shape_desc.scene_path = scene_path;
-        shape_desc.init(shapes[i]);
-        if (mat_name_to_id.contains(shape_desc.material.name)) {
-            shape_desc.material.id = mat_name_to_id[shape_desc.material.name];
-            shape_desc.mat_hash = material_descs[shape_desc.material.id].hash();
+        ShapeDesc sd;
+        sd.index = i;
+        sd.scene_path = scene_path;
+        sd.init(shapes[i]);
+        if (mat_name_to_id.contains(sd.material.name)) {
+            sd.material.id = mat_name_to_id[sd.material.name];
+            sd.mat_hash = material_descs[sd.material.id].hash();
         } else {
-            shape_desc.material.id = InvalidUI32;
-            shape_desc.mat_hash = InvalidUI64;
+            sd.material.id = InvalidUI32;
+            sd.mat_hash = InvalidUI64;
         }
-        shape_descs.push_back(shape_desc);
+        if (medium_name_to_id.contains(sd.inside_medium.name)) {
+            sd.inside_medium.id = medium_name_to_id[sd.inside_medium.name];
+        }
+        if (medium_name_to_id.contains(sd.outside_medium.name)) {
+            sd.outside_medium.id = medium_name_to_id[sd.outside_medium.name];
+        }
+        shape_descs.push_back(sd);
     }
 }
 
@@ -145,6 +151,7 @@ void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
 }
 
 void SceneDesc::process_materials() noexcept {
+    // merge duplicate materials
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;
     auto mats = move(material_descs);
@@ -182,10 +189,13 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sampler_desc.init(data.value("sampler", DataWrap()));
     warper_desc = WarperDesc("Warper");
     warper_desc.sub_type = "alias";
-    sensor_desc.init(data.value("camera", DataWrap()));
     init_material_descs(data.value("materials", DataWrap()));
     init_medium_descs(data.value("mediums", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
+    sensor_desc.init(data.value("camera", DataWrap()));
+    if (medium_name_to_id.contains(sensor_desc.medium.name)) {
+        sensor_desc.medium.id = medium_name_to_id[sensor_desc.medium.name];
+    }
     output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();
 }

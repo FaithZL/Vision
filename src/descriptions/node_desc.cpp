@@ -50,6 +50,11 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps["param"];
     o2w.init(param.data().value("transform", DataWrap()));
     material.name = param["material"].as_string("");
+    if (param.contains("medium")) {
+        ParameterSet m(param["medium"]);
+        inside_medium.name = m["inside"].as_string();
+        outside_medium.name = m["outside"].as_string();
+    }
     if (param.contains("emission")) {
         emission.inst_id = index;
         emission.scene_path = scene_path;
@@ -97,6 +102,9 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
     transform_desc.init(param["transform"]);
     filter_desc.init(param["filter"]);
     film_desc.init(param["film"]);
+    if (param.contains("medium")) {
+        medium.name = param["medium"].as_string();
+    }
 }
 
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
