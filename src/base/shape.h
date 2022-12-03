@@ -25,9 +25,12 @@ public:
     uint light_id{InvalidUI32};
     uint mat_id{InvalidUI32};
     struct Handle {
+        // todo compress unsigned int data
         uint light_id{InvalidUI32};
         uint mat_id{InvalidUI32};
         uint mesh_id{InvalidUI32};
+        uchar inside_medium{InvalidUI8};
+        uchar outside_medium{InvalidUI8};
         float4x4 o2w;
     };
 
@@ -40,7 +43,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Shape::Handle, light_id, mat_id, mesh_id, o2w){};
+OC_STRUCT(vision::Shape::Handle, light_id, mat_id, mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
 struct Mesh : public Shape {

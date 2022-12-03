@@ -32,13 +32,13 @@ public:
 
 struct MediumInterface {
 public:
-    Uint inside{InvalidUI32};
-    Uint outside{InvalidUI32};
+    Uchar inside{InvalidUI8};
+    Uchar outside{InvalidUI8};
 
 public:
     MediumInterface() = default;
-    MediumInterface(Uint in, Uint out) : inside(in), outside(out) {}
-    explicit MediumInterface(Uint medium_id): inside(medium_id), outside(medium_id) {}
+    MediumInterface(Uchar in, Uchar out) : inside(in), outside(out) {}
+    explicit MediumInterface(Uchar medium_id) : inside(medium_id), outside(medium_id) {}
     [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
 };
 
@@ -55,7 +55,7 @@ public:
     Uint prim_id{InvalidUI32};
     Uint light_id{InvalidUI32};
     Uint mat_id{InvalidUI32};
-    
+
     // todo optimize volpt and pt
     MediumInterface mi;
 

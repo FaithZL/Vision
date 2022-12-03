@@ -48,7 +48,7 @@ public:
 
                 Interaction si = geometry.compute_surface_interaction(hit, ray);
                 $if(!si.has_material()) {
-                    comment("process no material interaction");
+                    comment("process no material interaction for volumetric rendering");
                     ray = si.spawn_ray(ray->direction());
                     bounces -= 1;
                     $continue;
