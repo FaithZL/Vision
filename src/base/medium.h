@@ -35,18 +35,6 @@ public:
 
 class Sampler;
 
-struct MediumInterface {
-public:
-    Uint inside{InvalidUI32};
-    Uint outside{InvalidUI32};
-
-public:
-    MediumInterface() = default;
-    MediumInterface(Uint in, Uint out) : inside(in), outside(out) {}
-    explicit MediumInterface(Uint medium_id): inside(medium_id), outside(medium_id) {}
-    [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
-};
-
 class Medium : public Node {
 public:
     using Desc = MediumDesc;

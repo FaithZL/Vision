@@ -47,7 +47,7 @@ public:
                 };
 
                 Interaction si = geometry.compute_surface_interaction(hit, ray);
-                $if(!si.has_scatter()) {
+                $if(!si.has_material()) {
                     comment("process no material interaction");
                     ray = si.spawn_ray(ray->direction());
                     bounces -= 1;
@@ -72,7 +72,7 @@ public:
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                _scene->materials().dispatch(si.scatter_id,
+                _scene->materials().dispatch(si.mat_id,
                                        [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(si);
 

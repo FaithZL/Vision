@@ -30,6 +30,18 @@ public:
     [[nodiscard]] boolean_t<T> valid() const noexcept { return nonzero(normal()); }
 };
 
+struct MediumInterface {
+public:
+    Uint inside{InvalidUI32};
+    Uint outside{InvalidUI32};
+
+public:
+    MediumInterface() = default;
+    MediumInterface(Uint in, Uint out) : inside(in), outside(out) {}
+    explicit MediumInterface(Uint medium_id): inside(medium_id), outside(medium_id) {}
+    [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
+};
+
 struct Interaction {
 public:
     Float3 pos;
@@ -42,11 +54,14 @@ public:
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
     Uint light_id{InvalidUI32};
-    Uint scatter_id{InvalidUI32};
+    Uint mat_id{InvalidUI32};
+    
+    // todo optimize volpt and pt
+    MediumInterface mi;
 
 public:
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
-    [[nodiscard]] Bool has_scatter() const noexcept { return scatter_id != InvalidUI32; }
+    [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
