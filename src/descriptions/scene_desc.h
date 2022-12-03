@@ -21,8 +21,8 @@ public:
     vector<MediumDesc> medium_descs;
     vector<ShapeDesc> shape_descs;
     OutputDesc output_desc;
-    map<string, uint> mat_name_to_id;
-    map<string, uint> medium_name_to_id;
+    NameID::map_ty mat_name_to_id;
+    NameID::map_ty medium_name_to_id;
     fs::path scene_path;
 
 public:

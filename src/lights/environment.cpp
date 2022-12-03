@@ -36,11 +36,13 @@ public:
     }
 
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+        // todo clear this function
         Float3 direction = normalize(p_light.pos - p_ref.pos);
         return L(transform_vector(_w2o, direction));
     }
 
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+        // todo clear this function
         Float3 direction = normalize(p_light.pos - p_ref.pos);
         direction = transform_vector(_w2o, direction);
         Float theta = spherical_theta(direction);

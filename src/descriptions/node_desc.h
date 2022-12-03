@@ -23,9 +23,11 @@ public:
 public:
     string name;
     uint id{InvalidUI32};
-    void fill_id(map_ty name_to_id) {
+    void fill_id(const map_ty &name_to_id) {
         if (name_to_id.contains(name)) {
-            id = name_to_id[name];
+            id = name_to_id.at(name);
+        } else {
+            id = InvalidUI32;
         }
     }
 };

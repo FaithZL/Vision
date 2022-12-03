@@ -131,12 +131,8 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
             sd.material.id = InvalidUI32;
             sd.mat_hash = InvalidUI64;
         }
-        if (medium_name_to_id.contains(sd.inside_medium.name)) {
-            sd.inside_medium.id = medium_name_to_id[sd.inside_medium.name];
-        }
-        if (medium_name_to_id.contains(sd.outside_medium.name)) {
-            sd.outside_medium.id = medium_name_to_id[sd.outside_medium.name];
-        }
+        sd.inside_medium.fill_id(medium_name_to_id);
+        sd.outside_medium.fill_id(medium_name_to_id);
         shape_descs.push_back(sd);
     }
 }
@@ -193,9 +189,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     init_medium_descs(data.value("mediums", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
     sensor_desc.init(data.value("camera", DataWrap()));
-    if (medium_name_to_id.contains(sensor_desc.medium.name)) {
-        sensor_desc.medium.id = medium_name_to_id[sensor_desc.medium.name];
-    }
+    sensor_desc.medium.fill_id(medium_name_to_id);
     output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();
 }
