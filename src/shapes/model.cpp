@@ -13,9 +13,12 @@ namespace vision {
 class Model : public Shape {
 private:
     vector<Mesh> _meshes;
+    uint _mat_id{InvalidUI32};
+    float4x4 o2w;
 
 public:
-    explicit Model(const ShapeDesc &desc) : Shape(desc) {
+    explicit Model(const ShapeDesc &desc)
+        : Shape(desc), _mat_id(desc.material.id), o2w(desc.o2w.mat) {
         load(desc);
     }
 
@@ -100,13 +103,13 @@ public:
                                           ai_face.mIndices[3]);
                 } else {
                     OC_WARNING("Only triangles and quads supported: ", ai_mesh->mName.data, " num is ",
-                                     ai_face.mNumIndices);
+                               ai_face.mNumIndices);
                     continue;
                 }
             }
             Mesh mesh(std::move(vertices), std::move(triangle));
-            mesh.mat_id = mat_id;
-            mesh.o2w = o2w;
+            mesh.handle.mat_id = _mat_id;
+            mesh.handle.o2w = o2w;
             meshes.push_back(mesh);
         }
         return meshes;

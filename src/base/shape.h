@@ -20,14 +20,6 @@ public:
     using Desc = ShapeDesc;
 
 public:
-    Box3f aabb;
-    float4x4 o2w;
-    uint light_id{InvalidUI32};
-    uint mat_id{InvalidUI32};
-    uchar inside_medium{InvalidUI8};
-    uchar outside_medium{InvalidUI8};
-
-public:
     struct Handle {
         // todo compress unsigned int data
         uint light_id{InvalidUI32};
@@ -37,6 +29,11 @@ public:
         uchar outside_medium{InvalidUI8};
         float4x4 o2w;
     };
+
+public:
+    Box3f aabb;
+    Light *emission{};
+    Handle handle;
 
 public:
     explicit Shape(const ShapeDesc &desc);
@@ -58,7 +55,6 @@ public:
     };
 
 public:
-    Light *emission{};
     vector<Vertex> vertices;
     vector<Triangle> triangles;
 

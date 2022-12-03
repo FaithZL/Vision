@@ -59,7 +59,7 @@ public:
         };
         for (int i = 0; i < P.size(); ++i) {
             vertices.emplace_back(P[i], N[i], UVs[i]);
-            aabb.extend(transform_point<H>(o2w, P[i]));
+            aabb.extend(transform_point<H>(handle.o2w, P[i]));
         }
     }
 };

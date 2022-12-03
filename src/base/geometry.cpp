@@ -7,19 +7,12 @@
 
 namespace vision {
 
-void Geometry::accept(const vector<Vertex> &vert,
-                        const vector<Triangle> &tri, float4x4 o2w, uint mat_id, uint light_id) {
-
+void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle inst) {
     Mesh::Handle mesh_handle{.vertex_offset = (uint)vertices.host().size(),
                              .triangle_offset = (uint)triangles.host().size()};
-
     vertices.append(vert);
     triangles.append(tri);
-
-    Shape::Handle inst{.light_id = light_id,
-                       .mat_id = mat_id,
-                       .mesh_id = (uint)mesh_handles.host().size(),
-                       .o2w = o2w};
+    inst.mesh_id = (uint)mesh_handles.host().size();
     instances.push_back(inst);
     mesh_handles.push_back(mesh_handle);
 }
