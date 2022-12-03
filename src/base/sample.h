@@ -35,6 +35,10 @@ public:
 
 public:
     [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI8; }
+    [[nodiscard]] Float3 origin() const noexcept { return ray->origin(); }
+    [[nodiscard]] Float3 direction() const noexcept { return ray->direction(); }
+    [[nodiscard]] Float t_max() const noexcept { return ray->t_max(); }
+    [[nodiscard]] Float t_min() const noexcept { return ray->t_min(); }
 };
 
 struct RaySample {
