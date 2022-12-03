@@ -23,7 +23,7 @@ public:
             Bool debug = all(pixel == make_uint2(508, 66));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-            RaySample rs = camera->generate_ray(ss);
+            RayState rs = camera->generate_ray(ss);
             Var ray = rs.ray;
             Float bsdf_pdf = eval(1e16f);
             Float3 Li = make_float3(0.f);

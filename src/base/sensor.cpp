@@ -12,7 +12,8 @@ using namespace ocarina;
 Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
       _filter(desc.scene->load<Filter>(desc.filter_desc)),
-      _film(desc.scene->load<Film>(desc.film_desc)) {}
+      _film(desc.scene->load<Film>(desc.film_desc)),
+      _medium(desc.medium.id) {}
 
 void Sensor::prepare(RenderPipeline *rp) noexcept {
     _filter->prepare(rp);
@@ -27,16 +28,14 @@ void Camera::init(const SensorDesc &desc) noexcept {
     update_mat(desc.transform_desc.mat);
 }
 
-RaySample Camera::generate_ray(const SensorSample &ss) const noexcept {
+RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
     uint2 res = _film->resolution();
     Var<Data> data = _data.read(0);
     Float2 p = (ss.p_film * 2.f - make_float2(res)) * data.tan_fov_y_over2 / float(res.y);
     Float4x4 c2w = data.c2w;
     Float3 dir = normalize(p.x * c2w[0].xyz() - p.y * c2w[1].xyz() + c2w[2].xyz());
-    RaySample ret;
-    ret.ray = make_ray(c2w[3].xyz(), dir);
-    ret.weight = ss.filter_weight;
-    return ret;
+    OCRay ray = make_ray(c2w[3].xyz(), dir);
+    return {.ray = ray, .weight = ss.filter_weight, .ior = 1.f, .medium = _medium};
 }
 
 void Camera::update_mat(float4x4 m) noexcept {

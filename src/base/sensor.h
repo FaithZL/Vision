@@ -20,9 +20,15 @@ struct SensorSample {
     Float filter_weight{1.f};
 };
 
-struct RaySample {
+struct RayState {
+public:
     OCRay ray;
     Float weight;
+    Float ior;
+    Uchar medium{InvalidUI8};
+
+public:
+    [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI8; }
 };
 
 class Sensor : public Node {
@@ -32,6 +38,7 @@ public:
 protected:
     Filter *_filter{};
     Film *_film{};
+    uchar _medium{InvalidUI8};
 
 public:
     explicit Sensor(const SensorDesc &desc);
@@ -42,7 +49,7 @@ public:
     [[nodiscard]] auto film() noexcept { return _film; }
     [[nodiscard]] auto film() const noexcept { return _film; }
     [[nodiscard]] uint2 resolution() noexcept { return _film->resolution(); }
-    [[nodiscard]] virtual RaySample generate_ray(const SensorSample &ss) const noexcept = 0;
+    [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 
 }// namespace vision
@@ -79,7 +86,7 @@ public:
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
-    [[nodiscard]] float sensitivity() noexcept { return _sensitivity; }
+    [[nodiscard]] float sensitivity() const noexcept { return _sensitivity; }
     [[nodiscard]] float3 position() const noexcept { return _position; }
     void move(float3 delta) noexcept { _position += delta; }
     [[nodiscard]] float yaw() const noexcept { return _yaw; }
@@ -108,7 +115,7 @@ public:
     [[nodiscard]] float3 forward() const noexcept;
     [[nodiscard]] float3 up() const noexcept;
     [[nodiscard]] float3 right() const noexcept;
-    [[nodiscard]] RaySample generate_ray(const SensorSample &ss) const noexcept override;
+    [[nodiscard]] RayState generate_ray(const SensorSample &ss) const noexcept override;
 };
 
 }// namespace vision
