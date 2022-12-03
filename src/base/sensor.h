@@ -6,6 +6,7 @@
 
 #include "core/basic_types.h"
 #include "node.h"
+#include "sample.h"
 #include "math/transform.h"
 #include "filter.h"
 #include "film.h"
@@ -18,21 +19,6 @@ struct SensorSample {
     Float2 p_lens;
     Float time;
     Float filter_weight{1.f};
-};
-
-struct RayState {
-public:
-    OCRay ray;
-    Float ior;
-    Uchar medium{InvalidUI8};
-
-public:
-    [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI8; }
-};
-
-struct RaySample {
-    RayState ray_state;
-    Float weight{1.f};
 };
 
 class Sensor : public Node {

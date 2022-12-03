@@ -7,6 +7,7 @@
 #include "core/basic_types.h"
 #include "dsl/common.h"
 #include "math/geometry.h"
+#include "sample.h"
 
 namespace vision {
 
@@ -68,6 +69,11 @@ public:
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
         return vision::spawn_ray(pos, g_uvn.normal(), dir);
+    }
+    [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept {
+        OCRay ray = vision::spawn_ray(pos, g_uvn.normal(), dir);
+        Uchar medium = select(dot(g_uvn.normal(), dir) > 0, mi.outside, mi.inside);
+        return {.ray = ray, .ior = 1.f, .medium = medium};
     }
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
         return vision::spawn_ray_to(pos, g_uvn.normal(), p);
