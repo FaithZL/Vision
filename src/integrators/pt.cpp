@@ -108,7 +108,7 @@ public:
                 bsdf_pdf = bsdf_sample.eval.pdf;
                 ray = si.spawn_ray(bsdf_sample.wi);
             };
-            camera->film()->add_sample(pixel, Li * rs.weight, frame_index);
+            camera->film()->add_sample(pixel, Li, frame_index);
         };
         _shader = rp->device().compile(_kernel);
     }

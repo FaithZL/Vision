@@ -23,12 +23,16 @@ struct SensorSample {
 struct RayState {
 public:
     OCRay ray;
-    Float weight;
     Float ior;
     Uchar medium{InvalidUI8};
 
 public:
     [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI8; }
+};
+
+struct RaySample {
+    RayState ray_state;
+    Float weight{1.f};
 };
 
 class Sensor : public Node {

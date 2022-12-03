@@ -35,7 +35,7 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
     Float4x4 c2w = data.c2w;
     Float3 dir = normalize(p.x * c2w[0].xyz() - p.y * c2w[1].xyz() + c2w[2].xyz());
     OCRay ray = make_ray(c2w[3].xyz(), dir);
-    return {.ray = ray, .weight = ss.filter_weight, .ior = 1.f, .medium = _medium};
+    return {.ray = ray, .ior = 1.f, .medium = _medium};
 }
 
 void Camera::update_mat(float4x4 m) noexcept {
