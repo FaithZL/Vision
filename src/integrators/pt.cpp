@@ -47,6 +47,7 @@ public:
 
                 Interaction si = geometry.compute_surface_interaction(hit, rs.ray);
                 $if(!si.has_material()) {
+                    //todo remove no material mesh in non volumetric scene
                     comment("process no material interaction for volumetric rendering");
                     rs = si.spawn_ray_state(rs.direction());
                     bounces -= 1;
