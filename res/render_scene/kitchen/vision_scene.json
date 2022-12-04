@@ -13505,6 +13505,10 @@
             "rr_threshold": 1
         }
     },
+    "output" : {
+        "fn" : "kitchen_vision.png",
+        "spp" : 1024
+    },
     "light_sampler": {
         "type": "uniform",
         "param": {

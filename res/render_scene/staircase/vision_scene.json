@@ -31465,6 +31465,10 @@
             "rr_threshold": 1
         }
     },
+    "output" : {
+        "fn" : "staircase.png",
+        "spp" : 1024
+    },
     "light_sampler": {
         "type": "uniform",
         "param": {
