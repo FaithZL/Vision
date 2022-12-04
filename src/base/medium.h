@@ -20,6 +20,12 @@ template<EPort p = D>
 class PhaseFunction {
 public:
     [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;
+
+    /**
+     * @param wo
+     * @param u
+     * @return f , wi
+     */
     [[nodiscard]] virtual pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept = 0;
 };
 
@@ -42,7 +48,7 @@ public:
 public:
     explicit Medium(const MediumDesc &desc) : Node(desc) {}
     virtual ~Medium() {}
-    virtual Float3 tr(const OCRay &ray, Sampler &sampler) const noexcept = 0;
+    virtual Float3 Tr(const OCRay &ray, Sampler &sampler) const noexcept = 0;
     virtual pair<Float3, Interaction> sample(const OCRay &ray, Sampler &sampler) const noexcept = 0;
 };
 

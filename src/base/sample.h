@@ -27,6 +27,25 @@ struct BxDFFlag {
     static constexpr uchar All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
 };
 
+struct RayState {
+public:
+    OCRay ray;
+    Float ior;
+    Uchar medium{InvalidUI8};
+
+public:
+    [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI8; }
+    [[nodiscard]] Float3 origin() const noexcept { return ray->origin(); }
+    [[nodiscard]] Float3 direction() const noexcept { return ray->direction(); }
+    [[nodiscard]] Float t_max() const noexcept { return ray->t_max(); }
+    [[nodiscard]] Float t_min() const noexcept { return ray->t_min(); }
+};
+
+struct RaySample {
+    RayState ray_state;
+    Float weight{1.f};
+};
+
 struct BSDFEval {
     Float3 f{make_float3(0.f)};
     Float pdf{0.f};

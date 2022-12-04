@@ -22,12 +22,25 @@ public:
           _sigma_t(_sigma_a + _sigma_s),
           _g(desc.g) {}
 
-    [[nodiscard]] Float3 tr(const OCRay &ray, Sampler &sampler) const noexcept override {
-        return make_float3(0.f);
+    [[nodiscard]] Float3 Tr(Float t) const noexcept {
+        return exp(-_sigma_t * min(RayTMax, t));
+    }
+
+    [[nodiscard]] Float3 Tr(const OCRay &ray, Sampler &sampler) const noexcept override {
+        return Tr(length(ray->direction()) * ray->t_max());
     }
 
     [[nodiscard]] pair<Float3, Interaction> sample(const OCRay &ray, Sampler &sampler) const noexcept override {
-        return {};
+        Uint channel = min(cast<uint>(sampler.next_1d() * 3), 2u);
+        Float3 sigma_t = _sigma_t;
+        Float dist = -log(1 - sampler.next_1d()) / sigma_t[channel];
+        Float t = min(dist / length(ray->direction()), ray->t_max());
+        Bool sampled_medium = t < ray->t_max();
+        Float3 tr = Tr(t);
+        Float3 density = select(sampled_medium, _sigma_t * tr, tr);
+        Float pdf = (density.x + density.y + density.z) / 3.f;
+        Float3 ret = select(sampled_medium, tr * _sigma_s / pdf, tr / pdf);
+        return {ret, Interaction()};
     }
 
 };

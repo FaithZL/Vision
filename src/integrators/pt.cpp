@@ -23,8 +23,7 @@ public:
             Bool debug = all(pixel == make_uint2(508, 66));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-            RaySample rs = camera->generate_ray(ss);
-            Var ray = rs.ray;
+            RayState rs = camera->generate_ray(ss);
             Float bsdf_pdf = eval(1e16f);
             Float3 Li = make_float3(0.f);
             Float3 throughput = make_float3(1.f);
@@ -32,24 +31,24 @@ public:
             Float eta_scale = 1.f;
 
             $for(&bounces, 0, _max_depth) {
-                Var hit = geometry.trace_closest(ray);
+                Var hit = geometry.trace_closest(rs.ray);
                 comment("miss");
                 $if(hit->is_miss()) {
                     if (light_sampler->env_light()) {
                         LightSampleContext p_ref;
-                        p_ref.pos = ray->origin();
-                        p_ref.ng = ray->direction();
-                        LightEval eval = light_sampler->evaluate_miss(p_ref, ray->direction());
+                        p_ref.pos = rs.origin();
+                        p_ref.ng = rs.direction();
+                        LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction());
                         Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
                         Li += eval.L * throughput * weight;
                     }
                     $break;
                 };
 
-                Interaction si = geometry.compute_surface_interaction(hit, ray);
+                Interaction si = geometry.compute_surface_interaction(hit, rs.ray);
                 $if(!si.has_material()) {
                     comment("process no material interaction for volumetric rendering");
-                    ray = si.spawn_ray(ray->direction());
+                    rs = si.spawn_ray_state(rs.direction());
                     bounces -= 1;
                     $continue;
                 };
@@ -57,8 +56,8 @@ public:
                 comment("hit light");
                 $if(si.has_emission()) {
                     LightSampleContext p_ref;
-                    p_ref.pos = ray->origin();
-                    p_ref.ng = ray->direction();
+                    p_ref.pos = rs.origin();
+                    p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, si);
                     Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
                     Li += eval.L * throughput * weight;
@@ -106,9 +105,9 @@ public:
                     throughput /= q;
                 };
                 bsdf_pdf = bsdf_sample.eval.pdf;
-                ray = si.spawn_ray(bsdf_sample.wi);
+                rs = si.spawn_ray_state(bsdf_sample.wi);
             };
-            camera->film()->add_sample(pixel, Li * rs.weight, frame_index);
+            camera->film()->add_sample(pixel, Li, frame_index);
         };
         _shader = rp->device().compile(_kernel);
     }

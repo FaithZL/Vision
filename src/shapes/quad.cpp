@@ -32,7 +32,7 @@ public:
                           make_float2(0, 0)};
         for (int i = 0; i < P.size(); ++i) {
             vertices.emplace_back(P[i], N[i], UV[i]);
-            aabb.extend(transform_point<H>(o2w, P[i]));
+            aabb.extend(transform_point<H>(handle.o2w, P[i]));
         }
         triangles = {Triangle{1, 0, 2}, Triangle{1, 2, 3}};
     }

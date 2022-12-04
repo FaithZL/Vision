@@ -24,7 +24,7 @@ public:
     explicit Geometry(Device *device = nullptr)
         : device(device) {}
 
-    void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, float4x4 o2w, uint mat_id, uint light_id);
+    void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle handle);
     void reset_device_buffer();
     void build_meshes();
     void build_accel();

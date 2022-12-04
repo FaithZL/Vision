@@ -801,7 +801,7 @@
             "sensitivity" : 0.5,
             "fov_y": 19.5,
             "velocity": 5,
-            "medium" : "fog",
+            "medium" : "",
             "transform": {
                 "type": "look_at",
                 "param": {
