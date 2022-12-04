@@ -84,7 +84,7 @@
             "param": {
                 "color": {
                     "fn": "textures/WoodPanel.png",
-                    "color_space": "srgb"
+                    "color_space": "linear"
                 },
                 "ior": 1.5,
                 "specular": [
@@ -105,7 +105,7 @@
             "param": {
                 "color": {
                     "fn": "textures/WoodFloor.jpg",
-                    "color_space": "srgb"
+                    "color_space": "linear"
                 },
                 "ior": 1.5,
                 "specular": [
@@ -126,7 +126,7 @@
             "param": {
                 "color": {
                     "fn": "textures/Label.png",
-                    "color_space": "srgb"
+                    "color_space": "linear"
                 }
             }
         },
@@ -3168,7 +3168,7 @@
                             75.0
                         ],
                         "two_sided": false,
-                        "scale": 1
+                        "scale": 0.7
                     }
                 }
             }
@@ -3186,7 +3186,7 @@
         "param": {
             "fov_y": 60.0,
             "name": "view1",
-            "velocity": 5,
+            "velocity": 20,
             "transform": {
                 "type": "look_at",
                 "param": {
@@ -3239,6 +3239,10 @@
             "max_depth": 64,
             "rr_threshold": 1
         }
+    },
+    "output" : {
+        "fn" : "bathroom.png",
+        "spp" : 1024
     },
     "light_sampler": {
         "type": "uniform",
