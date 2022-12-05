@@ -49,7 +49,7 @@ public:
                 Interaction it;
                 $if(rs.in_medium()) {
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-
+                        auto [beta, mi] = medium->sample(rs.ray, sampler);
                     });
                 };
 

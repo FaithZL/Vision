@@ -26,14 +26,14 @@ public:
         return exp(-_sigma_t * min(RayTMax, t));
     }
 
-    [[nodiscard]] Float3 Tr(const OCRay &ray, Sampler &sampler) const noexcept override {
+    [[nodiscard]] Float3 Tr(const OCRay &ray, Sampler *sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max());
     }
 
-    [[nodiscard]] pair<Float3, Interaction> sample(const OCRay &ray, Sampler &sampler) const noexcept override {
-        Uint channel = min(cast<uint>(sampler.next_1d() * 3), 2u);
+    [[nodiscard]] pair<Float3, Interaction> sample(const OCRay &ray, Sampler *sampler) const noexcept override {
+        Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
         Float3 sigma_t = _sigma_t;
-        Float dist = -log(1 - sampler.next_1d()) / sigma_t[channel];
+        Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
         Float t = min(dist / length(ray->direction()), ray->t_max());
         Bool sampled_medium = t < ray->t_max();
         Interaction it;

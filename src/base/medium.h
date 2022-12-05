@@ -68,8 +68,8 @@ public:
 public:
     explicit Medium(const MediumDesc &desc) : Node(desc) {}
     virtual ~Medium() {}
-    virtual Float3 Tr(const OCRay &ray, Sampler &sampler) const noexcept = 0;
-    virtual pair<Float3, Interaction> sample(const OCRay &ray, Sampler &sampler) const noexcept = 0;
+    virtual Float3 Tr(const OCRay &ray, Sampler *sampler) const noexcept = 0;
+    virtual pair<Float3, Interaction> sample(const OCRay &ray, Sampler *sampler) const noexcept = 0;
 };
 
 
