@@ -181,13 +181,6 @@ void SceneDesc::process_materials() noexcept {
         md.sub_type = "null";
         material_descs.push_back(md);
     }
-//    auto m = material_descs;
-//    for (int i = 0; i < 1; ++i) {
-//        for (const auto &md : material_descs) {
-//            m.push_back(md);
-//        }
-//    }
-//    material_descs = m;
 }
 
 void SceneDesc::init(const DataWrap &data) noexcept {
