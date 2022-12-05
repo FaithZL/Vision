@@ -70,8 +70,8 @@ Bool RenderPipeline::trace_any(const OCRay &ray) const noexcept {
     return geometry().accel.trace_any(ray);
 }
 
-Interaction RenderPipeline::compute_surface_interaction(const OCHit &hit) const noexcept {
-    return geometry().compute_surface_interaction(hit, true);
+Interaction RenderPipeline::compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept {
+    return geometry().compute_surface_interaction(hit, ray);
 }
 
 LightEvalContext RenderPipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {

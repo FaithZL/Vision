@@ -46,14 +46,14 @@ public:
                 };
 
                 Float3 medium_throughput = make_float3(1.f);
-                Interaction it;
+                Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
                 $if(rs.in_medium()) {
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
                         auto [beta, mi] = medium->sample(rs.ray, sampler);
+                        medium_throughput = beta;
                     });
                 };
 
-                it = geometry.compute_surface_interaction(hit, rs.ray);
                 $if(!it.has_material()) {
                     //todo remove no material mesh in non volumetric scene
                     comment("process no material interaction for volumetric rendering");
