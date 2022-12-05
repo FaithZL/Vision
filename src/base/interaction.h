@@ -31,19 +31,8 @@ public:
     [[nodiscard]] boolean_t<T> valid() const noexcept { return nonzero(normal()); }
 };
 
-struct MediumInterface {
-public:
-    Uchar inside{InvalidUI8};
-    Uchar outside{InvalidUI8};
-
-public:
-    MediumInterface() = default;
-    MediumInterface(Uchar in, Uchar out) : inside(in), outside(out) {}
-    explicit MediumInterface(Uchar medium_id) : inside(medium_id), outside(medium_id) {}
-    [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
-    [[nodiscard]] Bool has_inside() const noexcept { return inside != InvalidUI8; }
-    [[nodiscard]] Bool has_outside() const noexcept { return outside != InvalidUI8; }
-};
+class PhaseFunction;
+class MediumInterface;
 
 struct Interaction {
 public:
@@ -60,9 +49,12 @@ public:
     Uint mat_id{InvalidUI32};
 
     // todo optimize volpt and pt
-    MediumInterface mi;
+    SP<MediumInterface> mi;
+    SP<PhaseFunction> phase;
 
 public:
+    Interaction();
+    void set_medium(const Uchar &inside, const Uchar &outside);
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
@@ -70,11 +62,7 @@ public:
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
         return vision::spawn_ray(pos, g_uvn.normal(), dir);
     }
-    [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept {
-        OCRay ray = vision::spawn_ray(pos, g_uvn.normal(), dir);
-        Uchar medium = select(dot(g_uvn.normal(), dir) > 0, mi.outside, mi.inside);
-        return {.ray = ray, .ior = 1.f, .medium = medium};
-    }
+    [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
         return vision::spawn_ray_to(pos, g_uvn.normal(), p);
     }

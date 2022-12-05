@@ -45,39 +45,45 @@ public:
                     $break;
                 };
 
-                Interaction si = geometry.compute_surface_interaction(hit, rs.ray);
-                $if(!si.has_material()) {
+                Float3 medium_throughput = make_float3(1.f);
+                Interaction it;
+                $if(rs.in_medium()) {
+//                    medium_throughput
+                };
+
+                it = geometry.compute_surface_interaction(hit, rs.ray);
+                $if(!it.has_material()) {
                     //todo remove no material mesh in non volumetric scene
                     comment("process no material interaction for volumetric rendering");
-                    rs = si.spawn_ray_state(rs.direction());
+                    rs = it.spawn_ray_state(rs.direction());
                     bounces -= 1;
                     $continue;
                 };
 
                 comment("hit light");
-                $if(si.has_emission()) {
+                $if(it.has_emission()) {
                     LightSampleContext p_ref;
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
-                    LightEval eval = light_sampler->evaluate_hit(p_ref, si);
+                    LightEval eval = light_sampler->evaluate_hit(p_ref, it);
                     Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
                     Li += eval.L * throughput * weight;
                 };
 
                 comment("estimate direct lighting");
                 comment("sample light");
-                LightSample light_sample = light_sampler->sample(si, sampler->next_1d(), sampler->next_2d());
-                OCRay shadow_ray = si.spawn_ray_to(light_sample.p_light);
+                LightSample light_sample = light_sampler->sample(it, sampler->next_1d(), sampler->next_2d());
+                OCRay shadow_ray = it.spawn_ray_to(light_sample.p_light);
                 Bool occluded = geometry.trace_any(shadow_ray);
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                _scene->materials().dispatch(si.mat_id,
+                _scene->materials().dispatch(it.mat_id,
                                        [&](const Material *material) {
-                    UP<BSDF> bsdf = material->get_BSDF(si);
+                    UP<BSDF> bsdf = material->get_BSDF(it);
 
                     BSDFEval bsdf_eval;
-                    Float3 wi = normalize(light_sample.p_light - si.pos);
+                    Float3 wi = normalize(light_sample.p_light - it.pos);
                     bsdf_eval = bsdf->evaluate(wi, BxDFFlag::All);
                     bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = bsdf_sample.wi;
@@ -106,7 +112,7 @@ public:
                     throughput /= q;
                 };
                 bsdf_pdf = bsdf_sample.eval.pdf;
-                rs = si.spawn_ray_state(bsdf_sample.wi);
+                rs = it.spawn_ray_state(bsdf_sample.wi);
             };
             camera->film()->add_sample(pixel, Li, frame_index);
         };

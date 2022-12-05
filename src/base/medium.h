@@ -29,14 +29,31 @@ public:
     [[nodiscard]] virtual pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept = 0;
 };
 
-class HenyeyGreenstein : public PhaseFunction {
-private:
-    Float _g;
+struct MediumInterface {
+public:
+    Uchar inside{InvalidUI8};
+    Uchar outside{InvalidUI8};
 
 public:
+    MediumInterface() = default;
+    MediumInterface(Uchar in, Uchar out) : inside(in), outside(out) {}
+    explicit MediumInterface(Uchar medium_id) : inside(medium_id), outside(medium_id) {}
+    [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
+    [[nodiscard]] Bool has_inside() const noexcept { return inside != InvalidUI8; }
+    [[nodiscard]] Bool has_outside() const noexcept { return outside != InvalidUI8; }
+};
+
+class HenyeyGreenstein : public PhaseFunction {
+private:
+    static constexpr float InvalidG = 10;
+    Float _g{InvalidG};
+
+public:
+    HenyeyGreenstein() = default;
     explicit HenyeyGreenstein(Float g) : _g(g) {}
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept override;
+    [[nodiscard]] Bool valid() const noexcept { return InvalidG == _g; }
 };
 
 class Sampler;
