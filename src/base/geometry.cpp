@@ -80,6 +80,8 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     si.light_id = inst.light_id;
     si.mat_id = inst.mat_id;
+    si.mi.inside = inst.inside_medium;
+    si.mi.outside = inst.outside_medium;
     comment("compute pos");
     Var p0 = o2w.apply_point(v0->position());
     Var p1 = o2w.apply_point(v1->position());
