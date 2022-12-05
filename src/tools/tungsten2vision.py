@@ -16,6 +16,8 @@ table = {
     "linear" : 3,
 }
 
+g_mat_outputs = []
+
 
 def write_scene(scene_output, filepath):
     with open(filepath, "w") as outputfile:
@@ -320,8 +322,28 @@ def convert_mesh(shape_input, index):
     }
     return ret
 
+def convert_material(mat_input):
+    mat_output = None
+    mat_type = mat_input["type"]
+    if mat_type == "lambert" or mat_type == "oren_nayar":
+        mat_output = convert_matte(mat_input)
+    elif mat_type == "dielectric" or mat_type == "rough_dielectric":
+        mat_output = convert_glass(mat_input)
+    elif mat_type == "mirror":
+        mat_output = convert_mirror(mat_input)
+    elif mat_type == "conductor" or mat_type == "rough_conductor":
+        mat_output = convert_metal(mat_input)
+    elif mat_type == "plastic" or mat_type == "rough_plastic":
+        mat_output = convert_substrate(mat_input)
+    elif mat_type == "null":
+        mat_output = convert_null_material(mat_input)
+    elif mat_type != "null":
+        mat_output = convert_disney(mat_input)
+    return mat_output
+
 def convert_shapes(scene_input):
     shape_outputs = []
+    global g_mat_outputs
     shape_inputs = scene_input["primitives"]
     for i, shape_input in enumerate(shape_inputs):
         shape_output = None
@@ -333,7 +355,13 @@ def convert_shapes(scene_input):
             shape_output = convert_quad(shape_input, i)
         elif shape_input["type"] == "mesh":
             shape_output = convert_mesh(shape_input, i)
-            
+        if type(shape_output["param"]["material"]) == dict:
+            material_name = shape_output["name"] + "_material"
+            material_data = shape_output["param"]["material"]
+            shape_output["param"]["material"] = material_name
+            material_data["name"] = material_name
+            g_mat_outputs.append(convert_material(material_data))
+        
         if "emission" in shape_input or "power" in shape_input:
             convert_light(shape_input, shape_output)
         if shape_output:
@@ -344,26 +372,10 @@ def convert_materials(scene_input):
     mat_inputs = scene_input["bsdfs"]
     mat_outputs = []
     for mat_input in mat_inputs:
-        mat_type = mat_input["type"]
-        mat_output = None
-        if mat_type == "lambert" or mat_type == "oren_nayar":
-            mat_output = convert_matte(mat_input)
-        elif mat_type == "dielectric" or mat_type == "rough_dielectric":
-            mat_output = convert_glass(mat_input)
-        elif mat_type == "mirror":
-            mat_output = convert_mirror(mat_input)
-        elif mat_type == "conductor" or mat_type == "rough_conductor":
-            mat_output = convert_metal(mat_input)
-        elif mat_type == "plastic" or mat_type == "rough_plastic":
-            mat_output = convert_substrate(mat_input)
-        elif mat_type == "null":
-            mat_output = convert_null_material(mat_input)
-        elif mat_type != "null":
-            mat_output = convert_disney(mat_input)
-
+        mat_output = convert_material(mat_input)
         if mat_output:
             mat_outputs.append(mat_output)
-            
+                    
     return mat_outputs
 
 def convert_lightsampler(scene_input):
@@ -388,9 +400,12 @@ def main():
     with open(fn) as file:
         scene_input = json.load(file)
         
+        
+    global g_mat_outputs
+    g_mat_outputs = convert_materials(scene_input)
     scene_output = {
-        "materials" : convert_materials(scene_input),
         "shapes" : convert_shapes(scene_input),
+        "materials" : g_mat_outputs,
         "sampler" : convert_sampler(scene_input),
         "camera" : convert_camera(scene_input),
         "warper" :{
@@ -398,6 +413,10 @@ def main():
         },
         "integrator" : convert_integrator(scene_input),
         "light_sampler" : convert_lightsampler(scene_input),
+        "output" : {
+            "spp" : 1024,
+            "fn" : "output.png"
+        }
     }
     write_scene(scene_output, output_fn)
     

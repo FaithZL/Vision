@@ -33,6 +33,7 @@ public:
     void init_medium_descs(const DataWrap &mediums) noexcept;
     void init(const DataWrap &data) noexcept;
     void process_materials() noexcept;
+    void check_meshes() noexcept;
 };
 
 }// namespace vision

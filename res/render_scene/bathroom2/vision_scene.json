@@ -1,252 +1,4 @@
 {
-    "materials": [
-        {
-            "type": "matte",
-            "name": "Wall",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ]
-            }
-        },
-        {
-            "type": "mirror",
-            "name": "Mirror",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ],
-                "roughness": 0.001
-            }
-        },
-        {
-            "type": "metal",
-            "name": "StainlessRough",
-            "param": {
-                "metal_name": "Al",
-                "eta": [
-                    0,
-                    0,
-                    0
-                ],
-                "k": [
-                    0,
-                    0,
-                    0
-                ],
-                "roughness": [
-                    0.01,
-                    0.01
-                ],
-                "remapping_roughness": false
-            }
-        },
-        {
-            "type": "matte",
-            "name": "Towel",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ]
-            }
-        },
-        {
-            "type": "substrate",
-            "name": "BlackWoodLacquer",
-            "param": {
-                "color": [
-                    0.05,
-                    0.05,
-                    0.05
-                ],
-                "ior": 1.5,
-                "specular": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
-                "roughness": [
-                    0.1,
-                    0.1
-                ],
-                "remapping_roughness": false
-            }
-        },
-        {
-            "type": "substrate",
-            "name": "Wood",
-            "param": {
-                "color": {
-                    "fn": "textures/WoodPanel.png",
-                    "color_space": "linear"
-                },
-                "ior": 1.5,
-                "specular": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
-                "roughness": [
-                    0.1,
-                    0.1
-                ],
-                "remapping_roughness": false
-            }
-        },
-        {
-            "type": "substrate",
-            "name": "WoodFloor",
-            "param": {
-                "color": {
-                    "fn": "textures/WoodFloor.jpg",
-                    "color_space": "linear"
-                },
-                "ior": 1.5,
-                "specular": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
-                "roughness": [
-                    0.1,
-                    0.1
-                ],
-                "remapping_roughness": false
-            }
-        },
-        {
-            "type": "matte",
-            "name": "Label",
-            "param": {
-                "color": {
-                    "fn": "textures/Label.png",
-                    "color_space": "linear"
-                }
-            }
-        },
-        {
-            "type": "glass",
-            "name": "RoughGlass",
-            "param": {
-                "ior": 1.5,
-                "roughness": [
-                    0.1,
-                    0.1
-                ],
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ]
-            }
-        },
-        {
-            "type": "substrate",
-            "name": "Plastic",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ],
-                "ior": 1.5,
-                "specular": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
-                "roughness": [
-                    0.01,
-                    0.01
-                ],
-                "remapping_roughness": false
-            }
-        },
-        {
-            "type": "matte",
-            "name": "DarkPlastic",
-            "param": {
-                "color": [
-                    0.05,
-                    0.05,
-                    0.05
-                ]
-            }
-        },
-        {
-            "type": "mirror",
-            "name": "Bin",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ],
-                "roughness": 0.001
-            }
-        },
-        {
-            "type": "matte",
-            "name": "WallRight",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ]
-            }
-        },
-        {
-            "type": "matte",
-            "name": "DarkBorder",
-            "param": {
-                "color": [
-                    0.05,
-                    0.05,
-                    0.05
-                ]
-            }
-        },
-        {
-            "type": "matte",
-            "name": "Trims",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ]
-            }
-        },
-        {
-            "type": "substrate",
-            "name": "Ceramic",
-            "param": {
-                "color": [
-                    0.578596,
-                    0.578596,
-                    0.578596
-                ],
-                "ior": 1.5,
-                "specular": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
-                "roughness": [
-                    0.01,
-                    0.01
-                ],
-                "remapping_roughness": false
-            }
-        }
-    ],
     "shapes": [
         {
             "type": "model",
@@ -2694,10 +2446,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_61_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2737,10 +2486,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "null"
-                },
+                "material": "shape_62_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2780,10 +2526,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_63_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2823,10 +2566,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_64_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2866,10 +2606,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_65_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2909,10 +2646,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_66_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2952,10 +2686,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_67_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2995,10 +2726,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_68_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3038,10 +2766,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_69_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3081,10 +2806,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "lambert"
-                },
+                "material": "shape_70_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3124,10 +2846,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": {
-                    "albedo": 1.0,
-                    "type": "null"
-                },
+                "material": "shape_71_material",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3168,9 +2887,378 @@
                             75.0
                         ],
                         "two_sided": false,
-                        "scale": 0.7
+                        "scale": 0.5
                     }
                 }
+            }
+        }
+    ],
+    "materials": [
+        {
+            "type": "matte",
+            "name": "Wall",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "mirror",
+            "name": "Mirror",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ],
+                "roughness": 0.001
+            }
+        },
+        {
+            "type": "metal",
+            "name": "StainlessRough",
+            "param": {
+                "metal_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Towel",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "BlackWoodLacquer",
+            "param": {
+                "color": [
+                    0.05,
+                    0.05,
+                    0.05
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "Wood",
+            "param": {
+                "color": {
+                    "fn": "textures/WoodPanel.png",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "WoodFloor",
+            "param": {
+                "color": {
+                    "fn": "textures/WoodFloor.jpg",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Label",
+            "param": {
+                "color": {
+                    "fn": "textures/Label.png",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "glass",
+            "name": "RoughGlass",
+            "param": {
+                "ior": 1.5,
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "Plastic",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "DarkPlastic",
+            "param": {
+                "color": [
+                    0.05,
+                    0.05,
+                    0.05
+                ]
+            }
+        },
+        {
+            "type": "mirror",
+            "name": "Bin",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ],
+                "roughness": 0.001
+            }
+        },
+        {
+            "type": "matte",
+            "name": "WallRight",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "DarkBorder",
+            "param": {
+                "color": [
+                    0.05,
+                    0.05,
+                    0.05
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Trims",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "Ceramic",
+            "param": {
+                "color": [
+                    0.578596,
+                    0.578596,
+                    0.578596
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_61_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_62_material",
+            "param": {
+                "color": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_63_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_64_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_65_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_66_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_67_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_68_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_69_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_70_material",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_71_material",
+            "param": {
+                "color": [
+                    0,
+                    0,
+                    0
+                ]
             }
         }
     ],
@@ -3186,7 +3274,7 @@
         "param": {
             "fov_y": 60.0,
             "name": "view1",
-            "velocity": 20,
+            "velocity": 25,
             "transform": {
                 "type": "look_at",
                 "param": {
@@ -3240,14 +3328,14 @@
             "rr_threshold": 1
         }
     },
-    "output" : {
-        "fn" : "bathroom.png",
-        "spp" : 1024
-    },
     "light_sampler": {
         "type": "uniform",
         "param": {
             "lights": []
         }
+    },
+    "output": {
+        "spp": 1024,
+        "fn": "output.png"
     }
 }

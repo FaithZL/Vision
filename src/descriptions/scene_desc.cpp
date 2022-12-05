@@ -183,6 +183,14 @@ void SceneDesc::process_materials() noexcept {
     }
 }
 
+void SceneDesc::check_meshes() noexcept {
+    for (auto sd : shape_descs) {
+        if (!sd.material.valid() && !sd.inside_medium.valid() && !sd.outside_medium.valid()) {
+            OC_WARNING("scene has no material mesh!");
+        }
+    }
+}
+
 void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap()));
     light_sampler_desc.scene_path = scene_path;
@@ -197,6 +205,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sensor_desc.medium.fill_id(medium_name_to_id);
     output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();
+    check_meshes();
 }
 
 SceneDesc SceneDesc::from_json(const fs::path &path) {
