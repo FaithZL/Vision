@@ -13,9 +13,9 @@ Uchar BSDF::combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept {
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
-BSDFSample BSDF::sample(Float uc, Float2 u, Uchar flag) const noexcept {
+ScatterSample BSDF::sample(Float uc, Float2 u, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
-    BSDFSample ret = sample_local(wo, uc, u, flag);
+    ScatterSample ret = sample_local(wo, uc, u, flag);
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame.to_world(ret.wi);
     return ret;

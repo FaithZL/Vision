@@ -49,8 +49,12 @@ public:
                 Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
                 $if(rs.in_medium()) {
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                        auto [beta, mi] = medium->sample(rs.ray, sampler);
-                        medium_throughput = beta;
+                        auto data = medium->sample(rs.ray, sampler);
+                        medium_throughput = data.first;
+                        Interaction mi = data.second;
+                        $if(mi.has_phase()) {
+                            
+                        };
                     });
                 };
 
@@ -79,16 +83,16 @@ public:
                 Bool occluded = geometry.trace_any(shadow_ray);
 
                 comment("sample bsdf");
-                BSDFSample bsdf_sample;
+                ScatterSample scatter_sample;
                 _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(it);
 
                     BSDFEval bsdf_eval;
                     Float3 wi = normalize(light_sample.p_light - it.pos);
                     bsdf_eval = bsdf->evaluate(wi, BxDFFlag::All);
-                    bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
-                    Float3 w = bsdf_sample.wi;
-                    Float3 f = bsdf_sample.eval.f;
+                    scatter_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+                    Float3 w = scatter_sample.wi;
+                    Float3 f = scatter_sample.eval.f;
                     //todo trick delta light
                     Bool is_delta_light = light_sample.eval.pdf < 0;
                     Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, bsdf_eval.pdf));
@@ -98,12 +102,12 @@ public:
                         Li += throughput * Ld;
                     };
                 });
-                eta_scale *= sqr(bsdf_sample.eta);
+                eta_scale *= sqr(scatter_sample.eta);
                 Float lum = luminance(throughput * eta_scale);
-                $if(!bsdf_sample.valid() || lum == 0.f) {
+                $if(!scatter_sample.valid() || lum == 0.f) {
                     $break;
                 };
-                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
+                throughput *= scatter_sample.eval.f / scatter_sample.eval.pdf;
                 $if(lum < _rr_threshold && bounces >= _min_depth) {
                     Float q = min(0.95f, lum);
                     Float rr = sampler->next_1d();
@@ -112,8 +116,8 @@ public:
                     };
                     throughput /= q;
                 };
-                bsdf_pdf = bsdf_sample.eval.pdf;
-                rs = it.spawn_ray_state(bsdf_sample.wi);
+                bsdf_pdf = scatter_sample.eval.pdf;
+                rs = it.spawn_ray_state(scatter_sample.wi);
             };
             camera->film()->add_sample(pixel, Li, frame_index);
         };

@@ -20,7 +20,7 @@ public:
     [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
+    [[nodiscard]] ScatterSample sample_local(Float3 wo, Float uc, Float2 u,
                                           Uchar flag) const noexcept override {
         return _bxdf.sample(wo, u, _fresnel->clone());
     }

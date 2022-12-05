@@ -180,9 +180,9 @@ public:
         Float3 wi = impl(wo, u, _alpha);
         return {wi, true};
     }
-    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] ScatterSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
         auto [wi, valid] = sample_wi(wo, u, fresnel);
-        BSDFSample ret;
+        ScatterSample ret;
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
         ret.flags = BxDFFlag::GlossyRefl;
@@ -386,8 +386,8 @@ public:
         ret.pdf = pdf;
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
-        BSDFSample ret;
+    [[nodiscard]] ScatterSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
+        ScatterSample ret;
 
         Uint sampling_strategy = 0u;
         Float sum_weights = 0.f;

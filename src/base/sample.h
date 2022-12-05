@@ -67,7 +67,7 @@ struct SampledDirection {
     Bool valid;
 };
 
-struct BSDFSample {
+struct ScatterSample {
     BSDFEval eval;
     Float3 wi{make_float3(0.f)};
     Uchar flags{BxDFFlag::Unset};
