@@ -151,9 +151,13 @@ void SceneDesc::process_materials() noexcept {
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;
     auto mats = move(material_descs);
+    bool has_no_material_light = false;
     for (const ShapeDesc &sd : shape_descs) {
         uint index = material_descs.size();
         if (sd.material.id == InvalidUI32) {
+            if (sd.emission.valid()) {
+                has_no_material_light = true;
+            }
             continue;
         }
         MaterialDesc md = mats[sd.material.id];
@@ -165,9 +169,17 @@ void SceneDesc::process_materials() noexcept {
     }
     for (ShapeDesc &sd : shape_descs) {
         if (sd.material.id == InvalidUI32) {
+            if (sd.emission.valid()) {
+                sd.material.id = material_descs.size();
+            }
             continue;
         }
         sd.material.id = index_map[sd.mat_hash];
+    }
+    if (has_no_material_light) {
+        MaterialDesc md;
+        md.sub_type = "null";
+        material_descs.push_back(md);
     }
 //    auto m = material_descs;
 //    for (int i = 0; i < 1; ++i) {

@@ -616,7 +616,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": "Black",
+                "material": "",
                 "medium": {
                     "inside" : "fog",
                     "outside" : "fog"
@@ -661,10 +661,6 @@
                             12,
                             4
                         ],
-                        //                        "radiance" : {
-                        //                            "fn":"Painting3.jpg",
-                        //                            "color_space" : "srgb"
-                        //                        },
                         "two_sided": false,
                         "scale": 1
                     }

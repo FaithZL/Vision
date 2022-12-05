@@ -1129,7 +1129,7 @@
         }
     },
     "output" : {
-        "fn" : "staircase.png",
+        "fn" : "output.png",
         "spp" : 1024
     },
     "light_sampler": {
