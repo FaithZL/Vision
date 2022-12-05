@@ -48,7 +48,9 @@ public:
                 Float3 medium_throughput = make_float3(1.f);
                 Interaction it;
                 $if(rs.in_medium()) {
-//                    medium_throughput
+                    _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
+
+                    });
                 };
 
                 it = geometry.compute_surface_interaction(hit, rs.ray);
@@ -78,8 +80,7 @@ public:
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                _scene->materials().dispatch(it.mat_id,
-                                       [&](const Material *material) {
+                _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(it);
 
                     BSDFEval bsdf_eval;

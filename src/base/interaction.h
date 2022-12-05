@@ -54,6 +54,10 @@ public:
 
 public:
     Interaction();
+    Interaction(Float3 pos, Float3 wo);
+    void prepare_medium();
+    void init_phase(Float g);
+    [[nodiscard]] Bool has_phase();
     void set_medium(const Uchar &inside, const Uchar &outside);
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }

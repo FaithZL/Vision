@@ -36,11 +36,16 @@ public:
         Float dist = -log(1 - sampler.next_1d()) / sigma_t[channel];
         Float t = min(dist / length(ray->direction()), ray->t_max());
         Bool sampled_medium = t < ray->t_max();
+        Interaction it;
+        $if(sampled_medium) {
+            it = Interaction(ray->at(t), -ray->direction());
+            it.init_phase(_g);
+        };
         Float3 tr = Tr(t);
         Float3 density = select(sampled_medium, _sigma_t * tr, tr);
         Float pdf = (density.x + density.y + density.z) / 3.f;
         Float3 ret = select(sampled_medium, tr * _sigma_s / pdf, tr / pdf);
-        return {ret, Interaction()};
+        return {ret, it};
     }
 
 };
