@@ -56,7 +56,7 @@ public:
     void init(Float g) noexcept override { _g = g; }
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept override;
-    [[nodiscard]] Bool valid() const noexcept override { return InvalidG == _g; }
+    [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
 };
 
 class Sampler;

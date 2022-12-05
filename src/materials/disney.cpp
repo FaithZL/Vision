@@ -355,8 +355,8 @@ public:
         }
     }
     [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse->albedo(); }
-    [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        BSDFEval ret;
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
+        ScatterEval ret;
         Float3 f = make_float3(0.f);
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();

@@ -53,10 +53,14 @@ public:
                         medium_throughput = data.first;
                         Interaction mi = data.second;
                         $if(mi.has_phase()) {
-                            
+//                            it = mi;
+
                         };
                     });
                 };
+
+                comment("process medium interaction");
+
 
                 $if(!it.has_material()) {
                     //todo remove no material mesh in non volumetric scene
@@ -87,18 +91,18 @@ public:
                 _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(it);
 
-                    BSDFEval bsdf_eval;
+                    ScatterEval scatter_eval;
                     Float3 wi = normalize(light_sample.p_light - it.pos);
-                    bsdf_eval = bsdf->evaluate(wi, BxDFFlag::All);
+                    scatter_eval = bsdf->evaluate(wi, BxDFFlag::All);
                     scatter_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
                     Float3 w = scatter_sample.wi;
                     Float3 f = scatter_sample.eval.f;
                     //todo trick delta light
                     Bool is_delta_light = light_sample.eval.pdf < 0;
-                    Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, bsdf_eval.pdf));
+                    Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, scatter_eval.pdf));
                     light_sample.eval.pdf = select(is_delta_light, -light_sample.eval.pdf, light_sample.eval.pdf);
-                    $if(!occluded && bsdf_eval.valid() && light_sample.valid()) {
-                        Float3 Ld = light_sample.eval.L * bsdf_eval.f * weight / light_sample.eval.pdf;
+                    $if(!occluded && scatter_eval.valid() && light_sample.valid()) {
+                        Float3 Ld = light_sample.eval.L * scatter_eval.f * weight / light_sample.eval.pdf;
                         Li += throughput * Ld;
                     };
                 });

@@ -23,8 +23,8 @@ protected:
         ScatterSample ret;
         return ret;
     }
-    [[nodiscard]] virtual BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
-        BSDFEval ret;
+    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+        ScatterEval ret;
         ret.f = make_float3(0.f);
         ret.pdf = 1.f;
         return ret;
@@ -36,7 +36,7 @@ public:
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()), world_wo(si.wo) {}
     [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
-    [[nodiscard]] virtual BSDFEval evaluate(Float3 world_wi, Uchar flag) const noexcept;
+    [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual ScatterSample sample(Float uc, Float2 u, Uchar flag) const noexcept;
 };
 

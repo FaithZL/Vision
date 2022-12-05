@@ -23,8 +23,8 @@ public:
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual BSDFEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] virtual BSDFEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual ScatterSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }

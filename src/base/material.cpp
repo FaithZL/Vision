@@ -21,10 +21,10 @@ ScatterSample BSDF::sample(Float uc, Float2 u, Uchar flag) const noexcept {
     return ret;
 }
 
-BSDFEval BSDF::evaluate(Float3 world_wi, Uchar flag) const noexcept {
+ScatterEval BSDF::evaluate(Float3 world_wi, Uchar flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
-    BSDFEval ret = evaluate_local(wo, wi, flag);
+    ScatterEval ret = evaluate_local(wo, wi, flag);
     ret.f *= abs_cos_theta(wi);
     return ret;
 }

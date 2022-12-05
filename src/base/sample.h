@@ -46,7 +46,7 @@ struct RaySample {
     Float weight{1.f};
 };
 
-struct BSDFEval {
+struct ScatterEval {
     Float3 f{make_float3(0.f)};
     Float pdf{0.f};
     [[nodiscard]] Bool valid() const noexcept {
@@ -68,7 +68,7 @@ struct SampledDirection {
 };
 
 struct ScatterSample {
-    BSDFEval eval;
+    ScatterEval eval;
     Float3 wi{make_float3(0.f)};
     Uchar flags{BxDFFlag::Unset};
     Float eta{1.f};

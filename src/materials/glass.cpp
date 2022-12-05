@@ -22,8 +22,8 @@ public:
         : BSDF(si), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
 
     [[nodiscard]] Float3 albedo() const noexcept override { return _refl.albedo(); }
-    [[nodiscard]] BSDFEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        BSDFEval ret;
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
+        ScatterEval ret;
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
