@@ -9,6 +9,7 @@
 #include "microfacet.h"
 #include "math/optics.h"
 #include "fresnel.h"
+#include "sampler.h"
 
 namespace vision {
 using namespace ocarina;
@@ -26,6 +27,7 @@ public:
     [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual SP<BSDFSample> sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uchar flag() const noexcept { return _flag; }
     [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {
@@ -61,6 +63,8 @@ public:
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
+
+    [[nodiscard]] SP<BSDFSample> sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override;
 };
 
 class MicrofacetTransmission : public BxDF {
@@ -78,6 +82,8 @@ public:
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
+
+    [[nodiscard]] SP<BSDFSample> sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override;
 };
 
 }// namespace vision

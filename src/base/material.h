@@ -12,8 +12,6 @@
 
 namespace vision {
 
-class Sampler;
-
 struct ScatterFunction {
     [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi) const noexcept = 0;
     [[nodiscard]] virtual SP<ScatterSample> sample(Sampler *sampler) const noexcept = 0;
@@ -37,7 +35,7 @@ protected:
         return ret;
     }
 
-    [[nodiscard]] virtual SP<ScatterSample> sample_local(Float3 wo, Sampler *sampler) const noexcept {
+    [[nodiscard]] virtual SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
         return make_shared<BSDFSample>();
     }
 

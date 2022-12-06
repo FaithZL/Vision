@@ -40,7 +40,7 @@ ScatterEval BSDF::evaluate(Float3 world_wi) const noexcept {
 
 SP<ScatterSample> BSDF::sample(Sampler *sampler) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
-    SP<ScatterSample> ret = sample_local(wo, sampler);
+    SP<ScatterSample> ret = sample_local(wo, BxDFFlag::All, sampler);
     ret->eval.f *= abs_cos_theta(ret->wi);
     ret->wi = shading_frame.to_world(ret->wi);
     return ret;

@@ -23,6 +23,10 @@ public:
                                           Uchar flag) const noexcept override {
         return _bxdf.sample(wo, u, nullptr);
     }
+
+    [[nodiscard]] SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+        return _bxdf.sample(wo, sampler, nullptr);
+    }
 };
 
 class MatteMaterial : public Material {
