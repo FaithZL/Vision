@@ -49,8 +49,8 @@ public:
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         return (1.f - fr) * PDF_diffuse(wo, wi) + fr * PDF_specular(wo, wi);
     }
-    [[nodiscard]] ScatterSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
-        ScatterSample ret;
+    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
+        BSDFSample ret;
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(u.x < fr) {
             u.x = remapping(u.x, 0.f, fr);
@@ -84,7 +84,7 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }
-    [[nodiscard]] ScatterSample sample_local(Float3 wo, Float uc, Float2 u,
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
                                           Uchar flag) const noexcept override {
         return _bxdf.sample(wo, u, _fresnel->clone());
     }

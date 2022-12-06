@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
         MicrofacetTransmission mt(make_float3(1.f), mf);
 
         auto fresnel = make_shared<FresnelDielectric>(1.5f);
-        ScatterSample bs = mt.sample(wo, u, fresnel);
+        BSDFSample bs = mt.sample(wo, u, fresnel);
         Float3 w = bs.eval.f;
         print("({},{},{})  {}", w.x, w.y, w.z, bs.eval.pdf);
         w = bs.wi;

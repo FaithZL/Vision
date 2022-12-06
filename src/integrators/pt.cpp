@@ -87,16 +87,16 @@ public:
                 Bool occluded = geometry.trace_any(shadow_ray);
 
                 comment("sample bsdf");
-                ScatterSample scatter_sample;
+                BSDFSample bsdf_sample;
                 _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(it);
 
                     ScatterEval scatter_eval;
                     Float3 wi = normalize(light_sample.p_light - it.pos);
                     scatter_eval = bsdf->evaluate(wi, BxDFFlag::All);
-                    scatter_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
-                    Float3 w = scatter_sample.wi;
-                    Float3 f = scatter_sample.eval.f;
+                    bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
+                    Float3 w = bsdf_sample.wi;
+                    Float3 f = bsdf_sample.eval.f;
                     //todo trick delta light
                     Bool is_delta_light = light_sample.eval.pdf < 0;
                     Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, scatter_eval.pdf));
@@ -106,12 +106,12 @@ public:
                         Li += throughput * Ld;
                     };
                 });
-                eta_scale *= sqr(scatter_sample.eta);
+                eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = luminance(throughput * eta_scale);
-                $if(!scatter_sample.valid() || lum == 0.f) {
+                $if(!bsdf_sample.valid() || lum == 0.f) {
                     $break;
                 };
-                throughput *= scatter_sample.eval.f / scatter_sample.eval.pdf;
+                throughput *= bsdf_sample.eval.f / bsdf_sample.eval.pdf;
                 $if(lum < _rr_threshold && bounces >= _min_depth) {
                     Float q = min(0.95f, lum);
                     Float rr = sampler->next_1d();
@@ -120,8 +120,8 @@ public:
                     };
                     throughput /= q;
                 };
-                bsdf_pdf = scatter_sample.eval.pdf;
-                rs = it.spawn_ray_state(scatter_sample.wi);
+                bsdf_pdf = bsdf_sample.eval.pdf;
+                rs = it.spawn_ray_state(bsdf_sample.wi);
             };
             camera->film()->add_sample(pixel, Li, frame_index);
         };

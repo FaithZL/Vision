@@ -19,8 +19,8 @@ public:
     Float3 world_wo;
 
 protected:
-    [[nodiscard]] virtual ScatterSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
-        ScatterSample ret;
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
+        BSDFSample ret;
         return ret;
     }
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
@@ -37,7 +37,7 @@ public:
     [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi, Uchar flag) const noexcept;
-    [[nodiscard]] virtual ScatterSample sample(Float uc, Float2 u, Uchar flag) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample(Float uc, Float2 u, Uchar flag) const noexcept;
 };
 
 class Material : public Node {

@@ -35,8 +35,8 @@ public:
         };
         return ret;
     }
-    [[nodiscard]] ScatterSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
-        ScatterSample ret;
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
+        BSDFSample ret;
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);

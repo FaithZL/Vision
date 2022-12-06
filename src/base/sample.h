@@ -72,7 +72,7 @@ struct PhaseSample {
     Float3 wi{make_float3(0.f)};
 };
 
-struct ScatterSample {
+struct BSDFSample {
     ScatterEval eval;
     Float3 wi{make_float3(0.f)};
     Uchar flags{BxDFFlag::Unset};
