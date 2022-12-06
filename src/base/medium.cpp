@@ -22,7 +22,10 @@ PhaseSample HenyeyGreenstein::sample(Float3 wo, Float2 u) const noexcept {
     coordinate_system(wo, v1, v2);
     Float3 wi = spherical_direction(sin_theta, cos_theta, phi, v1, v2, wo);
     Float f = phase_HG(cos_theta, _g);
-    return {.eval = {.f = make_float3(f), .pdf = f}, .wi = wi};
+    PhaseSample phase_sample;
+    phase_sample.eval = {.f = make_float3(f), .pdf = f};
+    phase_sample.wi = wi;
+    return phase_sample;
 }
 
 }// namespace vision

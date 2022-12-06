@@ -3,6 +3,7 @@
 //
 
 #include "material.h"
+#include "sampler.h"
 
 namespace vision {
 
@@ -26,6 +27,22 @@ ScatterEval BSDF::evaluate(Float3 world_wi, Uchar flag) const noexcept {
     Float3 wi = shading_frame.to_local(world_wi);
     ScatterEval ret = evaluate_local(wo, wi, flag);
     ret.f *= abs_cos_theta(wi);
+    return ret;
+}
+
+ScatterEval BSDF::evaluate(Float3 world_wi) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    Float3 wi = shading_frame.to_local(world_wi);
+    ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
+    ret.f *= abs_cos_theta(wi);
+    return ret;
+}
+
+SP<ScatterSample> BSDF::sample(Sampler *sampler) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    SP<ScatterSample> ret = sample_local(wo, sampler);
+    ret->eval.f *= abs_cos_theta(ret->wi);
+    ret->wi = shading_frame.to_world(ret->wi);
     return ret;
 }
 

@@ -12,7 +12,14 @@
 
 namespace vision {
 
-struct BSDF {
+class Sampler;
+
+struct ScatterFunction {
+    [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi) const noexcept = 0;
+    [[nodiscard]] virtual SP<ScatterSample> sample(Sampler *sampler) const noexcept = 0;
+};
+
+struct BSDF : public ScatterFunction {
 public:
     UVN<Float3> shading_frame;
     Float3 ng;
@@ -30,6 +37,10 @@ protected:
         return ret;
     }
 
+    [[nodiscard]] virtual SP<ScatterSample> sample_local(Float3 wo, Sampler *sampler) const noexcept {
+        return make_shared<BSDFSample>();
+    }
+
 public:
     BSDF() = default;
     explicit BSDF(const Interaction &si)
@@ -38,6 +49,9 @@ public:
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi, Uchar flag) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float uc, Float2 u, Uchar flag) const noexcept;
+
+    [[nodiscard]] ScatterEval evaluate(Float3 world_wi) const noexcept override;
+    [[nodiscard]] SP<ScatterSample> sample(Sampler *sampler) const noexcept override;
 };
 
 class Material : public Node {
