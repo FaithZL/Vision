@@ -51,11 +51,30 @@ public:
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
                         auto data = medium->sample(rs.ray, sampler);
                         medium_throughput = data.first;
+                        throughput *= medium_throughput;
                         Interaction mi = data.second;
-//                        $if(mi.has_phase()) {
-////                            it = mi;
-//
-//                        };
+                        $if(mi.has_phase()) {
+                            it = mi;
+                            comment("process phase sample light");
+                            LightSample light_sample = light_sampler->sample(it, sampler->next_1d(), sampler->next_2d());
+                            OCRay shadow_ray = it.spawn_ray_to(light_sample.p_light);
+                            Bool occluded = geometry.trace_any(shadow_ray);
+
+                            Float3 wi = normalize(light_sample.p_light - it.pos);
+                            ScatterEval scatter_eval = it.phase->evaluate(it.wo, wi);
+                            Float weight = mis_weight<D>(light_sample.eval.pdf, scatter_eval.pdf);
+
+                            $if(!occluded && scatter_eval.valid() && light_sample.valid()) {
+                                Float3 Ld = light_sample.eval.L * scatter_eval.f * weight / light_sample.eval.pdf;
+                                Li += throughput * Ld;
+                            };
+
+                            PhaseSample phase_sample = it.phase->sample(it.wo, sampler->next_2d());
+                            throughput *= phase_sample.eval.f / phase_sample.eval.pdf;
+                            bsdf_pdf = phase_sample.eval.pdf;
+                            rs = it.spawn_ray_state(phase_sample.wi);
+                            $continue;
+                        };
                     });
                 };
 
