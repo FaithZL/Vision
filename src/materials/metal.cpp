@@ -41,6 +41,10 @@ public:
                                           Uchar flag) const noexcept override {
         return _refl.sample(wo, u, _fresnel->clone());
     }
+
+    [[nodiscard]] SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+        return _refl.sample(wo, sampler, _fresnel->clone());
+    }
 };
 
 class MetalMaterial : public Material {

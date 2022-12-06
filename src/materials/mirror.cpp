@@ -24,6 +24,10 @@ public:
                                           Uchar flag) const noexcept override {
         return _bxdf.sample(wo, u, _fresnel->clone());
     }
+
+    [[nodiscard]] SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+        return _bxdf.sample(wo, sampler, _fresnel->clone());
+    }
 };
 
 class MirrorMaterial : public Material {

@@ -51,6 +51,24 @@ public:
         };
         return ret;
     }
+
+    [[nodiscard]] SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+        auto ret = make_shared<BSDFSample>();
+        Float uc = sampler->next_1d();
+        auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        $if(uc < fr) {
+            ret = _refl.sample(wo, sampler, fresnel);
+            ret->eval.pdf *= fr;
+        }
+        $else {
+            ret = _trans.sample(wo, sampler, fresnel);
+            ret->eval.pdf *= 1 - fr;
+        };
+        return ret;
+    }
 };
 
 class GlassMaterial : public Material {
