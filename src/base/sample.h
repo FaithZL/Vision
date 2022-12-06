@@ -73,6 +73,7 @@ struct ScatterSample {
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }
+    virtual ~ScatterSample() = default;
 };
 
 struct PhaseSample : public ScatterSample {};

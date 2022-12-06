@@ -113,9 +113,7 @@ public:
                     ScatterEval scatter_eval;
                     Float3 wi = normalize(light_sample.p_light - it.pos);
                     scatter_eval = bsdf->evaluate(wi, BxDFFlag::All);
-                    bsdf_sample = bsdf->sample(sampler->next_1d(), sampler->next_2d(), BxDFFlag::All);
-                    Float3 w = bsdf_sample.wi;
-                    Float3 f = bsdf_sample.eval.f;
+                    bsdf_sample = *std::dynamic_pointer_cast<BSDFSample>(bsdf->sample(sampler));
                     //todo trick delta light
                     Bool is_delta_light = light_sample.eval.pdf < 0;
                     Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, scatter_eval.pdf));
