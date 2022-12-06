@@ -52,10 +52,10 @@ public:
                         auto data = medium->sample(rs.ray, sampler);
                         medium_throughput = data.first;
                         Interaction mi = data.second;
-                        $if(mi.has_phase()) {
-//                            it = mi;
-
-                        };
+//                        $if(mi.has_phase()) {
+////                            it = mi;
+//
+//                        };
                     });
                 };
 

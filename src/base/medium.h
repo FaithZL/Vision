@@ -11,25 +11,6 @@
 
 namespace vision {
 using namespace ocarina;
-template<EPort p = D>
-[[nodiscard]] Float phase_HG(Float cos_theta, Float g) {
-    Float denom = 1 + sqr(g) + 2 * g * cos_theta;
-    return Inv4Pi * (1 - sqr(g)) / (denom * sqrt(denom));
-}
-
-class PhaseFunction {
-public:
-    virtual void init(Float g) noexcept = 0;
-    [[nodiscard]] virtual Bool valid() const noexcept = 0;
-    [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;
-
-    /**
-     * @param wo
-     * @param u
-     * @return f , wi
-     */
-    [[nodiscard]] virtual pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept = 0;
-};
 
 struct MediumInterface {
 public:
@@ -45,6 +26,25 @@ public:
     [[nodiscard]] Bool has_outside() const noexcept { return outside != InvalidUI8; }
 };
 
+template<EPort p = D>
+[[nodiscard]] Float phase_HG(Float cos_theta, Float g) {
+    Float denom = 1 + sqr(g) + 2 * g * cos_theta;
+    return Inv4Pi * (1 - sqr(g)) / (denom * sqrt(denom));
+}
+
+class PhaseFunction {
+public:
+    virtual void init(Float g) noexcept = 0;
+    [[nodiscard]] virtual Bool valid() const noexcept = 0;
+
+    [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi) const noexcept {
+        Float val = f(wo, wi);
+        return {.f = make_float3(val), .pdf = val};
+    }
+    [[nodiscard]] virtual PhaseSample sample(Float3 wo, Float2 u) const noexcept = 0;
+    [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;
+};
+
 class HenyeyGreenstein : public PhaseFunction {
 private:
     static constexpr float InvalidG = 10;
@@ -55,7 +55,7 @@ public:
     explicit HenyeyGreenstein(Float g) : _g(g) {}
     void init(Float g) noexcept override { _g = g; }
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] pair<Float, Float3> sample_f(Float3 wo, Float2 u) const noexcept override;
+    [[nodiscard]] PhaseSample sample(Float3 wo, Float2 u) const noexcept override;
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
 };
 

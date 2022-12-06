@@ -11,7 +11,7 @@ Float HenyeyGreenstein::f(Float3 wo, Float3 wi) const noexcept {
     return phase_HG(dot(wo, wi), _g);
 }
 
-pair<Float, Float3> HenyeyGreenstein::sample_f(Float3 wo, Float2 u) const noexcept {
+PhaseSample HenyeyGreenstein::sample(Float3 wo, Float2 u) const noexcept {
     Float sqr_term = (1 - sqr(_g)) / (1 + _g - 2 * _g * u.x);
     Float cos_theta = -(1 + sqr(_g) - sqr(sqr_term)) / (1 * _g);
     cos_theta = select(abs(_g) < 1e-3f, 1 - 2 * u.x, cos_theta);
@@ -21,7 +21,12 @@ pair<Float, Float3> HenyeyGreenstein::sample_f(Float3 wo, Float2 u) const noexce
     Float3 v1, v2;
     coordinate_system(wo, v1, v2);
     Float3 wi = spherical_direction(sin_theta, cos_theta, phi, v1, v2, wo);
-    return {phase_HG(cos_theta, _g), wi};
+    PhaseSample ret;
+    Float f = phase_HG(cos_theta, _g);
+    ret.wi = wi;
+    ret.eval.f = make_float3(f);
+    ret.eval.pdf = f;
+    return ret;
 }
 
 }// namespace vision

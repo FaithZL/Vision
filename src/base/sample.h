@@ -67,6 +67,11 @@ struct SampledDirection {
     Bool valid;
 };
 
+struct PhaseSample {
+    ScatterEval eval;
+    Float3 wi{make_float3(0.f)};
+};
+
 struct ScatterSample {
     ScatterEval eval;
     Float3 wi{make_float3(0.f)};
