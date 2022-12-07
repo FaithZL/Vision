@@ -189,13 +189,13 @@ public:
         return ret;
     }
 
-    [[nodiscard]] SP<BSDFSample> sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override {
         Float2 u = sampler->next_2d();
         auto [wi, valid] = sample_wi(wo, u, fresnel);
-        auto ret = make_shared<BSDFSample>();
-        ret->eval = safe_evaluate(wo, wi, nullptr);
-        ret->wi = wi;
-        ret->flags = BxDFFlag::GlossyRefl;
+        BSDFSample ret;
+        ret.eval = safe_evaluate(wo, wi, nullptr);
+        ret.wi = wi;
+        ret.flags = BxDFFlag::GlossyRefl;
         return ret;
     }
 };
@@ -445,8 +445,8 @@ public:
         return ret;
     }
 
-    [[nodiscard]] SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
-        auto ret = make_shared<BSDFSample>();
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+        BSDFSample ret;
         Float uc = sampler->next_1d();
         Float2 u = sampler->next_2d();
 
@@ -490,9 +490,9 @@ public:
                 $break;
             };
         };
-        ret->eval = evaluate_local(wo, sampled_direction.wi, flag);
-        ret->wi = sampled_direction.wi;
-        ret->eval.pdf = select(sampled_direction.valid, ret->eval.pdf, 0.f);
+        ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
+        ret.wi = sampled_direction.wi;
+        ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
         return ret;
     }
 };

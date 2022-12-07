@@ -70,25 +70,25 @@ public:
         return ret;
     }
 
-    [[nodiscard]] SP<BSDFSample> sample(Float3 wo, Sampler *sampler,
+    [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler,
                                         SP<Fresnel> fresnel) const noexcept override {
-        auto ret = make_shared<BSDFSample>();
+        BSDFSample ret;
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         Float2 u = sampler->next_2d();
         $if(u.x < fr) {
             u.x = remapping(u.x, 0.f, fr);
             Float3 wh = _microfacet->sample_wh(wo, u);
-            ret->wi = reflect(wo, wh);
-            ret->eval.f = f_specular(wo, ret->wi);
-            ret->eval.pdf = PDF_specular(wo, ret->wi);
-            ret->eval.pdf = select(safe(wo, ret->wi), ret->eval.pdf, 0.f) * fr;
+            ret.wi = reflect(wo, wh);
+            ret.eval.f = f_specular(wo, ret.wi);
+            ret.eval.pdf = PDF_specular(wo, ret.wi);
+            ret.eval.pdf = select(safe(wo, ret.wi), ret.eval.pdf, 0.f) * fr;
         }
         $else {
             u.x = remapping(u.x, fr, 1.f);
-            ret->wi = square_to_cosine_hemisphere(u);
-            ret->wi.z = select(wo.z < 0, -ret->wi.z, ret->wi.z);
-            ret->eval.f = f_diffuse(wo, ret->wi);
-            ret->eval.pdf = PDF_diffuse(wo, ret->wi) * (1 - fr);
+            ret.wi = square_to_cosine_hemisphere(u);
+            ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
+            ret.eval.f = f_diffuse(wo, ret.wi);
+            ret.eval.pdf = PDF_diffuse(wo, ret.wi) * (1 - fr);
         };
         return ret;
     }
@@ -112,7 +112,7 @@ public:
         return _bxdf.sample(wo, u, _fresnel->clone());
     }
 
-    [[nodiscard]] SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
         return _bxdf.sample(wo, sampler, _fresnel->clone());
     }
 };

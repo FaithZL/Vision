@@ -44,11 +44,11 @@ BSDFSample BxDF::sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept
     return ret;
 }
 
-SP<BSDFSample> BxDF::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
-    auto ret = make_shared<BSDFSample>();
+BSDFSample BxDF::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
+    BSDFSample ret;
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
-    ret->wi = wi;
-    ret->eval = evaluate(wo, ret->wi, fresnel);
+    ret.wi = wi;
+    ret.eval = evaluate(wo, wi, fresnel);
     return ret;
 }
 
@@ -86,12 +86,12 @@ BSDFSample MicrofacetReflection::sample(Float3 wo, Float2 u, SP<Fresnel> fresnel
     return ret;
 }
 
-SP<BSDFSample> MicrofacetReflection::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
-    auto ret = make_shared<BSDFSample>();
+BSDFSample MicrofacetReflection::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
+    BSDFSample ret;
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
-    ret->eval = safe_evaluate(wo, wi, fresnel);
-    ret->wi = wi;
-    ret->flags = flag();
+    ret.eval = safe_evaluate(wo, wi, fresnel);
+    ret.wi = wi;
+    ret.flags = flag();
     return ret;
 }
 
@@ -134,14 +134,14 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Float2 u, SP<Fresnel> fresn
     return ret;
 }
 
-SP<BSDFSample> MicrofacetTransmission::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
-    auto ret = make_shared<BSDFSample>();
+BSDFSample MicrofacetTransmission::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
+    BSDFSample ret;
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
-    ret->eval = safe_evaluate(wo, wi, fresnel);
-    ret->eval.pdf = select(valid, ret->eval.pdf, 0.f);
-    ret->wi = wi;
-    ret->eta = (fresnel->eta());
-    ret->flags = flag();
+    ret.eval = safe_evaluate(wo, wi, fresnel);
+    ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
+    ret.wi = wi;
+    ret.eta = (fresnel->eta());
+    ret.flags = flag();
     return ret;
 }
 

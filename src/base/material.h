@@ -35,8 +35,9 @@ protected:
         return ret;
     }
 
-    [[nodiscard]] virtual SP<ScatterSample> sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
-        return make_shared<BSDFSample>();
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
+        BSDFSample ret;
+        return ret;
     }
 
 public:
