@@ -4,6 +4,7 @@
 
 #include "base/lightsampler.h"
 #include "base/render_pipeline.h"
+#include "base/sampler.h"
 
 namespace vision {
 class UniformLightSampler : public LightSampler {
@@ -18,8 +19,10 @@ public:
         ret.PMF = 1.f / light_num();
         return ret;
     }
-    [[nodiscard]] LightSample sample(const LightSampleContext &lsc, const Float &u_light,
-                                     const Float2 &u_surface) const noexcept override {
+
+    [[nodiscard]] LightSample sample(const LightSampleContext &lsc, Sampler *sampler) const noexcept override {
+        Float u_light = sampler->next_1d();
+        Float2 u_surface = sampler->next_2d();
         LightSample ret;
         SampledLight sampled_light = select_light(lsc, u_light);
         RenderPipeline *rp = _scene->render_pipeline();

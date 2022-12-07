@@ -18,6 +18,8 @@ struct SampledLight {
     Float PMF;
 };
 
+class Sampler;
+
 class LightSampler : public Node {
 public:
     using Desc = LightSamplerDesc;
@@ -37,8 +39,7 @@ public:
     [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &si) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi) const noexcept;
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, const Float &u_light,
-                                             const Float2 &u_surface) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler) const noexcept = 0;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {

@@ -30,13 +30,12 @@ public:
         return Tr(length(ray->direction()) * ray->t_max());
     }
 
-    [[nodiscard]] pair<Float3, Interaction> sample(const OCRay &ray, Sampler *sampler) const noexcept override {
+    [[nodiscard]] Float3 sample(const OCRay &ray, Interaction &it, Sampler *sampler) const noexcept override {
         Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
         Float3 sigma_t = _sigma_t;
         Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
         Float t = min(dist / length(ray->direction()), ray->t_max());
         Bool sampled_medium = t < ray->t_max();
-        Interaction it;
         $if(sampled_medium) {
             it = Interaction(ray->at(t), -ray->direction());
             it.init_phase(_g);
@@ -45,7 +44,7 @@ public:
         Float3 density = select(sampled_medium, _sigma_t * tr, tr);
         Float pdf = (density.x + density.y + density.z) / 3.f;
         Float3 ret = select(sampled_medium, tr * _sigma_s / pdf, tr / pdf);
-        return {ret, it};
+        return ret;
     }
 
 };

@@ -47,6 +47,16 @@ public:
 
                 Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
 
+                $if(rs.in_medium()) {
+                    _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
+//                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
+//                        $if(it.has_phase()) {
+//                            comment("process phase sample light");
+////                            LightSample ls = light_sampler->sample(it,)
+//                        }
+                    });
+                };
+
                 $if(!it.has_material()) {
                     //todo remove no material mesh in non volumetric scene
                     comment("process no material interaction for volumetric rendering");
@@ -67,7 +77,7 @@ public:
 
                 comment("estimate direct lighting");
                 comment("sample light");
-                LightSample light_sample = light_sampler->sample(it, sampler->next_1d(), sampler->next_2d());
+                LightSample light_sample = light_sampler->sample(it, sampler);
                 Bool occluded = geometry.occluded(it, light_sample.p_light);
 
                 comment("sample bsdf");
