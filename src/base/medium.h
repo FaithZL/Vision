@@ -32,6 +32,8 @@ template<EPort p = D>
     return Inv4Pi * (1 - sqr(g)) / (denom * sqrt(denom));
 }
 
+class Sampler;
+
 class PhaseFunction {
 public:
     virtual void init(Float g) noexcept = 0;
@@ -41,7 +43,7 @@ public:
         Float val = f(wo, wi);
         return {.f = make_float3(val), .pdf = val};
     }
-    [[nodiscard]] virtual PhaseSample sample(Float3 wo, Float2 u) const noexcept = 0;
+    [[nodiscard]] virtual PhaseSample sample(Float3 wo, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;
 };
 
@@ -55,7 +57,7 @@ public:
     explicit HenyeyGreenstein(Float g) : _g(g) {}
     void init(Float g) noexcept override { _g = g; }
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] PhaseSample sample(Float3 wo, Float2 u) const noexcept override;
+    [[nodiscard]] PhaseSample sample(Float3 wo, Sampler *sampler) const noexcept override;
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
 };
 

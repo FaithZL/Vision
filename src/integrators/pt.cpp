@@ -52,8 +52,12 @@ public:
 //                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
 //                        $if(it.has_phase()) {
 //                            comment("process phase sample light");
-////                            LightSample ls = light_sampler->sample(it,)
-//                        }
+//                            LightSample ls = light_sampler->sample(it, sampler);
+//                            RayState ray_state;
+//                            Bool occluded = geometry.occluded(it, ls.p_light, &ray_state);
+//                            PhaseSample ps;
+//                            Float3 Ld = direct_lighting(it, *it.phase, ls, occluded, sampler, ps);
+//                        };
                     });
                 };
 

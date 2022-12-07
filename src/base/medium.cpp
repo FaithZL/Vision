@@ -4,6 +4,7 @@
 
 #include "medium.h"
 #include "math/geometry.h"
+#include "base/sampler.h"
 
 namespace vision {
 
@@ -11,7 +12,8 @@ Float HenyeyGreenstein::f(Float3 wo, Float3 wi) const noexcept {
     return phase_HG(dot(wo, wi), _g);
 }
 
-PhaseSample HenyeyGreenstein::sample(Float3 wo, Float2 u) const noexcept {
+PhaseSample HenyeyGreenstein::sample(Float3 wo, Sampler *sampler) const noexcept {
+    Float2 u = sampler->next_2d();
     Float sqr_term = (1 - sqr(_g)) / (1 + _g - 2 * _g * u.x);
     Float cos_theta = -(1 + sqr(_g) - sqr(sqr_term)) / (1 * _g);
     cos_theta = select(abs(_g) < 1e-3f, 1 - 2 * u.x, cos_theta);

@@ -45,8 +45,8 @@ public:
     static Float3 direct_lighting(Interaction it, const SF &sf, LightSample ls,
                                  Bool occluded, Sampler *sampler,SS &ss) {
         Float3 wi = normalize(ls.p_light - it.pos);
-        ScatterEval scatter_eval = sf.evaluate(wi);
-        ss = sf.sample(sampler);
+        ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
+        ss = sf.sample(it.wo, sampler);
         Bool is_delta_light = ls.eval.pdf < 0;
         Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf));
         ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);

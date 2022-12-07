@@ -30,7 +30,23 @@ ScatterEval BSDF::evaluate(Float3 world_wi) const noexcept {
     return ret;
 }
 
+ScatterEval BSDF::evaluate(Float3 world_wo, Float3 world_wi) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    Float3 wi = shading_frame.to_local(world_wi);
+    ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
+    ret.f *= abs_cos_theta(wi);
+    return ret;
+}
+
 BSDFSample BSDF::sample(Sampler *sampler) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    BSDFSample ret;
+    ret = sample_local(wo, BxDFFlag::All, sampler);
+    ret.eval.f *= abs_cos_theta(ret.wi);
+    ret.wi = shading_frame.to_world(ret.wi);
+    return ret;
+}
+BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     BSDFSample ret;
     ret = sample_local(wo, BxDFFlag::All, sampler);
