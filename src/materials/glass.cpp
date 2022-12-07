@@ -35,22 +35,6 @@ public:
         };
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
-        BSDFSample ret;
-        auto fresnel = _fresnel->clone();
-        Float cos_theta_o = cos_theta(wo);
-        fresnel->correct_eta(cos_theta_o);
-        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-        $if(uc < fr) {
-            ret = _refl.sample(wo, u, fresnel);
-            ret.eval.pdf *= fr;
-        }
-        $else {
-            ret = _trans.sample(wo, u, fresnel);
-            ret.eval.pdf *= 1 - fr;
-        };
-        return ret;
-    }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
         BSDFSample ret;

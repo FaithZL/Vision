@@ -24,10 +24,6 @@ public:
     Float3 world_wo;
 
 protected:
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept {
-        BSDFSample ret;
-        return ret;
-    }
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
         ScatterEval ret;
         ret.f = make_float3(0.f);
@@ -47,8 +43,6 @@ public:
     [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi, Uchar flag) const noexcept;
-    [[nodiscard]] virtual BSDFSample sample(Float uc, Float2 u, Uchar flag) const noexcept;
-
     [[nodiscard]] ScatterEval evaluate(Float3 world_wi) const noexcept override;
     [[nodiscard]] SP<ScatterSample> sample(Sampler *sampler) const noexcept override;
 };

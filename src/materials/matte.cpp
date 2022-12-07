@@ -19,11 +19,6 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, nullptr);
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u,
-                                          Uchar flag) const noexcept override {
-        return _bxdf.sample(wo, u, nullptr);
-    }
-
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
         return _bxdf.sample(wo, sampler, nullptr);
     }

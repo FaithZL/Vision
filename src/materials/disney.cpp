@@ -396,54 +396,6 @@ public:
         ret.pdf = pdf;
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Float uc, Float2 u, Uchar flag) const noexcept override {
-        BSDFSample ret;
-
-        Uint sampling_strategy = 0u;
-        Float sum_weights = 0.f;
-        for (uint i = 0; i < _sampling_strategy_num; ++i) {
-            sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
-            sum_weights += _sampling_weights[i];
-        }
-        Float3 f;
-        Float pdf;
-        auto fresnel = _fresnel->clone();
-        Float cos_theta_o = cos_theta(wo);
-        fresnel->correct_eta(cos_theta_o);
-        SampledDirection sampled_direction;
-        $switch(sampling_strategy) {
-            if (_diffuse.has_value()) {
-                $case(_diffuse_index) {
-                    sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
-                    $break;
-                };
-            }
-            $case(_spec_refl_index) {
-                sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
-                $break;
-            };
-            if (_clearcoat.has_value()) {
-                $case(_clearcoat_index) {
-                    sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
-                    $break;
-                };
-            }
-            if (_spec_trans.has_value()) {
-                $case(_spec_trans_index) {
-                    sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
-                    $break;
-                };
-            }
-            $default {
-                unreachable();
-                $break;
-            };
-        };
-        ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
-        ret.wi = sampled_direction.wi;
-        ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
-        return ret;
-    }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
         BSDFSample ret;
