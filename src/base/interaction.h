@@ -67,6 +67,7 @@ public:
         return vision::spawn_ray(pos, g_uvn.normal(), dir);
     }
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
+    [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
         return vision::spawn_ray_to(pos, g_uvn.normal(), p);
     }

@@ -37,6 +37,12 @@ RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
+RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
+    OCRay ray = vision::spawn_ray_to(pos, g_uvn.normal(), p);
+    Uchar medium = mi ? select(dot(g_uvn.normal(), ray->direction()) > 0, mi->outside, mi->inside) : InvalidUI8;
+    return {.ray = ray, .ior = 1.f, .medium = medium};
+}
+
 void Interaction::set_medium(const Uchar &inside, const Uchar &outside) {
     if (mi) {
         mi->inside = inside;

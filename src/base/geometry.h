@@ -10,6 +10,7 @@
 
 namespace vision {
 using namespace ocarina;
+class Scene;
 struct Geometry {
 public:
     Device *device;
@@ -36,7 +37,8 @@ public:
     // for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
-    [[nodiscard]] Bool occluded(const Interaction &it, const Float3 &pos) const noexcept;
+    [[nodiscard]] Bool occluded(const Interaction &it, const Float3 &pos, RayState *rs = nullptr) const noexcept;
+    [[nodiscard]] Float3 tr(Scene *scene, const RayState &ray_state) const noexcept;
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;

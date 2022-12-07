@@ -4,6 +4,8 @@
 
 #include "geometry.h"
 #include "math/transform.h"
+#include "scene.h"
+#include "medium.h"
 
 namespace vision {
 
@@ -140,20 +142,37 @@ Bool Geometry::trace_any(const OCRay &ray) const noexcept {
     return accel.trace_any(ray);
 }
 
-Bool Geometry::occluded(const Interaction &it, const Float3 &pos) const noexcept {
-    OCRay shadow_ray = it.spawn_ray_to(pos);
+Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) const noexcept {
+    OCRay shadow_ray;
+    if (rs) {
+        *rs = it.spawn_ray_state_to(pos);
+        shadow_ray = rs->ray;
+    } else {
+        shadow_ray = it.spawn_ray_to(pos);
+    }
     return trace_any(shadow_ray);
 }
 
+Float3 Geometry::tr(Scene *scene, const RayState &ray_state) const noexcept {
+    Sampler *sampler = scene->sampler();
+    Float3 ret = make_float3(1.f);
+    $if(ray_state.in_medium()) {
+        scene->mediums().dispatch(ray_state.medium, [&](const Medium *medium) {
+            ret = medium->Tr(ray_state.ray, sampler);
+        });
+    };
+    return ret;
+}
+
 array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
-                                               const Uint &offset) const noexcept {
+                                             const Uint &offset) const noexcept {
     return {vertices.read(offset + tri.i),
             vertices.read(offset + tri.j),
             vertices.read(offset + tri.k)};
 }
 LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
-                                                        const Uint &prim_id,
-                                                        const Float2 &bary) const noexcept {
+                                                      const Uint &prim_id,
+                                                      const Float2 &bary) const noexcept {
     OCHit hit;
     hit.inst_id = inst_id;
     hit.prim_id = prim_id;
