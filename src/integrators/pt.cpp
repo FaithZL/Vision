@@ -109,19 +109,8 @@ public:
                 BSDFSample bsdf_sample;
                 _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(it);
-
-                    ScatterEval scatter_eval;
-                    Float3 wi = normalize(light_sample.p_light - it.pos);
-                    scatter_eval = bsdf->evaluate(wi, BxDFFlag::All);
-                    bsdf_sample = *std::dynamic_pointer_cast<BSDFSample>(bsdf->sample(sampler));
-                    //todo trick delta light
-                    Bool is_delta_light = light_sample.eval.pdf < 0;
-                    Float weight = select(is_delta_light, 1.f, mis_weight<D>(light_sample.eval.pdf, scatter_eval.pdf));
-                    light_sample.eval.pdf = select(is_delta_light, -light_sample.eval.pdf, light_sample.eval.pdf);
-                    $if(!occluded && scatter_eval.valid() && light_sample.valid()) {
-                        Float3 Ld = light_sample.eval.L * scatter_eval.f * weight / light_sample.eval.pdf;
-                        Li += throughput * Ld;
-                    };
+                    Li += throughput * direct_lighting(it, *bsdf, light_sample, occluded,
+                                                       sampler, bsdf_sample);
                 });
                 eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = luminance(throughput * eta_scale);

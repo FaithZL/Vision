@@ -6,10 +6,15 @@
 
 #include "node.h"
 #include "rhi/common.h"
+#include "interaction.h"
 
 namespace vision {
 
 class RenderPipeline;
+
+class ScatterFunction;
+
+class Sampler;
 
 class Integrator : public Node {
 public:
@@ -31,5 +36,7 @@ public:
           _rr_threshold(desc.rr_threshold) {}
     virtual void compile_shader(RenderPipeline *rp) noexcept = 0;
     virtual void render(RenderPipeline *rp) const noexcept = 0;
+    static Float3 direct_lighting(Interaction it, const ScatterFunction &sf, LightSample ls,
+                                 Bool occluded, Sampler *sampler,BSDFSample &ss);
 };
 }// namespace vision
