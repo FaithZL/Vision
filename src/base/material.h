@@ -16,7 +16,6 @@ struct BSDF {
 public:
     UVN<Float3> shading_frame;
     Float3 ng;
-    Float3 world_wo;
 
 protected:
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
@@ -34,13 +33,10 @@ protected:
 public:
     BSDF() = default;
     explicit BSDF(const Interaction &si)
-        : shading_frame(si.s_uvn), ng(si.g_uvn.normal()), world_wo(si.wo) {}
+        : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
     [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
-    [[nodiscard]] virtual ScatterEval evaluate(Float3 world_wi, Uchar flag) const noexcept;
-    [[nodiscard]] ScatterEval evaluate(Float3 world_wi) const noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
-    [[nodiscard]] BSDFSample sample(Sampler *sampler) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
