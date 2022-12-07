@@ -140,6 +140,11 @@ Bool Geometry::trace_any(const OCRay &ray) const noexcept {
     return accel.trace_any(ray);
 }
 
+Bool Geometry::occluded(const Interaction &it, const Float3 &pos) const noexcept {
+    OCRay shadow_ray = it.spawn_ray_to(pos);
+    return trace_any(shadow_ray);
+}
+
 array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
                                                const Uint &offset) const noexcept {
     return {vertices.read(offset + tri.i),

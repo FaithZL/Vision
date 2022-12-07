@@ -68,8 +68,7 @@ public:
                 comment("estimate direct lighting");
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(it, sampler->next_1d(), sampler->next_2d());
-                OCRay shadow_ray = it.spawn_ray_to(light_sample.p_light);
-                Bool occluded = geometry.trace_any(shadow_ray);
+                Bool occluded = geometry.occluded(it, light_sample.p_light);
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
