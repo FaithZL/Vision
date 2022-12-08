@@ -49,8 +49,8 @@ public:
 
                 $if(rs.in_medium()) {
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                        //                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
-                        //                        throughput *= medium_throughput;
+                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
+                        throughput *= medium_throughput;
                     });
                 };
 
@@ -68,6 +68,7 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it);
+                    Float3 tr = geometry.Tr(_scene, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight;
                 };
@@ -77,17 +78,25 @@ public:
                 LightSample light_sample = light_sampler->sample(it, sampler);
                 RayState shadow_ray;
                 Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
-
+                Float3 tr = geometry.Tr(_scene, shadow_ray);
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
                 Float3 Ld = make_float3(0.f);
 
-                _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
-                    UP<BSDF> bsdf = material->get_BSDF(it);
-                    Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                         sampler, bsdf_sample);
-                });
-                Li += throughput * Ld;
+                $if(it.has_phase()) {
+                    PhaseSample ps;
+                    Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, ps);
+                    bsdf_sample.eval = ps.eval;
+                    bsdf_sample.wi = ps.wi;
+                } $else {
+                    _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
+                        UP<BSDF> bsdf = material->get_BSDF(it);
+                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                             sampler, bsdf_sample);
+                    });
+                };
+
+                Li += throughput * Ld * tr;
                 eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = luminance(throughput * eta_scale);
                 $if(!bsdf_sample.valid() || lum == 0.f) {
