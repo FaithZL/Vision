@@ -39,6 +39,7 @@ public:
         $if(sampled_medium) {
             it = Interaction(ray->at(t), -ray->direction());
             it.init_phase(_g);
+            it.set_medium(_index, _index);
         };
         Float3 tr = Tr(t);
         Float3 density = select(sampled_medium, _sigma_t * tr, tr);

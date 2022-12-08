@@ -49,33 +49,8 @@ public:
 
                 $if(rs.in_medium()) {
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
-                        $if(it.has_phase()) {
-                            comment("process phase sample light");
-                            LightSample ls = light_sampler->sample(it, sampler);
-                            RayState ray_state;
-                            Bool occluded = geometry.occluded(it, ls.p_light, &ray_state);
-                            PhaseSample ps;
-                            throughput *= medium_throughput;
-                            Float3 tr = geometry.tr(_scene, ray_state);
-                            Float3 Ld = direct_lighting(it, *it.phase, ls, occluded, sampler, ps) * tr;
-                            Li += Ld * throughput;
-                            throughput *= ps.eval.value();
-                            rs = it.spawn_ray_state(ps.wi);
-                            bsdf_pdf = ps.eval.pdf;
-                            $if(it.has_phase()) {
-                                Float lum = luminance(throughput);
-                                $if(lum < _rr_threshold && bounces >= _min_depth) {
-                                    Float q = min(0.95f, lum);
-                                    Float rr = sampler->next_1d();
-                                    $if(q < rr) {
-                                        $break;
-                                    };
-                                    throughput /= q;
-                                };
-                                $continue;
-                            };
-                        };
+//                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
+//                        throughput *= medium_throughput;
                     });
                 };
 

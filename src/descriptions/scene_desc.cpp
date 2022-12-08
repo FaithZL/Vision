@@ -140,6 +140,7 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
 void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
     for (uint i = 0; i < mediums.size(); ++i) {
         MediumDesc desc;
+        desc.index = i;
         desc.init(mediums[i]);
         medium_descs.push_back(desc);
         medium_name_to_id[desc.name] = i;

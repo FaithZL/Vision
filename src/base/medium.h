@@ -64,12 +64,15 @@ public:
 class Sampler;
 
 class Medium : public Node {
+protected:
+    uint _index{};
+
 public:
     using Desc = MediumDesc;
 
 public:
-    explicit Medium(const MediumDesc &desc) : Node(desc) {}
-    ~Medium() override {}
+    explicit Medium(const MediumDesc &desc) : Node(desc),_index(desc.index) {}
+    ~Medium() override = default;
     virtual Float3 Tr(const OCRay &ray, Sampler *sampler) const noexcept = 0;
     virtual Float3 sample(const OCRay &ray, Interaction &it, Sampler *sampler) const noexcept = 0;
 };
