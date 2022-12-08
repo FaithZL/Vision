@@ -866,7 +866,7 @@
         "MIS_mode" : 2
     },
     "output" : {
-        "fn" : "cornell-box-mg.png",
+        "fn" : "cornell-box-fog.png",
         // "fn": "cornell-box-wf.png",
         "spp" : 0,
         // "albedo" : true,
