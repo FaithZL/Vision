@@ -24,7 +24,7 @@ public:
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
-            Float bsdf_pdf = eval(1e16f);
+            Float scatter_pdf = eval(1e16f);
             Float3 Li = make_float3(0.f);
             Float3 throughput = make_float3(1.f);
             Geometry &geometry = rp->geometry();
@@ -39,7 +39,7 @@ public:
                         p_ref.pos = rs.origin();
                         p_ref.ng = rs.direction();
                         LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction());
-                        Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
+                        Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                         Li += eval.L * throughput * weight;
                     }
                     $break;
@@ -49,12 +49,12 @@ public:
 
                 $if(rs.in_medium()) {
                     _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-//                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
-//                        throughput *= medium_throughput;
+                        //                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
+                        //                        throughput *= medium_throughput;
                     });
                 };
 
-                $if(!it.has_material()) {
+                $if(!it.has_material() && !it.has_phase()) {
                     //todo remove no material mesh in non volumetric scene
                     comment("process no material interaction for volumetric rendering");
                     rs = it.spawn_ray_state(rs.direction());
@@ -68,22 +68,26 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it);
-                    Float weight = mis_weight<D>(bsdf_pdf, eval.pdf);
+                    Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight;
                 };
 
                 comment("estimate direct lighting");
                 comment("sample light");
                 LightSample light_sample = light_sampler->sample(it, sampler);
-                Bool occluded = geometry.occluded(it, light_sample.p_light);
+                RayState shadow_ray;
+                Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
 
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
+                Float3 Ld = make_float3(0.f);
+
                 _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                     UP<BSDF> bsdf = material->get_BSDF(it);
-                    Li += throughput * direct_lighting(it, *bsdf, light_sample, occluded,
-                                                       sampler, bsdf_sample);
+                    Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                         sampler, bsdf_sample);
                 });
+                Li += throughput * Ld;
                 eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = luminance(throughput * eta_scale);
                 $if(!bsdf_sample.valid() || lum == 0.f) {
@@ -98,7 +102,7 @@ public:
                     };
                     throughput /= q;
                 };
-                bsdf_pdf = bsdf_sample.eval.pdf;
+                scatter_pdf = bsdf_sample.eval.pdf;
                 rs = it.spawn_ray_state(bsdf_sample.wi);
             };
             camera->film()->add_sample(pixel, Li, frame_index);
