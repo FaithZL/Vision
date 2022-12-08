@@ -4,50 +4,61 @@
 
 #include "interaction.h"
 #include "medium.h"
+#include "base/sampler.h"
 
 namespace vision {
 using namespace ocarina;
-Interaction::Interaction() {
-    prepare_medium();
+
+Float HenyeyGreenstein::f(Float3 wo, Float3 wi) const noexcept {
+    return phase_HG(dot(wo, wi), _g);
 }
+
+PhaseSample HenyeyGreenstein::sample(Float3 wo, Sampler *sampler) const noexcept {
+    Float2 u = sampler->next_2d();
+    Float sqr_term = (1 - sqr(_g)) / (1 + _g - 2 * _g * u.x);
+    Float cos_theta = -(1 + sqr(_g) - sqr(sqr_term)) / (2 * _g);
+    cos_theta = select(abs(_g) < 1e-3f, 1 - 2 * u.x, cos_theta);
+
+    Float sin_theta = safe_sqrt(1 - sqr(cos_theta));
+    Float phi = 2 * Pi * u.y;
+    Float3 v1, v2;
+    coordinate_system(wo, v1, v2);
+    Float3 wi = spherical_direction(sin_theta, cos_theta, phi, v1, v2, wo);
+    Float f = phase_HG(cos_theta, _g);
+    PhaseSample phase_sample;
+    phase_sample.eval = {.f = make_float3(f), .pdf = f};
+    phase_sample.wi = wi;
+    return phase_sample;
+}
+
+Interaction::Interaction() {}
 
 Interaction::Interaction(Float3 pos, Float3 wo)
-    : pos(pos), wo(wo) {
-    prepare_medium();
-}
-
-void Interaction::prepare_medium() {
-    phase = make_shared<HenyeyGreenstein>();
-    mi = make_shared<MediumInterface>();
-}
+    : pos(pos), wo(wo) {}
 
 void Interaction::init_phase(Float g) {
-    if (phase) {
-        phase->init(g);
-    }
+    phase.init(g);
 }
 
 Bool Interaction::has_phase() {
-    return phase ? phase->valid() : false;
+    return phase.valid();
 }
 
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
     OCRay ray = vision::spawn_ray(pos, g_uvn.normal(), dir);
-    Uchar medium = mi ? select(dot(g_uvn.normal(), dir) > 0, mi->outside, mi->inside) : InvalidUI8;
+    Uchar medium = select(dot(g_uvn.normal(), dir) > 0, mi.outside, mi.inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
 RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
     OCRay ray = vision::spawn_ray_to(pos, g_uvn.normal(), p);
-    Uchar medium = mi ? select(dot(g_uvn.normal(), ray->direction()) > 0, mi->outside, mi->inside) : InvalidUI8;
+    Uchar medium = select(dot(g_uvn.normal(), ray->direction()) > 0, mi.outside, mi.inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
 void Interaction::set_medium(const Uchar &inside, const Uchar &outside) {
-    if (mi) {
-        mi->inside = inside;
-        mi->outside = outside;
-    }
+    mi.inside = inside;
+    mi.outside = outside;
 }
 
 }// namespace vision
