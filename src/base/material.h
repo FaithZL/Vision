@@ -40,6 +40,23 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
+class DielectricBSDF : public BSDF {
+private:
+    SP<const Fresnel> _fresnel;
+    MicrofacetReflection _refl;
+    MicrofacetTransmission _trans;
+
+public:
+    DielectricBSDF(const Interaction &si,
+              const SP<Fresnel> &fresnel,
+              MicrofacetReflection refl,
+              MicrofacetTransmission trans)
+        : BSDF(si), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
+    [[nodiscard]] Float3 albedo() const noexcept override { return _refl.albedo(); }
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override;
+};
+
 class Material : public Node {
 public:
     using Desc = MaterialDesc;

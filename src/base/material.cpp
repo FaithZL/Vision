@@ -31,4 +31,36 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     return ret;
 }
 
+ScatterEval DielectricBSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+    ScatterEval ret;
+    auto fresnel = _fresnel->clone();
+    Float cos_theta_o = cos_theta(wo);
+    fresnel->correct_eta(cos_theta_o);
+    $if(same_hemisphere(wo, wi)) {
+        ret = _refl.evaluate(wo, wi, fresnel);
+    }
+    $else {
+        ret = _trans.evaluate(wo, wi, fresnel);
+    };
+    return ret;
+}
+
+BSDFSample DielectricBSDF::sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
+    BSDFSample ret;
+    Float uc = sampler->next_1d();
+    auto fresnel = _fresnel->clone();
+    Float cos_theta_o = cos_theta(wo);
+    fresnel->correct_eta(cos_theta_o);
+    Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+    $if(uc < fr) {
+        ret = _refl.sample(wo, sampler, fresnel);
+        ret.eval.pdf *= fr;
+    }
+    $else {
+        ret = _trans.sample(wo, sampler, fresnel);
+        ret.eval.pdf *= 1 - fr;
+    };
+    return ret;
+}
+
 }// namespace vision
