@@ -72,7 +72,7 @@ public:
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it);
                     Float3 tr = geometry.Tr(_scene, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
-                    Li += eval.L * throughput * weight;
+                    Li += eval.L * throughput * weight * tr;
                 };
 
                 comment("estimate direct lighting");
