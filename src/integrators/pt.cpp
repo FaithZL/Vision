@@ -85,6 +85,14 @@ public:
                 BSDFSample bsdf_sample;
                 Float3 Ld = make_float3(0.f);
 
+                auto sample_surface = [&]() {
+                    _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
+                        UP<BSDF> bsdf = material->get_BSDF(it);
+                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                             sampler, bsdf_sample);
+                    });
+                };
+
                 if (_scene->has_medium()) {
                     $if(it.has_phase()) {
                         PhaseSample ps;
@@ -92,18 +100,10 @@ public:
                         bsdf_sample.eval = ps.eval;
                         bsdf_sample.wi = ps.wi;
                     } $else {
-                        _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
-                            UP<BSDF> bsdf = material->get_BSDF(it);
-                            Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                                 sampler, bsdf_sample);
-                        });
+                        sample_surface();
                     };
                 } else {
-                    _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
-                        UP<BSDF> bsdf = material->get_BSDF(it);
-                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                             sampler, bsdf_sample);
-                    });
+                    sample_surface();
                 }
 
                 Li += throughput * Ld * tr;
