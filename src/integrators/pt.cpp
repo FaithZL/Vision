@@ -47,12 +47,14 @@ public:
 
                 Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
 
-                $if(rs.in_medium()) {
-                    _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                        Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
-                        throughput *= medium_throughput;
-                    });
-                };
+                if (_scene->has_medium()) {
+                    $if(rs.in_medium()) {
+                        _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
+                            Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
+                            throughput *= medium_throughput;
+                        });
+                    };
+                }
 
                 $if(!it.has_material() && !it.has_phase()) {
                     //todo remove no material mesh in non volumetric scene
@@ -83,18 +85,26 @@ public:
                 BSDFSample bsdf_sample;
                 Float3 Ld = make_float3(0.f);
 
-                $if(it.has_phase()) {
-                    PhaseSample ps;
-                    Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, ps);
-                    bsdf_sample.eval = ps.eval;
-                    bsdf_sample.wi = ps.wi;
-                } $else {
+                if (_scene->has_medium()) {
+                    $if(it.has_phase()) {
+                        PhaseSample ps;
+                        Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, ps);
+                        bsdf_sample.eval = ps.eval;
+                        bsdf_sample.wi = ps.wi;
+                    } $else {
+                        _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
+                            UP<BSDF> bsdf = material->get_BSDF(it);
+                            Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                                 sampler, bsdf_sample);
+                        });
+                    };
+                } else {
                     _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                         UP<BSDF> bsdf = material->get_BSDF(it);
                         Ld = direct_lighting(it, *bsdf, light_sample, occluded,
                                              sampler, bsdf_sample);
                     });
-                };
+                }
 
                 Li += throughput * Ld * tr;
                 eta_scale *= sqr(bsdf_sample.eta);

@@ -861,6 +861,9 @@
             }
         }
     ],
+    "ext": {
+        "process_medium": true
+    },
     "debug" : {
         // "pixel" : [60, 79],
         "MIS_mode" : 2

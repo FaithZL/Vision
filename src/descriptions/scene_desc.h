@@ -24,6 +24,7 @@ public:
     NameID::map_ty mat_name_to_id;
     NameID::map_ty medium_name_to_id;
     fs::path scene_path;
+    ParameterSet ext_param;
 
 public:
     SceneDesc() = default;
@@ -32,6 +33,7 @@ public:
     void init_shape_descs(const DataWrap &shapes) noexcept;
     void init_medium_descs(const DataWrap &mediums) noexcept;
     void init(const DataWrap &data) noexcept;
+    [[nodiscard]] bool process_medium() const noexcept;
     void process_materials() noexcept;
     void check_meshes() noexcept;
 };

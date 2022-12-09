@@ -70,6 +70,7 @@ public:
         warper_desc.sub_type += "2d";
         return load<Warper2D>(warper_desc);
     }
+    [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs) noexcept;
     void load_mediums(const vector<MediumDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;

@@ -131,13 +131,18 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
             sd.material.id = InvalidUI32;
             sd.mat_hash = InvalidUI64;
         }
-        sd.inside_medium.fill_id(medium_name_to_id);
-        sd.outside_medium.fill_id(medium_name_to_id);
+        if (process_medium()) {
+            sd.inside_medium.fill_id(medium_name_to_id);
+            sd.outside_medium.fill_id(medium_name_to_id);
+        }
         shape_descs.push_back(sd);
     }
 }
 
 void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
+    if (!process_medium()) {
+        return;
+    }
     for (uint i = 0; i < mediums.size(); ++i) {
         MediumDesc desc;
         desc.index = i;
@@ -192,7 +197,12 @@ void SceneDesc::check_meshes() noexcept {
     }
 }
 
+bool SceneDesc::process_medium() const noexcept {
+    return ext_param["process_medium"].as_bool(false);
+}
+
 void SceneDesc::init(const DataWrap &data) noexcept {
+    ext_param = ParameterSet(data.value("ext", DataWrap::object()));
     integrator_desc.init(data.value("integrator", DataWrap()));
     light_sampler_desc.scene_path = scene_path;
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));

@@ -1,9 +1,8 @@
 {
-    "textures": [],
     "materials": [
         {
             "type" : "disney",
-            "name" : "disney",
+            "name" : "mix",
             "param" : {
                 "color" : [
                     1, 1, 1,
@@ -26,88 +25,92 @@
             }
         },
         {
-            "type" : "disney",
+            "type" : "matte",
             "name" : "LeftWall",
             "param" : {
-                "color" : {
-                    "fn" : "test.png",
-                    "ColorSpace" : "srgb"
-                }
-            }
-        },
-        {
-            "type" : "matte",
-            "name" : "image",
-            "param" : {
-                "color" : {
-                    "fn" : "test.png",
-                    "ColorSpace" : "linear"
-                }
-            }
-        },
-        {
-            "type" : "mirror",
-            "name" : "Mirror",
-            "param" : {
                 "color" : [
-                    1,
-                    1,
-                    1
-                ],
-                "roughness" : 0.001
+                    0.63,
+                    0.065,
+                    0.05
+                ]
             }
         },
+         {
+             "type" : "mirror",
+             "name" : "Mirror",
+             "param" : {
+                 "color" : [
+                     1,
+                     1,
+                     1
+                 ],
+                 "roughness" : 0.001
+             }
+         },
+         {
+             "type": "glass",
+             "name": "Glass",
+             "param": {
+                 "color": [
+                     1,
+                     1,
+                     1
+                 ],
+                 "ior": 1.5,
+                 "roughness" :0.001
+             }
+         },
+         {
+             "type" : "metal",
+             "name" : "metal",
+             "param" : {
+                 "metal_name" : "Cu",
+                 "roughness" : 0.01
+             }
+         },
         {
-            "type": "glass",
-            "name": "Glass",
-            "param": {
-                "color": [
-                    1,
-                    1,
-                    1
-                ],
-                "ior": 1.5,
-                "roughness" :0.001
-            }
-        },
-        {
-            "type" : "metal",
-            "name" : "metal",
-            "param" : {
-                "metal_name" : "Cu",
-                "roughness" : 0.01
-            }
-        },
-        {
-            "type": "disney",
+            "type": "matte",
             "name": "RightWall",
             "param": {
-                "color" : {
-                    "fn" : "test1.png",
-                    "ColorSpace" : "srgb"
-                }
+                "color": [
+                    0.14,
+                    0.45,
+                    0.091
+                ]
             }
         },
         {
-            "type": "disney",
+            "type": "matte",
             "name": "Floor",
             "param": {
-                "color" : {
-                    "fn" : "test2.png",
-                    "ColorSpace" : "srgb"
-                }
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
             }
         },
+        // {
+        //     "type": "substrate",
+        //     "name": "substrate",
+        //     "param": {
+        //         "roughness" : 0.001,
+        //         "spec": [
+        //             0.04,
+        //             0.04,
+        //             0.04
+        //         ],
+        //         "color": [
+        //             0.725,
+        //             0.71,
+        //             0.68
+        //         ]
+        //     }
+        // },
         {
-            "type": "substrate",
-            "name": "substrate",
+            "type": "matte",
+            "name": "Ceiling",
             "param": {
-                "roughness" : 0.001,
-                "spec": [
-                    0.04,
-                    0.04,
-                    0.04
-                ],
                 "color": [
                     0.725,
                     0.71,
@@ -116,30 +119,39 @@
             }
         },
         {
-            "type": "disney",
-            "name": "Ceiling",
-            "param": {
-                "color" : {
-                    "fn" : "test3.png",
-                    "ColorSpace" : "srgb"
-                }
-            }
-        },
-        {
-            "type": "disney",
+            "type": "matte",
             "name": "BackWall",
             "param": {
-                "color" : {
-                    "fn" : "test4.png",
-                    "ColorSpace" : "srgb"
-                }
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ],
+//                "color": {
+//                    "fn":"Painting3.jpg",
+//                    "color_space" : "srgb"
+//                },
+                "ior" : 1.5,
+                "roughness" : 1,
+                "metallic" : 0,
+                "spec_tint" : 0.0,
+                "anisotropic" : 0,
+                "sheen" : 0,
+                "sheen_tint" : 0,
+                "clearcoat" : 0,
+                "clearcoat_alpha" : 0,
+                "spec_trans" :0 ,
+                "flatness" : 0,
+                "scatter_distance" : [0, 0, 0],
+                "diff_trans" : 0,
+                "thin" : false
             }
         },
         {
-            "type": "disney",
+            "type": "mirror",
             "name": "ShortBox",
             "param": {
-                // "roughness" : [0.002]
+                 "roughness" : 0.002,
                 "color": [
                     0.725,
                     0.71,
@@ -152,23 +164,17 @@
             "name": "TallBox",
             "param": {
                 // "roughness" : [0.002]
-                "color" : {
-                    "fn" : "test5.png",
-                    "ColorSpace" : "srgb"
-                }
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
             }
         },
         {
-            "type": "matte",
+            "type": "null",
             "name": "Black",
-            "param": {
-                // "roughness" : [0.002]
-                "color": [
-                    0,
-                    0,
-                    0
-                ]
-            }
+            "param": { }
         }
     ],
     "shapes": [
@@ -387,11 +393,11 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-               "material": "ShortBox",
+//               "material": "ShortBox",
 //                "material" : "substrate",
                 // "material" : "disney",
 //                "material": "Mirror",
-//                "material": "Glass",
+                "material": "Glass",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -434,8 +440,8 @@
                 "z": 1,
 //                "material": "metal",
 //                "material": "Mirror",
-//                "material" : "Glass",
-                "material": "TallBox",
+                "material" : "Glass",
+//                "material": "TallBox",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -468,7 +474,60 @@
                     }
                 }
             }
-        },
+        }
+    ,
+//        {
+//            "type": "quad",
+//            "name": "shape_7",
+//            "param": {
+//                "width": 0.3,
+//                "height": 0.3,
+//                "material": "Black",
+//                "transform": {
+//                    "type": "matrix4x4",
+//                    "param": {
+//                        "matrix4x4": [
+//                            [
+//                                -0.4699999988079071,
+//                                -4.108870399477382e-08,
+//                                -4.108870399477382e-08,
+//                                0.0
+//                            ],
+//                            [
+//                                1.56137076601226e-08,
+//                                -0.1785999983549118,
+//                                1.3649937003794234e-15,
+//                                0.0
+//                            ],
+//                            [
+//                                3.3220654671595184e-08,
+//                                0.0,
+//                                -0.3799999952316284,
+//                                0.0
+//                            ],
+//                            [
+//                                -0,
+//                                1.9800000190734863,
+//                                -0.029999999329447746,
+//                                1.0
+//                            ]
+//                        ]
+//                    }
+//                },
+//                "emission": {
+//                    "type" : "area",
+//                    "param" : {
+//                        "radiance": [
+//                            17,
+//                            12,
+//                            4
+//                        ],
+//                        "two_sided": false,
+//                        "scale": 10
+//                    }
+//                }
+//            }
+//        }
         {
             "type": "quad",
             "name": "shape_7",
@@ -499,14 +558,15 @@
                                 0.0
                             ],
                             [
-                                0.004999999888241291,
+                                0,
                                 1.9800000190734863,
                                 -0.029999999329447746,
                                 1.0
                             ]
                         ]
                     }
-                },
+                }
+            ,
                 "emission": {
                     "type" : "area",
                     "param" : {
@@ -515,6 +575,10 @@
                             12,
                             4
                         ],
+//                        "radiance" : {
+//                            "fn":"Painting3.jpg",
+//                            "color_space" : "srgb"
+//                        },
                         "two_sided": false,
                         "scale": 1
                     }
@@ -525,14 +589,111 @@
     "light_sampler": {
         "type": "uniform",
         "param" : {
+            "env_prob" : 0.5,
             "lights": [
-                // {
-                //     "type" : "point",
-                //     "param" :{
-                //         "intensity" : [1,0,1],
-                //         "position" : [1,2,3]
-                //     }
-                // }
+//                {
+//                    "type" : "projector",
+//                    "param" :{
+//                        "angle" : 5,
+//                        "intensity" : {
+//                            "fn":"Painting3.jpg",
+//                            "color_space" : "srgb"
+//                        },
+//                        "ratio": 1,
+//                        "o2w" :  {
+//                            "type": "look_at",
+//                            "param": {
+//                                "position": [
+//                                    0,
+//                                    1,
+//                                    6.8
+//                                ],
+//                                "up": [
+//                                    0,
+//                                    1,
+//                                    0
+//                                ],
+//                                "target_pos": [
+//                                    0,
+//                                    1,
+//                                    0
+//                                ]
+//                            }
+//                        },
+//                        "scale" : 90
+//                    }
+//                }
+//                ,
+//                {
+//                    "type": "environment",
+//                    "param" : {
+//                        "texture" : {
+//                            "fn": "spruit_sunrise_2k.hdr",
+//                            "color_space": "linear"
+//                        },
+//                        "o2w" : {
+//                            "type": "yaw_pitch",
+//                            "param": {
+//                                "yaw" : 90,
+//                                "pitch": 0
+//                            }
+//                        },
+//                        "scale": 0
+//                    }
+//                }
+//                ,
+//                {
+//                    "type" : "projector",
+//                    "param" :{
+//                        "angle" : 5,
+//                        "intensity" : {
+//                            "fn":"Painting3.jpg",
+//                            "color_space" : "srgb"
+//                        },
+//                        "ratio": 1,
+//                        "o2w" :  {
+//                            "type": "look_at",
+//                            "param": {
+//                                "position": [
+//                                    0,
+//                                    1,
+//                                    6.8
+//                                ],
+//                                "up": [
+//                                    0,
+//                                    1,
+//                                    0
+//                                ],
+//                                "target_pos": [
+//                                    0,
+//                                    1,
+//                                    0
+//                                ]
+//                            }
+//                        },
+//                        "scale" : 90
+//                    }
+//                }
+//                {
+//                    "type" : "spot",
+//                    "param" :{
+//                        "angle" : 20,
+//                        "falloff": 2,
+//                        "direction": [0,-1,0],
+//                        "intensity" : [1,1,1],
+//                        "position" : [-0.5,1.9,0],
+//                        "scale" : 1
+//                    }
+//                }
+//            ,
+//                {
+//                    "type" : "point",
+//                    "param" :{
+//                        "intensity" : [1,1,1],
+//                        "position" : [-0.5,1.9,0],
+//                        "scale": 0
+//                    }
+//                }
             ]
         }
     },
@@ -597,23 +758,37 @@
             }
         }
     },
-    "integrator": {
-        "type": "pt",
+    "integrator" : {
+        "type" : "pt",
         // "type": "WavefrontPT",
-        "param": {
-            "min_depth": 16,
-            "max_depth": 16,
-            "rr_threshold": 1
+        "param" : {
+            "min_depth" : 0,
+            "max_depth" : 16,
+            "rr_threshold" : 1
         }
     },
-    "debug": {
-        // "pixel" : [60, 79],
-        "MIS_mode": 2
+    "mediums" : [
+        {
+            "type" : "homogeneous",
+            "name" :"fog",
+            "param" : {
+                "g" : 0,
+                "sigma_a" : [0.0, 0.0, 0.0],
+                "sigma_s" : [0.8, 0.8, 0.8]
+            }
+        }
+    ],
+    "ext" : {
+        "process_medium" : false
     },
-    "output": {
-        "fn": "cornell-box-mg.png",
+    "debug" : {
+        // "pixel" : [60, 79],
+        "MIS_mode" : 2
+    },
+    "output" : {
+        "fn" : "cornell-box-mg.png",
         // "fn": "cornell-box-wf.png",
-        "spp": 16,
+        "spp" : 0,
         // "albedo" : true,
         // "normal" : true,
         // "normal_remapping" : true,
