@@ -239,6 +239,17 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct MediumDesc : public NodeDesc {
+public:
+    float3 sigma_a{make_float3(0.f)};
+    float3 sigma_s{make_float3(0.8f)};
+    float g{0.f};
+    uint index{InvalidUI32};
+public:
+    VISION_DESC_COMMON(Medium)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct MaterialDesc : public NodeDesc {
 public:
     // common
@@ -250,7 +261,7 @@ public:
     TextureDesc ior{1.5f};
 
     // for metal
-    string metal_name{""};
+    string material_name{""};
     TextureDesc eta;
     TextureDesc k;
 
@@ -271,6 +282,10 @@ public:
     TextureDesc diff_trans{0.f};
     bool thin{false};
 
+    // for subsurface
+    TextureDesc sigma_a{make_float3(.0011f, .0024f, .014f)};
+    TextureDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f)};
+
 public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
@@ -281,17 +296,6 @@ public:
                       clearcoat_alpha, spec_trans, scatter_distance, flatness,
                       diff_trans, thin);
     }
-};
-
-struct MediumDesc : public NodeDesc {
-public:
-    float3 sigma_a{make_float3(0.f)};
-    float3 sigma_s{make_float3(0.8f)};
-    float g{0.f};
-    uint index{InvalidUI32};
-public:
-    VISION_DESC_COMMON(Medium)
-    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct LightSamplerDesc : public NodeDesc {

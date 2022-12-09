@@ -155,9 +155,9 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     VS_TEXTURE_DESC_INIT(flatness)
     VS_TEXTURE_DESC_INIT(diff_trans)
 
-    VISION_PARAMS_LIST_INITIAL(metal_name)
-    if (!metal_name.empty()) {
-        auto [eta_, k_] = detail::get_ior(metal_name);
+    VISION_PARAMS_LIST_INITIAL(material_name)
+    if (!material_name.empty()) {
+        auto [eta_, k_] = detail::get_ior(material_name);
         eta.init(DataWrap({eta_.x, eta_.y, eta_.z}));
         k.init(DataWrap({k_.x, k_.y, k_.z}));
     }
