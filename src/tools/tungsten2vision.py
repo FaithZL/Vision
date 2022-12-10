@@ -102,7 +102,7 @@ def convert_metal(mat_input):
         "type" : "metal",
         "name" : mat_input["name"],
         "param" : {
-            "metal_name" : mat_input.get("material", ""),
+            "material_name" : mat_input.get("material", ""),
             "eta" : convert_vec(mat_input.get("eta", 0), 3),
             "k" : convert_vec(mat_input.get("k", 0), 3),
             "roughness" :convert_vec(mat_input.get("roughness", 0.01), 2),
@@ -228,7 +228,7 @@ def convert_shape_transform(transform, scale=1):
     R = glm.radians(glm.vec3(transform.get("rotation", [0,0,0])))
     S = glm.vec3(transform.get("scale", [1,1,1]))
     M = convert_srt(S, R, T)
-    M = glm.scale(glm.vec3([-1,1,1])) * M
+    M = glm.scale(glm.vec3([1,1,1])) * M
     matrix4x4 = []
     for i in M:
         arr = []

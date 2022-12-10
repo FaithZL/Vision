@@ -32,9 +32,8 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
     uint2 res = _film->resolution();
     Var<Data> data = _data.read(0);
     Float2 p = (ss.p_film * 2.f - make_float2(res)) * data.tan_fov_y_over2 / float(res.y);
-    Float4x4 c2w = data.c2w;
-    Float3 dir = normalize(p.x * c2w[0].xyz() - p.y * c2w[1].xyz() + c2w[2].xyz());
-    OCRay ray = make_ray(c2w[3].xyz(), dir);
+    Float3 dir = normalize(p.x * device_right() - p.y * device_up() + device_forward());
+    OCRay ray = make_ray(device_position(), dir);
     return {.ray = ray, .ior = 1.f, .medium = _medium};
 }
 
@@ -76,7 +75,27 @@ float3 Camera::up() const noexcept {
 }
 
 float3 Camera::right() const noexcept {
-    return _data->c2w[0].xyz();
+    return -_data->c2w[0].xyz();
+}
+
+Float3 Camera::device_forward() const noexcept {
+    Var<Data> data = _data.read(0);
+    return data->c2w[2].xyz();
+}
+
+Float3 Camera::device_up() const noexcept {
+    Var<Data> data = _data.read(0);
+    return data->c2w[1].xyz();
+}
+
+Float3 Camera::device_right() const noexcept {
+    Var<Data> data = _data.read(0);
+    return -data->c2w[0].xyz();
+}
+
+Float3 Camera::device_position() const noexcept {
+    Var<Data> data = _data.read(0);
+    return data->c2w[3].xyz();
 }
 
 }// namespace vision

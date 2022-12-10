@@ -34,7 +34,7 @@ public:
             vertices.emplace_back(P[i], N[i], UV[i]);
             aabb.extend(transform_point<H>(handle.o2w, P[i]));
         }
-        triangles = {Triangle{1, 0, 2}, Triangle{1, 2, 3}};
+        triangles = {Triangle{0, 1, 2}, Triangle{2, 1, 3}};
     }
 };
 
