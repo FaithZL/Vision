@@ -23,13 +23,13 @@ public:
     }
 };
 
-class MetalBSDF : public BSDF {
+class ConductorBSDF : public BSDF {
 private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
 
 public:
-    MetalBSDF(const Interaction &si,
+    ConductorBSDF(const Interaction &si,
               const SP<Fresnel> &fresnel,
               MicrofacetReflection refl)
         : BSDF(si), _fresnel(fresnel), _refl(move(refl)) {}
@@ -66,7 +66,7 @@ public:
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k);
         MicrofacetReflection bxdf(kr, microfacet);
-        return make_unique<MetalBSDF>(si, fresnel, move(bxdf));
+        return make_unique<ConductorBSDF>(si, fresnel, move(bxdf));
     }
 };
 

@@ -6,6 +6,7 @@
 #include "parameter_set.h"
 #include "core/macro_map.h"
 #include "metal_ior_data.h"
+#include "medium_scatter_data.h"
 #include "math/transform.h"
 
 namespace vision {
@@ -116,8 +117,7 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
 
 namespace detail {
 [[nodiscard]] pair<float3, float3> get_ior(const string &name) {
-    for (int i = 0; i < sizeof(complex_ior_list) / sizeof(ComplexIor); ++i) {
-        ComplexIor elm = complex_ior_list[i];
+    for (auto elm : complex_ior_list) {
         if (elm.name == name) {
             return {elm.eta, elm.k};
         }
@@ -126,6 +126,17 @@ namespace detail {
     ComplexIor elm = complex_ior_list[0];
     return {elm.eta, elm.k};
 }
+
+[[nodiscard]] pair<float3, float3> get_sigma(const string &name) {
+    for (auto elm : SubsurfaceParameterTable) {
+        if (elm.name == name) {
+            return {elm.sigma_s, elm.sigma_a};
+        }
+    }
+    MeasuredSS elm = SubsurfaceParameterTable[0];
+    return {elm.sigma_s, elm.sigma_a};
+}
+
 }// namespace detail
 
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
@@ -169,7 +180,16 @@ void MediumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("homogeneous");
     ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(g, sigma_a, sigma_s)
+    VISION_PARAMS_LIST_INITIAL(g, sigma_a, sigma_s, scale, medium_name)
+
+    if (!medium_name.empty()) {
+        auto [ss, sa] = detail::get_sigma(medium_name);
+        sigma_s = ss;
+        sigma_a = sa;
+    }
+
+    sigma_a *= scale;
+    sigma_s *= scale;
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
