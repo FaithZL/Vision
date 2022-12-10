@@ -287,6 +287,7 @@ public:
     // for subsurface
     TextureDesc sigma_a{make_float3(.0011f, .0024f, .014f)};
     TextureDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f)};
+    float sigma_scale{1.f};
 
 public:
     VISION_DESC_COMMON(Material)

@@ -166,11 +166,17 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     VS_TEXTURE_DESC_INIT(flatness)
     VS_TEXTURE_DESC_INIT(diff_trans)
 
-    VISION_PARAMS_LIST_INITIAL(material_name)
+    VISION_PARAMS_LIST_INITIAL(material_name, sigma_scale)
     if (sub_type == "metal") {
         auto [eta_, k_] = detail::get_ior(material_name);
         eta.init(DataWrap({eta_.x, eta_.y, eta_.z}));
         k.init(DataWrap({k_.x, k_.y, k_.z}));
+    }
+
+    if (sub_type == "subsurface") {
+        auto [ss, sa] = detail::get_sigma(material_name);
+        sigma_s.init(DataWrap({ss.x, ss.y, ss.z}));
+        sigma_a.init(DataWrap({sa.x, sa.y, sa.z}));
     }
 
 #undef VS_TEXTURE_DESC_INIT
