@@ -105,7 +105,6 @@ public:
                 } else {
                     sample_surface();
                 }
-
                 Li += throughput * Ld * tr;
                 eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = luminance(throughput * eta_scale);

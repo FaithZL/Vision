@@ -62,7 +62,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         emission.init(param["emission"]);
     }
     if (sub_type == "model") {
-        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed, flip_uv)
+        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed, flip_uv, subdiv_level)
         fn = param["fn"].as_string();
         fn = scene_path / fn;
     } else if (sub_type == "quad") {

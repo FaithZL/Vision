@@ -14,11 +14,17 @@ class Model : public Shape {
 private:
     vector<Mesh> _meshes;
     uint _mat_id{InvalidUI32};
+    uchar _inside_medium{InvalidUI8};
+    uchar _outside_medium{InvalidUI8};
     float4x4 o2w;
 
 public:
     explicit Model(const ShapeDesc &desc)
-        : Shape(desc), _mat_id(desc.material.id), o2w(desc.o2w.mat) {
+        : Shape(desc),
+          _mat_id(desc.material.id),
+          o2w(desc.o2w.mat),
+          _inside_medium(desc.inside_medium.id),
+          _outside_medium(desc.outside_medium.id) {
         load(desc);
     }
 
@@ -83,6 +89,8 @@ public:
                 } else {
                     tex_coord = make_float2(0.f);
                 }
+                normal = has_invalid(normal) ? make_float3(0.f) : normal;
+                tex_coord = has_invalid(normal) ? make_float2(0.f) : tex_coord;
                 vertices.emplace_back(position, normal, tex_coord);
             }
 
@@ -109,6 +117,8 @@ public:
             }
             Mesh mesh(std::move(vertices), std::move(triangle));
             mesh.handle.mat_id = _mat_id;
+            mesh.handle.outside_medium = _outside_medium;
+            mesh.handle.inside_medium = _inside_medium;
             mesh.handle.o2w = o2w;
             meshes.push_back(mesh);
         }
