@@ -57,7 +57,7 @@
                      1
                  ],
                  "ior": 1.5,
-                 "roughness" :0.001
+                 "roughness" :0.0001
              }
          },
          {
@@ -398,6 +398,10 @@
                 // "material" : "disney",
 //                "material": "Mirror",
                 "material": "Glass",
+                "medium": {
+                    "inside" : "",
+                    "outside" : "fog"
+                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -442,6 +446,10 @@
 //                "material": "Mirror",
                 "material" : "Glass",
 //                "material": "TallBox",
+                "medium": {
+                    "inside" : "",
+                    "outside" : "fog"
+                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -773,22 +781,24 @@
             "name" :"fog",
             "param" : {
                 "g" : 0,
-                "sigma_a" : [0.0, 0.0, 0.0],
-                "sigma_s" : [0.8, 0.8, 0.8]
+//                "sigma_s" : [0,0,0],
+//                "sigma_a" : [0,0,0 ]
+                "sigma_s" : [7.4 ,8.8, 10.1],
+                "sigma_a" : [0.32 ,1.7, 4.8 ]
             }
         }
     ],
     "ext" : {
-        "process_medium" : false
+        "process_medium" : true
     },
     "debug" : {
         // "pixel" : [60, 79],
         "MIS_mode" : 2
     },
     "output" : {
-        "fn" : "cornell-box-mg.png",
+        "fn" : "cornell-box-sss.png",
         // "fn": "cornell-box-wf.png",
-        "spp" : 0,
+        "spp" : 8192,
         // "albedo" : true,
         // "normal" : true,
         // "normal_remapping" : true,
