@@ -67,6 +67,7 @@ void Geometry::build_accel() {
         stream << mesh.build_bvh();
         accel.add_mesh(mesh, inst.o2w);
     }
+    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel.vertex_num(), accel.triangle_num());
     stream << accel.build_bvh();
     stream << synchronize();
     stream << commit();
