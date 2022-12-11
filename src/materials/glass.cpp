@@ -30,7 +30,7 @@ public:
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(ior);
-        MicrofacetReflection refl(color, microfacet);
+        MicrofacetReflection refl(make_float3(1.f), microfacet);
         MicrofacetTransmission trans(color, microfacet);
         return make_unique<DielectricBSDF>(si, fresnel, move(refl), move(trans));
     }
