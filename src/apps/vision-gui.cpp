@@ -2,16 +2,10 @@
 // Created by Zero on 02/09/2022.
 //
 
-#include <iostream>
 #include "core/cli_parser.h"
 #include "descriptions/scene_desc.h"
-#include "core/stl.h"
 #include "core/context.h"
-#include "util/image_io.h"
-#include "core/logging.h"
 #include "application.h"
-#include "math/util.h"
-#include "dsl/common.h"
 
 using namespace ocarina;
 using namespace vision;

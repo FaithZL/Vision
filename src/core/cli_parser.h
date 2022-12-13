@@ -35,6 +35,13 @@ public:
     void init(int argc, char **argv);
     [[nodiscard]] string cli_positional_option() const;
     void print_help() const noexcept;
+    [[nodiscard]] bool has_help_cmd() const noexcept { return _parse_result().count("help") > 0; }
+    void try_print_help_and_exit() const noexcept {
+        if (has_help_cmd()) {
+            print_help();
+            exit(0);
+        }
+    }
     [[nodiscard]] bool clear_cache() noexcept;
     [[nodiscard]] string backend() noexcept;
     [[nodiscard]] fs::path working_path(const fs::path &name = {}) noexcept;

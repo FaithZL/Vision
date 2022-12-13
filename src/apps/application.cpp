@@ -9,6 +9,7 @@
 namespace vision {
 using namespace ocarina;
 void App::prepare() noexcept {
+    context.cli_parser().try_print_help_and_exit();
     scene_desc = context.parse_file();
     rp.init_scene(scene_desc);
     window = context.create_window("vision", rp.resolution(), "gl");
