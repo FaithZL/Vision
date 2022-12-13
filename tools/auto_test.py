@@ -11,21 +11,18 @@ def get_exe_path():
 
 def run_scene(scene_file):
     exe = get_exe_path()
-    # os.chdir(os.path.dirname(exe))
-    # print(os.getcwd())
-    print(scene_file)
-    # os.system(exe + " -s E:/work/compile/Vision/res/cbox-sss.json ")
+    print("run ",scene_file)
+    # os.system(exe + " -s " + scene_file)
     
-    # ret = subprocess.Popen([exe , "-h"])
-    # ret.wait()
-    # print(ret.returncode)
+    ret = subprocess.Popen([exe , "-s", scene_file])
+    ret.wait()
+    print(ret.returncode)
 
 def main():
     for root,dirs,files in os.walk(os.path.join(os.getcwd(), "res/test_case")):
         for file in files:
             if file.endswith(".json"):
-                run_scene(os.path.realpath(file))
-                return
+                run_scene(os.path.join(root, file))
     
 if __name__ == "__main__":
     main()
