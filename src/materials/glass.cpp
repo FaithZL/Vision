@@ -27,6 +27,7 @@ public:
         Float3 color = Texture::eval(_color, si).xyz();
         Float ior = Texture::eval(_ior, si, 1.5f).x;
         Float2 alpha = Texture::eval(_roughness, si, 1.f).xy();
+        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(ior);
