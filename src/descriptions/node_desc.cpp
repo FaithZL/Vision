@@ -279,6 +279,7 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
         return;
     }
     spp = ps["spp"].as_uint(0u);
+    save_exit = ps["save_exit"].as_uint(0u);
     fn = (scene_path / ps["fn"].as_string()).string();
 }
 

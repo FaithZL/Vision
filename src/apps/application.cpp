@@ -114,6 +114,9 @@ void App::check_and_save() noexcept {
     OutputDesc desc = scene_desc.output_desc;
     if (rp.frame_index() == desc.spp) {
         radiance_image.save(desc.fn);
+        if (desc.save_exit) {
+            exit(0);
+        }
     }
 }
 

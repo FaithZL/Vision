@@ -59,7 +59,7 @@ void RenderPipeline::render(double dt) noexcept {
     double ms = clk.elapse_ms();
     _total_time += ms;
     ++_frame_index;
-    cout << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
 }
 
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
