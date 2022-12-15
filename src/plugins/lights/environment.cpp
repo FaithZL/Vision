@@ -74,9 +74,10 @@ public:
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
         Float3 world_dir = normalize(transform_vector(inverse(_w2o), local_dir));
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
-        Float3 pos = p_ref.pos + world_dir * _scene->world_range();
+        Float3 pos = p_ref.pos + world_dir * _scene->world_diameter();
         LightEvalContext p_light{pos};
         ret.eval.L = L(local_dir);
+        pdf_dir = select(isinf(pdf_dir), 0.f, pdf_dir);
         ret.eval.pdf = pdf_dir;
         ret.p_light = pos;
         return ret;

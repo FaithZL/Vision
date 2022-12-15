@@ -63,6 +63,8 @@ public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
         : vertices(std::move(vert)), triangles(std::move(tri)) {}
     Mesh() = default;
+    [[nodiscard]] Box3f compute_aabb() const noexcept;
+    void init_aabb() noexcept { aabb = compute_aabb(); }
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_area() const noexcept override;
 };

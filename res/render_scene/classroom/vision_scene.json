@@ -3793,7 +3793,7 @@
     "integrator": {
         "type": "pt",
         "param": {
-            "min_depth": 0,
+            "min_depth": 5,
             "max_depth": 16,
             "rr_threshold": 1
         }
@@ -3805,7 +3805,10 @@
                 {
                     "type" : "environment",
                     "param": {
-                        "texture": "textures/spaichingen_hill_2k.exr"
+                        "texture": {
+                            "fn" : "textures/spaichingen_hill_2k.exr",
+                            "color_space": "srgb"
+                        }
                     }
                 }
             ]

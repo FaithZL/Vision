@@ -120,6 +120,7 @@ public:
             mesh.handle.outside_medium = _outside_medium;
             mesh.handle.inside_medium = _inside_medium;
             mesh.handle.o2w = o2w;
+            this->aabb.extend(aabb);
             meshes.push_back(mesh);
         }
         return meshes;

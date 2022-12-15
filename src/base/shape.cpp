@@ -26,6 +26,19 @@ void Mesh::fill_geometry(Geometry &data) const noexcept {
     data.accept(vertices, triangles, handle);
 }
 
+Box3f Mesh::compute_aabb() const noexcept {
+    Box3f box;
+    for (const Triangle &tri : triangles) {
+        float3 v0 = transform_point<H>(handle.o2w, vertices[tri.i].position());
+        float3 v1 = transform_point<H>(handle.o2w, vertices[tri.j].position());
+        float3 v2 = transform_point<H>(handle.o2w, vertices[tri.k].position());
+        box.extend(v0);
+        box.extend(v1);
+        box.extend(v2);
+    }
+    return box;
+}
+
 vector<float> Mesh::surface_area() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : triangles) {
