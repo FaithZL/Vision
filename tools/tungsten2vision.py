@@ -280,11 +280,14 @@ def convert_area_light(shape_input, shape_output):
     }
 
 def convert_envmap(shape_input, shape_output):
-    assert False
+    
+    shape_output["param"] = {
+        "material" : ""
+    }
 
 def convert_light(shape_input, shape_output):
     type = shape_input["type"]
-    if type == "infinite_sphere":
+    if type == "infinite_sphere" or type == "infinite_sphere_cap" or type == "skydome":
         convert_envmap(shape_input, shape_output)
     else:
         convert_area_light(shape_input, shape_output)
@@ -354,7 +357,11 @@ def convert_shapes(scene_input):
         elif shape_input["type"] == "disk":
             shape_output = convert_quad(shape_input, i)
         elif shape_input["type"] == "mesh":
-            shape_output = convert_mesh(shape_input, i)
+            shape_output = convert_mesh(shape_input, i) 
+        
+        if "emission" in shape_input or "power" in shape_input or "intensity" in shape_input:
+            shape_output = shape_output if shape_output else {}
+            convert_light(shape_input, shape_output)
         if type(shape_output["param"]["material"]) == dict:
             material_name = shape_output["name"] + "_material"
             material_data = shape_output["param"]["material"]
@@ -362,8 +369,9 @@ def convert_shapes(scene_input):
             material_data["name"] = material_name
             g_mat_outputs.append(convert_material(material_data))
         
-        if "emission" in shape_input or "power" in shape_input:
-            convert_light(shape_input, shape_output)
+        
+
+
         if shape_output:
             shape_outputs.append(shape_output)
     return shape_outputs
@@ -389,11 +397,12 @@ def convert_lightsampler(scene_input):
 
 def main():
     # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
-    # fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
     # fn = 'res\\render_scene\\kitchen\\tungsten_scene.json'
     # fn = 'res\\render_scene\\coffee\\tungsten_scene.json'
     # fn = 'res\\render_scene\\staircase2\\tungsten_scene.json'
-    fn = 'res\\render_scene\\bathroom2\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\bathroom2\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\classroom\\tungsten_scene.json'
     parent = os.path.dirname(fn)
     output_fn = os.path.join(parent, "vision_scene.json")
 
