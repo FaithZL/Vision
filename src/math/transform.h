@@ -104,8 +104,8 @@ template<EPort p = D>
 [[nodiscard]] oc_float4x4<p> look_at(const oc_float3<p> &eye, const oc_float3<p> &target_pos,
                                      oc_float3<p> up) noexcept {
     oc_float3<p> fwd = normalize(target_pos - eye);
-    oc_float3<p> right = normalize(cross(up, fwd));
-    up = normalize(cross(fwd, right));
+    oc_float3<p> right = normalize(cross(fwd, up));
+    up = normalize(cross(right, fwd));
     return make_float4x4(
         right.x, right.y, right.z, 0.f,
         up.x, up.y, up.z, 0.f,

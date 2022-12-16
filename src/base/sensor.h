@@ -88,7 +88,7 @@ public:
     [[nodiscard]] float yaw() const noexcept { return _yaw; }
     [[nodiscard]] float velocity() const noexcept { return _velocity; }
     void set_yaw(float yaw) noexcept { _yaw = yaw; }
-    void update_yaw(float val) noexcept { set_yaw(yaw() - val); }
+    void update_yaw(float val) noexcept { set_yaw(yaw() + val); }
     [[nodiscard]] float pitch() const noexcept { return _pitch; }
     void set_pitch(float pitch) noexcept { _pitch = pitch; }
     void update_pitch(float val) noexcept { set_pitch(pitch() + val); }

@@ -39,8 +39,8 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
 
 void Camera::update_mat(float4x4 m) noexcept {
     float sy = sqrt(sqr(m[2][1]) + sqr(m[2][2]));
-    _pitch = -degrees(std::atan2(m[1][2], m[1][1]));
-    _yaw = degrees(-std::atan2(m[2][0], m[0][0]));
+    _pitch = degrees(std::atan2(m[1][2], m[1][1]));
+    _yaw = degrees(std::atan2(m[2][0], m[0][0]));
     _position = make_float3(m[3]);
     _data->c2w = camera_to_world();
 }
@@ -58,7 +58,7 @@ void Camera::prepare(RenderPipeline *rp) noexcept {
 float4x4 Camera::camera_to_world_rotation() const noexcept {
     float4x4 horizontal = rotation_y<H>(yaw());
     float4x4 vertical = rotation_x<H>(-pitch());
-    return horizontal * vertical;
+    return scale(1, 1, -1) * horizontal * vertical;
 }
 
 float4x4 Camera::camera_to_world() const noexcept {
@@ -75,7 +75,7 @@ float3 Camera::up() const noexcept {
 }
 
 float3 Camera::right() const noexcept {
-    return -_data->c2w[0].xyz();
+    return _data->c2w[0].xyz();
 }
 
 Float3 Camera::device_forward() const noexcept {
@@ -90,7 +90,7 @@ Float3 Camera::device_up() const noexcept {
 
 Float3 Camera::device_right() const noexcept {
     Var<Data> data = _data.read(0);
-    return -data->c2w[0].xyz();
+    return data->c2w[0].xyz();
 }
 
 Float3 Camera::device_position() const noexcept {
