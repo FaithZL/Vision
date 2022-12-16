@@ -28,7 +28,7 @@ protected:
 public:
     explicit Light(const LightDesc &desc, LightType light_type)
         : Node(desc), _type(light_type) {}
-
+    [[nodiscard]] virtual Node *ext() noexcept { return nullptr; }
     [[nodiscard]] virtual Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;

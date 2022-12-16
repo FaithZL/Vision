@@ -30,27 +30,21 @@ public:
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
 
+    [[nodiscard]] Node *ext() noexcept override { return _warper; }
+
     [[nodiscard]] Float3 L(Float3 local_dir) const {
         Float2 uv = UV(local_dir);
         return _texture->eval(uv).xyz() * _scale;
     }
 
     [[nodiscard]] Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
-        // todo clear this function
-        Float3 direction = normalize(p_light.pos - p_ref.pos);
-        return L(transform_vector(_w2o, direction));
+        OC_ERROR("environment PDF_Li can not be called");
+        return make_float3(0.f);
     }
 
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
-        // todo clear this function
-        Float3 direction = normalize(p_light.pos - p_ref.pos);
-        direction = transform_vector(_w2o, direction);
-        Float theta = spherical_theta(direction);
-        Float phi = spherical_phi(direction);
-        Float sin_theta = sin(theta);
-        Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
-        Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
-        return select(sin_theta == 0, 0.f, pdf);
+        OC_ERROR("environment PDF_Li can not be called")
+        return 0;
     }
 
     [[nodiscard]] LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
@@ -61,6 +55,9 @@ public:
         Float sin_theta = sin(theta);
         Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
         Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
+
+        pdf = Inv4Pi;
+
         return {.L = L(local_dir), .pdf = select(sin_theta == 0, 0.f, pdf)};
     }
 

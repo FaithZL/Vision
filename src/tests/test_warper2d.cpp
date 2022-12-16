@@ -36,6 +36,33 @@ int main(int argc, char *argv[]) {
     auto node = Node::Wrapper(creator(desc), deleter);
     Warper2D *warper2d = dynamic_cast<Warper2D*>(node.get());
 
+    uint2 res = image_io.resolution();
+    vector<float> weights(res.x * res.y, 0);
+    image_io.for_each_pixel([&](const std::byte *pixel, int idx, PixelStorage pixel_storage) {
+        float f = 0;
+        float v = idx / res.y + 0.5f;
+        float theta = v / res.x;
+        float sinTheta = std::sin(Pi * theta);
+        switch (pixel_storage) {
+            case PixelStorage::FLOAT4: {
+                float4 val = *(reinterpret_cast<const float4 *>(pixel));
+                f = luminance(val.xyz());
+                break;
+            }
+            case PixelStorage::BYTE4: {
+                uchar4 val = *(reinterpret_cast<const uchar4 *>(pixel));
+                float4 f4 = make_float4(val) / 255.f;
+                f = luminance(f4.xyz());
+                break;
+            }
+            default:
+                break;
+        }
+        weights[idx] = f;
+    });
+
+
+
     Kernel kernel = [&]() {
         uint2 res = image_io.resolution();
         Uint2 pixel = dispatch_idx().xy();

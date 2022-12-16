@@ -70,7 +70,7 @@ VS_MAKE_CALLABLE(square_to_triangle)
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float3<p> square_to_sphere_impl(const oc_float2<p> &u) {
     oc_float<p> z = 1 - 2 * u[0];
-    oc_float<p> r = sqrt(max(0, 1 - z * z));
+    oc_float<p> r = sqrt(max(0.f, 1 - z * z));
     oc_float<p> phi = 2 * Pi * u[1];
     return make_float3(r * cos(phi), r * sin(phi), z);
 }

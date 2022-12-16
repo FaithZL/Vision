@@ -59,8 +59,12 @@ public:
         _conditional_v_weights.upload_immediately();
     }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
-        Uint idx = coord.x * _resolution.y + coord.x;
+        Uint idx = coord.y * _resolution.x + coord.x;
         return _conditional_v_weights.read(idx);
+    }
+    [[nodiscard]] float host_func_at(uint2 coord) const noexcept override {
+        uint idx = coord.y * _resolution.x + coord.x;
+        return _conditional_v_weights.at(idx);
     }
     [[nodiscard]] Float PDF(Float2 p) const noexcept override {
         Uint iu = clamp(cast<uint>(p.x * _resolution.x), 0u, _resolution.x - 1);
