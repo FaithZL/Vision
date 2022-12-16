@@ -87,6 +87,18 @@
                 "fn": "models/Mesh062.obj",
                 "smooth": false,
                 "material": "CeilingLight",
+//                "emission": {
+//                    "type": "area",
+//                    "param": {
+//                        "radiance": [
+//                            12,
+//                            12,
+//                            12
+//                        ],
+//                        "two_sided": false,
+//                        "scale": 5
+//                    }
+//                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -2887,6 +2899,18 @@
                 "fn": "models/Mesh002.obj",
                 "smooth": false,
                 "material": "CeilingLight",
+//                "emission": {
+//                    "type": "area",
+//                    "param": {
+//                        "radiance": [
+//                            12,
+//                            12,
+//                            12
+//                        ],
+//                        "two_sided": false,
+//                        "scale": 5
+//                    }
+//                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3808,6 +3832,12 @@
                         "texture": {
                             "fn" : "textures/spaichingen_hill_2k.exr",
                             "color_space": "srgb"
+                        },
+                        "o2w" : {
+                            "type":"yaw_pitch",
+                            "param": {
+                                "yaw" :30
+                            }
                         }
                     }
                 }
