@@ -22,15 +22,13 @@ public:
           _scale(desc.scale),
           _texture(desc.scene->load<Texture>(desc.texture_desc)) {
         float4x4 o2w = desc.o2w.mat;
-        float4x4 rx = rotation_x<H>(90);
+        float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);
     }
 
     [[nodiscard]] Float2 UV(Float3 local_dir) const {
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
-
-    [[nodiscard]] Node *ext() noexcept override { return _warper; }
 
     [[nodiscard]] Float3 L(Float3 local_dir) const {
         Float2 uv = UV(local_dir);
@@ -55,9 +53,6 @@ public:
         Float sin_theta = sin(theta);
         Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
         Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
-
-        pdf = Inv4Pi;
-
         return {.L = L(local_dir), .pdf = select(sin_theta == 0, 0.f, pdf)};
     }
 

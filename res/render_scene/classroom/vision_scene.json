@@ -3766,7 +3766,7 @@
     "camera": {
         "type": "thin_lens",
         "param": {
-            "fov_y": 60.0,
+            "fov_y": 35.98,
             "name": "view1",
             "velocity": 5,
             "transform": {
@@ -3831,14 +3831,15 @@
                     "param": {
                         "texture": {
                             "fn" : "textures/spaichingen_hill_2k.exr",
-                            "color_space": "srgb"
+                            "color_space": "linear"
                         },
                         "o2w" : {
                             "type":"yaw_pitch",
                             "param": {
-                                "yaw" :30
+                                "yaw" :-30
                             }
-                        }
+                        },
+                        "scale" : 1
                     }
                 }
             ]
@@ -3846,6 +3847,6 @@
     },
     "output": {
         "spp": 1024,
-        "fn": "output.png"
+        "fn": "output-.png"
     }
 }

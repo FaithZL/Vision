@@ -534,6 +534,7 @@
                     "param": {
                         "texture": {
                             "fn" : "spruit_sunrise_2k.hdr",
+//                            "fn" : "sky.exr",
                             "color_space": "linear"
                         },
                         "o2w" : {
@@ -541,14 +542,15 @@
                             "param": {
                                 "yaw" : 0
                             }
-                        }
+                        },
+                        "scale" : 1
                     }
                 }
             ]
         }
     },
     "output": {
-        "spp": 16000,
-        "fn": "cbox-sss.png"
+        "spp": 0,
+        "fn": "cbox-sss-avg.png"
     }
 }
