@@ -300,7 +300,7 @@ template<EPort p = EPort::D>
 
 template<EPort p = EPort::D>
 class Microfacet {
-private:
+protected:
     oc_float<p> _alpha_x{};
     oc_float<p> _alpha_y{};
     MicrofacetType _type{GGX};
@@ -311,47 +311,101 @@ public:
     Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
         : _alpha_x(ax), _alpha_y(ay), _type(type) {}
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(_alpha_x, _alpha_y); }
-    [[nodiscard]] oc_float<p> D_(oc_float3<p> wh) const noexcept { return microfacet::D_<p>(wh, _alpha_x, _alpha_y, _type); }
-    [[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {
+    [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept { return microfacet::D_<p>(wh, _alpha_x, _alpha_y, _type); }
+    [[nodiscard]] virtual oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {
         return microfacet::sample_wh<p>(wo, u, _alpha_x, _alpha_y, _type);
     }
-    [[nodiscard]] oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh) const noexcept {
         return microfacet::PDF_wh<p>(wo, wh, _alpha_x, _alpha_y, _type);
     }
 
-    [[nodiscard]] oc_float<p> PDF_wi_reflection(oc_float<p> pdf_wh, oc_float3<p> wo, oc_float3<p> wh) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wi_reflection(oc_float<p> pdf_wh, oc_float3<p> wo, oc_float3<p> wh) const noexcept {
         return microfacet::PDF_wi_reflection<p>(pdf_wh, wo, wh);
     }
 
-    [[nodiscard]] oc_float<p> PDF_wi_reflection(oc_float3<p> wo, oc_float3<p> wh) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wi_reflection(oc_float3<p> wo, oc_float3<p> wh) const noexcept {
         return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
     }
 
-    [[nodiscard]] oc_float<p> PDF_wi_transmission(oc_float<p> pdf_wh, oc_float3<p> wo, oc_float3<p> wh,
-                                                  oc_float3<p> wi, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wi_transmission(oc_float<p> pdf_wh, oc_float3<p> wo, oc_float3<p> wh,
+                                                          oc_float3<p> wi, oc_float<p> eta) const noexcept {
         return microfacet::PDF_wi_transmission<p>(pdf_wh, wo, wh, wi, eta);
     }
 
-    [[nodiscard]] oc_float<p> PDF_wi_transmission(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wi_transmission(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float<p> eta) const noexcept {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
+    [[nodiscard]] virtual oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
         return microfacet::BRDF<p>(wo, wh, wi, Fr, _alpha_x, _alpha_y, _type);
     }
 
-    [[nodiscard]] oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
+    [[nodiscard]] virtual oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
         oc_float3<p> wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
-                                    oc_float3<p> Ft, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
+                                            oc_float3<p> Ft, oc_float<p> eta) const noexcept {
         return microfacet::BTDF<p>(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y, _type);
     }
 
-    [[nodiscard]] oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Ft, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
+        return BTDF(wo, wh, wi, Ft, eta);
+    }
+};
+
+class GGXMicrofacet : public Microfacet<D> {
+private:
+    static constexpr MicrofacetType type = MicrofacetType::GGX;
+    using Super = Microfacet<D>;
+
+public:
+    explicit GGXMicrofacet(Float2 alpha) : Super(alpha, type) {}
+    GGXMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
+
+    [[nodiscard]] Float D_(Float3 wh) const noexcept { return microfacet::D_<D>(wh, _alpha_x, _alpha_y, _type); }
+    [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept {
+        return microfacet::sample_wh<D>(wo, u, _alpha_x, _alpha_y, _type);
+    }
+    [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
+        return microfacet::PDF_wh<D>(wo, wh, _alpha_x, _alpha_y, _type);
+    }
+
+    [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept {
+        return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
+    }
+
+    [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept {
+        return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
+    }
+
+    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,
+                                                          Float3 wi, Float eta) const noexcept {
+        return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
+    }
+
+    [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept {
+        return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
+    }
+
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept {
+        return microfacet::BRDF<D>(wo, wh, wi, Fr, _alpha_x, _alpha_y, type);
+    }
+
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept {
+        Float3 wh = normalize(wo + wi);
+        return BRDF(wo, wh, wi, Fr);
+    }
+
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,
+                                            Float3 Ft, Float eta) const noexcept {
+        return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y, type);
+    }
+
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept {
+        Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
 };
