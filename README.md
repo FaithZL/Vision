@@ -69,6 +69,7 @@ Part of the scene comes from https://benedikt-bitterli.me/resources/
 
 ![](gallery/staircase.png)
 ![](gallery/bathroom.png)
+![](gallery/classroom-1024spp.png)
 ![](gallery/output.png)
 ![](gallery/kitchen0.png)
 ![](gallery/cornell-box-fog.png)

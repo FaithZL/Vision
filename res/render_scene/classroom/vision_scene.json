@@ -3846,7 +3846,7 @@
         }
     },
     "output": {
-        "spp": 1024,
-        "fn": "output-.png"
+        "spp": 0,
+        "fn": "output-1024spp.png"
     }
 }
