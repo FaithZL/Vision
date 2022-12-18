@@ -132,7 +132,7 @@ public:
         Float2 alpha = Texture::eval(_roughness, si, 0.001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(1.5f);
         FresnelBlend bxdf(Rd, Rs, microfacet);
         return make_unique<SubstrateBSDF>(si, fresnel, move(bxdf));

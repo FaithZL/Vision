@@ -225,6 +225,60 @@ public:
 
 }// namespace disney
 
+class DisneyMicrofacet : public Microfacet<D> {
+private:
+    static constexpr MicrofacetType type = MicrofacetType::Disney;
+    using Super = Microfacet<D>;
+
+public:
+    explicit DisneyMicrofacet(Float2 alpha) : Super(alpha, type) {}
+    DisneyMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
+
+    [[nodiscard]] Float D_(Float3 wh) const noexcept override { return microfacet::D_<D>(wh, _alpha_x, _alpha_y, _type); }
+    [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override {
+        return microfacet::sample_wh<D>(wo, u, _alpha_x, _alpha_y, type);
+    }
+    [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override {
+        return microfacet::PDF_wh<D>(wo, wh, _alpha_x, _alpha_y, type);
+    }
+
+    [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override {
+        return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
+    }
+
+    [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override {
+        return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
+    }
+
+    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,
+                                            Float3 wi, Float eta) const noexcept override {
+        return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
+    }
+
+    [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override {
+        return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
+    }
+
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept override {
+        return microfacet::BRDF<D>(wo, wh, wi, Fr, _alpha_x, _alpha_y, type);
+    }
+
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept override {
+        Float3 wh = normalize(wo + wi);
+        return BRDF(wo, wh, wi, Fr);
+    }
+
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,
+                              Float3 Ft, Float eta) const noexcept override {
+        return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y, type);
+    }
+
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept override {
+        Float3 wh = normalize(wo + wi * eta);
+        return BTDF(wo, wh, wi, Ft, eta);
+    }
+};
+
 class PrincipledBSDF : public BSDF {
 private:
     SP<const Fresnel> _fresnel{};
