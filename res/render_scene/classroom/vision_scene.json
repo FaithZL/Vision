@@ -3862,7 +3862,7 @@
         }
     },
     "output": {
-        "spp": 1024,
-        "fn": "classroom-fog-1024spp.png"
+        "spp": 8192,
+        "fn": "classroom-fog-8192spp.png"
     }
 }
