@@ -386,7 +386,7 @@ public:
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
-        auto microfacet = make_shared<Microfacet<D>>(alpha, MicrofacetType::Disney);
+        auto microfacet = make_shared<DisneyMicrofacet>(alpha);
         _spec_refl = MicrofacetReflection(make_float3(1.f), microfacet);
         Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
         _spec_refl_index = _sampling_strategy_num++;

@@ -43,7 +43,7 @@ public:
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>();
         MicrofacetReflection bxdf(kr, microfacet);
         return make_unique<MirrorBSDF>(si, fresnel, move(bxdf));

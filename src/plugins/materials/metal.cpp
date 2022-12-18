@@ -64,7 +64,7 @@ public:
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         Float3 eta = Texture::eval(_eta, si, 1.5f).xyz();
         Float3 k = Texture::eval(_k, si, 0.f).xyz();
-        auto microfacet = make_shared<Microfacet<D>>(alpha.x, alpha.y);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k);
         MicrofacetReflection bxdf(kr, microfacet);
         return make_unique<ConductorBSDF>(si, fresnel, move(bxdf));
