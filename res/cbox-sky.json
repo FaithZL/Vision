@@ -208,7 +208,7 @@
                 "y": 1,
                 "z": 1,
                 "medium": {
-                    "inside" : "fog",
+                    "inside" : "",
                     "outside" : ""
                 },
                 "material": "TallBox",
@@ -253,7 +253,7 @@
                 "y": 1,
                 "z": 1,
                 "medium": {
-                    "inside" : "fog",
+                    "inside" : "",
                     "outside" : ""
                 },
                 "material": "TallBox",
@@ -507,35 +507,35 @@
     "mediums" : [
         {
             "type" : "homogeneous",
-            "name" :"fog",
+            "name" : "fog",
             "param" : {
                 "g" : 0,
-                "medium_name" : "Skin1",
-                "scale": 30
-//                "sigma_s" : [7.4 ,8.8, 10.1],
-//                "sigma_a" : [0.32 ,1.7, 4.8 ]
+                "scale" : 0.05,
+                "sigma_s" : [1, 1, 1],
+                "sigma_a" : [1, 1, 1]
             }
         }
     ],
-    "integrator": {
-        "type": "pt",
-        "param": {
-            "min_depth": 0,
-            "max_depth": 9,
-            "rr_threshold": 1
+    "global_medium" : "fog",
+    "integrator" : {
+        "type" : "pt",
+        "param" : {
+            "min_depth" : 0,
+            "max_depth" : 9,
+            "rr_threshold" : 1
         }
     },
-    "light_sampler": {
-        "type": "uniform",
-        "param": {
-            "lights": [
+    "light_sampler" : {
+        "type" : "uniform",
+        "param" : {
+            "lights" : [
                 {
                     "type" : "environment",
-                    "param": {
-                        "texture": {
+                    "param" : {
+                        "texture" : {
                             "fn" : "spruit_sunrise_2k.hdr",
-//                            "fn" : "sky.exr",
-                            "color_space": "linear"
+                            //                            "fn" : "sky.exr",
+                            "color_space" : "linear"
                         },
                         "o2w" : {
                             "type":"yaw_pitch",

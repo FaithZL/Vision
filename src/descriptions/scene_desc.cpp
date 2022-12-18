@@ -132,6 +132,10 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
             sd.mat_hash = InvalidUI64;
         }
         if (process_medium()) {
+            if (!global_medium.empty()) {
+                sd.inside_medium.name = global_medium;
+                sd.outside_medium.name = global_medium;
+            }
             sd.inside_medium.fill_id(medium_name_to_id);
             sd.outside_medium.fill_id(medium_name_to_id);
         }
@@ -209,10 +213,14 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sampler_desc.init(data.value("sampler", DataWrap()));
     warper_desc = WarperDesc("Warper");
     warper_desc.sub_type = "alias";
+    global_medium = data.value("global_medium", "");
     init_material_descs(data.value("materials", DataWrap()));
     init_medium_descs(data.value("mediums", DataWrap()));
     init_shape_descs(data.value("shapes", DataWrap()));
     sensor_desc.init(data.value("camera", DataWrap()));
+    if (!global_medium.empty()) {
+        sensor_desc.medium.name = global_medium;
+    }
     sensor_desc.medium.fill_id(medium_name_to_id);
     output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();

@@ -24,6 +24,7 @@ public:
     NameID::map_ty mat_name_to_id;
     NameID::map_ty medium_name_to_id;
     fs::path scene_path;
+    string global_medium;
     ParameterSet ext_param;
 
 public:
