@@ -54,9 +54,14 @@ public:
                         LightSampleContext p_ref;
                         p_ref.pos = rs.origin();
                         p_ref.ng = rs.direction();
+                        Float3 tr = make_float3(1.f);
+                        if (_scene->has_medium()) {
+                            rs.ray.dir_max.w = _scene->world_diameter();
+                            tr = geometry.Tr(_scene, rs);
+                        }
                         LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction());
                         Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
-                        Li += eval.L * throughput * weight;
+                        Li += eval.L * tr * throughput * weight;
                     }
                     $break;
                 };
