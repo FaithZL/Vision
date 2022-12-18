@@ -518,7 +518,7 @@ private:
     const Texture *_spec_trans{};
     const Texture *_flatness{};
     const Texture *_diff_trans{};
-    bool _thin;
+    bool _thin{false};
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)

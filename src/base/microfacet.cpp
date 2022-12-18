@@ -7,18 +7,30 @@
 namespace vision {
 
 Float GGXMicrofacet::D_(Float3 wh) const noexcept {
-    return microfacet::D_<D>(wh, _alpha_x, _alpha_y, _type);
+    static Callable impl = [](Float3 wh, Float ax, Float ay) {
+        return microfacet::D_<D>(wh, ax, ay, type);
+    };
+    return impl(wh, _alpha_x, _alpha_y);
 }
 
 Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcept {
-    return microfacet::sample_wh<D>(wo, u, _alpha_x, _alpha_y, type);
+    static Callable impl = [](Float3 wo, Float2 u, Float ax, Float ay) {
+        return microfacet::sample_wh<D>(wo, u, ax, ay, type);
+    };
+    return impl(wo, u, _alpha_x, _alpha_y);
 }
 Float GGXMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
-    return microfacet::PDF_wh<D>(wo, wh, _alpha_x, _alpha_y, type);
+    static Callable impl = [](Float3 wo, Float3 wh, Float ax, Float ay) {
+        return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
+    };
+    return impl(wo, wh, _alpha_x, _alpha_y);
 }
 
 Float GGXMicrofacet::PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept {
-    return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
+    static Callable impl = [](Float pdf_wh, Float3 wo, Float3 wh) {
+        return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
+    };
+    return impl(pdf_wh, wo, wh);
 }
 
 Float GGXMicrofacet::PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept {
@@ -27,7 +39,10 @@ Float GGXMicrofacet::PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept {
 
 Float GGXMicrofacet::PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,
                                          Float3 wi, Float eta) const noexcept {
-    return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
+    static Callable impl = [](Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) {
+        return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
+    };
+    return impl(pdf_wh, wo, wh, wi, eta);
 }
 
 Float GGXMicrofacet::PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept {
@@ -35,7 +50,10 @@ Float GGXMicrofacet::PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float 
 }
 
 Float3 GGXMicrofacet::BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept {
-    return microfacet::BRDF<D>(wo, wh, wi, Fr, _alpha_x, _alpha_y, type);
+    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Fr, Float ax, Float ay) {
+        return microfacet::BRDF<D>(wo, wh, wi, Fr, ax, ay, type);
+    };
+    return impl(wo, wh, wi, Fr, _alpha_x, _alpha_y);
 }
 
 Float3 GGXMicrofacet::BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept {
@@ -45,7 +63,11 @@ Float3 GGXMicrofacet::BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept {
 
 Float3 GGXMicrofacet::BTDF(Float3 wo, Float3 wh, Float3 wi,
                            Float3 Ft, Float eta) const noexcept {
-    return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y, type);
+    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Ft,
+                              Float eta, Float ax, Float ay) {
+        return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, ax, ay, type);
+    };
+    return impl(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y);
 }
 
 Float3 GGXMicrofacet::BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept {
