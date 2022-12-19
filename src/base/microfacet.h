@@ -377,4 +377,25 @@ public:
     [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept override;
 };
 
+class BeckmannMicrofacet : public Microfacet<D> {
+private:
+    static constexpr MicrofacetType type = MicrofacetType::Beckmann;
+    using Super = Microfacet<D>;
+
+public:
+    explicit BeckmannMicrofacet(Float2 alpha) : Super(alpha, type) {}
+    BeckmannMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
+    [[nodiscard]] Float D_(Float3 wh) const noexcept override;
+    [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
+    [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
+    [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override;
+    [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
+    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept override;
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept override;
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,Float3 Ft, Float eta) const noexcept override;
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept override;
+};
+
 }// namespace vision
