@@ -133,7 +133,6 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
         }
         if (mediums_desc.has_mediums()) {
             if (!mediums_desc.global.empty()) {
-                sd.inside_medium.name = mediums_desc.global;
                 sd.outside_medium.name = mediums_desc.global;
             }
             sd.inside_medium.fill_id(mediums_desc.medium_name_to_id);
