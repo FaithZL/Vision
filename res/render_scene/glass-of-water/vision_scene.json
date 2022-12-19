@@ -1,0 +1,893 @@
+{
+    "shapes": [
+        {
+            "type": "model",
+            "name": "shape_0",
+            "param": {
+                "fn": "models/Mesh008.obj",
+                "smooth": true,
+                "material": "WaterAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_1",
+            "param": {
+                "fn": "models/Mesh005.obj",
+                "smooth": true,
+                "material": "WaterAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_2",
+            "param": {
+                "fn": "models/Mesh004.obj",
+                "smooth": true,
+                "material": "IceAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_3",
+            "param": {
+                "fn": "models/Mesh003.obj",
+                "smooth": false,
+                "material": "AirIce",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_4",
+            "param": {
+                "fn": "models/Mesh010.obj",
+                "smooth": true,
+                "material": "IceAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_5",
+            "param": {
+                "fn": "models/Mesh009.obj",
+                "smooth": false,
+                "material": "AirIce",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_6",
+            "param": {
+                "fn": "models/Mesh012.obj",
+                "smooth": false,
+                "material": "AirIce",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_7",
+            "param": {
+                "fn": "models/Mesh014.obj",
+                "smooth": true,
+                "material": "IceAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_8",
+            "param": {
+                "fn": "models/Mesh015.obj",
+                "smooth": false,
+                "material": "AirIce",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_9",
+            "param": {
+                "fn": "models/Mesh006.obj",
+                "smooth": true,
+                "material": "IceAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_10",
+            "param": {
+                "fn": "models/Mesh002.obj",
+                "smooth": false,
+                "material": "AirIce",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_11",
+            "param": {
+                "fn": "models/Mesh001.obj",
+                "smooth": true,
+                "material": "IceAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_12",
+            "param": {
+                "fn": "models/Mesh007.obj",
+                "smooth": false,
+                "material": "Backdrop",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_13",
+            "param": {
+                "fn": "models/Mesh011.obj",
+                "smooth": false,
+                "material": "Floor",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_14",
+            "param": {
+                "fn": "models/Mesh013.obj",
+                "smooth": true,
+                "material": "Glass",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_15",
+            "param": {
+                "fn": "models/Mesh000.obj",
+                "smooth": true,
+                "material": "WaterAir",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "quad",
+            "name": "shape_16",
+            "param": {
+                "width": 1.0,
+                "height": 1.0,
+                "material": "shape_16_material",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                10.0,
+                                2.5113404262810946e-06,
+                                6.87030251356191e-06,
+                                0.0
+                            ],
+                            [
+                                6.87030251356191e-06,
+                                -6.449018478393555,
+                                -7.642653465270996,
+                                0.0
+                            ],
+                            [
+                                2.5113404262810946e-06,
+                                7.642653465270996,
+                                -6.449018478393555,
+                                0.0
+                            ],
+                            [
+                                -0.03848215192556381,
+                                10.480899810791016,
+                                26.19253921508789,
+                                1.0
+                            ]
+                        ]
+                    }
+                },
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "radiance": [
+                            15.915493965148926,
+                            27.056339263916016,
+                            31.83098793029785
+                        ],
+                        "two_sided": false,
+                        "scale": 1
+                    }
+                }
+            }
+        }
+    ],
+    "materials": [
+        {
+            "type": "metal",
+            "name": "Backdrop",
+            "param": {
+                "material_name": "V",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "metal",
+            "name": "Floor",
+            "param": {
+                "material_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "glass",
+            "name": "WaterAir",
+            "param": {
+                "ior": 1.33,
+                "roughness": [
+                    0,
+                    0
+                ],
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "IceAir",
+            "param": {
+                "ior": 1.31,
+                "roughness": [
+                    0,
+                    0
+                ],
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "Glass",
+            "param": {
+                "ior": 1.5,
+                "roughness": [
+                    0,
+                    0
+                ],
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "AirIce",
+            "param": {
+                "ior": 0.763,
+                "roughness": [
+                    0,
+                    0
+                ],
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "shape_16_material",
+            "param": {
+                "color": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    ],
+    "sampler": {
+        "type": "independent",
+        "name": "sampler0",
+        "param": {
+            "spp": 1
+        }
+    },
+    "camera": {
+        "type": "thin_lens",
+        "param": {
+            "fov_y": 35.0,
+            "name": "view1",
+            "velocity": 20,
+            "transform": {
+                "type": "look_at",
+                "param": {
+                    "position": [
+                        -0.08935849368572235,
+                        2.694121837615967,
+                        15.672550201416016
+                    ],
+                    "up": [
+                        0.0,
+                        1.0,
+                        0.0
+                    ],
+                    "target_pos": [
+                        0.006514795124530792,
+                        3.1010689735412598,
+                        0.010185359977185726
+                    ]
+                }
+            },
+            "film": {
+                "type": "rgb",
+                "param": {
+                    "resolution": [
+                        1280,
+                        720
+                    ],
+                    "fb_state": 0
+                }
+            },
+            "filter": {
+                "type": "box",
+                "name": "boxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            }
+        }
+    },
+    "warper": {
+        "type": "alias_table"
+    },
+    "integrator": {
+        "type": "pt",
+        "param": {
+            "min_depth": 3,
+            "max_depth": 32,
+            "rr_threshold": 1
+        }
+    },
+    "light_sampler": {
+        "type": "uniform",
+        "param": {
+            "lights": []
+        }
+    },
+    "output": {
+        "spp": 1024,
+        "fn": "glass-of-water-1024spp.png"
+    }
+}
