@@ -3814,22 +3814,22 @@
     "warper": {
         "type": "alias_table"
     },
-    "ext" : {
-        "process_medium" : true
-    },
-    "mediums" : [
-        {
-            "type" : "homogeneous",
-            "name" : "fog",
-            "param" : {
-                "g" : 0,
-                "scale" : 0.035,
-                "sigma_s" : [1, 1, 1],
-                "sigma_a" : [0, 0, 0]
+    "mediums" : {
+        "global" : "fog",
+        "process" : true,
+        "list": [
+            {
+                "type" : "homogeneous",
+                "name" : "fog",
+                "param" : {
+                    "g" : 0,
+                    "scale" : 0.035,
+                    "sigma_s" : [1, 1, 1],
+                    "sigma_a" : [0, 0, 0]
+                }
             }
-        }
-    ],
-    "global_medium" : "fog",
+        ]
+    },
     "integrator": {
         "type": "pt",
         "param": {

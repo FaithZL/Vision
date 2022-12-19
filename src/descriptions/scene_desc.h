@@ -12,19 +12,25 @@ namespace vision {
 using namespace ocarina;
 struct SceneDesc {
 public:
+    struct MediumsDesc {
+        vector<MediumDesc> mediums;
+        string global;
+        NameID::map_ty medium_name_to_id;
+        [[nodiscard]] bool has_mediums() const noexcept { return !mediums.empty(); }
+    };
+
+public:
     SensorDesc sensor_desc;
     SamplerDesc sampler_desc;
     LightSamplerDesc light_sampler_desc;
     IntegratorDesc integrator_desc;
     WarperDesc warper_desc;
     vector<MaterialDesc> material_descs;
-    vector<MediumDesc> medium_descs;
     vector<ShapeDesc> shape_descs;
     OutputDesc output_desc;
     NameID::map_ty mat_name_to_id;
-    NameID::map_ty medium_name_to_id;
     fs::path scene_path;
-    string global_medium;
+    MediumsDesc mediums_desc;
     ParameterSet ext_param;
 
 public:
@@ -34,7 +40,6 @@ public:
     void init_shape_descs(const DataWrap &shapes) noexcept;
     void init_medium_descs(const DataWrap &mediums) noexcept;
     void init(const DataWrap &data) noexcept;
-    [[nodiscard]] bool process_medium() const noexcept;
     void process_materials() noexcept;
     void check_meshes() noexcept;
 };

@@ -131,28 +131,30 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
             sd.material.id = InvalidUI32;
             sd.mat_hash = InvalidUI64;
         }
-        if (process_medium()) {
-            if (!global_medium.empty()) {
-                sd.inside_medium.name = global_medium;
-                sd.outside_medium.name = global_medium;
+        if (mediums_desc.has_mediums()) {
+            if (!mediums_desc.global.empty()) {
+                sd.inside_medium.name = mediums_desc.global;
+                sd.outside_medium.name = mediums_desc.global;
             }
-            sd.inside_medium.fill_id(medium_name_to_id);
-            sd.outside_medium.fill_id(medium_name_to_id);
+            sd.inside_medium.fill_id(mediums_desc.medium_name_to_id);
+            sd.outside_medium.fill_id(mediums_desc.medium_name_to_id);
         }
         shape_descs.push_back(sd);
     }
 }
 
 void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
-    if (!process_medium()) {
+    if (!mediums.value("process", false)) {
         return;
     }
-    for (uint i = 0; i < mediums.size(); ++i) {
+    mediums_desc.global = mediums.value("global", "");
+    DataWrap lst = mediums.value("list", DataWrap());
+    for (uint i = 0; i < lst.size(); ++i) {
         MediumDesc desc;
         desc.index = i;
-        desc.init(mediums[i]);
-        medium_descs.push_back(desc);
-        medium_name_to_id[desc.name] = i;
+        desc.init(lst[i]);
+        mediums_desc.mediums.push_back(desc);
+        mediums_desc.medium_name_to_id[desc.name] = i;
     }
 }
 
@@ -201,27 +203,19 @@ void SceneDesc::check_meshes() noexcept {
     }
 }
 
-bool SceneDesc::process_medium() const noexcept {
-    return ext_param["process_medium"].as_bool(false);
-}
-
 void SceneDesc::init(const DataWrap &data) noexcept {
-    ext_param = ParameterSet(data.value("ext", DataWrap::object()));
     integrator_desc.init(data.value("integrator", DataWrap()));
     light_sampler_desc.scene_path = scene_path;
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
     sampler_desc.init(data.value("sampler", DataWrap()));
     warper_desc = WarperDesc("Warper");
     warper_desc.sub_type = "alias";
-    global_medium = data.value("global_medium", "");
     init_material_descs(data.value("materials", DataWrap()));
-    init_medium_descs(data.value("mediums", DataWrap()));
+    init_medium_descs(data.value("mediums", DataWrap::object()));
     init_shape_descs(data.value("shapes", DataWrap()));
     sensor_desc.init(data.value("camera", DataWrap()));
-    if (!global_medium.empty()) {
-        sensor_desc.medium.name = global_medium;
-    }
-    sensor_desc.medium.fill_id(medium_name_to_id);
+    sensor_desc.medium.name = mediums_desc.global;
+    sensor_desc.medium.fill_id(mediums_desc.medium_name_to_id);
     output_desc.init(data.value("output", DataWrap()), scene_path);
     process_materials();
     check_meshes();

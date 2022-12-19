@@ -28,7 +28,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
-    load_mediums(scene_desc.medium_descs);
+    load_mediums(scene_desc.mediums_desc.mediums);
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _warper_desc = scene_desc.warper_desc;
     _sampler = load<Sampler>(scene_desc.sampler_desc);

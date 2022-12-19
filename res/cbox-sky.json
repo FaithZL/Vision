@@ -501,22 +501,22 @@
     "warper": {
         "type": "alias_table"
     },
-    "ext" : {
-        "process_medium" : false
-    },
-    "mediums" : [
-        {
-            "type" : "homogeneous",
-            "name" : "fog",
-            "param" : {
-                "g" : 0,
-                "scale" : 0.05,
-                "sigma_s" : [1, 1, 1],
-                "sigma_a" : [1, 1, 1]
+    "mediums" : {
+        "global" : "fog",
+        "process" : true,
+        "list": [
+            {
+                "type" : "homogeneous",
+                "name" : "fog",
+                "param" : {
+                    "g" : 0,
+                    "scale" : 0.05,
+                    "sigma_s" : [1, 1, 1],
+                    "sigma_a" : [1, 1, 1]
+                }
             }
-        }
-    ],
-    "global_medium" : "fog",
+        ]
+    },
     "integrator" : {
         "type" : "pt",
         "param" : {
