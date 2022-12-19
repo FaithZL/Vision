@@ -71,6 +71,9 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         VISION_PARAMS_LIST_INITIAL(x, y, z)
     } else if (sub_type == "sphere") {
         VISION_PARAMS_LIST_INITIAL(radius, sub_div)
+    } else {
+        cout << ps.data() << endl;
+        OC_ERROR_FORMAT("shape error {}", sub_type);
     }
 }
 

@@ -23,7 +23,11 @@ def write_scene(scene_output, filepath):
     with open(filepath, "w") as outputfile:
         json.dump(scene_output, outputfile, indent=4)
     abspath = os.path.join(os.getcwd(), filepath)
-    print("lumi scene save to:", abspath)
+    print("vision scene save to:", abspath)
+
+def add_light(data):
+    global g_lights
+    g_lights.append(data)
 
 def parse_attr(attr):
     if type(attr) == str:
@@ -280,10 +284,23 @@ def convert_area_light(shape_input, shape_output):
     }
 
 def convert_envmap(shape_input, shape_output):
-    
-    shape_output["param"] = {
-        "material" : ""
+    env_light =  {
+        "type" : "environment",
+        "param" : {
+            "texture" : [1,1,1],
+            "o2w" : {
+                "type":"yaw_pitch",
+                "param": {
+                    "yaw" : 0
+                }
+            },
+            "scale" : 1
+        }
     }
+    add_light(env_light)
+    # shape_output["param"] = {
+    #     "material" : ""
+    # }
 
 def convert_light(shape_input, shape_output):
     type = shape_input["type"]
@@ -362,6 +379,9 @@ def convert_shapes(scene_input):
         if "emission" in shape_input or "power" in shape_input or "intensity" in shape_input:
             shape_output = shape_output if shape_output else {}
             convert_light(shape_input, shape_output)
+        if not(shape_output):
+            continue
+
         if type(shape_output["param"]["material"]) == dict:
             material_name = shape_output["name"] + "_material"
             material_data = shape_output["param"]["material"]
@@ -369,11 +389,7 @@ def convert_shapes(scene_input):
             material_data["name"] = material_name
             g_mat_outputs.append(convert_material(material_data))
         
-        
-
-
-        if shape_output:
-            shape_outputs.append(shape_output)
+        shape_outputs.append(shape_output)
     return shape_outputs
 
 def convert_materials(scene_input):
@@ -397,7 +413,9 @@ def convert_lightsampler(scene_input):
 
 def main():
     # fn = 'res\\render_scene\\cornell-box\\tungsten_scene.json'
-    fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\staircase\\tungsten_scene.json'
+    fn = 'res\\render_scene\\spaceship\\tungsten_scene.json'
+    # fn = 'res\\render_scene\\glass-of-water\\tungsten_scene.json'
     # fn = 'res\\render_scene\\kitchen\\tungsten_scene.json'
     # fn = 'res\\render_scene\\coffee\\tungsten_scene.json'
     # fn = 'res\\render_scene\\staircase2\\tungsten_scene.json'

@@ -104,10 +104,17 @@ public:
     }
 
     void prepare(RenderPipeline *rp) noexcept override {
-        vector<float> weights = calculate_weights();
         Scene &scene = rp->scene();
         _warper = scene.load_warper2d();
-        _warper->build(rp, weights, _texture->resolution());
+        uint2 res = _texture->resolution();
+        vector<float> weights;
+        if (any(res == 0u)) {
+            res = make_uint2(1);
+            weights.push_back(1.f);
+        } else {
+            weights = calculate_weights();
+        }
+        _warper->build(rp, weights, res);
         _warper->prepare(rp);
     }
 };
