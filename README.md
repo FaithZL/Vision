@@ -74,7 +74,6 @@ Part of the scene comes from https://benedikt-bitterli.me/resources/
 ![](gallery/output.png)
 ![](gallery/glass-of-water-1024spp.png)
 ![](gallery/spaceship-1024spp.png)
-![](gallery/output.png)
 ![](gallery/kitchen0.png)
 ![](gallery/cornell-box-fog.png)
 ![](gallery/projector.png)
