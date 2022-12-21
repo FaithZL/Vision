@@ -5,7 +5,7 @@ function(vision_add_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-base vision-math)
-    set(category vision-${PLUGIN_CATEGORY}s)
+    set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 
     set_target_properties(${lib_name} PROPERTIES

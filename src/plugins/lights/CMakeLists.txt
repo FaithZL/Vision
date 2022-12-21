@@ -1,4 +1,4 @@
-add_library(vision-lights INTERFACE)
+add_library(vision-light INTERFACE)
 vision_add_plugin(area CATEGORY light SOURCES area.cpp)
 vision_add_plugin(point CATEGORY light SOURCES point.cpp)
 vision_add_plugin(spot CATEGORY light SOURCES spot.cpp)

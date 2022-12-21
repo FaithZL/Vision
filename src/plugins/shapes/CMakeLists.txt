@@ -1,4 +1,4 @@
-add_library(vision-shapes INTERFACE)
+add_library(vision-shape INTERFACE)
 vision_add_plugin(quad CATEGORY shape SOURCES quad.cpp)
 vision_add_plugin(cube CATEGORY shape SOURCES cube.cpp)
 vision_add_plugin(sphere CATEGORY shape SOURCES sphere.cpp)
@@ -8,7 +8,7 @@ function(vision_add_model_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-main vision-ext-assimp_config)
-    set(category vision-${PLUGIN_CATEGORY}s)
+    set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 
     set_target_properties(${lib_name} PROPERTIES
