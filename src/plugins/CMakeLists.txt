@@ -10,6 +10,7 @@ add_subdirectory(sensors)
 add_subdirectory(textures)
 add_subdirectory(shapes)
 add_subdirectory(warpers)
+add_subdirectory(spectrums)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -22,6 +23,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-textures
         vision-integrators
         vision-warpers
+        vision-spectrums
         vision-materials
         vision-mediums
         vision-samplers)
