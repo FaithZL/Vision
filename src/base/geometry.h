@@ -6,7 +6,7 @@
 
 #include "rhi/common.h"
 #include "shape.h"
-#include "interaction.h"
+#include "base/scattering/interaction.h"
 
 namespace vision {
 using namespace ocarina;

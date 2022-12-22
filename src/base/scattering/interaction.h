@@ -7,7 +7,7 @@
 #include "core/basic_types.h"
 #include "dsl/common.h"
 #include "math/geometry.h"
-#include "sample.h"
+#include "base/sample.h"
 
 namespace vision {
 

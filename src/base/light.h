@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "interaction.h"
+#include "base/scattering/interaction.h"
 #include "node.h"
 #include "sample.h"
 

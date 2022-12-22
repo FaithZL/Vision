@@ -6,7 +6,7 @@
 
 #include "node.h"
 #include "util/image_io.h"
-#include "interaction.h"
+#include "base/scattering/interaction.h"
 
 namespace vision {
 

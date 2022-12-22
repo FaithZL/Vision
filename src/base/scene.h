@@ -12,7 +12,7 @@
 #include "base/integrator.h"
 #include "base/lightsampler.h"
 #include "base/scattering/material.h"
-#include "base/medium.h"
+#include "base/scattering/medium.h"
 #include "base/warper.h"
 
 namespace vision {

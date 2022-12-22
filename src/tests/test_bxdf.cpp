@@ -9,7 +9,7 @@
 #include "math/transform.h"
 #include "math/geometry.h"
 #include "math/constants.h"
-#include "base/microfacet.h"
+#include "base/scattering/microfacet.h"
 
 using namespace vision;
 using namespace ocarina;

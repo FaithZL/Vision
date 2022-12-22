@@ -6,7 +6,7 @@
 
 #include "node.h"
 #include "rhi/common.h"
-#include "interaction.h"
+#include "base/scattering/interaction.h"
 #include "lightsampler.h"
 #include "base/scattering/material.h"
 #include "sampler.h"

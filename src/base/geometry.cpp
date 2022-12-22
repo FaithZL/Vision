@@ -5,7 +5,7 @@
 #include "geometry.h"
 #include "math/transform.h"
 #include "scene.h"
-#include "medium.h"
+#include "base/scattering/medium.h"
 
 namespace vision {
 

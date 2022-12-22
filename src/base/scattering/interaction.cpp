@@ -3,7 +3,7 @@
 //
 
 #include "interaction.h"
-#include "medium.h"
+#include "base/scattering/medium.h"
 #include "base/sampler.h"
 
 namespace vision {

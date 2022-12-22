@@ -2,7 +2,7 @@
 // Created by Zero on 29/11/2022.
 //
 
-#include "base/medium.h"
+#include "base/scattering/medium.h"
 #include "base/sampler.h"
 
 namespace vision {

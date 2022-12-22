@@ -6,9 +6,9 @@
 
 #include "dsl/common.h"
 #include "base/sample.h"
-#include "base/microfacet.h"
+#include "microfacet.h"
 #include "math/optics.h"
-#include "base/fresnel.h"
+#include "fresnel.h"
 #include "base/sampler.h"
 
 namespace vision {

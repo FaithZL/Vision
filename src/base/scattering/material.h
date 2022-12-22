@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/node.h"
-#include "base/interaction.h"
+#include "interaction.h"
 #include "core/stl.h"
 #include "base/scattering/bxdf.h"
 #include "base/texture.h"

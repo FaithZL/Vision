@@ -6,7 +6,7 @@
 
 #include "dsl/common.h"
 #include "math/optics.h"
-#include "node.h"
+#include "base/node.h"
 #include "interaction.h"
 
 namespace vision {
