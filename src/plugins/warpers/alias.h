@@ -5,7 +5,7 @@
 #pragma once
 
 #include "rhi/common.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 #include "base/warper.h"
 
 namespace vision {

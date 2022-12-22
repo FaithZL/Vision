@@ -4,7 +4,7 @@
 
 #include "base/sampler.h"
 #include "rhi/common.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 #include "math/util.h"
 
 namespace vision {

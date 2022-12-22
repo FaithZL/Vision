@@ -3,7 +3,7 @@
 //
 
 #include "base/sensor.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 class ThinLensCamera : public Camera {

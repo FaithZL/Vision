@@ -3,7 +3,7 @@
 //
 
 #include "base/integrator.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 #include "math/warp.h"
 
 namespace vision {

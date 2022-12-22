@@ -3,7 +3,7 @@
 //
 
 #include "lightsampler.h"
-#include "render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 

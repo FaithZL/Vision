@@ -9,9 +9,9 @@
 #include "descriptions/node_desc.h"
 #include "cli_parser.h"
 #include "base/node.h"
-#include "base/scene.h"
+#include "base/mgr/scene.h"
 #include "descriptions/node_desc.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 

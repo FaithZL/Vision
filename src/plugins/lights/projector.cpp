@@ -4,7 +4,7 @@
 
 #include "base/light.h"
 #include "base/texture.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 class Projector : public IPointLight {

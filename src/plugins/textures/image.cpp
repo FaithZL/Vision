@@ -4,7 +4,7 @@
 
 #include "base/texture.h"
 #include "rhi/common.h"
-#include "base/render_pipeline.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 using namespace ocarina;

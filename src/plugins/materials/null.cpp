@@ -3,7 +3,7 @@
 //
 
 #include "base/scattering/material.h"
-#include "base/scene.h"
+#include "base/mgr/scene.h"
 
 namespace vision {
 

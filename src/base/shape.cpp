@@ -3,8 +3,8 @@
 //
 
 #include "shape.h"
-#include "scene.h"
-#include "geometry.h"
+#include "base/mgr/scene.h"
+#include "base/mgr/geometry.h"
 
 namespace vision {
 

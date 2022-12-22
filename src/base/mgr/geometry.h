@@ -5,7 +5,7 @@
 #pragma once
 
 #include "rhi/common.h"
-#include "shape.h"
+#include "base/shape.h"
 #include "base/scattering/interaction.h"
 
 namespace vision {

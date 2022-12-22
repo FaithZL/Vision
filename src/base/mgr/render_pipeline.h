@@ -5,8 +5,8 @@
 #pragma once
 
 #include "rhi/common.h"
-#include "base/scene.h"
-#include "base/geometry.h"
+#include "scene.h"
+#include "geometry.h"
 #include "rhi/window.h"
 #include "util/image_io.h"
 #include "image_pool.h"
