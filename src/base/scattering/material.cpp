@@ -3,7 +3,7 @@
 //
 
 #include "material.h"
-#include "sampler.h"
+#include "base/sampler.h"
 
 namespace vision {
 

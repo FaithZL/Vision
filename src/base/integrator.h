@@ -8,7 +8,7 @@
 #include "rhi/common.h"
 #include "interaction.h"
 #include "lightsampler.h"
-#include "material.h"
+#include "base/scattering/material.h"
 #include "sampler.h"
 #include "math/warp.h"
 

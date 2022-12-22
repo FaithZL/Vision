@@ -5,11 +5,11 @@
 #pragma once
 
 #include "dsl/common.h"
-#include "sample.h"
-#include "microfacet.h"
+#include "base/sample.h"
+#include "base/microfacet.h"
 #include "math/optics.h"
-#include "fresnel.h"
-#include "sampler.h"
+#include "base/fresnel.h"
+#include "base/sampler.h"
 
 namespace vision {
 using namespace ocarina;

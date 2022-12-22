@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "node.h"
-#include "interaction.h"
+#include "base/node.h"
+#include "base/interaction.h"
 #include "core/stl.h"
-#include "scattering.h"
-#include "texture.h"
+#include "base/scattering/bxdf.h"
+#include "base/texture.h"
 
 namespace vision {
 

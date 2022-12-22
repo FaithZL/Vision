@@ -2,7 +2,7 @@
 // Created by Zero on 09/12/2022.
 //
 
-#include "base/material.h"
+#include "base/scattering/material.h"
 #include "base/texture.h"
 #include "base/scene.h"
 

@@ -11,7 +11,7 @@
 #include "base/shape.h"
 #include "base/integrator.h"
 #include "base/lightsampler.h"
-#include "base/material.h"
+#include "base/scattering/material.h"
 #include "base/medium.h"
 #include "base/warper.h"
 
