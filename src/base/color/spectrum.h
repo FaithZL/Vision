@@ -5,19 +5,12 @@
 #pragma once
 
 #include "dsl/common.h"
+#include "cie.h"
 
 namespace vision {
 using namespace ocarina;
 
-static constexpr float3x3 xyz2srgb = make_float3x3(
-    +3.240479f, -0.969256f, +0.055648f,
-    -1.537150f, +1.875991f, -0.204043f,
-    -0.498535f, +0.041556f, +1.057311f);
 
-static constexpr float3x3 srgb2xyz = make_float3x3(
-    0.412453f, 0.212671f, 0.019334f,
-    0.357580f, 0.715160f, 0.119193f,
-    0.180423f, 0.072169f, 0.950227f);
 
 class RGBSigmoidPolynomial {
 private:
