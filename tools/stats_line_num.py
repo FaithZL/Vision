@@ -17,6 +17,8 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
             continue
         if "tests" in fn:
             continue
+        if "srgb2spec.h" in fn:
+            continue
         if "stats_line_num.py" in fn:
             continue
         if "_embed.h" in fn:
