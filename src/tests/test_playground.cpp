@@ -9,6 +9,7 @@
 #include "math/transform.h"
 #include "math/geometry.h"
 #include "math/constants.h"
+#include "plugins/spectra/srgb2spec.h"
 
 using namespace vision;
 using namespace ocarina;
