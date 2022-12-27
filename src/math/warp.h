@@ -135,11 +135,23 @@ VS_MAKE_CALLABLE(mis_weight)
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> robust_mis_weight_impl(const oc_float<p> &f_PDF,
-                                            const oc_float<p> &g_PDF) {
+                                                 const oc_float<p> &g_PDF) {
     return select(f_PDF > g_PDF,
                   1.f / (1.f + sqr(g_PDF / f_PDF)),
                   1.f - 1.f / (1.f + sqr(f_PDF / g_PDF)));
 }
 VS_MAKE_CALLABLE(robust_mis_weight)
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> sample_visible_wavelength_impl(const oc_float<p> &u) noexcept {
+    return 538 - 138.888889f * atanh(0.85691062f - 1.82750197f * u);
+}
+VS_MAKE_CALLABLE(sample_visible_wavelength)
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> visible_wavelength_PDF_impl(const oc_float<p> &lambda) noexcept {
+    return 0.0039398042f / sqr(cosh(0.0072f * (lambda - 538)));
+}
+VS_MAKE_CALLABLE(visible_wavelength_PDF)
 
 }// namespace vision
