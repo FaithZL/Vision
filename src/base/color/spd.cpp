@@ -47,6 +47,16 @@ SPD::SPD(vector<float> func, uint interval, RenderPipeline *rp)
     _func.set_host(move(func));
 }
 
+Float SPD::sample(const Float& lambda) const noexcept {
+    using namespace cie;
+    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval;
+    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval) + 1u;
+    Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
+    Float l = _func.read(i);
+    Float r = _func.read(i + 1);
+    return lerp(fract(t), l, r);
+}
+
 SPD SPD::create_cie_x(RenderPipeline *rp) noexcept {
     return {detail::array2vector(cie::X), spd_lut_interval, rp};
 }

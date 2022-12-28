@@ -20,6 +20,7 @@ private:
 
 public:
     SPD(vector<float> func, uint interval, RenderPipeline *rp);
+    [[nodiscard]] Float sample(const Float& lambda) const noexcept;
     [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp) noexcept;
