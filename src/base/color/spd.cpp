@@ -47,20 +47,25 @@ SPD::SPD(vector<float> func, uint interval, RenderPipeline *rp)
     _func.set_host(move(func));
 }
 
-SPD SPD::create_cie_x(RenderPipeline *rp) {
-    return SPD(detail::array2vector(cie::X), spd_lut_interval, rp);
+SPD SPD::create_cie_x(RenderPipeline *rp) noexcept {
+    return {detail::array2vector(cie::X), spd_lut_interval, rp};
 }
 
-SPD SPD::create_cie_y(RenderPipeline *rp) {
-    return SPD(detail::array2vector(cie::Y), spd_lut_interval, rp);
+SPD SPD::create_cie_y(RenderPipeline *rp) noexcept {
+    return {detail::array2vector(cie::Y), spd_lut_interval, rp};
 }
 
-SPD SPD::create_cie_z(RenderPipeline *rp) {
-    return SPD(detail::array2vector(cie::Z), spd_lut_interval, rp);
+SPD SPD::create_cie_z(RenderPipeline *rp) noexcept {
+    return {detail::array2vector(cie::Z), spd_lut_interval, rp};
 }
 
-SPD SPD::create_cie_d65(RenderPipeline *rp) {
-    return SPD(detail::array2vector(cie::D65), spd_lut_interval, rp);
+SPD SPD::create_cie_d65(RenderPipeline *rp) noexcept {
+    return {detail::array2vector(cie::D65), spd_lut_interval, rp};
+}
+
+float SPD::cie_y_integral() noexcept {
+    static float integral = detail::densely_sampled_spectrum_integral(spd_lut_interval, cie::Y.data());
+    return integral;
 }
 
 }// namespace vision

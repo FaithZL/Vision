@@ -20,10 +20,11 @@ private:
 
 public:
     SPD(vector<float> func, uint interval, RenderPipeline *rp);
-    [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp);
-    [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp);
-    [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp);
-    [[nodiscard]] static SPD create_cie_d65(RenderPipeline *rp);
+    [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_d65(RenderPipeline *rp) noexcept;
+    [[nodiscard]] static float cie_y_integral() noexcept;
 };
 
 }// namespace vision
