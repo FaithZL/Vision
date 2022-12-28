@@ -15,13 +15,15 @@ using namespace ocarina;
 class SPD {
 private:
     Managed<float> _func;
+    uint _sample_interval{};
     RenderPipeline *_rp{};
 
 public:
-    static SPD create_cie_x(RenderPipeline *rp);
-    static SPD create_cie_y(RenderPipeline *rp);
-    static SPD create_cie_z(RenderPipeline *rp);
-    static SPD create_cie_d65(RenderPipeline *rp);
+    SPD(vector<float> func, uint interval, RenderPipeline *rp);
+    [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp);
+    [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp);
+    [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp);
+    [[nodiscard]] static SPD create_cie_d65(RenderPipeline *rp);
 };
 
 }// namespace vision
