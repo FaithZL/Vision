@@ -24,8 +24,8 @@ public:
     [[nodiscard]] const ImageIO &host_image() const noexcept { return _image_io; }
     [[nodiscard]] ImageIO &host_image() noexcept { return _image_io; }
     [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device *device);
-    [[nodiscard]] ImageUploadCommand *upload() const noexcept;
-    [[nodiscard]] ImageDownloadCommand *download() noexcept;
+    [[nodiscard]] TextureUploadCommand *upload() const noexcept;
+    [[nodiscard]] TextureDownloadCommand *download() noexcept;
     void upload_immediately() const noexcept;
     void download_immediately() noexcept;
 };

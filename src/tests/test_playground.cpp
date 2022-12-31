@@ -14,26 +14,6 @@
 using namespace vision;
 using namespace ocarina;
 
-void fun(int *a) {
-    cout << a << endl;
-    //    auto p = reinterpret_cast<int(*)[2][3]>(a);
-    //    auto v = *p;
-    //    cout << typeid(v).name();
-    cout << (*reinterpret_cast<int(*)[2][2][3]>(a))[1][1][1] << endl;
-    //cout << (reinterpret_cast<int(*)>(a))[2];
-}
-
-template<typename... Args>
-void set_dims(Args... args) {
-    vector<int> dims = {OC_FORWARD(args)...};
-    int a;
-}
-
-template<typename T = std::byte, int... args>
-class TB {
-public:
-};
-
 int main(int argc, char *argv[]) {
 
     //    auto tb = TB<int>();
@@ -67,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     int size = sizeof(sRGBToSpectrumTable_Data) / sizeof(float);
 
-    auto buf = device.create_buffer<float, 3, 64, 64, 64, 3>(size);
+    auto buf = device.create_buffer<float, 3, 64, 64, 64, 4>(size);
     auto buf2 = device.create_buffer<float>(size);
 
     buf.upload_immediately(sRGBToSpectrumTable_Data);

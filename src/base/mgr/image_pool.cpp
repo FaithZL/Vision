@@ -12,11 +12,11 @@ ImageWrapper ImageWrapper::create(const TextureDesc &desc, Device *device) {
     return {move(image_io), move(image)};
 }
 
-ImageDownloadCommand *ImageWrapper::download() noexcept {
+TextureDownloadCommand *ImageWrapper::download() noexcept {
     return _image.download(_image_io.pixel_ptr());
 }
 
-ImageUploadCommand *ImageWrapper::upload() const noexcept {
+TextureUploadCommand *ImageWrapper::upload() const noexcept {
     return _image.upload(_image_io.pixel_ptr());
 }
 
