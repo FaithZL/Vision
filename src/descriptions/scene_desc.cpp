@@ -132,8 +132,11 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
             sd.mat_hash = InvalidUI64;
         }
         if (mediums_desc.has_mediums()) {
-            if (!mediums_desc.global.empty()) {
+            if (!mediums_desc.global.empty() && sd.outside_medium.name.empty()) {
                 sd.outside_medium.name = mediums_desc.global;
+            }
+            if (!mediums_desc.global.empty() && sd.inside_medium.name.empty()) {
+                sd.inside_medium.name = mediums_desc.global;
             }
             sd.inside_medium.fill_id(mediums_desc.medium_name_to_id);
             sd.outside_medium.fill_id(mediums_desc.medium_name_to_id);
