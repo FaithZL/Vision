@@ -82,7 +82,8 @@ int main(int argc, char *argv[]) {
         //        f3 = frame.to_local(f3);
         //        prints("{} {} {}",f3.xyz());
         $for(i, 0, 10) {
-            prints("{} {}", buf.read(i), buf2.read(i));
+            prints("{} {}", buf.read(0,i,0,0,0),
+                   buf2.read(i));
         };
     };
     auto shader = device.compile(kernel);
