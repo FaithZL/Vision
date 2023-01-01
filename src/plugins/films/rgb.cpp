@@ -11,8 +11,8 @@ using namespace ocarina;
 
 class RGBFilm : public Film {
 private:
-    Image _radiance;
-    Image _frame;
+    RHITexture _radiance;
+    RHITexture _frame;
 public:
     explicit RGBFilm(const FilmDesc &desc) : Film(desc) {}
     void prepare(RenderPipeline *rp) noexcept override {

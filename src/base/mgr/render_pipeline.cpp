@@ -22,7 +22,7 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
     _shader = _device->compile(_kernel);
 }
 
-void RenderPipeline::clear_image(Image &image) const noexcept {
+void RenderPipeline::clear_image(RHITexture &image) const noexcept {
     _stream << _shader(image).dispatch(image.resolution())
             << synchronize() << commit();
 }

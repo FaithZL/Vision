@@ -24,13 +24,13 @@ private:
     uint _frame_index{};
     ImagePool _image_pool{_device};
     double _total_time{};
-    using image_clear_signature = void(Image);
+    using image_clear_signature = void(RHITexture);
     ocarina::Kernel<image_clear_signature> _kernel;
     ocarina::Shader<image_clear_signature> _shader;
 
 public:
     RenderPipeline(Device *device, vision::Context *context);
-    void clear_image(Image &image) const noexcept;
+    void clear_image(RHITexture &image) const noexcept;
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
