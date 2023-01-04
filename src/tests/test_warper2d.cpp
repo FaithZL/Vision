@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
     auto path1 = R"(E:/work/compile/vision/res/spruit_sunrise_2k.hdr)";
 
     auto image_io = ImageIO::load(path1, LINEAR);
-    auto image_out = device.create_image(image_io.resolution(), image_io.pixel_storage());
+    auto image_out = device.create_texture(image_io.resolution(), image_io.pixel_storage());
 
-    auto image = device.create_image(image_io.resolution(), image_io.pixel_storage());
+    auto image = device.create_texture(image_io.resolution(), image_io.pixel_storage());
     stream << image.upload_sync(image_io.pixel_ptr());
 
     WarperDesc desc = WarperDesc("Warper");

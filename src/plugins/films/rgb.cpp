@@ -16,8 +16,8 @@ private:
 public:
     explicit RGBFilm(const FilmDesc &desc) : Film(desc) {}
     void prepare(RenderPipeline *rp) noexcept override {
-        _radiance = rp->device().create_image(resolution(), PixelStorage::FLOAT4);
-        _frame = rp->device().create_image(resolution(), PixelStorage::FLOAT4);
+        _radiance = rp->device().create_texture(resolution(), PixelStorage::FLOAT4);
+        _frame = rp->device().create_texture(resolution(), PixelStorage::FLOAT4);
         rp->clear_image(_radiance);
         rp->clear_image(_frame);
     }
