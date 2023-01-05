@@ -61,6 +61,9 @@ int main(int argc, char *argv[]) {
         //        prints("{} {} {}",f3.xyz());
         //        f3 = frame.to_local(f3);
         //        prints("{} {} {}",f3.xyz());
+        Ushort2 a;
+        a.x = -1;
+        prints("{}", a.x);
         $for(i, 0, 10) {
             prints("{} {}", buf.read(0,i,0,0,0),
                    buf2.read(i));
