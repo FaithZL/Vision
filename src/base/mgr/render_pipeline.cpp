@@ -14,18 +14,7 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _context(context),
       _scene(context, this),
       _geometry(device),
-      _stream(device->create_stream()) {
-    _kernel = [&](ImageVar image) {
-        Uint2 pixel = dispatch_idx().xy();
-        image.write(pixel, make_float4(0.f));
-    };
-    _shader = _device->compile(_kernel);
-}
-
-void RenderPipeline::clear_image(RHITexture &image) const noexcept {
-    _stream << _shader(image).dispatch(image.resolution())
-            << synchronize() << commit();
-}
+      _stream(device->create_stream()) {}
 
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();

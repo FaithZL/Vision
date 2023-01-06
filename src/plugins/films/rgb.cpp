@@ -11,22 +11,21 @@ using namespace ocarina;
 
 class RGBFilm : public Film {
 private:
-    RHITexture _radiance;
-    RHITexture _frame;
+    Buffer<float4> _radiance;
+    Buffer<float4> _frame;
 public:
     explicit RGBFilm(const FilmDesc &desc) : Film(desc) {}
     void prepare(RenderPipeline *rp) noexcept override {
-        _radiance = rp->device().create_texture(resolution(), PixelStorage::FLOAT4);
-        _frame = rp->device().create_texture(resolution(), PixelStorage::FLOAT4);
-        rp->clear_image(_radiance);
-        rp->clear_image(_frame);
+        _radiance = rp->device().create_buffer<float4>(pixel_num());
+        _frame = rp->device().create_buffer<float4>(pixel_num());
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
-        Float4 accum_prev = _radiance.read<float4>(pixel);
+        Uint index = pixel_index(pixel);
+        Float4 accum_prev = _radiance.read(index);
         val = lerp(make_float4(a), accum_prev, val);
-        _radiance.write(pixel, val);
-        _frame.write(pixel, linear_to_srgb(val));
+        _radiance.write(index, val);
+        _frame.write(index, linear_to_srgb(val));
     }
     void copy_to(void *host_ptr) const noexcept override {
         _frame.download_immediately(host_ptr);
