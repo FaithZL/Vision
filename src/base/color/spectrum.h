@@ -10,7 +10,19 @@
 namespace vision {
 using namespace ocarina;
 
+class SampledWavelengths {
+private:
+    Array<float> _lambdas;
+    Array<float> _pdfs;
 
+public:
+    explicit SampledWavelengths(uint dim) noexcept : _lambdas{dim}, _pdfs{dim} {}
+    [[nodiscard]] auto lambda(const Uint &i) const noexcept { return _lambdas[i]; }
+    [[nodiscard]] auto pdf(const Uint &i) const noexcept { return _pdfs[i]; }
+    void set_lambda(const Uint &i, const Float &lambda) noexcept { _lambdas[i] = lambda; }
+    void set_pdf(const Uint &i, const Float &pdf) noexcept { _pdfs[i] = pdf; }
+    [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(_lambdas.size()); }
+};
 
 class RGBSigmoidPolynomial {
 private:
