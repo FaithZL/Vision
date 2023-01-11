@@ -315,6 +315,12 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct SpectrumDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(Spectrum)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct OutputDesc : public NodeDesc {
 public:
     string fn;

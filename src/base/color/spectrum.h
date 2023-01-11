@@ -6,6 +6,7 @@
 
 #include "dsl/common.h"
 #include "cie.h"
+#include "base/node.h"
 
 namespace vision {
 using namespace ocarina;
@@ -42,6 +43,10 @@ public:
     [[nodiscard]] Float operator()(Float lambda) const noexcept {
         return _s(fma(lambda, fma(lambda, _c[0], _c[1]), _c[2]));// c0 * x * x + c1 * x + c2
     }
+};
+
+class Spectrum : public Node {
+
 };
 
 }// namespace vision
