@@ -276,6 +276,11 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("alias_table");
 }
 
+void SpectrumDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("srgb");
+}
+
 void OutputDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     if (ps.data().is_null()) {

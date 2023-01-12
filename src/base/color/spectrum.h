@@ -46,7 +46,10 @@ public:
 };
 
 class Spectrum : public Node {
-
+public:
+    using Desc = SpectrumDesc;
+public:
+    explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
 };
 
 }// namespace vision
