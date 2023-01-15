@@ -40,6 +40,14 @@ void RenderPipeline::prepare_bindless_array() noexcept {
             << synchronize() << commit();
 }
 
+void RenderPipeline::deregister_buffer(handle_ty index) noexcept {
+    _bindless_array.remove_buffer(index);
+}
+
+void RenderPipeline::deregister_texture(handle_ty index) noexcept {
+    _bindless_array.remove_texture(index);
+}
+
 void RenderPipeline::compile_shaders() noexcept {
     _scene.integrator()->compile_shader(this);
 }

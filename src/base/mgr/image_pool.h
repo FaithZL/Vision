@@ -11,6 +11,8 @@
 namespace vision {
 using namespace ocarina;
 
+class RenderPipeline;
+
 class ImageWrapper {
 private:
     ImageIO _image_io;
@@ -23,7 +25,7 @@ public:
     [[nodiscard]] const RHITexture &texture() const noexcept { return _texture; }
     [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
     [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
-    [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device *device);
+    [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device &device);
     [[nodiscard]] TextureUploadCommand *upload() const noexcept;
     [[nodiscard]] TextureDownloadCommand *download() noexcept;
     void upload_immediately() const noexcept;
@@ -32,11 +34,11 @@ public:
 
 class ImagePool {
 private:
-    Device *_device{nullptr};
+    RenderPipeline *_rp{nullptr};
     map<uint64_t, ImageWrapper> _images;
 
 public:
-    explicit ImagePool(Device *device) : _device(device) {}
+    explicit ImagePool(RenderPipeline *rp) : _rp(rp) {}
     [[nodiscard]] ImageWrapper &obtain_image(const TextureDesc &desc) noexcept;
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };

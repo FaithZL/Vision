@@ -3,12 +3,13 @@
 //
 
 #include "image_pool.h"
+#include "render_pipeline.h"
 
 namespace vision {
 
-ImageWrapper ImageWrapper::create(const TextureDesc &desc, Device *device) {
+ImageWrapper ImageWrapper::create(const TextureDesc &desc, Device &device) {
     auto image_io = ImageIO::load(desc.fn, desc.color_space);
-    auto image = device->create_texture(image_io.resolution(), image_io.pixel_storage());
+    auto image = device.create_texture(image_io.resolution(), image_io.pixel_storage());
     return {move(image_io), move(image)};
 }
 
@@ -31,7 +32,7 @@ void ImageWrapper::download_immediately() noexcept {
 ImageWrapper &ImagePool::obtain_image(const TextureDesc &desc) noexcept {
     uint64_t hash = desc.hash();
     if (!is_contain(hash)) {
-        _images.insert(make_pair(hash, ImageWrapper::create(desc, _device)));
+        _images.insert(make_pair(hash, ImageWrapper::create(desc, _rp->device())));
     }
     return _images[hash];
 }

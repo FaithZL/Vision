@@ -23,7 +23,7 @@ private:
     BindlessArray _bindless_array{};
     mutable Stream _stream;
     uint _frame_index{};
-    ImagePool _image_pool{_device};
+    ImagePool _image_pool{this};
     double _total_time{};
 
 public:
@@ -34,12 +34,14 @@ public:
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
     template<typename T>
     requires is_buffer_or_view_v<T>
-    [[nodiscard]] size_t register_buffer(T &&buffer) noexcept {
+    [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
         return _bindless_array.emplace(OC_FORWARD(buffer));
     }
-    [[nodiscard]] size_t register_texture(const RHITexture &texture) noexcept {
+    [[nodiscard]] handle_ty register_texture(const RHITexture &texture) noexcept {
         return _bindless_array.emplace(texture);
     }
+    void deregister_buffer(handle_ty index) noexcept;
+    void deregister_texture(handle_ty index) noexcept;
     void prepare_bindless_array() noexcept;
     void change_resolution(uint2 res) noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
