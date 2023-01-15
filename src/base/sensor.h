@@ -32,7 +32,7 @@ protected:
 
 public:
     explicit Sensor(const SensorDesc &desc);
-    void prepare(RenderPipeline *rp) noexcept override;
+    void prepare() noexcept override;
     void set_filter(Filter *filter) noexcept { _filter = filter; }
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
     void set_film(Film *film) noexcept { _film = film; }
@@ -105,7 +105,7 @@ public:
     }
     void update_fov_y(float val) noexcept { set_fov_y(fov_y() + val); }
     virtual void update_device_data() noexcept;
-    void prepare(RenderPipeline *rp) noexcept override;
+    void prepare() noexcept override;
     [[nodiscard]] float4x4 camera_to_world() const noexcept;
     [[nodiscard]] float4x4 camera_to_world_rotation() const noexcept;
     [[nodiscard]] float3 forward() const noexcept;

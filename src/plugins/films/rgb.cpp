@@ -15,9 +15,9 @@ private:
     Buffer<float4> _frame;
 public:
     explicit RGBFilm(const FilmDesc &desc) : Film(desc) {}
-    void prepare(RenderPipeline *rp) noexcept override {
-        _radiance = rp->device().create_buffer<float4>(pixel_num());
-        _frame = rp->device().create_buffer<float4>(pixel_num());
+    void prepare() noexcept override {
+        _radiance = device().create_buffer<float4>(pixel_num());
+        _frame = device().create_buffer<float4>(pixel_num());
         _radiance.clear_immediately();
         _frame.clear_immediately();
     }

@@ -30,7 +30,7 @@ private:
 public:
     AliasTable() = default;
     explicit AliasTable(const WarperDesc &desc) : Warper(desc) {}
-    void prepare(RenderPipeline *rp) noexcept override;
+    void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
     [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return _func.read(i); }
@@ -41,9 +41,9 @@ public:
     [[nodiscard]] tuple<Uint, Float, Float> sample_discrete(Float u) const noexcept override;
 };
 
-void AliasTable::prepare(RenderPipeline *rp) noexcept {
-    _table.reset_device_buffer(rp->device());
-    _func.reset_device_buffer(rp->device());
+void AliasTable::prepare() noexcept {
+    _table.reset_device_buffer(device());
+    _func.reset_device_buffer(device());
     _table.upload_immediately();
     _func.upload_immediately();
 }

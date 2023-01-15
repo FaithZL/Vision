@@ -15,9 +15,9 @@ Sensor::Sensor(const SensorDesc &desc)
       _film(desc.scene->load<Film>(desc.film_desc)),
       _medium(desc.medium.id) {}
 
-void Sensor::prepare(RenderPipeline *rp) noexcept {
-    _filter->prepare(rp);
-    _film->prepare(rp);
+void Sensor::prepare() noexcept {
+    _filter->prepare();
+    _film->prepare();
 }
 
 void Camera::init(const SensorDesc &desc) noexcept {
@@ -50,9 +50,9 @@ void Camera::update_device_data() noexcept {
     _data.upload_immediately();
 }
 
-void Camera::prepare(RenderPipeline *rp) noexcept {
-    Sensor::prepare(rp);
-    _data.reset_device_buffer(rp->device(), 1);
+void Camera::prepare() noexcept {
+    Sensor::prepare();
+    _data.reset_device_buffer(render_pipeline()->device(), 1);
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {

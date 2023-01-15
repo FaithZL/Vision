@@ -27,9 +27,9 @@ public:
         Camera::update_device_data();
         _lens_data.upload_immediately();
     }
-    void prepare(RenderPipeline *rp) noexcept override {
-        Camera::prepare(rp);
-        _lens_data.reset_device_buffer(rp->device(), 1);
+    void prepare() noexcept override {
+        Camera::prepare();
+        _lens_data.reset_device_buffer(render_pipeline()->device(), 1);
     }
 };
 }// namespace vision

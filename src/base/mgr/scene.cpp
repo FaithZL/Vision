@@ -34,16 +34,16 @@ void Scene::init(const SceneDesc &scene_desc) {
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
 
-void Scene::prepare(RenderPipeline *rp) noexcept {
-    _camera->prepare(rp);
-    _sampler->prepare(rp);
+void Scene::prepare() noexcept {
+    _camera->prepare();
+    _sampler->prepare();
     _camera->update_device_data();
-    build_warpers(rp);
+    build_warpers();
 }
 
-void Scene::build_warpers(RenderPipeline *rp) noexcept {
+void Scene::build_warpers() noexcept {
     _light_sampler->for_each([&](Light *light) noexcept {
-        light->prepare(rp);
+        light->prepare();
     });
 }
 

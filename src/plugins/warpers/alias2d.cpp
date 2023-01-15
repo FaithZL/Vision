@@ -14,8 +14,10 @@ private:
     uint2 _resolution;
 
 public:
-    explicit AliasTable2D(const WarperDesc &desc) : Warper2D(desc) {}
-    void build(RenderPipeline *rp, vector<float> weights, uint2 res) noexcept override {
+    explicit AliasTable2D(const WarperDesc &desc) : Warper2D(desc) {
+        _marginal._scene = desc.scene;
+    }
+    void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v
         vector<AliasTable> conditional_v;
         conditional_v.reserve(res.y);
@@ -25,6 +27,7 @@ public:
             func_v.insert(func_v.end(), iter, iter + res.x);
             iter += res.x;
             AliasTable alias_table;
+            alias_table._scene = _scene;
             alias_table.build(move(func_v));
             conditional_v.push_back(move(alias_table));
         }
@@ -51,10 +54,10 @@ public:
         }
         _resolution = res;
     }
-    void prepare(RenderPipeline *rp) noexcept override {
-        _marginal.prepare(rp);
-        _conditional_v_tables.reset_device_buffer(rp->device());
-        _conditional_v_weights.reset_device_buffer(rp->device());
+    void prepare() noexcept override {
+        _marginal.prepare();
+        _conditional_v_tables.reset_device_buffer(device());
+        _conditional_v_weights.reset_device_buffer(device());
         _conditional_v_tables.upload_immediately();
         _conditional_v_weights.upload_immediately();
     }

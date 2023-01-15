@@ -44,7 +44,7 @@ private:
 public:
     explicit Scene(vision::Context *ctx, RenderPipeline *rp);
     void init(const SceneDesc &scene_desc);
-    void prepare(RenderPipeline *rp) noexcept;
+    void prepare() noexcept;
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)
@@ -63,7 +63,7 @@ public:
         return ret;
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
-    void build_warpers(RenderPipeline *rp) noexcept;
+    void build_warpers() noexcept;
     [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc); }
     [[nodiscard]] Warper2D *load_warper2d() noexcept {
         WarperDesc warper_desc = _warper_desc;

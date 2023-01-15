@@ -20,7 +20,7 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();
     film->set_resolution(res);
-    film->prepare(this);
+    film->prepare();
 }
 
 void RenderPipeline::prepare_geometry() noexcept {
@@ -53,7 +53,7 @@ void RenderPipeline::compile_shaders() noexcept {
 }
 
 void RenderPipeline::prepare() noexcept {
-    _scene.prepare(this);
+    _scene.prepare();
     _image_pool.prepare();
     prepare_geometry();
     prepare_bindless_array();

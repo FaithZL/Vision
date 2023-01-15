@@ -8,26 +8,33 @@
 #include "core/stl.h"
 #include "descriptions/node_desc.h"
 
+namespace ocarina {
+class Device;
+}
+
 namespace vision {
 
 class RenderPipeline;
 
+using namespace ocarina;
 class Node {
 protected:
-    ocarina::string _name;
+    string _name;
     mutable Scene *_scene{nullptr};
 
 public:
     using Creator = Node *(const NodeDesc &);
     using Deleter = void(Node *);
-    using Wrapper = ocarina::unique_ptr<Node, Node::Deleter *>;
+    using Wrapper = unique_ptr<Node, Node::Deleter *>;
 
 public:
     Node() = default;
     explicit Node(const NodeDesc &desc) : _name(desc.name), _scene(desc.scene) {}
-    virtual void prepare(RenderPipeline *rp) noexcept {}
+    [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
+    [[nodiscard]] Device &device() noexcept;
+    virtual void prepare() noexcept {}
     virtual ~Node() = default;
-    [[nodiscard]] ocarina::string name() const noexcept { return _name; }
+    [[nodiscard]] string name() const noexcept { return _name; }
 };
 }// namespace vision
 

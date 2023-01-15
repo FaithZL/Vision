@@ -60,12 +60,12 @@ public:
         return ret;
     }
 
-    void prepare(RenderPipeline *rp) noexcept override {
-        _warper = rp->scene().load_warper();
-        Shape *shape = rp->scene().get_shape(_inst_idx);
+    void prepare() noexcept override {
+        _warper = _scene->load_warper();
+        Shape *shape = _scene->get_shape(_inst_idx);
         vector<float> weights = shape->surface_area();
         _warper->build(std::move(weights));
-        _warper->prepare(rp);
+        _warper->prepare();
     }
 };
 

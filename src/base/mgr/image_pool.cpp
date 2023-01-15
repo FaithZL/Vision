@@ -4,9 +4,10 @@
 
 #include "image_pool.h"
 #include "render_pipeline.h"
+#include "rhi/device.h"
 
 namespace vision {
-
+using namespace ocarina;
 ImageWrapper ImageWrapper::create(const TextureDesc &desc, Device &device) {
     auto image_io = ImageIO::load(desc.fn, desc.color_space);
     auto image = device.create_texture(image_io.resolution(), image_io.pixel_storage());
