@@ -23,7 +23,7 @@ void RenderPipeline::change_resolution(uint2 res) noexcept {
     film->prepare(this);
 }
 
-void RenderPipeline::prepare_device_data() noexcept {
+void RenderPipeline::prepare_geometry() noexcept {
     for (const Shape *shape : _scene._shapes) {
         shape->fill_geometry(_geometry);
     }
@@ -54,7 +54,9 @@ void RenderPipeline::compile_shaders() noexcept {
 
 void RenderPipeline::prepare() noexcept {
     _scene.prepare(this);
-    prepare_device_data();
+    _image_pool.prepare();
+    prepare_geometry();
+    prepare_bindless_array();
     compile_shaders();
 }
 

@@ -36,4 +36,12 @@ ImageWrapper &ImagePool::obtain_image(const TextureDesc &desc) noexcept {
     }
     return _images[hash];
 }
+
+void ImagePool::prepare() noexcept {
+    for (auto &iter : _images) {
+        _rp->stream() << iter.second.upload();
+    }
+    _rp->stream() << synchronize() << commit();
+}
+
 }// namespace vision

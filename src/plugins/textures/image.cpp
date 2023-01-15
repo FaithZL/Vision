@@ -15,9 +15,7 @@ private:
 public:
     explicit ImageTexture(const TextureDesc &desc)
         : Texture(desc),
-          _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {
-        _image_wrapper.upload_immediately();
-    }
+          _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override {
         return eval(tev.uv);

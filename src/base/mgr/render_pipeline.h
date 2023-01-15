@@ -57,7 +57,7 @@ public:
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     void prepare() noexcept;
     [[nodiscard]] Stream &stream() noexcept { return _stream; }
-    void prepare_device_data() noexcept;
+    void prepare_geometry() noexcept;
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result(void *ptr) noexcept {

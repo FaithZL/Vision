@@ -40,6 +40,7 @@ private:
 public:
     explicit ImagePool(RenderPipeline *rp) : _rp(rp) {}
     [[nodiscard]] ImageWrapper &obtain_image(const TextureDesc &desc) noexcept;
+    void prepare() noexcept;
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
 
