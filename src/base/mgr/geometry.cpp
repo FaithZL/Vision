@@ -6,6 +6,7 @@
 #include "math/transform.h"
 #include "scene.h"
 #include "base/scattering/medium.h"
+#include "render_pipeline.h"
 
 namespace vision {
 
@@ -28,28 +29,28 @@ void Geometry::build_meshes() {
             // last element
             BufferView<Vertex> verts = vertices.device().view(mesh_handle.vertex_offset, 0);
             BufferView<Triangle> tris = triangles.device().view(mesh_handle.triangle_offset, 0);
-            mesh = device->create_mesh(verts, tris);
+            mesh = rp->device().create_mesh(verts, tris);
         } else {
             const auto &next_mesh_handle = mesh_handles[mesh_id + 1];
             uint vert_count = next_mesh_handle.vertex_offset - mesh_handle.vertex_offset;
             uint tri_count = next_mesh_handle.triangle_offset - mesh_handle.triangle_offset;
             BufferView<Vertex> verts = vertices.device().view(mesh_handle.vertex_offset, vert_count);
             BufferView<Triangle> tris = triangles.device().view(mesh_handle.triangle_offset, tri_count);
-            mesh = device->create_mesh(verts, tris);
+            mesh = rp->device().create_mesh(verts, tris);
         }
         meshes.push_back(std::move(mesh));
     }
 }
 
 void Geometry::reset_device_buffer() {
-    vertices.reset_device_buffer(*device);
-    triangles.reset_device_buffer(*device);
-    instances.reset_device_buffer(*device);
-    mesh_handles.reset_device_buffer(*device);
+    vertices.reset_device_buffer(rp->device());
+    triangles.reset_device_buffer(rp->device());
+    instances.reset_device_buffer(rp->device());
+    mesh_handles.reset_device_buffer(rp->device());
 }
 
 void Geometry::upload() const {
-    Stream stream = device->create_stream();
+    Stream stream = rp->device().create_stream();
     stream << vertices.upload()
            << triangles.upload()
            << mesh_handles.upload()
@@ -59,8 +60,8 @@ void Geometry::upload() const {
 }
 
 void Geometry::build_accel() {
-    accel = device->create_accel();
-    Stream stream = device->create_stream();
+    accel = rp->device().create_accel();
+    Stream stream = rp->device().create_stream();
     for (int i = 0; i < meshes.size(); ++i) {
         Shape::Handle inst = instances[i];
         ocarina::Mesh &mesh = meshes[i];

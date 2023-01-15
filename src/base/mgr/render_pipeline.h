@@ -19,7 +19,8 @@ private:
     Device *_device;
     vision::Context *_context;
     Scene _scene;
-    Geometry _geometry{_device};
+    Geometry _geometry{this};
+    BindlessArray _bindless_array{};
     mutable Stream _stream;
     uint _frame_index{};
     ImagePool _image_pool{_device};
@@ -31,6 +32,15 @@ public:
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
+    template<typename T>
+    requires is_buffer_or_view_v<T>
+    [[nodiscard]] size_t register_buffer(T &&buffer) noexcept {
+        return _bindless_array.emplace(OC_FORWARD(buffer));
+    }
+    [[nodiscard]] size_t register_texture(const RHITexture &texture) noexcept {
+        return _bindless_array.emplace(texture);
+    }
+    void prepare_bindless_array() noexcept;
     void change_resolution(uint2 res) noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
@@ -38,7 +48,10 @@ public:
         return _image_pool.obtain_image(desc);
     }
     [[nodiscard]] vision::Context &context() noexcept { return *_context; }
-    void update() noexcept { _frame_index = 0; _total_time = 0; }
+    void update() noexcept {
+        _frame_index = 0;
+        _total_time = 0;
+    }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     void prepare() noexcept;
     [[nodiscard]] Stream &stream() noexcept { return _stream; }
@@ -54,13 +67,26 @@ public:
         render(dt);
         download_result(ptr);
     }
-    // for dsl
+    /// for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
+
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept;
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
+
+    template<typename Index>
+    requires is_integral_expr_v<Index>
+    [[nodiscard]] BindlessArrayTexture tex(Index &&index) const noexcept {
+        return _bindless_array.tex(OC_FORWARD(index));
+    }
+
+    template<typename T, typename Index>
+    requires is_integral_expr_v<Index>
+    [[nodiscard]] BindlessArrayBuffer<T> buffer(Index &&index) const noexcept {
+        return _bindless_array.buffer<T>(OC_FORWARD(index));
+    }
 };
 
 }// namespace vision

@@ -41,4 +41,4 @@ public:
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
 
-}
+}// namespace vision

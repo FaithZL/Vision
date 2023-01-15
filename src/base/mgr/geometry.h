@@ -11,9 +11,10 @@
 namespace vision {
 using namespace ocarina;
 class Scene;
+class RenderPipeline;
 struct Geometry {
 public:
-    Device *device;
+    RenderPipeline *rp{};
     Managed<Vertex> vertices;
     Managed<Triangle> triangles;
     Managed<Shape::Handle> instances;
@@ -25,8 +26,7 @@ private:
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
 
 public:
-    explicit Geometry(Device *device = nullptr)
-        : device(device) {}
+    explicit Geometry(RenderPipeline *rp = nullptr) : rp(rp) {}
 
     void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle handle);
     void reset_device_buffer();

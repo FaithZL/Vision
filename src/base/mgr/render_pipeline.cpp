@@ -13,8 +13,9 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
     : _device(device),
       _context(context),
       _scene(context, this),
-      _geometry(device),
-      _stream(device->create_stream()) {}
+      _geometry(this),
+      _stream(device->create_stream()),
+      _bindless_array(device->create_bindless_array()) {}
 
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();
@@ -30,6 +31,13 @@ void RenderPipeline::prepare_device_data() noexcept {
     _geometry.build_meshes();
     _geometry.upload();
     _geometry.build_accel();
+}
+
+void RenderPipeline::prepare_bindless_array() noexcept {
+    _bindless_array.prepare_slotSOA(device());
+    _stream << _bindless_array.upload_buffer_handles()
+            << _bindless_array.upload_texture_handles()
+            << synchronize() << commit();
 }
 
 void RenderPipeline::compile_shaders() noexcept {
