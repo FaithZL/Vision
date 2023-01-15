@@ -23,13 +23,13 @@ public:
         return eval(tev.uv);
     }
     [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override {
-        return _image_wrapper.image().sample<float4>(uv);
+        return _image_wrapper.texture().sample<float4>(uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
-        return _image_wrapper.image().resolution();
+        return _image_wrapper.texture().resolution();
     }
     void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {
-        _image_wrapper.host_image().for_each_pixel(func);
+        _image_wrapper.image().for_each_pixel(func);
     }
 };
 }// namespace vision

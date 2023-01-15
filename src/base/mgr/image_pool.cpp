@@ -13,19 +13,19 @@ ImageWrapper ImageWrapper::create(const TextureDesc &desc, Device *device) {
 }
 
 TextureDownloadCommand *ImageWrapper::download() noexcept {
-    return _image.download(_image_io.pixel_ptr());
+    return _texture.download(_image_io.pixel_ptr());
 }
 
 TextureUploadCommand *ImageWrapper::upload() const noexcept {
-    return _image.upload(_image_io.pixel_ptr());
+    return _texture.upload(_image_io.pixel_ptr());
 }
 
 void ImageWrapper::upload_immediately() const noexcept {
-    _image.upload_immediately(_image_io.pixel_ptr());
+    _texture.upload_immediately(_image_io.pixel_ptr());
 }
 
 void ImageWrapper::download_immediately() noexcept {
-    _image.download_immediately(_image_io.pixel_ptr());
+    _texture.download_immediately(_image_io.pixel_ptr());
 }
 
 ImageWrapper &ImagePool::obtain_image(const TextureDesc &desc) noexcept {

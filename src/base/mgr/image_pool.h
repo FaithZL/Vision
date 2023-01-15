@@ -14,15 +14,15 @@ using namespace ocarina;
 class ImageWrapper {
 private:
     ImageIO _image_io;
-    RHITexture _image;
+    RHITexture _texture;
 
 public:
     ImageWrapper() = default;
-    ImageWrapper(ImageIO image_io, RHITexture image) : _image_io(move(image_io)), _image(move(image)) {}
-    [[nodiscard]] RHITexture &image() noexcept { return _image; }
-    [[nodiscard]] const RHITexture &image() const noexcept { return _image; }
-    [[nodiscard]] const ImageIO &host_image() const noexcept { return _image_io; }
-    [[nodiscard]] ImageIO &host_image() noexcept { return _image_io; }
+    ImageWrapper(ImageIO image_io, RHITexture image) : _image_io(move(image_io)), _texture(move(image)) {}
+    [[nodiscard]] RHITexture &texture() noexcept { return _texture; }
+    [[nodiscard]] const RHITexture &texture() const noexcept { return _texture; }
+    [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
+    [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
     [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device *device);
     [[nodiscard]] TextureUploadCommand *upload() const noexcept;
     [[nodiscard]] TextureDownloadCommand *download() noexcept;
