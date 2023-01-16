@@ -151,7 +151,7 @@ public:
     uint index{InvalidUI32};
     fs::path fn;
     bool smooth{false};
-    bool flip_uv{false};
+    bool flip_uv{true};
     bool swap_handed{false};
     uint subdiv_level{0};
 
