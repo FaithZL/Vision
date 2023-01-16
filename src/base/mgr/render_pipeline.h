@@ -42,6 +42,7 @@ public:
     }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
+    [[nodiscard]] BindlessArray &bindless_array() noexcept { return _bindless_array; }
     void prepare_bindless_array() noexcept;
     void change_resolution(uint2 res) noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
