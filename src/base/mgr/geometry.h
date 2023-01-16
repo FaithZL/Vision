@@ -14,10 +14,10 @@ class Scene;
 class RenderPipeline;
 struct Geometry {
 private:
-    Managed<Vertex> _vertices;
-    Managed<Triangle> _triangles;
-    Managed<Shape::Handle> _instances;
-    Managed<Mesh::Handle> _mesh_handles;
+    ManagedWrapper<Vertex> _vertices;
+    ManagedWrapper<Triangle> _triangles;
+    ManagedWrapper<Shape::Handle> _instances;
+    ManagedWrapper<Mesh::Handle> _mesh_handles;
     vector<ocarina::Mesh> _meshes;
 
 public:
@@ -28,7 +28,7 @@ private:
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
 
 public:
-    explicit Geometry(RenderPipeline *rp = nullptr) : rp(rp) {}
+    explicit Geometry(RenderPipeline *rp = nullptr);
 
     void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle handle);
     void reset_device_buffer();
