@@ -13,14 +13,16 @@ using namespace ocarina;
 class Scene;
 class RenderPipeline;
 struct Geometry {
+private:
+    Managed<Vertex> _vertices;
+    Managed<Triangle> _triangles;
+    Managed<Shape::Handle> _instances;
+    Managed<Mesh::Handle> _mesh_handles;
+    vector<ocarina::Mesh> _meshes;
+
 public:
-    RenderPipeline *rp{};
-    Managed<Vertex> vertices;
-    Managed<Triangle> triangles;
-    Managed<Shape::Handle> instances;
-    Managed<Mesh::Handle> mesh_handles;
-    vector<ocarina::Mesh> meshes;
     ocarina::Accel accel;
+    RenderPipeline *rp{};
 
 private:
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
