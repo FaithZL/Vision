@@ -11,6 +11,10 @@ RenderPipeline *Node::render_pipeline() noexcept {
     return _scene->render_pipeline();
 }
 
+const RenderPipeline *Node::render_pipeline() const noexcept {
+    return _scene->render_pipeline();
+}
+
 Device &Node::device() noexcept {
     return render_pipeline()->device();
 }

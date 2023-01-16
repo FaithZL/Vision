@@ -31,6 +31,7 @@ public:
     Node() = default;
     explicit Node(const NodeDesc &desc) : _name(desc.name), _scene(desc.scene) {}
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
+    [[nodiscard]] const RenderPipeline *render_pipeline() const noexcept;
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}
     virtual ~Node() = default;

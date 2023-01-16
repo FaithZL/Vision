@@ -21,7 +21,7 @@ public:
         return eval(tev.uv);
     }
     [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override {
-        return _image_wrapper.texture().sample<float4>(uv);
+        return render_pipeline()->tex(_image_wrapper.id()).sample<float4>(uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture().resolution();
