@@ -17,15 +17,18 @@ class ImageWrapper {
 private:
     ImageIO _image_io;
     RHITexture _texture;
+    uint _id;
 
 public:
     ImageWrapper() = default;
-    ImageWrapper(ImageIO image_io, RHITexture image) : _image_io(move(image_io)), _texture(move(image)) {}
+    ImageWrapper(ImageIO image_io, RHITexture image, uint id)
+        : _image_io(move(image_io)), _texture(move(image)), _id(id) {}
     [[nodiscard]] RHITexture &texture() noexcept { return _texture; }
     [[nodiscard]] const RHITexture &texture() const noexcept { return _texture; }
     [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
     [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
-    [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, Device &device);
+    [[nodiscard]] uint id() const noexcept { return _id; }
+    [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, RenderPipeline *rp);
     [[nodiscard]] TextureUploadCommand *upload() const noexcept;
     [[nodiscard]] TextureDownloadCommand *download() noexcept;
     void upload_immediately() const noexcept;
