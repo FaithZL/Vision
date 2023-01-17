@@ -11,15 +11,21 @@ using namespace ocarina;
 
 class RGBFilm : public Film {
 private:
-    Buffer<float4> _radiance;
-    Buffer<float4> _frame;
+    BufferWrapper<float4> _radiance;
+    BufferWrapper<float4> _frame;
+
 public:
-    explicit RGBFilm(const FilmDesc &desc) : Film(desc) {}
+    explicit RGBFilm(const FilmDesc &desc)
+        : Film(desc),
+          _radiance(render_pipeline()->bindless_array()),
+          _frame(render_pipeline()->bindless_array()) {}
     void prepare() noexcept override {
-        _radiance = device().create_buffer<float4>(pixel_num());
-        _frame = device().create_buffer<float4>(pixel_num());
+        _radiance.super() = device().create_buffer<float4>(pixel_num());
+        _frame.super() = device().create_buffer<float4>(pixel_num());
         _radiance.clear_immediately();
         _frame.clear_immediately();
+        _radiance.register_self();
+        _frame.register_self();
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
