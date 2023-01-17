@@ -9,12 +9,16 @@ namespace vision {
 class AliasTable2D : public Warper2D {
 private:
     AliasTable _marginal;
-    Managed<AliasEntry> _conditional_v_tables;
-    Managed<float> _conditional_v_weights;
+    ManagedWrapper<AliasEntry> _conditional_v_tables;
+    ManagedWrapper<float> _conditional_v_weights;
     uint2 _resolution;
 
 public:
-    explicit AliasTable2D(const WarperDesc &desc) : Warper2D(desc) {
+    explicit AliasTable2D(const WarperDesc &desc)
+        : Warper2D(desc),
+          _marginal(render_pipeline()->bindless_array()),
+          _conditional_v_tables(render_pipeline()->bindless_array()),
+          _conditional_v_weights(render_pipeline()->bindless_array()) {
         _marginal._scene = desc.scene;
     }
     void build(vector<float> weights, uint2 res) noexcept override {
@@ -26,7 +30,7 @@ public:
             vector<float> func_v;
             func_v.insert(func_v.end(), iter, iter + res.x);
             iter += res.x;
-            AliasTable alias_table;
+            AliasTable alias_table(render_pipeline()->bindless_array());
             alias_table._scene = _scene;
             alias_table.build(move(func_v));
             conditional_v.push_back(move(alias_table));
@@ -60,6 +64,9 @@ public:
         _conditional_v_weights.reset_device_buffer(device());
         _conditional_v_tables.upload_immediately();
         _conditional_v_weights.upload_immediately();
+
+        _conditional_v_weights.register_self();
+        _conditional_v_tables.register_self();
     }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
         Uint idx = coord.y * _resolution.x + coord.x;

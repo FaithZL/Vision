@@ -23,13 +23,17 @@ class AliasTable2D;
 
 class AliasTable : public Warper {
 private:
-    Managed<AliasEntry> _table;
-    Managed<float> _func;
+    ManagedWrapper<AliasEntry> _table;
+    ManagedWrapper<float> _func;
     friend class AliasTable2D;
 
 public:
-    AliasTable() = default;
-    explicit AliasTable(const WarperDesc &desc) : Warper(desc) {}
+    explicit AliasTable(BindlessArray &bindless_array)
+        : _table(bindless_array), _func(bindless_array) {}
+    explicit AliasTable(const WarperDesc &desc)
+        : Warper(desc),
+          _table(render_pipeline()->bindless_array()),
+          _func(render_pipeline()->bindless_array()) {}
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
@@ -46,6 +50,9 @@ void AliasTable::prepare() noexcept {
     _func.reset_device_buffer(device());
     _table.upload_immediately();
     _func.upload_immediately();
+
+    _table.register_self();
+    _func.register_self();
 }
 void AliasTable::build(vector<float> weights) noexcept {
     double sum = std::reduce(weights.cbegin(), weights.cend(), 0.0);
@@ -94,7 +101,7 @@ void AliasTable::build(vector<float> weights) noexcept {
 namespace detail {
 
 [[nodiscard]] tuple<Uint, Float> offset_u_remapped(Uint buffer_offset, Float u,
-                                                   const Managed<AliasEntry> &table, size_t size) noexcept {
+                                                   const ManagedWrapper<AliasEntry> &table, size_t size) noexcept {
     u = u * float(size);
     Uint idx = min(cast<uint>(u), uint(size - 1));
     u = min(u - idx, OneMinusEpsilon);
