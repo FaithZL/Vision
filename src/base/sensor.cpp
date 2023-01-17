@@ -20,6 +20,12 @@ void Sensor::prepare() noexcept {
     _film->prepare();
 }
 
+Camera::Camera(const SensorDesc &desc)
+    : Sensor(desc), _data(render_pipeline()->bindless_array()) {
+    _data.resize(1);
+    init(desc);
+}
+
 void Camera::init(const SensorDesc &desc) noexcept {
     _data.emplace_back();
     _velocity = desc.velocity;
@@ -53,6 +59,7 @@ void Camera::update_device_data() noexcept {
 void Camera::prepare() noexcept {
     Sensor::prepare();
     _data.reset_device_buffer(render_pipeline()->device(), 1);
+    _data.register_self();
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {

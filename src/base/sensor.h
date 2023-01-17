@@ -68,7 +68,7 @@ protected:
     float _velocity{5.f};
     float _sensitivity{1.f};
     float _fov_y{20.f};
-    Managed<Data> _data{1};
+    ManagedWrapper<Data> _data;
 
 public:
     [[nodiscard]] Float3 device_forward() const noexcept;
@@ -77,8 +77,7 @@ public:
     [[nodiscard]] Float3 device_position() const noexcept;
 
 public:
-    explicit Camera(const SensorDesc &desc)
-        : Sensor(desc) { init(desc); }
+    explicit Camera(const SensorDesc &desc);
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
