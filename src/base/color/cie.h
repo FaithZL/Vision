@@ -410,15 +410,29 @@ static constexpr array<float, cie_sample_count> D65 = {
     0.5953737885486733f, 0.5982780283395946f, 0.6011822681305159f, 0.6040865079214371f, 0.6069907477123584f,
     0.6098949875032796f};
 
-static constexpr float3x3 xyz2srgb = make_float3x3(
-    +3.240479f, -0.969256f, +0.055648f,
-    -1.537150f, +1.875991f, -0.204043f,
-    -0.498535f, +0.041556f, +1.057311f);
+template<typename T>
+[[nodiscard]] inline auto xyz_to_srgb(T &&xyz) noexcept {
+    static constexpr float3x3 xyz2srgb = make_float3x3(
+        +3.240479f, -0.969256f, +0.055648f,
+        -1.537150f, +1.875991f, -0.204043f,
+        -0.498535f, +0.041556f, +1.057311f);
+    return xyz2srgb * OC_FORWARD(xyz);
+}
 
-static constexpr float3x3 srgb2xyz = make_float3x3(
-    0.412453f, 0.212671f, 0.019334f,
-    0.357580f, 0.715160f, 0.119193f,
-    0.180423f, 0.072169f, 0.950227f);
+template<typename T>
+[[nodiscard]] inline auto srgb_to_xyz(T &&rgb) noexcept {
+    static constexpr float3x3 srgb2xyz = make_float3x3(
+        0.412453f, 0.212671f, 0.019334f,
+        0.357580f, 0.715160f, 0.119193f,
+        0.180423f, 0.072169f, 0.950227f);
+    return srgb2xyz * OC_FORWARD(rgb);
+}
+
+template<typename T>
+[[nodiscard]] inline auto srgb_to_y(T &&rgb) noexcept {
+    constexpr auto m = make_float3(0.212671f, 0.715160f, 0.072169f);
+    return dot(m, OC_FORWARD(rgb));
+}
 
 }// namespace cie
 
