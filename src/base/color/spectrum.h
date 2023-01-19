@@ -111,38 +111,45 @@ public:
         return map([](auto s) noexcept { return -s; });
     }
 
-    [[nodiscard]] SampledSpectrum operator+(const Float &rhs) const noexcept {
-        return map([rhs](const auto &lvalue) { return lvalue + rhs; });
+#define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
+    [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                              \
+        return map([rhs](const auto &lvalue) { return lvalue op rhs; });                                      \
+    }                                                                                                         \
+    [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                    \
+        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),           \
+                        "Invalid sampled spectrum");                                                          \
+        SampledSpectrum s(ocarina::max(dimension(), rhs.dimension()));                                        \
+        for (int i = 0; i < s.dimension(); ++i) {                                                             \
+            s[i] = (*this)[i] op rhs[i];                                                                      \
+        }                                                                                                     \
+        return s;                                                                                             \
+    }                                                                                                         \
+    [[nodiscard]] friend SampledSpectrum operator op(const Float &lhs, const SampledSpectrum &rhs) noexcept { \
+        return rhs.map([lhs](const Float &rvalue) { return lhs op rvalue; });                                 \
+    }                                                                                                         \
+    SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                              \
+        for (int i = 0; i < dimension(); ++i) {                                                               \
+            (*this)[i] op## = rhs;                                                                            \
+        }                                                                                                     \
+        return *this;                                                                                         \
+    }                                                                                                         \
+    SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                    \
+        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),           \
+                        "Invalid sampled spectrum");                                                          \
+        if (rhs.dimension() == 1u) {                                                                          \
+            return *this op## = rhs[0u];                                                                      \
+        }                                                                                                     \
+        for (uint i = 0; i < dimension(); ++i) {                                                              \
+            (*this)[i] op## = rhs[i];                                                                         \
+        }                                                                                                     \
+        return *this;                                                                                         \
     }
-    [[nodiscard]] SampledSpectrum operator+(const SampledSpectrum &rhs) const noexcept {
-        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),
-                        "Invalid sampled spectrum");
-        SampledSpectrum s(ocarina::max(dimension(), rhs.dimension()));
-        for (int i = 0; i < s.dimension(); ++i) {
-            s[i] = (*this)[i] + rhs[i];
-        }
-        return s;
-    }
-    [[nodiscard]] friend SampledSpectrum operator+(const Float &lhs, const SampledSpectrum &rhs) noexcept {
-        return rhs.map([lhs](const Float &rvalue) { return lhs + rvalue; });
-    }
-    SampledSpectrum &operator+=(const Float&rhs) noexcept {
-        for (int i = 0; i < dimension(); ++i) {
-            (*this)[i] += rhs;
-        }
-        return *this;
-    }
-    SampledSpectrum &operator+=(const SampledSpectrum &rhs) noexcept {
-        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),
-                        "Invalid sampled spectrum");
-        if (rhs.dimension() == 1u) {
-            return *this += rhs[0u];
-        }
-        for (uint i = 0; i < dimension(); ++i) {
-            (*this)[i] += rhs[i];
-        }
-        return *this;
-    }
+    
+    VS_MAKE_SPECTRUM_OPERATOR(+)
+    VS_MAKE_SPECTRUM_OPERATOR(-)
+    VS_MAKE_SPECTRUM_OPERATOR(*)
+    VS_MAKE_SPECTRUM_OPERATOR(/)
+#undef VS_MAKE_SPECTRUM_OPERATOR
 };
 
 class Spectrum : public Node {
