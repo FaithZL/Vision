@@ -39,11 +39,120 @@ public:
     explicit SampledSpectrum(uint n) noexcept : SampledSpectrum{n, 0.f} {}
     explicit SampledSpectrum(const Float &value) noexcept : SampledSpectrum{1u, value} {}
     explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
+    [[nodiscard]] uint dimension() const noexcept {
+        return static_cast<uint>(_samples.size());
+    }
+    [[nodiscard]] Array<float> &values() noexcept { return _samples; }
+    [[nodiscard]] const Array<float> &values() const noexcept { return _samples; }
+    [[nodiscard]] Float &operator[](const Uint &i) noexcept {
+        return dimension() == 1u ? _samples[0u] : _samples[i];
+    }
+    [[nodiscard]] Float operator[](const Uint &i) const noexcept {
+        return dimension() == 1u ? _samples[0u] : _samples[i];
+    }
+    template<typename F>
+    [[nodiscard]] auto map(F &&f) const noexcept {
+        SampledSpectrum s{dimension()};
+        for (auto i = 0u; i < dimension(); i++) {
+            if constexpr (std::invocable<F, Float>) {
+                s[i] = f((*this)[i]);
+            } else {
+                s[i] = f(i, (*this)[i]);
+            }
+        }
+        return s;
+    }
+    template<typename T, typename F>
+    [[nodiscard]] auto reduce(T &&initial, F &&f) const noexcept {
+        auto r = eval(OC_FORWARD(initial));
+        for (auto i = 0u; i < dimension(); i++) {
+            if constexpr (std::invocable<F, Var<expr_value_t<decltype(r)>>, Float>) {
+                r = f(r, (*this)[i]);
+            } else {
+                r = f(r, i, (*this)[i]);
+            }
+        }
+        return r;
+    }
+    [[nodiscard]] Float sum() const noexcept {
+        return reduce(0.f, [](auto r, auto x) noexcept { return r + x; });
+    }
+    [[nodiscard]] Float max() const noexcept {
+        return reduce(0.f, [](auto r, auto x) noexcept {
+            return ocarina::max(r, x);
+        });
+    }
+    [[nodiscard]] Float min() const noexcept {
+        return reduce(std::numeric_limits<float>::max(), [](auto r, auto x) noexcept {
+            return ocarina::min(r, x);
+        });
+    }
+
+    [[nodiscard]] Float average() const noexcept {
+        return sum() * static_cast<float>(1.0 / dimension());
+    }
+    template<typename F>
+    [[nodiscard]] Bool any(F &&f) const noexcept {
+        return reduce(false, [&f](auto ans, auto value) noexcept { return ans | f(value); });
+    }
+    template<typename F>
+    [[nodiscard]] Bool all(F &&f) const noexcept {
+        return reduce(true, [&f](auto ans, auto value) noexcept { return ans & f(value); });
+    }
+    [[nodiscard]] Bool is_zero() const noexcept {
+        return all([](auto x) noexcept { return x == 0.f; });
+    }
+    template<typename F>
+    [[nodiscard]] Bool none(F &&f) const noexcept { return !any(std::forward<F>(f)); }
+    [[nodiscard]] SampledSpectrum operator+() const noexcept {
+        return map([](auto s) noexcept { return s; });
+    }
+    [[nodiscard]] SampledSpectrum operator-() const noexcept {
+        return map([](auto s) noexcept { return -s; });
+    }
+
+    [[nodiscard]] SampledSpectrum operator+(const Float &rhs) const noexcept {
+        return map([rhs](const auto &lvalue) { return lvalue + rhs; });
+    }
+    [[nodiscard]] SampledSpectrum operator+(const SampledSpectrum &rhs) const noexcept {
+        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),
+                        "Invalid sampled spectrum");
+        SampledSpectrum s(ocarina::max(dimension(), rhs.dimension()));
+        for (int i = 0; i < s.dimension(); ++i) {
+            s[i] = (*this)[i] + rhs[i];
+        }
+        return s;
+    }
+    [[nodiscard]] friend SampledSpectrum operator+(const Float &lhs, const SampledSpectrum &rhs) noexcept {
+        return rhs.map([lhs](const Float &rvalue) { return lhs + rvalue; });
+    }
+    SampledSpectrum &operator+=(const Float&rhs) noexcept {
+        for (int i = 0; i < dimension(); ++i) {
+            (*this)[i] += rhs;
+        }
+        return *this;
+    }
+    SampledSpectrum &operator+=(const SampledSpectrum &rhs) noexcept {
+        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),
+                        "Invalid sampled spectrum");
+        if (rhs.dimension() == 1u) {
+            return *this += rhs[0u];
+        }
+        for (uint i = 0; i < dimension(); ++i) {
+            (*this)[i] += rhs[i];
+        }
+        return *this;
+    }
 };
 
 class Spectrum : public Node {
 public:
     using Desc = SpectrumDesc;
+    struct Decode {
+        SampledSpectrum sample;
+        Float strength;
+    };
+
 public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
 };
