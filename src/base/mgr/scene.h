@@ -14,6 +14,7 @@
 #include "base/scattering/material.h"
 #include "base/scattering/medium.h"
 #include "base/warper.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 
@@ -38,6 +39,7 @@ private:
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
     WarperDesc _warper_desc;
+    Spectrum *_spectrum{nullptr};
     RenderPipeline *_rp{nullptr};
     friend class RenderPipeline;
 
@@ -48,6 +50,7 @@ public:
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)
+    MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
     [[nodiscard]] auto film() noexcept { return camera()->film(); }

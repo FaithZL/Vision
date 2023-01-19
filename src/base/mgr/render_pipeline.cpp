@@ -6,6 +6,7 @@
 #include "base/sensor.h"
 #include "scene.h"
 #include "core/context.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 

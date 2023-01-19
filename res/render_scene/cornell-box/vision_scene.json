@@ -491,6 +491,9 @@
             "rr_threshold": 1
         }
     },
+    "spectrum" : {
+        "type" : "hero"
+    },
     "light_sampler": {
         "type": "uniform",
         "param": {

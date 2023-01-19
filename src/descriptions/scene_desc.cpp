@@ -207,6 +207,7 @@ void SceneDesc::check_meshes() noexcept {
 
 void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap()));
+    spectrum_desc.init(data.value("spectrum", DataWrap::object()));
     light_sampler_desc.scene_path = scene_path;
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
     sampler_desc.init(data.value("sampler", DataWrap()));

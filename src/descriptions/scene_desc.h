@@ -22,6 +22,7 @@ public:
 public:
     SensorDesc sensor_desc;
     SamplerDesc sampler_desc;
+    SpectrumDesc spectrum_desc;
     LightSamplerDesc light_sampler_desc;
     IntegratorDesc integrator_desc;
     WarperDesc warper_desc;

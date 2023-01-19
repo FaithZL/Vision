@@ -26,4 +26,13 @@ public:
         return _s(fma(lambda, fma(lambda, _c[0], _c[1]), _c[2]));// c0 * x * x + c1 * x + c2
     }
 };
+
+class HeroWavelengthSpectrum : public Spectrum {
+public:
+    explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
+        : Spectrum(desc) {}
+};
+
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::HeroWavelengthSpectrum)

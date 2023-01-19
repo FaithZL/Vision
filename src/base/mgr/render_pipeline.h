@@ -13,7 +13,7 @@
 
 namespace vision {
 using namespace ocarina;
-
+class Spectrum;
 class RenderPipeline {
 private:
     Device *_device;
