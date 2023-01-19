@@ -144,7 +144,7 @@ public:
         }                                                                                                     \
         return *this;                                                                                         \
     }
-    
+
     VS_MAKE_SPECTRUM_OPERATOR(+)
     VS_MAKE_SPECTRUM_OPERATOR(-)
     VS_MAKE_SPECTRUM_OPERATOR(*)
@@ -156,12 +156,18 @@ class Spectrum : public Node {
 public:
     using Desc = SpectrumDesc;
     struct Decode {
-        SampledSpectrum sample;
+        SampledSpectrum value;
         Float strength;
+        [[nodiscard]] static auto constant(uint dim, float value) noexcept {
+            return Decode{.value = {dim, value}, .strength = value};
+        }
+        [[nodiscard]] static auto one(uint dim) noexcept { return constant(dim, 1.f); }
+        [[nodiscard]] static auto zero(uint dim) noexcept { return constant(dim, 0.f); }
     };
 
 public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
+
 };
 
 }// namespace vision
