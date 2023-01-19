@@ -6,6 +6,7 @@
 #include "base/mgr/render_pipeline.h"
 #include "math/warp.h"
 
+
 namespace vision {
 using namespace ocarina;
 class PathTracingIntegrator : public Integrator {
@@ -29,7 +30,8 @@ public:
         return Ld;
     }
 
-    void compile_shader(RenderPipeline *rp) noexcept override {
+    void compile_shader() noexcept override {
+        RenderPipeline *rp = render_pipeline();
         Camera *camera = _scene->camera();
         Sampler *sampler = _scene->sampler();
         LightSampler *light_sampler = _scene->light_sampler();
@@ -149,7 +151,8 @@ public:
         _shader = rp->device().compile(_kernel);
     }
 
-    void render(RenderPipeline *rp) const noexcept override {
+    void render() const noexcept override {
+        const RenderPipeline *rp = render_pipeline();
         Stream &stream = rp->stream();
         stream << _shader(rp->frame_index()).dispatch(rp->resolution());
         stream << synchronize();

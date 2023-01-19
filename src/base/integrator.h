@@ -38,7 +38,7 @@ public:
           _max_depth(desc.max_depth),
           _min_depth(desc.min_depth),
           _rr_threshold(desc.rr_threshold) {}
-    virtual void compile_shader(RenderPipeline *rp) noexcept = 0;
-    virtual void render(RenderPipeline *rp) const noexcept = 0;
+    virtual void compile_shader() noexcept = 0;
+    virtual void render() const noexcept = 0;
 };
 }// namespace vision

@@ -44,6 +44,8 @@ public:
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] BindlessArray &bindless_array() noexcept { return _bindless_array; }
     void prepare_bindless_array() noexcept;
+    [[nodiscard]] Spectrum &spectrum() noexcept;
+    [[nodiscard]] const Spectrum &spectrum() const noexcept;
     void change_resolution(uint2 res) noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
@@ -57,7 +59,7 @@ public:
     }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     void prepare() noexcept;
-    [[nodiscard]] Stream &stream() noexcept { return _stream; }
+    [[nodiscard]] Stream &stream() const noexcept { return _stream; }
     void prepare_geometry() noexcept;
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }

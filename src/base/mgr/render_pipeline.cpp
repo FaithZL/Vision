@@ -41,6 +41,14 @@ void RenderPipeline::prepare_bindless_array() noexcept {
             << synchronize() << commit();
 }
 
+Spectrum &RenderPipeline::spectrum() noexcept {
+    return *_scene.spectrum();
+}
+
+const Spectrum &RenderPipeline::spectrum() const noexcept {
+    return *_scene.spectrum();
+}
+
 void RenderPipeline::deregister_buffer(handle_ty index) noexcept {
     _bindless_array.remove_buffer(index);
 }
@@ -50,7 +58,7 @@ void RenderPipeline::deregister_texture(handle_ty index) noexcept {
 }
 
 void RenderPipeline::compile_shaders() noexcept {
-    _scene.integrator()->compile_shader(this);
+    _scene.integrator()->compile_shader();
 }
 
 void RenderPipeline::prepare() noexcept {
@@ -63,7 +71,7 @@ void RenderPipeline::prepare() noexcept {
 
 void RenderPipeline::render(double dt) noexcept {
     Clock clk;
-    _scene.integrator()->render(this);
+    _scene.integrator()->render();
     double ms = clk.elapse_ms();
     _total_time += ms;
     ++_frame_index;
