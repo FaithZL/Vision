@@ -151,6 +151,16 @@ public:
     VS_MAKE_SPECTRUM_OPERATOR(/)
 #undef VS_MAKE_SPECTRUM_OPERATOR
 };
+
+template<typename A, typename B, typename T>
+requires std::disjunction_v<
+std::is_same<std::remove_cvref_t<A>, SampledSpectrum>,
+std::is_same<std::remove_cvref_t<B>, SampledSpectrum>,
+std::is_same<std::remove_cvref_t<T>, SampledSpectrum>>
+[[nodiscard]] auto lerp(A &&a, B &&b, T &&t) noexcept {
+    return t * (b - a) + a;
+}
+
 class Sampler;
 class Spectrum : public Node {
 public:
