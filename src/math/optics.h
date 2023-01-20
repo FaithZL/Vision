@@ -86,7 +86,7 @@ template<EPort p = D>
 [[nodiscard]] oc_float3<p> fresnel_complex(oc_float<p> cos_theta_i, oc_float3<p> eta, oc_float3<p> k) noexcept {
     oc_float3<p> ret;
     for (int i = 0; i < 3; ++i) {
-        ret[i] = fresnel_complex(cos_theta_i, eta[i], k[i]);
+        ret[i] = fresnel_complex<p>(cos_theta_i, eta[i], k[i]);
     }
     return ret;
 }

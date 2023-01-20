@@ -10,12 +10,12 @@ namespace vision {
 
 class FresnelConductor : public Fresnel {
 private:
-    Float3 _eta, _k;
+    VSColor _eta, _k;
 
 public:
     FresnelConductor(Float3 eta, Float3 k)
         : _eta(eta), _k(k) {}
-    [[nodiscard]] Float3 evaluate(Float abs_cos_theta) const noexcept override {
+    [[nodiscard]] VSColor evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex<D>(abs_cos_theta, _eta, _k);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {

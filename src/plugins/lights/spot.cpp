@@ -7,7 +7,7 @@
 namespace vision {
 class SpotLight : public IPointLight {
 private:
-    float3 _intensity;
+    VSColor _intensity;
     float3 _position;
     float3 _direction;
     float _angle;
@@ -32,7 +32,7 @@ public:
         Float ret = Pow<4>(factor);
         return ret;
     }
-    [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
+    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
         Float3 w_un = p_ref.pos - _position;
         Float3 w = normalize(w_un);

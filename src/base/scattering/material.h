@@ -34,7 +34,7 @@ public:
     BSDF() = default;
     explicit BSDF(const Interaction &si)
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
-    [[nodiscard]] virtual Float3 albedo() const noexcept { return make_float3(0.f); }
+    [[nodiscard]] virtual VSColor albedo() const noexcept { return make_float3(0.f); }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
@@ -48,11 +48,11 @@ private:
 
 public:
     DielectricBSDF(const Interaction &si,
-              const SP<Fresnel> &fresnel,
-              MicrofacetReflection refl,
-              MicrofacetTransmission trans)
+                   const SP<Fresnel> &fresnel,
+                   MicrofacetReflection refl,
+                   MicrofacetTransmission trans)
         : BSDF(si), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return _refl.albedo(); }
+    [[nodiscard]] VSColor albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override;
 };

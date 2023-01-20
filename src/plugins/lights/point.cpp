@@ -7,7 +7,7 @@
 namespace vision {
 class PointLight : public IPointLight {
 private:
-    float3 _intensity;
+    VSColor _intensity;
     float3 _position;
 
 public:
@@ -16,7 +16,7 @@ public:
           _intensity(desc.intensity),
           _position(desc.position) {}
     [[nodiscard]] float3 position() const noexcept override { return _position; }
-    [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
+    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
         return _intensity / length_squared(p_ref.pos - _position);
     }

@@ -29,7 +29,7 @@ public:
         }
     }
     [[nodiscard]] float3 position() const noexcept override { return _o2w[3].xyz(); }
-    [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
+    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
         Float3 p = transform_point(inverse(_o2w), p_ref.pos);
         Float d2 = length_squared(p);
@@ -40,7 +40,7 @@ public:
         float2 tan_xy = make_float2(tan_x, tan_y);
         Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
-        return select(valid, _intensity->eval(uv).xyz() / d2 * _scale, make_float3(0.f));
+        return select(valid, 1.f, 0.f) * _intensity->eval(uv).xyz() / d2 * _scale;
     }
 };
 }// namespace vision

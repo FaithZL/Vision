@@ -30,14 +30,14 @@ public:
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
 
-    [[nodiscard]] Float3 L(Float3 local_dir) const {
+    [[nodiscard]] VSColor L(Float3 local_dir) const {
         Float2 uv = UV(local_dir);
         return _texture->eval(uv).xyz() * _scale;
     }
 
-    [[nodiscard]] Float3 Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
         OC_ERROR("environment PDF_Li can not be called");
-        return make_float3(0.f);
+        return {};
     }
 
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {

@@ -11,17 +11,17 @@ namespace vision {
 
 class FresnelBlend : public BxDF {
 private:
-    Float3 Rd, Rs;
+    VSColor Rd, Rs;
     SP<Microfacet<D>> _microfacet;
 
 public:
-    FresnelBlend(Float3 Rd, Float3 Rs, const SP<Microfacet<D>> &m)
+    FresnelBlend(VSColor Rd, VSColor Rs, const SP<Microfacet<D>> &m)
         : BxDF(BxDFFlag::Reflection), Rd(Rd), Rs(Rs), _microfacet(m) {}
 
-    [[nodiscard]] Float3 albedo() const noexcept override { return Rd; }
+    [[nodiscard]] VSColor albedo() const noexcept override { return Rd; }
 
-    [[nodiscard]] Float3 f_diffuse(Float3 wo, Float3 wi) const noexcept {
-        Float3 diffuse = (28.f / (23.f * Pi)) * Rd * (make_float3(1.f) - Rs) *
+    [[nodiscard]] VSColor f_diffuse(Float3 wo, Float3 wi) const noexcept {
+        VSColor diffuse = (28.f / (23.f * Pi)) * Rd * (make_float3(1.f) - Rs) *
                          (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
                          (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
         return diffuse;
@@ -29,10 +29,10 @@ public:
     [[nodiscard]] Float PDF_diffuse(Float3 wo, Float3 wi) const noexcept {
         return cosine_hemisphere_PDF(abs_cos_theta(wi));
     }
-    [[nodiscard]] Float3 f_specular(Float3 wo, Float3 wi) const noexcept {
+    [[nodiscard]] VSColor f_specular(Float3 wo, Float3 wi) const noexcept {
         Float3 wh = wi + wo;
         wh = normalize(wh);
-        Float3 specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
+        VSColor specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
                           fresnel_schlick(Rs, dot(wi, wh));
         return select(is_zero(wh), make_float3(0.f), specular);
     }
@@ -41,7 +41,7 @@ public:
         Float ret = _microfacet->PDF_wi_reflection(wo, wh);
         return ret;
     }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float3 ret = f_specular(wo, wi) + f_diffuse(wo, wi);
         return ret;
     }
@@ -103,7 +103,7 @@ public:
     SubstrateBSDF(const Interaction &si, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
         : BSDF(si), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
 
-    [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
+    [[nodiscard]] VSColor albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }

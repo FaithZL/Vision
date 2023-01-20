@@ -28,15 +28,15 @@ public:
         return _warper->PMF(prim_id);
     }
 
-    [[nodiscard]] Float3 L(const LightEvalContext &p_light, const Float3 &w) const {
+    [[nodiscard]] VSColor L(const LightEvalContext &p_light, const Float3 &w) const {
         Float3 radiance = _radiance->eval(p_light.uv).xyz() * _scale;
         if (_two_sided) {
             return radiance;
         }
-        return select(dot(w, p_light.ng) > 0, radiance, make_float3(0.f));
+        return radiance * select(dot(w, p_light.ng) > 0, 1.f, 0.f);
     }
 
-    [[nodiscard]] Float3 Li(const LightSampleContext &p_ref,
+    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
                             const LightEvalContext &p_light) const noexcept override {
         return L(p_light, p_ref.pos - p_light.pos);
     }

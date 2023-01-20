@@ -12,7 +12,7 @@ namespace vision {
 
 class Fresnel {
 public:
-    [[nodiscard]] virtual Float3 evaluate(Float cos_theta) const noexcept = 0;
+    [[nodiscard]] virtual VSColor evaluate(Float cos_theta) const noexcept = 0;
     [[nodiscard]] virtual Float eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
         return 1;
@@ -32,7 +32,7 @@ public:
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
-    [[nodiscard]] Float3 evaluate(Float abs_cos_theta) const noexcept override {
+    [[nodiscard]] VSColor evaluate(Float abs_cos_theta) const noexcept override {
         Float fr = fresnel_dielectric<D>(abs_cos_theta, _eta);
         return make_float3(fr);
     }
@@ -45,7 +45,7 @@ public:
 class FresnelNoOp : public Fresnel {
 public:
     FresnelNoOp() = default;
-    [[nodiscard]] Float3 evaluate(Float cos_theta) const noexcept override { return make_float3(1.f); }
+    [[nodiscard]] VSColor evaluate(Float cos_theta) const noexcept override { return make_float3(1.f); }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelNoOp>();
     }

@@ -25,7 +25,7 @@ Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
 ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     ScatterEval ret;
     Bool s = safe(wo, wi);
-    ret.f = select(s, f(wo, wi, fresnel), make_float3(0.f));
+    ret.f = f(wo, wi, fresnel) * select(s, 1.f, 0.f);
     ret.pdf = select(s, PDF(wo, wi, fresnel), 1.f);
     return ret;
 }
@@ -53,12 +53,12 @@ BSDFSample BxDF::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const 
 }
 
 // LambertReflection
-Float3 LambertReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+VSColor LambertReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     return Kr * InvPi;
 }
 
 // MicrofacetReflection
-Float3 MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+VSColor MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = normalize(wo + wi);
     wh = face_forward(wh, make_float3(0, 0, 1));
     Float3 F = fresnel->evaluate(abs_dot(wo, wh));

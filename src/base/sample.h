@@ -46,15 +46,17 @@ struct RaySample {
     Float weight{1.f};
 };
 
+using VSColor = Float3;
+
 struct ScatterEval {
-    Float3 f{make_float3(0.f)};
+    VSColor f{make_float3(0.f)};
     Float pdf{0.f};
     [[nodiscard]] Float3 value() const noexcept { return f / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
 };
 
 struct LightEval {
-    Float3 L{make_float3(0.f)};
+    VSColor L{make_float3(0.f)};
     Float pdf{0.f};
     [[nodiscard]] Float3 value() const noexcept { return L / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }

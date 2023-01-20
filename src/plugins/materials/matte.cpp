@@ -15,7 +15,7 @@ private:
 public:
     explicit MatteBSDF(const Interaction &si, const Float3 &kr)
         : BSDF(si), _bxdf(kr) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return _bxdf.albedo(); }
+    [[nodiscard]] VSColor albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, nullptr);
     }

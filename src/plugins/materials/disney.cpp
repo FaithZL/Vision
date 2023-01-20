@@ -12,15 +12,15 @@ inline namespace disney {
 
 class Diffuse : public BxDF {
 private:
-    Float3 _color;
+    VSColor _color;
 
 public:
     Diffuse() = default;
     explicit Diffuse(Float3 color)
         : BxDF(BxDFFlag::DiffRefl),
           _color(color) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi) {
             Float Fo = schlick_weight(abs_cos_theta(wo));
             Float Fi = schlick_weight(abs_cos_theta(wi));
@@ -32,7 +32,7 @@ public:
 
 class FakeSS : public BxDF {
 private:
-    Float3 _color;
+    VSColor _color;
     Float _roughness;
 
 public:
@@ -41,8 +41,8 @@ public:
         : BxDF(BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -62,7 +62,7 @@ public:
 
 class Retro : public BxDF {
 private:
-    Float3 _color;
+    VSColor _color;
     Float _roughness;
 
 public:
@@ -71,8 +71,8 @@ public:
         : BxDF(BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -92,15 +92,15 @@ public:
 
 class Sheen : public BxDF {
 private:
-    Float3 _color;
+    VSColor _color;
 
 public:
     Sheen() = default;
     explicit Sheen(Float3 kr)
         : BxDF(BxDFFlag::DiffRefl),
           _color(kr) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return _color; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -142,8 +142,8 @@ public:
         : BxDF(BxDFFlag::GlossyRefl),
           _weight(weight),
           _alpha(alpha) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return make_float3(_weight); }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] VSColor albedo() const noexcept override { return make_float3(_weight); }
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float weight, Float alpha) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -202,7 +202,7 @@ public:
 
 class FresnelDisney : public Fresnel {
 private:
-    Float3 R0;
+    VSColor R0;
     Float _metallic;
     Float _eta;
 
@@ -212,7 +212,7 @@ public:
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
-    [[nodiscard]] Float3 evaluate(Float cos_theta) const noexcept override {
+    [[nodiscard]] VSColor evaluate(Float cos_theta) const noexcept override {
         return lerp(make_float3(_metallic),
                     make_float3(fresnel_dielectric(cos_theta, _eta)),
                     fresnel_schlick(R0, cos_theta));
@@ -276,28 +276,27 @@ public:
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept override {
-        static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Fr, Float ax, Float ay) {
-            return microfacet::BRDF<D>(wo, wh, wi, Fr, ax, ay, type);
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, VSColor Fr) const noexcept override {
+        static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
+            return microfacet::BRDF<D>(wo, wh, wi, make_float3(1.f), ax, ay, type);
         };
-        return impl(wo, wh, wi, Fr, _alpha_x, _alpha_y);
+        return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
     }
 
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept override {
+    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, VSColor Fr) const noexcept override {
         Float3 wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
     [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,
                               Float3 Ft, Float eta) const noexcept override {
-        static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Ft,
-            Float eta, Float ax, Float ay) {
-            return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, ax, ay, type);
+        static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
+            return microfacet::BTDF<D>(wo, wh, wi, make_float3(1.f), eta, ax, ay, type);
         };
-        return impl(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y);
+        return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
     }
 
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept override {
+    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, VSColor Ft, Float eta) const noexcept override {
         Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
@@ -325,7 +324,7 @@ private:
 
 private:
     template<typename T, typename... Args>
-    [[nodiscard]] Float3 lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
+    [[nodiscard]] VSColor lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
@@ -341,7 +340,7 @@ private:
     }
 
     template<typename... Args>
-    [[nodiscard]] Float3 f_diffuse(Args &&...args) const noexcept {
+    [[nodiscard]] VSColor f_diffuse(Args &&...args) const noexcept {
         return lobe_f(_diffuse, OC_FORWARD(args)...) + lobe_f(_retro, OC_FORWARD(args)...) +
                lobe_f(_sheen, OC_FORWARD(args)...) + lobe_f(_fake_ss, OC_FORWARD(args)...);
     }
@@ -442,7 +441,7 @@ public:
             _sampling_weights[i] *= inv_sum_weights;
         }
     }
-    [[nodiscard]] Float3 albedo() const noexcept override { return _diffuse->albedo(); }
+    [[nodiscard]] VSColor albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         ScatterEval ret;
         Float3 f = make_float3(0.f);
