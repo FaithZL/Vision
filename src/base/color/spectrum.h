@@ -27,28 +27,28 @@ public:
 
 class SampledSpectrum {
 private:
-    Array<float> _samples;
+    Array<float> _values;
 
 public:
     SampledSpectrum(uint n, const Float &value) noexcept
-        : _samples(n) {
+        : _values(n) {
         for (int i = 0; i < n; ++i) {
-            _samples[i] = value;
+            _values[i] = value;
         }
     }
     explicit SampledSpectrum(uint n) noexcept : SampledSpectrum{n, 0.f} {}
     explicit SampledSpectrum(const Float &value) noexcept : SampledSpectrum{1u, value} {}
     explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
     [[nodiscard]] uint dimension() const noexcept {
-        return static_cast<uint>(_samples.size());
+        return static_cast<uint>(_values.size());
     }
-    [[nodiscard]] Array<float> &values() noexcept { return _samples; }
-    [[nodiscard]] const Array<float> &values() const noexcept { return _samples; }
+    [[nodiscard]] Array<float> &values() noexcept { return _values; }
+    [[nodiscard]] const Array<float> &values() const noexcept { return _values; }
     [[nodiscard]] Float &operator[](const Uint &i) noexcept {
-        return dimension() == 1u ? _samples[0u] : _samples[i];
+        return dimension() == 1u ? _values[0u] : _values[i];
     }
     [[nodiscard]] Float operator[](const Uint &i) const noexcept {
-        return dimension() == 1u ? _samples[0u] : _samples[i];
+        return dimension() == 1u ? _values[0u] : _values[i];
     }
     template<typename F>
     [[nodiscard]] auto map(F &&f) const noexcept {
