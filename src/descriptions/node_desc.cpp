@@ -279,6 +279,8 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
 void SpectrumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("srgb");
+    ParameterSet param = ps["param"];
+    VISION_PARAMS_LIST_INITIAL(dimension)
 }
 
 void OutputDesc::init(const ParameterSet &ps) noexcept {

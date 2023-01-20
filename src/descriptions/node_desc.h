@@ -317,6 +317,9 @@ public:
 
 struct SpectrumDesc : public NodeDesc {
 public:
+    uint dimension{4};
+
+public:
     VISION_DESC_COMMON(Spectrum)
     void init(const ParameterSet &ps) noexcept override;
 };

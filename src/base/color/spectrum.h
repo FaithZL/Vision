@@ -151,7 +151,7 @@ public:
     VS_MAKE_SPECTRUM_OPERATOR(/)
 #undef VS_MAKE_SPECTRUM_OPERATOR
 };
-
+class Sampler;
 class Spectrum : public Node {
 public:
     using Desc = SpectrumDesc;
@@ -167,7 +167,9 @@ public:
 
 public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
-
+    [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
+    [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
+    [[nodiscard]] virtual Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
 };
 
 }// namespace vision

@@ -28,9 +28,19 @@ public:
 };
 
 class HeroWavelengthSpectrum : public Spectrum {
+private:
+    uint _dimension{};
+
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc) {}
+        : Spectrum(desc), _dimension(desc.dimension) {}
+    [[nodiscard]] uint dimension() const noexcept override { return _dimension; }
+    [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return make_float4(0.f);
+    }
+    [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
+        return SampledWavelengths(4);
+    }
 };
 
 }// namespace vision
