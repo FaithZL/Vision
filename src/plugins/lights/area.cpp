@@ -28,7 +28,8 @@ public:
         return _warper->PMF(prim_id);
     }
 
-    [[nodiscard]] VSColor L(const LightEvalContext &p_light, const Float3 &w) const {
+    [[nodiscard]] VSColor L(const LightEvalContext &p_light, const Float3 &w,
+                            const SampledWavelengths &swl) const {
         Float3 radiance = _radiance->eval(p_light.uv).xyz() * _scale;
         if (_two_sided) {
             return radiance;
@@ -37,8 +38,9 @@ public:
     }
 
     [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
-                            const LightEvalContext &p_light) const noexcept override {
-        return L(p_light, p_ref.pos - p_light.pos);
+                             const LightEvalContext &p_light,
+                             const SampledWavelengths &swl) const noexcept override {
+        return L(p_light, p_ref.pos - p_light.pos, swl);
     }
 
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
@@ -47,7 +49,8 @@ public:
         return select(isinf(ret), 0.f, ret);
     }
 
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+                                        const SampledWavelengths &swl) const noexcept override {
         LightSample ret;
         auto rp = _scene->render_pipeline();
         auto [prim_id, pmf, u_remapping] = _warper->sample_discrete(u.x);
@@ -55,7 +58,7 @@ public:
         Float2 bary = square_to_triangle(u);
         LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
-        ret.eval = evaluate(p_ref, p_light);
+        ret.eval = evaluate(p_ref, p_light, swl);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
     }

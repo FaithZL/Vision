@@ -17,7 +17,8 @@ public:
           _position(desc.position) {}
     [[nodiscard]] float3 position() const noexcept override { return _position; }
     [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
-                            const LightEvalContext &p_light) const noexcept override {
+                             const LightEvalContext &p_light,
+                             const SampledWavelengths &swl) const noexcept override {
         return _intensity / length_squared(p_ref.pos - _position);
     }
 };

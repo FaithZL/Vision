@@ -26,7 +26,7 @@ public:
 
 protected:
     Polymorphic<Light *> _lights;
-    Light * _env_light{};
+    Light *_env_light{};
     float _env_prob{};
 
 public:
@@ -36,10 +36,13 @@ public:
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
     void add_light(Light *light) noexcept { _lights.push_back(light); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &id) const noexcept = 0;
-    [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &si) const noexcept;
-    [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi) const noexcept;
+    [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &si,
+                                                 const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
+                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler,
+                                             const SampledWavelengths &swl) const noexcept = 0;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {

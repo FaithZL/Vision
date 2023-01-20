@@ -20,14 +20,15 @@ public:
         return ret;
     }
 
-    [[nodiscard]] LightSample sample(const LightSampleContext &lsc, Sampler *sampler) const noexcept override {
+    [[nodiscard]] LightSample sample(const LightSampleContext &lsc, Sampler *sampler,
+                                     const SampledWavelengths &swl) const noexcept override {
         Float u_light = sampler->next_1d();
         Float2 u_surface = sampler->next_2d();
         LightSample ret;
         SampledLight sampled_light = select_light(lsc, u_light);
         RenderPipeline *rp = _scene->render_pipeline();
         _lights.dispatch(sampled_light.light_id, [&](const Light *light) {
-            ret = light->sample_Li(lsc, u_surface);
+            ret = light->sample_Li(lsc, u_surface, swl);
             ret.eval.pdf *= sampled_light.PMF;
         });
         return ret;

@@ -63,7 +63,7 @@ public:
                             rs.ray.dir_max.w = _scene->world_diameter();
                             tr = geometry.Tr(_scene, rs);
                         }
-                        LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction());
+                        LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
                         Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                         Li += eval.L * tr * throughput * weight;
                     }
@@ -94,7 +94,7 @@ public:
                     LightSampleContext p_ref;
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
-                    LightEval eval = light_sampler->evaluate_hit(p_ref, it);
+                    LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
                     Float3 tr = geometry.Tr(_scene, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight * tr;
@@ -102,10 +102,10 @@ public:
 
                 comment("estimate direct lighting");
                 comment("sample light");
-                LightSample light_sample = light_sampler->sample(it, sampler);
+                LightSample light_sample = light_sampler->sample(it, sampler, swl);
                 RayState shadow_ray;
                 Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
-                Float3 tr = geometry.Tr(_scene, shadow_ray);
+                VSColor tr = geometry.Tr(_scene, shadow_ray);
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
                 Float3 Ld = make_float3(0.f);

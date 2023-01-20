@@ -30,12 +30,13 @@ public:
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
 
-    [[nodiscard]] VSColor L(Float3 local_dir) const {
+    [[nodiscard]] VSColor L(Float3 local_dir,const SampledWavelengths &swl) const {
         Float2 uv = UV(local_dir);
         return _texture->eval(uv).xyz() * _scale;
     }
 
-    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref, const LightEvalContext &p_light,
+                             const SampledWavelengths &swl) const noexcept override {
         OC_ERROR("environment PDF_Li can not be called");
         return {};
     }
@@ -45,7 +46,8 @@ public:
         return 0;
     }
 
-    [[nodiscard]] LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+    [[nodiscard]] LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light,
+                                     const SampledWavelengths &swl) const noexcept override {
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
         Float3 local_dir = transform_vector(_w2o, world_dir);
         Float theta = spherical_theta(local_dir);
@@ -53,10 +55,11 @@ public:
         Float sin_theta = sin(theta);
         Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
         Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
-        return {.L = L(local_dir), .pdf = select(sin_theta == 0, 0.f, pdf)};
+        return {.L = L(local_dir,swl), .pdf = select(sin_theta == 0, 0.f, pdf)};
     }
 
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+                                        const SampledWavelengths &swl) const noexcept override {
         LightSample ret;
         auto [uv, pdf_map, coord] = _warper->sample_continuous(u);
         Float theta = uv[1] * Pi;
@@ -68,7 +71,7 @@ public:
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
         Float3 pos = p_ref.pos + world_dir * _scene->world_diameter();
         LightEvalContext p_light{pos};
-        ret.eval.L = L(local_dir);
+        ret.eval.L = L(local_dir, swl);
         pdf_dir = select(isinf(pdf_dir), 0.f, pdf_dir);
         ret.eval.pdf = pdf_dir;
         ret.p_light = pos;

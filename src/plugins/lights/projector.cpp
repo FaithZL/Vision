@@ -30,7 +30,8 @@ public:
     }
     [[nodiscard]] float3 position() const noexcept override { return _o2w[3].xyz(); }
     [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
-                            const LightEvalContext &p_light) const noexcept override {
+                             const LightEvalContext &p_light,
+                             const SampledWavelengths &swl) const noexcept override {
         Float3 p = transform_point(inverse(_o2w), p_ref.pos);
         Float d2 = length_squared(p);
         Bool valid = p.z > 0;

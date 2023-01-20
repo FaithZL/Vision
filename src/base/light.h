@@ -7,6 +7,7 @@
 #include "base/scattering/interaction.h"
 #include "node.h"
 #include "sample.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 
@@ -28,13 +29,13 @@ protected:
 public:
     explicit Light(const LightDesc &desc, LightType light_type)
         : Node(desc), _type(light_type) {}
-    [[nodiscard]] virtual VSColor Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
+    [[nodiscard]] virtual VSColor Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, Float2 u, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
-    [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept {
-        return {Li(p_ref, p_light), PDF_Li(p_ref, p_light)};
+    [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept {
+        return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light)};
     }
 };
 
@@ -47,11 +48,12 @@ public:
         return -1.f;
     }
     [[nodiscard]] virtual float3 position() const noexcept = 0;
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u) const noexcept override {
+    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+                                        const SampledWavelengths &swl) const noexcept override {
         LightSample ret;
         LightEvalContext p_light;
         p_light.pos = position();
-        ret.eval = evaluate(p_ref, p_light);
+        ret.eval = evaluate(p_ref, p_light, swl);
         Float3 wi_un = position() - p_ref.pos;
         ret.p_light = p_light.pos;
         return ret;
