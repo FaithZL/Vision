@@ -22,15 +22,15 @@ public:
           _sigma_t(_sigma_a + _sigma_s),
           _g(desc.g) {}
 
-    [[nodiscard]] Float3 Tr(Float t) const noexcept {
+    [[nodiscard]] VSColor Tr(Float t) const noexcept {
         return exp(-_sigma_t * min(RayTMax, t));
     }
 
-    [[nodiscard]] Float3 Tr(const OCRay &ray, Sampler *sampler) const noexcept override {
+    [[nodiscard]] VSColor  Tr(const OCRay &ray, Sampler *sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max());
     }
 
-    [[nodiscard]] Float3 sample(const OCRay &ray, Interaction &it, Sampler *sampler) const noexcept override {
+    [[nodiscard]] VSColor  sample(const OCRay &ray, Interaction &it, Sampler *sampler) const noexcept override {
         Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
         Float3 sigma_t = _sigma_t;
         Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
