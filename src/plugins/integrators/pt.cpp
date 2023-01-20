@@ -35,6 +35,7 @@ public:
         Camera *camera = _scene->camera();
         Sampler *sampler = _scene->sampler();
         LightSampler *light_sampler = _scene->light_sampler();
+        Spectrum &spectrum = rp->spectrum();
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
@@ -47,6 +48,7 @@ public:
             Float3 throughput = make_float3(1.f);
             Geometry &geometry = rp->geometry();
             Float eta_scale = 1.f;
+            SampledWavelengths swl = spectrum.sample_wavelength(sampler);
 
             $for(&bounces, 0, _max_depth) {
                 Var hit = geometry.trace_closest(rs.ray);

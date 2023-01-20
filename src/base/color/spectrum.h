@@ -93,11 +93,11 @@ public:
     }
     template<typename F>
     [[nodiscard]] Bool any(F &&f) const noexcept {
-        return reduce(false, [&f](auto ans, auto value) noexcept { return ans | f(value); });
+        return reduce(false, [&f](auto ans, auto value) noexcept { return ans || f(value); });
     }
     template<typename F>
     [[nodiscard]] Bool all(F &&f) const noexcept {
-        return reduce(true, [&f](auto ans, auto value) noexcept { return ans & f(value); });
+        return reduce(true, [&f](auto ans, auto value) noexcept { return ans && f(value); });
     }
     [[nodiscard]] Bool is_zero() const noexcept {
         return all([](auto x) noexcept { return x == 0.f; });
@@ -160,6 +160,20 @@ requires std::disjunction_v<
 [[nodiscard]] auto lerp(T &&t, A &&a, B &&b) noexcept {
     return t * (b - a) + a;
 }
+
+[[nodiscard]] SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum select(const SampledSpectrum &p, const Float &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const Float &f) noexcept;
+[[nodiscard]] SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum select(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept;
+
+[[nodiscard]] SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept;
+
+// some math functions
+[[nodiscard]] SampledSpectrum saturate(const SampledSpectrum &t) noexcept;
+[[nodiscard]] SampledSpectrum abs(const SampledSpectrum &t) noexcept;
+[[nodiscard]] SampledSpectrum sqrt(const SampledSpectrum &t) noexcept;
 
 class Sampler;
 class Spectrum : public Node {
