@@ -154,10 +154,10 @@ public:
 
 template<typename A, typename B, typename T>
 requires std::disjunction_v<
-std::is_same<std::remove_cvref_t<A>, SampledSpectrum>,
-std::is_same<std::remove_cvref_t<B>, SampledSpectrum>,
-std::is_same<std::remove_cvref_t<T>, SampledSpectrum>>
-[[nodiscard]] auto lerp(A &&a, B &&b, T &&t) noexcept {
+    std::is_same<std::remove_cvref_t<A>, SampledSpectrum>,
+    std::is_same<std::remove_cvref_t<B>, SampledSpectrum>,
+    std::is_same<std::remove_cvref_t<T>, SampledSpectrum>>
+[[nodiscard]] auto lerp(T &&t, A &&a, B &&b) noexcept {
     return t * (b - a) + a;
 }
 
