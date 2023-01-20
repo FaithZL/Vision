@@ -492,7 +492,7 @@
         }
     },
     "spectrum" : {
-        "type" : "hero"
+        "type" : "srgb"
     },
     "light_sampler": {
         "type": "uniform",
