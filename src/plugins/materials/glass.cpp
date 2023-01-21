@@ -23,7 +23,7 @@ public:
           _roughness(desc.scene->load<Texture>(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         Float3 color = Texture::eval(_color, si).xyz();
         Float ior = Texture::eval(_ior, si, 1.5f).x;
         Float2 alpha = Texture::eval(_roughness, si, 1.f).xy();

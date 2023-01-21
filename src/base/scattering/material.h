@@ -63,7 +63,7 @@ public:
 
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si) const noexcept {
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept {
         return make_unique<BSDF>(si);
     }
 };

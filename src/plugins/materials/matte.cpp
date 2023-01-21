@@ -32,7 +32,7 @@ public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(desc.scene->load<Texture>(desc.color)) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         Float3 kr = Texture::eval(_color, si).xyz();
         return make_unique<MatteBSDF>(si, kr);
     }

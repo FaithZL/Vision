@@ -112,7 +112,7 @@ public:
 
                 auto sample_surface = [&]() {
                     _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
-                        UP<BSDF> bsdf = material->get_BSDF(it);
+                        UP<BSDF> bsdf = material->get_BSDF(it, swl);
                         Ld = direct_lighting(it, *bsdf, light_sample, occluded,
                                              sampler, bsdf_sample);
                     });

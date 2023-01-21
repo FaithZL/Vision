@@ -559,7 +559,7 @@ public:
           _flatness(desc.scene->load<Texture>(desc.flatness)),
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic,
                                            _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
                                            _spec_trans, _flatness, _diff_trans);
