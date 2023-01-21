@@ -15,15 +15,15 @@ private:
     SP<Microfacet<D>> _microfacet;
 
 public:
-    FresnelBlend(VSColor Rd, VSColor Rs, const SP<Microfacet<D>> &m)
-        : BxDF(BxDFFlag::Reflection), Rd(Rd), Rs(Rs), _microfacet(m) {}
+    FresnelBlend(VSColor Rd, VSColor Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
+        : BxDF(swl, BxDFFlag::Reflection), Rd(Rd), Rs(Rs), _microfacet(m) {}
 
     [[nodiscard]] VSColor albedo() const noexcept override { return Rd; }
 
     [[nodiscard]] VSColor f_diffuse(Float3 wo, Float3 wi) const noexcept {
         VSColor diffuse = (28.f / (23.f * Pi)) * Rd * (make_float3(1.f) - Rs) *
-                         (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
-                         (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
+                          (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
+                          (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
         return diffuse;
     }
     [[nodiscard]] Float PDF_diffuse(Float3 wo, Float3 wi) const noexcept {
@@ -134,7 +134,7 @@ public:
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(1.5f);
-        FresnelBlend bxdf(Rd, Rs, microfacet);
+        FresnelBlend bxdf(Rd, Rs, swl, microfacet);
         return make_unique<SubstrateBSDF>(si, fresnel, move(bxdf));
     }
 };

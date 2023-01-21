@@ -16,8 +16,8 @@ private:
 
 public:
     Diffuse() = default;
-    explicit Diffuse(Float3 color)
-        : BxDF(BxDFFlag::DiffRefl),
+    explicit Diffuse(Float3 color, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
     [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
@@ -37,8 +37,8 @@ private:
 
 public:
     FakeSS() = default;
-    explicit FakeSS(Float3 color, Float r)
-        : BxDF(BxDFFlag::DiffRefl),
+    explicit FakeSS(Float3 color, Float r, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
@@ -67,8 +67,8 @@ private:
 
 public:
     Retro() = default;
-    explicit Retro(Float3 color, Float r)
-        : BxDF(BxDFFlag::DiffRefl),
+    explicit Retro(Float3 color, Float r, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
@@ -96,8 +96,8 @@ private:
 
 public:
     Sheen() = default;
-    explicit Sheen(Float3 kr)
-        : BxDF(BxDFFlag::DiffRefl),
+    explicit Sheen(Float3 kr, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::DiffRefl),
           _color(kr) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
     [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
@@ -138,8 +138,8 @@ private:
 
 public:
     Clearcoat() = default;
-    Clearcoat(Float weight, Float alpha)
-        : BxDF(BxDFFlag::GlossyRefl),
+    Clearcoat(Float weight, Float alpha, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::GlossyRefl),
           _weight(weight),
           _alpha(alpha) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return make_float3(_weight); }
@@ -351,7 +351,7 @@ private:
     }
 
 public:
-    PrincipledBSDF(const Interaction &si, const Texture *color_tex, const Texture *metallic_tex, const Texture *eta_tex,
+    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const Texture *color_tex, const Texture *metallic_tex, const Texture *eta_tex,
                    const Texture *roughness_tex, const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
@@ -373,15 +373,15 @@ public:
         bool has_diffuse = false;
 
         if (Texture::nonzero(color_tex)) {
-            _diffuse = Diffuse(Cdiff);
-            _retro = Retro(Cdiff, roughness);
+            _diffuse = Diffuse(Cdiff, swl);
+            _retro = Retro(Cdiff, roughness, swl);
             has_diffuse = true;
         }
 
         if (Texture::nonzero(flatness_tex)) {
             Float Css_weight = diffuse_weight * flatness;
             Float3 Css = Css_weight * color;
-            _fake_ss = FakeSS(Css, roughness);
+            _fake_ss = FakeSS(Css, roughness, swl);
             has_diffuse = true;
         }
 
@@ -390,7 +390,7 @@ public:
             Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
             Float Csheen_weight = diffuse_weight * sheen;
             Float3 Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
-            _sheen = Sheen(Csheen);
+            _sheen = Sheen(Csheen, swl);
             has_diffuse = true;
         }
 
@@ -410,7 +410,7 @@ public:
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
         auto microfacet = make_shared<DisneyMicrofacet>(alpha);
-        _spec_refl = MicrofacetReflection(make_float3(1.f), microfacet);
+        _spec_refl = MicrofacetReflection(make_float3(1.f), swl, microfacet);
         Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
         _spec_refl_index = _sampling_strategy_num++;
         _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
@@ -418,7 +418,7 @@ public:
         if (Texture::nonzero(clearcoat_tex)) {
             Float cc = Texture::eval(clearcoat_tex, si).x;
             Float cc_alpha = lerp(Texture::eval(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
-            _clearcoat = Clearcoat(cc, cc_alpha);
+            _clearcoat = Clearcoat(cc, cc_alpha, swl);
             _clearcoat_index = _sampling_strategy_num++;
             _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
         }
@@ -426,7 +426,7 @@ public:
         if (Texture::nonzero(spec_trans_tex)) {
             Float Cst_weight = (1.f - metallic) * spec_trans;
             Float3 Cst = Cst_weight * sqrt(color);
-            _spec_trans = MicrofacetTransmission(Cst, microfacet);
+            _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);
             Float Cst_lum = Cst_weight * sqrt(color_lum);
             _spec_trans_index = _sampling_strategy_num++;
             _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
@@ -560,7 +560,7 @@ public:
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<PrincipledBSDF>(si, _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic,
+        return make_unique<PrincipledBSDF>(si, swl, _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic,
                                            _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
                                            _spec_trans, _flatness, _diff_trans);
     }

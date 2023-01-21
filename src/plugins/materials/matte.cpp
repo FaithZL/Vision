@@ -13,8 +13,8 @@ private:
     LambertReflection _bxdf;
 
 public:
-    explicit MatteBSDF(const Interaction &si, const Float3 &kr)
-        : BSDF(si), _bxdf(kr) {}
+    explicit MatteBSDF(const Interaction &si, const Float3 &kr, const SampledWavelengths &swl)
+        : BSDF(si), _bxdf(kr, swl) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, nullptr);
@@ -34,7 +34,7 @@ public:
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         Float3 kr = Texture::eval(_color, si).xyz();
-        return make_unique<MatteBSDF>(si, kr);
+        return make_unique<MatteBSDF>(si, kr, swl);
     }
 };
 }// namespace vision

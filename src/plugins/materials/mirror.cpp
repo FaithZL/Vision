@@ -45,7 +45,7 @@ public:
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>();
-        MicrofacetReflection bxdf(kr, microfacet);
+        MicrofacetReflection bxdf(kr, swl, microfacet);
         return make_unique<MirrorBSDF>(si, fresnel, move(bxdf));
     }
 };

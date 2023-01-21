@@ -32,9 +32,16 @@ using namespace ocarina;
 class BxDF {
 protected:
     uchar _flag;
+    const SampledWavelengths *_swl;
 
 public:
-    explicit BxDF(uchar flag = BxDFFlag::Unset) : _flag(flag) {}
+    explicit BxDF(const SampledWavelengths &swl, uchar flag = BxDFFlag::Unset) : _flag(flag), _swl(&swl) {}
+    BxDF(const BxDF &other) noexcept : _flag(other._flag), _swl(other._swl) {}
+    BxDF &operator=(const BxDF &other) noexcept {
+        _flag = other._flag;
+        _swl = other._swl;
+        return *this;
+    }
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
@@ -55,8 +62,8 @@ private:
     VSColor Kr;
 
 public:
-    explicit LambertReflection(Float3 kr)
-        : BxDF(BxDFFlag::DiffRefl),
+    explicit LambertReflection(Float3 kr, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::DiffRefl),
           Kr(kr) {}
     [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
     [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
@@ -69,8 +76,8 @@ private:
 
 public:
     MicrofacetReflection() = default;
-    MicrofacetReflection(VSColor color, const SP<Microfacet<D>> &m)
-        : BxDF(BxDFFlag::Reflection), Kr(color),
+    MicrofacetReflection(VSColor color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
+        : BxDF(swl, BxDFFlag::Reflection), Kr(color),
           _microfacet(m) {}
 
     [[nodiscard]] VSColor albedo() const noexcept override { return Kr; }
@@ -88,8 +95,8 @@ private:
 
 public:
     MicrofacetTransmission() = default;
-    MicrofacetTransmission(Float3 color, const SP<Microfacet<D>> &m)
-        : BxDF(BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
+    MicrofacetTransmission(Float3 color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
+        : BxDF(swl, BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] VSColor albedo() const noexcept override { return Kt; }
     [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
