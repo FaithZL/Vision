@@ -36,7 +36,7 @@ public:
             _values[i] = value;
         }
     }
-    explicit SampledSpectrum(uint n) noexcept : SampledSpectrum{n, 0.f} {}
+    explicit SampledSpectrum(uint n = 3u) noexcept : SampledSpectrum{n, 0.f} {}
     explicit SampledSpectrum(const Float3 value) noexcept : _values(3) {
         for (int i = 0; i < 3; ++i) {
             _values[i] = value[i];

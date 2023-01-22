@@ -31,7 +31,17 @@ public:
         }
         return tex ? tex->eval(ctx) : Float4(val);
     }
-    [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
+    [[nodiscard]] static VSColor eval_albedo_spectrum(const Texture *tex,
+                                                      const TextureEvalContext &ctx,
+                                                      const SampledWavelengths &swl) noexcept {
+        return tex ? tex->eval_albedo_spectrum(ctx, swl) : VSColor{};
+    }
+    [[nodiscard]] static VSColor eval_illumination_spectrum(const Texture *tex,
+                                                            const TextureEvalContext &ctx,
+                                                            const SampledWavelengths &swl) noexcept {
+        return tex ? tex->eval_illumination_spectrum(ctx, swl) : VSColor{};
+    }
+    [[nodiscard]] [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
         return tex ? tex->is_zero() : true;
     }
     [[nodiscard]] static bool nonzero(const Texture *tex) noexcept {
@@ -43,13 +53,13 @@ public:
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
-    [[nodiscard]] virtual SampledSpectrum eval_albedo_spectrum(const TextureEvalContext &tec,
-                                                               const SampledWavelengths &swl) const noexcept {
-        return SampledSpectrum(3u);
+    [[nodiscard]] virtual VSColor eval_albedo_spectrum(const TextureEvalContext &tec,
+                                                       const SampledWavelengths &swl) const noexcept {
+        return VSColor{};
     }
-    [[nodiscard]] virtual SampledSpectrum eval_illumination_spectrum(const TextureEvalContext &tec,
-                                                                   const SampledWavelengths &swl) const noexcept {
-        return SampledSpectrum(3u);
+    [[nodiscard]] virtual VSColor eval_illumination_spectrum(const TextureEvalContext &tec,
+                                                             const SampledWavelengths &swl) const noexcept {
+        return VSColor{};
     }
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
