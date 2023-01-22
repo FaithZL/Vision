@@ -30,7 +30,9 @@ public:
         return Tr(length(ray->direction()) * ray->t_max());
     }
 
-    [[nodiscard]] VSColor  sample(const OCRay &ray, Interaction &it, Sampler *sampler) const noexcept override {
+    [[nodiscard]] VSColor  sample(const OCRay &ray, Interaction &it,
+                                 const SampledWavelengths &swl,
+                                 Sampler *sampler) const noexcept override {
         Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
         Float3 sigma_t = _sigma_t;
         Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];

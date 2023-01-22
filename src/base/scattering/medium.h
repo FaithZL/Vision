@@ -13,6 +13,7 @@ namespace vision {
 using namespace ocarina;
 
 class Sampler;
+class SampledWavelengths;
 
 class Medium : public Node {
 protected:
@@ -25,7 +26,8 @@ public:
     explicit Medium(const MediumDesc &desc) : Node(desc), _index(desc.index) {}
     ~Medium() override = default;
     virtual VSColor Tr(const OCRay &ray, Sampler *sampler) const noexcept = 0;
-    virtual VSColor sample(const OCRay &ray, Interaction &it, Sampler *sampler) const noexcept = 0;
+    virtual VSColor sample(const OCRay &ray, Interaction &it,
+                           const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
 };
 
 

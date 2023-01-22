@@ -16,7 +16,7 @@ public:
 
     template<typename SF, typename SS>
     static Float3 direct_lighting(Interaction it, const SF &sf, LightSample ls,
-                                  Bool occluded, Sampler *sampler, SS &ss) {
+                                  Bool occluded, Sampler *sampler, const SampledWavelengths &swl, SS &ss) {
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
         ss = sf.sample(it.wo, sampler);
@@ -75,7 +75,7 @@ public:
                 if (_scene->has_medium()) {
                     $if(rs.in_medium()) {
                         _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                            VSColor medium_throughput = medium->sample(rs.ray, it, sampler);
+                            VSColor medium_throughput = medium->sample(rs.ray, it, swl, sampler);
                             throughput *= medium_throughput;
                         });
                     };
@@ -114,14 +114,14 @@ public:
                     _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                         UP<BSDF> bsdf = material->get_BSDF(it, swl);
                         Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                             sampler, bsdf_sample);
+                                             sampler, swl, bsdf_sample);
                     });
                 };
 
                 if (_scene->has_medium()) {
                     $if(it.has_phase()) {
                         PhaseSample ps;
-                        Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, ps);
+                        Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, swl, ps);
                         bsdf_sample.eval = ps.eval;
                         bsdf_sample.wi = ps.wi;
                     } $else {
