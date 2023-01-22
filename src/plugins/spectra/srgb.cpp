@@ -18,11 +18,11 @@ public:
     [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return make_float4(sp[0], sp[1], sp[2], 1.f);
     }
-    [[nodiscard]] SampledSpectrum decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        return SampledSpectrum(rgb);
+    [[nodiscard]] Decode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
+        return {.value = SampledSpectrum(rgb), .strength = luminance(rgb)};
     }
-    [[nodiscard]] SampledSpectrum decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        return SampledSpectrum(rgb);
+    [[nodiscard]] Decode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
+        return {.value = SampledSpectrum(rgb), .strength = luminance(rgb)};
     }
 };
 
