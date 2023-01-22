@@ -36,8 +36,8 @@ Interaction::Interaction() {}
 Interaction::Interaction(Float3 pos, Float3 wo)
     : pos(pos), wo(wo) {}
 
-void Interaction::init_phase(Float g) {
-    phase.init(g);
+void Interaction::init_phase(Float g, const SampledWavelengths &swl) {
+    phase.init(g, swl);
 }
 
 Bool Interaction::has_phase() {

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "dsl/common.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 using namespace ocarina;

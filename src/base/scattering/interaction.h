@@ -54,8 +54,11 @@ template<EPort p = D>
 class Sampler;
 
 class PhaseFunction {
+protected:
+    const SampledWavelengths *_swl{};
+
 public:
-    virtual void init(Float g) noexcept = 0;
+    virtual void init(Float g, const SampledWavelengths &swl) noexcept = 0;
     [[nodiscard]] virtual Bool valid() const noexcept = 0;
 
     [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi) const noexcept {
@@ -73,8 +76,10 @@ private:
 
 public:
     HenyeyGreenstein() = default;
-    explicit HenyeyGreenstein(Float g) : _g(g) {}
-    void init(Float g) noexcept override { _g = g; }
+    void init(Float g, const SampledWavelengths &swl) noexcept override {
+        _g = g;
+        _swl = &swl;
+    }
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] PhaseSample sample(Float3 wo, Sampler *sampler) const noexcept override;
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
@@ -101,7 +106,7 @@ public:
 public:
     Interaction();
     Interaction(Float3 pos, Float3 wo);
-    void init_phase(Float g);
+    void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
     void set_medium(const Uchar &inside, const Uchar &outside);
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
