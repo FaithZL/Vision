@@ -166,13 +166,14 @@ Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) 
     return trace_any(shadow_ray);
 }
 
-Float3 Geometry::Tr(Scene *scene, const RayState &ray_state) const noexcept {
+Float3 Geometry::Tr(Scene *scene, const SampledWavelengths &swl,
+                    const RayState &ray_state) const noexcept {
     Sampler *sampler = scene->sampler();
     Float3 ret = make_float3(1.f);
     if (scene->has_medium()) {
         $if(ray_state.in_medium()) {
             scene->mediums().dispatch(ray_state.medium, [&](const Medium *medium) {
-                ret = medium->Tr(ray_state.ray, sampler);
+                ret = medium->Tr(ray_state.ray, swl, sampler);
             });
         };
     }

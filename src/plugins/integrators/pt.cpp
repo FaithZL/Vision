@@ -61,7 +61,7 @@ public:
                         VSColor tr = make_float3(1.f);
                         if (_scene->has_medium()) {
                             rs.ray.dir_max.w = _scene->world_diameter();
-                            tr = geometry.Tr(_scene, rs);
+                            tr = geometry.Tr(_scene, swl, rs);
                         }
                         LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
                         Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
@@ -95,7 +95,7 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
-                    VSColor tr = geometry.Tr(_scene, rs);
+                    VSColor tr = geometry.Tr(_scene, swl, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight * tr;
                 };
@@ -105,7 +105,7 @@ public:
                 LightSample light_sample = light_sampler->sample(it, sampler, swl);
                 RayState shadow_ray;
                 Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
-                VSColor tr = geometry.Tr(_scene, shadow_ray);
+                VSColor tr = geometry.Tr(_scene, swl, shadow_ray);
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
                 VSColor Ld = make_float3(0.f);

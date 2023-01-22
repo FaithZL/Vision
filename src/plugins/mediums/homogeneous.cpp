@@ -26,11 +26,12 @@ public:
         return exp(-_sigma_t * min(RayTMax, t));
     }
 
-    [[nodiscard]] VSColor  Tr(const OCRay &ray, Sampler *sampler) const noexcept override {
+    [[nodiscard]] VSColor Tr(const OCRay &ray, const SampledWavelengths &swl,
+                             Sampler *sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max());
     }
 
-    [[nodiscard]] VSColor  sample(const OCRay &ray, Interaction &it,
+    [[nodiscard]] VSColor sample(const OCRay &ray, Interaction &it,
                                  const SampledWavelengths &swl,
                                  Sampler *sampler) const noexcept override {
         Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
@@ -49,7 +50,6 @@ public:
         Float3 ret = select(sampled_medium, tr * _sigma_s / pdf, tr / pdf);
         return ret;
     }
-
 };
 
 }// namespace vision
