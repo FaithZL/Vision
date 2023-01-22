@@ -127,8 +127,8 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        Float3 Rd = Texture::eval(_diff, si).xyz();
-        Float3 Rs = Texture::eval(_spec, si).xyz();
+        VSColor Rd = Texture::eval(_diff, si).xyz();
+        VSColor Rs = Texture::eval(_spec, si).xyz();
         Float2 alpha = Texture::eval(_roughness, si, 0.001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));

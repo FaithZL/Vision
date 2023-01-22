@@ -96,7 +96,7 @@ private:
 
 public:
     Sheen() = default;
-    explicit Sheen(Float3 kr, const SampledWavelengths &swl)
+    explicit Sheen(VSColor kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(kr) {}
     [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
@@ -207,7 +207,7 @@ private:
     Float _eta;
 
 public:
-    FresnelDisney(const Float3 &R0, Float metallic, Float eta)
+    FresnelDisney(const VSColor &R0, Float metallic, Float eta)
         : R0(R0), _metallic(metallic), _eta(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
@@ -356,7 +356,7 @@ public:
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
         : BSDF(si) {
-        Float3 color = Texture::eval(color_tex, si).xyz();
+        VSColor color = Texture::eval(color_tex, si).xyz();
         Float color_lum = luminance(color);
         Float metallic = Texture::eval(metallic_tex, si).x;
         Float spec_trans = Texture::eval(spec_trans_tex, si).x;
@@ -364,11 +364,11 @@ public:
         Float flatness = Texture::eval(flatness_tex, si).x;
         Float roughness = Texture::eval(roughness_tex, si).x;
         Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
-        Float3 tint = clamp(color * tint_weight, make_float3(0.f), make_float3(1.f));
+        VSColor tint = clamp(color * tint_weight, make_float3(0.f), make_float3(1.f));
         Float tint_lum = color_lum * tint_weight;
 
         Float Cdiff_weight = diffuse_weight * (1.f - flatness);
-        Float3 Cdiff = color * Cdiff_weight;
+        VSColor Cdiff = color * Cdiff_weight;
 
         bool has_diffuse = false;
 
@@ -380,7 +380,7 @@ public:
 
         if (Texture::nonzero(flatness_tex)) {
             Float Css_weight = diffuse_weight * flatness;
-            Float3 Css = Css_weight * color;
+            VSColor Css = Css_weight * color;
             _fake_ss = FakeSS(Css, roughness, swl);
             has_diffuse = true;
         }
@@ -389,7 +389,7 @@ public:
             Float sheen = Texture::eval(sheen_tex, si).x;
             Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
             Float Csheen_weight = diffuse_weight * sheen;
-            Float3 Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
+            VSColor Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
             _sheen = Sheen(Csheen, swl);
             has_diffuse = true;
         }

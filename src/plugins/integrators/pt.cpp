@@ -44,8 +44,8 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
             Float scatter_pdf = eval(1e16f);
-            Float3 Li = make_float3(0.f);
-            Float3 throughput = make_float3(1.f);
+            VSColor Li = make_float3(0.f);
+            VSColor throughput = make_float3(1.f);
             Geometry &geometry = rp->geometry();
             Float eta_scale = 1.f;
             SampledWavelengths swl = spectrum.sample_wavelength(sampler);
@@ -58,7 +58,7 @@ public:
                         LightSampleContext p_ref;
                         p_ref.pos = rs.origin();
                         p_ref.ng = rs.direction();
-                        Float3 tr = make_float3(1.f);
+                        VSColor tr = make_float3(1.f);
                         if (_scene->has_medium()) {
                             rs.ray.dir_max.w = _scene->world_diameter();
                             tr = geometry.Tr(_scene, rs);
@@ -75,7 +75,7 @@ public:
                 if (_scene->has_medium()) {
                     $if(rs.in_medium()) {
                         _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                            Float3 medium_throughput = medium->sample(rs.ray, it, sampler);
+                            VSColor medium_throughput = medium->sample(rs.ray, it, sampler);
                             throughput *= medium_throughput;
                         });
                     };
@@ -95,7 +95,7 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
-                    Float3 tr = geometry.Tr(_scene, rs);
+                    VSColor tr = geometry.Tr(_scene, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight * tr;
                 };
@@ -108,7 +108,7 @@ public:
                 VSColor tr = geometry.Tr(_scene, shadow_ray);
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                Float3 Ld = make_float3(0.f);
+                VSColor Ld = make_float3(0.f);
 
                 auto sample_surface = [&]() {
                     _scene->materials().dispatch(it.mat_id, [&](const Material *material) {

@@ -37,6 +37,16 @@ public:
         }
     }
     explicit SampledSpectrum(uint n) noexcept : SampledSpectrum{n, 0.f} {}
+    explicit SampledSpectrum(const Float3 value) noexcept : _values(3) {
+        for (int i = 0; i < 3; ++i) {
+            _values[i] = value[i];
+        }
+    }
+    explicit SampledSpectrum(const Float4 value) noexcept : _values(4) {
+        for (int i = 0; i < 4; ++i) {
+            _values[i] = value[i];
+        }
+    }
     explicit SampledSpectrum(const Float &value) noexcept : SampledSpectrum{1u, value} {}
     explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
     [[nodiscard]] uint dimension() const noexcept {

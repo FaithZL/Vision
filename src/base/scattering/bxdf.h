@@ -63,11 +63,11 @@ private:
     VSColor Kr;
 
 public:
-    explicit LambertReflection(Float3 kr, const SampledWavelengths &swl)
+    explicit LambertReflection(VSColor kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           Kr(kr) {}
-    [[nodiscard]] Float3 albedo() const noexcept override { return Kr; }
-    [[nodiscard]] Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] VSColor albedo() const noexcept override { return Kr; }
+    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
 };
 
 class MicrofacetReflection : public BxDF {
