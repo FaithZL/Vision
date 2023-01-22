@@ -204,6 +204,8 @@ public:
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual Float4 decode_to_albedo(Float3 rgb) const noexcept = 0;
+    [[nodiscard]] virtual Float4 decode_to_illumination(Float3 rgb) const noexcept = 0;
 };
 
 }// namespace vision

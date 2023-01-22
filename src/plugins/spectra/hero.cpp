@@ -41,6 +41,12 @@ public:
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
         return SampledWavelengths(4);
     }
+    [[nodiscard]] Float4 decode_to_albedo(Float3 rgb) const noexcept override {
+        return make_float4(rgb, luminance(rgb));
+    }
+    [[nodiscard]] Float4 decode_to_illumination(Float3 rgb) const noexcept override {
+        return make_float4(rgb, luminance(rgb));
+    }
 };
 
 }// namespace vision

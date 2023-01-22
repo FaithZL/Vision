@@ -6,6 +6,7 @@
 
 #include "node.h"
 #include "util/image_io.h"
+#include "base/color/spectrum.h"
 #include "base/scattering/interaction.h"
 
 namespace vision {
@@ -40,8 +41,16 @@ public:
 public:
     explicit Texture(const TextureDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
-    [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tev) const noexcept = 0;
+    [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum eval_albedo_spectrum(const TextureEvalContext &tec,
+                                                               const SampledWavelengths &swl) const noexcept {
+        return SampledSpectrum(3u);
+    }
+    [[nodiscard]] virtual SampledSpectrum eval_illumination_spectrum(const TextureEvalContext &tec,
+                                                                   const SampledWavelengths &swl) const noexcept {
+        return SampledSpectrum(3u);
+    }
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
