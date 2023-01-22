@@ -36,12 +36,13 @@ protected:
 
 public:
     explicit BxDF(const SampledWavelengths &swl, uchar flag = BxDFFlag::Unset) : _flag(flag), _swl(&swl) {}
-    BxDF(const BxDF &other) noexcept : _flag(other._flag), _swl(other._swl) {}
+    BxDF(const BxDF &other) = default;
     BxDF &operator=(const BxDF &other) noexcept {
         _flag = other._flag;
         _swl = other._swl;
         return *this;
     }
+    [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *_swl; }
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
