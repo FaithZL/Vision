@@ -16,7 +16,7 @@ private:
 public:
     MirrorBSDF(const Interaction &si, const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
         : BSDF(si), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return _bxdf.albedo(); }
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }
@@ -39,7 +39,7 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        VSColor kr = Texture::eval(_color, si).xyz();
+        SampledSpectrum kr = Texture::eval(_color, si).xyz();
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));

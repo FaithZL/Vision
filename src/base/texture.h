@@ -54,15 +54,13 @@ public:
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum eval_albedo_spectrum(const TextureEvalContext &tec,
-                                                       const SampledWavelengths &swl) const noexcept {
-        Float3 rgb = eval(tec).xyz();
-        return SampledSpectrum{};
-    }
+                                                       const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual SampledSpectrum eval_illumination_spectrum(const TextureEvalContext &tec,
-                                                             const SampledWavelengths &swl) const noexcept {
-        Float3 rgb = eval(tec).xyz();
-        return SampledSpectrum{};
-    }
+                                                             const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual SampledSpectrum eval_albedo_spectrum(const Float2 &uv,
+                                                               const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual SampledSpectrum eval_illumination_spectrum(const Float2 &uv,
+                                                                     const SampledWavelengths &swl) const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }

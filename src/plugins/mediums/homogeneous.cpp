@@ -22,33 +22,37 @@ public:
           _sigma_t(_sigma_a + _sigma_s),
           _g(desc.g) {}
 
-    [[nodiscard]] VSColor Tr(Float t, const SampledWavelengths &swl) const noexcept {
-        return exp(-_sigma_t * min(RayTMax, t));
+    [[nodiscard]] SampledSpectrum Tr(Float t, const SampledWavelengths &swl) const noexcept {
+        // todo
+        return SampledSpectrum{swl.dimension(), 0.f};
+//        return exp(-_sigma_t * min(RayTMax, t));
     }
 
-    [[nodiscard]] VSColor Tr(const OCRay &ray, const SampledWavelengths &swl,
+    [[nodiscard]] SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl,
                              Sampler *sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max(), swl);
     }
 
-    [[nodiscard]] VSColor sample(const OCRay &ray, Interaction &it,
+    [[nodiscard]] SampledSpectrum sample(const OCRay &ray, Interaction &it,
                                  const SampledWavelengths &swl,
                                  Sampler *sampler) const noexcept override {
-        Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
-        Float3 sigma_t = _sigma_t;
-        Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
-        Float t = min(dist / length(ray->direction()), ray->t_max());
-        Bool sampled_medium = t < ray->t_max();
-        $if(sampled_medium) {
-            it = Interaction(ray->at(t), -ray->direction());
-            it.init_phase(_g, swl);
-            it.set_medium(_index, _index);
-        };
-        VSColor tr = Tr(t, swl);
-        Float3 density = select(sampled_medium, _sigma_t * tr, tr);
-        Float pdf = (density.x + density.y + density.z) / 3.f;
-        Float3 ret = select(sampled_medium, tr * _sigma_s / pdf, tr / pdf);
-        return ret;
+        // todo
+        return {swl.dimension(), 0.f};
+//        Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
+//        Float3 sigma_t = _sigma_t;
+//        Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
+//        Float t = min(dist / length(ray->direction()), ray->t_max());
+//        Bool sampled_medium = t < ray->t_max();
+//        $if(sampled_medium) {
+//            it = Interaction(ray->at(t), -ray->direction());
+//            it.init_phase(_g, swl);
+//            it.set_medium(_index, _index);
+//        };
+//        SampledSpectrum tr = Tr(t, swl);
+//        Float3 density = select(sampled_medium, _sigma_t * tr, tr);
+//        Float pdf = (density.x + density.y + density.z) / 3.f;
+//        Float3 ret = select(sampled_medium, tr * _sigma_s / pdf, tr / pdf);
+//        return ret;
     }
 };
 

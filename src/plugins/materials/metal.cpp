@@ -10,12 +10,12 @@ namespace vision {
 
 class FresnelConductor : public Fresnel {
 private:
-    VSColor _eta, _k;
+    SampledSpectrum _eta, _k;
 
 public:
     FresnelConductor(Float3 eta, Float3 k, const SampledWavelengths &swl, const RenderPipeline *rp)
         : Fresnel(swl, rp), _eta(eta), _k(k) {}
-    [[nodiscard]] VSColor evaluate(Float abs_cos_theta) const noexcept override {
+    [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex<D>(abs_cos_theta, _eta, _k);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
@@ -58,12 +58,12 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        VSColor kr = make_float3(1.f);
+        SampledSpectrum kr = make_float3(1.f);
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        VSColor eta = Texture::eval(_eta, si, 1.5f).xyz();
-        VSColor k = Texture::eval(_k, si, 0.f).xyz();
+        SampledSpectrum eta = Texture::eval(_eta, si, 1.5f).xyz();
+        SampledSpectrum k = Texture::eval(_k, si, 0.f).xyz();
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl,microfacet);

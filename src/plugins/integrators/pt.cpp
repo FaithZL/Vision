@@ -15,15 +15,16 @@ public:
         : Integrator(desc) {}
 
     template<typename SF, typename SS>
-    static Float3 direct_lighting(Interaction it, const SF &sf, LightSample ls,
-                                  Bool occluded, Sampler *sampler, const SampledWavelengths &swl, SS &ss) {
+    static SampledSpectrum direct_lighting(Interaction it, const SF &sf, LightSample ls,
+                                           Bool occluded, Sampler *sampler,
+                                           const SampledWavelengths &swl, SS &ss) {
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
         ss = sf.sample(it.wo, sampler);
         Bool is_delta_light = ls.eval.pdf < 0;
         Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf));
         ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
-        Float3 Ld = make_float3(0.f);
+        SampledSpectrum Ld = {swl.dimension(), 0.f};
         $if(!occluded && scatter_eval.valid() && ls.valid()) {
             Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
         };
@@ -44,11 +45,11 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
             Float scatter_pdf = eval(1e16f);
-            VSColor Li = make_float3(0.f);
-            VSColor throughput = make_float3(1.f);
+            SampledWavelengths swl = spectrum.sample_wavelength(sampler);
+            SampledSpectrum Li = {swl.dimension(), 0.f};
+            SampledSpectrum throughput = {swl.dimension(), 1.f};
             Geometry &geometry = rp->geometry();
             Float eta_scale = 1.f;
-            SampledWavelengths swl = spectrum.sample_wavelength(sampler);
 
             $for(&bounces, 0, _max_depth) {
                 Var hit = geometry.trace_closest(rs.ray);
@@ -58,7 +59,7 @@ public:
                         LightSampleContext p_ref;
                         p_ref.pos = rs.origin();
                         p_ref.ng = rs.direction();
-                        VSColor tr = make_float3(1.f);
+                        SampledSpectrum tr = {swl.dimension(), 1.f};
                         if (_scene->has_medium()) {
                             rs.ray.dir_max.w = _scene->world_diameter();
                             tr = geometry.Tr(_scene, swl, rs);
@@ -75,7 +76,7 @@ public:
                 if (_scene->has_medium()) {
                     $if(rs.in_medium()) {
                         _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
-                            VSColor medium_throughput = medium->sample(rs.ray, it, swl, sampler);
+                            SampledSpectrum medium_throughput = medium->sample(rs.ray, it, swl, sampler);
                             throughput *= medium_throughput;
                         });
                     };
@@ -95,7 +96,7 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
-                    VSColor tr = geometry.Tr(_scene, swl, rs);
+                    SampledSpectrum tr = geometry.Tr(_scene, swl, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight * tr;
                 };
@@ -105,10 +106,10 @@ public:
                 LightSample light_sample = light_sampler->sample(it, sampler, swl);
                 RayState shadow_ray;
                 Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
-                VSColor tr = geometry.Tr(_scene, swl, shadow_ray);
+                SampledSpectrum tr = geometry.Tr(_scene, swl, shadow_ray);
                 comment("sample bsdf");
                 BSDFSample bsdf_sample;
-                VSColor Ld = make_float3(0.f);
+                SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
                     _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
@@ -124,7 +125,8 @@ public:
                         Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, swl, ps);
                         bsdf_sample.eval = ps.eval;
                         bsdf_sample.wi = ps.wi;
-                    } $else {
+                    }
+                    $else {
                         sample_surface();
                     };
                 } else {
@@ -132,7 +134,8 @@ public:
                 }
                 Li += throughput * Ld * tr;
                 eta_scale *= sqr(bsdf_sample.eta);
-                Float lum = luminance(throughput * eta_scale);
+                Float lum = throughput.max();
+                //                Float lum = luminance(throughput * eta_scale);
                 $if(!bsdf_sample.valid() || lum == 0.f) {
                     $break;
                 };
@@ -148,7 +151,7 @@ public:
                 scatter_pdf = bsdf_sample.eval.pdf;
                 rs = it.spawn_ray_state(bsdf_sample.wi);
             };
-            camera->film()->add_sample(pixel, Li, frame_index);
+            camera->film()->add_sample(pixel, render_pipeline()->spectrum().srgb(Li, swl), frame_index);
         };
         _shader = rp->device().compile(_kernel);
     }
