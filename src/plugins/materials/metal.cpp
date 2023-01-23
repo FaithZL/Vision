@@ -13,13 +13,13 @@ private:
     VSColor _eta, _k;
 
 public:
-    FresnelConductor(Float3 eta, Float3 k)
-        : _eta(eta), _k(k) {}
+    FresnelConductor(Float3 eta, Float3 k, const SampledWavelengths &swl)
+        : Fresnel(swl), _eta(eta), _k(k) {}
     [[nodiscard]] VSColor evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex<D>(abs_cos_theta, _eta, _k);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConductor>(_eta, _k);
+        return make_shared<FresnelConductor>(_eta, _k, _swl);
     }
 };
 
@@ -65,7 +65,7 @@ public:
         VSColor eta = Texture::eval(_eta, si, 1.5f).xyz();
         VSColor k = Texture::eval(_k, si, 0.f).xyz();
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelConductor>(eta, k);
+        auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
         MicrofacetReflection bxdf(kr, swl,microfacet);
         return make_unique<ConductorBSDF>(si, fresnel, move(bxdf));
     }

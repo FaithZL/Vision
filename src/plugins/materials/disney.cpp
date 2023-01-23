@@ -207,8 +207,8 @@ private:
     Float _eta;
 
 public:
-    FresnelDisney(const VSColor &R0, Float metallic, Float eta)
-        : R0(R0), _metallic(metallic), _eta(eta) {}
+    FresnelDisney(const VSColor &R0, Float metallic, Float eta, const SampledWavelengths &swl)
+        : Fresnel(swl), R0(R0), _metallic(metallic), _eta(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
@@ -219,7 +219,7 @@ public:
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDisney>(R0, _metallic, _eta);
+        return make_shared<FresnelDisney>(R0, _metallic, _eta, _swl);
     }
 };
 
@@ -404,7 +404,7 @@ public:
         Float SchlickR0 = schlick_R0_from_eta(eta);
         Float3 Cspec0 = lerp(make_float3(metallic), lerp(make_float3(spec_tint), make_float3(1.f), tint) * SchlickR0, color);
 
-        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta);
+        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl);
         Float anisotropic = Texture::eval(anisotropic_tex, si).x;
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
