@@ -207,8 +207,9 @@ private:
     Float _eta;
 
 public:
-    FresnelDisney(const VSColor &R0, Float metallic, Float eta, const SampledWavelengths &swl)
-        : Fresnel(swl), R0(R0), _metallic(metallic), _eta(eta) {}
+    FresnelDisney(const VSColor &R0, Float metallic, Float eta,
+                  const SampledWavelengths &swl, const RenderPipeline *rp)
+        : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
@@ -219,7 +220,7 @@ public:
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDisney>(R0, _metallic, _eta, _swl);
+        return make_shared<FresnelDisney>(R0, _metallic, _eta, _swl, _rp);
     }
 };
 
@@ -351,8 +352,9 @@ private:
     }
 
 public:
-    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const Texture *color_tex, const Texture *metallic_tex, const Texture *eta_tex,
-                   const Texture *roughness_tex, const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
+    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, const Texture *color_tex,
+                   const Texture *metallic_tex, const Texture *eta_tex, const Texture *roughness_tex,
+                   const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
         : BSDF(si) {
@@ -404,7 +406,7 @@ public:
         Float SchlickR0 = schlick_R0_from_eta(eta);
         Float3 Cspec0 = lerp(make_float3(metallic), lerp(make_float3(spec_tint), make_float3(1.f), tint) * SchlickR0, color);
 
-        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl);
+        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
         Float anisotropic = Texture::eval(anisotropic_tex, si).x;
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
@@ -560,9 +562,9 @@ public:
           _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<PrincipledBSDF>(si, swl, _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic,
-                                           _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
-                                           _spec_trans, _flatness, _diff_trans);
+        return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
+                                           _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat,
+                                           _clearcoat_alpha, _spec_trans, _flatness, _diff_trans);
     }
 };
 

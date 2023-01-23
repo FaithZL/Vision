@@ -9,13 +9,15 @@
 #include "core/stl.h"
 
 namespace vision {
+class RenderPipeline;
 
 class Fresnel {
 protected:
     const SampledWavelengths &_swl;
+    const RenderPipeline *_rp{};
 
 public:
-    explicit Fresnel(const SampledWavelengths &swl) : _swl(swl) {}
+    explicit Fresnel(const SampledWavelengths &swl, const RenderPipeline *rp) : _swl(swl), _rp(rp) {}
     [[nodiscard]] virtual VSColor evaluate(Float cos_theta) const noexcept = 0;
     [[nodiscard]] virtual Float eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
@@ -32,7 +34,7 @@ private:
     Float _eta;
 
 public:
-    explicit FresnelDielectric(Float ior, const SampledWavelengths &swl) : Fresnel(swl), _eta(ior) {}
+    explicit FresnelDielectric(Float ior, const SampledWavelengths &swl, const RenderPipeline *rp) : Fresnel(swl, rp), _eta(ior) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
@@ -42,16 +44,16 @@ public:
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDielectric>(_eta, _swl);
+        return make_shared<FresnelDielectric>(_eta, _swl, _rp);
     }
 };
 
 class FresnelNoOp : public Fresnel {
 public:
-    explicit FresnelNoOp(const SampledWavelengths &swl): Fresnel(swl) {}
+    explicit FresnelNoOp(const SampledWavelengths &swl, const RenderPipeline *rp) : Fresnel(swl, rp) {}
     [[nodiscard]] VSColor evaluate(Float cos_theta) const noexcept override { return make_float3(1.f); }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelNoOp>(_swl);
+        return make_shared<FresnelNoOp>(_swl, _rp);
     }
 };
 

@@ -13,13 +13,13 @@ private:
     VSColor _eta, _k;
 
 public:
-    FresnelConductor(Float3 eta, Float3 k, const SampledWavelengths &swl)
-        : Fresnel(swl), _eta(eta), _k(k) {}
+    FresnelConductor(Float3 eta, Float3 k, const SampledWavelengths &swl, const RenderPipeline *rp)
+        : Fresnel(swl, rp), _eta(eta), _k(k) {}
     [[nodiscard]] VSColor evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex<D>(abs_cos_theta, _eta, _k);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConductor>(_eta, _k, _swl);
+        return make_shared<FresnelConductor>(_eta, _k, _swl, _rp);
     }
 };
 
