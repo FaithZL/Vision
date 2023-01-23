@@ -65,7 +65,7 @@ public:
         VSColor eta = Texture::eval(_eta, si, 1.5f).xyz();
         VSColor k = Texture::eval(_k, si, 0.f).xyz();
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
+        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl,microfacet);
         return make_unique<ConductorBSDF>(si, fresnel, move(bxdf));
     }
