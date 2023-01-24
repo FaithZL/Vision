@@ -27,33 +27,34 @@ public:
 
 class SampledSpectrum {
 private:
-    Array<float> _values;
+    //    Array<float> _values;
+    Float3 _values;
 
 public:
     SampledSpectrum(uint n, const Float &value) noexcept
-        : _values(n) {
-        for (int i = 0; i < n; ++i) {
-            _values[i] = value;
-        }
+        : _values(value) {
+        //        for (int i = 0; i < n; ++i) {
+        //            _values[i] = value;
+        //        }
     }
     explicit SampledSpectrum(uint n = 3u) noexcept : SampledSpectrum{n, 0.f} {}
-    explicit SampledSpectrum(const Float3 value) noexcept : _values(3) {
-        for (int i = 0; i < 3; ++i) {
-            _values[i] = value[i];
-        }
+    explicit SampledSpectrum(const Float3 value) noexcept : _values(value) {
+        //        for (int i = 0; i < 3; ++i) {
+        //            _values[i] = value[i];
+        //        }
     }
-    explicit SampledSpectrum(const Float4 value) noexcept : _values(4) {
-        for (int i = 0; i < 4; ++i) {
-            _values[i] = value[i];
-        }
+    explicit SampledSpectrum(const Float4 value) noexcept : _values(value.xyz()) {
+        //        for (int i = 0; i < 4; ++i) {
+        //            _values[i] = value[i];
+        //        }
     }
     explicit SampledSpectrum(const Float &value) noexcept : SampledSpectrum{1u, value} {}
     explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
     [[nodiscard]] uint dimension() const noexcept {
-        return static_cast<uint>(_values.size());
+        return static_cast<uint>(3);
     }
-    [[nodiscard]] Array<float> &values() noexcept { return _values; }
-    [[nodiscard]] const Array<float> &values() const noexcept { return _values; }
+    [[nodiscard]] Float3 &values() noexcept { return _values; }
+    [[nodiscard]] const Float3 &values() const noexcept { return _values; }
     [[nodiscard]] Float &operator[](const Uint &i) noexcept {
         return dimension() == 1u ? _values[0u] : _values[i];
     }
@@ -123,35 +124,22 @@ public:
 
 #define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
     [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                              \
-        return map([rhs](const auto &lvalue) { return lvalue op rhs; });                                      \
+        return SampledSpectrum(values() op rhs);                                                              \
     }                                                                                                         \
     [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                    \
         OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),           \
                         "Invalid sampled spectrum");                                                          \
-        SampledSpectrum s(ocarina::max(dimension(), rhs.dimension()));                                        \
-        for (int i = 0; i < s.dimension(); ++i) {                                                             \
-            s[i] = (*this)[i] op rhs[i];                                                                      \
-        }                                                                                                     \
-        return s;                                                                                             \
+        return SampledSpectrum(values() op rhs.values());                                                     \
     }                                                                                                         \
     [[nodiscard]] friend SampledSpectrum operator op(const Float &lhs, const SampledSpectrum &rhs) noexcept { \
-        return rhs.map([lhs](const Float &rvalue) { return lhs op rvalue; });                                 \
+        return SampledSpectrum(lhs op rhs.values());                                                          \
     }                                                                                                         \
     SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                              \
-        for (int i = 0; i < dimension(); ++i) {                                                               \
-            (*this)[i] op## = rhs;                                                                            \
-        }                                                                                                     \
+        *this = (*this)op rhs;                                                                                \
         return *this;                                                                                         \
     }                                                                                                         \
     SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                    \
-        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),           \
-                        "Invalid sampled spectrum");                                                          \
-        if (rhs.dimension() == 1u) {                                                                          \
-            return *this op## = rhs[0u];                                                                      \
-        }                                                                                                     \
-        for (uint i = 0; i < dimension(); ++i) {                                                              \
-            (*this)[i] op## = rhs[i];                                                                         \
-        }                                                                                                     \
+        *this = (*this)op rhs;                                                                                \
         return *this;                                                                                         \
     }
 
