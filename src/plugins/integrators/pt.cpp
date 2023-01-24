@@ -135,7 +135,6 @@ public:
                 Li += throughput * Ld * tr;
                 eta_scale *= sqr(bsdf_sample.eta);
                 Float lum = throughput.max();
-                //                Float lum = luminance(throughput * eta_scale);
                 $if(!bsdf_sample.valid() || lum == 0.f) {
                     $break;
                 };
