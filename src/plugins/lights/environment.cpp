@@ -32,13 +32,13 @@ public:
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir,const SampledWavelengths &swl) const {
         Float2 uv = UV(local_dir);
-        return _texture->eval(uv).xyz() * _scale;
+        return _texture->eval_illumination_spectrum(uv, swl) * _scale;
     }
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
         OC_ERROR("environment PDF_Li can not be called");
-        return {};
+        return {3u, 0.f};
     }
 
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
