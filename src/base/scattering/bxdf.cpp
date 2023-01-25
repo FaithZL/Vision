@@ -62,9 +62,8 @@ SampledSpectrum MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresne
     Float3 wh = normalize(wo + wi);
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
-    SampledSpectrum fr(_microfacet->BRDF(wo, wh, wi, F.values()));
-return fr * Kr;
-//return F * Kr * 1;
+    SampledSpectrum fr = _microfacet->BRDF(wo, wh, wi, F);
+    return fr * Kr;
 }
 
 Float MicrofacetReflection::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
@@ -102,13 +101,13 @@ Bool MicrofacetTransmission::safe(Float3 wo, Float3 wi) const noexcept {
 }
 
 SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-//    Float eta = fresnel->eta();
-//    Float3 wh = normalize(wo + wi * eta);
-//    wh = face_forward(wh, make_float3(0, 0, 1));
-//    Float3 F = fresnel->evaluate(abs_dot(wo, wh));
-//    Float3 tr = _microfacet->BTDF(wo, wh, wi, make_float3(1) - F, eta);
-//    return select(dot(wo, wh) * dot(wi, wh) > 0, make_float3(0.f), tr * Kt);
-    return SampledSpectrum(3u, 0.f);
+    Float eta = fresnel->eta();
+    Float3 wh = normalize(wo + wi * eta);
+    wh = face_forward(wh, make_float3(0, 0, 1));
+    SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
+    SampledSpectrum tr = _microfacet->BTDF(wo, wh, wi, SampledSpectrum(F.dimension(), 1.f) - F, eta);
+    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, 1.f) * tr * Kt;
+    //    return SampledSpectrum(3u, 0.f);
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {

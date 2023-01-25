@@ -9,6 +9,7 @@
 #include "math/base.h"
 #include "math/geometry.h"
 #include "math/optics.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 using namespace ocarina;
@@ -298,7 +299,7 @@ template<EPort p = EPort::D>
 
 }// namespace microfacet
 
-template<EPort p = EPort::D, typename TSpectrum = Float3>
+template<EPort p = EPort::D, typename TSpectrum = SampledSpectrum>
 class Microfacet {
 protected:
     oc_float<p> _alpha_x{};
@@ -356,9 +357,9 @@ public:
     }
 };
 
-class GGXMicrofacet : public Microfacet<D> {
+class GGXMicrofacet : public Microfacet<D, SampledSpectrum> {
 public:
-    using TSpectrum = Float3;
+    using TSpectrum = SampledSpectrum;
 
 private:
     static constexpr MicrofacetType type = MicrofacetType::GGX;
@@ -382,7 +383,7 @@ public:
 
 class BeckmannMicrofacet : public Microfacet<D> {
 public:
-    using TSpectrum = Float3;
+    using TSpectrum = SampledSpectrum;
 
 public:
     static constexpr MicrofacetType type = MicrofacetType::Beckmann;
