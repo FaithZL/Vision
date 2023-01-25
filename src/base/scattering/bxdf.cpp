@@ -62,9 +62,9 @@ SampledSpectrum MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresne
     Float3 wh = normalize(wo + wi);
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
-//    SampledSpectrum fr = _microfacet->BRDF(wo, wh, wi, F);
-//return fr * Kr;
-return F * Kr;
+    SampledSpectrum fr(_microfacet->BRDF(wo, wh, wi, F.values()));
+return fr * Kr;
+//return F * Kr * 1;
 }
 
 Float MicrofacetReflection::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
