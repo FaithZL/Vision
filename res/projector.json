@@ -823,17 +823,21 @@
             "rr_threshold" : 1
         }
     },
-    "mediums" : [
-        {
-            "type" : "homogeneous",
-            "name" :"fog",
-            "param" : {
-                "g" : 0,
-                "sigma_a" : [0.0, 0.0, 0.0],
-                "sigma_s" : [0.8, 0.8, 0.8]
+    "mediums" : {
+        "global" : "fog",
+        "process" : false,
+        "list": [
+            {
+                "type" : "homogeneous",
+                "name" : "fog",
+                "param" : {
+                    "g" : 0,
+                    "sigma_a" : [0.0, 0.0, 0.0],
+                    "sigma_s" : [0.8, 0.8, 0.8]
+                }
             }
-        }
-    ],
+        ]
+    },
     "debug" : {
         // "pixel" : [60, 79],
         "MIS_mode" : 2
