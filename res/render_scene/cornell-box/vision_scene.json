@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "substrate",
+                "material": "Glass",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {

@@ -96,7 +96,7 @@ private:
 
 public:
     MicrofacetTransmission() = default;
-    MicrofacetTransmission(Float3 color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
+    MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kt; }

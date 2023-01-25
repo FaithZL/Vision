@@ -39,7 +39,7 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = Texture::eval_albedo_spectrum(_color, si, swl);
+        SampledSpectrum kr = Texture::eval_albedo_spectrum(_color, si, swl).sample;
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));

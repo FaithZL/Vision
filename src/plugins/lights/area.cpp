@@ -30,7 +30,7 @@ public:
 
     [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
                             const SampledWavelengths &swl) const {
-        SampledSpectrum radiance = _radiance->eval_illumination_spectrum(p_light.uv, swl) * _scale;
+        SampledSpectrum radiance = _radiance->eval_illumination_spectrum(p_light.uv, swl).sample * _scale;
         if (_two_sided) {
             return radiance;
         }

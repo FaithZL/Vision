@@ -32,7 +32,7 @@ public:
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir,const SampledWavelengths &swl) const {
         Float2 uv = UV(local_dir);
-        return _texture->eval_illumination_spectrum(uv, swl) * _scale;
+        return _texture->eval_illumination_spectrum(uv, swl).sample * _scale;
     }
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light,

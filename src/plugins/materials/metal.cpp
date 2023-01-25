@@ -62,8 +62,8 @@ public:
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl);
-        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl);
+        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl).sample;
+        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl).sample;
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl,microfacet);
