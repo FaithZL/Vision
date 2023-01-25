@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Metal",
+                "material": "substrate",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -412,6 +412,23 @@
                     1
                 ],
                 "roughness": [0.001,0.001]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "substrate",
+            "param": {
+                "roughness" : 0.001,
+                "spec": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
             }
         },
         {

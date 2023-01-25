@@ -21,7 +21,7 @@ public:
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Rd; }
 
     [[nodiscard]] SampledSpectrum f_diffuse(Float3 wo, Float3 wi) const noexcept {
-        SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd * (make_float3(1.f) - Rs) *
+        SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd * (SampledSpectrum(swl().dimension(), 1.f) - Rs) *
                           (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
                           (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
         return diffuse;
@@ -34,7 +34,7 @@ public:
         wh = normalize(wh);
         SampledSpectrum specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
                           fresnel_schlick(Rs, dot(wi, wh));
-        return select(is_zero(wh), make_float3(0.f), specular);
+        return select(is_zero(wh), 0.f, 1.f) * specular;
     }
     [[nodiscard]] Float PDF_specular(Float3 wo, Float3 wi) const noexcept {
         Float3 wh = normalize(wo + wi);
@@ -42,7 +42,7 @@ public:
         return ret;
     }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        Float3 ret = f_specular(wo, wi) + f_diffuse(wo, wi);
+        SampledSpectrum ret = f_specular(wo, wi) + f_diffuse(wo, wi);
         return ret;
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
@@ -127,8 +127,8 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = Texture::eval(_diff, si).xyz();
-        SampledSpectrum Rs = Texture::eval(_spec, si).xyz();
+        SampledSpectrum Rd = Texture::eval_albedo_spectrum(_diff, si, swl);
+        SampledSpectrum Rs = Texture::eval_albedo_spectrum(_spec, si, swl);
         Float2 alpha = Texture::eval(_roughness, si, 0.001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
