@@ -115,10 +115,13 @@ public:
     template<typename F>
     [[nodiscard]] Bool none(F &&f) const noexcept { return !any(std::forward<F>(f)); }
     [[nodiscard]] SampledSpectrum operator+() const noexcept {
-        return map([](auto s) noexcept { return s; });
+        return map([](Float s) noexcept { return s; });
     }
     [[nodiscard]] SampledSpectrum operator-() const noexcept {
-        return map([](auto s) noexcept { return -s; });
+        return map([](Float s) noexcept { return -s; });
+    }
+    [[nodiscard]] SampledSpectrum clamp(Float lower, Float upper) const noexcept {
+        return map([&](Float s) noexcept { return ocarina::clamp(s, lower, upper); });
     }
 
 #define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \

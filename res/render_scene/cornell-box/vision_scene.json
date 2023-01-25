@@ -415,6 +415,17 @@
             }
         },
         {
+            "type": "disney",
+            "name": "disney",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
             "type": "substrate",
             "name": "substrate",
             "param": {
