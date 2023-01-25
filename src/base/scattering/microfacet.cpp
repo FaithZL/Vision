@@ -50,10 +50,10 @@ Float GGXMicrofacet::PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float 
 }
 
 Float3 GGXMicrofacet::BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept {
-    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Fr, Float ax, Float ay) {
-        return microfacet::BRDF<D>(wo, wh, wi, Fr, ax, ay, type);
+    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
+        return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
     };
-    return impl(wo, wh, wi, Fr, _alpha_x, _alpha_y);
+    return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
 }
 
 Float3 GGXMicrofacet::BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept {
@@ -63,11 +63,11 @@ Float3 GGXMicrofacet::BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept {
 
 Float3 GGXMicrofacet::BTDF(Float3 wo, Float3 wh, Float3 wi,
                            Float3 Ft, Float eta) const noexcept {
-    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Ft,
+    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi,
                               Float eta, Float ax, Float ay) {
-        return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, ax, ay, type);
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
     };
-    return impl(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y);
+    return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
 }
 
 Float3 GGXMicrofacet::BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept {
@@ -119,10 +119,10 @@ Float BeckmannMicrofacet::PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, F
 }
 
 Float3 BeckmannMicrofacet::BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept {
-    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Fr, Float ax, Float ay) {
-        return microfacet::BRDF<D>(wo, wh, wi, Fr, ax, ay, type);
+    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
+        return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
     };
-    return impl(wo, wh, wi, Fr, _alpha_x, _alpha_y);
+    return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
 }
 
 Float3 BeckmannMicrofacet::BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept {
@@ -132,11 +132,11 @@ Float3 BeckmannMicrofacet::BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept 
 
 Float3 BeckmannMicrofacet::BTDF(Float3 wo, Float3 wh, Float3 wi,
                            Float3 Ft, Float eta) const noexcept {
-    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float3 Ft,
+    static Callable impl = [](Float3 wo, Float3 wh, Float3 wi,
         Float eta, Float ax, Float ay) {
-        return microfacet::BTDF<D>(wo, wh, wi, Ft, eta, ax, ay, type);
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
     };
-    return impl(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y);
+    return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
 }
 
 Float3 BeckmannMicrofacet::BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept {

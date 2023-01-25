@@ -279,7 +279,7 @@ public:
 
     [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, SampledSpectrum Fr) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
-            return microfacet::BRDF<D>(wo, wh, wi, make_float3(1.f), ax, ay, type);
+            return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
         };
         return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
     }
@@ -292,7 +292,7 @@ public:
     [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,
                               Float3 Ft, Float eta) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
-            return microfacet::BTDF<D>(wo, wh, wi, make_float3(1.f), eta, ax, ay, type);
+            return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
     }
