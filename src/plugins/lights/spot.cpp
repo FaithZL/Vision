@@ -38,7 +38,7 @@ public:
                              const SampledWavelengths &swl) const noexcept override {
         Float3 w_un = p_ref.pos - _position;
         Float3 w = normalize(w_un);
-        SampledSpectrum value = render_pipeline()->spectrum().decode_to_illumination(_intensity, swl).value;
+        SampledSpectrum value = render_pipeline()->spectrum().decode_to_illumination(_intensity, swl).sample;
         return value / length_squared(w_un) * falloff(dot(_direction, w));
     }
 };

@@ -9,22 +9,22 @@ namespace vision {
 
 SampledSpectrum Texture::eval_albedo_spectrum(const TextureEvalContext &tec, const SampledWavelengths &swl) const noexcept {
     Float3 rgb = eval(tec).xyz();
-    return render_pipeline()->spectrum().decode_to_albedo(rgb, swl).value;
+    return render_pipeline()->spectrum().decode_to_albedo(rgb, swl).sample;
 }
 
 SampledSpectrum Texture::eval_illumination_spectrum(const TextureEvalContext &tec, const SampledWavelengths &swl) const noexcept {
     Float3 rgb = eval(tec).xyz();
-    return render_pipeline()->spectrum().decode_to_illumination(rgb, swl).value;
+    return render_pipeline()->spectrum().decode_to_illumination(rgb, swl).sample;
 }
 
 SampledSpectrum Texture::eval_albedo_spectrum(const Float2 &uv, const SampledWavelengths &swl) const noexcept {
     Float3 rgb = eval(uv).xyz();
-    return render_pipeline()->spectrum().decode_to_albedo(rgb, swl).value;
+    return render_pipeline()->spectrum().decode_to_albedo(rgb, swl).sample;
 }
 
 SampledSpectrum Texture::eval_illumination_spectrum(const Float2 &uv, const SampledWavelengths &swl) const noexcept {
     Float3 rgb = eval(uv).xyz();
-    return render_pipeline()->spectrum().decode_to_illumination(rgb, swl).value;
+    return render_pipeline()->spectrum().decode_to_illumination(rgb, swl).sample;
 }
 
 }// namespace vision

@@ -41,13 +41,13 @@ public:
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
         return SampledWavelengths(4);
     }
-    [[nodiscard]] Decode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         // todo
-        return {.value = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
     }
-    [[nodiscard]] Decode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         // todo
-        return {.value = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
     }
 };
 

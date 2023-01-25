@@ -214,8 +214,8 @@ public:
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override {
-        return lerp(make_float3(_metallic),
-                    make_float3(fresnel_dielectric(cos_theta, _eta)),
+        return lerp(_metallic,
+                    fresnel_dielectric(cos_theta, _eta),
                     fresnel_schlick(R0, cos_theta));
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
@@ -277,27 +277,27 @@ public:
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, SampledSpectrum Fr) const noexcept override {
+    [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const SampledSpectrum &Fr) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
             return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
         };
         return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
     }
 
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, SampledSpectrum Fr) const noexcept override {
+    [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wi, const SampledSpectrum & Fr) const noexcept override {
         Float3 wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,
-                              Float3 Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi,
+                              const SampledSpectrum & Ft, Float eta) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
             return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
     }
 
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, SampledSpectrum Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wi, const SampledSpectrum& Ft, Float eta) const noexcept override {
         Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
@@ -305,6 +305,7 @@ public:
 
 class PrincipledBSDF : public BSDF {
 private:
+    const SampledWavelengths &_swl;
     SP<const Fresnel> _fresnel{};
     optional<Diffuse> _diffuse{};
     optional<Retro> _retro{};
@@ -329,7 +330,7 @@ private:
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
-        return make_float3(0.f);
+        return SampledSpectrum(_swl.dimension(), 0.f);
     }
 
     template<typename T, typename... Args>
@@ -357,7 +358,7 @@ public:
                    const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
-        : BSDF(si) {
+        : BSDF(si),_swl(swl) {
         SampledSpectrum color = Texture::eval(color_tex, si).xyz();
         Float color_lum = luminance(color);
         Float metallic = Texture::eval(metallic_tex, si).x;

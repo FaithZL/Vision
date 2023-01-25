@@ -21,7 +21,7 @@ public:
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                              const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum value = render_pipeline()->spectrum().decode_to_illumination(_intensity, swl).value;
+        SampledSpectrum value = render_pipeline()->spectrum().decode_to_illumination(_intensity, swl).sample;
         return value / length_squared(p_ref.pos - _position);
     }
 };

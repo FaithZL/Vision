@@ -173,27 +173,28 @@ requires std::disjunction_v<
 [[nodiscard]] SampledSpectrum abs(const SampledSpectrum &t) noexcept;
 [[nodiscard]] SampledSpectrum sqrt(const SampledSpectrum &t) noexcept;
 
+struct ColorDecode {
+    SampledSpectrum sample;
+    Float strength;
+    [[nodiscard]] static ColorDecode constant(uint dim, float value) noexcept {
+        return ColorDecode{.sample = {dim, value}, .strength = value};
+    }
+    [[nodiscard]] static ColorDecode one(uint dim) noexcept { return constant(dim, 1.f); }
+    [[nodiscard]] static ColorDecode zero(uint dim) noexcept { return constant(dim, 0.f); }
+};
+
 class Sampler;
 class Spectrum : public Node {
 public:
     using Desc = SpectrumDesc;
-    struct Decode {
-        SampledSpectrum value;
-        Float strength;
-        [[nodiscard]] static auto constant(uint dim, float value) noexcept {
-            return Decode{.value = {dim, value}, .strength = value};
-        }
-        [[nodiscard]] static auto one(uint dim) noexcept { return constant(dim, 1.f); }
-        [[nodiscard]] static auto zero(uint dim) noexcept { return constant(dim, 0.f); }
-    };
 
 public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual Decode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual Decode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
 };
 
 }// namespace vision
