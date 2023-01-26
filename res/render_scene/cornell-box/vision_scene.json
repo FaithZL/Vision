@@ -126,7 +126,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": "RightWall",
+                "material": "LeftWall",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -150,7 +150,7 @@
                                 0.0
                             ],
                             [
-                                1.0,
+                                -1.0,
                                 1.0,
                                 0.0,
                                 1.0
@@ -166,7 +166,7 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": "LeftWall",
+                "material": "RightWall",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -190,7 +190,7 @@
                                 0.0
                             ],
                             [
-                                -1.0,
+                                1.0,
                                 1.0,
                                 0.0,
                                 1.0
@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Glass",
+                "material": "Metal",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
