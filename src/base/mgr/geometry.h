@@ -6,6 +6,7 @@
 
 #include "rhi/common.h"
 #include "base/shape.h"
+#include "base/color/spectrum.h"
 #include "base/scattering/interaction.h"
 
 namespace vision {
@@ -40,7 +41,7 @@ public:
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool occluded(const Interaction &it, const Float3 &pos, RayState *rs = nullptr) const noexcept;
-    [[nodiscard]] Float3 Tr(Scene *scene, const SampledWavelengths &swl, const RayState &ray_state) const noexcept;
+    [[nodiscard]] SampledSpectrum Tr(Scene *scene, const SampledWavelengths &swl, const RayState &ray_state) const noexcept;
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;

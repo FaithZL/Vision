@@ -24,15 +24,15 @@ public:
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        Float3 color = Texture::eval(_color, si).xyz();
+        SampledSpectrum color = Texture::eval_albedo_spectrum(_color, si, swl).sample;
         Float ior = Texture::eval(_ior, si, 1.5f).x;
         Float2 alpha = Texture::eval(_roughness, si, 1.f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(ior, swl,render_pipeline());
-        MicrofacetReflection refl(make_float3(1.f), swl, microfacet);
-        MicrofacetTransmission trans(color, swl,microfacet);
+        MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
+        MicrofacetTransmission trans(color, swl, microfacet);
         return make_unique<DielectricBSDF>(si, fresnel, move(refl), move(trans));
     }
 };

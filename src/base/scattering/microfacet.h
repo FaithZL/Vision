@@ -9,6 +9,7 @@
 #include "math/base.h"
 #include "math/geometry.h"
 #include "math/optics.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 using namespace ocarina;
@@ -245,20 +246,20 @@ template<EPort p = EPort::D>
 }
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float3<p> BRDF(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi, oc_float3<p> Fr,
-                                const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+[[nodiscard]] oc_float<p> BRDF_div_fr(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
+                                       const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
-    oc_float3<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * Fr * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
-//    oc_assert(!has_invalid(ret) && all(ret > 0.f), "invalid brdf ! {}  {}", cos_theta_o, cos_theta_i);
+    oc_float<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
+    //    oc_assert(!has_invalid(ret) && all(ret > 0.f), "invalid brdf ! {}  {}", cos_theta_o, cos_theta_i);
     return ret;
 }
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float3<p> BRDF(const oc_float3<p> &wo, const oc_float3<p> &wi, oc_float3<p> Fr,
-                                const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+[[nodiscard]] oc_float3<p> BRDF_div_fr(const oc_float3<p> &wo, const oc_float3<p> &wi,
+                                       const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float3<p> wh = normalize(wo + wi);
-    return BRDF<p>(wo, wh, wi, Fr, alpha_x, alpha_y, type);
+    return BRDF<p>(wo, wh, wi, alpha_x, alpha_y, type);
 }
 
 /**
@@ -268,17 +269,17 @@ template<EPort p = EPort::D>
  * @return
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float3<p> BTDF(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
-                                const oc_float3<p> &Ft,const oc_float<p> &eta,
-                                const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+[[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
+                                       const oc_float<p> &eta, const oc_float<p> &alpha_x,
+                                       const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
-    oc_float3<p> numerator = D_<p>(wh, alpha_x, alpha_y, type) * Ft * G_<p>(wo, wi, alpha_x, alpha_y, type) *
+    oc_float<p> numerator = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) *
                              abs(dot(wi, wh) * dot(wo, wh));
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
-    oc_float3<p> ft = numerator / denom;
+    oc_float<p> ft = numerator / denom;
     oc_float<p> factor = rcp(sqr(eta));
-//    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf({},{},{}) ! ", ft.x, ft.y, ft.z);
+    //    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf({},{},{}) ! ", ft.x, ft.y, ft.z);
     return ft * factor;
 }
 
@@ -289,16 +290,16 @@ template<EPort p = EPort::D>
  * @return
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float3<p> BTDF(const oc_float3<p> &wo, const oc_float3<p> &wi, const oc_float3<p> &Ft,
-                                const oc_float<p> &cos_theta_i, const oc_float<p> &cos_theta_o, const oc_float<p> &eta,
-                                const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+[[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wi,const oc_float<p> &cos_theta_i,
+                                       const oc_float<p> &cos_theta_o, const oc_float<p> &eta,
+                                       const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float3<p> wh = normalize(wo + wi * eta);
-    return BTDF<p>(wo, wh, wi, Ft, cos_theta_i, cos_theta_o, eta, alpha_x, alpha_y, type);
+    return BTDF_div_ft<p>(wo, wh, wi, cos_theta_i, cos_theta_o, eta, alpha_x, alpha_y, type);
 }
 
 }// namespace microfacet
 
-template<EPort p = EPort::D>
+template<EPort p = EPort::D, typename TSpectrum = SampledSpectrum>
 class Microfacet {
 protected:
     oc_float<p> _alpha_x{};
@@ -336,27 +337,30 @@ public:
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] virtual oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
-        return microfacet::BRDF<p>(wo, wh, wi, Fr, _alpha_x, _alpha_y, _type);
+    [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
+        return microfacet::BRDF_div_fr<p>(wo, wh, wi, _alpha_x, _alpha_y, _type) * Fr;
     }
 
-    [[nodiscard]] virtual oc_float3<p> BRDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Fr) const noexcept {
+    [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
         oc_float3<p> wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] virtual oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
-                                            oc_float3<p> Ft, oc_float<p> eta) const noexcept {
-        return microfacet::BTDF<p>(wo, wh, wi, Ft, eta, _alpha_x, _alpha_y, _type);
+    [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
+                                         const TSpectrum &Ft, oc_float<p> eta) const noexcept {
+        return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, _alpha_x, _alpha_y, _type) * Ft;
     }
 
-    [[nodiscard]] virtual oc_float3<p> BTDF(oc_float3<p> wo, oc_float3<p> wi, oc_float3<p> Ft, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
 };
 
-class GGXMicrofacet : public Microfacet<D> {
+class GGXMicrofacet : public Microfacet<D, SampledSpectrum> {
+public:
+    using TSpectrum = SampledSpectrum;
+
 private:
     static constexpr MicrofacetType type = MicrofacetType::GGX;
     using Super = Microfacet<D>;
@@ -369,16 +373,19 @@ public:
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
-    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept override;
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept override;
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,Float3 Ft, Float eta) const noexcept override;
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
 
 class BeckmannMicrofacet : public Microfacet<D> {
-private:
+public:
+    using TSpectrum = SampledSpectrum;
+
+public:
     static constexpr MicrofacetType type = MicrofacetType::Beckmann;
     using Super = Microfacet<D>;
 
@@ -390,12 +397,12 @@ public:
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
-    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, Float3 Fr) const noexcept override;
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, Float3 Fr) const noexcept override;
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,Float3 Ft, Float eta) const noexcept override;
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, Float3 Ft, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
 
 }// namespace vision

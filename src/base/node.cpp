@@ -15,6 +15,14 @@ const RenderPipeline *Node::render_pipeline() const noexcept {
     return _scene->render_pipeline();
 }
 
+Spectrum &Node::spectrum() noexcept {
+    return render_pipeline()->spectrum();
+}
+
+const Spectrum &Node::spectrum() const noexcept {
+    return render_pipeline()->spectrum();
+}
+
 Device &Node::device() noexcept {
     return render_pipeline()->device();
 }

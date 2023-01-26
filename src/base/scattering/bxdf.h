@@ -44,8 +44,8 @@ public:
     }
     [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *_swl; }
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] virtual Float3 f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
-    [[nodiscard]] virtual Float3 albedo() const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
@@ -60,29 +60,29 @@ public:
 
 class LambertReflection : public BxDF {
 private:
-    VSColor Kr;
+    SampledSpectrum Kr;
 
 public:
-    explicit LambertReflection(VSColor kr, const SampledWavelengths &swl)
+    explicit LambertReflection(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           Kr(kr) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return Kr; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
 };
 
 class MicrofacetReflection : public BxDF {
 private:
-    VSColor Kr;
+    SampledSpectrum Kr;
     SP<Microfacet<D>> _microfacet;
 
 public:
     MicrofacetReflection() = default;
-    MicrofacetReflection(VSColor color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
+    MicrofacetReflection(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::Reflection), Kr(color),
           _microfacet(m) {}
 
-    [[nodiscard]] VSColor albedo() const noexcept override { return Kr; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
@@ -91,16 +91,16 @@ public:
 
 class MicrofacetTransmission : public BxDF {
 private:
-    VSColor Kt;
+    SampledSpectrum Kt;
     SP<Microfacet<D>> _microfacet;
 
 public:
     MicrofacetTransmission() = default;
-    MicrofacetTransmission(Float3 color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
+    MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] VSColor albedo() const noexcept override { return Kt; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kt; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;

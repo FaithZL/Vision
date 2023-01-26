@@ -20,7 +20,7 @@ public:
 protected:
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
         ScatterEval ret;
-        ret.f = make_float3(0.f);
+        ret.f = {3u, 0.f};
         ret.pdf = 1.f;
         return ret;
     }
@@ -34,7 +34,10 @@ public:
     BSDF() = default;
     explicit BSDF(const Interaction &si)
         : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
-    [[nodiscard]] virtual VSColor albedo() const noexcept { return make_float3(0.f); }
+    [[nodiscard]] virtual SampledSpectrum albedo() const noexcept {
+        // todo
+        return {3u, 0.f};
+    }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
@@ -52,7 +55,7 @@ public:
                    MicrofacetReflection refl,
                    MicrofacetTransmission trans)
         : BSDF(si), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return _refl.albedo(); }
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override;
 };

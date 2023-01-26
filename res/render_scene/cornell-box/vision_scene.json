@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "ShortBox",
+                "material": "Glass",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -248,7 +248,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "TallBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -400,6 +400,66 @@
                     0.71,
                     0.68
                 ]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "Glass",
+            "param": {
+                "color": [
+                    1,
+                    1,
+                    1
+                ],
+                "roughness": [0.001,0.001]
+            }
+        },
+        {
+            "type": "disney",
+            "name": "disney",
+            "param": {
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "substrate",
+            "param": {
+                "roughness" : 0.001,
+                "spec": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "color": [
+                    0.725,
+                    0.71,
+                    0.68
+                ]
+            }
+        },
+        {
+            "type": "metal",
+            "name": "Metal",
+            "param": {
+                "material_name":"Cu",
+                "roughness": [0.001,0.001]
+            }
+        },
+        {
+            "type": "mirror",
+            "name": "Mirror",
+            "param": {
+                "color": [
+                    1,
+                    1,
+                    1
+                ],
+                "roughness": [0.001,0.001]
             }
         },
         {

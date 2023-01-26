@@ -12,15 +12,15 @@ inline namespace disney {
 
 class Diffuse : public BxDF {
 private:
-    VSColor _color;
+    SampledSpectrum _color;
 
 public:
     Diffuse() = default;
-    explicit Diffuse(Float3 color, const SampledWavelengths &swl)
+    explicit Diffuse(SampledSpectrum color, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi) {
             Float Fo = schlick_weight(abs_cos_theta(wo));
             Float Fi = schlick_weight(abs_cos_theta(wi));
@@ -32,17 +32,17 @@ public:
 
 class FakeSS : public BxDF {
 private:
-    VSColor _color;
+    SampledSpectrum _color;
     Float _roughness;
 
 public:
     FakeSS() = default;
-    explicit FakeSS(Float3 color, Float r, const SampledWavelengths &swl)
+    explicit FakeSS(SampledSpectrum color, Float r, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -62,17 +62,17 @@ public:
 
 class Retro : public BxDF {
 private:
-    VSColor _color;
+    SampledSpectrum _color;
     Float _roughness;
 
 public:
     Retro() = default;
-    explicit Retro(Float3 color, Float r, const SampledWavelengths &swl)
+    explicit Retro(SampledSpectrum color, Float r, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -92,15 +92,15 @@ public:
 
 class Sheen : public BxDF {
 private:
-    VSColor _color;
+    SampledSpectrum _color;
 
 public:
     Sheen() = default;
-    explicit Sheen(VSColor kr, const SampledWavelengths &swl)
+    explicit Sheen(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(kr) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return _color; }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -142,8 +142,8 @@ public:
         : BxDF(swl, BxDFFlag::GlossyRefl),
           _weight(weight),
           _alpha(alpha) {}
-    [[nodiscard]] VSColor albedo() const noexcept override { return make_float3(_weight); }
-    [[nodiscard]] VSColor f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return {swl().dimension(), _weight}; }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float weight, Float alpha) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
@@ -152,9 +152,9 @@ public:
             Float Fr = fresnel_schlick((0.04f), dot(wo, wh));
             Float Gr = smithG_GGX(abs_cos_theta(wo), 0.25f) * smithG_GGX(abs_cos_theta(wi), 0.25f);
             Float ret = weight * Gr * Fr * Dr * 0.25f;
-            return make_float3(select(valid, ret, 0.f));
+            return select(valid, ret, 0.f);
         };
-        return impl(wo, wi, _weight, _alpha);
+        return {swl().dimension(), impl(wo, wi, _weight, _alpha)};
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wi, Float alpha) {
@@ -202,20 +202,20 @@ public:
 
 class FresnelDisney : public Fresnel {
 private:
-    VSColor R0;
+    SampledSpectrum R0;
     Float _metallic;
     Float _eta;
 
 public:
-    FresnelDisney(const VSColor &R0, Float metallic, Float eta,
+    FresnelDisney(const SampledSpectrum &R0, Float metallic, Float eta,
                   const SampledWavelengths &swl, const RenderPipeline *rp)
         : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
-    [[nodiscard]] VSColor evaluate(Float cos_theta) const noexcept override {
-        return lerp(make_float3(_metallic),
-                    make_float3(fresnel_dielectric(cos_theta, _eta)),
+    [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override {
+        return lerp(_metallic,
+                    fresnel_dielectric(cos_theta, _eta),
                     fresnel_schlick(R0, cos_theta));
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
@@ -277,27 +277,27 @@ public:
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wh, Float3 wi, VSColor Fr) const noexcept override {
+    [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const SampledSpectrum &Fr) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
-            return microfacet::BRDF<D>(wo, wh, wi, make_float3(1.f), ax, ay, type);
+            return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
         };
         return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
     }
 
-    [[nodiscard]] Float3 BRDF(Float3 wo, Float3 wi, VSColor Fr) const noexcept override {
+    [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wi, const SampledSpectrum & Fr) const noexcept override {
         Float3 wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wh, Float3 wi,
-                              Float3 Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi,
+                              const SampledSpectrum & Ft, Float eta) const noexcept override {
         static Callable impl = [](Float3 wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
-            return microfacet::BTDF<D>(wo, wh, wi, make_float3(1.f), eta, ax, ay, type);
+            return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
     }
 
-    [[nodiscard]] Float3 BTDF(Float3 wo, Float3 wi, VSColor Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wi, const SampledSpectrum& Ft, Float eta) const noexcept override {
         Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
@@ -305,6 +305,7 @@ public:
 
 class PrincipledBSDF : public BSDF {
 private:
+    const SampledWavelengths &_swl;
     SP<const Fresnel> _fresnel{};
     optional<Diffuse> _diffuse{};
     optional<Retro> _retro{};
@@ -325,11 +326,11 @@ private:
 
 private:
     template<typename T, typename... Args>
-    [[nodiscard]] VSColor lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
+    [[nodiscard]] SampledSpectrum lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
-        return make_float3(0.f);
+        return SampledSpectrum(_swl.dimension(), 0.f);
     }
 
     template<typename T, typename... Args>
@@ -341,7 +342,7 @@ private:
     }
 
     template<typename... Args>
-    [[nodiscard]] VSColor f_diffuse(Args &&...args) const noexcept {
+    [[nodiscard]] SampledSpectrum f_diffuse(Args &&...args) const noexcept {
         return lobe_f(_diffuse, OC_FORWARD(args)...) + lobe_f(_retro, OC_FORWARD(args)...) +
                lobe_f(_sheen, OC_FORWARD(args)...) + lobe_f(_fake_ss, OC_FORWARD(args)...);
     }
@@ -357,20 +358,20 @@ public:
                    const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
-        : BSDF(si) {
-        VSColor color = Texture::eval(color_tex, si).xyz();
-        Float color_lum = luminance(color);
+        : BSDF(si),_swl(swl) {
+
+        auto [color, color_lum] = Texture::eval_albedo_spectrum(color_tex, si, swl);
         Float metallic = Texture::eval(metallic_tex, si).x;
         Float spec_trans = Texture::eval(spec_trans_tex, si).x;
         Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
         Float flatness = Texture::eval(flatness_tex, si).x;
         Float roughness = Texture::eval(roughness_tex, si).x;
         Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
-        VSColor tint = clamp(color * tint_weight, make_float3(0.f), make_float3(1.f));
+        SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
         Float tint_lum = color_lum * tint_weight;
 
         Float Cdiff_weight = diffuse_weight * (1.f - flatness);
-        VSColor Cdiff = color * Cdiff_weight;
+        SampledSpectrum Cdiff = color * Cdiff_weight;
 
         bool has_diffuse = false;
 
@@ -382,7 +383,7 @@ public:
 
         if (Texture::nonzero(flatness_tex)) {
             Float Css_weight = diffuse_weight * flatness;
-            VSColor Css = Css_weight * color;
+            SampledSpectrum Css = Css_weight * color;
             _fake_ss = FakeSS(Css, roughness, swl);
             has_diffuse = true;
         }
@@ -391,7 +392,7 @@ public:
             Float sheen = Texture::eval(sheen_tex, si).x;
             Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
             Float Csheen_weight = diffuse_weight * sheen;
-            VSColor Csheen = Csheen_weight * lerp(make_float3(sheen_tint), make_float3(1.f), tint);
+            SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
             _sheen = Sheen(Csheen, swl);
             has_diffuse = true;
         }
@@ -404,7 +405,7 @@ public:
         Float spec_tint = Texture::eval(spec_tint_tex, si).x;
         Float eta = Texture::eval(eta_tex, si).x;
         Float SchlickR0 = schlick_R0_from_eta(eta);
-        Float3 Cspec0 = lerp(make_float3(metallic), lerp(make_float3(spec_tint), make_float3(1.f), tint) * SchlickR0, color);
+        SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
         _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
         Float anisotropic = Texture::eval(anisotropic_tex, si).x;
@@ -412,7 +413,7 @@ public:
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
         auto microfacet = make_shared<DisneyMicrofacet>(alpha);
-        _spec_refl = MicrofacetReflection(make_float3(1.f), swl, microfacet);
+        _spec_refl = MicrofacetReflection(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
         _spec_refl_index = _sampling_strategy_num++;
         _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
@@ -427,7 +428,7 @@ public:
 
         if (Texture::nonzero(spec_trans_tex)) {
             Float Cst_weight = (1.f - metallic) * spec_trans;
-            Float3 Cst = Cst_weight * sqrt(color);
+            SampledSpectrum Cst = Cst_weight * sqrt(color);
             _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);
             Float Cst_lum = Cst_weight * sqrt(color_lum);
             _spec_trans_index = _sampling_strategy_num++;
@@ -443,10 +444,10 @@ public:
             _sampling_weights[i] *= inv_sum_weights;
         }
     }
-    [[nodiscard]] VSColor albedo() const noexcept override { return _diffuse->albedo(); }
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         ScatterEval ret;
-        Float3 f = make_float3(0.f);
+        SampledSpectrum f = {_swl.dimension(), 0.f};
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);

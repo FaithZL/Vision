@@ -26,7 +26,7 @@ PhaseSample HenyeyGreenstein::sample(Float3 wo, Sampler *sampler) const noexcept
     Float3 wi = spherical_direction(sin_theta, cos_theta, phi, v1, v2, wo);
     Float f = phase_HG(cos_theta, _g);
     PhaseSample phase_sample;
-    phase_sample.eval = {.f = make_float3(f), .pdf = f};
+    phase_sample.eval = {.f = {_swl->dimension(), f}, .pdf = f};
     phase_sample.wi = wi;
     return phase_sample;
 }

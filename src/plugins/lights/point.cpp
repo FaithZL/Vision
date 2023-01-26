@@ -3,11 +3,13 @@
 //
 
 #include "base/light.h"
+#include "base/mgr/render_pipeline.h"
+#include "base/color/spectrum.h"
 
 namespace vision {
 class PointLight : public IPointLight {
 private:
-    VSColor _intensity;
+    float3 _intensity;
     float3 _position;
 
 public:
@@ -16,10 +18,11 @@ public:
           _intensity(desc.intensity),
           _position(desc.position) {}
     [[nodiscard]] float3 position() const noexcept override { return _position; }
-    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
+    [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                              const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
-        return _intensity / length_squared(p_ref.pos - _position);
+        SampledSpectrum value = spectrum().decode_to_illumination(_intensity, swl).sample;
+        return value / length_squared(p_ref.pos - _position);
     }
 };
 }// namespace vision

@@ -37,24 +37,17 @@ SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const SampledSpe
     return r;
 }
 
-SampledSpectrum ite(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept {
+SampledSpectrum select(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept {
     return f.map([p, t](auto i, auto x) noexcept { return select(p, t, x); });
 }
 
-SampledSpectrum ite(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept {
+SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept {
     return t.map([p, f](auto i, auto x) noexcept { return select(p, x, f); });
 }
 
-SampledSpectrum saturate(const SampledSpectrum &t) noexcept {
-    return t.map([](auto x) noexcept { return saturate(x); });
-}
-
-SampledSpectrum abs(const SampledSpectrum &t) noexcept {
-    return t.map([](auto x) noexcept { return abs(x); });
-}
-
-SampledSpectrum sqrt(const SampledSpectrum &t) noexcept {
-    return t.map([](auto x) noexcept { return sqrt(x); });
+SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept {
+    Bool any_nan = t.any([](const Float &value) { return isnan(value); });
+    return t.map([&any_nan](const Float &x) noexcept { return select(any_nan, 0.f, x); });
 }
 
 }// namespace vision

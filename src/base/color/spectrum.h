@@ -37,12 +37,12 @@ public:
         }
     }
     explicit SampledSpectrum(uint n = 3u) noexcept : SampledSpectrum{n, 0.f} {}
-    explicit SampledSpectrum(const Float3 value) noexcept : _values(3) {
+    explicit SampledSpectrum(const Float3 &value) noexcept : _values(3) {
         for (int i = 0; i < 3; ++i) {
             _values[i] = value[i];
         }
     }
-    explicit SampledSpectrum(const Float4 value) noexcept : _values(4) {
+    explicit SampledSpectrum(const Float4 &value) noexcept : _values(4) {
         for (int i = 0; i < 4; ++i) {
             _values[i] = value[i];
         }
@@ -115,10 +115,10 @@ public:
     template<typename F>
     [[nodiscard]] Bool none(F &&f) const noexcept { return !any(std::forward<F>(f)); }
     [[nodiscard]] SampledSpectrum operator+() const noexcept {
-        return map([](auto s) noexcept { return s; });
+        return map([](Float s) noexcept { return s; });
     }
     [[nodiscard]] SampledSpectrum operator-() const noexcept {
-        return map([](auto s) noexcept { return -s; });
+        return map([](Float s) noexcept { return -s; });
     }
 
 #define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
@@ -180,32 +180,42 @@ requires std::disjunction_v<
 
 [[nodiscard]] SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept;
 
-// some math functions
-[[nodiscard]] SampledSpectrum saturate(const SampledSpectrum &t) noexcept;
-[[nodiscard]] SampledSpectrum abs(const SampledSpectrum &t) noexcept;
-[[nodiscard]] SampledSpectrum sqrt(const SampledSpectrum &t) noexcept;
+#define VS_MAKE_SPECTRUM_MATH_FUNC(func_name)                                                        \
+    template<typename... Args>                                                                       \
+    [[nodiscard]] SampledSpectrum func_name(const SampledSpectrum &sp, Args &&...args) noexcept {    \
+        return sp.map([&](Float s) noexcept { return ocarina::func_name(s, OC_FORWARD(args)...); }); \
+    }
+VS_MAKE_SPECTRUM_MATH_FUNC(clamp)
+VS_MAKE_SPECTRUM_MATH_FUNC(exp)
+VS_MAKE_SPECTRUM_MATH_FUNC(saturate)
+VS_MAKE_SPECTRUM_MATH_FUNC(abs)
+VS_MAKE_SPECTRUM_MATH_FUNC(sqrt)
+
+#undef VS_MAKE_SPECTRUM_MATH_FUNC
+
+struct ColorDecode {
+    SampledSpectrum sample;
+    Float strength;
+    [[nodiscard]] static ColorDecode constant(uint dim, float value) noexcept {
+        return ColorDecode{.sample = {dim, value}, .strength = value};
+    }
+    [[nodiscard]] static ColorDecode one(uint dim) noexcept { return constant(dim, 1.f); }
+    [[nodiscard]] static ColorDecode zero(uint dim) noexcept { return constant(dim, 0.f); }
+};
 
 class Sampler;
 class Spectrum : public Node {
 public:
     using Desc = SpectrumDesc;
-    struct Decode {
-        SampledSpectrum value;
-        Float strength;
-        [[nodiscard]] static auto constant(uint dim, float value) noexcept {
-            return Decode{.value = {dim, value}, .strength = value};
-        }
-        [[nodiscard]] static auto one(uint dim) noexcept { return constant(dim, 1.f); }
-        [[nodiscard]] static auto zero(uint dim) noexcept { return constant(dim, 0.f); }
-    };
 
 public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual Decode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual Decode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
 };
 
 }// namespace vision

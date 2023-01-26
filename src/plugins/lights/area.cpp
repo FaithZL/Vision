@@ -28,16 +28,16 @@ public:
         return _warper->PMF(prim_id);
     }
 
-    [[nodiscard]] VSColor L(const LightEvalContext &p_light, const Float3 &w,
+    [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
                             const SampledWavelengths &swl) const {
-        Float3 radiance = _radiance->eval(p_light.uv).xyz() * _scale;
+        SampledSpectrum radiance = _radiance->eval_illumination_spectrum(p_light.uv, swl).sample * _scale;
         if (_two_sided) {
             return radiance;
         }
         return radiance * select(dot(w, p_light.ng) > 0, 1.f, 0.f);
     }
 
-    [[nodiscard]] VSColor Li(const LightSampleContext &p_ref,
+    [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                              const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
         return L(p_light, p_ref.pos - p_light.pos, swl);

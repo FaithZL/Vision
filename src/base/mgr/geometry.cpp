@@ -166,10 +166,10 @@ Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) 
     return trace_any(shadow_ray);
 }
 
-Float3 Geometry::Tr(Scene *scene, const SampledWavelengths &swl,
+SampledSpectrum Geometry::Tr(Scene *scene, const SampledWavelengths &swl,
                     const RayState &ray_state) const noexcept {
     Sampler *sampler = scene->sampler();
-    Float3 ret = make_float3(1.f);
+    SampledSpectrum ret{swl.dimension(), 1.f};
     if (scene->has_medium()) {
         $if(ray_state.in_medium()) {
             scene->mediums().dispatch(ray_state.medium, [&](const Medium *medium) {
