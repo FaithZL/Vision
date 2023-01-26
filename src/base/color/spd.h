@@ -14,6 +14,27 @@ namespace vision {
 
 using namespace ocarina;
 
+/**
+ * Cauchy's dispersion formula
+ * eta(lambda) = a + b / (lambda^2) + c / (lambda^4)
+ */
+struct CauchyDispersion {
+public:
+    float a;
+    float b;
+    float c;
+
+private:
+    explicit CauchyDispersion(float3 eta_rgb, float3 lambdas = rgb_spectrum_peak_wavelengths) {
+        // todo
+    }
+
+    template<EPort p = D>
+    [[nodiscard]] oc_float<p> eta(const oc_float<p> &lambda) const noexcept {
+        return a + b / sqr(lambda) + c / Pow<4>(lambda);
+    }
+};
+
 class SPD {
 private:
     ManagedWrapper<float> _func;
