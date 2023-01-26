@@ -447,7 +447,7 @@
             "name": "Metal",
             "param": {
                 "material_name":"Cu",
-                "roughness": [0.001,0.001]
+                "roughness": 0.01
             }
         },
         {

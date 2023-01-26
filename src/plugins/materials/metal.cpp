@@ -5,6 +5,7 @@
 #include "base/scattering/material.h"
 #include "base/texture.h"
 #include "base/mgr/scene.h"
+#include "metal_ior.h"
 
 namespace vision {
 
@@ -44,6 +45,7 @@ public:
 
 class MetalMaterial : public Material {
 private:
+    string _material_name{};
     const Texture *_eta{};
     const Texture *_k{};
     const Texture *_roughness{};
@@ -52,6 +54,7 @@ private:
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
+          _material_name(desc.material_name),
           _eta(desc.scene->load<Texture>(desc.eta)),
           _k(desc.scene->load<Texture>(desc.k)),
           _roughness(desc.scene->load<Texture>(desc.roughness)),
