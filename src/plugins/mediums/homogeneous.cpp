@@ -49,9 +49,9 @@ public:
             it.set_medium(_index, _index);
         };
         SampledSpectrum tr = Tr(t, swl);
-        SampledSpectrum density = sp_select(sampled_medium, sigma_t * tr, tr);
+        SampledSpectrum density = select(sampled_medium, sigma_t * tr, tr);
         Float pdf = density.average();
-        SampledSpectrum ret = sp_select(sampled_medium, tr * sigma_s / pdf, tr / pdf);
+        SampledSpectrum ret = select(sampled_medium, tr * sigma_s / pdf, tr / pdf);
         return ret;
     }
 };
