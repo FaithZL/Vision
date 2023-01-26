@@ -24,6 +24,9 @@ public:
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
     }
+    [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
+        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+    }
 };
 
 }// namespace vision

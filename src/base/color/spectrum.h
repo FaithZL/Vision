@@ -37,12 +37,12 @@ public:
         }
     }
     explicit SampledSpectrum(uint n = 3u) noexcept : SampledSpectrum{n, 0.f} {}
-    explicit SampledSpectrum(const Float3 value) noexcept : _values(3) {
+    explicit SampledSpectrum(const Float3 &value) noexcept : _values(3) {
         for (int i = 0; i < 3; ++i) {
             _values[i] = value[i];
         }
     }
-    explicit SampledSpectrum(const Float4 value) noexcept : _values(4) {
+    explicit SampledSpectrum(const Float4 &value) noexcept : _values(4) {
         for (int i = 0; i < 4; ++i) {
             _values[i] = value[i];
         }
@@ -121,15 +121,6 @@ public:
         return map([](Float s) noexcept { return -s; });
     }
 
-#define VS_MAKE_SPECTRUM_MATH_FUNC(func_name)                                                     \
-    template<typename... Args>                                                                    \
-    [[nodiscard]] SampledSpectrum func_name(Args &&...args) const noexcept {                      \
-        return map([&](Float s) noexcept { return ocarina::func_name(s, OC_FORWARD(args)...); }); \
-    }
-    VS_MAKE_SPECTRUM_MATH_FUNC(clamp)
-    VS_MAKE_SPECTRUM_MATH_FUNC(exp)
-#undef VS_MAKE_SPECTRUM_MATH_FUNC
-
 #define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
     [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                              \
         return map([rhs](const auto &lvalue) { return lvalue op rhs; });                                      \
@@ -189,10 +180,18 @@ requires std::disjunction_v<
 
 [[nodiscard]] SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept;
 
-// some math functions
-[[nodiscard]] SampledSpectrum saturate(const SampledSpectrum &t) noexcept;
-[[nodiscard]] SampledSpectrum abs(const SampledSpectrum &t) noexcept;
-[[nodiscard]] SampledSpectrum sqrt(const SampledSpectrum &t) noexcept;
+#define VS_MAKE_SPECTRUM_MATH_FUNC(func_name)                                                        \
+    template<typename... Args>                                                                       \
+    [[nodiscard]] SampledSpectrum func_name(const SampledSpectrum &sp, Args &&...args) noexcept {    \
+        return sp.map([&](Float s) noexcept { return ocarina::func_name(s, OC_FORWARD(args)...); }); \
+    }
+VS_MAKE_SPECTRUM_MATH_FUNC(clamp)
+VS_MAKE_SPECTRUM_MATH_FUNC(exp)
+VS_MAKE_SPECTRUM_MATH_FUNC(saturate)
+VS_MAKE_SPECTRUM_MATH_FUNC(abs)
+VS_MAKE_SPECTRUM_MATH_FUNC(sqrt)
+
+#undef VS_MAKE_SPECTRUM_MATH_FUNC
 
 struct ColorDecode {
     SampledSpectrum sample;
@@ -216,6 +215,7 @@ public:
     [[nodiscard]] virtual Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
 };
 
 }// namespace vision

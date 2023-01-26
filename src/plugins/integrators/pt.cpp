@@ -5,6 +5,7 @@
 #include "base/integrator.h"
 #include "base/mgr/render_pipeline.h"
 #include "math/warp.h"
+#include "base/color/spectrum.h"
 
 
 namespace vision {
@@ -150,7 +151,7 @@ public:
                 scatter_pdf = bsdf_sample.eval.pdf;
                 rs = it.spawn_ray_state(bsdf_sample.wi);
             };
-            camera->film()->add_sample(pixel, render_pipeline()->spectrum().srgb(Li, swl), frame_index);
+            camera->film()->add_sample(pixel, spectrum.srgb(Li, swl), frame_index);
         };
         _shader = rp->device().compile(_kernel);
     }

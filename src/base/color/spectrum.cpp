@@ -50,16 +50,4 @@ SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept {
     return t.map([&any_nan](const Float &x) noexcept { return select(any_nan, 0.f, x); });
 }
 
-SampledSpectrum saturate(const SampledSpectrum &t) noexcept {
-    return t.map([](const Float &x) noexcept { return saturate(x); });
-}
-
-SampledSpectrum abs(const SampledSpectrum &t) noexcept {
-    return t.map([](const Float &x) noexcept { return abs(x); });
-}
-
-SampledSpectrum sqrt(const SampledSpectrum &t) noexcept {
-    return t.map([](const Float &x) noexcept { return sqrt(x); });
-}
-
 }// namespace vision

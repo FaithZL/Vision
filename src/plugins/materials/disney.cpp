@@ -367,7 +367,7 @@ public:
         Float flatness = Texture::eval(flatness_tex, si).x;
         Float roughness = Texture::eval(roughness_tex, si).x;
         Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
-        SampledSpectrum tint = (color * tint_weight).clamp(0.f, 1.f);
+        SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
         Float tint_lum = color_lum * tint_weight;
 
         Float Cdiff_weight = diffuse_weight * (1.f - flatness);
