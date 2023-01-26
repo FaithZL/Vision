@@ -120,9 +120,15 @@ public:
     [[nodiscard]] SampledSpectrum operator-() const noexcept {
         return map([](Float s) noexcept { return -s; });
     }
-    [[nodiscard]] SampledSpectrum clamp(Float lower, Float upper) const noexcept {
-        return map([&](Float s) noexcept { return ocarina::clamp(s, lower, upper); });
+
+#define VS_MAKE_SPECTRUM_MATH_FUNC(func_name)                                                     \
+    template<typename... Args>                                                                    \
+    [[nodiscard]] SampledSpectrum func_name(Args &&...args) const noexcept {                      \
+        return map([&](Float s) noexcept { return ocarina::func_name(s, OC_FORWARD(args)...); }); \
     }
+    VS_MAKE_SPECTRUM_MATH_FUNC(clamp)
+    VS_MAKE_SPECTRUM_MATH_FUNC(exp)
+#undef VS_MAKE_SPECTRUM_MATH_FUNC
 
 #define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
     [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                              \
