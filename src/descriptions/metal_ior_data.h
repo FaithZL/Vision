@@ -7,13 +7,13 @@
 #include "core/basic_types.h"
 
 namespace vision {
-struct ComplexIor {
+struct ComplexIorOld {
     std::string name;
     float3 eta;
     float3 k;
 };
 
-static const ComplexIor complex_ior_list[] = {
+static const ComplexIorOld complex_ior_list[] = {
     {"a-C", float3(2.9440999183f, 2.2271502925f, 1.9681668794f), float3(0.8874329109f, 0.7993216383f, 0.8152862927f)},
     {"Ag", float3(0.1552646489f, 0.1167232965f, 0.1383806959f), float3(4.8283433224f, 3.1222459278f, 2.1469504455f)},
     {"Al", float3(1.6574599595f, 0.8803689579f, 0.5212287346f), float3(9.2238691996f, 6.2695232477f, 4.8370012281f)},

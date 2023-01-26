@@ -14,11 +14,12 @@ using namespace ocarina;
 
 class SPD {
 private:
-    Managed<float> _func;
+    ManagedWrapper<float> _func;
     float _sample_interval{};
     RenderPipeline *_rp{};
 
 public:
+    SPD(RenderPipeline *rp);
     SPD(vector<float> func, float interval, RenderPipeline *rp);
     [[nodiscard]] Float sample(const Float& lambda) const noexcept;
     [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp) noexcept;

@@ -48,6 +48,7 @@ private:
     string _material_name{};
     const Texture *_eta{};
     const Texture *_k{};
+
     const Texture *_roughness{};
     bool _remapping_roughness{false};
 

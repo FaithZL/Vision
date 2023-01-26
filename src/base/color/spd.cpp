@@ -41,13 +41,16 @@ template<typename T, size_t N>
 
 }// namespace detail
 
+SPD::SPD(RenderPipeline *rp)
+    : _rp(rp), _func(rp->bindless_array()) {}
+
 SPD::SPD(vector<float> func, float interval, RenderPipeline *rp)
     : _sample_interval(interval),
-      _rp(rp) {
+      _rp(rp), _func(rp->bindless_array()) {
     _func.set_host(move(func));
 }
 
-Float SPD::sample(const Float& lambda) const noexcept {
+Float SPD::sample(const Float &lambda) const noexcept {
     using namespace cie;
     Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval;
     uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval) + 1u;

@@ -126,7 +126,7 @@ namespace detail {
         }
     }
     OC_WARNING("unknown metal name ", name);
-    ComplexIor elm = complex_ior_list[0];
+    ComplexIorOld elm = complex_ior_list[0];
     return {elm.eta, elm.k};
 }
 
