@@ -48,7 +48,8 @@ private:
     string _material_name{};
     const Texture *_eta{};
     const Texture *_k{};
-
+    SPD _spd_eta;
+    SPD _spd_k;
     const Texture *_roughness{};
     bool _remapping_roughness{false};
 
@@ -58,16 +59,27 @@ public:
           _material_name(desc.material_name),
           _eta(desc.scene->load<Texture>(desc.eta)),
           _k(desc.scene->load<Texture>(desc.k)),
+          _spd_eta(desc.scene->render_pipeline()),
+          _spd_k(desc.scene->render_pipeline()),
           _roughness(desc.scene->load<Texture>(desc.roughness)),
-          _remapping_roughness(desc.remapping_roughness) {}
+          _remapping_roughness(desc.remapping_roughness) {
+        const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
+        _spd_eta.init(complex_ior.eta);
+        _spd_k.init(complex_ior.k);
+
+        _spd_eta.prepare();
+        _spd_k.prepare();
+    }
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl).sample;
-        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl).sample;
+//        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl).sample;
+//        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl).sample;
+        SampledSpectrum eta = _spd_eta.sample(swl);
+        SampledSpectrum k = _spd_k.sample(swl);
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl,microfacet);
