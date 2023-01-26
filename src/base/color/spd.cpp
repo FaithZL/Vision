@@ -41,7 +41,7 @@ template<typename T, size_t N>
 
 }// namespace detail
 
-SPD::SPD(vector<float> func, uint interval, RenderPipeline *rp)
+SPD::SPD(vector<float> func, float interval, RenderPipeline *rp)
     : _sample_interval(interval),
       _rp(rp) {
     _func.set_host(move(func));
