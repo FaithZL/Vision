@@ -6,7 +6,7 @@
 
 namespace vision {
 
-SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {
+SampledSpectrum sp_select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {
     uint n = std::max({p.dimension(), t.dimension(), f.dimension()});
     OC_ASSERT((p.dimension() == 1u || p.dimension() == n) &&
               (t.dimension() == 1u || t.dimension() == n) &&
@@ -16,32 +16,32 @@ SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const
     return r;
 }
 
-SampledSpectrum select(const SampledSpectrum &p, const Float &t, const SampledSpectrum &f) noexcept {
+SampledSpectrum sp_select(const SampledSpectrum &p, const Float &t, const SampledSpectrum &f) noexcept {
     OC_ASSERT(f.dimension() == 1u || p.dimension() == 1u || f.dimension() == p.dimension());
     auto r = SampledSpectrum{std::max(f.dimension(), p.dimension())};
     for (uint i = 0u; i < r.dimension(); i++) { r[i] = select(p[i] != 0.f, t, f[i]); }
     return r;
 }
 
-SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const Float &f) noexcept {
+SampledSpectrum sp_select(const SampledSpectrum &p, const SampledSpectrum &t, const Float &f) noexcept {
     OC_ASSERT(t.dimension() == 1u || p.dimension() == 1u || t.dimension() == p.dimension());
     auto r = SampledSpectrum{std::max(t.dimension(), p.dimension())};
     for (uint i = 0u; i < r.dimension(); i++) { r[i] = select(p[i] != 0.f, t[i], f); }
     return r;
 }
 
-SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {
+SampledSpectrum sp_select(const Bool &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {
     OC_ASSERT(t.dimension() == 1u || f.dimension() == 1u || t.dimension() == f.dimension());
     auto r = SampledSpectrum{std::max(t.dimension(), f.dimension())};
     for (uint i = 0u; i < r.dimension(); i++) { r[i] = select(p, t[i], f[i]); }
     return r;
 }
 
-SampledSpectrum select(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept {
+SampledSpectrum sp_select(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept {
     return f.map([p, t](auto i, auto x) noexcept { return select(p, t, x); });
 }
 
-SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept {
+SampledSpectrum sp_select(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept {
     return t.map([p, f](auto i, auto x) noexcept { return select(p, x, f); });
 }
 

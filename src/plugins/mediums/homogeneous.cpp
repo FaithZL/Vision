@@ -36,24 +36,23 @@ public:
     [[nodiscard]] SampledSpectrum sample(const OCRay &ray, Interaction &it,
                                  const SampledWavelengths &swl,
                                  Sampler *sampler) const noexcept override {
-        return {swl.dimension(), 0.f};
-//        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
-//        SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(_sigma_s, swl).sample;
-//        SampledSpectrum sigma_a = spectrum().decode_to_unbound_spectrum(_sigma_a, swl).sample;
-//        Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
-//        Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
-//        Float t = min(dist / length(ray->direction()), ray->t_max());
-//        Bool sampled_medium = t < ray->t_max();
-//        $if(sampled_medium) {
-//            it = Interaction(ray->at(t), -ray->direction());
-//            it.init_phase(_g, swl);
-//            it.set_medium(_index, _index);
-//        };
-//        SampledSpectrum tr = Tr(t, swl);
-//        SampledSpectrum density = select(sampled_medium, sigma_t * tr, tr);
-//        Float pdf = density.average();
-//        SampledSpectrum ret = select(sampled_medium, tr * sigma_s / pdf, tr / pdf);
-//        return ret;
+        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
+        SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(_sigma_s, swl).sample;
+        SampledSpectrum sigma_a = spectrum().decode_to_unbound_spectrum(_sigma_a, swl).sample;
+        Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
+        Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
+        Float t = min(dist / length(ray->direction()), ray->t_max());
+        Bool sampled_medium = t < ray->t_max();
+        $if(sampled_medium) {
+            it = Interaction(ray->at(t), -ray->direction());
+            it.init_phase(_g, swl);
+            it.set_medium(_index, _index);
+        };
+        SampledSpectrum tr = Tr(t, swl);
+        SampledSpectrum density = sp_select(sampled_medium, sigma_t * tr, tr);
+        Float pdf = density.average();
+        SampledSpectrum ret = sp_select(sampled_medium, tr * sigma_s / pdf, tr / pdf);
+        return ret;
     }
 };
 

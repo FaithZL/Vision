@@ -171,12 +171,12 @@ requires std::disjunction_v<
     return t * (b - a) + a;
 }
 
-[[nodiscard]] SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept;
-[[nodiscard]] SampledSpectrum select(const SampledSpectrum &p, const Float &t, const SampledSpectrum &f) noexcept;
-[[nodiscard]] SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const Float &f) noexcept;
-[[nodiscard]] SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept;
-[[nodiscard]] SampledSpectrum select(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept;
-[[nodiscard]] SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept;
+[[nodiscard]] SampledSpectrum sp_select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum sp_select(const SampledSpectrum &p, const Float &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum sp_select(const SampledSpectrum &p, const SampledSpectrum &t, const Float &f) noexcept;
+[[nodiscard]] SampledSpectrum sp_select(const Bool &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum sp_select(const Bool &p, const Float &t, const SampledSpectrum &f) noexcept;
+[[nodiscard]] SampledSpectrum sp_select(const Bool &p, const SampledSpectrum &t, const Float &f) noexcept;
 
 [[nodiscard]] SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept;
 
