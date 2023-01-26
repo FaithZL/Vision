@@ -62,6 +62,12 @@ public:
     [[nodiscard]] Float operator[](const Uint &i) const noexcept {
         return dimension() == 1u ? _values[0u] : _values[i];
     }
+    [[nodiscard]] Float3 vec3() const noexcept {
+        return make_float3(values()[0], values()[1], values()[2]);
+    }
+    [[nodiscard]] Float4 vec4() const noexcept {
+        return make_float4(values()[0], values()[1], values()[2], values()[3]);
+    }
     template<typename F>
     [[nodiscard]] auto map(F &&f) const noexcept {
         SampledSpectrum s{dimension()};
