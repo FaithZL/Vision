@@ -12,7 +12,13 @@ public:
         : Spectrum(desc) {}
 
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
-        return SampledWavelengths(3);
+        SampledWavelengths swl{3u};
+        auto lambdas = rgb_spectrum_peak_wavelengths;
+        for (auto i = 0u; i < 3u; i++) {
+            swl.set_lambda(i, lambdas[i]);
+            swl.set_pdf(i, 1.f);
+        }
+        return swl;
     }
 
     [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {

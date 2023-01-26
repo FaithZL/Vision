@@ -25,7 +25,7 @@ Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
 ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     ScatterEval ret;
     Bool s = safe(wo, wi);
-    ret.f = f(wo, wi, fresnel) * select(s, 1.f, 0.f);
+    ret.f = select(s, f(wo, wi, fresnel), 0.f);
     ret.pdf = select(s, PDF(wo, wi, fresnel), 1.f);
     return ret;
 }
@@ -106,8 +106,7 @@ SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fres
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
     SampledSpectrum tr = _microfacet->BTDF(wo, wh, wi, SampledSpectrum(F.dimension(), 1.f) - F, eta);
-    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, 1.f) * tr * Kt;
-    //    return SampledSpectrum(3u, 0.f);
+    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, tr * Kt);
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
