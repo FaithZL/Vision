@@ -66,7 +66,9 @@ public:
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
         _spd_k.init(complex_ior.k);
+    }
 
+    void prepare() noexcept override {
         _spd_eta.prepare();
         _spd_k.prepare();
     }
@@ -76,8 +78,8 @@ public:
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-//        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl).sample;
-//        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl).sample;
+        //        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl).sample;
+        //        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl).sample;
         SampledSpectrum eta = _spd_eta.sample(swl);
         SampledSpectrum k = _spd_k.sample(swl);
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
