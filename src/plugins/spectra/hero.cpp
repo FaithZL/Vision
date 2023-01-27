@@ -27,6 +27,36 @@ public:
     }
 };
 
+class RGBToSpectrumTable {
+public:
+    static constexpr auto res = 64u;
+    using coefficient_table_type = const float[3][res][res][res][4];
+
+private:
+    const coefficient_table_type &_coefficients;
+
+private:
+    [[nodiscard]] inline static auto _inverse_smooth_step(auto x) noexcept {
+        return 0.5f - sin(asin(1.0f - 2.0f * x) * (1.0f / 3.0f));
+    }
+
+public:
+    explicit constexpr RGBToSpectrumTable(const coefficient_table_type &coefficients) noexcept
+        : _coefficients{coefficients} {}
+    constexpr RGBToSpectrumTable(RGBToSpectrumTable &&) noexcept = default;
+    constexpr RGBToSpectrumTable(const RGBToSpectrumTable &) noexcept = default;
+};
+
+class RGBAlbedoSpectrum {
+
+private:
+    RGBSigmoidPolynomial _rsp;
+
+public:
+    explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
+    [[nodiscard]] auto sample(const Float &lambda) const noexcept { return _rsp(lambda); }
+};
+
 class HeroWavelengthSpectrum : public Spectrum {
 private:
     uint _dimension{};
