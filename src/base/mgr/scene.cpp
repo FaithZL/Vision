@@ -41,6 +41,7 @@ void Scene::prepare() noexcept {
     _camera->update_device_data();
     build_warpers();
     prepare_materials();
+    _rp->spectrum().prepare();
 }
 
 void Scene::build_warpers() noexcept {

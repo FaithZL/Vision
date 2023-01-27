@@ -4,6 +4,8 @@
 
 #include "srgb2spec.h"
 #include "base/color/spectrum.h"
+#include "base/color/spd.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 
@@ -60,10 +62,15 @@ public:
 class HeroWavelengthSpectrum : public Spectrum {
 private:
     uint _dimension{};
+    SPD _illumination_d65;
 
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc), _dimension(desc.dimension) {}
+        : Spectrum(desc), _dimension(desc.dimension),
+          _illumination_d65(SPD::create_cie_d65(render_pipeline())) {}
+    void prepare() noexcept override {
+        _illumination_d65.prepare();
+    }
     [[nodiscard]] uint dimension() const noexcept override { return _dimension; }
     [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return make_float4(0.f);
