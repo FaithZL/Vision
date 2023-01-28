@@ -24,7 +24,7 @@ public:
         return render_pipeline()->tex(_image_wrapper.id()).sample<float4>(uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
-        return _image_wrapper.texture().resolution();
+        return _image_wrapper.texture().resolution().xy();
     }
     void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {
         _image_wrapper.image().for_each_pixel(func);
