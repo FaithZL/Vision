@@ -58,13 +58,37 @@ public:
     }
 
     void prepare() noexcept {
-
-        _base_index = _rp->register_texture(_coefficient0) - 1;
+        _base_index = _rp->register_texture(_coefficient0);
         _rp->register_texture(_coefficient1);
         _rp->register_texture(_coefficient2);
         _coefficient0.upload_immediately(&_coefficients[0]);
         _coefficient1.upload_immediately(&_coefficients[1]);
         _coefficient2.upload_immediately(&_coefficients[2]);
+    }
+
+    [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
+        Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
+        static Callable decode = [](Var<BindlessArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
+            Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
+            $if(!(rgb[0] == rgb[1] & rgb[1] == rgb[2])) {
+                Uint maxc = select(
+                    rgb[0] > rgb[1],
+                    select(rgb[0] > rgb[2], 0u, 2u),
+                    select(rgb[1] > rgb[2], 1u, 2u));
+                Float z = rgb[maxc];
+                Float x = rgb[(maxc + 1u) % 3u] / z;
+                Float y = rgb[(maxc + 2u) % 3u] / z;
+                Float zz = _inverse_smooth_step(_inverse_smooth_step(z));
+
+                Float3 coord = dsl::fma(
+                    make_float3(x, y, zz),
+                    make_float3((res - 1.0f) / res),
+                    make_float3(0.5f / res));
+                c = array.tex(base_index + maxc).sample<float4>(coord).xyz();
+            };
+            return c;
+        };
+        return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb), 1.f);
     }
 };
 
