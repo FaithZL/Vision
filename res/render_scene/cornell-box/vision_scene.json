@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Metal",
+                "material": "ShortBox",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -248,7 +248,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Mirror",
+                "material": "TallBox",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -552,7 +552,7 @@
         }
     },
     "spectrum" : {
-        "type" : "srgb"
+        "type" : "hero"
     },
     "light_sampler": {
         "type": "uniform",

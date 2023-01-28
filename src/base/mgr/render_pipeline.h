@@ -37,7 +37,7 @@ public:
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
         return _bindless_array.emplace(OC_FORWARD(buffer));
     }
-    [[nodiscard]] handle_ty register_texture(const RHITexture &texture) noexcept {
+    handle_ty register_texture(const RHITexture &texture) noexcept {
         return _bindless_array.emplace(texture);
     }
     void deregister_buffer(handle_ty index) noexcept;

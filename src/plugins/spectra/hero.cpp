@@ -38,6 +38,9 @@ private:
     const coefficient_table_type &_coefficients;
     RenderPipeline *_rp{};
     uint _base_index{InvalidUI32};
+    RHITexture _coefficient0;
+    RHITexture _coefficient1;
+    RHITexture _coefficient2;
 
 private:
     [[nodiscard]] inline static auto _inverse_smooth_step(auto x) noexcept {
@@ -47,11 +50,21 @@ private:
 public:
     explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, RenderPipeline *rp) noexcept
         : _coefficients{coefficients}, _rp(rp) {}
-    void init() noexcept {
 
+    void init() noexcept {
+        _coefficient0 = _rp->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
+        _coefficient1 = _rp->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
+        _coefficient2 = _rp->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
     }
 
     void prepare() noexcept {
+
+        _base_index = _rp->register_texture(_coefficient0) - 1;
+        _rp->register_texture(_coefficient1);
+        _rp->register_texture(_coefficient2);
+        _coefficient0.upload_immediately(&_coefficients[0]);
+        _coefficient1.upload_immediately(&_coefficients[1]);
+        _coefficient2.upload_immediately(&_coefficients[2]);
     }
 };
 
