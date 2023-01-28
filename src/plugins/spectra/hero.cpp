@@ -36,6 +36,8 @@ public:
 
 private:
     const coefficient_table_type &_coefficients;
+    RenderPipeline *_rp{};
+    uint _base_index{InvalidUI32};
 
 private:
     [[nodiscard]] inline static auto _inverse_smooth_step(auto x) noexcept {
@@ -43,40 +45,65 @@ private:
     }
 
 public:
-    explicit constexpr RGBToSpectrumTable(const coefficient_table_type &coefficients) noexcept
-        : _coefficients{coefficients} {}
-    constexpr RGBToSpectrumTable(RGBToSpectrumTable &&) noexcept = default;
-    constexpr RGBToSpectrumTable(const RGBToSpectrumTable &) noexcept = default;
+    explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, RenderPipeline *rp) noexcept
+        : _coefficients{coefficients}, _rp(rp) {}
+    void init() noexcept {
+
+    }
+
+    void prepare() noexcept {
+    }
 };
 
 class RGBAlbedoSpectrum {
-
 private:
     RGBSigmoidPolynomial _rsp;
 
 public:
     explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
-    [[nodiscard]] auto sample(const Float &lambda) const noexcept { return _rsp(lambda); }
+    [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
+};
+
+class RGBAIlluminationSpectrum {
+private:
+    RGBSigmoidPolynomial _rsp;
+    Float _scale;
+
+public:
+    explicit RGBAIlluminationSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
+    [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
 class HeroWavelengthSpectrum : public Spectrum {
 private:
     uint _dimension{};
-    SPD _illumination_d65;
+    SPD _white_point;
+    RGBToSpectrumTable _rgb_to_spectrum_table;
 
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc), _dimension(desc.dimension),
-          _illumination_d65(SPD::create_cie_d65(render_pipeline())) {}
+          _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, render_pipeline()),
+          _white_point(SPD::create_cie_d65(render_pipeline())) {
+        _rgb_to_spectrum_table.init();
+    }
+
     void prepare() noexcept override {
-        _illumination_d65.prepare();
+        _white_point.prepare();
+        _rgb_to_spectrum_table.prepare();
     }
     [[nodiscard]] uint dimension() const noexcept override { return _dimension; }
     [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
-        return make_float4(0.f);
+        return make_float4(sp[0], sp[1], sp[2], 1.f);
     }
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
-        return SampledWavelengths(4);
+        SampledWavelengths swl{3u};
+        auto lambdas = rgb_spectrum_peak_wavelengths;
+        for (auto i = 0u; i < 3u; i++) {
+            swl.set_lambda(i, lambdas[i]);
+            swl.set_pdf(i, 1.f);
+        }
+        return swl;
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         // todo
