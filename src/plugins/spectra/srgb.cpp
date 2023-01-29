@@ -12,9 +12,9 @@ public:
         : Spectrum(desc) {}
 
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
-        SampledWavelengths swl{3u};
+        SampledWavelengths swl{dimension()};
         auto lambdas = rgb_spectrum_peak_wavelengths;
-        for (auto i = 0u; i < 3u; i++) {
+        for (auto i = 0u; i < dimension(); i++) {
             swl.set_lambda(i, lambdas[i]);
             swl.set_pdf(i, 1.f);
         }

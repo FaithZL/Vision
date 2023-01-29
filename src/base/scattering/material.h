@@ -16,27 +16,29 @@ struct BSDF {
 public:
     UVN<Float3> shading_frame;
     Float3 ng;
+    const SampledWavelengths &swl;
 
 protected:
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
-        ScatterEval ret{3u};
-        ret.f = {3u, 0.f};
+        ScatterEval ret{swl.dimension()};
+        ret.f = {swl.dimension(), 0.f};
         ret.pdf = 1.f;
         return ret;
     }
 
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
-        BSDFSample ret{3u};
+        BSDFSample ret{swl.dimension()};
         return ret;
     }
 
 public:
     BSDF() = default;
-    explicit BSDF(const Interaction &si)
-        : shading_frame(si.s_uvn), ng(si.g_uvn.normal()) {}
+    explicit BSDF(const Interaction &si, const SampledWavelengths &swl)
+        : shading_frame(si.s_uvn), ng(si.g_uvn.normal()), swl(swl) {}
+
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept {
         // todo
-        return {3u, 0.f};
+        return {swl.dimension(), 0.f};
     }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
@@ -54,7 +56,7 @@ public:
                    const SP<Fresnel> &fresnel,
                    MicrofacetReflection refl,
                    MicrofacetTransmission trans)
-        : BSDF(si), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
+        : BSDF(si, refl.swl()), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override;
@@ -67,7 +69,7 @@ public:
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept {
-        return make_unique<BSDF>(si);
+        return make_unique<BSDF>(si, swl);
     }
 };
 }// namespace vision

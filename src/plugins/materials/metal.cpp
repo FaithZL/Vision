@@ -33,7 +33,7 @@ public:
     ConductorBSDF(const Interaction &si,
               const SP<Fresnel> &fresnel,
               MicrofacetReflection refl)
-        : BSDF(si), _fresnel(fresnel), _refl(move(refl)) {}
+        : BSDF(si, refl.swl()), _fresnel(fresnel), _refl(move(refl)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
         return _refl.safe_evaluate(wo, wi, _fresnel->clone());

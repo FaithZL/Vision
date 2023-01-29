@@ -101,7 +101,7 @@ private:
 
 public:
     SubstrateBSDF(const Interaction &si, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
-        : BSDF(si), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+        : BSDF(si,bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {

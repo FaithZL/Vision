@@ -17,7 +17,7 @@ using namespace ocarina;
 
 [[nodiscard]] inline SampledSpectrum fresnel_complex(Float cos_theta_i, const SampledSpectrum &eta,
                                                      const SampledSpectrum &k) noexcept {
-    SampledSpectrum ret{3u};
+    SampledSpectrum ret{eta.dimension()};
     for (uint i = 0; i < ret.dimension(); ++i) {
         ret[i] = fresnel_complex<D>(cos_theta_i, eta[i], k[i]);
     }

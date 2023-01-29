@@ -182,7 +182,7 @@ public:
     }
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
         auto [wi, valid] = sample_wi(wo, u, fresnel);
-        BSDFSample ret{3u};
+        BSDFSample ret{swl().dimension()};
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
         ret.flags = BxDFFlag::GlossyRefl;
@@ -192,7 +192,7 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override {
         Float2 u = sampler->next_2d();
         auto [wi, valid] = sample_wi(wo, u, fresnel);
-        BSDFSample ret{3u};
+        BSDFSample ret{swl().dimension()};
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
         ret.flags = BxDFFlag::GlossyRefl;
@@ -305,7 +305,6 @@ public:
 
 class PrincipledBSDF : public BSDF {
 private:
-    const SampledWavelengths &_swl;
     SP<const Fresnel> _fresnel{};
     optional<Diffuse> _diffuse{};
     optional<Retro> _retro{};
@@ -330,7 +329,7 @@ private:
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
-        return SampledSpectrum(_swl.dimension(), 0.f);
+        return SampledSpectrum(swl.dimension(), 0.f);
     }
 
     template<typename T, typename... Args>
@@ -358,7 +357,7 @@ public:
                    const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
                    const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
                    const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
-        : BSDF(si),_swl(swl) {
+        : BSDF(si, swl) {
 
         auto [color, color_lum] = Texture::eval_albedo_spectrum(color_tex, si, swl);
         Float metallic = Texture::eval(metallic_tex, si).x;
@@ -446,8 +445,8 @@ public:
     }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        ScatterEval ret{3u};
-        SampledSpectrum f = {_swl.dimension(), 0.f};
+        ScatterEval ret{swl.dimension()};
+        SampledSpectrum f = {swl.dimension(), 0.f};
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
@@ -478,7 +477,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret{3u};
+        BSDFSample ret{swl.dimension()};
         Float uc = sampler->next_1d();
         Float2 u = sampler->next_2d();
 
