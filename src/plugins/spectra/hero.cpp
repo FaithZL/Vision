@@ -134,6 +134,17 @@ public:
         return make_float4(sp[0], sp[1], sp[2], 1.f);
     }
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
+//        uint n = dimension();
+//        SampledWavelengths swl{n};
+//        Float u = sampler->next_1d();
+//        for (uint i = 0; i < n; ++i) {
+//            float offset = static_cast<float>(1 * (1.f / n));
+//            Float up = fract(u + offset);
+//            Float lambda = sample_visible_wavelength(up);
+//            swl.set_lambda(i, lambda);
+//            swl.set_pdf(i, visible_wavelength_PDF(lambda));
+//        }
+
         SampledWavelengths swl{3u};
         auto lambdas = rgb_spectrum_peak_wavelengths;
         for (auto i = 0u; i < 3u; i++) {
