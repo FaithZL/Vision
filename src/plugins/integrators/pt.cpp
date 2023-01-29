@@ -109,7 +109,7 @@ public:
                 Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
                 SampledSpectrum tr = geometry.Tr(_scene, swl, shadow_ray);
                 comment("sample bsdf");
-                BSDFSample bsdf_sample;
+                BSDFSample bsdf_sample{swl.dimension()};
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
@@ -122,7 +122,7 @@ public:
 
                 if (_scene->has_medium()) {
                     $if(it.has_phase()) {
-                        PhaseSample ps;
+                        PhaseSample ps{swl.dimension()};
                         Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, swl, ps);
                         bsdf_sample.eval = ps.eval;
                         bsdf_sample.wi = ps.wi;

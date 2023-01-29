@@ -23,7 +23,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
 
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &si,
                                      const SampledWavelengths &swl) const noexcept {
-    LightEval ret;
+    LightEval ret = {{swl.dimension(), 0.f}, 0.f};
     dispatch_light(si.light_id, [&](const Light *light) {
         if (light->type() != LightType::Area) { return; }
         LightEvalContext p_light{si};
@@ -37,7 +37,7 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
 
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {
-    LightEval ret;
+    LightEval ret{swl.dimension()};
     LightEvalContext p_light{p_ref.pos + wi};
     ret = env_light()->evaluate(p_ref, p_light, swl);
     Float pmf = 1.f / light_num();

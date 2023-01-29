@@ -182,7 +182,7 @@ public:
     }
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
         auto [wi, valid] = sample_wi(wo, u, fresnel);
-        BSDFSample ret;
+        BSDFSample ret{3u};
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
         ret.flags = BxDFFlag::GlossyRefl;
@@ -192,7 +192,7 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override {
         Float2 u = sampler->next_2d();
         auto [wi, valid] = sample_wi(wo, u, fresnel);
-        BSDFSample ret;
+        BSDFSample ret{3u};
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
         ret.flags = BxDFFlag::GlossyRefl;
@@ -446,7 +446,7 @@ public:
     }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
-        ScatterEval ret;
+        ScatterEval ret{3u};
         SampledSpectrum f = {_swl.dimension(), 0.f};
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();
@@ -478,7 +478,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret;
+        BSDFSample ret{3u};
         Float uc = sampler->next_1d();
         Float2 u = sampler->next_2d();
 

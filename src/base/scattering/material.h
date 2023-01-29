@@ -19,14 +19,14 @@ public:
 
 protected:
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
-        ScatterEval ret;
+        ScatterEval ret{3u};
         ret.f = {3u, 0.f};
         ret.pdf = 1.f;
         return ret;
     }
 
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
-        BSDFSample ret;
+        BSDFSample ret{3u};
         return ret;
     }
 

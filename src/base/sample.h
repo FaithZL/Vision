@@ -48,15 +48,25 @@ struct RaySample {
 };
 
 struct ScatterEval {
-    SampledSpectrum f{make_float3(0.f)};
+public:
+    SampledSpectrum f{};
     Float pdf{0.f};
+
+public:
+    explicit ScatterEval(uint dim) : f(dim), pdf{0.f} {};
+    ScatterEval(const SampledSpectrum &f, const Float &pdf) : f(f), pdf(pdf) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
 };
 
 struct LightEval {
-    SampledSpectrum L{make_float3(0.f)};
+public:
+    SampledSpectrum L{};
     Float pdf{0.f};
+
+public:
+    explicit LightEval(uint dim) : L(dim), pdf{0.f} {};
+    LightEval(const SampledSpectrum &L, const Float &pdf) : L(L), pdf(pdf) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return L / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
 };
@@ -67,24 +77,40 @@ struct SampledDirection {
 };
 
 struct ScatterSample {
+public:
     ScatterEval eval;
     Float3 wi{make_float3(0.f)};
+
+public:
+    explicit ScatterSample(uint dim) noexcept
+        : eval(dim), wi(make_float3(0.f)) {}
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }
     virtual ~ScatterSample() = default;
 };
 
-struct PhaseSample : public ScatterSample {};
+struct PhaseSample : public ScatterSample {
+    using ScatterSample::ScatterSample;
+};
 
 struct BSDFSample : public ScatterSample {
+public:
     Uchar flags{BxDFFlag::Unset};
     Float eta{1.f};
+
+public:
+    using ScatterSample::ScatterSample;
 };
 
 struct LightSample {
+public:
     LightEval eval;
     Float3 p_light{make_float3(0.f)};
+
+public:
+    explicit LightSample(uint dim) noexcept
+        : eval(dim), p_light(make_float3(0.f)) {}
     [[nodiscard]] Bool valid() const noexcept {
         return eval.valid();
     }

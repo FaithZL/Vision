@@ -38,7 +38,7 @@ public:
             _values[i] = value;
         }
     }
-    explicit SampledSpectrum(uint n = 3u) noexcept : SampledSpectrum{n, 0.f} {}
+    explicit SampledSpectrum(uint n = 1u) noexcept : SampledSpectrum{n, 0.f} {}
     explicit SampledSpectrum(const Float3 &value) noexcept : _values(3) {
         for (int i = 0; i < 3; ++i) {
             _values[i] = value[i];
@@ -134,8 +134,7 @@ public:
         return map([rhs](const auto &lvalue) { return lvalue op rhs; });                                      \
     }                                                                                                         \
     [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                    \
-        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),           \
-                        "Invalid sampled spectrum");                                                          \
+        OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                \
         SampledSpectrum s(ocarina::max(dimension(), rhs.dimension()));                                        \
         for (int i = 0; i < s.dimension(); ++i) {                                                             \
             s[i] = (*this)[i] op rhs[i];                                                                      \
@@ -152,8 +151,7 @@ public:
         return *this;                                                                                         \
     }                                                                                                         \
     SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                    \
-        OC_ERROR_IF_NOT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension(),           \
-                        "Invalid sampled spectrum");                                                          \
+        OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                \
         if (rhs.dimension() == 1u) {                                                                          \
             return *this op## = rhs[0u];                                                                      \
         }                                                                                                     \

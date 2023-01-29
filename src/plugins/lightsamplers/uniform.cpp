@@ -24,7 +24,7 @@ public:
                                      const SampledWavelengths &swl) const noexcept override {
         Float u_light = sampler->next_1d();
         Float2 u_surface = sampler->next_2d();
-        LightSample ret;
+        LightSample ret{swl.dimension()};
         SampledLight sampled_light = select_light(lsc, u_light);
         RenderPipeline *rp = _scene->render_pipeline();
         _lights.dispatch(sampled_light.light_id, [&](const Light *light) {

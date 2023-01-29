@@ -51,7 +51,7 @@ public:
 
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
-        LightSample ret;
+        LightSample ret{swl.dimension()};
         auto rp = _scene->render_pipeline();
         auto [prim_id, pmf, u_remapping] = _warper->sample_discrete(u.x);
         u.x = u_remapping;

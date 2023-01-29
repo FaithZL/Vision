@@ -50,7 +50,7 @@ public:
         return (1.f - fr) * PDF_diffuse(wo, wi) + fr * PDF_specular(wo, wi);
     }
     [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
-        BSDFSample ret;
+        BSDFSample ret{swl().dimension()};
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(u.x < fr) {
             u.x = remapping(u.x, 0.f, fr);
@@ -72,7 +72,7 @@ public:
 
     [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler,
                                         SP<Fresnel> fresnel) const noexcept override {
-        BSDFSample ret;
+        BSDFSample ret{swl().dimension()};
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         Float2 u = sampler->next_2d();
         $if(u.x < fr) {

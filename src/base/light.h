@@ -50,7 +50,7 @@ public:
     [[nodiscard]] virtual float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
-        LightSample ret;
+        LightSample ret{swl.dimension()};
         LightEvalContext p_light;
         p_light.pos = position();
         ret.eval = evaluate(p_ref, p_light, swl);

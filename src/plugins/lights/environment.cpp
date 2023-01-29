@@ -55,12 +55,12 @@ public:
         Float sin_theta = sin(theta);
         Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
         Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
-        return {.L = L(local_dir,swl), .pdf = select(sin_theta == 0, 0.f, pdf)};
+        return {L(local_dir,swl), select(sin_theta == 0, 0.f, pdf)};
     }
 
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
-        LightSample ret;
+        LightSample ret{swl.dimension()};
         auto [uv, pdf_map, coord] = _warper->sample_continuous(u);
         Float theta = uv[1] * Pi;
         Float phi = uv[0] * _2Pi;
