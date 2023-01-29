@@ -25,6 +25,18 @@ public:
     void set_lambda(const Uint &i, const Float &lambda) noexcept { _lambdas[i] = lambda; }
     void set_pdf(const Uint &i, const Float &pdf) noexcept { _pdfs[i] = pdf; }
     [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(_lambdas.size()); }
+    [[nodiscard]] Float3 lambda_vec3() const noexcept {
+        return make_float3(_lambdas[0], _lambdas[1], _lambdas[2]);
+    }
+    [[nodiscard]] Float4 lambda_vec4() const noexcept {
+        return make_float4(_lambdas[0], _lambdas[1], _lambdas[2], _lambdas[3]);
+    }
+    [[nodiscard]] Float3 pdf_vec3() const noexcept {
+        return make_float3(_pdfs[0], _pdfs[1], _pdfs[2]);
+    }
+    [[nodiscard]] Float4 pdf_vec4() const noexcept {
+        return make_float4(_pdfs[0], _pdfs[1], _pdfs[2], _pdfs[3]);
+    }
 };
 
 class SampledSpectrum {

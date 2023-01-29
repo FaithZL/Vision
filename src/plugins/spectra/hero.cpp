@@ -90,6 +90,14 @@ public:
         };
         return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb), 1.f);
     }
+
+    [[nodiscard]] Float4 decode_unbound(const Float3 &rgb_in) const noexcept {
+        Float3 rgb = max(rgb_in, make_float3(0.f));
+        Float m = max_comp(rgb);
+        Float scale = 2.f * m;
+        Float4 c = decode_albedo(select(scale == 0.f, make_float3(0.f), rgb / scale));
+        return make_float4(c.xyz(), scale);
+    }
 };
 
 class RGBAlbedoSpectrum {
@@ -101,14 +109,20 @@ public:
     [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
-class RGBAIlluminationSpectrum {
+class RGBIlluminationSpectrum {
 private:
     RGBSigmoidPolynomial _rsp;
     Float _scale;
+    const SPD &_white_point;
 
 public:
-    explicit RGBAIlluminationSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
+    explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
+        : _rsp{move(rsp)}, _scale(scale), _white_point(wp) {}
+    explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
+        : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
+    [[nodiscard]] Float sample(const Float &lambda) const noexcept {
+        return _rsp(lambda) * _scale * _white_point.sample(lambda);
+    }
 };
 
 class HeroWavelengthSpectrum : public Spectrum {
@@ -182,16 +196,26 @@ public:
         return swl;
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        // todo
-        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
+        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
+        SampledSpectrum sp{dimension()};
+        for (uint i = 0; i < dimension(); ++i) {
+            sp[i] = spec.sample(swl.lambda(i));
+        }
+        return {.sample = sp, .strength = luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        // todo
-        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
+        RGBIlluminationSpectrum spec{c, _white_point};
+        SampledSpectrum sp{dimension()};
+        for (uint i = 0; i < dimension(); ++i) {
+            sp[i] = spec.sample(swl.lambda(i));
+        }
+        return {.sample = sp, .strength = luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         // todo
-        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        return {.sample = SampledSpectrum(4u), .strength = luminance(rgb)};
     }
 };
 
