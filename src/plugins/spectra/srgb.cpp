@@ -21,8 +21,16 @@ public:
         return swl;
     }
 
-    [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
-        return make_float4(sp[0], sp[1], sp[2], 1.f);
+    [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return cie::srgb_to_y(srgb(sp, swl));
+    }
+
+    [[nodiscard]] Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return cie::srgb_to_xyz(srgb(sp, swl));
+    }
+
+    [[nodiscard]] Float3 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return sp.vec3();
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};

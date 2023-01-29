@@ -115,41 +115,69 @@ class HeroWavelengthSpectrum : public Spectrum {
 private:
     uint _dimension{};
     SPD _white_point;
+    SPD _cie_x;
+    SPD _cie_y;
+    SPD _cie_z;
     RGBToSpectrumTable _rgb_to_spectrum_table;
 
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc), _dimension(desc.dimension),
+        : Spectrum(desc), _dimension(3),
           _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, render_pipeline()),
-          _white_point(SPD::create_cie_d65(render_pipeline())) {
+          _white_point(SPD::create_cie_d65(render_pipeline())),
+          _cie_x(SPD::create_cie_x(render_pipeline())),
+          _cie_y(SPD::create_cie_y(render_pipeline())),
+          _cie_z(SPD::create_cie_z(render_pipeline())) {
         _rgb_to_spectrum_table.init();
     }
 
     void prepare() noexcept override {
         _white_point.prepare();
         _rgb_to_spectrum_table.prepare();
+        _cie_x.prepare();
+        _cie_y.prepare();
+        _cie_z.prepare();
     }
     [[nodiscard]] uint dimension() const noexcept override { return _dimension; }
-    [[nodiscard]] Float4 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
-        return make_float4(sp[0], sp[1], sp[2], 1.f);
+    [[nodiscard]] Float3 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return cie::xyz_to_srgb(cie_xyz(sp, swl));
+    }
+    [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        Float sum = 0.f;
+
+        constexpr auto safe_div = [](const Float &a, const Float &b) noexcept {
+            return select(b == 0.0f, 0.0f, a / b);
+        };
+
+        for (uint i = 0; i < sp.dimension(); ++i) {
+            sum += safe_div(_cie_y.sample(swl.lambda(i)) * sp[i], swl.pdf(i));
+        }
+        float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
+        return sum * factor;
+    }
+    [[nodiscard]] Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        Float3 sum = make_float3(0.f);
+        constexpr auto safe_div = [](const Float &a, const Float &b) noexcept {
+            return select(b == 0.0f, 0.0f, a / b);
+        };
+        for (uint i = 0; i < sp.dimension(); ++i) {
+            sum += make_float3(safe_div(_cie_x.sample(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(_cie_y.sample(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(_cie_z.sample(swl.lambda(i)) * sp[i], swl.pdf(i)));
+        }
+        float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
+        return sum * factor;
     }
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
-//        uint n = dimension();
-//        SampledWavelengths swl{n};
-//        Float u = sampler->next_1d();
-//        for (uint i = 0; i < n; ++i) {
-//            float offset = static_cast<float>(1 * (1.f / n));
-//            Float up = fract(u + offset);
-//            Float lambda = sample_visible_wavelength(up);
-//            swl.set_lambda(i, lambda);
-//            swl.set_pdf(i, visible_wavelength_PDF(lambda));
-//        }
-
-        SampledWavelengths swl{3u};
-        auto lambdas = rgb_spectrum_peak_wavelengths;
-        for (auto i = 0u; i < 3u; i++) {
-            swl.set_lambda(i, lambdas[i]);
-            swl.set_pdf(i, 1.f);
+        uint n = dimension();
+        SampledWavelengths swl{n};
+        Float u = sampler->next_1d();
+        for (uint i = 0; i < n; ++i) {
+            float offset = static_cast<float>(i * (1.f / n));
+            Float up = fract(u + offset);
+            Float lambda = sample_visible_wavelength(up);
+            swl.set_lambda(i, lambda);
+            swl.set_pdf(i, visible_wavelength_PDF(lambda));
         }
         return swl;
     }
