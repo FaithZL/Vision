@@ -411,7 +411,7 @@ static constexpr array<float, cie_sample_count> D65 = {
     0.6098949875032796f};
 
 template<typename T>
-[[nodiscard]] inline auto xyz_to_srgb(T &&xyz) noexcept {
+[[nodiscard]] inline auto xyz_to_linear_srgb(T &&xyz) noexcept {
     static constexpr float3x3 xyz2srgb = make_float3x3(
         +3.240479f, -0.969256f, +0.055648f,
         -1.537150f, +1.875991f, -0.204043f,
@@ -420,7 +420,7 @@ template<typename T>
 }
 
 template<typename T>
-[[nodiscard]] inline auto srgb_to_xyz(T &&rgb) noexcept {
+[[nodiscard]] inline auto linear_srgb_to_xyz(T &&rgb) noexcept {
     static constexpr float3x3 srgb2xyz = make_float3x3(
         0.412453f, 0.212671f, 0.019334f,
         0.357580f, 0.715160f, 0.119193f,
@@ -429,7 +429,7 @@ template<typename T>
 }
 
 template<typename T>
-[[nodiscard]] inline auto srgb_to_y(T &&rgb) noexcept {
+[[nodiscard]] inline auto linear_srgb_to_y(T &&rgb) noexcept {
     constexpr auto m = make_float3(0.212671f, 0.715160f, 0.072169f);
     return dot(m, OC_FORWARD(rgb));
 }

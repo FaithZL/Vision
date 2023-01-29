@@ -22,14 +22,14 @@ public:
     }
 
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
-        return cie::srgb_to_y(srgb(sp, swl));
+        return cie::linear_srgb_to_y(linear_srgb(sp, swl));
     }
 
     [[nodiscard]] Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
-        return cie::srgb_to_xyz(srgb(sp, swl));
+        return cie::linear_srgb_to_xyz(linear_srgb(sp, swl));
     }
 
-    [[nodiscard]] Float3 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return sp.vec3();
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {

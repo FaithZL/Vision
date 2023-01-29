@@ -139,8 +139,8 @@ public:
         _cie_z.prepare();
     }
     [[nodiscard]] uint dimension() const noexcept override { return _dimension; }
-    [[nodiscard]] Float3 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
-        return cie::xyz_to_srgb(cie_xyz(sp, swl));
+    [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         Float sum = 0.f;

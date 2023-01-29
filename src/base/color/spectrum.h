@@ -220,7 +220,7 @@ public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
-    [[nodiscard]] virtual Float3 srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
