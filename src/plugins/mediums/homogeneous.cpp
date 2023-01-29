@@ -39,7 +39,7 @@ public:
         SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
         SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(_sigma_s, swl).sample;
         SampledSpectrum sigma_a = spectrum().decode_to_unbound_spectrum(_sigma_a, swl).sample;
-        Uint channel = min(cast<uint>(sampler->next_1d() * 3), 2u);
+        Uint channel = min(cast<uint>(sampler->next_1d() * swl.dimension()), swl.dimension() - 1);
         Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
         Float t = min(dist / length(ray->direction()), ray->t_max());
         Bool sampled_medium = t < ray->t_max();
