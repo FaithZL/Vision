@@ -15,16 +15,16 @@
 using namespace vision;
 using namespace ocarina;
 
+float eta(float lambda) {
+    float f = 1.03961212 * sqr(lambda) / (sqr(lambda) - 0.00600069867) +
+        0.231792344 * sqr(lambda) / (sqr(lambda) - 0.0200179144) +
+        1.01046945 * sqr(lambda) / (sqr(lambda) - 103.560653);
+    return sqrt(f + 1);
+}
+
 int main(int argc, char *argv[]) {
 
-    float3 lambdas = make_float3(520, 586, 652);
-    float3 eta = make_float3(1.5201596882463, 1.516865556749, 1.5144566604975);
-
-    CauchyDispersion cauchy_dispersion(eta, lambdas);
-
-    for (int i = 360; i < 830; i += 10) {
-        cout << i << "   " << cauchy_dispersion.eta(i) << endl;
-    }
+    float e = eta(830);
 
     return 0;
 }
