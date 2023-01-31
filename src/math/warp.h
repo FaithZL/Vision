@@ -142,16 +142,4 @@ template<EPort p = EPort::D>
 }
 VS_MAKE_CALLABLE(robust_mis_weight)
 
-template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> sample_visible_wavelength_impl(const oc_float<p> &u) noexcept {
-    return 538 - 138.888889f * atanh(0.85691062f - 1.82750197f * u);
-}
-VS_MAKE_CALLABLE(sample_visible_wavelength)
-
-template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> visible_wavelength_PDF_impl(const oc_float<p> &lambda) noexcept {
-    return 0.0039398042f / sqr(cosh(0.0072f * (lambda - 538)));
-}
-VS_MAKE_CALLABLE(visible_wavelength_PDF)
-
 }// namespace vision

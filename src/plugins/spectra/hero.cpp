@@ -9,6 +9,18 @@
 
 namespace vision {
 
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> sample_visible_wavelength_impl(const oc_float<p> &u) noexcept {
+    return 538 - 138.888889f * atanh(0.85691062f - 1.82750197f * u);
+}
+VS_MAKE_CALLABLE(sample_visible_wavelength)
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> visible_wavelength_PDF_impl(const oc_float<p> &lambda) noexcept {
+    return 0.0039398042f / sqr(cosh(0.0072f * (lambda - 538)));
+}
+VS_MAKE_CALLABLE(visible_wavelength_PDF)
+
 class RGBSigmoidPolynomial {
 private:
     array<Float, 3> _c;
@@ -19,13 +31,17 @@ private:
                       0.5f * fma(x, rsqrt(fma(x, x, 1.f)), 1.f));
     }
 
+    [[nodiscard]] Float _f(Float lambda) const noexcept {
+        return fma(fma(_c[0], lambda, _c[1]), lambda, _c[2]);
+    }
+
 public:
     RGBSigmoidPolynomial() noexcept = default;
     RGBSigmoidPolynomial(Float c0, Float c1, Float c2) noexcept
         : _c{c0, c1, c2} {}
     explicit RGBSigmoidPolynomial(Float3 c) noexcept : _c{c[0], c[1], c[2]} {}
     [[nodiscard]] Float operator()(Float lambda) const noexcept {
-        return _s(fma(lambda, fma(lambda, _c[0], _c[1]), _c[2]));// c0 * x * x + c1 * x + c2
+        return _s(_f(lambda));// c0 * x * x + c1 * x + c2
     }
 };
 
@@ -79,9 +95,9 @@ public:
                 Float x = rgb[(maxc + 1u) % 3u] / z;
                 Float y = rgb[(maxc + 2u) % 3u] / z;
                 Float zz = _inverse_smooth_step(_inverse_smooth_step(z));
-
-                Float3 coord = dsl::fma(
-                    make_float3(x, y, zz),
+                Float3 coord = make_float3(x, y, zz);
+                coord = dsl::fma(
+                    coord,
                     make_float3((res - 1.0f) / res),
                     make_float3(0.5f / res));
                 c = array.tex(base_index + maxc).sample<float4>(coord).xyz();
@@ -156,6 +172,28 @@ public:
     [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
+
+    void test(const SampledWavelengths &) noexcept override {
+        Sampler *sampler = _scene->sampler();
+        Float3 rgb = make_float3(0.63, 0.065, 0.05);
+        Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
+        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
+        int n = 30;
+        //        c = float4{-9.3091614e-05, 0.101219758, -31.811121, 1.f};
+
+        Float3 output = make_float3(0.f);
+        SampledWavelengths swl{dimension()};
+        $for(i, n) {
+            swl = sample_wavelength(sampler);
+            SampledSpectrum sp{1u, spec.sample(swl.lambda(0u))};
+            Float3 cl = linear_srgb(sp, swl);
+            output += cl;
+            prints("rgb {} {} {} xyz {} {} {}, lambda {}", cl, cie_xyz(sp, swl), swl.lambda(0u));
+        };
+        output /= float(n);
+        prints("rgb {}, {}, {} xyz {} {} {}  c {} {} {}", output, cie::linear_srgb_to_xyz(output), c.xyz());
+    }
+
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         Float sum = 0.f;
 
