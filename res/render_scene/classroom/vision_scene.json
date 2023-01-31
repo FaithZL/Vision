@@ -3861,6 +3861,12 @@
             ]
         }
     },
+    "spectrum" : {
+        "type" : "hero",
+        "param" : {
+            "dimension": 4
+        }
+    },
     "output": {
         "spp": 8192,
         "fn": "classroom-fog-8192spp.png"

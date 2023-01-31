@@ -31481,6 +31481,12 @@
     },
     "output": {
         "spp": 1024,
-        "fn": "output.png"
+        "fn": "srgb.png"
+    },
+    "spectrum" : {
+        "type" : "hero",
+        "param" : {
+            "dimension": 4
+        }
     }
 }

@@ -106,7 +106,8 @@ public:
             };
             return c;
         };
-        return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb), 1.f);
+        return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb),
+                           cie::linear_srgb_to_y(rgb));
     }
 
     [[nodiscard]] Float4 decode_unbound(const Float3 &rgb_in) const noexcept {
@@ -127,6 +128,21 @@ public:
     [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
+class RGBUnboundSpectrum {
+private:
+    RGBSigmoidPolynomial _rsp;
+    Float _scale;
+
+public:
+    explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
+        : _rsp{move(rsp)}, _scale(scale) {}
+    explicit RGBUnboundSpectrum(const Float4 &c) noexcept
+        : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
+    [[nodiscard]] Float sample(const Float &lambda) const noexcept {
+        return _rsp(lambda) * _scale;
+    }
+};
+
 class RGBIlluminationSpectrum {
 private:
     RGBSigmoidPolynomial _rsp;
@@ -135,7 +151,7 @@ private:
 
 public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
-    : _rsp{move(rsp)}, _scale(scale), _illuminant(wp) {}
+        : _rsp{move(rsp)}, _scale(scale), _illuminant(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
     [[nodiscard]] Float sample(const Float &lambda) const noexcept {
@@ -252,8 +268,13 @@ public:
         return {.sample = sp, .strength = luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        // todo
-        return {.sample = SampledSpectrum(4u), .strength = luminance(rgb)};
+        Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
+        RGBUnboundSpectrum spec{c};
+        SampledSpectrum sp{dimension()};
+        for (uint i = 0; i < dimension(); ++i) {
+            sp[i] = spec.sample(swl.lambda(i));
+        }
+        return {.sample = sp, .strength = luminance(rgb)};
     }
 };
 
