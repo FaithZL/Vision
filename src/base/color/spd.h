@@ -33,10 +33,29 @@ public:
         float a1 = 1, b1 = 1 / sqr(lambdas[0]), c1 = 1 / Pow<4>(lambdas[0]), d1 = eta[0];
         float a2 = 1, b2 = 1 / sqr(lambdas[1]), c2 = 1 / Pow<4>(lambdas[1]), d2 = eta[1];
         float a3 = 1, b3 = 1 / sqr(lambdas[2]), c3 = 1 / Pow<4>(lambdas[2]), d3 = eta[2];
+
+        float Dx = det(make_float3x3(d1, d2, d3,
+                                     b1, b2, b3,
+                                     c1, c2, c3));
+
+        float Dy = det(make_float3x3(a1, a2, a3,
+                                     d1, d2, d3,
+                                     c1, c2, c3));
+
+        float Dz = det(make_float3x3(a1, a2, a3,
+                                     b1, b2, b3,
+                                     d1, d2, d3));
+
+        float D = det(make_float3x3(a1, a2, a3,
+                                    b1, b2, b3,
+                                    c1, c2, c3));
+
+        _a = Dx / D;
+        _b = Dy / D;
+        _c = Dz / D;
     }
 
-    template<EPort p = D>
-    [[nodiscard]] oc_float<p> eta(const oc_float<p> &lambda) const noexcept {
+    [[nodiscard]] auto eta(const auto &lambda) const noexcept {
         return _a + _b / sqr(lambda) + _c / Pow<4>(lambda);
     }
 };
