@@ -554,7 +554,7 @@
     "spectrum" : {
         "type" : "hero",
         "param" : {
-            "dimension": 1
+            "dimension": 4
         }
     },
     "light_sampler": {

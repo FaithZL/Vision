@@ -82,13 +82,8 @@ int main(int argc, char *argv[]) {
 
         auto mf = make_shared<Microfacet<D>>(ax, ay);
       SampledWavelengths swl{3u};
-      MicrofacetTransmission mt(make_float3(1.f),swl, mf);
-        auto fresnel = make_shared<FresnelDielectric>(1.5f, swl);
-        BSDFSample bs = mt.sample(wo, u, fresnel);
-        Float3 w = bs.eval.f;
-        print("({},{},{})  {}", w.x, w.y, w.z, bs.eval.pdf);
-        w = bs.wi;
-        print("({},{},{})  ", w.x, w.y, fresnel->evaluate(wo.z)[0]);
+      MicrofacetTransmission mt(SampledSpectrum{3u},swl, mf);
+  
 
 
 
