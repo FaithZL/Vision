@@ -43,7 +43,6 @@ private:
 
 public:
     explicit SPD(RenderPipeline *rp);
-    SPD(vector<float> func, float interval, RenderPipeline *rp);
     SPD(vector<float> func, RenderPipeline *rp);
     void init(vector<float> func) noexcept;
     void prepare() noexcept;

@@ -44,14 +44,10 @@ template<typename T, size_t N>
 SPD::SPD(RenderPipeline *rp)
     : _rp(rp), _func(rp->bindless_array()) {}
 
-SPD::SPD(vector<float> func, float interval, RenderPipeline *rp)
-    : _sample_interval(interval),
-      _rp(rp), _func(rp->bindless_array()) {
-    _func.set_host(move(func));
-}
-
 SPD::SPD(vector<float> func, RenderPipeline *rp)
-    : SPD(move(func), (static_cast<float>(cie::cie_sample_count) / func.size()), rp) {}
+    : SPD(rp) {
+    init(move(func));
+}
 
 void SPD::init(vector<float> func) noexcept {
     _sample_interval = static_cast<float>(cie::cie_sample_count) / func.size();
@@ -83,19 +79,19 @@ SampledSpectrum SPD::sample(const SampledWavelengths &swl) const noexcept {
 }
 
 SPD SPD::create_cie_x(RenderPipeline *rp) noexcept {
-    return {detail::array2vector(cie::X), spd_lut_interval, rp};
+    return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::X.data()), rp};
 }
 
 SPD SPD::create_cie_y(RenderPipeline *rp) noexcept {
-    return {detail::array2vector(cie::Y), spd_lut_interval, rp};
+    return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::Y.data()), rp};
 }
 
 SPD SPD::create_cie_z(RenderPipeline *rp) noexcept {
-    return {detail::array2vector(cie::Z), spd_lut_interval, rp};
+    return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::Z.data()), rp};
 }
 
 SPD SPD::create_cie_d65(RenderPipeline *rp) noexcept {
-    return {detail::array2vector(cie::D65), spd_lut_interval, rp};
+    return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::D65.data()), rp};
 }
 
 float SPD::cie_y_integral() noexcept {

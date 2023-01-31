@@ -11,12 +11,14 @@ namespace vision {
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> sample_visible_wavelength_impl(const oc_float<p> &u) noexcept {
+//    return cie::visible_wavelength_min + cie::cie_sample_count * u;
     return 538 - 138.888889f * atanh(0.85691062f - 1.82750197f * u);
 }
 VS_MAKE_CALLABLE(sample_visible_wavelength)
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> visible_wavelength_PDF_impl(const oc_float<p> &lambda) noexcept {
+//    return 1.f / cie::cie_sample_count;
     return 0.0039398042f / sqr(cosh(0.0072f * (lambda - 538)));
 }
 VS_MAKE_CALLABLE(visible_wavelength_PDF)
@@ -129,22 +131,22 @@ class RGBIlluminationSpectrum {
 private:
     RGBSigmoidPolynomial _rsp;
     Float _scale;
-    const SPD &_white_point;
+    const SPD &_illuminant;
 
 public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
-        : _rsp{move(rsp)}, _scale(scale), _white_point(wp) {}
+    : _rsp{move(rsp)}, _scale(scale), _illuminant(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
     [[nodiscard]] Float sample(const Float &lambda) const noexcept {
-        return _rsp(lambda) * _scale * _white_point.sample(lambda);
+        return _rsp(lambda) * _scale * _illuminant.sample(lambda);
     }
 };
 
 class HeroWavelengthSpectrum : public Spectrum {
 private:
     uint _dimension{};
-    SPD _white_point;
+    SPD _illuminant_d65;
     SPD _cie_x;
     SPD _cie_y;
     SPD _cie_z;
@@ -154,7 +156,7 @@ public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc), _dimension(desc.dimension),
           _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, render_pipeline()),
-          _white_point(SPD::create_cie_d65(render_pipeline())),
+          _illuminant_d65(SPD::create_cie_d65(render_pipeline())),
           _cie_x(SPD::create_cie_x(render_pipeline())),
           _cie_y(SPD::create_cie_y(render_pipeline())),
           _cie_z(SPD::create_cie_z(render_pipeline())) {
@@ -162,7 +164,7 @@ public:
     }
 
     void prepare() noexcept override {
-        _white_point.prepare();
+        _illuminant_d65.prepare();
         _rgb_to_spectrum_table.prepare();
         _cie_x.prepare();
         _cie_y.prepare();
@@ -178,8 +180,7 @@ public:
         Float3 rgb = make_float3(0.63, 0.065, 0.05);
         Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
-        int n = 30;
-        //        c = float4{-9.3091614e-05, 0.101219758, -31.811121, 1.f};
+        int n = 500;
 
         Float3 output = make_float3(0.f);
         SampledWavelengths swl{dimension()};
@@ -188,7 +189,6 @@ public:
             SampledSpectrum sp{1u, spec.sample(swl.lambda(0u))};
             Float3 cl = linear_srgb(sp, swl);
             output += cl;
-            prints("rgb {} {} {} xyz {} {} {}, lambda {}", cl, cie_xyz(sp, swl), swl.lambda(0u));
         };
         output /= float(n);
         prints("rgb {}, {}, {} xyz {} {} {}  c {} {} {}", output, cie::linear_srgb_to_xyz(output), c.xyz());
@@ -244,7 +244,7 @@ public:
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        RGBIlluminationSpectrum spec{c, _white_point};
+        RGBIlluminationSpectrum spec{c, _illuminant_d65};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
             sp[i] = spec.sample(swl.lambda(i));

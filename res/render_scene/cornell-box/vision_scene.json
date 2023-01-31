@@ -552,7 +552,10 @@
         }
     },
     "spectrum" : {
-        "type" : "hero"
+        "type" : "hero",
+        "param" : {
+            "dimension": 4
+        }
     },
     "light_sampler": {
         "type": "uniform",
