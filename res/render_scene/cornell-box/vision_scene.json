@@ -554,7 +554,7 @@
     "spectrum" : {
         "type" : "hero",
         "param" : {
-            "dimension": 4
+            "dimension": 1
         }
     },
     "light_sampler": {
@@ -564,7 +564,7 @@
         }
     },
     "output": {
-        "spp": 1024,
+        "spp": 4096,
         "fn": "hero.png"
     }
 }
