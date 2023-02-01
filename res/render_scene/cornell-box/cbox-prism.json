@@ -122,6 +122,58 @@
         },
         {
             "type": "quad",
+            "name": "shape_2",
+            "param": {
+                "width": 0.1,
+                "height": 0.1,
+                "material": "BackWall",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                3.82137093032941e-15,
+                                1.9999998807907104,
+                                8.742277657347586e-08,
+                                0.0
+                            ],
+                            [
+                                1.7484555314695172e-07,
+                                -1.74845538936097e-07,
+                                4.0,
+                                0.0
+                            ],
+                            [
+                                1.9999998807907104,
+                                0.0,
+                                -8.74227694680485e-08,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                -0.9,
+                                1.0
+                            ]
+                        ]
+                    }
+                },
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "radiance": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": false,
+                        "scale": 2
+                    }
+                }
+            }
+        },
+        {
+            "type": "quad",
             "name": "shape_3",
             "param": {
                 "width": 1.0,
@@ -285,18 +337,18 @@
 //            }
 //        },
         {
-            "type": "model",
-            "name": "shape_0",
+            "type": "sphere",
             "param" : {
-                "fn": "Prism.obj",
                 "material": "Glass",
-                "name" : "prism",
+//                "name" : "prism",
+                "radius": 0.3,
+                "sub_div": 60,
                 "transform": {
                     "type" : "trs",
                     "param": {
-                        "t": [0.1,1.39,0],
-                        "r" : [1,0,0,90],
-                        "s" : [0.3,0.3,0.3]
+                        "t": [0.2,1,0],
+                        "r" : [1,0,0,0],
+                        "s" : [1,1,1]
                     }
                 }
             }
@@ -305,8 +357,8 @@
             "type": "quad",
             "name": "shape_7",
             "param": {
-                "width": 0.5,
-                "height": 0.5,
+                "width": 1,
+                "height": 1,
                 "material": "Light",
                 "transform": {
                     "type": "matrix4x4",
@@ -331,7 +383,7 @@
                                 0.0
                             ],
                             [
-                                -0.14999999888241291,
+                                -0.004999999888241291,
                                 1.9800000190734863,
                                 -0.029999999329447746,
                                 1.0
@@ -348,7 +400,7 @@
                             12
                         ],
                         "two_sided": false,
-                        "scale": 11
+                        "scale": 2
                     }
                 }
             }
@@ -404,9 +456,9 @@
             "name": "BackWall",
             "param": {
                 "color": [
-                    0.725,
-                    0.71,
-                    0.68
+                    0.0725,
+                    0.071,
+                    0.068
                 ]
             }
         },
@@ -425,13 +477,13 @@
             "type": "glass",
             "name": "Glass",
             "param": {
-                "material_name" : "BK7",
+                "material_name" : "LASF9",
                 "color": [
                     1,
                     1,
                     1
                 ],
-                "roughness": [0.001,0.001]
+                "roughness": [0.0001,0.0001]
             }
         },
         {
