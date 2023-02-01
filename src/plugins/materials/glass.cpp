@@ -8,12 +8,61 @@
 
 namespace vision {
 
+class IORCurve {
+public:
+    [[nodiscard]] virtual Float eta(const Float &lambda) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum eta(const SampledWavelengths &swl) const noexcept = 0;
+};
+
+class BK7 : public IORCurve {
+private:
+    [[nodiscard]] auto _eta(auto lambda) const noexcept {
+        lambda = lambda / 1000.f;
+        auto f = 1.03961212f * sqr(lambda) / (sqr(lambda) - 0.00600069867f) +
+                 0.231792344f * sqr(lambda) / (sqr(lambda) - 0.0200179144f) +
+                 1.01046945f * sqr(lambda) / (sqr(lambda) - 103.560653f);
+        return sqrt(f + 1);
+    }
+
+public:
+    [[nodiscard]] Float eta(const Float &lambda) const noexcept override {
+        return _eta(lambda);
+    }
+    [[nodiscard]] SampledSpectrum eta(const SampledWavelengths &swl) const noexcept override {
+        SampledSpectrum ret{swl.dimension()};
+        for (uint i = 0; i < swl.dimension(); ++i) {
+            ret[i] = eta(swl.lambda(i));
+        }
+        return ret;
+    }
+};
+
+[[nodiscard]] static IORCurve *ior_curve(string name) noexcept {
+    using Map = map<string, UP<IORCurve>>;
+    static Map curve_map = [&]() {
+        Map ret;
+#define VS_MAKE_GLASS_IOR_CURVE(name) \
+    ret[#name] = make_unique<name>();
+        VS_MAKE_GLASS_IOR_CURVE(BK7)
+#undef VS_MAKE_GLASS_IOR_CURVE
+        return ret;
+    }();
+    if (curve_map.find(name) == curve_map.end()) {
+        if (name.empty()) {
+            return nullptr;
+        }
+        name = "BK7";
+    }
+    return curve_map[name].get();
+}
+
 class GlassMaterial : public Material {
 private:
     const Texture *_color{};
     const Texture *_ior{};
     const Texture *_roughness{};
     bool _remapping_roughness{false};
+    IORCurve *_ior_curve{nullptr};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
@@ -21,7 +70,8 @@ public:
           _color(desc.scene->load<Texture>(desc.color)),
           _ior(desc.scene->load<Texture>(desc.ior)),
           _roughness(desc.scene->load<Texture>(desc.roughness)),
-          _remapping_roughness(desc.remapping_roughness) {}
+          _remapping_roughness(desc.remapping_roughness),
+          _ior_curve(ior_curve(desc.material_name)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = Texture::eval_albedo_spectrum(_color, si, swl).sample;
