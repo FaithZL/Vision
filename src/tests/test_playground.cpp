@@ -16,9 +16,9 @@ using namespace vision;
 using namespace ocarina;
 
 float eta(float lambda) {
-    float f = 1.03961212 * sqr(lambda) / (sqr(lambda) - 0.00600069867) +
-        0.231792344 * sqr(lambda) / (sqr(lambda) - 0.0200179144) +
-        1.01046945 * sqr(lambda) / (sqr(lambda) - 103.560653);
+    auto f = 2.00029547f * sqr(lambda) / (sqr(lambda) - 0.0121426017f) +
+        0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
+        1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
     return sqrt(f + 1);
 }
 

@@ -294,7 +294,7 @@
                 "transform": {
                     "type" : "trs",
                     "param": {
-                        "t": [0.3,0.7,0],
+                        "t": [0.1,1.39,0],
                         "r" : [1,0,0,90],
                         "s" : [0.3,0.3,0.3]
                     }
@@ -348,7 +348,7 @@
                             12
                         ],
                         "two_sided": false,
-                        "scale": 4
+                        "scale": 11
                     }
                 }
             }
@@ -425,7 +425,7 @@
             "type": "glass",
             "name": "Glass",
             "param": {
-                "material_name" : "BK7",
+                "material_name" : "LASF9",
                 "color": [
                     1,
                     1,
@@ -512,6 +512,22 @@
             "spp": 1
         }
     },
+    "mediums" : {
+        "global" : "fog",
+        "process" : false,
+        "list": [
+            {
+                "type" : "homogeneous",
+                "name" : "fog",
+                "param" : {
+                    "scale" : 3,
+                    "g" : 0,
+                    "sigma_a" : [0.0, 0.0, 0.0],
+                    "sigma_s" : [0.1, 0.1, 0.1]
+                }
+            }
+        ]
+    },
     "camera": {
         "type": "thin_lens",
         "param": {
@@ -574,7 +590,7 @@
     "spectrum" : {
         "type" : "hero",
         "param" : {
-            "dimension": 1
+            "dimension": 4
         }
     },
     "light_sampler": {

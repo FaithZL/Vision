@@ -14,6 +14,18 @@ public:
     [[nodiscard]] virtual SampledSpectrum eta(const SampledWavelengths &swl) const noexcept = 0;
 };
 
+#define VS_IOR_CURVE_COMMON                                                                    \
+    [[nodiscard]] Float eta(const Float &lambda) const noexcept override {                     \
+        return _eta(lambda);                                                                   \
+    }                                                                                          \
+    [[nodiscard]] SampledSpectrum eta(const SampledWavelengths &swl) const noexcept override { \
+        SampledSpectrum ret{swl.dimension()};                                                  \
+        for (uint i = 0; i < swl.dimension(); ++i) {                                           \
+            ret[i] = eta(swl.lambda(i));                                                       \
+        }                                                                                      \
+        return ret;                                                                            \
+    }
+
 class BK7 : public IORCurve {
 private:
     [[nodiscard]] auto _eta(auto lambda) const noexcept {
@@ -25,16 +37,21 @@ private:
     }
 
 public:
-    [[nodiscard]] Float eta(const Float &lambda) const noexcept override {
-        return _eta(lambda);
+    VS_IOR_CURVE_COMMON
+};
+
+class LASF9 : public IORCurve {
+private:
+    [[nodiscard]] auto _eta(auto lambda) const noexcept {
+        lambda = lambda / 1000.f;
+        auto f = 2.00029547f * sqr(lambda) / (sqr(lambda) - 0.0121426017f) +
+            0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
+            1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
+        return sqrt(f + 1);
     }
-    [[nodiscard]] SampledSpectrum eta(const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum ret{swl.dimension()};
-        for (uint i = 0; i < swl.dimension(); ++i) {
-            ret[i] = eta(swl.lambda(i));
-        }
-        return ret;
-    }
+
+public:
+    VS_IOR_CURVE_COMMON
 };
 
 [[nodiscard]] static IORCurve *ior_curve(string name) noexcept {
@@ -44,6 +61,7 @@ public:
 #define VS_MAKE_GLASS_IOR_CURVE(name) \
     ret[#name] = make_unique<name>();
         VS_MAKE_GLASS_IOR_CURVE(BK7)
+        VS_MAKE_GLASS_IOR_CURVE(LASF9)
 #undef VS_MAKE_GLASS_IOR_CURVE
         return ret;
     }();
