@@ -40,8 +40,8 @@ public:
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
-        Float fr = fresnel_dielectric<D>(abs_cos_theta, _eta[0]);
-        return {_swl.dimension(), fr};
+        SampledSpectrum fr = _eta.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
+        return fr;
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta[0]; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
