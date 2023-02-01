@@ -126,8 +126,8 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-//                "material": "LeftWall",
-                "material": "Floor",
+                "material": "LeftWall",
+//                "material": "Floor",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -167,8 +167,8 @@
             "param": {
                 "width": 1.0,
                 "height": 1.0,
-                "material": "Floor",
-//                "material": "RightWall",
+//                "material": "Floor",
+                "material": "RightWall",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -425,7 +425,7 @@
             "type": "glass",
             "name": "Glass",
             "param": {
-                "material_name" : "LASF9",
+                "material_name" : "BK7",
                 "color": [
                     1,
                     1,

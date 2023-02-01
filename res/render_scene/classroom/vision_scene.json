@@ -1,5 +1,24 @@
 {
     "shapes": [
+//        {
+//            "type": "model",
+//            "name": "shape_0",
+//            "param" : {
+//                "fn": "models/Prism.obj",
+//                "material": "Glass",
+//                "name" : "prism",
+//                "transform": {
+//                    "type" : "trs",
+//                    "param": {
+//                        "t": [ -0.7776312828063965,
+//                            1.4423744678497314,
+//                            -0.07520569860935211],
+//                        "r" : [1,0,0,0],
+//                        "s" : [1,1,1]
+//                    }
+//                }
+//            }
+//        },
         {
             "type": "model",
             "name": "shape_0",
@@ -3198,6 +3217,19 @@
             }
         },
         {
+            "type": "glass",
+            "name": "Glass",
+            "param": {
+                "material_name" : "BK7",
+                "color": [
+                    1,
+                    1,
+                    1
+                ],
+                "roughness": [0.001,0.001]
+            }
+        },
+        {
             "type": "matte",
             "name": "Lectern",
             "param": {
@@ -3816,7 +3848,7 @@
     },
     "mediums" : {
         "global" : "fog",
-        "process" : true,
+        "process" : false,
         "list": [
             {
                 "type" : "homogeneous",
@@ -3855,7 +3887,7 @@
                                 "yaw" :-30
                             }
                         },
-                        "scale" : 3
+                        "scale" : 1
                     }
                 }
             ]
@@ -3868,7 +3900,7 @@
         }
     },
     "output": {
-        "spp": 8192,
-        "fn": "classroom-fog-8192spp.png"
+        "spp": 512,
+        "fn": "classroom-hero-512spp.png"
     }
 }
