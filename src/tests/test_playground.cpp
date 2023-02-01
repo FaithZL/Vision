@@ -24,7 +24,7 @@ float eta(float lambda) {
 
 int main(int argc, char *argv[]) {
 
-    float e = eta(830);
-
+    float e = eta(0.83);
+    float e2 = eta(0.36);
     return 0;
 }
