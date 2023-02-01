@@ -101,7 +101,7 @@ Bool MicrofacetTransmission::safe(Float3 wo, Float3 wi) const noexcept {
 }
 
 SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    Float eta = fresnel->eta();
+    Float eta = fresnel->eta()[0];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
@@ -110,7 +110,7 @@ SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fres
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    Float eta = fresnel->eta();
+    Float eta = fresnel->eta()[0];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
@@ -118,7 +118,7 @@ Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) con
 
 SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = _microfacet->sample_wh(wo, u);
-    auto [valid, wi] = refract(wo, wh, fresnel->eta());
+    auto [valid, wi] = refract(wo, wh, fresnel->eta()[0]);
     return {wi, valid && dot(wh, wo) > 0};
 }
 
@@ -129,7 +129,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Float2 u, SP<Fresnel> fresn
     ret.eval = safe_evaluate(wo, wi, fresnel);
     ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
-    ret.eta = (fresnel->eta());
+    ret.eta = fresnel->eta()[0];
     ret.flags = flag();
     return ret;
 }
@@ -140,7 +140,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Sampler *sampler, SP<Fresne
     ret.eval = safe_evaluate(wo, wi, fresnel);
     ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
-    ret.eta = (fresnel->eta());
+    ret.eta = fresnel->eta()[0];
     ret.flags = flag();
     return ret;
 }

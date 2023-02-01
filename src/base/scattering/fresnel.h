@@ -19,9 +19,9 @@ protected:
 public:
     explicit Fresnel(const SampledWavelengths &swl, const RenderPipeline *rp) : _swl(swl), _rp(rp) {}
     [[nodiscard]] virtual SampledSpectrum evaluate(Float cos_theta) const noexcept = 0;
-    [[nodiscard]] virtual Float eta() const noexcept {
+    [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
-        return 1;
+        return {_swl.dimension(), 1.f};
     }
     virtual void correct_eta(Float cos_theta) noexcept {
         OC_ERROR("correct_eta only dielectric material !");
@@ -44,7 +44,7 @@ public:
         SampledSpectrum fr = _eta.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
         return fr;
     }
-    [[nodiscard]] Float eta() const noexcept override { return _eta[0]; }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override { return _eta; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelDielectric>(_eta, _swl, _rp);
     }

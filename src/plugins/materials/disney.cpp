@@ -218,7 +218,7 @@ public:
                     fresnel_dielectric(cos_theta, _eta),
                     fresnel_schlick(R0, cos_theta));
     }
-    [[nodiscard]] Float eta() const noexcept override { return _eta; }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {_swl.dimension(), _eta}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelDisney>(R0, _metallic, _eta, _swl, _rp);
     }
