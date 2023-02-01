@@ -31,7 +31,7 @@ public:
 
 class FresnelDielectric : public Fresnel {
 private:
-    Float _eta;
+    SampledSpectrum _eta;
 
 public:
     explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const RenderPipeline *rp)
@@ -40,12 +40,12 @@ public:
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
-        Float fr = fresnel_dielectric<D>(abs_cos_theta, _eta);
+        Float fr = fresnel_dielectric<D>(abs_cos_theta, _eta[0]);
         return {_swl.dimension(), fr};
     }
-    [[nodiscard]] Float eta() const noexcept override { return _eta; }
+    [[nodiscard]] Float eta() const noexcept override { return _eta[0]; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDielectric>(SampledSpectrum{_swl.dimension(), _eta}, _swl, _rp);
+        return make_shared<FresnelDielectric>(_eta, _swl, _rp);
     }
 };
 
