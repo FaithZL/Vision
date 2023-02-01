@@ -341,12 +341,12 @@
             "param" : {
                 "material": "Glass",
 //                "name" : "prism",
-                "radius": 0.3,
+                "radius": 0.5,
                 "sub_div": 60,
                 "transform": {
                     "type" : "trs",
                     "param": {
-                        "t": [0.2,1,0],
+                        "t": [0.2,1,-0.3],
                         "r" : [1,0,0,0],
                         "s" : [1,1,1]
                     }
@@ -652,7 +652,7 @@
         }
     },
     "output": {
-        "spp": 4096,
-        "fn": "hero.png"
+        "spp": 2048,
+        "fn": "dispersion-hero.png"
     }
 }

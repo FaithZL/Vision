@@ -54,6 +54,8 @@ public:
     VS_IOR_CURVE_COMMON
 };
 
+#undef VS_IOR_CURVE_COMMON
+
 [[nodiscard]] static IORCurve *ior_curve(string name) noexcept {
     using Map = map<string, UP<IORCurve>>;
     static Map curve_map = [&]() {
