@@ -621,8 +621,8 @@
                 "name": "boxFilter",
                 "param": {
                     "radius": [
-                        0.5,
-                        0.5
+                        1.5,
+                        1.5
                     ]
                 }
             }

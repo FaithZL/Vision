@@ -109,7 +109,7 @@ public:
                                                       swl, render_pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<DielectricBSDF>(si, fresnel, move(refl), move(trans));
+        return make_unique<DielectricBSDF>(si, fresnel, move(refl), move(trans), bool(_ior_curve));
     }
 };
 }// namespace vision

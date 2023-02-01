@@ -40,6 +40,9 @@ public:
         // todo
         return {swl.dimension(), 0.f};
     }
+    [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept {
+        return {};
+    }
     [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
@@ -50,14 +53,21 @@ private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
     MicrofacetTransmission _trans;
+    Bool _dispersive{};
 
 public:
     DielectricBSDF(const Interaction &si,
                    const SP<Fresnel> &fresnel,
                    MicrofacetReflection refl,
-                   MicrofacetTransmission trans)
-        : BSDF(si, refl.swl()), _fresnel(fresnel), _refl(move(refl)), _trans(move(trans)) {}
+                   MicrofacetTransmission trans,
+                   const Bool &dispersive)
+        : BSDF(si, refl.swl()), _fresnel(fresnel),
+          _refl(move(refl)), _trans(move(trans)),
+    _dispersive(dispersive){}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
+    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
+        return _dispersive;
+    }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override;
 };

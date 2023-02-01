@@ -115,6 +115,11 @@ public:
                 auto sample_surface = [&]() {
                     _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
                         UP<BSDF> bsdf = material->get_BSDF(it, swl);
+                        if (auto dispersive = bsdf->is_dispersive()){
+                            $if(*dispersive) {
+                                swl.invalidation_secondary();
+                            };
+                        }
                         Ld = direct_lighting(it, *bsdf, light_sample, occluded,
                                              sampler, swl, bsdf_sample);
                     });

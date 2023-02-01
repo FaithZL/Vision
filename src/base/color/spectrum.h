@@ -37,6 +37,21 @@ public:
     [[nodiscard]] Float4 pdf_vec4() const noexcept {
         return make_float4(_pdfs[0], _pdfs[1], _pdfs[2], _pdfs[3]);
     }
+    [[nodiscard]] Bool secondary_valid() const noexcept {
+        Bool ret = true;
+        for (uint i = 1; i < dimension(); ++i) {
+            ret = ret & pdf(i) != 0.f;
+        }
+        return ret;
+    }
+    void invalidation_secondary() noexcept {
+        $if(secondary_valid()) {
+            for (uint i = 1; i < dimension(); ++i) {
+                _pdfs[i] = 0.f;
+            }
+            _pdfs[0] = _pdfs[0] / 4.f;
+        };
+    }
 };
 
 class SampledSpectrum {
