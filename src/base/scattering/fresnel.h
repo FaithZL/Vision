@@ -34,7 +34,8 @@ private:
     Float _eta;
 
 public:
-    explicit FresnelDielectric(Float ior, const SampledWavelengths &swl, const RenderPipeline *rp) : Fresnel(swl, rp), _eta(ior) {}
+    explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const RenderPipeline *rp)
+        : Fresnel(swl, rp), _eta(ior[0]) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
@@ -44,7 +45,7 @@ public:
     }
     [[nodiscard]] Float eta() const noexcept override { return _eta; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDielectric>(_eta, _swl, _rp);
+        return make_shared<FresnelDielectric>(SampledSpectrum{_swl.dimension(), _eta}, _swl, _rp);
     }
 };
 

@@ -133,7 +133,8 @@ public:
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelDielectric>(1.5f, swl, render_pipeline());
+        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
+                                                      swl, render_pipeline());
         FresnelBlend bxdf(Rd, Rs, swl, microfacet);
         return make_unique<SubstrateBSDF>(si, fresnel, move(bxdf));
     }
