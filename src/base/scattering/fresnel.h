@@ -35,7 +35,8 @@ private:
 
 public:
     explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const RenderPipeline *rp)
-        : Fresnel(swl, rp), _eta(ior[0]) {}
+        : Fresnel(swl, rp),
+          _eta(ior) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
