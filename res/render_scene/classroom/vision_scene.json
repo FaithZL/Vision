@@ -3848,7 +3848,7 @@
     },
     "mediums" : {
         "global" : "fog",
-        "process" : false,
+        "process" : true,
         "list": [
             {
                 "type" : "homogeneous",
@@ -3887,7 +3887,7 @@
                                 "yaw" :-30
                             }
                         },
-                        "scale" : 1
+                        "scale" : 3
                     }
                 }
             ]
