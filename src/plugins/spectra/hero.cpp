@@ -6,6 +6,7 @@
 #include "base/color/spectrum.h"
 #include "base/color/spd.h"
 #include "base/mgr/render_pipeline.h"
+#include "base/scattering/material.h"
 
 namespace vision {
 
@@ -189,23 +190,8 @@ public:
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
 
-    void test(const SampledWavelengths &) noexcept override {
-        Sampler *sampler = _scene->sampler();
-        Float3 rgb = make_float3(0.63, 0.065, 0.05);
-        Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
-        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
-        int n = 500;
-
-        Float3 output = make_float3(0.f);
-        SampledWavelengths swl{dimension()};
-        $for(i, n) {
-            swl = sample_wavelength(sampler);
-            SampledSpectrum sp{1u, spec.sample(swl.lambda(0u))};
-            Float3 cl = linear_srgb(sp, swl);
-            output += cl;
-        };
-        output /= float(n);
-        prints("rgb {}, {}, {} xyz {} {} {}  c {} {} {}", output, cie::linear_srgb_to_xyz(output), c.xyz());
+    [[nodiscard]] optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept override {
+        return bsdf->is_dispersive();
     }
 
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
