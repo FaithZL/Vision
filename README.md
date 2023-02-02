@@ -32,6 +32,12 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | hair                         | Planned     |
 | BSSRDF                       | Planned     |
 
+### Color
+| Feature                      | Progress    |
+|------------------------------|-------------|
+| SRGB                         | Done        |
+| Complete spectrum            | Done        |
+
 ### Sensor
 | Feature                                   | Progress    |
 |-------------------------------------------|-------------|
@@ -68,6 +74,9 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 Part of the scene comes from https://benedikt-bitterli.me/resources/
 
 ![](gallery/staircase.png)
+dispersive
+![](gallery/dispersion-hero.png)
+![](gallery/prism.png)
 ![](gallery/bathroom.png)
 ![](gallery/classroom-1024spp.png)
 ![](gallery/classroom-fog-1024spp.png)
