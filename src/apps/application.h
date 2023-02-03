@@ -24,6 +24,7 @@ public:
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};
+    bool need_save{false};
     bool need_update{false};
 
 public:
