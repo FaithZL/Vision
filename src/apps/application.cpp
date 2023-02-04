@@ -96,7 +96,7 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
     switch (button) {
         case 0: left_key_press = bool(action); break;
         case 1: right_key_press = bool(action); break;
-        case 2: need_save = true; break;
+        case 2: need_save = bool(action); break;
     }
 }
 
@@ -114,6 +114,7 @@ void App::update(double dt) noexcept {
 void App::check_and_save() noexcept {
     OutputDesc desc = scene_desc.output_desc;
     if (rp.frame_index() == desc.spp || need_save) {
+        // todo change fn
         radiance_image.save(desc.fn);
         if (desc.save_exit) {
             exit(0);
