@@ -17,8 +17,8 @@ private:
 public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
-          _radiance(render_pipeline()->bindless_array()),
-          _frame(render_pipeline()->bindless_array()) {}
+          _radiance(render_pipeline()->resource_array()),
+          _frame(render_pipeline()->resource_array()) {}
     void prepare() noexcept override {
         _radiance.super() = device().create_buffer<float4>(pixel_num());
         _frame.super() = device().create_buffer<float4>(pixel_num());

@@ -20,7 +20,7 @@ private:
     vision::Context *_context;
     Scene _scene;
     Geometry _geometry{this};
-    BindlessArray _bindless_array{};
+    ResourceArray _resource_array{};
     mutable Stream _stream;
     uint _frame_index{};
     ImagePool _image_pool{this};
@@ -35,15 +35,15 @@ public:
     template<typename T>
     requires is_buffer_or_view_v<T>
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
-        return _bindless_array.emplace(OC_FORWARD(buffer));
+        return _resource_array.emplace(OC_FORWARD(buffer));
     }
     handle_ty register_texture(const RHITexture &texture) noexcept {
-        return _bindless_array.emplace(texture);
+        return _resource_array.emplace(texture);
     }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
-    [[nodiscard]] BindlessArray &bindless_array() noexcept { return _bindless_array; }
-    void prepare_bindless_array() noexcept;
+    [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
+    void prepare_resource_array() noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
     void change_resolution(uint2 res) noexcept;
@@ -83,14 +83,14 @@ public:
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] BindlessArrayTexture tex(Index &&index) const noexcept {
-        return _bindless_array.tex(OC_FORWARD(index));
+    [[nodiscard]] ResourceArrayTexture tex(Index &&index) const noexcept {
+        return _resource_array.tex(OC_FORWARD(index));
     }
 
     template<typename T, typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] BindlessArrayBuffer<T> buffer(Index &&index) const noexcept {
-        return _bindless_array.buffer<T>(OC_FORWARD(index));
+    [[nodiscard]] ResourceArrayBuffer<T> buffer(Index &&index) const noexcept {
+        return _resource_array.buffer<T>(OC_FORWARD(index));
     }
 };
 

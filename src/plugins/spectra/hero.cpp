@@ -85,7 +85,7 @@ public:
 
     [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
-        static Callable decode = [](Var<BindlessArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
+        static Callable decode = [](Var<ResourceArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
             Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
             $if(!(rgb[0] == rgb[1] & rgb[1] == rgb[2])) {
                 Uint maxc = select(
@@ -105,7 +105,7 @@ public:
             };
             return c;
         };
-        return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb),
+        return make_float4(decode(_rp->resource_array().var(), _base_index, rgb),
                            cie::linear_srgb_to_y(rgb));
     }
 

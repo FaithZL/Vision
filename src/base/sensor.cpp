@@ -21,7 +21,7 @@ void Sensor::prepare() noexcept {
 }
 
 Camera::Camera(const SensorDesc &desc)
-    : Sensor(desc), _data(render_pipeline()->bindless_array()) {
+    : Sensor(desc), _data(render_pipeline()->resource_array()) {
     _data.resize(1);
     init(desc);
 }

@@ -16,9 +16,9 @@ private:
 public:
     explicit AliasTable2D(const WarperDesc &desc)
         : Warper2D(desc),
-          _marginal(render_pipeline()->bindless_array()),
-          _conditional_v_tables(render_pipeline()->bindless_array()),
-          _conditional_v_weights(render_pipeline()->bindless_array()) {
+          _marginal(render_pipeline()->resource_array()),
+          _conditional_v_tables(render_pipeline()->resource_array()),
+          _conditional_v_weights(render_pipeline()->resource_array()) {
         _marginal._scene = desc.scene;
     }
     void build(vector<float> weights, uint2 res) noexcept override {
@@ -30,7 +30,7 @@ public:
             vector<float> func_v;
             func_v.insert(func_v.end(), iter, iter + res.x);
             iter += res.x;
-            AliasTable alias_table(render_pipeline()->bindless_array());
+            AliasTable alias_table(render_pipeline()->resource_array());
             alias_table._scene = _scene;
             alias_table.build(move(func_v));
             conditional_v.push_back(move(alias_table));
