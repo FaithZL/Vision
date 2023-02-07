@@ -28,8 +28,8 @@ private:
     friend class AliasTable2D;
 
 public:
-    explicit AliasTable(ResourceArray &bindless_array)
-        : _table(bindless_array), _func(bindless_array) {}
+    explicit AliasTable(ResourceArray &resource_array)
+        : _table(resource_array), _func(resource_array) {}
     explicit AliasTable(const WarperDesc &desc)
         : Warper(desc),
           _table(render_pipeline()->resource_array()),
