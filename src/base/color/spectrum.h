@@ -49,7 +49,7 @@ public:
             for (uint i = 1; i < dimension(); ++i) {
                 _pdfs[i] = 0.f;
             }
-            _pdfs[0] = _pdfs[0] / 4.f;
+            _pdfs[0] /= dimension();
         };
     }
 };
