@@ -38,13 +38,19 @@ public:
         return make_float4(_pdfs[0], _pdfs[1], _pdfs[2], _pdfs[3]);
     }
     [[nodiscard]] Bool secondary_valid() const noexcept {
+        if (dimension() == 1) {
+            return false;
+        }
         Bool ret = true;
         for (uint i = 1; i < dimension(); ++i) {
-            ret = ret & pdf(i) != 0.f;
+            ret = ret & (pdf(i) != 0.f);
         }
         return ret;
     }
     void invalidation_secondary() noexcept {
+        if (dimension() == 1) {
+            return;
+        }
         $if(secondary_valid()) {
             for (uint i = 1; i < dimension(); ++i) {
                 _pdfs[i] = 0.f;
