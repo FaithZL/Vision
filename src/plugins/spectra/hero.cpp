@@ -119,42 +119,45 @@ public:
 };
 
 class RGBAlbedoSpectrum {
-private:
+protected:
     RGBSigmoidPolynomial _rsp;
 
 public:
     explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
-    [[nodiscard]] Float eval(const Float &lambda) const noexcept { return _rsp(lambda); }
+    [[nodiscard]] virtual Float eval(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
-class RGBUnboundSpectrum {
+class RGBUnboundSpectrum : public RGBAlbedoSpectrum {
 private:
-    RGBSigmoidPolynomial _rsp;
     Float _scale;
+
+public:
+    using Super = RGBAlbedoSpectrum;
 
 public:
     explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
-        : _rsp{move(rsp)}, _scale(scale) {}
+        : Super{move(rsp)}, _scale(scale) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
         : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {
-        return _rsp(lambda) * _scale;
+        return Super::eval(lambda) * _scale;
     }
 };
 
-class RGBIlluminationSpectrum {
+class RGBIlluminationSpectrum : public RGBUnboundSpectrum {
 private:
-    RGBSigmoidPolynomial _rsp;
-    Float _scale;
     const SPD &_illuminant;
 
 public:
+    using Super = RGBUnboundSpectrum;
+
+public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
-        : _rsp{move(rsp)}, _scale(scale), _illuminant(wp) {}
+        : Super(rsp, scale), _illuminant(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {
-        return _rsp(lambda) * _scale * _illuminant.eval(lambda);
+        return Super::eval(lambda) * _illuminant.eval(lambda);
     }
 };
 
