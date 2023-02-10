@@ -25,8 +25,8 @@ public:
     SPD(vector<float> func, RenderPipeline *rp);
     void init(vector<float> func) noexcept;
     void prepare() noexcept;
-    [[nodiscard]] Float sample(const Float& lambda) const noexcept;
-    [[nodiscard]] SampledSpectrum sample(const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] Float eval(const Float& lambda) const noexcept;
+    [[nodiscard]] SampledSpectrum eval(const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp) noexcept;

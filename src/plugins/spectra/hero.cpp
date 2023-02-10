@@ -124,7 +124,7 @@ private:
 
 public:
     explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
 class RGBUnboundSpectrum {
@@ -137,7 +137,7 @@ public:
         : _rsp{move(rsp)}, _scale(scale) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
         : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept {
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept {
         return _rsp(lambda) * _scale;
     }
 };
@@ -153,8 +153,8 @@ public:
         : _rsp{move(rsp)}, _scale(scale), _illuminant(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept {
-        return _rsp(lambda) * _scale * _illuminant.sample(lambda);
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept {
+        return _rsp(lambda) * _scale * _illuminant.eval(lambda);
     }
 };
 
@@ -202,7 +202,7 @@ public:
         };
 
         for (uint i = 0; i < sp.dimension(); ++i) {
-            sum += safe_div(_cie_y.sample(swl.lambda(i)) * sp[i], swl.pdf(i));
+            sum += safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i));
         }
         float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
         return sum * factor;
@@ -213,9 +213,9 @@ public:
             return select(b == 0.0f, 0.0f, a / b);
         };
         for (uint i = 0; i < sp.dimension(); ++i) {
-            sum += make_float3(safe_div(_cie_x.sample(swl.lambda(i)) * sp[i], swl.pdf(i)),
-                               safe_div(_cie_y.sample(swl.lambda(i)) * sp[i], swl.pdf(i)),
-                               safe_div(_cie_z.sample(swl.lambda(i)) * sp[i], swl.pdf(i)));
+            sum += make_float3(safe_div(_cie_x.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(_cie_z.eval(swl.lambda(i)) * sp[i], swl.pdf(i)));
         }
         float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
         return sum * factor;
@@ -238,7 +238,7 @@ public:
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.sample(swl.lambda(i));
+            sp[i] = spec.eval(swl.lambda(i));
         }
         return {.sample = sp, .strength = luminance(rgb)};
     }
@@ -247,7 +247,7 @@ public:
         RGBIlluminationSpectrum spec{c, _illuminant_d65};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.sample(swl.lambda(i));
+            sp[i] = spec.eval(swl.lambda(i));
         }
         return {.sample = sp, .strength = luminance(rgb)};
     }
@@ -256,7 +256,7 @@ public:
         RGBUnboundSpectrum spec{c};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.sample(swl.lambda(i));
+            sp[i] = spec.eval(swl.lambda(i));
         }
         return {.sample = sp, .strength = luminance(rgb)};
     }
