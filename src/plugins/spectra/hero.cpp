@@ -123,6 +123,14 @@ public:
         return make_float4(c, cie::linear_srgb_to_y(rgb));
     }
 
+    [[nodiscard]] float4 decode_unbound(const float3 &rgb_in) const noexcept {
+        float3 rgb = max(rgb_in, make_float3(0.f));
+        float m = max_comp(rgb);
+        float scale = 2.f * m;
+        float4 c = decode_albedo(select(scale == 0.f, make_float3(0.f), rgb / scale));
+        return make_float4(c.xyz(), scale);
+    }
+
     [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
         static Callable decode = [](Var<ResourceArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
