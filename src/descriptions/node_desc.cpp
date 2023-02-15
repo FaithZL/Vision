@@ -211,8 +211,8 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point" || sub_type == "spot") {
         VISION_PARAMS_LIST_INITIAL(position, intensity, scale, angle, falloff, direction)
-        angle = clamp(angle, 1, 89);
-        falloff = clamp(falloff, 0, angle);
+        angle = clamp(angle, 1.f, 89.f);
+        falloff = clamp(falloff, 0.f, angle);
         intensity *= scale;
     } else if (sub_type == "projector") {
         VISION_PARAMS_LIST_INITIAL(scale, angle, ratio)

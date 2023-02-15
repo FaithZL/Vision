@@ -83,6 +83,46 @@ public:
         _coefficient2.upload_immediately(&_coefficients[2]);
     }
 
+    [[nodiscard]] float4 decode_albedo(float3 rgb_in) const noexcept {
+        float3 rgb = clamp(rgb_in, 0.f, 1.f);
+        if (rgb[0] == rgb[1] && rgb[1] == rgb[2]) {
+            auto s = (rgb[0] - 0.5f) / std::sqrt(rgb[0] * (1.0f - rgb[0]));
+            return make_float4(0.0f, 0.0f, s, cie::linear_srgb_to_y(rgb));
+        }
+
+        // Find maximum component and compute remapped component values
+        uint maxc = (rgb[0] > rgb[1]) ?
+                        ((rgb[0] > rgb[2]) ? 0u : 2u) :
+                        ((rgb[1] > rgb[2]) ? 1u : 2u);
+        float z = rgb[maxc];
+        float x = rgb[(maxc + 1u) % 3u] * (res - 1u) / z;
+        float y = rgb[(maxc + 2u) % 3u] * (res - 1u) / z;
+
+        float zz = _inverse_smooth_step(_inverse_smooth_step(z)) * (res - 1u);
+
+        uint xi = std::min(static_cast<uint>(x), res - 2u);
+        uint yi = std::min(static_cast<uint>(y), res - 2u);
+        uint zi = std::min(static_cast<uint>(zz), res - 2u);
+        float dx = x - static_cast<float>(xi);
+        float dy = y - static_cast<float>(yi);
+        float dz = zz - static_cast<float>(zi);
+
+        auto c = make_float3(0.f);
+        using ocarina::lerp;
+        for (auto i = 0u; i < 3u; i++) {
+            // Define _co_ lambda for looking up sigmoid polynomial coefficients
+            auto co = [&](int dx, int dy, int dz) noexcept {
+                return _coefficients[maxc][zi + dz][yi + dy][xi + dx][i];
+            };
+            c[i] = lerp(lerp(lerp(co(0, 0, 0), co(1, 0, 0), dx),
+                             lerp(co(0, 1, 0), co(1, 1, 0), dx), dy),
+                        lerp(lerp(co(0, 0, 1), co(1, 0, 1), dx),
+                             lerp(co(0, 1, 1), co(1, 1, 1), dx), dy),
+                        dz);
+        }
+        return make_float4(c, cie::linear_srgb_to_y(rgb));
+    }
+
     [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
         static Callable decode = [](Var<ResourceArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
