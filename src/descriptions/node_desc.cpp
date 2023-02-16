@@ -5,7 +5,6 @@
 #include "node_desc.h"
 #include "parameter_set.h"
 #include "core/macro_map.h"
-#include "metal_ior_data.h"
 #include "medium_scatter_data.h"
 #include "math/transform.h"
 
@@ -119,16 +118,16 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
 }
 
 namespace detail {
-[[nodiscard]] pair<float3, float3> get_ior(const string &name) {
-    for (auto elm : complex_ior_list) {
-        if (elm.name == name) {
-            return {elm.eta, elm.k};
-        }
-    }
-    OC_WARNING("unknown metal name ", name);
-    ComplexIorOld elm = complex_ior_list[0];
-    return {elm.eta, elm.k};
-}
+//[[nodiscard]] pair<float3, float3> get_ior(const string &name) {
+//    for (auto elm : complex_ior_list) {
+//        if (elm.name == name) {
+//            return {elm.eta, elm.k};
+//        }
+//    }
+//    OC_WARNING("unknown metal name ", name);
+//    ComplexIorOld elm = complex_ior_list[0];
+//    return {elm.eta, elm.k};
+//}
 
 [[nodiscard]] pair<float3, float3> get_sigma(const string &name) {
     for (auto elm : SubsurfaceParameterTable) {
@@ -170,11 +169,6 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     VS_TEXTURE_DESC_INIT(diff_trans)
 
     VISION_PARAMS_LIST_INITIAL(material_name, sigma_scale)
-    if (sub_type == "metal") {
-        auto [eta_, k_] = detail::get_ior(material_name);
-        eta.init(DataWrap({eta_.x, eta_.y, eta_.z}));
-        k.init(DataWrap({k_.x, k_.y, k_.z}));
-    }
 
     if (sub_type == "subsurface") {
         auto [ss, sa] = detail::get_sigma(material_name);
