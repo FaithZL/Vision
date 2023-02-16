@@ -78,8 +78,6 @@ public:
         Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        //        SampledSpectrum eta = Texture::eval_illumination_spectrum(_eta, si, swl).sample;
-        //        SampledSpectrum k = Texture::eval_illumination_spectrum(_k, si, swl).sample;
         SampledSpectrum eta = _spd_eta.eval(swl);
         SampledSpectrum k = _spd_k.eval(swl);
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
