@@ -247,6 +247,14 @@ public:
         }
         return swl;
     }
+    [[nodiscard]] ColorDecode to_albedo(float4 val, const SampledWavelengths &swl) const noexcept override {
+        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz()});
+        SampledSpectrum sp{dimension()};
+        for (uint i = 0; i < dimension(); ++i) {
+            sp[i] = spec.eval(swl.lambda(i));
+        }
+        return {.sample = sp, .strength = val.w};
+    }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});

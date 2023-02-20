@@ -653,7 +653,7 @@
         }
     },
     "output": {
-        "spp": 20000,
+        "spp": 1024,
         "fn": "dispersion-hero.png"
     }
 }
