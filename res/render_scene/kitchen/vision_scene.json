@@ -12273,6 +12273,7 @@
             "type": "glass",
             "name": "WineGlasses",
             "param": {
+                "material_name": "LASF9",
                 "ior": 1.5,
                 "roughness": [
                     0,
@@ -12689,6 +12690,7 @@
             "name": "CookerGlass",
             "param": {
                 "ior": 1.5,
+                "material_name": "LASF9",
                 "roughness": [
                     0,
                     0
@@ -12793,6 +12795,7 @@
             "name": "MicrowaveGlass",
             "param": {
                 "ior": 1.5,
+                "material_name": "LASF9",
                 "roughness": [
                     0,
                     0
@@ -12853,6 +12856,7 @@
             "name": "MicrowaveDigital",
             "param": {
                 "ior": 1.5,
+                "material_name": "LASF9",
                 "roughness": [
                     0,
                     0
@@ -13532,9 +13536,15 @@
     "integrator": {
         "type": "pt",
         "param": {
-            "min_depth": 5,
-            "max_depth": 16,
+            "min_depth": 3,
+            "max_depth": 8,
             "rr_threshold": 1
+        }
+    },
+    "spectrum": {
+        "type": "hero",
+        "param": {
+            "dimension" : 4
         }
     },
     "light_sampler": {

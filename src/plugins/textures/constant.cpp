@@ -3,6 +3,7 @@
 //
 
 #include "base/texture.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 class ConstantTexture : public Texture {

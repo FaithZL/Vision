@@ -11,10 +11,10 @@
 namespace vision {
 
 Geometry::Geometry(RenderPipeline *rp)
-    : rp(rp), _vertices(rp->bindless_array()),
-      _triangles(rp->bindless_array()),
-      _instances(rp->bindless_array()),
-      _mesh_handles(rp->bindless_array()) {}
+    : rp(rp), _vertices(rp->resource_array()),
+      _triangles(rp->resource_array()),
+      _instances(rp->resource_array()),
+      _mesh_handles(rp->resource_array()) {}
 
 void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle inst) {
     Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host().size(),

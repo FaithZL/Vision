@@ -6,6 +6,7 @@
 #include "base/color/spectrum.h"
 #include "base/color/spd.h"
 #include "base/mgr/render_pipeline.h"
+#include "base/scattering/material.h"
 
 namespace vision {
 
@@ -82,9 +83,57 @@ public:
         _coefficient2.upload_immediately(&_coefficients[2]);
     }
 
+    [[nodiscard]] float4 decode_albedo(float3 rgb_in) const noexcept {
+        float3 rgb = clamp(rgb_in, 0.f, 1.f);
+        if (rgb[0] == rgb[1] && rgb[1] == rgb[2]) {
+            auto s = (rgb[0] - 0.5f) / std::sqrt(rgb[0] * (1.0f - rgb[0]));
+            return make_float4(0.0f, 0.0f, s, cie::linear_srgb_to_y(rgb));
+        }
+
+        // Find maximum component and compute remapped component values
+        uint maxc = (rgb[0] > rgb[1]) ?
+                        ((rgb[0] > rgb[2]) ? 0u : 2u) :
+                        ((rgb[1] > rgb[2]) ? 1u : 2u);
+        float z = rgb[maxc];
+        float x = rgb[(maxc + 1u) % 3u] * (res - 1u) / z;
+        float y = rgb[(maxc + 2u) % 3u] * (res - 1u) / z;
+
+        float zz = _inverse_smooth_step(_inverse_smooth_step(z)) * (res - 1u);
+
+        uint xi = std::min(static_cast<uint>(x), res - 2u);
+        uint yi = std::min(static_cast<uint>(y), res - 2u);
+        uint zi = std::min(static_cast<uint>(zz), res - 2u);
+        float dx = x - static_cast<float>(xi);
+        float dy = y - static_cast<float>(yi);
+        float dz = zz - static_cast<float>(zi);
+
+        auto c = make_float3(0.f);
+        using ocarina::lerp;
+        for (auto i = 0u; i < 3u; i++) {
+            // Define _co_ lambda for looking up sigmoid polynomial coefficients
+            auto co = [&](int dx, int dy, int dz) noexcept {
+                return _coefficients[maxc][zi + dz][yi + dy][xi + dx][i];
+            };
+            c[i] = lerp(lerp(lerp(co(0, 0, 0), co(1, 0, 0), dx),
+                             lerp(co(0, 1, 0), co(1, 1, 0), dx), dy),
+                        lerp(lerp(co(0, 0, 1), co(1, 0, 1), dx),
+                             lerp(co(0, 1, 1), co(1, 1, 1), dx), dy),
+                        dz);
+        }
+        return make_float4(c, cie::linear_srgb_to_y(rgb));
+    }
+
+    [[nodiscard]] float4 decode_unbound(const float3 &rgb_in) const noexcept {
+        float3 rgb = max(rgb_in, make_float3(0.f));
+        float m = max_comp(rgb);
+        float scale = 2.f * m;
+        float4 c = decode_albedo(select(scale == 0.f, make_float3(0.f), rgb / scale));
+        return make_float4(c.xyz(), scale);
+    }
+
     [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
-        static Callable decode = [](Var<BindlessArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
+        static Callable decode = [](Var<ResourceArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
             Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
             $if(!(rgb[0] == rgb[1] & rgb[1] == rgb[2])) {
                 Uint maxc = select(
@@ -104,7 +153,7 @@ public:
             };
             return c;
         };
-        return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb),
+        return make_float4(decode(_rp->resource_array().var(), _base_index, rgb),
                            cie::linear_srgb_to_y(rgb));
     }
 
@@ -118,42 +167,45 @@ public:
 };
 
 class RGBAlbedoSpectrum {
-private:
+protected:
     RGBSigmoidPolynomial _rsp;
 
 public:
     explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept { return _rsp(lambda); }
+    [[nodiscard]] virtual Float eval(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
-class RGBUnboundSpectrum {
+class RGBUnboundSpectrum : public RGBAlbedoSpectrum {
 private:
-    RGBSigmoidPolynomial _rsp;
     Float _scale;
+
+public:
+    using Super = RGBAlbedoSpectrum;
 
 public:
     explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
-        : _rsp{move(rsp)}, _scale(scale) {}
+        : Super{move(rsp)}, _scale(scale) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
         : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept {
-        return _rsp(lambda) * _scale;
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept {
+        return Super::eval(lambda) * _scale;
     }
 };
 
-class RGBIlluminationSpectrum {
+class RGBIlluminationSpectrum : public RGBUnboundSpectrum {
 private:
-    RGBSigmoidPolynomial _rsp;
-    Float _scale;
     const SPD &_illuminant;
 
 public:
+    using Super = RGBUnboundSpectrum;
+
+public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
-        : _rsp{move(rsp)}, _scale(scale), _illuminant(wp) {}
+        : Super(rsp, scale), _illuminant(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
-    [[nodiscard]] Float sample(const Float &lambda) const noexcept {
-        return _rsp(lambda) * _scale * _illuminant.sample(lambda);
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept {
+        return Super::eval(lambda) * _illuminant.eval(lambda);
     }
 };
 
@@ -189,23 +241,8 @@ public:
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
 
-    void test(const SampledWavelengths &) noexcept override {
-        Sampler *sampler = _scene->sampler();
-        Float3 rgb = make_float3(0.63, 0.065, 0.05);
-        Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
-        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
-        int n = 500;
-
-        Float3 output = make_float3(0.f);
-        SampledWavelengths swl{dimension()};
-        $for(i, n) {
-            swl = sample_wavelength(sampler);
-            SampledSpectrum sp{1u, spec.sample(swl.lambda(0u))};
-            Float3 cl = linear_srgb(sp, swl);
-            output += cl;
-        };
-        output /= float(n);
-        prints("rgb {}, {}, {} xyz {} {} {}  c {} {} {}", output, cie::linear_srgb_to_xyz(output), c.xyz());
+    [[nodiscard]] optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept override {
+        return bsdf->is_dispersive();
     }
 
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
@@ -216,7 +253,7 @@ public:
         };
 
         for (uint i = 0; i < sp.dimension(); ++i) {
-            sum += safe_div(_cie_y.sample(swl.lambda(i)) * sp[i], swl.pdf(i));
+            sum += safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i));
         }
         float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
         return sum * factor;
@@ -227,9 +264,9 @@ public:
             return select(b == 0.0f, 0.0f, a / b);
         };
         for (uint i = 0; i < sp.dimension(); ++i) {
-            sum += make_float3(safe_div(_cie_x.sample(swl.lambda(i)) * sp[i], swl.pdf(i)),
-                               safe_div(_cie_y.sample(swl.lambda(i)) * sp[i], swl.pdf(i)),
-                               safe_div(_cie_z.sample(swl.lambda(i)) * sp[i], swl.pdf(i)));
+            sum += make_float3(safe_div(_cie_x.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(_cie_z.eval(swl.lambda(i)) * sp[i], swl.pdf(i)));
         }
         float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
         return sum * factor;
@@ -260,7 +297,7 @@ public:
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{c.xyz()});
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.sample(swl.lambda(i));
+            sp[i] = spec.eval(swl.lambda(i));
         }
         return {.sample = sp, .strength = luminance(rgb)};
     }
@@ -269,7 +306,7 @@ public:
         RGBIlluminationSpectrum spec{c, _illuminant_d65};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.sample(swl.lambda(i));
+            sp[i] = spec.eval(swl.lambda(i));
         }
         return {.sample = sp, .strength = luminance(rgb)};
     }
@@ -278,7 +315,7 @@ public:
         RGBUnboundSpectrum spec{c};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.sample(swl.lambda(i));
+            sp[i] = spec.eval(swl.lambda(i));
         }
         return {.sample = sp, .strength = luminance(rgb)};
     }

@@ -16,7 +16,7 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _scene(context, this),
       _geometry(this),
       _stream(device->create_stream()),
-      _bindless_array(device->create_bindless_array()) {}
+      _resource_array(device->create_resource_array()) {}
 
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();
@@ -34,10 +34,10 @@ void RenderPipeline::prepare_geometry() noexcept {
     _geometry.build_accel();
 }
 
-void RenderPipeline::prepare_bindless_array() noexcept {
-    _bindless_array.prepare_slotSOA(device());
-    _stream << _bindless_array.upload_buffer_handles()
-            << _bindless_array.upload_texture_handles()
+void RenderPipeline::prepare_resource_array() noexcept {
+    _resource_array.prepare_slotSOA(device());
+    _stream << _resource_array.upload_buffer_handles()
+            << _resource_array.upload_texture_handles()
             << synchronize() << commit();
 }
 
@@ -50,11 +50,11 @@ const Spectrum &RenderPipeline::spectrum() const noexcept {
 }
 
 void RenderPipeline::deregister_buffer(handle_ty index) noexcept {
-    _bindless_array.remove_buffer(index);
+    _resource_array.remove_buffer(index);
 }
 
 void RenderPipeline::deregister_texture(handle_ty index) noexcept {
-    _bindless_array.remove_texture(index);
+    _resource_array.remove_texture(index);
 }
 
 void RenderPipeline::compile_shaders() noexcept {
@@ -65,7 +65,7 @@ void RenderPipeline::prepare() noexcept {
     _scene.prepare();
     _image_pool.prepare();
     prepare_geometry();
-    prepare_bindless_array();
+    prepare_resource_array();
     compile_shaders();
 }
 
