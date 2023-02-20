@@ -33,6 +33,12 @@ public:
     }
 };
 
+enum SpectrumType {
+    Albedo,
+    Unbound,
+    Illumination
+};
+
 struct NodeDesc : public Hashable {
 protected:
     string_view _type;
@@ -81,6 +87,7 @@ public:
     float4 val{};
     string fn;
     ColorSpace color_space{ColorSpace::SRGB};
+    SpectrumType type{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -88,16 +95,18 @@ protected:
     }
 
 public:
-    TextureDesc() : NodeDesc("Texture") { sub_type = "constant"; }
-    explicit TextureDesc(string name) : NodeDesc("Texture", std::move(name)) {}
-    explicit TextureDesc(float v)
-        : NodeDesc("Texture"), val(make_float4(v)) { sub_type = "constant"; }
-    explicit TextureDesc(float2 v)
-        : NodeDesc("Texture"), val(make_float4(v, 0, 0)) { sub_type = "constant"; }
-    explicit TextureDesc(float3 v)
-        : NodeDesc("Texture"), val(make_float4(v, 0)) { sub_type = "constant"; }
-    explicit TextureDesc(float4 v)
-        : NodeDesc("Texture"), val(v) { sub_type = "constant"; }
+    explicit TextureDesc(SpectrumType type = Albedo)
+        : NodeDesc("Texture"), type(type) { sub_type = "constant"; }
+    explicit TextureDesc(string name)
+        : NodeDesc("Texture", std::move(name)), type(Albedo) {}
+    explicit TextureDesc(float v, SpectrumType type = Albedo)
+        : NodeDesc("Texture"), val(make_float4(v)), type(type) { sub_type = "constant"; }
+    explicit TextureDesc(float2 v, SpectrumType type = Albedo)
+        : NodeDesc("Texture"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
+    explicit TextureDesc(float3 v, SpectrumType type = Albedo)
+        : NodeDesc("Texture"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
+    explicit TextureDesc(float4 v, SpectrumType type = Albedo)
+        : NodeDesc("Texture"), val(v), type(type) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
@@ -111,7 +120,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     // for area light and projector
-    TextureDesc texture_desc;
+    TextureDesc texture_desc{Illumination};
 
     // area light
     bool two_sided{false};

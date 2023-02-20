@@ -12,6 +12,9 @@
 namespace vision {
 
 class Texture : public Node {
+private:
+    SpectrumType _type{};
+
 public:
     using Desc = TextureDesc;
 
@@ -32,13 +35,13 @@ public:
         return tex ? tex->eval(ctx) : Float4(val);
     }
     [[nodiscard]] static ColorDecode eval_albedo_spectrum(const Texture *tex,
-                                                      const TextureEvalContext &ctx,
-                                                      const SampledWavelengths &swl) noexcept {
+                                                          const TextureEvalContext &ctx,
+                                                          const SampledWavelengths &swl) noexcept {
         return tex ? tex->eval_albedo_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
     }
     [[nodiscard]] static ColorDecode eval_illumination_spectrum(const Texture *tex,
-                                                            const TextureEvalContext &ctx,
-                                                            const SampledWavelengths &swl) noexcept {
+                                                                const TextureEvalContext &ctx,
+                                                                const SampledWavelengths &swl) noexcept {
         return tex ? tex->eval_illumination_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
     }
     [[nodiscard]] [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
@@ -49,18 +52,18 @@ public:
     }
 
 public:
-    explicit Texture(const TextureDesc &desc) : Node(desc) {}
+    explicit Texture(const TextureDesc &desc) : Node(desc), _type(desc.type) {}
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const TextureEvalContext &tec,
-                                                       const SampledWavelengths &swl) const noexcept;
+                                                           const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const TextureEvalContext &tec,
-                                                             const SampledWavelengths &swl) const noexcept;
+                                                                 const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const Float2 &uv,
-                                                               const SampledWavelengths &swl) const noexcept;
+                                                           const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const Float2 &uv,
-                                                                     const SampledWavelengths &swl) const noexcept;
+                                                                 const SampledWavelengths &swl) const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
