@@ -256,7 +256,9 @@ public:
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept { return {}; }
-    [[nodiscard]] virtual float4 preprocess_color(float4 rgb) const noexcept { return rgb; }
+    [[nodiscard]] virtual float4 preprocess_albedo(float4 rgb) const noexcept {
+        return make_float4(rgb.xyz(), luminance(rgb.xyz()));
+    }
     [[nodiscard]] virtual ColorDecode to_albedo(float4 val, const SampledWavelengths &swl) const noexcept {
         return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
     }

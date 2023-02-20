@@ -284,6 +284,9 @@ public:
         }
         return swl;
     }
+//    [[nodiscard]] float4 preprocess_albedo(float4 rgb) const noexcept override {
+//
+//    }
     [[nodiscard]] ColorDecode to_albedo(float4 val, const SampledWavelengths &swl) const noexcept override {
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz()});
         SampledSpectrum sp{dimension()};

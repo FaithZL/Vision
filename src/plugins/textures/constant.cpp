@@ -13,7 +13,7 @@ private:
 public:
     explicit ConstantTexture(const TextureDesc &desc) : Texture(desc), _val(desc.val) {}
     void prepare() noexcept override {
-        _val = spectrum().preprocess_color(_val);
+        _val = spectrum().preprocess_albedo(_val);
     }
     [[nodiscard]] bool is_zero() const noexcept override { return ocarina::is_zero(_val); }
     [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override { return _val; }
