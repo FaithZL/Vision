@@ -13,7 +13,7 @@ namespace vision {
 
 class Texture : public Node {
 protected:
-    SpectrumType _type{};
+    TextureType _type{};
 
 public:
     using Desc = TextureDesc;

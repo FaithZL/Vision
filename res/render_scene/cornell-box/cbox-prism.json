@@ -417,7 +417,7 @@
                     "type": "area",
                     "param": {
                         "radiance": [
-                            12,
+                            12.1,
                             12,
                             12
                         ],

@@ -33,7 +33,8 @@ public:
     }
 };
 
-enum SpectrumType {
+enum TextureType {
+    Number,
     Albedo,
     Unbound,
     Illumination
@@ -87,7 +88,7 @@ public:
     float4 val{};
     string fn;
     ColorSpace color_space{ColorSpace::SRGB};
-    SpectrumType type{};
+    TextureType type{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -95,17 +96,17 @@ protected:
     }
 
 public:
-    explicit TextureDesc(SpectrumType type = Albedo)
+    explicit TextureDesc(TextureType type)
         : NodeDesc("Texture"), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(string name)
-        : NodeDesc("Texture", std::move(name)), type(Albedo) {}
-    explicit TextureDesc(float v, SpectrumType type = Albedo)
+    explicit TextureDesc(string name, TextureType type)
+        : NodeDesc("Texture", std::move(name)), type(type) {}
+    explicit TextureDesc(float v, TextureType type)
         : NodeDesc("Texture"), val(make_float4(v)), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(float2 v, SpectrumType type = Albedo)
+    explicit TextureDesc(float2 v, TextureType type)
         : NodeDesc("Texture"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(float3 v, SpectrumType type = Albedo)
+    explicit TextureDesc(float3 v, TextureType type)
         : NodeDesc("Texture"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(float4 v, SpectrumType type = Albedo)
+    explicit TextureDesc(float4 v, TextureType type)
         : NodeDesc("Texture"), val(v), type(type) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
@@ -264,38 +265,38 @@ public:
 struct MaterialDesc : public NodeDesc {
 public:
     // common
-    TextureDesc color;
-    TextureDesc roughness{1.f};
+    TextureDesc color{Albedo};
+    TextureDesc roughness{1.f, Number};
     bool remapping_roughness{false};
 
     // for glass and disney
-    TextureDesc ior{1.5f};
+    TextureDesc ior{1.5f, Number};
 
     // for metal
     string material_name{""};
-    TextureDesc eta;
-    TextureDesc k;
+    TextureDesc eta{Number};
+    TextureDesc k{Number};
 
     // for substrate
-    TextureDesc spec{0.05f};
+    TextureDesc spec{0.05f, Albedo};
 
     // for disney
-    TextureDesc metallic{0.f};
-    TextureDesc spec_tint{0.0f};
-    TextureDesc anisotropic{0.0f};
-    TextureDesc sheen{0.f};
-    TextureDesc sheen_tint{0.f};
-    TextureDesc clearcoat{0.f};
-    TextureDesc clearcoat_alpha{0.f};
-    TextureDesc spec_trans{0.f};
-    TextureDesc scatter_distance{0.f};
-    TextureDesc flatness{0.f};
-    TextureDesc diff_trans{0.f};
+    TextureDesc metallic{0.f, Number};
+    TextureDesc spec_tint{0.0f, Number};
+    TextureDesc anisotropic{0.0f, Number};
+    TextureDesc sheen{0.f, Number};
+    TextureDesc sheen_tint{0.f, Number};
+    TextureDesc clearcoat{0.f, Number};
+    TextureDesc clearcoat_alpha{0.f, Number};
+    TextureDesc spec_trans{0.f, Number};
+    TextureDesc scatter_distance{0.f, Number};
+    TextureDesc flatness{0.f, Number};
+    TextureDesc diff_trans{0.f, Number};
     bool thin{false};
 
     // for subsurface
-    TextureDesc sigma_a{make_float3(.0011f, .0024f, .014f)};
-    TextureDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f)};
+    TextureDesc sigma_a{make_float3(.0011f, .0024f, .014f), Unbound};
+    TextureDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f), Unbound};
     float sigma_scale{1.f};
 
 public:
