@@ -44,7 +44,7 @@ public:
                                                                 const SampledWavelengths &swl) noexcept {
         return tex ? tex->eval_illumination_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
     }
-    [[nodiscard]] [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
+    [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
         return tex ? tex->is_zero() : true;
     }
     [[nodiscard]] static bool nonzero(const Texture *tex) noexcept {
