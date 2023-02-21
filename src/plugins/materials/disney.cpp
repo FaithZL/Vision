@@ -547,19 +547,19 @@ private:
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load<Texture>(desc.color)),
-          _metallic(desc.scene->load<Texture>(desc.metallic)),
-          _eta(desc.scene->load<Texture>(desc.ior)),
-          _roughness(desc.scene->load<Texture>(desc.roughness)),
-          _spec_tint(desc.scene->load<Texture>(desc.spec_tint)),
-          _anisotropic(desc.scene->load<Texture>(desc.anisotropic)),
-          _sheen(desc.scene->load<Texture>(desc.sheen)),
-          _sheen_tint(desc.scene->load<Texture>(desc.sheen_tint)),
-          _clearcoat(desc.scene->load<Texture>(desc.clearcoat)),
-          _clearcoat_alpha(desc.scene->load<Texture>(desc.clearcoat_alpha)),
-          _spec_trans(desc.scene->load<Texture>(desc.spec_trans)),
-          _flatness(desc.scene->load<Texture>(desc.flatness)),
-          _diff_trans(desc.scene->load<Texture>(desc.diff_trans)) {}
+        : Material(desc), _color(desc.scene->load_texture(desc.color)),
+          _metallic(desc.scene->load_texture(desc.metallic)),
+          _eta(desc.scene->load_texture(desc.ior)),
+          _roughness(desc.scene->load_texture(desc.roughness)),
+          _spec_tint(desc.scene->load_texture(desc.spec_tint)),
+          _anisotropic(desc.scene->load_texture(desc.anisotropic)),
+          _sheen(desc.scene->load_texture(desc.sheen)),
+          _sheen_tint(desc.scene->load_texture(desc.sheen_tint)),
+          _clearcoat(desc.scene->load_texture(desc.clearcoat)),
+          _clearcoat_alpha(desc.scene->load_texture(desc.clearcoat_alpha)),
+          _spec_trans(desc.scene->load_texture(desc.spec_trans)),
+          _flatness(desc.scene->load_texture(desc.flatness)),
+          _diff_trans(desc.scene->load_texture(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,

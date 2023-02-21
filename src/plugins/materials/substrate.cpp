@@ -121,9 +121,9 @@ private:
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(desc.scene->load<Texture>(desc.color)),
-          _spec(desc.scene->load<Texture>(desc.spec)),
-          _roughness(desc.scene->load<Texture>(desc.roughness)),
+        : Material(desc), _diff(desc.scene->load_texture(desc.color)),
+          _spec(desc.scene->load_texture(desc.spec)),
+          _roughness(desc.scene->load_texture(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {

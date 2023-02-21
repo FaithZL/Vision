@@ -21,12 +21,12 @@ private:
 public:
     explicit SubsurfaceMaterial(const MaterialDesc &desc)
         : Material(desc),
-        _sigma_a{desc.scene->load<Texture>(desc.sigma_a)},
-        _sigma_s{desc.scene->load<Texture>(desc.sigma_s)},
+        _sigma_a{desc.scene->load_texture(desc.sigma_a)},
+        _sigma_s{desc.scene->load_texture(desc.sigma_s)},
         _sigma_scale{desc.sigma_scale},
-        _color(desc.scene->load<Texture>(desc.color)),
-        _ior(desc.scene->load<Texture>(desc.ior)),
-        _roughness(desc.scene->load<Texture>(desc.roughness)),
+        _color(desc.scene->load_texture(desc.color)),
+        _ior(desc.scene->load_texture(desc.ior)),
+        _roughness(desc.scene->load_texture(desc.roughness)),
         _remapping_roughness(desc.remapping_roughness) {}
 };
 

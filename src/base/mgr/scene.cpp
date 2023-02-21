@@ -78,6 +78,12 @@ Light *Scene::load_light(const LightDesc &desc) noexcept {
     return ret;
 }
 
+Texture *Scene::load_texture(const TextureDesc &desc) noexcept {
+    auto ret = load<Texture>(desc);
+    _textures.push_back(ret);
+    return ret;
+}
+
 void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
     for (const LightDesc &desc : descs) {
         load_light(desc);

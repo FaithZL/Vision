@@ -30,7 +30,7 @@ private:
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load<Texture>(desc.color)) {}
+        : Material(desc), _color(desc.scene->load_texture(desc.color)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = Texture::eval_albedo_spectrum(_color, si, swl).sample;

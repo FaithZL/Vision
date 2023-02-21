@@ -38,6 +38,7 @@ private:
     vector<Shape *> _shapes;
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
+    Polymorphic<Texture *> _textures;
     WarperDesc _warper_desc;
     Spectrum *_spectrum{nullptr};
     RenderPipeline *_rp{nullptr};
@@ -78,6 +79,7 @@ public:
     void load_mediums(const vector<MediumDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
+    Texture *load_texture(const TextureDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
     void prepare_materials() noexcept;
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }

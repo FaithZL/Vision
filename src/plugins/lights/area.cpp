@@ -21,7 +21,7 @@ public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           _two_sided{desc.two_sided}, _inst_idx(desc.inst_id), _scale(desc.scale) {
-        _radiance = desc.scene->load<Texture>(desc.texture_desc);
+        _radiance = desc.scene->load_texture(desc.texture_desc);
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {

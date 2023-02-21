@@ -57,11 +57,11 @@ public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
           _material_name(desc.material_name),
-          _eta(desc.scene->load<Texture>(desc.eta)),
-          _k(desc.scene->load<Texture>(desc.k)),
+          _eta(desc.scene->load_texture(desc.eta)),
+          _k(desc.scene->load_texture(desc.k)),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
-          _roughness(desc.scene->load<Texture>(desc.roughness)),
+          _roughness(desc.scene->load_texture(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);

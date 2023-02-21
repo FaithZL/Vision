@@ -34,8 +34,8 @@ private:
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load<Texture>(desc.color)),
-          _roughness(desc.scene->load<Texture>(desc.roughness)),
+        : Material(desc), _color(desc.scene->load_texture(desc.color)),
+          _roughness(desc.scene->load_texture(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {

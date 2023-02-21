@@ -87,9 +87,9 @@ private:
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _color(desc.scene->load<Texture>(desc.color)),
-          _ior(desc.scene->load<Texture>(desc.ior)),
-          _roughness(desc.scene->load<Texture>(desc.roughness)),
+          _color(desc.scene->load_texture(desc.color)),
+          _ior(desc.scene->load_texture(desc.ior)),
+          _roughness(desc.scene->load_texture(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness),
           _ior_curve(ior_curve(desc.material_name)) {}
 
