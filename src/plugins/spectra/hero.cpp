@@ -284,9 +284,33 @@ public:
         }
         return swl;
     }
-//    [[nodiscard]] float4 preprocess_albedo(float4 rgb) const noexcept override {
-//        return _rgb_to_spectrum_table.decode_albedo(rgb.xyz());
-//    }
+    [[nodiscard]] float4 albedo_params(float4 rgb) const noexcept override {
+        return _rgb_to_spectrum_table.decode_albedo(rgb.xyz());
+    }
+    [[nodiscard]] float4 illumination_params(float4 rgb) const noexcept override {
+        return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
+    }
+    [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
+        return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
+    }
+    [[nodiscard]] ColorDecode params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept override {
+        RGBIlluminationSpectrum spec{val, _illuminant_d65};
+        SampledSpectrum sp{dimension()};
+        for (uint i = 0; i < dimension(); ++i) {
+            sp[i] = spec.eval(swl.lambda(i));
+        }
+        // todo strength
+        return {.sample = sp, .strength = val.w};
+    }
+    [[nodiscard]] ColorDecode params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept override {
+        RGBUnboundSpectrum spec{val};
+        SampledSpectrum sp{dimension()};
+        for (uint i = 0; i < dimension(); ++i) {
+            sp[i] = spec.eval(swl.lambda(i));
+        }
+        // todo strength
+        return {.sample = sp, .strength = val.w};
+    }
     [[nodiscard]] ColorDecode params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept override {
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz()});
         SampledSpectrum sp{dimension()};
