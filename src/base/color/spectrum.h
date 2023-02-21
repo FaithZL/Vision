@@ -256,16 +256,28 @@ public:
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept { return {}; }
-    [[nodiscard]] virtual float4 preprocess_albedo(float4 rgb) const noexcept {
+    [[nodiscard]] virtual float4 albedo_params(float4 rgb) const noexcept {
         return make_float4(rgb.xyz(), luminance(rgb.xyz()));
     }
-    [[nodiscard]] virtual ColorDecode to_albedo(float4 val, const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual float4 illumination_params(float4 rgb) const noexcept {
+        return make_float4(rgb.xyz(), luminance(rgb.xyz()));
+    }
+    [[nodiscard]] virtual float4 unbound_params(float4 rgb) const noexcept {
+        return make_float4(rgb.xyz(), luminance(rgb.xyz()));
+    }
+    [[nodiscard]] virtual ColorDecode params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept {
+        return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
+    }
+    [[nodiscard]] virtual ColorDecode params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept {
+        return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
+    }
+    [[nodiscard]] virtual ColorDecode params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept {
         return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
     }
     [[nodiscard]] virtual Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual ColorDecode decode_to_albedo(Float3 rgb,  const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
 };
