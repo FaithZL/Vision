@@ -114,11 +114,13 @@ public:
             auto co = [&](int dx, int dy, int dz) noexcept {
                 return _coefficients[maxc][zi + dz][yi + dy][xi + dx][i];
             };
-            c[i] = lerp(lerp(lerp(co(0, 0, 0), co(1, 0, 0), dx),
-                             lerp(co(0, 1, 0), co(1, 1, 0), dx), dy),
-                        lerp(lerp(co(0, 0, 1), co(1, 0, 1), dx),
-                             lerp(co(0, 1, 1), co(1, 1, 1), dx), dy),
-                        dz);
+            c[i] = lerp(dz,
+                        lerp(dy,
+                             lerp(dx, co(0, 0, 0), co(1, 0, 0)),
+                             lerp(dx, co(0, 1, 0), co(1, 1, 0))),
+                        lerp(dy,
+                             lerp(dx, co(0, 0, 1), co(1, 0, 1)),
+                             lerp(dx, co(0, 1, 1), co(1, 1, 1))));
         }
         return make_float4(c, cie::linear_srgb_to_y(rgb));
     }
