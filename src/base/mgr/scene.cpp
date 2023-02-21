@@ -40,6 +40,7 @@ void Scene::prepare() noexcept {
     _sampler->prepare();
     _camera->update_device_data();
     build_warpers();
+    prepare_textures();
     prepare_materials();
     _rp->spectrum().prepare();
 }
@@ -91,8 +92,14 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 }
 
 void Scene::prepare_materials() noexcept {
-    _materials.for_each([&](Material *material) {
+    _materials.for_each([&](Material *material) noexcept {
         material->prepare();
+    });
+}
+
+void Scene::prepare_textures() noexcept {
+    _textures.for_each([&](Texture *texture) noexcept {
+        texture->prepare();
     });
 }
 

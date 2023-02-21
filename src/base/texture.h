@@ -12,7 +12,7 @@
 namespace vision {
 
 class Texture : public Node {
-private:
+protected:
     SpectrumType _type{};
 
 public:

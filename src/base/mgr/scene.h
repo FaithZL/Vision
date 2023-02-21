@@ -82,6 +82,7 @@ public:
     Texture *load_texture(const TextureDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
     void prepare_materials() noexcept;
+    void prepare_textures() noexcept;
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }
