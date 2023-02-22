@@ -108,10 +108,35 @@ VS_MAKE_CALLABLE(square_to_hemisphere)
 }
 
 template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> linear_PDF_impl(oc_float<p> x, oc_float<p> a, oc_float<p> b) {
+    //    assert(a > 0 && b > 0);
+    oc_float<p> ret = 2 * lerp(x, a, b) / (a + b);
+    return select(x < 0.f || x > 1.f, 0.f, ret);
+}
+VS_MAKE_CALLABLE(linear_PDF)
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> sample_linear_impl(oc_float<p> u, oc_float<p> a, oc_float<p> b) {
+    //    assert(a >= 0 && b >= 0);
+    oc_float<p> x = u * (a + b) / (a + sqrt(lerp(u, sqr(a), sqr(b))));
+    oc_float<p> ret = min(x, OneMinusEpsilon);
+    return select(u == 0 && a == 0, 0.f, ret);
+}
+VS_MAKE_CALLABLE(sample_linear)
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> sample_tent_impl(oc_float<p> u, oc_float<p> r) {
+    return select(u < 0.5f,
+                  -r * sample_linear((0.5f - u) * 2, 1, 0),
+                  r * sample_linear((u - 0.5f) * 2, 1, 0));
+}
+VS_MAKE_CALLABLE(sample_tent)
+
+template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> balance_heuristic_impl(const oc_int<p> &nf,
-                                            const oc_float<p> &f_PDF,
-                                            const oc_int<p> &ng,
-                                            const oc_float<p> &g_PDF) {
+                                                 const oc_float<p> &f_PDF,
+                                                 const oc_int<p> &ng,
+                                                 const oc_float<p> &g_PDF) {
     return (nf * f_PDF) / (nf * f_PDF + ng * g_PDF);
 }
 VS_MAKE_CALLABLE(balance_heuristic)

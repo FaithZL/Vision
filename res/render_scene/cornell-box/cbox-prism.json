@@ -643,7 +643,7 @@
                 }
             },
             "filter": {
-                "type": "box",
+                "type": "triangle",
                 "name": "boxFilter",
                 "param": {
                     "radius": [
