@@ -36,6 +36,7 @@ public:
     [[nodiscard]] const RenderPipeline *render_pipeline() const noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
     [[nodiscard]] uint type_index() const noexcept { return _type_index; }
+    void set_type_index(uint val) noexcept { _type_index = val; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}
