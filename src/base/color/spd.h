@@ -14,6 +14,7 @@ namespace vision {
 
 using namespace ocarina;
 
+// todo change to scalar or vector template
 class SPD {
 private:
     ManagedWrapper<float> _func;
