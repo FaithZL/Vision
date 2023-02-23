@@ -22,6 +22,7 @@ class Node {
 protected:
     string _name;
     mutable Scene *_scene{nullptr};
+    uint _type_index{InvalidUI32};
 
 public:
     using Creator = Node *(const NodeDesc &);
@@ -34,6 +35,7 @@ public:
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     [[nodiscard]] const RenderPipeline *render_pipeline() const noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
+    [[nodiscard]] uint type_index() const noexcept { return _type_index; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}

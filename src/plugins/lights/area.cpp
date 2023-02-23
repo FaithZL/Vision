@@ -29,7 +29,7 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
-                            const SampledWavelengths &swl) const {
+                                    const SampledWavelengths &swl) const {
         SampledSpectrum radiance = _radiance->eval_illumination_spectrum(p_light.uv, swl).sample * _scale;
         if (_two_sided) {
             return radiance;
@@ -38,8 +38,8 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
-                             const LightEvalContext &p_light,
-                             const SampledWavelengths &swl) const noexcept override {
+                                     const LightEvalContext &p_light,
+                                     const SampledWavelengths &swl) const noexcept override {
         return L(p_light, p_ref.pos - p_light.pos, swl);
     }
 
