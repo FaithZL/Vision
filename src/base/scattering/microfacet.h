@@ -259,7 +259,7 @@ template<EPort p = EPort::D>
 [[nodiscard]] oc_float3<p> BRDF_div_fr(const oc_float3<p> &wo, const oc_float3<p> &wi,
                                        const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float3<p> wh = normalize(wo + wi);
-    return BRDF<p>(wo, wh, wi, alpha_x, alpha_y, type);
+    return BRDF_div_fr<p>(wo, wh, wi, alpha_x, alpha_y, type);
 }
 
 /**
@@ -343,7 +343,7 @@ public:
 
     [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
         oc_float3<p> wh = normalize(wo + wi);
-        return BRDF(wo, wh, wi, Fr);
+        return this->BRDF(wo, wh, wi, Fr);
     }
 
     [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
@@ -353,7 +353,7 @@ public:
 
     [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
-        return BTDF(wo, wh, wi, Ft, eta);
+        return this->BTDF(wo, wh, wi, Ft, eta);
     }
 };
 
