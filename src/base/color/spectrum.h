@@ -62,6 +62,7 @@ public:
 
 class SampledSpectrum {
 private:
+    // todo usually dimension is 3 or 4, optimize parse to float3 or float4
     Array<float> _values;
 
 public:
