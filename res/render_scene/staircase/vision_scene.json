@@ -31486,7 +31486,7 @@
     "spectrum" : {
         "type" : "hero",
         "param" : {
-            "dimension": 4
+            "dimension": 3
         }
     }
 }

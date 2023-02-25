@@ -327,7 +327,7 @@ public:
 
 struct SpectrumDesc : public NodeDesc {
 public:
-    uint dimension{4};
+    uint dimension{3};
 
 public:
     VISION_DESC_COMMON(Spectrum)

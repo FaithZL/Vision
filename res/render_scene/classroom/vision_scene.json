@@ -3896,11 +3896,11 @@
     "spectrum" : {
         "type" : "hero",
         "param" : {
-            "dimension": 4
+            "dimension": 3
         }
     },
     "output": {
-        "spp": 512,
+        "spp": 0,
         "fn": "classroom-hero-512spp.png"
     }
 }

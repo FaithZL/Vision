@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Glass",
+                "material": "ShortBox",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -248,7 +248,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "Glass",
+                "material": "TallBox",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
