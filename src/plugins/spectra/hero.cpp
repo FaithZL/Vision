@@ -327,21 +327,11 @@ public:
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        RGBIlluminationSpectrum spec{c, _illuminant_d65};
-        SampledSpectrum sp{dimension()};
-        for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.eval(swl.lambda(i));
-        }
-        return {.sample = sp, .strength = luminance(rgb)};
+        return params_to_illumination(c, swl);
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        RGBUnboundSpectrum spec{c};
-        SampledSpectrum sp{dimension()};
-        for (uint i = 0; i < dimension(); ++i) {
-            sp[i] = spec.eval(swl.lambda(i));
-        }
-        return {.sample = sp, .strength = luminance(rgb)};
+        return params_to_unbound(c, swl);
     }
 };
 
