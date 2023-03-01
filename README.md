@@ -1,6 +1,6 @@
 # Vision
 Vision is a GPU physically based renderer,
-The vision renderer uses embeded DSL codegen technology derived from luisa compute https://github.com/LuisaGroup/LuisaCompute, which is a nice invention! 
+The vision renderer uses embeded DSL codegen technology derived from luisa compute https://github.com/LuisaGroup/LuisaCompute, which is a great invention! 
 
 ### Render algorithm
 | Feature                                                 | Progress  |
