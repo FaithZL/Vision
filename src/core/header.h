@@ -41,8 +41,12 @@ using DataWrap = nlohmann::json;
         }                                               \
     }
 
+#define CALLABLE Callable
+
 //#define VS_MAKE_CALLABLE(func)                      \
 //    template<EPort p = EPort::D, typename... Args>  \
 //    [[nodiscard]] auto func(Args &&...args) {       \
 //        return func##_impl<p>(OC_FORWARD(args)...); \
 //    }
+
+// #define CALLABLE auto
