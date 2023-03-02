@@ -76,7 +76,7 @@ public:
 
                 if (_scene->has_medium()) {
                     $if(rs.in_medium()) {
-                        _scene->mediums().dispatch(rs.medium, [&](const Medium *medium) {
+                        _scene->mediums().dispatch_instance(rs.medium, [&](const Medium *medium) {
                             SampledSpectrum medium_throughput = medium->sample(rs.ray, it, swl, sampler);
                             throughput *= medium_throughput;
                         });
@@ -113,7 +113,7 @@ public:
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
-                    _scene->materials().dispatch(it.mat_id, [&](const Material *material) {
+                    _scene->materials().dispatch_instance(it.mat_id, [&](const Material *material) {
                         UP<BSDF> bsdf = material->get_BSDF(it, swl);
                         if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
                             $if(*dispersive) {

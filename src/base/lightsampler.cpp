@@ -46,7 +46,7 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
 }
 
 void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
-    _lights.dispatch(id, func);
+    _lights.dispatch_instance(id, func);
 }
 
 }// namespace vision
