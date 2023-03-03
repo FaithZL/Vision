@@ -135,7 +135,7 @@ public:
 
     [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
-        static CALLABLE decode = [](Var<ResourceArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
+        static CALLABLE_TYPE decode = [](Var<ResourceArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
             Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
             $if(!(rgb[0] == rgb[1] & rgb[1] == rgb[2])) {
                 Uint maxc = select(

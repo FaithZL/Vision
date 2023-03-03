@@ -41,7 +41,7 @@ using DataWrap = nlohmann::json;
         }                                               \
     }
 
-#define CALLABLE Callable
+#define CALLABLE_TYPE Callable
 
 //#define VS_MAKE_CALLABLE(func)                      \
 //    template<EPort p = EPort::D, typename... Args>  \
