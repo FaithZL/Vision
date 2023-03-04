@@ -48,5 +48,5 @@ using DataWrap = nlohmann::json;
 //    [[nodiscard]] auto func(Args &&...args) {       \
 //        return func##_impl<p>(OC_FORWARD(args)...); \
 //    }
-
-// #define CALLABLE auto
+//
+// #define CALLABLE_TYPE auto
