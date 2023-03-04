@@ -18,7 +18,7 @@ class RenderPipeline;
 class Spectrum;
 
 using namespace ocarina;
-class Node {
+class Node : public Hashable {
 protected:
     string _name;
     mutable Scene *_scene{nullptr};
@@ -35,6 +35,7 @@ public:
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     [[nodiscard]] const RenderPipeline *render_pipeline() const noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
+    [[nodiscard]] uint64_t _compute_hash() const noexcept { return 0; }
     [[nodiscard]] uint type_index() const noexcept { return _type_index; }
     void set_type_index(uint val) noexcept { _type_index = val; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
