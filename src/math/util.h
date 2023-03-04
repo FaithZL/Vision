@@ -6,7 +6,7 @@
 
 #include "core/basic_types.h"
 #include "dsl/common.h"
-#include "core/header.h"
+#include "core/vs_header.h"
 
 namespace vision {
 
