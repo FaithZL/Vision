@@ -9,7 +9,12 @@
 namespace vision {
 using namespace ocarina;
 ImageWrapper ImageWrapper::create(const TextureDesc &desc, RenderPipeline *rp) {
-    auto image_io = ImageIO::load(desc.fn, desc.color_space);
+    ImageIO image_io;
+    if (desc.sub_type == "constant") {
+        image_io = ImageIO::pure_color(desc.val, ocarina::LINEAR, make_uint2(1));
+    } else {
+        image_io = ImageIO::load(desc.fn, desc.color_space);
+    }
     auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());
     uint id = rp->register_texture(texture);
     return {move(image_io), move(texture), id};
