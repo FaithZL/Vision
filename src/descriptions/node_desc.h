@@ -347,4 +347,8 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct ShaderNodeDesc : public NodeDesc {
+public:
+};
+
 }// namespace vision
