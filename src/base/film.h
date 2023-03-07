@@ -32,7 +32,7 @@ private:
 public:
     explicit Film(const FilmDesc &desc)
         : Node(desc),
-          _resolution(desc.parameter["resolution"].as_uint2(make_uint2(768u))) {}
+          _resolution(desc["resolution"].as_uint2(make_uint2(768u))) {}
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     void set_resolution(uint2 res) noexcept { _resolution = res; }

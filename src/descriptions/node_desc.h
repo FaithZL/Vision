@@ -43,13 +43,13 @@ enum AttrType {
 struct NodeDesc : public Hashable {
 protected:
     string_view _type;
+    ParameterSet _parameter;
 
 public:
     string sub_type;
     string name;
     mutable Scene *scene{nullptr};
     mutable fs::path scene_path;
-    ParameterSet parameter;
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -61,6 +61,7 @@ public:
     NodeDesc(string_view type, string name)
         : _type(type), sub_type(std::move(name)) {}
     explicit NodeDesc(string_view type) : _type(type) {}
+    [[nodiscard]] ParameterSet operator[](const string &key) const noexcept { return _parameter[key]; }
     virtual void init(const ParameterSet &ps) noexcept {
         if (ps.data().is_object())
             name = ps["name"].as_string();

@@ -86,31 +86,31 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("independent");
-    parameter = ps["param"];
+    _parameter = ps["param"];
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("box");
-    parameter = ps["param"];
+    _parameter = ps["param"];
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
-    parameter = ps["param"];
-    transform_desc.init(parameter["transform"]);
-    filter_desc.init(parameter["filter"]);
-    film_desc.init(parameter["film"]);
-    if (parameter.contains("medium")) {
-        medium.name = parameter["medium"].as_string();
+    _parameter = ps["param"];
+    transform_desc.init(_parameter["transform"]);
+    filter_desc.init(_parameter["filter"]);
+    film_desc.init(_parameter["film"]);
+    if (_parameter.contains("medium")) {
+        medium.name = _parameter["medium"].as_string();
     }
 }
 
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
-    parameter = ps["param"];
+    _parameter = ps["param"];
 }
 
 namespace detail {
@@ -247,7 +247,7 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 void FilmDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
-    parameter = ps["param"];
+    _parameter = ps["param"];
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {
@@ -258,7 +258,7 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
 void SpectrumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("srgb");
-    parameter = ps.value("param", DataWrap::object());
+    _parameter = ps.value("param", DataWrap::object());
 }
 
 void OutputDesc::init(const ParameterSet &ps) noexcept {

@@ -37,7 +37,7 @@ protected:
 public:
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
-          _radius(desc.parameter["radius"].as_float2(make_float2(1.f))) {}
+          _radius(desc["radius"].as_float2(make_float2(1.f))) {}
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
 };
