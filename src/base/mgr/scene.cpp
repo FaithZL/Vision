@@ -79,9 +79,9 @@ Light *Scene::load_light(const LightDesc &desc) noexcept {
     return ret;
 }
 
-Texture *Scene::load_texture(const ShaderNodeDesc &desc) noexcept {
-    auto ret = load<Texture>(desc);
-    _textures.push_back(ret);
+ShaderNode *Scene::load_shader_node(const ShaderNodeDesc &desc) noexcept {
+    auto ret = load<ShaderNode>(desc);
+    _shadernodes.push_back(ret);
     return ret;
 }
 
@@ -98,7 +98,7 @@ void Scene::prepare_materials() noexcept {
 }
 
 void Scene::prepare_textures() noexcept {
-    _textures.for_each([&](Texture *texture) noexcept {
+    _shadernodes.for_each([&](ShaderNode *texture) noexcept {
         texture->prepare();
     });
 }

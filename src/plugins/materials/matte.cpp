@@ -26,14 +26,14 @@ public:
 
 class MatteMaterial : public Material {
 private:
-    const Texture *_color{};
+    const ShaderNode *_color{};
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load_texture(desc.color)) {}
+        : Material(desc), _color(desc.scene->load_shader_node(desc.color)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = Texture::eval_albedo_spectrum(_color, si, swl).sample;
+        SampledSpectrum kr = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;
         return make_unique<MatteBSDF>(si, kr, swl);
     }
 };

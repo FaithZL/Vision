@@ -114,22 +114,22 @@ public:
 
 class SubstrateMaterial : public Material {
 private:
-    const Texture *_diff{};
-    const Texture *_spec{};
-    const Texture *_roughness{};
+    const ShaderNode *_diff{};
+    const ShaderNode *_spec{};
+    const ShaderNode *_roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(desc.scene->load_texture(desc.color)),
-          _spec(desc.scene->load_texture(desc.spec)),
-          _roughness(desc.scene->load_texture(desc.roughness)),
+        : Material(desc), _diff(desc.scene->load_shader_node(desc.color)),
+          _spec(desc.scene->load_shader_node(desc.spec)),
+          _roughness(desc.scene->load_shader_node(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = Texture::eval_albedo_spectrum(_diff, si, swl).sample;
-        SampledSpectrum Rs = Texture::eval_albedo_spectrum(_spec, si, swl).sample;
-        Float2 alpha = Texture::eval(_roughness, si, 0.001f).xy();
+        SampledSpectrum Rd = ShaderNode::eval_albedo_spectrum(_diff, si, swl).sample;
+        SampledSpectrum Rs = ShaderNode::eval_albedo_spectrum(_spec, si, swl).sample;
+        Float2 alpha = ShaderNode::eval(_roughness, si, 0.001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);

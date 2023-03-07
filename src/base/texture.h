@@ -11,7 +11,7 @@
 
 namespace vision {
 
-class Texture : public Node {
+class ShaderNode : public Node {
 protected:
     AttrType _type{};
 
@@ -20,7 +20,7 @@ public:
 
 public:
     template<typename T = float4>
-    [[nodiscard]] static Float4 eval(const Texture *tex, const TextureEvalContext &ctx,
+    [[nodiscard]] static Float4 eval(const ShaderNode *tex, const AttrEvalContext &ctx,
                                      T val = T{}) noexcept {
         float4 default_val = make_float4(0);
         if constexpr (is_scalar_v<T>) {
@@ -34,31 +34,31 @@ public:
         }
         return tex ? tex->eval(ctx) : Float4(val);
     }
-    [[nodiscard]] static ColorDecode eval_albedo_spectrum(const Texture *tex,
-                                                          const TextureEvalContext &ctx,
+    [[nodiscard]] static ColorDecode eval_albedo_spectrum(const ShaderNode *tex,
+                                                          const AttrEvalContext &ctx,
                                                           const SampledWavelengths &swl) noexcept {
         return tex ? tex->eval_albedo_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
     }
-    [[nodiscard]] static ColorDecode eval_illumination_spectrum(const Texture *tex,
-                                                                const TextureEvalContext &ctx,
+    [[nodiscard]] static ColorDecode eval_illumination_spectrum(const ShaderNode *tex,
+                                                                const AttrEvalContext &ctx,
                                                                 const SampledWavelengths &swl) noexcept {
         return tex ? tex->eval_illumination_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
     }
-    [[nodiscard]] static bool is_zero(const Texture *tex) noexcept {
+    [[nodiscard]] static bool is_zero(const ShaderNode *tex) noexcept {
         return tex ? tex->is_zero() : true;
     }
-    [[nodiscard]] static bool nonzero(const Texture *tex) noexcept {
+    [[nodiscard]] static bool nonzero(const ShaderNode *tex) noexcept {
         return !is_zero(tex);
     }
 
 public:
-    explicit Texture(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
+    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
-    [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tec) const noexcept = 0;
+    [[nodiscard]] virtual Float4 eval(const AttrEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;
-    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const TextureEvalContext &tec,
+    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                            const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const TextureEvalContext &tec,
+    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &tec,
                                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const Float2 &uv,
                                                            const SampledWavelengths &swl) const noexcept;

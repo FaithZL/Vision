@@ -28,19 +28,19 @@ public:
 
 class MirrorMaterial : public Material {
 private:
-    const Texture *_color{};
-    const Texture *_roughness{};
+    const ShaderNode *_color{};
+    const ShaderNode *_roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load_texture(desc.color)),
-          _roughness(desc.scene->load_texture(desc.roughness)),
+        : Material(desc), _color(desc.scene->load_shader_node(desc.color)),
+          _roughness(desc.scene->load_shader_node(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = Texture::eval_albedo_spectrum(_color, si, swl).sample;
-        Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
+        SampledSpectrum kr = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;
+        Float2 alpha = ShaderNode::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);

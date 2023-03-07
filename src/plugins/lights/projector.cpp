@@ -11,7 +11,7 @@ class Projector : public IPointLight {
 private:
     float4x4 _o2w;
     float _ratio;
-    const Texture *_intensity{};
+    const ShaderNode *_intensity{};
     float _angle_y;
     float _scale{1.f};
 
@@ -22,7 +22,7 @@ public:
           _angle_y(radians(desc.angle)),
           _o2w(desc.o2w.mat),
           _scale(desc.scale) {
-        _intensity = desc.scene->load_texture(desc.texture_desc);
+        _intensity = desc.scene->load_shader_node(desc.texture_desc);
         if (_ratio == 0) {
             uint2 res = _intensity->resolution();
             _ratio = float(res.x) / res.y;

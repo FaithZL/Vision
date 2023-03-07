@@ -6,12 +6,12 @@
 #include "base/mgr/render_pipeline.h"
 
 namespace vision {
-class ConstantTexture : public Texture {
+class ConstantTexture : public ShaderNode {
 private:
     float4 _val;
 
 public:
-    explicit ConstantTexture(const ShaderNodeDesc &desc) : Texture(desc), _val(desc.val) {}
+    explicit ConstantTexture(const ShaderNodeDesc &desc) : ShaderNode(desc), _val(desc.val) {}
     void prepare() noexcept override {
         switch (_type) {
             case AttrType::Albedo:
@@ -28,7 +28,7 @@ public:
         }
     }
     [[nodiscard]] bool is_zero() const noexcept override { return ocarina::is_zero(_val); }
-    [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override { return _val; }
+    [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override { return _val; }
     [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override { return _val; }
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const Float2 &uv,
                                                    const SampledWavelengths &swl) const noexcept override {
@@ -38,11 +38,11 @@ public:
                                                          const SampledWavelengths &swl) const noexcept override {
         return spectrum().params_to_illumination(_val, swl);
     }
-    [[nodiscard]] ColorDecode eval_albedo_spectrum(const TextureEvalContext &tec,
+    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                    const SampledWavelengths &swl) const noexcept override {
         return spectrum().params_to_albedo(_val, swl);
     }
-    [[nodiscard]] ColorDecode eval_illumination_spectrum(const TextureEvalContext &tec,
+    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &tec,
                                                          const SampledWavelengths &swl) const noexcept override {
         return spectrum().params_to_illumination(_val, swl);
     }

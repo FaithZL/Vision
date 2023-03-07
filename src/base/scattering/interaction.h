@@ -184,21 +184,21 @@ struct LightSampleContext : public SpacePoint {
         : SpacePoint{p, ng}, ns(ns) {}
 };
 
-struct TextureEvalContext {
+struct AttrEvalContext {
     Float3 pos;
     Float2 uv;
-    TextureEvalContext() = default;
-    TextureEvalContext(const Interaction &si)
+    AttrEvalContext() = default;
+    AttrEvalContext(const Interaction &si)
         : pos(si.pos), uv(si.uv) {}
 };
 
-struct MaterialEvalContext : public TextureEvalContext {
+struct MaterialEvalContext : public AttrEvalContext {
     Float3 wo;
     Float3 ng, ns;
     Float3 dp_dus;
     MaterialEvalContext() = default;
     MaterialEvalContext(const Interaction &si)
-        : TextureEvalContext(si),
+        : AttrEvalContext(si),
           wo(si.wo),
           ng(si.g_uvn.normal()),
           ns(si.s_uvn.normal()),

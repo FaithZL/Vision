@@ -14,14 +14,14 @@ private:
     uint _inst_idx{InvalidUI32};
     bool _two_sided{false};
     Warper *_warper{nullptr};
-    Texture *_radiance{nullptr};
+    ShaderNode *_radiance{nullptr};
     float _scale{1.f};
 
 public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           _two_sided{desc.two_sided}, _inst_idx(desc.inst_id), _scale(desc.scale) {
-        _radiance = desc.scene->load_texture(desc.texture_desc);
+        _radiance = desc.scene->load_shader_node(desc.texture_desc);
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {

@@ -46,22 +46,22 @@ public:
 class MetalMaterial : public Material {
 private:
     string _material_name{};
-    const Texture *_eta{};
-    const Texture *_k{};
+    const ShaderNode *_eta{};
+    const ShaderNode *_k{};
     SPD _spd_eta;
     SPD _spd_k;
-    const Texture *_roughness{};
+    const ShaderNode *_roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
           _material_name(desc.material_name),
-          _eta(desc.scene->load_texture(desc.eta)),
-          _k(desc.scene->load_texture(desc.k)),
+          _eta(desc.scene->load_shader_node(desc.eta)),
+          _k(desc.scene->load_shader_node(desc.k)),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
-          _roughness(desc.scene->load_texture(desc.roughness)),
+          _roughness(desc.scene->load_shader_node(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
@@ -75,7 +75,7 @@ public:
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = Texture::eval(_roughness, si, 0.0001f).xy();
+        Float2 alpha = ShaderNode::eval(_roughness, si, 0.0001f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         SampledSpectrum eta = _spd_eta.eval(swl);

@@ -14,13 +14,13 @@ private:
     Warper2D *_warper{};
     float4x4 _w2o;
     float _scale{1.f};
-    Texture *_texture{nullptr};
+    ShaderNode *_texture{nullptr};
 
 public:
     explicit EnvironmentLight(const LightDesc &desc)
         : Light(desc, LightType::Infinite),
           _scale(desc.scale),
-          _texture(desc.scene->load_texture(desc.texture_desc)) {
+          _texture(desc.scene->load_shader_node(desc.texture_desc)) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);

@@ -8,16 +8,16 @@
 
 namespace vision {
 using namespace ocarina;
-class ImageTexture : public Texture {
+class ImageTexture : public ShaderNode {
 private:
     const ImageWrapper &_image_wrapper;
 
 public:
     explicit ImageTexture(const ShaderNodeDesc &desc)
-        : Texture(desc),
+        : ShaderNode(desc),
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
-    [[nodiscard]] Float4 eval(const TextureEvalContext &tev) const noexcept override {
+    [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override {
         return eval(tev.uv);
     }
     [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override {

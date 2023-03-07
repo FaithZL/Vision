@@ -352,19 +352,19 @@ private:
     }
 
 public:
-    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, const Texture *color_tex,
-                   const Texture *metallic_tex, const Texture *eta_tex, const Texture *roughness_tex,
-                   const Texture *spec_tint_tex, const Texture *anisotropic_tex, const Texture *sheen_tex,
-                   const Texture *sheen_tint_tex, const Texture *clearcoat_tex, const Texture *clearcoat_alpha_tex,
-                   const Texture *spec_trans_tex, const Texture *flatness_tex, const Texture *diff_trans_tex)
+    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, const ShaderNode *color_tex,
+                   const ShaderNode *metallic_tex, const ShaderNode *eta_tex, const ShaderNode *roughness_tex,
+                   const ShaderNode *spec_tint_tex, const ShaderNode *anisotropic_tex, const ShaderNode *sheen_tex,
+                   const ShaderNode *sheen_tint_tex, const ShaderNode *clearcoat_tex, const ShaderNode *clearcoat_alpha_tex,
+                   const ShaderNode *spec_trans_tex, const ShaderNode *flatness_tex, const ShaderNode *diff_trans_tex)
         : BSDF(si, swl) {
 
-        auto [color, color_lum] = Texture::eval_albedo_spectrum(color_tex, si, swl);
-        Float metallic = Texture::eval(metallic_tex, si).x;
-        Float spec_trans = Texture::eval(spec_trans_tex, si).x;
+        auto [color, color_lum] = ShaderNode::eval_albedo_spectrum(color_tex, si, swl);
+        Float metallic = ShaderNode::eval(metallic_tex, si).x;
+        Float spec_trans = ShaderNode::eval(spec_trans_tex, si).x;
         Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
-        Float flatness = Texture::eval(flatness_tex, si).x;
-        Float roughness = Texture::eval(roughness_tex, si).x;
+        Float flatness = ShaderNode::eval(flatness_tex, si).x;
+        Float roughness = ShaderNode::eval(roughness_tex, si).x;
         Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
         SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
         Float tint_lum = color_lum * tint_weight;
@@ -374,22 +374,22 @@ public:
 
         bool has_diffuse = false;
 
-        if (Texture::nonzero(color_tex)) {
+        if (ShaderNode::nonzero(color_tex)) {
             _diffuse = Diffuse(Cdiff, swl);
             _retro = Retro(Cdiff, roughness, swl);
             has_diffuse = true;
         }
 
-        if (Texture::nonzero(flatness_tex)) {
+        if (ShaderNode::nonzero(flatness_tex)) {
             Float Css_weight = diffuse_weight * flatness;
             SampledSpectrum Css = Css_weight * color;
             _fake_ss = FakeSS(Css, roughness, swl);
             has_diffuse = true;
         }
 
-        if (Texture::nonzero(sheen_tex)) {
-            Float sheen = Texture::eval(sheen_tex, si).x;
-            Float sheen_tint = Texture::eval(sheen_tint_tex, si).x;
+        if (ShaderNode::nonzero(sheen_tex)) {
+            Float sheen = ShaderNode::eval(sheen_tex, si).x;
+            Float sheen_tint = ShaderNode::eval(sheen_tint_tex, si).x;
             Float Csheen_weight = diffuse_weight * sheen;
             SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
             _sheen = Sheen(Csheen, swl);
@@ -401,13 +401,13 @@ public:
             _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
         }
 
-        Float spec_tint = Texture::eval(spec_tint_tex, si).x;
-        Float eta = Texture::eval(eta_tex, si).x;
+        Float spec_tint = ShaderNode::eval(spec_tint_tex, si).x;
+        Float eta = ShaderNode::eval(eta_tex, si).x;
         Float SchlickR0 = schlick_R0_from_eta(eta);
         SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
         _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
-        Float anisotropic = Texture::eval(anisotropic_tex, si).x;
+        Float anisotropic = ShaderNode::eval(anisotropic_tex, si).x;
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
@@ -417,15 +417,15 @@ public:
         _spec_refl_index = _sampling_strategy_num++;
         _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
 
-        if (Texture::nonzero(clearcoat_tex)) {
-            Float cc = Texture::eval(clearcoat_tex, si).x;
-            Float cc_alpha = lerp(Texture::eval(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
+        if (ShaderNode::nonzero(clearcoat_tex)) {
+            Float cc = ShaderNode::eval(clearcoat_tex, si).x;
+            Float cc_alpha = lerp(ShaderNode::eval(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
             _clearcoat = Clearcoat(cc, cc_alpha, swl);
             _clearcoat_index = _sampling_strategy_num++;
             _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
         }
 
-        if (Texture::nonzero(spec_trans_tex)) {
+        if (ShaderNode::nonzero(spec_trans_tex)) {
             Float Cst_weight = (1.f - metallic) * spec_trans;
             SampledSpectrum Cst = Cst_weight * sqrt(color);
             _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);
@@ -530,36 +530,36 @@ public:
 
 class DisneyMaterial : public Material {
 private:
-    const Texture *_color{};
-    const Texture *_metallic{};
-    const Texture *_eta{};
-    const Texture *_roughness{};
-    const Texture *_spec_tint{};
-    const Texture *_anisotropic{};
-    const Texture *_sheen{};
-    const Texture *_sheen_tint{};
-    const Texture *_clearcoat{};
-    const Texture *_clearcoat_alpha{};
-    const Texture *_spec_trans{};
-    const Texture *_flatness{};
-    const Texture *_diff_trans{};
+    const ShaderNode *_color{};
+    const ShaderNode *_metallic{};
+    const ShaderNode *_eta{};
+    const ShaderNode *_roughness{};
+    const ShaderNode *_spec_tint{};
+    const ShaderNode *_anisotropic{};
+    const ShaderNode *_sheen{};
+    const ShaderNode *_sheen_tint{};
+    const ShaderNode *_clearcoat{};
+    const ShaderNode *_clearcoat_alpha{};
+    const ShaderNode *_spec_trans{};
+    const ShaderNode *_flatness{};
+    const ShaderNode *_diff_trans{};
     bool _thin{false};
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load_texture(desc.color)),
-          _metallic(desc.scene->load_texture(desc.metallic)),
-          _eta(desc.scene->load_texture(desc.ior)),
-          _roughness(desc.scene->load_texture(desc.roughness)),
-          _spec_tint(desc.scene->load_texture(desc.spec_tint)),
-          _anisotropic(desc.scene->load_texture(desc.anisotropic)),
-          _sheen(desc.scene->load_texture(desc.sheen)),
-          _sheen_tint(desc.scene->load_texture(desc.sheen_tint)),
-          _clearcoat(desc.scene->load_texture(desc.clearcoat)),
-          _clearcoat_alpha(desc.scene->load_texture(desc.clearcoat_alpha)),
-          _spec_trans(desc.scene->load_texture(desc.spec_trans)),
-          _flatness(desc.scene->load_texture(desc.flatness)),
-          _diff_trans(desc.scene->load_texture(desc.diff_trans)) {}
+        : Material(desc), _color(desc.scene->load_shader_node(desc.color)),
+          _metallic(desc.scene->load_shader_node(desc.metallic)),
+          _eta(desc.scene->load_shader_node(desc.ior)),
+          _roughness(desc.scene->load_shader_node(desc.roughness)),
+          _spec_tint(desc.scene->load_shader_node(desc.spec_tint)),
+          _anisotropic(desc.scene->load_shader_node(desc.anisotropic)),
+          _sheen(desc.scene->load_shader_node(desc.sheen)),
+          _sheen_tint(desc.scene->load_shader_node(desc.sheen_tint)),
+          _clearcoat(desc.scene->load_shader_node(desc.clearcoat)),
+          _clearcoat_alpha(desc.scene->load_shader_node(desc.clearcoat_alpha)),
+          _spec_trans(desc.scene->load_shader_node(desc.spec_trans)),
+          _flatness(desc.scene->load_shader_node(desc.flatness)),
+          _diff_trans(desc.scene->load_shader_node(desc.diff_trans)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,

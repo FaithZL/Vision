@@ -38,7 +38,7 @@ private:
     vector<Shape *> _shapes;
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
-    Polymorphic<Texture *> _textures;
+    Polymorphic<ShaderNode *> _shadernodes;
     WarperDesc _warper_desc;
     Spectrum *_spectrum{nullptr};
     RenderPipeline *_rp{nullptr};
@@ -79,7 +79,7 @@ public:
     void load_mediums(const vector<MediumDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
-    Texture *load_texture(const ShaderNodeDesc &desc) noexcept;
+    ShaderNode *load_shader_node(const ShaderNodeDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
     void prepare_materials() noexcept;
     void prepare_textures() noexcept;

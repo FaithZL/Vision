@@ -78,30 +78,30 @@ public:
 
 class GlassMaterial : public Material {
 private:
-    const Texture *_color{};
-    const Texture *_ior{};
-    const Texture *_roughness{};
+    const ShaderNode *_color{};
+    const ShaderNode *_ior{};
+    const ShaderNode *_roughness{};
     bool _remapping_roughness{false};
     IORCurve *_ior_curve{nullptr};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _color(desc.scene->load_texture(desc.color)),
-          _ior(desc.scene->load_texture(desc.ior)),
-          _roughness(desc.scene->load_texture(desc.roughness)),
+          _color(desc.scene->load_shader_node(desc.color)),
+          _ior(desc.scene->load_shader_node(desc.ior)),
+          _roughness(desc.scene->load_shader_node(desc.roughness)),
           _remapping_roughness(desc.remapping_roughness),
           _ior_curve(ior_curve(desc.material_name)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum color = Texture::eval_albedo_spectrum(_color, si, swl).sample;
+        SampledSpectrum color = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;
         Float ior;
         if (_ior_curve) {
             ior = _ior_curve->eta(swl.lambda(0u));
         } else {
-            ior = Texture::eval(_ior, si, 1.5f).x;
+            ior = ShaderNode::eval(_ior, si, 1.5f).x;
         }
-        Float2 alpha = Texture::eval(_roughness, si, 1.f).xy();
+        Float2 alpha = ShaderNode::eval(_roughness, si, 1.f).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
