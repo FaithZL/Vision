@@ -7,11 +7,10 @@ add_subdirectory(integrators)
 add_subdirectory(materials)
 add_subdirectory(mediums)
 add_subdirectory(sensors)
-add_subdirectory(textures)
+add_subdirectory(shadernodes)
 add_subdirectory(shapes)
 add_subdirectory(warpers)
 add_subdirectory(spectra)
-add_subdirectory(shadernodes)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -22,7 +21,6 @@ target_link_libraries(vision-plugins INTERFACE
         vision-light
         vision-film
         vision-shadernode
-        vision-texture
         vision-integrator
         vision-warper
         vision-spectrum
