@@ -227,11 +227,6 @@ public:
 
 struct IntegratorDesc : public NodeDesc {
 public:
-    uint max_depth{10};
-    uint min_depth{5};
-    float rr_threshold{1};
-
-public:
     VISION_DESC_COMMON(Integrator)
     void init(const ParameterSet &ps) noexcept override;
 };
@@ -313,9 +308,6 @@ public:
 };
 
 struct SpectrumDesc : public NodeDesc {
-public:
-    uint dimension{3};
-
 public:
     VISION_DESC_COMMON(Spectrum)
     void init(const ParameterSet &ps) noexcept override;

@@ -113,8 +113,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
-    ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(max_depth, min_depth, rr_threshold)
+    parameter = ps["param"];
 }
 
 namespace detail {
@@ -272,8 +271,7 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
 void SpectrumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("srgb");
-    ParameterSet param = ps.data().value("param", DataWrap::object());
-    VISION_PARAMS_LIST_INITIAL(dimension)
+    parameter = ps["param"];
 }
 
 void OutputDesc::init(const ParameterSet &ps) noexcept {

@@ -20,6 +20,14 @@ class ScatterFunction;
 
 class Sampler;
 
+//"integrator": {
+//    "type": "pt",
+//    "param": {
+//        "min_depth": 5,
+//        "max_depth": 16,
+//        "rr_threshold": 1
+//    }
+//}
 class Integrator : public Node {
 public:
     using Desc = IntegratorDesc;
@@ -35,9 +43,9 @@ protected:
 public:
     explicit Integrator(const IntegratorDesc &desc)
         : Node(desc),
-          _max_depth(desc.max_depth),
-          _min_depth(desc.min_depth),
-          _rr_threshold(desc.rr_threshold) {}
+          _max_depth(desc.parameter["max_depth"].as_uint(16)),
+          _min_depth(desc.parameter["min_depth"].as_uint(5)),
+          _rr_threshold(desc.parameter["rr_threshold"].as_float(1.f)) {}
     virtual void compile_shader() noexcept = 0;
     virtual void render() const noexcept = 0;
 };

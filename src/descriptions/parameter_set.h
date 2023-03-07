@@ -154,7 +154,7 @@ public:
     }
 
     OC_NODISCARD ParameterSet operator[](const std::string &key) const {
-        return ParameterSet(_data.value(key, DataWrap()), key);
+        return ParameterSet(_data.value(key, DataWrap::object()), key);
     }
 
     OC_NODISCARD bool contains(const std::string &key) const {

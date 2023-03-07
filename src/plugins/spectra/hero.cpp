@@ -211,6 +211,12 @@ public:
     }
 };
 
+//"spectrum" : {
+//    "type" : "hero",
+//    "param" : {
+//        "dimension": 3
+//    }
+//}
 class HeroWavelengthSpectrum : public Spectrum {
 private:
     uint _dimension{};
@@ -222,7 +228,7 @@ private:
 
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc), _dimension(desc.dimension),
+        : Spectrum(desc), _dimension(desc.parameter["dimension"].as_uint(3u)),
           _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, render_pipeline()),
           _illuminant_d65(SPD::create_cie_d65(render_pipeline())),
           _cie_x(SPD::create_cie_x(render_pipeline())),
