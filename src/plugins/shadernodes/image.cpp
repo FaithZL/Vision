@@ -2,18 +2,18 @@
 // Created by Zero on 09/09/2022.
 //
 
-#include "base/texture.h"
+#include "base/shader_node.h"
 #include "rhi/common.h"
 #include "base/mgr/render_pipeline.h"
 
 namespace vision {
 using namespace ocarina;
-class ImageTexture : public ShaderNode {
+class Image : public ShaderNode {
 private:
     const ImageWrapper &_image_wrapper;
 
 public:
-    explicit ImageTexture(const ShaderNodeDesc &desc)
+    explicit Image(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
@@ -32,4 +32,4 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::ImageTexture)
+VS_MAKE_CLASS_CREATOR(vision::Image)

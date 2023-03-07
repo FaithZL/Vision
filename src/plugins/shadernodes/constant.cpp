@@ -2,16 +2,16 @@
 // Created by Zero on 09/09/2022.
 //
 
-#include "base/texture.h"
+#include "base/shader_node.h"
 #include "base/mgr/render_pipeline.h"
 
 namespace vision {
-class ConstantTexture : public ShaderNode {
+class Constant : public ShaderNode {
 private:
     float4 _val;
 
 public:
-    explicit ConstantTexture(const ShaderNodeDesc &desc) : ShaderNode(desc), _val(desc.val) {}
+    explicit Constant(const ShaderNodeDesc &desc) : ShaderNode(desc), _val(desc.val) {}
     void prepare() noexcept override {
         switch (_type) {
             case AttrType::Albedo:
@@ -49,4 +49,4 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::ConstantTexture)
+VS_MAKE_CLASS_CREATOR(vision::Constant)

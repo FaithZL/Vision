@@ -8,7 +8,7 @@
 #include "interaction.h"
 #include "core/stl.h"
 #include "base/scattering/bxdf.h"
-#include "base/texture.h"
+#include "base/shader_node.h"
 
 namespace vision {
 

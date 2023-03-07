@@ -5,8 +5,6 @@
 #include "base/shader_node.h"
 
 namespace vision {
-class Lerp : public ShaderNode {
-private:
-
+class NumberInput : public ShaderNode {
 };
 }// namespace vision

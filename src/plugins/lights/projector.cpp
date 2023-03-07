@@ -3,7 +3,7 @@
 //
 
 #include "base/light.h"
-#include "base/texture.h"
+#include "base/shader_node.h"
 #include "base/mgr/render_pipeline.h"
 
 namespace vision {

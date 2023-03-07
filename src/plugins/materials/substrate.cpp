@@ -3,7 +3,7 @@
 //
 
 #include "base/scattering/material.h"
-#include "base/texture.h"
+#include "base/shader_node.h"
 #include "base/mgr/scene.h"
 #include "math/warp.h"
 
