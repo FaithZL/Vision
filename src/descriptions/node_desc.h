@@ -189,9 +189,6 @@ public:
 
 struct SamplerDesc : public NodeDesc {
 public:
-    uint spp{};
-
-public:
     VISION_DESC_COMMON(Sampler)
     void init(const ParameterSet &ps) noexcept override;
 };
@@ -211,11 +208,11 @@ public:
 struct SensorDesc : public NodeDesc {
 public:
     TransformDesc transform_desc;
-    float fov_y{20};
-    float velocity{5};
-    float sensitivity{0.5};
-    float focal_distance{5.f};
-    float lens_radius{0.f};
+//    float fov_y{20};
+//    float velocity{5};
+//    float sensitivity{0.5};
+//    float focal_distance{5.f};
+//    float lens_radius{0.f};
     FilterDesc filter_desc;
     FilmDesc film_desc;
     NameID medium;

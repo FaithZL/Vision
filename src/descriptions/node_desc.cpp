@@ -86,27 +86,24 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("independent");
-    ParameterSet param = ps["param"];
-    VISION_PARAMS_INITIAL(spp)
+    parameter = ps["param"];
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("box");
     parameter = ps["param"];
-//    VISION_PARAMS_INITIAL(radius)
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
-    ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(velocity, fov_y, focal_distance, lens_radius, sensitivity)
-    transform_desc.init(param["transform"]);
-    filter_desc.init(param["filter"]);
-    film_desc.init(param["film"]);
-    if (param.contains("medium")) {
-        medium.name = param["medium"].as_string();
+    parameter = ps["param"];
+    transform_desc.init(parameter["transform"]);
+    filter_desc.init(parameter["filter"]);
+    film_desc.init(parameter["film"]);
+    if (parameter.contains("medium")) {
+        medium.name = parameter["medium"].as_string();
     }
 }
 
@@ -117,16 +114,6 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
 }
 
 namespace detail {
-//[[nodiscard]] pair<float3, float3> get_ior(const string &name) {
-//    for (auto elm : complex_ior_list) {
-//        if (elm.name == name) {
-//            return {elm.eta, elm.k};
-//        }
-//    }
-//    OC_WARNING("unknown metal name ", name);
-//    ComplexIorOld elm = complex_ior_list[0];
-//    return {elm.eta, elm.k};
-//}
 
 [[nodiscard]] pair<float3, float3> get_sigma(const string &name) {
     for (auto elm : SubsurfaceParameterTable) {
@@ -271,7 +258,7 @@ void WarperDesc::init(const ParameterSet &ps) noexcept {
 void SpectrumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("srgb");
-    parameter = ps["param"];
+    parameter = ps.value("param", DataWrap::object());
 }
 
 void OutputDesc::init(const ParameterSet &ps) noexcept {

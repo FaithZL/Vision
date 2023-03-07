@@ -20,8 +20,8 @@ public:
     explicit ThinLensCamera(const SensorDesc &desc)
         : Camera(desc) {
         _lens_data.emplace_back();
-        _lens_data->focal_distance = desc.focal_distance;
-        _lens_data->lens_radius = desc.lens_radius;
+        _lens_data->focal_distance = desc.parameter["focal_distance"].as_float(5.f);
+        _lens_data->lens_radius = desc.parameter["lens_radius"].as_float(0.f);
     }
     void update_device_data() noexcept override {
         Camera::update_device_data();
