@@ -29,7 +29,6 @@ public:
     }
     [[nodiscard]] bool is_zero() const noexcept override { return ocarina::is_zero(_val); }
     [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override { return _val; }
-    [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override { return _val; }
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const Float2 &uv,
                                                    const SampledWavelengths &swl) const noexcept override {
         return spectrum().params_to_albedo(_val, swl);

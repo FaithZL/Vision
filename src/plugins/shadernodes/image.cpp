@@ -18,10 +18,7 @@ public:
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override {
-        return eval(tev.uv);
-    }
-    [[nodiscard]] Float4 eval(const Float2 &uv) const noexcept override {
-        return render_pipeline()->tex(_image_wrapper.id()).sample<float4>(uv);
+        return render_pipeline()->tex(_image_wrapper.id()).sample<float4>(tev.uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture().resolution().xy();
