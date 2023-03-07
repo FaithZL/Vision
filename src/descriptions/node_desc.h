@@ -33,7 +33,7 @@ public:
     }
 };
 
-enum TextureType {
+enum AttrType {
     Number,
     Albedo,
     Unbound,
@@ -88,7 +88,7 @@ public:
     float4 val{};
     string fn;
     ColorSpace color_space{ColorSpace::SRGB};
-    TextureType type{};
+    AttrType type{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -96,17 +96,17 @@ protected:
     }
 
 public:
-    explicit ShaderNodeDesc(TextureType type)
+    explicit ShaderNodeDesc(AttrType type)
         : NodeDesc("ShaderNode"), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(string name, TextureType type)
+    explicit ShaderNodeDesc(string name, AttrType type)
         : NodeDesc("ShaderNode", std::move(name)), type(type) {}
-    explicit ShaderNodeDesc(float v, TextureType type)
+    explicit ShaderNodeDesc(float v, AttrType type)
         : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(float2 v, TextureType type)
+    explicit ShaderNodeDesc(float2 v, AttrType type)
         : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(float3 v, TextureType type)
+    explicit ShaderNodeDesc(float3 v, AttrType type)
         : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(float4 v, TextureType type)
+    explicit ShaderNodeDesc(float4 v, AttrType type)
         : NodeDesc("ShaderNode"), val(v), type(type) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {

@@ -14,13 +14,13 @@ public:
     explicit ConstantTexture(const ShaderNodeDesc &desc) : Texture(desc), _val(desc.val) {}
     void prepare() noexcept override {
         switch (_type) {
-            case TextureType::Albedo:
+            case AttrType::Albedo:
                 _val = spectrum().albedo_params(_val);
                 break;
-            case TextureType::Illumination:
+            case AttrType::Illumination:
                 _val = spectrum().illumination_params(_val);
                 break;
-            case TextureType::Unbound:
+            case AttrType::Unbound:
                 _val = spectrum().unbound_params(_val);
                 break;
             default:

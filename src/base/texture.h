@@ -13,7 +13,7 @@ namespace vision {
 
 class Texture : public Node {
 protected:
-    TextureType _type{};
+    AttrType _type{};
 
 public:
     using Desc = ShaderNodeDesc;
