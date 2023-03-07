@@ -13,7 +13,7 @@ private:
     const ImageWrapper &_image_wrapper;
 
 public:
-    explicit ImageTexture(const TextureDesc &desc)
+    explicit ImageTexture(const ShaderNodeDesc &desc)
         : Texture(desc),
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }

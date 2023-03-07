@@ -16,7 +16,7 @@ protected:
     TextureType _type{};
 
 public:
-    using Desc = TextureDesc;
+    using Desc = ShaderNodeDesc;
 
 public:
     template<typename T = float4>
@@ -52,7 +52,7 @@ public:
     }
 
 public:
-    explicit Texture(const TextureDesc &desc) : Node(desc), _type(desc.type) {}
+    explicit Texture(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
     [[nodiscard]] virtual bool is_zero() const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const TextureEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept = 0;

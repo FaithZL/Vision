@@ -79,7 +79,7 @@ public:
     void load_mediums(const vector<MediumDesc> &descs) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
-    Texture *load_texture(const TextureDesc &desc) noexcept;
+    Texture *load_texture(const ShaderNodeDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
     void prepare_materials() noexcept;
     void prepare_textures() noexcept;

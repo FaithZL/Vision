@@ -28,7 +28,7 @@ public:
     [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
     [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
     [[nodiscard]] uint id() const noexcept { return _id; }
-    [[nodiscard]] static ImageWrapper create(const TextureDesc &desc, RenderPipeline *rp);
+    [[nodiscard]] static ImageWrapper create(const ShaderNodeDesc &desc, RenderPipeline *rp);
     [[nodiscard]] TextureUploadCommand *upload() const noexcept;
     [[nodiscard]] TextureDownloadCommand *download() noexcept;
     void upload_immediately() const noexcept;
@@ -42,7 +42,7 @@ private:
 
 public:
     explicit ImagePool(RenderPipeline *rp) : _rp(rp) {}
-    [[nodiscard]] ImageWrapper &obtain_image(const TextureDesc &desc) noexcept;
+    [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
     void prepare() noexcept;
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };

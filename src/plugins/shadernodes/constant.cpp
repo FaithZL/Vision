@@ -11,7 +11,7 @@ private:
     float4 _val;
 
 public:
-    explicit ConstantTexture(const TextureDesc &desc) : Texture(desc), _val(desc.val) {}
+    explicit ConstantTexture(const ShaderNodeDesc &desc) : Texture(desc), _val(desc.val) {}
     void prepare() noexcept override {
         switch (_type) {
             case TextureType::Albedo:

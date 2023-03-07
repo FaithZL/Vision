@@ -83,7 +83,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct TextureDesc : public NodeDesc {
+struct ShaderNodeDesc : public NodeDesc {
 public:
     float4 val{};
     string fn;
@@ -96,18 +96,18 @@ protected:
     }
 
 public:
-    explicit TextureDesc(TextureType type)
-        : NodeDesc("Texture"), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(string name, TextureType type)
-        : NodeDesc("Texture", std::move(name)), type(type) {}
-    explicit TextureDesc(float v, TextureType type)
-        : NodeDesc("Texture"), val(make_float4(v)), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(float2 v, TextureType type)
-        : NodeDesc("Texture"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(float3 v, TextureType type)
-        : NodeDesc("Texture"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
-    explicit TextureDesc(float4 v, TextureType type)
-        : NodeDesc("Texture"), val(v), type(type) { sub_type = "constant"; }
+    explicit ShaderNodeDesc(TextureType type)
+        : NodeDesc("ShaderNode"), type(type) { sub_type = "constant"; }
+    explicit ShaderNodeDesc(string name, TextureType type)
+        : NodeDesc("ShaderNode", std::move(name)), type(type) {}
+    explicit ShaderNodeDesc(float v, TextureType type)
+        : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) { sub_type = "constant"; }
+    explicit ShaderNodeDesc(float2 v, TextureType type)
+        : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
+    explicit ShaderNodeDesc(float3 v, TextureType type)
+        : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
+    explicit ShaderNodeDesc(float4 v, TextureType type)
+        : NodeDesc("ShaderNode"), val(v), type(type) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
@@ -121,7 +121,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     // for area light and projector
-    TextureDesc texture_desc{Illumination};
+    ShaderNodeDesc texture_desc{Illumination};
 
     // area light
     bool two_sided{false};
@@ -265,38 +265,38 @@ public:
 struct MaterialDesc : public NodeDesc {
 public:
     // common
-    TextureDesc color{Albedo};
-    TextureDesc roughness{1.f, Number};
+    ShaderNodeDesc color{Albedo};
+    ShaderNodeDesc roughness{1.f, Number};
     bool remapping_roughness{false};
 
     // for glass and disney
-    TextureDesc ior{1.5f, Number};
+    ShaderNodeDesc ior{1.5f, Number};
 
     // for metal
     string material_name{""};
-    TextureDesc eta{Number};
-    TextureDesc k{Number};
+    ShaderNodeDesc eta{Number};
+    ShaderNodeDesc k{Number};
 
     // for substrate
-    TextureDesc spec{0.05f, Albedo};
+    ShaderNodeDesc spec{0.05f, Albedo};
 
     // for disney
-    TextureDesc metallic{0.f, Number};
-    TextureDesc spec_tint{0.0f, Number};
-    TextureDesc anisotropic{0.0f, Number};
-    TextureDesc sheen{0.f, Number};
-    TextureDesc sheen_tint{0.f, Number};
-    TextureDesc clearcoat{0.f, Number};
-    TextureDesc clearcoat_alpha{0.f, Number};
-    TextureDesc spec_trans{0.f, Number};
-    TextureDesc scatter_distance{0.f, Number};
-    TextureDesc flatness{0.f, Number};
-    TextureDesc diff_trans{0.f, Number};
+    ShaderNodeDesc metallic{0.f, Number};
+    ShaderNodeDesc spec_tint{0.0f, Number};
+    ShaderNodeDesc anisotropic{0.0f, Number};
+    ShaderNodeDesc sheen{0.f, Number};
+    ShaderNodeDesc sheen_tint{0.f, Number};
+    ShaderNodeDesc clearcoat{0.f, Number};
+    ShaderNodeDesc clearcoat_alpha{0.f, Number};
+    ShaderNodeDesc spec_trans{0.f, Number};
+    ShaderNodeDesc scatter_distance{0.f, Number};
+    ShaderNodeDesc flatness{0.f, Number};
+    ShaderNodeDesc diff_trans{0.f, Number};
     bool thin{false};
 
     // for subsurface
-    TextureDesc sigma_a{make_float3(.0011f, .0024f, .014f), Unbound};
-    TextureDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f), Unbound};
+    ShaderNodeDesc sigma_a{make_float3(.0011f, .0024f, .014f), Unbound};
+    ShaderNodeDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f), Unbound};
     float sigma_scale{1.f};
 
 public:
@@ -345,10 +345,6 @@ public:
         init(ps);
     }
     void init(const ParameterSet &ps) noexcept override;
-};
-
-struct ShaderNodeDesc : public NodeDesc {
-public:
 };
 
 }// namespace vision

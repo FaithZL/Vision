@@ -219,7 +219,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     }
 }
 
-void TextureDesc::init(const ParameterSet &ps) noexcept {
+void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_null()) {
         return;
     }

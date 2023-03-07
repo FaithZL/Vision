@@ -8,7 +8,7 @@
 
 namespace vision {
 using namespace ocarina;
-ImageWrapper ImageWrapper::create(const TextureDesc &desc, RenderPipeline *rp) {
+ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, RenderPipeline *rp) {
     ImageIO image_io;
     if (desc.sub_type == "constant") {
         image_io = ImageIO::pure_color(desc.val, ocarina::LINEAR, make_uint2(1));
@@ -36,7 +36,7 @@ void ImageWrapper::download_immediately() noexcept {
     _texture.download_immediately(_image_io.pixel_ptr());
 }
 
-ImageWrapper &ImagePool::obtain_image(const TextureDesc &desc) noexcept {
+ImageWrapper &ImagePool::obtain_image(const ShaderNodeDesc &desc) noexcept {
     uint64_t hash = desc.hash();
     if (!is_contain(hash)) {
         _images.insert(make_pair(hash, ImageWrapper::create(desc, _rp)));

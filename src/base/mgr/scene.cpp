@@ -79,7 +79,7 @@ Light *Scene::load_light(const LightDesc &desc) noexcept {
     return ret;
 }
 
-Texture *Scene::load_texture(const TextureDesc &desc) noexcept {
+Texture *Scene::load_texture(const ShaderNodeDesc &desc) noexcept {
     auto ret = load<Texture>(desc);
     _textures.push_back(ret);
     return ret;
