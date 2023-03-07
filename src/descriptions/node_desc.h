@@ -49,6 +49,7 @@ public:
     string name;
     mutable Scene *scene{nullptr};
     mutable fs::path scene_path;
+    ParameterSet parameter;
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -197,25 +198,11 @@ public:
 
 struct FilterDesc : public NodeDesc {
 public:
-    float2 radius{make_float2(1.f)};
-    // for gaussian filter
-    float sigma{};
-    // for sinc filter
-    float tau{};
-    // for mitchell filter
-    float b{}, c{};
-
-public:
     VISION_DESC_COMMON(Filter)
     void init(const ParameterSet &ps) noexcept override;
 };
 
 struct FilmDesc : public NodeDesc {
-public:
-    int state{0};
-    int tone_map{0};
-    uint2 resolution{make_uint2(500)};
-
 public:
     VISION_DESC_COMMON(Film)
     void init(const ParameterSet &ps) noexcept override;

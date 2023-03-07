@@ -93,8 +93,8 @@ void SamplerDesc::init(const ParameterSet &ps) noexcept {
 void FilterDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("box");
-    ParameterSet param = ps["param"];
-    VISION_PARAMS_INITIAL(radius)
+    parameter = ps["param"];
+//    VISION_PARAMS_INITIAL(radius)
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
@@ -261,8 +261,7 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 void FilmDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
-    ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(resolution)
+    parameter = ps["param"];
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {

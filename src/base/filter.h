@@ -16,6 +16,17 @@ struct FilterSample {
     Float weight;
 };
 
+
+//"filter": {
+//    "type": "box",
+//    "name": "boxFilter",
+//    "param": {
+//        "radius": [
+//            0.5,
+//            0.5
+//        ]
+//    }
+//}
 class Filter : public Node {
 public:
     using Desc = FilterDesc;
@@ -24,7 +35,9 @@ protected:
     float2 _radius;
 
 public:
-    explicit Filter(const FilterDesc &desc) : Node(desc), _radius(desc.radius) {}
+    explicit Filter(const FilterDesc &desc)
+        : Node(desc),
+          _radius(desc.parameter["radius"].as_float2(make_float2(1.f))) {}
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
 };
