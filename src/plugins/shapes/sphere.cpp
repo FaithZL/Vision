@@ -16,8 +16,8 @@ public:
         init(desc);
     }
     void init(const ShapeDesc &desc) noexcept {
-        float radius = desc.radius;
-        uint theta_div = desc.sub_div;
+        float radius = desc["radius"].as_float(1.f);
+        uint theta_div = desc["sub_div"].as_uint(60u);
         uint phi_div = 2 * theta_div;
         vertices.emplace_back(make_float3(0, radius, 0),
                               make_float3(0, 1, 0),

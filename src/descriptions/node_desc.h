@@ -167,17 +167,6 @@ public:
     bool swap_handed{false};
     uint subdiv_level{0};
 
-    // quad param
-    float width{1};
-    float height{1};
-
-    // cube param
-    float x{1}, y{1}, z{1};
-
-    // sphere param
-    float radius{1};
-    uint sub_div{60};
-
     // mesh param
     mutable vector<Vertex> vertices;
     mutable vector<Triangle> triangles;

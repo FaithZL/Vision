@@ -47,29 +47,30 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string();
     name = ps["name"].as_string();
-    ParameterSet param = ps["param"];
-    o2w.init(param.data().value("transform", DataWrap()));
-    material.name = param["material"].as_string("");
-    if (param.contains("medium")) {
-        ParameterSet m(param["medium"]);
+    _parameter = ps["param"];
+    ParameterSet param = _parameter;
+    o2w.init(_parameter.data().value("transform", DataWrap()));
+    material.name = _parameter["material"].as_string("");
+    if (_parameter.contains("medium")) {
+        ParameterSet m(_parameter["medium"]);
         inside_medium.name = m["inside"].as_string();
         outside_medium.name = m["outside"].as_string();
     }
-    if (param.contains("emission")) {
+    if (_parameter.contains("emission")) {
         emission.inst_id = index;
         emission.scene_path = scene_path;
-        emission.init(param["emission"]);
+        emission.init(_parameter["emission"]);
     }
     if (sub_type == "model") {
         VISION_PARAMS_LIST_INITIAL(smooth, swap_handed, flip_uv, subdiv_level)
-        fn = param["fn"].as_string();
+        fn = _parameter["fn"].as_string();
         fn = scene_path / fn;
     } else if (sub_type == "quad") {
-        VISION_PARAMS_LIST_INITIAL(width, height)
+//        VISION_PARAMS_LIST_INITIAL(width, height)
     } else if (sub_type == "cube") {
-        VISION_PARAMS_LIST_INITIAL(x, y, z)
+//        VISION_PARAMS_LIST_INITIAL(x, y, z)
     } else if (sub_type == "sphere") {
-        VISION_PARAMS_LIST_INITIAL(radius, sub_div)
+//        VISION_PARAMS_LIST_INITIAL(radius, sub_div)
     } else {
         cout << ps.data() << endl;
         OC_ERROR_FORMAT("shape error {}", sub_type);

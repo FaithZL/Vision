@@ -16,9 +16,9 @@ public:
         init(desc);
     }
     void init(const ShapeDesc &desc) noexcept {
-        float x = desc.x;
-        float y = desc.y;
-        float z = desc.z;
+        float x = desc["x"].as_float(1.f);
+        float y = desc["y"].as_float(1.f);
+        float z = desc["z"].as_float(1.f);
         y = y == 0 ? x : y;
         z = z == 0 ? y : z;
         x = x / 2.f;

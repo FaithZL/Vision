@@ -17,8 +17,8 @@ public:
     }
 
     void init(const ShapeDesc &desc) noexcept {
-        float width = desc.width / 2;
-        float height = desc.height / 2;
+        float width = desc["width"].as_float(1.f) / 2;
+        float height = desc["height"].as_float(1.f) / 2;
         vector<float3> P{make_float3(width, 0, height),
                          make_float3(width, 0, -height),
                          make_float3(-width, 0, height),

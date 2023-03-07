@@ -359,7 +359,7 @@
             "param" : {
                 "material": "Glass",
                 "name" : "prism",
-                "radius": 0.3,
+                "radius": 0.5,
                 "sub_div": 60,
                 "medium": {
                     "inside" : null,
