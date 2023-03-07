@@ -127,11 +127,13 @@ public:
     }
 
     void load(const ShapeDesc &desc) noexcept {
-        fs::path directory = desc.fn.parent_path();
+        auto fn = desc.scene_path / desc["fn"].as_string();
+        fs::path directory = desc.scene_path;
         Assimp::Importer ai_importer;
-        const aiScene *ai_scene = load_scene(desc.fn, ai_importer, desc.swap_handed,
-                                             desc.smooth, desc.flip_uv);
-        _meshes = process_mesh(ai_scene, desc.subdiv_level);
+        const aiScene *ai_scene = load_scene(fn, ai_importer, desc["swap_handed"].as_bool(false),
+                                             desc["smooth"].as_bool(false),
+                                             desc["flip_uv"].as_bool(false));
+        _meshes = process_mesh(ai_scene, desc["subdiv_level"].as_uint(0u));
     }
 
     void fill_geometry(Geometry &data) const noexcept override {

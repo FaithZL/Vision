@@ -61,27 +61,11 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         emission.scene_path = scene_path;
         emission.init(_parameter["emission"]);
     }
-    if (sub_type == "model") {
-        VISION_PARAMS_LIST_INITIAL(smooth, swap_handed, flip_uv, subdiv_level)
-        fn = _parameter["fn"].as_string();
-        fn = scene_path / fn;
-    } else if (sub_type == "quad") {
-//        VISION_PARAMS_LIST_INITIAL(width, height)
-    } else if (sub_type == "cube") {
-//        VISION_PARAMS_LIST_INITIAL(x, y, z)
-    } else if (sub_type == "sphere") {
-//        VISION_PARAMS_LIST_INITIAL(radius, sub_div)
-    } else {
-        cout << ps.data() << endl;
-        OC_ERROR_FORMAT("shape error {}", sub_type);
-    }
 }
 
 bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
-    return fn == other.fn &&
-           sub_type == other.sub_type &&
-           smooth == other.smooth &&
-           swap_handed == other.swap_handed;
+    // todo hash
+    return false;
 }
 
 void SamplerDesc::init(const ParameterSet &ps) noexcept {

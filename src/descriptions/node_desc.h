@@ -161,11 +161,6 @@ public:
     NameID outside_medium;
     uint64_t mat_hash{InvalidUI32};
     uint index{InvalidUI32};
-    fs::path fn;
-    bool smooth{false};
-    bool flip_uv{true};
-    bool swap_handed{false};
-    uint subdiv_level{0};
 
     // mesh param
     mutable vector<Vertex> vertices;
