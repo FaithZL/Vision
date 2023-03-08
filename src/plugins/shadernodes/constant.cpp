@@ -14,13 +14,13 @@ public:
     explicit Constant(const ShaderNodeDesc &desc) : ShaderNode(desc), _val(desc.val) {}
     void prepare() noexcept override {
         switch (_type) {
-            case AttrType::Albedo:
+            case ShaderNodeType::Albedo:
                 _val = spectrum().albedo_params(_val);
                 break;
-            case AttrType::Illumination:
+            case ShaderNodeType::Illumination:
                 _val = spectrum().illumination_params(_val);
                 break;
-            case AttrType::Unbound:
+            case ShaderNodeType::Unbound:
                 _val = spectrum().unbound_params(_val);
                 break;
             default:

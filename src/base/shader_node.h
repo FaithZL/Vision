@@ -13,7 +13,7 @@ namespace vision {
 
 class ShaderNode : public Node {
 protected:
-    AttrType _type{};
+    ShaderNodeType _type{};
 
 public:
     using Desc = ShaderNodeDesc;

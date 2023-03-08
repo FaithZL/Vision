@@ -33,11 +33,12 @@ public:
     }
 };
 
-enum AttrType {
+enum ShaderNodeType {
     Number,
     Albedo,
     Unbound,
-    Illumination
+    Illumination,
+    Calculate
 };
 
 struct NodeDesc : public Hashable {
@@ -90,7 +91,7 @@ public:
     float4 val{};
     string fn;
     ColorSpace color_space{ColorSpace::SRGB};
-    AttrType type{};
+    ShaderNodeType type{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -98,17 +99,17 @@ protected:
     }
 
 public:
-    explicit ShaderNodeDesc(AttrType type)
+    explicit ShaderNodeDesc(ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(string name, AttrType type)
+    explicit ShaderNodeDesc(string name, ShaderNodeType type)
         : NodeDesc("ShaderNode", std::move(name)), type(type) {}
-    explicit ShaderNodeDesc(float v, AttrType type)
+    explicit ShaderNodeDesc(float v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(float2 v, AttrType type)
+    explicit ShaderNodeDesc(float2 v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(float3 v, AttrType type)
+    explicit ShaderNodeDesc(float3 v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
-    explicit ShaderNodeDesc(float4 v, AttrType type)
+    explicit ShaderNodeDesc(float4 v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(v), type(type) { sub_type = "constant"; }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
@@ -226,7 +227,7 @@ public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] ShaderNodeDesc attr(const string &key, auto default_value,
-                                      AttrType type = AttrType::Number) const noexcept {
+                                      ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc ret{default_value, type};
         ret.init(_parameter[key], scene_path);
         return ret;
