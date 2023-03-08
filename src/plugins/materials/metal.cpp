@@ -46,8 +46,6 @@ public:
 class MetalMaterial : public Material {
 private:
     string _material_name{};
-    const ShaderNode *_eta{};
-    const ShaderNode *_k{};
     SPD _spd_eta;
     SPD _spd_k;
     const ShaderNode *_roughness{};
@@ -56,12 +54,10 @@ private:
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _material_name(desc.material_name),
-          _eta(desc.scene->load_shader_node(desc.eta)),
-          _k(desc.scene->load_shader_node(desc.k)),
+          _material_name(desc["material_name"].as_string()),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
-          _roughness(desc.scene->load_shader_node(desc.roughness)),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.1f)))),
           _remapping_roughness(desc.remapping_roughness) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
