@@ -10,7 +10,7 @@ namespace vision {
 
 class SubsurfaceMaterial : public Material {
 private:
-    float _sigma_scale{1.f};
+    const ShaderNode *_sigma_scale{};
     const ShaderNode *_sigma_a{};
     const ShaderNode *_sigma_s{};
     const ShaderNode *_color{};
@@ -21,13 +21,13 @@ private:
 public:
     explicit SubsurfaceMaterial(const MaterialDesc &desc)
         : Material(desc),
-        _sigma_a{desc.scene->load_shader_node(desc.sigma_a)},
-        _sigma_s{desc.scene->load_shader_node(desc.sigma_s)},
-        _sigma_scale{desc.sigma_scale},
-        _color(desc.scene->load_shader_node(desc.color)),
-        _ior(desc.scene->load_shader_node(desc.ior)),
-        _roughness(desc.scene->load_shader_node(desc.roughness)),
-        _remapping_roughness(desc.remapping_roughness) {}
+          _sigma_a{_scene->load_shader_node(desc.attr("sigma_a", make_float3(.0011f, .0024f, .014f), Unbound))},
+          _sigma_s{_scene->load_shader_node(desc.attr("sigma_s", make_float3(2.55f, 3.21f, 3.77f), Unbound))},
+          _sigma_scale{_scene->load_shader_node(desc.attr("sigma_scale", 1.f, Number))},
+          _color(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
+          _ior(_scene->load_shader_node(desc.attr("ior", make_float3(1.5f)))),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.1f)))),
+          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 };
 
 }// namespace vision

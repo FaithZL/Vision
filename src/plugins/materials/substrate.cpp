@@ -121,10 +121,10 @@ private:
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(desc.scene->load_shader_node(desc.color)),
-          _spec(desc.scene->load_shader_node(desc.spec)),
-          _roughness(desc.scene->load_shader_node(desc.roughness)),
-          _remapping_roughness(desc.remapping_roughness) {}
+        : Material(desc), _diff(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
+          _spec(_scene->load_shader_node(desc.attr("spec", make_float3(0.05f), Albedo))),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.001f)))),
+          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = ShaderNode::eval_albedo_spectrum(_diff, si, swl).sample;
