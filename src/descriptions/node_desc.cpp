@@ -115,40 +115,7 @@ namespace detail {
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
-    ParameterSet param = ps["param"];
     _parameter = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(remapping_roughness, thin)
-
-#define VS_TEXTURE_DESC_INIT(attr_name) \
-    attr_name.init(param[#attr_name], scene_path);
-
-    VS_TEXTURE_DESC_INIT(color)
-    VS_TEXTURE_DESC_INIT(roughness)
-    VS_TEXTURE_DESC_INIT(ior)
-    VS_TEXTURE_DESC_INIT(eta)
-    VS_TEXTURE_DESC_INIT(k)
-    VS_TEXTURE_DESC_INIT(spec)
-    VS_TEXTURE_DESC_INIT(metallic)
-    VS_TEXTURE_DESC_INIT(spec_tint)
-    VS_TEXTURE_DESC_INIT(anisotropic)
-    VS_TEXTURE_DESC_INIT(sheen)
-    VS_TEXTURE_DESC_INIT(sheen_tint)
-    VS_TEXTURE_DESC_INIT(clearcoat)
-    VS_TEXTURE_DESC_INIT(clearcoat_alpha)
-    VS_TEXTURE_DESC_INIT(spec_trans)
-    VS_TEXTURE_DESC_INIT(scatter_distance)
-    VS_TEXTURE_DESC_INIT(flatness)
-    VS_TEXTURE_DESC_INIT(diff_trans)
-
-    VISION_PARAMS_LIST_INITIAL(material_name, sigma_scale)
-
-    if (sub_type == "subsurface") {
-        auto [ss, sa] = detail::get_sigma(material_name);
-        sigma_s.init(DataWrap({ss.x, ss.y, ss.z}));
-        sigma_a.init(DataWrap({sa.x, sa.y, sa.z}));
-    }
-
-#undef VS_TEXTURE_DESC_INIT
 }
 
 void MediumDesc::init(const ParameterSet &ps) noexcept {

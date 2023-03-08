@@ -58,7 +58,7 @@ public:
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
           _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.1f)))),
-          _remapping_roughness(desc.remapping_roughness) {
+          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
         _spd_k.init(complex_ior.k);

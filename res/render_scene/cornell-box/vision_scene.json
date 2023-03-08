@@ -395,11 +395,24 @@
             "type": "matte",
             "name": "ShortBox",
             "param": {
-                "color": [
+                "color" : [
                     0.725,
                     0.71,
                     0.68
-                ]
+                ],
+                "ior" : 1.5,
+                "roughness" : 0.1,
+                "metallic" : 0.8,
+                "spec_tint" : 0.0,
+                "anisotropic" : 0,
+                "sheen" : 0,
+                "sheen_tint" : 0,
+                "clearcoat" : 1,
+                "clearcoat_alpha" : 0.1,
+                "spec_trans" : 0.0,
+                "flatness" : 0.98,
+                "scatter_distance" : [0, 0, 0],
+                "diff_trans" : 0.11
             }
         },
         {

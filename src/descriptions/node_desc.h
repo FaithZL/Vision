@@ -223,42 +223,6 @@ public:
 
 struct MaterialDesc : public NodeDesc {
 public:
-    // common
-    ShaderNodeDesc color{Albedo};
-    ShaderNodeDesc roughness{1.f, Number};
-    bool remapping_roughness{false};
-
-    // for glass and disney
-    ShaderNodeDesc ior{1.5f, Number};
-
-    // for metal
-    string material_name{""};
-    ShaderNodeDesc eta{Number};
-    ShaderNodeDesc k{Number};
-
-    // for substrate
-    ShaderNodeDesc spec{0.05f, Albedo};
-
-    // for disney
-    ShaderNodeDesc metallic{0.f, Number};
-    ShaderNodeDesc spec_tint{0.0f, Number};
-    ShaderNodeDesc anisotropic{0.0f, Number};
-    ShaderNodeDesc sheen{0.f, Number};
-    ShaderNodeDesc sheen_tint{0.f, Number};
-    ShaderNodeDesc clearcoat{0.f, Number};
-    ShaderNodeDesc clearcoat_alpha{0.f, Number};
-    ShaderNodeDesc spec_trans{0.f, Number};
-    ShaderNodeDesc scatter_distance{0.f, Number};
-    ShaderNodeDesc flatness{0.f, Number};
-    ShaderNodeDesc diff_trans{0.f, Number};
-    bool thin{false};
-
-    // for subsurface
-    ShaderNodeDesc sigma_a{make_float3(.0011f, .0024f, .014f), Unbound};
-    ShaderNodeDesc sigma_s{make_float3(2.55f, 3.21f, 3.77f), Unbound};
-    float sigma_scale{1.f};
-
-public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] ShaderNodeDesc attr(const string &key, auto default_value,
@@ -268,11 +232,7 @@ public:
         return ret;
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(NodeDesc::_compute_hash(), color, roughness,
-                      remapping_roughness, ior, eta, k, spec, metallic,
-                      spec_tint, anisotropic, sheen, sheen_tint, clearcoat,
-                      clearcoat_alpha, spec_trans, scatter_distance, flatness,
-                      diff_trans, thin);
+        return hash64(NodeDesc::_compute_hash(), _parameter.as_string());
     }
 };
 
