@@ -34,9 +34,9 @@ private:
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load_shader_node(desc.color)),
-          _roughness(desc.scene->load_shader_node(desc.roughness)),
-          _remapping_roughness(desc.remapping_roughness) {}
+        : Material(desc), _color(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.001f)))),
+          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;
