@@ -6,6 +6,7 @@
 #include "parameter_set.h"
 #include "core/macro_map.h"
 #include "medium_scatter_data.h"
+#include <sstream>
 #include "math/transform.h"
 
 namespace vision {
@@ -116,6 +117,12 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     _parameter = ps["param"];
+}
+
+uint64_t MaterialDesc::_compute_hash() const noexcept {
+    std::stringstream ss;
+    ss << _parameter.data() << endl;
+    return hash64(NodeDesc::_compute_hash(), ss.str());
 }
 
 void MediumDesc::init(const ParameterSet &ps) noexcept {

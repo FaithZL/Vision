@@ -231,9 +231,7 @@ public:
         ret.init(_parameter[key], scene_path);
         return ret;
     }
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(NodeDesc::_compute_hash(), _parameter.as_string());
-    }
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 };
 
 struct LightSamplerDesc : public NodeDesc {
