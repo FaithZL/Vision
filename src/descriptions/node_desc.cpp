@@ -116,6 +116,7 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     ParameterSet param = ps["param"];
+    _parameter = ps["param"];
     VISION_PARAMS_LIST_INITIAL(remapping_roughness, thin)
 
 #define VS_TEXTURE_DESC_INIT(attr_name) \

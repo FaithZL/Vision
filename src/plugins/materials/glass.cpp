@@ -87,11 +87,11 @@ private:
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _color(desc.scene->load_shader_node(desc.color)),
-          _ior(desc.scene->load_shader_node(desc.ior)),
-          _roughness(desc.scene->load_shader_node(desc.roughness)),
-          _remapping_roughness(desc.remapping_roughness),
-          _ior_curve(ior_curve(desc.material_name)) {}
+          _color(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
+          _ior(_scene->load_shader_node(desc.attr("ior", 1.5f))),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.01f)))),
+          _remapping_roughness(desc["remapping_roughness"].as_bool(false)),
+          _ior_curve(ior_curve(desc["material_name"].as_string())) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;

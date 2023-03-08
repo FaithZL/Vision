@@ -115,7 +115,6 @@ public:
         this->scene_path = scene_path;
         init(ps);
     }
-    [[nodiscard]] static ShaderNodeDesc create(const ParameterSet &ps,fs::path scene_path, Scene *scene) noexcept;
     [[nodiscard]] bool valid_emission() const noexcept {
         return any(val != 0.f) || !fn.empty();
     }
@@ -194,11 +193,6 @@ public:
 struct SensorDesc : public NodeDesc {
 public:
     TransformDesc transform_desc;
-//    float fov_y{20};
-//    float velocity{5};
-//    float sensitivity{0.5};
-//    float focal_distance{5.f};
-//    float lens_radius{0.f};
     FilterDesc filter_desc;
     FilmDesc film_desc;
     NameID medium;
@@ -267,6 +261,12 @@ public:
 public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
+    [[nodiscard]] ShaderNodeDesc attr(const string &key, auto default_value,
+                                      AttrType type = AttrType::Number) const noexcept {
+        ShaderNodeDesc ret{default_value, type};
+        ret.init(_parameter[key], scene_path);
+        return ret;
+    }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64(NodeDesc::_compute_hash(), color, roughness,
                       remapping_roughness, ior, eta, k, spec, metallic,
