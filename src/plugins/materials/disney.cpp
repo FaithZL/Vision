@@ -547,19 +547,19 @@ private:
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(desc.scene->load_shader_node(desc.color)),
-          _metallic(desc.scene->load_shader_node(desc.metallic)),
-          _eta(desc.scene->load_shader_node(desc.ior)),
-          _roughness(desc.scene->load_shader_node(desc.roughness)),
-          _spec_tint(desc.scene->load_shader_node(desc.spec_tint)),
-          _anisotropic(desc.scene->load_shader_node(desc.anisotropic)),
-          _sheen(desc.scene->load_shader_node(desc.sheen)),
-          _sheen_tint(desc.scene->load_shader_node(desc.sheen_tint)),
-          _clearcoat(desc.scene->load_shader_node(desc.clearcoat)),
-          _clearcoat_alpha(desc.scene->load_shader_node(desc.clearcoat_alpha)),
-          _spec_trans(desc.scene->load_shader_node(desc.spec_trans)),
-          _flatness(desc.scene->load_shader_node(desc.flatness)),
-          _diff_trans(desc.scene->load_shader_node(desc.diff_trans)) {}
+        : Material(desc), _color(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
+          _metallic(_scene->load_shader_node(desc.attr("metallic", 0.f, Number))),
+          _eta(_scene->load_shader_node(desc.attr("ior", 1.5f, Number))),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", 1.f, Number))),
+          _spec_tint(_scene->load_shader_node(desc.attr("spec_tint", 0.f, Number))),
+          _anisotropic(_scene->load_shader_node(desc.attr("anisotropic", 0.f, Number))),
+          _sheen(_scene->load_shader_node(desc.attr("sheen", 0.f, Number))),
+          _sheen_tint(_scene->load_shader_node(desc.attr("sheen_tint", 0.f, Number))),
+          _clearcoat(_scene->load_shader_node(desc.attr("clearcoat", 0.f, Number))),
+          _clearcoat_alpha(_scene->load_shader_node(desc.attr("clearcoat_alpha", 0.f, Number))),
+          _spec_trans(_scene->load_shader_node(desc.attr("spec_trans", 0.f, Number))),
+          _flatness(_scene->load_shader_node(desc.attr("flatness", 0.f, Number))),
+          _diff_trans(_scene->load_shader_node(desc.attr("diff_trans", 0.f, Number))) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
