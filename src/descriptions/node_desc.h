@@ -115,6 +115,7 @@ public:
         this->scene_path = scene_path;
         init(ps);
     }
+    [[nodiscard]] static ShaderNodeDesc create(const ParameterSet &ps,fs::path scene_path, Scene *scene) noexcept;
     [[nodiscard]] bool valid_emission() const noexcept {
         return any(val != 0.f) || !fn.empty();
     }
