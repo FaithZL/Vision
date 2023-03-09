@@ -89,9 +89,6 @@ public:
 
 struct ShaderNodeDesc : public NodeDesc {
 public:
-    float4 val{};
-    string fn;
-    ColorSpace color_space{ColorSpace::SRGB};
     ShaderNodeType type{};
 
 protected:
@@ -111,25 +108,25 @@ public:
         _parameter.set_json(DataWrap::object());
     }
     explicit ShaderNodeDesc(float v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v, v, v, v});
     }
     explicit ShaderNodeDesc(float2 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v.x, v.y, 0, 0});
     }
     explicit ShaderNodeDesc(float3 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v.x, v.y, v.z, 0});
     }
     explicit ShaderNodeDesc(float4 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(v), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v.x, v.y, v.z, v.w});
@@ -138,9 +135,6 @@ public:
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
         init(ps);
-    }
-    [[nodiscard]] bool valid_emission() const noexcept {
-        return any(val != 0.f) || !fn.empty();
     }
 };
 

@@ -175,34 +175,32 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     }
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
+        float4 value;
         sub_type = "constant";
         if (ps.data().size() == 2) {
-            val = make_float4(ps.as_float2(), 0.f, 0.f);
+            value = make_float4(ps.as_float2(), 0.f, 0.f);
         } else if (ps.data().size() == 3) {
-            val = make_float4(ps.as_float3(), 0.f);
+            value = make_float4(ps.as_float3(), 0.f);
         } else {
-            val = ps.as_float4();
+            value = ps.as_float4();
         }
-        DataWrap json = DataWrap::object();
-        json["value"] = {val.x, val.y, val.z, val.w};
-        _parameter.set_json(json);
-    } else if (ps.data().is_object() && ps.data()["param"].is_null()) {
+        _parameter.set_value("value", {value.x, value.y, value.z, value.w});
+    } else if (ps.data().is_object() && !ps.contains("param")) {
         sub_type = "image";
-        fn = (scene_path / ps["fn"].as_string()).string();
-        color_space = ps["color_space"].as_string() == "linear" ?
-                          ColorSpace::LINEAR :
-                          ColorSpace::SRGB;
+        string fn = (scene_path / ps["fn"].as_string()).string();
+//        color_space = ps["color_space"].as_string() == "linear" ?
+//                          ColorSpace::LINEAR :
+//                          ColorSpace::SRGB;
         DataWrap json = DataWrap::object();
         json["fn"] = fn;
         json["color_space"] = ps["color_space"].data();
         _parameter.set_json(json);
     } else if (ps.data().is_number()) {
         sub_type = "constant";
-        val = make_float4(ps.as_float(1.f));
-        DataWrap json = DataWrap::object();
-        json["value"] = {val.x, val.y, val.z, val.w};
-        _parameter.set_json(json);
+        float4 value = make_float4(ps.as_float(1.f));
+        _parameter.set_value("value", {value.x, value.y, value.z, value.w});
     } else {
+        sub_type = ps["type"].as_string();
         _parameter = ps["param"];
     }
 }

@@ -11,7 +11,8 @@ private:
     float4 _val;
 
 public:
-    explicit Constant(const ShaderNodeDesc &desc) : ShaderNode(desc), _val(desc.val) {}
+    explicit Constant(const ShaderNodeDesc &desc)
+        : ShaderNode(desc), _val(desc["value"].as_float4()) {}
     void prepare() noexcept override {
         switch (_type) {
             case ShaderNodeType::Albedo:
