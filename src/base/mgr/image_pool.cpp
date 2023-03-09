@@ -11,9 +11,10 @@ using namespace ocarina;
 ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, RenderPipeline *rp) {
     ImageIO image_io;
     if (desc.sub_type == "constant") {
-        image_io = ImageIO::pure_color(desc.val, ocarina::LINEAR, make_uint2(1));
+        image_io = ImageIO::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));
     } else {
-        image_io = ImageIO::load(desc.fn, desc.color_space);
+        ColorSpace cs = desc["color_space"].as_string() == "linear" ? LINEAR : SRGB;
+        image_io = ImageIO::load(desc["fn"].as_string(), cs);
     }
     auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());
     uint id = rp->register_texture(texture);
