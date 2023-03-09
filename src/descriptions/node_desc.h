@@ -44,7 +44,7 @@ enum ShaderNodeType {
 struct NodeDesc : public Hashable {
 protected:
     string_view _type;
-    ParameterSet _parameter;
+    ParameterSet _parameter{DataWrap::object()};
 
 public:
     string sub_type;
@@ -150,7 +150,6 @@ public:
     // area light
     bool two_sided{false};
     float scale{1.f};
-    uint inst_id{InvalidUI32};
 
     // point light
     float3 position;

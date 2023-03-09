@@ -64,7 +64,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         outside_medium.name = m["outside"].as_string();
     }
     if (_parameter.contains("emission")) {
-        emission.inst_id = index;
+        emission.set_value("inst_id", index);
         emission.scene_path = scene_path;
         emission.init(_parameter["emission"]);
     }
@@ -149,7 +149,6 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
-
     if (sub_type == "area") {
         texture_desc.init(param["radiance"], scene_path);
         VISION_PARAMS_LIST_INITIAL(scale, two_sided)
