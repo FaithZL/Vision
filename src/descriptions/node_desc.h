@@ -64,6 +64,10 @@ public:
     explicit NodeDesc(string_view type) : _type(type) {}
     [[nodiscard]] string parameter_string() const noexcept;
     [[nodiscard]] ParameterSet operator[](const string &key) const noexcept { return _parameter[key]; }
+    template<typename... Args>
+    void set_value(Args &&...args) noexcept {
+        _parameter.set_value(OC_FORWARD(args)...);
+    }
     virtual void init(const ParameterSet &ps) noexcept {
         if (ps.data().is_object())
             name = ps["name"].as_string();
