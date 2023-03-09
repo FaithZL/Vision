@@ -114,21 +114,25 @@ public:
         : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
+        _parameter.set_value("value", {v, v, v, v});
     }
     explicit ShaderNodeDesc(float2 v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
+        _parameter.set_value("value", {v.x, v.y, 0, 0});
     }
     explicit ShaderNodeDesc(float3 v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
+        _parameter.set_value("value", {v.x, v.y, v.z, 0});
     }
     explicit ShaderNodeDesc(float4 v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), val(v), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
+        _parameter.set_value("value", {v.x, v.y, v.z, v.w});
     }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {

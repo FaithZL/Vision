@@ -157,6 +157,10 @@ public:
         return ParameterSet(_data.value(key, DataWrap()), key);
     }
 
+    void set_value(const std::string &key, const DataWrap &data) noexcept {
+        _data[key] = data;
+    }
+
     OC_NODISCARD ParameterSet value(const string &key, const DataWrap &data) const {
         return ParameterSet(_data.value(key, data), key);
     }
