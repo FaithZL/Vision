@@ -62,6 +62,7 @@ public:
     NodeDesc(string_view type, string name)
         : _type(type), sub_type(std::move(name)) {}
     explicit NodeDesc(string_view type) : _type(type) {}
+    [[nodiscard]] string parameter_string() const noexcept;
     [[nodiscard]] ParameterSet operator[](const string &key) const noexcept { return _parameter[key]; }
     virtual void init(const ParameterSet &ps) noexcept {
         if (ps.data().is_object())
@@ -95,7 +96,7 @@ public:
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(NodeDesc::_compute_hash(), fn, val, color_space);
+        return hash64(NodeDesc::_compute_hash(), parameter_string());
     }
 
 public:

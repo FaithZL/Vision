@@ -16,6 +16,12 @@ namespace vision {
 
 #define VISION_PARAMS_LIST_INITIAL(...) MAP(VISION_PARAMS_INITIAL, ##__VA_ARGS__)
 
+string NodeDesc::parameter_string() const noexcept {
+    std::stringstream ss;
+    ss << _parameter.data() << endl;
+    return ss.str();
+}
+
 void TransformDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_null()) {
         return;
@@ -120,9 +126,7 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
 }
 
 uint64_t MaterialDesc::_compute_hash() const noexcept {
-    std::stringstream ss;
-    ss << _parameter.data() << endl;
-    return hash64(NodeDesc::_compute_hash(), ss.str());
+    return hash64(NodeDesc::_compute_hash(), parameter_string());
 }
 
 void MediumDesc::init(const ParameterSet &ps) noexcept {
