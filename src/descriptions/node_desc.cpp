@@ -179,15 +179,27 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
         } else {
             val = ps.as_float4();
         }
-    } else if (ps.data().is_object()) {
+        DataWrap json = DataWrap::object();
+        json["value"] = {val.x, val.y, val.z, val.w};
+        _parameter.set_json(json);
+    } else if (ps.data().is_object() && ps.data()["param"].is_null()) {
         sub_type = "image";
         fn = (scene_path / ps["fn"].as_string()).string();
         color_space = ps["color_space"].as_string() == "linear" ?
                           ColorSpace::LINEAR :
                           ColorSpace::SRGB;
+        DataWrap json = DataWrap::object();
+        json["fn"] = fn;
+        json["color_space"] = ps["color_space"].data();
+        _parameter.set_json(json);
     } else if (ps.data().is_number()) {
         sub_type = "constant";
         val = make_float4(ps.as_float(1.f));
+        DataWrap json = DataWrap::object();
+        json["value"] = {val.x, val.y, val.z, val.w};
+        _parameter.set_json(json);
+    } else {
+        _parameter = ps["param"];
     }
 }
 

@@ -141,7 +141,7 @@ public:
     ParameterSet(const DataWrap &json, const string &key = "")
         : _data(json), _key(key) {}
 
-    void setJson(const DataWrap &json) { _data = json; }
+    void set_json(const DataWrap &json) { _data = json; }
 
     OC_NODISCARD DataWrap data() const { return _data; }
 
