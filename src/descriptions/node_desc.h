@@ -101,17 +101,35 @@ protected:
 
 public:
     explicit ShaderNodeDesc(ShaderNodeType type)
-        : NodeDesc("ShaderNode"), type(type) { sub_type = "constant"; }
+        : NodeDesc("ShaderNode"), type(type) {
+        sub_type = "constant";
+        _parameter.set_json(DataWrap::object());
+    }
     explicit ShaderNodeDesc(string name, ShaderNodeType type)
-        : NodeDesc("ShaderNode", std::move(name)), type(type) {}
+        : NodeDesc("ShaderNode", std::move(name)), type(type) {
+        sub_type = "constant";
+        _parameter.set_json(DataWrap::object());
+    }
     explicit ShaderNodeDesc(float v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) { sub_type = "constant"; }
+        : NodeDesc("ShaderNode"), val(make_float4(v)), type(type) {
+        sub_type = "constant";
+        _parameter.set_json(DataWrap::object());
+    }
     explicit ShaderNodeDesc(float2 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) { sub_type = "constant"; }
+        : NodeDesc("ShaderNode"), val(make_float4(v, 0, 0)), type(type) {
+        sub_type = "constant";
+        _parameter.set_json(DataWrap::object());
+    }
     explicit ShaderNodeDesc(float3 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) { sub_type = "constant"; }
+        : NodeDesc("ShaderNode"), val(make_float4(v, 0)), type(type) {
+        sub_type = "constant";
+        _parameter.set_json(DataWrap::object());
+    }
     explicit ShaderNodeDesc(float4 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), val(v), type(type) { sub_type = "constant"; }
+        : NodeDesc("ShaderNode"), val(v), type(type) {
+        sub_type = "constant";
+        _parameter.set_json(DataWrap::object());
+    }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
