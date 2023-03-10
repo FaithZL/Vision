@@ -21,7 +21,7 @@ public:
           _ratio(desc.ratio),
           _angle_y(radians(desc.angle)),
           _o2w(desc.o2w.mat),
-          _scale(desc.scale) {
+          _scale(desc["scale"].as_float(1.f)) {
         _intensity = desc.scene->load_shader_node(desc.texture_desc);
         if (_ratio == 0) {
             uint2 res = _intensity->resolution();

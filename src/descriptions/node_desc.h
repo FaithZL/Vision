@@ -148,8 +148,8 @@ public:
     ShaderNodeDesc texture_desc{Illumination};
 
     // area light
-    bool two_sided{false};
-    float scale{1.f};
+//    bool two_sided{false};
+//    float scale{1.f};
 
     // point light
     float3 position;

@@ -19,7 +19,7 @@ private:
 public:
     explicit EnvironmentLight(const LightDesc &desc)
         : Light(desc, LightType::Infinite),
-          _scale(desc.scale),
+          _scale(desc["scale"].as_float(1.f)),
           _texture(desc.scene->load_shader_node(desc.texture_desc)) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);

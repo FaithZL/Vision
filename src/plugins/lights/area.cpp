@@ -20,7 +20,9 @@ private:
 public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
-          _two_sided{desc.two_sided}, _inst_idx(desc["inst_id"].as_uint()), _scale(desc.scale) {
+          _two_sided{desc["two_sided"].as_bool(false)},
+          _inst_idx(desc["inst_id"].as_uint()),
+          _scale(desc["scale"].as_float(1.f)) {
         _radiance = desc.scene->load_shader_node(desc.texture_desc);
     }
 

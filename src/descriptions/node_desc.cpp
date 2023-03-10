@@ -64,9 +64,9 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         outside_medium.name = m["outside"].as_string();
     }
     if (_parameter.contains("emission")) {
-        emission.set_value("inst_id", index);
         emission.scene_path = scene_path;
         emission.init(_parameter["emission"]);
+        emission.set_value("inst_id", index);
     }
 }
 
@@ -149,20 +149,19 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
+    _parameter = ps["param"];
     if (sub_type == "area") {
         texture_desc.init(param["radiance"], scene_path);
-        VISION_PARAMS_LIST_INITIAL(scale, two_sided)
     } else if (sub_type == "point" || sub_type == "spot") {
-        VISION_PARAMS_LIST_INITIAL(position, intensity, scale, angle, falloff, direction)
+        VISION_PARAMS_LIST_INITIAL(position, intensity, angle, falloff, direction)
         angle = clamp(angle, 1.f, 89.f);
         falloff = clamp(falloff, 0.f, angle);
-        intensity *= scale;
+        intensity *= _parameter["scale"].as_float(1.f);
     } else if (sub_type == "projector") {
-        VISION_PARAMS_LIST_INITIAL(scale, angle, ratio)
+        VISION_PARAMS_LIST_INITIAL(angle, ratio)
         texture_desc.init(param["intensity"], scene_path);
         o2w.init(param.data().value("o2w", DataWrap()));
     } else if (sub_type == "environment") {
-        VISION_PARAMS_LIST_INITIAL(scale)
         texture_desc.init(param["texture"], scene_path);
         o2w.init(param.data().value("o2w", DataWrap()));
     }
