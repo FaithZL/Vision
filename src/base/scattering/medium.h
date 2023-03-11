@@ -23,11 +23,13 @@ public:
     using Desc = MediumDesc;
 
 public:
-    explicit Medium(const MediumDesc &desc) : Node(desc), _index(desc.index) {}
+    explicit Medium(const MediumDesc &desc)
+        : Node(desc),
+          _index(desc["index"].as_uint(InvalidUI32)) {}
     ~Medium() override = default;
     virtual SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const OCRay &ray, Interaction &it,
-                           const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
+                                   const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
 };
 
 

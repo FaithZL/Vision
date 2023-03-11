@@ -153,7 +153,7 @@ void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
     DataWrap lst = mediums.value("list", DataWrap());
     for (uint i = 0; i < lst.size(); ++i) {
         MediumDesc desc;
-        desc.index = i;
+        desc.set_value("index", i);
         desc.init(lst[i]);
         mediums_desc.mediums.push_back(desc);
         mediums_desc.medium_name_to_id[desc.name] = i;

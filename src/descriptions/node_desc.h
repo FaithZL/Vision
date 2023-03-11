@@ -220,8 +220,6 @@ public:
     float3 sigma_s{make_float3(0.8f)};
     float g{0.f};
     float scale{1.f};
-    string medium_name;
-    uint index{InvalidUI32};
 public:
     VISION_DESC_COMMON(Medium)
     void init(const ParameterSet &ps) noexcept override;

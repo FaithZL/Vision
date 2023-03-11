@@ -139,8 +139,9 @@ void MediumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("homogeneous");
     ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(g, sigma_a, sigma_s, scale, medium_name)
-
+    VISION_PARAMS_LIST_INITIAL(g, sigma_a, sigma_s, scale)
+    set_parameter(param);
+    string medium_name = _parameter["medium_name"].as_string();
     if (!medium_name.empty()) {
         auto [ss, sa] = detail::get_sigma(medium_name);
         sigma_s = ss;
