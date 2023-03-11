@@ -216,10 +216,11 @@ public:
 
 struct MediumDesc : public NodeDesc {
 public:
-    float3 sigma_a{make_float3(0.f)};
-    float3 sigma_s{make_float3(0.8f)};
-    float g{0.f};
-    float scale{1.f};
+    ShaderNodeDesc sigma_a{Unbound};
+    ShaderNodeDesc sigma_s{Unbound};
+    ShaderNodeDesc g{Number};
+    ShaderNodeDesc scale{Number};
+
 public:
     VISION_DESC_COMMON(Medium)
     void init(const ParameterSet &ps) noexcept override;

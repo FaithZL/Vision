@@ -18,10 +18,10 @@ private:
 public:
     explicit HomogeneousMedium(const MediumDesc &desc)
         : Medium(desc),
-          _sigma_a(desc.sigma_a),
-          _sigma_s(desc.sigma_s),
+          _sigma_a(desc.sigma_a["value"].as_float4().xyz() * _scale),
+          _sigma_s(desc.sigma_s["value"].as_float4().xyz() * _scale),
           _sigma_t(_sigma_a + _sigma_s),
-          _g(desc.g) {}
+          _g(desc.g["value"].as_float4().x) {}
 
     [[nodiscard]] SampledSpectrum Tr(Float t, const SampledWavelengths &swl) const noexcept {
         SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;

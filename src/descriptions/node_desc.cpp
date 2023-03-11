@@ -138,18 +138,18 @@ uint64_t MaterialDesc::_compute_hash() const noexcept {
 void MediumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("homogeneous");
-    ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(g, sigma_a, sigma_s, scale)
-    set_parameter(param);
+    set_parameter(ps["param"]);
     string medium_name = _parameter["medium_name"].as_string();
     if (!medium_name.empty()) {
         auto [ss, sa] = detail::get_sigma(medium_name);
-        sigma_s = ss;
-        sigma_a = sa;
+        sigma_s.init(DataWrap({ss.x, ss.y, ss.z}));
+        sigma_a.init(DataWrap({sa.x, sa.y, sa.z}));
+    } else {
+        sigma_a.init(_parameter["sigma_a"]);
+        sigma_s.init(_parameter["sigma_s"]);
     }
-
-    sigma_a *= scale;
-    sigma_s *= scale;
+    scale.init(_parameter["scale"]);
+    g.init(_parameter["g"]);
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
