@@ -145,24 +145,8 @@ public:
 
 struct LightDesc : public NodeDesc {
 public:
-    // for area light and projector
+    // for area light and projector and environment
     ShaderNodeDesc texture_desc{Illumination};
-
-    // area light
-//    bool two_sided{false};
-//    float scale{1.f};
-
-    // point light
-//    float3 position;
-//    float3 intensity{};
-
-    // for spotlight and projector
-//    float angle{45};
-//    float falloff{10};
-//    float3 direction{make_float3(0, 0, 1)};
-
-    // for projector width / height
-//    float ratio{0.f};
 
     // for environment and projector
     TransformDesc o2w;
