@@ -156,21 +156,21 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
     set_parameter(ps["param"]);
-    if (sub_type == "area") {
-        texture_desc.init(param["radiance"], scene_path);
-    } else if (sub_type == "point" || sub_type == "spot") {
-        VISION_PARAMS_LIST_INITIAL(position, intensity, angle, falloff, direction)
-        angle = clamp(angle, 1.f, 89.f);
-        falloff = clamp(falloff, 0.f, angle);
-        intensity *= _parameter["scale"].as_float(1.f);
-    } else if (sub_type == "projector") {
-        VISION_PARAMS_LIST_INITIAL(angle, ratio)
-        texture_desc.init(param["intensity"], scene_path);
-        o2w.init(param.data().value("o2w", DataWrap()));
-    } else if (sub_type == "environment") {
+//    if (sub_type == "area") {
+//        texture_desc.init(param["radiance"], scene_path);
+//    } else if (sub_type == "point" || sub_type == "spot") {
+//        VISION_PARAMS_LIST_INITIAL(position, intensity, angle, falloff, direction)
+//        angle = clamp(angle, 1.f, 89.f);
+//        falloff = clamp(falloff, 0.f, angle);
+//        intensity *= _parameter["scale"].as_float(1.f);
+//    } else if (sub_type == "projector") {
+//        VISION_PARAMS_LIST_INITIAL(angle, ratio)
+//        texture_desc.init(param["intensity"], scene_path);
+//        o2w.init(param.data().value("o2w", DataWrap()));
+//    } else if (sub_type == "environment") {
         texture_desc.init(param["texture"], scene_path);
         o2w.init(param.data().value("o2w", DataWrap()));
-    }
+//    }
 }
 
 void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {

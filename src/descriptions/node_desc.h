@@ -153,16 +153,16 @@ public:
 //    float scale{1.f};
 
     // point light
-    float3 position;
-    float3 intensity{};
+//    float3 position;
+//    float3 intensity{};
 
     // for spotlight and projector
-    float angle{45};
-    float falloff{10};
-    float3 direction{make_float3(0, 0, 1)};
+//    float angle{45};
+//    float falloff{10};
+//    float3 direction{make_float3(0, 0, 1)};
 
     // for projector width / height
-    float ratio{0.f};
+//    float ratio{0.f};
 
     // for environment and projector
     TransformDesc o2w;

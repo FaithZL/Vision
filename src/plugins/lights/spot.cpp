@@ -18,11 +18,11 @@ private:
 public:
     explicit SpotLight(const LightDesc &desc)
         : IPointLight(desc),
-          _intensity(desc.intensity),
-          _position(desc.position),
-          _angle(radians(desc.angle)),
-          _falloff(radians(desc.falloff)),
-          _direction(normalize(desc.direction)) {}
+          _intensity(desc["intensity"].as_float3(make_float3(1.f)) * desc["scale"].as_float(1.f)),
+          _position(desc["position"].as_float3()),
+          _angle(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
+          _falloff(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, _angle))),
+          _direction(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
     [[nodiscard]] float3 position() const noexcept override { return _position; }
     [[nodiscard]] Float falloff(Float cos_theta) const noexcept {
         float falloff_start = max(0.f, _angle - _falloff);

@@ -18,8 +18,8 @@ private:
 public:
     explicit Projector(const LightDesc &desc)
         : IPointLight(desc),
-          _ratio(desc.ratio),
-          _angle_y(radians(desc.angle)),
+          _ratio(desc["ratio"].as_float(1.f)),
+          _angle_y(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _o2w(desc.o2w.mat),
           _scale(desc["scale"].as_float(1.f)) {
         _intensity = desc.scene->load_shader_node(desc.texture_desc);
