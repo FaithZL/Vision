@@ -68,6 +68,7 @@ public:
     void set_value(Args &&...args) noexcept {
         _parameter.set_value(OC_FORWARD(args)...);
     }
+    void set_parameter(const ParameterSet &ps) noexcept;
     virtual void init(const ParameterSet &ps) noexcept {
         if (ps.data().is_object())
             name = ps["name"].as_string();
