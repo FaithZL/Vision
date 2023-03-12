@@ -68,6 +68,17 @@ template<EPort p = D>
 VS_MAKE_CALLABLE(fresnel_dielectric)
 
 template<EPort p = D>
+[[nodiscard]] oc_float<p> black_body_impl(oc_float<p> lambda, oc_float<p> T) {
+    constexpr float c = 299792458.f;
+    constexpr float h = 6.62606957e-34f;
+    constexpr float kb = 1.3806488e-23f;
+    oc_float<p> l = lambda * 1e-9f;
+    oc_float<p> Le = (2 * h * c * c) / (Pow<5>(l) * (ocarina::exp((h * c) / (l * kb * T)) - 1));
+    return Le;
+}
+VS_MAKE_CALLABLE(black_body)
+
+template<EPort p = D>
 [[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, Complex<p> eta) noexcept {
     oc_float<p> sin_theta_i_2 = 1 - sqr(cos_theta_i);
     Complex<p> sin_theta_t_2 = sin_theta_i_2 / complex_sqr(eta);
