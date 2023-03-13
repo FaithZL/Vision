@@ -31001,7 +31001,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "texture": [
                             30,
                             30,
                             30

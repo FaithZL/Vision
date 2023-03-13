@@ -2881,7 +2881,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "texture": [
                             125.0,
                             100.0,
                             75.0
