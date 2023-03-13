@@ -242,7 +242,6 @@ public:
 struct LightSamplerDesc : public NodeDesc {
 public:
     vector<LightDesc> light_descs;
-    float env_prob{0.5f};
     VISION_DESC_COMMON(LightSampler)
     void init(const ParameterSet &ps) noexcept override;
 };

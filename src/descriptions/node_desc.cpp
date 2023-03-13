@@ -11,11 +11,6 @@
 
 namespace vision {
 
-#define VISION_PARAMS_INITIAL(member_name) \
-    member_name = param[#member_name].as<decltype(member_name)>(member_name);
-
-#define VISION_PARAMS_LIST_INITIAL(...) MAP(VISION_PARAMS_INITIAL, ##__VA_ARGS__)
-
 string NodeDesc::parameter_string() const noexcept {
     return _parameter.data().dump();
 }
@@ -198,7 +193,7 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("uniform");
     ParameterSet param = ps["param"];
-    VISION_PARAMS_LIST_INITIAL(env_prob)
+    set_parameter(param);
     for (const DataWrap &data : param["lights"].data()) {
         LightDesc light_desc;
         light_desc.scene_path = scene_path;
@@ -233,8 +228,5 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
     save_exit = ps["save_exit"].as_uint(0u);
     fn = (scene_path / ps["fn"].as_string()).string();
 }
-
-#undef VISION_PARAMS_INITIAL
-#undef VISION_PARAMS_LIST_INITIAL
 
 }// namespace vision
