@@ -416,7 +416,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "texture": [
                             12.1,
                             12,
                             12
@@ -668,7 +668,7 @@
     "spectrum" : {
         "type" : "hero",
         "param" : {
-            "dimension": 4
+            "dimension": 3
         }
     },
     "light_sampler": {
