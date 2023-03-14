@@ -57,7 +57,7 @@ public:
           _material_name(desc["material_name"].as_string()),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
-          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.1f)))),
+          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
@@ -71,7 +71,7 @@ public:
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = ShaderNode::eval(_roughness, si, 0.0001f).xy();
+        Float2 alpha = _roughness->eval(si).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         SampledSpectrum eta = _spd_eta.eval(swl);

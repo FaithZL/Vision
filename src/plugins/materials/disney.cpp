@@ -359,12 +359,12 @@ public:
                    const ShaderNode *spec_trans_tex, const ShaderNode *flatness_tex, const ShaderNode *diff_trans_tex)
         : BSDF(si, swl) {
 
-        auto [color, color_lum] = ShaderNode::eval_albedo_spectrum(color_tex, si, swl);
-        Float metallic = ShaderNode::eval(metallic_tex, si).x;
-        Float spec_trans = ShaderNode::eval(spec_trans_tex, si).x;
+        auto [color, color_lum] = color_tex->eval_albedo_spectrum(si, swl);
+        Float metallic = metallic_tex->eval(si).x;
+        Float spec_trans = spec_trans_tex->eval(si).x;
         Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
-        Float flatness = ShaderNode::eval(flatness_tex, si).x;
-        Float roughness = ShaderNode::eval(roughness_tex, si).x;
+        Float flatness = flatness_tex->eval(si).x;
+        Float roughness = roughness_tex->eval(si).x;
         Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
         SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
         Float tint_lum = color_lum * tint_weight;
@@ -388,8 +388,8 @@ public:
         }
 
         if (ShaderNode::nonzero(sheen_tex)) {
-            Float sheen = ShaderNode::eval(sheen_tex, si).x;
-            Float sheen_tint = ShaderNode::eval(sheen_tint_tex, si).x;
+            Float sheen = sheen_tex->eval(si).x;
+            Float sheen_tint = sheen_tint_tex->eval(si).x;
             Float Csheen_weight = diffuse_weight * sheen;
             SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
             _sheen = Sheen(Csheen, swl);
@@ -401,13 +401,13 @@ public:
             _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
         }
 
-        Float spec_tint = ShaderNode::eval(spec_tint_tex, si).x;
-        Float eta = ShaderNode::eval(eta_tex, si).x;
+        Float spec_tint = spec_tint_tex->eval(si).x;
+        Float eta = eta_tex->eval(si).x;
         Float SchlickR0 = schlick_R0_from_eta(eta);
         SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
         _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
-        Float anisotropic = ShaderNode::eval(anisotropic_tex, si).x;
+        Float anisotropic = anisotropic_tex->eval(si).x;
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
@@ -418,8 +418,8 @@ public:
         _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
 
         if (ShaderNode::nonzero(clearcoat_tex)) {
-            Float cc = ShaderNode::eval(clearcoat_tex, si).x;
-            Float cc_alpha = lerp(ShaderNode::eval(clearcoat_alpha_tex, si).x, 0.001f, 1.f);
+            Float cc = clearcoat_tex->eval(si).x;
+            Float cc_alpha = lerp(clearcoat_alpha_tex->eval(si).x, 0.001f, 1.f);
             _clearcoat = Clearcoat(cc, cc_alpha, swl);
             _clearcoat_index = _sampling_strategy_num++;
             _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));

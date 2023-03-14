@@ -94,14 +94,14 @@ public:
           _ior_curve(ior_curve(desc["material_name"].as_string())) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum color = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;
+        SampledSpectrum color = _color->eval_albedo_spectrum(si, swl).sample;
         Float ior;
         if (_ior_curve) {
             ior = _ior_curve->eta(swl.lambda(0u));
         } else {
-            ior = ShaderNode::eval(_ior, si, 1.5f).x;
+            ior = _ior->eval(si).x;
         }
-        Float2 alpha = ShaderNode::eval(_roughness, si, 1.f).xy();
+        Float2 alpha = _roughness->eval(si).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);

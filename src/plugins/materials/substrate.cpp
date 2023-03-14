@@ -127,9 +127,9 @@ public:
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = ShaderNode::eval_albedo_spectrum(_diff, si, swl).sample;
-        SampledSpectrum Rs = ShaderNode::eval_albedo_spectrum(_spec, si, swl).sample;
-        Float2 alpha = ShaderNode::eval(_roughness, si, 0.001f).xy();
+        SampledSpectrum Rd = _diff->eval_albedo_spectrum(si, swl).sample;
+        SampledSpectrum Rs = _spec->eval_albedo_spectrum(si, swl).sample;
+        Float2 alpha = _roughness->eval(si).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);

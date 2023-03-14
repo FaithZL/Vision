@@ -33,7 +33,7 @@ public:
         : Material(desc), _color(_scene->load_shader_node(desc.attr("color", make_float4(0.5f), Albedo))) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = ShaderNode::eval_albedo_spectrum(_color, si, swl).sample;
+        SampledSpectrum kr = _color->eval_albedo_spectrum(si, swl).sample;
         return make_unique<MatteBSDF>(si, kr, swl);
     }
 };

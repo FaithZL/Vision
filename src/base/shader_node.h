@@ -19,31 +19,6 @@ public:
     using Desc = ShaderNodeDesc;
 
 public:
-    template<typename T = float4>
-    [[nodiscard]] static Float4 eval(const ShaderNode *tex, const AttrEvalContext &ctx,
-                                     T val = T{}) noexcept {
-        float4 default_val = make_float4(0);
-        if constexpr (is_scalar_v<T>) {
-            default_val = make_float4(val);
-        } else if constexpr (is_vector2_v<T>) {
-            default_val = make_float4(val, 0, 0);
-        } else if constexpr (is_vector3_v<T>) {
-            default_val = make_float4(val, 0);
-        } else {
-            default_val = val;
-        }
-        return tex ? tex->eval(ctx) : Float4(val);
-    }
-    [[nodiscard]] static ColorDecode eval_albedo_spectrum(const ShaderNode *tex,
-                                                          const AttrEvalContext &ctx,
-                                                          const SampledWavelengths &swl) noexcept {
-        return tex ? tex->eval_albedo_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
-    }
-    [[nodiscard]] static ColorDecode eval_illumination_spectrum(const ShaderNode *tex,
-                                                                const AttrEvalContext &ctx,
-                                                                const SampledWavelengths &swl) noexcept {
-        return tex ? tex->eval_illumination_spectrum(ctx, swl) : ColorDecode::zero(swl.dimension());
-    }
     [[nodiscard]] static bool is_zero(const ShaderNode *tex) noexcept {
         return tex ? tex->is_zero() : true;
     }
