@@ -18,13 +18,11 @@ ColorDecode ShaderNode::eval_illumination_spectrum(const AttrEvalContext &tec, c
 }
 
 ColorDecode ShaderNode::eval_albedo_spectrum(const Float2 &uv, const SampledWavelengths &swl) const noexcept {
-    Float3 rgb = eval(uv).xyz();
-    return spectrum().decode_to_albedo(rgb, swl);
+    return eval_albedo_spectrum(AttrEvalContext(uv), swl);
 }
 
 ColorDecode ShaderNode::eval_illumination_spectrum(const Float2 &uv, const SampledWavelengths &swl) const noexcept {
-    Float3 rgb = eval(uv).xyz();
-    return spectrum().decode_to_illumination(rgb, swl);
+    return eval_illumination_spectrum(AttrEvalContext(uv), swl);
 }
 
 }// namespace vision
