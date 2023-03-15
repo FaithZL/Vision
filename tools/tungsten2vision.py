@@ -277,7 +277,7 @@ def convert_area_light(shape_input, shape_output):
     shape_output["param"]["emission"] = {
         "type" : "area",
         "param" : {
-            "radiance" : emission,
+            "color" : emission,
             "two_sided" : False,
             "scale" : scale
         }
@@ -376,7 +376,7 @@ def convert_shapes(scene_input):
         elif shape_input["type"] == "mesh":
             shape_output = convert_mesh(shape_input, i) 
         
-        if "emission" in shape_input or "power" in shape_input or "intensity" in shape_input:
+        if "emission" in shape_input or "power" in shape_input or "color" in shape_input:
             shape_output = shape_output if shape_output else {}
             convert_light(shape_input, shape_output)
         if not(shape_output):

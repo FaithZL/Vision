@@ -321,7 +321,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             20.0,
                             3.0,
                             3.0
@@ -773,7 +773,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             3.886280059814453,
                             3.772550106048584,
                             3.4313700199127197
@@ -3585,7 +3585,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             9.0,
                             9.0,
                             10.0
@@ -3637,7 +3637,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             9.0,
                             9.0,
                             10.0
@@ -4000,7 +4000,7 @@
                 {
                     "type": "environment",
                     "param": {
-                        "texture": [
+                        "color": [
                             1,
                             1,
                             1

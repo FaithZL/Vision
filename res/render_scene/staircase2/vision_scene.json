@@ -801,7 +801,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -853,7 +853,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -905,7 +905,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -957,7 +957,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -1009,7 +1009,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -1061,7 +1061,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -1113,7 +1113,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -1165,7 +1165,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -1217,7 +1217,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             1.5,
                             1.5,
                             1.5
@@ -1269,7 +1269,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             0.6366197466850281,
                             0.6366197466850281,
                             0.6366197466850281
@@ -1321,7 +1321,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             4.575004577636719,
                             3.5907576084136963,
                             1.5497708320617676
@@ -1373,7 +1373,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             4.575004577636719,
                             3.5907576084136963,
                             1.5497708320617676
@@ -1425,7 +1425,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "radiance": [
+                        "color": [
                             0.6366197466850281,
                             0.6366197466850281,
                             0.6366197466850281

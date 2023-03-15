@@ -1075,7 +1075,7 @@
             "temperature": 5777.0,
             "gamma_scale": 1.0,
             "turbidity": 3.0,
-            "intensity": 6.0,
+            "color": 6.0,
             "sample": false
         }
     ],

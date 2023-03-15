@@ -146,7 +146,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     // for area light and projector and environment
-    ShaderNodeDesc texture_desc{Illumination};
+    ShaderNodeDesc color_desc{Illumination};
 
     // for environment and projector
     TransformDesc o2w;

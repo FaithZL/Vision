@@ -22,7 +22,7 @@ public:
           _angle_y(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _o2w(desc.o2w.mat),
           _scale(desc["scale"].as_float(1.f)) {
-        _intensity = desc.scene->load_shader_node(desc.texture_desc);
+        _intensity = desc.scene->load_shader_node(desc.color_desc);
         if (_ratio == 0) {
             uint2 res = _intensity->resolution();
             _ratio = float(res.x) / res.y;

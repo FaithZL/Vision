@@ -2881,7 +2881,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "texture": [
+                        "color": [
                             125.0,
                             100.0,
                             75.0

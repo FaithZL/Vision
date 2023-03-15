@@ -152,7 +152,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
     set_parameter(ps["param"]);
-    texture_desc.init(param["texture"], scene_path);
+    color_desc.init(param["color"], scene_path);
     o2w.init(param.data().value("o2w", DataWrap()));
 }
 

@@ -23,7 +23,7 @@ public:
           _two_sided{desc["two_sided"].as_bool(false)},
           _inst_idx(desc["inst_id"].as_uint()),
           _scale(desc["scale"].as_float(1.f)) {
-        _radiance = desc.scene->load_shader_node(desc.texture_desc);
+        _radiance = desc.scene->load_shader_node(desc.color_desc);
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {

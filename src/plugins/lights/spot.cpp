@@ -18,7 +18,7 @@ private:
 public:
     explicit SpotLight(const LightDesc &desc)
         : IPointLight(desc),
-          _intensity(desc["intensity"].as_float3(make_float3(1.f)) * desc["scale"].as_float(1.f)),
+          _intensity(desc["color"].as_float3(make_float3(1.f)) * desc["scale"].as_float(1.f)),
           _position(desc["position"].as_float3()),
           _angle(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _falloff(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, _angle))),

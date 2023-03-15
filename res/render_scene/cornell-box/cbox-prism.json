@@ -161,7 +161,7 @@
 //                "emission": {
 //                    "type": "area",
 //                    "param": {
-//                        "radiance": [
+//                        "color": [
 //                            12,
 //                            12,
 //                            12
@@ -416,7 +416,7 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "texture": [
+                        "color": [
                             12.1,
                             12,
                             12

@@ -109,7 +109,7 @@
 //                "emission": {
 //                    "type": "area",
 //                    "param": {
-//                        "radiance": [
+//                        "color": [
 //                            12,
 //                            12,
 //                            12
@@ -2921,7 +2921,7 @@
 //                "emission": {
 //                    "type": "area",
 //                    "param": {
-//                        "radiance": [
+//                        "color": [
 //                            12,
 //                            12,
 //                            12
@@ -3877,7 +3877,7 @@
                 {
                     "type" : "environment",
                     "param": {
-                        "texture": {
+                        "color": {
                             "fn" : "textures/spaichingen_hill_2k.exr",
                             "color_space": "linear"
                         },

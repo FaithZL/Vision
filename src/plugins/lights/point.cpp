@@ -15,7 +15,7 @@ private:
 public:
     explicit PointLight(const LightDesc &desc)
         : IPointLight(desc),
-          _intensity(desc["intensity"].as_float3(make_float3(1.f)) * desc["scale"].as_float(1.f)),
+          _intensity(desc["color"].as_float3(make_float3(1.f)) * desc["scale"].as_float(1.f)),
           _position(desc["position"].as_float3()) {}
     [[nodiscard]] float3 position() const noexcept override { return _position; }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,

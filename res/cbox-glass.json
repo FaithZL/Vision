@@ -525,7 +525,7 @@
 //                "emission": {
 //                    "type" : "area",
 //                    "param" : {
-//                        "radiance": [
+//                        "color": [
 //                            17,
 //                            12,
 //                            4
@@ -578,12 +578,12 @@
                 "emission": {
                     "type" : "area",
                     "param" : {
-                        "radiance": [
+                        "color": [
                             17,
                             12,
                             4
                         ],
-//                        "radiance" : {
+//                        "color" : {
 //                            "fn":"Painting3.jpg",
 //                            "color_space" : "srgb"
 //                        },
@@ -603,7 +603,7 @@
 //                    "type" : "projector",
 //                    "param" :{
 //                        "angle" : 5,
-//                        "intensity" : {
+//                        "color" : {
 //                            "fn":"Painting3.jpg",
 //                            "color_space" : "srgb"
 //                        },
@@ -654,7 +654,7 @@
 //                    "type" : "projector",
 //                    "param" :{
 //                        "angle" : 5,
-//                        "intensity" : {
+//                        "color" : {
 //                            "fn":"Painting3.jpg",
 //                            "color_space" : "srgb"
 //                        },
@@ -688,7 +688,7 @@
 //                        "angle" : 20,
 //                        "falloff": 2,
 //                        "direction": [0,-1,0],
-//                        "intensity" : [1,1,1],
+//                        "color" : [1,1,1],
 //                        "position" : [-0.5,1.9,0],
 //                        "scale" : 1
 //                    }
@@ -697,7 +697,7 @@
 //                {
 //                    "type" : "point",
 //                    "param" :{
-//                        "intensity" : [1,1,1],
+//                        "color" : [1,1,1],
 //                        "position" : [-0.5,1.9,0],
 //                        "scale": 0
 //                    }
