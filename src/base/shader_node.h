@@ -47,4 +47,16 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
+template<uint dim = 1>
+class Slot {
+private:
+    string _channel_mask{};
+    const ShaderNode *_input{};
+
+public:
+    explicit Slot(const ShaderNode *input, string channel)
+        : _input(input), _channel_mask(channel) {}
+    //    Var<Vector<float, dim>>
+};
+
 }// namespace vision
