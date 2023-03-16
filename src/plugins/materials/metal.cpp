@@ -3,7 +3,7 @@
 //
 
 #include "base/scattering/material.h"
-#include "base/shader_node.h"
+#include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
 #include "metal_ior.h"
 

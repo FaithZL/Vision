@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "node.h"
+#include "base/node.h"
 #include "util/image_io.h"
 #include "base/color/spectrum.h"
 #include "base/scattering/interaction.h"
@@ -80,6 +80,12 @@ public:
                 default: OC_ASSERT(0); return 0;
             }
         } else if constexpr (dim == 2) {
+
+        } else if constexpr (dim == 3) {
+
+        } else if constexpr (dim == 4) {
+
+        } else {
 
         }
     }

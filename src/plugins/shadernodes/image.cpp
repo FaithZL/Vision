@@ -2,7 +2,7 @@
 // Created by Zero on 09/09/2022.
 //
 
-#include "base/shader_node.h"
+#include "base/shader_graph/shader_node.h"
 #include "rhi/common.h"
 #include "base/mgr/render_pipeline.h"
 
