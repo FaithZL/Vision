@@ -48,15 +48,27 @@ public:
 };
 
 template<uint dim = 1>
+requires (dim <= 4)
 class ShaderSlot {
 private:
     uint _channel_mask{};
     const ShaderNode *_node{};
 
 private:
-    [[nodiscard]] static uint _calculate_mask(const string &channels) noexcept {
+    [[nodiscard]] static uint _calculate_mask(string channels) noexcept {
+        OC_ASSERT(channels.size() == dim);
         uint ret{};
-        map<char, uint> dict{{'x', 0u}, {'y', 1u}, {'z', 2u}, {'w', 3u}};
+        channels = to_lower(channels);
+        static map<char, uint> dict{
+            {'x', 0u},
+            {'y', 1u},
+            {'z', 2u},
+            {'w', 3u},
+            {'r', 0u},
+            {'g', 1u},
+            {'b', 2u},
+            {'a', 3u},
+        };
         for (char channel : channels) {
             ret = (ret << 4) | dict[channel];
         }
@@ -80,13 +92,20 @@ public:
                 default: OC_ASSERT(0); return 0;
             }
         } else if constexpr (dim == 2) {
-
+            switch (_channel_mask) {
+#include "slot_swizzle_2.inl.h"
+                default: OC_ASSERT(0); return make_float2(0.f);
+            }
         } else if constexpr (dim == 3) {
-
-        } else if constexpr (dim == 4) {
-
+            switch (_channel_mask) {
+#include "slot_swizzle_3.inl.h"
+                default: OC_ASSERT(0); return make_float3(0.f);
+            }
         } else {
-
+            switch (_channel_mask) {
+#include "slot_swizzle_4.inl.h"
+                default: OC_ASSERT(0); return make_float4(0.f);
+            }
         }
     }
 };
