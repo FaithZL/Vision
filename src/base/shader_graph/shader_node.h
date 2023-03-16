@@ -48,8 +48,7 @@ public:
 };
 
 template<uint dim = 1>
-requires (dim <= 4)
-class ShaderSlot {
+requires(dim <= 4) class Slot : public ocarina::Hashable {
 private:
     uint _channel_mask{};
     const ShaderNode *_node{};
@@ -75,8 +74,16 @@ private:
         return ret;
     }
 
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(_channel_mask, _node->hash());
+    }
+
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(_channel_mask, _node->type_hash());
+    }
+
 public:
-    explicit ShaderSlot(const ShaderNode *input, string channels)
+    explicit Slot(const ShaderNode *input, string channels)
         : _node(input),
           _channel_mask(_calculate_mask(channels)) {
         OC_ASSERT(channels.size() == dim);
