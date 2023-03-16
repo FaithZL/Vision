@@ -48,15 +48,29 @@ public:
 };
 
 template<uint dim = 1>
-class Slot {
+class ShaderSlot {
 private:
-    string _channel_mask{};
+    uint _channel_mask{};
     const ShaderNode *_input{};
 
+private:
+    [[nodiscard]] static uint _calculate_mask(const string &channels) noexcept {
+        uint ret{};
+        map<char, uint> dict{{'x', 0u}, {'y', 1u}, {'z', 2u}, {'w', 3u}};
+        for (char channel : channels) {
+            ret = (ret << 4) | dict[channel];
+        }
+        return ret;
+    }
+
 public:
-    explicit Slot(const ShaderNode *input, string channel)
-        : _input(input), _channel_mask(channel) {}
-    //    Var<Vector<float, dim>>
+    explicit ShaderSlot(const ShaderNode *input, string channels)
+        : _input(input),
+          _channel_mask(_calculate_mask(channels)) {
+        OC_ASSERT(channels.size() == dim);
+    }
+
+
 };
 
 }// namespace vision
