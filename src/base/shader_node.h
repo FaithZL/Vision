@@ -51,7 +51,7 @@ template<uint dim = 1>
 class ShaderSlot {
 private:
     uint _channel_mask{};
-    const ShaderNode *_input{};
+    const ShaderNode *_node{};
 
 private:
     [[nodiscard]] static uint _calculate_mask(const string &channels) noexcept {
@@ -65,12 +65,24 @@ private:
 
 public:
     explicit ShaderSlot(const ShaderNode *input, string channels)
-        : _input(input),
+        : _node(input),
           _channel_mask(_calculate_mask(channels)) {
         OC_ASSERT(channels.size() == dim);
     }
 
+    [[nodiscard]] auto eval(const AttrEvalContext &ctx) const noexcept {
+        if constexpr (dim == 1) {
+            switch (_channel_mask) {
+                case 0x0: return _node->eval(ctx).x;
+                case 0x1: return _node->eval(ctx).y;
+                case 0x2: return _node->eval(ctx).z;
+                case 0x3: return _node->eval(ctx).w;
+                default: OC_ASSERT(0); return 0;
+            }
+        } else if constexpr (dim == 2) {
 
+        }
+    }
 };
 
 }// namespace vision
