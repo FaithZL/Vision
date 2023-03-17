@@ -24,7 +24,7 @@ add_subdirectory(base)
 add_subdirectory(math)
 add_subdirectory(apps)
 
-add_subdirectory(plugins)
+add_subdirectory(render_core)
 
 add_subdirectory(tests)
 
