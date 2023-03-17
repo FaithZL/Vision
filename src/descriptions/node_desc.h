@@ -143,6 +143,19 @@ public:
     }
 };
 
+template<uint dim>
+struct SlotDesc : public ObjectDesc {
+public:
+    string channels;
+    ShaderNodeDesc node;
+    VISION_DESC_COMMON(Slot)
+    explicit SlotDesc(ShaderNodeDesc node, string channels = "")
+        : node(node), channels(channels) {}
+
+    explicit SlotDesc(ShaderNodeType type, string channels = "")
+        : node(type), channels(channels) {}
+};
+
 struct LightDesc : public ObjectDesc {
 public:
     // for area light and projector and environment

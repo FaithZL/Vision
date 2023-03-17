@@ -48,8 +48,7 @@ public:
     void set_type_index(uint val) noexcept { _type_index = val; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
     [[nodiscard]] Device &device() noexcept;
-    virtual void prepare() noexcept {}
-    virtual ~Node() = default;
+    void prepare() noexcept override {}
     [[nodiscard]] string name() const noexcept { return _name; }
 };
 }// namespace vision
