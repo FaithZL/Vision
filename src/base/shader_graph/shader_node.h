@@ -48,7 +48,7 @@ public:
 };
 
 template<uint dim = 1>
-requires(dim <= 4) class Slot : public Node {
+requires(dim <= 4) class Slot : public Object {
 private:
     uint _channel_mask{};
     const ShaderNode *_node{};

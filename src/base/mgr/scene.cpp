@@ -12,12 +12,12 @@ Scene::Scene(vision::Context *ctx, RenderPipeline *rp)
     : _context(ctx),
       _rp(rp) {}
 
-Node *Scene::load_node(const NodeDesc &desc) {
+Object *Scene::load_object(const ObjectDesc &desc) {
     const DynamicModule *module = _context->obtain_module(desc.plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
     auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-    _all_nodes.emplace_back(creator(desc), deleter);
-    return _all_nodes.back().get();
+    _all_objects.emplace_back(creator(desc), deleter);
+    return _all_objects.back().get();
 }
 
 RenderPipeline *Scene::render_pipeline() noexcept { return _rp; }
