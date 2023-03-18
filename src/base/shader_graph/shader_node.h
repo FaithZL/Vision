@@ -114,22 +114,22 @@ public:
                 case 0x1: return _node->eval(ctx).y;
                 case 0x2: return _node->eval(ctx).z;
                 case 0x3: return _node->eval(ctx).w;
-                default: OC_ASSERT(0); return 0;
+                default: OC_ASSERT(0); return Var(0.f);
             }
         } else if constexpr (Dim == 2) {
             switch (_channel_mask) {
 #include "slot_swizzle_2.inl.h"
-                default: OC_ASSERT(0); return make_float2(0.f);
+                default: OC_ASSERT(0); return Var(make_float2(0.f));
             }
         } else if constexpr (Dim == 3) {
             switch (_channel_mask) {
 #include "slot_swizzle_3.inl.h"
-                default: OC_ASSERT(0); return make_float3(0.f);
+                default: OC_ASSERT(0); return Var(make_float3(0.f));
             }
         } else {
             switch (_channel_mask) {
 #include "slot_swizzle_4.inl.h"
-                default: OC_ASSERT(0); return make_float4(0.f);
+                default: OC_ASSERT(0); return Var(make_float4(0.f));
             }
         }
     }

@@ -14,7 +14,6 @@ private:
     uint _inst_idx{InvalidUI32};
     bool _two_sided{false};
     Warper *_warper{nullptr};
-    ShaderNode *_radiance{nullptr};
     float _scale{1.f};
 
 public:
@@ -23,7 +22,6 @@ public:
           _two_sided{desc["two_sided"].as_bool(false)},
           _inst_idx(desc["inst_id"].as_uint()),
           _scale(desc["scale"].as_float(1.f)) {
-        _radiance = desc.scene->load_shader_node(desc.color_desc);
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
@@ -32,7 +30,7 @@ public:
 
     [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
                                     const SampledWavelengths &swl) const {
-        SampledSpectrum radiance = _radiance->eval_illumination_spectrum(p_light.uv, swl).sample * _scale;
+        SampledSpectrum radiance = _color.eval_illumination_spectrum(p_light.uv, swl).sample * _scale;
         if (_two_sided) {
             return radiance;
         }

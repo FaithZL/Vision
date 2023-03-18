@@ -323,11 +323,14 @@
                 "emission": {
                     "type": "area",
                     "param": {
-                        "color" : [
-                            17,
-                            12,
-                            4
-                        ],
+                        "color" : {
+                            "channels" : "xyz",
+                            "node": [
+                                17,
+                                12,
+                                4
+                            ]
+                        },
 //                        "color" : {
 //                            "fn" : "Painting3.jpg",
 //                            "color_space" : "srgb"
