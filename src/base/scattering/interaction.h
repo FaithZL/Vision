@@ -190,7 +190,7 @@ struct AttrEvalContext {
     AttrEvalContext() = default;
     AttrEvalContext(const Interaction &si)
         : pos(si.pos), uv(si.uv) {}
-    explicit AttrEvalContext(const Float2 &uv)
+    AttrEvalContext(const Float2 &uv)
         : uv(uv) {}
 };
 

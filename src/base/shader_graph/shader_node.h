@@ -30,16 +30,9 @@ public:
     explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
     [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
     [[nodiscard]] virtual Float4 eval(const AttrEvalContext &tec) const noexcept = 0;
-    [[nodiscard]] virtual Float4 eval(const Float2 &uv) const noexcept {
-        return eval(AttrEvalContext(uv));
-    }
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                            const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &tec,
-                                                                 const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const Float2 &uv,
-                                                           const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const Float2 &uv,
                                                                  const SampledWavelengths &swl) const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
