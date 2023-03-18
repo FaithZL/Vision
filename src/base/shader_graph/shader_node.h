@@ -47,15 +47,15 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
-template<uint dim = 1>
-requires(dim <= 4) class Slot : public Object {
+template<uint Dim = 1>
+requires(Dim <= 4) class Slot : public Object {
 private:
     uint _channel_mask{};
     const ShaderNode *_node{};
 
 private:
     [[nodiscard]] static uint _calculate_mask(string channels) noexcept {
-        OC_ASSERT(channels.size() == dim);
+        OC_ASSERT(channels.size() == Dim);
         uint ret{};
         channels = to_lower(channels);
         static map<char, uint> dict{
@@ -86,11 +86,11 @@ public:
     explicit Slot(const ShaderNode *input, string channels)
         : _node(input),
           _channel_mask(_calculate_mask(channels)) {
-        OC_ASSERT(channels.size() == dim);
+        OC_ASSERT(channels.size() == Dim);
     }
 
     [[nodiscard]] auto eval(const AttrEvalContext &ctx) const noexcept {
-        if constexpr (dim == 1) {
+        if constexpr (Dim == 1) {
             switch (_channel_mask) {
                 case 0x0: return _node->eval(ctx).x;
                 case 0x1: return _node->eval(ctx).y;
@@ -98,12 +98,12 @@ public:
                 case 0x3: return _node->eval(ctx).w;
                 default: OC_ASSERT(0); return 0;
             }
-        } else if constexpr (dim == 2) {
+        } else if constexpr (Dim == 2) {
             switch (_channel_mask) {
 #include "slot_swizzle_2.inl.h"
                 default: OC_ASSERT(0); return make_float2(0.f);
             }
-        } else if constexpr (dim == 3) {
+        } else if constexpr (Dim == 3) {
             switch (_channel_mask) {
 #include "slot_swizzle_3.inl.h"
                 default: OC_ASSERT(0); return make_float3(0.f);

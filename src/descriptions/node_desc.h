@@ -143,15 +143,15 @@ public:
     }
 };
 
-template<uint dim>
-requires(dim <= 4) struct SlotDesc : public ObjectDesc {
+template<uint Dim>
+requires(Dim <= 4) struct SlotDesc : public ObjectDesc {
 public:
     static constexpr auto default_channels() noexcept {
-        if constexpr (dim == 1) {
+        if constexpr (Dim == 1) {
             return "x";
-        } else if constexpr (dim == 2) {
+        } else if constexpr (Dim == 2) {
             return "xy";
-        } else if constexpr (dim == 3) {
+        } else if constexpr (Dim == 3) {
             return "xyz";
         } else {
             return "xyzw";
