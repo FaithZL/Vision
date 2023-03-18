@@ -144,24 +144,51 @@ public:
 };
 
 template<uint dim>
-struct SlotDesc : public ObjectDesc {
+requires(dim <= 4) struct SlotDesc : public ObjectDesc {
+public:
+    static constexpr auto default_channels() noexcept {
+        if constexpr (dim == 1) {
+            return "x";
+        } else if constexpr (dim == 2) {
+            return "xy";
+        } else if constexpr (dim == 3) {
+            return "xyz";
+        } else {
+            return "xyzw";
+        }
+    }
+
 public:
     string channels;
     ShaderNodeDesc node;
     VISION_DESC_COMMON(Slot)
-    explicit SlotDesc(ShaderNodeDesc node, string channels = "")
+    explicit SlotDesc(ShaderNodeDesc node, string channels = default_channels())
         : node(node), channels(channels) {}
 
-    explicit SlotDesc(ShaderNodeType type, string channels = "")
+    explicit SlotDesc(ShaderNodeType type, string channels = default_channels())
         : node(type), channels(channels) {}
+
+    void init(const ParameterSet &ps) noexcept override {
+        DataWrap data = ps.data();
+        if (data.contains("channels")) {
+            channels = ps["channels"].as_string();
+            node.init(ps["node"], scene_path);
+        } else {
+            node.init(ps, scene_path);
+        }
+    }
+    void init(const ParameterSet &ps, fs::path scene_path) noexcept {
+        this->scene_path = scene_path;
+        init(ps);
+    }
 };
 
 struct LightDesc : public ObjectDesc {
 public:
-    // for area light and projector and environment
     ShaderNodeDesc color_desc{Illumination};
 
-    // for environment and projector
+    SlotDesc<3> color_slot{Illumination};
+
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)
