@@ -132,7 +132,7 @@ public:
         Assimp::Importer ai_importer;
         const aiScene *ai_scene = load_scene(fn, ai_importer, desc["swap_handed"].as_bool(false),
                                              desc["smooth"].as_bool(false),
-                                             desc["flip_uv"].as_bool(false));
+                                             desc["flip_uv"].as_bool(true));
         _meshes = process_mesh(ai_scene, desc["subdiv_level"].as_uint(0u));
     }
 
