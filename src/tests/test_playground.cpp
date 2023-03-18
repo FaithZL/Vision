@@ -9,7 +9,7 @@
 #include "math/transform.h"
 #include "math/geometry.h"
 #include "math/constants.h"
-#include "plugins/spectra/srgb2spec.h"
+#include "render_core/spectra/srgb2spec.h"
 #include "base/color/spd.h"
 
 using namespace vision;
