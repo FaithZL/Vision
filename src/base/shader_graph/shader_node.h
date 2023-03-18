@@ -32,6 +32,8 @@ public:
     [[nodiscard]] virtual Float4 eval(const AttrEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                            const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
+                                                            const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &tec,
                                                                  const SampledWavelengths &swl) const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
@@ -82,6 +84,27 @@ public:
         : _node(input),
           _channel_mask(_calculate_mask(channels)) {
         OC_ASSERT(channels.size() == Dim);
+    }
+
+    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
+                                                   const SampledWavelengths &swl) const noexcept {
+        static_assert(Dim == 3, "eval_albedo_spectrum dim must be 3!");
+        Float3 val = eval(ctx);
+        return _node->spectrum().decode_to_albedo(val, swl);
+    }
+
+    [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
+                                                    const SampledWavelengths &swl) const noexcept {
+        static_assert(Dim == 3, "eval_unbound_spectrum dim must be 3!");
+        Float3 val = eval(ctx);
+        return _node->spectrum().decode_to_unbound_spectrum(val, swl);
+    }
+
+    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
+                                                         const SampledWavelengths &swl) const noexcept {
+        static_assert(Dim == 3, "eval_illumination_spectrum dim must be 3!");
+        Float3 val = eval(ctx);
+        return _node->spectrum().decode_to_illumination(val, swl);
     }
 
     [[nodiscard]] auto eval(const AttrEvalContext &ctx) const noexcept {
