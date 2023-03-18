@@ -11,11 +11,11 @@
 
 namespace vision {
 
-string ObjectDesc::parameter_string() const noexcept {
+string NodeDesc::parameter_string() const noexcept {
     return _parameter.data().dump();
 }
 
-void ObjectDesc::set_parameter(const ParameterSet &ps) noexcept {
+void NodeDesc::set_parameter(const ParameterSet &ps) noexcept {
     OC_ASSERT(ps.data().is_object());
     DataWrap data = ps.data();
     for (auto iter = data.begin(); iter != data.end(); ++iter) {
@@ -52,7 +52,7 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void ShapeDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string();
     name = ps["name"].as_string();
     set_parameter(ps["param"]);
@@ -77,19 +77,19 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 }
 
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("independent");
     set_parameter(ps["param"]);
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("box");
     set_parameter(ps["param"]);
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
     set_parameter(ps["param"]);
     transform_desc.init(_parameter["transform"]);
@@ -101,7 +101,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
     set_parameter(ps["param"]);
 }
@@ -121,17 +121,17 @@ namespace detail {
 }// namespace detail
 
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
     set_parameter(ps["param"]);
 }
 
 uint64_t MaterialDesc::_compute_hash() const noexcept {
-    return hash64(ObjectDesc::_compute_hash(), parameter_string());
+    return hash64(NodeDesc::_compute_hash(), parameter_string());
 }
 
 void MediumDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("homogeneous");
     set_parameter(ps["param"]);
     string medium_name = _parameter["medium_name"].as_string();
@@ -148,7 +148,7 @@ void MediumDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
     set_parameter(ps["param"]);
@@ -161,7 +161,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_null()) {
         return;
     }
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     if (ps.data().is_array()) {
         float4 value;
         sub_type = "constant";
@@ -191,7 +191,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("uniform");
     ParameterSet param = ps["param"];
     set_parameter(param);
@@ -204,24 +204,24 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void FilmDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
     set_parameter(ps["param"]);
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("alias_table");
 }
 
 void SpectrumDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     sub_type = ps["type"].as_string("srgb");
     set_parameter(ps.value("param", DataWrap::object()));
 }
 
 void OutputDesc::init(const ParameterSet &ps) noexcept {
-    ObjectDesc::init(ps);
+    NodeDesc::init(ps);
     if (ps.data().is_null()) {
         return;
     }

@@ -19,19 +19,12 @@ class Spectrum;
 
 using namespace ocarina;
 
-class Object : public Hashable {
+class Node : public Hashable {
 public:
-    using Creator = Object *(const ObjectDesc &);
-    using Deleter = void(Object *);
-    using Wrapper = unique_ptr<Object, Object::Deleter *>;
+    using Creator = Node *(const NodeDesc &);
+    using Deleter = void(Node *);
+    using Wrapper = unique_ptr<Node, Node::Deleter *>;
 
-public:
-    virtual void prepare() noexcept {}
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
-    virtual ~Object() = default;
-};
-
-class Node : public Object {
 protected:
     string _name;
     mutable Scene *_scene{nullptr};
@@ -39,7 +32,7 @@ protected:
 
 public:
     Node() = default;
-    explicit Node(const ObjectDesc &desc) : _name(desc.name), _scene(desc.scene) {}
+    explicit Node(const NodeDesc &desc) : _name(desc.name), _scene(desc.scene) {}
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     [[nodiscard]] const RenderPipeline *render_pipeline() const noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
@@ -48,13 +41,14 @@ public:
     void set_type_index(uint val) noexcept { _type_index = val; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
     [[nodiscard]] Device &device() noexcept;
-    void prepare() noexcept override {}
+    virtual void prepare() noexcept {}
     [[nodiscard]] string name() const noexcept { return _name; }
+    virtual ~Node() = default;
 };
 }// namespace vision
 
 #define VS_MAKE_CLASS_CREATOR(Class)                                                        \
-    VS_EXPORT_API Class *create(const vision::ObjectDesc &desc) {                           \
+    VS_EXPORT_API Class *create(const vision::NodeDesc &desc) {                             \
         return ocarina::new_with_allocator<Class>(dynamic_cast<const Class::Desc &>(desc)); \
     }                                                                                       \
     OC_EXPORT_API void destroy(Class *obj) {                                                \

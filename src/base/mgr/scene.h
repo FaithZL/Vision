@@ -29,7 +29,7 @@ class Context;
 class Scene {
 private:
     vision::Context *_context{nullptr};
-    vector<Object::Wrapper> _all_objects;
+    vector<Node::Wrapper> _all_nodes;
     Box3f _aabb;
     Camera *_camera{nullptr};
     Sampler *_sampler{nullptr};
@@ -58,11 +58,11 @@ public:
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
     [[nodiscard]] const auto& materials() const noexcept { return _materials; }
     [[nodiscard]] const auto& mediums() const noexcept { return _mediums; }
-    [[nodiscard]] Object *load_object(const ObjectDesc &desc);
+    [[nodiscard]] Node *load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) noexcept {
         desc.scene = this;
-        auto ret = dynamic_cast<T *>(load_object(desc));
+        auto ret = dynamic_cast<T *>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }

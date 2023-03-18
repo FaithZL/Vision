@@ -48,7 +48,7 @@ public:
 };
 
 template<uint Dim = 1>
-requires(Dim <= 4) class Slot : public Object {
+requires(Dim <= 4) class Slot : public ocarina::Hashable {
 private:
     uint _channel_mask{};
     const ShaderNode *_node{};

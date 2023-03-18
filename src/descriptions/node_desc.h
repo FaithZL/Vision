@@ -41,7 +41,7 @@ enum ShaderNodeType {
     Calculate
 };
 
-struct ObjectDesc : public Hashable {
+struct NodeDesc : public Hashable {
 protected:
     string_view _type;
     ParameterSet _parameter{DataWrap::object()};
@@ -58,10 +58,10 @@ protected:
     }
 
 public:
-    ObjectDesc() = default;
-    ObjectDesc(string_view type, string name)
+    NodeDesc() = default;
+    NodeDesc(string_view type, string name)
         : _type(type), sub_type(std::move(name)) {}
-    explicit ObjectDesc(string_view type) : _type(type) {}
+    explicit NodeDesc(string_view type) : _type(type) {}
     [[nodiscard]] string parameter_string() const noexcept;
     [[nodiscard]] ParameterSet operator[](const string &key) const noexcept { return _parameter[key]; }
     template<typename... Args>
@@ -76,15 +76,15 @@ public:
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
     }
-    [[nodiscard]] virtual bool operator==(const ObjectDesc &other) const noexcept {
+    [[nodiscard]] virtual bool operator==(const NodeDesc &other) const noexcept {
         return hash() == other.hash();
     }
 };
 #define VISION_DESC_COMMON(type)      \
-    type##Desc() : ObjectDesc(#type) {} \
-    explicit type##Desc(string name) : ObjectDesc(#type, std::move(name)) {}
+    type##Desc() : NodeDesc(#type) {} \
+    explicit type##Desc(string name) : NodeDesc(#type, std::move(name)) {}
 
-struct TransformDesc : public ObjectDesc {
+struct TransformDesc : public NodeDesc {
 public:
     float4x4 mat{make_float4x4(1.f)};
 
@@ -92,46 +92,46 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct ShaderNodeDesc : public ObjectDesc {
+struct ShaderNodeDesc : public NodeDesc {
 public:
     ShaderNodeType type{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(ObjectDesc::_compute_hash(), parameter_string());
+        return hash64(NodeDesc::_compute_hash(), parameter_string());
     }
 
 public:
     explicit ShaderNodeDesc(ShaderNodeType type)
-        : ObjectDesc("ShaderNode"), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
     }
     explicit ShaderNodeDesc(string name, ShaderNodeType type)
-        : ObjectDesc("ShaderNode", std::move(name)), type(type) {
+        : NodeDesc("ShaderNode", std::move(name)), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
     }
     explicit ShaderNodeDesc(float v, ShaderNodeType type)
-        : ObjectDesc("ShaderNode"), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v, v, v, v});
     }
     explicit ShaderNodeDesc(float2 v, ShaderNodeType type)
-        : ObjectDesc("ShaderNode"), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v.x, v.y, 0, 0});
     }
     explicit ShaderNodeDesc(float3 v, ShaderNodeType type)
-        : ObjectDesc("ShaderNode"), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v.x, v.y, v.z, 0});
     }
     explicit ShaderNodeDesc(float4 v, ShaderNodeType type)
-        : ObjectDesc("ShaderNode"), type(type) {
+        : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", {v.x, v.y, v.z, v.w});
@@ -144,7 +144,7 @@ public:
 };
 
 template<uint Dim>
-requires(Dim <= 4) struct SlotDesc : public ObjectDesc {
+requires(Dim <= 4) struct SlotDesc : public NodeDesc {
 public:
     static constexpr auto default_channels() noexcept {
         if constexpr (Dim == 1) {
@@ -183,7 +183,7 @@ public:
     }
 };
 
-struct LightDesc : public ObjectDesc {
+struct LightDesc : public NodeDesc {
 public:
     ShaderNodeDesc color_desc{Illumination};
 
@@ -198,7 +198,7 @@ public:
     }
 };
 
-struct ShapeDesc : public ObjectDesc {
+struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
     LightDesc emission;
@@ -218,25 +218,25 @@ public:
     [[nodiscard]] bool operator==(const ShapeDesc &other) const noexcept;
 };
 
-struct SamplerDesc : public ObjectDesc {
+struct SamplerDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Sampler)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct FilterDesc : public ObjectDesc {
+struct FilterDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Filter)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct FilmDesc : public ObjectDesc {
+struct FilmDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Film)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct SensorDesc : public ObjectDesc {
+struct SensorDesc : public NodeDesc {
 public:
     TransformDesc transform_desc;
     FilterDesc filter_desc;
@@ -248,13 +248,13 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct IntegratorDesc : public ObjectDesc {
+struct IntegratorDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Integrator)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct MediumDesc : public ObjectDesc {
+struct MediumDesc : public NodeDesc {
 public:
     ShaderNodeDesc sigma_a{Unbound};
     ShaderNodeDesc sigma_s{Unbound};
@@ -266,7 +266,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct MaterialDesc : public ObjectDesc {
+struct MaterialDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
@@ -279,26 +279,26 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 };
 
-struct LightSamplerDesc : public ObjectDesc {
+struct LightSamplerDesc : public NodeDesc {
 public:
     vector<LightDesc> light_descs;
     VISION_DESC_COMMON(LightSampler)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct WarperDesc : public ObjectDesc {
+struct WarperDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Warper)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct SpectrumDesc : public ObjectDesc {
+struct SpectrumDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Spectrum)
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct OutputDesc : public ObjectDesc {
+struct OutputDesc : public NodeDesc {
 public:
     string fn;
     uint spp{0u};
