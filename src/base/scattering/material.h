@@ -63,7 +63,7 @@ public:
                    const Bool &dispersive)
         : BSDF(si, refl.swl()), _fresnel(fresnel),
           _refl(move(refl)), _trans(move(trans)),
-    _dispersive(dispersive){}
+          _dispersive(dispersive) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         return _dispersive;
