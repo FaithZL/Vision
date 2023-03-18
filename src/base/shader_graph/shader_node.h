@@ -83,6 +83,8 @@ private:
     }
 
 public:
+    Slot() = default;
+
     explicit Slot(const ShaderNode *input, string channels)
         : _node(input),
           _channel_mask(_calculate_mask(channels)) {

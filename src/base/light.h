@@ -6,6 +6,7 @@
 
 #include "base/scattering/interaction.h"
 #include "node.h"
+#include "shader_graph/shader_node.h"
 #include "sample.h"
 #include "base/color/spectrum.h"
 
@@ -25,10 +26,10 @@ public:
 
 protected:
     const LightType _type{LightType::Area};
+    Slot<3> _color{};
 
 public:
-    explicit Light(const LightDesc &desc, LightType light_type)
-        : Node(desc), _type(light_type) {}
+    explicit Light(const LightDesc &desc, LightType light_type);
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
@@ -49,15 +50,7 @@ public:
     }
     [[nodiscard]] virtual float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
-                                        const SampledWavelengths &swl) const noexcept override {
-        LightSample ret{swl.dimension()};
-        LightEvalContext p_light;
-        p_light.pos = position();
-        ret.eval = evaluate(p_ref, p_light, swl);
-        Float3 wi_un = position() - p_ref.pos;
-        ret.p_light = p_light.pos;
-        return ret;
-    }
+                                        const SampledWavelengths &swl) const noexcept override;
 };
 
 }// namespace vision
