@@ -267,14 +267,7 @@ struct MaterialDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
-    [[nodiscard]] ShaderNodeDesc attr(const string &key, auto default_value,
-                                      ShaderNodeType type = ShaderNodeType::Number) const noexcept {
-        ShaderNodeDesc ret{default_value, type};
-        ret.init(_parameter[key], scene_path);
-        return ret;
-    }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
-
     template<uint Dim>
     [[nodiscard]] SlotDesc<Dim> slot(const string &key, auto default_value,
                                      ShaderNodeType type = ShaderNodeType::Number) const noexcept {

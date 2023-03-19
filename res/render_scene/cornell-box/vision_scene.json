@@ -207,7 +207,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "ShortBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -232,7 +232,7 @@
                             ],
                             [
                                 0.3286310136318207,
-                                0.30000001192092896,
+                                0.2990000001192092896,
                                 0.37459200620651245,
                                 1.0
                             ]
@@ -430,11 +430,14 @@
             "name": "Glass",
             "param": {
                 "material_name" : "BK7",
-                "color": [
-                    1,
-                    1,
-                    1
-                ],
+                "color":{
+                    "channels": "xyz",
+                    "node":  [
+                        1,
+                        1,
+                        1
+                    ]
+                },
                 "roughness": [0.001,0.001]
             }
         },
@@ -442,11 +445,24 @@
             "type": "disney",
             "name": "disney",
             "param": {
-                "color": [
-                    0.725,
-                    0.71,
-                    0.68
-                ]
+                "color" : [
+                    1,
+                    1,
+                    1
+                ],
+                "ior" : 1.5,
+                "roughness" : 0.1,
+                "metallic" : 0.9,
+                "spec_tint" : 0.0,
+                "anisotropic" : 0,
+                "sheen" : 0,
+                "sheen_tint" : 0,
+                "clearcoat" : 0,
+                "clearcoat_alpha" : 0.1,
+                "spec_trans" : 0.9,
+                "flatness" : 0.98,
+                "scatter_distance" : [0, 0, 0],
+                "diff_trans" : 0.11
             }
         },
         {
@@ -478,11 +494,14 @@
             "type": "mirror",
             "name": "Mirror",
             "param": {
-                "color": [
-                    1,
-                    1,
-                    1
-                ],
+                "color": {
+                    "channels" : "xyz",
+                    "node": [
+                        1,
+                        1,
+                        1
+                    ]
+                },
                 "roughness": [0.001,0.001]
             }
         },
