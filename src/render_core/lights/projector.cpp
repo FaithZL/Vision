@@ -11,20 +11,16 @@ class Projector : public IPointLight {
 private:
     float4x4 _o2w;
     float _ratio;
-    const ShaderNode *_intensity{};
     float _angle_y;
-    float _scale{1.f};
 
 public:
     explicit Projector(const LightDesc &desc)
         : IPointLight(desc),
           _ratio(desc["ratio"].as_float(1.f)),
           _angle_y(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
-          _o2w(desc.o2w.mat),
-          _scale(desc["scale"].as_float(1.f)) {
-        _intensity = desc.scene->load_shader_node(desc.color_desc);
+          _o2w(desc.o2w.mat) {
         if (_ratio == 0) {
-            uint2 res = _intensity->resolution();
+            uint2 res = _color.node()->resolution();
             _ratio = float(res.x) / res.y;
         }
     }
@@ -41,7 +37,7 @@ public:
         float2 tan_xy = make_float2(tan_x, tan_y);
         Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
-        return select(valid, 1.f, 0.f) * _intensity->eval_illumination_spectrum(uv, swl).sample / d2 * _scale;
+        return select(valid, 1.f, 0.f) * _color.eval_illumination_spectrum(uv, swl).sample / d2 * _scale;
     }
 };
 }// namespace vision

@@ -40,7 +40,7 @@ void Scene::prepare() noexcept {
     _sampler->prepare();
     _camera->update_device_data();
     build_warpers();
-    prepare_textures();
+    prepare_shadernodes();
     prepare_materials();
     _rp->spectrum().prepare();
 }
@@ -97,7 +97,7 @@ void Scene::prepare_materials() noexcept {
     });
 }
 
-void Scene::prepare_textures() noexcept {
+void Scene::prepare_shadernodes() noexcept {
     _shadernodes.for_each([&](ShaderNode *texture) noexcept {
         texture->prepare();
     });

@@ -596,7 +596,10 @@
 //                {
 //                    "type" : "point",
 //                    "param" : {
-//                        "color" : [1, 1, 1],
+//                        "color" : {
+//                            "channels": "xyz",
+//                            "node": [1, 1, 1]
+//                        },
 //                        "position" : [-0.5, 1.9, 0],
 //                        "scale" : 0.2
 //                    }
@@ -606,8 +609,11 @@
 //                    "param" : {
 //                        "angle" : 6,
 //                        "color" : {
-//                            "fn" : "Painting3.jpg",
-//                            "color_space" : "srgb"
+//                            "channels" : "xyz",
+//                            "node" : {
+//                                "fn" : "Painting3.jpg",
+//                                "color_space" : "srgb"
+//                            }
 //                        },
 //                        "ratio" : 1,
 //                        "o2w" : {

@@ -8,7 +8,6 @@
 namespace vision {
 class SpotLight : public IPointLight {
 private:
-    float3 _intensity;
     float3 _position;
     float3 _direction;
     float _angle;
@@ -18,7 +17,6 @@ private:
 public:
     explicit SpotLight(const LightDesc &desc)
         : IPointLight(desc),
-          _intensity(desc["color"].as_float3(make_float3(1.f)) * desc["scale"].as_float(1.f)),
           _position(desc["position"].as_float3()),
           _angle(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _falloff(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, _angle))),
@@ -38,7 +36,7 @@ public:
                              const SampledWavelengths &swl) const noexcept override {
         Float3 w_un = p_ref.pos - _position;
         Float3 w = normalize(w_un);
-        SampledSpectrum value = spectrum().decode_to_illumination(_intensity, swl).sample;
+        SampledSpectrum value = _color.eval_illumination_spectrum(p_light.uv, swl).sample * _scale;
         return value / length_squared(w_un) * falloff(dot(_direction, w));
     }
 };
