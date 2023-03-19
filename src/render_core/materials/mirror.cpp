@@ -28,23 +28,23 @@ public:
 
 class MirrorMaterial : public Material {
 private:
-    const ShaderNode *_color{};
-    const ShaderNode *_roughness{};
+    Slot<3> _color{};
+    Slot<2> _roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
-          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.0001f)))),
+        : Material(desc), _color(_scene->create_slot(desc.slot<3>("color", make_float3(1.f), Albedo))),
+          _roughness(_scene->create_slot(desc.slot<2>("roughness", make_float2(0.0001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color->eval_albedo_spectrum(si, swl).sample;
-        Float2 alpha = _roughness->eval(si).xy();
+        SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
+        Float2 alpha = _roughness.eval(si);
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelNoOp>(swl,render_pipeline());
+        auto fresnel = make_shared<FresnelNoOp>(swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
         return make_unique<MirrorBSDF>(si, fresnel, move(bxdf));
     }
