@@ -14,6 +14,8 @@ public:
     explicit Constant(const ShaderNodeDesc &desc)
         : ShaderNode(desc), _val(desc["value"].as_float4()) {}
     [[nodiscard]] bool is_zero() const noexcept override { return ocarina::is_zero(_val); }
+    [[nodiscard]] bool is_constant() const noexcept override { return true; }
+    [[nodiscard]] bool is_versatile() const noexcept override { return false; }
     [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override { return _val; }
 };
 }// namespace vision

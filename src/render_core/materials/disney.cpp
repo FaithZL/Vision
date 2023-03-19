@@ -374,20 +374,20 @@ public:
 
         bool has_diffuse = false;
 
-        if (ShaderNode::nonzero(color_tex.node())) {
+        if (!color_tex.is_zero()) {
             _diffuse = Diffuse(Cdiff, swl);
             _retro = Retro(Cdiff, roughness, swl);
             has_diffuse = true;
         }
 
-        if (ShaderNode::nonzero(flatness_tex.node())) {
+        if (!flatness_tex.is_zero()) {
             Float Css_weight = diffuse_weight * flatness;
             SampledSpectrum Css = Css_weight * color;
             _fake_ss = FakeSS(Css, roughness, swl);
             has_diffuse = true;
         }
 
-        if (ShaderNode::nonzero(sheen_tex.node())) {
+        if (!sheen_tex.is_zero()) {
             Float sheen = sheen_tex.eval(si);
             Float sheen_tint = sheen_tint_tex.eval(si);
             Float Csheen_weight = diffuse_weight * sheen;
@@ -417,7 +417,7 @@ public:
         _spec_refl_index = _sampling_strategy_num++;
         _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
 
-        if (ShaderNode::nonzero(clearcoat_tex.node())) {
+        if (!clearcoat_tex.is_zero()) {
             Float cc = clearcoat_tex.eval(si);
             Float cc_alpha = lerp(clearcoat_alpha_tex.eval(si), 0.001f, 1.f);
             _clearcoat = Clearcoat(cc, cc_alpha, swl);
@@ -425,7 +425,7 @@ public:
             _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
         }
 
-        if (ShaderNode::nonzero(spec_trans_tex.node())) {
+        if (!spec_trans_tex.is_zero()) {
             Float Cst_weight = (1.f - metallic) * spec_trans;
             SampledSpectrum Cst = Cst_weight * sqrt(color);
             _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);

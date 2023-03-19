@@ -19,16 +19,18 @@ public:
     using Desc = ShaderNodeDesc;
 
 public:
-    [[nodiscard]] static bool is_zero(const ShaderNode *tex) noexcept {
-        return tex ? tex->is_zero() : true;
-    }
-    [[nodiscard]] static bool nonzero(const ShaderNode *tex) noexcept {
-        return !is_zero(tex);
-    }
-
-public:
     explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
     [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
+    /**
+     * if shader node is constant, the result will be inlined
+     * @return
+     */
+    [[nodiscard]] virtual bool is_constant() const noexcept { return false; }
+    /**
+     * if shader node contain textures,the result is versatile
+     * @return
+     */
+    [[nodiscard]] virtual bool is_versatile() const noexcept { return true; }
     [[nodiscard]] virtual Float4 eval(const AttrEvalContext &tec) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                            const SampledWavelengths &swl) const noexcept;
@@ -85,6 +87,10 @@ public:
           _channel_mask(_calculate_mask(channels)) {
         OC_ASSERT(channels.size() == Dim);
     }
+
+    [[nodiscard]] bool is_zero() const noexcept { return _node->is_zero(); }
+    [[nodiscard]] bool is_constant() const noexcept { return _node->is_constant(); }
+    [[nodiscard]] bool is_versatile() const noexcept { return _node->is_versatile(); }
 
     [[nodiscard]] auto node() const noexcept { return _node; }
     [[nodiscard]] auto node() noexcept { return _node; }
