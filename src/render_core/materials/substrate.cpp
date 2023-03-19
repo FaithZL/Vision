@@ -114,22 +114,22 @@ public:
 
 class SubstrateMaterial : public Material {
 private:
-    const ShaderNode *_diff{};
-    const ShaderNode *_spec{};
-    const ShaderNode *_roughness{};
+    Slot<3> _diff{};
+    Slot<3> _spec{};
+    Slot<2> _roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(_scene->load_shader_node(desc.attr("color", make_float3(1.f), Albedo))),
-          _spec(_scene->load_shader_node(desc.attr("spec", make_float3(0.05f), Albedo))),
-          _roughness(_scene->load_shader_node(desc.attr("roughness", make_float2(0.001f)))),
+        : Material(desc), _diff(_scene->create_slot(desc.slot<3>("color", make_float3(1.f), Albedo))),
+          _spec(_scene->create_slot(desc.slot<3>("spec", make_float3(0.05f), Albedo))),
+          _roughness(_scene->create_slot(desc.slot<2>("roughness", make_float2(0.001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = _diff->eval_albedo_spectrum(si, swl).sample;
-        SampledSpectrum Rs = _spec->eval_albedo_spectrum(si, swl).sample;
-        Float2 alpha = _roughness->eval(si).xy();
+        SampledSpectrum Rd = _diff.eval_albedo_spectrum(si, swl).sample;
+        SampledSpectrum Rs = _spec.eval_albedo_spectrum(si, swl).sample;
+        Float2 alpha = _roughness.eval(si).xy();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
