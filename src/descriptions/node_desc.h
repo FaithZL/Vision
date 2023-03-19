@@ -185,10 +185,7 @@ public:
 
 struct LightDesc : public NodeDesc {
 public:
-    ShaderNodeDesc color_desc{Illumination};
-
     SlotDesc<3> color_slot{Illumination};
-
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)
