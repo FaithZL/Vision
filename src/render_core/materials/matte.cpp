@@ -26,14 +26,14 @@ public:
 
 class MatteMaterial : public Material {
 private:
-    const ShaderNode *_color{};
+    Slot<3> _color{};
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->load_shader_node(desc.attr("color", make_float4(0.5f), Albedo))) {}
+        : Material(desc), _color(_scene->create_slot(desc.slot<3>("color", make_float4(0.5f), Albedo))) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color->eval_albedo_spectrum(si, swl).sample;
+        SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
         return make_unique<MatteBSDF>(si, kr, swl);
     }
 };
