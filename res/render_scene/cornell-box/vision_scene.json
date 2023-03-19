@@ -332,8 +332,11 @@
                             ]
                         },
 //                        "color" : {
-//                            "fn" : "Painting3.jpg",
-//                            "color_space" : "srgb"
+//                            "channels": "xyz",
+//                            "node": {
+//                                "fn" : "Painting3.jpg",
+//                                "color_space" : "srgb"
+//                            }
 //                        },
                         "two_sided" : false,
                         "scale" : 1
