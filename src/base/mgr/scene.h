@@ -62,7 +62,7 @@ public:
     template<uint Dim>
     [[nodiscard]] Slot<Dim> create_slot(const SlotDesc<Dim> &desc) noexcept {
         desc.scene = this;
-        const ShaderNode *shader_node = load<ShaderNode>(desc.node);
+        const ShaderNode *shader_node = load_shader_node(desc.node);
         return Slot<Dim>(shader_node, desc.channels);
     }
     template<typename T, typename desc_ty>

@@ -86,6 +86,9 @@ public:
         OC_ASSERT(channels.size() == Dim);
     }
 
+    [[nodiscard]] auto node() const noexcept { return _node; }
+    [[nodiscard]] auto node() noexcept { return _node; }
+
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept {
         static_assert(Dim == 3, "eval_albedo_spectrum dim must be 3!");

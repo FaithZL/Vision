@@ -27,6 +27,7 @@ public:
 protected:
     const LightType _type{LightType::Area};
     Slot<3> _color{};
+    float _scale{1.f};
 
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
