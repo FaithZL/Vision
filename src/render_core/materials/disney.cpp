@@ -352,11 +352,11 @@ private:
     }
 
 public:
-    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, Slot<3>color_tex,
-                   Slot<1>metallic_tex, Slot<1>eta_tex, Slot<1>roughness_tex,
-                   Slot<1>spec_tint_tex, Slot<1>anisotropic_tex, Slot<1>sheen_tex,
-                   Slot<1>sheen_tint_tex, Slot<1>clearcoat_tex, Slot<1>clearcoat_alpha_tex,
-                   Slot<1>spec_trans_tex, Slot<1>flatness_tex, Slot<1>diff_trans_tex)
+    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, TSlot<3>color_tex,
+                   TSlot<1>metallic_tex, TSlot<1>eta_tex, TSlot<1>roughness_tex,
+                   TSlot<1>spec_tint_tex, TSlot<1>anisotropic_tex, TSlot<1>sheen_tex,
+                   TSlot<1>sheen_tint_tex, TSlot<1>clearcoat_tex, TSlot<1>clearcoat_alpha_tex,
+                   TSlot<1>spec_trans_tex, TSlot<1>flatness_tex, TSlot<1>diff_trans_tex)
         : BSDF(si, swl) {
 
         auto [color, color_lum] = color_tex.eval_albedo_spectrum(si, swl);
@@ -530,19 +530,19 @@ public:
 
 class DisneyMaterial : public Material {
 private:
-    Slot<3> _color{};
-    Slot<1> _metallic{};
-    Slot<1> _eta{};
-    Slot<1> _roughness{};
-    Slot<1> _spec_tint{};
-    Slot<1> _anisotropic{};
-    Slot<1> _sheen{};
-    Slot<1> _sheen_tint{};
-    Slot<1> _clearcoat{};
-    Slot<1> _clearcoat_alpha{};
-    Slot<1> _spec_trans{};
-    Slot<1> _flatness{};
-    Slot<1> _diff_trans{};
+    TSlot<3> _color{};
+    TSlot<1> _metallic{};
+    TSlot<1> _eta{};
+    TSlot<1> _roughness{};
+    TSlot<1> _spec_tint{};
+    TSlot<1> _anisotropic{};
+    TSlot<1> _sheen{};
+    TSlot<1> _sheen_tint{};
+    TSlot<1> _clearcoat{};
+    TSlot<1> _clearcoat_alpha{};
+    TSlot<1> _spec_trans{};
+    TSlot<1> _flatness{};
+    TSlot<1> _diff_trans{};
     bool _thin{false};
 
 public:

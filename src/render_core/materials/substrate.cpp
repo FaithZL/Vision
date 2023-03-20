@@ -114,9 +114,9 @@ public:
 
 class SubstrateMaterial : public Material {
 private:
-    Slot<3> _diff{};
-    Slot<3> _spec{};
-    Slot<2> _roughness{};
+    TSlot<3> _diff{};
+    TSlot<3> _spec{};
+    TSlot<2> _roughness{};
     bool _remapping_roughness{false};
 
 public:

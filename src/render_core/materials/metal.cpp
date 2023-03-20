@@ -48,7 +48,7 @@ private:
     string _material_name{};
     SPD _spd_eta;
     SPD _spd_k;
-    Slot<2> _roughness{};
+    TSlot<2> _roughness{};
     bool _remapping_roughness{false};
 
 public:

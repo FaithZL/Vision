@@ -31,7 +31,7 @@ public:
      * @return
      */
     [[nodiscard]] virtual bool is_versatile() const noexcept { return true; }
-    [[nodiscard]] virtual Float4 eval(const AttrEvalContext &tec) const noexcept = 0;
+    [[nodiscard]] virtual Float4 eval(const AttrEvalContext &ctx) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                            const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
@@ -45,7 +45,7 @@ public:
 };
 
 template<uint Dim = 1>
-requires(Dim <= 4) class Slot : public ocarina::Hashable {
+requires(Dim <= 4) class TSlot : public ocarina::Hashable {
 private:
     uint _channel_mask{};
     const ShaderNode *_node{};
@@ -80,9 +80,9 @@ private:
     }
 
 public:
-    Slot() = default;
+    TSlot() = default;
 
-    explicit Slot(const ShaderNode *input, string channels)
+    explicit TSlot(const ShaderNode *input, string channels)
         : _node(input),
           _channel_mask(_calculate_mask(channels)) {
         OC_ASSERT(channels.size() == Dim);

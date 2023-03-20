@@ -78,9 +78,9 @@ public:
 
 class GlassMaterial : public Material {
 private:
-    Slot<3> _color{};
-    Slot<1> _ior{};
-    Slot<2> _roughness{};
+    TSlot<3> _color{};
+    TSlot<1> _ior{};
+    TSlot<2> _roughness{};
     bool _remapping_roughness{false};
     IORCurve *_ior_curve{nullptr};
 

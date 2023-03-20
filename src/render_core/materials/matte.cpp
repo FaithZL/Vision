@@ -26,7 +26,7 @@ public:
 
 class MatteMaterial : public Material {
 private:
-    Slot<3> _color{};
+    TSlot<3> _color{};
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
