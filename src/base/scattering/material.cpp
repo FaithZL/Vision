@@ -7,10 +7,10 @@
 
 namespace vision {
 
-Uchar BSDF::combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept {
+Uint BSDF::combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept {
     Bool reflect = same_hemisphere(wo, wi);
-    uchar non_reflect = ~BxDFFlag::Reflection;
-    uchar non_trans = ~BxDFFlag::Transmission;
+    Uint non_reflect = ~BxDFFlag::Reflection;
+    Uint non_trans = ~BxDFFlag::Transmission;
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
@@ -30,7 +30,7 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     return ret;
 }
 
-ScatterEval DielectricBSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+ScatterEval DielectricBSDF::evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
     ScatterEval ret{swl.dimension()};
     auto fresnel = _fresnel->clone();
     Float cos_theta_o = cos_theta(wo);
@@ -44,7 +44,7 @@ ScatterEval DielectricBSDF::evaluate_local(Float3 wo, Float3 wi, Uchar flag) con
     return ret;
 }
 
-BSDFSample DielectricBSDF::sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
+BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
     BSDFSample ret{swl.dimension()};
     Float uc = sampler->next_1d();
     auto fresnel = _fresnel->clone();

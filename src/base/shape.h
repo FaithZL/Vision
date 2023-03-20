@@ -25,8 +25,8 @@ public:
         uint light_id{InvalidUI32};
         uint mat_id{InvalidUI32};
         uint mesh_id{InvalidUI32};
-        uchar inside_medium{InvalidUI8};
-        uchar outside_medium{InvalidUI8};
+        uint inside_medium{InvalidUI32};
+        uint outside_medium{InvalidUI32};
         float4x4 o2w;
     };
 

@@ -33,16 +33,16 @@ public:
 
 struct MediumInterface {
 public:
-    Uchar inside{InvalidUI8};
-    Uchar outside{InvalidUI8};
+    Uint inside{InvalidUI32};
+    Uint outside{InvalidUI32};
 
 public:
     MediumInterface() = default;
-    MediumInterface(Uchar in, Uchar out) : inside(in), outside(out) {}
-    explicit MediumInterface(Uchar medium_id) : inside(medium_id), outside(medium_id) {}
+    MediumInterface(Uint in, Uint out) : inside(in), outside(out) {}
+    explicit MediumInterface(Uint medium_id) : inside(medium_id), outside(medium_id) {}
     [[nodiscard]] Bool is_transition() const noexcept { return inside != outside; }
-    [[nodiscard]] Bool has_inside() const noexcept { return inside != InvalidUI8; }
-    [[nodiscard]] Bool has_outside() const noexcept { return outside != InvalidUI8; }
+    [[nodiscard]] Bool has_inside() const noexcept { return inside != InvalidUI32; }
+    [[nodiscard]] Bool has_outside() const noexcept { return outside != InvalidUI32; }
 };
 
 template<EPort p = D>
@@ -108,7 +108,7 @@ public:
     Interaction(Float3 pos, Float3 wo);
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
-    void set_medium(const Uchar &inside, const Uchar &outside);
+    void set_medium(const Uint &inside, const Uint &outside);
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }

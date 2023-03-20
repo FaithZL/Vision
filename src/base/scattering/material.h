@@ -19,14 +19,14 @@ public:
     const SampledWavelengths &swl;
 
 protected:
-    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept {
+    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
         ScatterEval ret{swl.dimension()};
         ret.f = {swl.dimension(), 0.f};
         ret.pdf = 1.f;
         return ret;
     }
 
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept {
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
         BSDFSample ret{swl.dimension()};
         return ret;
     }
@@ -43,7 +43,7 @@ public:
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept {
         return {};
     }
-    [[nodiscard]] static Uchar combine_flag(Float3 wo, Float3 wi, Uchar flag) noexcept;
+    [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
@@ -68,8 +68,8 @@ public:
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         return _dispersive;
     }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override;
 };
 
 class Material : public Node {

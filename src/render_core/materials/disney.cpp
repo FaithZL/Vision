@@ -444,7 +444,7 @@ public:
         }
     }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{swl.dimension()};
         SampledSpectrum f = {swl.dimension(), 0.f};
         Float pdf = 0.f;
@@ -476,7 +476,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{swl.dimension()};
         Float uc = sampler->next_1d();
         Float2 u = sampler->next_2d();

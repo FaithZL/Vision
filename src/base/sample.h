@@ -11,31 +11,31 @@ namespace vision {
 using namespace ocarina;
 
 struct BxDFFlag {
-    static constexpr uchar Unset = 1;
-    static constexpr uchar Reflection = 1 << 1;
-    static constexpr uchar Transmission = 1 << 2;
-    static constexpr uchar Diffuse = 1 << 3;
-    static constexpr uchar Glossy = 1 << 4;
-    static constexpr uchar Specular = 1 << 5;
-    static constexpr uchar NearSpec = 1 << 6;
+    static constexpr uint Unset = 1;
+    static constexpr uint Reflection = 1 << 1;
+    static constexpr uint Transmission = 1 << 2;
+    static constexpr uint Diffuse = 1 << 3;
+    static constexpr uint Glossy = 1 << 4;
+    static constexpr uint Specular = 1 << 5;
+    static constexpr uint NearSpec = 1 << 6;
     // Composite _BxDFFlags_ definitions
-    static constexpr uchar DiffRefl = Diffuse | Reflection;
-    static constexpr uchar DiffTrans = Diffuse | Transmission;
-    static constexpr uchar GlossyRefl = Glossy | Reflection;
-    static constexpr uchar GlossyTrans = Glossy | Transmission;
-    static constexpr uchar SpecRefl = Specular | Reflection;
-    static constexpr uchar SpecTrans = Specular | Transmission;
-    static constexpr uchar All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
+    static constexpr uint DiffRefl = Diffuse | Reflection;
+    static constexpr uint DiffTrans = Diffuse | Transmission;
+    static constexpr uint GlossyRefl = Glossy | Reflection;
+    static constexpr uint GlossyTrans = Glossy | Transmission;
+    static constexpr uint SpecRefl = Specular | Reflection;
+    static constexpr uint SpecTrans = Specular | Transmission;
+    static constexpr uint All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
 };
 
 struct RayState {
 public:
     OCRay ray;
     Float ior;
-    Uchar medium{InvalidUI8};
+    Uint medium{InvalidUI32};
 
 public:
-    [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI8; }
+    [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI32; }
     [[nodiscard]] Float3 origin() const noexcept { return ray->origin(); }
     [[nodiscard]] Float3 direction() const noexcept { return ray->direction(); }
     [[nodiscard]] Float t_max() const noexcept { return ray->t_max(); }
@@ -96,7 +96,7 @@ struct PhaseSample : public ScatterSample {
 
 struct BSDFSample : public ScatterSample {
 public:
-    Uchar flags{BxDFFlag::Unset};
+    Uint flags{BxDFFlag::Unset};
     Float eta{1.f};
 
 public:

@@ -16,10 +16,10 @@ public:
     explicit MatteBSDF(const Interaction &si, const SampledSpectrum &kr, const SampledWavelengths &swl)
         : BSDF(si, swl), _bxdf(kr, swl) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uchar flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, nullptr);
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uchar flag, Sampler *sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         return _bxdf.sample(wo, sampler, nullptr);
     }
 };

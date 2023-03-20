@@ -31,7 +31,7 @@ using namespace ocarina;
 
 class BxDF {
 protected:
-    uchar _flag;
+    uint _flag;
     const SampledWavelengths *_swl;
 
 public:
@@ -52,8 +52,8 @@ public:
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] Uchar flag() const noexcept { return _flag; }
-    [[nodiscard]] Bool match_flag(Uchar bxdf_flag) const noexcept {
+    [[nodiscard]] Uint flag() const noexcept { return _flag; }
+    [[nodiscard]] Bool match_flag(Uint bxdf_flag) const noexcept {
         return ((_flag & bxdf_flag) == _flag);
     }
 };
