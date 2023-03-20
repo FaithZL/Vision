@@ -14,12 +14,14 @@ namespace vision {
 class ShaderNode : public Node {
 protected:
     ShaderNodeType _type{};
+    uint _dim{4};
 
 public:
     using Desc = ShaderNodeDesc;
 
 public:
     explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
+    [[nodiscard]] virtual uint dim() const noexcept { return _dim; }
     [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
     /**
      * if shader node is constant, the result will be inlined
