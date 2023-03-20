@@ -25,4 +25,23 @@ ColorDecode ShaderNode::eval_illumination_spectrum(const AttrEvalContext &ctx,
     return spectrum().decode_to_illumination(rgb, swl);
 }
 
+uint Slot::_calculate_mask(string channels) noexcept {
+    uint ret{};
+    channels = to_lower(channels);
+    static map<char, uint> dict{
+        {'x', 0u},
+        {'y', 1u},
+        {'z', 2u},
+        {'w', 3u},
+        {'r', 0u},
+        {'g', 1u},
+        {'b', 2u},
+        {'a', 3u},
+    };
+    for (char channel : channels) {
+        ret = (ret << 4) | dict[channel];
+    }
+    return ret;
+}
+
 }// namespace vision

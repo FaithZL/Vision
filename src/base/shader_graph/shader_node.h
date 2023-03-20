@@ -46,6 +46,34 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
+class Slot : public ocarina::Hashable {
+private:
+    const ShaderNode *_node{};
+    uint _dim{4};
+    uint _channel_mask{};
+
+private:
+    [[nodiscard]] uint _calculate_mask(string channels) noexcept;
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return hash64(_channel_mask, _node->hash()); }
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(_channel_mask, _node->type_hash()); }
+
+public:
+    explicit Slot(const ShaderNode *input, string channels)
+        : _node(input),
+          _dim(channels.size()),
+          _channel_mask(_calculate_mask(channels)) {
+        
+    }
+
+    [[nodiscard]] uint dim() const noexcept { return _dim; }
+    [[nodiscard]] bool is_zero() const noexcept { return _node->is_zero(); }
+    [[nodiscard]] bool is_constant() const noexcept { return _node->is_constant(); }
+    [[nodiscard]] bool is_versatile() const noexcept { return _node->is_versatile(); }
+
+    [[nodiscard]] auto node() const noexcept { return _node; }
+    [[nodiscard]] auto node() noexcept { return _node; }
+};
+
 template<uint Dim = 1>
 requires(Dim <= 4) class TSlot : public ocarina::Hashable {
 private:

@@ -102,6 +102,7 @@ protected:
     }
 
 public:
+    ShaderNodeDesc() = default;
     explicit ShaderNodeDesc(ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
@@ -183,9 +184,36 @@ public:
     }
 };
 
+struct SlotDesc : public NodeDesc {
+public:
+    string channels;
+    ShaderNodeDesc node;
+    VISION_DESC_COMMON(Slot)
+    explicit SlotDesc(ShaderNodeDesc node, string channels)
+        : node(node), channels(channels) {}
+
+    explicit SlotDesc(ShaderNodeType type, string channels)
+        : node(type), channels(channels) {}
+
+    void init(const ParameterSet &ps) noexcept override {
+        DataWrap data = ps.data();
+        if (data.contains("channels")) {
+            channels = ps["channels"].as_string();
+            node.init(ps["node"], scene_path);
+        } else {
+            node.init(ps, scene_path);
+        }
+    }
+    void init(const ParameterSet &ps, fs::path scene_path) noexcept {
+        this->scene_path = scene_path;
+        init(ps);
+    }
+};
+
 struct LightDesc : public NodeDesc {
 public:
     TSlotDesc<3> color_slot{Illumination};
+    SlotDesc color{Illumination, "xyz"};
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)
