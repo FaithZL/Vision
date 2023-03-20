@@ -144,7 +144,7 @@ public:
 };
 
 template<uint Dim>
-requires(Dim <= 4) struct SlotDesc : public NodeDesc {
+requires(Dim <= 4) struct TSlotDesc : public NodeDesc {
 public:
     static constexpr auto default_channels() noexcept {
         if constexpr (Dim == 1) {
@@ -161,11 +161,11 @@ public:
 public:
     string channels;
     ShaderNodeDesc node;
-    VISION_DESC_COMMON(Slot)
-    explicit SlotDesc(ShaderNodeDesc node, string channels = default_channels())
+    VISION_DESC_COMMON(TSlot)
+    explicit TSlotDesc(ShaderNodeDesc node, string channels = default_channels())
         : node(node), channels(channels) {}
 
-    explicit SlotDesc(ShaderNodeType type, string channels = default_channels())
+    explicit TSlotDesc(ShaderNodeType type, string channels = default_channels())
         : node(type), channels(channels) {}
 
     void init(const ParameterSet &ps) noexcept override {
@@ -185,7 +185,7 @@ public:
 
 struct LightDesc : public NodeDesc {
 public:
-    SlotDesc<3> color_slot{Illumination};
+    TSlotDesc<3> color_slot{Illumination};
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)
@@ -269,10 +269,10 @@ public:
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     template<uint Dim>
-    [[nodiscard]] SlotDesc<Dim> slot(const string &key, auto default_value,
+    [[nodiscard]] TSlotDesc<Dim> slot(const string &key, auto default_value,
                                      ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
-        SlotDesc<Dim> slot_desc{node};
+        TSlotDesc<Dim> slot_desc{node};
         slot_desc.init(_parameter[key], scene_path);
         return slot_desc;
     }
