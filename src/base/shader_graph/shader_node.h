@@ -62,7 +62,7 @@ public:
         : _node(input),
           _dim(channels.size()),
           _channel_mask(_calculate_mask(channels)) {
-        
+
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
