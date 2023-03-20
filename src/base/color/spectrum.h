@@ -66,6 +66,8 @@ private:
     Array<float> _values;
 
 public:
+    explicit SampledSpectrum(const Array<float> &value) noexcept
+        : _values(value) {}
     SampledSpectrum(uint n, const Float &value) noexcept
         : _values(n) {
         for (int i = 0; i < n; ++i) {
@@ -97,10 +99,10 @@ public:
         return dimension() == 1u ? _values[0u] : _values[i];
     }
     [[nodiscard]] Float3 vec3() const noexcept {
-        return make_float3(values()[0], values()[1], values()[2]);
+        return _values.to_vec3();
     }
     [[nodiscard]] Float4 vec4() const noexcept {
-        return make_float4(values()[0], values()[1], values()[2], values()[3]);
+        return _values.to_vec4();
     }
     template<typename F>
     [[nodiscard]] auto map(F &&f) const noexcept {
@@ -114,28 +116,17 @@ public:
         }
         return s;
     }
-    template<typename T, typename F>
-    [[nodiscard]] auto reduce(T &&initial, F &&f) const noexcept {
-        auto r = eval(OC_FORWARD(initial));
-        for (auto i = 0u; i < dimension(); i++) {
-            if constexpr (std::invocable<F, Var<expr_value_t<decltype(r)>>, Float>) {
-                r = f(r, (*this)[i]);
-            } else {
-                r = f(r, i, (*this)[i]);
-            }
-        }
-        return r;
-    }
+
     [[nodiscard]] Float sum() const noexcept {
-        return reduce(0.f, [](auto r, auto x) noexcept { return r + x; });
+        return values().reduce(0.f, [](auto r, auto x) noexcept { return r + x; });
     }
     [[nodiscard]] Float max() const noexcept {
-        return reduce(0.f, [](auto r, auto x) noexcept {
+        return values().reduce(0.f, [](auto r, auto x) noexcept {
             return ocarina::max(r, x);
         });
     }
     [[nodiscard]] Float min() const noexcept {
-        return reduce(std::numeric_limits<float>::max(), [](auto r, auto x) noexcept {
+        return values().reduce(std::numeric_limits<float>::max(), [](auto r, auto x) noexcept {
             return ocarina::min(r, x);
         });
     }
@@ -145,11 +136,11 @@ public:
     }
     template<typename F>
     [[nodiscard]] Bool any(F &&f) const noexcept {
-        return reduce(false, [&f](auto ans, auto value) noexcept { return ans || f(value); });
+        return values().reduce(false, [&f](auto ans, auto value) noexcept { return ans || f(value); });
     }
     template<typename F>
     [[nodiscard]] Bool all(F &&f) const noexcept {
-        return reduce(true, [&f](auto ans, auto value) noexcept { return ans && f(value); });
+        return values().reduce(true, [&f](auto ans, auto value) noexcept { return ans && f(value); });
     }
     [[nodiscard]] Bool is_zero() const noexcept {
         return all([](auto x) noexcept { return x == 0.f; });
