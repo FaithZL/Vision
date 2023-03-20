@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     Device device = context.create_device("cuda");
     device.init_rtx();
     Stream stream = device.create_stream();
-    context.clear_cache();
+//    context.clear_cache();
     float3 vec = make_float3(2);
     float4x4 mat = scale(2);
     Transform tsf = Transform(mat);
@@ -73,20 +73,9 @@ int main(int argc, char *argv[]) {
 
 
     Kernel kernel = [&]() {
-        Float2 u = make_float2(0.28, 0.28);
-        Float ax = 0.001f;
-        Float ay = 0.001f;
-        Float eta = 1.5f;
-
-        Float3 wo = normalize(make_float3(1,0,0.6));
-
-        auto mf = make_shared<Microfacet<D>>(ax, ay);
-      SampledWavelengths swl{3u};
-      MicrofacetTransmission mt(SampledSpectrum{3u},swl, mf);
-  
-
-
-
+        Array<float> arr = Array<float>::create(std::array<Float, 2>{10.f, 9.f});
+//        arr[0] = 9.6f;
+        prints("----- {}", arr[0]);
     };
     auto shader = device.compile(kernel);
 //    Stream stream = device.create_stream();
