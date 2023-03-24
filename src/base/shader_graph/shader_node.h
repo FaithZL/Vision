@@ -64,9 +64,7 @@ public:
     [[nodiscard]] bool is_zero() const noexcept { return _node->is_zero(); }
     [[nodiscard]] bool is_constant() const noexcept { return _node->is_constant(); }
     [[nodiscard]] bool is_uniform() const noexcept { return _node->is_uniform(); }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept {
-        return _node->evaluate(ctx);
-    }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
 

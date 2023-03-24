@@ -26,6 +26,10 @@ uint Slot::_calculate_mask(string channels) noexcept {
     return ret;
 }
 
+Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
+    return _node->evaluate(ctx);
+}
+
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx).to_vec3();
