@@ -17,6 +17,9 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override { return true; }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override { return Array<float>(_value).to_vec4(); }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
+        return Array<float>(_value);
+    }
 };
 }// namespace vision
 

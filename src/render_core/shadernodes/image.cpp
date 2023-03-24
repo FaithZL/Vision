@@ -21,6 +21,9 @@ public:
 //        return _image_wrapper.texture().sample(4, tev.uv).to_vec4();
         return render_pipeline()->tex(_image_wrapper.id()).sample(4, tev.uv).to_vec4();
     }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
+        return render_pipeline()->tex(_image_wrapper.id()).sample(4, ctx.uv);
+    }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture().resolution().xy();
     }

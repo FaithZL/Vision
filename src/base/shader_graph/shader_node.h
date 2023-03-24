@@ -33,14 +33,8 @@ public:
      * @return
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
-    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept { return Array<float>{1u}; }
+    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     [[nodiscard]] virtual Float4 eval(const AttrEvalContext &ctx) const noexcept = 0;
-    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
-                                                           const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                            const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &tec,
-                                                                 const SampledWavelengths &swl) const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
@@ -69,8 +63,18 @@ public:
     [[nodiscard]] uint dim() const noexcept { return _dim; }
     [[nodiscard]] bool is_zero() const noexcept { return _node->is_zero(); }
     [[nodiscard]] bool is_constant() const noexcept { return _node->is_constant(); }
-    [[nodiscard]] bool is_versatile() const noexcept { return _node->is_uniform(); }
+    [[nodiscard]] bool is_uniform() const noexcept { return _node->is_uniform(); }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept {
+        return _node->evaluate(ctx);
+    }
+    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
+                                                   const SampledWavelengths &swl) const noexcept;
 
+    [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
+                                                    const SampledWavelengths &swl) const noexcept;
+
+    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
+                                                         const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] auto node() const noexcept { return _node; }
     [[nodiscard]] auto node() noexcept { return _node; }
 };

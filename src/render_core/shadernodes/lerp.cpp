@@ -19,6 +19,9 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override {
         return _t->is_constant() && A->is_constant() && B->is_constant();
     }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
+        return Array<float>{1u};
+    }
     [[nodiscard]] Float4 eval(const AttrEvalContext &tec) const noexcept override {
         return lerp(_t->eval(tec), A->eval(tec), B->eval(tec));
     }

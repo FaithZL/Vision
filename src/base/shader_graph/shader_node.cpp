@@ -7,24 +7,6 @@
 
 namespace vision {
 
-ColorDecode ShaderNode::eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                             const SampledWavelengths &swl) const noexcept {
-    Float3 rgb = eval(ctx).xyz();
-    return spectrum().decode_to_albedo(rgb, swl);
-}
-
-ColorDecode ShaderNode::eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                              const SampledWavelengths &swl) const noexcept {
-    Float3 rgb = eval(ctx).xyz();
-    return spectrum().decode_to_unbound_spectrum(rgb, swl);
-}
-
-ColorDecode ShaderNode::eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                   const SampledWavelengths &swl) const noexcept {
-    Float3 rgb = eval(ctx).xyz();
-    return spectrum().decode_to_illumination(rgb, swl);
-}
-
 uint Slot::_calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
@@ -42,6 +24,24 @@ uint Slot::_calculate_mask(string channels) noexcept {
         ret = (ret << 4) | dict[channel];
     }
     return ret;
+}
+
+ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+    OC_ASSERT(_dim == 3);
+    Float3 val = evaluate(ctx).to_vec3();
+    return _node->spectrum().decode_to_albedo(val, swl);
+}
+
+ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+    OC_ASSERT(_dim == 3);
+    Float3 val = evaluate(ctx).to_vec3();
+    return _node->spectrum().decode_to_unbound_spectrum(val, swl);
+}
+
+ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+    OC_ASSERT(_dim == 3);
+    Float3 val = evaluate(ctx).to_vec3();
+    return _node->spectrum().decode_to_illumination(val, swl);
 }
 
 }// namespace vision
