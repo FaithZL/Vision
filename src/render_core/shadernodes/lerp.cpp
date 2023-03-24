@@ -13,8 +13,8 @@ private:
 
 public:
     explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
-    [[nodiscard]] bool is_versatile() const noexcept override {
-        return _t->is_versatile() || A->is_versatile() || B->is_versatile();
+    [[nodiscard]] bool is_uniform() const noexcept override {
+        return _t->is_uniform() && A->is_uniform() && B->is_uniform();
     }
     [[nodiscard]] bool is_constant() const noexcept override {
         return _t->is_constant() && A->is_constant() && B->is_constant();
