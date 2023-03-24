@@ -33,6 +33,7 @@ public:
      * @return
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
+    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept { return Array<float>{1u}; }
     [[nodiscard]] virtual Float4 eval(const AttrEvalContext &ctx) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &tec,
                                                            const SampledWavelengths &swl) const noexcept;
