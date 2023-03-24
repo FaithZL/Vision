@@ -162,17 +162,17 @@ public:
             }
         } else if constexpr (Dim == 2) {
             switch (_channel_mask) {
-#include "slot_swizzle_2.inl.h"
+#include "tslot_swizzle_2.inl.h"
                 default: OC_ASSERT(0); return Var(make_float2(0.f));
             }
         } else if constexpr (Dim == 3) {
             switch (_channel_mask) {
-#include "slot_swizzle_3.inl.h"
+#include "tslot_swizzle_3.inl.h"
                 default: OC_ASSERT(0); return Var(make_float3(0.f));
             }
         } else {
             switch (_channel_mask) {
-#include "slot_swizzle_4.inl.h"
+#include "tslot_swizzle_4.inl.h"
                 default: OC_ASSERT(0); return Var(make_float4(0.f));
             }
         }

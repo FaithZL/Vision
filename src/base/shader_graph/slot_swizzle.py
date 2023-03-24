@@ -25,5 +25,5 @@ def generate(file, dim):
 if __name__ == "__main__":
     base = dirname(realpath(__file__))
     for dim in range(2, 5):
-        with open(f"{base}/slot_swizzle_{dim}.inl.h", "w") as file:
+        with open(f"{base}/tslot_swizzle_{dim}.inl.h", "w") as file:
             generate(file, dim)
