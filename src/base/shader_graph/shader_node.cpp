@@ -27,6 +27,29 @@ uint Slot::_calculate_mask(string channels) noexcept {
 }
 
 Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
+    switch (_dim) {
+        case 1: {
+            switch (_channel_mask) {
+#include "slot_swizzle_1.inl.h"
+            }
+        }
+        case 2 :{
+            switch (_channel_mask) {
+#include "slot_swizzle_2.inl.h"
+            }
+        }
+        case 3 :{
+            switch (_channel_mask) {
+#include "slot_swizzle_3.inl.h"
+            }
+        }
+        case 4 :{
+            switch (_channel_mask) {
+#include "slot_swizzle_4.inl.h"
+            }
+        }
+    }
+    OC_ASSERT(false);
     return _node->evaluate(ctx);
 }
 

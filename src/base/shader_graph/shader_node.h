@@ -57,7 +57,7 @@ public:
         : _node(input),
           _dim(channels.size()),
           _channel_mask(_calculate_mask(channels)) {
-
+        OC_ASSERT(_dim <= 4);
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
