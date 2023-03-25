@@ -78,18 +78,18 @@ public:
 
 class GlassMaterial : public Material {
 private:
-    TSlot<3> _color{};
-    TSlot<1> _ior{};
-    TSlot<2> _roughness{};
+    Slot _color{};
+    Slot _ior{};
+    Slot _roughness{};
     bool _remapping_roughness{false};
     IORCurve *_ior_curve{nullptr};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _color(_scene->create_tslot(desc.tslot<3>("color", make_float3(1.f), Albedo))),
-          _ior(_scene->create_tslot(desc.tslot<1>("ior", 1.5f))),
-          _roughness(_scene->create_tslot(desc.tslot<2>("roughness", make_float2(0.01f)))),
+          _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
+          _ior(_scene->create_slot(desc.slot("ior", 1.5f))),
+          _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)),
           _ior_curve(ior_curve(desc["material_name"].as_string())) {}
 
@@ -99,9 +99,9 @@ public:
         if (_ior_curve) {
             ior = _ior_curve->eta(swl.lambda(0u));
         } else {
-            ior = _ior.eval(si);
+            ior = _ior.evaluate(si).to_scalar();
         }
-        Float2 alpha = _roughness.eval(si);
+        Float2 alpha = _roughness.evaluate(si).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
