@@ -160,14 +160,11 @@ public:
     }                                                                                                         \
     [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                    \
         OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                \
-        SampledSpectrum s(ocarina::max(dimension(), rhs.dimension()));                                        \
-        for (int i = 0; i < s.dimension(); ++i) {                                                             \
-            s[i] = (*this)[i] op rhs[i];                                                                      \
-        }                                                                                                     \
+        SampledSpectrum s(values() op rhs.values());                                                          \
         return s;                                                                                             \
     }                                                                                                         \
     [[nodiscard]] friend SampledSpectrum operator op(const Float &lhs, const SampledSpectrum &rhs) noexcept { \
-        return rhs.map([lhs](const Float &rvalue) { return lhs op rvalue; });                                 \
+        return SampledSpectrum(lhs op rhs.values());                                                          \
     }                                                                                                         \
     SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                              \
         for (int i = 0; i < dimension(); ++i) {                                                               \
