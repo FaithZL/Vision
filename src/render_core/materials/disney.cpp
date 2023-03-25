@@ -547,19 +547,19 @@ private:
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_tslot(desc.slot<3>("color", make_float3(1.f), Albedo))),
-          _metallic(_scene->create_tslot(desc.slot<1>("metallic", 0.f, Number))),
-          _eta(_scene->create_tslot(desc.slot<1>("ior", 1.5f, Number))),
-          _roughness(_scene->create_tslot(desc.slot<1>("roughness", 1.f, Number))),
-          _spec_tint(_scene->create_tslot(desc.slot<1>("spec_tint", 0.f, Number))),
-          _anisotropic(_scene->create_tslot(desc.slot<1>("anisotropic", 0.f, Number))),
-          _sheen(_scene->create_tslot(desc.slot<1>("sheen", 0.f, Number))),
-          _sheen_tint(_scene->create_tslot(desc.slot<1>("sheen_tint", 0.f, Number))),
-          _clearcoat(_scene->create_tslot(desc.slot<1>("clearcoat", 0.f, Number))),
-          _clearcoat_alpha(_scene->create_tslot(desc.slot<1>("clearcoat_alpha", 0.f, Number))),
-          _spec_trans(_scene->create_tslot(desc.slot<1>("spec_trans", 0.f, Number))),
-          _flatness(_scene->create_tslot(desc.slot<1>("flatness", 0.f, Number))),
-          _diff_trans(_scene->create_tslot(desc.slot<1>("diff_trans", 0.f, Number))) {}
+        : Material(desc), _color(_scene->create_tslot(desc.tslot<3>("color", make_float3(1.f), Albedo))),
+          _metallic(_scene->create_tslot(desc.tslot<1>("metallic", 0.f, Number))),
+          _eta(_scene->create_tslot(desc.tslot<1>("ior", 1.5f, Number))),
+          _roughness(_scene->create_tslot(desc.tslot<1>("roughness", 1.f, Number))),
+          _spec_tint(_scene->create_tslot(desc.tslot<1>("spec_tint", 0.f, Number))),
+          _anisotropic(_scene->create_tslot(desc.tslot<1>("anisotropic", 0.f, Number))),
+          _sheen(_scene->create_tslot(desc.tslot<1>("sheen", 0.f, Number))),
+          _sheen_tint(_scene->create_tslot(desc.tslot<1>("sheen_tint", 0.f, Number))),
+          _clearcoat(_scene->create_tslot(desc.tslot<1>("clearcoat", 0.f, Number))),
+          _clearcoat_alpha(_scene->create_tslot(desc.tslot<1>("clearcoat_alpha", 0.f, Number))),
+          _spec_trans(_scene->create_tslot(desc.tslot<1>("spec_trans", 0.f, Number))),
+          _flatness(_scene->create_tslot(desc.tslot<1>("flatness", 0.f, Number))),
+          _diff_trans(_scene->create_tslot(desc.tslot<1>("diff_trans", 0.f, Number))) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,

@@ -57,7 +57,7 @@ public:
           _material_name(desc["material_name"].as_string()),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
-          _roughness(_scene->create_tslot(desc.slot<2>("roughness", make_float2(0.01f)))),
+          _roughness(_scene->create_tslot(desc.tslot<2>("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);

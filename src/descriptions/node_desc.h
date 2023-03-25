@@ -297,7 +297,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     template<uint Dim>
-    [[nodiscard]] TSlotDesc<Dim> slot(const string &key, auto default_value,
+    [[nodiscard]] TSlotDesc<Dim> tslot(const string &key, auto default_value,
                                      ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
         TSlotDesc<Dim> slot_desc{node};

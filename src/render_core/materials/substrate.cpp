@@ -121,9 +121,9 @@ private:
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(_scene->create_tslot(desc.slot<3>("color", make_float3(1.f), Albedo))),
-          _spec(_scene->create_tslot(desc.slot<3>("spec", make_float3(0.05f), Albedo))),
-          _roughness(_scene->create_tslot(desc.slot<2>("roughness", make_float2(0.001f)))),
+        : Material(desc), _diff(_scene->create_tslot(desc.tslot<3>("color", make_float3(1.f), Albedo))),
+          _spec(_scene->create_tslot(desc.tslot<3>("spec", make_float3(0.05f), Albedo))),
+          _roughness(_scene->create_tslot(desc.tslot<2>("roughness", make_float2(0.001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {

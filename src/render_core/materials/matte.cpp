@@ -30,7 +30,7 @@ private:
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_tslot(desc.slot<3>("color", make_float4(0.5f), Albedo))) {}
+        : Material(desc), _color(_scene->create_tslot(desc.tslot<3>("color", make_float4(0.5f), Albedo))) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
