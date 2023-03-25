@@ -352,19 +352,19 @@ private:
     }
 
 public:
-    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_tex,
-                   Slot metallic_tex, Slot eta_tex, Slot roughness_tex,
-                   Slot spec_tint_tex, Slot anisotropic_tex, Slot sheen_tex,
-                   Slot sheen_tint_tex, Slot clearcoat_tex, Slot clearcoat_alpha_tex,
-                   Slot spec_trans_tex, Slot flatness_tex, Slot diff_trans_tex)
+    PrincipledBSDF(const Interaction &si, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_slot,
+                   Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
+                   Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
+                   Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
+                   Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot)
                    : BSDF(si, swl) {
 
-                       auto [color, color_lum] = color_tex.eval_albedo_spectrum(si, swl);
-                       Float metallic = metallic_tex.evaluate(si).to_scalar();
-                       Float spec_trans = spec_trans_tex.evaluate(si).to_scalar();
+                       auto [color, color_lum] = color_slot.eval_albedo_spectrum(si, swl);
+                       Float metallic = metallic_slot.evaluate(si).to_scalar();
+                       Float spec_trans = spec_trans_slot.evaluate(si).to_scalar();
                        Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
-                       Float flatness = flatness_tex.evaluate(si).to_scalar();
-                       Float roughness = roughness_tex.evaluate(si).to_scalar();
+                       Float flatness = flatness_slot.evaluate(si).to_scalar();
+                       Float roughness = roughness_slot.evaluate(si).to_scalar();
                        Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
                        SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
                        Float tint_lum = color_lum * tint_weight;
@@ -374,22 +374,22 @@ public:
 
                        bool has_diffuse = false;
 
-                       if (!color_tex.is_zero()) {
+                       if (!color_slot->is_zero()) {
                            _diffuse = Diffuse(Cdiff, swl);
                            _retro = Retro(Cdiff, roughness, swl);
                            has_diffuse = true;
                        }
 
-                       if (!flatness_tex.is_zero()) {
+                       if (!flatness_slot->is_zero()) {
                            Float Css_weight = diffuse_weight * flatness;
                            SampledSpectrum Css = Css_weight * color;
                            _fake_ss = FakeSS(Css, roughness, swl);
                            has_diffuse = true;
                        }
 
-                       if (!sheen_tex.is_zero()) {
-                           Float sheen = sheen_tex.evaluate(si).to_scalar();
-                           Float sheen_tint = sheen_tint_tex.evaluate(si).to_scalar();
+                       if (!sheen_slot->is_zero()) {
+                           Float sheen = sheen_slot.evaluate(si).to_scalar();
+                           Float sheen_tint = sheen_tint_slot.evaluate(si).to_scalar();
                            Float Csheen_weight = diffuse_weight * sheen;
                            SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
                            _sheen = Sheen(Csheen, swl);
@@ -401,13 +401,13 @@ public:
                            _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
                        }
 
-                       Float spec_tint = spec_tint_tex.evaluate(si).to_scalar();
-                       Float eta = eta_tex.evaluate(si).to_scalar();
+                       Float spec_tint = spec_tint_slot.evaluate(si).to_scalar();
+                       Float eta = eta_slot.evaluate(si).to_scalar();
                        Float SchlickR0 = schlick_R0_from_eta(eta);
                        SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
                        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
-                       Float anisotropic = anisotropic_tex.evaluate(si).to_scalar();
+                       Float anisotropic = anisotropic_slot.evaluate(si).to_scalar();
                        Float aspect = sqrt(1 - anisotropic * 0.9f);
                        Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                                   max(0.001f, sqr(roughness) * aspect));
@@ -417,15 +417,15 @@ public:
                        _spec_refl_index = _sampling_strategy_num++;
                        _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
 
-                       if (!clearcoat_tex.is_zero()) {
-                           Float cc = clearcoat_tex.evaluate(si).to_scalar();
-                           Float cc_alpha = lerp(clearcoat_alpha_tex.evaluate(si).to_scalar(), 0.001f, 1.f);
+                       if (!clearcoat_slot->is_zero()) {
+                           Float cc = clearcoat_slot.evaluate(si).to_scalar();
+                           Float cc_alpha = lerp(clearcoat_alpha_slot.evaluate(si).to_scalar(), 0.001f, 1.f);
                            _clearcoat = Clearcoat(cc, cc_alpha, swl);
                            _clearcoat_index = _sampling_strategy_num++;
                            _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
                        }
 
-                       if (!spec_trans_tex.is_zero()) {
+                       if (!spec_trans_slot->is_zero()) {
                            Float Cst_weight = (1.f - metallic) * spec_trans;
                            SampledSpectrum Cst = Cst_weight * sqrt(color);
                            _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);

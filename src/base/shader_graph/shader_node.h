@@ -29,7 +29,7 @@ public:
      */
     [[nodiscard]] virtual bool is_constant() const noexcept { return false; }
     /**
-     * if shader node contain textures,the result is versatile
+     * if shader node contain textures, the result is not uniform
      * @return
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
@@ -56,14 +56,11 @@ public:
     explicit Slot(const ShaderNode *input, string channels)
         : _node(input),
           _dim(channels.size()),
-          _channel_mask(_calculate_mask(channels)) {
+          _channel_mask(_calculate_mask(move(channels))) {
         OC_ASSERT(_dim <= 4);
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
-    [[nodiscard]] bool is_zero() const noexcept { return _node->is_zero(); }
-    [[nodiscard]] bool is_constant() const noexcept { return _node->is_constant(); }
-    [[nodiscard]] bool is_uniform() const noexcept { return _node->is_uniform(); }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
@@ -73,8 +70,8 @@ public:
 
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                          const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] auto node() const noexcept { return _node; }
-    [[nodiscard]] auto node() noexcept { return _node; }
+    [[nodiscard]] const ShaderNode *node() const noexcept { return _node; }
+    [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node; }
 };
 
 }// namespace vision

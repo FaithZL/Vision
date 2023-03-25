@@ -14,10 +14,10 @@ private:
 public:
     explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
     [[nodiscard]] bool is_uniform() const noexcept override {
-        return _t.is_uniform() && A.is_uniform() && B.is_uniform();
+        return _t->is_uniform() && A->is_uniform() && B->is_uniform();
     }
     [[nodiscard]] bool is_constant() const noexcept override {
-        return _t.is_constant() && A.is_constant() && B.is_constant();
+        return _t->is_constant() && A->is_constant() && B->is_constant();
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
         return Array<float>{1u};
