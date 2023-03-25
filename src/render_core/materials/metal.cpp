@@ -48,7 +48,7 @@ private:
     string _material_name{};
     SPD _spd_eta;
     SPD _spd_k;
-    TSlot<2> _roughness{};
+    Slot _roughness{};
     bool _remapping_roughness{false};
 
 public:
@@ -57,7 +57,7 @@ public:
           _material_name(desc["material_name"].as_string()),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
-          _roughness(_scene->create_tslot(desc.tslot<2>("roughness", make_float2(0.01f)))),
+          _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
@@ -71,7 +71,7 @@ public:
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = _roughness.eval(si);
+        Float2 alpha = _roughness.evaluate(si).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         SampledSpectrum eta = _spd_eta.eval(swl);
