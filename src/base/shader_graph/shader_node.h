@@ -53,6 +53,7 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(_channel_mask, _node->type_hash()); }
 
 public:
+    Slot() = default;
     explicit Slot(const ShaderNode *input, string channels)
         : _node(input),
           _dim(channels.size()),

@@ -186,14 +186,24 @@ public:
 
 struct SlotDesc : public NodeDesc {
 public:
+    [[nodiscard]] static string default_channels(uint dim) noexcept {
+        switch (dim) {
+            case 1: return "x";
+            case 2: return "xy";
+            case 3: return "xyz";
+            case 4: return "xyzw";
+        }
+        OC_ASSERT(0);
+        return "";
+    }
     string channels;
     ShaderNodeDesc node;
     VISION_DESC_COMMON(Slot)
-    explicit SlotDesc(ShaderNodeDesc node, string channels)
-        : node(node), channels(channels) {}
+    SlotDesc(ShaderNodeDesc node, uint dim)
+        : node(node), channels(default_channels(dim)) {}
 
-    explicit SlotDesc(ShaderNodeType type, string channels)
-        : node(type), channels(channels) {}
+    SlotDesc(ShaderNodeType type, uint dim)
+        : node(type), channels(default_channels(dim)) {}
 
     void init(const ParameterSet &ps) noexcept override {
         DataWrap data = ps.data();
@@ -213,7 +223,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     TSlotDesc<3> color_slot{Illumination};
-    SlotDesc color{Illumination, "xyz"};
+    SlotDesc color{Illumination, 3};
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)
@@ -298,9 +308,18 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     template<uint Dim>
     [[nodiscard]] TSlotDesc<Dim> tslot(const string &key, auto default_value,
-                                     ShaderNodeType type = ShaderNodeType::Number) const noexcept {
+                                       ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
         TSlotDesc<Dim> slot_desc{node};
+        slot_desc.init(_parameter[key], scene_path);
+        return slot_desc;
+    }
+
+    template<typename T>
+    [[nodiscard]] SlotDesc slot(const string &key, T default_value,
+                                ShaderNodeType type = ShaderNodeType::Number) const noexcept {
+        ShaderNodeDesc node{default_value, type};
+        SlotDesc slot_desc{node, type_dimension_v<T>};
         slot_desc.init(_parameter[key], scene_path);
         return slot_desc;
     }
