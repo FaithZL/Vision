@@ -144,46 +144,6 @@ public:
     }
 };
 
-template<uint Dim>
-requires(Dim <= 4) struct TSlotDesc : public NodeDesc {
-public:
-    static constexpr auto default_channels() noexcept {
-        if constexpr (Dim == 1) {
-            return "x";
-        } else if constexpr (Dim == 2) {
-            return "xy";
-        } else if constexpr (Dim == 3) {
-            return "xyz";
-        } else {
-            return "xyzw";
-        }
-    }
-
-public:
-    string channels;
-    ShaderNodeDesc node;
-    VISION_DESC_COMMON(TSlot)
-    explicit TSlotDesc(ShaderNodeDesc node, string channels = default_channels())
-        : node(node), channels(channels) {}
-
-    explicit TSlotDesc(ShaderNodeType type, string channels = default_channels())
-        : node(type), channels(channels) {}
-
-    void init(const ParameterSet &ps) noexcept override {
-        DataWrap data = ps.data();
-        if (data.contains("channels")) {
-            channels = ps["channels"].as_string();
-            node.init(ps["node"], scene_path);
-        } else {
-            node.init(ps, scene_path);
-        }
-    }
-    void init(const ParameterSet &ps, fs::path scene_path) noexcept {
-        this->scene_path = scene_path;
-        init(ps);
-    }
-};
-
 struct SlotDesc : public NodeDesc {
 public:
     [[nodiscard]] static string default_channels(uint dim) noexcept {
@@ -222,7 +182,6 @@ public:
 
 struct LightDesc : public NodeDesc {
 public:
-    TSlotDesc<3> color_slot{Illumination};
     SlotDesc color{Illumination, 3};
     TransformDesc o2w;
 
@@ -306,14 +265,6 @@ public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
-    template<uint Dim>
-    [[nodiscard]] TSlotDesc<Dim> tslot(const string &key, auto default_value,
-                                       ShaderNodeType type = ShaderNodeType::Number) const noexcept {
-        ShaderNodeDesc node{default_value, type};
-        TSlotDesc<Dim> slot_desc{node};
-        slot_desc.init(_parameter[key], scene_path);
-        return slot_desc;
-    }
 
     template<typename T>
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
