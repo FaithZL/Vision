@@ -175,11 +175,15 @@ public:
 
     template<typename T>
     OC_NODISCARD std::vector<T> as_vector() const {
-        OC_ERROR_IF(!_data.is_array(), "data is not array!");
+        OC_ERROR_IF(!(_data.is_array() || _data.is_number()), "data is not array!");
         std::vector<T> ret;
-        for (const auto &elm : _data) {
-            ParameterSet ps{elm};
-            ret.push_back(ps.template as<T>());
+        if (_data.is_array()) {
+            for (const auto &elm : _data) {
+                ParameterSet ps{elm};
+                ret.push_back(ps.template as<T>());
+            }
+        } else if (_data.is_number()) {
+            ret.push_back(_data);
         }
         return ret;
     }
