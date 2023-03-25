@@ -28,19 +28,19 @@ public:
 
 class MirrorMaterial : public Material {
 private:
-    TSlot<3> _color{};
-    TSlot<2> _roughness{};
+    Slot _color{};
+    Slot _roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_tslot(desc.tslot<3>("color", make_float3(1.f), Albedo))),
-          _roughness(_scene->create_tslot(desc.tslot<2>("roughness", make_float2(0.0001f)))),
+        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
+          _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.0001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
-        Float2 alpha = _roughness.eval(si);
+        Float2 alpha = _roughness.evaluate(si).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
