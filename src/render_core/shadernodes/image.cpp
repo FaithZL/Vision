@@ -17,10 +17,6 @@ public:
         : ShaderNode(desc),
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
-    [[nodiscard]] Float4 eval(const AttrEvalContext &tev) const noexcept override {
-//        return _image_wrapper.texture().sample(4, tev.uv).to_vec4();
-        return render_pipeline()->tex(_image_wrapper.id()).sample(4, tev.uv).to_vec4();
-    }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
         return render_pipeline()->tex(_image_wrapper.id()).sample(4, ctx.uv);
     }

@@ -34,7 +34,6 @@ public:
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
-    [[nodiscard]] virtual Float4 eval(const AttrEvalContext &ctx) const noexcept = 0;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
