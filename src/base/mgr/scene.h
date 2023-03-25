@@ -59,12 +59,6 @@ public:
     [[nodiscard]] const auto& materials() const noexcept { return _materials; }
     [[nodiscard]] const auto& mediums() const noexcept { return _mediums; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
-    template<uint Dim>
-    [[nodiscard]] TSlot<Dim> create_tslot(const TSlotDesc<Dim> &desc) noexcept {
-        desc.scene = this;
-        const ShaderNode *shader_node = load_shader_node(desc.node);
-        return TSlot<Dim>(shader_node, desc.channels);
-    }
 
     [[nodiscard]] Slot create_slot(const SlotDesc &desc) noexcept;
     template<typename T, typename desc_ty>

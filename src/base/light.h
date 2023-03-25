@@ -26,7 +26,7 @@ public:
 
 protected:
     const LightType _type{LightType::Area};
-    TSlot<3> _color{};
+    Slot _color{};
     float _scale{1.f};
 
 public:
