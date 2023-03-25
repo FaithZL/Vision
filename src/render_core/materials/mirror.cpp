@@ -34,8 +34,8 @@ private:
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_slot(desc.slot<3>("color", make_float3(1.f), Albedo))),
-          _roughness(_scene->create_slot(desc.slot<2>("roughness", make_float2(0.0001f)))),
+        : Material(desc), _color(_scene->create_tslot(desc.slot<3>("color", make_float3(1.f), Albedo))),
+          _roughness(_scene->create_tslot(desc.slot<2>("roughness", make_float2(0.0001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {

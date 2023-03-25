@@ -87,9 +87,9 @@ private:
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _color(_scene->create_slot(desc.slot<3>("color", make_float3(1.f), Albedo))),
-          _ior(_scene->create_slot(desc.slot<1>("ior", 1.5f))),
-          _roughness(_scene->create_slot(desc.slot<2>("roughness", make_float2(0.01f)))),
+          _color(_scene->create_tslot(desc.slot<3>("color", make_float3(1.f), Albedo))),
+          _ior(_scene->create_tslot(desc.slot<1>("ior", 1.5f))),
+          _roughness(_scene->create_tslot(desc.slot<2>("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)),
           _ior_curve(ior_curve(desc["material_name"].as_string())) {}
 

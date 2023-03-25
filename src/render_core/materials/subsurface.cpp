@@ -21,12 +21,12 @@ private:
 public:
     explicit SubsurfaceMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _sigma_a{_scene->create_slot(desc.slot<3>("sigma_a", make_float3(.0011f, .0024f, .014f), Unbound))},
-          _sigma_s{_scene->create_slot(desc.slot<3>("sigma_s", make_float3(2.55f, 3.21f, 3.77f), Unbound))},
+          _sigma_a{_scene->create_tslot(desc.slot<3>("sigma_a", make_float3(.0011f, .0024f, .014f), Unbound))},
+          _sigma_s{_scene->create_tslot(desc.slot<3>("sigma_s", make_float3(2.55f, 3.21f, 3.77f), Unbound))},
           _sigma_scale{desc["sigma_scale"].as_float(1.f)},
-          _color(_scene->create_slot(desc.slot<3>("color", make_float3(1.f), Albedo))),
-          _ior(_scene->create_slot(desc.slot<1>("ior", make_float3(1.5f)))),
-          _roughness(_scene->create_slot(desc.slot<2>("roughness", make_float2(0.1f)))),
+          _color(_scene->create_tslot(desc.slot<3>("color", make_float3(1.f), Albedo))),
+          _ior(_scene->create_tslot(desc.slot<1>("ior", make_float3(1.5f)))),
+          _roughness(_scene->create_tslot(desc.slot<2>("roughness", make_float2(0.1f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 };
 

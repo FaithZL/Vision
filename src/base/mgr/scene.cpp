@@ -35,6 +35,12 @@ void Scene::init(const SceneDesc &scene_desc) {
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
 
+Slot Scene::create_slot(const SlotDesc &desc) noexcept {
+    desc.scene = this;
+    const ShaderNode *shader_node = load_shader_node(desc.node);
+    return Slot(shader_node, desc.channels);
+}
+
 void Scene::prepare() noexcept {
     _camera->prepare();
     _sampler->prepare();
