@@ -17,8 +17,8 @@ private:
 public:
     Diffuse() = default;
     explicit Diffuse(SampledSpectrum color, const SampledWavelengths &swl)
-    : BxDF(swl, BxDFFlag::DiffRefl),
-    _color(color) {}
+        : BxDF(swl, BxDFFlag::DiffRefl),
+          _color(color) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
@@ -38,9 +38,9 @@ private:
 public:
     FakeSS() = default;
     explicit FakeSS(SampledSpectrum color, Float r, const SampledWavelengths &swl)
-    : BxDF(swl, BxDFFlag::DiffRefl),
-    _color(color),
-    _roughness(r) {}
+        : BxDF(swl, BxDFFlag::DiffRefl),
+          _color(color),
+          _roughness(r) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
@@ -68,9 +68,9 @@ private:
 public:
     Retro() = default;
     explicit Retro(SampledSpectrum color, Float r, const SampledWavelengths &swl)
-    : BxDF(swl, BxDFFlag::DiffRefl),
-    _color(color),
-    _roughness(r) {}
+        : BxDF(swl, BxDFFlag::DiffRefl),
+          _color(color),
+          _roughness(r) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
@@ -97,8 +97,8 @@ private:
 public:
     Sheen() = default;
     explicit Sheen(SampledSpectrum kr, const SampledWavelengths &swl)
-    : BxDF(swl, BxDFFlag::DiffRefl),
-    _color(kr) {}
+        : BxDF(swl, BxDFFlag::DiffRefl),
+          _color(kr) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
@@ -117,7 +117,7 @@ public:
     static CALLABLE_TYPE impl = [](Float cos_theta, Float alpha) {
         Float alpha2 = sqr(alpha);
         return (alpha2 - 1) /
-        (Pi * log(alpha2) * (1 + (alpha2 - 1) * sqr(cos_theta)));
+               (Pi * log(alpha2) * (1 + (alpha2 - 1) * sqr(cos_theta)));
     };
     return impl(cos_theta, alpha);
 }
@@ -139,9 +139,9 @@ private:
 public:
     Clearcoat() = default;
     Clearcoat(Float weight, Float alpha, const SampledWavelengths &swl)
-    : BxDF(swl, BxDFFlag::GlossyRefl),
-    _weight(weight),
-    _alpha(alpha) {}
+        : BxDF(swl, BxDFFlag::GlossyRefl),
+          _weight(weight),
+          _alpha(alpha) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return {swl().dimension(), _weight}; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float weight, Float alpha) {
@@ -209,8 +209,8 @@ private:
 public:
     FresnelDisney(const SampledSpectrum &R0, Float metallic, Float eta,
                   const SampledWavelengths &swl, const RenderPipeline *rp)
-                  : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
-                  void correct_eta(Float cos_theta) noexcept override {
+        : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
+    void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override {
@@ -284,20 +284,20 @@ public:
         return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
     }
 
-    [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wi, const SampledSpectrum & Fr) const noexcept override {
+    [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wi, const SampledSpectrum &Fr) const noexcept override {
         Float3 wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
     [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi,
-                                       const SampledSpectrum & Ft, Float eta) const noexcept override {
+                                       const SampledSpectrum &Ft, Float eta) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
             return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
     }
 
-    [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wi, const SampledSpectrum& Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wi, const SampledSpectrum &Ft, Float eta) const noexcept override {
         Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
@@ -343,7 +343,7 @@ private:
     template<typename... Args>
     [[nodiscard]] SampledSpectrum f_diffuse(Args &&...args) const noexcept {
         return lobe_f(_diffuse, OC_FORWARD(args)...) + lobe_f(_retro, OC_FORWARD(args)...) +
-        lobe_f(_sheen, OC_FORWARD(args)...) + lobe_f(_fake_ss, OC_FORWARD(args)...);
+               lobe_f(_sheen, OC_FORWARD(args)...) + lobe_f(_fake_ss, OC_FORWARD(args)...);
     }
 
     template<typename... Args>
@@ -357,175 +357,175 @@ public:
                    Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
                    Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
                    Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot)
-                   : BSDF(si, swl) {
+        : BSDF(si, swl) {
 
-                       auto [color, color_lum] = color_slot.eval_albedo_spectrum(si, swl);
-                       Float metallic = metallic_slot.evaluate(si).to_scalar();
-                       Float spec_trans = spec_trans_slot.evaluate(si).to_scalar();
-                       Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
-                       Float flatness = flatness_slot.evaluate(si).to_scalar();
-                       Float roughness = roughness_slot.evaluate(si).to_scalar();
-                       Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
-                       SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
-                       Float tint_lum = color_lum * tint_weight;
+        auto [color, color_lum] = color_slot.eval_albedo_spectrum(si, swl);
+        Float metallic = metallic_slot.evaluate(si).to_scalar();
+        Float spec_trans = spec_trans_slot.evaluate(si).to_scalar();
+        Float diffuse_weight = (1.f - metallic) * (1 - spec_trans);
+        Float flatness = flatness_slot.evaluate(si).to_scalar();
+        Float roughness = roughness_slot.evaluate(si).to_scalar();
+        Float tint_weight = select(color_lum > 0.f, 1.f / color_lum, 1.f);
+        SampledSpectrum tint = clamp(color * tint_weight, 0.f, 1.f);
+        Float tint_lum = color_lum * tint_weight;
 
-                       Float Cdiff_weight = diffuse_weight * (1.f - flatness);
-                       SampledSpectrum Cdiff = color * Cdiff_weight;
+        Float Cdiff_weight = diffuse_weight * (1.f - flatness);
+        SampledSpectrum Cdiff = color * Cdiff_weight;
 
-                       bool has_diffuse = false;
+        bool has_diffuse = false;
 
-                       if (!color_slot->is_zero()) {
-                           _diffuse = Diffuse(Cdiff, swl);
-                           _retro = Retro(Cdiff, roughness, swl);
-                           has_diffuse = true;
-                       }
+        if (!color_slot->is_zero()) {
+            _diffuse = Diffuse(Cdiff, swl);
+            _retro = Retro(Cdiff, roughness, swl);
+            has_diffuse = true;
+        }
 
-                       if (!flatness_slot->is_zero()) {
-                           Float Css_weight = diffuse_weight * flatness;
-                           SampledSpectrum Css = Css_weight * color;
-                           _fake_ss = FakeSS(Css, roughness, swl);
-                           has_diffuse = true;
-                       }
+        if (!flatness_slot->is_zero()) {
+            Float Css_weight = diffuse_weight * flatness;
+            SampledSpectrum Css = Css_weight * color;
+            _fake_ss = FakeSS(Css, roughness, swl);
+            has_diffuse = true;
+        }
 
-                       if (!sheen_slot->is_zero()) {
-                           Float sheen = sheen_slot.evaluate(si).to_scalar();
-                           Float sheen_tint = sheen_tint_slot.evaluate(si).to_scalar();
-                           Float Csheen_weight = diffuse_weight * sheen;
-                           SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
-                           _sheen = Sheen(Csheen, swl);
-                           has_diffuse = true;
-                       }
+        if (!sheen_slot->is_zero()) {
+            Float sheen = sheen_slot.evaluate(si).to_scalar();
+            Float sheen_tint = sheen_tint_slot.evaluate(si).to_scalar();
+            Float Csheen_weight = diffuse_weight * sheen;
+            SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
+            _sheen = Sheen(Csheen, swl);
+            has_diffuse = true;
+        }
 
-                       if (has_diffuse) {
-                           _diffuse_index = _sampling_strategy_num++;
-                           _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
-                       }
+        if (has_diffuse) {
+            _diffuse_index = _sampling_strategy_num++;
+            _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
+        }
 
-                       Float spec_tint = spec_tint_slot.evaluate(si).to_scalar();
-                       Float eta = eta_slot.evaluate(si).to_scalar();
-                       Float SchlickR0 = schlick_R0_from_eta(eta);
-                       SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
+        Float spec_tint = spec_tint_slot.evaluate(si).to_scalar();
+        Float eta = eta_slot.evaluate(si).to_scalar();
+        Float SchlickR0 = schlick_R0_from_eta(eta);
+        SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
-                       _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
-                       Float anisotropic = anisotropic_slot.evaluate(si).to_scalar();
-                       Float aspect = sqrt(1 - anisotropic * 0.9f);
-                       Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
-                                                  max(0.001f, sqr(roughness) * aspect));
-                       auto microfacet = make_shared<DisneyMicrofacet>(alpha);
-                       _spec_refl = MicrofacetReflection(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
-                       Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
-                       _spec_refl_index = _sampling_strategy_num++;
-                       _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
+        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
+        Float anisotropic = anisotropic_slot.evaluate(si).to_scalar();
+        Float aspect = sqrt(1 - anisotropic * 0.9f);
+        Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
+                                   max(0.001f, sqr(roughness) * aspect));
+        auto microfacet = make_shared<DisneyMicrofacet>(alpha);
+        _spec_refl = MicrofacetReflection(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
+        Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
+        _spec_refl_index = _sampling_strategy_num++;
+        _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
 
-                       if (!clearcoat_slot->is_zero()) {
-                           Float cc = clearcoat_slot.evaluate(si).to_scalar();
-                           Float cc_alpha = lerp(clearcoat_alpha_slot.evaluate(si).to_scalar(), 0.001f, 1.f);
-                           _clearcoat = Clearcoat(cc, cc_alpha, swl);
-                           _clearcoat_index = _sampling_strategy_num++;
-                           _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
-                       }
+        if (!clearcoat_slot->is_zero()) {
+            Float cc = clearcoat_slot.evaluate(si).to_scalar();
+            Float cc_alpha = lerp(clearcoat_alpha_slot.evaluate(si).to_scalar(), 0.001f, 1.f);
+            _clearcoat = Clearcoat(cc, cc_alpha, swl);
+            _clearcoat_index = _sampling_strategy_num++;
+            _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
+        }
 
-                       if (!spec_trans_slot->is_zero()) {
-                           Float Cst_weight = (1.f - metallic) * spec_trans;
-                           SampledSpectrum Cst = Cst_weight * sqrt(color);
-                           _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);
-                           Float Cst_lum = Cst_weight * sqrt(color_lum);
-                           _spec_trans_index = _sampling_strategy_num++;
-                           _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
-                       }
+        if (!spec_trans_slot->is_zero()) {
+            Float Cst_weight = (1.f - metallic) * spec_trans;
+            SampledSpectrum Cst = Cst_weight * sqrt(color);
+            _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);
+            Float Cst_lum = Cst_weight * sqrt(color_lum);
+            _spec_trans_index = _sampling_strategy_num++;
+            _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
+        }
 
-                       Float sum_weights = 0.f;
-                       for (uint i = 0u; i < _sampling_strategy_num; i++) {
-                           sum_weights += _sampling_weights[i];
-                       }
-                       Float inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
-                       for (uint i = 0u; i < _sampling_strategy_num; i++) {
-                           _sampling_weights[i] *= inv_sum_weights;
-                       }
-                   }
-                   [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
-                   [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
-                       ScatterEval ret{swl.dimension()};
-                       SampledSpectrum f = {swl.dimension(), 0.f};
-                       Float pdf = 0.f;
-                       auto fresnel = _fresnel->clone();
-                       Float cos_theta_o = cos_theta(wo);
-                       fresnel->correct_eta(cos_theta_o);
-                       $if(same_hemisphere(wo, wi)) {
-                           if (_diffuse_index != InvalidUI32) {
-                               f = f_diffuse(wo, wi, fresnel);
-                               pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
-                           }
+        Float sum_weights = 0.f;
+        for (uint i = 0u; i < _sampling_strategy_num; i++) {
+            sum_weights += _sampling_weights[i];
+        }
+        Float inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
+        for (uint i = 0u; i < _sampling_strategy_num; i++) {
+            _sampling_weights[i] *= inv_sum_weights;
+        }
+    }
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
+        ScatterEval ret{swl.dimension()};
+        SampledSpectrum f = {swl.dimension(), 0.f};
+        Float pdf = 0.f;
+        auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        $if(same_hemisphere(wo, wi)) {
+            if (_diffuse_index != InvalidUI32) {
+                f = f_diffuse(wo, wi, fresnel);
+                pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
+            }
 
-                           f += _spec_refl->f(wo, wi, fresnel);
-                           pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
+            f += _spec_refl->f(wo, wi, fresnel);
+            pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
 
-                           if (_clearcoat.has_value()) {
-                               f += _clearcoat->f(wo, wi, fresnel);
-                               pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
-                           }
-                       }
-                       $else {
-                           if (_spec_trans.has_value()) {
-                               f = _spec_trans->f(wo, wi, fresnel);
-                               pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
-                           }
-                       };
-                       ret.f = f;
-                       ret.pdf = pdf;
-                       return ret;
-                   }
+            if (_clearcoat.has_value()) {
+                f += _clearcoat->f(wo, wi, fresnel);
+                pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
+            }
+        }
+        $else {
+            if (_spec_trans.has_value()) {
+                f = _spec_trans->f(wo, wi, fresnel);
+                pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
+            }
+        };
+        ret.f = f;
+        ret.pdf = pdf;
+        return ret;
+    }
 
-                   [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-                       BSDFSample ret{swl.dimension()};
-                       Float uc = sampler->next_1d();
-                       Float2 u = sampler->next_2d();
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+        BSDFSample ret{swl.dimension()};
+        Float uc = sampler->next_1d();
+        Float2 u = sampler->next_2d();
 
-                       Uint sampling_strategy = 0u;
-                       Float sum_weights = 0.f;
-                       for (uint i = 0; i < _sampling_strategy_num; ++i) {
-                           sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
-                           sum_weights += _sampling_weights[i];
-                       }
-                       Float3 f;
-                       Float pdf;
-                       auto fresnel = _fresnel->clone();
-                       Float cos_theta_o = cos_theta(wo);
-                       fresnel->correct_eta(cos_theta_o);
-                       SampledDirection sampled_direction;
-                       $switch(sampling_strategy) {
-                           if (_diffuse.has_value()) {
-                               $case(_diffuse_index) {
-                                   sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
-                                   $break;
-                               };
-                           }
-                           $case(_spec_refl_index) {
-                               sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
-                               $break;
-                           };
-                           if (_clearcoat.has_value()) {
-                               $case(_clearcoat_index) {
-                                   sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
-                                   $break;
-                               };
-                           }
-                           if (_spec_trans.has_value()) {
-                               $case(_spec_trans_index) {
-                                   sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
-                                   $break;
-                               };
-                           }
-                           $default {
-                               unreachable();
-                               $break;
-                           };
-                       };
-                       ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
-                       ret.wi = sampled_direction.wi;
-                       ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
-                       return ret;
-                   }
+        Uint sampling_strategy = 0u;
+        Float sum_weights = 0.f;
+        for (uint i = 0; i < _sampling_strategy_num; ++i) {
+            sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+            sum_weights += _sampling_weights[i];
+        }
+        Float3 f;
+        Float pdf;
+        auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        SampledDirection sampled_direction;
+        $switch(sampling_strategy) {
+            if (_diffuse.has_value()) {
+                $case(_diffuse_index) {
+                    sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
+                    $break;
+                };
+            }
+            $case(_spec_refl_index) {
+                sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
+                $break;
+            };
+            if (_clearcoat.has_value()) {
+                $case(_clearcoat_index) {
+                    sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
+                    $break;
+                };
+            }
+            if (_spec_trans.has_value()) {
+                $case(_spec_trans_index) {
+                    sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
+                    $break;
+                };
+            }
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+        ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
+        ret.wi = sampled_direction.wi;
+        ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
+        return ret;
+    }
 };
 
 class DisneyMaterial : public Material {
@@ -547,19 +547,19 @@ private:
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-    : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-    _metallic(_scene->create_slot(desc.slot("metallic", 0.f, Number))),
-    _eta(_scene->create_slot(desc.slot("ior", 1.5f, Number))),
-    _roughness(_scene->create_slot(desc.slot("roughness", 1.f, Number))),
-    _spec_tint(_scene->create_slot(desc.slot("spec_tint", 0.f, Number))),
-    _anisotropic(_scene->create_slot(desc.slot("anisotropic", 0.f, Number))),
-    _sheen(_scene->create_slot(desc.slot("sheen", 0.f, Number))),
-    _sheen_tint(_scene->create_slot(desc.slot("sheen_tint", 0.f, Number))),
-    _clearcoat(_scene->create_slot(desc.slot("clearcoat", 0.f, Number))),
-    _clearcoat_alpha(_scene->create_slot(desc.slot("clearcoat_alpha", 0.f, Number))),
-    _spec_trans(_scene->create_slot(desc.slot("spec_trans", 0.f, Number))),
-    _flatness(_scene->create_slot(desc.slot("flatness", 0.f, Number))),
-    _diff_trans(_scene->create_slot(desc.slot("diff_trans", 0.f, Number))) {}
+        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
+          _metallic(_scene->create_slot(desc.slot("metallic", 0.f, Number))),
+          _eta(_scene->create_slot(desc.slot("ior", 1.5f, Number))),
+          _roughness(_scene->create_slot(desc.slot("roughness", 1.f, Number))),
+          _spec_tint(_scene->create_slot(desc.slot("spec_tint", 0.f, Number))),
+          _anisotropic(_scene->create_slot(desc.slot("anisotropic", 0.f, Number))),
+          _sheen(_scene->create_slot(desc.slot("sheen", 0.f, Number))),
+          _sheen_tint(_scene->create_slot(desc.slot("sheen_tint", 0.f, Number))),
+          _clearcoat(_scene->create_slot(desc.slot("clearcoat", 0.f, Number))),
+          _clearcoat_alpha(_scene->create_slot(desc.slot("clearcoat_alpha", 0.f, Number))),
+          _spec_trans(_scene->create_slot(desc.slot("spec_trans", 0.f, Number))),
+          _flatness(_scene->create_slot(desc.slot("flatness", 0.f, Number))),
+          _diff_trans(_scene->create_slot(desc.slot("diff_trans", 0.f, Number))) {}
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
