@@ -47,8 +47,8 @@ private:
 
 private:
     [[nodiscard]] uint _calculate_mask(string channels) noexcept;
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return hash64(_channel_mask, _node->hash()); }
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(_channel_mask, _node->type_hash()); }
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return hash64(_channel_mask, _dim, _node->hash()); }
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(_channel_mask, _dim, _node->type_hash()); }
 
 public:
     Slot() = default;
