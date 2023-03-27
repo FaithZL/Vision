@@ -33,17 +33,17 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
 #include "slot_swizzle_1.inl.h"
             }
         }
-        case 2 :{
+        case 2: {
             switch (_channel_mask) {
 #include "slot_swizzle_2.inl.h"
             }
         }
-        case 3 :{
+        case 3: {
             switch (_channel_mask) {
 #include "slot_swizzle_3.inl.h"
             }
         }
-        case 4 :{
+        case 4: {
             switch (_channel_mask) {
 #include "slot_swizzle_4.inl.h"
             }
