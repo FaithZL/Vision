@@ -163,7 +163,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
         float4 value;
-        sub_type = "constant";
+        sub_type = "number";
         if (ps.data().size() == 2) {
             value = make_float4(ps.as_float2(), 0.f, 0.f);
         } else if (ps.data().size() == 3) {
@@ -180,7 +180,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
         json["color_space"] = ps["color_space"].data();
         _parameter.set_json(json);
     } else if (ps.data().is_number()) {
-        sub_type = "constant";
+        sub_type = "number";
         float4 value = make_float4(ps.as_float(1.f));
         _parameter.set_value("value", {value.x, value.y, value.z, value.w});
     } else {
