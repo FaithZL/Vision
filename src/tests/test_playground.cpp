@@ -7,6 +7,7 @@
 #include "rhi/common.h"
 #include "core/string_util.h"
 #include "math/transform.h"
+#include "base/scattering/interaction.h"
 #include "math/geometry.h"
 #include "math/constants.h"
 #include "render_core/spectra/srgb2spec.h"
@@ -29,9 +30,14 @@ float eta_LASF9(float lambda) {
     return sqrt(f + 1);
 }
 
-int main(int argc, char *argv[]) {
 
-    float e = eta_LASF9(0.83);
-    float e2 = eta_LASF9(0.36);
+int main(int argc, char *argv[]) {
+    auto tmp = encode_id<H>(1237,113);
+    auto [inst, type] = decode_id<H>(tmp);
+    cout << tmp << endl;
+    cout << inst << endl << type << endl;
+//    cout << std::hex << InvalidUI32;
+//    float e = eta_LASF9(0.83);
+//    float e2 = eta_LASF9(0.36);
     return 0;
 }
