@@ -5,6 +5,7 @@
 #include "scene.h"
 #include "core/context.h"
 #include "rhi/dynamic_module.h"
+#include "base/scattering/interaction.h"
 
 namespace vision {
 
@@ -64,8 +65,10 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
-    for (const ShapeDesc &desc : descs) {
-        auto shape = load<Shape>(desc);
+    for (int i = 0; i < descs.size(); ++i) {
+        Shape *shape = const_cast<Shape *>(load<Shape>(descs[i]));
+        const Material *material = _materials[shape->handle.mat_id];
+        shape->handle.mat_id = encode_id<H>(shape->handle.mat_id, material->type_index());
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
     }

@@ -44,6 +44,14 @@ Bool Interaction::has_phase() {
     return phase.valid();
 }
 
+Uint Interaction::material_inst_id() const noexcept {
+    return decode_id<D>(mat_id).first;
+}
+
+Uint Interaction::material_type_id() const noexcept {
+    return decode_id<D>(mat_id).second;
+}
+
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
     OCRay ray = vision::spawn_ray(pos, g_uvn.normal(), dir);
     Uint medium = select(dot(g_uvn.normal(), dir) > 0, mi.outside, mi.inside);

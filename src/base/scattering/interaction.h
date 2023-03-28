@@ -93,9 +93,9 @@ template<EPort p>
 
 template<EPort p>
 [[nodiscard]] inline pair<oc_uint<p>, oc_uint<p>> decode_id(oc_uint<p> id) noexcept {
-    oc_uint<p> inst_id = 0xffffff00 & id;
+    oc_uint<p> inst_id = (0xffffff00 & id) >> 8;
     oc_uint<p> type_id = 0x000000ff & id;
-    return std::make_pair(inst_id >> 8, type_id);
+    return std::make_pair(inst_id, type_id);
 }
 
 struct Interaction {
@@ -110,8 +110,11 @@ public:
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
     Uint light_id{InvalidUI32};
+
+private:
     Uint mat_id{InvalidUI32};
 
+public:
     // todo optimize volpt and pt
     MediumInterface mi;
     HenyeyGreenstein phase;
@@ -122,8 +125,11 @@ public:
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
     void set_medium(const Uint &inside, const Uint &outside);
+    void set_material(const Uint &mat) noexcept { mat_id = mat; }
     [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
+    [[nodiscard]] Uint material_inst_id() const noexcept;
+    [[nodiscard]] Uint material_type_id() const noexcept;
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {

@@ -94,7 +94,7 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     Var tri = _triangles.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     si.light_id = inst.light_id;
-    si.mat_id = inst.mat_id;
+    si.set_material(inst.mat_id);
     si.set_medium(inst.inside_medium, inst.outside_medium);
     comment("compute pos");
     Var p0 = o2w.apply_point(v0->position());
