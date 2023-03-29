@@ -32,6 +32,11 @@ public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {}
 
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        auto ret = _color.type_hash();
+        return _color.type_hash();
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
         return make_unique<MatteBSDF>(si, kr, swl);

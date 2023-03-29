@@ -26,6 +26,14 @@ uint Slot::_calculate_mask(string channels) noexcept {
     return ret;
 }
 
+uint64_t Slot::_compute_hash() const noexcept {
+    return hash64(_channel_mask, _dim, _node->hash());
+}
+
+uint64_t Slot::_compute_type_hash() const noexcept {
+    return hash64(_channel_mask, _dim, _node->type_hash());
+}
+
 Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
     switch (_dim) {
         case 1: {
