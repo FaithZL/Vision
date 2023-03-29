@@ -39,6 +39,7 @@ public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
     virtual void fill_geometry(Geometry &data) const noexcept = 0;
+    virtual void update_material_id(uint id) noexcept;
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
 };
 

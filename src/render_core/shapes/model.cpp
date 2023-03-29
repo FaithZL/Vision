@@ -142,6 +142,13 @@ public:
         }
     }
 
+    void update_material_id(uint id) noexcept override {
+        for (Mesh &mesh : _meshes) {
+            mesh.update_material_id(id);
+        }
+        _mat_id = id;
+    }
+
     [[nodiscard]] vector<float> surface_area() const noexcept override {
         vector<float> ret;
         for (const Mesh &mesh : _meshes) {
