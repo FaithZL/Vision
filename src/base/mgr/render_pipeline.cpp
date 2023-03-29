@@ -16,7 +16,9 @@ RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
       _scene(context, this),
       _geometry(this),
       _stream(device->create_stream()),
-      _resource_array(device->create_resource_array()) {}
+      _resource_array(device->create_resource_array()) {
+    Printer::instance().init(*device);
+}
 
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();
