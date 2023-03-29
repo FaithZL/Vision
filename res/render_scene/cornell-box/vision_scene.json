@@ -394,7 +394,14 @@
             "type": "matte",
             "name": "BackWall",
             "param": {
-                "color": [
+                //                "color" : {
+                //                    "channels" : "xyz",
+                //                    "node" : {
+                //                        "fn" : "checker.jpg",
+                //                        "color_space" : "srgb"
+                //                    }
+                //                }
+                "color" : [
                     0.725,
                     0.71,
                     0.68
@@ -509,7 +516,14 @@
             "type": "matte",
             "name": "TallBox",
             "param": {
-                "color": [
+                //                "color" : {
+                //                    "channels" : "xyz",
+                //                    "node" : {
+                //                        "fn" : "Painting3.jpg",
+                //                        "color_space" : "srgb"
+                //                    }
+                //                }
+                "color" : [
                     0.725,
                     0.71,
                     0.68
