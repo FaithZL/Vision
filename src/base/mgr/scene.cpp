@@ -104,15 +104,16 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 }
 
 void Scene::prepare_materials() noexcept {
-    _materials.for_each([&](Material *material) noexcept {
+    _materials.for_each_instance([&](Material *material) noexcept {
         material->prepare();
+    });
+
+    _materials.for_each_type([&](Material *material) {
+
     });
 }
 
 void Scene::prepare_shadernodes() noexcept {
-    _shadernodes.for_each([&](ShaderNode *texture) noexcept {
-        texture->prepare();
-    });
 }
 
 void Scene::upload_data() noexcept {

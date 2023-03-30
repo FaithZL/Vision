@@ -31,8 +31,8 @@ using namespace ocarina;
 
 class BxDF {
 protected:
-    uint _flag;
-    const SampledWavelengths *_swl;
+    uint _flag{};
+    const SampledWavelengths *_swl{};
 
 public:
     BxDF() = default;
