@@ -71,7 +71,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
     for (const auto & desc : descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
         const Material *material = _materials[shape->handle.mat_id];
-        shape->update_material_id(encode_id<H>(shape->handle.mat_id, material->type_index()));
+        shape->update_material_id(encode_id<H>(shape->handle.mat_id, _materials.type_index(material)));
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
     }
