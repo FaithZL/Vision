@@ -108,7 +108,7 @@ void Scene::prepare_materials() noexcept {
         material->prepare();
     });
 
-    _materials.for_each_type([&](Material *material) {
+    _materials.for_each_representative([&](Material *material) {
 
     });
 }
