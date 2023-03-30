@@ -126,6 +126,10 @@ public:
           _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
 
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(_diff.type_hash(), _spec.type_hash(), _roughness.type_hash());
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = _diff.eval_albedo_spectrum(si, swl).sample;
         SampledSpectrum Rs = _spec.eval_albedo_spectrum(si, swl).sample;
