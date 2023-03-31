@@ -98,6 +98,12 @@ public:
     [[nodiscard]] ResourceArrayBuffer<T> buffer(Index &&index) const noexcept {
         return _resource_array.buffer<T>(OC_FORWARD(index));
     }
+
+    template<typename Index>
+    requires is_integral_expr_v<Index>
+    [[nodiscard]] ResourceArrayTexture mix(Index &&index) const noexcept {
+        return _resource_array.mix(OC_FORWARD(index));
+    }
 };
 
 }// namespace vision
