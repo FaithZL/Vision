@@ -69,6 +69,10 @@ public:
         _spd_k.prepare();
     }
 
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(_roughness.type_hash(), _material_name);
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = _roughness.evaluate(si).to_vec2();

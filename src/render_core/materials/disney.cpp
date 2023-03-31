@@ -561,6 +561,25 @@ public:
           _flatness(_scene->create_slot(desc.slot("flatness", 0.f, Number))),
           _diff_trans(_scene->create_slot(desc.slot("diff_trans", 0.f, Number))) {}
 
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        auto lst = {
+            _color.type_hash(),
+            _metallic.type_hash(),
+            _eta.type_hash(),
+            _roughness.type_hash(),
+            _spec_tint.type_hash(),
+            _anisotropic.type_hash(),
+            _sheen.type_hash(),
+            _sheen_tint.type_hash(),
+            _clearcoat.type_hash(),
+            _clearcoat_alpha.type_hash(),
+            _spec_trans.type_hash(),
+            _flatness.type_hash(),
+            _diff_trans.type_hash()
+        };
+        return hash64_list(lst);
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(si, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
                                            _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat,

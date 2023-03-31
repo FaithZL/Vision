@@ -31,10 +31,11 @@ using namespace ocarina;
 
 class BxDF {
 protected:
-    uint _flag;
-    const SampledWavelengths *_swl;
+    uint _flag{};
+    const SampledWavelengths *_swl{};
 
 public:
+    BxDF() = default;
     explicit BxDF(const SampledWavelengths &swl, uchar flag = BxDFFlag::Unset) : _flag(flag), _swl(&swl) {}
     BxDF(const BxDF &other) = default;
     BxDF &operator=(const BxDF &other) noexcept {

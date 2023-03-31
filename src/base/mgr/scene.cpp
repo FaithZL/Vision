@@ -64,14 +64,14 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
     }
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
                    _materials.type_num(),
-                   _materials.instance_num());
+                   _materials.all_instance_num());
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
     for (const auto & desc : descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
         const Material *material = _materials[shape->handle.mat_id];
-        shape->update_material_id(encode_id<H>(shape->handle.mat_id, material->type_index()));
+        shape->update_material_id(encode_id<H>(shape->handle.mat_id, _materials.type_index(material)));
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
     }
@@ -104,15 +104,16 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 }
 
 void Scene::prepare_materials() noexcept {
-    _materials.for_each([&](Material *material) noexcept {
+    _materials.for_each_instance([&](Material *material) noexcept {
         material->prepare();
+    });
+
+    _materials.for_each_representative([&](Material *material) {
+
     });
 }
 
 void Scene::prepare_shadernodes() noexcept {
-    _shadernodes.for_each([&](ShaderNode *texture) noexcept {
-        texture->prepare();
-    });
 }
 
 void Scene::upload_data() noexcept {

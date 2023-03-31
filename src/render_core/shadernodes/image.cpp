@@ -20,8 +20,17 @@ public:
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
         return render_pipeline()->tex(_image_wrapper.id()).sample(3, ctx.uv);
     }
+    [[nodiscard]] Array<float> _eval(const AttrEvalContext &ctx,
+                                     uint type_index,
+                                     const Uint &data_offset) const noexcept override {
+        OC_ASSERT(false);
+        return Array<float>(1u);
+    }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
+    }
+    [[nodiscard]] uint data_size() const noexcept override {
+        return sizeof(_image_wrapper.id());
     }
     void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {
         _image_wrapper.image().for_each_pixel(func);

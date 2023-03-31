@@ -93,6 +93,14 @@ public:
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)),
           _ior_curve(ior_curve(desc["material_name"].as_string())) {}
 
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        uint64_t ret = hash64(_color.type_hash(), _roughness.type_hash());
+        if (_ior_curve) {
+            return hash64(ret, typeid(*_ior_curve).name());
+        }
+        return hash64(ret, _ior.type_hash());
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(si, swl).sample;
         Float ior;

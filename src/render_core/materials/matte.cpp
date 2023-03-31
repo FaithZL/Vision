@@ -5,6 +5,7 @@
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
+#include "base/mgr/render_pipeline.h"
 
 namespace vision {
 
@@ -32,9 +33,17 @@ public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {}
 
+    void prepare() noexcept override {
+        RenderPipeline *rp = render_pipeline();
+
+    }
+
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        auto ret = _color.type_hash();
         return _color.type_hash();
+    }
+
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return _color.hash();
     }
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
