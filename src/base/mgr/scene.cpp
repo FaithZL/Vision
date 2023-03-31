@@ -64,7 +64,7 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
     }
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
                    _materials.type_num(),
-                   _materials.instance_num());
+                   _materials.all_instance_num());
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
