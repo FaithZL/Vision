@@ -36,13 +36,21 @@ public:
      * data size in byte
      * @return
      */
-    [[nodiscard]] virtual size_t data_size() const noexcept {
+    [[nodiscard]] virtual uint data_size() const noexcept {
         OC_ASSERT(false);
         return 0;
     }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
                                                 uint type_index,
-                                                Uint data_offset) const noexcept {
+                                                Uint &data_offset) const noexcept {
+        Array<float> ret = _eval(ctx, type_index, data_offset);
+        data_offset += data_size();
+        return ret;
+    }
+
+    [[nodiscard]] virtual Array<float> _eval(const AttrEvalContext &ctx,
+                                             uint type_index,
+                                             const Uint &data_offset) const noexcept {
         OC_ASSERT(false);
         return Array<float>(1u);
     }
