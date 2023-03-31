@@ -32,6 +32,20 @@ public:
      * @return
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
+    /**
+     * data size in byte
+     * @return
+     */
+    [[nodiscard]] virtual size_t data_size() const noexcept {
+        OC_ASSERT(false);
+        return 0;
+    }
+    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
+                                                uint type_index,
+                                                Uint data_offset) const noexcept {
+        OC_ASSERT(false);
+        return Array<float>(1u);
+    }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
@@ -43,6 +57,9 @@ class Slot : public ocarina::Hashable {
 private:
     const ShaderNode *_node{};
     uint _dim{4};
+#ifndef NDEBUG
+    string _channels;
+#endif
     uint _channel_mask{};
 
 private:
@@ -55,6 +72,9 @@ public:
     explicit Slot(const ShaderNode *input, string channels)
         : _node(input),
           _dim(channels.size()),
+#ifndef NDEBUG
+          _channels(channels),
+#endif
           _channel_mask(_calculate_mask(move(channels))) {
         OC_ASSERT(_dim <= 4);
     }
