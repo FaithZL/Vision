@@ -1,0 +1,16 @@
+case 0x00: return _node->evaluate(ctx, type_index, data_offset).xx();
+case 0x01: return _node->evaluate(ctx, type_index, data_offset).xy();
+case 0x02: return _node->evaluate(ctx, type_index, data_offset).xz();
+case 0x03: return _node->evaluate(ctx, type_index, data_offset).xw();
+case 0x10: return _node->evaluate(ctx, type_index, data_offset).yx();
+case 0x11: return _node->evaluate(ctx, type_index, data_offset).yy();
+case 0x12: return _node->evaluate(ctx, type_index, data_offset).yz();
+case 0x13: return _node->evaluate(ctx, type_index, data_offset).yw();
+case 0x20: return _node->evaluate(ctx, type_index, data_offset).zx();
+case 0x21: return _node->evaluate(ctx, type_index, data_offset).zy();
+case 0x22: return _node->evaluate(ctx, type_index, data_offset).zz();
+case 0x23: return _node->evaluate(ctx, type_index, data_offset).zw();
+case 0x30: return _node->evaluate(ctx, type_index, data_offset).wx();
+case 0x31: return _node->evaluate(ctx, type_index, data_offset).wy();
+case 0x32: return _node->evaluate(ctx, type_index, data_offset).wz();
+case 0x33: return _node->evaluate(ctx, type_index, data_offset).ww();
