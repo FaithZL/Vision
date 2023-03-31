@@ -19,6 +19,9 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64_list(_value);
     }
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64_list(_value);
+    }
     [[nodiscard]] bool is_constant() const noexcept override { return true; }
     [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }

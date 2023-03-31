@@ -42,6 +42,10 @@ public:
         return _color.type_hash();
     }
 
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return _color.hash();
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
         return make_unique<MatteBSDF>(si, kr, swl);
