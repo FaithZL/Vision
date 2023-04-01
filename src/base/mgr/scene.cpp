@@ -104,13 +104,15 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 }
 
 void Scene::prepare_materials() noexcept {
-    _materials.for_each_instance([&](Material *material) noexcept {
-        material->prepare();
-    });
 
     _materials.for_each_representative([&](Material *material) {
+        ManagedWrapper<float> data_set{render_pipeline()->resource_array()};
+        _materials.set_datas(material, move(data_set));
+    });
+    _materials.for_each_instance([&](Material *material) noexcept {
 
     });
+
 }
 
 void Scene::prepare_shadernodes() noexcept {

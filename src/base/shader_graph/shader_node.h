@@ -91,7 +91,7 @@ public:
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
-    virtual void fill_data(ManagedWrapper<float> &datas, uint &offset) const noexcept {
+    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;

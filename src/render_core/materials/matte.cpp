@@ -33,8 +33,8 @@ public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {}
 
-    void fill_data(ManagedWrapper<float> &datas, uint &offset) const noexcept override {
-        _color.fill_data(datas, offset);
+    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+        _color.fill_data(datas);
     }
 
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
