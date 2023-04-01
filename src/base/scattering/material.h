@@ -78,6 +78,9 @@ public:
 
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
+    virtual void fill_data(ManagedWrapper<float> &datas, uint &offset) const noexcept {
+        OC_ASSERT(false);
+    }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept {
         return make_unique<BSDF>(si, swl);
     }
