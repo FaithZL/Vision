@@ -22,7 +22,7 @@ public:
     [[nodiscard]] uint data_size() const noexcept override {
         return _value.size() * sizeof(float);
     }
-    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
+    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
         for (auto elm : _value) {
             datas.push_back(elm);
         }

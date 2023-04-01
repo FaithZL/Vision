@@ -40,7 +40,7 @@ public:
         OC_ASSERT(false);
         return 0;
     }
-    virtual void fill_data(ManagedWrapper<float> &datas, uint &offset) noexcept {
+    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
@@ -91,9 +91,6 @@ public:
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
-    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
-        OC_ASSERT(false);
-    }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         uint type_index,

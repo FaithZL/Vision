@@ -164,14 +164,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_array()) {
         float4 value;
         sub_type = "number";
-        if (ps.data().size() == 2) {
-            value = make_float4(ps.as_float2(), 0.f, 0.f);
-        } else if (ps.data().size() == 3) {
-            value = make_float4(ps.as_float3(), 0.f);
-        } else {
-            value = ps.as_float4();
-        }
-        _parameter.set_value("value", {value.x, value.y, value.z, value.w});
+        _parameter.set_value("value", ps.data());
     } else if (ps.data().is_object() && !ps.contains("param")) {
         sub_type = "image";
         string fn = (scene_path / ps["fn"].as_string()).string();
