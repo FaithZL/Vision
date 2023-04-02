@@ -33,8 +33,8 @@ protected:
 
 public:
     BSDF() = default;
-    explicit BSDF(const Interaction &si, const SampledWavelengths &swl)
-        : shading_frame(si.s_uvn), ng(si.g_uvn.normal()), swl(swl) {}
+    explicit BSDF(const Interaction &it, const SampledWavelengths &swl)
+        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl) {}
 
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept {
         // todo
@@ -56,12 +56,12 @@ private:
     Bool _dispersive{};
 
 public:
-    DielectricBSDF(const Interaction &si,
+    DielectricBSDF(const Interaction &it,
                    const SP<Fresnel> &fresnel,
                    MicrofacetReflection refl,
                    MicrofacetTransmission trans,
                    const Bool &dispersive)
-        : BSDF(si, refl.swl()), _fresnel(fresnel),
+        : BSDF(it, refl.swl()), _fresnel(fresnel),
           _refl(move(refl)), _trans(move(trans)),
           _dispersive(dispersive) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
@@ -81,11 +81,11 @@ public:
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, DataAccessor &da, const SampledWavelengths &swl) const noexcept {
-        return make_unique<BSDF>(si, swl);
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da, const SampledWavelengths &swl) const noexcept {
+        return make_unique<BSDF>(it, swl);
     }
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept {
-        return make_unique<BSDF>(si, swl);
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {
+        return make_unique<BSDF>(it, swl);
     }
 };
 }// namespace vision

@@ -14,8 +14,8 @@ private:
     MicrofacetReflection _bxdf;
 
 public:
-    MirrorBSDF(const Interaction &si, const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
-        : BSDF(si, bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+    MirrorBSDF(const Interaction &it, const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
+        : BSDF(it, bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
@@ -42,15 +42,15 @@ public:
         return hash64(_color.type_hash(), _roughness.type_hash());
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color.eval_albedo_spectrum(si, swl).sample;
-        Float2 alpha = _roughness.evaluate(si).to_vec2();
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
+        Float2 alpha = _roughness.evaluate(it).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBSDF>(si, fresnel, move(bxdf));
+        return make_unique<MirrorBSDF>(it, fresnel, move(bxdf));
     }
 };
 

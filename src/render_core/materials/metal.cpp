@@ -30,10 +30,10 @@ private:
     MicrofacetReflection _refl;
 
 public:
-    ConductorBSDF(const Interaction &si,
+    ConductorBSDF(const Interaction &it,
               const SP<Fresnel> &fresnel,
               MicrofacetReflection refl)
-        : BSDF(si, refl.swl()), _fresnel(fresnel), _refl(move(refl)) {}
+        : BSDF(it, refl.swl()), _fresnel(fresnel), _refl(move(refl)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _refl.safe_evaluate(wo, wi, _fresnel->clone());
@@ -73,9 +73,9 @@ public:
         return hash64(_roughness.type_hash(), _material_name);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = _roughness.evaluate(si).to_vec2();
+        Float2 alpha = _roughness.evaluate(it).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         SampledSpectrum eta = _spd_eta.eval(swl);
@@ -83,7 +83,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl,microfacet);
-        return make_unique<ConductorBSDF>(si, fresnel, move(bxdf));
+        return make_unique<ConductorBSDF>(it, fresnel, move(bxdf));
     }
 };
 

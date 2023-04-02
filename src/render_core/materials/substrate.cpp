@@ -100,8 +100,8 @@ private:
     FresnelBlend _bxdf;
 
 public:
-    SubstrateBSDF(const Interaction &si, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
-        : BSDF(si,bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+    SubstrateBSDF(const Interaction &it, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
+        : BSDF(it,bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
@@ -130,17 +130,17 @@ public:
         return hash64(_diff.type_hash(), _spec.type_hash(), _roughness.type_hash());
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = _diff.eval_albedo_spectrum(si, swl).sample;
-        SampledSpectrum Rs = _spec.eval_albedo_spectrum(si, swl).sample;
-        Float2 alpha = _roughness.evaluate(si).to_vec2();
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, swl).sample;
+        SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, swl).sample;
+        Float2 alpha = _roughness.evaluate(it).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl, render_pipeline());
         FresnelBlend bxdf(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBSDF>(si, fresnel, move(bxdf));
+        return make_unique<SubstrateBSDF>(it, fresnel, move(bxdf));
     }
 };
 

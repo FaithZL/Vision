@@ -101,15 +101,15 @@ public:
         return hash64(ret, _ior.type_hash());
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum color = _color.eval_albedo_spectrum(si, swl).sample;
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
         Float ior;
         if (_ior_curve) {
             ior = _ior_curve->eta(swl.lambda(0u));
         } else {
-            ior = _ior.evaluate(si).to_scalar();
+            ior = _ior.evaluate(it).to_scalar();
         }
-        Float2 alpha = _roughness.evaluate(si).to_vec2();
+        Float2 alpha = _roughness.evaluate(it).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
@@ -117,7 +117,7 @@ public:
                                                       swl, render_pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<DielectricBSDF>(si, fresnel, move(refl), move(trans), bool(_ior_curve));
+        return make_unique<DielectricBSDF>(it, fresnel, move(refl), move(trans), bool(_ior_curve));
     }
 };
 }// namespace vision

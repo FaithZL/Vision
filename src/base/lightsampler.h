@@ -36,7 +36,7 @@ public:
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
     void add_light(Light *light) noexcept { _lights.push_back(light); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &id) const noexcept = 0;
-    [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &si,
+    [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;

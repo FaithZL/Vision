@@ -190,8 +190,8 @@ struct LightEvalContext : public GeometrySurfacePoint {
         : GeometrySurfacePoint(gsp), PDF_pos(PDF_pos) {}
     LightEvalContext(Float3 p, Float3 ng, Float2 uv, Float PDF_pos)
         : GeometrySurfacePoint{p, ng, uv}, PDF_pos(PDF_pos) {}
-    LightEvalContext(const Interaction &si)
-        : GeometrySurfacePoint{si, si.uv}, PDF_pos(1.f / si.prim_area) {}
+    LightEvalContext(const Interaction &it)
+        : GeometrySurfacePoint{it, it.uv}, PDF_pos(1.f / it.prim_area) {}
 };
 
 struct LightSampleContext : public SpacePoint {
@@ -207,8 +207,8 @@ struct AttrEvalContext {
     Float3 pos;
     Float2 uv;
     AttrEvalContext() = default;
-    AttrEvalContext(const Interaction &si)
-        : pos(si.pos), uv(si.uv) {}
+    AttrEvalContext(const Interaction &it)
+        : pos(it.pos), uv(it.uv) {}
     AttrEvalContext(const Float2 &uv)
         : uv(uv) {}
 };
@@ -218,12 +218,12 @@ struct MaterialEvalContext : public AttrEvalContext {
     Float3 ng, ns;
     Float3 dp_dus;
     MaterialEvalContext() = default;
-    MaterialEvalContext(const Interaction &si)
-        : AttrEvalContext(si),
-          wo(si.wo),
-          ng(si.g_uvn.normal()),
-          ns(si.s_uvn.normal()),
-          dp_dus(si.s_uvn.dp_du()) {}
+    MaterialEvalContext(const Interaction &it)
+        : AttrEvalContext(it),
+          wo(it.wo),
+          ng(it.g_uvn.normal()),
+          ns(it.s_uvn.normal()),
+          dp_dus(it.s_uvn.dp_du()) {}
 };
 
 }// namespace vision

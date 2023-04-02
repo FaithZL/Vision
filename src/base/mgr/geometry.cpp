@@ -86,28 +86,28 @@ void Geometry::build_accel() {
 }
 
 Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
-    Interaction si;
-    si.prim_id = hit.prim_id;
+    Interaction it;
+    it.prim_id = hit.prim_id;
     Var inst = _instances.read(hit.inst_id);
     Var mesh = _mesh_handles.read(inst.mesh_id);
     auto o2w = Transform(inst.o2w);
     Var tri = _triangles.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
-    si.light_id = inst.light_id;
-    si.set_material(inst.mat_id);
-    si.set_medium(inst.inside_medium, inst.outside_medium);
+    it.light_id = inst.light_id;
+    it.set_material(inst.mat_id);
+    it.set_medium(inst.inside_medium, inst.outside_medium);
     comment("compute pos");
     Var p0 = o2w.apply_point(v0->position());
     Var p1 = o2w.apply_point(v1->position());
     Var p2 = o2w.apply_point(v2->position());
     Float3 pos = hit->lerp(p0, p1, p2);
-    si.pos = pos;
+    it.pos = pos;
 
     comment("compute geometry uvn");
     Float3 dp02 = p0 - p2;
     Float3 dp12 = p1 - p2;
     Float3 ng_un = cross(dp02, dp12);
-    si.prim_area = 0.5f * length(ng_un);
+    it.prim_area = 0.5f * length(ng_un);
     if (is_complete) {
         Float2 duv02 = v0->tex_coord() - v2->tex_coord();
         Float2 duv12 = v1->tex_coord() - v2->tex_coord();
@@ -124,28 +124,28 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
             dp_dv = normalize(p2 - p0);
         };
         Float3 ng = normalize(ng_un);
-        si.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
+        it.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
     } else {
-        si.g_uvn.set(normalize(dp02), normalize(dp12), normalize(ng_un));
+        it.g_uvn.set(normalize(dp02), normalize(dp12), normalize(ng_un));
     }
 
     if (is_complete) {
         comment("compute shading uvn");
         Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
         $if(is_zero(normal)) {
-            si.s_uvn = si.g_uvn;
+            it.s_uvn = it.g_uvn;
         }
         $else {
             Float3 ns = normalize(o2w.apply_normal(normal));
-            Float3 ss = si.g_uvn.dp_du();
+            Float3 ss = it.g_uvn.dp_du();
             Float3 st = normalize(cross(ns, ss));
             ss = cross(st, ns);
-            si.s_uvn.set(ss, st, ns);
+            it.s_uvn.set(ss, st, ns);
         };
     }
     Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
-    si.uv = uv;
-    return si;
+    it.uv = uv;
+    return it;
 }
 
 OCHit Geometry::trace_closest(const OCRay &ray) const noexcept {
@@ -193,8 +193,8 @@ LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
     hit.inst_id = inst_id;
     hit.prim_id = prim_id;
     hit.bary = bary;
-    Interaction si = compute_surface_interaction(hit, false);
-    LightEvalContext ret(si);
+    Interaction it = compute_surface_interaction(hit, false);
+    LightEvalContext ret(it);
     return ret;
 }
 

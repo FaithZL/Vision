@@ -21,16 +21,16 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
     });
 }
 
-LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &si,
+LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                      const SampledWavelengths &swl) const noexcept {
     LightEval ret = {{swl.dimension(), 0.f}, 0.f};
-    dispatch_light(si.light_id, [&](const Light *light) {
+    dispatch_light(it.light_id, [&](const Light *light) {
         if (light->type() != LightType::Area) { return; }
-        LightEvalContext p_light{si};
-        p_light.PDF_pos *= light->PMF(si.prim_id);
+        LightEvalContext p_light{it};
+        p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate(p_ref, p_light, swl);
     });
-    Float pmf = PMF(p_ref, si.light_id);
+    Float pmf = PMF(p_ref, it.light_id);
     ret.pdf *= pmf;
     return ret;
 }
