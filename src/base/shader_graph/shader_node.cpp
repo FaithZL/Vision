@@ -62,7 +62,7 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
 }
 
 Array<float> Slot::evaluate(const AttrEvalContext &ctx,
-                            DataContext &data_ctx) const noexcept {
+                            DataAccessor &data_ctx) const noexcept {
     switch (_dim) {
         case 1: {
             switch (_channel_mask) {
@@ -108,7 +108,7 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
 }
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                       DataContext &data_ctx,
+                                       DataAccessor &data_ctx,
                                        const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, data_ctx).to_vec3();
@@ -116,7 +116,7 @@ ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx,
 }
 
 ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                        DataContext &data_ctx,
+                                        DataAccessor &data_ctx,
                                         const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, data_ctx).to_vec3();
@@ -124,7 +124,7 @@ ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx,
 }
 
 ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                             DataContext &data_ctx,
+                                             DataAccessor &data_ctx,
                                              const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, data_ctx).to_vec3();

@@ -20,10 +20,13 @@ public:
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
         return render_pipeline()->tex(_image_wrapper.id()).sample(3, ctx.uv);
     }
+    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+        datas.push_back(bit_cast<float>(_image_wrapper.id()));
+    }
     [[nodiscard]] Array<float> _eval(const AttrEvalContext &ctx,
-                                     DataContext &data_ctx) const noexcept override {
-        OC_ASSERT(false);
-        return Array<float>(1u);
+                                     const DataAccessor &data_ctx) const noexcept override {
+        Uint index = data_ctx.byte_read<uint>();
+        return render_pipeline()->tex(index).sample(3, ctx.uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
