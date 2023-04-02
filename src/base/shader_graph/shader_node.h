@@ -11,6 +11,11 @@
 
 namespace vision {
 
+struct DataContext {
+    Uint offset;
+    ManagedWrapper<float> datas;
+};
+
 class ShaderNode : public Node {
 protected:
     ShaderNodeType _type{};
@@ -44,16 +49,14 @@ public:
         OC_ASSERT(false);
     }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
-                                                uint type_index,
-                                                Uint &data_offset) const noexcept {
-        Array<float> ret = _eval(ctx, type_index, data_offset);
-        data_offset += data_size();
+                                                DataContext &data_ctx) const noexcept {
+        Array<float> ret = _eval(ctx, data_ctx);
+        data_ctx.offset += data_size();
         return ret;
     }
 
     [[nodiscard]] virtual Array<float> _eval(const AttrEvalContext &ctx,
-                                             uint type_index,
-                                             const Uint &data_offset) const noexcept {
+                                             DataContext &data_ctx) const noexcept {
         OC_ASSERT(false);
         return Array<float>(1u);
     }
@@ -93,8 +96,7 @@ public:
     [[nodiscard]] uint dim() const noexcept { return _dim; }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                        uint type_index,
-                                        Uint &data_offset) const noexcept;
+                                        DataContext &data_ctx) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
@@ -102,16 +104,13 @@ public:
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                          const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                                   uint type_index,
-                                                   Uint &data_offset,
+                                                   DataContext &data_ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                    uint type_index,
-                                                    Uint &data_offset,
+                                                    DataContext &data_ctx,
                                                     const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                         uint type_index,
-                                                         Uint &data_offset,
+                                                         DataContext &data_ctx,
                                                          const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] const ShaderNode *node() const noexcept { return _node; }
     [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node; }

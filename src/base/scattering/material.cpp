@@ -63,12 +63,4 @@ BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) 
     return ret;
 }
 
-Polymorphic<Material *> &Material::polymorphic() noexcept {
-    return _scene->materials();
-}
-
-const Polymorphic<Material *> &Material::polymorphic() const noexcept {
-    return _scene->materials();
-}
-
 }// namespace vision

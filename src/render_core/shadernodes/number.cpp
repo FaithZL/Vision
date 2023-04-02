@@ -28,8 +28,7 @@ public:
         }
     }
     [[nodiscard]] Array<float> _eval(const AttrEvalContext &ctx,
-                                     uint type_index,
-                                     const Uint &data_offset) const noexcept override {
+                                     DataContext &data_ctx) const noexcept override {
         OC_ASSERT(false);
         return Array<float>(1u);
     }
