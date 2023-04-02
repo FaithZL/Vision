@@ -81,7 +81,7 @@ public:
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const Uint &index, const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, DataAccessor &da, const SampledWavelengths &swl) const noexcept {
         return make_unique<BSDF>(si, swl);
     }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept {

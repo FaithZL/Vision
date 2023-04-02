@@ -45,9 +45,9 @@ public:
         return _color.hash();
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, const Uint &index,
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &si, DataAccessor &da,
                                     const SampledWavelengths &swl) const noexcept override {
-        Uint offset = index * _color->data_size();
+
         return make_unique<BSDF>(si, swl);
     }
 

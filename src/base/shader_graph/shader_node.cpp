@@ -62,7 +62,7 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
 }
 
 Array<float> Slot::evaluate(const AttrEvalContext &ctx,
-                            DataAccessor &data_ctx) const noexcept {
+                            DataAccessor &da) const noexcept {
     switch (_dim) {
         case 1: {
             switch (_channel_mask) {
@@ -86,7 +86,7 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx,
         }
     }
     OC_ASSERT(false);
-    return _node->evaluate(ctx, data_ctx);
+    return _node->evaluate(ctx, da);
 }
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
@@ -108,26 +108,26 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
 }
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                       DataAccessor &data_ctx,
+                                       DataAccessor &da,
                                        const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, data_ctx).to_vec3();
+    Float3 val = evaluate(ctx, da).to_vec3();
     return _node->spectrum().decode_to_albedo(val, swl);
 }
 
 ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                        DataAccessor &data_ctx,
+                                        DataAccessor &da,
                                         const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, data_ctx).to_vec3();
+    Float3 val = evaluate(ctx, da).to_vec3();
     return _node->spectrum().decode_to_unbound_spectrum(val, swl);
 }
 
 ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                             DataAccessor &data_ctx,
+                                             DataAccessor &da,
                                              const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, data_ctx).to_vec3();
+    Float3 val = evaluate(ctx, da).to_vec3();
     return _node->spectrum().decode_to_illumination(val, swl);
 }
 
