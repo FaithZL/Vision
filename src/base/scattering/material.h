@@ -81,6 +81,11 @@ public:
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
+    [[nodiscard]] Polymorphic<Material *> &polymorphic() noexcept;
+    [[nodiscard]] const Polymorphic<Material *> &polymorphic() const noexcept;
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const Uint &index, const SampledWavelengths &swl) const noexcept {
+        return make_unique<BSDF>(si, swl);
+    }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &si, const SampledWavelengths &swl) const noexcept {
         return make_unique<BSDF>(si, swl);
     }

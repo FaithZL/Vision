@@ -4,6 +4,7 @@
 
 #include "material.h"
 #include "base/sampler.h"
+#include "base/mgr/scene.h"
 
 namespace vision {
 
@@ -60,6 +61,14 @@ BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) 
         ret.eval.pdf *= 1 - fr;
     };
     return ret;
+}
+
+Polymorphic<Material *> &Material::polymorphic() noexcept {
+    return _scene->materials();
+}
+
+const Polymorphic<Material *> &Material::polymorphic() const noexcept {
+    return _scene->materials();
 }
 
 }// namespace vision

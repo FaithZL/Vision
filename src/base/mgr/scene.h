@@ -57,6 +57,7 @@ public:
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
     [[nodiscard]] const auto& materials() const noexcept { return _materials; }
+    [[nodiscard]] auto& materials() noexcept { return _materials; }
     [[nodiscard]] const auto& mediums() const noexcept { return _mediums; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
 
