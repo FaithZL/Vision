@@ -45,10 +45,14 @@ public:
         return _color.hash();
     }
 
+    [[nodiscard]] uint data_size() const noexcept override {
+        return _color->data_size();
+    }
+
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
                                     const SampledWavelengths &swl) const noexcept override {
-
-        return make_unique<BSDF>(it, swl);
+        SampledSpectrum kr = _color.eval_albedo_spectrum(it, da, swl).sample;
+        return make_unique<MatteBSDF>(it, kr, swl);
     }
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {

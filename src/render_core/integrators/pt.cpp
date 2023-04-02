@@ -41,7 +41,7 @@ public:
 
         _kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            Bool debug = all(pixel == make_uint2(508, 66));
+            Bool debug = all(pixel == make_uint2(512, 512));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
@@ -113,9 +113,14 @@ public:
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
-                    _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
-
-                    });
+//                    _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
+//                        ManagedWrapper<float> &datas = _scene->materials().datas(material);
+//                        uint data_size = material->data_size();
+//                        DataAccessor da{it.material_inst_id() * material->data_size(), datas};
+//                        UP<BSDF> bsdf = material->get_BSDF(it, da, swl);
+//                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+//                                             sampler, swl, bsdf_sample);
+//                    });
 
                     _scene->materials().dispatch_instance(it.material_inst_id(), [&](const Material *material) {
                         UP<BSDF> bsdf = material->get_BSDF(it, swl);

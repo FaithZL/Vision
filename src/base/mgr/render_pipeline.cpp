@@ -78,6 +78,7 @@ void RenderPipeline::render(double dt) noexcept {
     _total_time += ms;
     ++_frame_index;
     cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+    Printer::instance().retrieve_immediately();
 }
 
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {

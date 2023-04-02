@@ -610,7 +610,7 @@
         }
     },
     "spectrum" : {
-        "type" : "hero",
+        "type" : "srgb",
         "param" : {
             "dimension": 3
         }
@@ -680,7 +680,7 @@
         }
     },
     "output": {
-        "spp": 4096,
+        "spp": 1024,
         "fn": "hero.png"
     }
 }
