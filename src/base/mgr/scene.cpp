@@ -111,9 +111,15 @@ void Scene::prepare_materials() noexcept {
     });
     _materials.for_each_instance([&](const Material *material) noexcept {
         const_cast<Material *>(material)->prepare();
-      
+
         ManagedWrapper<float> &data_set = _materials.datas(material);
         material->fill_data(data_set);
+    });
+    _materials.for_each_representative([&](Material *material) {
+        ManagedWrapper<float> &datas = _materials.datas(material);
+        datas.reset_device_buffer(render_pipeline()->device());
+        datas.register_self();
+        datas.upload_immediately();
     });
 }
 
