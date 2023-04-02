@@ -40,14 +40,9 @@ public:
     handle_ty register_texture(const RHITexture &texture) noexcept {
         return _resource_array.emplace(texture);
     }
-    template<typename T>
-    requires is_buffer_or_view_v<T>
-    [[nodiscard]] handle_ty register_mix_buffer(T &&buffer) noexcept {
-        return _resource_array.emplace_mix(OC_FORWARD(buffer));
-    }
+
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
-    void deregister_mix_buffer(handle_ty index) noexcept;
     [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
     void prepare_resource_array() noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
@@ -101,8 +96,8 @@ public:
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] ResourceArrayTexture mix(Index &&index) const noexcept {
-        return _resource_array.mix(OC_FORWARD(index));
+    [[nodiscard]] ResourceArrayTexture byte_buffer(Index &&index) const noexcept {
+        return _resource_array.byte_buffer(OC_FORWARD(index));
     }
 };
 

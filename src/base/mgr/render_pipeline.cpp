@@ -40,7 +40,6 @@ void RenderPipeline::prepare_resource_array() noexcept {
     _resource_array.prepare_slotSOA(device());
     _stream << _resource_array->upload_buffer_handles()
             << _resource_array->upload_texture_handles()
-            << _resource_array->upload_mix_buffer_handles()
             << synchronize() << commit();
 }
 
@@ -58,10 +57,6 @@ void RenderPipeline::deregister_buffer(handle_ty index) noexcept {
 
 void RenderPipeline::deregister_texture(handle_ty index) noexcept {
     _resource_array->remove_texture(index);
-}
-
-void RenderPipeline::deregister_mix_buffer(handle_ty index) noexcept {
-    _resource_array->remove_mix_buffer(index);
 }
 
 void RenderPipeline::compile_shaders() noexcept {
