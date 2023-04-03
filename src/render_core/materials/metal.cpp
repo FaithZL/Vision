@@ -62,6 +62,7 @@ public:
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
         _spd_eta.init(complex_ior.eta);
         _spd_k.init(complex_ior.k);
+        init_slot_cursor(&_roughness, 1);
     }
 
     void prepare() noexcept override {
@@ -70,12 +71,29 @@ public:
     }
 
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_roughness.type_hash(), _material_name);
+        if (!_material_name.empty()) {
+            return hash64(Material::_compute_type_hash(), _material_name);
+        }
+        return Material::_compute_type_hash();
     }
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = _roughness.evaluate(it).to_vec2();
+        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
+        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
+        SampledSpectrum eta = _spd_eta.eval(swl);
+        SampledSpectrum k = _spd_k.eval(swl);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
+        MicrofacetReflection bxdf(kr, swl,microfacet);
+        return make_unique<ConductorBSDF>(it, fresnel, move(bxdf));
+    }
+
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
+                                    const SampledWavelengths &swl) const noexcept override {
+        SampledSpectrum kr{swl.dimension(), 1.f};
+        Float2 alpha = _roughness.evaluate(it, da).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         SampledSpectrum eta = _spd_eta.eval(swl);

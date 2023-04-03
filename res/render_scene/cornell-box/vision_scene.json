@@ -204,15 +204,17 @@
             "type": "cube",
             "name": "shape_5",
             "param": {
-                "x": 1,
-                "y": 1,
-                "z": 1,
-//                "material": "ShortBox",
-                "material": "Glass",
-                "transform": {
-                    "type": "matrix4x4",
-                    "param": {
-                        "matrix4x4": [
+                "x" : 1,
+                "y" : 1,
+                "z" : 1,
+                //                "material" : "ShortBox",
+//                "material" : "substrate",
+                "material" : "Metal",
+                //                "material" : "Glass",
+                "transform" : {
+                    "type" : "matrix4x4",
+                    "param" : {
+                        "matrix4x4" : [
                             [
                                 -0.17032849788665771,
                                 7.4452954912374025e-09,
@@ -478,13 +480,13 @@
             "type": "substrate",
             "name": "substrate",
             "param": {
-                "roughness" : 0.001,
-                "spec": [
+                "roughness" : [0.001, 0.001],
+                "spec" : [
                     0.04,
                     0.04,
                     0.04
                 ],
-                "color": [
+                "color" : [
                     0.725,
                     0.71,
                     0.68
@@ -496,7 +498,7 @@
             "name": "Metal",
             "param": {
                 "material_name":"Cu",
-                "roughness": 0.01
+                "roughness": [0.01,0.01]
             }
         },
         {
@@ -618,7 +620,7 @@
         "type": "alias_table"
     },
     "render_setting": {
-        "polymorphic_mode": 1
+        "polymorphic_mode" : 1
     },
     "integrator": {
         "type": "pt",
@@ -631,7 +633,7 @@
     "spectrum" : {
         "type" : "srgb",
         "param" : {
-            "dimension": 3
+            "dimension" : 3
         }
     },
     "light_sampler": {
