@@ -117,7 +117,7 @@ public:
     requires is_scalar_v<Arg>
     explicit ShaderNodeDesc(Arg v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
-        sub_type = "constant";
+        sub_type = "number";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", v);
     }
