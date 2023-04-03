@@ -208,9 +208,9 @@
                 "y" : 1,
                 "z" : 1,
 //                                "material" : "ShortBox",
-//                "material" : "substrate",
+                "material" : "substrate",
 //                "material" : "Metal",
-                "material" : "disney",
+//                "material" : "disney",
                 //                "material" : "Glass",
                 "transform" : {
                     "type" : "matrix4x4",
@@ -481,7 +481,7 @@
             "type": "substrate",
             "name": "substrate",
             "param": {
-                "roughness" : [0.001, 0.001],
+                "roughness" : 0.001,
                 "spec" : [
                     0.04,
                     0.04,

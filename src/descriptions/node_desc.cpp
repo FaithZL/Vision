@@ -120,6 +120,25 @@ namespace detail {
 
 }// namespace detail
 
+void SlotDesc::init(const ParameterSet &ps) noexcept {
+    DataWrap data = ps.data();
+    if (data.contains("channels")) {
+        channels = ps["channels"].as_string();
+        node.init(ps["node"], scene_path);
+    } else {
+        node.init(ps, scene_path);
+    }
+    if (dim() > 1 && node["value"].data().is_number()) {
+        DataWrap value = DataWrap::array();
+        for (int i = 0; i < dim(); ++i) {
+            value.push_back(node["value"].data());
+        }
+        node.set_value("value", value);
+    } else if (node["value"].data().is_array()) {
+        OC_ASSERT(node["value"].data().size() == dim());
+    }
+}
+
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
@@ -224,4 +243,5 @@ void RenderSettingDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     polymorphic_mode = static_cast<PolymorphicMode>(ps["polymorphic_mode"].as_uint(0));
 }
+
 }// namespace vision

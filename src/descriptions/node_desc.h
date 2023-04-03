@@ -155,6 +155,7 @@ public:
     }
     string channels;
     ShaderNodeDesc node;
+    [[nodiscard]] uint dim() const noexcept { return channels.size(); }
     VISION_DESC_COMMON(Slot)
     SlotDesc(ShaderNodeDesc node, uint dim)
         : node(node), channels(default_channels(dim)) {}
@@ -162,15 +163,7 @@ public:
     SlotDesc(ShaderNodeType type, uint dim)
         : node(type), channels(default_channels(dim)) {}
 
-    void init(const ParameterSet &ps) noexcept override {
-        DataWrap data = ps.data();
-        if (data.contains("channels")) {
-            channels = ps["channels"].as_string();
-            node.init(ps["node"], scene_path);
-        } else {
-            node.init(ps, scene_path);
-        }
-    }
+    void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
         init(ps);
