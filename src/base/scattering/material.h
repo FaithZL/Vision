@@ -76,15 +76,24 @@ class Material : public Node {
 public:
     using Desc = MaterialDesc;
 
+protected:
+    static constexpr uint stride = sizeof(Slot);
+    struct SlotCursor {
+        const Slot *ptr{nullptr};
+        uint num{0u};
+    };
+    SlotCursor _slot_cursor;
+
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
-    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
-        OC_ASSERT(false);
+    void init_slot_cursor(const Slot *ptr, uint num) noexcept {
+        _slot_cursor.ptr = ptr;
+        _slot_cursor.num = num;
     }
-    virtual uint data_size() const noexcept {
-        OC_ASSERT(0);
-        return 0u;
-    }
+    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept;
+    virtual uint data_size() const noexcept;
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da, const SampledWavelengths &swl) const noexcept {
         return make_unique<BSDF>(it, swl);
     }

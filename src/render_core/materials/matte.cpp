@@ -31,22 +31,8 @@ private:
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {}
-
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
-        _color->fill_data(datas);
-    }
-
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return _color.type_hash();
-    }
-
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return _color.hash();
-    }
-
-    [[nodiscard]] uint data_size() const noexcept override {
-        return _color->data_size();
+        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
+        init_slot_cursor(&_color, 1);
     }
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,

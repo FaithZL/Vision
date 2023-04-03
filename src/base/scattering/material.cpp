@@ -63,4 +63,37 @@ BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) 
     return ret;
 }
 
+void Material::fill_data(ManagedWrapper<float> &datas) const noexcept {
+    for (int i = 0; i < _slot_cursor.num; ++i) {
+        const Slot &slot = _slot_cursor.ptr[i];
+        slot->fill_data(datas);
+    }
+}
+
+uint Material::data_size() const noexcept {
+    uint ret = 0;
+    for (int i = 0; i < _slot_cursor.num; ++i) {
+        const Slot &slot = _slot_cursor.ptr[i];
+        ret += slot->data_size();
+    }
+    return ret;
+}
+
+uint64_t Material::_compute_type_hash() const noexcept {
+    uint64_t ret = Hash64::default_seed;
+    for (int i = 0; i < _slot_cursor.num; ++i) {
+        const Slot &slot = _slot_cursor.ptr[i];
+        ret = hash64(ret, slot.type_hash());
+    }
+    return ret;
+}
+
+uint64_t Material::_compute_hash() const noexcept {
+    uint64_t ret = Hash64::default_seed;
+    for (int i = 0; i < _slot_cursor.num; ++i) {
+        const Slot &slot = _slot_cursor.ptr[i];
+        ret = hash64(ret, slot.hash());
+    }
+    return ret;
+}
 }// namespace vision

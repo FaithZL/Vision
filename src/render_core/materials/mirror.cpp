@@ -36,23 +36,8 @@ public:
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
           _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.0001f)))),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
-
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
-        _color->fill_data(datas);
-        _roughness->fill_data(datas);
-    }
-
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_color.type_hash(), _roughness.type_hash());
-    }
-
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(_color.hash(), _roughness.hash());
-    }
-
-    [[nodiscard]] uint data_size() const noexcept override {
-        return _color->data_size() + _roughness->data_size();
+          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
+        init_slot_cursor(&_color, 2);
     }
 
     [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
