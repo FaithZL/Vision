@@ -25,13 +25,14 @@ RenderPipeline *Scene::render_pipeline() noexcept { return _rp; }
 
 void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
+    _warper_desc = scene_desc.warper_desc;
+    _render_setting = scene_desc.render_setting;
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
     load_mediums(scene_desc.mediums_desc.mediums);
     _integrator = load<Integrator>(scene_desc.integrator_desc);
-    _warper_desc = scene_desc.warper_desc;
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
@@ -71,7 +72,20 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
     for (const auto & desc : descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
         const Material *material = _materials[shape->handle.mat_id];
-        shape->update_material_id(encode_id<H>(shape->handle.mat_id, _materials.type_index(material)));
+        switch (polymorphic_mode()) {
+            case Instance:
+                shape->update_material_id(encode_id<H>(shape->handle.mat_id,
+                                                       _materials.type_index(material)));
+                break;
+            case Type:
+                shape->update_material_id(encode_id<H>(_materials.data_index(material),
+                                                       _materials.type_index(material)));
+                break;
+            default:
+                OC_ASSERT(false);
+                break;
+        }
+
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
     }

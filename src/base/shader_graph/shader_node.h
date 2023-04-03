@@ -59,11 +59,7 @@ public:
         OC_ASSERT(false);
     }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
-                                                DataAccessor &da) const noexcept {
-        Array<float> ret = _eval(ctx, da);
-//        da.offset += data_size();
-        return ret;
-    }
+                                                DataAccessor &da) const noexcept;
 
     [[nodiscard]] virtual Array<float> _eval(const AttrEvalContext &ctx,
                                              const DataAccessor &da) const noexcept {

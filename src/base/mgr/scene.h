@@ -40,6 +40,7 @@ private:
     Polymorphic<Medium *> _mediums;
     Polymorphic<ShaderNode *> _shadernodes;
     WarperDesc _warper_desc;
+    RenderSettingDesc _render_setting{};
     Spectrum *_spectrum{nullptr};
     RenderPipeline *_rp{nullptr};
     friend class RenderPipeline;
@@ -48,6 +49,7 @@ public:
     explicit Scene(vision::Context *ctx, RenderPipeline *rp);
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
+    [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)

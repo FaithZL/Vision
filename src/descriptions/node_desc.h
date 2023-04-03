@@ -308,4 +308,15 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+enum PolymorphicMode {
+    Instance = 0,
+    Type = 1
+};
+
+struct RenderSettingDesc : public NodeDesc {
+    PolymorphicMode polymorphic_mode{};
+    VISION_DESC_COMMON(RenderSetting)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 }// namespace vision

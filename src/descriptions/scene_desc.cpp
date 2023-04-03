@@ -220,6 +220,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sensor_desc.medium.name = mediums_desc.global;
     sensor_desc.medium.fill_id(mediums_desc.medium_name_to_id);
     output_desc.init(data.value("output", DataWrap()), scene_path);
+    render_setting.init(data.value("render_setting", DataWrap::object()));
     process_materials();
     check_meshes();
 }

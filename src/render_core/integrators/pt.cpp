@@ -113,25 +113,36 @@ public:
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
-//                    _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
-//                        ManagedWrapper<float> &datas = _scene->materials().datas(material);
-//                        uint data_size = material->data_size();
-//                        DataAccessor da{it.material_inst_id() * material->data_size(), datas};
-//                        UP<BSDF> bsdf = material->get_BSDF(it, da, swl);
-//                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-//                                             sampler, swl, bsdf_sample);
-//                    });
-
-                    _scene->materials().dispatch_instance(it.material_inst_id(), [&](const Material *material) {
-                        UP<BSDF> bsdf = material->get_BSDF(it, swl);
-                        if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
-                            $if(*dispersive) {
-                                swl.invalidation_secondary();
-                            };
+                    switch (_scene->polymorphic_mode()) {
+                        case Instance: {
+                            _scene->materials().dispatch_instance(it.material_inst_id(), [&](const Material *material) {
+                                UP<BSDF> bsdf = material->get_BSDF(it, swl);
+                                if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
+                                    $if(*dispersive) {
+                                        swl.invalidation_secondary();
+                                    };
+                                }
+                                Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                                     sampler, swl, bsdf_sample);
+                            });
+                            break;
                         }
-                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                             sampler, swl, bsdf_sample);
-                    });
+                        case Type: {
+                            _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
+                                ManagedWrapper<float> &datas = _scene->materials().datas(material);
+                                uint data_size = material->data_size();
+                                DataAccessor da{it.material_inst_id() * material->data_size(), datas};
+                                UP<BSDF> bsdf = material->get_BSDF(it, da, swl);
+                                if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
+                                    $if(*dispersive) {
+                                        swl.invalidation_secondary();
+                                    };
+                                }
+                                Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                                     sampler, swl, bsdf_sample);
+                            });
+                        }
+                    }
                 };
 
                 if (_scene->has_medium()) {

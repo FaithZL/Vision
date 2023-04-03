@@ -601,6 +601,9 @@
     "warper": {
         "type": "alias_table"
     },
+    "render_setting": {
+        "polymorphic_mode": 1
+    },
     "integrator": {
         "type": "pt",
         "param": {

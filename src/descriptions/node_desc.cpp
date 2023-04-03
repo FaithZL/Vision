@@ -222,4 +222,8 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
     fn = (scene_path / ps["fn"].as_string()).string();
 }
 
+void RenderSettingDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    polymorphic_mode = static_cast<PolymorphicMode>(ps["polymorphic_mode"].as_uint(0));
+}
 }// namespace vision
