@@ -1027,7 +1027,7 @@
                     1.0,
                     1.0
                 ],
-                "roughness": 0.001
+                "roughness": [0.001,0.001]
             }
         },
         {
@@ -1159,7 +1159,7 @@
         }
     },
     "render_setting": {
-        "polymorphic_mode": 1
+        "polymorphic_mode": 0
     },
     "output": {
         "spp": 1024,
