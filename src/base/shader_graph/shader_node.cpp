@@ -9,7 +9,7 @@ namespace vision {
 
 Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx, DataAccessor &da) const noexcept {
     Array<float> ret = _eval(ctx, da);
-    da.offset += data_size();
+//    da.offset += data_size();
     return ret;
 }
 

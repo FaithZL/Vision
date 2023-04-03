@@ -12,17 +12,21 @@
 namespace vision {
 
 struct DataAccessor {
-    Uint offset;
+    mutable Uint offset;
     ManagedWrapper<float> &datas;
 
     template<typename T>
     [[nodiscard]] Array<T> read_dynamic_array(uint size) const noexcept {
-        return datas.read_dynamic_array<T>(size, offset);
+        auto ret = datas.read_dynamic_array<T>(size, offset);
+        offset += size * static_cast<uint>(sizeof(T));
+        return ret;
     }
 
     template<typename Target>
     OC_NODISCARD auto byte_read() const noexcept {
-        return datas.byte_read<Target>(offset);
+        auto ret = datas.byte_read<Target>(offset);
+        offset += static_cast<uint>(sizeof(Target));
+        return ret;
     }
 };
 

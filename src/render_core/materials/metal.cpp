@@ -54,7 +54,7 @@ private:
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _material_name(desc["material_name"].as_string()),
+//          _material_name(desc["material_name"].as_string()),
           _spd_eta(desc.scene->render_pipeline()),
           _spd_k(desc.scene->render_pipeline()),
           _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.01f)))),

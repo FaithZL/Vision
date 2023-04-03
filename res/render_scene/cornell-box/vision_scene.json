@@ -207,8 +207,8 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "ShortBox",
-//                "material": "Mirror",
+//                "material": "ShortBox",
+                "material": "Mirror",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -250,6 +250,7 @@
                 "y": 1,
                 "z": 1,
                 "material": "TallBox",
+                "material": "Mirror2",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -510,7 +511,22 @@
                         1
                     ]
                 },
-                "roughness": [0.001,0.001]
+                "roughness": [0.01,0.01]
+            }
+        },
+        {
+            "type": "mirror",
+            "name": "Mirror2",
+            "param": {
+                "color": {
+                    "channels" : "xyz",
+                    "node": [
+                        1,
+                        1,
+                        1
+                    ]
+                },
+                "roughness": [0.02,0.02]
             }
         },
         {
