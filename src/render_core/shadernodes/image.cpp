@@ -26,7 +26,8 @@ public:
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                      const DataAccessor &data) const noexcept override {
         Uint index = data.byte_read<uint>();
-        return render_pipeline()->tex(index).sample(3, ctx.uv);
+        _value_ref.reset(render_pipeline()->tex(index).sample(3, ctx.uv));
+        return _value_ref;
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();

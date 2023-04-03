@@ -33,7 +33,7 @@ struct DataAccessor {
 class ShaderNode : public Node {
 protected:
     ShaderNodeType _type{};
-    Array<float> _values;
+    mutable Array<float> _value_ref{};
 
 public:
     using Desc = ShaderNodeDesc;
@@ -63,7 +63,7 @@ public:
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
-    [[nodiscard]] Array<float> values() const noexcept { return _values; }
+    [[nodiscard]] Array<float> values() const noexcept { return _value_ref; }
     virtual Array<float> evaluate(const AttrEvalContext &ctx,
                                   const DataAccessor &da) const noexcept;
 
