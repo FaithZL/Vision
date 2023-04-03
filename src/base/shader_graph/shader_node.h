@@ -33,6 +33,7 @@ struct DataAccessor {
 class ShaderNode : public Node {
 protected:
     ShaderNodeType _type{};
+    Array<float> _values;
 
 public:
     using Desc = ShaderNodeDesc;
@@ -62,8 +63,9 @@ public:
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
-    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
-                                                const DataAccessor &da) const noexcept;
+    [[nodiscard]] Array<float> values() const noexcept { return _values; }
+    virtual Array<float> evaluate(const AttrEvalContext &ctx,
+                                  const DataAccessor &da) const noexcept;
 
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
@@ -100,8 +102,8 @@ public:
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                        DataAccessor &da) const noexcept;
+    Array<float> evaluate(const AttrEvalContext &ctx,
+                          DataAccessor &da) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,

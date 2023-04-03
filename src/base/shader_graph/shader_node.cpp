@@ -9,7 +9,8 @@ namespace vision {
 
 Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx,
                                   const DataAccessor &da) const noexcept {
-    return Array<float>(1u);
+    OC_ASSERT(false);
+    return Array<float>();
 }
 
 uint Slot::_calculate_mask(string channels) noexcept {

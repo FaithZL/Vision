@@ -110,8 +110,8 @@ public:
                                           ai_face.mIndices[2],
                                           ai_face.mIndices[3]);
                 } else {
-                    OC_WARNING("Only triangles and quads supported: ", ai_mesh->mName.data, " num is ",
-                               ai_face.mNumIndices);
+//                    OC_WARNING("Only triangles and quads supported: ", ai_mesh->mName.data, " num is ",
+//                               ai_face.mNumIndices);
                     continue;
                 }
             }

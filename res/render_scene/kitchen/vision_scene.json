@@ -13536,15 +13536,15 @@
     "integrator": {
         "type": "pt",
         "param": {
-            "min_depth": 3,
-            "max_depth": 8,
+            "min_depth": 5,
+            "max_depth": 16,
             "rr_threshold": 1
         }
     },
     "spectrum": {
         "type": "hero",
         "param": {
-            "dimension" : 4
+            "dimension" : 3
         }
     },
     "light_sampler": {
@@ -13553,8 +13553,11 @@
             "lights": []
         }
     },
+    "render_setting": {
+        "polymorphic_mode" : 0
+    },
     "output": {
-        "spp": 1024,
+        "spp": 0,
         "fn": "output.png"
     }
 }
