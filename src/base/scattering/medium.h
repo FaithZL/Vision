@@ -27,7 +27,7 @@ public:
     explicit Medium(const MediumDesc &desc)
         : Node(desc),
           _index(desc["index"].as_uint(InvalidUI32)),
-          _scale(desc.scale["value"].as_float4().x) {}
+          _scale(desc.scale["value"].as_float()) {}
     ~Medium() override = default;
     virtual SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const OCRay &ray, Interaction &it,
