@@ -7,10 +7,9 @@
 
 namespace vision {
 
-Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx, DataAccessor &da) const noexcept {
-    Array<float> ret = _eval(ctx, da);
-//    da.offset += data_size();
-    return ret;
+Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx,
+                                  const DataAccessor &da) const noexcept {
+    return Array<float>(1u);
 }
 
 uint Slot::_calculate_mask(string channels) noexcept {

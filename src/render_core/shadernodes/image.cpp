@@ -23,7 +23,7 @@ public:
     void fill_data(ManagedWrapper<float> &datas) const noexcept override {
         datas.push_back(bit_cast<float>(_image_wrapper.id()));
     }
-    [[nodiscard]] Array<float> _eval(const AttrEvalContext &ctx,
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                      const DataAccessor &data) const noexcept override {
         Uint index = data.byte_read<uint>();
         return render_pipeline()->tex(index).sample(3, ctx.uv);

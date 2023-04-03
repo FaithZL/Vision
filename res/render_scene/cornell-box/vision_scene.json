@@ -396,18 +396,18 @@
             "type": "matte",
             "name": "BackWall",
             "param": {
-                //                "color" : {
-                //                    "channels" : "xyz",
-                //                    "node" : {
-                //                        "fn" : "checker.jpg",
-                //                        "color_space" : "srgb"
-                //                    }
-                //                }
-                "color" : [
-                    0.725,
-                    0.71,
-                    0.68
-                ]
+                                "color" : {
+                                    "channels" : "xyz",
+                                    "node" : {
+                                        "fn" : "checker.jpg",
+                                        "color_space" : "srgb"
+                                    }
+                                }
+//                "color" : [
+//                    0.725,
+//                    0.71,
+//                    0.68
+//                ]
             }
         },
         {
@@ -511,7 +511,7 @@
                         1
                     ]
                 },
-                "roughness": [0.01,0.01]
+                "roughness": [0.001,0.001]
             }
         },
         {

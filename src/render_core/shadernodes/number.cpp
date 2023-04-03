@@ -27,8 +27,8 @@ public:
             datas.push_back(elm);
         }
     }
-    [[nodiscard]] Array<float> _eval(const AttrEvalContext &ctx,
-                                     const DataAccessor &da) const noexcept override {
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const DataAccessor &da) const noexcept override {
         Array<float> ret = da.read_dynamic_array<float>(_value.size());
         return ret;
     }

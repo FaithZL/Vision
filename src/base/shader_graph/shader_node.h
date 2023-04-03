@@ -63,13 +63,8 @@ public:
         OC_ASSERT(false);
     }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx,
-                                                DataAccessor &da) const noexcept;
+                                                const DataAccessor &da) const noexcept;
 
-    [[nodiscard]] virtual Array<float> _eval(const AttrEvalContext &ctx,
-                                             const DataAccessor &da) const noexcept {
-        OC_ASSERT(false);
-        return Array<float>(1u);
-    }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
