@@ -173,9 +173,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
         json["color_space"] = ps["color_space"].data();
         _parameter.set_json(json);
     } else if (ps.data().is_number()) {
-        sub_type = "number";
-        float4 value = make_float4(ps.as_float(1.f));
-        _parameter.set_value("value", {value.x, value.y, value.z, value.w});
+        _parameter.set_value("value", ps.as_float(1.f));
     } else {
         sub_type = ps["type"].as_string();
         set_parameter(ps["param"]);
