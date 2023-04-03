@@ -118,23 +118,33 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 }
 
 void Scene::prepare_materials() noexcept {
+    switch (polymorphic_mode()) {
+        case Instance:{
+            _materials.for_each_instance([&](const Material *material) noexcept {
+                const_cast<Material *>(material)->prepare();
+            });
+            break;
+        }
+        case Type:{
+            _materials.for_each_representative([&](Material *material) {
+                ManagedWrapper<float> data_set{render_pipeline()->resource_array()};
+                _materials.set_datas(material, move(data_set));
+            });
+            _materials.for_each_instance([&](const Material *material) noexcept {
+                const_cast<Material *>(material)->prepare();
 
-    _materials.for_each_representative([&](Material *material) {
-        ManagedWrapper<float> data_set{render_pipeline()->resource_array()};
-        _materials.set_datas(material, move(data_set));
-    });
-    _materials.for_each_instance([&](const Material *material) noexcept {
-        const_cast<Material *>(material)->prepare();
-
-        ManagedWrapper<float> &data_set = _materials.datas(material);
-        material->fill_data(data_set);
-    });
-    _materials.for_each_representative([&](Material *material) {
-        ManagedWrapper<float> &datas = _materials.datas(material);
-        datas.reset_device_buffer(render_pipeline()->device());
-        datas.register_self();
-        datas.upload_immediately();
-    });
+                ManagedWrapper<float> &data_set = _materials.datas(material);
+                material->fill_data(data_set);
+            });
+            _materials.for_each_representative([&](Material *material) {
+                ManagedWrapper<float> &datas = _materials.datas(material);
+                datas.reset_device_buffer(render_pipeline()->device());
+                datas.register_self();
+                datas.upload_immediately();
+            });
+            break;
+        }
+    }
 }
 
 void Scene::prepare_shadernodes() noexcept {
