@@ -31483,6 +31483,9 @@
         "spp": 0,
         "fn": "srgb.png"
     },
+    "render_setting": {
+        "polymorphic_mode": 0
+    },
     "spectrum" : {
         "type" : "hero",
         "param" : {

@@ -3899,6 +3899,9 @@
             "dimension": 3
         }
     },
+    "render_setting": {
+        "polymorphic_mode": 1
+    },
     "output": {
         "spp": 0,
         "fn": "classroom-hero-512spp.png"

@@ -1788,6 +1788,15 @@
             "lights": []
         }
     },
+    "render_setting": {
+        "polymorphic_mode": 1
+    },
+    "spectrum" : {
+        "type" : "hero",
+        "param" : {
+            "dimension": 3
+        }
+    },
     "output": {
         "spp": 1024,
         "fn": "output.png"
