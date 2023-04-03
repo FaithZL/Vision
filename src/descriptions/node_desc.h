@@ -113,29 +113,26 @@ public:
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
     }
-    explicit ShaderNodeDesc(float v, ShaderNodeType type)
+    template<typename Arg>
+    requires is_scalar_v<Arg>
+    explicit ShaderNodeDesc(Arg v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
-        _parameter.set_value("value", {v, v, v, v});
+        _parameter.set_value("value", v);
     }
-    explicit ShaderNodeDesc(float2 v, ShaderNodeType type)
+    template<typename T, size_t N>
+    explicit ShaderNodeDesc(Vector<T, N> v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
-        _parameter.set_value("value", {v.x, v.y, 0, 0});
-    }
-    explicit ShaderNodeDesc(float3 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), type(type) {
-        sub_type = "constant";
-        _parameter.set_json(DataWrap::object());
-        _parameter.set_value("value", {v.x, v.y, v.z, 0});
-    }
-    explicit ShaderNodeDesc(float4 v, ShaderNodeType type)
-        : NodeDesc("ShaderNode"), type(type) {
-        sub_type = "constant";
-        _parameter.set_json(DataWrap::object());
-        _parameter.set_value("value", {v.x, v.y, v.z, v.w});
+        if constexpr (N == 2) {
+            _parameter.set_value("value", {v.x, v.y});
+        } else if constexpr (N == 3) {
+            _parameter.set_value("value", {v.x, v.y, v.z});
+        } else if constexpr (N == 4) {
+            _parameter.set_value("value", {v.x, v.y, v.z, v.w});
+        }
     }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {

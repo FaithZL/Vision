@@ -25,6 +25,9 @@ public:
     [[nodiscard]] uint data_size() const noexcept override {
         return 0;
     }
+    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+
+    }
     [[nodiscard]] bool is_constant() const noexcept override { return true; }
     [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }

@@ -130,7 +130,6 @@ public:
                         case Type: {
                             _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
                                 ManagedWrapper<float> &datas = _scene->materials().datas(material);
-                                uint data_size = material->data_size();
                                 DataAccessor da{it.material_inst_id() * material->data_size(), datas};
                                 UP<BSDF> bsdf = material->get_BSDF(it, da, swl);
                                 if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
