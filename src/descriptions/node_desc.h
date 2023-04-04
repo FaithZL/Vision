@@ -124,7 +124,7 @@ public:
     template<typename T, size_t N>
     explicit ShaderNodeDesc(Vector<T, N> v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
-        sub_type = "constant";
+        sub_type = "number";
         _parameter.set_json(DataWrap::object());
         if constexpr (N == 2) {
             _parameter.set_value("value", {v.x, v.y});

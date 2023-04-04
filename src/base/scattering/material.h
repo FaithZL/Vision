@@ -131,12 +131,7 @@ protected:
 
 public:
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                        DataAccessor *da = nullptr) const noexcept {
-        if (da) {
-            return get_BSDF(it, da, swl);
-        }
-        return _compute_BSDF(it, swl);
-    }
+                                        DataAccessor *da = nullptr) const noexcept;
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);
         return make_unique<BSDF>(it, swl);

@@ -208,10 +208,10 @@
                 "y" : 1,
                 "z" : 1,
 //                                "material" : "ShortBox",
-                "material" : "substrate",
+//                "material" : "substrate",
 //                "material" : "Metal",
-//                "material" : "disney",
-                //                "material" : "Glass",
+                "material" : "disney",
+//                                "material" : "Glass",
                 "transform" : {
                     "type" : "matrix4x4",
                     "param" : {
@@ -252,7 +252,7 @@
                 "x": 1,
                 "y": 1,
                 "z": 1,
-                "material": "TallBox",
+//                "material": "TallBox",
                 "material": "Mirror2",
                 "transform": {
                     "type": "matrix4x4",
@@ -529,7 +529,7 @@
                         1
                     ]
                 },
-                "roughness": [0.02,0.02]
+                "roughness": 0.001
             }
         },
         {
