@@ -56,21 +56,14 @@ public:
      * data size in byte
      * @return
      */
-    [[nodiscard]] virtual uint data_size() const noexcept {
-        OC_ASSERT(false);
-        return 0;
-    }
-    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
-        OC_ASSERT(false);
-    }
+    [[nodiscard]] virtual uint data_size() const noexcept = 0;
+    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept = 0;
+    virtual Array<float> evaluate(const AttrEvalContext &ctx,
+                                  const DataAccessor *da) const noexcept = 0;
+    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     [[nodiscard]] Array<float> value(const AttrEvalContext &ctx) const noexcept;
     void cache_value(const AttrEvalContext &ctx,const DataAccessor *da) const noexcept;
     void clear_cache() const noexcept;
-
-    virtual Array<float> evaluate(const AttrEvalContext &ctx,
-                                  const DataAccessor *da) const noexcept;
-
-    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }

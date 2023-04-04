@@ -19,10 +19,7 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override {
         return _t->is_constant() && A->is_constant() && B->is_constant();
     }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
-        return Array<float>{1u};
-    }
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::Lerp)
+//VS_MAKE_CLASS_CREATOR(vision::Lerp)

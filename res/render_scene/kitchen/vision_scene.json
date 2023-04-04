@@ -13542,7 +13542,7 @@
         }
     },
     "spectrum": {
-        "type": "hero",
+        "type": "srgb",
         "param": {
             "dimension" : 3
         }
@@ -13554,7 +13554,7 @@
         }
     },
     "render_setting": {
-        "polymorphic_mode" : 0
+        "polymorphic_mode" : 1
     },
     "output": {
         "spp": 0,
