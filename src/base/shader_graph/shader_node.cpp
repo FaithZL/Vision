@@ -79,34 +79,6 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
     return _node->value(ctx);
 }
 
-Array<float> Slot::evaluate(const AttrEvalContext &ctx,
-                            DataAccessor *da) const noexcept {
-    switch (_dim) {
-        case 1: {
-            switch (_channel_mask) {
-#include "slot_swizzle1.inl.h"
-            }
-        }
-        case 2: {
-            switch (_channel_mask) {
-#include "slot_swizzle2.inl.h"
-            }
-        }
-        case 3: {
-            switch (_channel_mask) {
-#include "slot_swizzle3.inl.h"
-            }
-        }
-        case 4: {
-            switch (_channel_mask) {
-#include "slot_swizzle4.inl.h"
-            }
-        }
-    }
-    OC_ASSERT(false);
-    return _node->evaluate(ctx, da);
-}
-
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx).to_vec3();
@@ -122,30 +94,6 @@ ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx, const Sample
 ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx).to_vec3();
-    return _node->spectrum().decode_to_illumination(val, swl);
-}
-
-ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                       DataAccessor *da,
-                                       const SampledWavelengths &swl) const noexcept {
-    OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, da).to_vec3();
-    return _node->spectrum().decode_to_albedo(val, swl);
-}
-
-ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                        DataAccessor *da,
-                                        const SampledWavelengths &swl) const noexcept {
-    OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, da).to_vec3();
-    return _node->spectrum().decode_to_unbound_spectrum(val, swl);
-}
-
-ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                             DataAccessor *da,
-                                             const SampledWavelengths &swl) const noexcept {
-    OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, da).to_vec3();
     return _node->spectrum().decode_to_illumination(val, swl);
 }
 

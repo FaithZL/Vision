@@ -98,22 +98,11 @@ public:
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
-    Array<float> evaluate(const AttrEvalContext &ctx,
-                          DataAccessor *da) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
                                                     const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                         const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                                   DataAccessor *da,
-                                                   const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                    DataAccessor *da,
-                                                    const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                         DataAccessor *da,
                                                          const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] const ShaderNode *node() const noexcept { return _node; }
     [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node; }

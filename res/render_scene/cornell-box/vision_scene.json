@@ -210,8 +210,8 @@
 //                                "material" : "ShortBox",
 //                "material" : "substrate",
 //                "material" : "Metal",
-//                "material" : "disney",
-                                "material" : "Glass",
+                "material" : "disney",
+//                                "material" : "Glass",
                 "transform" : {
                     "type" : "matrix4x4",
                     "param" : {
