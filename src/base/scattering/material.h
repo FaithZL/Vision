@@ -124,8 +124,7 @@ protected:
         ~Guard() { material->clear_slot_cache(); }
     };
 
-    [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                                 DataAccessor *da) const noexcept {
+    [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);
         return make_unique<BSDF>(it, swl);
     }
@@ -136,13 +135,10 @@ public:
         if (da) {
             return get_BSDF(it, da, swl);
         }
-        return get_BSDF(it, swl);
+        return _compute_BSDF(it, swl);
     }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);
-        return make_unique<BSDF>(it, swl);
-    }
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {
         return make_unique<BSDF>(it, swl);
     }
 };

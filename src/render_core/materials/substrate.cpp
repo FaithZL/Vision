@@ -142,7 +142,7 @@ public:
         return make_unique<SubstrateBSDF>(it, fresnel, move(bxdf));
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, swl).sample;
         Float2 alpha = _roughness.evaluate(it).to_vec2();

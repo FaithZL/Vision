@@ -77,7 +77,7 @@ public:
         return Material::_compute_type_hash();
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = _roughness.evaluate(it).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;

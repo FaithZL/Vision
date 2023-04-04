@@ -663,7 +663,7 @@ public:
                                            _clearcoat_alpha, _spec_trans, _flatness, _diff_trans);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(it, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
                                            _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat,
                                            _clearcoat_alpha, _spec_trans, _flatness, _diff_trans);

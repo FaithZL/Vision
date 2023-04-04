@@ -12,8 +12,8 @@ public:
     explicit NullMaterial(const MaterialDesc &desc)
         : Material(desc) {}
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
-                                    const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it,
+                                         const SampledWavelengths &swl) const noexcept override {
         return make_unique<BSDF>(it, swl);
     }
 };
