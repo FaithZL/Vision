@@ -7,17 +7,17 @@
 
 namespace vision {
 
-Array<float> ShaderNode::value(const AttrEvalContext &ctx) const noexcept {
+Array<float> ShaderNode::value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     if (_value_ref.valid()) {
         return _value_ref;
     }
-    return evaluate(ctx);
+    return evaluate(ctx, swl);
 }
 
-void ShaderNode::cache_value(const AttrEvalContext &ctx,
+void ShaderNode::cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl,
                              const DataAccessor *da) const noexcept {
     if (!_value_ref.valid()) {
-        _value_ref.reset(evaluate(ctx, da));
+        _value_ref.reset(evaluate(ctx, swl, da));
     }
 }
 
@@ -52,7 +52,8 @@ uint64_t Slot::_compute_type_hash() const noexcept {
     return hash64(_channel_mask, _dim, _node->type_hash());
 }
 
-Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
+Array<float> Slot::evaluate(const AttrEvalContext &ctx,
+                            const SampledWavelengths &swl) const noexcept {
     switch (_dim) {
         case 1: {
             switch (_channel_mask) {
@@ -76,24 +77,24 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
         }
     }
     OC_ASSERT(false);
-    return _node->value(ctx);
+    return _node->value(ctx, swl);
 }
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx).to_vec3();
+    Float3 val = evaluate(ctx, swl).to_vec3();
     return _node->spectrum().decode_to_albedo(val, swl);
 }
 
 ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx).to_vec3();
+    Float3 val = evaluate(ctx, swl).to_vec3();
     return _node->spectrum().decode_to_unbound_spectrum(val, swl);
 }
 
 ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx).to_vec3();
+    Float3 val = evaluate(ctx, swl).to_vec3();
     return _node->spectrum().decode_to_illumination(val, swl);
 }
 

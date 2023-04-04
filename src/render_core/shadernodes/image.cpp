@@ -20,10 +20,12 @@ public:
     void fill_data(ManagedWrapper<float> &datas) const noexcept override {
         datas.push_back(bit_cast<float>(_image_wrapper.id()));
     }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const SampledWavelengths &swl) const noexcept override {
         return render_pipeline()->tex(_image_wrapper.id()).sample(3, ctx.uv);
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const SampledWavelengths &swl,
                                         const DataAccessor *da) const noexcept override {
         Uint index = da->byte_read<uint>();
         return render_pipeline()->tex(index).sample(3, ctx.uv);

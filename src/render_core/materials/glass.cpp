@@ -108,9 +108,9 @@ public:
 //        if (_ior_curve) {
 //            ior = _ior_curve->eta(swl.lambda(0u));
 //        } else {
-            ior = _ior.evaluate(it).to_scalar();
-//        }
-        Float2 alpha = _roughness.evaluate(it).to_vec2();
+        ior = _ior.evaluate(it, swl).to_scalar();
+        //        }
+        Float2 alpha = _roughness.evaluate(it, swl).to_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);

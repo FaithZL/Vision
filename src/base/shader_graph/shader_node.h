@@ -58,11 +58,11 @@ public:
      */
     [[nodiscard]] virtual uint data_size() const noexcept = 0;
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept = 0;
-    virtual Array<float> evaluate(const AttrEvalContext &ctx,
+    virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl,
                                   const DataAccessor *da) const noexcept = 0;
-    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
-    [[nodiscard]] Array<float> value(const AttrEvalContext &ctx) const noexcept;
-    void cache_value(const AttrEvalContext &ctx,const DataAccessor *da) const noexcept;
+    [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] Array<float> value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept;
+    void cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl, const DataAccessor *da) const noexcept;
     void clear_cache() const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
@@ -97,7 +97,8 @@ public:
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
