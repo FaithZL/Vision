@@ -64,36 +64,42 @@ BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) 
 }
 
 void Material::fill_data(ManagedWrapper<float> &datas) const noexcept {
-    for (int i = 0; i < _slot_cursor.num; ++i) {
-        const Slot &slot = _slot_cursor.ptr[i];
+    for_each_slot([&](const Slot &slot) {
         slot->fill_data(datas);
-    }
+    });
 }
 
 uint Material::data_size() const noexcept {
-    uint ret = 0;
-    for (int i = 0; i < _slot_cursor.num; ++i) {
-        const Slot &slot = _slot_cursor.ptr[i];
-        ret += slot->data_size();
-    }
-    return ret;
+    return reduce_slots(0u, [&](uint size, const Slot &slot) {
+        return size + slot->data_size();
+    });
+}
+
+void Material::cache_slots(const Interaction &it, const DataAccessor *da) const noexcept {
+    for_each_slot([&](const Slot &slot) {
+        slot->cache_value(it, da);
+    });
+}
+
+void Material::clear_slot_cache() const noexcept {
+    for_each_slot([&](const Slot &slot) {
+        slot->clear_cache();
+    });
 }
 
 uint64_t Material::_compute_type_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
-    for (int i = 0; i < _slot_cursor.num; ++i) {
-        const Slot &slot = _slot_cursor.ptr[i];
-        ret = hash64(ret, slot.type_hash());
-    }
+    reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {
+        return hash64(hash, slot.type_hash());
+    });
     return ret;
 }
 
 uint64_t Material::_compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
-    for (int i = 0; i < _slot_cursor.num; ++i) {
-        const Slot &slot = _slot_cursor.ptr[i];
-        ret = hash64(ret, slot.hash());
-    }
+    reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {
+        return hash64(hash, slot.hash());
+    });
     return ret;
 }
 }// namespace vision

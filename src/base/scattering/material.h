@@ -90,10 +90,45 @@ public:
         _slot_cursor.ptr = ptr;
         _slot_cursor.num = num;
     }
-    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept;
-    virtual uint data_size() const noexcept;
+
+    template<typename T, typename F>
+    auto reduce_slots(T &&initial, F &&func) const noexcept {
+        T ret = OC_FORWARD(initial);
+        for (int i = 0; i < _slot_cursor.num; ++i) {
+            const Slot &slot = _slot_cursor.ptr[i];
+            ret = func(ret, slot);
+        }
+        return ret;
+    }
+
+    template<typename F>
+    void for_each_slot(F &&func) const noexcept {
+        for (int i = 0; i < _slot_cursor.num; ++i) {
+            const Slot &slot = _slot_cursor.ptr[i];
+            func(slot);
+        }
+    }
+
+    void fill_data(ManagedWrapper<float> &datas) const noexcept;
+    uint data_size() const noexcept;
+    void cache_slots(const Interaction &it, const DataAccessor *da) const noexcept;
+    void clear_slot_cache() const noexcept;
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+
+protected:
+    [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
+                                                 const DataAccessor *da) const noexcept {
+        OC_ASSERT(false);
+        return make_unique<BSDF>(it, swl);
+    }
+
+public:
+    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
+                                        const DataAccessor *da) const noexcept {
+
+        return _compute_BSDF(it, swl, da);
+    }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);
         return make_unique<BSDF>(it, swl);

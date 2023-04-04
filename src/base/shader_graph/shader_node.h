@@ -63,7 +63,19 @@ public:
     virtual void fill_data(ManagedWrapper<float> &datas) const noexcept {
         OC_ASSERT(false);
     }
-    [[nodiscard]] Array<float> values() const noexcept { return _value_ref; }
+    [[nodiscard]] Array<float> value() const noexcept { return _value_ref; }
+
+    virtual void cache_value(const AttrEvalContext &ctx,
+                              const DataAccessor *da) const noexcept {
+        if (!_value_ref.valid()) {
+            _value_ref.reset(evaluate(ctx, da));
+        }
+    }
+
+    virtual void clear_cache() const noexcept {
+        _value_ref.invalidate();
+    }
+
     virtual Array<float> evaluate(const AttrEvalContext &ctx,
                                   const DataAccessor *da) const noexcept;
 
