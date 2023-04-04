@@ -40,7 +40,7 @@ public:
         init_slot_cursor(&_color, 2);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
                                     const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, da, swl).sample;
         Float2 alpha = _roughness.evaluate(it, da).to_vec2();

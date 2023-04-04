@@ -94,7 +94,7 @@ public:
     virtual uint data_size() const noexcept;
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da, const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);
         return make_unique<BSDF>(it, swl);
     }

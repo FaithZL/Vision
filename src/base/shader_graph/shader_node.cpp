@@ -8,7 +8,7 @@
 namespace vision {
 
 Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx,
-                                  const DataAccessor &da) const noexcept {
+                                  const DataAccessor *da) const noexcept {
     OC_ASSERT(false);
     return Array<float>();
 }
@@ -68,7 +68,7 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
 }
 
 Array<float> Slot::evaluate(const AttrEvalContext &ctx,
-                            DataAccessor &da) const noexcept {
+                            DataAccessor *da) const noexcept {
     switch (_dim) {
         case 1: {
             switch (_channel_mask) {
@@ -114,7 +114,7 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
 }
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                       DataAccessor &da,
+                                       DataAccessor *da,
                                        const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, da).to_vec3();
@@ -122,7 +122,7 @@ ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx,
 }
 
 ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                        DataAccessor &da,
+                                        DataAccessor *da,
                                         const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, da).to_vec3();
@@ -130,7 +130,7 @@ ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx,
 }
 
 ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                             DataAccessor &da,
+                                             DataAccessor *da,
                                              const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, da).to_vec3();

@@ -65,7 +65,7 @@ public:
     }
     [[nodiscard]] Array<float> values() const noexcept { return _value_ref; }
     virtual Array<float> evaluate(const AttrEvalContext &ctx,
-                                  const DataAccessor &da) const noexcept;
+                                  const DataAccessor *da) const noexcept;
 
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx) const noexcept = 0;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
@@ -103,7 +103,7 @@ public:
     [[nodiscard]] uint dim() const noexcept { return _dim; }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept;
     Array<float> evaluate(const AttrEvalContext &ctx,
-                          DataAccessor &da) const noexcept;
+                          DataAccessor *da) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
@@ -111,13 +111,13 @@ public:
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                          const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                                   DataAccessor &da,
+                                                   DataAccessor *da,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                    DataAccessor &da,
+                                                    DataAccessor *da,
                                                     const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                         DataAccessor &da,
+                                                         DataAccessor *da,
                                                          const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] const ShaderNode *node() const noexcept { return _node; }
     [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node; }

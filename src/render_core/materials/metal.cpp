@@ -90,7 +90,7 @@ public:
         return make_unique<ConductorBSDF>(it, fresnel, move(bxdf));
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
                                     const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = _roughness.evaluate(it, da).to_vec2();

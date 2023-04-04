@@ -32,7 +32,7 @@ public:
     [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                        const DataAccessor &da) const noexcept override {
+                                        const DataAccessor *da) const noexcept override {
         return Array<float>(_value);
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {

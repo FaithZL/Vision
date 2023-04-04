@@ -24,8 +24,8 @@ public:
         datas.push_back(bit_cast<float>(_image_wrapper.id()));
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                     const DataAccessor &data) const noexcept override {
-        Uint index = data.byte_read<uint>();
+                                        const DataAccessor *da) const noexcept override {
+        Uint index = da->byte_read<uint>();
         _value_ref.reset(render_pipeline()->tex(index).sample(3, ctx.uv));
         return _value_ref;
     }

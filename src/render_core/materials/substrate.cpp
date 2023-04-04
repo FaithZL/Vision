@@ -128,7 +128,7 @@ public:
         init_slot_cursor(&_diff, 3);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
                                     const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, da, swl).sample;
         SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, da, swl).sample;

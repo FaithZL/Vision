@@ -444,7 +444,7 @@ public:
         }
     }
 
-    PrincipledBSDF(const Interaction &it, DataAccessor &da, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_slot,
+    PrincipledBSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_slot,
                    Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
                    Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
                    Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
@@ -656,7 +656,7 @@ public:
         init_slot_cursor(&_color, 13);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
                                     const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBSDF>(it, da, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
                                            _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat,

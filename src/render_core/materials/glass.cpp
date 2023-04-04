@@ -121,7 +121,7 @@ public:
         return make_unique<DielectricBSDF>(it, fresnel, move(refl), move(trans), bool(_ior_curve));
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor &da,
+    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
                                     const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, da, swl).sample;
         Float ior;
