@@ -74,12 +74,12 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
         const Material *material = _materials[shape->handle.mat_id];
         switch (polymorphic_mode()) {
             case Instance:
-                OC_INFO_FORMAT("polymorphic mode is instance");
+                OC_INFO("polymorphic mode is instance");
                 shape->update_material_id(encode_id<H>(shape->handle.mat_id,
                                                        _materials.type_index(material)));
                 break;
             case Type:
-                OC_INFO_FORMAT("polymorphic mode is type");
+                OC_INFO("polymorphic mode is type");
                 shape->update_material_id(encode_id<H>(_materials.data_index(material),
                                                        _materials.type_index(material)));
                 break;
