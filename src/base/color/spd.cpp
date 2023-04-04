@@ -60,14 +60,18 @@ void SPD::prepare() noexcept {
     _func.upload_immediately();
 }
 
-Float SPD::eval(const Float &lambda) const noexcept {
+Float SPD::eval(const Uint &index, const Float &lambda) const noexcept {
     using namespace cie;
     Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval;
     uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval) + 1u;
     Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
-    Float l = _func.read(i);
-    Float r = _func.read(i + 1);
+    Float l = _rp->buffer<float>(index).read(i);
+    Float r = _rp->buffer<float>(index).read(i + 1);
     return lerp(fract(t), l, r);
+}
+
+Float SPD::eval(const Float &lambda) const noexcept {
+    return eval(_func.index(), lambda);
 }
 
 SampledSpectrum SPD::eval(const SampledWavelengths &swl) const noexcept {
