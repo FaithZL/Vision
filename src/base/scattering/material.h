@@ -91,6 +91,11 @@ public:
         _slot_cursor.num = num;
     }
 
+    void init_slot_cursor(const Slot *head, const Slot *back) noexcept {
+        _slot_cursor.ptr = head;
+        _slot_cursor.num = (back - head) + 1;
+    }
+
     template<typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
@@ -132,9 +137,5 @@ protected:
 public:
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
                                         DataAccessor *da = nullptr) const noexcept;
-    [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl) const noexcept {
-        OC_ASSERT(false);
-        return make_unique<BSDF>(it, swl);
-    }
 };
 }// namespace vision

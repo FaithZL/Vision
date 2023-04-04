@@ -89,20 +89,6 @@ public:
         MicrofacetReflection bxdf(kr, swl,microfacet);
         return make_unique<ConductorBSDF>(it, fresnel, move(bxdf));
     }
-
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
-                                    const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = _roughness.evaluate(it, da).to_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        SampledSpectrum eta = _spd_eta.eval(swl);
-        SampledSpectrum k = _spd_k.eval(swl);
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
-        MicrofacetReflection bxdf(kr, swl,microfacet);
-        return make_unique<ConductorBSDF>(it, fresnel, move(bxdf));
-    }
 };
 
 }// namespace vision

@@ -653,14 +653,7 @@ public:
           _spec_trans(_scene->create_slot(desc.slot("spec_trans", 0.f, Number))),
           _flatness(_scene->create_slot(desc.slot("flatness", 0.f, Number))),
           _diff_trans(_scene->create_slot(desc.slot("diff_trans", 0.f, Number))) {
-        init_slot_cursor(&_color, 13);
-    }
-
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
-                                    const SampledWavelengths &swl) const noexcept override {
-        return make_unique<PrincipledBSDF>(it, da, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
-                                           _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat,
-                                           _clearcoat_alpha, _spec_trans, _flatness, _diff_trans);
+        init_slot_cursor(&_color, &_diff_trans);
     }
 
     [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {

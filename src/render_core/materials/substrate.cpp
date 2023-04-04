@@ -128,20 +128,6 @@ public:
         init_slot_cursor(&_diff, 3);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
-                                    const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, da, swl).sample;
-        SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, da, swl).sample;
-        Float2 alpha = _roughness.evaluate(it, da).to_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
-                                                      swl, render_pipeline());
-        FresnelBlend bxdf(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBSDF>(it, fresnel, move(bxdf));
-    }
-
     [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, swl).sample;

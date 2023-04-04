@@ -35,12 +35,6 @@ public:
         init_slot_cursor(&_color, 1);
     }
 
-    [[nodiscard]] UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da,
-                                    const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color.eval_albedo_spectrum(it, da, swl).sample;
-        return make_unique<MatteBSDF>(it, kr, swl);
-    }
-
     [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         return make_unique<MatteBSDF>(it, kr, swl);
