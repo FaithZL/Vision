@@ -116,7 +116,7 @@ public:
                     switch (_scene->polymorphic_mode()) {
                         case Instance: {
                             _scene->materials().dispatch_instance(it.material_inst_id(), [&](const Material *material) {
-                                UP<BSDF> bsdf = material->get_BSDF(it, swl);
+                                UP<BSDF> bsdf = material->compute_BSDF(it, swl);
                                 if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
                                     $if(*dispersive) {
                                         swl.invalidation_secondary();
@@ -131,7 +131,7 @@ public:
                             _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
                                 ManagedWrapper<float> &datas = _scene->materials().datas(material);
                                 DataAccessor da{it.material_inst_id() * material->data_size(), datas};
-                                UP<BSDF> bsdf = material->get_BSDF(it, &da, swl);
+                                UP<BSDF> bsdf = material->compute_BSDF(it, swl, &da);
                                 if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
                                     $if(*dispersive) {
                                         swl.invalidation_secondary();

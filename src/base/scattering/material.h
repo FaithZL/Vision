@@ -117,17 +117,26 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 protected:
+    struct Guard {
+        const Material *material{};
+        Guard(const Material *mat, const Interaction &it, const DataAccessor *da)
+            : material(mat) { material->cache_slots(it, da); }
+        ~Guard() { material->clear_slot_cache(); }
+    };
+
     [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                                 const DataAccessor *da) const noexcept {
+                                                 DataAccessor *da) const noexcept {
         OC_ASSERT(false);
         return make_unique<BSDF>(it, swl);
     }
 
 public:
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                        const DataAccessor *da) const noexcept {
-
-        return _compute_BSDF(it, swl, da);
+                                        DataAccessor *da = nullptr) const noexcept {
+        if (da) {
+            return get_BSDF(it, da, swl);
+        }
+        return get_BSDF(it, swl);
     }
     [[nodiscard]] virtual UP<BSDF> get_BSDF(const Interaction &it, DataAccessor *da, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);

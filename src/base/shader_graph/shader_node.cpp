@@ -7,9 +7,6 @@
 
 namespace vision {
 
-//Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx,
-//                                  const DataAccessor *da) const noexcept =
-
 Array<float> ShaderNode::value(const AttrEvalContext &ctx) const noexcept {
     if (_value_ref.valid()) {
         return _value_ref;
