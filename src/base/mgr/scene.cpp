@@ -69,27 +69,34 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
-    for (const auto & desc : descs) {
-        Shape *shape = const_cast<Shape *>(load<Shape>(desc));
-        const Material *material = _materials[shape->handle.mat_id];
-        switch (polymorphic_mode()) {
-            case Instance:
-                OC_INFO("polymorphic mode is instance");
+
+    switch (polymorphic_mode()) {
+        case Instance:
+            OC_INFO("polymorphic mode is instance");
+            for (const auto &desc : descs) {
+                Shape *shape = const_cast<Shape *>(load<Shape>(desc));
+                const Material *material = _materials[shape->handle.mat_id];
                 shape->update_material_id(encode_id<H>(shape->handle.mat_id,
                                                        _materials.type_index(material)));
-                break;
-            case Type:
-                OC_INFO("polymorphic mode is type");
+                _aabb.extend(shape->aabb);
+                _shapes.push_back(shape);
+            }
+            break;
+        case Type:
+            OC_INFO("polymorphic mode is type");
+            for (const auto &desc : descs) {
+                Shape *shape = const_cast<Shape *>(load<Shape>(desc));
+                const Material *material = _materials[shape->handle.mat_id];
                 shape->update_material_id(encode_id<H>(_materials.data_index(material),
                                                        _materials.type_index(material)));
-                break;
-            default:
-                OC_ASSERT(false);
-                break;
-        }
 
-        _aabb.extend(shape->aabb);
-        _shapes.push_back(shape);
+                _aabb.extend(shape->aabb);
+                _shapes.push_back(shape);
+            }
+            break;
+        default:
+            OC_ASSERT(false);
+            break;
     }
 }
 

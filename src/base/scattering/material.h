@@ -79,20 +79,28 @@ public:
 protected:
     static constexpr uint stride = sizeof(Slot);
     struct SlotCursor {
-        const Slot *ptr{nullptr};
+        // The offset of the first slot in the object
+        uint offset{0u};
         uint num{0u};
     };
     SlotCursor _slot_cursor;
 
+    const Slot &get_slot(uint index) const noexcept {
+        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
+        return head[index];
+    }
+
 public:
     explicit Material(const MaterialDesc &desc) : Node(desc) {}
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
-        _slot_cursor.ptr = ptr;
+        uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
+        _slot_cursor.offset = offset;
         _slot_cursor.num = num;
     }
 
     void init_slot_cursor(const Slot *head, const Slot *back) noexcept {
-        _slot_cursor.ptr = head;
+        uint offset = reinterpret_cast<const char *>(head) - reinterpret_cast<char *>(this);
+        _slot_cursor.offset = offset;
         _slot_cursor.num = (back - head) + 1;
     }
 
@@ -100,7 +108,7 @@ public:
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
         for (int i = 0; i < _slot_cursor.num; ++i) {
-            const Slot &slot = _slot_cursor.ptr[i];
+            const Slot &slot = get_slot(i);
             ret = func(ret, slot);
         }
         return ret;
@@ -109,7 +117,7 @@ public:
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
         for (int i = 0; i < _slot_cursor.num; ++i) {
-            const Slot &slot = _slot_cursor.ptr[i];
+            const Slot &slot = get_slot(i);
             func(slot);
         }
     }
