@@ -76,7 +76,7 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx) const noexcept {
         }
     }
     OC_ASSERT(false);
-    return _node->evaluate(ctx);
+    return _node->value(ctx);
 }
 
 Array<float> Slot::evaluate(const AttrEvalContext &ctx,
