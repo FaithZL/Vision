@@ -13,6 +13,24 @@ Array<float> ShaderNode::evaluate(const AttrEvalContext &ctx,
     return Array<float>();
 }
 
+Array<float> ShaderNode::value(const AttrEvalContext &ctx) const noexcept {
+    if (_value_ref.valid()) {
+        return _value_ref;
+    }
+    return evaluate(ctx);
+}
+
+void ShaderNode::cache_value(const AttrEvalContext &ctx,
+                             const DataAccessor *da) const noexcept {
+    if (!_value_ref.valid()) {
+        _value_ref.reset(evaluate(ctx, da));
+    }
+}
+
+void ShaderNode::clear_cache() const noexcept {
+    _value_ref.invalidate();
+}
+
 uint Slot::_calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);

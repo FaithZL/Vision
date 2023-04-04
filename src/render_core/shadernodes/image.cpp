@@ -17,17 +17,16 @@ public:
         : ShaderNode(desc),
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
-        return render_pipeline()->tex(_image_wrapper.id()).sample(3, ctx.uv);
-    }
     void fill_data(ManagedWrapper<float> &datas) const noexcept override {
         datas.push_back(bit_cast<float>(_image_wrapper.id()));
+    }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx) const noexcept override {
+        return render_pipeline()->tex(_image_wrapper.id()).sample(3, ctx.uv);
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const DataAccessor *da) const noexcept override {
         Uint index = da->byte_read<uint>();
-        _value_ref.reset(render_pipeline()->tex(index).sample(3, ctx.uv));
-        return _value_ref;
+        return render_pipeline()->tex(index).sample(3, ctx.uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
