@@ -103,7 +103,8 @@ uint64_t Material::_compute_hash() const noexcept {
     return ret;
 }
 
-UP<BSDF> Material::compute_BSDF(const Interaction &it, const SampledWavelengths &swl, DataAccessor *da) const noexcept {
+UP<BSDF> Material::compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
+                                const DataAccessor *da) const noexcept {
     if (da) {
         Guard guard(this, it, da);
         return _compute_BSDF(it, swl);

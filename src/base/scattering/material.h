@@ -144,6 +144,6 @@ protected:
 
 public:
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                        DataAccessor *da = nullptr) const noexcept;
+                                        const DataAccessor *da = nullptr) const noexcept;
 };
 }// namespace vision
