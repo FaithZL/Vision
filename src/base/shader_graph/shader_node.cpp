@@ -82,19 +82,19 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx,
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, swl).to_vec3();
+    Float3 val = evaluate(ctx, swl).as_vec3();
     return _node->spectrum().decode_to_albedo(val, swl);
 }
 
 ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, swl).to_vec3();
+    Float3 val = evaluate(ctx, swl).as_vec3();
     return _node->spectrum().decode_to_unbound_spectrum(val, swl);
 }
 
 ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
-    Float3 val = evaluate(ctx, swl).to_vec3();
+    Float3 val = evaluate(ctx, swl).as_vec3();
     return _node->spectrum().decode_to_illumination(val, swl);
 }
 

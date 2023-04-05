@@ -151,7 +151,7 @@ public:
                     coord,
                     make_float3((res - 1.0f) / res),
                     make_float3(0.5f / res));
-                c = array.tex(base_index + maxc).sample(4, coord).to_vec4().xyz();
+                c = array.tex(base_index + maxc).sample(4, coord).as_vec4().xyz();
             };
             return c;
         };

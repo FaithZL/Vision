@@ -25,6 +25,14 @@ public:
     explicit SPD(RenderPipeline *rp);
     SPD(vector<float> func, RenderPipeline *rp);
     void init(vector<float> func) noexcept;
+    template<typename Func>
+    static vector<float> to_list(Func &&func, float interval) noexcept {
+        vector<float> ret;
+        for (float lambda = cie::visible_wavelength_min; lambda < cie::visible_wavelength_max ; lambda += interval) {
+            ret.push_back(func(lambda));
+        }
+        return ret;
+    }
     void prepare() noexcept;
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;
     [[nodiscard]] Float eval(const Float& lambdas) const noexcept;

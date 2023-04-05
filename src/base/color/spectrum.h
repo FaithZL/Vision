@@ -99,10 +99,10 @@ public:
         return dimension() == 1u ? _values[0u] : _values[i];
     }
     [[nodiscard]] Float3 vec3() const noexcept {
-        return _values.to_vec3();
+        return _values.as_vec3();
     }
     [[nodiscard]] Float4 vec4() const noexcept {
-        return _values.to_vec4();
+        return _values.as_vec4();
     }
     template<typename F>
     [[nodiscard]] auto map(F &&f) const noexcept {
