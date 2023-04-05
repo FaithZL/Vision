@@ -75,11 +75,15 @@ Float SPD::eval(const Float &lambda) const noexcept {
 }
 
 SampledSpectrum SPD::eval(const SampledWavelengths &swl) const noexcept {
-    SampledSpectrum ret{swl.dimension()};
+    return SampledSpectrum{eval(_func.index(), swl)};
+}
+
+Array<float> SPD::eval(const Uint &index, const SampledWavelengths &swl) const noexcept {
+    Array<float> values{swl.dimension()};
     for (int i = 0; i < swl.dimension(); ++i) {
-        ret[i] = eval(swl.lambda(i));
+        values[i] = eval(swl.lambda(i));
     }
-    return ret;
+    return values;
 }
 
 SPD SPD::create_cie_x(RenderPipeline *rp) noexcept {

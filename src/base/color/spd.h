@@ -27,8 +27,9 @@ public:
     void init(vector<float> func) noexcept;
     void prepare() noexcept;
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;
-    [[nodiscard]] Float eval(const Float& lambda) const noexcept;
+    [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
     [[nodiscard]] SampledSpectrum eval(const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] Array<float> eval(const Uint &index, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp) noexcept;
