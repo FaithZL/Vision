@@ -48,6 +48,14 @@ public:
     [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;
     [[nodiscard]] float eval(float lambda) const noexcept;
+    template<size_t N>
+    [[nodiscard]] Vector<float, N> eval(Vector<float, N> lambdas) const noexcept {
+        Vector<float, N> ret;
+        for (int i = 0; i < N; ++i) {
+            ret[i] = eval(lambdas[i]);
+        }
+        return ret;
+    }
     [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
     [[nodiscard]] SampledSpectrum eval(const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Array<float> eval(const Uint &index, const SampledWavelengths &swl) const noexcept;
