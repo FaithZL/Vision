@@ -118,7 +118,7 @@ public:
         } else {
             float lambda = rgb_spectrum_peak_wavelengths.x;
             float ior = (*ior_curve(name))(lambda);
-            eta_slot = desc.slot("ior", ior);
+            eta_slot = desc.slot("", ior);
         }
         _ior = _scene->create_slot(eta_slot);
     }

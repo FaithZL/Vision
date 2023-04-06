@@ -73,8 +73,8 @@ public:
             SPD spd_k = SPD(complex_ior.k, nullptr);
             float3 eta = spd_eta.eval(rgb_spectrum_peak_wavelengths);
             float3 k = spd_k.eval(rgb_spectrum_peak_wavelengths);
-            eta_slot = desc.slot("eta", eta);
-            k_slot = desc.slot("k", k);
+            eta_slot = desc.slot("", eta);
+            k_slot = desc.slot("", k);
         }
 
         _eta = _scene->create_slot(eta_slot);
