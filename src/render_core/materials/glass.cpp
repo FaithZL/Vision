@@ -5,17 +5,26 @@
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
+#include "base/color/spd.h"
 
 namespace vision {
 
 class IORCurve {
 public:
     [[nodiscard]] virtual Float eta(const Float &lambda) const noexcept = 0;
+    [[nodiscard]] virtual float eta(float lambda) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum eta(const SampledWavelengths &swl) const noexcept = 0;
+
+    [[nodiscard]] float operator()(float lambda) const noexcept {
+        return eta(lambda);
+    }
 };
 
 #define VS_IOR_CURVE_COMMON                                                                    \
     [[nodiscard]] Float eta(const Float &lambda) const noexcept override {                     \
+        return _eta(lambda);                                                                   \
+    }                                                                                          \
+    [[nodiscard]] float eta(float lambda) const noexcept override {                            \
         return _eta(lambda);                                                                   \
     }                                                                                          \
     [[nodiscard]] SampledSpectrum eta(const SampledWavelengths &swl) const noexcept override { \
@@ -29,6 +38,8 @@ public:
 class BK7 : public IORCurve {
 private:
     [[nodiscard]] auto _eta(auto lambda) const noexcept {
+        using ocarina::sqr;
+        using ocarina::sqrt;
         lambda = lambda / 1000.f;
         auto f = 1.03961212f * sqr(lambda) / (sqr(lambda) - 0.00600069867f) +
                  0.231792344f * sqr(lambda) / (sqr(lambda) - 0.0200179144f) +
@@ -43,10 +54,12 @@ public:
 class LASF9 : public IORCurve {
 private:
     [[nodiscard]] auto _eta(auto lambda) const noexcept {
+        using ocarina::sqr;
+        using ocarina::sqrt;
         lambda = lambda / 1000.f;
         auto f = 2.00029547f * sqr(lambda) / (sqr(lambda) - 0.0121426017f) +
-            0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
-            1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
+                 0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
+                 1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
         return sqrt(f + 1);
     }
 
@@ -81,35 +94,37 @@ private:
     Slot _color{};
     Slot _ior{};
     Slot _roughness{};
-    IORCurve *_ior_curve{nullptr};
     bool _remapping_roughness{false};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
           _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _ior(_scene->create_slot(desc.slot("ior", 1.5f))),
           _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.01f)))),
-//          _ior_curve(ior_curve(desc["material_name"].as_string())),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
+        init_ior(desc);
         init_slot_cursor(&_color, 3);
     }
 
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        if (_ior_curve) {
-            return hash64(Material::_compute_type_hash(), typeid(*_ior_curve).name());
+    void init_ior(const MaterialDesc &desc) noexcept {
+        auto name = desc["material_name"].as_string();
+        if (name.empty()) {
+            _ior = _scene->create_slot(desc.slot("ior", 1.5f));
+            return;
         }
-        return Material::_compute_type_hash();
+        SlotDesc eta_slot(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
+        auto lst = SPD::to_list(*ior_curve(name));
+        eta_slot.node.set_value("value", lst);
+        _ior = _scene->create_slot(eta_slot);
+    }
+
+    void prepare() noexcept override {
+        _ior->prepare();
     }
 
     [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
-        Float ior;
-//        if (_ior_curve) {
-//            ior = _ior_curve->eta(swl.lambda(0u));
-//        } else {
-        ior = _ior.evaluate(it, swl).as_scalar();
-        //        }
+        Float ior = _ior.evaluate(it, swl).as_scalar();
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
@@ -118,7 +133,7 @@ public:
                                                       swl, render_pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<DielectricBSDF>(it, fresnel, move(refl), move(trans), bool(_ior_curve));
+        return make_unique<DielectricBSDF>(it, fresnel, move(refl), move(trans), _ior->type() == ESPD);
     }
 
 };

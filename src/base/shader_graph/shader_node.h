@@ -41,6 +41,7 @@ public:
 public:
     explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
+    [[nodiscard]] ShaderNodeType type() const noexcept { return _type; }
     [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
     /**
      * if shader node is constant, the result will be inlined

@@ -8,7 +8,7 @@
 namespace vision {
 
 using namespace ocarina;
-static constexpr auto spd_lut_interval = 5u;
+
 namespace detail {
 
 [[nodiscard]] float densely_sampled_spectrum_integral(uint t, const float *spec) noexcept {

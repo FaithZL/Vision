@@ -209,9 +209,9 @@
                 "z" : 1,
 //                                "material" : "ShortBox",
 //                "material" : "substrate",
-                "material" : "Metal",
+//                "material" : "Metal",
 //                "material" : "disney",
-//                                "material" : "Glass",
+                                "material" : "Glass",
                 "transform" : {
                     "type" : "matrix4x4",
                     "param" : {
@@ -253,7 +253,8 @@
                 "y": 1,
                 "z": 1,
 //                "material": "TallBox",
-                "material": "Mirror2",
+//                "material": "Mirror2",
+                "material": "Glass2",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -450,6 +451,22 @@
                         1
                     ]
                 },
+                "roughness": [0.001,0.001]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "Glass2",
+            "param": {
+                "color":{
+                    "channels": "xyz",
+                    "node":  [
+                        1,
+                        1,
+                        1
+                    ]
+                },
+                "ior": 1.5,
                 "roughness": [0.001,0.001]
             }
         },

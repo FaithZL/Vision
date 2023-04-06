@@ -17,6 +17,7 @@ using namespace ocarina;
 // todo change to scalar or vector template
 class SPD {
 private:
+    static constexpr auto spd_lut_interval = 5u;
     ManagedWrapper<float> _func;
     float _sample_interval{};
     RenderPipeline *_rp{};
@@ -36,7 +37,7 @@ public:
         init(lst);
     }
     template<typename Func>
-    static vector<float> to_list(Func &&func, float interval) noexcept {
+    static vector<float> to_list(Func &&func, float interval = spd_lut_interval) noexcept {
         vector<float> ret;
         for (float lambda = cie::visible_wavelength_min; lambda < cie::visible_wavelength_max; lambda += interval) {
             ret.push_back(func(lambda));
