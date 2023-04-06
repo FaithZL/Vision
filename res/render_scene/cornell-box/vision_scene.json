@@ -458,6 +458,7 @@
             "type": "glass",
             "name": "Glass2",
             "param": {
+                "material_name" : "BK7",
                 "color":{
                     "channels": "xyz",
                     "node":  [

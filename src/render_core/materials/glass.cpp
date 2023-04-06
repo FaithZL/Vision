@@ -108,13 +108,18 @@ public:
 
     void init_ior(const MaterialDesc &desc) noexcept {
         auto name = desc["material_name"].as_string();
+        SlotDesc eta_slot;
         if (name.empty()) {
-            _ior = _scene->create_slot(desc.slot("ior", 1.5f));
-            return;
+            eta_slot = desc.slot("ior", 1.5f);
+        } else if (spectrum().is_complete()) {
+            eta_slot = SlotDesc(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
+            auto lst = SPD::to_list(*ior_curve(name));
+            eta_slot.node.set_value("value", lst);
+        } else {
+            float lambda = rgb_spectrum_peak_wavelengths.x;
+            float ior = (*ior_curve(name))(lambda);
+            eta_slot = desc.slot("ior", ior);
         }
-        SlotDesc eta_slot(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
-        auto lst = SPD::to_list(*ior_curve(name));
-        eta_slot.node.set_value("value", lst);
         _ior = _scene->create_slot(eta_slot);
     }
 

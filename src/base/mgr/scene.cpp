@@ -29,11 +29,11 @@ void Scene::init(const SceneDesc &scene_desc) {
     _render_setting = scene_desc.render_setting;
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
+    _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
     load_mediums(scene_desc.mediums_desc.mediums);
     _integrator = load<Integrator>(scene_desc.integrator_desc);
-    _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
 

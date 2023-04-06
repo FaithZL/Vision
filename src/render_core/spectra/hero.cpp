@@ -253,7 +253,7 @@ public:
         return bsdf->is_dispersive();
     }
 
-    [[nodiscard]] bool handle_dispersive() const noexcept override { return true; }
+    [[nodiscard]] bool is_complete() const noexcept override { return true; }
 
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         Float sum = 0.f;
