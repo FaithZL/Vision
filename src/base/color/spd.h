@@ -47,6 +47,7 @@ public:
     void prepare() noexcept;
     [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;
+    [[nodiscard]] float eval(float lambda) const noexcept;
     [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
     [[nodiscard]] SampledSpectrum eval(const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Array<float> eval(const Uint &index, const SampledWavelengths &swl) const noexcept;

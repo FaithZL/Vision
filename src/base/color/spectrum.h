@@ -244,6 +244,7 @@ public:
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
+    [[nodiscard]] virtual bool handle_dispersive() const noexcept { return false; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept { return {}; }
     [[nodiscard]] virtual float4 albedo_params(float4 rgb) const noexcept = 0;
     [[nodiscard]] virtual float4 illumination_params(float4 rgb) const noexcept = 0;
