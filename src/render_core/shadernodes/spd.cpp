@@ -6,29 +6,41 @@
 
 namespace vision {
 
+
 class SPDNode : public ShaderNode {
 private:
-//    SPD _spd;
+    SPD _spd{nullptr};
+
 public:
     explicit SPDNode(const ShaderNodeDesc &desc)
-        : ShaderNode(desc) {}
+        : ShaderNode(desc), _spd(desc.scene->render_pipeline()) {
+        _spd.init(desc["value"].data());
+    }
 
     [[nodiscard]] uint data_size() const noexcept override {
-        return sizeof(uint);
+        return sizeof(_spd.buffer_index());
     }
+
+    void prepare() noexcept override {
+        _spd.prepare();
+    }
+
     void fill_data(ManagedWrapper<float> &datas) const noexcept override {
-
+        datas.push_back(bit_cast<float>(_spd.buffer_index()));
     }
 
-//    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-//                                        const SampledWavelengths &swl,
-//                                        const DataAccessor *da) const noexcept override {
-//    }
-//    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-//                                        const SampledWavelengths &swl) const noexcept override {
-//    }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const SampledWavelengths &swl,
+                                        const DataAccessor *da) const noexcept override {
+        Uint index = da->byte_read<uint>();
+        return _spd.eval(index, swl);
+    }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const SampledWavelengths &swl) const noexcept override {
+        return _spd.eval(_spd.buffer_index(), swl);
+    }
 };
 
 }// namespace vision
 
-//VS_MAKE_CLASS_CREATOR(vision::SPDNode)
+VS_MAKE_CLASS_CREATOR(vision::SPDNode)

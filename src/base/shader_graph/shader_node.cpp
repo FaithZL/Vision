@@ -76,7 +76,6 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx,
             }
         }
     }
-    OC_ASSERT(false);
     return _node->value(ctx, swl);
 }
 

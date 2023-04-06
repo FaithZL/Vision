@@ -45,36 +45,33 @@ public:
 
 class MetalMaterial : public Material {
 private:
-    string _material_name{};
-    SPD _spd_eta;
-    SPD _spd_k;
+    Slot _eta;
+    Slot _k;
     Slot _roughness{};
     bool _remapping_roughness{false};
 
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
-//          _material_name(desc["material_name"].as_string()),
-          _spd_eta(desc.scene->render_pipeline()),
-          _spd_k(desc.scene->render_pipeline()),
           _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
-        const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(_material_name);
-        _spd_eta.init(complex_ior.eta);
-        _spd_k.init(complex_ior.k);
-        init_slot_cursor(&_roughness, 1);
+        init_ior(desc["material_name"].as_string());
+        init_slot_cursor(&_eta, 3);
+    }
+
+    void init_ior(const string &name) noexcept {
+        const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(name);
+        SlotDesc eta_slot(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
+        eta_slot.node.set_value("value", complex_ior.eta);
+        SlotDesc k_slot(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
+        k_slot.node.set_value("value", complex_ior.k);
+        _eta = _scene->create_slot(eta_slot);
+        _k = _scene->create_slot(k_slot);
     }
 
     void prepare() noexcept override {
-        _spd_eta.prepare();
-        _spd_k.prepare();
-    }
-
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        if (!_material_name.empty()) {
-            return hash64(Material::_compute_type_hash(), _material_name);
-        }
-        return Material::_compute_type_hash();
+        _eta->prepare();
+        _k->prepare();
     }
 
     [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
@@ -82,8 +79,8 @@ public:
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        SampledSpectrum eta = _spd_eta.eval(swl);
-        SampledSpectrum k = _spd_k.eval(swl);
+        SampledSpectrum eta = SampledSpectrum{_eta.evaluate(it, swl)};
+        SampledSpectrum k = SampledSpectrum{_k.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl,microfacet);

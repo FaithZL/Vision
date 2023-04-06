@@ -38,7 +38,8 @@ enum ShaderNodeType {
     Albedo,
     Unbound,
     Illumination,
-    Calculate
+    Calculate,
+    ESPD
 };
 
 struct NodeDesc : public Hashable {
@@ -103,9 +104,9 @@ protected:
 
 public:
     ShaderNodeDesc() = default;
-    explicit ShaderNodeDesc(ShaderNodeType type)
+    explicit ShaderNodeDesc(ShaderNodeType type, const string &s_type = "constant")
         : NodeDesc("ShaderNode"), type(type) {
-        sub_type = "constant";
+        sub_type = s_type;
         _parameter.set_json(DataWrap::object());
     }
     explicit ShaderNodeDesc(string name, ShaderNodeType type)
@@ -150,7 +151,6 @@ public:
             case 3: return "xyz";
             case 4: return "xyzw";
         }
-        OC_ASSERT(0);
         return "";
     }
     string channels;

@@ -24,16 +24,27 @@ private:
 public:
     explicit SPD(RenderPipeline *rp);
     SPD(vector<float> func, RenderPipeline *rp);
+
     void init(vector<float> func) noexcept;
+    template<typename T>
+    requires concepts::iterable<T>
+    void init(T &&t) noexcept {
+        std::vector<float> lst;
+        for (const auto &elm : OC_FORWARD(t)) {
+            lst.push_back(elm);
+        }
+        init(lst);
+    }
     template<typename Func>
     static vector<float> to_list(Func &&func, float interval) noexcept {
         vector<float> ret;
-        for (float lambda = cie::visible_wavelength_min; lambda < cie::visible_wavelength_max ; lambda += interval) {
+        for (float lambda = cie::visible_wavelength_min; lambda < cie::visible_wavelength_max; lambda += interval) {
             ret.push_back(func(lambda));
         }
         return ret;
     }
     void prepare() noexcept;
+    [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;
     [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
     [[nodiscard]] SampledSpectrum eval(const SampledWavelengths &swl) const noexcept;
