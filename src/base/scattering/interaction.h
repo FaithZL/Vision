@@ -85,19 +85,6 @@ public:
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
 };
 
-template<EPort p>
-[[nodiscard]] inline oc_uint<p> encode_id(oc_uint<p> inst_id, oc_uint<p> type_id) noexcept {
-    inst_id = inst_id << 8;
-    return inst_id | type_id;
-}
-
-template<EPort p>
-[[nodiscard]] inline pair<oc_uint<p>, oc_uint<p>> decode_id(oc_uint<p> id) noexcept {
-    oc_uint<p> inst_id = (0xffffff00 & id) >> 8;
-    oc_uint<p> type_id = 0x000000ff & id;
-    return std::make_pair(inst_id, type_id);
-}
-
 struct Interaction {
 public:
     Float3 pos;

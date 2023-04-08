@@ -114,7 +114,7 @@ public:
 
                 auto sample_surface = [&]() {
                     switch (_scene->polymorphic_mode()) {
-                        case Instance: {
+                        case EInstance: {
                             _scene->materials().dispatch_instance(it.material_inst_id(), [&](const Material *material) {
                                 UP<BSDF> bsdf = material->compute_BSDF(it, swl);
                                 if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
@@ -127,7 +127,7 @@ public:
                             });
                             break;
                         }
-                        case Type: {
+                        case EType: {
                             _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
                                 DataAccessor da = _scene->materials().data_accessor(material, it.material_inst_id());
                                 UP<BSDF> bsdf = material->compute_BSDF(it, swl, &da);

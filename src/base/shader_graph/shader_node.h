@@ -39,10 +39,10 @@ public:
      * @return
      */
     virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl,
-                                  const DataAccessor *da) const noexcept = 0;
+                                  const DataAccessor<float> *da) const noexcept = 0;
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Array<float> value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept;
-    void cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl, const DataAccessor *da) const noexcept;
+    void cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl, const DataAccessor<float> *da) const noexcept;
     void clear_cache() const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");

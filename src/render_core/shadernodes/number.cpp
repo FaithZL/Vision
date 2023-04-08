@@ -29,7 +29,7 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl,
-                                        const DataAccessor *da) const noexcept override {
+                                        const DataAccessor<float> *da) const noexcept override {
         return da->read_dynamic_array<float>(_value.size());
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,

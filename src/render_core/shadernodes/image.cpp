@@ -26,7 +26,7 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl,
-                                        const DataAccessor *da) const noexcept override {
+                                        const DataAccessor<float> *da) const noexcept override {
         Uint index = da->byte_read<uint>();
         return render_pipeline()->tex(index).sample(3, ctx.uv);
     }

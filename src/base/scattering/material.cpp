@@ -76,7 +76,7 @@ uint Material::data_size() const noexcept {
 }
 
 void Material::cache_slots(const Interaction &it, const SampledWavelengths &swl,
-                           const DataAccessor *da) const noexcept {
+                           const DataAccessor<float> *da) const noexcept {
     for_each_slot([&](const Slot &slot) {
         slot->cache_value(it, swl, da);
     });
@@ -105,7 +105,7 @@ uint64_t Material::_compute_hash() const noexcept {
 }
 
 UP<BSDF> Material::compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                const DataAccessor *da) const noexcept {
+                                const DataAccessor<float> *da) const noexcept {
     if (da) {
         Guard guard(this, it, swl, da);
         return _compute_BSDF(it, swl);

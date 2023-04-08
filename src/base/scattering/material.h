@@ -125,7 +125,7 @@ public:
     void fill_data(ManagedWrapper<float> &datas) const noexcept override;
     uint data_size() const noexcept override;
     void cache_slots(const Interaction &it, const SampledWavelengths &swl,
-                     const DataAccessor *da) const noexcept;
+                     const DataAccessor<float> *da) const noexcept;
     void clear_slot_cache() const noexcept;
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
@@ -133,7 +133,7 @@ public:
 protected:
     struct Guard {
         const Material *material{};
-        Guard(const Material *mat, const Interaction &it, const SampledWavelengths &swl, const DataAccessor *da)
+        Guard(const Material *mat, const Interaction &it, const SampledWavelengths &swl, const DataAccessor<float> *da)
             : material(mat) { material->cache_slots(it, swl, da); }
         ~Guard() { material->clear_slot_cache(); }
     };
@@ -145,6 +145,6 @@ protected:
 
 public:
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                        const DataAccessor *da = nullptr) const noexcept;
+                                        const DataAccessor<float> *da = nullptr) const noexcept;
 };
 }// namespace vision

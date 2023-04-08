@@ -71,7 +71,7 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
 
     switch (polymorphic_mode()) {
-        case Instance:
+        case EInstance:
             OC_INFO("polymorphic mode is instance");
             for (const auto &desc : descs) {
                 Shape *shape = const_cast<Shape *>(load<Shape>(desc));
@@ -82,7 +82,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
                 _shapes.push_back(shape);
             }
             break;
-        case Type:
+        case EType:
             OC_INFO("polymorphic mode is type");
             for (const auto &desc : descs) {
                 Shape *shape = const_cast<Shape *>(load<Shape>(desc));
@@ -128,13 +128,13 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 
 void Scene::prepare_materials() noexcept {
     switch (polymorphic_mode()) {
-        case Instance:{
+        case EInstance:{
             _materials.for_each_instance([&](const Material *material) noexcept {
                 const_cast<Material *>(material)->prepare();
             });
             break;
         }
-        case Type:{
+        case EType:{
             _materials.for_each_representative([&](Material *material) {
                 ManagedWrapper<float> data_set{render_pipeline()->resource_array()};
                 _materials.set_datas(material, move(data_set));

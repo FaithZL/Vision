@@ -15,7 +15,7 @@ Array<float> ShaderNode::value(const AttrEvalContext &ctx, const SampledWaveleng
 }
 
 void ShaderNode::cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl,
-                             const DataAccessor *da) const noexcept {
+                             const DataAccessor<float> *da) const noexcept {
     if (!_value_ref.valid()) {
         _value_ref.reset(evaluate(ctx, swl, da));
     }
