@@ -20,7 +20,7 @@ enum class LightType {
     Infinite
 };
 
-class Light : public Node {
+class Light : public Node, public PolymorphicElement<float> {
 public:
     using Desc = LightDesc;
 
@@ -33,6 +33,10 @@ public:
     explicit Light(const LightDesc &desc, LightType light_type);
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
+    }
+    [[nodiscard]] uint data_size() const noexcept override { return 0u; }
+    [[nodiscard]] void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+
     }
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
