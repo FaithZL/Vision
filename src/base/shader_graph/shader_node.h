@@ -11,25 +11,6 @@
 
 namespace vision {
 
-struct DataAccessor {
-    mutable Uint offset;
-    ManagedWrapper<float> &datas;
-
-    template<typename T>
-    [[nodiscard]] Array<T> read_dynamic_array(uint size) const noexcept {
-        auto ret = datas.read_dynamic_array<T>(size, offset);
-        offset += size * static_cast<uint>(sizeof(T));
-        return ret;
-    }
-
-    template<typename Target>
-    OC_NODISCARD auto byte_read() const noexcept {
-        auto ret = datas.byte_read<Target>(offset);
-        offset += static_cast<uint>(sizeof(Target));
-        return ret;
-    }
-};
-
 class ShaderNode : public Node, public PolymorphicElement<float> {
 protected:
     ShaderNodeType _type{};
