@@ -27,6 +27,8 @@ void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
     _warper_desc = scene_desc.warper_desc;
     _render_setting = scene_desc.render_setting;
+    _materials.set_mode(_render_setting.polymorphic_mode);
+    OC_INFO_FORMAT("polymorphic mode is {}", _materials.mode());
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
@@ -69,34 +71,12 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
-
-    switch (polymorphic_mode()) {
-        case EInstance:
-            OC_INFO("polymorphic mode is instance");
-            for (const auto &desc : descs) {
-                Shape *shape = const_cast<Shape *>(load<Shape>(desc));
-                const Material *material = _materials[shape->handle.mat_id];
-                shape->update_material_id(encode_id<H>(shape->handle.mat_id,
-                                                       _materials.type_index(material)));
-                _aabb.extend(shape->aabb);
-                _shapes.push_back(shape);
-            }
-            break;
-        case EType:
-            OC_INFO("polymorphic mode is type");
-            for (const auto &desc : descs) {
-                Shape *shape = const_cast<Shape *>(load<Shape>(desc));
-                const Material *material = _materials[shape->handle.mat_id];
-                shape->update_material_id(encode_id<H>(_materials.data_index(material),
-                                                       _materials.type_index(material)));
-
-                _aabb.extend(shape->aabb);
-                _shapes.push_back(shape);
-            }
-            break;
-        default:
-            OC_ASSERT(false);
-            break;
+    for (const auto &desc : descs) {
+        Shape *shape = const_cast<Shape *>(load<Shape>(desc));
+        const Material *material = _materials[shape->handle.mat_id];
+        shape->update_material_id(_materials.encode_id(shape->handle.mat_id, material));
+        _aabb.extend(shape->aabb);
+        _shapes.push_back(shape);
     }
 }
 
