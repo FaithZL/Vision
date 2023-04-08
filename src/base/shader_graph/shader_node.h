@@ -30,7 +30,7 @@ struct DataAccessor {
     }
 };
 
-class ShaderNode : public Node {
+class ShaderNode : public Node, public PolymorphicElement<float> {
 protected:
     ShaderNodeType _type{};
     mutable Array<float> _value_ref{};
@@ -57,8 +57,6 @@ public:
      * data size in byte
      * @return
      */
-    [[nodiscard]] virtual uint data_size() const noexcept = 0;
-    virtual void fill_data(ManagedWrapper<float> &datas) const noexcept = 0;
     virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl,
                                   const DataAccessor *da) const noexcept = 0;
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;

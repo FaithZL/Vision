@@ -72,7 +72,7 @@ public:
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override;
 };
 
-class Material : public Node {
+class Material : public Node, public PolymorphicElement<float> {
 public:
     using Desc = MaterialDesc;
 
@@ -122,8 +122,8 @@ public:
         }
     }
 
-    void fill_data(ManagedWrapper<float> &datas) const noexcept;
-    uint data_size() const noexcept;
+    void fill_data(ManagedWrapper<float> &datas) const noexcept override;
+    uint data_size() const noexcept override;
     void cache_slots(const Interaction &it, const SampledWavelengths &swl,
                      const DataAccessor *da) const noexcept;
     void clear_slot_cache() const noexcept;
