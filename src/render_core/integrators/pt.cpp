@@ -113,46 +113,17 @@ public:
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
-//                    _scene->materials().dispatch(it.material_inst_id(), [&](const Material *material,
-//                                                                            const DataAccessor<float> *da) {
-//                        UP<BSDF> bsdf = material->compute_BSDF(it, swl, da);
-//                        if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
-//                            $if(*dispersive) {
-//                                swl.invalidation_secondary();
-//                            };
-//                        }
-//                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-//                                             sampler, swl, bsdf_sample);
-//                    });
-
-                    switch (_scene->polymorphic_mode()) {
-                        case EInstance: {
-                            _scene->materials().dispatch_instance(it.material_inst_id(), [&](const Material *material) {
-                                UP<BSDF> bsdf = material->compute_BSDF(it, swl);
-                                if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
-                                    $if(*dispersive) {
-                                        swl.invalidation_secondary();
-                                    };
-                                }
-                                Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                                     sampler, swl, bsdf_sample);
-                            });
-                            break;
+                    _scene->materials().dispatch(it.material_type_id(),it.material_inst_id(), [&](const Material *material,
+                                                                            const DataAccessor<float> *da) {
+                        UP<BSDF> bsdf = material->compute_BSDF(it, swl, da);
+                        if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
+                            $if(*dispersive) {
+                                swl.invalidation_secondary();
+                            };
                         }
-                        case EType: {
-                            _scene->materials().dispatch_representative(it.material_type_id(), [&](const Material *material) {
-                                DataAccessor da = _scene->materials().data_accessor(material, it.material_inst_id());
-                                UP<BSDF> bsdf = material->compute_BSDF(it, swl, &da);
-                                if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
-                                    $if(*dispersive) {
-                                        swl.invalidation_secondary();
-                                    };
-                                }
-                                Ld = direct_lighting(it, *bsdf, light_sample, occluded,
-                                                     sampler, swl, bsdf_sample);
-                            });
-                        }
-                    }
+                        Ld = direct_lighting(it, *bsdf, light_sample, occluded,
+                                             sampler, swl, bsdf_sample);
+                    });
                 };
 
                 if (_scene->has_medium()) {

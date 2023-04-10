@@ -639,7 +639,7 @@
         "type": "alias_table"
     },
     "render_setting": {
-        "polymorphic_mode" : 0
+        "polymorphic_mode" : 1
     },
     "integrator": {
         "type": "pt",
