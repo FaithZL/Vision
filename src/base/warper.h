@@ -26,6 +26,9 @@ public:
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &i) const noexcept = 0;
+    [[nodiscard]] virtual Float func_at(const Uint &buffer_id, const Uint &i) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF(const Uint &buffer_id, const Uint &i) const noexcept = 0;
+    [[nodiscard]] virtual Float PMF(const Uint &buffer_id, const Uint &i) const noexcept = 0;
     /**
      * @param u uniform
      * @return offset, PMF, u_remapped

@@ -37,9 +37,18 @@ public:
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
-    [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return _func.read(i); }
-    [[nodiscard]] Float PDF(const Uint &i) const noexcept override;
-    [[nodiscard]] Float PMF(const Uint &i) const noexcept override;
+    [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return func_at(_func.index(), i); }
+    [[nodiscard]] Float PDF(const Uint &i) const noexcept override { return PDF(_func.index(), i); }
+    [[nodiscard]] Float PMF(const Uint &i) const noexcept override { return PMF(_func.index(), i); }
+    [[nodiscard]] Float func_at(const Uint &buffer_id, const Uint &i) const noexcept override {
+        return render_pipeline()->buffer<float>(buffer_id).read(i);
+    }
+    [[nodiscard]] Float PDF(const Uint &buffer_id, const Uint &i) const noexcept {
+        return integral() > 0 ? func_at(buffer_id, i) / integral() : Var(0.f);
+    }
+    [[nodiscard]] Float PMF(const Uint &buffer_id, const Uint &i) const noexcept {
+        return integral() > 0 ? (func_at(buffer_id, i) / (integral() * size())) : Var(0.f);
+    }
     [[nodiscard]] tuple<Uint, Float> offset_u_remapped(Float u) const noexcept;
     [[nodiscard]] tuple<Float, Float, Uint> sample_continuous(Float u) const noexcept override;
     [[nodiscard]] tuple<Uint, Float, Float> sample_discrete(Float u) const noexcept override;
@@ -90,12 +99,6 @@ void AliasTable::build(vector<float> weights) noexcept {
     _integral = sum / weights.size();
     _func.set_host(std::move(weights));
     _table.set_host(std::move(table));
-}
-[[nodiscard]] Float AliasTable::PDF(const Uint &i) const noexcept {
-    return integral() > 0 ? func_at(i) / integral() : Var(0.f);
-}
-[[nodiscard]] Float AliasTable::PMF(const Uint &i) const noexcept {
-    return integral() > 0 ? (func_at(i) / (integral() * size())) : Var(0.f);
 }
 
 namespace detail {
