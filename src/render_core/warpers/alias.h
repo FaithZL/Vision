@@ -59,6 +59,15 @@ public:
     [[nodiscard]] tuple<Uint, Float> offset_u_remapped(Float u) const noexcept;
     [[nodiscard]] tuple<Float, Float, Uint> sample_continuous(Float u) const noexcept override;
     [[nodiscard]] tuple<Uint, Float, Float> sample_discrete(Float u) const noexcept override;
+
+    [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override {
+        // todo
+        return {};
+    }
+    [[nodiscard]] Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept override {
+        // todo
+        return {};
+    }
 };
 
 void AliasTable::prepare() noexcept {
