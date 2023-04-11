@@ -10,7 +10,7 @@
 
 namespace vision {
 
-class Warper : public Node {
+class Warper : public Node, public PolymorphicElement<float> {
 public:
     using Desc = WarperDesc;
 
