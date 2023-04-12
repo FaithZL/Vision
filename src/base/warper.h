@@ -29,17 +29,6 @@ public:
     [[nodiscard]] virtual Float func_at(const Uint &buffer_id, const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &buffer_id, const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &buffer_id, const Uint &i) const noexcept = 0;
-    /**
-     * @param u uniform
-     * @return offset, PMF, u_remapped
-     */
-    [[nodiscard]] virtual tuple<Uint, Float, Float> sample_discrete(Float u) const noexcept = 0;
-    /**
-     * @param u uniform
-     * @return ret, PDF, offset
-     */
-    [[nodiscard]] virtual tuple<Float, Float, Uint> sample_continuous(Float u) const noexcept = 0;
-
     [[nodiscard]] virtual Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept = 0;
     [[nodiscard]] virtual Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept = 0;
     [[nodiscard]] virtual Uint sample_discrete(const Uint &func_id, const Uint &entry_id, Float u,

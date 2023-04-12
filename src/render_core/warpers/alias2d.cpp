@@ -82,7 +82,9 @@ public:
     }
     [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept override {
         // sample v
-        auto [fv, pdf_v, iv] = _marginal.sample_continuous(u.y);
+        Float pdf_v;
+        Uint iv;
+        Float fv = _marginal.sample_continuous(u.y, &pdf_v, &iv);
 
         // sample u
         Uint buffer_offset = _resolution.x * iv;
