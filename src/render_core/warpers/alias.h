@@ -68,6 +68,11 @@ public:
         // todo
         return {};
     }
+    [[nodiscard]] pair<Uint, Float> offset_u_remapped(Float u, const Uint &entry_id, size_t size) const noexcept;
+    [[nodiscard]] Uint sample_discrete(const Uint &func_id, const Uint &entry_id, Float u,
+                                       Float *pmf, Float *u_remapped) const noexcept override;
+    [[nodiscard]] Float sample_continuous(const Uint &func_id, const Uint &entry_id,
+                                          Float u, Float *pdf, Uint *offset) const noexcept override;
 };
 
 void AliasTable::prepare() noexcept {
@@ -137,14 +142,53 @@ namespace detail {
 [[nodiscard]] tuple<Uint, Float> AliasTable::offset_u_remapped(Float u) const noexcept {
     return detail::offset_u_remapped(0, u, _table, size());
 }
+
 [[nodiscard]] tuple<Float, Float, Uint> AliasTable::sample_continuous(Float u) const noexcept {
     auto [offset, u_remapped] = offset_u_remapped(u);
     Float ret = (offset + u_remapped) / float(size());
     return {ret, PDF(offset), offset};
 }
+
 [[nodiscard]] tuple<Uint, Float, Float> AliasTable::sample_discrete(Float u) const noexcept {
     auto [offset, u_remapped] = offset_u_remapped(u);
     return {offset, PMF(offset), u_remapped};
+}
+
+pair<Uint, Float> AliasTable::offset_u_remapped(Float u, const Uint &entry_id, size_t size) const noexcept {
+    u = u * float(size);
+    Uint idx = min(cast<uint>(u), uint(size - 1));
+    u = min(u - idx, OneMinusEpsilon);
+    Var alias_entry = render_pipeline()->buffer<AliasEntry>(entry_id).read(idx);
+    idx = select(u < alias_entry.prob, idx, alias_entry.alias);
+    Float u_remapped = select(u < alias_entry.prob,
+                              min(u / alias_entry.prob, OneMinusEpsilon),
+                              min((1 - u) / (1 - alias_entry.prob), OneMinusEpsilon));
+    return {idx, u_remapped};
+}
+
+Uint AliasTable::sample_discrete(const Uint &func_id, const Uint &entry_id, Float u,
+                                 Float *pmf, Float *u_remapped) const noexcept {
+    auto [offset, ur] = offset_u_remapped(u, entry_id, size());
+    if (pmf) {
+        *pmf = PMF(func_id, offset);
+    }
+    if (u_remapped) {
+        *u_remapped = ur;
+    }
+    return offset;
+}
+
+Float AliasTable::sample_continuous(const Uint &func_id, const Uint &entry_id, Float u,
+                                    Float *pdf, Uint *offset) const noexcept {
+    auto [ofs, u_remapped] = offset_u_remapped(u, entry_id, size());
+    Float ret = (ofs + u_remapped) / float(size());
+    if (pdf) {
+        *pdf = PDF(func_id, ofs);
+    }
+    if (offset) {
+        *offset = ofs;
+    }
+    return ret;
 }
 
 }// namespace vision

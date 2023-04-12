@@ -42,6 +42,10 @@ public:
 
     [[nodiscard]] virtual Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept = 0;
     [[nodiscard]] virtual Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept = 0;
+    [[nodiscard]] virtual Uint sample_discrete(const Uint &func_id, const Uint &entry_id, Float u,
+                                               Float *pmf, Float *u_remapped) const noexcept = 0;
+    [[nodiscard]] virtual Float sample_continuous(const Uint &func_id, const Uint &entry_id, Float u,
+                                                  Float *pdf, Uint *offset) const noexcept = 0;
 };
 
 class Warper2D : public Node {
