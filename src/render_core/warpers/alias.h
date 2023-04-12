@@ -56,7 +56,6 @@ public:
     [[nodiscard]] Float PMF(const Uint &buffer_id, const Uint &i) const noexcept {
         return integral() > 0 ? (func_at(buffer_id, i) / (integral() * size())) : Var(0.f);
     }
-    [[nodiscard]] tuple<Uint, Float> offset_u_remapped(Float u) const noexcept;
     [[nodiscard]] tuple<Float, Float, Uint> sample_continuous(Float u) const noexcept override;
     [[nodiscard]] tuple<Uint, Float, Float> sample_discrete(Float u) const noexcept override;
 
@@ -139,18 +138,14 @@ namespace detail {
 
 }// namespace detail
 
-[[nodiscard]] tuple<Uint, Float> AliasTable::offset_u_remapped(Float u) const noexcept {
-    return detail::offset_u_remapped(0, u, _table, size());
-}
-
 [[nodiscard]] tuple<Float, Float, Uint> AliasTable::sample_continuous(Float u) const noexcept {
-    auto [offset, u_remapped] = offset_u_remapped(u);
+    auto [offset, u_remapped] = offset_u_remapped(u, _table.index(), size());
     Float ret = (offset + u_remapped) / float(size());
     return {ret, PDF(offset), offset};
 }
 
 [[nodiscard]] tuple<Uint, Float, Float> AliasTable::sample_discrete(Float u) const noexcept {
-    auto [offset, u_remapped] = offset_u_remapped(u);
+    auto [offset, u_remapped] = offset_u_remapped(u, _table.index(), size());
     return {offset, PMF(offset), u_remapped};
 }
 
