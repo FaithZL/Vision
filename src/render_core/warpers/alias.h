@@ -38,11 +38,12 @@ public:
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
     [[nodiscard]] uint data_size() const noexcept override {
-        return sizeof(_table.index()) + sizeof(_func.index());
+        return sizeof(_table.index()) + sizeof(_func.index()) + sizeof(size());
     }
     void fill_data(ManagedWrapper<float> &datas) const noexcept override {
-        datas.push_back(bit_cast<float>(_table.index()));
+        datas.push_back(bit_cast<float>(size()));
         datas.push_back(bit_cast<float>(_func.index()));
+        datas.push_back(bit_cast<float>(_table.index()));
     }
     [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return func_at(_func.index(), i); }
     [[nodiscard]] Float PDF(const Uint &i) const noexcept override { return PDF(_func.index(), i); }

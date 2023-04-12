@@ -37,7 +37,7 @@ public:
                                                   Float *pdf, Uint *offset) const noexcept = 0;
 };
 
-class Warper2D : public Node {
+class Warper2D : public Node, public PolymorphicElement<float> {
 public:
     using Desc = WarperDesc;
 
@@ -49,6 +49,7 @@ public:
     [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
     [[nodiscard]] virtual float integral() const noexcept = 0;
     [[nodiscard]] virtual tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept = 0;
+    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint *coord) const noexcept = 0;
 };
 
 }// namespace vision
