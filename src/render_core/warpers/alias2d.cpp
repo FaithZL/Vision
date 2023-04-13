@@ -13,8 +13,6 @@ private:
     ManagedWrapper<float> _conditional_v_weights;
     uint2 _resolution;
 
-    vector<AliasTable> _conditional_v;
-
 public:
     explicit AliasTable2D(const WarperDesc &desc)
         : Warper2D(desc),
@@ -72,9 +70,6 @@ public:
     }
     [[nodiscard]] uint data_size() const noexcept override {
         uint ret = _marginal.data_size();
-        for (const AliasTable &item : _conditional_v) {
-            ret += item.data_size();
-        }
         ret += sizeof(_resolution);
         return ret;
     }
@@ -82,9 +77,6 @@ public:
         datas.push_back(bit_cast<float>(_resolution.x));
         datas.push_back(bit_cast<float>(_resolution.y));
         _marginal.fill_data(datas);
-        for (const auto &item : _conditional_v) {
-            item.fill_data(datas);
-        }
     }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
         Uint idx = coord.y * _resolution.x + coord.x;
