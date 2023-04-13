@@ -122,8 +122,8 @@ public:
         }
     }
 
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override;
-    uint data_size() const noexcept override;
+    void fill_datas(ManagedWrapper<float>&datas) const noexcept override;
+    uint datas_size() const noexcept override;
     void cache_slots(const Interaction &it, const SampledWavelengths &swl,
                      const DataAccessor<float> *da) const noexcept;
     void clear_slot_cache() const noexcept;

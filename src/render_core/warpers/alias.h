@@ -37,10 +37,10 @@ public:
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
-    [[nodiscard]] uint data_size() const noexcept override {
+    [[nodiscard]] uint datas_size() const noexcept override {
         return sizeof(_table.index()) + sizeof(_func.index()) + sizeof(size());
     }
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
         datas.push_back(bit_cast<float>(size()));
         datas.push_back(bit_cast<float>(_func.index()));
         datas.push_back(bit_cast<float>(_table.index()));

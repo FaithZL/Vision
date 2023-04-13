@@ -63,15 +63,15 @@ BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) 
     return ret;
 }
 
-void Material::fill_data(ManagedWrapper<float> &datas) const noexcept {
+void Material::fill_datas(ManagedWrapper<float>&datas) const noexcept {
     for_each_slot([&](const Slot &slot) {
-        slot->fill_data(datas);
+        slot->fill_datas(datas);
     });
 }
 
-uint Material::data_size() const noexcept {
+uint Material::datas_size() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
-        return size + slot->data_size();
+        return size + slot->datas_size();
     });
 }
 

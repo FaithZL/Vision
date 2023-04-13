@@ -19,10 +19,10 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64_list(_value);
     }
-    [[nodiscard]] uint data_size() const noexcept override {
+    [[nodiscard]] uint datas_size() const noexcept override {
         return _value.size() * sizeof(float);
     }
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
         for (auto elm : _value) {
             datas.push_back(elm);
         }

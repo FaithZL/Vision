@@ -17,7 +17,7 @@ public:
         : ShaderNode(desc),
           _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
         datas.push_back(bit_cast<float>(_image_wrapper.id()));
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
@@ -33,7 +33,7 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
     }
-    [[nodiscard]] uint data_size() const noexcept override {
+    [[nodiscard]] uint datas_size() const noexcept override {
         return sizeof(_image_wrapper.id());
     }
     void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {

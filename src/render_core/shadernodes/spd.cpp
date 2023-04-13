@@ -17,7 +17,7 @@ public:
         _spd.init(desc["value"].data());
     }
 
-    [[nodiscard]] uint data_size() const noexcept override {
+    [[nodiscard]] uint datas_size() const noexcept override {
         return sizeof(_spd.buffer_index());
     }
 
@@ -25,7 +25,7 @@ public:
         _spd.prepare();
     }
 
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
         datas.push_back(bit_cast<float>(_spd.buffer_index()));
     }
 

@@ -34,8 +34,8 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
-    [[nodiscard]] uint data_size() const noexcept override { return 0u; }
-    void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+    [[nodiscard]] uint datas_size() const noexcept override { return 0u; }
+    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
 
     }
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;

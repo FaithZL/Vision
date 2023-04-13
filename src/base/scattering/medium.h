@@ -29,8 +29,8 @@ public:
           _index(desc["index"].as_uint(InvalidUI32)),
           _scale(desc.scale["value"].as_float()) {}
     ~Medium() override = default;
-    [[nodiscard]] uint data_size() const noexcept override { return 0u; }
-    [[nodiscard]] void fill_data(ManagedWrapper<float> &datas) const noexcept override {
+    [[nodiscard]] uint datas_size() const noexcept override { return 0u; }
+    [[nodiscard]] void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
     }
     virtual SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const OCRay &ray, Interaction &it,
