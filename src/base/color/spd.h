@@ -15,7 +15,7 @@ namespace vision {
 using namespace ocarina;
 
 // todo change to scalar or vector template
-class SPD {
+class SPD : public PolymorphicElement<float> {
 private:
     static constexpr auto spd_lut_interval = 5u;
     ManagedWrapper<float> _func;
@@ -43,6 +43,13 @@ public:
             ret.push_back(func(lambda));
         }
         return ret;
+    }
+    [[nodiscard]] uint datas_size() const noexcept override {
+        return _func.datas_size() + sizeof(_sample_interval);
+    }
+    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
+        _func.fill_datas(datas);
+        datas.push_back(_sample_interval);
     }
     void prepare() noexcept;
     [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
