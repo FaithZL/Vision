@@ -12091,10 +12091,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12113,10 +12112,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12164,10 +12162,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.05,
+                "roughness":
                     0.05
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12186,10 +12183,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.075,
+                "roughness":
                     0.075
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12207,10 +12203,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.04,
+                "roughness":
                     0.04
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12229,10 +12224,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.08,
+                "roughness":
                     0.08
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12262,10 +12256,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.01,
+                "roughness":
                     0.01
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12275,10 +12268,9 @@
             "param": {
                 "material_name": "LASF9",
                 "ior": 1.5,
-                "roughness": [
-                    0,
+                "roughness":
                     0
-                ],
+                ,
                 "color": [
                     1.0,
                     1.0,
@@ -12300,10 +12292,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.025,
+                "roughness":
                     0.025
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12353,10 +12344,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.05,
+                "roughness":
                     0.05
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12374,10 +12364,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.05,
+                "roughness":
                     0.05
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12406,10 +12395,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12428,10 +12416,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12450,10 +12437,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12472,10 +12458,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12515,10 +12500,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.02,
+                "roughness":
                     0.02
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12537,10 +12521,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12559,10 +12542,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12581,10 +12563,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.01,
+                "roughness":
                     0.01
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12602,10 +12583,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12656,10 +12636,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.08,
+                "roughness":
                     0.08
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12678,10 +12657,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.02,
+                "roughness":
                     0.02
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12691,10 +12669,9 @@
             "param": {
                 "ior": 1.5,
                 "material_name": "LASF9",
-                "roughness": [
-                    0,
+                "roughness":
                     0
-                ],
+                ,
                 "color": [
                     1.0,
                     1.0,
@@ -12717,10 +12694,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12739,10 +12715,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12761,10 +12736,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12796,10 +12770,9 @@
             "param": {
                 "ior": 1.5,
                 "material_name": "LASF9",
-                "roughness": [
-                    0,
+                "roughness":
                     0
-                ],
+                ,
                 "color": [
                     1.0,
                     1.0,
@@ -12822,10 +12795,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12844,10 +12816,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -12857,10 +12828,9 @@
             "param": {
                 "ior": 1.5,
                 "material_name": "LASF9",
-                "roughness": [
-                    0,
+                "roughness":
                     0
-                ],
+                ,
                 "color": [
                     1.0,
                     1.0,
@@ -12968,10 +12938,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13011,10 +12980,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13033,10 +13001,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13055,10 +13022,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.05,
+                "roughness":
                     0.05
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13077,10 +13043,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13099,10 +13064,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13121,10 +13085,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13143,10 +13106,9 @@
                     0,
                     0
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13194,10 +13156,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13226,10 +13187,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13248,10 +13208,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13269,10 +13228,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13356,10 +13314,9 @@
                     0.04,
                     0.04
                 ],
-                "roughness": [
-                    0.1,
+                "roughness":
                     0.1
-                ],
+                ,
                 "remapping_roughness": false
             }
         },
@@ -13512,8 +13469,8 @@
                 "type": "rgb",
                 "param": {
                     "resolution": [
-                        1280,
-                        720
+                        1440,
+                        968
                     ],
                     "fb_state": 0
                 }
