@@ -12,7 +12,7 @@ void App::prepare() noexcept {
     context.cli_parser().try_print_help_and_exit();
     scene_desc = context.parse_file();
     rp.init_scene(scene_desc);
-    window = context.create_window("vision", rp.resolution(), "gl");
+    window = context.create_window("LajiRender", rp.resolution(), "gl");
     rp.prepare();
     radiance_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, rp.resolution());
     register_event();
