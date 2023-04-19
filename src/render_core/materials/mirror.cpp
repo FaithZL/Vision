@@ -48,7 +48,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBSDF>(it, fresnel, move(bxdf));
+        return make_unique<MirrorBSDF>(it, fresnel, ocarina::move(bxdf));
     }
 };
 

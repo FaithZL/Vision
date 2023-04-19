@@ -173,7 +173,7 @@ protected:
     RGBSigmoidPolynomial _rsp;
 
 public:
-    explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{move(rsp)} {}
+    explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{ocarina::move(rsp)} {}
     [[nodiscard]] virtual Float eval(const Float &lambda) const noexcept { return _rsp(lambda); }
 };
 
@@ -186,7 +186,7 @@ public:
 
 public:
     explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
-        : Super{move(rsp)}, _scale(scale) {}
+        : Super{ocarina::move(rsp)}, _scale(scale) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
         : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {

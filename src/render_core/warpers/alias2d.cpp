@@ -32,8 +32,8 @@ public:
             iter += res.x;
             AliasTable alias_table(render_pipeline()->resource_array());
             alias_table._scene = _scene;
-            alias_table.build(move(func_v));
-            conditional_v.push_back(move(alias_table));
+            alias_table.build(ocarina::move(func_v));
+            conditional_v.push_back(ocarina::move(alias_table));
         }
 
         // build marginal
@@ -42,7 +42,7 @@ public:
         for (int v = 0; v < res.y; ++v) {
             marginal_func.push_back(conditional_v[v].integral());
         }
-        _marginal.build(move(marginal_func));
+        _marginal.build(ocarina::move(marginal_func));
 
         // flatten conditionals table and weight
         _conditional_v_tables.reserve(res.x * res.y);

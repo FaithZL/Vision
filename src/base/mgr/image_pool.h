@@ -22,7 +22,7 @@ private:
 public:
     ImageWrapper() = default;
     ImageWrapper(ImageIO image_io, RHITexture image, uint id)
-        : _image_io(move(image_io)), _texture(move(image)), _id(id) {}
+        : _image_io(ocarina::move(image_io)), _texture(ocarina::move(image)), _id(id) {}
     [[nodiscard]] RHITexture &texture() noexcept { return _texture; }
     [[nodiscard]] const RHITexture &texture() const noexcept { return _texture; }
     [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }

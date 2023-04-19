@@ -32,7 +32,7 @@ protected:
     }
 
 public:
-    BSDF() = default;
+    BSDF() = delete;
     explicit BSDF(const Interaction &it, const SampledWavelengths &swl)
         : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl) {}
 
@@ -62,7 +62,7 @@ public:
                    MicrofacetTransmission trans,
                    const Bool &dispersive)
         : BSDF(it, refl.swl()), _fresnel(fresnel),
-          _refl(move(refl)), _trans(move(trans)),
+          _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
           _dispersive(dispersive) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {

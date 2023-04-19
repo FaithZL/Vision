@@ -46,12 +46,12 @@ SPD::SPD(RenderPipeline *rp)
 
 SPD::SPD(vector<float> func, RenderPipeline *rp)
     : SPD(rp) {
-    init(move(func));
+    init(ocarina::move(func));
 }
 
 void SPD::init(vector<float> func) noexcept {
     _sample_interval = static_cast<float>(cie::cie_sample_count) / func.size();
-    _func.set_host(move(func));
+    _func.set_host(ocarina::move(func));
 }
 
 void SPD::prepare() noexcept {

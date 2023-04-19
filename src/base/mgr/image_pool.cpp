@@ -18,7 +18,7 @@ ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, RenderPipeline *rp
     }
     auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());
     uint id = rp->register_texture(texture);
-    return {move(image_io), move(texture), id};
+    return {ocarina::move(image_io), ocarina::move(texture), id};
 }
 
 TextureDownloadCommand *ImageWrapper::download() noexcept {

@@ -138,7 +138,7 @@ public:
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl, render_pipeline());
         FresnelBlend bxdf(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBSDF>(it, fresnel, move(bxdf));
+        return make_unique<SubstrateBSDF>(it, fresnel, ocarina::move(bxdf));
     }
 };
 

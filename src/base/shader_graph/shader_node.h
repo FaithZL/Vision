@@ -72,7 +72,7 @@ public:
 #ifndef NDEBUG
           _channels(channels),
 #endif
-          _channel_mask(_calculate_mask(move(channels))) {
+          _channel_mask(_calculate_mask(ocarina::move(channels))) {
         OC_ASSERT(_dim <= 4);
     }
 

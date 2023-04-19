@@ -164,7 +164,7 @@ void SceneDesc::process_materials() noexcept {
     // merge duplicate materials
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;
-    auto mats = move(material_descs);
+    auto mats = ocarina::move(material_descs);
     bool has_no_material_light = false;
     for (const ShapeDesc &sd : shape_descs) {
         uint index = material_descs.size();

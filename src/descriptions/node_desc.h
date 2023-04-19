@@ -292,7 +292,7 @@ public:
     bool save_exit{false};
     VISION_DESC_COMMON(Output)
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
-        this->scene_path = move(scene_path);
+        this->scene_path = ocarina::move(scene_path);
         init(ps);
     }
     void init(const ParameterSet &ps) noexcept override;
