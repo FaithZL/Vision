@@ -68,13 +68,13 @@ template<EPort p = D>
         case GGX: {
             oc_float<p> e = tan_theta_2 * (sqr(geometry::cos_phi(wh) / alpha_x) + sqr(geometry::sin_phi(wh) / alpha_y));
             oc_float<p> ret = 1.f / (Pi * alpha_x * alpha_y * cos_theta_4 * sqr(1 + e));
-            return select(cos_theta_4 < 1e-16f || isinf(tan_theta_2), 0.f, ret);
+            return select(cos_theta_4 < 1e-16f || ocarina::isinf(tan_theta_2), 0.f, ret);
         }
         case Beckmann: {
             oc_float<p> ret = exp(-tan_theta_2 * (geometry::cos_phi_2(wh) / sqr(alpha_x) +
                                                   geometry::sin_phi_2(wh) / sqr(alpha_y))) /
                               (Pi * alpha_x * alpha_y * cos_theta_4);
-            return select(cos_theta_4 < 1e-16f || isinf(tan_theta_2), 0.f, ret);
+            return select(cos_theta_4 < 1e-16f || ocarina::isinf(tan_theta_2), 0.f, ret);
         }
         default:
             break;
@@ -99,7 +99,7 @@ template<EPort p = EPort::D>
             oc_float<p> alpha = sqrt(cos_theta2 * sqr(alpha_x) +
                                      sin_theta2 * sqr(alpha_y));
             oc_float<p> ret = (-1 + sqrt(1.f + sqr(alpha * abs_tan_theta))) / 2;
-            return select(isinf(abs_tan_theta), 0.f, ret);
+            return select(ocarina::isinf(abs_tan_theta), 0.f, ret);
         }
         case Beckmann: {
             oc_float<p> abs_tan_theta = abs(geometry::tan_theta(w));
@@ -112,7 +112,7 @@ template<EPort p = EPort::D>
             oc_float<p> a = 1.f / (alpha * abs_tan_theta);
 
             oc_float<p> ret = (1 - 1.259f * a + 0.396f * sqr(a)) / (3.535f * a + 2.181f * sqr(a));
-            return select(a >= 1.6f || isinf(abs_tan_theta), 0.f, ret);
+            return select(a >= 1.6f || ocarina::isinf(abs_tan_theta), 0.f, ret);
         }
         default:
             break;
@@ -177,7 +177,7 @@ template<EPort p = EPort::D>
         case Beckmann: {
             oc_float<p> tan_theta_2, phi;
             oc_float<p> log_sample = log(1 - u[0]);
-            oc_assert(!isinf(log_sample), "inf log sample");
+            oc_assert(!ocarina::isinf(log_sample), "inf log sample");
             phi = atan(alpha_y / alpha_x *
                        tan(_2Pi * u[1] + PiOver2));
             phi = select(u[1] > .5f, phi + Pi, phi);

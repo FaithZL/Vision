@@ -28,7 +28,7 @@ private:
 
 private:
     [[nodiscard]] static Float _s(Float x) noexcept {
-        return select(isinf(x), cast<float>(x > 0.0f),
+        return select(ocarina::isinf(x), cast<float>(x > 0.0f),
                       0.5f * fma(x, rsqrt(fma(x, x, 1.f)), 1.f));
     }
 

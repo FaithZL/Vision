@@ -46,7 +46,7 @@ SampledSpectrum select(const Bool &p, const SampledSpectrum &t, const Float &f) 
 }
 
 SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept {
-    Bool any_nan = t.any([](const Float &value) { return isnan(value); });
+    Bool any_nan = t.any([](const Float &value) { return ocarina::isnan(value); });
     return t.map([&any_nan](const Float &x) noexcept { return select(any_nan, 0.f, x); });
 }
 

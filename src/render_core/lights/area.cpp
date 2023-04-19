@@ -44,7 +44,7 @@ public:
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
         Float ret = PDF_dir(p_light.PDF_pos, p_light.ng, p_ref.pos - p_light.pos);
-        return select(isinf(ret), 0.f, ret);
+        return select(ocarina::isinf(ret), 0.f, ret);
     }
 
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,

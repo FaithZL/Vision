@@ -70,7 +70,7 @@ public:
         Float3 pos = p_ref.pos + world_dir * _scene->world_diameter();
         LightEvalContext p_light{pos};
         ret.eval.L = L(local_dir, swl);
-        pdf_dir = select(isinf(pdf_dir), 0.f, pdf_dir);
+        pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
         ret.eval.pdf = pdf_dir;
         ret.p_light = pos;
         return ret;
