@@ -11,11 +11,15 @@ using namespace ocarina;
 class Image : public ShaderNode {
 private:
     const ImageWrapper &_image_wrapper;
+    Serialize<uint> _tex_id{};
 
 public:
     explicit Image(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
-          _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {}
+          _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {
+        _tex_id = _image_wrapper.id();
+    }
+    OC_SERIALIZABLE_FUNC(float, _tex_id)
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
         datas.push_back(bit_cast<float>(_image_wrapper.id()));

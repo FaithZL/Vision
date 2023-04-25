@@ -12,6 +12,7 @@ private:
 public:
     explicit NumberInput(const ShaderNodeDesc &desc)
         : ShaderNode(desc), _value(desc["value"].as_vector<float>()) {}
+    OC_SERIALIZABLE_FUNC(float, _value)
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
     [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
@@ -22,6 +23,7 @@ public:
     [[nodiscard]] uint datas_size() const noexcept override {
         return _value.size() * sizeof(float);
     }
+
     void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
         for (auto elm : _value.hv()) {
             datas.push_back(elm);
