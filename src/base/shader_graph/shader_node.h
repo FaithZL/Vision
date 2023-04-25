@@ -11,7 +11,7 @@
 
 namespace vision {
 
-class ShaderNode : public Node, public PolymorphicElement<float> {
+class ShaderNode : public Node, public PolymorphicElement<float>,public ISerializable<float> {
 protected:
     ShaderNodeType _type{};
     mutable Array<float> _value_ref{};
@@ -40,6 +40,15 @@ public:
      */
     virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl,
                                   const DataAccessor<float> *da) const noexcept = 0;
+    void encode(ManagedWrapper<float> &data) const noexcept override {
+
+    }
+    void decode(const DataAccessor<float> *da) const noexcept override {
+
+    }
+    [[nodiscard]] uint size() const noexcept override {
+        return 0;
+    }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Array<float> value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept;
     void cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl, const DataAccessor<float> *da) const noexcept;

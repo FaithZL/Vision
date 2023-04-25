@@ -7,7 +7,7 @@
 namespace vision {
 class NumberInput : public ShaderNode {
 private:
-    vector<float> _value;
+    Serialize<vector<float>> _value;
 
 public:
     explicit NumberInput(const ShaderNodeDesc &desc)
@@ -17,13 +17,13 @@ public:
     [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64_list(_value);
+        return hash64_list(_value.hv());
     }
     [[nodiscard]] uint datas_size() const noexcept override {
         return _value.size() * sizeof(float);
     }
     void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
-        for (auto elm : _value) {
+        for (auto elm : _value.hv()) {
             datas.push_back(elm);
         }
     }
@@ -34,7 +34,7 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return Array<float>(_value);
+        return Array<float>(_value.hv());
     }
 };
 }// namespace vision

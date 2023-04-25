@@ -22,7 +22,7 @@ void ShaderNode::cache_value(const AttrEvalContext &ctx, const SampledWavelength
 }
 
 void ShaderNode::clear_cache() const noexcept {
-    _value_ref.invalidate();
+//    _value_ref.invalidate();
 }
 
 uint Slot::_calculate_mask(string channels) noexcept {
