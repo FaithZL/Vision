@@ -46,7 +46,7 @@ public:
     void decode(const DataAccessor<float> *da) const noexcept override {
 
     }
-    [[nodiscard]] uint size() const noexcept override {
+    [[nodiscard]] uint element_num() const noexcept override {
         return 0;
     }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;

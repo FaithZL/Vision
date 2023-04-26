@@ -15,13 +15,13 @@ public:
     OC_SERIALIZABLE_FUNC(float, _value)
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
-    [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
+    [[nodiscard]] uint dim() const noexcept override { return _value.element_num(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64_list(_value.hv());
     }
     [[nodiscard]] uint datas_size() const noexcept override {
-        return _value.size() * sizeof(float);
+        return _value.element_num() * sizeof(float);
     }
 
     void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
@@ -32,7 +32,7 @@ public:
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl,
                                         const DataAccessor<float> *da) const noexcept override {
-        return da->read_dynamic_array<float>(_value.size());
+        return da->read_dynamic_array<float>(_value.element_num());
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
