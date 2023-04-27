@@ -14,7 +14,7 @@ namespace vision {
 
 using namespace ocarina;
 
-class SPD : public PolymorphicElement<float>, public ISerializable<float>{
+class SPD : public ISerializable<float>{
 private:
     static constexpr auto spd_lut_interval = 5u;
     ManagedWrapper<float> _func;
@@ -44,13 +44,7 @@ public:
         }
         return ret;
     }
-    [[nodiscard]] uint datas_size() const noexcept override {
-        return _func.datas_size() + sizeof(_sample_interval);
-    }
-    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
-        _func.fill_datas(datas);
-        datas.push_back(_sample_interval.hv());
-    }
+
     void prepare() noexcept;
     [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;

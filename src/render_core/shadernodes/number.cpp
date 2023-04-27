@@ -20,15 +20,6 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64_list(_value.hv());
     }
-    [[nodiscard]] uint datas_size() const noexcept override {
-        return _value.element_num() * sizeof(float);
-    }
-
-    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
-        for (auto elm : _value.hv()) {
-            datas.push_back(elm);
-        }
-    }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl,
                                         const DataAccessor<float> *da) const noexcept override {

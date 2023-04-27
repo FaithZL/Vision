@@ -11,7 +11,7 @@
 
 namespace vision {
 
-class ShaderNode : public Node, public PolymorphicElement<float>,public ISerializable<float> {
+class ShaderNode : public Node, public ISerializable<float> {
 protected:
     ShaderNodeType _type{};
     mutable Array<float> _value_ref{};

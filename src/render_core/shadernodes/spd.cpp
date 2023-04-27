@@ -18,16 +18,8 @@ public:
     }
     OC_SERIALIZABLE_FUNC(float, _spd)
 
-    [[nodiscard]] uint datas_size() const noexcept override {
-        return sizeof(_spd.buffer_index());
-    }
-
     void prepare() noexcept override {
         _spd.prepare();
-    }
-
-    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
-        datas.push_back(bit_cast<float>(_spd.buffer_index()));
     }
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,

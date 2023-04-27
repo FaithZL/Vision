@@ -63,18 +63,6 @@ BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) 
     return ret;
 }
 
-void Material::fill_datas(ManagedWrapper<float> &datas) const noexcept {
-    for_each_slot([&](const Slot &slot) {
-        slot->fill_datas(datas);
-    });
-}
-
-uint Material::datas_size() const noexcept {
-    return reduce_slots(0u, [&](uint size, const Slot &slot) {
-        return size + slot->datas_size();
-    });
-}
-
 void Material::cache_slots(const Interaction &it, const SampledWavelengths &swl,
                            const DataAccessor<float> *da) const noexcept {
     for_each_slot([&](const Slot &slot) {

@@ -21,9 +21,7 @@ public:
     }
     OC_SERIALIZABLE_FUNC(float, _tex_id)
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
-    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
-        datas.push_back(bit_cast<float>(_image_wrapper.id()));
-    }
+
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         Uint idx = _tex_id.valid() ? _tex_id.dv() : _tex_id.hv();
@@ -37,9 +35,6 @@ public:
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
-    }
-    [[nodiscard]] uint datas_size() const noexcept override {
-        return sizeof(_image_wrapper.id());
     }
     void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {
         _image_wrapper.image().for_each_pixel(func);

@@ -68,20 +68,6 @@ public:
         _conditional_v_weights.register_self();
         _conditional_v_tables.register_self();
     }
-    [[nodiscard]] uint datas_size() const noexcept override {
-        uint ret = _marginal.datas_size();
-        ret += sizeof(_conditional_v_weights.index());
-        ret += sizeof(_conditional_v_tables.index());
-        ret += sizeof(_resolution);
-        return ret;
-    }
-    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
-        datas.push_back(bit_cast<float>(_resolution.x));
-        datas.push_back(bit_cast<float>(_resolution.y));
-        _marginal.fill_datas(datas);
-        _conditional_v_weights.fill_datas(datas);
-        _conditional_v_tables.fill_datas(datas);
-    }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
         Uint idx = coord.y * _resolution.x + coord.x;
         return _conditional_v_weights.read(idx);

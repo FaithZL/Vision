@@ -10,7 +10,7 @@
 
 namespace vision {
 
-class Warper : public Node, public PolymorphicElement<float> {
+class Warper : public Node {
 public:
     using Desc = WarperDesc;
 
@@ -37,7 +37,7 @@ public:
                                                   Float *pdf, Uint *offset) const noexcept = 0;
 };
 
-class Warper2D : public Node, public PolymorphicElement<float> {
+class Warper2D : public Node {
 public:
     using Desc = WarperDesc;
 
