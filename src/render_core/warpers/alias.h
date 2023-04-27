@@ -40,7 +40,7 @@ public:
     [[nodiscard]] uint datas_size() const noexcept override {
         return sizeof(_table.index()) + sizeof(_func.index()) + sizeof(size());
     }
-    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
+    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
         datas.push_back(bit_cast<float>(size()));
         datas.push_back(bit_cast<float>(_func.index()));
         datas.push_back(bit_cast<float>(_table.index()));
@@ -51,10 +51,10 @@ public:
     [[nodiscard]] Float func_at(const Uint &buffer_id, const Uint &i) const noexcept override {
         return render_pipeline()->buffer<float>(buffer_id).read(i);
     }
-    [[nodiscard]] Float PDF(const Uint &buffer_id, const Uint &i) const noexcept {
+    [[nodiscard]] Float PDF(const Uint &buffer_id, const Uint &i) const noexcept override {
         return integral() > 0 ? func_at(buffer_id, i) / integral() : Var(0.f);
     }
-    [[nodiscard]] Float PMF(const Uint &buffer_id, const Uint &i) const noexcept {
+    [[nodiscard]] Float PMF(const Uint &buffer_id, const Uint &i) const noexcept override {
         return integral() > 0 ? (func_at(buffer_id, i) / (integral() * size())) : Var(0.f);
     }
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override {
