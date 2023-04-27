@@ -62,8 +62,8 @@ void SPD::prepare() noexcept {
 
 Float SPD::eval(const Uint &index, const Float &lambda) const noexcept {
     using namespace cie;
-    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval;
-    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval) + 1u;
+    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
+    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
     Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
     Float l = _rp->buffer<float>(index).read(i);
     Float r = _rp->buffer<float>(index).read(i + 1);
@@ -73,8 +73,8 @@ Float SPD::eval(const Uint &index, const Float &lambda) const noexcept {
 float SPD::eval(float lambda) const noexcept {
     using namespace cie;
     using namespace cie;
-    float t = (ocarina::clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval;
-    float sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval) + 1u;
+    float t = (ocarina::clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
+    float sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
     uint i = static_cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
     float l = _func.at(i);
     float r = _func.at(i + 1);

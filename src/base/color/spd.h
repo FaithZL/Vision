@@ -14,17 +14,17 @@ namespace vision {
 
 using namespace ocarina;
 
-// todo change to scalar or vector template
-class SPD : public PolymorphicElement<float> {
+class SPD : public PolymorphicElement<float>, public ISerializable<float>{
 private:
     static constexpr auto spd_lut_interval = 5u;
     ManagedWrapper<float> _func;
-    float _sample_interval{};
+    Serialize<float> _sample_interval{};
     RenderPipeline *_rp{};
 
 public:
     explicit SPD(RenderPipeline *rp);
     SPD(vector<float> func, RenderPipeline *rp);
+    OC_SERIALIZABLE_FUNC(float, _func, _sample_interval)
 
     void init(vector<float> func) noexcept;
     template<typename T>
@@ -49,7 +49,7 @@ public:
     }
     void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
         _func.fill_datas(datas);
-        datas.push_back(_sample_interval);
+        datas.push_back(_sample_interval.hv());
     }
     void prepare() noexcept;
     [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
