@@ -254,7 +254,8 @@
                 "z": 1,
 //                "material": "TallBox",
 //                "material": "Mirror2",
-                "material": "Glass2",
+//                "material": "Glass2",
+                "material": "Ag",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -521,6 +522,14 @@
             }
         },
         {
+            "type": "metal",
+            "name": "Ag",
+            "param": {
+                "material_name":"Ag",
+                "roughness": [0.01,0.01]
+            }
+        },
+        {
             "type": "mirror",
             "name": "Mirror",
             "param": {
@@ -650,7 +659,7 @@
         }
     },
     "spectrum" : {
-        "type" : "srgb",
+        "type" : "hero",
         "param" : {
             "dimension" : 3
         }
