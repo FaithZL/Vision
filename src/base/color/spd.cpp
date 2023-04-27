@@ -60,16 +60,6 @@ void SPD::prepare() noexcept {
     _func.upload_immediately();
 }
 
-Float SPD::eval(const Uint &index, const Float &lambda) const noexcept {
-    using namespace cie;
-    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
-    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
-    Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
-    Float l = _rp->buffer<float>(index).read(i);
-    Float r = _rp->buffer<float>(index).read(i + 1);
-    return lerp(fract(t), l, r);
-}
-
 float SPD::eval(float lambda) const noexcept {
     using namespace cie;
     using namespace cie;
@@ -82,17 +72,19 @@ float SPD::eval(float lambda) const noexcept {
 }
 
 Float SPD::eval(const Float &lambda) const noexcept {
-    return eval(_func.index().hv(), lambda);
+    using namespace cie;
+    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
+    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
+    Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
+    Float l = _rp->buffer<float>(_func.index().auto_value()).read(i);
+    Float r = _rp->buffer<float>(_func.index().auto_value()).read(i + 1);
+    return lerp(fract(t), l, r);
 }
 
-SampledSpectrum SPD::eval(const SampledWavelengths &swl) const noexcept {
-    return SampledSpectrum{eval(_func.index().hv(), swl)};
-}
-
-Array<float> SPD::eval(const Uint &index, const SampledWavelengths &swl) const noexcept {
+Array<float> SPD::eval(const SampledWavelengths &swl) const noexcept {
     Array<float> values{swl.dimension()};
     for (int i = 0; i < swl.dimension(); ++i) {
-        values[i] = eval(index, swl.lambda(i));
+        values[i] = eval(swl.lambda(i));
     }
     return values;
 }
