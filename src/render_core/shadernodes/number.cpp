@@ -36,7 +36,9 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return Array<float>(_value.hv());
+        return _value.valid() ?
+                   _value.dv() :
+                   Array<float>(_value.hv());
     }
 };
 }// namespace vision

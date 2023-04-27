@@ -155,11 +155,11 @@ protected:
         const Material *material{};
         Guard(const Material *mat, const Interaction &it, const SampledWavelengths &swl, const DataAccessor<float> *da)
             : material(mat) {
-            material->cache_slots(it, swl, da);
+//            material->cache_slots(it, swl, da);
             material->decode(da);
         }
         ~Guard() {
-            material->clear_slot_cache();
+//            material->clear_slot_cache();
             material->invalidate();
         }
     };
