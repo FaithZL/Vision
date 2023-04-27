@@ -72,7 +72,7 @@ public:
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override;
 };
 
-class Material : public Node, public PolymorphicElement<float> {
+class Material : public Node, public PolymorphicElement<float>, public ISerializable<float> {
 public:
     using Desc = MaterialDesc;
 
@@ -88,6 +88,11 @@ protected:
     const Slot &get_slot(uint index) const noexcept {
         const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
         return head[index];
+    }
+
+    Slot &get_slot(uint index) noexcept {
+        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
+        return (const_cast<Slot *>(head))[index];
     }
 
 public:
@@ -122,11 +127,26 @@ public:
         }
     }
 
-    void fill_datas(ManagedWrapper<float>&datas) const noexcept override;
+    template<typename F>
+    void for_each_slot(F &&func) noexcept {
+        for (int i = 0; i < _slot_cursor.num; ++i) {
+            Slot &slot = get_slot(i);
+            func(slot);
+        }
+    }
+
+    void fill_datas(ManagedWrapper<float> &datas) const noexcept override;
     uint datas_size() const noexcept override;
     void cache_slots(const Interaction &it, const SampledWavelengths &swl,
                      const DataAccessor<float> *da) const noexcept;
     void clear_slot_cache() const noexcept;
+
+    [[nodiscard]] uint element_num() const noexcept override;
+    [[nodiscard]] bool valid() const noexcept override;
+    void invalidate() noexcept override;
+    void encode(ManagedWrapper<float, float> &data) const noexcept override;
+    void decode(const DataAccessor<float> *da) const noexcept override;
+
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
