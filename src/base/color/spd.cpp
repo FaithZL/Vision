@@ -92,7 +92,7 @@ SampledSpectrum SPD::eval(const SampledWavelengths &swl) const noexcept {
 Array<float> SPD::eval(const Uint &index, const SampledWavelengths &swl) const noexcept {
     Array<float> values{swl.dimension()};
     for (int i = 0; i < swl.dimension(); ++i) {
-        values[i] = eval(swl.lambda(i));
+        values[i] = eval(index, swl.lambda(i));
     }
     return values;
 }
