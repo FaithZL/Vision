@@ -41,7 +41,7 @@ public:
         return integral() > 0 ? func_at(i) / integral() : Var(0.f);
     }
     [[nodiscard]] Float func_at(const Uint &i) const noexcept override {
-        return render_pipeline()->buffer<float>(_func.index().hv()).read(i);
+        return _func.read(i);
     }
     [[nodiscard]] Float PMF(const Uint &i) const noexcept override {
         return integral() > 0 ? (func_at(i) / (integral() * size())) : Var(0.f);
@@ -99,19 +99,6 @@ void AliasTable::build(vector<float> weights) noexcept {
 }
 
 namespace detail {
-
-[[nodiscard]] tuple<Uint, Float> offset_u_remapped(Uint buffer_offset, Float u,
-                                                   const ManagedWrapper<AliasEntry> &table, size_t size) noexcept {
-    u = u * float(size);
-    Uint idx = min(cast<uint>(u), uint(size - 1));
-    u = min(u - idx, OneMinusEpsilon);
-    Var alias_entry = table.read(buffer_offset + idx);
-    idx = select(u < alias_entry.prob, idx, alias_entry.alias);
-    Float u_remapped = select(u < alias_entry.prob,
-                              min(u / alias_entry.prob, OneMinusEpsilon),
-                              min((1 - u) / (1 - alias_entry.prob), OneMinusEpsilon));
-    return {idx, u_remapped};
-}
 
 [[nodiscard]] Uint offset(const Uint &buffer_offset, Float u, const RenderPipeline *rp,
                           const Uint &entry_id, size_t size, Float *u_remapped) noexcept {
