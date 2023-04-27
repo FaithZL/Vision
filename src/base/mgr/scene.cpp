@@ -107,10 +107,10 @@ void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
 }
 
 void Scene::prepare_materials() noexcept {
-    _materials.prepare(render_pipeline()->resource_array(), render_pipeline()->device());
     _materials.for_each_instance([&](const Material *material) noexcept {
         const_cast<Material *>(material)->prepare();
     });
+    _materials.prepare(render_pipeline()->resource_array(), render_pipeline()->device());
 }
 
 void Scene::prepare_shadernodes() noexcept {

@@ -30,7 +30,7 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return _spd.eval(_spd.buffer_index(), swl);
+        return _spd.eval(_spd.buffer_index().dv(), swl);
     }
 };
 
