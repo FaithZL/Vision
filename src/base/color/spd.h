@@ -24,7 +24,7 @@ private:
 public:
     explicit SPD(RenderPipeline *rp);
     SPD(vector<float> func, RenderPipeline *rp);
-    OC_SERIALIZABLE_FUNC(float, _func, _sample_interval)
+    OC_SERIALIZABLE_FUNC( _func, _sample_interval)
 
     void init(vector<float> func) noexcept;
     template<typename T>

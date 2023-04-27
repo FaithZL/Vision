@@ -12,7 +12,7 @@ private:
 public:
     explicit NumberInput(const ShaderNodeDesc &desc)
         : ShaderNode(desc), _value(desc["value"].as_vector<float>()) {}
-    OC_SERIALIZABLE_FUNC(float, _value)
+    OC_SERIALIZABLE_FUNC(_value)
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
     [[nodiscard]] uint dim() const noexcept override { return _value.element_num(); }

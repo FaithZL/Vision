@@ -16,7 +16,7 @@ public:
         : ShaderNode(desc), _spd(desc.scene->render_pipeline()) {
         _spd.init(desc["value"].data());
     }
-    OC_SERIALIZABLE_FUNC(float, _spd)
+    OC_SERIALIZABLE_FUNC(_spd)
 
     void prepare() noexcept override {
         _spd.prepare();
