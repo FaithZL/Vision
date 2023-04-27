@@ -37,9 +37,9 @@ public:
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
-    [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return func_at(_func.index(), i); }
-    [[nodiscard]] Float PDF(const Uint &i) const noexcept override { return PDF(_func.index(), i); }
-    [[nodiscard]] Float PMF(const Uint &i) const noexcept override { return PMF(_func.index(), i); }
+    [[nodiscard]] Float func_at(const Uint &i) const noexcept override { return func_at(_func.index().hv(), i); }
+    [[nodiscard]] Float PDF(const Uint &i) const noexcept override { return PDF(_func.index().hv(), i); }
+    [[nodiscard]] Float PMF(const Uint &i) const noexcept override { return PMF(_func.index().hv(), i); }
     [[nodiscard]] Float func_at(const Uint &buffer_id, const Uint &i) const noexcept override {
         return render_pipeline()->buffer<float>(buffer_id).read(i);
     }
@@ -50,10 +50,10 @@ public:
         return integral() > 0 ? (func_at(buffer_id, i) / (integral() * size())) : Var(0.f);
     }
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override {
-        return sample_discrete(_func.index(), _table.index(), u, pmf, u_remapped);
+        return sample_discrete(_func.index().hv(), _table.index().hv(), u, pmf, u_remapped);
     }
     [[nodiscard]] Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept override {
-        return sample_continuous(_func.index(), _table.index(), u, pdf, offset);
+        return sample_continuous(_func.index().hv(), _table.index().hv(), u, pdf, offset);
     }
     [[nodiscard]] pair<Uint, Float> offset_u_remapped(Float u, const Uint &entry_id, size_t size) const noexcept;
     [[nodiscard]] Uint sample_discrete(const Uint &func_id, const Uint &entry_id, Float u,

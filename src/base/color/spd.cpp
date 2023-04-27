@@ -82,11 +82,11 @@ float SPD::eval(float lambda) const noexcept {
 }
 
 Float SPD::eval(const Float &lambda) const noexcept {
-    return eval(_func.index(), lambda);
+    return eval(_func.index().hv(), lambda);
 }
 
 SampledSpectrum SPD::eval(const SampledWavelengths &swl) const noexcept {
-    return SampledSpectrum{eval(_func.index(), swl)};
+    return SampledSpectrum{eval(_func.index().hv(), swl)};
 }
 
 Array<float> SPD::eval(const Uint &index, const SampledWavelengths &swl) const noexcept {

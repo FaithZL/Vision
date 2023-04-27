@@ -46,7 +46,7 @@ public:
     }
 
     void prepare() noexcept;
-    [[nodiscard]] uint buffer_index() const noexcept { return _func.index(); }
+    [[nodiscard]] uint buffer_index() const noexcept { return _func.index().hv(); }
     [[nodiscard]] Float eval(const Uint &index, const Float &lambda) const noexcept;
     [[nodiscard]] float eval(float lambda) const noexcept;
     template<size_t N>
