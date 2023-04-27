@@ -160,6 +160,7 @@ protected:
         }
         ~Guard() {
             material->clear_slot_cache();
+            material->invalidate();
         }
     };
 
