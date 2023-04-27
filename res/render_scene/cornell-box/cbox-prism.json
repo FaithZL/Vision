@@ -678,6 +678,9 @@
             "lights": []
         }
     },
+    "render_setting": {
+        "polymorphic_mode" : 1
+    },
     "output": {
         "spp": 1024,
         "fn": "dispersion-hero.png"

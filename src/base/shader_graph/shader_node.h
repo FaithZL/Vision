@@ -14,7 +14,6 @@ namespace vision {
 class ShaderNode : public Node, public ISerializable<float> {
 protected:
     ShaderNodeType _type{};
-    mutable Array<float> _value_ref{};
 
 public:
     using Desc = ShaderNodeDesc;
@@ -36,7 +35,6 @@ public:
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
 
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] Array<float> value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }

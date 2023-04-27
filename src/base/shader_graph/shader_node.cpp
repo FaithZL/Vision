@@ -7,13 +7,6 @@
 
 namespace vision {
 
-Array<float> ShaderNode::value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
-    if (_value_ref.valid()) {
-        return _value_ref;
-    }
-    return evaluate(ctx, swl);
-}
-
 uint Slot::_calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
@@ -65,7 +58,7 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx,
             }
         }
     }
-    return _node->value(ctx, swl);
+    return _node->evaluate(ctx, swl);
 }
 
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
