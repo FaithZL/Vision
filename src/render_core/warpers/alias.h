@@ -113,6 +113,21 @@ namespace detail {
     return {idx, u_remapped};
 }
 
+[[nodiscard]] Uint offset(const Uint &buffer_offset, Float u, const RenderPipeline *rp,
+                          const Uint &entry_id, size_t size, Float *u_remapped) noexcept {
+    u = u * float(size);
+    Uint idx = min(cast<uint>(u), uint(size - 1));
+    u = min(u - idx, OneMinusEpsilon);
+    Var alias_entry = rp->buffer<AliasEntry>(entry_id).read(buffer_offset + idx);
+    idx = select(u < alias_entry.prob, idx, alias_entry.alias);
+    if (u_remapped) {
+        *u_remapped = select(u < alias_entry.prob,
+                             min(u / alias_entry.prob, OneMinusEpsilon),
+                             min((1 - u) / (1 - alias_entry.prob), OneMinusEpsilon));
+    }
+    return idx;
+}
+
 }// namespace detail
 
 pair<Uint, Float> AliasTable::offset_u_remapped(Float u, const Uint &entry_id, size_t size) const noexcept {

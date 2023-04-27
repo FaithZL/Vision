@@ -81,6 +81,7 @@ public:
         return _marginal.integral();
     }
     [[nodiscard]] Float2 sample_continuous(Float2 u, Float *pdf, Uint *coord) const noexcept override {
+
         return u;
     }
     [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept override {
@@ -91,7 +92,9 @@ public:
 
         // sample u
         Uint buffer_offset = _resolution.x * iv;
-        auto [iu, u_remapped] = detail::offset_u_remapped(buffer_offset, u.x, _conditional_v_tables, _resolution.x);
+        Float u_remapped;
+        Uint iu = detail::offset(buffer_offset, u.x, render_pipeline(),
+                                 _conditional_v_tables.index().hv(), _resolution.x, &u_remapped);
 
         Float fu = (iu + u_remapped) / _resolution.x;
         Float integral_u = _marginal._func.read(iv);
