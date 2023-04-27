@@ -135,10 +135,6 @@ public:
         }
     }
 
-    void cache_slots(const Interaction &it, const SampledWavelengths &swl,
-                     const DataAccessor<float> *da) const noexcept;
-    void clear_slot_cache() const noexcept;
-
     [[nodiscard]] uint element_num() const noexcept override;
     [[nodiscard]] bool has_device_value() const noexcept override;
     void reset_device_value() const noexcept override;

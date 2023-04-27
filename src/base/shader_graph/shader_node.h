@@ -34,16 +34,9 @@ public:
      * @return
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
-    /**
-     * data size in byte
-     * @return
-     */
-    virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl,
-                                  const DataAccessor<float> *da) const noexcept = 0;
+
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Array<float> value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept;
-    void cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl, const DataAccessor<float> *da) const noexcept;
-    void clear_cache() const noexcept;
     virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }

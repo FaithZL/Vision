@@ -27,12 +27,6 @@ public:
         Uint idx = _tex_id.has_device_value() ? _tex_id.dv() : _tex_id.hv();
         return render_pipeline()->tex(idx).sample(3, ctx.uv);
     }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl,
-                                        const DataAccessor<float> *da) const noexcept override {
-        Uint index = da->byte_read<uint>();
-        return render_pipeline()->tex(index).sample(3, ctx.uv);
-    }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
     }

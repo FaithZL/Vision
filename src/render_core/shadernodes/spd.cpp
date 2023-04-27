@@ -21,13 +21,6 @@ public:
     void prepare() noexcept override {
         _spd.prepare();
     }
-
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl,
-                                        const DataAccessor<float> *da) const noexcept override {
-        Uint index = da->byte_read<uint>();
-        return _spd.eval(index, swl);
-    }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return _spd.eval(_spd.buffer_index().dv(), swl);

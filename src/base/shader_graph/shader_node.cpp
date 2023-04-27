@@ -14,17 +14,6 @@ Array<float> ShaderNode::value(const AttrEvalContext &ctx, const SampledWaveleng
     return evaluate(ctx, swl);
 }
 
-void ShaderNode::cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl,
-                             const DataAccessor<float> *da) const noexcept {
-    if (!_value_ref.valid()) {
-        _value_ref.reset(evaluate(ctx, swl, da));
-    }
-}
-
-void ShaderNode::clear_cache() const noexcept {
-//    _value_ref.invalidate();
-}
-
 uint Slot::_calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);

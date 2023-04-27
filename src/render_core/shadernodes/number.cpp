@@ -21,11 +21,6 @@ public:
         return hash64_list(_value.hv());
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl,
-                                        const DataAccessor<float> *da) const noexcept override {
-        return da->read_dynamic_array<float>(_value.element_num());
-    }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return _value.has_device_value() ?
                    _value.dv() :
