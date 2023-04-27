@@ -94,7 +94,7 @@ void Material::invalidate() const noexcept {
     });
 }
 
-void Material::encode(ManagedWrapper<float, float> &data) const noexcept {
+void Material::encode(ManagedWrapper<float> &data) const noexcept {
     for_each_slot([&](const Slot &slot) {
         slot->encode(data);
     });
