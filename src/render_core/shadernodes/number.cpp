@@ -27,7 +27,7 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return _value.valid() ?
+        return _value.has_device_value() ?
                    _value.dv() :
                    Array<float>(_value.hv());
     }

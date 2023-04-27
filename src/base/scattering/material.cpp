@@ -82,15 +82,15 @@ uint Material::element_num() const noexcept {
     });
 }
 
-bool Material::valid() const noexcept {
+bool Material::has_device_value() const noexcept {
     return reduce_slots(true, [&](bool b, const Slot &slot) {
-        return b && slot->valid();
+        return b && slot->has_device_value();
     });
 }
 
-void Material::invalidate() const noexcept {
+void Material::reset_device_value() const noexcept {
     for_each_slot([&](const Slot &slot) {
-        slot->invalidate();
+        slot->reset_device_value();
     });
 }
 

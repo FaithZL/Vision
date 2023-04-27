@@ -24,7 +24,7 @@ public:
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        Uint idx = _tex_id.valid() ? _tex_id.dv() : _tex_id.hv();
+        Uint idx = _tex_id.has_device_value() ? _tex_id.dv() : _tex_id.hv();
         return render_pipeline()->tex(idx).sample(3, ctx.uv);
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,

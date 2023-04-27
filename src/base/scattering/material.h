@@ -140,8 +140,8 @@ public:
     void clear_slot_cache() const noexcept;
 
     [[nodiscard]] uint element_num() const noexcept override;
-    [[nodiscard]] bool valid() const noexcept override;
-    void invalidate() const noexcept override;
+    [[nodiscard]] bool has_device_value() const noexcept override;
+    void reset_device_value() const noexcept override;
     void encode(ManagedWrapper<float> &data) const noexcept override;
     void decode(const DataAccessor<float> *da) const noexcept override;
 
@@ -156,7 +156,7 @@ protected:
             material->decode(da);
         }
         ~Guard() {
-            material->invalidate();
+            material->reset_device_value();
         }
     };
 
