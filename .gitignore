@@ -1,7 +1,10 @@
 /cmake-build-debug
-/cmake-build-debug-visual-studio
 /cmake-build-release
 /cmake-build-relwithdebinfo
 /cmake-build-minsizerel
+/cmake-build-debug-msvc
+/cmake-build-release-msvc
+/cmake-build-relwithdebinfo-msvc
+/cmake-build-minsizerel-msvc
 /build
 /vs2019
