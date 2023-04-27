@@ -46,7 +46,7 @@ public:
     [[nodiscard]] Float PMF(const Uint &i) const noexcept override {
         return integral() > 0 ? (func_at(i) / (integral() * size())) : Var(0.f);
     }
-    [[nodiscard]] pair<Uint, Float> offset_u_remapped(Float u, const Uint &entry_id, size_t size) const noexcept;
+    [[nodiscard]] pair<Uint, Float> offset_u_remapped(Float u, size_t size) const noexcept;
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override;
     [[nodiscard]] Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept override;
 };
@@ -117,11 +117,11 @@ namespace detail {
 
 }// namespace detail
 
-pair<Uint, Float> AliasTable::offset_u_remapped(Float u, const Uint &entry_id, size_t size) const noexcept {
+pair<Uint, Float> AliasTable::offset_u_remapped(Float u, size_t size) const noexcept {
     u = u * float(size);
     Uint idx = min(cast<uint>(u), uint(size - 1));
     u = min(u - idx, OneMinusEpsilon);
-    Var alias_entry = render_pipeline()->buffer<AliasEntry>(entry_id).read(idx);
+    Var alias_entry = _table.read(idx);
     idx = select(u < alias_entry.prob, idx, alias_entry.alias);
     Float u_remapped = select(u < alias_entry.prob,
                               min(u / alias_entry.prob, OneMinusEpsilon),
@@ -130,7 +130,7 @@ pair<Uint, Float> AliasTable::offset_u_remapped(Float u, const Uint &entry_id, s
 }
 
 Uint AliasTable::sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept {
-    auto [offset, ur] = offset_u_remapped(u, _table.index().hv(), size());
+    auto [offset, ur] = offset_u_remapped(u, size());
     if (pmf) {
         *pmf = PMF(offset);
     }
@@ -141,7 +141,7 @@ Uint AliasTable::sample_discrete(Float u, Float *pmf, Float *u_remapped) const n
 }
 
 Float AliasTable::sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept {
-    auto [ofs, u_remapped] = offset_u_remapped(u, _table.index().hv(), size());
+    auto [ofs, u_remapped] = offset_u_remapped(u, size());
     Float ret = (ofs + u_remapped) / float(size());
     if (pdf) {
         *pdf = PDF(ofs);
