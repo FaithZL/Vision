@@ -143,7 +143,7 @@ public:
 
     [[nodiscard]] uint element_num() const noexcept override;
     [[nodiscard]] bool valid() const noexcept override;
-    void invalidate() noexcept override;
+    void invalidate() const noexcept override;
     void encode(ManagedWrapper<float, float> &data) const noexcept override;
     void decode(const DataAccessor<float> *da) const noexcept override;
 
@@ -154,8 +154,13 @@ protected:
     struct Guard {
         const Material *material{};
         Guard(const Material *mat, const Interaction &it, const SampledWavelengths &swl, const DataAccessor<float> *da)
-            : material(mat) { material->cache_slots(it, swl, da); }
-        ~Guard() { material->clear_slot_cache(); }
+            : material(mat) {
+            material->cache_slots(it, swl, da);
+            material->decode(da);
+        }
+        ~Guard() {
+            material->clear_slot_cache();
+        }
     };
 
     [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {

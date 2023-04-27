@@ -100,8 +100,8 @@ bool Material::valid() const noexcept {
     });
 }
 
-void Material::invalidate() noexcept {
-    for_each_slot([&](Slot &slot) {
+void Material::invalidate() const noexcept {
+    for_each_slot([&](const Slot &slot) {
         slot->invalidate();
     });
 }
