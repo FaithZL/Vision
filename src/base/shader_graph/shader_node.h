@@ -40,15 +40,6 @@ public:
      */
     virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl,
                                   const DataAccessor<float> *da) const noexcept = 0;
-    void encode(ManagedWrapper<float> &data) const noexcept override {
-
-    }
-    void decode(const DataAccessor<float> *da) const noexcept override {
-
-    }
-    [[nodiscard]] uint element_num() const noexcept override {
-        return 0;
-    }
     [[nodiscard]] virtual Array<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Array<float> value(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept;
     void cache_value(const AttrEvalContext &ctx, const SampledWavelengths &swl, const DataAccessor<float> *da) const noexcept;

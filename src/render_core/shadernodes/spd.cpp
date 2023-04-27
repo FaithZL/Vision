@@ -3,9 +3,9 @@
 //
 
 #include "base/color/spd.h"
+#include "base/shader_graph/shader_node.h"
 
 namespace vision {
-
 
 class SPDNode : public ShaderNode {
 private:
@@ -16,6 +16,7 @@ public:
         : ShaderNode(desc), _spd(desc.scene->render_pipeline()) {
         _spd.init(desc["value"].data());
     }
+    OC_SERIALIZABLE_FUNC(float, _spd)
 
     [[nodiscard]] uint datas_size() const noexcept override {
         return sizeof(_spd.buffer_index());
