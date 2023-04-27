@@ -59,7 +59,11 @@ public:
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
-        auto [uv, pdf_map, coord] = _warper->sample_continuous(u);
+
+        Float pdf_map;
+        Uint2 coord;
+
+        Float2 uv = _warper->sample_continuous(u, &pdf_map, &coord);
         Float theta = uv[1] * Pi;
         Float phi = uv[0] * _2Pi;
         Float sin_theta = sin(theta);

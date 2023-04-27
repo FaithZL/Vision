@@ -41,8 +41,7 @@ public:
     [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
     [[nodiscard]] virtual float integral() const noexcept = 0;
-    [[nodiscard]] virtual tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept = 0;
-    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint *coord) const noexcept = 0;
+    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept = 0;
 };
 
 }// namespace vision

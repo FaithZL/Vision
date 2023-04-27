@@ -80,11 +80,7 @@ public:
     [[nodiscard]] float integral() const noexcept override {
         return _marginal.integral();
     }
-    [[nodiscard]] Float2 sample_continuous(Float2 u, Float *pdf, Uint *coord) const noexcept override {
-
-        return u;
-    }
-    [[nodiscard]] tuple<Float2, Float, Uint2> sample_continuous(Float2 u) const noexcept override {
+    [[nodiscard]] Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept override {
         // sample v
         Float pdf_v;
         Uint iv;
@@ -100,7 +96,13 @@ public:
         Float integral_u = _marginal._func.read(iv);
         Float func_u = _conditional_v_weights.read(buffer_offset + iu);
         Float pdf_u = select(integral_u > 0, func_u / integral_u, 0.f);
-        return {make_float2(fu, fv), pdf_u * pdf_v, make_uint2(iu, iv)};
+        if (pdf) {
+            *pdf = pdf_u * pdf_v;
+        }
+        if (coord) {
+            *coord = make_uint2(iu, iv);
+        }
+        return make_float2(fu, fv);
     }
 };
 
