@@ -15,7 +15,7 @@ using namespace ocarina;
 class Sampler;
 class SampledWavelengths;
 
-class Medium : public Node, public PolymorphicElement<float> {
+class Medium : public Node, public PolymorphicElement<float>, public ISerializable<float> {
 protected:
     uint _index{};
     float _scale{};
@@ -30,12 +30,11 @@ public:
           _scale(desc.scale["value"].as_float()) {}
     ~Medium() override = default;
     [[nodiscard]] uint datas_size() const noexcept override { return 0u; }
-    void fill_datas(ManagedWrapper<float>&datas) const noexcept override {
+    void fill_datas(ManagedWrapper<float> &datas) const noexcept override {
     }
     virtual SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const OCRay &ray, Interaction &it,
                                    const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
 };
-
 
 }// namespace vision

@@ -20,7 +20,7 @@ enum class LightType {
     Infinite
 };
 
-class Light : public Node, public PolymorphicElement<float> {
+class Light : public Node, public PolymorphicElement<float>, public ISerializable<float>{
 public:
     using Desc = LightDesc;
 
