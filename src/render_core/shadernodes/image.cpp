@@ -24,8 +24,7 @@ public:
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        Uint idx = _tex_id.has_device_value() ? _tex_id.dv() : _tex_id.hv();
-        return render_pipeline()->tex(idx).sample(3, ctx.uv);
+        return render_pipeline()->tex(_tex_id.auto_value()).sample(3, ctx.uv);
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();

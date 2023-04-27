@@ -22,9 +22,7 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return _value.has_device_value() ?
-                   _value.dv() :
-                   Array<float>(_value.hv());
+        return _value.auto_value();
     }
 };
 }// namespace vision
