@@ -26,7 +26,8 @@ public:
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return render_pipeline()->tex(_image_wrapper.id()).sample(3, ctx.uv);
+        Uint idx = _tex_id.valid() ? _tex_id.dv() : _tex_id.hv();
+        return render_pipeline()->tex(idx).sample(3, ctx.uv);
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl,
