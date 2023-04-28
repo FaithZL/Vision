@@ -72,7 +72,7 @@ public:
         return ret;
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
-    void build_warpers() noexcept;
+    void prepare_lights() noexcept;
     [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc); }
     [[nodiscard]] Warper2D *load_warper2d() noexcept {
         WarperDesc warper_desc = _warper_desc;

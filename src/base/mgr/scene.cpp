@@ -49,16 +49,14 @@ void Scene::prepare() noexcept {
     _camera->prepare();
     _sampler->prepare();
     _camera->update_device_data();
-    build_warpers();
+    prepare_lights();
     prepare_shadernodes();
     prepare_materials();
     _rp->spectrum().prepare();
 }
 
-void Scene::build_warpers() noexcept {
-    _light_sampler->for_each([&](Light *light) noexcept {
-        light->prepare();
-    });
+void Scene::prepare_lights() noexcept {
+    _light_sampler->prepare();
 }
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept {

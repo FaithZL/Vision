@@ -26,7 +26,6 @@ public:
         Float2 u_surface = sampler->next_2d();
         LightSample ret{swl.dimension()};
         SampledLight sampled_light = select_light(lsc, u_light);
-        RenderPipeline *rp = _scene->render_pipeline();
         _lights.dispatch_instance(sampled_light.light_id, [&](const Light *light) {
             ret = light->sample_Li(lsc, u_surface, swl);
             ret.eval.pdf *= sampled_light.PMF;

@@ -21,6 +21,14 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
     });
 }
 
+void LightSampler::prepare() noexcept {
+    for_each([&](Light *light) noexcept {
+        light->prepare();
+    });
+    auto rp = render_pipeline();
+    _lights.prepare(rp->resource_array(), rp->device());
+}
+
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                      const SampledWavelengths &swl) const noexcept {
     LightEval ret = {{swl.dimension(), 0.f}, 0.f};
