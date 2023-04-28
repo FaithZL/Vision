@@ -26,6 +26,7 @@ private:
     ManagedWrapper<AliasEntry> _table;
     ManagedWrapper<float> _func;
     friend class AliasTable2D;
+    using _serial_ty = Warper;
 
 public:
     explicit AliasTable(ResourceArray &resource_array)
@@ -34,6 +35,7 @@ public:
         : Warper(desc),
           _table(render_pipeline()->resource_array()),
           _func(render_pipeline()->resource_array()) {}
+    OC_SERIALIZABLE_FUNC(_table, _func)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }

@@ -13,7 +13,6 @@ namespace vision {
 class Warper : public Node, public Serializable<>{
 public:
     using Desc = WarperDesc;
-    using _serial_ty  = Serializable<>;
 
 protected:
     Serial<float> _integral{};
