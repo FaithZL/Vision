@@ -10,19 +10,21 @@
 
 namespace vision {
 
-class Warper : public Node {
+class Warper : public Node, public Serializable<>{
 public:
     using Desc = WarperDesc;
+    using _serial_ty  = Serializable<>;
 
 protected:
-    float _integral{};
+    Serial<float> _integral{};
 
 public:
     Warper() = default;
+    OC_SERIALIZABLE_FUNC(_integral)
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     [[nodiscard]] virtual uint size() const noexcept = 0;
-    [[nodiscard]] virtual float integral() const noexcept { return _integral; }
+    [[nodiscard]] virtual float integral() const noexcept { return _integral.hv(); }
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &i) const noexcept = 0;
