@@ -11,7 +11,7 @@
 
 namespace vision {
 
-class ShaderNode : public Node, public ISerializable<float> {
+class ShaderNode : public Node, public Serializable<float> {
 protected:
     ShaderNodeType _type{};
 

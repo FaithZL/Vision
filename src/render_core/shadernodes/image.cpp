@@ -11,7 +11,7 @@ using namespace ocarina;
 class Image : public ShaderNode {
 private:
     const ImageWrapper &_image_wrapper;
-    Serialize<uint> _tex_id{};
+    Serial<uint> _tex_id{};
 
 public:
     explicit Image(const ShaderNodeDesc &desc)

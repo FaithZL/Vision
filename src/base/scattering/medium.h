@@ -15,7 +15,7 @@ using namespace ocarina;
 class Sampler;
 class SampledWavelengths;
 
-class Medium : public Node, public ISerializable<float> {
+class Medium : public Node, public Serializable<float> {
 protected:
     uint _index{};
     float _scale{};

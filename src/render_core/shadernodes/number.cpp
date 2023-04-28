@@ -7,7 +7,7 @@
 namespace vision {
 class NumberInput : public ShaderNode {
 private:
-    Serialize<vector<float>> _value;
+    Serial<vector<float>> _value;
 
 public:
     explicit NumberInput(const ShaderNodeDesc &desc)

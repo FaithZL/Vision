@@ -14,11 +14,11 @@ namespace vision {
 
 using namespace ocarina;
 
-class SPD : public ISerializable<float>{
+class SPD : public Serializable<float>{
 private:
     static constexpr auto spd_lut_interval = 5u;
     ManagedWrapper<float> _func;
-    Serialize<float> _sample_interval{};
+    Serial<float> _sample_interval{};
     RenderPipeline *_rp{};
 
 public:

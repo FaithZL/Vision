@@ -72,7 +72,7 @@ public:
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override;
 };
 
-class Material : public Node, public ISerializable<float> {
+class Material : public Node, public Serializable<float> {
 public:
     using Desc = MaterialDesc;
 
