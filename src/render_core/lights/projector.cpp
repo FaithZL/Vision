@@ -37,7 +37,7 @@ public:
         float2 tan_xy = make_float2(tan_x, tan_y);
         Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
-        return select(valid, 1.f, 0.f) * _color.eval_illumination_spectrum(uv, swl).sample / d2 * _scale;
+        return select(valid, 1.f, 0.f) * _color.eval_illumination_spectrum(uv, swl).sample / d2 * scale();
     }
 };
 }// namespace vision

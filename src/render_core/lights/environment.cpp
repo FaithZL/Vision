@@ -13,12 +13,10 @@ class EnvironmentLight : public Light {
 private:
     Warper2D *_warper{};
     float4x4 _w2o;
-    float _scale{1.f};
 
 public:
     explicit EnvironmentLight(const LightDesc &desc)
-        : Light(desc, LightType::Infinite),
-          _scale(desc["scale"].as_float(1.f)) {
+        : Light(desc, LightType::Infinite){
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);
@@ -30,7 +28,7 @@ public:
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir,const SampledWavelengths &swl) const {
         Float2 uv = UV(local_dir);
-        return _color.eval_illumination_spectrum(uv, swl).sample * _scale;
+        return _color.eval_illumination_spectrum(uv, swl).sample * scale();
     }
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light,
