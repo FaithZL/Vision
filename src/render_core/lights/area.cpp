@@ -11,7 +11,8 @@ namespace vision {
 
 class AreaLight : public Light {
 private:
-    uint _inst_idx{InvalidUI32};
+    using _serial_ty = Light;
+    Serial<uint> _inst_idx{InvalidUI32};
     bool _two_sided{false};
     Warper *_warper{nullptr};
 
@@ -21,7 +22,7 @@ public:
           _two_sided{desc["two_sided"].as_bool(false)},
           _inst_idx(desc["inst_id"].as_uint()) {
     }
-
+    OC_SERIALIZABLE_FUNC(_inst_idx, (*_warper))
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
         return _warper->PMF(prim_id);
     }
@@ -56,7 +57,7 @@ public:
         Uint prim_id = _warper->sample_discrete(u.x, &pmf, &u_remapped);
         u.x = u_remapped;
         Float2 bary = square_to_triangle(u);
-        LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx, prim_id, bary);
+        LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx.auto_value(), prim_id, bary);
         p_light.PDF_pos *= pmf;
         ret.eval = evaluate(p_ref, p_light, swl);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
@@ -65,7 +66,7 @@ public:
 
     void prepare() noexcept override {
         _warper = _scene->load_warper();
-        Shape *shape = _scene->get_shape(_inst_idx);
+        Shape *shape = _scene->get_shape(_inst_idx.hv());
         vector<float> weights = shape->surface_area();
         _warper->build(std::move(weights));
         _warper->prepare();
