@@ -19,9 +19,6 @@ Shape::Shape(const ShapeDesc &desc)
         emission = desc.scene->load_light(desc.emission);
     }
 }
-void Shape::update_material_id(uint id) noexcept {
-    handle.mat_id = id;
-}
 
 Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {}
 

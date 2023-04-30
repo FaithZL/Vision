@@ -30,7 +30,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     _materials.set_mode(_render_setting.polymorphic_mode);
     OC_INFO_FORMAT("polymorphic mode is {}", _materials.mode());
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
-    _light_sampler->set_mode(_render_setting.polymorphic_mode);
+//    _light_sampler->set_mode(_render_setting.polymorphic_mode);
     _camera = load<Camera>(scene_desc.sensor_desc);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
@@ -71,11 +71,18 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
     for (const auto &desc : descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
-        const Material *material = _materials[shape->handle.mat_id];
-        shape->update_material_id(_materials.encode_id(shape->handle.mat_id, material));
+        if (shape->has_material()) {
+            const Material *material = _materials[shape->handle.mat_id];
+            shape->update_material_id(_materials.encode_id(shape->handle.mat_id, material));
+        }
+        if (shape->has_emission()) {
+            const Light *light = _light_sampler->lights()[shape->handle.light_id];
+            shape->update_light_id(_light_sampler->lights().encode_id(shape->handle.light_id, light));
+        }
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
     }
+    int i = 0;
 }
 
 void Scene::load_mediums(const vector<MediumDesc> &descs) noexcept {
@@ -108,7 +115,8 @@ void Scene::prepare_materials() noexcept {
     _materials.for_each_instance([&](const Material *material) noexcept {
         const_cast<Material *>(material)->prepare();
     });
-    _materials.prepare(render_pipeline()->resource_array(), render_pipeline()->device());
+    auto rp = render_pipeline();
+    _materials.prepare(rp->resource_array(), rp->device());
 }
 
 void Scene::upload_data() noexcept {
