@@ -32,6 +32,10 @@ protected:
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
+    template<typename ...Args>
+    void set_mode(Args &&...args) noexcept {
+        _lights.set_mode(OC_FORWARD(args)...);
+    }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light; }
     [[nodiscard]] const auto &lights() const noexcept { return _lights; }
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }

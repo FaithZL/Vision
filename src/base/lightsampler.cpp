@@ -45,9 +45,8 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
 
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {
-    LightEval ret{swl.dimension()};
     LightEvalContext p_light{p_ref.pos + wi};
-    ret = env_light()->evaluate(p_ref, p_light, swl);
+    LightEval ret = env_light()->evaluate(p_ref, p_light, swl);
     Float pmf = 1.f / light_num();
     ret.pdf *= pmf;
     return ret;

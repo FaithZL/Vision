@@ -87,7 +87,6 @@ public:
     ShaderNode *load_shader_node(const ShaderNodeDesc &desc) noexcept;
     void load_lights(const vector<LightDesc> &descs) noexcept;
     void prepare_materials() noexcept;
-    void prepare_shadernodes() noexcept;
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }

@@ -30,6 +30,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     _materials.set_mode(_render_setting.polymorphic_mode);
     OC_INFO_FORMAT("polymorphic mode is {}", _materials.mode());
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
+    _light_sampler->set_mode(_render_setting.polymorphic_mode);
     _camera = load<Camera>(scene_desc.sensor_desc);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
@@ -50,7 +51,6 @@ void Scene::prepare() noexcept {
     _sampler->prepare();
     _camera->update_device_data();
     prepare_lights();
-    prepare_shadernodes();
     prepare_materials();
     _rp->spectrum().prepare();
 }
@@ -109,9 +109,6 @@ void Scene::prepare_materials() noexcept {
         const_cast<Material *>(material)->prepare();
     });
     _materials.prepare(render_pipeline()->resource_array(), render_pipeline()->device());
-}
-
-void Scene::prepare_shadernodes() noexcept {
 }
 
 void Scene::upload_data() noexcept {
