@@ -57,7 +57,7 @@ public:
         Uint prim_id = _warper->sample_discrete(u.x, &pmf, &u_remapped);
         u.x = u_remapped;
         Float2 bary = square_to_triangle(u);
-        LightEvalContext p_light = rp->compute_light_eval_context(_inst_idx.auto_value(), prim_id, bary);
+        LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
         ret.eval = evaluate(p_ref, p_light, swl);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
