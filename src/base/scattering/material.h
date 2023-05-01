@@ -147,7 +147,7 @@ public:
 protected:
     struct Guard {
         const Material *material{};
-        Guard(const Material *mat, const Interaction &it, const SampledWavelengths &swl, const DataAccessor<float> *da)
+        Guard(const Material *mat, const DataAccessor<float> *da)
             : material(mat) {
             material->decode(da);
         }

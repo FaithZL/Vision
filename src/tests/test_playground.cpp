@@ -30,9 +30,6 @@ float eta_LASF9(float lambda) {
     return sqrt(f + 1);
 }
 
-pair<uint, uint> dcd(uint index) {
-}
-
 int main(int argc, char *argv[]) {
     uint type_id = 0u;
     uint inst_id = 0u;

@@ -29,6 +29,17 @@ protected:
     Serial<float> _scale{1.f};
     Slot _color{};
 
+    struct Guard {
+        const Light *light{};
+        Guard(const Light *light, const Interaction &it, const SampledWavelengths &swl, const DataAccessor<float> *da)
+            : light(light) {
+            light->decode(da);
+        }
+        ~Guard() {
+            light->reset_device_value();
+        }
+    };
+
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
     OC_SERIALIZABLE_FUNC(_scale, (*_color.node()))
