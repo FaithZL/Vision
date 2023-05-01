@@ -53,11 +53,11 @@ Uint Interaction::material_type_id() const noexcept {
 }
 
 Uint Interaction::light_inst_id() const noexcept {
-    return _light_id;
+    return decode_id<D>(_light_id).first;
 }
 
 Uint Interaction::light_type_id() const noexcept {
-    return _light_id;
+    return decode_id<D>(_light_id).second;
 }
 
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
