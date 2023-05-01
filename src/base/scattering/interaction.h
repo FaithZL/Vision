@@ -118,8 +118,10 @@ public:
     [[nodiscard]] Bool has_material() const noexcept { return _mat_id != InvalidUI32; }
     [[nodiscard]] Uint material_inst_id() const noexcept;
     [[nodiscard]] Uint material_type_id() const noexcept;
+    [[nodiscard]] Uint material_id() const noexcept { return _mat_id; }
     [[nodiscard]] Uint light_inst_id() const noexcept;
     [[nodiscard]] Uint light_type_id() const noexcept;
+    [[nodiscard]] Uint light_id() const noexcept { return _light_id; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {

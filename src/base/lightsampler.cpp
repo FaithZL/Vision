@@ -56,9 +56,9 @@ void LightSampler::dispatch_light(const Uint &id, const std::function<void(const
     _lights.dispatch_instance(id, func);
 }
 
-void LightSampler::dispatch_light(const vision::Interaction &it,
+void LightSampler::dispatch_light(const Uint &id,
                                   const std::function<void(const Light *, const DataAccessor<float> *da)> &func) const noexcept {
-    _lights.dispatch(it.light_type_id(), it.light_inst_id(), func);
+    _lights.dispatch(id, func);
 }
 
 }// namespace vision

@@ -50,7 +50,7 @@ public:
     [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler,
                                              const SampledWavelengths &swl) const noexcept = 0;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
-    void dispatch_light(const Interaction &it, const std::function<void(const Light *, const DataAccessor<float> *da)> &func) const noexcept;
+    void dispatch_light(const Uint &id, const std::function<void(const Light *, const DataAccessor<float> *da)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
         for (Light *light : _lights) {

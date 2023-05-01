@@ -112,7 +112,7 @@ public:
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
-                    _scene->materials().dispatch(it.material_type_id(), it.material_inst_id(), [&](const Material *material, const DataAccessor<float> *da) {
+                    _scene->materials().dispatch(it.material_id(), [&](const Material *material, const DataAccessor<float> *da) {
                         UP<BSDF> bsdf = material->compute_BSDF(it, swl, da);
                         if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
                             $if(*dispersive) {
