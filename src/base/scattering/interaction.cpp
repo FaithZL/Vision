@@ -45,11 +45,19 @@ Bool Interaction::has_phase() {
 }
 
 Uint Interaction::material_inst_id() const noexcept {
-    return decode_id<D>(mat_id).first;
+    return decode_id<D>(_mat_id).first;
 }
 
 Uint Interaction::material_type_id() const noexcept {
-    return decode_id<D>(mat_id).second;
+    return decode_id<D>(_mat_id).second;
+}
+
+Uint Interaction::light_inst_id() const noexcept {
+    return _light_id;
+}
+
+Uint Interaction::light_type_id() const noexcept {
+    return _light_id;
 }
 
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {

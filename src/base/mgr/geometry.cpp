@@ -93,7 +93,7 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     auto o2w = Transform(inst.o2w);
     Var tri = _triangles.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
-    it.light_id = inst.light_id;
+    it.set_light(inst.light_id);
     it.set_material(inst.mat_id);
     it.set_medium(inst.inside_medium, inst.outside_medium);
     comment("compute pos");

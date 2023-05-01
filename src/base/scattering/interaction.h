@@ -96,10 +96,10 @@ public:
     UVN<Float3> s_uvn;
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
-    Uint light_id{InvalidUI32};
 
 private:
-    Uint mat_id{InvalidUI32};
+    Uint _mat_id{InvalidUI32};
+    Uint _light_id{InvalidUI32};
 
 public:
     // todo optimize volpt and pt
@@ -112,11 +112,14 @@ public:
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
     void set_medium(const Uint &inside, const Uint &outside);
-    void set_material(const Uint &mat) noexcept { mat_id = mat; }
-    [[nodiscard]] Bool has_emission() const noexcept { return light_id != InvalidUI32; }
-    [[nodiscard]] Bool has_material() const noexcept { return mat_id != InvalidUI32; }
+    void set_material(const Uint &mat) noexcept { _mat_id = mat; }
+    void set_light(const Uint &light) noexcept { _light_id = light; }
+    [[nodiscard]] Bool has_emission() const noexcept { return _light_id != InvalidUI32; }
+    [[nodiscard]] Bool has_material() const noexcept { return _mat_id != InvalidUI32; }
     [[nodiscard]] Uint material_inst_id() const noexcept;
     [[nodiscard]] Uint material_type_id() const noexcept;
+    [[nodiscard]] Uint light_inst_id() const noexcept;
+    [[nodiscard]] Uint light_type_id() const noexcept;
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
@@ -147,10 +150,10 @@ struct SpacePoint {
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
         return vision::spawn_ray(pos, ng, dir);
     }
-    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept{
+    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
         return vision::spawn_ray_to(pos, ng, p);
     }
-    [[nodiscard]] OCRay spawn_ray_to(const SpacePoint &lsc) const noexcept{
+    [[nodiscard]] OCRay spawn_ray_to(const SpacePoint &lsc) const noexcept {
         return vision::spawn_ray_to(pos, ng, lsc.pos, lsc.ng);
     }
 };

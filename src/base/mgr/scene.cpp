@@ -52,6 +52,7 @@ void Scene::prepare() noexcept {
     _camera->update_device_data();
     prepare_lights();
     prepare_materials();
+    auto &light = _light_sampler->lights();
     _rp->spectrum().prepare();
 }
 
