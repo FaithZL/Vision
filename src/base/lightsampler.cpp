@@ -29,6 +29,25 @@ void LightSampler::prepare() noexcept {
     _lights.prepare(rp->resource_array(), rp->device());
 }
 
+pair<Uint, Uint> LightSampler::decode_light_index(const Uint &index) const noexcept {
+    Uint type_id = 0u;
+    Uint inst_id = 0u;
+    vector<uint> func;
+    func.reserve(_lights.type_num());
+    for (int i = 0; i < _lights.type_num(); ++i) {
+        func.push_back(static_cast<uint>(_lights.instance_num(i)));
+    }
+
+    Uint accum = 0u;
+    for (uint i = 0; i < func.size(); ++i) {
+        type_id = select(index > accum, i, type_id);
+        inst_id = select(index > accum, index - accum, inst_id);
+        accum += func[i];
+    }
+
+    return {type_id, inst_id};
+}
+
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                      const SampledWavelengths &swl) const noexcept {
     LightEval ret = {{swl.dimension(), 0.f}, 0.f};
