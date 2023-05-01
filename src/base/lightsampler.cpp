@@ -40,8 +40,8 @@ pair<Uint, Uint> LightSampler::decode_light_index(const Uint &index) const noexc
 
     Uint accum = 0u;
     for (uint i = 0; i < func.size(); ++i) {
-        type_id = select(index > accum, i, type_id);
-        inst_id = select(index > accum, index - accum, inst_id);
+        type_id = select(index >= accum, i, type_id);
+        inst_id = select(index >= accum, index - accum, inst_id);
         accum += func[i];
     }
 

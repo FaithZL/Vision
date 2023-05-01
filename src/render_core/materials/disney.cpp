@@ -488,8 +488,6 @@ public:
             sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
             sum_weights += _sampling_weights[i];
         }
-        Float3 f;
-        Float pdf;
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);

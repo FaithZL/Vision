@@ -18,26 +18,43 @@ using namespace ocarina;
 
 float eta_bk7(float lambda) {
     float f = 1.03961212 * sqr(lambda) / (sqr(lambda) - 0.00600069867) +
-        0.231792344 * sqr(lambda) / (sqr(lambda) - 0.0200179144) +
-        1.01046945 * sqr(lambda) / (sqr(lambda) - 103.560653);
+              0.231792344 * sqr(lambda) / (sqr(lambda) - 0.0200179144) +
+              1.01046945 * sqr(lambda) / (sqr(lambda) - 103.560653);
     return sqrt(f + 1);
 }
 
 float eta_LASF9(float lambda) {
     auto f = 2.00029547f * sqr(lambda) / (sqr(lambda) - 0.0121426017f) +
-        0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
-        1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
+             0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
+             1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
     return sqrt(f + 1);
 }
 
+pair<uint, uint> dcd(uint index) {
+}
 
 int main(int argc, char *argv[]) {
-    auto tmp = encode_id<H>(1237,113);
-    auto [inst, type] = decode_id<H>(tmp);
-    cout << tmp << endl;
-    cout << inst << endl << type << endl;
-//    cout << std::hex << InvalidUI32;
-//    float e = eta_LASF9(0.83);
-//    float e2 = eta_LASF9(0.36);
+    uint type_id = 0u;
+    uint inst_id = 0u;
+    vector<uint> func{1, 2, 5, 6, 3};
+    uint accum = 0u;
+    uint index = 16;
+    for (int i = 0; i < func.size(); ++i) {
+        type_id = select(index >= accum, i, type_id);
+        inst_id = select(index >= accum, index - accum, inst_id);
+        accum += func[i];
+    }
+
+    cout << "index = " << index << endl;
+    cout << "type_id = " << type_id << endl;
+    cout << "inst_id = " << inst_id << endl;
+
+    auto tmp = encode_id<H>(1237, 113);
+    //    auto [inst, type] = decode_id<H>(tmp);
+    //    cout << tmp << endl;
+    //    cout << inst << endl << type << endl;
+    //    cout << std::hex << InvalidUI32;
+    //    float e = eta_LASF9(0.83);
+    //    float e2 = eta_LASF9(0.36);
     return 0;
 }
