@@ -113,7 +113,7 @@ public:
 
                 auto sample_surface = [&]() {
                     _scene->materials().dispatch(it.material_id(), [&](const Material *material, const DataAccessor<float> *da) {
-                        UP<BSDF> bsdf = material->compute_BSDF(it, swl, da);
+                        UP<BSDF> bsdf = material->compute_BSDF(it, swl);
                         if (auto dispersive = spectrum.is_dispersive(bsdf.get())) {
                             $if(*dispersive) {
                                 swl.invalidation_secondary();

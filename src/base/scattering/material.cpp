@@ -109,12 +109,7 @@ uint64_t Material::_compute_hash() const noexcept {
     return ret;
 }
 
-UP<BSDF> Material::compute_BSDF(const Interaction &it, const SampledWavelengths &swl,
-                                const DataAccessor<float> *da) const noexcept {
-    if (da) {
-        Guard guard(this, da);
-        return _compute_BSDF(it, swl);
-    }
+UP<BSDF> Material::compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {
     return _compute_BSDF(it, swl);
 }
 }// namespace vision
