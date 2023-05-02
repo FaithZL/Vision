@@ -58,6 +58,9 @@ public:
 };
 
 class IPointLight : public Light {
+protected:
+    using _serial_ty = Light;
+
 public:
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
@@ -65,7 +68,7 @@ public:
         // using -1 for delta position light
         return -1.f;
     }
-    [[nodiscard]] virtual float3 position() const noexcept = 0;
+    [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override;
 };

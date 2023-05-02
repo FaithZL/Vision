@@ -9,9 +9,9 @@
 namespace vision {
 class Projector : public IPointLight {
 private:
-    float4x4 _o2w;
-    float _ratio;
-    float _angle_y;
+    Serial<float4x4> _o2w;
+    Serial<float> _ratio;
+    Serial<float> _angle_y;
 
 public:
     explicit Projector(const LightDesc &desc)
@@ -19,22 +19,23 @@ public:
           _ratio(desc["ratio"].as_float(1.f)),
           _angle_y(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _o2w(desc.o2w.mat) {
-        if (_ratio == 0) {
+        if (_ratio.hv() == 0) {
             uint2 res = _color.node()->resolution();
             _ratio = float(res.x) / res.y;
         }
     }
-    [[nodiscard]] float3 position() const noexcept override { return _o2w[3].xyz(); }
+    OC_SERIALIZABLE_FUNC(_o2w, _ratio, _angle_y)
+    [[nodiscard]] Float3 position() const noexcept override { return (*_o2w)[3].xyz(); }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                              const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
-        Float3 p = transform_point(inverse(_o2w), p_ref.pos);
+        Float3 p = transform_point(inverse(*_o2w), p_ref.pos);
         Float d2 = length_squared(p);
         Bool valid = p.z > 0;
         p = p / p.z;
-        float tan_y = tan(_angle_y);
-        float tan_x = _ratio * tan_y;
-        float2 tan_xy = make_float2(tan_x, tan_y);
+        Float tan_y = tan(*_angle_y);
+        Float tan_x = *_ratio * tan_y;
+        Float2 tan_xy = make_float2(tan_x, tan_y);
         Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
         return select(valid, 1.f, 0.f) * _color.eval_illumination_spectrum(uv, swl).sample / d2 * scale();

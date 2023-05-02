@@ -9,18 +9,19 @@
 namespace vision {
 class PointLight : public IPointLight {
 private:
-    float3 _position;
+    Serial<float3> _position;
 
 public:
     explicit PointLight(const LightDesc &desc)
         : IPointLight(desc),
           _position(desc["position"].as_float3()) {}
-    [[nodiscard]] float3 position() const noexcept override { return _position; }
+    OC_SERIALIZABLE_FUNC(_position)
+    [[nodiscard]] Float3 position() const noexcept override { return *_position; }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                              const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum value = _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
-        return value / length_squared(p_ref.pos - _position);
+        return value / length_squared(p_ref.pos - position());
     }
 };
 }// namespace vision
