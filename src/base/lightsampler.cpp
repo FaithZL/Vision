@@ -29,7 +29,7 @@ void LightSampler::prepare() noexcept {
     _lights.prepare(rp->resource_array(), rp->device());
 }
 
-pair<Uint, Uint> LightSampler::decode_light_index(const Uint &index) const noexcept {
+pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcept {
     Uint type_id = 0u;
     Uint inst_id = 0u;
     vector<uint> func;
@@ -51,7 +51,7 @@ pair<Uint, Uint> LightSampler::decode_light_index(const Uint &index) const noexc
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                      const SampledWavelengths &swl) const noexcept {
     LightEval ret = {{swl.dimension(), 0.f}, 0.f};
-    dispatch_light(it.light_inst_id(), [&](const Light *light) {
+    dispatch_light(it.light_id(), [&](const Light *light) {
         if (light->type() != LightType::Area) { return; }
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
@@ -72,7 +72,7 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
 }
 
 void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
-    _lights.dispatch_instance(id, func);
+    _lights.dispatch(id, func);
 }
 
 void LightSampler::dispatch_light(const Uint &type_id, const Uint &inst_id,

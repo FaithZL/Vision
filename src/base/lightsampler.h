@@ -14,7 +14,7 @@ namespace vision {
 using namespace ocarina;
 
 struct SampledLight {
-    Uint light_id;
+    Uint light_index;
     Float PMF;
 };
 
@@ -47,7 +47,7 @@ public:
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
-    [[nodiscard]] pair<Uint, Uint> decode_light_index(const Uint &index) const noexcept;
+    [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler,
                                              const SampledWavelengths &swl) const noexcept = 0;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;

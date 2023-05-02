@@ -15,7 +15,7 @@ public:
     }
     [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
-        ret.light_id = min(u * float(light_num()), float(light_num()) - 1);
+        ret.light_index = min(u * float(light_num()), float(light_num()) - 1);
         ret.PMF = 1.f / light_num();
         return ret;
     }
@@ -26,13 +26,14 @@ public:
         Float2 u_surface = sampler->next_2d();
         LightSample ret{swl.dimension()};
         SampledLight sampled_light = select_light(lsc, u_light);
-        dispatch_light(sampled_light.light_id, [&](const Light *light) {
+        auto [inst_id, type_id] = extract_light_id(sampled_light.light_index);
+        dispatch_light(type_id, inst_id, [&](const Light *light) {
             ret = light->sample_Li(lsc, u_surface, swl);
             ret.eval.pdf *= sampled_light.PMF;
         });
         return ret;
     }
 };
-}
+}// namespace vision
 
 VS_MAKE_CLASS_CREATOR(vision::UniformLightSampler)
