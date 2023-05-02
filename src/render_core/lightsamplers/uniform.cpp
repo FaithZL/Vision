@@ -26,7 +26,7 @@ public:
         Float2 u_surface = sampler->next_2d();
         LightSample ret{swl.dimension()};
         SampledLight sampled_light = select_light(lsc, u_light);
-        auto [inst_id, type_id] = extract_light_id(sampled_light.light_index);
+        auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
         dispatch_light(type_id, inst_id, [&](const Light *light) {
             ret = light->sample_Li(lsc, u_surface, swl);
             ret.eval.pdf *= sampled_light.PMF;

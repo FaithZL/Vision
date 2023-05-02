@@ -30,7 +30,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     _materials.set_mode(_render_setting.polymorphic_mode);
     OC_INFO_FORMAT("polymorphic mode is {}", _materials.mode());
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
-//    _light_sampler->set_mode(_render_setting.polymorphic_mode);
+    _light_sampler->set_mode(_render_setting.polymorphic_mode);
     _camera = load<Camera>(scene_desc.sensor_desc);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
