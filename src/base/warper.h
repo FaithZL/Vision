@@ -10,7 +10,7 @@
 
 namespace vision {
 
-class Warper : public Node, public Serializable<>{
+class Warper : public Node, public Serializable<> {
 public:
     using Desc = WarperDesc;
 
@@ -31,7 +31,7 @@ public:
     [[nodiscard]] virtual Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept = 0;
 };
 
-class Warper2D : public Node {
+class Warper2D : public Node, public Serializable<> {
 public:
     using Desc = WarperDesc;
 

@@ -11,8 +11,9 @@ namespace vision {
 
 class EnvironmentLight : public Light {
 private:
+    Serial<float4x4> _w2o;
     Warper2D *_warper{};
-    float4x4 _w2o;
+    using _serial_ty = Light;
 
 public:
     explicit EnvironmentLight(const LightDesc &desc)
@@ -21,6 +22,8 @@ public:
         float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);
     }
+
+    OC_SERIALIZABLE_FUNC(_w2o, (*_warper))
 
     [[nodiscard]] Float2 UV(Float3 local_dir) const {
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
@@ -45,7 +48,7 @@ public:
     [[nodiscard]] LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
-        Float3 local_dir = transform_vector(_w2o, world_dir);
+        Float3 local_dir = transform_vector(*_w2o, world_dir);
         Float theta = spherical_theta(local_dir);
         Float phi = spherical_phi(local_dir);
         Float sin_theta = sin(theta);
@@ -67,10 +70,9 @@ public:
         Float sin_theta = sin(theta);
         Float cos_theta = cos(theta);
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
-        Float3 world_dir = normalize(transform_vector(inverse(_w2o), local_dir));
+        Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
         Float3 pos = p_ref.pos + world_dir * _scene->world_diameter();
-        LightEvalContext p_light{pos};
         ret.eval.L = L(local_dir, swl);
         pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
         ret.eval.pdf = pdf_dir;
