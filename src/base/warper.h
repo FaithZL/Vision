@@ -35,14 +35,18 @@ class Warper2D : public Node, public Serializable<> {
 public:
     using Desc = WarperDesc;
 
+private:
+    Warper *_marginal{};
+    ManagedWrapper<Warper *> _conditional_v;
+
 public:
     Warper2D() = default;
     explicit Warper2D(const WarperDesc &desc) : Node(desc) {}
-    virtual void build(vector<float> weights, uint2 res) noexcept = 0;
-    [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept = 0;
-    [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
-    [[nodiscard]] virtual float integral() const noexcept = 0;
-    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept = 0;
+    virtual void build(vector<float> weights, uint2 res) noexcept;
+    [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept;
+    [[nodiscard]] virtual Float PDF(Float2 p) const noexcept;
+    [[nodiscard]] virtual float integral() const noexcept;
+    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept;
 };
 
 }// namespace vision
