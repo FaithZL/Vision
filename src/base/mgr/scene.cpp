@@ -83,7 +83,6 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
         _aabb.extend(shape->aabb);
         _shapes.push_back(shape);
     }
-    int i = 0;
 }
 
 void Scene::load_mediums(const vector<MediumDesc> &descs) noexcept {
@@ -104,12 +103,6 @@ ShaderNode *Scene::load_shader_node(const ShaderNodeDesc &desc) noexcept {
     auto ret = load<ShaderNode>(desc);
     _shadernodes.push_back(ret);
     return ret;
-}
-
-void Scene::load_lights(const vector<LightDesc> &descs) noexcept {
-    for (const LightDesc &desc : descs) {
-        load_light(desc);
-    }
 }
 
 void Scene::prepare_materials() noexcept {

@@ -85,7 +85,6 @@ public:
     void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
     Light *load_light(const LightDesc &desc) noexcept;
     ShaderNode *load_shader_node(const ShaderNodeDesc &desc) noexcept;
-    void load_lights(const vector<LightDesc> &descs) noexcept;
     void prepare_materials() noexcept;
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;

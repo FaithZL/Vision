@@ -44,7 +44,15 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
         inst_id = select(index >= accum, index - accum, inst_id);
         accum += func[i];
     }
-
+    switch (_lights.mode()) {
+        case ocarina::EInstance:
+            return {type_id, index};
+        case ocarina::EType:
+            return {type_id, inst_id};
+        default:
+            break;
+    }
+    OC_ASSERT(false);
     return {type_id, inst_id};
 }
 
