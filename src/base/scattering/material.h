@@ -145,17 +145,6 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 protected:
-    struct Guard {
-        const Material *material{};
-        Guard(const Material *mat, const DataAccessor<float> *da)
-            : material(mat) {
-            material->decode(da);
-        }
-        ~Guard() {
-            material->reset_device_value();
-        }
-    };
-
     [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {
         OC_ASSERT(false);
         return make_unique<BSDF>(it, swl);
