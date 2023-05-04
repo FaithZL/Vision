@@ -52,12 +52,15 @@ void Scene::prepare() noexcept {
     _camera->update_device_data();
     prepare_lights();
     prepare_materials();
-    auto &light = _light_sampler->lights();
     _rp->spectrum().prepare();
 }
 
 void Scene::prepare_lights() noexcept {
     _light_sampler->prepare();
+    auto &light = _light_sampler->lights();
+    OC_INFO_FORMAT("This scene contains {} light types with {} light instances",
+                   light.type_num(),
+                   light.all_instance_num());
 }
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept {
