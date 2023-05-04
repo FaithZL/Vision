@@ -37,7 +37,7 @@ public:
 
 private:
     Warper *_marginal{};
-    ManagedWrapper<Warper *> _conditional_v;
+    vector<Warper *> _conditional_v;
 
 public:
     Warper2D() = default;

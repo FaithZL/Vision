@@ -21,6 +21,7 @@ public:
           _conditional_v_weights(render_pipeline()->resource_array()) {
         _marginal._scene = desc.scene;
     }
+    OC_SERIALIZABLE_FUNC(_marginal, _conditional_v_tables, _conditional_v_weights)
     void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v
         vector<AliasTable> conditional_v;
