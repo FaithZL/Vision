@@ -180,14 +180,6 @@ public:
         Float3 wi = impl(wo, u, _alpha);
         return {wi, true};
     }
-    [[nodiscard]] BSDFSample sample(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
-        auto [wi, valid] = sample_wi(wo, u, fresnel);
-        BSDFSample ret{swl().dimension()};
-        ret.eval = safe_evaluate(wo, wi, nullptr);
-        ret.wi = wi;
-        ret.flags = BxDFFlag::GlossyRefl;
-        return ret;
-    }
 
     [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept override {
         Float2 u = sampler->next_2d();
