@@ -13,7 +13,7 @@ class AreaLight : public Light {
 private:
     using _serial_ty = Light;
     Serial<uint> _inst_idx{InvalidUI32};
-    bool _two_sided{false};
+    Serial<uint> _two_sided{0u};
     Warper *_warper{nullptr};
 
 public:
@@ -22,7 +22,7 @@ public:
           _two_sided{desc["two_sided"].as_bool(false)},
           _inst_idx(desc["inst_id"].as_uint()) {
     }
-    OC_SERIALIZABLE_FUNC(_inst_idx, (*_warper))
+    OC_SERIALIZABLE_FUNC(_inst_idx, _two_sided, (*_warper))
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
         return _warper->PMF(prim_id);
     }
@@ -30,10 +30,7 @@ public:
     [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
                                     const SampledWavelengths &swl) const {
         SampledSpectrum radiance = _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
-        if (_two_sided) {
-            return radiance;
-        }
-        return radiance * select(dot(w, p_light.ng) > 0, 1.f, 0.f);
+        return radiance * select(dot(w, p_light.ng) > 0 || (*_two_sided), 1.f, 0.f);
     }
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,

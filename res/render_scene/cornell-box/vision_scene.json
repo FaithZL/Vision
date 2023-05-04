@@ -330,21 +330,21 @@
 				"emission" : {
 					"type" : "area",
 					"param" : {
-						//						"color" : {
-						//							"channels" : "xyz",
-						//							"node" : [
-						//								17,
-						//								12,
-						//								4
-						//							]
-						//						},
-						"color" : {
-							"channels" : "xyz",
-							"node" : {
-								"fn" : "Painting3.jpg",
-								"color_space" : "srgb"
-							}
-						},
+												"color" : {
+													"channels" : "xyz",
+													"node" : [
+														17,
+														12,
+														4
+													]
+												},
+//						"color" : {
+//							"channels" : "xyz",
+//							"node" : {
+//								"fn" : "Painting3.jpg",
+//								"color_space" : "srgb"
+//							}
+//						},
 						"two_sided" : false,
 						"scale" : 1
 					}
