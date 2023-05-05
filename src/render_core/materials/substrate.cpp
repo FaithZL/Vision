@@ -108,7 +108,7 @@ public:
         init_slot_cursor(&_diff, 3);
     }
 
-    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, swl).sample;
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();

@@ -86,7 +86,7 @@ public:
         _k->prepare();
     }
 
-    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;

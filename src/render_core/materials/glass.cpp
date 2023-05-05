@@ -127,7 +127,7 @@ public:
         _ior->prepare();
     }
 
-    [[nodiscard]] UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
         Float ior = _ior.evaluate(it, swl).as_scalar();
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();

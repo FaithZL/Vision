@@ -144,14 +144,8 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
-protected:
-    [[nodiscard]] virtual UP<BSDF> _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept {
-        OC_ASSERT(false);
-        return make_unique<BSDF>(it, swl);
-    }
-
 public:
-    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it,
-                                        const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual UP<BSDF> compute_BSDF(const Interaction &it,
+                                                const SampledWavelengths &swl) const noexcept = 0;
 };
 }// namespace vision

@@ -252,6 +252,10 @@ public:
 
 struct MaterialDesc : public NodeDesc {
 public:
+    SP<MaterialDesc> mat0;
+    SP<MaterialDesc> mat1;
+
+public:
     VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
@@ -297,7 +301,6 @@ public:
     }
     void init(const ParameterSet &ps) noexcept override;
 };
-
 
 struct RenderSettingDesc : public NodeDesc {
     PolymorphicMode polymorphic_mode{};
