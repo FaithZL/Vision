@@ -12,24 +12,23 @@
 
 namespace vision {
 
+struct BSDFData {
+public:
+    UVN<Float3> shading_frame;
+    Float3 ng;
+    const SampledWavelengths &swl;
+};
+
 struct BSDF {
+
 public:
     UVN<Float3> shading_frame;
     Float3 ng;
     const SampledWavelengths &swl;
 
 protected:
-    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
-        ScatterEval ret{swl.dimension()};
-        ret.f = {swl.dimension(), 0.f};
-        ret.pdf = 1.f;
-        return ret;
-    }
-
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
-        BSDFSample ret{swl.dimension()};
-        return ret;
-    }
+    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
 
 public:
     BSDF() = delete;
