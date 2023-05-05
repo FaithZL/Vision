@@ -14,7 +14,7 @@ private:
     LambertReflection _bxdf;
 
 public:
-    explicit MatteBSDF(const Interaction &it, const SampledSpectrum &kr, const SampledWavelengths &swl)
+    MatteBSDF(const Interaction &it, const SampledSpectrum &kr, const SampledWavelengths &swl)
         : BSDF(it, swl), _bxdf(kr, swl) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
