@@ -19,7 +19,13 @@ public:
         : Material(desc), _mat0(desc.scene->load<Material>(*desc.mat0)),
           _mat1(desc.scene->load<Material>(*desc.mat1)) {}
 
-
+    OC_SERIALIZABLE_FUNC((*_mat0), (*_mat1))
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(_mat0->type_hash(), _mat1->type_hash());
+    }
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(_mat0->hash(), _mat1->hash());
+    }
 };
 
 }// namespace vision
