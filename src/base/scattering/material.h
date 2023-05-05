@@ -12,12 +12,12 @@
 
 namespace vision {
 
-struct BSDFData {
+struct BxDFSet {
 public:
-    UVN<Float3> shading_frame;
-    Float3 ng;
-    const SampledWavelengths &swl;
+    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
 };
+
 
 struct BSDF {
 
@@ -25,6 +25,7 @@ public:
     UVN<Float3> shading_frame;
     Float3 ng;
     const SampledWavelengths &swl;
+    UP<BxDFSet> bxdf_set{};
 
 protected:
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
