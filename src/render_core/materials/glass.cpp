@@ -138,7 +138,8 @@ public:
                                                       swl, render_pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<DielectricBSDF>(it, fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD);
+        return make_unique<BSDF>(it, swl, make_unique<DielectricBSDF>(fresnel, ocarina::move(refl),
+                                                                      ocarina::move(trans), _ior->type() == ESPD));
     }
 
 };

@@ -14,7 +14,7 @@ private:
     SampledSpectrum _eta, _k;
 
 public:
-    FresnelConductor(const SampledSpectrum &eta,const SampledSpectrum &k, const SampledWavelengths &swl, const RenderPipeline *rp)
+    FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k, const SampledWavelengths &swl, const RenderPipeline *rp)
         : Fresnel(swl, rp), _eta(eta), _k(k) {}
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex(abs_cos_theta, _eta, _k);
@@ -24,16 +24,15 @@ public:
     }
 };
 
-class ConductorBSDF : public BSDF {
+class ConductorBSDF : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
 
 public:
-    ConductorBSDF(const Interaction &it,
-              const SP<Fresnel> &fresnel,
-              MicrofacetReflection refl)
-        : BSDF(it, refl.swl()), _fresnel(fresnel), _refl(ocarina::move(refl)) {}
+    ConductorBSDF(const SP<Fresnel> &fresnel,
+                  MicrofacetReflection refl)
+        : _fresnel(fresnel), _refl(ocarina::move(refl)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _refl.safe_evaluate(wo, wi, _fresnel->clone());
@@ -95,8 +94,8 @@ public:
         SampledSpectrum k = SampledSpectrum{_k.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
-        MicrofacetReflection bxdf(kr, swl,microfacet);
-        return make_unique<ConductorBSDF>(it, fresnel, ocarina::move(bxdf));
+        MicrofacetReflection bxdf(kr, swl, microfacet);
+        return make_unique<BSDF>(it, swl, make_unique<ConductorBSDF>(fresnel, ocarina::move(bxdf)));
     }
 };
 

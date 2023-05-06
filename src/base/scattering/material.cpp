@@ -32,7 +32,7 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
 }
 
 ScatterEval DielectricBSDF::evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
-    ScatterEval ret{swl.dimension()};
+    ScatterEval ret{_refl.swl().dimension()};
     auto fresnel = _fresnel->clone();
     Float cos_theta_o = cos_theta(wo);
     fresnel->correct_eta(cos_theta_o);
@@ -46,7 +46,7 @@ ScatterEval DielectricBSDF::evaluate_local(Float3 wo, Float3 wi, Uint flag) cons
 }
 
 BSDFSample DielectricBSDF::sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
-    BSDFSample ret{swl.dimension()};
+    BSDFSample ret{_refl.swl().dimension()};
     Float uc = sampler->next_1d();
     auto fresnel = _fresnel->clone();
     Float cos_theta_o = cos_theta(wo);

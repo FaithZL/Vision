@@ -17,6 +17,7 @@ public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
+    [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
 };
 
 struct BSDF {
@@ -48,14 +49,14 @@ public:
         return {swl.dimension(), 0.f};
     }
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept {
-        return {};
+        return bxdf_set != nullptr ? bxdf_set->is_dispersive() : optional<Bool>{};
     }
     [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
-class DielectricBSDF : public BSDF {
+class DielectricBSDF : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
@@ -63,12 +64,11 @@ private:
     Bool _dispersive{};
 
 public:
-    DielectricBSDF(const Interaction &it,
-                   const SP<Fresnel> &fresnel,
+    DielectricBSDF(const SP<Fresnel> &fresnel,
                    MicrofacetReflection refl,
                    MicrofacetTransmission trans,
                    const Bool &dispersive)
-        : BSDF(it, refl.swl()), _fresnel(fresnel),
+        : _fresnel(fresnel),
           _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
           _dispersive(dispersive) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
