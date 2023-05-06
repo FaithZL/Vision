@@ -295,7 +295,7 @@ public:
     }
 };
 
-class PrincipledBSDF : public BSDF {
+class PrincipledBxDFSet : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel{};
     optional<Diffuse> _diffuse{};
@@ -321,7 +321,7 @@ private:
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
-        return SampledSpectrum(swl.dimension(), 0.f);
+        return SampledSpectrum(lobe->swl().dimension(), 0.f);
     }
 
     template<typename T, typename... Args>
@@ -344,12 +344,11 @@ private:
     }
 
 public:
-    PrincipledBSDF(const Interaction &it, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_slot,
-                   Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
-                   Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
-                   Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
-                   Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot)
-        : BSDF(it, swl) {
+    PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_slot,
+                      Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
+                      Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
+                      Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
+                      Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) {
 
         auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
@@ -438,8 +437,8 @@ public:
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
-        ScatterEval ret{swl.dimension()};
-        SampledSpectrum f = {swl.dimension(), 0.f};
+        ScatterEval ret{_spec_refl->swl().dimension()};
+        SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
         Float pdf = 0.f;
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
@@ -470,7 +469,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret{swl.dimension()};
+        BSDFSample ret{_spec_refl->swl().dimension()};
         Float uc = sampler->next_1d();
         Float2 u = sampler->next_2d();
 
@@ -555,9 +554,7 @@ public:
     }
 
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<PrincipledBSDF>(it, swl, render_pipeline(), _color, _metallic, _eta, _roughness,
-                                           _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat,
-                                           _clearcoat_alpha, _spec_trans, _flatness, _diff_trans);
+        return make_unique<BSDF>(it, swl, make_unique<PrincipledBxDFSet>(it, swl, render_pipeline(), _color, _metallic, _eta, _roughness, _spec_tint, _anisotropic, _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha, _spec_trans, _flatness, _diff_trans));
     }
 };
 

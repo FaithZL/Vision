@@ -208,10 +208,10 @@
 				"y" : 1,
 				"z" : 1,
 				//                                "material" : "ShortBox",
-				"material" : "substrate",
+//				"material" : "substrate",
 //				"material" : "Mirror",
 //				"material" : "Metal",
-				//                "material" : "disney",
+				                "material" : "disney",
 //				                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
@@ -545,8 +545,8 @@
 					1
 				],
 				"ior" : 1.5,
-				"roughness" : 0.01,
-				"metallic" : 0.9,
+				"roughness" : 0.1,
+				"metallic" : 1,
 				"spec_tint" : 0.0,
 				"anisotropic" : 0,
 				"sheen" : 0,
