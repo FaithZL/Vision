@@ -18,6 +18,7 @@ public:
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
+    virtual ~BxDFSet() = default;
 };
 
 struct BSDF final {
