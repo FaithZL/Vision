@@ -7,20 +7,26 @@
 
 namespace vision {
 
-class NullBSDF : public BSDF {
+class NullBxDFSet : public BxDFSet {
+private:
+    const SampledWavelengths &_swl;
+
 public:
-    NullBSDF(const Interaction &it,const SampledWavelengths &swl)
-        : BSDF(it, swl) {}
+    NullBxDFSet(const SampledWavelengths &swl) : _swl(swl) {}
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
-        ScatterEval ret{swl.dimension()};
-        ret.f = {swl.dimension(), 0.f};
+        ScatterEval ret{_swl.dimension()};
+        ret.f = {_swl.dimension(), 0.f};
         ret.pdf = 1.f;
         return ret;
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
-        BSDFSample ret{swl.dimension()};
+        BSDFSample ret{_swl.dimension()};
         return ret;
+    }
+
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override {
+        return {_swl.dimension(), 0.f};
     }
 };
 
@@ -29,9 +35,9 @@ public:
     explicit NullMaterial(const MaterialDesc &desc)
         : Material(desc) {}
 
-    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it,
-                                        const SampledWavelengths &swl) const noexcept override {
-        return make_unique<NullBSDF>(it, swl);
+    [[nodiscard]] BSDF compute_BSDF(const Interaction &it,
+                                    const SampledWavelengths &swl) const noexcept override {
+        return BSDF(it, swl, make_unique<NullBxDFSet>(swl));
     }
 };
 

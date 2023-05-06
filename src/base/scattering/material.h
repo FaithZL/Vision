@@ -65,9 +65,9 @@ private:
 
 public:
     DielectricBxDFSet(const SP<Fresnel> &fresnel,
-                   MicrofacetReflection refl,
-                   MicrofacetTransmission trans,
-                   const Bool &dispersive)
+                      MicrofacetReflection refl,
+                      MicrofacetTransmission trans,
+                      const Bool &dispersive)
         : _fresnel(fresnel),
           _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
           _dispersive(dispersive) {}
@@ -152,7 +152,7 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 public:
-    [[nodiscard]] virtual UP<BSDF> compute_BSDF(const Interaction &it,
-                                                const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual BSDF compute_BSDF(const Interaction &it,
+                                            const SampledWavelengths &swl) const noexcept = 0;
 };
 }// namespace vision

@@ -127,7 +127,7 @@ public:
         _ior->prepare();
     }
 
-    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
         Float ior = _ior.evaluate(it, swl).as_scalar();
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
@@ -138,10 +138,8 @@ public:
                                                       swl, render_pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<BSDF>(it, swl, make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl),
-                                                                      ocarina::move(trans), _ior->type() == ESPD));
+        return BSDF(it, swl, make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD));
     }
-
 };
 }// namespace vision
 

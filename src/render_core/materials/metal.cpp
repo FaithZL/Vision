@@ -85,7 +85,7 @@ public:
         _k->prepare();
     }
 
-    [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
@@ -95,7 +95,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<BSDF>(it, swl, make_unique<ConductorBSDF>(fresnel, ocarina::move(bxdf)));
+        return BSDF(it, swl, make_unique<ConductorBSDF>(fresnel, ocarina::move(bxdf)));
     }
 };
 
