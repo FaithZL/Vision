@@ -14,10 +14,10 @@ namespace vision {
 
 struct BxDFSet {
 public:
+    [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
 };
-
 
 struct BSDF {
 
@@ -28,13 +28,20 @@ public:
     UP<BxDFSet> bxdf_set{};
 
 protected:
-    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
+    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
+        return bxdf_set->evaluate_local(wo, wi, flag);
+    }
+    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
+        return bxdf_set->sample_local(wo, flag, sampler);
+    }
 
 public:
     BSDF() = delete;
     explicit BSDF(const Interaction &it, const SampledWavelengths &swl)
         : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl) {}
+
+    explicit BSDF(const Interaction &it, const SampledWavelengths &swl, UP<BxDFSet> &&bxdf_set)
+        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl), bxdf_set(move(bxdf_set)) {}
 
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept {
         // todo

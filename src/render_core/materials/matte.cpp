@@ -9,13 +9,13 @@
 
 namespace vision {
 
-class MatteBSDF : public BSDF {
+class MatteBxDFSet : public BxDFSet {
 private:
     LambertReflection _bxdf;
 
 public:
-    MatteBSDF(const Interaction &it, const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : BSDF(it, swl), _bxdf(kr, swl) {}
+    MatteBxDFSet(const Interaction &it, const SampledSpectrum &kr, const SampledWavelengths &swl)
+        : _bxdf(kr, swl) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, nullptr);
@@ -37,7 +37,7 @@ public:
 
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        return make_unique<MatteBSDF>(it, kr, swl);
+        return make_unique<BSDF>(it, swl, make_unique<MatteBxDFSet>(it, kr, swl));
     }
 };
 }// namespace vision
