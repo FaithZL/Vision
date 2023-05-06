@@ -9,18 +9,6 @@
 
 namespace vision {
 
-class MixBSDF : public BSDF {
-private:
-    UP<BSDF> _bsdf0{};
-    UP<BSDF> _bsdf1{};
-    Float _scale{};
-
-public:
-    MixBSDF(UP<BSDF> &&b0, UP<BSDF> &&b1, Float scale,
-            const Interaction &it,const SampledWavelengths &swl)
-        : BSDF(it, swl), _bsdf0(move(b0)), _bsdf1(move(b1)), _scale(scale) {}
-};
-
 class MixMaterial : public Material {
 private:
     Material *_mat0{};

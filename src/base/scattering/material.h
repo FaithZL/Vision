@@ -29,10 +29,10 @@ public:
     UP<BxDFSet> bxdf_set{};
 
 protected:
-    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
         return bxdf_set->evaluate_local(wo, wi, flag);
     }
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
         return bxdf_set->sample_local(wo, flag, sampler);
     }
 
@@ -48,7 +48,7 @@ public:
         // todo
         return {swl.dimension(), 0.f};
     }
-    [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept {
+    [[nodiscard]] optional<Bool> is_dispersive() const noexcept {
         return bxdf_set != nullptr ? bxdf_set->is_dispersive() : optional<Bool>{};
     }
     [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
