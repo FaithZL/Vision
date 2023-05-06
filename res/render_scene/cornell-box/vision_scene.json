@@ -208,8 +208,9 @@
 				"y" : 1,
 				"z" : 1,
 				//                                "material" : "ShortBox",
-				//                "material" : "substrate",
-				"material" : "Metal",
+//				"material" : "substrate",
+				"material" : "Mirror",
+//				"material" : "Metal",
 				//                "material" : "disney",
 				//                                "material" : "Glass",
 				"transform" : {

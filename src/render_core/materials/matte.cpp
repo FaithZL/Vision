@@ -14,7 +14,7 @@ private:
     LambertReflection _bxdf;
 
 public:
-    MatteBxDFSet(const Interaction &it, const SampledSpectrum &kr, const SampledWavelengths &swl)
+    MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
         : _bxdf(kr, swl) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
@@ -37,7 +37,7 @@ public:
 
     [[nodiscard]] UP<BSDF> compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        return make_unique<BSDF>(it, swl, make_unique<MatteBxDFSet>(it, kr, swl));
+        return make_unique<BSDF>(it, swl, make_unique<MatteBxDFSet>(kr, swl));
     }
 };
 }// namespace vision

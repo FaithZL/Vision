@@ -8,14 +8,14 @@
 
 namespace vision {
 
-class MirrorBSDF : public BSDF {
+class MirrorBxDFSet : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _bxdf;
 
 public:
-    MirrorBSDF(const Interaction &it, const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
-        : BSDF(it, bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+    MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
+        : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
@@ -48,7 +48,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBSDF>(it, fresnel, ocarina::move(bxdf));
+        return make_unique<BSDF>(it, swl, make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf)));
     }
 };
 
