@@ -555,7 +555,7 @@ public:
 
     [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return BSDF(it, swl, make_unique<PrincipledBxDFSet>(it, swl, render_pipeline(), _color, _metallic,
-                                                            _eta, _roughness, _spec_tint, _anisotropic, 
+                                                            _eta, _roughness, _spec_tint, _anisotropic,
                                                             _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
                                                             _spec_trans, _flatness, _diff_trans));
     }
