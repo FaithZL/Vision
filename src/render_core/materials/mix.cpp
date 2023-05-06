@@ -22,6 +22,15 @@ public:
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         return *(_b0->is_dispersive()) || *(_b1->is_dispersive());
     }
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi,
+                                             Uint flag) const noexcept override {
+        ScatterEval eval0 = _b0->evaluate_local(wo, wi, flag);
+        ScatterEval eval1 = _b1->evaluate_local(wo, wi, flag);
+        ScatterEval ret{eval0.f.dimension()};
+        ret.f = eval0.f * _scale + eval1.f * (1 - _scale);
+        ret.pdf = eval0.pdf * _scale + eval1.pdf * (1 - _scale);
+        return ret;
+    }
 };
 
 class MixMaterial : public Material {
