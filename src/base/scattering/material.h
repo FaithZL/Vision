@@ -55,29 +55,6 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
-class DielectricBxDFSet : public BxDFSet {
-private:
-    SP<const Fresnel> _fresnel;
-    MicrofacetReflection _refl;
-    MicrofacetTransmission _trans;
-    Bool _dispersive{};
-
-public:
-    DielectricBxDFSet(const SP<Fresnel> &fresnel,
-                      MicrofacetReflection refl,
-                      MicrofacetTransmission trans,
-                      const Bool &dispersive)
-        : _fresnel(fresnel),
-          _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
-          _dispersive(dispersive) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
-    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
-        return _dispersive;
-    }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override;
-};
-
 class Material : public Node, public Serializable<float> {
 public:
     using Desc = MaterialDesc;

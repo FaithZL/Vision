@@ -31,38 +31,6 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     return ret;
 }
 
-ScatterEval DielectricBxDFSet::evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
-    ScatterEval ret{_refl.swl().dimension()};
-    auto fresnel = _fresnel->clone();
-    Float cos_theta_o = cos_theta(wo);
-    fresnel->correct_eta(cos_theta_o);
-    $if(same_hemisphere(wo, wi)) {
-        ret = _refl.evaluate(wo, wi, fresnel);
-    }
-    $else {
-        ret = _trans.evaluate(wo, wi, fresnel);
-    };
-    return ret;
-}
-
-BSDFSample DielectricBxDFSet::sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
-    BSDFSample ret{_refl.swl().dimension()};
-    Float uc = sampler->next_1d();
-    auto fresnel = _fresnel->clone();
-    Float cos_theta_o = cos_theta(wo);
-    fresnel->correct_eta(cos_theta_o);
-    Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-    $if(uc < fr) {
-        ret = _refl.sample(wo, sampler, fresnel);
-        ret.eval.pdf *= fr;
-    }
-    $else {
-        ret = _trans.sample(wo, sampler, fresnel);
-        ret.eval.pdf *= 1 - fr;
-    };
-    return ret;
-}
-
 uint Material::element_num() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
         return size + slot->element_num();

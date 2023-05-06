@@ -9,6 +9,21 @@
 
 namespace vision {
 
+class MixBxDFSet : public BxDFSet {
+private:
+    UP<BxDFSet> _b0;
+    UP<BxDFSet> _b1;
+    Float _scale;
+
+public:
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override {
+        return _b0->albedo() * _scale + _b1->albedo() * (1 - _scale);
+    }
+    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
+        return *(_b0->is_dispersive()) || *(_b1->is_dispersive());
+    }
+};
+
 class MixMaterial : public Material {
 private:
     Material *_mat0{};
