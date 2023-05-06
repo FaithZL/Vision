@@ -20,7 +20,7 @@ public:
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
 };
 
-struct BSDF {
+struct BSDF final {
 
 public:
     UVN<Float3> shading_frame;
@@ -42,11 +42,10 @@ public:
         : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl) {}
 
     explicit BSDF(const Interaction &it, const SampledWavelengths &swl, UP<BxDFSet> &&bxdf_set)
-        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl), bxdf_set(move(bxdf_set)) {}
+        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl), bxdf_set(ocarina::move(bxdf_set)) {}
 
-    [[nodiscard]] virtual SampledSpectrum albedo() const noexcept {
-        // todo
-        return {swl.dimension(), 0.f};
+    [[nodiscard]] SampledSpectrum albedo() const noexcept {
+        return bxdf_set->albedo();
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept {
         return bxdf_set != nullptr ? bxdf_set->is_dispersive() : optional<Bool>{};
