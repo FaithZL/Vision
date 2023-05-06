@@ -56,7 +56,7 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
-class DielectricBSDF : public BxDFSet {
+class DielectricBxDFSet : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
@@ -64,7 +64,7 @@ private:
     Bool _dispersive{};
 
 public:
-    DielectricBSDF(const SP<Fresnel> &fresnel,
+    DielectricBxDFSet(const SP<Fresnel> &fresnel,
                    MicrofacetReflection refl,
                    MicrofacetTransmission trans,
                    const Bool &dispersive)

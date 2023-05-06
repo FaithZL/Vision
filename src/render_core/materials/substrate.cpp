@@ -74,14 +74,14 @@ public:
     }
 };
 
-class SubstrateBSDF : public BSDF {
+class SubstrateBxDFSet : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel;
     FresnelBlend _bxdf;
 
 public:
-    SubstrateBSDF(const Interaction &it, const SP<Fresnel> &fresnel, FresnelBlend bxdf)
-        : BSDF(it,bxdf.swl()), _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+    SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf)
+        : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
@@ -118,7 +118,7 @@ public:
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl, render_pipeline());
         FresnelBlend bxdf(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBSDF>(it, fresnel, ocarina::move(bxdf));
+        return make_unique<BSDF>(it, swl, make_unique<SubstrateBxDFSet>(fresnel, ocarina::move(bxdf)));
     }
 };
 
