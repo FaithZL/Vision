@@ -16,6 +16,8 @@ private:
     Float _scale;
 
 public:
+    MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float scale)
+        : _b0(ocarina::move(b0)), _b1(ocarina::move(b1)), _scale(scale) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override {
         return _b0->albedo() * _scale + _b1->albedo() * (1 - _scale);
     }
@@ -29,6 +31,27 @@ public:
         ScatterEval ret{eval0.f.dimension()};
         ret.f = eval0.f * _scale + eval1.f * (1 - _scale);
         ret.pdf = eval0.pdf * _scale + eval1.pdf * (1 - _scale);
+        return ret;
+    }
+
+    SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+        SampledDirection sd;
+        Float u = sampler->next_1d();
+        $if(u < _scale) {
+            sd = _b0->sample_wi(wo, flag, sampler);
+        }
+        $else {
+            sd = _b1->sample_wi(wo, flag, sampler);
+        };
+        return sd;
+    }
+
+    BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+        BSDFSample ret{_b0->albedo().dimension()};
+        SampledDirection sd = sample_wi(wo, flag, sampler);
+        ret.eval = evaluate_local(wo, sd.wi, flag);
+        ret.wi = sd.wi;
+        ret.eval.pdf = select(sd.valid, ret.eval.pdf, 0.f);
         return ret;
     }
 };
@@ -51,6 +74,19 @@ public:
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64(_mat0->hash(), _mat1->hash(), _scale.hash());
+    }
+
+    void prepare() noexcept override {
+        _mat0->prepare();
+        _mat1->prepare();
+        _scale->prepare();
+    }
+
+    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        BSDF b0 = _mat0->compute_BSDF(it, swl);
+        BSDF b1 = _mat1->compute_BSDF(it, swl);
+        Float scale = _scale.evaluate(it, swl)[0];
+        return BSDF(it, swl, make_unique<MixBxDFSet>(ocarina::move(b0.bxdf_set), ocarina::move(b1.bxdf_set), scale));
     }
 };
 
