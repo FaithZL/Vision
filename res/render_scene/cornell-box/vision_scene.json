@@ -86,7 +86,7 @@
 			"param" : {
 				"width" : 1.0,
 				"height" : 1.0,
-				"material" : "BackWall",
+				"material" : "mix",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -211,8 +211,8 @@
 //				"material" : "substrate",
 //				"material" : "Mirror",
 //				"material" : "Metal",
-				                "material" : "disney",
-//				                                "material" : "Glass",
+//				                "material" : "disney",
+				                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -425,6 +425,37 @@
 					0.065,
 					0.05
 				]
+			}
+		},
+		{
+			"type": "mix",
+			"name": "mix",
+			"param": {
+				"mat0": {
+					"type" : "matte",
+					"name" : "LeftWall",
+					"param" : {
+						"color" : [
+							0,
+							0,
+							0
+						]
+					}
+				},
+				"mat1": {
+					"type" : "matte",
+					"name" : "LeftWall",
+					"param" : {
+						"color" : {
+							"channels" : "xyz",
+							"node" : {
+								"fn" : "checker.jpg",
+								"color_space" : "srgb"
+							}
+						}
+					}
+				},
+				"scale": 0
 			}
 		},
 		{
@@ -719,7 +750,7 @@
 		}
 	},
 	"spectrum" : {
-		"type" : "hero",
+		"type" : "srgb",
 		"param" : {
 			"dimension" : 3
 		}

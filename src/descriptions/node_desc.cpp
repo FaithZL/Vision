@@ -144,11 +144,12 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("matte");
     if (sub_type == "mix") {
         mat0 = make_shared<MaterialDesc>();
+        mat0->scene_path = scene_path;
         mat0->init(ps["param"]["mat0"]);
         mat1 = make_shared<MaterialDesc>();
-        mat0->init(ps["param"]["mat1"]);
-        scale = SlotDesc();
-        scale.init(ps["param"]["scale"]);
+        mat1->scene_path = scene_path;
+        mat1->init(ps["param"]["mat1"]);
+        set_parameter(ps["param"]);
     } else {
         set_parameter(ps["param"]);
     }

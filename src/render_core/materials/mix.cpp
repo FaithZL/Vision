@@ -64,9 +64,10 @@ private:
 
 public:
     explicit MixMaterial(const MaterialDesc &desc)
-        : Material(desc), _mat0(desc.scene->load<Material>(*desc.mat0)),
+        : Material(desc),
+          _mat0(desc.scene->load<Material>(*desc.mat0)),
           _mat1(desc.scene->load<Material>(*desc.mat1)),
-          _scale(_scene->create_slot(desc.slot("scale", make_float3(0.5f), Number))) {}
+          _scale(_scene->create_slot(desc.slot("scale", 0.5f, Number))) {}
 
     OC_SERIALIZABLE_FUNC((*_mat0), (*_mat1), (*_scale.node()))
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
@@ -91,3 +92,5 @@ public:
 };
 
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::MixMaterial)
