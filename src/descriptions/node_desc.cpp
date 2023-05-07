@@ -142,7 +142,16 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("matte");
-    set_parameter(ps["param"]);
+    if (sub_type == "mix") {
+        mat0 = make_shared<MaterialDesc>();
+        mat0->init(ps["param"]["mat0"]);
+        mat1 = make_shared<MaterialDesc>();
+        mat0->init(ps["param"]["mat1"]);
+        scale = SlotDesc();
+        scale.init(ps["param"]["scale"]);
+    } else {
+        set_parameter(ps["param"]);
+    }
 }
 
 uint64_t MaterialDesc::_compute_hash() const noexcept {

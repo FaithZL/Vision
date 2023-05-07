@@ -254,7 +254,7 @@ struct MaterialDesc : public NodeDesc {
 public:
     SP<MaterialDesc> mat0;
     SP<MaterialDesc> mat1;
-    ShaderNodeDesc scale;
+    SlotDesc scale;
 
 public:
     VISION_DESC_COMMON(Material)
