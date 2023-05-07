@@ -23,6 +23,9 @@ public:
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         return _bxdf.sample(wo, sampler, nullptr);
     }
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+        return _bxdf.sample_wi(wo, sampler->next_2d(), nullptr);
+    }
 };
 
 class MatteMaterial : public Material {

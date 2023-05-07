@@ -22,8 +22,8 @@ public:
 
     [[nodiscard]] SampledSpectrum f_diffuse(Float3 wo, Float3 wi) const noexcept {
         SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd * (SampledSpectrum(swl().dimension(), 1.f) - Rs) *
-                          (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
-                          (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
+                                  (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
+                                  (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
         return diffuse;
     }
     [[nodiscard]] Float PDF_diffuse(Float3 wo, Float3 wi) const noexcept {
@@ -33,7 +33,7 @@ public:
         Float3 wh = wi + wo;
         wh = normalize(wh);
         SampledSpectrum specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
-                          fresnel_schlick(Rs, dot(wi, wh));
+                                   fresnel_schlick(Rs, dot(wi, wh));
         return select(is_zero(wh), 0.f, 1.f) * specular;
     }
     [[nodiscard]] Float PDF_specular(Float3 wo, Float3 wi) const noexcept {
@@ -51,7 +51,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler,
-                                        SP<Fresnel> fresnel) const noexcept override {
+                                    SP<Fresnel> fresnel) const noexcept override {
         BSDFSample ret{swl().dimension()};
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         Float2 u = sampler->next_2d();
@@ -72,6 +72,24 @@ public:
         };
         return ret;
     }
+
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
+        SampledDirection ret;
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        $if(u.x < fr) {
+            u.x = remapping(u.x, 0.f, fr);
+            Float3 wh = _microfacet->sample_wh(wo, u);
+            ret.wi = reflect(wo, wh);
+            ret.valid = true;
+        }
+        $else {
+            u.x = remapping(u.x, fr, 1.f);
+            ret.wi = square_to_cosine_hemisphere(u);
+            ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
+            ret.valid = true;
+        };
+        return ret;
+    }
 };
 
 class SubstrateBxDFSet : public BxDFSet {
@@ -89,6 +107,10 @@ public:
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         return _bxdf.sample(wo, sampler, _fresnel->clone());
+    }
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
+                                             Sampler *sampler) const noexcept override {
+        return _bxdf.sample_wi(wo, sampler->next_2d(), _fresnel->clone());
     }
 };
 

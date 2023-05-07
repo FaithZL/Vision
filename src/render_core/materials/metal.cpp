@@ -24,13 +24,13 @@ public:
     }
 };
 
-class ConductorBSDF : public BxDFSet {
+class ConductorBxDFSet : public BxDFSet {
 private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _refl;
 
 public:
-    ConductorBSDF(const SP<Fresnel> &fresnel,
+    ConductorBxDFSet(const SP<Fresnel> &fresnel,
                   MicrofacetReflection refl)
         : _fresnel(fresnel), _refl(ocarina::move(refl)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
@@ -39,6 +39,10 @@ public:
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         return _refl.sample(wo, sampler, _fresnel->clone());
+    }
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
+                                             Sampler *sampler) const noexcept override {
+        return _refl.sample_wi(wo, sampler->next_2d(), _fresnel->clone());
     }
 };
 
@@ -95,7 +99,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return BSDF(it, swl, make_unique<ConductorBSDF>(fresnel, ocarina::move(bxdf)));
+        return BSDF(it, swl, make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf)));
     }
 };
 

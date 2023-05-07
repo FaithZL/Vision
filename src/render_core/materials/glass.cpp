@@ -122,6 +122,21 @@ public:
         };
         return ret;
     }
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
+                                             Sampler *sampler) const noexcept override {
+        Float uc = sampler->next_1d();
+        auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        SampledDirection ret;
+        $if(uc < fr) {
+            ret = _refl.sample_wi(wo, sampler->next_2d(), fresnel);
+        } $else {
+            ret = _trans.sample_wi(wo, sampler->next_2d(), fresnel);
+        };
+        return ret;
+    }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag,
                                           Sampler *sampler) const noexcept override {
         BSDFSample ret{_refl.swl().dimension()};
