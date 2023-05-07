@@ -468,8 +468,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret{_spec_refl->swl().dimension()};
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         Float uc = sampler->next_1d();
         Float2 u = sampler->next_2d();
 
@@ -479,10 +478,12 @@ public:
             sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
             sum_weights += _sampling_weights[i];
         }
+
         auto fresnel = _fresnel->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         SampledDirection sampled_direction;
+
         $switch(sampling_strategy) {
             if (_diffuse.has_value()) {
                 $case(_diffuse_index) {
@@ -511,6 +512,12 @@ public:
                 $break;
             };
         };
+        return sampled_direction;
+    }
+
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+        BSDFSample ret{_spec_refl->swl().dimension()};
+        SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
         ret.wi = sampled_direction.wi;
         ret.eval.pdf = select(sampled_direction.valid, ret.eval.pdf, 0.f);
