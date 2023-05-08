@@ -132,8 +132,10 @@ public:
         SampledDirection ret;
         $if(uc < fr) {
             ret = _refl.sample_wi(wo, sampler->next_2d(), fresnel);
+            ret.pdf = fr;
         } $else {
             ret = _trans.sample_wi(wo, sampler->next_2d(), fresnel);
+            ret.pdf = 1 - fr;
         };
         return ret;
     }

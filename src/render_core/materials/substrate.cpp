@@ -80,13 +80,13 @@ public:
             u.x = remapping(u.x, 0.f, fr);
             Float3 wh = _microfacet->sample_wh(wo, u);
             ret.wi = reflect(wo, wh);
-            ret.valid = true;
+            ret.pdf = fr;
         }
         $else {
             u.x = remapping(u.x, fr, 1.f);
             ret.wi = square_to_cosine_hemisphere(u);
             ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
-            ret.valid = true;
+            ret.pdf = 1 - fr;
         };
         return ret;
     }

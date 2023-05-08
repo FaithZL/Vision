@@ -73,7 +73,10 @@ public:
 
 struct SampledDirection {
     Float3 wi;
-    Bool valid;
+    Float pdf{1.f};
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdf > 0;
+    }
 };
 
 struct ScatterSample {
