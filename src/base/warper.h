@@ -42,11 +42,11 @@ private:
 public:
     Warper2D() = default;
     explicit Warper2D(const WarperDesc &desc) : Node(desc) {}
-    virtual void build(vector<float> weights, uint2 res) noexcept;
-    [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept;
-    [[nodiscard]] virtual Float PDF(Float2 p) const noexcept;
-    [[nodiscard]] virtual float integral() const noexcept;
-    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept;
+    virtual void build(vector<float> weights, uint2 res) noexcept = 0;
+    [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
+    [[nodiscard]] virtual float integral() const noexcept = 0;
+    [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept = 0;
 };
 
 }// namespace vision
