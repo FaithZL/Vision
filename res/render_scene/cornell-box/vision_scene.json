@@ -432,14 +432,18 @@
 			"name": "mix",
 			"param": {
 				"mat0": {
-					"type" : "matte",
-					"name" : "LeftWall",
+					"type" : "mirror",
+					"name" : "Mirror",
 					"param" : {
-						"color" : [
-							0,
-							0,
-							0
-						]
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								1,
+								1,
+								1
+							]
+						},
+						"roughness" : [0.001, 0.001]
 					}
 				},
 				"mat1": {
@@ -455,7 +459,7 @@
 						}
 					}
 				},
-				"scale": 0
+				"scale": 0.1
 			}
 		},
 		{
@@ -750,7 +754,7 @@
 		}
 	},
 	"spectrum" : {
-		"type" : "srgb",
+		"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}

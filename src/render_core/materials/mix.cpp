@@ -22,7 +22,16 @@ public:
         return _b0->albedo() * _scale + _b1->albedo() * (1 - _scale);
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
-        return *(_b0->is_dispersive()) || *(_b1->is_dispersive());
+        optional<Bool> v0 = _b0->is_dispersive();
+        optional<Bool> v1 = _b1->is_dispersive();
+        if (v0 && v1) {
+            return (*v0) || (*v1);
+        } else if (v0) {
+            return v0;
+        } else if (v1) {
+            return v1;
+        }
+        return {};
     }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi,
                                              Uint flag) const noexcept override {
