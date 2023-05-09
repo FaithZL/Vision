@@ -7,9 +7,9 @@
 #include "base/sampler.h"
 
 namespace vision {
-class LightBVHSampler : public LightSampler {
+class BVHLightSampler : public LightSampler {
 public:
-    explicit LightBVHSampler(const LightSamplerDesc &desc)
+    explicit BVHLightSampler(const LightSamplerDesc &desc)
         : LightSampler(desc) {}
 };
 }// namespace vision
