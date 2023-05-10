@@ -17,6 +17,9 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
     [[nodiscard]] uint dim() const noexcept override { return _value.element_num(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
+    [[nodiscard]] ocarina::vector<float> average() const noexcept override {
+        return _value.hv();
+    }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64_list(_value.hv());
     }
