@@ -17,7 +17,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
         }
     }
     std::sort(_lights.begin(), _lights.end(), [&](Light *a, Light *b) {
-        return a->type() > b->type();
+        return _lights.type_index(a) < _lights.type_index(b);
     });
 }
 
