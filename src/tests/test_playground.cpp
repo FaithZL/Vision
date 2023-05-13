@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     uint inst_id = 0u;
     vector<uint> func{1, 2, 5, 6, 3};
     uint accum = 0u;
-    uint index = 16;
+    uint index = 13;
     for (int i = 0; i < func.size(); ++i) {
         type_id = select(index >= accum, i, type_id);
         inst_id = select(index >= accum, index - accum, inst_id);
@@ -45,6 +45,13 @@ int main(int argc, char *argv[]) {
     cout << "index = " << index << endl;
     cout << "type_id = " << type_id << endl;
     cout << "inst_id = " << inst_id << endl;
+
+    uint id = 0;
+    for (int i = 0; i < type_id; ++i) {
+        id += func[i];
+    }
+    index = id + inst_id;
+    cout << "index = " << index << endl;
 
     auto tmp = encode_id<H>(1237, 113);
     //    auto [inst, type] = decode_id<H>(tmp);

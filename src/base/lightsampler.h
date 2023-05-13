@@ -41,15 +41,16 @@ public:
     [[nodiscard]] Polymorphic<Light *> &lights() noexcept { return _lights; }
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
     void add_light(Light *light) noexcept { _lights.push_back(light); }
-    [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &id) const noexcept = 0;
+    [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
     [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
+    [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler,
-                                             const SampledWavelengths &swl) const noexcept = 0;
+                                             const SampledWavelengths &swl) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id,const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>

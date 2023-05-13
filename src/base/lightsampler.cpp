@@ -16,17 +16,41 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
             _env_light = light;
         }
     }
-    std::sort(_lights.begin(), _lights.end(), [&](Light *a, Light *b) {
-        return _lights.type_index(a) < _lights.type_index(b);
-    });
 }
 
 void LightSampler::prepare() noexcept {
+    std::sort(_lights.begin(), _lights.end(), [&](Light *a, Light *b) {
+        return _lights.type_index(a) < _lights.type_index(b);
+    });
     for_each([&](Light *light) noexcept {
         light->prepare();
     });
     auto rp = render_pipeline();
     _lights.prepare(rp->resource_array(), rp->device());
+}
+
+Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
+    vector<uint> func;
+    Uint ret = 0u;
+    switch (_lights.mode()) {
+        case ocarina::EInstance: {
+            ret = inst_id;
+        }
+        case ocarina::EType: {
+            func.reserve(_lights.type_num());
+            for (int i = 0; i < _lights.type_num(); ++i) {
+                func.push_back(static_cast<uint>(_lights.instance_num(i)));
+            }
+            Array<uint> arr{func};
+            $for(i, type_id) {
+                ret += arr[i];
+            };
+            ret += inst_id;
+        }
+        default:
+            break;
+    }
+    return ret;
 }
 
 pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcept {
@@ -65,8 +89,22 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate(p_ref, p_light, swl);
     });
-    Float pmf = PMF(p_ref, it.light_inst_id());
+    Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
     ret.pdf *= pmf;
+    return ret;
+}
+
+LightSample LightSampler::sample(const LightSampleContext &lsc, Sampler *sampler,
+                                 const SampledWavelengths &swl) const noexcept {
+    Float u_light = sampler->next_1d();
+    Float2 u_surface = sampler->next_2d();
+    LightSample ret{swl.dimension()};
+    SampledLight sampled_light = select_light(lsc, u_light);
+    auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
+    dispatch_light(type_id, inst_id, [&](const Light *light) {
+        ret = light->sample_Li(lsc, u_surface, swl);
+        ret.eval.pdf *= sampled_light.PMF;
+    });
     return ret;
 }
 

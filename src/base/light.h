@@ -35,6 +35,7 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
+    [[nodiscard]] virtual float power() const noexcept { return 1.f; }
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }

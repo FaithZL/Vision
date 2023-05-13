@@ -212,8 +212,8 @@
 //				"material" : "Mirror",
 //				"material" : "Metal",
 				//				                "material" : "disney",
-								                "material" : "mix",
-//				                                "material" : "Glass",
+//								                "material" : "mix",
+				                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -886,7 +886,7 @@
 		}
 	},
 	"render_setting" : {
-		"polymorphic_mode" : 1
+		"polymorphic_mode" : 0
 	},
 	"output" : {
 		"spp" : 0,
