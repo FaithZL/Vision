@@ -27,6 +27,7 @@ public:
 protected:
     Polymorphic<Light *> _lights;
     Light *_env_light{};
+    uint _env_index{InvalidUI32};
     float _env_prob{};
 
 public:
@@ -52,18 +53,32 @@ public:
     [[nodiscard]] virtual LightSample sample(const LightSampleContext &lsc, Sampler *sampler,
                                              const SampledWavelengths &swl) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
-    void dispatch_light(const Uint &type_id,const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
+    void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
-        for (Light *light : _lights) {
-            func(light);
+        if constexpr (std::invocable<Func, Light *>) {
+            for (Light *light : _lights) {
+                func(light);
+            }
+        } else {
+            uint i = 0u;
+            for (Light *light : _lights) {
+                func(light, i++);
+            }
         }
     }
 
     template<typename Func>
     void for_each(Func &&func) const noexcept {
-        for (const Light *light : _lights) {
-            func(light);
+        if constexpr (std::invocable<Func, const Light *>) {
+            for (const Light *light : _lights) {
+                func(light);
+            }
+        } else {
+            uint i = 0u;
+            for (const Light *light : _lights) {
+                func(light, i++);
+            }
         }
     }
 };

@@ -12,9 +12,6 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
     for (const LightDesc &light_desc : desc.light_descs) {
         Light *light = desc.scene->load<Light>(light_desc);
         add_light(light);
-        if (light->type() == LightType::Infinite) {
-            _env_light = light;
-        }
     }
 }
 
@@ -22,7 +19,11 @@ void LightSampler::prepare() noexcept {
     std::sort(_lights.begin(), _lights.end(), [&](Light *a, Light *b) {
         return _lights.type_index(a) < _lights.type_index(b);
     });
-    for_each([&](Light *light) noexcept {
+    for_each([&](Light *light, uint index) noexcept {
+        if (light->type() == LightType::Infinite) {
+            _env_light = light;
+            _env_index = index;
+        }
         light->prepare();
     });
     auto rp = render_pipeline();
@@ -112,7 +113,8 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate(p_ref, p_light, swl);
-    Float pmf = 1.f / light_num();
+    OC_ASSERT(_env_index != InvalidUI32 && _env_light != nullptr);
+    Float pmf = PMF(p_ref, _env_index);
     ret.pdf *= pmf;
     return ret;
 }
