@@ -208,7 +208,7 @@ public:
                                                       swl, render_pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return BSDF(it, swl, make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD));
+        return BSDF(it, make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD));
     }
 };
 }// namespace vision

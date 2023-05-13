@@ -37,7 +37,7 @@ public:
 
     [[nodiscard]] BSDF compute_BSDF(const Interaction &it,
                                     const SampledWavelengths &swl) const noexcept override {
-        return BSDF(it, swl, make_unique<NullBxDFSet>(swl));
+        return BSDF(it, make_unique<NullBxDFSet>(swl));
     }
 };
 

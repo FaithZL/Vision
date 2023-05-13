@@ -40,7 +40,7 @@ public:
 
     [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        return BSDF(it, swl, make_unique<MatteBxDFSet>(kr, swl));
+        return BSDF(it, make_unique<MatteBxDFSet>(kr, swl));
     }
 };
 }// namespace vision

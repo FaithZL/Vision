@@ -96,7 +96,7 @@ public:
         BSDF b0 = _mat0->compute_BSDF(it, swl);
         BSDF b1 = _mat1->compute_BSDF(it, swl);
         Float scale = _scale.evaluate(it, swl)[0];
-        return BSDF(it, swl, make_unique<MixBxDFSet>(ocarina::move(b0.bxdf_set), ocarina::move(b1.bxdf_set), scale));
+        return BSDF(it, make_unique<MixBxDFSet>(ocarina::move(b0.bxdf_set), ocarina::move(b1.bxdf_set), scale));
     }
 };
 

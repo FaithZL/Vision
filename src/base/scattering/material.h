@@ -26,11 +26,9 @@ public:
 };
 
 struct BSDF final {
-
 public:
     UVN<Float3> shading_frame;
     Float3 ng;
-    const SampledWavelengths &swl;
     UP<BxDFSet> bxdf_set{};
 
 protected:
@@ -43,11 +41,11 @@ protected:
 
 public:
     BSDF() = delete;
-    explicit BSDF(const Interaction &it, const SampledWavelengths &swl)
-        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl) {}
+    explicit BSDF(const Interaction &it)
+        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()) {}
 
-    explicit BSDF(const Interaction &it, const SampledWavelengths &swl, UP<BxDFSet> &&bxdf_set)
-        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), swl(swl), bxdf_set(ocarina::move(bxdf_set)) {}
+    explicit BSDF(const Interaction &it, UP<BxDFSet> &&bxdf_set)
+        : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), bxdf_set(ocarina::move(bxdf_set)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept {
         return bxdf_set->albedo();
@@ -72,6 +70,7 @@ protected:
         uint num{0u};
     };
     SlotCursor _slot_cursor;
+    UP<BSDF> _bsdf{};
 
     const Slot &get_slot(uint index) const noexcept {
         const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
@@ -95,6 +94,10 @@ public:
         uint offset = reinterpret_cast<const char *>(head) - reinterpret_cast<char *>(this);
         _slot_cursor.offset = offset;
         _slot_cursor.num = (back - head) + 1;
+    }
+
+    void set_BSDF(BSDF &&bsdf) noexcept {
+//        _bsdf = make_unique<BSDF>();
     }
 
     template<typename T, typename F>
