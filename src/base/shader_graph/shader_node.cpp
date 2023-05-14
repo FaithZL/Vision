@@ -92,7 +92,7 @@ float Slot::luminance() const noexcept {
     switch (_dim) {
         case 1: return average()[0];
         case 2:
-            OC_ERROR_FORMAT("float2 not is a color attribute !");
+            OC_ERROR("float2 not is a color attribute !");
             return 0;
         case 3:
         case 4:
