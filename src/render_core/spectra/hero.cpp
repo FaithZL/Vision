@@ -55,9 +55,9 @@ private:
     const coefficient_table_type &_coefficients;
     RenderPipeline *_rp{};
     uint _base_index{InvalidUI32};
-    RHITexture _coefficient0;
-    RHITexture _coefficient1;
-    RHITexture _coefficient2;
+    Texture _coefficient0;
+    Texture _coefficient1;
+    Texture _coefficient2;
 
 private:
     [[nodiscard]] inline static auto _inverse_smooth_step(auto x) noexcept {

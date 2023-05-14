@@ -16,15 +16,15 @@ class RenderPipeline;
 class ImageWrapper {
 private:
     ImageIO _image_io;
-    RHITexture _texture;
+    Texture _texture;
     uint _id;
 
 public:
     ImageWrapper() = default;
-    ImageWrapper(ImageIO image_io, RHITexture image, uint id)
+    ImageWrapper(ImageIO image_io, Texture image, uint id)
         : _image_io(ocarina::move(image_io)), _texture(ocarina::move(image)), _id(id) {}
-    [[nodiscard]] RHITexture &texture() noexcept { return _texture; }
-    [[nodiscard]] const RHITexture &texture() const noexcept { return _texture; }
+    [[nodiscard]] Texture &texture() noexcept { return _texture; }
+    [[nodiscard]] const Texture &texture() const noexcept { return _texture; }
     [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
     [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
     [[nodiscard]] uint id() const noexcept { return _id; }

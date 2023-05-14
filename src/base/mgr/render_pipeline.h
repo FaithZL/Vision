@@ -37,7 +37,7 @@ public:
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
         return _resource_array.emplace(OC_FORWARD(buffer));
     }
-    handle_ty register_texture(const RHITexture &texture) noexcept {
+    handle_ty register_texture(const Texture &texture) noexcept {
         return _resource_array.emplace(texture);
     }
 
