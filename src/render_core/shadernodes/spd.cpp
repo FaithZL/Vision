@@ -17,7 +17,10 @@ public:
         _spd.init(desc["value"].data());
     }
     OC_SERIALIZABLE_FUNC(_spd)
-
+    [[nodiscard]] vector<float> average() const noexcept override {
+        float3 color = _spd.eval(rgb_spectrum_peak_wavelengths);
+        return vector<float>{color.x, color.y, color.z};
+    }
     void prepare() noexcept override {
         _spd.prepare();
     }
