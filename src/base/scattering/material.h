@@ -96,10 +96,6 @@ public:
         _slot_cursor.num = (back - head) + 1;
     }
 
-    void set_BSDF(BSDF &&bsdf) noexcept {
-//        _bsdf = make_unique<BSDF>();
-    }
-
     template<typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);

@@ -54,10 +54,11 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | projector                                     |  done       |
 | spotlight                                     |  done       |
 | pointlight                                    |  done       |
-| IES                                           |  Planned    |
 | HDRI Environment Maps                         |  done       |
+| Portal Environment Maps                       |  Planned    |
+| IES                                           |  Planned    |
 | Uniform-Distribution Light Selection Strategy |  done       |
-| Power-Distribution Light Selection Strategy   |  Planned    |
+| Power-Distribution Light Selection Strategy   |  done       |
 | BVH Light Selection Strategy                  |  Planned    |
 
 ### Backends
@@ -73,10 +74,10 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 
 Part of the scene comes from https://benedikt-bitterli.me/resources/
 
-![](gallery/staircase.png)
-dispersive
+![](gallery/dispersion.png)
 ![](gallery/dispersion-hero.png)
 ![](gallery/prism.png)
+![](gallery/staircase.png)
 ![](gallery/bathroom.png)
 ![](gallery/classroom-1024spp.png)
 ![](gallery/classroom-fog-1024spp.png)
