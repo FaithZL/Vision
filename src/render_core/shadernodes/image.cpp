@@ -26,6 +26,9 @@ public:
                                         const SampledWavelengths &swl) const noexcept override {
         return render_pipeline()->tex(*_tex_id).sample(3, ctx.uv);
     }
+    [[nodiscard]] ocarina::vector<float> average() const noexcept override {
+        return _image_wrapper.image().average_vector();
+    }
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _image_wrapper.texture()->resolution().xy();
     }

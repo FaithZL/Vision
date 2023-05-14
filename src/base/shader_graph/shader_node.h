@@ -74,6 +74,8 @@ public:
     [[nodiscard]] uint dim() const noexcept { return _dim; }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] vector<float> average() const noexcept;
+    [[nodiscard]] float luminance() const noexcept;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,

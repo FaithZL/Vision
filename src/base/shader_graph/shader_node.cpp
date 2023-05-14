@@ -61,6 +61,48 @@ Array<float> Slot::evaluate(const AttrEvalContext &ctx,
     return _node->evaluate(ctx, swl);
 }
 
+vector<float> Slot::average() const noexcept {
+    switch (_dim) {
+        case 1: {
+            switch (_channel_mask) {
+#include "slot_average_swizzle_1.inl.h"
+            }
+        }
+        case 2: {
+            switch (_channel_mask) {
+#include "slot_average_swizzle_2.inl.h"
+            }
+        }
+        case 3: {
+            switch (_channel_mask) {
+#include "slot_average_swizzle_3.inl.h"
+            }
+        }
+        case 4: {
+            switch (_channel_mask) {
+#include "slot_average_swizzle_4.inl.h"
+            }
+        }
+    }
+    OC_ASSERT(false);
+    return {};
+}
+
+float Slot::luminance() const noexcept {
+    switch (_dim) {
+        case 1: return average()[0];
+        case 2:
+            OC_ERROR_FORMAT("float2 not is a color attribute !");
+            return 0;
+        case 3:
+        case 4:
+            auto a = average();
+            return ocarina::luminance(make_float3(a[0], a[1], a[2]));
+    }
+    OC_ASSERT(false);
+    return 0;
+}
+
 ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(_dim == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
