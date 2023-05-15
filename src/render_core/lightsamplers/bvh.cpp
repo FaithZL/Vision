@@ -13,7 +13,7 @@ struct LightBound {
 };
 
 struct LightBVHNode {
-    
+
 };
 
 class BVHLightSampler : public LightSampler {
