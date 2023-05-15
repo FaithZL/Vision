@@ -27,6 +27,24 @@ public:
         return _warper->PMF(prim_id);
     }
 
+    [[nodiscard]] bool two_sided() const noexcept {
+        return _two_sided.hv();
+    }
+
+    [[nodiscard]] float surface_area() const noexcept {
+        float ret = 0.f;
+        Shape *shape = _scene->get_shape(_inst_idx.hv());
+        vector<float> weights = shape->surface_area();
+        for (float weight : weights) {
+            ret += weight;
+        }
+        return ret;
+    }
+
+    [[nodiscard]] float3 power() const noexcept override {
+        return (two_sided() ? 2.f : 1.f) * average() * surface_area() * Pi;
+    }
+
     [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
                                     const SampledWavelengths &swl) const {
         SampledSpectrum radiance = _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();

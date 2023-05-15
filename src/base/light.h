@@ -29,13 +29,19 @@ protected:
     Serial<float> _scale{1.f};
     Slot _color{};
 
+protected:
+    [[nodiscard]] float3 average() const noexcept {
+        auto a = _color.average();
+        return make_float3(a[0], a[1], a[2]);
+    }
+
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
     OC_SERIALIZABLE_FUNC(_scale, (*_color.node()))
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
-    [[nodiscard]] virtual float power() const noexcept { return 1.f; }
+    [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }

@@ -16,6 +16,9 @@ public:
         : IPointLight(desc),
           _position(desc["position"].as_float3()) {}
     OC_SERIALIZABLE_FUNC(_position)
+    [[nodiscard]] float3 power() const noexcept override {
+        return 4 * Pi * average();
+    }
     [[nodiscard]] Float3 position() const noexcept override { return *_position; }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                              const LightEvalContext &p_light,

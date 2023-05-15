@@ -22,6 +22,9 @@ public:
           _falloff(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, _angle.hv()))),
           _direction(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
     OC_SERIALIZABLE_FUNC(_position, _direction, _angle, _falloff)
+    [[nodiscard]] float3 power() const noexcept override {
+        return 2 * Pi * average() * (1 - .5f * (_angle.hv() * 2 + _falloff.hv()));
+    }
     [[nodiscard]] Float3 position() const noexcept override { return *_position; }
     [[nodiscard]] Float falloff(Float cos_theta) const noexcept {
         Float falloff_start = max(0.f, *_angle - *_falloff);

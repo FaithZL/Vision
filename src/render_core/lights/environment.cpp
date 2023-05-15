@@ -57,6 +57,11 @@ public:
         return {L(local_dir,swl), select(sin_theta == 0, 0.f, pdf)};
     }
 
+    [[nodiscard]] float3 power() const noexcept override {
+        float world_radius = _scene->world_diameter() / 2.f;
+        return Pi * ocarina::sqr(world_radius) * average();
+    }
+
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};

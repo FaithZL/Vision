@@ -25,10 +25,44 @@ public:
         }
     }
     OC_SERIALIZABLE_FUNC(_o2w, _ratio, _angle_y)
+    [[nodiscard]] float3 power() const noexcept override {
+        // http://math.stackexchange.com/questions/9819/area-of-a-spherical-triangle
+        // Girard's theorem: surface area of a spherical triangle on a unit
+        // sphere is the 'excess angle' alpha+beta+gamma-pi, where
+        // alpha/beta/gamma are the interior angles at the vertices.
+        //
+        // Given three vertices on the sphere, a, b, c, then we can compute,
+        // for example, the angle c->a->b by
+        //
+        // cos theta =  Dot(Cross(c, a), Cross(b, a)) /
+        //              (Length(Cross(c, a)) * Length(Cross(b, a))).
+        //
+        using ocarina::clamp;
+        using ocarina::sqr;
+        using ocarina::sqrt;
+        float y = sqrt(1.f / (sqr(_ratio.hv()) + 1.f));
+        float x = _ratio.hv() * y;
+        float z = sqrt(sqr(x) + sqr(y));
+        float3 p0 = make_float3(x, y, z);
+        float3 p1 = make_float3(x, -y, z);
+        float3 p2 = make_float3(-x, -y, z);
+        float3 cross01 = cross(p0, p1);
+        float3 cross12 = cross(p1, p2);
+        float3 cross20 = cross(p2, p0);
+        using namespace ocarina;
+        if (length_squared(cross01) > 0) cross01 = normalize(cross01);
+        if (length_squared(cross12) > 0) cross12 = normalize(cross12);
+        if (length_squared(cross20) > 0) cross20 = normalize(cross20);
+        float solid_angle = ocarina::abs(
+            ocarina::acos(clamp(dot(cross01, -cross12), -1.f, 1.f)) +
+            ocarina::acos(clamp(dot(cross12, -cross20), -1.f, 1.f)) +
+            ocarina::acos(clamp(dot(cross20, -cross01), -1.f, 1.f)) - Pi);
+        return (2 * solid_angle) / (4 * Pi) * average();
+    }
     [[nodiscard]] Float3 position() const noexcept override { return (*_o2w)[3].xyz(); }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
-                             const LightEvalContext &p_light,
-                             const SampledWavelengths &swl) const noexcept override {
+                                     const LightEvalContext &p_light,
+                                     const SampledWavelengths &swl) const noexcept override {
         Float3 p = transform_point(inverse(*_o2w), p_ref.pos);
         Float d2 = length_squared(p);
         Bool valid = p.z > 0;
