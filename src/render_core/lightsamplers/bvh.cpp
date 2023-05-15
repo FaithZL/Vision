@@ -7,9 +7,27 @@
 #include "base/sampler.h"
 
 namespace vision {
+
+struct LightBound {
+
+};
+
+struct LightBVHNode {
+    
+};
+
 class BVHLightSampler : public LightSampler {
 public:
     explicit BVHLightSampler(const LightSamplerDesc &desc)
         : LightSampler(desc) {}
+
+    void prepare() noexcept override {
+        LightSampler::prepare();
+        build_bvh();
+    }
+
+    void build_bvh() noexcept {
+
+    }
 };
 }// namespace vision
