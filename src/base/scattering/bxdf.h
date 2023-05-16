@@ -43,6 +43,7 @@ public:
         _swl = other._swl;
         return *this;
     }
+    virtual void regularize() noexcept {}
     [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *_swl; }
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;

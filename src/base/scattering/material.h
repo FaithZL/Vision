@@ -21,6 +21,7 @@ public:
         OC_ASSERT(false);
         return {};
     }
+    virtual void regularize() noexcept {}
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -47,6 +48,7 @@ public:
     explicit BSDF(const Interaction &it, UP<BxDFSet> &&bxdf_set)
         : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), bxdf_set(ocarina::move(bxdf_set)) {}
 
+    void regularize() noexcept { bxdf_set->regularize(); }
     [[nodiscard]] SampledSpectrum albedo() const noexcept {
         return bxdf_set->albedo();
     }
