@@ -36,6 +36,7 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
     switch (_lights.mode()) {
         case ocarina::EInstance: {
             ret = inst_id;
+            break;
         }
         case ocarina::EType: {
             func.reserve(_lights.type_num());
@@ -47,6 +48,7 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
                 ret += arr[i];
             };
             ret += inst_id;
+            break;
         }
         default:
             break;
@@ -89,9 +91,9 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate(p_ref, p_light, swl);
+        Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
+        ret.pdf *= pmf;
     });
-    Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
-    ret.pdf *= pmf;
     return ret;
 }
 
