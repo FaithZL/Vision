@@ -32,7 +32,7 @@ protected:
 protected:
     [[nodiscard]] float3 average() const noexcept {
         auto a = _color.average();
-        return make_float3(a[0], a[1], a[2]);
+        return make_float3(a[0], a[1], a[2]) * _scale.hv();
     }
 
 public:
