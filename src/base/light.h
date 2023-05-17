@@ -11,6 +11,23 @@
 #include "base/color/spectrum.h"
 
 namespace vision {
+struct LightBound {
+    ocarina::array<float, 3> _axis{};
+    float theta_o{};
+    float theta_e{};
+    [[nodiscard]] auto axis() const noexcept {
+        return make_float3(_axis[0], _axis[1], _axis[2]);
+    }
+};
+}// namespace vision
+
+OC_STRUCT(vision::LightBound, _axis, theta_o, theta_e){
+    [[nodiscard]] auto axis() const noexcept {
+        return make_float3(_axis[0], _axis[1], _axis[2]);
+    }
+};
+
+namespace vision {
 
 // LightType Definition
 enum class LightType {
@@ -41,6 +58,7 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
+    [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;

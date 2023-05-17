@@ -8,10 +8,6 @@
 
 namespace vision {
 
-struct LightBound {
-
-};
-
 struct LightBVHNode {
 
 };

@@ -33,12 +33,15 @@ public:
 
     [[nodiscard]] float surface_area() const noexcept {
         float ret = 0.f;
-        Shape *shape = _scene->get_shape(_inst_idx.hv());
-        vector<float> weights = shape->surface_area();
+        vector<float> weights = shape()->surface_area();
         for (float weight : weights) {
             ret += weight;
         }
         return ret;
+    }
+
+    [[nodiscard]] Shape *shape() const noexcept {
+        return _scene->get_shape(_inst_idx.hv());
     }
 
     [[nodiscard]] float3 power() const noexcept override {
@@ -81,8 +84,7 @@ public:
 
     void prepare() noexcept override {
         _warper = _scene->load_warper();
-        Shape *shape = _scene->get_shape(_inst_idx.hv());
-        vector<float> weights = shape->surface_area();
+        vector<float> weights = shape()->surface_area();
         _warper->build(std::move(weights));
         _warper->prepare();
     }
