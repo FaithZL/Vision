@@ -210,10 +210,10 @@
 				//                                "material" : "ShortBox",
 //				"material" : "substrate",
 //				"material" : "Mirror",
-//				"material" : "Metal",
+				"material" : "Metal",
 				//				                "material" : "disney",
 //								                "material" : "mix",
-				                                "material" : "Glass",
+//				                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -295,8 +295,8 @@
 			"type" : "quad",
 			"name" : "shape_7",
 			"param" : {
-				"width" : 1.0,
-				"height" : 1.0,
+				"width" : 0.1,
+				"height" : 0.1,
 				"material" : "Light",
 				"transform" : {
 					"type" : "matrix4x4",
@@ -348,7 +348,7 @@
 //							}
 //						},
 						"two_sided" : false,
-						"scale" : 1
+						"scale" : 100
 					}
 				}
 			}
@@ -621,7 +621,7 @@
 			"name" : "Metal",
 			"param" : {
 				"material_name" : "Cu",
-				"roughness" : [0.01, 0.01]
+				"roughness" : [0.001, 0.001]
 			}
 		},
 		{
@@ -629,7 +629,7 @@
 			"name" : "Ag",
 			"param" : {
 				"material_name" : "Ag",
-				"roughness" : [0.01, 0.01]
+				"roughness" : [0.001, 0.001]
 			}
 		},
 		{
@@ -759,7 +759,7 @@
 		}
 	},
 	"spectrum" : {
-		"type" : "srgb",
+		"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}
@@ -886,7 +886,7 @@
 		}
 	},
 	"render_setting" : {
-		"polymorphic_mode" : 0
+		"polymorphic_mode" : 1
 	},
 	"output" : {
 		"spp" : 0,
