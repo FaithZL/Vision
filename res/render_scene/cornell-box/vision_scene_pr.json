@@ -257,8 +257,7 @@
 				//                "material": "TallBox",
 				//                "material": "Mirror2",
 				//                "material": "Glass2",
-				//				"material" : "Ag",
-								"material" : "Glass",
+				"material" : "Ag",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -296,8 +295,8 @@
 			"type" : "quad",
 			"name" : "shape_7",
 			"param" : {
-				"width" : 1,
-				"height" : 1,
+				"width" : 0.1,
+				"height" : 0.1,
 				"material" : "Light",
 				"transform" : {
 					"type" : "matrix4x4",
@@ -349,7 +348,7 @@
 //							}
 //						},
 						"two_sided" : false,
-						"scale" : 1
+						"scale" : 100
 					}
 				}
 			}
@@ -760,7 +759,7 @@
 		}
 	},
 	"spectrum" : {
-		"type" : "srgb",
+		"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}
