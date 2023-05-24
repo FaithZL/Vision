@@ -13,6 +13,14 @@
 #include "core/logging.h"
 
 namespace vision {
+
+struct LaunchParam {
+    fs::path work_dir;
+    fs::path scene_dir;
+    fs::path output_dir;
+    string backend{"cuda"};
+};
+
 class App {
 public:
     vision::Context context;
@@ -26,6 +34,7 @@ public:
     bool right_key_press{false};
     bool need_save{false};
     bool need_update{false};
+    LaunchParam param;
 
 public:
     App(int argc, char *argv[])

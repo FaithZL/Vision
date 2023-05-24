@@ -41,7 +41,7 @@ void CLIParser::init(int argc, char **argv) {
          {"h, help", "Print usage"}});
 }
 
-const cxxopts::ParseResult &CLIParser::_parse_result() const noexcept  {
+const cxxopts::ParseResult &CLIParser::_parse_result() const noexcept {
     if (!_parsed_cli_options.has_value()) {
         _cli_options.parse_positional("positional");
         _parsed_cli_options.emplace(
@@ -54,52 +54,12 @@ void CLIParser::print_help() const noexcept {
     cout << _cli_options.help() << endl;
 }
 
-fs::path CLIParser::_working_dir() noexcept {
-    if (_work_dir.empty()) {
-        _work_dir = fs::canonical(_parse_result()["working-dir"].as<fs::path>());
-        OC_ERROR_IF(!fs::exists(_work_dir) || !fs::is_directory(_work_dir),
-                              "Invalid working directory: ", _work_dir);
-        fs::current_path(_work_dir);
-        OC_INFO("Working directory: ", _work_dir);
-    }
-    return _work_dir;
+fs::path CLIParser::working_dir() noexcept {
+    return fs::canonical(_parse_result()["working-dir"].as<fs::path>());
 }
 
-fs::path CLIParser::_runtime_dir() noexcept {
-    if (_run_dir.empty()) {
-        _run_dir = fs::canonical(_parse_result()["runtime-dir"].as<fs::path>());
-        OC_ERROR_IF(!fs::exists(_run_dir) || !fs::is_directory(_run_dir),
-                              "Invalid runtime directory: ", _run_dir);
-        OC_INFO("Runtime directory: ", _run_dir);
-    }
-    return _run_dir;
-}
-
-fs::path CLIParser::_input_dir() noexcept {
-    if (_in_dir.empty()) {
-        if (_parse_result().count("positional") == 0u) {
-            OC_WARNING("No positional CLI argument given, setting input directory to working directory: ",
-                             _working_dir());
-        } else {
-            _in_dir = fs::canonical(cli_positional_option()).parent_path();
-            OC_ERROR_IF(!fs::exists(_in_dir) || !fs::is_directory(_in_dir),
-                                  "Invalid input directory: ", _in_dir);
-            OC_INFO("Input directory: ", _in_dir);
-        }
-    }
-    return _in_dir;
-}
-
-fs::path CLIParser::input_path(const fs::path &name) noexcept {
-    return _input_dir() / name;
-}
-
-fs::path CLIParser::working_path(const fs::path &name) noexcept {
-    return _working_dir() / name;
-}
-
-fs::path CLIParser::runtime_path(const fs::path &name) noexcept {
-    return _runtime_dir() / name;
+fs::path CLIParser::runtime_dir() noexcept {
+    return fs::canonical(_parse_result()["runtime-dir"].as<fs::path>());
 }
 
 fs::path CLIParser::scene_path() const noexcept {
@@ -107,13 +67,7 @@ fs::path CLIParser::scene_path() const noexcept {
 }
 
 fs::path CLIParser::output_dir() noexcept {
-    if (_output_dir.empty()) {
-        _output_dir = fs::canonical(_parse_result()["output-dir"].as<std::string>());
-        if (_output_dir.empty()) {
-            _output_dir = scene_path();
-        }
-    }
-    return _output_dir;
+    return fs::canonical(_parse_result()["output-dir"].as<std::string>());
 }
 
 fs::path CLIParser::scene_file() const noexcept {

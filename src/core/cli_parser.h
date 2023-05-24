@@ -15,19 +15,11 @@ class CLIParser {
 private:
     int _argc;
     char **_argv;
-    fs::path _run_dir;
-    fs::path _work_dir;
-    fs::path _res_dir;
-    fs::path _in_dir;
-    fs::path _scene_file;
-    fs::path _output_dir;
     mutable cxxopts::Options _cli_options;
     mutable std::optional<cxxopts::ParseResult> _parsed_cli_options;
 
 private:
-    [[nodiscard]] fs::path _working_dir() noexcept;
-    [[nodiscard]] fs::path _runtime_dir() noexcept;
-    [[nodiscard]] fs::path _input_dir() noexcept;
+
     const cxxopts::ParseResult &_parse_result() const noexcept;
 
 public:
@@ -44,10 +36,9 @@ public:
     }
     [[nodiscard]] bool clear_cache() noexcept;
     [[nodiscard]] string backend() noexcept;
-    [[nodiscard]] fs::path working_path(const fs::path &name = {}) noexcept;
-    [[nodiscard]] fs::path runtime_path(const fs::path &name = {}) noexcept;
-    [[nodiscard]] fs::path input_path(const fs::path &name = {}) noexcept;
     [[nodiscard]] fs::path scene_file() const noexcept;
+    [[nodiscard]] fs::path working_dir() noexcept;
+    [[nodiscard]] fs::path runtime_dir() noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;
     [[nodiscard]] fs::path output_dir() noexcept;
 };
