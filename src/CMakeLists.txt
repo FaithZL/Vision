@@ -36,7 +36,7 @@ target_link_libraries(vision-main INTERFACE
         vision-math
         vision-core)
 
-add_library(vision-all INTERFACE)
-target_link_libraries(vision-all INTERFACE
+add_library(vision-all_libs INTERFACE)
+target_link_libraries(vision-all_libs INTERFACE
         vision-main
         vision-plugins)
