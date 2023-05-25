@@ -8,6 +8,20 @@
 
 namespace vision {
 using namespace ocarina;
+
+void App::init(int argc) noexcept {
+    core::log_level_info();
+    device.init_rtx();
+    if (context.cli_parser().clear_cache()) {
+        context.clear_cache();
+    }
+    if (argc == 1) {
+        context.cli_parser().print_help();
+        exit(0);
+    }
+    prepare();
+}
+
 void App::prepare() noexcept {
     context.cli_parser().try_print_help_and_exit();
     scene_desc = context.parse_file();

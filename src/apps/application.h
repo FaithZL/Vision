@@ -41,11 +41,9 @@ public:
         : context(argc, argv),
           device(context.create_device("cuda")),
           rp(context.create_pipeline(&device)) {
-        device.init_rtx();
-        if (context.cli_parser().clear_cache()) {
-            context.clear_cache();
-        }
+        init(argc);
     }
+    void init(int argc) noexcept;
     void prepare() noexcept;
     void update(double dt) noexcept;
     void check_and_save() noexcept;

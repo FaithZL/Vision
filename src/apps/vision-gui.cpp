@@ -10,17 +10,6 @@
 using namespace ocarina;
 using namespace vision;
 
-int execute(int argc, char *argv[]) {
-    core::log_level_info();
-    App app(argc, argv);
-    if (argc == 1) {
-        app.context.cli_parser().print_help();
-        return 0;
-    }
-    app.prepare();
-    return app.run();
-}
-
 int main(int argc, char *argv[]) {
-    return execute(argc, argv);
+    return App(argc, argv).run();
 }
