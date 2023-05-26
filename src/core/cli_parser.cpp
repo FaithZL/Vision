@@ -54,11 +54,11 @@ void CLIParser::print_help() const noexcept {
     cout << _cli_options.help() << endl;
 }
 
-fs::path CLIParser::working_dir() noexcept {
+fs::path CLIParser::working_dir() const noexcept {
     return fs::canonical(_parse_result()["working-dir"].as<fs::path>());
 }
 
-fs::path CLIParser::runtime_dir() noexcept {
+fs::path CLIParser::runtime_dir() const noexcept {
     return fs::canonical(_parse_result()["runtime-dir"].as<fs::path>());
 }
 
@@ -66,7 +66,7 @@ fs::path CLIParser::scene_path() const noexcept {
     return scene_file().parent_path();
 }
 
-fs::path CLIParser::output_dir() noexcept {
+fs::path CLIParser::output_dir() const noexcept {
     return fs::canonical(_parse_result()["output-dir"].as<std::string>());
 }
 
@@ -74,11 +74,11 @@ fs::path CLIParser::scene_file() const noexcept {
     return fs::canonical(_parse_result()["scene"].as<std::string>());
 }
 
-bool CLIParser::clear_cache() noexcept {
+bool CLIParser::clear_cache() const noexcept {
     return _parse_result()["clear-cache"].as<bool>();
 }
 
-string CLIParser::backend() noexcept {
+string CLIParser::backend() const noexcept {
     return _parse_result()["device"].as<std::string>();
 }
 

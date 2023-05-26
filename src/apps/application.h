@@ -14,11 +14,14 @@
 
 namespace vision {
 
-struct LaunchParam {
-    fs::path work_dir;
-    fs::path scene_dir;
+struct LaunchParams {
+    fs::path working_dir;
+    fs::path scene_file;
+    fs::path scene_path;
     fs::path output_dir;
     string backend{"cuda"};
+
+    void init(CLIParser &cli_parser) noexcept;
 };
 
 class App {
@@ -34,7 +37,7 @@ public:
     bool right_key_press{false};
     bool need_save{false};
     bool need_update{false};
-    LaunchParam param;
+    LaunchParams params;
 
 public:
     App(int argc, char *argv[])

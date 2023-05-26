@@ -19,7 +19,6 @@ private:
     mutable std::optional<cxxopts::ParseResult> _parsed_cli_options;
 
 private:
-
     const cxxopts::ParseResult &_parse_result() const noexcept;
 
 public:
@@ -34,13 +33,13 @@ public:
             exit(0);
         }
     }
-    [[nodiscard]] bool clear_cache() noexcept;
-    [[nodiscard]] string backend() noexcept;
+    [[nodiscard]] bool clear_cache() const noexcept;
+    [[nodiscard]] string backend() const noexcept;
     [[nodiscard]] fs::path scene_file() const noexcept;
-    [[nodiscard]] fs::path working_dir() noexcept;
-    [[nodiscard]] fs::path runtime_dir() noexcept;
+    [[nodiscard]] fs::path working_dir() const noexcept;
+    [[nodiscard]] fs::path runtime_dir() const noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;
-    [[nodiscard]] fs::path output_dir() noexcept;
+    [[nodiscard]] fs::path output_dir() const noexcept;
 };
 
 }// namespace vision

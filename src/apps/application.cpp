@@ -9,8 +9,17 @@
 namespace vision {
 using namespace ocarina;
 
+void LaunchParams::init(CLIParser &cli_parser) noexcept {
+    working_dir = cli_parser.working_dir();
+    scene_path = cli_parser.scene_path();
+    scene_file = cli_parser.scene_file();
+    output_dir = cli_parser.output_dir();
+    backend = cli_parser.backend();
+}
+
 void App::init(int argc) noexcept {
     core::log_level_info();
+    params.init(context.cli_parser());
     device.init_rtx();
     if (context.cli_parser().clear_cache()) {
         context.clear_cache();
