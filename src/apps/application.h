@@ -25,15 +25,20 @@ struct LaunchParams {
 
     LaunchParams() = default;
 
-    void init(const CLIParser &cli_parser) noexcept {
-        working_dir = cli_parser.working_dir();
-        scene_path = cli_parser.scene_path();
-        scene_file = cli_parser.scene_file();
-        output_dir = cli_parser.output_dir();
-        clear_cache = cli_parser.clear_cache();
-        backend = cli_parser.backend();
+    void init(const CLIParser *cli_parser) noexcept {
+        if (cli_parser == nullptr) {
+            return ;
+        }
+        working_dir = cli_parser->working_dir();
+        scene_path = cli_parser->scene_path();
+        scene_file = cli_parser->scene_file();
+        output_dir = cli_parser->output_dir();
+        clear_cache = cli_parser->clear_cache();
+        backend = cli_parser->backend();
     }
 };
+
+VS_EXPORT_API int execute(char *working_dir, char *scene_fn);
 
 class App {
 public:
@@ -58,6 +63,15 @@ public:
           device(context.create_device(cli_parser->backend())),
           rp(create_pipeline()) {
         init(argc);
+    }
+    App(const fs::path &working_dir, const fs::path &scene_fn)
+        : context(working_dir),
+          device(context.create_device("cuda")),
+          rp(create_pipeline()) {
+        params.working_dir = working_dir;
+        params.scene_file = scene_fn;
+        params.scene_path = scene_fn.parent_path();
+        init();
     }
     [[nodiscard]] RenderPipeline create_pipeline() { return {&device, &context}; }
     void init(int argc = 0) noexcept;

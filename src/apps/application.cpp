@@ -9,13 +9,16 @@
 namespace vision {
 using namespace ocarina;
 
-VS_EXPORT_API int run() {
-    return 0;
+VS_EXPORT_API int execute(char *working_dir, char *scene_fn) {
+    cout << working_dir << endl;
+    cout << scene_fn << endl;
+//    return 0;
+    return App(working_dir, scene_fn).run();
 }
 
 void App::init(int argc) noexcept {
     core::log_level_info();
-    params.init(*cli_parser);
+    params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
         context.clear_cache();
