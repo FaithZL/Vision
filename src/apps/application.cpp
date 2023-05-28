@@ -33,7 +33,7 @@ void App::init(int argc) noexcept {
 
 void App::prepare() noexcept {
     context.cli_parser().try_print_help_and_exit();
-    scene_desc = context.parse_file();
+    scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     window = context.create_window("LajiRender", rp.resolution(), "gl");
     rp.prepare();

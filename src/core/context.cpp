@@ -12,12 +12,4 @@ Context::Context(int argc, char **argv, ocarina::string_view cache_dir)
       _cli_parser(argc, argv) {
 }
 
-SceneDesc Context::parse_file() const noexcept {
-    return SceneDesc::from_json(cli_parser().scene_file());
-}
-
-fs::path Context::scene_directory() const noexcept {
-    return cli_parser().scene_file().parent_path();
-}
-
 }// namespace vision
