@@ -10,9 +10,6 @@ namespace vision {
 using namespace ocarina;
 
 VS_EXPORT_API int execute(char *working_dir, char *scene_fn) {
-    cout << working_dir << endl;
-    cout << scene_fn << endl;
-//    return 0;
     return App(working_dir, scene_fn).run();
 }
 
@@ -27,11 +24,13 @@ void App::init(int argc) noexcept {
         cli_parser->print_help();
         exit(0);
     }
+    if (cli_parser) {
+        cli_parser->try_print_help_and_exit();
+    }
     prepare();
 }
 
 void App::prepare() noexcept {
-    cli_parser->try_print_help_and_exit();
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     window = context.create_window("LajiRender", rp.resolution(), "gl");
@@ -88,7 +87,6 @@ void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
     camera->update_yaw(d_yaw * sensitivity);
     camera->update_pitch(d_pitch * sensitivity);
 }
-
 
 void App::on_cursor_move(float2 pos) noexcept {
     if (is_zero(last_cursor_pos)) {
@@ -153,22 +151,22 @@ int App::run() noexcept {
 }
 
 void App::register_event() noexcept {
-    window->set_key_callback([&]<typename... Args>(Args && ...args) {
+    window->set_key_callback([&]<typename... Args>(Args &&...args) {
         on_key_event(OC_FORWARD(args)...);
     });
-    window->set_mouse_callback([&]<typename... Args>(Args && ...args) {
+    window->set_mouse_callback([&]<typename... Args>(Args &&...args) {
         on_mouse_event(OC_FORWARD(args)...);
     });
-    window->set_cursor_position_callback([&]<typename... Args>(Args && ...args) {
+    window->set_cursor_position_callback([&]<typename... Args>(Args &&...args) {
         on_cursor_move(OC_FORWARD(args)...);
     });
-    window->set_scroll_callback([&]<typename... Args>(Args && ...args) {
+    window->set_scroll_callback([&]<typename... Args>(Args &&...args) {
         on_scroll_event(OC_FORWARD(args)...);
     });
     //todo check resize bug
-//    window->set_window_size_callback([&]<typename... Args>(Args && ...args) {
-//        on_window_size_change(OC_FORWARD(args)...);
-//    });
+    //    window->set_window_size_callback([&]<typename... Args>(Args && ...args) {
+    //        on_window_size_change(OC_FORWARD(args)...);
+    //    });
 }
 
 }// namespace vision
