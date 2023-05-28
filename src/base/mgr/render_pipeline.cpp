@@ -10,7 +10,7 @@
 
 namespace vision {
 
-RenderPipeline::RenderPipeline(Device *device, vision::Context *context)
+RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
     : _device(device),
       _context(context),
       _scene(context, this),

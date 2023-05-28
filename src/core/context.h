@@ -19,19 +19,19 @@ using namespace ocarina;
 
 class Filter;
 
-class Context : public ocarina::Context {
-public:
-    using Super = ocarina::Context;
-
-private:
-    CLIParser _cli_parser;
-
-public:
-    explicit Context(int argc, char **argv,
-                     ocarina::string_view cache_dir = ".cache");
-    [[nodiscard]] RenderPipeline create_pipeline(Device *device) { return {device, this}; }
-    [[nodiscard]] const CLIParser &cli_parser() const noexcept { return _cli_parser; }
-    [[nodiscard]] CLIParser &cli_parser() noexcept { return _cli_parser; }
-};
+//class Context : public ocarina::Context {
+//public:
+//    using Super = ocarina::Context;
+//
+//private:
+//    CLIParser _cli_parser;
+//
+//public:
+//    explicit Context(int argc, char **argv,
+//                     ocarina::string_view cache_dir = ".cache");
+//    [[nodiscard]] RenderPipeline create_pipeline(Device *device) { return {device, this}; }
+//    [[nodiscard]] const CLIParser &cli_parser() const noexcept { return _cli_parser; }
+//    [[nodiscard]] CLIParser &cli_parser() noexcept { return _cli_parser; }
+//};
 
 }// namespace vision

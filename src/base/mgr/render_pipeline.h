@@ -17,7 +17,7 @@ class Spectrum;
 class RenderPipeline {
 private:
     Device *_device;
-    vision::Context *_context;
+    ocarina::Context *_context;
     Scene _scene;
     Geometry _geometry{this};
     ResourceArray _resource_array{};
@@ -27,7 +27,7 @@ private:
     double _total_time{};
 
 public:
-    RenderPipeline(Device *device, vision::Context *context);
+    RenderPipeline(Device *device, ocarina::Context *context);
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
@@ -53,7 +53,7 @@ public:
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {
         return _image_pool.obtain_image(desc);
     }
-    [[nodiscard]] vision::Context &context() noexcept { return *_context; }
+    [[nodiscard]] ocarina::Context &context() noexcept { return *_context; }
     void update() noexcept {
         _frame_index = 0;
         _total_time = 0;

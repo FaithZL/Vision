@@ -9,7 +9,7 @@
 
 namespace vision {
 
-Scene::Scene(vision::Context *ctx, RenderPipeline *rp)
+Scene::Scene(ocarina::Context *ctx, RenderPipeline *rp)
     : _context(ctx),
       _rp(rp) {}
 

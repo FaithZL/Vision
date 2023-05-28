@@ -19,20 +19,20 @@ void LaunchParams::init(CLIParser &cli_parser) noexcept {
 
 void App::init(int argc) noexcept {
     core::log_level_info();
-    params.init(context.cli_parser());
+    params.init(cli_parser);
     device.init_rtx();
-    if (context.cli_parser().clear_cache()) {
+    if (cli_parser.clear_cache()) {
         context.clear_cache();
     }
     if (argc == 1) {
-        context.cli_parser().print_help();
+        cli_parser.print_help();
         exit(0);
     }
     prepare();
 }
 
 void App::prepare() noexcept {
-    context.cli_parser().try_print_help_and_exit();
+    cli_parser.try_print_help_and_exit();
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     window = context.create_window("LajiRender", rp.resolution(), "gl");

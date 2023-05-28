@@ -26,7 +26,8 @@ struct LaunchParams {
 
 class App {
 public:
-    vision::Context context;
+    CLIParser cli_parser;
+    ocarina::Context context;
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
@@ -41,11 +42,13 @@ public:
 
 public:
     App(int argc, char *argv[])
-        : context(argc, argv),
-          device(context.create_device("cuda")),
-          rp(context.create_pipeline(&device)) {
+        : cli_parser(argc, argv),
+          context(fs::path(argv[0]).parent_path()),
+          device(context.create_device(cli_parser.backend())),
+          rp(create_pipeline()) {
         init(argc);
     }
+    [[nodiscard]] RenderPipeline create_pipeline() { return {&device, &context}; }
     void init(int argc) noexcept;
     void prepare() noexcept;
     void update(double dt) noexcept;

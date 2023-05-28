@@ -28,7 +28,7 @@ class Context;
 
 class Scene {
 private:
-    vision::Context *_context{nullptr};
+    ocarina::Context *_context{nullptr};
     vector<Node::Wrapper> _all_nodes;
     Box3f _aabb;
     Camera *_camera{nullptr};
@@ -46,7 +46,7 @@ private:
     friend class RenderPipeline;
 
 public:
-    explicit Scene(vision::Context *ctx, RenderPipeline *rp);
+    explicit Scene(ocarina::Context *ctx, RenderPipeline *rp);
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
