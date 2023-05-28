@@ -20,14 +20,24 @@ struct LaunchParams {
     fs::path scene_file;
     fs::path scene_path;
     fs::path output_dir;
+    bool clear_cache{false};
     string backend{"cuda"};
 
-    void init(CLIParser &cli_parser) noexcept;
+    LaunchParams() = default;
+
+    void init(const CLIParser &cli_parser) noexcept {
+        working_dir = cli_parser.working_dir();
+        scene_path = cli_parser.scene_path();
+        scene_file = cli_parser.scene_file();
+        output_dir = cli_parser.output_dir();
+        clear_cache = cli_parser.clear_cache();
+        backend = cli_parser.backend();
+    }
 };
 
 class App {
 public:
-    CLIParser cli_parser;
+    UP<CLIParser> cli_parser{};
     ocarina::Context context;
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
@@ -43,14 +53,14 @@ public:
 
 public:
     App(int argc, char *argv[])
-        : cli_parser(argc, argv),
+        : cli_parser(make_unique<CLIParser>(argc, argv)),
           context(fs::path(argv[0]).parent_path()),
-          device(context.create_device(cli_parser.backend())),
+          device(context.create_device(cli_parser->backend())),
           rp(create_pipeline()) {
         init(argc);
     }
     [[nodiscard]] RenderPipeline create_pipeline() { return {&device, &context}; }
-    void init(int argc) noexcept;
+    void init(int argc = 0) noexcept;
     void prepare() noexcept;
     void update(double dt) noexcept;
     void check_and_save() noexcept;

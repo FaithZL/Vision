@@ -9,30 +9,26 @@
 namespace vision {
 using namespace ocarina;
 
-void LaunchParams::init(CLIParser &cli_parser) noexcept {
-    working_dir = cli_parser.working_dir();
-    scene_path = cli_parser.scene_path();
-    scene_file = cli_parser.scene_file();
-    output_dir = cli_parser.output_dir();
-    backend = cli_parser.backend();
+VS_EXPORT_API int run() {
+    return 0;
 }
 
 void App::init(int argc) noexcept {
     core::log_level_info();
-    params.init(cli_parser);
+    params.init(*cli_parser);
     device.init_rtx();
-    if (cli_parser.clear_cache()) {
+    if (params.clear_cache) {
         context.clear_cache();
     }
     if (argc == 1) {
-        cli_parser.print_help();
+        cli_parser->print_help();
         exit(0);
     }
     prepare();
 }
 
 void App::prepare() noexcept {
-    cli_parser.try_print_help_and_exit();
+    cli_parser->try_print_help_and_exit();
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     window = context.create_window("LajiRender", rp.resolution(), "gl");
