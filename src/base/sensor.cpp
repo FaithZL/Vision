@@ -3,7 +3,6 @@
 //
 
 #include "sensor.h"
-#include "core/context.h"
 #include "base/mgr/render_pipeline.h"
 
 namespace vision {

@@ -8,7 +8,8 @@
 #include "core/cli_parser.h"
 #include "descriptions/scene_desc.h"
 #include "core/stl.h"
-#include "core/context.h"
+#include "base/mgr/render_pipeline.h"
+#include "rhi/context.h"
 #include "util/image_io.h"
 #include "core/logging.h"
 

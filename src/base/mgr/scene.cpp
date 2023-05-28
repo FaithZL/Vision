@@ -3,8 +3,8 @@
 //
 
 #include "scene.h"
-#include "core/context.h"
 #include "rhi/dynamic_module.h"
+#include "render_pipeline.h"
 #include "base/scattering/interaction.h"
 
 namespace vision {
