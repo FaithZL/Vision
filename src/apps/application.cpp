@@ -98,7 +98,6 @@ void App::on_cursor_move(float2 pos) noexcept {
     if (right_key_press) {
         update_camera_view(delta.x, -delta.y);
     } else if (left_key_press) {
-        double dt = window->dt();
         Camera *camera = rp.scene().camera();
         float3 forward = camera->forward();
         float3 right = camera->right();
@@ -117,6 +116,7 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
         case 0: left_key_press = bool(action); break;
         case 1: right_key_press = bool(action); break;
         case 2: need_save = bool(action); break;
+        default:break;
     }
 }
 
