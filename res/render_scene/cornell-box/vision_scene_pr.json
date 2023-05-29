@@ -621,7 +621,7 @@
 			"name" : "Metal",
 			"param" : {
 				"material_name" : "Cu",
-				"roughness" : [0.001, 0.001]
+				"roughness" : 0.001
 			}
 		},
 		{
@@ -629,7 +629,7 @@
 			"name" : "Ag",
 			"param" : {
 				"material_name" : "Ag",
-				"roughness" : [0.001, 0.001]
+				"roughness" : 0.001
 			}
 		},
 		{

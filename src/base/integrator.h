@@ -34,9 +34,10 @@ public:
     using signature = void(uint);
 
 protected:
-    uint _max_depth;
-    uint _min_depth;
-    float _rr_threshold;
+    optional<Uint> _frame_index{};
+    uint _max_depth{};
+    uint _min_depth{};
+    float _rr_threshold{};
     ocarina::Kernel<signature> _kernel;
     ocarina::Shader<signature> _shader;
 
@@ -48,5 +49,6 @@ public:
           _rr_threshold(desc["rr_threshold"].as_float(1.f)) {}
     virtual void compile_shader() noexcept = 0;
     virtual void render() const noexcept = 0;
+    [[nodiscard]] Uint frame_index() const noexcept { return *_frame_index; }
 };
 }// namespace vision
