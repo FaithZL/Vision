@@ -22,6 +22,7 @@ public:
         return {};
     }
     virtual void regularize() noexcept {}
+    virtual void mollify() noexcept {}
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -49,6 +50,7 @@ public:
         : shading_frame(it.s_uvn), ng(it.g_uvn.normal()), bxdf_set(ocarina::move(bxdf_set)) {}
 
     void regularize() noexcept { bxdf_set->regularize(); }
+    void mollify() noexcept { bxdf_set->mollify(); }
     [[nodiscard]] SampledSpectrum albedo() const noexcept {
         return bxdf_set->albedo();
     }

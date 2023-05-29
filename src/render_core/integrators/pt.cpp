@@ -45,7 +45,7 @@ public:
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
-            Float scatter_pdf = eval(1e16f);
+            Float scatter_pdf = 1e16f;
             SampledWavelengths swl = spectrum.sample_wavelength(sampler);
             SampledSpectrum Li = {swl.dimension(), 0.f};
             SampledSpectrum throughput = {swl.dimension(), 1.f};
