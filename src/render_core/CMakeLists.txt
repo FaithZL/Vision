@@ -11,11 +11,13 @@ add_subdirectory(shadernodes)
 add_subdirectory(shapes)
 add_subdirectory(warpers)
 add_subdirectory(spectra)
+add_subdirectory(tonemappings)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
         vision-filter
         vision-shape
+        vision-tonemapping
         vision-lightsampler
         vision-sensor
         vision-light

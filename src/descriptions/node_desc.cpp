@@ -185,6 +185,13 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     o2w.init(param.data().value("o2w", DataWrap()));
 }
 
+void ToneMappingDesc::init(const vision::ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("aces");
+    ParameterSet param = ps["param"];
+    set_parameter(ps["param"]);
+}
+
 void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_null()) {
         return;

@@ -170,6 +170,15 @@ public:
     }
 };
 
+struct ToneMappingDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(ToneMapping)
+    void init(const ParameterSet &ps) noexcept override;
+    [[nodiscard]] bool valid() const noexcept {
+        return !sub_type.empty();
+    }
+};
+
 struct LightDesc : public NodeDesc {
 public:
     SlotDesc color{Illumination, 3};

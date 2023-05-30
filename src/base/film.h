@@ -8,6 +8,7 @@
 #include "rhi/common.h"
 #include "dsl/common.h"
 #include "node.h"
+#include "tonemapping.h"
 
 namespace vision {
 using namespace ocarina;
@@ -28,6 +29,7 @@ public:
 
 private:
     uint2 _resolution;
+
 
 public:
     explicit Film(const FilmDesc &desc)
