@@ -187,7 +187,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
 
 void ToneMappingDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
-    sub_type = ps["type"].as_string("linear");
+    sub_type = ps["type"].as_string("aces");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
 }
