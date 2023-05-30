@@ -33,7 +33,7 @@ public:
         Float4 accum_prev = _radiance.read(index);
         val = lerp(make_float4(a), accum_prev, val);
         _radiance.write(index, val);
-        _frame.write(index, linear_to_srgb(val));
+        _frame.write(index, _tone_mapping->apply(val));
     }
     void copy_to(void *host_ptr) const noexcept override {
         _frame.download_immediately(host_ptr);

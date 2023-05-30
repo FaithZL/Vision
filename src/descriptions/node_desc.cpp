@@ -187,16 +187,16 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
 
 void ToneMappingDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
-    sub_type = ps["type"].as_string("aces");
-    ParameterSet param = ps["param"];
-    set_parameter(ps["param"]);
+    sub_type = ps["type"].as_string("gamma");
+    ParameterSet param = ps.value("param", DataWrap::object());
+    set_parameter(param);
 }
 
 void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("oidn");
     ParameterSet param = ps["param"];
-    set_parameter(ps["param"]);
+    set_parameter(param);
 }
 
 void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
@@ -205,7 +205,6 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     }
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
-        float4 value;
         sub_type = "number";
         _parameter.set_value("value", ps.data());
     } else if (ps.data().is_object() && !ps.contains("param")) {
@@ -240,7 +239,7 @@ void FilmDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
     set_parameter(ps["param"]);
-    tone_mapping.init(ps["param"]["tone_mapping"]);
+    tone_mapping.init(ps["param"].value("tone_mapping", DataWrap::object()));
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {

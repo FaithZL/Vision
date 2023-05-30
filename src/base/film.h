@@ -27,7 +27,7 @@ class Film : public Node {
 public:
     using Desc = FilmDesc;
 
-private:
+protected:
     uint2 _resolution;
     ToneMapping *_tone_mapping{};
 
