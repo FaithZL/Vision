@@ -7,3 +7,6 @@
 [submodule "src/ext/assimp"]
 	path = src/ext/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "src/ext/oidn"]
+	path = src/ext/oidn
+	url = https://github.com/OpenImageDenoise/oidn.git
