@@ -38,6 +38,13 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | SRGB                         | Done        |
 | Complete spectrum            | Done        |
 
+### Tone mapping
+| Feature                      | Progress    |
+|------------------------------|-------------|
+| Linear                       | Done        |
+| ACES                         | Done        |
+| Reinhard                     | Done        |
+
 ### Sensor
 | Feature                                   | Progress    |
 |-------------------------------------------|-------------|
