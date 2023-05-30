@@ -737,7 +737,11 @@
 					"tone_mapping" : {
 //						"type": "reinhard"
 //						"type": "linear"
-						"type": "aces"
+//						"type": "aces"
+						"type": "exposure",
+						"param": {
+							"exposure" : 1.0
+						}
 					}
 				}
 			},
