@@ -735,7 +735,7 @@
 					],
 					"fb_state" : 0,
 					"tone_mapping" : {
-						"type": "gamma"
+						"type": "linear"
 					}
 				}
 			},

@@ -1,5 +1,4 @@
 add_library(vision-tonemapping INTERFACE)
 vision_add_plugin(linear CATEGORY tonemapping SOURCES linear.cpp)
-vision_add_plugin(gamma CATEGORY tonemapping SOURCES gamma.cpp)
 vision_add_plugin(reinhard CATEGORY tonemapping SOURCES reinhard.cpp)
 vision_add_plugin(aces CATEGORY tonemapping SOURCES aces.cpp)
