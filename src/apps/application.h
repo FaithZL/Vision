@@ -12,6 +12,7 @@
 #include "rhi/context.h"
 #include "util/image_io.h"
 #include "core/logging.h"
+#include "base/denoiser.h"
 
 namespace vision {
 

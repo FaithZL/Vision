@@ -174,9 +174,12 @@ struct ToneMappingDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(ToneMapping)
     void init(const ParameterSet &ps) noexcept override;
-    [[nodiscard]] bool valid() const noexcept {
-        return !sub_type.empty();
-    }
+};
+
+struct DenoiserDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(Denoiser)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct LightDesc : public NodeDesc {
