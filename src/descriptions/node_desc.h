@@ -228,6 +228,8 @@ public:
 
 struct FilmDesc : public NodeDesc {
 public:
+    ToneMappingDesc tone_mapping;
+public:
     VISION_DESC_COMMON(Film)
     void init(const ParameterSet &ps) noexcept override;
 };

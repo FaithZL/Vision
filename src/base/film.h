@@ -29,12 +29,10 @@ public:
 
 private:
     uint2 _resolution;
-
+    ToneMapping *_tone_mapping{};
 
 public:
-    explicit Film(const FilmDesc &desc)
-        : Node(desc),
-          _resolution(desc["resolution"].as_uint2(make_uint2(768u))) {}
+    explicit Film(const FilmDesc &desc);
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     void set_resolution(uint2 res) noexcept { _resolution = res; }

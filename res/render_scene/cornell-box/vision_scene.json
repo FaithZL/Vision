@@ -733,7 +733,10 @@
 						1024,
 						1024
 					],
-					"fb_state" : 0
+					"fb_state" : 0,
+					"tone_mapping" : {
+						"type": "gamma"
+					}
 				}
 			},
 			"filter" : {

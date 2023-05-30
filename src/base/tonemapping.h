@@ -12,18 +12,20 @@
 namespace vision {
 
 //"tone_mapping": {
-//    "type": "aces",
+//    "type": "gamma",
 //    "param": {
-//        "resolution": [
-//            1280,
-//            720
-//            ],
-//         "fb_state": 0
+//
 //    }
 //}
 class ToneMapping : public Node {
 public:
     using Desc = ToneMappingDesc;
+
+public:
+    explicit ToneMapping(const ToneMappingDesc &desc)
+        : Node(desc) {}
+
+    [[nodiscard]] virtual Float4 apply(const Float4 &input) const noexcept = 0;
 };
 
 }// namespace vision
