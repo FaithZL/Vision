@@ -1798,7 +1798,7 @@
         }
     },
     "output": {
-        "spp": 1024,
+        "spp": 0,
         "fn": "output.png"
     }
 }
