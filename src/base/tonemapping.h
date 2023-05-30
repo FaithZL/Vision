@@ -12,7 +12,7 @@
 namespace vision {
 
 //"tone_mapping": {
-//    "type": "gamma",
+//    "type": "linear",
 //    "param": {
 //
 //    }
