@@ -3,6 +3,7 @@
 //
 
 #include "base/denoiser.h"
+#include "OpenImageDenoise/oidn.hpp"
 
 namespace vision {
 
