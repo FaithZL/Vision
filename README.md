@@ -45,6 +45,12 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | ACES                         | Done        |
 | Reinhard                     | Done        |
 
+### Denoise
+| Feature                      | Progress    |
+|------------------------------|-------------|
+| OIDN                         | Planned     |
+| OptiX                        | Planned     |
+
 ### Sensor
 | Feature                                   | Progress    |
 |-------------------------------------------|-------------|
