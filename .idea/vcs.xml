@@ -4,6 +4,11 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/ext/assimp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/ext/cxxopts" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/ext/oidn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/ext/oidn/external/composable_kernel" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/ext/oidn/external/cutlass" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/ext/oidn/external/mkl-dnn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/ext/oidn/weights" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/ocarina" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/ocarina/src/ext/fmt" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/ocarina/src/ext/spdlog" vcs="Git" />

@@ -20,9 +20,9 @@ endif ()
 add_library(vision-ext-assimp_config INTERFACE)
 target_link_libraries(vision-ext-assimp_config INTERFACE assimp::assimp)
 
-#add_subdirectory(oidn)
-#add_library(vision-ext-oidn INTERFACE)
-#target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
+add_subdirectory(oidn)
+add_library(vision-ext-oidn INTERFACE)
+target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
 
 add_library(vision-ext INTERFACE)
 target_link_libraries(vision-ext INTERFACE
