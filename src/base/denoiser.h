@@ -12,6 +12,11 @@ namespace vision {
 class Denoiser : public Node {
 public:
     using Desc = DenoiserDesc;
+
+public:
+    explicit Denoiser(const DenoiserDesc &desc) : Node(desc) {}
+    virtual void apply(uint2 res, float4 *output, float4 *color,
+                       float4 *normal, float4 *albedo) const noexcept = 0;
 };
 
-}
+}// namespace vision
