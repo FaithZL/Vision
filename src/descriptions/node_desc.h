@@ -176,6 +176,12 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct UVSpreaderDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(UVSpreader)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct DenoiserDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Denoiser)

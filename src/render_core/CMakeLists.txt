@@ -13,6 +13,7 @@ add_subdirectory(warpers)
 add_subdirectory(spectra)
 add_subdirectory(tonemappings)
 add_subdirectory(denoisers)
+add_subdirectory(uvspreaders)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -20,6 +21,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-shape
         vision-tonemapping
         vision-denoiser
+        vision-uvspreader
         vision-lightsampler
         vision-sensor
         vision-light

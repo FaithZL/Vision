@@ -185,6 +185,13 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     o2w.init(param.data().value("o2w", DataWrap()));
 }
 
+void UVSpreaderDesc::init(const vision::ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("xatlas");
+    ParameterSet param = ps.value("param", DataWrap::object());
+    set_parameter(param);
+}
+
 void ToneMappingDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("aces");
