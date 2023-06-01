@@ -96,7 +96,7 @@ public:
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] ResourceArrayTexture byte_buffer(Index &&index) const noexcept {
+    [[nodiscard]] ResourceArrayByteBuffer byte_buffer(Index &&index) const noexcept {
         return _resource_array.byte_buffer(OC_FORWARD(index));
     }
 };
