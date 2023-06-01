@@ -25,6 +25,8 @@ add_library(vision-ext-oidn INTERFACE)
 target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
 
 add_subdirectory(xatlas)
+add_library(vision-ext-xatlas INTERFACE)
+target_link_libraries(vision-ext-xatlas INTERFACE xatlas)
 
 add_library(vision-ext INTERFACE)
 target_link_libraries(vision-ext INTERFACE
