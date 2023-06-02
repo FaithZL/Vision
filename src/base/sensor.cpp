@@ -43,7 +43,6 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
 }
 
 void Camera::update_mat(float4x4 m) noexcept {
-    float sy = ocarina::sqrt(ocarina::sqr(m[2][1]) + ocarina::sqr(m[2][2]));
     _pitch = degrees(std::atan2(m[1][2], m[1][1]));
     _yaw = degrees(std::atan2(m[2][0], m[0][0]));
     _position = make_float3(m[3]);

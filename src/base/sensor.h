@@ -56,9 +56,6 @@ public:
 
 protected:
     constexpr static float pitch_max = 80.f;
-    constexpr static float3 right_vec = make_float3(1, 0, 0);
-    constexpr static float3 up_vec = make_float3(0, 1, 0);
-    constexpr static float3 forward_vec = make_float3(0, 0, 1);
 
     float3 _position;
     float _yaw{};
@@ -87,7 +84,14 @@ public:
     void set_yaw(float yaw) noexcept { _yaw = yaw; }
     void update_yaw(float val) noexcept { set_yaw(yaw() + val); }
     [[nodiscard]] float pitch() const noexcept { return _pitch; }
-    void set_pitch(float pitch) noexcept { _pitch = pitch; }
+    void set_pitch(float pitch) noexcept {
+        if (pitch > pitch_max) {
+            pitch = pitch_max;
+        } else if (pitch < -pitch_max) {
+            pitch = -pitch_max;
+        }
+        _pitch = pitch;
+    }
     void update_pitch(float val) noexcept { set_pitch(pitch() + val); }
     [[nodiscard]] float fov_y() const noexcept { return _fov_y; }
     void set_fov_y(float new_fov_y) noexcept {
