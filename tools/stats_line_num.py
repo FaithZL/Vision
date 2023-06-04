@@ -66,3 +66,7 @@ print(count, num_file)
 
 # while 1:
 #     pass
+
+a = 14.7+4.8+6.3+9+3.5+2.4+3.5+28.2+ 6.8
+
+print(a , a/ 95.6)

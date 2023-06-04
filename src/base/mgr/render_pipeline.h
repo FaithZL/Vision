@@ -10,6 +10,7 @@
 #include "rhi/window.h"
 #include "util/image_io.h"
 #include "image_pool.h"
+#include "postprocessor.h"
 
 namespace vision {
 using namespace ocarina;
@@ -25,6 +26,7 @@ private:
     uint _frame_index{};
     ImagePool _image_pool{this};
     double _total_time{};
+    Postprocessor _postprocessor;
 
 public:
     RenderPipeline(Device *device, ocarina::Context *context);

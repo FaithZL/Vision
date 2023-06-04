@@ -9,6 +9,9 @@
 namespace vision {
 class Postprocessor {
 private:
-
+    Denoiser *_denoiser{};
+public:
+    Postprocessor() = default;
+    void set_denoiser(Denoiser *denoiser) noexcept { _denoiser = denoiser; }
 };
 }
