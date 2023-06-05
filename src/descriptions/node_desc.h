@@ -135,6 +135,12 @@ public:
             _parameter.set_value("value", {v.x, v.y, v.z, v.w});
         }
     }
+    explicit ShaderNodeDesc(const DataWrap &data, ShaderNodeType type)
+        : NodeDesc("ShaderNode"), type(type) {
+        sub_type = "number";
+        _parameter.set_json(DataWrap::object());
+        _parameter.set_value("value", data);
+    }
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
@@ -235,6 +241,7 @@ public:
 struct FilmDesc : public NodeDesc {
 public:
     ToneMappingDesc tone_mapping;
+
 public:
     VISION_DESC_COMMON(Film)
     void init(const ParameterSet &ps) noexcept override;
@@ -285,6 +292,15 @@ public:
                                 ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
         SlotDesc slot_desc{node, type_dimension_v<T>};
+        slot_desc.init(_parameter[key], scene_path);
+        return slot_desc;
+    }
+
+    [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
+                                ShaderNodeType type = ShaderNodeType::Number) const noexcept {
+        ShaderNodeDesc node{data, type};
+        uint size = data.is_number() ? 1 : data.size();
+        SlotDesc slot_desc{node, size};
         slot_desc.init(_parameter[key], scene_path);
         return slot_desc;
     }
