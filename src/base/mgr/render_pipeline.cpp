@@ -19,6 +19,10 @@ RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
     Printer::instance().init(*device);
 }
 
+void RenderPipeline::init_postprocessor(const SceneDesc &scene_desc) noexcept {
+//    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+}
+
 void RenderPipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->film();
     film->set_resolution(res);

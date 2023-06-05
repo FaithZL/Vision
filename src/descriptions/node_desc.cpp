@@ -202,7 +202,7 @@ void ToneMappingDesc::init(const vision::ParameterSet &ps) noexcept {
 void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("oidn");
-    ParameterSet param = ps["param"];
+    ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
 }
 

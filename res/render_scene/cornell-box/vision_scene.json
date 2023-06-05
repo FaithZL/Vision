@@ -898,6 +898,9 @@
 	"render_setting" : {
 		"polymorphic_mode" : 1
 	},
+	"denoiser": {
+		"type": "oidn"
+	},
 	"output" : {
 		"spp" : 0,
 		"fn" : "hero1.png"

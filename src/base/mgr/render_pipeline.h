@@ -31,6 +31,7 @@ private:
 public:
     RenderPipeline(Device *device, ocarina::Context *context);
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
+    void init_postprocessor(const SceneDesc &scene_desc) noexcept;
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }

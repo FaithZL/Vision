@@ -33,6 +33,7 @@ void App::init(int argc) noexcept {
 void App::prepare() noexcept {
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
+    rp.init_postprocessor(scene_desc);
     window = context.create_window("LajiRender", rp.resolution(), "gl");
     rp.prepare();
     radiance_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, rp.resolution());

@@ -32,6 +32,7 @@ public:
     NameID::map_ty mat_name_to_id;
     fs::path scene_path;
     MediumsDesc mediums_desc;
+    DenoiserDesc denoiser_desc;
     RenderSettingDesc render_setting;
     ParameterSet ext_param;
 

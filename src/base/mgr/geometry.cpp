@@ -123,7 +123,6 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
             dp_du = normalize(p1 - p0);
             dp_dv = normalize(p2 - p0);
         };
-        Float3 ng = normalize(ng_un);
         it.g_uvn.set(normalize(dp_du), normalize(dp_dv), normalize(ng_un));
     } else {
         it.g_uvn.set(normalize(dp02), normalize(dp12), normalize(ng_un));

@@ -7,6 +7,16 @@
 namespace vision {
 
 class OptixDenoiser : public Denoiser {
+public:
+    explicit OptixDenoiser(const DenoiserDesc &desc)
+        : Denoiser(desc){
+    }
+
+    void apply(uint2 res, float4 *output, float4 *color,
+               float4 *normal, float4 *albedo) const noexcept override {
+    }
 };
 
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::OptixDenoiser)
