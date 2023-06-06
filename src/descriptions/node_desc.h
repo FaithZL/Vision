@@ -93,6 +93,8 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct SlotDesc;
+
 struct ShaderNodeDesc : public NodeDesc {
 public:
     ShaderNodeType type{};
@@ -141,6 +143,10 @@ public:
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", data);
     }
+
+    [[nodiscard]] SP<SlotDesc> slot(const string &key, const DataWrap &data,
+                                    ShaderNodeType type = ShaderNodeType::Number) const noexcept;
+
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
         this->scene_path = scene_path;
