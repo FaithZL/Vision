@@ -208,12 +208,12 @@
 				"y" : 1,
 				"z" : 1,
 				//                                "material" : "ShortBox",
-//				"material" : "substrate",
-//				"material" : "Mirror",
+				//				"material" : "substrate",
+				//				"material" : "Mirror",
 				"material" : "Metal",
 				//				                "material" : "disney",
-//								                "material" : "mix",
-//				                                "material" : "Glass",
+				//								                "material" : "mix",
+				//				                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -258,7 +258,7 @@
 				//                "material": "Mirror2",
 				//                "material": "Glass2",
 				//				"material" : "Ag",
-								"material" : "Glass",
+				"material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -333,89 +333,89 @@
 				"emission" : {
 					"type" : "area",
 					"param" : {
-												"color" : {
-													"channels" : "xyz",
-													"node" : [
-														17,
-														12,
-														4
-													]
-												},
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : {
-//								"fn" : "Painting3.jpg",
-//								"color_space" : "srgb"
-//							}
-//						},
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								17,
+								12,
+								4
+							]
+						},
+						//						"color" : {
+						//							"channels" : "xyz",
+						//							"node" : {
+						//								"fn" : "Painting3.jpg",
+						//								"color_space" : "srgb"
+						//							}
+						//						},
 						"two_sided" : false,
 						"scale" : 1
 					}
 				}
 			}
 		}
-//		{
-//			"type" : "quad",
-//			"name" : "shape_7",
-//			"param" : {
-//				"width" : 1.0,
-//				"height" : 1.0,
-//				"material" : "Light",
-//				"transform" : {
-//					"type" : "matrix4x4",
-//					"param" : {
-//						"matrix4x4" : [
-//							[
-//								0.4699999988079071,
-//								-4.108870399477382e-08,
-//								-4.108870399477382e-08,
-//								0.0
-//							],
-//							[
-//								-1.56137076601226e-08,
-//								-0.1785999983549118,
-//								1.3649937003794234e-15,
-//								0.0
-//							],
-//							[
-//								-3.3220654671595184e-08,
-//								0.0,
-//								-0.3799999952316284,
-//								0.0
-//							],
-//							[
-//								-0.4999999888241291,
-//								1.9800000190734863,
-//								-0.029999999329447746,
-//								1.0
-//							]
-//						]
-//					}
-//				},
-//				"emission" : {
-//					"type" : "area",
-//					"param" : {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [
-//								17,
-//								12,
-//								4
-//							]
-//						},
-//						//                        "color" : {
-//						//                            "channels": "xyz",
-//						//                            "node": {
-//						//                                "fn" : "Painting3.jpg",
-//						//                                "color_space" : "srgb"
-//						//                            }
-//						//                        },
-//						"two_sided" : false,
-//						"scale" : 0.1
-//					}
-//				}
-//			}
-//		}
+		//		{
+		//			"type" : "quad",
+		//			"name" : "shape_7",
+		//			"param" : {
+		//				"width" : 1.0,
+		//				"height" : 1.0,
+		//				"material" : "Light",
+		//				"transform" : {
+		//					"type" : "matrix4x4",
+		//					"param" : {
+		//						"matrix4x4" : [
+		//							[
+		//								0.4699999988079071,
+		//								-4.108870399477382e-08,
+		//								-4.108870399477382e-08,
+		//								0.0
+		//							],
+		//							[
+		//								-1.56137076601226e-08,
+		//								-0.1785999983549118,
+		//								1.3649937003794234e-15,
+		//								0.0
+		//							],
+		//							[
+		//								-3.3220654671595184e-08,
+		//								0.0,
+		//								-0.3799999952316284,
+		//								0.0
+		//							],
+		//							[
+		//								-0.4999999888241291,
+		//								1.9800000190734863,
+		//								-0.029999999329447746,
+		//								1.0
+		//							]
+		//						]
+		//					}
+		//				},
+		//				"emission" : {
+		//					"type" : "area",
+		//					"param" : {
+		//						"color" : {
+		//							"channels" : "xyz",
+		//							"node" : [
+		//								17,
+		//								12,
+		//								4
+		//							]
+		//						},
+		//						//                        "color" : {
+		//						//                            "channels": "xyz",
+		//						//                            "node": {
+		//						//                                "fn" : "Painting3.jpg",
+		//						//                                "color_space" : "srgb"
+		//						//                            }
+		//						//                        },
+		//						"two_sided" : false,
+		//						"scale" : 0.1
+		//					}
+		//				}
+		//			}
+		//		}
 	],
 	"materials" : [
 		{
@@ -430,10 +430,10 @@
 			}
 		},
 		{
-			"type": "mix",
-			"name": "mix",
-			"param": {
-				"mat0": {
+			"type" : "mix",
+			"name" : "mix",
+			"param" : {
+				"mat0" : {
 					"type" : "glass",
 					"name" : "Glass",
 					"param" : {
@@ -449,7 +449,7 @@
 						"roughness" : [0.001, 0.001]
 					}
 				},
-				"mat1": {
+				"mat1" : {
 					"type" : "glass",
 					"name" : "Glass",
 					"param" : {
@@ -465,7 +465,7 @@
 						"roughness" : [0.001, 0.001]
 					}
 				},
-				"scale": 0.5
+				"scale" : 0.5
 			}
 		},
 		{
@@ -494,11 +494,16 @@
 			"type" : "matte",
 			"name" : "Ceiling",
 			"param" : {
-				"color" : [
-					0.725,
-					0.71,
-					0.68
-				]
+				"color" :{
+					"type": "number",
+					"param": {
+						"value":  [
+							0.725,
+							0.71,
+							0.68
+						]
+					}
+				}
 			}
 		},
 		{
@@ -509,7 +514,7 @@
 					"channels" : "xyz",
 					"node" : {
 						"type" : "image",
-						"param": {
+						"param" : {
 							"fn" : "checker.jpg",
 							"color_space" : "srgb"
 						}
@@ -518,15 +523,30 @@
 //				"color" : {
 //					"channels" : "xyz",
 //					"node" : {
-//						"fn" : "checker.jpg",
-//						"color_space" : "srgb"
+//						"type" : "multiply",
+//						"param" : {
+//							"lhs" : {
+//								"channels" : "xyz",
+//								"node" : {
+//									"type" : "image",
+//									"param" : {
+//										"fn" : "checker.jpg",
+//										"color_space" : "srgb"
+//									}
+//								}
+//							},
+//							"rhs" : {
+//								"channels" : "xyz",
+//								"node" : {
+//									"type": "number",
+//									"param": {
+//										"value": [1,1,1]
+//									}
+//								}
+//							}
+//						}
 //					}
 //				}
-				//                "color" : [
-				//                    0.725,
-				//                    0.71,
-				//                    0.68
-				//                ]
 			}
 		},
 		{
@@ -758,11 +778,11 @@
 					],
 					"fb_state" : 0,
 					"tone_mapping" : {
-//						"type": "reinhard"
-//						"type": "linear"
-//						"type": "aces"
-						"type": "exposure",
-						"param": {
+						//						"type": "reinhard"
+						//						"type": "linear"
+						//						"type": "aces"
+						"type" : "exposure",
+						"param" : {
 							"exposure" : 1.0
 						}
 					}
@@ -801,128 +821,128 @@
 		"type" : "uniform",
 		"param" : {
 			"lights" : [
-//				{
-//					"type" : "spot",
-//					"param" : {
-//						"angle" : 20,
-//						"falloff" : 2,
-//						"direction" : [0.2, -1, 0],
-//						"color" : [1, 1, 1],
-//						"position" : [-0.5, 1.9, 0],
-//						"scale" : 1
-//					}
-//				},
-//				{
-//					"type" : "spot",
-//					"param" : {
-//						"angle" : 20,
-//						"falloff" : 2,
-//						"direction" : [0.2, -1, 0],
-//						"color" : [1, 1, 1],
-//						"position" : [0.5, 1.9, 0],
-//						"scale" : 3
-//					}
-//				},
-//				{
-//					"type" : "point",
-//					"param" : {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [1, 1, 1]
-//						},
-//						"position" : [-0.5, 1.8, 0],
-//						"scale" : 0.2
-//					}
-//				},
-//				{
-//					"type" : "point",
-//					"param" : {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [1, 1, 1]
-//						},
-//						"position" : [0.5, 1.8, 0],
-//						"scale" : 0.5
-//					}
-//				},
-//				{
-//					"type" : "projector",
-//					"param" : {
-//						"angle" : 6,
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : {
-//								"fn" : "Painting3.jpg",
-//								"color_space" : "srgb"
-//							}
-//						},
-//						"ratio" : 1,
-//						"o2w" : {
-//							"type" : "look_at",
-//							"param" : {
-//								"position" : [
-//									0,
-//									1,
-//									6.8
-//								],
-//								"up" : [
-//									0,
-//									1,
-//									0
-//								],
-//								"target_pos" : [
-//									0,
-//									1,
-//									0
-//								]
-//							}
-//						},
-//						"scale" : 300
-//					}
-//				},
-//				{
-//					"type" : "projector",
-//					"param" : {
-//						"angle" : 6,
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : {
-//								"fn" : "Painting3.jpg",
-//								"color_space" : "srgb"
-//							}
-//						},
-//						"ratio" : 1,
-//						"o2w" : {
-//							"type" : "look_at",
-//							"param" : {
-//								"position" : [
-//									0,
-//									1,
-//									6.8
-//								],
-//								"up" : [
-//									0,
-//									1,
-//									0
-//								],
-//								"target_pos" : [
-//									0.9,
-//									1,
-//									0
-//								]
-//							}
-//						},
-//						"scale" : 300
-//					}
-//				}
+				//				{
+				//					"type" : "spot",
+				//					"param" : {
+				//						"angle" : 20,
+				//						"falloff" : 2,
+				//						"direction" : [0.2, -1, 0],
+				//						"color" : [1, 1, 1],
+				//						"position" : [-0.5, 1.9, 0],
+				//						"scale" : 1
+				//					}
+				//				},
+				//				{
+				//					"type" : "spot",
+				//					"param" : {
+				//						"angle" : 20,
+				//						"falloff" : 2,
+				//						"direction" : [0.2, -1, 0],
+				//						"color" : [1, 1, 1],
+				//						"position" : [0.5, 1.9, 0],
+				//						"scale" : 3
+				//					}
+				//				},
+				//				{
+				//					"type" : "point",
+				//					"param" : {
+				//						"color" : {
+				//							"channels" : "xyz",
+				//							"node" : [1, 1, 1]
+				//						},
+				//						"position" : [-0.5, 1.8, 0],
+				//						"scale" : 0.2
+				//					}
+				//				},
+				//				{
+				//					"type" : "point",
+				//					"param" : {
+				//						"color" : {
+				//							"channels" : "xyz",
+				//							"node" : [1, 1, 1]
+				//						},
+				//						"position" : [0.5, 1.8, 0],
+				//						"scale" : 0.5
+				//					}
+				//				},
+				//				{
+				//					"type" : "projector",
+				//					"param" : {
+				//						"angle" : 6,
+				//						"color" : {
+				//							"channels" : "xyz",
+				//							"node" : {
+				//								"fn" : "Painting3.jpg",
+				//								"color_space" : "srgb"
+				//							}
+				//						},
+				//						"ratio" : 1,
+				//						"o2w" : {
+				//							"type" : "look_at",
+				//							"param" : {
+				//								"position" : [
+				//									0,
+				//									1,
+				//									6.8
+				//								],
+				//								"up" : [
+				//									0,
+				//									1,
+				//									0
+				//								],
+				//								"target_pos" : [
+				//									0,
+				//									1,
+				//									0
+				//								]
+				//							}
+				//						},
+				//						"scale" : 300
+				//					}
+				//				},
+				//				{
+				//					"type" : "projector",
+				//					"param" : {
+				//						"angle" : 6,
+				//						"color" : {
+				//							"channels" : "xyz",
+				//							"node" : {
+				//								"fn" : "Painting3.jpg",
+				//								"color_space" : "srgb"
+				//							}
+				//						},
+				//						"ratio" : 1,
+				//						"o2w" : {
+				//							"type" : "look_at",
+				//							"param" : {
+				//								"position" : [
+				//									0,
+				//									1,
+				//									6.8
+				//								],
+				//								"up" : [
+				//									0,
+				//									1,
+				//									0
+				//								],
+				//								"target_pos" : [
+				//									0.9,
+				//									1,
+				//									0
+				//								]
+				//							}
+				//						},
+				//						"scale" : 300
+				//					}
+				//				}
 			]
 		}
 	},
 	"render_setting" : {
 		"polymorphic_mode" : 1
 	},
-	"denoiser": {
-		"type": "oidn"
+	"denoiser" : {
+		"type" : "oidn"
 	},
 	"output" : {
 		"spp" : 0,
