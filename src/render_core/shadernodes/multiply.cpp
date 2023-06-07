@@ -25,11 +25,11 @@ public:
     }
 
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return {};
+        return _lhs.average() * _rhs.average();
     }
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return {};
+        return _lhs.evaluate(ctx, swl) * _rhs.evaluate(ctx, swl);
     }
 };
 }// namespace vision
