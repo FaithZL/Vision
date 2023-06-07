@@ -54,7 +54,7 @@ protected:
 
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
-    OC_SERIALIZABLE_FUNC(_scale, (*_color.node()))
+    OC_SERIALIZABLE_FUNC(_scale, *_color.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }

@@ -17,6 +17,7 @@ public:
           _lhs(desc.scene->create_slot(*desc.slot("lhs", desc["lhs"].data(), Albedo))),
           _rhs(desc.scene->create_slot(*desc.slot("rhs", desc["rhs"].data(), Albedo))) {}
 
+    OC_SERIALIZABLE_FUNC(*_lhs.node(), *_rhs.node())
     [[nodiscard]] bool is_uniform() const noexcept override {
         return _lhs->is_uniform() && _rhs->is_uniform();
     }

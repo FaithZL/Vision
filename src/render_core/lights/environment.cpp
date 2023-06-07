@@ -23,7 +23,7 @@ public:
         _w2o = inverse(o2w * rx);
     }
 
-    OC_SERIALIZABLE_FUNC(_w2o, (*_warper))
+    OC_SERIALIZABLE_FUNC(_w2o, *_warper)
 
     [[nodiscard]] Float2 UV(Float3 local_dir) const {
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);

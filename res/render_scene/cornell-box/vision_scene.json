@@ -510,43 +510,43 @@
 			"type" : "matte",
 			"name" : "BackWall",
 			"param" : {
-				"color" : {
-					"channels" : "xyz",
-					"node" : {
-						"type" : "image",
-						"param" : {
-							"fn" : "checker.jpg",
-							"color_space" : "srgb"
-						}
-					}
-				}
 //				"color" : {
 //					"channels" : "xyz",
 //					"node" : {
-//						"type" : "multiply",
+//						"type" : "image",
 //						"param" : {
-//							"lhs" : {
-//								"channels" : "xyz",
-//								"node" : {
-//									"type" : "image",
-//									"param" : {
-//										"fn" : "checker.jpg",
-//										"color_space" : "srgb"
-//									}
-//								}
-//							},
-//							"rhs" : {
-//								"channels" : "xyz",
-//								"node" : {
-//									"type": "number",
-//									"param": {
-//										"value": [1,1,1]
-//									}
-//								}
-//							}
+//							"fn" : "checker.jpg",
+//							"color_space" : "srgb"
 //						}
 //					}
 //				}
+				"color" : {
+					"channels" : "xyz",
+					"node" : {
+						"type" : "multiply",
+						"param" : {
+							"lhs" : {
+								"channels" : "xyz",
+								"node" : {
+									"type" : "image",
+									"param" : {
+										"fn" : "checker.jpg",
+										"color_space" : "srgb"
+									}
+								}
+							},
+							"rhs" : {
+								"channels" : "xyz",
+								"node" : {
+									"type": "number",
+									"param": {
+										"value": [0.9,1,0.9]
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		{
