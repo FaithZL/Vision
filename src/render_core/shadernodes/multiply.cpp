@@ -24,7 +24,12 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override {
         return _lhs->is_constant() && _rhs->is_constant();
     }
-
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(_lhs.hash(), _rhs.hash());
+    }
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(_lhs.type_hash(), _rhs.type_hash());
+    }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return _lhs.average() * _rhs.average();
     }
