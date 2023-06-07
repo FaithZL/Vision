@@ -508,15 +508,38 @@
 				"color" : {
 					"channels" : "xyz",
 					"node" : {
-						"fn" : "checker.jpg",
-						"color_space" : "srgb"
+						"type" : "image",
+						"param": {
+							"fn" : "checker.jpg",
+							"color_space" : "srgb"
+						}
 					}
 				}
+//				"color" : {
+//					"channels" : "xyz",
+//					"node" : {
+//						"fn" : "checker.jpg",
+//						"color_space" : "srgb"
+//					}
+//				}
 				//                "color" : [
 				//                    0.725,
 				//                    0.71,
 				//                    0.68
 				//                ]
+			}
+		},
+		{
+			"type" : "matte",
+			"name" : "BackWall2",
+			"param" : {
+				"color" : {
+					"channels" : "xyz",
+					"node" : {
+						"fn" : "checker.jpg",
+						"color_space" : "srgb"
+					}
+				}
 			}
 		},
 		{

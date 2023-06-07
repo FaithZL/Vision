@@ -15,6 +15,10 @@ string NodeDesc::parameter_string() const noexcept {
     return _parameter.data().dump();
 }
 
+fs::path NodeDesc::file_name() const noexcept {
+    return scene_path / (*this)["fn"].as_string();
+}
+
 void NodeDesc::set_parameter(const ParameterSet &ps) noexcept {
     OC_ASSERT(ps.data().is_object());
     DataWrap data = ps.data();
@@ -224,9 +228,8 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
         _parameter.set_value("value", ps.data());
     } else if (ps.data().is_object() && !ps.contains("param")) {
         sub_type = "image";
-        string fn = (scene_path / ps["fn"].as_string()).string();
         DataWrap json = DataWrap::object();
-        json["fn"] = fn;
+        json["fn"] = ps["fn"].as_string();
         json["color_space"] = ps["color_space"].data();
         _parameter.set_json(json);
     } else if (ps.data().is_number()) {

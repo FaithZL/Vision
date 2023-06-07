@@ -23,5 +23,15 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override {
         return _lhs->is_constant() && _rhs->is_constant();
     }
+
+    [[nodiscard]] ocarina::vector<float> average() const noexcept override {
+        return {};
+    }
+    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+                                        const SampledWavelengths &swl) const noexcept override {
+        return {};
+    }
 };
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::Multiply)
