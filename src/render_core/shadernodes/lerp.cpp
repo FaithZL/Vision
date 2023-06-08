@@ -19,6 +19,19 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override {
         return _t->is_constant() && A->is_constant() && B->is_constant();
     }
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(_t.type_hash(), A.type_hash(), B.type_hash());
+    }
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        return hash64(_t.hash(), A.hash(), B.hash());
+    }
+    [[nodiscard]] ocarina::vector<float> average() const noexcept override {
+        return ocarina::lerp(_t.average(), A.average(), B.average());
+    }
+//    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+//                                        const SampledWavelengths &swl) const noexcept override {
+//        return ocarina::lerp(_t.evaluate(ctx, swl),A.evaluate(ctx, swl),B.evaluate(ctx, swl));
+//    }
 };
 }// namespace vision
 
