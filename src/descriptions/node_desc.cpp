@@ -210,7 +210,9 @@ void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     set_parameter(param);
 }
 
-SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, const DataWrap &data, ShaderNodeType type) const noexcept {
+SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, ShaderNodeType type) const noexcept {
+    auto data = _parameter[key].data();
+    auto str = data.dump();
     ShaderNodeDesc node{data, type};
     uint size = data.is_number() ? 1 : data.size();
     SP<SlotDesc> slot_desc = make_shared<SlotDesc>(node, size);

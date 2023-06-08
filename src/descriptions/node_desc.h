@@ -112,21 +112,21 @@ public:
         sub_type = s_type;
         _parameter.set_json(DataWrap::object());
     }
-    explicit ShaderNodeDesc(string name, ShaderNodeType type)
+    ShaderNodeDesc(string name, ShaderNodeType type)
         : NodeDesc("ShaderNode", std::move(name)), type(type) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
     }
     template<typename Arg>
     requires is_scalar_v<Arg>
-    explicit ShaderNodeDesc(Arg v, ShaderNodeType type)
+    ShaderNodeDesc(Arg v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
         sub_type = "number";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", v);
     }
     template<typename T, size_t N>
-    explicit ShaderNodeDesc(Vector<T, N> v, ShaderNodeType type)
+    ShaderNodeDesc(Vector<T, N> v, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
         sub_type = "number";
         _parameter.set_json(DataWrap::object());
@@ -138,14 +138,14 @@ public:
             _parameter.set_value("value", {v.x, v.y, v.z, v.w});
         }
     }
-    explicit ShaderNodeDesc(const DataWrap &data, ShaderNodeType type)
+    ShaderNodeDesc(const DataWrap &data, ShaderNodeType type)
         : NodeDesc("ShaderNode"), type(type) {
         sub_type = "number";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", data);
     }
 
-    [[nodiscard]] SP<SlotDesc> slot(const string &key, const DataWrap &data,
+    [[nodiscard]] SP<SlotDesc> slot(const string &key,
                                     ShaderNodeType type = ShaderNodeType::Number) const noexcept;
 
     void init(const ParameterSet &ps) noexcept override;
