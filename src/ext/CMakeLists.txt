@@ -21,6 +21,22 @@ add_library(vision-ext-assimp_config INTERFACE)
 target_link_libraries(vision-ext-assimp_config INTERFACE assimp::assimp)
 
 add_subdirectory(oidn)
+
+set_target_properties(OpenImageDenoise
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+        ${CMAKE_BINARY_DIR}/bin/
+        )
+
+set_target_properties(OpenImageDenoise_core
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+        ${CMAKE_BINARY_DIR}/bin/
+        )
+
+set_target_properties(OpenImageDenoise_device_cpu
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+        ${CMAKE_BINARY_DIR}/bin/
+        )
+
 add_library(vision-ext-oidn INTERFACE)
 target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
 

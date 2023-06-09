@@ -20,7 +20,7 @@ RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
 }
 
 void RenderPipeline::init_postprocessor(const SceneDesc &scene_desc) noexcept {
-//    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
 }
 
 void RenderPipeline::change_resolution(uint2 res) noexcept {
