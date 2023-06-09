@@ -19,9 +19,21 @@ public:
         _device->commit();
     }
 
+    [[nodiscard]] oidn::FilterRef create_filter() const noexcept {
+        switch (_mode) {
+            case RT:
+                return _device->newFilter("RT");
+            case RTLightmap:
+                return _device->newFilter("RTLightmap");
+            default:
+                break;
+        }
+        return nullptr;
+    }
+
     void apply(uint2 res, float4 *output, float4 *color,
                float4 *normal, float4 *albedo) const noexcept override {
-        oidn::FilterRef filter = _device->newFilter("RT");
+        oidn::FilterRef filter = create_filter();
         filter.setImage("output", output, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
         filter.setImage("color", color, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
         if (normal && albedo) {
