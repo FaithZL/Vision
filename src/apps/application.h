@@ -79,6 +79,7 @@ public:
     void prepare() noexcept;
     void update(double dt) noexcept;
     void check_and_save() noexcept;
+    void save_result() noexcept;
     void register_event() noexcept;
     void update_camera_view(float d_yaw, float d_pitch) noexcept;
     void on_key_event(int key, int action) noexcept;

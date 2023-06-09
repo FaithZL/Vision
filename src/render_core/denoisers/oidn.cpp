@@ -44,6 +44,11 @@ public:
         filter.set("hdr", true);
         filter.commit();
         filter.execute();
+
+        const char *errorMessage;
+        if (_device->getError(errorMessage) != oidn::Error::None) {
+            OC_ERROR_FORMAT("oidn error: {}", errorMessage)
+        }
     }
 };
 
