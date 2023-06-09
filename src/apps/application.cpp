@@ -140,7 +140,7 @@ void App::check_and_save() noexcept {
 
 void App::save_result() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-//    rp.frame_buffer().save(desc.fn);
+    rp.frame_buffer().save(desc.fn);
     if (desc.save_exit) {
         exit(0);
     }
