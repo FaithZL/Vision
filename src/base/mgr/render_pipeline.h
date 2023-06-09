@@ -26,6 +26,8 @@ private:
     uint _frame_index{};
     ImagePool _image_pool{this};
     double _total_time{};
+    ImageIO _radiance_buffer;
+    ImageIO _frame_buffer;
     Postprocessor _postprocessor;
 
 public:
@@ -43,7 +45,9 @@ public:
     handle_ty register_texture(const Texture &texture) noexcept {
         return _resource_array.emplace(texture);
     }
-
+    [[nodiscard]] const ImageIO &frame_buffer() const noexcept {
+        return _frame_buffer;
+    }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
@@ -68,13 +72,13 @@ public:
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result(void *ptr) noexcept {
-        _scene.film()->copy_to(ptr);
+        _scene.film()->copy_frame_buffer(ptr);
     }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
-    void render_to_image(double dt, void *ptr) {
+    void render_to_image(double dt) {
         render(dt);
-        download_result(ptr);
+        download_result(_frame_buffer.pixel_ptr());
     }
     /// for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;

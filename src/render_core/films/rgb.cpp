@@ -37,8 +37,11 @@ public:
         val.w = 1.f;
         _frame.write(index, val);
     }
-    void copy_to(void *host_ptr) const noexcept override {
-        _frame.download_immediately(host_ptr);
+    void copy_frame_buffer(void *dst_ptr) const noexcept override {
+        _frame.download_immediately(dst_ptr);
+    }
+    void copy_radiance_buffer(void *dst_ptr) const noexcept override {
+        _radiance.download_immediately(dst_ptr);
     }
 };
 

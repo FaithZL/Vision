@@ -49,7 +49,6 @@ public:
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
     RenderPipeline rp;
-    ImageIO radiance_image;
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};

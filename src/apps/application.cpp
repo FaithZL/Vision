@@ -36,7 +36,6 @@ void App::prepare() noexcept {
     rp.init_postprocessor(scene_desc);
     window = context.create_window("LajiRender", rp.resolution(), "gl");
     rp.prepare();
-    radiance_image = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, rp.resolution());
     register_event();
 }
 
@@ -127,8 +126,8 @@ void App::update(double dt) noexcept {
         need_update = false;
         rp.update();
     }
-    rp.render_to_image(dt, radiance_image.pixel_ptr());
-    window->set_background(radiance_image.pixel_ptr<float4>());
+    rp.render_to_image(dt);
+    window->set_background(rp.frame_buffer().pixel_ptr<float4>());
     check_and_save();
 }
 
@@ -141,7 +140,7 @@ void App::check_and_save() noexcept {
 
 void App::save_result() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-    radiance_image.save(desc.fn);
+//    rp.frame_buffer().save(desc.fn);
     if (desc.save_exit) {
         exit(0);
     }

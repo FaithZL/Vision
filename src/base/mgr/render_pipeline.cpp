@@ -72,6 +72,7 @@ void RenderPipeline::prepare() noexcept {
     prepare_geometry();
     prepare_resource_array();
     compile_shaders();
+    _frame_buffer = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, resolution());
 }
 
 void RenderPipeline::render(double dt) noexcept {
