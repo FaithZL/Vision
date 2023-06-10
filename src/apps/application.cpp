@@ -140,7 +140,7 @@ void App::check_and_save() noexcept {
 
 void App::save_result() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-    ImageIO picture = ImageIO::create_empty(PixelStorage::FLOAT4, rp.resolution());
+    ImageIO picture = ImageIO::pure_color(make_float4(1.f), SRGB, rp.resolution());
     rp.get_final_picture(picture.pixel_ptr<float4>());
     picture.save(desc.fn);
     if (desc.save_exit) {
