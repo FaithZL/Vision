@@ -33,7 +33,7 @@ public:
         Float4 accum_prev = _radiance.read(index);
         val = lerp(make_float4(a), accum_prev, val);
         _radiance.write(index, val);
-        val = linear_to_srgb(_tone_mapping->apply(val));
+        val = linear_to_srgb(_tone_mapper->apply(val));
         val.w = 1.f;
         _frame.write(index, val);
     }

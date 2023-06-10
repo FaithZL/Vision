@@ -8,14 +8,20 @@
 #include "base/tonemapping.h"
 
 namespace vision {
+class RenderPipeline;
 class Postprocessor {
 private:
+    RenderPipeline *_rp{};
     Denoiser *_denoiser{};
-    ToneMapper *_tone_mapping{};
+    ToneMapper *_tone_mapper{};
 
 public:
-    Postprocessor() = default;
+    explicit Postprocessor(RenderPipeline *rp);
     void set_denoiser(Denoiser *denoiser) noexcept { _denoiser = denoiser; }
-    void set_tone_mapping(ToneMapper *tone_mapping) noexcept { _tone_mapping = tone_mapping; }
+    void set_tone_mapper(ToneMapper *tone_mapper) noexcept { _tone_mapper = tone_mapper; }
+    template<typename ...Args>
+    void denoise(Args &&...args) const noexcept {
+        _denoiser->apply(OC_FORWARD(args)...);
+    }
 };
 }// namespace vision

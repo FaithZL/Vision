@@ -28,7 +28,7 @@ private:
     double _total_time{};
     ImageIO _radiance_buffer;
     ImageIO _frame_buffer;
-    Postprocessor _postprocessor;
+    Postprocessor _postprocessor{this};
 
 public:
     RenderPipeline(Device *device, ocarina::Context *context);

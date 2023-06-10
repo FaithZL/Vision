@@ -3,3 +3,10 @@
 //
 
 #include "postprocessor.h"
+#include "render_pipeline.h"
+
+namespace vision {
+
+Postprocessor::Postprocessor(RenderPipeline *rp)
+    : _rp(rp) {}
+}// namespace vision
