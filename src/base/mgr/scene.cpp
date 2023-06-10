@@ -63,7 +63,7 @@ void Scene::prepare_lights() noexcept {
                    light.all_instance_num());
 }
 
-void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept {
+void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
         _materials.push_back(load<Material>(desc));
     }
@@ -72,7 +72,7 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) noexcept 
                    _materials.all_instance_num());
 }
 
-void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
+void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
         if (shape->has_material()) {
