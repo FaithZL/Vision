@@ -86,6 +86,10 @@ void RenderPipeline::render(double dt) noexcept {
     Printer::instance().retrieve_immediately();
 }
 
+void RenderPipeline::get_final_picture(ocarina::float4 *ptr) noexcept {
+    _postprocessor.denoise(resolution(), ptr, radiance_buffer().pixel_ptr<float4>(), nullptr, nullptr);
+}
+
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
     return geometry().accel.trace_closest(ray);
 }

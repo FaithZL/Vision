@@ -259,7 +259,7 @@ void FilmDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
     set_parameter(ps["param"]);
-    tone_mapping.init(ps["param"].value("tone_mapper", DataWrap::object()));
+    tone_mapper.init(ps["param"].value("tone_mapper", DataWrap::object()));
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {

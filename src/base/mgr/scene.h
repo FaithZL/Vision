@@ -91,4 +91,6 @@ public:
     [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }
 };
 
+#undef MAKE_GETTER
+
 }// namespace vision

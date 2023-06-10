@@ -15,6 +15,11 @@
 namespace vision {
 using namespace ocarina;
 class Spectrum;
+
+#define VS_MAKE_GETTER(member)                                                 \
+    [[nodiscard]] const ImageIO &member() const noexcept { return _##member; } \
+    [[nodiscard]] ImageIO &member() noexcept { return _##member; }
+
 class RenderPipeline {
 private:
     Device *_device;
@@ -45,9 +50,8 @@ public:
     handle_ty register_texture(const Texture &texture) noexcept {
         return _resource_array.emplace(texture);
     }
-    [[nodiscard]] const ImageIO &frame_buffer() const noexcept {
-        return _frame_buffer;
-    }
+    VS_MAKE_GETTER(frame_buffer)
+    VS_MAKE_GETTER(radiance_buffer)
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
@@ -68,6 +72,7 @@ public:
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     void prepare() noexcept;
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
+    void get_final_picture(float4 *ptr) noexcept;
     void prepare_geometry() noexcept;
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
@@ -107,5 +112,7 @@ public:
         return _resource_array.byte_buffer(OC_FORWARD(index));
     }
 };
+
+#undef VS_MAKE_GETTER
 
 }// namespace vision

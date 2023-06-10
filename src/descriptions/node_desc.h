@@ -247,7 +247,7 @@ public:
 
 struct FilmDesc : public NodeDesc {
 public:
-    ToneMapperDesc tone_mapping;
+    ToneMapperDesc tone_mapper;
 
 public:
     VISION_DESC_COMMON(Film)
