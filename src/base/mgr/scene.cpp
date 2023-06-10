@@ -40,7 +40,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
 
-Slot Scene::create_slot(const SlotDesc &desc) noexcept {
+Slot Scene::create_slot(const SlotDesc &desc) {
     desc.scene = this;
     ShaderNode *shader_node = load_shader_node(desc.node);
     return Slot(shader_node, desc.channels);
@@ -88,27 +88,27 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) noexcept {
     }
 }
 
-void Scene::load_mediums(const vector<MediumDesc> &descs) noexcept {
+void Scene::load_mediums(const vector<MediumDesc> &descs) {
     for (const MediumDesc &desc : descs) {
         auto medium = load<Medium>(desc);
         _mediums.push_back(medium);
     }
 }
 
-Light *Scene::load_light(const LightDesc &desc) noexcept {
+Light *Scene::load_light(const LightDesc &desc) {
     OC_ASSERT(_light_sampler != nullptr);
     auto ret = load<Light>(desc);
     _light_sampler->add_light(ret);
     return ret;
 }
 
-ShaderNode *Scene::load_shader_node(const ShaderNodeDesc &desc) noexcept {
+ShaderNode *Scene::load_shader_node(const ShaderNodeDesc &desc) {
     auto ret = load<ShaderNode>(desc);
     _shadernodes.push_back(ret);
     return ret;
 }
 
-void Scene::prepare_materials() noexcept {
+void Scene::prepare_materials() {
     _materials.for_each_instance([&](const Material *material) noexcept {
         const_cast<Material *>(material)->prepare();
     });

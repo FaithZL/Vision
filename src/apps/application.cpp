@@ -13,7 +13,7 @@ VS_EXPORT_API int execute(char *working_dir, char *scene_fn) {
     return App(working_dir, scene_fn).run();
 }
 
-void App::init(int argc) noexcept {
+void App::init(int argc) {
     core::log_level_info();
     params.init(cli_parser.get());
     device.init_rtx();
@@ -30,7 +30,7 @@ void App::init(int argc) noexcept {
     prepare();
 }
 
-void App::prepare() noexcept {
+void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     rp.init_postprocessor(scene_desc);
@@ -140,7 +140,9 @@ void App::check_and_save() noexcept {
 
 void App::save_result() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-    rp.frame_buffer().save(desc.fn);
+    ImageIO picture = ImageIO::create_empty(PixelStorage::FLOAT4, rp.resolution());
+    rp.get_final_picture(picture.pixel_ptr<float4>());
+    picture.save(desc.fn);
     if (desc.save_exit) {
         exit(0);
     }

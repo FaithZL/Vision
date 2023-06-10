@@ -15,7 +15,8 @@ private:
 
 public:
     explicit OidnDenoiser(const DenoiserDesc &desc)
-        : Denoiser(desc), _device{new oidn::DeviceRef(oidn::newDevice())} {
+        : Denoiser(desc),
+          _device{new oidn::DeviceRef(oidn::newDevice())} {
         _device->commit();
     }
 

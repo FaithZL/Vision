@@ -19,7 +19,7 @@ RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
     Printer::instance().init(*device);
 }
 
-void RenderPipeline::init_postprocessor(const SceneDesc &scene_desc) noexcept {
+void RenderPipeline::init_postprocessor(const SceneDesc &scene_desc) {
     _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
     _postprocessor.set_tone_mapper(_scene.camera()->film()->tone_mapper());
 }
@@ -67,7 +67,7 @@ void RenderPipeline::compile_shaders() noexcept {
     _scene.integrator()->compile_shader();
 }
 
-void RenderPipeline::prepare() noexcept {
+void RenderPipeline::prepare() {
     _scene.prepare();
     _image_pool.prepare();
     prepare_geometry();
@@ -87,7 +87,7 @@ void RenderPipeline::render(double dt) noexcept {
 }
 
 void RenderPipeline::get_final_picture(ocarina::float4 *ptr) noexcept {
-    _postprocessor.denoise(resolution(), ptr, radiance_buffer().pixel_ptr<float4>(), nullptr, nullptr);
+    _postprocessor.denoise(resolution(), ptr, frame_buffer().pixel_ptr<float4>(), nullptr, nullptr);
 }
 
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {

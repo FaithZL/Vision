@@ -58,14 +58,14 @@ public:
     MAKE_GETTER(light_sampler)
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
-    [[nodiscard]] const auto& materials() const noexcept { return _materials; }
-    [[nodiscard]] auto& materials() noexcept { return _materials; }
-    [[nodiscard]] const auto& mediums() const noexcept { return _mediums; }
+    [[nodiscard]] const auto &materials() const noexcept { return _materials; }
+    [[nodiscard]] auto &materials() noexcept { return _materials; }
+    [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
 
-    [[nodiscard]] Slot create_slot(const SlotDesc &desc) noexcept;
+    [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
-    [[nodiscard]] T *load(const desc_ty &desc) noexcept {
+    [[nodiscard]] T *load(const desc_ty &desc) {
         desc.scene = this;
         auto ret = dynamic_cast<T *>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
@@ -80,12 +80,12 @@ public:
         return load<Warper2D>(warper_desc);
     }
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
-    void load_shapes(const vector<ShapeDesc> &descs) noexcept;
-    void load_mediums(const vector<MediumDesc> &descs) noexcept;
-    void load_materials(const vector<MaterialDesc> &material_descs) noexcept;
-    Light *load_light(const LightDesc &desc) noexcept;
-    ShaderNode *load_shader_node(const ShaderNodeDesc &desc) noexcept;
-    void prepare_materials() noexcept;
+    void load_shapes(const vector<ShapeDesc> &descs);
+    void load_mediums(const vector<MediumDesc> &descs);
+    void load_materials(const vector<MaterialDesc> &material_descs);
+    Light *load_light(const LightDesc &desc);
+    ShaderNode *load_shader_node(const ShaderNodeDesc &desc);
+    void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }

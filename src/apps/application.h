@@ -74,8 +74,8 @@ public:
         init();
     }
     [[nodiscard]] RenderPipeline create_pipeline() { return {&device, &context}; }
-    void init(int argc = 0) noexcept;
-    void prepare() noexcept;
+    void init(int argc = 0);
+    void prepare();
     void update(double dt) noexcept;
     void check_and_save() noexcept;
     void save_result() noexcept;
