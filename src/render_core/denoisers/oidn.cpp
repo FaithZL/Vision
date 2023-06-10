@@ -11,21 +11,21 @@ using namespace ocarina;
 
 class OidnDenoiser : public Denoiser {
 private:
-    oidn::DeviceRef *_device{};
+    oidn::DeviceRef _device{};
 
 public:
     explicit OidnDenoiser(const DenoiserDesc &desc)
         : Denoiser(desc),
-          _device{new oidn::DeviceRef(oidn::newDevice())} {
-        _device->commit();
+          _device{oidn::DeviceRef(oidn::newDevice())} {
+        _device.commit();
     }
 
     [[nodiscard]] oidn::FilterRef create_filter() const noexcept {
         switch (_mode) {
             case RT:
-                return _device->newFilter("RT");
+                return _device.newFilter("RT");
             case RTLightmap:
-                return _device->newFilter("RTLightmap");
+                return _device.newFilter("RTLightmap");
             default:
                 break;
         }
@@ -33,7 +33,7 @@ public:
     }
 
     void apply(uint2 res, float4 *output, float4 *color,
-               float4 *normal, float4 *albedo) const noexcept override {
+               float4 *normal, float4 *albedo) noexcept override {
         oidn::FilterRef filter = create_filter();
         filter.setImage("output", output, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
         filter.setImage("color", color, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
@@ -47,8 +47,8 @@ public:
         filter.execute();
 
         const char *errorMessage;
-        if (_device->getError(errorMessage) != oidn::Error::None) {
-//            OC_ERROR_FORMAT("oidn error: {}", errorMessage)
+        if (_device.getError(errorMessage) != oidn::Error::None) {
+            OC_ERROR_FORMAT("oidn error: {}", errorMessage)
         }
     }
 };

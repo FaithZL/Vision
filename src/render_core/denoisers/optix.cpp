@@ -13,7 +13,7 @@ public:
     }
 
     void apply(uint2 res, float4 *output, float4 *color,
-               float4 *normal, float4 *albedo) const noexcept override {
+               float4 *normal, float4 *albedo) noexcept override {
     }
 };
 

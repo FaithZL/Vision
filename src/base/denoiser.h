@@ -24,7 +24,7 @@ public:
 public:
     explicit Denoiser(const DenoiserDesc &desc) : Node(desc),_mode(RT) {}
     virtual void apply(uint2 res, float4 *output, float4 *color,
-                       float4 *normal, float4 *albedo) const noexcept = 0;
+                       float4 *normal, float4 *albedo) noexcept = 0;
 };
 
 }// namespace vision
