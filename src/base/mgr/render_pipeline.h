@@ -72,7 +72,7 @@ public:
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     void download_result(void *ptr) noexcept {
-        _scene.film()->copy_frame_buffer(ptr);
+        _scene.film()->copy_tone_mapped_buffer(ptr);
     }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;

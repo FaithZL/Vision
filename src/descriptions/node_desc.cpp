@@ -196,7 +196,7 @@ void UVSpreaderDesc::init(const vision::ParameterSet &ps) noexcept {
     set_parameter(param);
 }
 
-void ToneMappingDesc::init(const vision::ParameterSet &ps) noexcept {
+void ToneMapperDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("aces");
     ParameterSet param = ps.value("param", DataWrap::object());

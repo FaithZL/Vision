@@ -17,12 +17,12 @@ namespace vision {
 //
 //    }
 //}
-class ToneMapping : public Node {
+class ToneMapper : public Node {
 public:
-    using Desc = ToneMappingDesc;
+    using Desc = ToneMapperDesc;
 
 public:
-    explicit ToneMapping(const ToneMappingDesc &desc)
+    explicit ToneMapper(const ToneMapperDesc &desc)
         : Node(desc) {}
 
     [[nodiscard]] virtual Float4 apply(const Float4 &input) const noexcept = 0;

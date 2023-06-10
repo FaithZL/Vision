@@ -37,10 +37,10 @@ public:
         val.w = 1.f;
         _frame.write(index, val);
     }
-    void copy_frame_buffer(void *dst_ptr) const noexcept override {
+    void copy_tone_mapped_buffer(void *dst_ptr) const noexcept override {
         _frame.download_immediately(dst_ptr);
     }
-    void copy_accumulate_buffer(void *dst_ptr) const noexcept override {
+    void copy_raw_buffer(void *dst_ptr) const noexcept override {
         _radiance.download_immediately(dst_ptr);
     }
 };

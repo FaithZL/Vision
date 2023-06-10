@@ -183,9 +183,9 @@ public:
     }
 };
 
-struct ToneMappingDesc : public NodeDesc {
+struct ToneMapperDesc : public NodeDesc {
 public:
-    VISION_DESC_COMMON(ToneMapping)
+    VISION_DESC_COMMON(ToneMapper)
     void init(const ParameterSet &ps) noexcept override;
 };
 
@@ -247,7 +247,7 @@ public:
 
 struct FilmDesc : public NodeDesc {
 public:
-    ToneMappingDesc tone_mapping;
+    ToneMapperDesc tone_mapping;
 
 public:
     VISION_DESC_COMMON(Film)
