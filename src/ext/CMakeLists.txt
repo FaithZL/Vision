@@ -20,6 +20,8 @@ endif ()
 add_library(vision-ext-assimp_config INTERFACE)
 target_link_libraries(vision-ext-assimp_config INTERFACE assimp::assimp)
 
+set(OIDN_DEVICE_CUDA ON)
+
 add_subdirectory(oidn)
 
 set_target_properties(OpenImageDenoise
@@ -33,6 +35,11 @@ set_target_properties(OpenImageDenoise_core
         )
 
 set_target_properties(OpenImageDenoise_device_cpu
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+        ${CMAKE_BINARY_DIR}/bin/
+        )
+
+set_target_properties(OpenImageDenoise_device_cuda
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_BINARY_DIR}/bin/
         )
