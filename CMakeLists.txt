@@ -33,3 +33,7 @@ endfunction()
 
 add_subdirectory(src)
 
+add_custom_target(CP_OIDN_CUDA ALL
+        COMMAND copy src\\ext\\oidn\\OpenImageDenoise_device_cuda.dll bin
+        DEPENDS OpenImageDenoise_device_cuda
+        )

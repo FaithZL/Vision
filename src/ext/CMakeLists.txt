@@ -54,3 +54,4 @@ target_link_libraries(vision-ext-xatlas INTERFACE xatlas)
 add_library(vision-ext INTERFACE)
 target_link_libraries(vision-ext INTERFACE
         cxxopts)
+
