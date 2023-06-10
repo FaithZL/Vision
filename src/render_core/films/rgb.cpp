@@ -40,7 +40,7 @@ public:
     void copy_frame_buffer(void *dst_ptr) const noexcept override {
         _frame.download_immediately(dst_ptr);
     }
-    void copy_radiance_buffer(void *dst_ptr) const noexcept override {
+    void copy_accumulate_buffer(void *dst_ptr) const noexcept override {
         _radiance.download_immediately(dst_ptr);
     }
 };

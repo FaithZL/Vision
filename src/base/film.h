@@ -42,6 +42,6 @@ public:
         add_sample(pixel, make_float4(val, 1.f), frame_index);
     }
     virtual void copy_frame_buffer(void *dst_ptr) const noexcept = 0;
-    virtual void copy_radiance_buffer(void *dst_ptr) const noexcept = 0;
+    virtual void copy_accumulate_buffer(void *dst_ptr) const noexcept = 0;
 };
 }// namespace vision
