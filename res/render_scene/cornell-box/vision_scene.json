@@ -942,7 +942,7 @@
 		"polymorphic_mode" : 1
 	},
 	"denoiser" : {
-		"type" : "oidn"
+		"type" : "oidn",
 		"param" : {
 			"backend": "GPU"
 		}

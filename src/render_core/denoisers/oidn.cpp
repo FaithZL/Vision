@@ -52,6 +52,13 @@ public:
             OC_ERROR_FORMAT("oidn error: {}", errorMessage)
         }
     }
+
+    void apply(ocarina::uint2 res, RegistrableManaged<ocarina::float4> &output,
+               RegistrableManaged<ocarina::float4> &color,
+               RegistrableManaged<ocarina::float4> *normal,
+               RegistrableManaged<ocarina::float4> *albedo) noexcept override {
+        
+    }
 };
 
 }// namespace vision
