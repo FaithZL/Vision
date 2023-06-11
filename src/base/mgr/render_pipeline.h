@@ -31,6 +31,7 @@ private:
     uint _frame_index{};
     ImagePool _image_pool{this};
     double _total_time{};
+    RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
 
 public:

@@ -68,6 +68,8 @@ void RenderPipeline::compile_shaders() noexcept {
 }
 
 void RenderPipeline::prepare() {
+    auto pixel_num = resolution().x * resolution().y;
+    _final_picture.reset_all(device(), pixel_num);
     _scene.prepare();
     _image_pool.prepare();
     prepare_geometry();
@@ -86,9 +88,9 @@ void RenderPipeline::render(double dt) noexcept {
 }
 
 float4 *RenderPipeline::final_picture() noexcept {
+    RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
     RegistrableManaged<float4> &frame = _scene.radiance_film()->tone_mapped_buffer();
-    RegistrableManaged<float4> &f2 = _scene.radiance_film()->original_buffer();
-    _postprocessor.denoise(resolution(), frame.ptr<float4*>(), frame.ptr<float4*>(), nullptr, nullptr);
+    _postprocessor.denoise(resolution(), &frame, &original, nullptr, nullptr);
     frame.download_immediately();
     return frame.data();
 }

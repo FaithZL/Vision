@@ -61,7 +61,7 @@ public:
 #define VS_DENOISE_ATTR_CPU(attr_name) \
     attr_name->download_immediately(); \
     attr_name##_ptr = attr_name->ptr<float4 *>();
-            switch (_mode) {
+            switch (_backend) {
                 case CPU: {
                     output_ptr = output->data();
                     VS_DENOISE_ATTR_CPU(color)
@@ -86,7 +86,7 @@ public:
         };
 
         auto after_denoise = [&]() {
-            switch (_mode) {
+            switch (_backend) {
                 case CPU: break;
                 case GPU: {
                     output->download_immediately();
