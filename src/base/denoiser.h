@@ -35,7 +35,7 @@ public:
           _backend(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
     virtual void apply(uint2 res, float4 *output, float4 *color,
                        float4 *normal, float4 *albedo) noexcept = 0;
-    virtual void apply(uint2 res, RegistrableManaged<float4> &output, RegistrableManaged<float4> &color,
+    virtual void apply(uint2 res, RegistrableManaged<float4> *output, RegistrableManaged<float4> *color,
                        RegistrableManaged<float4> *normal, RegistrableManaged<float4> *albedo) noexcept = 0;
     [[nodiscard]] Backend backend() const noexcept { return _backend; }
 };
