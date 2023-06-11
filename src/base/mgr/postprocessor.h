@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/denoiser.h"
-#include "base/tonemapping.h"
+#include "base/tonemapper.h"
 
 namespace vision {
 class RenderPipeline;

@@ -8,7 +8,7 @@
 #include "rhi/common.h"
 #include "dsl/common.h"
 #include "node.h"
-#include "tonemapping.h"
+#include "tonemapper.h"
 
 namespace vision {
 using namespace ocarina;

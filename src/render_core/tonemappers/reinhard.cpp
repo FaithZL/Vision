@@ -2,7 +2,7 @@
 // Created by Zero on 2023/5/30.
 //
 
-#include "base/tonemapping.h"
+#include "base/tonemapper.h"
 
 namespace vision {
 
