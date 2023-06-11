@@ -9,20 +9,30 @@
 
 namespace vision {
 
-enum DenoiseMode {
-    RT = 0,
-    RTLightmap = 1
-};
-
 class Denoiser : public Node {
+public:
+    enum Mode {
+        RT = 0,
+        RTLightmap = 1
+    };
+
+    enum Backend {
+        GPU = 0,
+        CPU = 1
+    };
+
 protected:
-    DenoiseMode _mode{};
+    Mode _mode{};
+    Backend _backend{};
 
 public:
     using Desc = DenoiserDesc;
 
 public:
-    explicit Denoiser(const DenoiserDesc &desc) : Node(desc),_mode(RT) {}
+    explicit Denoiser(const DenoiserDesc &desc)
+        : Node(desc),
+          _mode(RT),
+          _backend(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
     virtual void apply(uint2 res, float4 *output, float4 *color,
                        float4 *normal, float4 *albedo) noexcept = 0;
 };

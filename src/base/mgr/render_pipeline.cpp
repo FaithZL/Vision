@@ -87,6 +87,8 @@ void RenderPipeline::render(double dt) noexcept {
 
 float4 *RenderPipeline::final_picture() noexcept {
     RegistrableManaged<float4> &frame = _scene.radiance_film()->tone_mapped_buffer();
+    RegistrableManaged<float4> &f2 = _scene.radiance_film()->original_buffer();
+    _postprocessor.denoise(resolution(), frame.ptr<float4*>(), f2.ptr<float4*>(), nullptr, nullptr);
     frame.download_immediately();
     return frame.data();
 }

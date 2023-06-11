@@ -943,9 +943,12 @@
 	},
 	"denoiser" : {
 		"type" : "oidn"
+		"param" : {
+			"backend": "GPU"
+		}
 	},
 	"output" : {
 		"spp" : 0,
-		"fn" : "hero1.png"
+		"fn" : "hero1.exr"
 	}
 }

@@ -45,6 +45,7 @@ public:
         filter.set("hdr", true);
         filter.commit();
         filter.execute();
+        _device.sync();
 
         const char *errorMessage;
         if (_device.getError(errorMessage) != oidn::Error::None) {
