@@ -23,7 +23,7 @@ using namespace ocarina;
 //         "fb_state": 0
 //    }
 //}
-class Film : public Node {
+class Film : public Node, public Serializable<float> {
 public:
     using Desc = FilmDesc;
 
@@ -33,6 +33,7 @@ protected:
 
 public:
     explicit Film(const FilmDesc &desc);
+    OC_SERIALIZABLE_FUNC(*_tone_mapper)
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     void set_resolution(uint2 res) noexcept { _resolution = res; }

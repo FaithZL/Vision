@@ -11,17 +11,23 @@ using namespace ocarina;
 
 class RGBFilm : public Film {
 private:
-    BufferWrapper<float4> _radiance;
-    BufferWrapper<float4> _frame;
+    using _serial_ty = Film;
+
+private:
+    ManagedWrapper<float4> _radiance;
+    ManagedWrapper<float4> _frame;
 
 public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
           _radiance(render_pipeline()->resource_array()),
           _frame(render_pipeline()->resource_array()) {}
+
+    OC_SERIALIZABLE_FUNC(_radiance, _frame)
+
     void prepare() noexcept override {
-        _radiance.super() = device().create_buffer<float4>(pixel_num());
-        _frame.super() = device().create_buffer<float4>(pixel_num());
+        _radiance.device() = device().create_buffer<float4>(pixel_num());
+        _frame.device() = device().create_buffer<float4>(pixel_num());
         _radiance.clear_immediately();
         _frame.clear_immediately();
         _radiance.register_self();
@@ -38,10 +44,10 @@ public:
         _frame.write(index, val);
     }
     void copy_tone_mapped_buffer(void *dst_ptr) const noexcept override {
-        _frame.download_immediately(dst_ptr);
+        _frame.device().download_immediately(dst_ptr);
     }
     void copy_raw_buffer(void *dst_ptr) const noexcept override {
-        _radiance.download_immediately(dst_ptr);
+        _radiance.device().download_immediately(dst_ptr);
     }
 };
 
