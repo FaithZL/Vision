@@ -87,7 +87,9 @@ public:
 
         auto after_denoise = [&]() {
             switch (_backend) {
-                case CPU: break;
+                case CPU: {
+                    output->upload_immediately();
+                }
                 case GPU: {
                     output->download_immediately();
                     break;
