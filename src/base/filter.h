@@ -16,7 +16,6 @@ struct FilterSample {
     Float weight;
 };
 
-
 //"filter": {
 //    "type": "box",
 //    "name": "boxFilter",
@@ -27,19 +26,21 @@ struct FilterSample {
 //        ]
 //    }
 //}
-class Filter : public Node {
+class Filter : public Node, public Serializable<float> {
 public:
     using Desc = FilterDesc;
 
 protected:
-    float2 _radius;
+    Serial<float2> _radius;
 
 public:
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
           _radius(desc["radius"].as_float2(make_float2(1.f))) {}
+    OC_SERIALIZABLE_FUNC(_radius)
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
+    [[nodiscard]] Float2 radius() const noexcept { return *_radius; }
 };
 
 }// namespace vision

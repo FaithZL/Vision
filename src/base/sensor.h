@@ -21,7 +21,7 @@ struct SensorSample {
     Float filter_weight{1.f};
 };
 
-class Sensor : public Node {
+class Sensor : public Node, public Serializable<float> {
 public:
     using Desc = SensorDesc;
 
@@ -32,6 +32,7 @@ protected:
 
 public:
     explicit Sensor(const SensorDesc &desc);
+    OC_SERIALIZABLE_FUNC(*_filter, *_film)
     void prepare() noexcept override;
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
     [[nodiscard]] auto film() noexcept { return _film; }

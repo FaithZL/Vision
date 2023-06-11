@@ -11,12 +11,12 @@ class BoxFilter : public Filter {
 public:
     explicit BoxFilter(const FilterDesc &desc) : Filter(desc) {}
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
-        Float2 p = make_float2(lerp(u[0], -_radius.x, _radius.x),
-                               lerp(u[1], -_radius.y, _radius.y));
+        Float2 p = make_float2(lerp(u[0], -radius().x, radius().x),
+                               lerp(u[1], -radius().y, radius().y));
         return {p, 1.f};
     }
     [[nodiscard]] float evaluate(float2 p) const noexcept override {
-        return (std::abs(p.x) <= _radius.x && std::abs(p.y) <= _radius.y) ? 1 : 0;
+        return (std::abs(p.x) <= _radius.hv().x && std::abs(p.y) <= _radius.hv().y) ? 1 : 0;
     }
 };
 }// namespace vision

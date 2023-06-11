@@ -12,11 +12,11 @@ class TriangleFilter : public Filter {
 public:
     explicit TriangleFilter(const FilterDesc &desc) : Filter(desc) {}
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
-        return {make_float2(sample_tent(u.x, _radius.x), sample_tent(u.y, _radius.y)),1.f};
+        return {make_float2(sample_tent(u.x, radius().x), sample_tent(u.y, radius().y)), 1.f};
     }
     [[nodiscard]] float evaluate(float2 p) const noexcept override {
-        return std::max(0.f, _radius.x - std::abs(p.x)) *
-               std::max(0.f, _radius.y - std::abs(p.y));
+        return std::max(0.f, _radius.hv().x - std::abs(p.x)) *
+               std::max(0.f, _radius.hv().y - std::abs(p.y));
     }
 };
 }// namespace vision
