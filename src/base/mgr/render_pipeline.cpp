@@ -73,7 +73,6 @@ void RenderPipeline::prepare() {
     prepare_geometry();
     prepare_resource_array();
     compile_shaders();
-    _frame_buffer = ImageIO::pure_color(make_float4(0, 0, 0, 1), ColorSpace::LINEAR, resolution());
 }
 
 void RenderPipeline::render(double dt) noexcept {
@@ -86,8 +85,10 @@ void RenderPipeline::render(double dt) noexcept {
     Printer::instance().retrieve_immediately();
 }
 
-void RenderPipeline::get_final_picture(ocarina::float4 *ptr) noexcept {
-    _postprocessor.denoise(resolution(), ptr, frame_buffer().pixel_ptr<float4>(), nullptr, nullptr);
+float4 *RenderPipeline::final_picture() noexcept {
+    RegistrableManaged<float4> &frame = _scene.film()->tone_mapped_buffer();
+    frame.download_immediately();
+    return frame.data();
 }
 
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {

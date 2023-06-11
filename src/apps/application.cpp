@@ -126,8 +126,10 @@ void App::update(double dt) noexcept {
         need_update = false;
         rp.update();
     }
-    rp.render_to_image(dt);
-    window->set_background(rp.frame_buffer().pixel_ptr<float4>());
+    auto &radiance = rp.scene().film()->tone_mapped_buffer();
+    rp.render(dt);
+    radiance.download_immediately();
+    window->set_background(radiance.data());
     check_and_save();
 }
 
@@ -140,9 +142,7 @@ void App::check_and_save() noexcept {
 
 void App::save_result() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-    ImageIO picture = ImageIO::pure_color(make_float4(1.f), SRGB, rp.resolution());
-    rp.get_final_picture(picture.pixel_ptr<float4>());
-    picture.save(desc.fn);
+    ImageIO::save_image(desc.fn, PixelStorage::FLOAT4, rp.resolution(), reinterpret_cast<std::byte *>(rp.final_picture()));
     if (desc.save_exit) {
         exit(0);
     }

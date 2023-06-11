@@ -25,13 +25,16 @@ public:
 
     OC_SERIALIZABLE_FUNC(_radiance, _frame)
 
+    void prepare(RegistrableManaged<float4> &managed) noexcept {
+        managed.device() = device().create_buffer<float4>(pixel_num());
+        managed.host().resize(pixel_num());
+        managed.clear_immediately();
+        managed.register_self();
+    }
+
     void prepare() noexcept override {
-        _radiance.device() = device().create_buffer<float4>(pixel_num());
-        _frame.device() = device().create_buffer<float4>(pixel_num());
-        _radiance.clear_immediately();
-        _frame.clear_immediately();
-        _radiance.register_self();
-        _frame.register_self();
+        prepare(_radiance);
+        prepare(_frame);
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
