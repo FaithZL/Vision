@@ -27,17 +27,18 @@ public:
 
 protected:
     Filter *_filter{};
-    Film *_film{};
+    Film *_radiance_film{};
     uchar _medium{InvalidUI8};
 
 public:
     explicit Sensor(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(*_filter, *_film)
+    OC_SERIALIZABLE_FUNC(*_filter, *_radiance_film)
     void prepare() noexcept override;
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
-    [[nodiscard]] auto film() noexcept { return _film; }
-    [[nodiscard]] auto film() const noexcept { return _film; }
-    [[nodiscard]] uint2 resolution() noexcept { return _film->resolution(); }
+    [[nodiscard]] const Filter *filter() const noexcept { return _filter; }
+    [[nodiscard]] auto radiance_film() noexcept { return _radiance_film; }
+    [[nodiscard]] auto radiance_film() const noexcept { return _radiance_film; }
+    [[nodiscard]] uint2 resolution() noexcept { return _radiance_film->resolution(); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 

@@ -21,11 +21,11 @@ RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
 
 void RenderPipeline::init_postprocessor(const SceneDesc &scene_desc) {
     _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
-    _postprocessor.set_tone_mapper(_scene.camera()->film()->tone_mapper());
+    _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
 }
 
 void RenderPipeline::change_resolution(uint2 res) noexcept {
-    auto film = _scene.camera()->film();
+    auto film = _scene.camera()->radiance_film();
     film->set_resolution(res);
     film->prepare();
 }
@@ -86,7 +86,7 @@ void RenderPipeline::render(double dt) noexcept {
 }
 
 float4 *RenderPipeline::final_picture() noexcept {
-    RegistrableManaged<float4> &frame = _scene.film()->tone_mapped_buffer();
+    RegistrableManaged<float4> &frame = _scene.radiance_film()->tone_mapped_buffer();
     frame.download_immediately();
     return frame.data();
 }

@@ -156,7 +156,7 @@ public:
                 scatter_pdf = bsdf_sample.eval.pdf;
                 rs = it.spawn_ray_state(bsdf_sample.wi);
             };
-            camera->film()->add_sample(pixel, spectrum.linear_srgb(Li, swl), frame_index);
+            camera->radiance_film()->add_sample(pixel, spectrum.linear_srgb(Li, swl), frame_index);
         };
         _shader = rp->device().compile(_kernel);
     }

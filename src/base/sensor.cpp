@@ -11,12 +11,12 @@ using namespace ocarina;
 Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
       _filter(desc.scene->load<Filter>(desc.filter_desc)),
-      _film(desc.scene->load<Film>(desc.film_desc)),
+      _radiance_film(desc.scene->load<Film>(desc.film_desc)),
       _medium(desc.medium.id) {}
 
 void Sensor::prepare() noexcept {
     _filter->prepare();
-    _film->prepare();
+    _radiance_film->prepare();
 }
 
 Camera::Camera(const SensorDesc &desc)
@@ -34,7 +34,7 @@ void Camera::init(const SensorDesc &desc) noexcept {
 }
 
 RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
-    uint2 res = _film->resolution();
+    uint2 res = _radiance_film->resolution();
     Var<Data> data = _data.read(0);
     Float2 p = (ss.p_film * 2.f - make_float2(res)) * data.tan_fov_y_over2 / float(res.y);
     Float3 dir = normalize(p.x * device_right() - p.y * device_up() + device_forward());

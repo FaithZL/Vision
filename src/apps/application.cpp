@@ -126,7 +126,7 @@ void App::update(double dt) noexcept {
         need_update = false;
         rp.update();
     }
-    auto &radiance = rp.scene().film()->tone_mapped_buffer();
+    auto &radiance = rp.scene().radiance_film()->tone_mapped_buffer();
     rp.render(dt);
     radiance.download_immediately();
     window->set_background(radiance.data());
