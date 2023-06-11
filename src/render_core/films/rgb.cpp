@@ -46,9 +46,10 @@ public:
     void copy_tone_mapped_buffer(void *dst_ptr) const noexcept override {
         _frame.device().download_immediately(dst_ptr);
     }
-    void copy_raw_buffer(void *dst_ptr) const noexcept override {
-        _radiance.device().download_immediately(dst_ptr);
-    }
+    [[nodiscard]] const RegistrableManaged<float4> &tone_mapped_buffer() const noexcept override { return _frame; }
+    [[nodiscard]] RegistrableManaged<float4> &tone_mapped_buffer() noexcept override { return _frame; }
+    [[nodiscard]] const RegistrableManaged<float4> &original_buffer() const noexcept override { return _radiance; }
+    [[nodiscard]] RegistrableManaged<float4> &original_buffer() noexcept override { return _radiance; }
 };
 
 }// namespace vision
