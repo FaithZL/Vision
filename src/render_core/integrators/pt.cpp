@@ -38,7 +38,7 @@ public:
         LightSampler *light_sampler = _scene->light_sampler();
         Spectrum &spectrum = rp->spectrum();
 
-        _kernel = [&](Uint frame_index) -> void {
+        ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
             _frame_index = frame_index;
             Bool debug = all(pixel == make_uint2(512, 512));
@@ -158,7 +158,7 @@ public:
             };
             camera->radiance_film()->add_sample(pixel, spectrum.linear_srgb(Li, swl), frame_index);
         };
-        _shader = rp->device().compile(_kernel);
+        _shader = rp->device().compile(kernel);
     }
 
     void render() const noexcept override {

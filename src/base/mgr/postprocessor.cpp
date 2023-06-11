@@ -9,4 +9,9 @@ namespace vision {
 
 Postprocessor::Postprocessor(RenderPipeline *rp)
     : _rp(rp) {}
+
+void Postprocessor::compile_kernel() noexcept {
+
+}
+
 }// namespace vision
