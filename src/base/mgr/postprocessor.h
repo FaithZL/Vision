@@ -17,7 +17,7 @@ private:
     RenderPipeline *_rp{};
     Denoiser *_denoiser{};
     ToneMapper *_tone_mapper{};
-    ocarina::Shader<signature> _shader;
+    ocarina::Shader<signature> _tone_mapping_shader;
 
 public:
     explicit Postprocessor(RenderPipeline *rp);
@@ -27,14 +27,13 @@ public:
             return;
         }
         _tone_mapper = tone_mapper;
-        compile_kernel();
+        compile_tone_mapping();
     }
-    void compile_kernel() noexcept;
+    void compile_tone_mapping() noexcept;
     template<typename... Args>
     void denoise(Args &&...args) const noexcept {
         _denoiser->apply(OC_FORWARD(args)...);
     }
-    void tone_mapping(RegistrableManaged<float4> &input, RegistrableManaged<float4> &output) const noexcept {
-    }
+    void tone_mapping(RegistrableManaged<float4> &input, RegistrableManaged<float4> &output) noexcept;
 };
 }// namespace vision

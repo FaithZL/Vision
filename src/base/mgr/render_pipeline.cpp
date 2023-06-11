@@ -89,10 +89,10 @@ void RenderPipeline::render(double dt) noexcept {
 
 float4 *RenderPipeline::final_picture() noexcept {
     RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
-    RegistrableManaged<float4> &frame = _scene.radiance_film()->tone_mapped_buffer();
-    _postprocessor.denoise(resolution(), &frame, &original, nullptr, nullptr);
-    frame.download_immediately();
-    return frame.data();
+    _postprocessor.denoise(resolution(), &_final_picture, &original, nullptr, nullptr);
+    _postprocessor.tone_mapping(_final_picture, _final_picture);
+    _final_picture.download_immediately();
+    return _final_picture.data();
 }
 
 OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
