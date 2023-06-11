@@ -26,8 +26,7 @@ public:
     OC_SERIALIZABLE_FUNC(_radiance, _frame)
 
     void prepare(RegistrableManaged<float4> &managed) noexcept {
-        managed.device() = device().create_buffer<float4>(pixel_num());
-        managed.host().resize(pixel_num());
+        managed.reset_all(device(), pixel_num());
         managed.clear_immediately();
         managed.register_self();
     }
@@ -45,9 +44,6 @@ public:
         val = linear_to_srgb(_tone_mapper->apply(val));
         val.w = 1.f;
         _frame.write(index, val);
-    }
-    void copy_tone_mapped_buffer(void *dst_ptr) const noexcept override {
-        _frame.device().download_immediately(dst_ptr);
     }
     [[nodiscard]] const RegistrableManaged<float4> &tone_mapped_buffer() const noexcept override { return _frame; }
     [[nodiscard]] RegistrableManaged<float4> &tone_mapped_buffer() noexcept override { return _frame; }

@@ -72,14 +72,8 @@ public:
     void prepare_geometry() noexcept;
     void compile_shaders() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
-    void download_result(void *ptr) noexcept {
-        _scene.radiance_film()->copy_tone_mapped_buffer(ptr);
-    }
     void upload_data() noexcept { _scene.upload_data(); }
     void render(double dt) noexcept;
-    void render_to_image(double dt) {
-        render(dt);
-    }
     /// for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
