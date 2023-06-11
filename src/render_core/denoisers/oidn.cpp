@@ -60,7 +60,7 @@ public:
 #define VS_DENOISE_ATTR_GPU(attr_name) attr_name##_ptr = attr_name->ptr<float4 *>();
 #define VS_DENOISE_ATTR_CPU(attr_name) \
     attr_name->download_immediately(); \
-    attr_name##_ptr = attr_name->ptr<float4 *>();
+    attr_name##_ptr = attr_name->data();
             switch (_backend) {
                 case CPU: {
                     output_ptr = output->data();

@@ -944,11 +944,12 @@
 	"denoiser" : {
 		"type" : "oidn",
 		"param" : {
-			"backend": "GPU"
+			"backend": "CPU"
 		}
 	},
 	"output" : {
-		"spp" : 0,
-		"fn" : "hero1.exr"
+		"spp" : 1024,
+		"save_exit" : true,
+		"fn" : "hero1-CPU.exr"
 	}
 }
