@@ -64,7 +64,7 @@ protected:
     float _velocity{5.f};
     float _sensitivity{1.f};
     float _fov_y{20.f};
-    ManagedWrapper<Data> _data;
+    RegistrableManaged<Data> _data;
 
 public:
     [[nodiscard]] Float3 device_forward() const noexcept;

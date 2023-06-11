@@ -17,7 +17,7 @@ using namespace ocarina;
 class SPD : public Serializable<float>{
 private:
     static constexpr auto spd_lut_interval = 5u;
-    ManagedWrapper<float> _func;
+    RegistrableManaged<float> _func;
     Serial<float> _sample_interval{};
     RenderPipeline *_rp{};
 

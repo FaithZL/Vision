@@ -23,8 +23,8 @@ class AliasTable2D;
 
 class AliasTable : public Warper {
 private:
-    ManagedWrapper<AliasEntry> _table;
-    ManagedWrapper<float> _func;
+    RegistrableManaged<AliasEntry> _table;
+    RegistrableManaged<float> _func;
     friend class AliasTable2D;
     using _serial_ty = Warper;
 

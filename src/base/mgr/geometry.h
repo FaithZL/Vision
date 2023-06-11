@@ -15,10 +15,10 @@ class Scene;
 class RenderPipeline;
 struct Geometry {
 private:
-    ManagedWrapper<Vertex> _vertices;
-    ManagedWrapper<Triangle> _triangles;
-    ManagedWrapper<Shape::Handle> _instances;
-    ManagedWrapper<Mesh::Handle> _mesh_handles;
+    RegistrableManaged<Vertex> _vertices;
+    RegistrableManaged<Triangle> _triangles;
+    RegistrableManaged<Shape::Handle> _instances;
+    RegistrableManaged<Mesh::Handle> _mesh_handles;
     vector<ocarina::Mesh> _meshes;
 
 public:

@@ -14,8 +14,8 @@ private:
     using _serial_ty = Film;
 
 private:
-    ManagedWrapper<float4> _radiance;
-    ManagedWrapper<float4> _frame;
+    RegistrableManaged<float4> _radiance;
+    RegistrableManaged<float4> _frame;
 
 public:
     explicit RGBFilm(const FilmDesc &desc)

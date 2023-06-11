@@ -9,8 +9,8 @@ namespace vision {
 class AliasTable2D : public Warper2D {
 private:
     AliasTable _marginal;
-    ManagedWrapper<AliasEntry> _conditional_v_tables;
-    ManagedWrapper<float> _conditional_v_weights;
+    RegistrableManaged<AliasEntry> _conditional_v_tables;
+    RegistrableManaged<float> _conditional_v_weights;
     uint2 _resolution;
 
 public:
