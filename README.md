@@ -10,10 +10,17 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | Bidirectional path tracing                              | Planned   |
 | Photon mapping                                          | Planned   |
 
+### Render mode
+| Feature                                                 | Progress  |
+|---------------------------------------------------------|-----------|
+| Offline render                                          | Done      |
+| Real time render                                        | Planned   |
+| Lightmap bake                                           | Doing     |
+
 ### Reconstruction Filters
 | Feature                      | Progress    |
 |------------------------------|-------------|
-| Filter Importance Sampling   | Planned     |
+| Filter Importance Sampling   | Done        |
 | Mitchell-Netravali Filter    | Planned     |
 | Box Filter                   | Done        |
 | Triangle Filter              | Planned     |
@@ -48,7 +55,7 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 ### Denoise
 | Feature                      | Progress    |
 |------------------------------|-------------|
-| OIDN                         | Planned     |
+| OIDN                         | Done        |
 | OptiX                        | Planned     |
 
 ### Sensor
@@ -58,7 +65,7 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | Thin-Lens Cameras                         | Planned     |
 | Realistic Cameras                         | Planned     |
 | Fish-Eye Cameras                          | Planned     |
-| Geometry surface(for light map baker)     | Planned     |
+| Geometry surface(for light map baker)     | Doing       |
 
 ### Illumination
 | Feature                                       | Progress    |
