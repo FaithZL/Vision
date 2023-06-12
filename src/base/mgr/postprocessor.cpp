@@ -3,11 +3,11 @@
 //
 
 #include "postprocessor.h"
-#include "render_pipeline.h"
+#include "pipeline.h"
 
 namespace vision {
 
-Postprocessor::Postprocessor(RenderPipeline *rp)
+Postprocessor::Postprocessor(Pipeline *rp)
     : _rp(rp) {}
 
 void Postprocessor::compile_tone_mapping() noexcept {

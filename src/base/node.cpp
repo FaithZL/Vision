@@ -2,16 +2,16 @@
 // Created by Zero on 16/01/2023.
 //
 
-#include "mgr/render_pipeline.h"
+#include "mgr/pipeline.h"
 #include "node.h"
 
 namespace vision {
 
-RenderPipeline *Node::render_pipeline() noexcept {
+Pipeline *Node::render_pipeline() noexcept {
     return _scene->render_pipeline();
 }
 
-const RenderPipeline *Node::render_pipeline() const noexcept {
+const Pipeline *Node::render_pipeline() const noexcept {
     return _scene->render_pipeline();
 }
 

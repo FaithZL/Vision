@@ -5,7 +5,7 @@
 #include "srgb2spec.h"
 #include "base/color/spectrum.h"
 #include "base/color/spd.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 #include "base/scattering/material.h"
 
 namespace vision {
@@ -53,7 +53,7 @@ public:
 
 private:
     const coefficient_table_type &_coefficients;
-    RenderPipeline *_rp{};
+    Pipeline *_rp{};
     uint _base_index{InvalidUI32};
     Texture _coefficient0;
     Texture _coefficient1;
@@ -65,7 +65,7 @@ private:
     }
 
 public:
-    explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, RenderPipeline *rp) noexcept
+    explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, Pipeline *rp) noexcept
         : _coefficients{coefficients}, _rp(rp) {}
 
     void init() noexcept {

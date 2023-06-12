@@ -2,14 +2,14 @@
 // Created by Zero on 04/09/2022.
 //
 
-#include "render_pipeline.h"
+#include "pipeline.h"
 #include "base/sensor.h"
 #include "scene.h"
 #include "base/color/spectrum.h"
 
 namespace vision {
 
-RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
+Pipeline::Pipeline(Device *device, ocarina::Context *context)
     : _device(device),
       _context(context),
       _scene(context, this),
@@ -19,18 +19,18 @@ RenderPipeline::RenderPipeline(Device *device, ocarina::Context *context)
     Printer::instance().init(*device);
 }
 
-void RenderPipeline::init_postprocessor(const SceneDesc &scene_desc) {
+void Pipeline::init_postprocessor(const SceneDesc &scene_desc) {
     _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
     _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
 }
 
-void RenderPipeline::change_resolution(uint2 res) noexcept {
+void Pipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->radiance_film();
     film->set_resolution(res);
     film->prepare();
 }
 
-void RenderPipeline::prepare_geometry() noexcept {
+void Pipeline::prepare_geometry() noexcept {
     for (const Shape *shape : _scene._shapes) {
         shape->fill_geometry(_geometry);
     }
@@ -40,34 +40,34 @@ void RenderPipeline::prepare_geometry() noexcept {
     _geometry.build_accel();
 }
 
-void RenderPipeline::prepare_resource_array() noexcept {
+void Pipeline::prepare_resource_array() noexcept {
     _resource_array.prepare_slotSOA(device());
     _stream << _resource_array->upload_buffer_handles()
             << _resource_array->upload_texture_handles()
             << synchronize() << commit();
 }
 
-Spectrum &RenderPipeline::spectrum() noexcept {
+Spectrum &Pipeline::spectrum() noexcept {
     return *_scene.spectrum();
 }
 
-const Spectrum &RenderPipeline::spectrum() const noexcept {
+const Spectrum &Pipeline::spectrum() const noexcept {
     return *_scene.spectrum();
 }
 
-void RenderPipeline::deregister_buffer(handle_ty index) noexcept {
+void Pipeline::deregister_buffer(handle_ty index) noexcept {
     _resource_array->remove_buffer(index);
 }
 
-void RenderPipeline::deregister_texture(handle_ty index) noexcept {
+void Pipeline::deregister_texture(handle_ty index) noexcept {
     _resource_array->remove_texture(index);
 }
 
-void RenderPipeline::compile_shaders() noexcept {
+void Pipeline::compile_shaders() noexcept {
     _scene.integrator()->compile_shader();
 }
 
-void RenderPipeline::prepare() {
+void Pipeline::prepare() {
     auto pixel_num = resolution().x * resolution().y;
     _final_picture.reset_all(device(), pixel_num);
     _scene.prepare();
@@ -77,7 +77,7 @@ void RenderPipeline::prepare() {
     compile_shaders();
 }
 
-void RenderPipeline::render(double dt) noexcept {
+void Pipeline::render(double dt) noexcept {
     Clock clk;
     _scene.integrator()->render();
     double ms = clk.elapse_ms();
@@ -87,7 +87,7 @@ void RenderPipeline::render(double dt) noexcept {
     Printer::instance().retrieve_immediately();
 }
 
-float4 *RenderPipeline::final_picture() noexcept {
+float4 *Pipeline::final_picture() noexcept {
     RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
     _postprocessor.denoise(resolution(), &_final_picture, &original, nullptr, nullptr);
     _postprocessor.tone_mapping(_final_picture, _final_picture);
@@ -95,19 +95,19 @@ float4 *RenderPipeline::final_picture() noexcept {
     return _final_picture.data();
 }
 
-OCHit RenderPipeline::trace_closest(const OCRay &ray) const noexcept {
+OCHit Pipeline::trace_closest(const OCRay &ray) const noexcept {
     return geometry().accel.trace_closest(ray);
 }
 
-Bool RenderPipeline::trace_any(const OCRay &ray) const noexcept {
+Bool Pipeline::trace_any(const OCRay &ray) const noexcept {
     return geometry().accel.trace_any(ray);
 }
 
-Interaction RenderPipeline::compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept {
+Interaction Pipeline::compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept {
     return geometry().compute_surface_interaction(hit, ray);
 }
 
-LightEvalContext RenderPipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {
+LightEvalContext Pipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {
     return geometry().compute_light_eval_context(inst_id, prim_id, bary);
 }
 }// namespace vision

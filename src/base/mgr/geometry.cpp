@@ -6,11 +6,11 @@
 #include "math/transform.h"
 #include "scene.h"
 #include "base/scattering/medium.h"
-#include "render_pipeline.h"
+#include "pipeline.h"
 
 namespace vision {
 
-Geometry::Geometry(RenderPipeline *rp)
+Geometry::Geometry(Pipeline *rp)
     : rp(rp), _vertices(rp->resource_array()),
       _triangles(rp->resource_array()),
       _instances(rp->resource_array()),

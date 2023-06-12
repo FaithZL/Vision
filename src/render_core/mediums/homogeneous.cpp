@@ -4,7 +4,7 @@
 
 #include "base/scattering/medium.h"
 #include "base/sampler.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 

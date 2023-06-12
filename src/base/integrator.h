@@ -14,7 +14,7 @@
 
 namespace vision {
 
-class RenderPipeline;
+class Pipeline;
 
 class ScatterFunction;
 

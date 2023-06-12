@@ -14,7 +14,7 @@ private:
     SampledSpectrum _eta, _k;
 
 public:
-    FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k, const SampledWavelengths &swl, const RenderPipeline *rp)
+    FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k, const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp), _eta(eta), _k(k) {}
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex(abs_cos_theta, _eta, _k);

@@ -4,12 +4,12 @@
 
 #include "scene.h"
 #include "rhi/dynamic_module.h"
-#include "render_pipeline.h"
+#include "pipeline.h"
 #include "base/scattering/interaction.h"
 
 namespace vision {
 
-Scene::Scene(ocarina::Context *ctx, RenderPipeline *rp)
+Scene::Scene(ocarina::Context *ctx, Pipeline *rp)
     : _context(ctx),
       _rp(rp) {}
 
@@ -21,7 +21,7 @@ Node *Scene::load_node(const NodeDesc &desc) {
     return _all_nodes.back().get();
 }
 
-RenderPipeline *Scene::render_pipeline() noexcept { return _rp; }
+Pipeline *Scene::render_pipeline() noexcept { return _rp; }
 
 void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);

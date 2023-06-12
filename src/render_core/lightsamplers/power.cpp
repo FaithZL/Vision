@@ -4,7 +4,7 @@
 
 #include "base/lightsampler.h"
 #include "base/warper.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 #include "base/sampler.h"
 
 namespace vision {

@@ -20,7 +20,7 @@ class Spectrum;
     [[nodiscard]] const ImageIO &member() const noexcept { return _##member; } \
     [[nodiscard]] ImageIO &member() noexcept { return _##member; }
 
-class RenderPipeline {
+class Pipeline {
 private:
     Device *_device;
     ocarina::Context *_context;
@@ -35,7 +35,7 @@ private:
     Postprocessor _postprocessor{this};
 
 public:
-    RenderPipeline(Device *device, ocarina::Context *context);
+    Pipeline(Device *device, ocarina::Context *context);
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }

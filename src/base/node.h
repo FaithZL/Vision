@@ -14,7 +14,7 @@ class Device;
 
 namespace vision {
 
-class RenderPipeline;
+class Pipeline;
 class Spectrum;
 
 using namespace ocarina;
@@ -32,8 +32,8 @@ protected:
 public:
     Node() = default;
     explicit Node(const NodeDesc &desc) : _name(desc.name), _scene(desc.scene) {}
-    [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
-    [[nodiscard]] const RenderPipeline *render_pipeline() const noexcept;
+    [[nodiscard]] Pipeline *render_pipeline() noexcept;
+    [[nodiscard]] const Pipeline *render_pipeline() const noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;

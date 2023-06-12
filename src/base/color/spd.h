@@ -6,7 +6,7 @@
 
 #include "dsl/common.h"
 #include "rhi/common.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 #include "cie.h"
 #include "spectrum.h"
 
@@ -19,11 +19,11 @@ private:
     static constexpr auto spd_lut_interval = 5u;
     RegistrableManaged<float> _func;
     Serial<float> _sample_interval{};
-    RenderPipeline *_rp{};
+    Pipeline *_rp{};
 
 public:
-    explicit SPD(RenderPipeline *rp);
-    SPD(vector<float> func, RenderPipeline *rp);
+    explicit SPD(Pipeline *rp);
+    SPD(vector<float> func, Pipeline *rp);
     OC_SERIALIZABLE_FUNC( _func, _sample_interval)
 
     void init(vector<float> func) noexcept;
@@ -57,10 +57,10 @@ public:
     }
     [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
     [[nodiscard]] Array<float> eval(const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] static SPD create_cie_x(RenderPipeline *rp) noexcept;
-    [[nodiscard]] static SPD create_cie_y(RenderPipeline *rp) noexcept;
-    [[nodiscard]] static SPD create_cie_z(RenderPipeline *rp) noexcept;
-    [[nodiscard]] static SPD create_cie_d65(RenderPipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_x(Pipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_y(Pipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_z(Pipeline *rp) noexcept;
+    [[nodiscard]] static SPD create_cie_d65(Pipeline *rp) noexcept;
     [[nodiscard]] static float cie_y_integral() noexcept;
 };
 

@@ -8,7 +8,7 @@
 #include "core/cli_parser.h"
 #include "descriptions/scene_desc.h"
 #include "core/stl.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 #include "rhi/context.h"
 #include "util/image_io.h"
 #include "core/logging.h"
@@ -48,7 +48,7 @@ public:
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
-    RenderPipeline rp;
+    Pipeline rp;
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};
@@ -73,7 +73,7 @@ public:
         params.scene_path = scene_fn.parent_path();
         init();
     }
-    [[nodiscard]] RenderPipeline create_pipeline() { return {&device, &context}; }
+    [[nodiscard]] Pipeline create_pipeline() { return {&device, &context}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;

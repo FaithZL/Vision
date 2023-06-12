@@ -3,7 +3,7 @@
 //
 
 #include "base/light.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 #include "base/shader_graph/shader_node.h"
 #include "math/warp.h"
 

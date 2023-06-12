@@ -3,12 +3,12 @@
 //
 
 #include "image_pool.h"
-#include "render_pipeline.h"
+#include "pipeline.h"
 #include "rhi/device.h"
 
 namespace vision {
 using namespace ocarina;
-ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, RenderPipeline *rp) {
+ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, Pipeline *rp) {
     ImageIO image_io;
     if (desc.sub_type == "constant") {
         image_io = ImageIO::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));

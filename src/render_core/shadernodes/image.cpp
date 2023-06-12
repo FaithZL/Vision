@@ -4,7 +4,7 @@
 
 #include "base/shader_graph/shader_node.h"
 #include "rhi/common.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 using namespace ocarina;

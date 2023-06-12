@@ -41,10 +41,10 @@ template<typename T, size_t N>
 
 }// namespace detail
 
-SPD::SPD(RenderPipeline *rp)
+SPD::SPD(Pipeline *rp)
     : _rp(rp), _func(rp->resource_array()) {}
 
-SPD::SPD(vector<float> func, RenderPipeline *rp)
+SPD::SPD(vector<float> func, Pipeline *rp)
     : SPD(rp) {
     init(ocarina::move(func));
 }
@@ -89,19 +89,19 @@ Array<float> SPD::eval(const SampledWavelengths &swl) const noexcept {
     return values;
 }
 
-SPD SPD::create_cie_x(RenderPipeline *rp) noexcept {
+SPD SPD::create_cie_x(Pipeline *rp) noexcept {
     return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::X.data()), rp};
 }
 
-SPD SPD::create_cie_y(RenderPipeline *rp) noexcept {
+SPD SPD::create_cie_y(Pipeline *rp) noexcept {
     return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::Y.data()), rp};
 }
 
-SPD SPD::create_cie_z(RenderPipeline *rp) noexcept {
+SPD SPD::create_cie_z(Pipeline *rp) noexcept {
     return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::Z.data()), rp};
 }
 
-SPD SPD::create_cie_d65(RenderPipeline *rp) noexcept {
+SPD SPD::create_cie_d65(Pipeline *rp) noexcept {
     return {detail::downsample_densely_sampled_spectrum(spd_lut_interval, cie::D65.data()), rp};
 }
 

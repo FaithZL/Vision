@@ -3,7 +3,7 @@
 //
 
 #include "base/integrator.h"
-#include "base/mgr/render_pipeline.h"
+#include "base/mgr/pipeline.h"
 #include "math/warp.h"
 #include "base/color/spectrum.h"
 
@@ -32,7 +32,7 @@ public:
     }
 
     void compile_shader() noexcept override {
-        RenderPipeline *rp = render_pipeline();
+        Pipeline *rp = render_pipeline();
         Camera *camera = _scene->camera();
         Sampler *sampler = _scene->sampler();
         LightSampler *light_sampler = _scene->light_sampler();
@@ -162,7 +162,7 @@ public:
     }
 
     void render() const noexcept override {
-        const RenderPipeline *rp = render_pipeline();
+        const Pipeline *rp = render_pipeline();
         Stream &stream = rp->stream();
         stream << _shader(rp->frame_index()).dispatch(rp->resolution());
         stream << synchronize();

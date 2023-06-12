@@ -42,15 +42,15 @@ private:
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
     Spectrum *_spectrum{nullptr};
-    RenderPipeline *_rp{nullptr};
-    friend class RenderPipeline;
+    Pipeline *_rp{nullptr};
+    friend class Pipeline;
 
 public:
-    explicit Scene(ocarina::Context *ctx, RenderPipeline *rp);
+    explicit Scene(ocarina::Context *ctx, Pipeline *rp);
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
-    [[nodiscard]] RenderPipeline *render_pipeline() noexcept;
+    [[nodiscard]] Pipeline *render_pipeline() noexcept;
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)

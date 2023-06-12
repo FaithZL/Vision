@@ -200,7 +200,7 @@ private:
 
 public:
     FresnelDisney(const SampledSpectrum &R0, Float metallic, Float eta,
-                  const SampledWavelengths &swl, const RenderPipeline *rp)
+                  const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
@@ -344,7 +344,7 @@ private:
     }
 
 public:
-    PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const RenderPipeline *rp, Slot color_slot,
+    PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
                       Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
                       Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
                       Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,

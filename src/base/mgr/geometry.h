@@ -12,7 +12,7 @@
 namespace vision {
 using namespace ocarina;
 class Scene;
-class RenderPipeline;
+class Pipeline;
 struct Geometry {
 private:
     RegistrableManaged<Vertex> _vertices;
@@ -23,13 +23,13 @@ private:
 
 public:
     ocarina::Accel accel;
-    RenderPipeline *rp{};
+    Pipeline *rp{};
 
 private:
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
 
 public:
-    explicit Geometry(RenderPipeline *rp = nullptr);
+    explicit Geometry(Pipeline *rp = nullptr);
 
     void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle handle);
     void reset_device_buffer();

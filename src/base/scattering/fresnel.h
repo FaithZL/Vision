@@ -9,15 +9,15 @@
 #include "core/stl.h"
 
 namespace vision {
-class RenderPipeline;
+class Pipeline;
 
 class Fresnel {
 protected:
     const SampledWavelengths &_swl;
-    const RenderPipeline *_rp{};
+    const Pipeline *_rp{};
 
 public:
-    explicit Fresnel(const SampledWavelengths &swl, const RenderPipeline *rp) : _swl(swl), _rp(rp) {}
+    explicit Fresnel(const SampledWavelengths &swl, const Pipeline *rp) : _swl(swl), _rp(rp) {}
     [[nodiscard]] virtual SampledSpectrum evaluate(Float cos_theta) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
@@ -34,7 +34,7 @@ private:
     SampledSpectrum _eta;
 
 public:
-    explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const RenderPipeline *rp)
+    explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp),
           _eta(ior) {}
     void correct_eta(Float cos_theta) noexcept override {
@@ -52,7 +52,7 @@ public:
 
 class FresnelNoOp : public Fresnel {
 public:
-    explicit FresnelNoOp(const SampledWavelengths &swl, const RenderPipeline *rp) : Fresnel(swl, rp) {}
+    explicit FresnelNoOp(const SampledWavelengths &swl, const Pipeline *rp) : Fresnel(swl, rp) {}
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {_swl.dimension(), 1.f}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelNoOp>(_swl, _rp);
