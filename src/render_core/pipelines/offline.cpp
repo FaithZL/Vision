@@ -6,7 +6,7 @@
 
 namespace vision {
 
-class BakerPipeline {
+class OfflineRenderPipeline {
 
 };
 

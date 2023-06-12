@@ -6,8 +6,7 @@
 
 namespace vision {
 
-class BakerPipeline {
-
+class RealTimeRenderPipeline {
 };
 
-}
+}// namespace vision
