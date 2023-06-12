@@ -61,6 +61,7 @@ public:
 public:
     vector<Vertex> vertices;
     vector<Triangle> triangles;
+    vector<float2> lightmap_uvs;
 
 public:
     explicit Mesh(const ShapeDesc &desc);
@@ -68,6 +69,10 @@ public:
         : vertices(std::move(vert)), triangles(std::move(tri)) {}
     Mesh() = default;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
+    void allocate_lightmap_uv(size_t num = 0) {
+        num = num == 0 ? vertices.size() : num;
+        lightmap_uvs.resize(num);
+    }
     void init_aabb() noexcept { aabb = compute_aabb(); }
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_area() const noexcept override;

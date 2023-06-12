@@ -6,6 +6,7 @@
 
 #include "core/basic_types.h"
 #include "node.h"
+#include "shape.h"
 
 namespace vision {
 
@@ -18,6 +19,7 @@ public:
 public:
     explicit UVSpreader(const UVSpreaderDesc &desc)
         : Node(desc) {}
+    virtual void apply(vision::Mesh *mesh) = 0;
 };
 
 }// namespace vision

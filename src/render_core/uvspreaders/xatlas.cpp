@@ -3,14 +3,24 @@
 //
 
 #include "base/uv_spreader.h"
+#include "ext/xatlas/xatlas.h"
 
 namespace vision {
 using namespace ocarina;
 
 class XAtlas : public UVSpreader {
-private:
 public:
-    explicit XAtlas(const UVSpreaderDesc &desc) : UVSpreader(desc) {}
+    explicit XAtlas(const UVSpreaderDesc &desc)
+        : UVSpreader(desc) {}
+
+    [[nodiscard]] static xatlas::MeshDecl mesh_decl(vision::Mesh *mesh) {
+        xatlas::MeshDecl ret;
+        return ret;
+    }
+
+    void apply(vision::Mesh *mesh) override {
+        mesh->allocate_lightmap_uv();
+    }
 };
 
 }// namespace vision
