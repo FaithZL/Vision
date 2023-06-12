@@ -16,7 +16,7 @@ private:
 public:
     explicit Image(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
-          _image_wrapper(desc.scene->render_pipeline()->obtain_image(desc)) {
+          _image_wrapper(desc.scene->pipeline()->obtain_image(desc)) {
         _tex_id = _image_wrapper.id();
     }
     OC_SERIALIZABLE_FUNC(_tex_id)
@@ -24,7 +24,7 @@ public:
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return render_pipeline()->tex(*_tex_id).sample(3, ctx.uv);
+        return pipeline()->tex(*_tex_id).sample(3, ctx.uv);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return _image_wrapper.image().average_vector();

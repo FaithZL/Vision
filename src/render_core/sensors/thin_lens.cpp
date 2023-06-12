@@ -29,7 +29,7 @@ public:
     }
     void prepare() noexcept override {
         Camera::prepare();
-        _lens_data.reset_device_buffer(render_pipeline()->device(), 1);
+        _lens_data.reset_device_buffer(pipeline()->device(), 1);
     }
 };
 }// namespace vision

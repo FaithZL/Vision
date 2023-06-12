@@ -16,9 +16,9 @@ private:
 public:
     explicit AliasTable2D(const WarperDesc &desc)
         : Warper2D(desc),
-          _marginal(render_pipeline()->resource_array()),
-          _conditional_v_tables(render_pipeline()->resource_array()),
-          _conditional_v_weights(render_pipeline()->resource_array()) {
+          _marginal(pipeline()->resource_array()),
+          _conditional_v_tables(pipeline()->resource_array()),
+          _conditional_v_weights(pipeline()->resource_array()) {
         _marginal._scene = desc.scene;
     }
     OC_SERIALIZABLE_FUNC(_marginal, _conditional_v_tables, _conditional_v_weights)
@@ -31,7 +31,7 @@ public:
             vector<float> func_v;
             func_v.insert(func_v.end(), iter, iter + res.x);
             iter += res.x;
-            AliasTable alias_table(render_pipeline()->resource_array());
+            AliasTable alias_table(pipeline()->resource_array());
             alias_table._scene = _scene;
             alias_table.build(ocarina::move(func_v));
             conditional_v.push_back(ocarina::move(alias_table));
@@ -90,7 +90,7 @@ public:
         // sample u
         Uint buffer_offset = _resolution.x * iv;
         Float u_remapped;
-        Uint iu = detail::offset(buffer_offset, u.x, render_pipeline(),
+        Uint iu = detail::offset(buffer_offset, u.x, pipeline(),
                                  _conditional_v_tables.index().hv(), _resolution.x, &u_remapped);
 
         Float fu = (iu + u_remapped) / _resolution.x;

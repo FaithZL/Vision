@@ -97,7 +97,7 @@ public:
         SampledSpectrum eta = SampledSpectrum{_eta.evaluate(it, swl)};
         SampledSpectrum k = SampledSpectrum{_k.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, render_pipeline());
+        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
         return BSDF(it, make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf)));
     }

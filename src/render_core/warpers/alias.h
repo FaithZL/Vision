@@ -33,8 +33,8 @@ public:
         : _table(resource_array), _func(resource_array) {}
     explicit AliasTable(const WarperDesc &desc)
         : Warper(desc),
-          _table(render_pipeline()->resource_array()),
-          _func(render_pipeline()->resource_array()) {}
+          _table(pipeline()->resource_array()),
+          _func(pipeline()->resource_array()) {}
     OC_SERIALIZABLE_FUNC(_table, _func)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
@@ -102,7 +102,7 @@ void AliasTable::build(vector<float> weights) noexcept {
 
 namespace detail {
 
-[[nodiscard]] Uint offset(const Uint &buffer_offset, Float u, const RenderPipeline *rp,
+[[nodiscard]] Uint offset(const Uint &buffer_offset, Float u, const Pipeline *rp,
                           const Uint &entry_id, size_t size, Float *u_remapped) noexcept {
     u = u * float(size);
     Uint idx = min(cast<uint>(u), uint(size - 1));

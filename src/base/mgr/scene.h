@@ -50,7 +50,7 @@ public:
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
-    [[nodiscard]] Pipeline *render_pipeline() noexcept;
+    [[nodiscard]] Pipeline *pipeline() noexcept;
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)

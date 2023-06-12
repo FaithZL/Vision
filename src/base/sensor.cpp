@@ -20,7 +20,7 @@ void Sensor::prepare() noexcept {
 }
 
 Camera::Camera(const SensorDesc &desc)
-    : Sensor(desc), _data(render_pipeline()->resource_array()) {
+    : Sensor(desc), _data(pipeline()->resource_array()) {
     _data.resize(1);
     init(desc);
 }
@@ -56,7 +56,7 @@ void Camera::update_device_data() noexcept {
 
 void Camera::prepare() noexcept {
     Sensor::prepare();
-    _data.reset_device_buffer(render_pipeline()->device(), 1);
+    _data.reset_device_buffer(pipeline()->device(), 1);
     _data.register_self();
 }
 

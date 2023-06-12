@@ -14,6 +14,7 @@ add_subdirectory(spectra)
 add_subdirectory(tonemappers)
 add_subdirectory(denoisers)
 add_subdirectory(uvspreaders)
+add_subdirectory(piplines)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE

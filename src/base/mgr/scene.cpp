@@ -21,7 +21,7 @@ Node *Scene::load_node(const NodeDesc &desc) {
     return _all_nodes.back().get();
 }
 
-Pipeline *Scene::render_pipeline() noexcept { return _rp; }
+Pipeline *Scene::pipeline() noexcept { return _rp; }
 
 void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
@@ -112,7 +112,7 @@ void Scene::prepare_materials() {
     _materials.for_each_instance([&](const Material *material) noexcept {
         const_cast<Material *>(material)->prepare();
     });
-    auto rp = render_pipeline();
+    auto rp = pipeline();
     _materials.prepare(rp->resource_array(), rp->device());
 }
 

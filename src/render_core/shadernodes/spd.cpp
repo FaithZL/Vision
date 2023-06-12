@@ -13,7 +13,7 @@ private:
 
 public:
     explicit SPDNode(const ShaderNodeDesc &desc)
-        : ShaderNode(desc), _spd(desc.scene->render_pipeline()) {
+        : ShaderNode(desc), _spd(desc.scene->pipeline()) {
         _spd.init(desc["value"].data());
     }
     OC_SERIALIZABLE_FUNC(_spd)

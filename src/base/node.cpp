@@ -7,24 +7,24 @@
 
 namespace vision {
 
-Pipeline *Node::render_pipeline() noexcept {
-    return _scene->render_pipeline();
+Pipeline *Node::pipeline() noexcept {
+    return _scene->pipeline();
 }
 
-const Pipeline *Node::render_pipeline() const noexcept {
-    return _scene->render_pipeline();
+const Pipeline *Node::pipeline() const noexcept {
+    return _scene->pipeline();
 }
 
 Spectrum &Node::spectrum() noexcept {
-    return render_pipeline()->spectrum();
+    return pipeline()->spectrum();
 }
 
 const Spectrum &Node::spectrum() const noexcept {
-    return render_pipeline()->spectrum();
+    return pipeline()->spectrum();
 }
 
 Device &Node::device() noexcept {
-    return render_pipeline()->device();
+    return pipeline()->device();
 }
 
 }// namespace vision

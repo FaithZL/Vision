@@ -26,7 +26,7 @@ void LightSampler::prepare() noexcept {
         }
         light->prepare();
     });
-    auto rp = render_pipeline();
+    auto rp = pipeline();
     _lights.prepare(rp->resource_array(), rp->device());
 }
 

@@ -229,11 +229,11 @@ private:
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc), _dimension(desc["dimension"].as_uint(3u)),
-          _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, render_pipeline()),
-          _illuminant_d65(SPD::create_cie_d65(render_pipeline())),
-          _cie_x(SPD::create_cie_x(render_pipeline())),
-          _cie_y(SPD::create_cie_y(render_pipeline())),
-          _cie_z(SPD::create_cie_z(render_pipeline())) {
+          _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, pipeline()),
+          _illuminant_d65(SPD::create_cie_d65(pipeline())),
+          _cie_x(SPD::create_cie_x(pipeline())),
+          _cie_y(SPD::create_cie_y(pipeline())),
+          _cie_z(SPD::create_cie_z(pipeline())) {
         _rgb_to_spectrum_table.init();
     }
 

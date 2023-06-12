@@ -32,7 +32,7 @@ public:
     }
 
     void compile_shader() noexcept override {
-        Pipeline *rp = render_pipeline();
+        Pipeline *rp = pipeline();
         Camera *camera = _scene->camera();
         Sampler *sampler = _scene->sampler();
         LightSampler *light_sampler = _scene->light_sampler();
@@ -162,7 +162,7 @@ public:
     }
 
     void render() const noexcept override {
-        const Pipeline *rp = render_pipeline();
+        const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << _shader(rp->frame_index()).dispatch(rp->resolution());
         stream << synchronize();

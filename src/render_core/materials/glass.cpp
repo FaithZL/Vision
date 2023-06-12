@@ -205,7 +205,7 @@ public:
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), ior},
-                                                      swl, render_pipeline());
+                                                      swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
         return BSDF(it, make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD));
