@@ -29,7 +29,7 @@ class Context;
 class Scene {
 private:
     ocarina::Context *_context{nullptr};
-    vector<Node::Wrapper> _all_nodes;
+    std::list<Node::Wrapper> _all_nodes;
     Box3f _aabb;
     Camera *_camera{nullptr};
     Sampler *_sampler{nullptr};
