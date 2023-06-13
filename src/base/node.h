@@ -65,7 +65,7 @@ public:
     [[nodiscard]] static NodeMgr &instance() noexcept;
     static void destroy_instance() noexcept;
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
-    Container::iterator remove(Node *node);
+    void remove(Node *node);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
         desc.scene = this;

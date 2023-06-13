@@ -43,8 +43,8 @@ void NodeMgr::destroy_instance() noexcept {
     }
 }
 
-NodeMgr::Iterator NodeMgr::remove(vision::Node *node) {
-    return std::remove_if(_all_nodes.begin(), _all_nodes.end(), [&](Node::Wrapper &elm) {
+void NodeMgr::remove(vision::Node *node) {
+    std::erase_if(_all_nodes, [&](Node::Wrapper &elm) {
         return elm.get() == node;
     });
 }

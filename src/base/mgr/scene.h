@@ -27,7 +27,6 @@ using namespace ocarina;
 
 class Scene {
 private:
-    std::list<Node::Wrapper> _all_nodes;
     Box3f _aabb;
     Camera *_camera{nullptr};
     Sampler *_sampler{nullptr};
@@ -58,13 +57,12 @@ public:
     [[nodiscard]] const auto &materials() const noexcept { return _materials; }
     [[nodiscard]] auto &materials() noexcept { return _materials; }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
-    [[nodiscard]] Node *load_node(const NodeDesc &desc);
 
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
         desc.scene = this;
-        auto ret = dynamic_cast<T *>(load_node(desc));
+        auto ret = dynamic_cast<T *>(NodeMgr::instance().load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
