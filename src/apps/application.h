@@ -60,7 +60,7 @@ public:
           rp(create_pipeline()) {
         init(argc);
     }
-    [[nodiscard]] Pipeline create_pipeline() { return {&device, &Context::instance()}; }
+    [[nodiscard]] Pipeline create_pipeline() { return {&device}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;

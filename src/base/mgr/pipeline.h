@@ -23,8 +23,7 @@ class Spectrum;
 class Pipeline {
 private:
     Device *_device;
-    ocarina::Context *_context;
-    Scene _scene;
+    Scene _scene{this};
     Geometry _geometry{this};
     ResourceArray _resource_array{};
     mutable Stream _stream;
@@ -35,7 +34,7 @@ private:
     Postprocessor _postprocessor{this};
 
 public:
-    Pipeline(Device *device, ocarina::Context *context);
+    Pipeline(Device *device);
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
@@ -61,7 +60,6 @@ public:
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {
         return _image_pool.obtain_image(desc);
     }
-    [[nodiscard]] ocarina::Context &context() noexcept { return *_context; }
     void update() noexcept {
         _frame_index = 0;
         _total_time = 0;

@@ -9,10 +9,8 @@
 
 namespace vision {
 
-Pipeline::Pipeline(Device *device, ocarina::Context *context)
+Pipeline::Pipeline(Device *device)
     : _device(device),
-      _context(context),
-      _scene(context, this),
       _geometry(this),
       _stream(device->create_stream()),
       _resource_array(device->create_resource_array()) {

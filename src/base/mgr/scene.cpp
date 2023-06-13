@@ -9,12 +9,11 @@
 
 namespace vision {
 
-Scene::Scene(ocarina::Context *ctx, Pipeline *rp)
-    : _context(ctx),
-      _rp(rp) {}
+Scene::Scene(Pipeline *rp)
+    : _rp(rp) {}
 
 Node *Scene::load_node(const NodeDesc &desc) {
-    const DynamicModule *module = _context->obtain_module(desc.plugin_name());
+    const DynamicModule *module = Context::instance().obtain_module(desc.plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
     auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
     _all_nodes.emplace_back(creator(desc), deleter);

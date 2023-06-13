@@ -27,7 +27,6 @@ using namespace ocarina;
 
 class Scene {
 private:
-    ocarina::Context *_context{nullptr};
     std::list<Node::Wrapper> _all_nodes;
     Box3f _aabb;
     Camera *_camera{nullptr};
@@ -44,7 +43,7 @@ private:
     friend class Pipeline;
 
 public:
-    explicit Scene(ocarina::Context *ctx, Pipeline *rp);
+    explicit Scene(Pipeline *rp);
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
@@ -53,7 +52,6 @@ public:
     MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
-    MAKE_GETTER(context)
     MAKE_GETTER(light_sampler)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }

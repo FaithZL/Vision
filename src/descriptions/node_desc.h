@@ -79,7 +79,6 @@ public:
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
     }
-    const DynamicModule * obtain_module() const noexcept;
     [[nodiscard]] virtual bool operator==(const NodeDesc &other) const noexcept {
         return hash() == other.hash();
     }
