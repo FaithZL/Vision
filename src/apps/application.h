@@ -60,7 +60,7 @@ public:
           rp(create_pipeline()) {
         init(argc);
     }
-    [[nodiscard]] Pipeline create_pipeline() { return {&device}; }
+    [[nodiscard]] Pipeline create_pipeline() { return Pipeline{&device}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;

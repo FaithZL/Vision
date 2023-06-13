@@ -34,7 +34,7 @@ private:
     Postprocessor _postprocessor{this};
 
 public:
-    Pipeline(Device *device);
+    explicit Pipeline(Device *device);
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }

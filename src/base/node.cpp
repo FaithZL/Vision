@@ -49,12 +49,12 @@ NodeMgr::Iterator NodeMgr::remove(vision::Node *node) {
     });
 }
 
-//Node *NodeMgr::load_node(const vision::NodeDesc &desc) {
-//    const DynamicModule *module = _context->obtain_module(desc.plugin_name());
-//    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-//    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-//    _all_nodes.emplace_back(creator(desc), deleter);
-//    return _all_nodes.back().get();
-//}
+Node *NodeMgr::load_node(const vision::NodeDesc &desc) {
+    const DynamicModule *module = Context::instance().obtain_module(desc.plugin_name());
+    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
+    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+    _all_nodes.emplace_back(creator(desc), deleter);
+    return _all_nodes.back().get();
+}
 
 }// namespace vision

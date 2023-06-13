@@ -43,6 +43,9 @@ public:
     virtual ~Node() = default;
 };
 
+class Light;
+class ShaderNode;
+
 class NodeMgr {
 public:
     using Container = std::list<Node::Wrapper>;
@@ -63,6 +66,13 @@ public:
     static void destroy_instance() noexcept;
     [[nodiscard]] Node *load_node(const NodeDesc &desc);
     Container::iterator remove(Node *node);
+    template<typename T, typename desc_ty>
+    [[nodiscard]] T *load(const desc_ty &desc) {
+        desc.scene = this;
+        auto ret = dynamic_cast<T *>(load_node(desc));
+        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
+        return ret;
+    }
 };
 
 }// namespace vision
