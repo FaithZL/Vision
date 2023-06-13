@@ -42,6 +42,28 @@ public:
     [[nodiscard]] string name() const noexcept { return _name; }
     virtual ~Node() = default;
 };
+
+class NodeMgr {
+public:
+    using Container = std::list<Node::Wrapper>;
+    using Iterator = Container::iterator;
+private:
+    std::list<Node::Wrapper> _all_nodes;
+
+private:
+    NodeMgr() = default;
+    NodeMgr(const NodeMgr &) = delete;
+    NodeMgr(NodeMgr &&) = delete;
+    NodeMgr operator=(const NodeMgr &) = delete;
+    NodeMgr operator=(NodeMgr &&) = delete;
+    static NodeMgr *s_node_loader;
+
+public:
+    [[nodiscard]] static NodeMgr &instance() noexcept;
+    static void destroy_instance() noexcept;
+    Container::iterator remove(Node *node) noexcept;
+};
+
 }// namespace vision
 
 #define VS_MAKE_CLASS_CREATOR(Class)                                                        \
