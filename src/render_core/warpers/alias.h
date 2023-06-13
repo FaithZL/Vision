@@ -40,13 +40,13 @@ public:
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
     [[nodiscard]] Float PDF(const Uint &i) const noexcept override {
-        return integral() > 0 ? func_at(i) / integral() : Var(0.f);
+        return select(*integral() > 0, func_at(i) / *integral(), 0.f);
     }
     [[nodiscard]] Float func_at(const Uint &i) const noexcept override {
         return _func.read(i);
     }
     [[nodiscard]] Float PMF(const Uint &i) const noexcept override {
-        return integral() > 0 ? (func_at(i) / (integral() * size())) : Var(0.f);
+        return select(*integral() > 0, func_at(i) / (*integral() * size()), 0.f);
     }
     [[nodiscard]] pair<Uint, Float> offset_u_remapped(Float u, size_t size) const noexcept;
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override;

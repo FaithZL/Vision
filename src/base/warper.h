@@ -23,7 +23,7 @@ public:
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     [[nodiscard]] virtual uint size() const noexcept = 0;
-    [[nodiscard]] virtual float integral() const noexcept { return _integral.hv(); }
+    [[nodiscard]] virtual Serial<float> integral() const noexcept { return _integral; }
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &i) const noexcept = 0;
@@ -45,7 +45,7 @@ public:
     virtual void build(vector<float> weights, uint2 res) noexcept = 0;
     [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
-    [[nodiscard]] virtual float integral() const noexcept = 0;
+    [[nodiscard]] virtual Serial<float> integral() const noexcept = 0;
     [[nodiscard]] virtual Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept = 0;
 };
 

@@ -41,7 +41,7 @@ public:
         vector<float> marginal_func;
         marginal_func.reserve(res.y);
         for (int v = 0; v < res.y; ++v) {
-            marginal_func.push_back(conditional_v[v].integral());
+            marginal_func.push_back(conditional_v[v].integral().hv());
         }
         _marginal.build(ocarina::move(marginal_func));
 
@@ -76,9 +76,9 @@ public:
     [[nodiscard]] Float PDF(Float2 p) const noexcept override {
         Uint iu = clamp(cast<uint>(p.x * _resolution.x), 0u, _resolution.x - 1);
         Uint iv = clamp(cast<uint>(p.y * _resolution.y), 0u, _resolution.y - 1);
-        return integral() > 0 ? func_at(make_uint2(iu, iv)) / integral() : Var(0.f);
+        return select(*integral() > 0, func_at(make_uint2(iu, iv)) / *integral(), 0.f);
     }
-    [[nodiscard]] float integral() const noexcept override {
+    [[nodiscard]] Serial<float> integral() const noexcept override {
         return _marginal.integral();
     }
     [[nodiscard]] Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept override {
