@@ -38,11 +38,10 @@ struct LaunchParams {
         backend = cli_parser->backend();
     }
 };
-
+using namespace ocarina;
 class App {
 public:
     UP<CLIParser> cli_parser{};
-    ocarina::Context *context;
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
@@ -57,12 +56,11 @@ public:
 public:
     App(int argc, char *argv[])
         : cli_parser(make_unique<CLIParser>(argc, argv)),
-          context(new ocarina::Context(fs::path(argv[0]).parent_path())),
-          device(context->create_device(cli_parser->backend())),
+          device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())),
           rp(create_pipeline()) {
         init(argc);
     }
-    [[nodiscard]] Pipeline create_pipeline() { return {&device, context}; }
+    [[nodiscard]] Pipeline create_pipeline() { return {&device, &Context::instance()}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;

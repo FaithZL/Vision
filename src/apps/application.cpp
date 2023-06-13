@@ -14,7 +14,7 @@ void App::init(int argc) {
     params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
-        context->clear_cache();
+        Context::instance().clear_cache();
     }
     if (argc == 1) {
         cli_parser->print_help();
@@ -30,7 +30,7 @@ void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     rp.init_postprocessor(scene_desc);
-    window = context->create_window("LajiRender", rp.resolution(), "gl");
+    window = Context::instance().create_window("LajiRender", rp.resolution(), "gl");
     rp.prepare();
     register_event();
 }

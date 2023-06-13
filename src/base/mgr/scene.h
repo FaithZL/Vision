@@ -20,7 +20,6 @@ namespace vision {
 
 using namespace ocarina;
 
-class Context;
 
 #define MAKE_GETTER(member)                                          \
     [[nodiscard]] auto member() const noexcept { return _##member; } \
