@@ -104,7 +104,6 @@ Light *Scene::load_light(const LightDesc &desc) {
 
 ShaderNode *Scene::load_shader_node(const ShaderNodeDesc &desc) {
     auto ret = load<ShaderNode>(desc);
-    _shadernodes.push_back(ret);
     return ret;
 }
 

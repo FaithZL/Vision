@@ -38,7 +38,6 @@ private:
     vector<Shape *> _shapes;
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
-    Polymorphic<ShaderNode *> _shadernodes;
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
     Spectrum *_spectrum{nullptr};
