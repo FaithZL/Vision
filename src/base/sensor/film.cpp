@@ -3,7 +3,7 @@
 //
 
 #include "film.h"
-#include "mgr/scene.h"
+#include "base/mgr/scene.h"
 
 namespace vision {
 

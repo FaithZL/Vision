@@ -6,8 +6,8 @@
 
 #include "dsl/common.h"
 #include "node.h"
-#include "sensor.h"
-#include "filter.h"
+#include "base/sensor/sensor.h"
+#include "base/sensor/filter.h"
 
 namespace vision {
 using namespace ocarina;

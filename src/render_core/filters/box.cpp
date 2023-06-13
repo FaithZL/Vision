@@ -3,7 +3,7 @@
 //
 
 #include "descriptions/node_desc.h"
-#include "base/filter.h"
+#include "base/sensor/filter.h"
 
 namespace vision {
 

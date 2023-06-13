@@ -7,7 +7,7 @@
 #include "core/basic_types.h"
 #include "rhi/common.h"
 #include "dsl/common.h"
-#include "node.h"
+#include "base/node.h"
 #include "tonemapper.h"
 
 namespace vision {

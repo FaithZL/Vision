@@ -2,7 +2,7 @@
 // Created by Zero on 09/09/2022.
 //
 
-#include "base/sensor.h"
+#include "base/sensor/sensor.h"
 #include "base/mgr/pipeline.h"
 
 namespace vision {

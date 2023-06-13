@@ -6,11 +6,11 @@
 
 #include "descriptions/scene_desc.h"
 #include "base/node.h"
-#include "base/sensor.h"
+#include "base/sensor/camera.h"
 #include "base/sampler.h"
 #include "base/shape.h"
 #include "base/integrator.h"
-#include "base/lightsampler.h"
+#include "base/illumination/lightsampler.h"
 #include "base/scattering/material.h"
 #include "base/scattering/medium.h"
 #include "base/warper.h"

@@ -2,7 +2,7 @@
 // Created by Zero on 27/11/2022.
 //
 
-#include "base/light.h"
+#include "base/illumination/light.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/pipeline.h"
 

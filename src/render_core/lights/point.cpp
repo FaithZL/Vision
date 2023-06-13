@@ -2,7 +2,7 @@
 // Created by Zero on 22/10/2022.
 //
 
-#include "base/light.h"
+#include "base/illumination/light.h"
 #include "base/mgr/pipeline.h"
 #include "base/color/spectrum.h"
 

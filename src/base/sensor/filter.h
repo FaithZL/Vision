@@ -5,7 +5,7 @@
 #pragma once
 
 #include "dsl/common.h"
-#include "node.h"
+#include "base/node.h"
 #include "descriptions/node_desc.h"
 
 namespace vision {

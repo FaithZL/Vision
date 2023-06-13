@@ -2,7 +2,7 @@
 // Created by Zero on 26/11/2022.
 //
 
-#include "base/light.h"
+#include "base/illumination/light.h"
 #include "base/mgr/pipeline.h"
 
 namespace vision {

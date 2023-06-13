@@ -1,23 +1,11 @@
 //
-// Created by Zero on 11/10/2022.
+// Created by Zero on 2023/6/13.
 //
 
-#include "sensor.h"
+#include "camera.h"
 #include "base/mgr/pipeline.h"
 
 namespace vision {
-using namespace ocarina;
-
-Sensor::Sensor(const SensorDesc &desc)
-    : Node(desc),
-      _filter(desc.scene->load<Filter>(desc.filter_desc)),
-      _radiance_film(desc.scene->load<Film>(desc.film_desc)),
-      _medium(desc.medium.id) {}
-
-void Sensor::prepare() noexcept {
-    _filter->prepare();
-    _radiance_film->prepare();
-}
 
 Camera::Camera(const SensorDesc &desc)
     : Sensor(desc), _data(pipeline()->resource_array()) {
@@ -102,5 +90,4 @@ Float3 Camera::device_position() const noexcept {
     Var<Data> data = _data.read(0);
     return data->c2w[3].xyz();
 }
-
 }// namespace vision

@@ -9,7 +9,7 @@
 #include "dsl/rtx_type.h"
 #include "node.h"
 #include "math/box.h"
-#include "light.h"
+#include "base/illumination/light.h"
 
 namespace vision {
 

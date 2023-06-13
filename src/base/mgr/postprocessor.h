@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/denoiser.h"
-#include "base/tonemapper.h"
+#include "base/sensor/tonemapper.h"
 
 namespace vision {
 class Pipeline;

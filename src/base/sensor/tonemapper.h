@@ -7,7 +7,7 @@
 #include "core/basic_types.h"
 #include "rhi/common.h"
 #include "dsl/common.h"
-#include "node.h"
+#include "base/node.h"
 
 namespace vision {
 

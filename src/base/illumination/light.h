@@ -5,9 +5,9 @@
 #pragma once
 
 #include "base/scattering/interaction.h"
-#include "node.h"
-#include "shader_graph/shader_node.h"
-#include "sample.h"
+#include "base/node.h"
+#include "base/shader_graph/shader_node.h"
+#include "base/sample.h"
 #include "base/color/spectrum.h"
 
 namespace vision {

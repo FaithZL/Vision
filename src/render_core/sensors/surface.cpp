@@ -2,7 +2,7 @@
 // Created by Zero on 2023/6/2.
 //
 
-#include "base/sensor.h"
+#include "base/sensor/sensor.h"
 #include "base/shader_graph/shader_node.h"
 
 namespace vision {

@@ -2,7 +2,7 @@
 // Created by Zero on 09/09/2022.
 //
 
-#include "base/lightsampler.h"
+#include "base/illumination/lightsampler.h"
 #include "base/mgr/pipeline.h"
 #include "base/sampler.h"
 

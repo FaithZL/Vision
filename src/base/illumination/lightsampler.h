@@ -5,7 +5,7 @@
 #pragma once
 
 #include "dsl/common.h"
-#include "node.h"
+#include "base/node.h"
 #include "core/stl.h"
 #include "light.h"
 #include "base/scattering/interaction.h"

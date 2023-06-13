@@ -7,7 +7,7 @@
 #include "node.h"
 #include "rhi/common.h"
 #include "base/scattering/interaction.h"
-#include "lightsampler.h"
+#include "base/illumination/lightsampler.h"
 #include "base/scattering/material.h"
 #include "sampler.h"
 #include "math/warp.h"

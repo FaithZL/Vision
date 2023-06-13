@@ -1,48 +1,10 @@
 //
-// Created by Zero on 09/09/2022.
+// Created by Zero on 2023/6/13.
 //
 
 #pragma once
 
-#include "core/basic_types.h"
-#include "node.h"
-#include "sample.h"
-#include "math/transform.h"
-#include "filter.h"
-#include "film.h"
-
-namespace vision {
-using namespace ocarina;
-
-struct SensorSample {
-    Float2 p_film;
-    Float2 p_lens;
-    Float time;
-    Float filter_weight{1.f};
-};
-
-class Sensor : public Node, public Serializable<float> {
-public:
-    using Desc = SensorDesc;
-
-protected:
-    Filter *_filter{};
-    Film *_radiance_film{};
-    uchar _medium{InvalidUI8};
-
-public:
-    explicit Sensor(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(*_filter, *_radiance_film)
-    void prepare() noexcept override;
-    [[nodiscard]] Filter *filter() noexcept { return _filter; }
-    [[nodiscard]] const Filter *filter() const noexcept { return _filter; }
-    [[nodiscard]] auto radiance_film() noexcept { return _radiance_film; }
-    [[nodiscard]] auto radiance_film() const noexcept { return _radiance_film; }
-    [[nodiscard]] uint2 resolution() noexcept { return _radiance_film->resolution(); }
-    [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
-};
-
-}// namespace vision
+#include "sensor.h"
 
 namespace vision {
 
