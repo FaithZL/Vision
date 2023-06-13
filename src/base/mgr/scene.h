@@ -54,6 +54,7 @@ public:
     MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
+    MAKE_GETTER(context)
     MAKE_GETTER(light_sampler)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }

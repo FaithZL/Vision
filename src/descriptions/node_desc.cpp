@@ -8,6 +8,7 @@
 #include "medium_scatter_data.h"
 #include <sstream>
 #include "math/transform.h"
+#include "rhi/context.h"
 
 namespace vision {
 
@@ -18,6 +19,11 @@ string NodeDesc::parameter_string() const noexcept {
 fs::path NodeDesc::file_name() const noexcept {
     return scene_path / (*this)["fn"].as_string();
 }
+
+//const DynamicModule *NodeDesc::obtain_module() const noexcept {
+//    const DynamicModule *dynamic_module = _scene->context()->obtain_module(plugin_name());
+//    return dynamic_module;
+//}
 
 void NodeDesc::set_parameter(const ParameterSet &ps) noexcept {
     OC_ASSERT(ps.data().is_object());

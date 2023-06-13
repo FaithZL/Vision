@@ -39,12 +39,10 @@ struct LaunchParams {
     }
 };
 
-VS_EXPORT_API int execute(char *working_dir, char *scene_fn);
-
 class App {
 public:
     UP<CLIParser> cli_parser{};
-    ocarina::Context context;
+    ocarina::Context *context;
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
@@ -59,21 +57,12 @@ public:
 public:
     App(int argc, char *argv[])
         : cli_parser(make_unique<CLIParser>(argc, argv)),
-          context(fs::path(argv[0]).parent_path()),
-          device(context.create_device(cli_parser->backend())),
+          context(new ocarina::Context(fs::path(argv[0]).parent_path())),
+          device(context->create_device(cli_parser->backend())),
           rp(create_pipeline()) {
         init(argc);
     }
-    App(const fs::path &working_dir, const fs::path &scene_fn)
-        : context(working_dir),
-          device(context.create_device("cuda")),
-          rp(create_pipeline()) {
-        params.working_dir = working_dir;
-        params.scene_file = scene_fn;
-        params.scene_path = scene_fn.parent_path();
-        init();
-    }
-    [[nodiscard]] Pipeline create_pipeline() { return {&device, &context}; }
+    [[nodiscard]] Pipeline create_pipeline() { return {&device, context}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;

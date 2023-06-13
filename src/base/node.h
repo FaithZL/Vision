@@ -61,7 +61,8 @@ private:
 public:
     [[nodiscard]] static NodeMgr &instance() noexcept;
     static void destroy_instance() noexcept;
-    Container::iterator remove(Node *node) noexcept;
+    [[nodiscard]] Node *load_node(const NodeDesc &desc);
+    Container::iterator remove(Node *node);
 };
 
 }// namespace vision

@@ -9,16 +9,12 @@
 namespace vision {
 using namespace ocarina;
 
-VS_EXPORT_API int execute(char *working_dir, char *scene_fn) {
-    return App(working_dir, scene_fn).run();
-}
-
 void App::init(int argc) {
     core::log_level_info();
     params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
-        context.clear_cache();
+        context->clear_cache();
     }
     if (argc == 1) {
         cli_parser->print_help();
@@ -34,7 +30,7 @@ void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
     rp.init_scene(scene_desc);
     rp.init_postprocessor(scene_desc);
-    window = context.create_window("LajiRender", rp.resolution(), "gl");
+    window = context->create_window("LajiRender", rp.resolution(), "gl");
     rp.prepare();
     register_event();
 }
