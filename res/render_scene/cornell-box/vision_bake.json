@@ -810,6 +810,7 @@
 			"max_depth" : 16,
 			"rr_threshold" : 1,
 			"sample_num" : 32,
+			"distance" : 2.2,
 			"cos_sample": true
 		}
 	},
