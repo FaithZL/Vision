@@ -804,7 +804,7 @@
 		"type" : "alias_table"
 	},
 	"integrator" : {
-		"type" : "ao",
+		"type" : "pt",
 		"param" : {
 			"min_depth" : 0,
 			"max_depth" : 16,
