@@ -12,8 +12,8 @@ Pipeline *Node::pipeline() noexcept {
     return Global::instance().pipeline();
 }
 
-const Pipeline *Node::pipeline() const noexcept {
-    return Global::instance().pipeline();
+Scene &Node::scene() noexcept {
+    return pipeline()->scene();
 }
 
 Spectrum &Node::spectrum() noexcept {

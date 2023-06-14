@@ -76,7 +76,7 @@ public:
         : Material(desc),
           _mat0(desc.scene->load<Material>(*desc.mat0)),
           _mat1(desc.scene->load<Material>(*desc.mat1)),
-          _scale(_scene->create_slot(desc.slot("scale", 0.5f, Number))) {}
+          _scale(scene().create_slot(desc.slot("scale", 0.5f, Number))) {}
 
     OC_SERIALIZABLE_FUNC(*_mat0, *_mat1, *_scale.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {

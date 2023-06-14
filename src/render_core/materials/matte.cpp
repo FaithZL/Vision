@@ -34,7 +34,7 @@ private:
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
+        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
         init_slot_cursor(&_color, 1);
     }
 

@@ -33,9 +33,9 @@ public:
 
     void compile_shader() noexcept override {
         Pipeline *rp = pipeline();
-        Camera *camera = _scene->camera();
-        Sampler *sampler = _scene->sampler();
-        LightSampler *light_sampler = _scene->light_sampler();
+        Camera *camera = scene().camera();
+        Sampler *sampler = scene().sampler();
+        LightSampler *light_sampler = scene().light_sampler();
         Spectrum &spectrum = rp->spectrum();
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
@@ -61,9 +61,9 @@ public:
                         p_ref.pos = rs.origin();
                         p_ref.ng = rs.direction();
                         SampledSpectrum tr = {swl.dimension(), 1.f};
-                        if (_scene->has_medium()) {
-                            rs.ray.dir_max.w = _scene->world_diameter();
-                            tr = geometry.Tr(_scene, swl, rs);
+                        if (scene().has_medium()) {
+                            rs.ray.dir_max.w = scene().world_diameter();
+                            tr = geometry.Tr(scene(), swl, rs);
                         }
                         LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
                         Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
@@ -74,9 +74,9 @@ public:
 
                 Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
 
-                if (_scene->has_medium()) {
+                if (scene().has_medium()) {
                     $if(rs.in_medium()) {
-                        _scene->mediums().dispatch_instance(rs.medium, [&](const Medium *medium) {
+                        scene().mediums().dispatch_instance(rs.medium, [&](const Medium *medium) {
                             SampledSpectrum medium_throughput = medium->sample(rs.ray, it, swl, sampler);
                             throughput *= medium_throughput;
                         });
@@ -97,7 +97,7 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
-                    SampledSpectrum tr = geometry.Tr(_scene, swl, rs);
+                    SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
                     Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
                     Li += eval.L * throughput * weight * tr;
                 };
@@ -107,13 +107,13 @@ public:
                 LightSample light_sample = light_sampler->sample(it, sampler, swl);
                 RayState shadow_ray;
                 Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
-                SampledSpectrum tr = geometry.Tr(_scene, swl, shadow_ray);
+                SampledSpectrum tr = geometry.Tr(scene(), swl, shadow_ray);
                 comment("sample bsdf");
                 BSDFSample bsdf_sample{swl.dimension()};
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
 
                 auto sample_surface = [&]() {
-                    _scene->materials().dispatch(it.material_id(), [&](const Material *material) {
+                    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                         BSDF bsdf = material->compute_BSDF(it, swl);
                         if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
                             $if(*dispersive) {
@@ -125,7 +125,7 @@ public:
                     });
                 };
 
-                if (_scene->has_medium()) {
+                if (scene().has_medium()) {
                     $if(it.has_phase()) {
                         PhaseSample ps{swl.dimension()};
                         Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, swl, ps);

@@ -29,7 +29,7 @@ public:
 
     void prepare() noexcept override {
         LightSampler::prepare();
-        _warper = _scene->load_warper();
+        _warper = scene().load_warper();
         vector<float> weights;
         _lights.for_each_instance([&](Light *light) {
             weights.push_back(luminance(light->power()));

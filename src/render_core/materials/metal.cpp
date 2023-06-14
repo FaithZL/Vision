@@ -56,7 +56,7 @@ private:
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.01f)))),
+          _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
         init_ior(desc);
         init_slot_cursor(&_eta, 3);
@@ -80,8 +80,8 @@ public:
             k_slot = desc.slot("", k);
         }
 
-        _eta = _scene->create_slot(eta_slot);
-        _k = _scene->create_slot(k_slot);
+        _eta = scene().create_slot(eta_slot);
+        _k = scene().create_slot(k_slot);
     }
 
     void prepare() noexcept override {

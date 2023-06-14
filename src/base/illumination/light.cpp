@@ -9,7 +9,7 @@ namespace vision {
 
 Light::Light(const LightDesc &desc, LightType light_type)
     : Node(desc), _type(light_type),
-      _color(_scene->create_slot(desc.color)),
+      _color(scene().create_slot(desc.color)),
       _scale(desc["scale"].as_float(1.f)) {}
 
 LightSample IPointLight::sample_Li(const LightSampleContext &p_ref, Float2 u,

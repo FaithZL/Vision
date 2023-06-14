@@ -27,13 +27,12 @@ public:
 
 protected:
     string _name;
-    mutable Scene *_scene{nullptr};
 
 public:
     Node() = default;
-    explicit Node(const NodeDesc &desc) : _name(desc.name), _scene(desc.scene) {}
-    [[nodiscard]] Pipeline *pipeline() noexcept;
-    [[nodiscard]] const Pipeline *pipeline() const noexcept;
+    explicit Node(const NodeDesc &desc) : _name(desc.name) {}
+    [[nodiscard]] static Pipeline *pipeline() noexcept;
+    [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;

@@ -39,8 +39,8 @@ private:
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _roughness(_scene->create_slot(desc.slot("roughness", make_float2(0.0001f)))),
+        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
+          _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.0001f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
         init_slot_cursor(&_color, 2);
     }

@@ -58,7 +58,7 @@ public:
     }
 
     [[nodiscard]] float3 power() const noexcept override {
-        float world_radius = _scene->world_diameter() / 2.f;
+        float world_radius = scene().world_diameter() / 2.f;
         return Pi * ocarina::sqr(world_radius) * average();
     }
 
@@ -77,7 +77,7 @@ public:
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
         Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
-        Float3 pos = p_ref.pos + world_dir * _scene->world_diameter();
+        Float3 pos = p_ref.pos + world_dir * scene().world_diameter();
         ret.eval.L = L(local_dir, swl);
         pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
         ret.eval.pdf = pdf_dir;
@@ -114,7 +114,7 @@ public:
     }
 
     void prepare() noexcept override {
-        _warper = _scene->load_warper2d();
+        _warper = scene().load_warper2d();
         uint2 res = _color.node()->resolution();
         vector<float> weights;
         if (any(res == 0u)) {

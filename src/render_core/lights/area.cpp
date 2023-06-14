@@ -41,7 +41,7 @@ public:
     }
 
     [[nodiscard]] Shape *shape() const noexcept {
-        return _scene->get_shape(_inst_idx.hv());
+        return scene().get_shape(_inst_idx.hv());
     }
 
     [[nodiscard]] float3 power() const noexcept override {
@@ -69,7 +69,7 @@ public:
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
-        auto rp = _scene->pipeline();
+        auto rp = scene().pipeline();
         Float pmf;
         Float u_remapped;
         Uint prim_id = _warper->sample_discrete(u.x, &pmf, &u_remapped);
@@ -83,7 +83,7 @@ public:
     }
 
     void prepare() noexcept override {
-        _warper = _scene->load_warper();
+        _warper = scene().load_warper();
         vector<float> weights = shape()->surface_area();
         _warper->build(std::move(weights));
         _warper->prepare();

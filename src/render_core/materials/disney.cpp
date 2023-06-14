@@ -544,19 +544,19 @@ private:
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(_scene->create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _metallic(_scene->create_slot(desc.slot("metallic", 0.f, Number))),
-          _eta(_scene->create_slot(desc.slot("ior", 1.5f, Number))),
-          _roughness(_scene->create_slot(desc.slot("roughness", 0.5f, Number))),
-          _spec_tint(_scene->create_slot(desc.slot("spec_tint", 0.f, Number))),
-          _anisotropic(_scene->create_slot(desc.slot("anisotropic", 0.f, Number))),
-          _sheen(_scene->create_slot(desc.slot("sheen", 0.f, Number))),
-          _sheen_tint(_scene->create_slot(desc.slot("sheen_tint", 0.f, Number))),
-          _clearcoat(_scene->create_slot(desc.slot("clearcoat", 0.3f, Number))),
-          _clearcoat_alpha(_scene->create_slot(desc.slot("clearcoat_alpha", 0.2f, Number))),
-          _spec_trans(_scene->create_slot(desc.slot("spec_trans", 0.f, Number))),
-          _flatness(_scene->create_slot(desc.slot("flatness", 0.f, Number))),
-          _diff_trans(_scene->create_slot(desc.slot("diff_trans", 0.f, Number))) {
+        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
+          _metallic(scene().create_slot(desc.slot("metallic", 0.f, Number))),
+          _eta(scene().create_slot(desc.slot("ior", 1.5f, Number))),
+          _roughness(scene().create_slot(desc.slot("roughness", 0.5f, Number))),
+          _spec_tint(scene().create_slot(desc.slot("spec_tint", 0.f, Number))),
+          _anisotropic(scene().create_slot(desc.slot("anisotropic", 0.f, Number))),
+          _sheen(scene().create_slot(desc.slot("sheen", 0.f, Number))),
+          _sheen_tint(scene().create_slot(desc.slot("sheen_tint", 0.f, Number))),
+          _clearcoat(scene().create_slot(desc.slot("clearcoat", 0.3f, Number))),
+          _clearcoat_alpha(scene().create_slot(desc.slot("clearcoat_alpha", 0.2f, Number))),
+          _spec_trans(scene().create_slot(desc.slot("spec_trans", 0.f, Number))),
+          _flatness(scene().create_slot(desc.slot("flatness", 0.f, Number))),
+          _diff_trans(scene().create_slot(desc.slot("diff_trans", 0.f, Number))) {
         init_slot_cursor(&_color, &_diff_trans);
     }
 
