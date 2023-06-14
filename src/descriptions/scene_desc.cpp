@@ -222,6 +222,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     output_desc.init(data.value("output", DataWrap()), scene_path);
     render_setting.init(data.value("render_setting", DataWrap::object()));
     denoiser_desc.init(data.value("denoiser", DataWrap::object()));
+    pipeline_desc.init(data.value("pipeline", DataWrap::object()));
     process_materials();
     check_meshes();
 }

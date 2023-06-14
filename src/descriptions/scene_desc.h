@@ -29,6 +29,7 @@ public:
     vector<MaterialDesc> material_descs;
     vector<ShapeDesc> shape_descs;
     OutputDesc output_desc;
+    PipelineDesc pipeline_desc;
     NameID::map_ty mat_name_to_id;
     fs::path scene_path;
     MediumsDesc mediums_desc;

@@ -6,8 +6,11 @@
 
 namespace vision {
 
-class OfflineRenderPipeline {
-
+class OfflineRenderPipeline : public Pipeline {
+public:
+    explicit OfflineRenderPipeline(const PipelineDesc &desc) : Pipeline(desc) {}
 };
 
-}
+}// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::OfflineRenderPipeline)

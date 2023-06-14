@@ -6,8 +6,11 @@
 
 namespace vision {
 
-class BakerPipeline {
-
+class BakerPipeline : public Pipeline {
+public:
+    explicit BakerPipeline(const PipelineDesc &desc) : Pipeline(desc) {}
 };
 
-}
+}// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::BakerPipeline)

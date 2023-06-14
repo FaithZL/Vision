@@ -6,7 +6,11 @@
 
 namespace vision {
 
-class RealTimeRenderPipeline {
+class RealTimeRenderPipeline : public Pipeline {
+public:
+    explicit RealTimeRenderPipeline(const PipelineDesc &desc) : Pipeline(desc) {}
 };
 
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::RealTimeRenderPipeline)

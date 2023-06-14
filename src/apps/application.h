@@ -57,15 +57,14 @@ public:
 public:
     App(int argc, char *argv[])
         : cli_parser(make_unique<CLIParser>(argc, argv)),
-          device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())),
-          rp(create_pipeline()) {
+          device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())) {
         init(argc);
     }
-    [[nodiscard]] Pipeline *create_pipeline() { return new Pipeline{&device}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;
-    [[nodiscard]] Pipeline& pipeline() { return *rp; }
+    void init_pipeline(const PipelineDesc &desc);
+    [[nodiscard]] Pipeline &pipeline() { return *rp; }
     void check_and_save() noexcept;
     void save_result() noexcept;
     void register_event() noexcept;

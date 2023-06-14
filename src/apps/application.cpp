@@ -5,6 +5,7 @@
 #include "application.h"
 #include "core/basic_types.h"
 #include "ext/imgui/imgui.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 using namespace ocarina;
@@ -27,8 +28,15 @@ void App::init(int argc) {
     prepare();
 }
 
+void App::init_pipeline(const PipelineDesc &desc) {
+    rp = Global::node_mgr().load<Pipeline>(desc);
+    Global::instance().set_pipeline(rp);
+}
+
 void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
+    scene_desc.pipeline_desc.device = &device;
+    init_pipeline(scene_desc.pipeline_desc);
     pipeline().init_scene(scene_desc);
     pipeline().init_postprocessor(scene_desc);
     window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
