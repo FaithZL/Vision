@@ -124,9 +124,8 @@ public:
     [[nodiscard]] Uint light_id() const noexcept { return _light_id; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
     [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
-    [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
-        return vision::spawn_ray(pos, g_uvn.normal(), dir);
-    }
+    [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept;
+    [[nodiscard]] OCRay spawn_ray(const Float3 &dir, const Float &t) const noexcept;
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {

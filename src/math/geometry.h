@@ -60,7 +60,7 @@ template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> cos_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    return select(sinTheta == 0.f, 1.f,clamp(v.x / sinTheta, -1.f, 1.f));
+    return select(sinTheta == 0.f, 1.f, clamp(v.x / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>
@@ -82,6 +82,13 @@ template<typename T>
     normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
     T org = offset_ray_origin(pos, normal);
     return make_ray(org, dir);
+}
+
+template<typename T, typename U>
+[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir, U t_max) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(pos, normal);
+    return make_ray(org, dir, t_max);
 }
 
 template<typename T>
@@ -235,13 +242,14 @@ public:
 OC_STRUCT(vision::Vertex, pos, n, uv){
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
-    }
+}
 
-    [[nodiscard]] auto normal() const noexcept {
-        return make_float3(n[0], n[1], n[2]);
-    }
+[[nodiscard]] auto normal() const noexcept {
+    return make_float3(n[0], n[1], n[2]);
+}
 
-    [[nodiscard]] auto tex_coord() const noexcept {
-        return make_float2(uv[0], uv[1]);
-    }
-};
+[[nodiscard]] auto tex_coord() const noexcept {
+    return make_float2(uv[0], uv[1]);
+}
+}
+;

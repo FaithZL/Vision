@@ -804,11 +804,13 @@
 		"type" : "alias_table"
 	},
 	"integrator" : {
-		"type" : "pt",
+		"type" : "ao",
 		"param" : {
 			"min_depth" : 0,
 			"max_depth" : 16,
-			"rr_threshold" : 1
+			"rr_threshold" : 1,
+			"sample_num" : 32,
+			"cos_sample": true
 		}
 	},
 	"spectrum" : {
@@ -953,6 +955,6 @@
 	"output" : {
 		"spp" : 1024,
 		"save_exit" : false,
-		"fn" : "hero1-CPU.png"
+		"fn" : "hero3-CPU.png"
 	}
 }
