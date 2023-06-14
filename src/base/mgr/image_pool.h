@@ -17,7 +17,7 @@ class ImageWrapper {
 private:
     ImageIO _image_io;
     Texture _texture;
-    uint _id;
+    uint _id{};
 
 public:
     ImageWrapper() = default;

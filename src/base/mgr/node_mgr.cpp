@@ -36,4 +36,14 @@ Node *NodeMgr::load_node(const vision::NodeDesc &desc) {
     _all_nodes.emplace_back(creator(desc), deleter);
     return _all_nodes.back().get();
 }
+
+ShaderNode *NodeMgr::load_shader_node(const ShaderNodeDesc &desc) {
+    auto ret = load<ShaderNode>(desc);
+    return ret;
+}
+
+Slot NodeMgr::create_slot(const SlotDesc &desc) {
+    ShaderNode *shader_node = load_shader_node(desc.node);
+    return Slot(shader_node, desc.channels);
+}
 }// namespace vision

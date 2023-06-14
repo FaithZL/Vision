@@ -5,6 +5,7 @@
 #pragma once
 
 #include "base/node.h"
+#include "base/shader_graph/shader_node.h"
 
 namespace vision {
 
@@ -33,10 +34,11 @@ public:
     void remove(Node *node);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
-        desc.scene = this;
         auto ret = dynamic_cast<T *>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
+    [[nodiscard]] ShaderNode *load_shader_node(const ShaderNodeDesc &desc);
+    [[nodiscard]] Slot create_slot(const SlotDesc &desc);
 };
 }
