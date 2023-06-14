@@ -8,7 +8,19 @@ namespace vision {
 
 class OfflineRenderPipeline : public Pipeline {
 public:
-    explicit OfflineRenderPipeline(const PipelineDesc &desc) : Pipeline(desc) {}
+    explicit OfflineRenderPipeline(const PipelineDesc &desc)
+        : Pipeline(desc) {}
+
+    void prepare() noexcept override {
+        auto pixel_num = resolution().x * resolution().y;
+        _final_picture.reset_all(device(), pixel_num);
+        _scene.prepare();
+        image_pool().prepare();
+        prepare_geometry();
+        prepare_resource_array();
+        compile_shaders();
+        preprocess();
+    }
 };
 
 }// namespace vision

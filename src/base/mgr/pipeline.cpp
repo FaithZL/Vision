@@ -78,6 +78,7 @@ void Pipeline::prepare() noexcept {
     prepare_geometry();
     prepare_resource_array();
     compile_shaders();
+    preprocess();
 }
 
 void Pipeline::render(double dt) noexcept {

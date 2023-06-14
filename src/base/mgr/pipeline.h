@@ -24,7 +24,7 @@ class Pipeline : public Node {
 public:
     using Desc = PipelineDesc;
 
-private:
+protected:
     Device *_device{};
     Scene _scene{};
     Geometry _geometry{this};

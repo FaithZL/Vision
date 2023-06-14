@@ -39,7 +39,6 @@ void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
     init_pipeline(scene_desc);
     pipeline().prepare();
-    pipeline().preprocess();
     window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
     register_event();
 }

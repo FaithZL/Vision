@@ -8,7 +8,12 @@ namespace vision {
 
 class BakerPipeline : public Pipeline {
 public:
-    explicit BakerPipeline(const PipelineDesc &desc) : Pipeline(desc) {}
+    explicit BakerPipeline(const PipelineDesc &desc)
+        : Pipeline(desc) {}
+
+    void preprocess() noexcept override {
+
+    }
 };
 
 }// namespace vision

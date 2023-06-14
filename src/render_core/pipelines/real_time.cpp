@@ -8,7 +8,8 @@ namespace vision {
 
 class RealTimeRenderPipeline : public Pipeline {
 public:
-    explicit RealTimeRenderPipeline(const PipelineDesc &desc) : Pipeline(desc) {}
+    explicit RealTimeRenderPipeline(const PipelineDesc &desc)
+        : Pipeline(desc) {}
 };
 
 }// namespace vision
