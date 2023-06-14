@@ -47,7 +47,7 @@ public:
           _min_depth(desc["min_depth"].as_uint(5)),
           _rr_threshold(desc["rr_threshold"].as_float(1.f)) {}
     virtual void compile_shader() noexcept = 0;
-    virtual void render() const noexcept = 0;
+    virtual void render() const noexcept {}
     [[nodiscard]] Uint frame_index() const noexcept { return *_frame_index; }
 };
 }// namespace vision
