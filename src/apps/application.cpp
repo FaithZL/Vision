@@ -28,19 +28,19 @@ void App::init(int argc) {
     prepare();
 }
 
-void App::init_pipeline(const PipelineDesc &desc) {
-    rp = Global::node_mgr().load<Pipeline>(desc);
+void App::init_pipeline(const SceneDesc &desc) {
+    desc.pipeline_desc.device = &device;
+    rp = Global::node_mgr().load<Pipeline>(desc.pipeline_desc);
     Global::instance().set_pipeline(rp);
+    pipeline().init_scene(desc);
 }
 
 void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
-    scene_desc.pipeline_desc.device = &device;
-    init_pipeline(scene_desc.pipeline_desc);
-    pipeline().init_scene(scene_desc);
-    pipeline().init_postprocessor(scene_desc);
-    window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
+    init_pipeline(scene_desc);
     pipeline().prepare();
+    pipeline().preprocess();
+    window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
     register_event();
 }
 

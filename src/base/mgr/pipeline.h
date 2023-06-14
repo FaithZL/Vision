@@ -43,7 +43,10 @@ public:
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
 
     /// virtual function start
-    virtual void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
+    virtual void init_scene(const SceneDesc &scene_desc) {
+        _scene.init(scene_desc);
+        init_postprocessor(scene_desc);
+    }
     virtual void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] virtual RegistrableManaged<float4> &view_buffer();
     virtual void preprocess() noexcept {}

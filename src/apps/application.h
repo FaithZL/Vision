@@ -63,7 +63,7 @@ public:
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;
-    void init_pipeline(const PipelineDesc &desc);
+    void init_pipeline(const SceneDesc &desc);
     [[nodiscard]] Pipeline &pipeline() { return *rp; }
     void check_and_save() noexcept;
     void save_result() noexcept;

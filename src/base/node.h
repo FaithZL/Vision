@@ -33,8 +33,7 @@ public:
     explicit Node(const NodeDesc &desc) : _name(desc.name) {}
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
-    [[nodiscard]] Spectrum &spectrum() noexcept;
-    [[nodiscard]] const Spectrum &spectrum() const noexcept;
+    [[nodiscard]] static Spectrum &spectrum() noexcept;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}

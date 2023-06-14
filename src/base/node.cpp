@@ -17,11 +17,7 @@ Scene &Node::scene() noexcept {
 }
 
 Spectrum &Node::spectrum() noexcept {
-    return *pipeline()->scene().spectrum();
-}
-
-const Spectrum &Node::spectrum() const noexcept {
-    return *pipeline()->scene().spectrum();
+    return *scene().spectrum();
 }
 
 Device &Node::device() noexcept {
