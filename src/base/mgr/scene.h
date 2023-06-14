@@ -60,9 +60,7 @@ public:
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
-        auto ret = dynamic_cast<T *>(NodeMgr::instance().load_node(desc));
-        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
-        return ret;
+        return Global::node_mgr().load<T>(desc);
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void prepare_lights() noexcept;
@@ -77,7 +75,6 @@ public:
     void load_mediums(const vector<MediumDesc> &descs);
     void load_materials(const vector<MaterialDesc> &material_descs);
     Light *load_light(const LightDesc &desc);
-    [[nodiscard]] ShaderNode *load_shader_node(const ShaderNodeDesc &desc);
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;

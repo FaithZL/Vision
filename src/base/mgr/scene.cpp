@@ -29,8 +29,7 @@ void Scene::init(const SceneDesc &scene_desc) {
 }
 
 Slot Scene::create_slot(const SlotDesc &desc) {
-    ShaderNode *shader_node = load_shader_node(desc.node);
-    return Slot(shader_node, desc.channels);
+    return Global::node_mgr().create_slot(desc);
 }
 
 void Scene::prepare() noexcept {
@@ -86,11 +85,6 @@ Light *Scene::load_light(const LightDesc &desc) {
     OC_ASSERT(_light_sampler != nullptr);
     auto ret = load<Light>(desc);
     _light_sampler->add_light(ret);
-    return ret;
-}
-
-ShaderNode *Scene::load_shader_node(const ShaderNodeDesc &desc) {
-    auto ret = load<ShaderNode>(desc);
     return ret;
 }
 
