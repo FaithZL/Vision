@@ -28,7 +28,7 @@ private:
     ResourceArray _resource_array{};
     mutable Stream _stream;
     uint _frame_index{};
-    ImagePool _image_pool{this};
+    ImagePool _image_pool{};
     double _total_time{};
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};

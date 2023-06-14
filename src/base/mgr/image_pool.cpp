@@ -4,6 +4,7 @@
 
 #include "image_pool.h"
 #include "pipeline.h"
+#include "global.h"
 #include "rhi/device.h"
 
 namespace vision {
@@ -40,16 +41,20 @@ void ImageWrapper::download_immediately() noexcept {
 ImageWrapper &ImagePool::obtain_image(const ShaderNodeDesc &desc) noexcept {
     uint64_t hash = desc.hash();
     if (!is_contain(hash)) {
-        _images.insert(make_pair(hash, ImageWrapper::create(desc, _rp)));
+        _images.insert(make_pair(hash, ImageWrapper::create(desc, pipeline())));
     }
     return _images[hash];
 }
 
 void ImagePool::prepare() noexcept {
     for (auto &iter : _images) {
-        _rp->stream() << iter.second.upload();
+        pipeline()->stream() << iter.second.upload();
     }
-    _rp->stream() << synchronize() << commit();
+    pipeline()->stream() << synchronize() << commit();
+}
+
+Pipeline *ImagePool::pipeline() {
+    return Global::instance().pipeline();
 }
 
 }// namespace vision

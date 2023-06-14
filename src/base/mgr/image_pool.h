@@ -37,13 +37,13 @@ public:
 
 class ImagePool {
 private:
-    Pipeline *_rp{nullptr};
     map<uint64_t, ImageWrapper> _images;
 
 public:
-    explicit ImagePool(Pipeline *rp) : _rp(rp) {}
+    ImagePool() = default;
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
     void prepare() noexcept;
+    [[nodiscard]] Pipeline *pipeline();
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
 
