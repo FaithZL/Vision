@@ -73,7 +73,7 @@ void App::on_key_event(int key, int action) noexcept {
         default:
             return;
     }
-    need_update = true;
+    invalidation = true;
 }
 
 void App::on_window_size_change(uint2 size) noexcept {
@@ -81,7 +81,7 @@ void App::on_window_size_change(uint2 size) noexcept {
 }
 
 void App::on_scroll_event(float2 scroll) noexcept {
-    need_update = true;
+    invalidation = true;
     Camera *camera = pipeline().scene().camera();
     camera->update_fov_y(scroll.y);
 }
@@ -113,7 +113,7 @@ void App::on_cursor_move(float2 pos) noexcept {
     } else {
         return;
     }
-    need_update = true;
+    invalidation = true;
 }
 
 void App::on_mouse_event(int button, int action, float2 pos) noexcept {
@@ -127,14 +127,14 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
 
 void App::update(double dt) noexcept {
     pipeline().upload_data();
-    if (need_update) {
-        need_update = false;
-        pipeline().update();
+    if (invalidation) {
+        invalidation = false;
+        pipeline().invalidate();
     }
-    auto &radiance = pipeline().scene().radiance_film()->tone_mapped_buffer();
     pipeline().render(dt);
-    radiance.download_immediately();
-    window->set_background(radiance.data());
+    auto &view_buffer = pipeline().view_buffer();
+    view_buffer.download_immediately();
+    window->set_background(view_buffer.data());
     check_and_save();
 }
 

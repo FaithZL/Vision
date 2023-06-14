@@ -51,7 +51,7 @@ public:
     bool left_key_press{false};
     bool right_key_press{false};
     bool need_save{false};
-    bool need_update{false};
+    bool invalidation{false};
     LaunchParams params;
 
 public:

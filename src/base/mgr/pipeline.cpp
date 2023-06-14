@@ -31,6 +31,10 @@ void Pipeline::init_postprocessor(const SceneDesc &scene_desc) {
     _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
 }
 
+RegistrableManaged<float4> &Pipeline::view_buffer() {
+    return scene().radiance_film()->tone_mapped_buffer();
+}
+
 void Pipeline::change_resolution(uint2 res) noexcept {
     auto film = _scene.camera()->radiance_film();
     film->set_resolution(res);

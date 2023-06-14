@@ -38,11 +38,30 @@ private:
 public:
     explicit Pipeline(Device *device);
     explicit Pipeline(const PipelineDesc &desc);
-    void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
-    void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
+    [[nodiscard]] Spectrum &spectrum() noexcept;
+    [[nodiscard]] const Spectrum &spectrum() const noexcept;
+
+    /// virtual function start
+    virtual void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
+    virtual void init_postprocessor(const SceneDesc &scene_desc);
+    [[nodiscard]] virtual RegistrableManaged<float4> &view_buffer();
+    virtual void change_resolution(uint2 res) noexcept;
+    virtual void invalidate() noexcept {
+        _frame_index = 0;
+        _total_time = 0;
+    }
+    virtual void prepare_geometry() noexcept;
+    virtual void compile_shaders() noexcept;
+    virtual void prepare() noexcept override;
+    virtual void upload_data() noexcept { _scene.upload_data(); }
+    virtual void render(double dt) noexcept;
+    [[nodiscard]] virtual float4 *final_picture() noexcept;
+    [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
+    /// virtual function end
+
     template<typename T>
     requires is_buffer_or_view_v<T>
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
@@ -64,27 +83,14 @@ public:
     [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
     [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
     void prepare_resource_array() noexcept;
-    [[nodiscard]] Spectrum &spectrum() noexcept;
-    [[nodiscard]] const Spectrum &spectrum() const noexcept;
-    void change_resolution(uint2 res) noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {
         return image_pool().obtain_image(desc);
     }
-    void update() noexcept {
-        _frame_index = 0;
-        _total_time = 0;
-    }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
-    void prepare() noexcept override;
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
-    [[nodiscard]] float4 *final_picture() noexcept;
-    void prepare_geometry() noexcept;
-    void compile_shaders() noexcept;
-    [[nodiscard]] uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
-    void upload_data() noexcept { _scene.upload_data(); }
-    void render(double dt) noexcept;
+
     /// for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
