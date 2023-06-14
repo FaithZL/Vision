@@ -60,7 +60,6 @@ public:
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
-        desc.scene = this;
         auto ret = dynamic_cast<T *>(NodeMgr::instance().load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;

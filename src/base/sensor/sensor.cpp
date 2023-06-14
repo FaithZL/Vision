@@ -10,8 +10,8 @@ using namespace ocarina;
 
 Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
-      _filter(desc.scene->load<Filter>(desc.filter_desc)),
-      _radiance_film(desc.scene->load<Film>(desc.film_desc)),
+      _filter(scene().load<Filter>(desc.filter_desc)),
+      _radiance_film(scene().load<Film>(desc.film_desc)),
       _medium(desc.medium.id) {}
 
 void Sensor::prepare() noexcept {

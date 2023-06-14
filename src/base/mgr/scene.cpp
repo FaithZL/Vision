@@ -29,7 +29,6 @@ void Scene::init(const SceneDesc &scene_desc) {
 }
 
 Slot Scene::create_slot(const SlotDesc &desc) {
-    desc.scene = this;
     ShaderNode *shader_node = load_shader_node(desc.node);
     return Slot(shader_node, desc.channels);
 }

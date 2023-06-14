@@ -74,8 +74,8 @@ private:
 public:
     explicit MixMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _mat0(desc.scene->load<Material>(*desc.mat0)),
-          _mat1(desc.scene->load<Material>(*desc.mat1)),
+          _mat0(scene().load<Material>(*desc.mat0)),
+          _mat1(scene().load<Material>(*desc.mat1)),
           _scale(scene().create_slot(desc.slot("scale", 0.5f, Number))) {}
 
     OC_SERIALIZABLE_FUNC(*_mat0, *_mat1, *_scale.node())

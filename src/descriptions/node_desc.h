@@ -51,7 +51,6 @@ protected:
 public:
     string sub_type;
     string name;
-    mutable Scene *scene{nullptr};
     mutable fs::path scene_path;
 
 protected:
