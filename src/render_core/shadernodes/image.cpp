@@ -5,6 +5,7 @@
 #include "base/shader_graph/shader_node.h"
 #include "rhi/common.h"
 #include "base/mgr/pipeline.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 using namespace ocarina;
@@ -16,7 +17,7 @@ private:
 public:
     explicit Image(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
-          _image_wrapper(desc.scene->pipeline()->obtain_image(desc)) {
+          _image_wrapper(Global::instance().pipeline()->obtain_image(desc)) {
         _tex_id = _image_wrapper.id();
     }
     OC_SERIALIZABLE_FUNC(_tex_id)

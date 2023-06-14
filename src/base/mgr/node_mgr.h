@@ -16,6 +16,7 @@ class NodeMgr {
 public:
     using Container = std::list<Node::Wrapper>;
     using Iterator = Container::iterator;
+
 private:
     std::list<Node::Wrapper> _all_nodes;
 
@@ -41,4 +42,4 @@ public:
     [[nodiscard]] ShaderNode *load_shader_node(const ShaderNodeDesc &desc);
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
 };
-}
+}// namespace vision

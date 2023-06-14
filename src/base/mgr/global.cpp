@@ -3,6 +3,7 @@
 //
 
 #include "global.h"
+#include "pipeline.h"
 
 namespace vision {
 
@@ -14,6 +15,15 @@ Global &Global::instance() {
     }
     return *s_global;
 }
+
+Global::~Global() {
+    NodeMgr::destroy_instance();
+    Context::destroy_instance();
+}
+
+void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
+
+Pipeline *Global::pipeline() { return _pipeline; }
 
 void Global::destroy_instance() {
     if (s_global) {

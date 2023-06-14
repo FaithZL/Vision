@@ -14,8 +14,8 @@ private:
 public:
     explicit Multiply(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
-          _lhs(desc.scene->create_slot(*desc.slot("lhs"))),
-          _rhs(desc.scene->create_slot(*desc.slot("rhs"))) {}
+          _lhs(Global::node_mgr().create_slot(*desc.slot("lhs"))),
+          _rhs(Global::node_mgr().create_slot(*desc.slot("rhs"))) {}
 
     OC_SERIALIZABLE_FUNC(*_lhs.node(), *_rhs.node())
     [[nodiscard]] bool is_uniform() const noexcept override {

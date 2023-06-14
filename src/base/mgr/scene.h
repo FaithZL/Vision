@@ -5,7 +5,7 @@
 #pragma once
 
 #include "descriptions/scene_desc.h"
-#include "node_mgr.h"
+#include "global.h"
 #include "base/sensor/camera.h"
 #include "base/sampler.h"
 #include "base/shape.h"
@@ -38,11 +38,10 @@ private:
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
     Spectrum *_spectrum{nullptr};
-    Pipeline *_rp{nullptr};
     friend class Pipeline;
 
 public:
-    explicit Scene(Pipeline *rp);
+    Scene() = default;
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }

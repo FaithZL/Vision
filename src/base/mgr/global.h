@@ -8,7 +8,7 @@
 #include "rhi/context.h"
 
 namespace vision {
-
+class Pipeline;
 class Global {
 private:
     Global() = default;
@@ -17,10 +17,22 @@ private:
     Global operator=(const Global &) = delete;
     Global operator=(Global &&) = delete;
     static Global *s_global;
+    ~Global();
+
+private:
+    Pipeline *_pipeline{nullptr};
 
 public:
     [[nodiscard]] static Global &instance();
     static void destroy_instance();
+    void set_pipeline(Pipeline *pipeline);
+    [[nodiscard]] Pipeline *pipeline();
+    [[nodiscard]] static decltype(auto) node_mgr() {
+        return NodeMgr::instance();
+    }
+    [[nodiscard]] static decltype(auto) context() {
+        return Context::instance();
+    }
 };
 
 }// namespace vision

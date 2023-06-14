@@ -13,6 +13,7 @@
 #include "util/image_io.h"
 #include "core/logging.h"
 #include "base/denoiser.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 
@@ -58,6 +59,7 @@ public:
         : cli_parser(make_unique<CLIParser>(argc, argv)),
           device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())),
           rp(create_pipeline()) {
+        Global::instance().set_pipeline(&rp);
         init(argc);
     }
     [[nodiscard]] Pipeline create_pipeline() { return Pipeline{&device}; }

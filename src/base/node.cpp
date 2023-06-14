@@ -4,15 +4,16 @@
 
 #include "mgr/pipeline.h"
 #include "node.h"
+#include "mgr/global.h"
 
 namespace vision {
 
 Pipeline *Node::pipeline() noexcept {
-    return _scene->pipeline();
+    return Global::instance().pipeline();
 }
 
 const Pipeline *Node::pipeline() const noexcept {
-    return _scene->pipeline();
+    return Global::instance().pipeline();
 }
 
 Spectrum &Node::spectrum() noexcept {

@@ -22,8 +22,8 @@ class Spectrum;
 
 class Pipeline {
 private:
-    Device *_device;
-    Scene _scene{this};
+    Device *_device{};
+    Scene _scene{};
     Geometry _geometry{this};
     ResourceArray _resource_array{};
     mutable Stream _stream;

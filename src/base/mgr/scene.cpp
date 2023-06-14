@@ -9,10 +9,7 @@
 
 namespace vision {
 
-Scene::Scene(Pipeline *rp)
-    : _rp(rp) {}
-
-Pipeline *Scene::pipeline() noexcept { return _rp; }
+Pipeline *Scene::pipeline() noexcept { return Global::instance().pipeline(); }
 
 void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
@@ -43,7 +40,7 @@ void Scene::prepare() noexcept {
     _camera->update_device_data();
     prepare_lights();
     prepare_materials();
-    _rp->spectrum().prepare();
+    pipeline()->spectrum().prepare();
 }
 
 void Scene::prepare_lights() noexcept {
