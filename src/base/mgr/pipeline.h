@@ -51,6 +51,14 @@ public:
     handle_ty register_texture(const Texture &texture) noexcept {
         return _resource_array.emplace(texture);
     }
+    template<typename T>
+    requires is_buffer_or_view_v<T>
+    void set_buffer(handle_ty index, T &&buffer) noexcept {
+        _resource_array.set_buffer(index, OC_FORWARD(buffer));
+    }
+    void set_texture(handle_ty index, const Texture &texture) noexcept {
+        _resource_array.set_texture(index, texture);
+    }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
