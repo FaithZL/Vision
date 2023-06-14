@@ -41,13 +41,12 @@ public:
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
-    [[nodiscard]] Spectrum &spectrum() noexcept;
-    [[nodiscard]] const Spectrum &spectrum() const noexcept;
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     virtual void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] virtual RegistrableManaged<float4> &view_buffer();
+    virtual void preprocess() noexcept {}
     virtual void change_resolution(uint2 res) noexcept;
     virtual void invalidate() noexcept {
         _frame_index = 0;

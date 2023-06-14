@@ -58,14 +58,6 @@ void Pipeline::prepare_resource_array() noexcept {
             << synchronize() << commit();
 }
 
-Spectrum &Pipeline::spectrum() noexcept {
-    return *_scene.spectrum();
-}
-
-const Spectrum &Pipeline::spectrum() const noexcept {
-    return *_scene.spectrum();
-}
-
 void Pipeline::deregister_buffer(handle_ty index) noexcept {
     _resource_array->remove_buffer(index);
 }

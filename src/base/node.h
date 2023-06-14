@@ -34,8 +34,8 @@ public:
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
     [[nodiscard]] const Spectrum &spectrum() const noexcept;
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}
     [[nodiscard]] string name() const noexcept { return _name; }

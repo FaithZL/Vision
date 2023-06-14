@@ -17,11 +17,11 @@ Scene &Node::scene() noexcept {
 }
 
 Spectrum &Node::spectrum() noexcept {
-    return pipeline()->spectrum();
+    return *pipeline()->scene().spectrum();
 }
 
 const Spectrum &Node::spectrum() const noexcept {
-    return pipeline()->spectrum();
+    return *pipeline()->scene().spectrum();
 }
 
 Device &Node::device() noexcept {
