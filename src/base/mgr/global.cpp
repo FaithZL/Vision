@@ -19,6 +19,7 @@ Global &Global::instance() {
 Global::~Global() {
     NodeMgr::destroy_instance();
     Context::destroy_instance();
+    ImagePool::destroy_instance();
 }
 
 void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }

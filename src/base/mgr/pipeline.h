@@ -20,7 +20,10 @@ class Spectrum;
     [[nodiscard]] const ImageIO &member() const noexcept { return _##member; } \
     [[nodiscard]] ImageIO &member() noexcept { return _##member; }
 
-class Pipeline {
+class Pipeline : public Node {
+public:
+    using Desc = PipelineDesc;
+
 private:
     Device *_device{};
     Scene _scene{};
@@ -34,6 +37,7 @@ private:
 
 public:
     explicit Pipeline(Device *device);
+    explicit Pipeline(const PipelineDesc &desc);
     void init_scene(const SceneDesc &scene_desc) { _scene.init(scene_desc); }
     void init_postprocessor(const SceneDesc &scene_desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
@@ -65,7 +69,7 @@ public:
         _total_time = 0;
     }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
-    void prepare();
+    void prepare() noexcept override;
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
     [[nodiscard]] float4 *final_picture() noexcept;
     void prepare_geometry() noexcept;

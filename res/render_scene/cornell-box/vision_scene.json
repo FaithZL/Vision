@@ -947,6 +947,9 @@
 			"backend": "GPU"
 		}
 	},
+	"pipeline": {
+		"type": "offline"
+	},
 	"output" : {
 		"spp" : 1024,
 		"save_exit" : false,

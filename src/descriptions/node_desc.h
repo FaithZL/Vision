@@ -183,6 +183,15 @@ public:
     }
 };
 
+struct PipelineDesc : public NodeDesc {
+public:
+    mutable Device *device{nullptr};
+
+public:
+    VISION_DESC_COMMON(Pipeline)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct ToneMapperDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(ToneMapper)

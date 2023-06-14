@@ -17,6 +17,15 @@ Pipeline::Pipeline(Device *device)
     Printer::instance().init(*device);
 }
 
+Pipeline::Pipeline(const vision::PipelineDesc &desc)
+    : Node(desc),
+      _device(desc.device),
+      _geometry(this),
+      _stream(device().create_stream()),
+      _resource_array(device().create_resource_array()) {
+    Printer::instance().init(device());
+}
+
 void Pipeline::init_postprocessor(const SceneDesc &scene_desc) {
     _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
     _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
@@ -65,7 +74,7 @@ void Pipeline::compile_shaders() noexcept {
     _scene.integrator()->compile_shader();
 }
 
-void Pipeline::prepare() {
+void Pipeline::prepare() noexcept {
     auto pixel_num = resolution().x * resolution().y;
     _final_picture.reset_all(device(), pixel_num);
     _scene.prepare();

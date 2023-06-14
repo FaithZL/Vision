@@ -204,6 +204,13 @@ void ToneMapperDesc::init(const vision::ParameterSet &ps) noexcept {
     set_parameter(param);
 }
 
+void PipelineDesc::init(const vision::ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("offline");
+    ParameterSet param = ps.value("param", DataWrap::object());
+    set_parameter(param);
+}
+
 void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("oidn");

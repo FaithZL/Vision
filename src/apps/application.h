@@ -29,7 +29,7 @@ struct LaunchParams {
 
     void init(const CLIParser *cli_parser) noexcept {
         if (cli_parser == nullptr) {
-            return ;
+            return;
         }
         working_dir = cli_parser->working_dir();
         scene_path = cli_parser->scene_path();
@@ -46,7 +46,7 @@ public:
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
-    Pipeline rp;
+    Pipeline *rp{};
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};
@@ -59,13 +59,13 @@ public:
         : cli_parser(make_unique<CLIParser>(argc, argv)),
           device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())),
           rp(create_pipeline()) {
-        Global::instance().set_pipeline(&rp);
         init(argc);
     }
-    [[nodiscard]] Pipeline create_pipeline() { return Pipeline{&device}; }
+    [[nodiscard]] Pipeline *create_pipeline() { return new Pipeline{&device}; }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;
+    [[nodiscard]] Pipeline& pipeline() { return *rp; }
     void check_and_save() noexcept;
     void save_result() noexcept;
     void register_event() noexcept;

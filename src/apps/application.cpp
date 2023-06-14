@@ -11,6 +11,7 @@ using namespace ocarina;
 
 void App::init(int argc) {
     core::log_level_info();
+    Global::instance().set_pipeline(rp);
     params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
@@ -28,16 +29,16 @@ void App::init(int argc) {
 
 void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
-    rp.init_scene(scene_desc);
-    rp.init_postprocessor(scene_desc);
-    window = Context::instance().create_window("LajiRender", rp.resolution(), "gl");
-    rp.prepare();
+    pipeline().init_scene(scene_desc);
+    pipeline().init_postprocessor(scene_desc);
+    window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
+    pipeline().prepare();
     register_event();
 }
 
 void App::on_key_event(int key, int action) noexcept {
     double dt = window->dt();
-    Camera *camera = rp.scene().camera();
+    Camera *camera = pipeline().scene().camera();
     float3 forward = camera->forward();
     float3 up = camera->up();
     float3 right = camera->right();
@@ -68,17 +69,17 @@ void App::on_key_event(int key, int action) noexcept {
 }
 
 void App::on_window_size_change(uint2 size) noexcept {
-    rp.change_resolution(size);
+    pipeline().change_resolution(size);
 }
 
 void App::on_scroll_event(float2 scroll) noexcept {
     need_update = true;
-    Camera *camera = rp.scene().camera();
+    Camera *camera = pipeline().scene().camera();
     camera->update_fov_y(scroll.y);
 }
 
 void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
-    Camera *camera = rp.scene().camera();
+    Camera *camera = pipeline().scene().camera();
     float sensitivity = camera->sensitivity();
     camera->update_yaw(d_yaw * sensitivity);
     camera->update_pitch(d_pitch * sensitivity);
@@ -94,7 +95,7 @@ void App::on_cursor_move(float2 pos) noexcept {
     if (right_key_press) {
         update_camera_view(delta.x, -delta.y);
     } else if (left_key_press) {
-        Camera *camera = rp.scene().camera();
+        Camera *camera = pipeline().scene().camera();
         float3 forward = camera->forward();
         float3 right = camera->right();
         delta *= 0.05f;
@@ -117,13 +118,13 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
 }
 
 void App::update(double dt) noexcept {
-    rp.upload_data();
+    pipeline().upload_data();
     if (need_update) {
         need_update = false;
-        rp.update();
+        pipeline().update();
     }
-    auto &radiance = rp.scene().radiance_film()->tone_mapped_buffer();
-    rp.render(dt);
+    auto &radiance = pipeline().scene().radiance_film()->tone_mapped_buffer();
+    pipeline().render(dt);
     radiance.download_immediately();
     window->set_background(radiance.data());
     check_and_save();
@@ -131,14 +132,14 @@ void App::update(double dt) noexcept {
 
 void App::check_and_save() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-    if (rp.frame_index() == desc.spp || need_save) {
+    if (pipeline().frame_index() == desc.spp || need_save) {
         save_result();
     }
 }
 
 void App::save_result() noexcept {
     OutputDesc desc = scene_desc.output_desc;
-    ImageIO::save_image(desc.fn, PixelStorage::FLOAT4, rp.resolution(), rp.final_picture());
+    ImageIO::save_image(desc.fn, PixelStorage::FLOAT4, pipeline().resolution(), pipeline().final_picture());
     if (desc.save_exit) {
         exit(0);
     }
