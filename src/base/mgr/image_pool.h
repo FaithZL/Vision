@@ -38,12 +38,19 @@ public:
 class ImagePool {
 private:
     map<uint64_t, ImageWrapper> _images;
+    ImagePool() = default;
+    static ImagePool *s_image_pool;
+    ImagePool(const ImagePool &) = delete;
+    ImagePool(ImagePool &&) = delete;
+    ImagePool operator=(const ImagePool &) = delete;
+    ImagePool operator=(ImagePool &&) = delete;
+    [[nodiscard]] Pipeline *pipeline();
 
 public:
-    ImagePool() = default;
+    static ImagePool &instance();
+    static void destroy_instance();
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
     void prepare() noexcept;
-    [[nodiscard]] Pipeline *pipeline();
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
 

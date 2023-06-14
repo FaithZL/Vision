@@ -28,7 +28,6 @@ private:
     ResourceArray _resource_array{};
     mutable Stream _stream;
     uint _frame_index{};
-    ImagePool _image_pool{};
     double _total_time{};
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
@@ -50,6 +49,7 @@ public:
     }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
+    [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
     [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
     void prepare_resource_array() noexcept;
     [[nodiscard]] Spectrum &spectrum() noexcept;
@@ -58,7 +58,7 @@ public:
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {
-        return _image_pool.obtain_image(desc);
+        return image_pool().obtain_image(desc);
     }
     void update() noexcept {
         _frame_index = 0;

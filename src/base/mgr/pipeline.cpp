@@ -69,7 +69,7 @@ void Pipeline::prepare() {
     auto pixel_num = resolution().x * resolution().y;
     _final_picture.reset_all(device(), pixel_num);
     _scene.prepare();
-    _image_pool.prepare();
+    image_pool().prepare();
     prepare_geometry();
     prepare_resource_array();
     compile_shaders();

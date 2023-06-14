@@ -6,6 +6,7 @@
 
 #include "node_mgr.h"
 #include "rhi/context.h"
+#include "image_pool.h"
 
 namespace vision {
 class Pipeline;
@@ -27,6 +28,9 @@ public:
     static void destroy_instance();
     void set_pipeline(Pipeline *pipeline);
     [[nodiscard]] Pipeline *pipeline();
+    [[nodiscard]] ImagePool &image_pool() {
+        return ImagePool::instance();
+    }
     [[nodiscard]] static decltype(auto) node_mgr() {
         return NodeMgr::instance();
     }

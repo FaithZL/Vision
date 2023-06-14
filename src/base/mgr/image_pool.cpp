@@ -57,4 +57,20 @@ Pipeline *ImagePool::pipeline() {
     return Global::instance().pipeline();
 }
 
+ImagePool *ImagePool::s_image_pool = nullptr;
+
+ImagePool &ImagePool::instance() {
+    if (s_image_pool == nullptr) {
+        s_image_pool = new ImagePool();
+    }
+    return *s_image_pool;
+}
+
+void ImagePool::destroy_instance() {
+    if (s_image_pool) {
+        delete s_image_pool;
+        s_image_pool = nullptr;
+    }
+}
+
 }// namespace vision
