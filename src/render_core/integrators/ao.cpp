@@ -54,14 +54,13 @@ public:
                         wi = square_to_hemisphere(sampler->next_2d());
                         pdf = uniform_hemisphere_PDF();
                     }
+                    it.s_uvn.z = face_forward(it.s_uvn.normal(), -rs.direction());
                     wi = it.s_uvn.to_world(wi);
                     Bool occ = geom.trace_any(it.spawn_ray(wi));
-                    Float3 normal = face_forward(it.g_uvn.normal(), -rs.direction());
                     $if(!occ) {
-                        L += dot(wi, normal) / (pdf * _sample_num);
+                        L += dot(wi, it.s_uvn.normal()) / (pdf * _sample_num);
                     };
                 };
-
                 $break;
             };
 
