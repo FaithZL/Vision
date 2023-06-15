@@ -12,15 +12,15 @@ using namespace ocarina;
 
 void App::init(int argc) {
     core::log_level_info();
+    if (argc == 1 || cli_parser->has_help_cmd()) {
+        cli_parser->print_help();
+        exit(0);
+    }
     Global::instance().set_pipeline(rp);
     params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
         Context::instance().clear_cache();
-    }
-    if (argc == 1) {
-        cli_parser->print_help();
-        exit(0);
     }
     if (cli_parser) {
         cli_parser->try_print_help_and_exit();
