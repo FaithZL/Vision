@@ -19,7 +19,12 @@ private:
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc)
-        : Pipeline(desc) {}
+        : Pipeline(desc) {
+//        UVSpreaderDesc spreader_desc;
+//        spreader_desc.sub_type = "xatlas";
+        _uv_spreader = Global::node_mgr().load<UVSpreader>(desc.uv_spreader_desc);
+        _rasterizer = Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc);
+    }
 
     void preprocess() noexcept override {
     }

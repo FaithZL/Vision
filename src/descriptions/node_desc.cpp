@@ -217,6 +217,7 @@ void PipelineDesc::init(const vision::ParameterSet &ps) noexcept {
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
     rasterizer_desc.init(param.value("rasterizer", DataWrap::object()));
+    uv_spreader_desc.init(param.value("uv_spreader", DataWrap::object()));
 }
 
 void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
