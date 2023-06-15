@@ -7,18 +7,32 @@
 #include "core/basic_types.h"
 #include "node.h"
 #include "shape.h"
+#include "base/mgr/pipeline.h"
+#include "mgr/global.h"
 
 namespace vision {
 
 using namespace ocarina;
 
-struct BakedShape {
-    Shape *shape{};
-    uint2 resolution{};
-    RegistrableManaged<float4> normal;
-    RegistrableManaged<float4> position;
+struct UVSpreadResult {
+    // Not normalized - values are in Atlas width and height range.
+    vector<float2> uv;
+    vector<Triangle> triangle;
 };
 
+struct BakedShape {
+public:
+    Shape *shape{};
+    uint2 resolution{};
+    RegistrableManaged<float4> normal{Global::instance().pipeline()->resource_array()};
+    RegistrableManaged<float4> position{Global::instance().pipeline()->resource_array()};
+    vector<UVSpreadResult> results;
+
+public:
+    BakedShape() = default;
+    BakedShape(Shape *shape, uint2 res, vector<UVSpreadResult> datas)
+        : shape(shape), resolution(res), results(ocarina::move(datas)) {}
+};
 
 class UVSpreader : public Node {
 public:

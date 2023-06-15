@@ -110,8 +110,8 @@ public:
                                           ai_face.mIndices[2],
                                           ai_face.mIndices[3]);
                 } else {
-//                    OC_WARNING("Only triangles and quads supported: ", ai_mesh->mName.data, " num is ",
-//                               ai_face.mNumIndices);
+                    //                    OC_WARNING("Only triangles and quads supported: ", ai_mesh->mName.data, " num is ",
+                    //                               ai_face.mNumIndices);
                     continue;
                 }
             }
@@ -142,8 +142,10 @@ public:
         }
     }
 
-    void for_each_mesh(const std::function<void (vision::Mesh &)> &func) noexcept override {
-        std::for_each(_meshes.begin(), _meshes.end(), func);
+    void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
+        for (uint i = 0; i < _meshes.size(); ++i) {
+            func(_meshes[i], i);
+        }
     }
 
     void update_material_id(uint id) noexcept override {

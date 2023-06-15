@@ -45,7 +45,7 @@ public:
     [[nodiscard]] bool has_material() const noexcept { return handle.mat_id != InvalidUI32; }
     [[nodiscard]] bool has_emission() const noexcept { return handle.light_id != InvalidUI32; }
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
-    virtual void for_each_mesh(const std::function<void(vision::Mesh &)> &func) noexcept = 0;
+    virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
 };
 
 }// namespace vision
@@ -73,8 +73,8 @@ public:
     void init_aabb() noexcept { aabb = compute_aabb(); }
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_area() const noexcept override;
-    void for_each_mesh(const std::function<void (vision::Mesh &)> &func) noexcept override {
-        func(*this);
+    void for_each_mesh(const std::function<void (vision::Mesh &,uint)> &func) noexcept override {
+        func(*this, 0);
     }
 };
 

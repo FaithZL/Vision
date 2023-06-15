@@ -66,10 +66,10 @@ public:
         xatlas::SetProgressCallback(_atlas, progress_callback, &_stopwatch);
     }
 
-    [[nodiscard]] static xatlas::MeshDecl mesh_decl(vision::Mesh *mesh) {
+    [[nodiscard]] static xatlas::MeshDecl mesh_decl(vision::Mesh &mesh) {
         xatlas::MeshDecl ret;
-        vector<Vertex> &vertices = mesh->vertices;
-        vector<Triangle> &triangle = mesh->triangles;
+        vector<Vertex> &vertices = mesh.vertices;
+        vector<Triangle> &triangle = mesh.triangles;
 
         // fill position
         ret.vertexCount = vertices.size();
@@ -111,38 +111,40 @@ public:
 
     [[nodiscard]] BakedShape apply(vision::Shape *shape) override {
         Guard __(this);
-        vision::Mesh *mesh = dynamic_cast<vision::Mesh *>(shape);
-        xatlas::MeshDecl decl = mesh_decl(mesh);
 
-        xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
-        if (error != xatlas::AddMeshError::Success) {
-            destroy_xatlas();
-            OC_ERROR("xatlas adding mesh error");
-        }
+        shape->for_each_mesh([&](vision::Mesh &mesh, uint) {
+            xatlas::MeshDecl decl = mesh_decl(mesh);
+            xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
+            if (error != xatlas::AddMeshError::Success) {
+                destroy_xatlas();
+                OC_ERROR("xatlas adding mesh error");
+            }
+        });
 
         xatlas::AddMeshJoin(_atlas);
-        auto &a = *_atlas;
         xatlas::Generate(_atlas, chart_options(), pack_options());
-        a = *_atlas;
-        auto &m = *a.meshes;
-        m = *a.meshes;
 
-        vector<xatlas::Vertex> vert;
-        for (int i = 0; i < m.vertexCount; ++i) {
-            auto &v = m.vertexArray[i];
-            v.uv[0] /= a.width;
-            v.uv[1] /= a.height;
-            vert.push_back(m.vertexArray[i]);
+        vector<UVSpreadResult> results;
+
+        for (int i = 0; i < _atlas->meshCount; ++i) {
+            UVSpreadResult result;
+            xatlas::Mesh &mesh = _atlas->meshes[i];
+            for (int j = 0; j < mesh.vertexCount; ++j) {
+                xatlas::Vertex &vertex = mesh.vertexArray[j];
+                result.uv.push_back(make_float2(vertex.uv[0], vertex.uv[1]));
+            }
+
+            for (int j = 0; j < mesh.indexCount; j += 3) {
+                uint i0 = mesh.indexArray[j];
+                uint i1 = mesh.indexArray[j + 1];
+                uint i2 = mesh.indexArray[j + 2];
+                result.triangle.emplace_back(i0, i1, i2);
+            }
+
+            results.push_back(result);
         }
 
-        vector<uint> indices;
-        for (int i = 0; i < m.indexCount; ++i) {
-            indices.push_back(m.indexArray[i]);
-        }
-
-        uint2 res = make_uint2(_atlas->width, _atlas->height);
-
-        return {};
+        return {shape, make_uint2(_atlas->width, _atlas->height), ocarina::move(results)};
     }
 };
 
