@@ -27,7 +27,18 @@ public:
 public:
     explicit UVSpreader(const UVSpreaderDesc &desc)
         : Node(desc) {}
-    virtual void apply(vision::Shape *shape) = 0;
+    [[nodiscard]] virtual BakedShape apply(vision::Shape *shape) = 0;
+};
+
+class Rasterizer : public Node {
+public:
+    using Desc = RasterizerDesc;
+
+public:
+    explicit Rasterizer(const RasterizerDesc &desc)
+        : Node(desc) {}
+
+    virtual void apply(BakedShape &baked_shape) noexcept = 0;
 };
 
 }// namespace vision

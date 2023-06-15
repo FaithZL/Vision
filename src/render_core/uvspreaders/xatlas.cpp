@@ -2,7 +2,7 @@
 // Created by Zero on 2023/6/2.
 //
 
-#include "base/uv_spreader.h"
+#include "base/bake.h"
 #include "ext/xatlas/xatlas.h"
 
 namespace vision {
@@ -109,13 +109,12 @@ public:
         return ret;
     }
 
-    void apply(vision::Shape *shape) override {
+    [[nodiscard]] BakedShape apply(vision::Shape *shape) override {
         Guard __(this);
         vision::Mesh *mesh = dynamic_cast<vision::Mesh *>(shape);
         xatlas::MeshDecl decl = mesh_decl(mesh);
 
         xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
-        //         error = xatlas::AddMesh(_atlas, decl, 1);
         if (error != xatlas::AddMeshError::Success) {
             destroy_xatlas();
             OC_ERROR("xatlas adding mesh error");
@@ -143,6 +142,7 @@ public:
 
         uint2 res = make_uint2(_atlas->width, _atlas->height);
 
+        return {};
     }
 };
 

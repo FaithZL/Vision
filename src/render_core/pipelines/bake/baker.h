@@ -5,8 +5,7 @@
 #pragma once
 
 #include "base/mgr/pipeline.h"
-#include "base/uv_spreader.h"
-#include "base/rasterizer.h"
+#include "base/bake.h"
 #include "expander.h"
 
 namespace vision {
@@ -16,6 +15,7 @@ private:
     UVSpreader *_uv_spreader{};
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
+    vector<BakedShape> _baked_shapes;
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc)
@@ -35,9 +35,15 @@ public:
     }
 
     void preprocess() noexcept override {
-        auto &meshes = _scene.shapes();
-        for_each_need_bake([&](const auto &item) {
-            _uv_spreader->apply(item);
+        // uv spread
+        for_each_need_bake([&](auto &item) {
+            BakedShape baked_shape = _uv_spreader->apply(item);
+            _baked_shapes.push_back(ocarina::move(baked_shape));
+        });
+
+        // raster
+        std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+
         });
     }
 };
