@@ -19,7 +19,7 @@ public:
 public:
     explicit UVSpreader(const UVSpreaderDesc &desc)
         : Node(desc) {}
-    virtual void apply(vision::Mesh *mesh) = 0;
+    virtual void apply(vision::Shape *shape) = 0;
 };
 
 }// namespace vision

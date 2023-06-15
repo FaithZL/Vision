@@ -26,8 +26,8 @@ public:
 
     template<typename Func>
     void for_each_need_bake(Func &&func) {
-        auto &meshes = _scene.meshes();
-        std::for_each(meshes.begin(), meshes.end(), [&](vision::Mesh *item) {
+        auto &meshes = _scene.shapes();
+        std::for_each(meshes.begin(), meshes.end(), [&](vision::Shape *item) {
             if (!item->has_emission()) {
                 func(item);
             }
@@ -35,7 +35,7 @@ public:
     }
 
     void preprocess() noexcept override {
-        auto &meshes = _scene.meshes();
+        auto &meshes = _scene.shapes();
         for_each_need_bake([&](const auto &item) {
             _uv_spreader->apply(item);
         });

@@ -60,7 +60,7 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
-        vision::Mesh *shape = const_cast<vision::Mesh *>(load<vision::Mesh>(desc));
+        Shape *shape = const_cast<Shape *>(load<Shape>(desc));
         if (shape->has_material()) {
             const Material *material = _materials[shape->handle.mat_id];
             shape->update_material_id(_materials.encode_id(shape->handle.mat_id, material));
@@ -70,7 +70,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             shape->update_light_id(_light_sampler->lights().encode_id(shape->handle.light_id, light));
         }
         _aabb.extend(shape->aabb);
-        _meshes.push_back(shape);
+        _shapes.push_back(shape);
     }
 }
 

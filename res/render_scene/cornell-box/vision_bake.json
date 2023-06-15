@@ -204,13 +204,14 @@
 			"type" : "cube",
 			"name" : "shape_5",
 			"param" : {
+				"fn" : "cube.obj",
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				                                "material" : "ShortBox",
+				"material" : "ShortBox",
 				//				"material" : "substrate",
 				//				"material" : "Mirror",
-//				"material" : "Metal",
+				//				"material" : "Metal",
 				//				                "material" : "disney",
 				//								                "material" : "mix",
 				//				                                "material" : "Glass",
@@ -254,11 +255,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				                "material": "TallBox",
+				"material" : "TallBox",
 				//                "material": "Mirror2",
 				//                "material": "Glass2",
 				//				"material" : "Ag",
-//				"material" : "Glass",
+				//				"material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -494,10 +495,10 @@
 			"type" : "matte",
 			"name" : "Ceiling",
 			"param" : {
-				"color" :{
-					"type": "number",
-					"param": {
-						"value":  [
+				"color" : {
+					"type" : "number",
+					"param" : {
+						"value" : [
 							0.725,
 							0.71,
 							0.68
@@ -510,16 +511,16 @@
 			"type" : "matte",
 			"name" : "BackWall",
 			"param" : {
-//				"color" : {
-//					"channels" : "xyz",
-//					"node" : {
-//						"type" : "image",
-//						"param" : {
-//							"fn" : "checker.jpg",
-//							"color_space" : "srgb"
-//						}
-//					}
-//				}
+				//				"color" : {
+				//					"channels" : "xyz",
+				//					"node" : {
+				//						"type" : "image",
+				//						"param" : {
+				//							"fn" : "checker.jpg",
+				//							"color_space" : "srgb"
+				//						}
+				//					}
+				//				}
 				"color" : {
 					"channels" : "xyz",
 					"node" : {
@@ -538,9 +539,9 @@
 							"rhs" : {
 								"channels" : "xyz",
 								"node" : {
-									"type": "number",
-									"param": {
-										"value": [0.9,1,0.9]
+									"type" : "number",
+									"param" : {
+										"value" : [0.9, 1, 0.9]
 									}
 								}
 							}
@@ -778,9 +779,9 @@
 					],
 					"fb_state" : 0,
 					"tone_mapper" : {
-//												"type": "reinhard",
-//												"type": "linear",
-//												"type": "aces",
+						//												"type": "reinhard",
+						//												"type": "linear",
+						//												"type": "aces",
 						"type" : "exposure",
 						"param" : {
 							"exposure" : 1.0
@@ -811,7 +812,7 @@
 			"rr_threshold" : 1,
 			"sample_num" : 32,
 			"distance" : 2.2,
-			"cos_sample": true
+			"cos_sample" : true
 		}
 	},
 	"spectrum" : {
@@ -947,11 +948,11 @@
 	"denoiser" : {
 		"type" : "oidn",
 		"param" : {
-			"backend": "GPU"
+			"backend" : "GPU"
 		}
 	},
-	"pipeline": {
-		"type": "baker"
+	"pipeline" : {
+		"type" : "baker"
 	},
 	"output" : {
 		"spp" : 1024,
