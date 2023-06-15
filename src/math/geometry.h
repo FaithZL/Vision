@@ -219,11 +219,15 @@ public:
     array<float, 3> pos;
     array<float, 3> n;
     array<float, 2> uv;
+    array<float, 2> uv2;
 
 public:
     Vertex() = default;
-    Vertex(float3 p, float3 n, float2 uv)
-        : pos{p.x, p.y, p.z}, n{n.x, n.y, n.z}, uv{uv.x, uv.y} {}
+    Vertex(float3 p, float3 n, float2 uv, float2 uv2 = make_float2(0.f))
+        : pos{p.x, p.y, p.z},
+          n{n.x, n.y, n.z},
+          uv{uv.x, uv.y},
+          uv2{uv2.x, uv2.y} {}
 
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
@@ -235,6 +239,10 @@ public:
 
     [[nodiscard]] auto tex_coord() const noexcept {
         return make_float2(uv[0], uv[1]);
+    }
+
+    [[nodiscard]] auto lightmap_uv() const noexcept {
+        return make_float2(uv2[0], uv2[1]);
     }
 
 #define VS_ATTR_STRIDE_OFFSET(attr)                        \
@@ -247,21 +255,27 @@ public:
     VS_ATTR_STRIDE_OFFSET(pos)
     VS_ATTR_STRIDE_OFFSET(n)
     VS_ATTR_STRIDE_OFFSET(uv)
+    VS_ATTR_STRIDE_OFFSET(uv2)
 #undef VS_ATTR_STRIDE_OFFSET
 };
 }// namespace geometry
 }// namespace vision
 
-OC_STRUCT(vision::Vertex, pos, n, uv){
+OC_STRUCT(vision::Vertex, pos, n, uv, uv2){
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
-    }
+}
 
-    [[nodiscard]] auto normal() const noexcept {
-        return make_float3(n[0], n[1], n[2]);
-    }
+[[nodiscard]] auto normal() const noexcept {
+    return make_float3(n[0], n[1], n[2]);
+}
 
-    [[nodiscard]] auto tex_coord() const noexcept {
-        return make_float2(uv[0], uv[1]);
-    }
-};
+[[nodiscard]] auto tex_coord() const noexcept {
+    return make_float2(uv[0], uv[1]);
+}
+
+[[nodiscard]] auto lightmap_uv() const noexcept {
+    return make_float2(uv2[0], uv2[1]);
+}
+}
+;
