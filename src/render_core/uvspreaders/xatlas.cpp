@@ -90,7 +90,7 @@ public:
         xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
         if (error != xatlas::AddMeshError::Success) {
             destroy_xatlas();
-            OC_ERROR_FORMAT("xatlas adding mesh error");
+            OC_ERROR("xatlas adding mesh error");
         }
 
         xatlas::AddMeshJoin(_atlas);
