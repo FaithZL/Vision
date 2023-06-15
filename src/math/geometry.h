@@ -245,17 +245,14 @@ public:
         return make_float2(uv2[0], uv2[1]);
     }
 
-#define VS_ATTR_STRIDE_OFFSET(attr)                        \
+#define VS_ATTR_OFFSET(attr)                               \
     [[nodiscard]] static size_t attr##_offset() noexcept { \
         return OC_OFFSET_OF(Vertex, attr);                 \
-    }                                                      \
-    [[nodiscard]] static size_t attr##_stride() noexcept { \
-        return sizeof(attr);                               \
     }
-    VS_ATTR_STRIDE_OFFSET(pos)
-    VS_ATTR_STRIDE_OFFSET(n)
-    VS_ATTR_STRIDE_OFFSET(uv)
-    VS_ATTR_STRIDE_OFFSET(uv2)
+    VS_ATTR_OFFSET(pos)
+    VS_ATTR_OFFSET(n)
+    VS_ATTR_OFFSET(uv)
+    VS_ATTR_OFFSET(uv2)
 #undef VS_ATTR_STRIDE_OFFSET
 };
 }// namespace geometry
