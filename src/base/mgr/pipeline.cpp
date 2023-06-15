@@ -42,7 +42,7 @@ void Pipeline::change_resolution(uint2 res) noexcept {
 }
 
 void Pipeline::prepare_geometry() noexcept {
-    for (const Shape *shape : _scene._shapes) {
+    for (const Shape *shape : _scene._meshes) {
         shape->fill_geometry(_geometry);
     }
     _geometry.reset_device_buffer();

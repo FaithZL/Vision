@@ -32,7 +32,7 @@ private:
     Sampler *_sampler{nullptr};
     Integrator *_integrator{nullptr};
     LightSampler *_light_sampler{nullptr};
-    vector<Shape *> _shapes;
+    vector<vision::Mesh *> _meshes;
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
     WarperDesc _warper_desc;
@@ -51,6 +51,8 @@ public:
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
+    [[nodiscard]] auto& meshes() const noexcept { return _meshes; }
+    [[nodiscard]] auto& meshes() noexcept { return _meshes; }
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
     [[nodiscard]] const auto &materials() const noexcept { return _materials; }
@@ -78,7 +80,7 @@ public:
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
-    [[nodiscard]] Shape *get_shape(uint id) noexcept { return _shapes[id]; }
+    [[nodiscard]] Shape *get_shape(uint id) noexcept { return _meshes[id]; }
 };
 
 #undef MAKE_GETTER

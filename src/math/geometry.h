@@ -236,20 +236,32 @@ public:
     [[nodiscard]] auto tex_coord() const noexcept {
         return make_float2(uv[0], uv[1]);
     }
+
+#define VS_ATTR_STRIDE_OFFSET(attr)                        \
+    [[nodiscard]] static size_t attr##_offset() noexcept { \
+        return OC_OFFSET_OF(Vertex, attr);                 \
+    }                                                      \
+    [[nodiscard]] static size_t attr##_stride() noexcept { \
+        return sizeof(attr);                               \
+    }
+    VS_ATTR_STRIDE_OFFSET(pos)
+    VS_ATTR_STRIDE_OFFSET(n)
+    VS_ATTR_STRIDE_OFFSET(uv)
+#undef VS_ATTR_STRIDE_OFFSET
 };
 }// namespace geometry
 }// namespace vision
+
 OC_STRUCT(vision::Vertex, pos, n, uv){
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
-}
+    }
 
-[[nodiscard]] auto normal() const noexcept {
-    return make_float3(n[0], n[1], n[2]);
-}
+    [[nodiscard]] auto normal() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
 
-[[nodiscard]] auto tex_coord() const noexcept {
-    return make_float2(uv[0], uv[1]);
-}
-}
-;
+    [[nodiscard]] auto tex_coord() const noexcept {
+        return make_float2(uv[0], uv[1]);
+    }
+};
