@@ -15,6 +15,7 @@ add_subdirectory(tonemappers)
 add_subdirectory(denoisers)
 add_subdirectory(uvspreaders)
 add_subdirectory(pipelines)
+add_subdirectory(rasterizers)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -26,6 +27,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-lightsampler
         vision-sensor
         vision-pipeline
+        vision-rasterizer
         vision-light
         vision-film
         vision-shadernode

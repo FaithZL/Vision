@@ -6,7 +6,7 @@
 
 #include "base/mgr/pipeline.h"
 #include "base/uv_spreader.h"
-#include "rasterizer.h"
+#include "base/rasterizer.h"
 #include "expander.h"
 
 namespace vision {
@@ -14,7 +14,7 @@ namespace vision {
 class BakerPipeline : public Pipeline {
 private:
     UVSpreader * _uv_spreader{};
-    UP<Rasterizer> _rasterizer;
+    Rasterizer *_rasterizer{};
     UP<Expander> _expander;
 
 public:

@@ -183,9 +183,16 @@ public:
     }
 };
 
+struct RasterizerDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(Rasterizer)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct PipelineDesc : public NodeDesc {
 public:
     mutable Device *device{nullptr};
+    RasterizerDesc rasterizer_desc;
 
 public:
     VISION_DESC_COMMON(Pipeline)
