@@ -27,8 +27,8 @@ struct UVSpreadMesh {
 };
 
 struct UVSpreadResult {
-    uint width;
-    uint height;
+    uint width{};
+    uint height{};
     vector<UVSpreadMesh> meshes;
 };
 
@@ -38,6 +38,8 @@ private:
     uint2 _resolution{};
     RegistrableManaged<float4> _normal{Global::instance().pipeline()->resource_array()};
     RegistrableManaged<float4> _position{Global::instance().pipeline()->resource_array()};
+    Buffer<Vertex> _vertices;
+    Buffer<Triangle> _triangles;
 
 public:
     BakedShape() = default;
@@ -69,7 +71,7 @@ public:
         return _resolution.x * _resolution.y;
     }
 
-    void allocate_device_memory() noexcept {
+    void prepare_for_rasterize() noexcept {
         _normal.reset_all(_shape->device(), pixel_num());
         _position.reset_all(_shape->device(), pixel_num());
         shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
@@ -77,7 +79,7 @@ public:
         });
     }
 
-    [[nodiscard]] UVSpreadResult load_uv_spread_result_from_cache() const {
+    [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const {
         DataWrap json = create_json_from_file(uv_config_fn());
         auto res = json["resolution"];
         UVSpreadResult spread_result;
@@ -124,10 +126,10 @@ public:
         Context::write_file(uv_config, data_str);
     }
 
-    void remedy_vertices(const UVSpreadResult &result) {
+    void remedy_vertices(UVSpreadResult result) {
         _resolution = make_uint2(result.width, result.height);
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-            const UVSpreadMesh &u_mesh = result.meshes[i];
+            UVSpreadMesh &u_mesh = result.meshes[i];
             vector<Vertex> vertices;
             vertices.reserve(u_mesh.vertices.size());
             for (auto &vert : u_mesh.vertices) {
@@ -136,7 +138,7 @@ public:
                 vertices.push_back(vertex);
             }
             mesh.vertices = ocarina::move(vertices);
-            mesh.triangles = u_mesh.triangles;
+            mesh.triangles = ocarina::move(u_mesh.triangles);
         });
     }
 };

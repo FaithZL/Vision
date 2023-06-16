@@ -252,7 +252,7 @@ public:
         return make_float2(uv2[0], uv2[1]);
     }
 
-    [[nodiscard]] void set_lightmap_uv(float2 uv) noexcept {
+    void set_lightmap_uv(float2 uv) noexcept {
         uv2 = {uv.x, uv.y};
     }
 

@@ -76,17 +76,17 @@ public:
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
             UVSpreadResult spread_result;
             if (baked_shape.has_uv_cache()) {
-                spread_result = baked_shape.load_uv_spread_result_from_cache();
+                spread_result = baked_shape.load_uv_config_from_cache();
             } else {
                 spread_result = _uv_spreader->apply(baked_shape.shape());
                 baked_shape.save_to_cache(spread_result);
             }
-            baked_shape.remedy_vertices(spread_result);
+            baked_shape.remedy_vertices(ocarina::move(spread_result));
         });
 
-        // raster
+        // rasterize
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-            baked_shape.allocate_device_memory();
+            baked_shape.prepare_for_rasterize();
             _rasterizer->apply(baked_shape);
         });
     }
