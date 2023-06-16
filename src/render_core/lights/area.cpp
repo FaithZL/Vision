@@ -11,7 +11,6 @@ namespace vision {
 
 class AreaLight : public Light {
 private:
-    using _serial_ty = Light;
     Serial<uint> _inst_idx{InvalidUI32};
     Serial<uint> _two_sided{0u};
     Warper *_warper{nullptr};

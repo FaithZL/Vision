@@ -15,7 +15,7 @@ ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, Pipeline *rp) {
         image_io = ImageIO::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));
     } else {
         ColorSpace cs = desc["color_space"].as_string() == "linear" ? LINEAR : SRGB;
-        image_io = ImageIO::load(desc.file_name(), cs);
+        image_io = ImageIO::load(Global::instance().scene_path() / desc.file_name(), cs);
     }
     auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());
     uint id = rp->register_texture(texture);

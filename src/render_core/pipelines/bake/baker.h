@@ -24,6 +24,10 @@ public:
           _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
     }
 
+    void try_make_cache_directory() const noexcept {
+        Context &context = Global::context().instance();
+    }
+
     template<typename Func>
     void for_each_need_bake(Func &&func) {
         auto &meshes = _scene.shapes();
@@ -35,6 +39,8 @@ public:
     }
 
     void preprocess() noexcept override {
+        try_make_cache_directory();
+
         // uv spread
         for_each_need_bake([&](auto &item) {
             BakedShape baked_shape = _uv_spreader->apply(item);

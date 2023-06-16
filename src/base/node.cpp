@@ -16,6 +16,10 @@ Scene &Node::scene() noexcept {
     return pipeline()->scene();
 }
 
+fs::path Node::scene_path() noexcept {
+    return Global::instance().scene_path();
+}
+
 Spectrum &Node::spectrum() noexcept {
     return *scene().spectrum();
 }
@@ -23,6 +27,5 @@ Spectrum &Node::spectrum() noexcept {
 Device &Node::device() noexcept {
     return pipeline()->device();
 }
-
 
 }// namespace vision

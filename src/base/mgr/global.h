@@ -22,6 +22,7 @@ private:
 
 private:
     Pipeline *_pipeline{nullptr};
+    fs::path _scene_path;
 
 public:
     [[nodiscard]] static Global &instance();
@@ -31,6 +32,8 @@ public:
     [[nodiscard]] ImagePool &image_pool() {
         return ImagePool::instance();
     }
+    void set_scene_path(const fs::path &sp) noexcept;
+    [[nodiscard]] fs::path scene_path() const noexcept;
     [[nodiscard]] static decltype(auto) node_mgr() {
         return NodeMgr::instance();
     }

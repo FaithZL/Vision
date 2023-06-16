@@ -111,7 +111,6 @@ namespace detail {
 void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
     for (uint i = 0; i < materials.size(); ++i) {
         MaterialDesc md;
-        md.scene_path = scene_path;
         md.init(materials[i]);
         material_descs.push_back(md);
         mat_name_to_id[md.name] = i;
@@ -122,7 +121,6 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     for (uint i = 0; i < shapes.size(); ++i) {
         ShapeDesc sd;
         sd.index = i;
-        sd.scene_path = scene_path;
         sd.init(shapes[i]);
         if (mat_name_to_id.contains(sd.material.name)) {
             sd.material.id = mat_name_to_id[sd.material.name];
@@ -208,7 +206,6 @@ void SceneDesc::check_meshes() noexcept {
 void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap()));
     spectrum_desc.init(data.value("spectrum", DataWrap::object()));
-    light_sampler_desc.scene_path = scene_path;
     light_sampler_desc.init(data.value("light_sampler", DataWrap()));
     sampler_desc.init(data.value("sampler", DataWrap()));
     warper_desc = WarperDesc("Warper");
@@ -219,7 +216,7 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     sensor_desc.init(data.value("camera", DataWrap()));
     sensor_desc.medium.name = mediums_desc.global;
     sensor_desc.medium.fill_id(mediums_desc.medium_name_to_id);
-    output_desc.init(data.value("output", DataWrap()), scene_path);
+    output_desc.init(data.value("output", DataWrap()));
     render_setting.init(data.value("render_setting", DataWrap::object()));
     denoiser_desc.init(data.value("denoiser", DataWrap::object()));
     pipeline_desc.init(data.value("pipeline", DataWrap::object()));

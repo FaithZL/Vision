@@ -17,7 +17,7 @@ string NodeDesc::parameter_string() const noexcept {
 }
 
 fs::path NodeDesc::file_name() const noexcept {
-    return scene_path / (*this)["fn"].as_string();
+    return  (*this)["fn"].as_string();
 }
 
 void NodeDesc::set_parameter(const ParameterSet &ps) noexcept {
@@ -70,7 +70,6 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         outside_medium.name = m["outside"].as_string();
     }
     if (_parameter.contains("emission")) {
-        emission.scene_path = scene_path;
         emission.set_value("inst_id", index);
         emission.init(_parameter["emission"]);
     }
@@ -129,9 +128,9 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
     DataWrap data = ps.data();
     if (data.contains("channels")) {
         channels = ps["channels"].as_string();
-        node.init(ps["node"], scene_path);
+        node.init(ps["node"]);
     } else {
-        node.init(ps, scene_path);
+        node.init(ps);
     }
     if (dim() > 1 && node["value"].data().is_number()) {
         DataWrap value = DataWrap::array();
@@ -149,10 +148,8 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("matte");
     if (sub_type == "mix") {
         mat0 = make_shared<MaterialDesc>();
-        mat0->scene_path = scene_path;
         mat0->init(ps["param"]["mat0"]);
         mat1 = make_shared<MaterialDesc>();
-        mat1->scene_path = scene_path;
         mat1->init(ps["param"]["mat1"]);
         set_parameter(ps["param"]);
     } else {
@@ -186,7 +183,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("area");
     ParameterSet param = ps["param"];
     set_parameter(ps["param"]);
-    color.init(param["color"], scene_path);
+    color.init(param["color"]);
     o2w.init(param.data().value("o2w", DataWrap()));
 }
 
@@ -233,7 +230,7 @@ SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, ShaderNodeType type) c
     ShaderNodeDesc node{data, type};
     uint size = data.is_number() ? 1 : data.size();
     SP<SlotDesc> slot_desc = make_shared<SlotDesc>(node, size);
-    slot_desc->init(_parameter[key], scene_path);
+    slot_desc->init(_parameter[key]);
     return slot_desc;
 }
 
@@ -266,7 +263,6 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     set_parameter(param);
     for (const DataWrap &data : param["lights"].data()) {
         LightDesc light_desc;
-        light_desc.scene_path = scene_path;
         light_desc.init(data);
         light_descs.push_back(light_desc);
     }
@@ -297,7 +293,7 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
     }
     spp = ps["spp"].as_uint(0u);
     save_exit = ps["save_exit"].as_uint(0u);
-    fn = (scene_path / ps["fn"].as_string()).string();
+    fn = ps["fn"].as_string();
 }
 
 void RenderSettingDesc::init(const ParameterSet &ps) noexcept {

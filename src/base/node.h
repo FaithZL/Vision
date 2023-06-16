@@ -36,6 +36,7 @@ public:
     explicit Node(const NodeDesc &desc) : _name(desc.name) {}
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
+    [[nodiscard]] static fs::path scene_path() noexcept;
     [[nodiscard]] static Spectrum &spectrum() noexcept;
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}

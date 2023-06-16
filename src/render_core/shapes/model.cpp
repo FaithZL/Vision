@@ -136,8 +136,7 @@ public:
     }
 
     void load(const ShapeDesc &desc) noexcept {
-        auto fn = desc.scene_path / desc["fn"].as_string();
-        fs::path directory = desc.scene_path;
+        auto fn = scene_path() / desc["fn"].as_string();
         Assimp::Importer ai_importer;
         const aiScene *ai_scene = load_scene(fn, ai_importer, desc["swap_handed"].as_bool(false),
                                              desc["smooth"].as_bool(false),

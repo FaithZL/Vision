@@ -33,6 +33,7 @@ struct LaunchParams {
         }
         working_dir = cli_parser->working_dir();
         scene_path = cli_parser->scene_path();
+        Global::instance().set_scene_path(scene_path);
         scene_file = cli_parser->scene_file();
         output_dir = cli_parser->output_dir();
         clear_cache = cli_parser->clear_cache();

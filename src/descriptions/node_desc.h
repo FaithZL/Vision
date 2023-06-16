@@ -51,7 +51,6 @@ protected:
 public:
     string sub_type;
     string name;
-    mutable fs::path scene_path;
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -150,7 +149,6 @@ public:
 
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
-        this->scene_path = scene_path;
         init(ps);
     }
 };
@@ -178,7 +176,7 @@ public:
 
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
-        this->scene_path = scene_path;
+//        this->scene_path = scene_path;
         init(ps);
     }
 };
@@ -318,7 +316,7 @@ public:
                                 ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
         SlotDesc slot_desc{node, type_dimension_v<T>};
-        slot_desc.init(_parameter[key], scene_path);
+        slot_desc.init(_parameter[key]);
         return slot_desc;
     }
 
@@ -327,7 +325,7 @@ public:
         ShaderNodeDesc node{data, type};
         uint size = data.is_number() ? 1 : data.size();
         SlotDesc slot_desc{node, size};
-        slot_desc.init(_parameter[key], scene_path);
+        slot_desc.init(_parameter[key]);
         return slot_desc;
     }
 };
@@ -357,10 +355,6 @@ public:
     uint spp{0u};
     bool save_exit{false};
     VISION_DESC_COMMON(Output)
-    void init(const ParameterSet &ps, fs::path scene_path) noexcept {
-        this->scene_path = ocarina::move(scene_path);
-        init(ps);
-    }
     void init(const ParameterSet &ps) noexcept override;
 };
 
