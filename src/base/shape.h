@@ -64,6 +64,9 @@ public:
     vector<Vertex> vertices;
     vector<Triangle> triangles;
 
+protected:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+
 public:
     explicit Mesh(const ShapeDesc &desc);
     Mesh(vector<Vertex> vert, vector<Triangle> tri)

@@ -26,6 +26,17 @@ void Mesh::fill_geometry(Geometry &data) const noexcept {
     data.accept(vertices, triangles, handle);
 }
 
+uint64_t Mesh::_compute_hash() const noexcept {
+    uint64_t ret = Hash64::default_seed;
+    for (Vertex vertex : vertices) {
+        ret = hash64(vertex, ret);
+    }
+    for (Triangle triangle : triangles) {
+        ret = hash64(triangle, ret);
+    }
+    return ret;
+}
+
 Box3f Mesh::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : triangles) {

@@ -28,13 +28,15 @@ public:
 protected:
     string _name;
 
+protected:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
+
 public:
     Node() = default;
     explicit Node(const NodeDesc &desc) : _name(desc.name) {}
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static Spectrum &spectrum() noexcept;
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}
     [[nodiscard]] string name() const noexcept { return _name; }

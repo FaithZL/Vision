@@ -18,6 +18,15 @@ private:
     uchar _outside_medium{InvalidUI8};
     float4x4 o2w;
 
+protected:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+        uint64_t ret = Hash64::default_seed;
+        for (const Mesh &mesh : _meshes) {
+            ret = hash64(mesh.hash(), ret);
+        }
+        return ret;
+    }
+
 public:
     explicit Model(const ShapeDesc &desc)
         : Shape(desc),
