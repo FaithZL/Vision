@@ -13,7 +13,6 @@ class EnvironmentLight : public Light {
 private:
     Serial<float4x4> _w2o;
     Warper2D *_warper{};
-    using _serial_ty = Light;
 
 public:
     explicit EnvironmentLight(const LightDesc &desc)
