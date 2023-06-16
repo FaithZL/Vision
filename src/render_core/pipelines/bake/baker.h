@@ -45,6 +45,27 @@ public:
         });
     }
 
+    void prepare() noexcept override {
+        auto pixel_num = resolution().x * resolution().y;
+        _final_picture.reset_all(device(), pixel_num);
+        _scene.prepare();
+        image_pool().prepare();
+        prepare_geometry();
+        prepare_resource_array();
+        compile_shaders();
+        preprocess();
+    }
+
+    void render(double dt) noexcept override {
+        Clock clk;
+        _scene.integrator()->render();
+        double ms = clk.elapse_ms();
+        _total_time += ms;
+        ++_frame_index;
+        cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+        Printer::instance().retrieve_immediately();
+    }
+
     void preprocess() noexcept override {
         // fill baked shape list
         for_each_need_bake([&](Shape *item) {
@@ -63,7 +84,7 @@ public:
 
         // raster
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-            baked_shape.allocate_maps();
+            baked_shape.allocate_device_memory();
             _rasterizer->apply(baked_shape);
         });
     }

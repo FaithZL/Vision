@@ -56,10 +56,10 @@ public:
         _total_time = 0;
     }
     virtual void prepare_geometry() noexcept;
-    virtual void compile_shaders() noexcept;
-    virtual void prepare() noexcept override;
+    virtual void compile_shaders() noexcept = 0;
+    virtual void prepare() noexcept override = 0;
+    virtual void render(double dt) noexcept = 0;
     virtual void upload_data() noexcept { _scene.upload_data(); }
-    virtual void render(double dt) noexcept;
     [[nodiscard]] virtual float4 *final_picture() noexcept;
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     /// virtual function end

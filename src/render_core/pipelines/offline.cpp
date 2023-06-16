@@ -21,6 +21,20 @@ public:
         compile_shaders();
         preprocess();
     }
+
+    void compile_shaders() noexcept override {
+        _scene.integrator()->compile_shader();
+    }
+
+    void render(double dt) noexcept override {
+        Clock clk;
+        _scene.integrator()->render();
+        double ms = clk.elapse_ms();
+        _total_time += ms;
+        ++_frame_index;
+        cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+        Printer::instance().retrieve_immediately();
+    }
 };
 
 }// namespace vision

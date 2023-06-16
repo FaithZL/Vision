@@ -66,30 +66,7 @@ void Pipeline::deregister_texture(handle_ty index) noexcept {
     _resource_array->remove_texture(index);
 }
 
-void Pipeline::compile_shaders() noexcept {
-    _scene.integrator()->compile_shader();
-}
 
-void Pipeline::prepare() noexcept {
-    auto pixel_num = resolution().x * resolution().y;
-    _final_picture.reset_all(device(), pixel_num);
-    _scene.prepare();
-    image_pool().prepare();
-    prepare_geometry();
-    prepare_resource_array();
-    compile_shaders();
-    preprocess();
-}
-
-void Pipeline::render(double dt) noexcept {
-    Clock clk;
-    _scene.integrator()->render();
-    double ms = clk.elapse_ms();
-    _total_time += ms;
-    ++_frame_index;
-    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
-    Printer::instance().retrieve_immediately();
-}
 
 float4 *Pipeline::final_picture() noexcept {
     RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();

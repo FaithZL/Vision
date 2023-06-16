@@ -51,17 +51,9 @@ public:
         return resolution.x * resolution.y;
     }
 
-    void allocate_normal() noexcept {
+    void allocate_device_memory() noexcept {
         normal.reset_all(shape->device(), pixel_num());
-    }
-
-    void allocate_position() noexcept {
         position.reset_all(shape->device(), pixel_num());
-    }
-
-    void allocate_maps() noexcept {
-        allocate_normal();
-        allocate_position();
     }
 
     void load_uv_spread_result_from_cache() {
