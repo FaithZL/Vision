@@ -22,10 +22,11 @@ public:
         : Pipeline(desc),
           _uv_spreader(Global::node_mgr().load<UVSpreader>(desc.uv_spreader_desc)),
           _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
+        create_cache_directory_if_necessary();
     }
 
-    void try_make_cache_directory() const noexcept {
-        Context &context = Global::context().instance();
+    static void create_cache_directory_if_necessary()  {
+        Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
 
     template<typename Func>
@@ -39,8 +40,6 @@ public:
     }
 
     void preprocess() noexcept override {
-        try_make_cache_directory();
-
         // uv spread
         for_each_need_bake([&](auto &item) {
             BakedShape baked_shape = _uv_spreader->apply(item);

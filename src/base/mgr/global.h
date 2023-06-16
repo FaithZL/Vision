@@ -34,6 +34,7 @@ public:
     }
     void set_scene_path(const fs::path &sp) noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;
+    [[nodiscard]] fs::path scene_cache_path() const noexcept;
     [[nodiscard]] static decltype(auto) node_mgr() {
         return NodeMgr::instance();
     }

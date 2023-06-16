@@ -34,6 +34,10 @@ fs::path Global::scene_path() const noexcept {
     return _scene_path;
 }
 
+fs::path Global::scene_cache_path() const noexcept {
+    return _scene_path / ".cache";
+}
+
 void Global::destroy_instance() {
     if (s_global) {
         delete s_global;
