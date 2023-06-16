@@ -12,15 +12,22 @@
 #include "descriptions/json_util.h"
 
 namespace vision {
+struct UVSpreadVertex {
+    // Not normalized - values are in Atlas width and height range.
+    float2 uv;
+    uint xref;
+};
+}// namespace vision
+
+OC_STRUCT(vision::UVSpreadVertex, uv, xref){};
+
+namespace vision {
 
 using namespace ocarina;
 
 struct UVSpreadResult {
-    // Not normalized - values are in Atlas width and height range.
-    RegistrableManaged<float2> uv;
-    RegistrableManaged<Triangle> triangles;
-    RegistrableManaged<uint> charts;
-    Buffer<Vertex> device_vertices;
+    vector<UVSpreadVertex> vertices;
+    vector<Triangle> triangles;
 };
 
 struct BakedShape {
@@ -84,14 +91,14 @@ public:
         _resolution = make_uint2(res[0], res[1]);
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             DataWrap elm = json["uv_result"][i];
-            auto uvs = elm["uv"];
+            auto vertices = elm["vertices"];
 
             UVSpreadResult result;
-            for (auto uv : uvs) {
-                result.uv.push_back(make_float2(uv[0], uv[1]));
+            for (auto vertex : vertices) {
+                result.vertices.emplace_back(make_float2(vertex[0], vertex[1]), vertex[2]);
             }
 
-            auto triangles = elm["triangle"];
+            auto triangles = elm["triangles"];
             for (auto tri : triangles) {
                 result.triangles.emplace_back(tri[0], tri[1], tri[2]);
             }
@@ -102,7 +109,6 @@ public:
     void remedy_vertices() {
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             UVSpreadResult &result = _results[i];
-
         });
     }
 
@@ -114,13 +120,13 @@ public:
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             UVSpreadResult &result = _results[i];
             DataWrap elm = DataWrap::object();
-            elm["uv"] = DataWrap::array();
-            for (auto uv : result.uv) {
-                elm["uv"].push_back({uv.x, uv.y});
+            elm["vertices"] = DataWrap::array();
+            for (auto vertex : result.vertices) {
+                elm["vertices"].push_back({vertex.uv.x, vertex.uv.y, vertex.xref});
             }
-            elm["triangle"] = DataWrap::array();
+            elm["triangles"] = DataWrap::array();
             for (Triangle tri : result.triangles) {
-                elm["triangle"].push_back({tri.i, tri.j, tri.k});
+                elm["triangles"].push_back({tri.i, tri.j, tri.k});
             }
             data["uv_result"].push_back(elm);
         });

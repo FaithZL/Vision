@@ -125,13 +125,12 @@ public:
         xatlas::Generate(_atlas, chart_options(), pack_options());
 
         vector<UVSpreadResult> results;
-
         for (int i = 0; i < _atlas->meshCount; ++i) {
             UVSpreadResult result;
             xatlas::Mesh &mesh = _atlas->meshes[i];
             for (int j = 0; j < mesh.vertexCount; ++j) {
                 xatlas::Vertex &vertex = mesh.vertexArray[j];
-                result.uv.push_back(make_float2(vertex.uv[0], vertex.uv[1]));
+                result.vertices.emplace_back(make_float2(vertex.uv[0], vertex.uv[1]), vertex.xref);
             }
 
             for (int j = 0; j < mesh.indexCount; j += 3) {
@@ -140,9 +139,10 @@ public:
                 uint i2 = mesh.indexArray[j + 2];
                 result.triangles.emplace_back(i0, i1, i2);
             }
+
             results.push_back(ocarina::move(result));
         }
-        baked_shape.update_result(ocarina::move(results),make_uint2(_atlas->width, _atlas->height));
+        baked_shape.update_result(ocarina::move(results), make_uint2(_atlas->width, _atlas->height));
     }
 };
 
