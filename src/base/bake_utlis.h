@@ -109,6 +109,15 @@ public:
     void remedy_vertices() {
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             UVSpreadResult &result = _results[i];
+            vector<Vertex> vertices;
+            vertices.reserve(result.vertices.size());
+            for (auto &vert : result.vertices) {
+                Vertex vertex = mesh.vertices[vert.xref];
+                vertex.set_lightmap_uv(vert.uv / make_float2(resolution()));
+                vertices.push_back(vertex);
+            }
+            mesh.vertices = ocarina::move(vertices);
+            mesh.triangles = result.triangles;
         });
     }
 

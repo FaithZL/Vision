@@ -50,10 +50,10 @@ public:
         _final_picture.reset_all(device(), pixel_num);
         _scene.prepare();
         image_pool().prepare();
+        preprocess();
         prepare_geometry();
         prepare_resource_array();
         compile_shaders();
-        preprocess();
     }
 
     void render(double dt) noexcept override {

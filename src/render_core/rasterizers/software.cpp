@@ -8,7 +8,7 @@ namespace vision {
 
 class SoftwareRasterizer : public Rasterizer {
 private:
-    using signature = void(Buffer<Vertex>, Buffer<Triangle>, Buffer<float2>, Buffer<float4>, Buffer<float4>);
+    using signature = void(Buffer<Vertex>, Buffer<Triangle>, Buffer<float4>, Buffer<float4>);
     Shader<signature> _vertex_shader;
 
 public:
@@ -16,7 +16,7 @@ public:
         : Rasterizer(desc) {}
 
     void compile_shader() noexcept override {
-        Kernel vertex_kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles, BufferVar<float2> uv2,
+        Kernel vertex_kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
                                    BufferVar<float4> position, BufferVar<float4> normal) {
 
         };
