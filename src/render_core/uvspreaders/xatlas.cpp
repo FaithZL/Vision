@@ -138,7 +138,7 @@ public:
                 uint i0 = mesh.indexArray[j];
                 uint i1 = mesh.indexArray[j + 1];
                 uint i2 = mesh.indexArray[j + 2];
-                result.triangle.emplace_back(i0, i1, i2);
+                result.triangles.emplace_back(i0, i1, i2);
             }
             results.push_back(ocarina::move(result));
         }
