@@ -33,7 +33,7 @@ protected:
 
 public:
     explicit Film(const FilmDesc &desc);
-    OC_SERIALIZABLE_FUNC(*_tone_mapper)
+    OC_SERIALIZABLE_FUNC(Serializable<float>, *_tone_mapper)
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     void set_resolution(uint2 res) noexcept { _resolution = res; }

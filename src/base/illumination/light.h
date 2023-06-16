@@ -54,7 +54,7 @@ protected:
 
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
-    OC_SERIALIZABLE_FUNC(_scale, *_color.node())
+    OC_SERIALIZABLE_FUNC(Serializable<float>, _scale, *_color.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
@@ -72,9 +72,6 @@ public:
 };
 
 class IPointLight : public Light {
-protected:
-    using _serial_ty = Light;
-
 public:
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,

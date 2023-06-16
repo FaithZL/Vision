@@ -11,9 +11,6 @@ using namespace ocarina;
 
 class RGBFilm : public Film {
 private:
-    using _serial_ty = Film;
-
-private:
     RegistrableManaged<float4> _radiance;
     RegistrableManaged<float4> _frame;
 
@@ -23,7 +20,7 @@ public:
           _radiance(pipeline()->resource_array()),
           _frame(pipeline()->resource_array()) {}
 
-    OC_SERIALIZABLE_FUNC(_radiance, _frame)
+    OC_SERIALIZABLE_FUNC(Film, _radiance, _frame)
 
     void prepare(RegistrableManaged<float4> &managed) noexcept {
         managed.reset_all(device(), pixel_num());

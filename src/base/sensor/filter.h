@@ -37,7 +37,7 @@ public:
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
           _radius(desc["radius"].as_float2(make_float2(1.f))) {}
-    OC_SERIALIZABLE_FUNC(_radius)
+    OC_SERIALIZABLE_FUNC(Serializable<float>, _radius)
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
     [[nodiscard]] Float2 radius() const noexcept { return *_radius; }

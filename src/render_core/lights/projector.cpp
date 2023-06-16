@@ -24,7 +24,7 @@ public:
             _ratio = float(res.x) / res.y;
         }
     }
-    OC_SERIALIZABLE_FUNC(_o2w, _ratio, _angle_y)
+    OC_SERIALIZABLE_FUNC(IPointLight, _o2w, _ratio, _angle_y)
     [[nodiscard]] float3 power() const noexcept override {
         // http://math.stackexchange.com/questions/9819/area-of-a-spherical-triangle
         // Girard's theorem: surface area of a spherical triangle on a unit

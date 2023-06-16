@@ -14,7 +14,7 @@ public:
     explicit ExposureToneMapper(const ToneMapperDesc &desc)
         : ToneMapper(desc),
           _exposure(desc["exposure"].as_float(1.f)) {}
-    OC_SERIALIZABLE_FUNC(_exposure)
+    OC_SERIALIZABLE_FUNC(ToneMapper, _exposure)
     [[nodiscard]] Float4 apply(const ocarina::Float4 &input) const noexcept override {
         return 1.f - exp(-input * *_exposure);
     }

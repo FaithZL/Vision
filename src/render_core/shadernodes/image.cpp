@@ -20,7 +20,7 @@ public:
           _image_wrapper(Global::instance().pipeline()->obtain_image(desc)) {
         _tex_id = _image_wrapper.id();
     }
-    OC_SERIALIZABLE_FUNC(_tex_id)
+    OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,

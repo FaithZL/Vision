@@ -32,7 +32,7 @@ protected:
 
 public:
     explicit Sensor(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(*_filter, *_radiance_film)
+    OC_SERIALIZABLE_FUNC(Serializable<float>, *_filter, *_radiance_film)
     void prepare() noexcept override;
     [[nodiscard]] Filter *filter() noexcept { return _filter; }
     [[nodiscard]] const Filter *filter() const noexcept { return _filter; }

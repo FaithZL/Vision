@@ -17,7 +17,7 @@ public:
           _lhs(Global::node_mgr().create_slot(*desc.slot("lhs"))),
           _rhs(Global::node_mgr().create_slot(*desc.slot("rhs"))) {}
 
-    OC_SERIALIZABLE_FUNC(*_lhs.node(), *_rhs.node())
+    OC_SERIALIZABLE_FUNC(ShaderNode, *_lhs.node(), *_rhs.node())
     [[nodiscard]] bool is_uniform() const noexcept override {
         return _lhs->is_uniform() && _rhs->is_uniform();
     }

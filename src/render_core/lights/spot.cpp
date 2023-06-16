@@ -21,7 +21,7 @@ public:
           _angle(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _falloff(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, _angle.hv()))),
           _direction(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
-    OC_SERIALIZABLE_FUNC(_position, _direction, _angle, _falloff)
+    OC_SERIALIZABLE_FUNC(IPointLight, _position, _direction, _angle, _falloff)
     [[nodiscard]] float3 power() const noexcept override {
         return 2 * Pi * average() * (1 - .5f * (_angle.hv() * 2 + _falloff.hv()));
     }

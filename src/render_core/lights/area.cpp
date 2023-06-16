@@ -22,7 +22,7 @@ public:
           _two_sided{desc["two_sided"].as_bool(false)},
           _inst_idx(desc["inst_id"].as_uint()) {
     }
-    OC_SERIALIZABLE_FUNC(_inst_idx, _two_sided, *_warper)
+    OC_SERIALIZABLE_FUNC(Light, _inst_idx, _two_sided, *_warper)
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
         return _warper->PMF(prim_id);
     }

@@ -15,7 +15,7 @@ public:
     explicit PointLight(const LightDesc &desc)
         : IPointLight(desc),
           _position(desc["position"].as_float3()) {}
-    OC_SERIALIZABLE_FUNC(_position)
+    OC_SERIALIZABLE_FUNC(IPointLight, _position)
     [[nodiscard]] float3 power() const noexcept override {
         return 4 * Pi * average();
     }

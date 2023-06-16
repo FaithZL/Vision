@@ -20,7 +20,7 @@ public:
           _conditional_v_tables(pipeline()->resource_array()),
           _conditional_v_weights(pipeline()->resource_array()) {
     }
-    OC_SERIALIZABLE_FUNC(_marginal, _conditional_v_tables, _conditional_v_weights)
+    OC_SERIALIZABLE_FUNC(Warper2D, _marginal, _conditional_v_tables, _conditional_v_weights)
     void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v
         vector<AliasTable> conditional_v;
