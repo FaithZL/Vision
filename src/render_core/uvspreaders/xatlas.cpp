@@ -109,10 +109,10 @@ public:
         return ret;
     }
 
-    [[nodiscard]] BakedShape apply(vision::Shape *shape) override {
+    void apply(BakedShape &baked_shape) override {
         Guard __(this);
 
-        shape->for_each_mesh([&](vision::Mesh &mesh, uint) {
+        baked_shape.shape->for_each_mesh([&](vision::Mesh &mesh, uint) {
             xatlas::MeshDecl decl = mesh_decl(mesh);
             xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
             if (error != xatlas::AddMeshError::Success) {
@@ -143,8 +143,8 @@ public:
 
             results.push_back(result);
         }
-
-        return {shape, make_uint2(_atlas->width, _atlas->height), ocarina::move(results)};
+        baked_shape.resolution = make_uint2(_atlas->width, _atlas->height);
+        baked_shape.results = ocarina::move(results);
     }
 };
 

@@ -43,7 +43,9 @@ public:
     virtual void update_material_id(uint id) noexcept { handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { handle.light_id = id; }
     [[nodiscard]] bool has_material() const noexcept { return handle.mat_id != InvalidUI32; }
-    [[nodiscard]] bool has_emission() const noexcept { return handle.light_id != InvalidUI32; }
+    [[nodiscard]] bool has_emission() const noexcept {
+        return handle.light_id != InvalidUI32;
+    }
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
 };

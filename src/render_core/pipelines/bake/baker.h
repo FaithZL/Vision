@@ -25,7 +25,7 @@ public:
         create_cache_directory_if_necessary();
     }
 
-    static void create_cache_directory_if_necessary()  {
+    static void create_cache_directory_if_necessary() {
         Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
 
@@ -33,21 +33,27 @@ public:
     void for_each_need_bake(Func &&func) {
         auto &meshes = _scene.shapes();
         std::for_each(meshes.begin(), meshes.end(), [&](vision::Shape *item) {
-            if (!item->has_emission()) {
-                func(item);
+            if (item->has_emission()) {
+                return;
             }
+            func(item);
         });
     }
 
     void preprocess() noexcept override {
-        // uv spread
-        for_each_need_bake([&](auto &item) {
-            BakedShape baked_shape = _uv_spreader->apply(item);
-            _baked_shapes.push_back(ocarina::move(baked_shape));
+        // fill baked shape list
+        for_each_need_bake([&](Shape *item) {
+            _baked_shapes.push_back(BakedShape(item));
         });
 
+        // uv spread
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-            baked_shape.save_uv_spread_result_to_cache();
+            if (baked_shape.has_uv_cache()) {
+                baked_shape.load_uv_spread_result_from_cache();
+            } else {
+                _uv_spreader->apply(baked_shape);
+                baked_shape.save_uv_spread_result_to_cache();
+            }
         });
 
         // raster

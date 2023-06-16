@@ -9,6 +9,7 @@
 #include "shape.h"
 #include "base/mgr/pipeline.h"
 #include "mgr/global.h"
+#include "descriptions/json_util.h"
 
 namespace vision {
 
@@ -30,6 +31,7 @@ public:
 
 public:
     BakedShape() = default;
+    explicit BakedShape(Shape *shape) : shape(shape) {}
     BakedShape(Shape *shape, uint2 res, vector<UVSpreadResult> datas)
         : shape(shape), resolution(res), results(ocarina::move(datas)) {}
 
@@ -43,6 +45,27 @@ public:
 
     [[nodiscard]] bool has_uv_cache() const noexcept {
         return fs::exists(uv_config_fn());
+    }
+
+    void load_uv_spread_result_from_cache() {
+        DataWrap json = create_json_from_file(uv_config_fn());
+        auto res = json["resolution"];
+        resolution = make_uint2(res[0], res[1]);
+        shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+            DataWrap elm = json["uv_result"][i];
+            auto uvs = elm["uv"];
+
+            UVSpreadResult result;
+            for (auto uv : uvs) {
+                result.uv.push_back(make_float2(uv[0], uv[1]));
+            }
+
+            auto triangles = elm["triangle"];
+            for (auto tri : triangles) {
+                result.triangle.push_back(Triangle{tri[0], tri[1], tri[2]});
+            }
+            results.push_back(result);
+        });
     }
 
     void save_uv_spread_result_to_cache() {
@@ -79,7 +102,7 @@ public:
 public:
     explicit UVSpreader(const UVSpreaderDesc &desc)
         : Node(desc) {}
-    [[nodiscard]] virtual BakedShape apply(vision::Shape *shape) = 0;
+    virtual void apply(BakedShape &baked_shape) = 0;
 };
 
 class Rasterizer : public Node {
