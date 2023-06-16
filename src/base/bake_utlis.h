@@ -32,14 +32,18 @@ struct UVSpreadResult {
     vector<UVSpreadMesh> meshes;
 };
 
+struct DeviceMesh {
+    Buffer<Vertex> vertices;
+    Buffer<Triangle> triangles;
+};
+
 struct BakedShape {
 private:
     Shape *_shape{};
     uint2 _resolution{};
     RegistrableManaged<float4> _normal{Global::instance().pipeline()->resource_array()};
     RegistrableManaged<float4> _position{Global::instance().pipeline()->resource_array()};
-    Buffer<Vertex> _vertices;
-    Buffer<Triangle> _triangles;
+    vector<DeviceMesh> _device_meshes;
 
 public:
     BakedShape() = default;
@@ -71,12 +75,26 @@ public:
         return _resolution.x * _resolution.y;
     }
 
+    template<typename Func>
+    void for_each_device_mesh(const Func &func) noexcept {
+        std::for_each(_device_meshes.begin(), _device_meshes.end(), func);
+    }
+
     void prepare_for_rasterize() noexcept {
         _normal.reset_all(_shape->device(), pixel_num());
         _position.reset_all(_shape->device(), pixel_num());
+        auto &stream = shape()->pipeline()->stream();
+        stream << _normal.device_buffer().clear()
+               << _position.device_buffer().clear();
         shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
-
+            DeviceMesh device_mesh;
+            device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
+            device_mesh.triangles = shape()->device().create_buffer<Triangle>(mesh.triangles.size());
+            stream << device_mesh.vertices.upload(mesh.vertices.data())
+                   << device_mesh.triangles.upload(mesh.triangles.data());
+            _device_meshes.push_back(ocarina::move(device_mesh));
         });
+//        stream << synchronize() << commit();
     }
 
     [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const {

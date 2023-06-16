@@ -31,7 +31,6 @@ public:
 
     void compile_shaders() noexcept override {
         _scene.integrator()->compile_shader();
-        _rasterizer->compile_shader();
     }
 
     template<typename Func>
@@ -52,8 +51,8 @@ public:
         image_pool().prepare();
         preprocess();
         prepare_geometry();
-        prepare_resource_array();
         compile_shaders();
+        prepare_resource_array();
     }
 
     void render(double dt) noexcept override {
@@ -85,10 +84,19 @@ public:
         });
 
         // rasterize
+        _rasterizer->compile_shader();
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
             baked_shape.prepare_for_rasterize();
-            _rasterizer->apply(baked_shape);
+//            _rasterizer->apply(baked_shape);
         });
+        std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+//            baked_shape.prepare_for_rasterize();
+            _rasterizer->apply(baked_shape);
+
+        });
+        pipeline()->stream() << synchronize() << commit();
+        Printer::instance().retrieve_immediately();
+        exit(0);
     }
 };
 
