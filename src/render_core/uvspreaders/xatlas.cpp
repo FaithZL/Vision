@@ -112,7 +112,7 @@ public:
     void apply(BakedShape &baked_shape) override {
         Guard __(this);
 
-        baked_shape.shape->for_each_mesh([&](vision::Mesh &mesh, uint) {
+        baked_shape.shape()->for_each_mesh([&](vision::Mesh &mesh, uint) {
             xatlas::MeshDecl decl = mesh_decl(mesh);
             xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
             if (error != xatlas::AddMeshError::Success) {
@@ -140,11 +140,9 @@ public:
                 uint i2 = mesh.indexArray[j + 2];
                 result.triangle.emplace_back(i0, i1, i2);
             }
-
-            results.push_back(result);
+            results.push_back(ocarina::move(result));
         }
-        baked_shape.resolution = make_uint2(_atlas->width, _atlas->height);
-        baked_shape.results = ocarina::move(results);
+        baked_shape.update_result(ocarina::move(results),make_uint2(_atlas->width, _atlas->height));
     }
 };
 
