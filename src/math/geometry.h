@@ -210,6 +210,13 @@ struct Triangle {
 }// namespace vision
 OC_STRUCT(vision::Triangle, i, j, k){};
 
+[[nodiscard]] inline bool operator==(const vision::Triangle &lhs,
+                              const vision::Triangle &rhs) noexcept {
+    return lhs.i == rhs.i &&
+           lhs.j == rhs.j &&
+           lhs.k == rhs.k;
+}
+
 namespace vision {
 using namespace ocarina;
 inline namespace geometry {
@@ -261,17 +268,18 @@ public:
 OC_STRUCT(vision::Vertex, pos, n, uv, uv2){
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
-    }
+}
 
-    [[nodiscard]] auto normal() const noexcept {
-        return make_float3(n[0], n[1], n[2]);
-    }
+[[nodiscard]] auto normal() const noexcept {
+    return make_float3(n[0], n[1], n[2]);
+}
 
-    [[nodiscard]] auto tex_coord() const noexcept {
-        return make_float2(uv[0], uv[1]);
-    }
+[[nodiscard]] auto tex_coord() const noexcept {
+    return make_float2(uv[0], uv[1]);
+}
 
-    [[nodiscard]] auto lightmap_uv() const noexcept {
-        return make_float2(uv2[0], uv2[1]);
-    }
-};
+[[nodiscard]] auto lightmap_uv() const noexcept {
+    return make_float2(uv2[0], uv2[1]);
+}
+}
+;

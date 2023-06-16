@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/mgr/pipeline.h"
-#include "base/bake.h"
+#include "base/bake_utlis.h"
 #include "expander.h"
 
 namespace vision {
@@ -80,6 +80,7 @@ public:
                 _uv_spreader->apply(baked_shape);
                 baked_shape.save_uv_spread_result_to_cache();
             }
+            baked_shape.remedy_vertices();
         });
 
         // raster

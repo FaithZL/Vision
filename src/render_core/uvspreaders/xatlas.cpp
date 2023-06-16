@@ -2,7 +2,7 @@
 // Created by Zero on 2023/6/2.
 //
 
-#include "base/bake.h"
+#include "base/bake_utlis.h"
 #include "ext/xatlas/xatlas.h"
 
 namespace vision {

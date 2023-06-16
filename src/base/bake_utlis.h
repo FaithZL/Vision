@@ -18,7 +18,8 @@ using namespace ocarina;
 struct UVSpreadResult {
     // Not normalized - values are in Atlas width and height range.
     RegistrableManaged<float2> uv;
-    RegistrableManaged<Triangle> triangle;
+    RegistrableManaged<Triangle> triangles;
+    RegistrableManaged<uint> charts;
     Buffer<Vertex> device_vertices;
 };
 
@@ -72,6 +73,9 @@ public:
     void allocate_device_memory() noexcept {
         _normal.reset_all(_shape->device(), pixel_num());
         _position.reset_all(_shape->device(), pixel_num());
+        shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
+
+        });
     }
 
     void load_uv_spread_result_from_cache() {
@@ -89,9 +93,16 @@ public:
 
             auto triangles = elm["triangle"];
             for (auto tri : triangles) {
-                result.triangle.emplace_back(tri[0], tri[1], tri[2]);
+                result.triangles.emplace_back(tri[0], tri[1], tri[2]);
             }
             _results.push_back(ocarina::move(result));
+        });
+    }
+
+    void remedy_vertices() {
+        _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+            UVSpreadResult &result = _results[i];
+
         });
     }
 
@@ -102,15 +113,13 @@ public:
         data["uv_result"] = DataWrap::array();
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             UVSpreadResult &result = _results[i];
-            OC_ASSERT(mesh.vertices.size() == result.uv.host_buffer().size());
-            OC_ASSERT(mesh.triangles.size() == result.triangle.host_buffer().size());
             DataWrap elm = DataWrap::object();
             elm["uv"] = DataWrap::array();
             for (auto uv : result.uv) {
                 elm["uv"].push_back({uv.x, uv.y});
             }
             elm["triangle"] = DataWrap::array();
-            for (Triangle tri : result.triangle) {
+            for (Triangle tri : result.triangles) {
                 elm["triangle"].push_back({tri.i, tri.j, tri.k});
             }
             data["uv_result"].push_back(elm);
