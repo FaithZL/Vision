@@ -7,12 +7,25 @@
 namespace vision {
 
 class SoftwareRasterizer : public Rasterizer {
+private:
+    using signature = void(Buffer<Vertex>, Buffer<Triangle>, Buffer<float2>);
+    Shader<signature> _shader;
+
 public:
     explicit SoftwareRasterizer(const RasterizerDesc &desc)
         : Rasterizer(desc) {}
 
-    void apply(vision::BakedShape &baked_shape) noexcept override {
+    void compile_shader() noexcept override {
+        Kernel kernel = [&](BufferVar<Vertex> vertices,
+                            BufferVar<Triangle> triangles,
+                            BufferVar<float2> uv2) {
+            Var v = vertices.read(0);
+            Var t = triangles.read(0);
+        };
+        _shader = device().compile(kernel);
+    }
 
+    void apply(vision::BakedShape &baked_shape) noexcept override {
     }
 };
 

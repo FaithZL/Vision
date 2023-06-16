@@ -112,7 +112,7 @@ public:
 public:
     explicit Rasterizer(const RasterizerDesc &desc)
         : Node(desc) {}
-
+    virtual void compile_shader() noexcept = 0;
     virtual void apply(BakedShape &baked_shape) noexcept = 0;
 };
 

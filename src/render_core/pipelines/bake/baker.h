@@ -29,6 +29,11 @@ public:
         Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
 
+    void compile_shaders() noexcept override {
+        _scene.integrator()->compile_shader();
+        _rasterizer->compile_shader();
+    }
+
     template<typename Func>
     void for_each_need_bake(Func &&func) {
         auto &meshes = _scene.shapes();
@@ -58,7 +63,7 @@ public:
 
         // raster
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-
+            _rasterizer->apply(baked_shape);
         });
     }
 };
