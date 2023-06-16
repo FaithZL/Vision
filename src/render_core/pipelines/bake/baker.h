@@ -63,6 +63,7 @@ public:
 
         // raster
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+            baked_shape.allocate_maps();
             _rasterizer->apply(baked_shape);
         });
     }

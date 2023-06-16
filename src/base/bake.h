@@ -47,6 +47,23 @@ public:
         return fs::exists(uv_config_fn());
     }
 
+    [[nodiscard]] size_t pixel_num() const noexcept {
+        return resolution.x * resolution.y;
+    }
+
+    void allocate_normal() noexcept {
+        normal.reset_all(shape->device(), pixel_num());
+    }
+
+    void allocate_position() noexcept {
+        position.reset_all(shape->device(), pixel_num());
+    }
+
+    void allocate_maps() noexcept {
+        allocate_normal();
+        allocate_position();
+    }
+
     void load_uv_spread_result_from_cache() {
         DataWrap json = create_json_from_file(uv_config_fn());
         auto res = json["resolution"];
@@ -62,7 +79,7 @@ public:
 
             auto triangles = elm["triangle"];
             for (auto tri : triangles) {
-                result.triangle.push_back(Triangle{tri[0], tri[1], tri[2]});
+                result.triangle.emplace_back(tri[0], tri[1], tri[2]);
             }
             results.push_back(result);
         });

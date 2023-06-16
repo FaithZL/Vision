@@ -21,7 +21,7 @@ void Postprocessor::compile_tone_mapping() noexcept {
 }
 void Postprocessor::tone_mapping(RegistrableManaged<float4> &input, RegistrableManaged<float4> &output) noexcept {
     Stream &stream = _rp->stream();
-    stream << _tone_mapping_shader(input.device(), output.device()).dispatch(_rp->resolution());
+    stream << _tone_mapping_shader(input.device_buffer(), output.device_buffer()).dispatch(_rp->resolution());
     stream << synchronize();
     stream << commit();
 }

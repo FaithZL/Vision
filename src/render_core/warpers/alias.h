@@ -37,7 +37,7 @@ public:
     OC_SERIALIZABLE_FUNC(Warper, _table, _func)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
-    [[nodiscard]] uint size() const noexcept override { return _func.host().size(); }
+    [[nodiscard]] uint size() const noexcept override { return _func.host_buffer().size(); }
     [[nodiscard]] Float PDF(const Uint &i) const noexcept override {
         return select(*integral() > 0, func_at(i) / *integral(), 0.f);
     }

@@ -17,11 +17,11 @@ Geometry::Geometry(Pipeline *rp)
       _mesh_handles(rp->resource_array()) {}
 
 void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle inst) {
-    Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host().size(),
-                             .triangle_offset = (uint)_triangles.host().size()};
+    Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host_buffer().size(),
+                             .triangle_offset = (uint)_triangles.host_buffer().size()};
     _vertices.append(vert);
     _triangles.append(tri);
-    inst.mesh_id = (uint)_mesh_handles.host().size();
+    inst.mesh_id = (uint)_mesh_handles.host_buffer().size();
     _instances.push_back(inst);
     _mesh_handles.push_back(mesh_handle);
 }
@@ -31,17 +31,17 @@ void Geometry::build_meshes() {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = _mesh_handles[mesh_id];
         ocarina::Mesh mesh;
-        if (mesh_id == _mesh_handles.host().size() - 1) {
+        if (mesh_id == _mesh_handles.host_buffer().size() - 1) {
             // last element
-            BufferView<Vertex> verts = _vertices.device().view(mesh_handle.vertex_offset, 0);
-            BufferView<Triangle> tris = _triangles.device().view(mesh_handle.triangle_offset, 0);
+            BufferView<Vertex> verts = _vertices.device_buffer().view(mesh_handle.vertex_offset, 0);
+            BufferView<Triangle> tris = _triangles.device_buffer().view(mesh_handle.triangle_offset, 0);
             mesh = rp->device().create_mesh(verts, tris);
         } else {
             const auto &next_mesh_handle = _mesh_handles[mesh_id + 1];
             uint vert_count = next_mesh_handle.vertex_offset - mesh_handle.vertex_offset;
             uint tri_count = next_mesh_handle.triangle_offset - mesh_handle.triangle_offset;
-            BufferView<Vertex> verts = _vertices.device().view(mesh_handle.vertex_offset, vert_count);
-            BufferView<Triangle> tris = _triangles.device().view(mesh_handle.triangle_offset, tri_count);
+            BufferView<Vertex> verts = _vertices.device_buffer().view(mesh_handle.vertex_offset, vert_count);
+            BufferView<Triangle> tris = _triangles.device_buffer().view(mesh_handle.triangle_offset, tri_count);
             mesh = rp->device().create_mesh(verts, tris);
         }
         _meshes.push_back(std::move(mesh));
