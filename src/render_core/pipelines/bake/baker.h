@@ -69,18 +69,19 @@ public:
     void preprocess() noexcept override {
         // fill baked shape list
         for_each_need_bake([&](Shape *item) {
-            _baked_shapes.push_back(BakedShape(item));
+            _baked_shapes.emplace_back(item);
         });
 
         // uv spread
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+            UVSpreadResult spread_result;
             if (baked_shape.has_uv_cache()) {
-                baked_shape.load_uv_spread_result_from_cache();
+                spread_result = baked_shape.load_uv_spread_result_from_cache();
             } else {
-                _uv_spreader->apply(baked_shape);
-                baked_shape.save_uv_spread_result_to_cache();
+                spread_result = _uv_spreader->apply(baked_shape.shape());
+                baked_shape.save_to_cache(spread_result);
             }
-            baked_shape.remedy_vertices();
+            baked_shape.remedy_vertices(spread_result);
         });
 
         // raster

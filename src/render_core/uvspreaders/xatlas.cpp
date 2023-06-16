@@ -66,10 +66,10 @@ public:
         xatlas::SetProgressCallback(_atlas, progress_callback, &_stopwatch);
     }
 
-    [[nodiscard]] static xatlas::MeshDecl mesh_decl(vision::Mesh &mesh) {
+    [[nodiscard]] static xatlas::MeshDecl mesh_decl(const vision::Mesh &mesh) {
         xatlas::MeshDecl ret;
-        vector<Vertex> &vertices = mesh.vertices;
-        vector<Triangle> &triangle = mesh.triangles;
+        const vector<Vertex> &vertices = mesh.vertices;
+        const vector<Triangle> &triangle = mesh.triangles;
 
         // fill position
         ret.vertexCount = vertices.size();
@@ -77,15 +77,15 @@ public:
         ret.vertexPositionStride = sizeof(Vertex);
 
         // fill normal
-        ret.vertexNormalData = reinterpret_cast<std::byte *>(vertices.data()) + Vertex::n_offset();
+        ret.vertexNormalData = reinterpret_cast<const std::byte *>(vertices.data()) + Vertex::n_offset();
         ret.vertexNormalStride = sizeof(Vertex);
 
         // fill normal
-        ret.vertexNormalData = reinterpret_cast<std::byte *>(vertices.data()) + Vertex::n_offset();
+        ret.vertexNormalData = reinterpret_cast<const std::byte *>(vertices.data()) + Vertex::n_offset();
         ret.vertexNormalStride = sizeof(Vertex);
 
         // fill tex_coord
-        ret.vertexUvData = reinterpret_cast<std::byte *>(vertices.data()) + Vertex::uv_offset();
+        ret.vertexUvData = reinterpret_cast<const std::byte *>(vertices.data()) + Vertex::uv_offset();
         ret.vertexUvStride = sizeof(Vertex);
 
         // fill indices
@@ -109,10 +109,10 @@ public:
         return ret;
     }
 
-    void apply(BakedShape &baked_shape) override {
+    [[nodiscard]] UVSpreadResult apply(const Shape *shape) override {
         Guard __(this);
-
-        baked_shape.shape()->for_each_mesh([&](vision::Mesh &mesh, uint) {
+        UVSpreadResult spread_result;
+        shape->for_each_mesh([&](const vision::Mesh &mesh, uint) {
             xatlas::MeshDecl decl = mesh_decl(mesh);
             xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
             if (error != xatlas::AddMeshError::Success) {
@@ -123,26 +123,25 @@ public:
 
         xatlas::AddMeshJoin(_atlas);
         xatlas::Generate(_atlas, chart_options(), pack_options());
-
-        vector<UVSpreadResult> results;
+        spread_result.width = _atlas->width;
+        spread_result.height = _atlas->height;
         for (int i = 0; i < _atlas->meshCount; ++i) {
-            UVSpreadResult result;
             xatlas::Mesh &mesh = _atlas->meshes[i];
+            UVSpreadMesh u_mesh;
             for (int j = 0; j < mesh.vertexCount; ++j) {
                 xatlas::Vertex &vertex = mesh.vertexArray[j];
-                result.vertices.emplace_back(make_float2(vertex.uv[0], vertex.uv[1]), vertex.xref);
+                u_mesh.vertices.emplace_back(make_float2(vertex.uv[0], vertex.uv[1]), vertex.xref);
             }
 
             for (int j = 0; j < mesh.indexCount; j += 3) {
                 uint i0 = mesh.indexArray[j];
                 uint i1 = mesh.indexArray[j + 1];
                 uint i2 = mesh.indexArray[j + 2];
-                result.triangles.emplace_back(i0, i1, i2);
+                u_mesh.triangles.emplace_back(i0, i1, i2);
             }
-
-            results.push_back(ocarina::move(result));
+            spread_result.meshes.push_back(u_mesh);
         }
-        baked_shape.update_result(ocarina::move(results), make_uint2(_atlas->width, _atlas->height));
+        return spread_result;
     }
 };
 

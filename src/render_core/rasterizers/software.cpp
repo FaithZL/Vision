@@ -18,12 +18,15 @@ public:
     void compile_shader() noexcept override {
         Kernel vertex_kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
                                    BufferVar<float4> position, BufferVar<float4> normal) {
+            Var triangle = triangles.read(dispatch_id());
 
         };
         _vertex_shader = device().compile(vertex_kernel);
     }
 
     void apply(vision::BakedShape &baked_shape) noexcept override {
+        auto &stream = pipeline()->stream();
+//        stream << _vertex_shader()
     }
 };
 

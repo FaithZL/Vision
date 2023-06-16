@@ -156,6 +156,12 @@ public:
         }
     }
 
+    void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept override {
+        for (uint i = 0; i < _meshes.size(); ++i) {
+            func(_meshes[i], i);
+        }
+    }
+
     void update_material_id(uint id) noexcept override {
         for (Mesh &mesh : _meshes) {
             mesh.update_material_id(id);

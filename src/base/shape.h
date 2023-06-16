@@ -48,6 +48,7 @@ public:
     }
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
+    virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
 };
 
 }// namespace vision
@@ -78,7 +79,10 @@ public:
     void init_aabb() noexcept { aabb = compute_aabb(); }
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_area() const noexcept override;
-    void for_each_mesh(const std::function<void (vision::Mesh &,uint)> &func) noexcept override {
+    void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
+        func(*this, 0);
+    }
+    void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept override {
         func(*this, 0);
     }
 };

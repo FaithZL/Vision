@@ -12,22 +12,24 @@
 #include "descriptions/json_util.h"
 
 namespace vision {
-struct UVSpreadVertex {
-    // Not normalized - values are in Atlas width and height range.
-    float2 uv;
-    uint xref;
-};
-}// namespace vision
-
-OC_STRUCT(vision::UVSpreadVertex, uv, xref){};
-
-namespace vision {
 
 using namespace ocarina;
 
-struct UVSpreadResult {
+struct UVSpreadVertex {
+    // Not normalized - values are in Atlas width and height range.
+    float2 uv{};
+    uint xref{};
+};
+
+struct UVSpreadMesh {
     vector<UVSpreadVertex> vertices;
     vector<Triangle> triangles;
+};
+
+struct UVSpreadResult {
+    uint width;
+    uint height;
+    vector<UVSpreadMesh> meshes;
 };
 
 struct BakedShape {
@@ -36,14 +38,10 @@ private:
     uint2 _resolution{};
     RegistrableManaged<float4> _normal{Global::instance().pipeline()->resource_array()};
     RegistrableManaged<float4> _position{Global::instance().pipeline()->resource_array()};
-    vector<UVSpreadResult> _results;
 
 public:
     BakedShape() = default;
     explicit BakedShape(Shape *shape) : _shape(shape) {}
-    BakedShape(Shape *shape, uint2 res, vector<UVSpreadResult> datas)
-        : _shape(shape), _resolution(res),
-          _results(ocarina::move(datas)) {}
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
         return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}", _shape->hash());
@@ -56,7 +54,6 @@ public:
     VS_MAKE_ATTR_GET(shape, )
     VS_MAKE_ATTR_GET(position, &)
     VS_MAKE_ATTR_GET(normal, &)
-    VS_MAKE_ATTR_GET(results, &)
 
 #undef VS_MAKE_ATTR_GET
 
@@ -72,11 +69,6 @@ public:
         return _resolution.x * _resolution.y;
     }
 
-    void update_result(vector<UVSpreadResult> results, uint2 res) {
-        _results = ocarina::move(results);
-        _resolution = res;
-    }
-
     void allocate_device_memory() noexcept {
         _normal.reset_all(_shape->device(), pixel_num());
         _position.reset_all(_shape->device(), pixel_num());
@@ -85,56 +77,43 @@ public:
         });
     }
 
-    void load_uv_spread_result_from_cache() {
+    [[nodiscard]] UVSpreadResult load_uv_spread_result_from_cache() const {
         DataWrap json = create_json_from_file(uv_config_fn());
         auto res = json["resolution"];
-        _resolution = make_uint2(res[0], res[1]);
+        UVSpreadResult spread_result;
+        spread_result.width = res[0];
+        spread_result.height = res[1];
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             DataWrap elm = json["uv_result"][i];
             auto vertices = elm["vertices"];
-
-            UVSpreadResult result;
+            UVSpreadMesh u_mesh;
             for (auto vertex : vertices) {
-                result.vertices.emplace_back(make_float2(vertex[0], vertex[1]), vertex[2]);
+                u_mesh.vertices.emplace_back(make_float2(vertex[0], vertex[1]), vertex[2]);
             }
 
             auto triangles = elm["triangles"];
             for (auto tri : triangles) {
-                result.triangles.emplace_back(tri[0], tri[1], tri[2]);
+                u_mesh.triangles.emplace_back(tri[0], tri[1], tri[2]);
             }
-            _results.push_back(ocarina::move(result));
+            spread_result.meshes.push_back(u_mesh);
         });
+        return spread_result;
     }
 
-    void remedy_vertices() {
-        _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-            UVSpreadResult &result = _results[i];
-            vector<Vertex> vertices;
-            vertices.reserve(result.vertices.size());
-            for (auto &vert : result.vertices) {
-                Vertex vertex = mesh.vertices[vert.xref];
-                vertex.set_lightmap_uv(vert.uv / make_float2(resolution()));
-                vertices.push_back(vertex);
-            }
-            mesh.vertices = ocarina::move(vertices);
-            mesh.triangles = result.triangles;
-        });
-    }
-
-    void save_uv_spread_result_to_cache() {
+    void save_to_cache(const UVSpreadResult &result) {
         Context::create_directory_if_necessary(cache_directory());
         DataWrap data = DataWrap::object();
-        data["resolution"] = {_resolution.x, _resolution.y};
+        data["resolution"] = {result.width, result.height};
         data["uv_result"] = DataWrap::array();
         _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-            UVSpreadResult &result = _results[i];
+            const UVSpreadMesh &u_mesh = result.meshes[i];
             DataWrap elm = DataWrap::object();
             elm["vertices"] = DataWrap::array();
-            for (auto vertex : result.vertices) {
+            for (auto vertex : u_mesh.vertices) {
                 elm["vertices"].push_back({vertex.uv.x, vertex.uv.y, vertex.xref});
             }
             elm["triangles"] = DataWrap::array();
-            for (Triangle tri : result.triangles) {
+            for (Triangle tri : u_mesh.triangles) {
                 elm["triangles"].push_back({tri.i, tri.j, tri.k});
             }
             data["uv_result"].push_back(elm);
@@ -143,6 +122,22 @@ public:
         string data_str = data.dump(4);
         fs::path uv_config = uv_config_fn();
         Context::write_file(uv_config, data_str);
+    }
+
+    void remedy_vertices(const UVSpreadResult &result) {
+        _resolution = make_uint2(result.width, result.height);
+        _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+            const UVSpreadMesh &u_mesh = result.meshes[i];
+            vector<Vertex> vertices;
+            vertices.reserve(u_mesh.vertices.size());
+            for (auto &vert : u_mesh.vertices) {
+                Vertex vertex = mesh.vertices[vert.xref];
+                vertex.set_lightmap_uv(vert.uv / make_float2(result.width, result.height));
+                vertices.push_back(vertex);
+            }
+            mesh.vertices = ocarina::move(vertices);
+            mesh.triangles = u_mesh.triangles;
+        });
     }
 };
 
@@ -153,7 +148,7 @@ public:
 public:
     explicit UVSpreader(const UVSpreaderDesc &desc)
         : Node(desc) {}
-    virtual void apply(BakedShape &baked_shape) = 0;
+    [[nodiscard]] virtual UVSpreadResult apply(const Shape *shape) = 0;
 };
 
 class Rasterizer : public Node {
