@@ -46,6 +46,10 @@ public:
             _baked_shapes.push_back(ocarina::move(baked_shape));
         });
 
+        std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+            baked_shape.save_uv_spread_result_to_cache();
+        });
+
         // raster
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
 

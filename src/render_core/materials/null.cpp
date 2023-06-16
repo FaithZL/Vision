@@ -12,15 +12,15 @@ private:
     const SampledWavelengths &_swl;
 
 public:
-    NullBxDFSet(const SampledWavelengths &swl) : _swl(swl) {}
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
+    explicit NullBxDFSet(const SampledWavelengths &swl) : _swl(swl) {}
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_swl.dimension()};
         ret.f = {_swl.dimension(), 0.f};
         ret.pdf = 1.f;
         return ret;
     }
 
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{_swl.dimension()};
         return ret;
     }

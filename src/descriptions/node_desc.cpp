@@ -16,8 +16,8 @@ string NodeDesc::parameter_string() const noexcept {
     return _parameter.data().dump();
 }
 
-fs::path NodeDesc::file_name() const noexcept {
-    return  (*this)["fn"].as_string();
+string NodeDesc::file_name() const noexcept {
+    return (*this)["fn"].as_string();
 }
 
 void NodeDesc::set_parameter(const ParameterSet &ps) noexcept {

@@ -14,7 +14,12 @@ ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, Pipeline *rp) {
     if (desc.sub_type == "constant") {
         image_io = ImageIO::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));
     } else {
-        ColorSpace cs = desc["color_space"].as_string() == "linear" ? LINEAR : SRGB;
+        string color_space = desc["color_space"].as_string();
+        if (color_space.empty()) {
+            string fn = desc.file_name();
+            color_space = (fn.ends_with(".exr") || fn.ends_with(".hdr")) ? "linear" : "srgb";
+        }
+        ColorSpace cs = color_space == "linear" ? LINEAR : SRGB;
         image_io = ImageIO::load(Global::instance().scene_path() / desc.file_name(), cs);
     }
     auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());

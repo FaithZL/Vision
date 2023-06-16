@@ -32,6 +32,14 @@ public:
     BakedShape() = default;
     BakedShape(Shape *shape, uint2 res, vector<UVSpreadResult> datas)
         : shape(shape), resolution(res), results(ocarina::move(datas)) {}
+
+    [[nodiscard]] fs::path cache_directory() const noexcept {
+        return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}", shape->hash());
+    }
+
+    void save_uv_spread_result_to_cache() {
+        Context::create_directory_if_necessary(cache_directory());
+    }
 };
 
 class UVSpreader : public Node {
