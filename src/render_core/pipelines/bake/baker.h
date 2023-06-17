@@ -85,20 +85,19 @@ public:
 
         // rasterize
         _rasterizer->compile_shader();
-//        std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-//            baked_shape.prepare_for_rasterize();
-////            pipeline()->stream() << synchronize();
-//        });
-        int i = 0;
         std::for_each(_baked_shapes.begin(), _baked_shapes.begin() + 7, [&](BakedShape &baked_shape) {
             baked_shape.prepare_for_rasterize();
-            _rasterizer->apply(baked_shape, i++);
-//            pipeline()->stream() << synchronize() << commit();
-//            pipeline()->stream() << synchronize();
+        });
+        std::for_each(_baked_shapes.begin(), _baked_shapes.begin() + 7, [&](BakedShape &baked_shape) {
+            if (baked_shape.has_rasterization_cache()) {
+
+            } else {
+                _rasterizer->apply(baked_shape);
+            }
         });
         pipeline()->stream() << synchronize() << commit();
         Printer::instance().retrieve_immediately();
-//        exit(0);
+        exit(0);
     }
 };
 
