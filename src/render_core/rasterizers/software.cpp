@@ -18,12 +18,21 @@ public:
     void compile_shader() noexcept override {
         Kernel vertex_kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
                                    BufferVar<float4> position, BufferVar<float4> normal, Uint2 res, Uint triangle_index) {
-            //            Var triangle = triangles.read(dispatch_id());
-//            Var vertex = vertices.read(dispatch_id());
-            normal.write(dispatch_id(), make_float4(1.f));
-            position.write(dispatch_id(), make_float4(0.6666));
+            Float2 coord = (make_float2(dispatch_idx().xy()) + 0.5f);
+            Var tri = triangles.read(triangle_index);
+            Var v0 = vertices.read(tri.i);
+            Var v1 = vertices.read(tri.j);
+            Var v2 = vertices.read(tri.k);
 
-//            Printer::instance().info("wocao {} {} {} {}", vertex->lightmap_uv(), res);
+            Float2 p0 = v0->lightmap_uv() * make_float2(res);
+            Float2 p1 = v1->lightmap_uv() * make_float2(res);
+            Float2 p2 = v2->lightmap_uv() * make_float2(res);
+            $if(in_triangle<D>(coord, p0, p1, p2)) {
+                position.write(dispatch_id(), make_float4(1,1,0,1));
+                normal.write(dispatch_id(), make_float4(1,0,1,1));
+
+            };
+
         };
         _shader = device().compile(vertex_kernel);
     }
@@ -38,6 +47,7 @@ public:
                                   baked_shape.position(),
                                   baked_shape.normal(),
                                   make_uint2(baked_shape.resolution()), i).dispatch(baked_shape.resolution());
+                break ;
             }
         });
     }
