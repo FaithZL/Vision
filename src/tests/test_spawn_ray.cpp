@@ -82,6 +82,6 @@ int main(int argc, char *argv[]) {
     };
     auto shader = device.compile(kernel);
 //    Stream stream = device.create_stream();
-    stream << shader.dispatch(1) << synchronize() << commit();
+    stream << shader().dispatch(1) << synchronize() << commit();
     return 0;
 }
