@@ -69,7 +69,10 @@ public:
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     template<typename Func>
     void for_each_device_mesh(const Func &func) noexcept {
-        std::for_each(_device_meshes.begin(), _device_meshes.end(), func);
+        uint i = 0;
+        std::for_each(_device_meshes.begin(), _device_meshes.end(), [&](DeviceMesh &mesh) {
+            func(mesh, i++);
+        });
     }
     void prepare_for_rasterize() noexcept;
     [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const;

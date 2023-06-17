@@ -93,10 +93,11 @@ public:
 //
 //            } else {
                 _rasterizer->apply(baked_shape);
+                pipeline()->stream() << synchronize() << commit();
                 baked_shape.save_rasterization_to_cache();
 //            }
         });
-        pipeline()->stream() << synchronize() << commit();
+
         Printer::instance().retrieve_immediately();
         exit(0);
     }

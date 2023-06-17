@@ -49,6 +49,8 @@ public:
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
+    [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
+    [[nodiscard]] virtual const Mesh &mesh_at(uint i) const noexcept = 0;
 };
 
 }// namespace vision
@@ -84,6 +86,12 @@ public:
     }
     void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept override {
         func(*this, 0);
+    }
+    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
+        return *this;
+    }
+    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
+        return *this;
     }
 };
 

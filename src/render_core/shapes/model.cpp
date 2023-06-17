@@ -150,6 +150,14 @@ public:
         }
     }
 
+    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
+        return _meshes[i];
+    }
+
+    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
+        return _meshes[i];
+    }
+
     void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
         for (uint i = 0; i < _meshes.size(); ++i) {
             func(_meshes[i], i);
