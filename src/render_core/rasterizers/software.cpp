@@ -30,9 +30,9 @@ public:
         auto &stream = pipeline()->stream();
         baked_shape.for_each_device_mesh([&](DeviceMesh &device_mesh) {
             stream << _vertex_shader(device_mesh.vertices, device_mesh.triangles,
-                                     baked_shape.position().device_buffer(),
-                                     baked_shape.normal().device_buffer(),
-                                     make_uint2(baked_shape.resolution())).dispatch(device_mesh.vertices.size());
+                                     baked_shape.position(),
+                                     baked_shape.normal(),
+                                     make_uint2(baked_shape.resolution())).dispatch(device_mesh.triangles.size());
         });
     }
 };

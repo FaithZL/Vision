@@ -7,11 +7,11 @@
 namespace vision {
 
 void BakedShape::prepare_for_rasterize() noexcept {
-    _normal.reset_all(_shape->device(), pixel_num());
-    _position.reset_all(_shape->device(), pixel_num());
+    _normal.super() = shape()->device().create_buffer<float4>(pixel_num());
+    _position.super() = shape()->device().create_buffer<float4>(pixel_num());
     auto &stream = shape()->pipeline()->stream();
-    stream << _normal.device_buffer().clear()
-           << _position.device_buffer().clear();
+    stream << _normal.clear()
+           << _position.clear();
     shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
         DeviceMesh device_mesh;
         device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
@@ -69,6 +69,15 @@ void BakedShape::save_to_cache(const UVSpreadResult &result) {
     Context::write_file(uv_config, data_str);
 }
 
+void BakedShape::save_rasterization_to_cache() const {
+    vector<float4> map;
+    map.resize(pixel_num());
+    _position.download_immediately(map.data());
+    ImageIO::save_image(position_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
+    _normal.download_immediately(map.data());
+    ImageIO::save_image(normal_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
+}
+
 void BakedShape::remedy_vertices(UVSpreadResult result) {
     _resolution = make_uint2(result.width, result.height);
     _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
@@ -90,14 +99,14 @@ fs::path BakedShape::uv_config_fn() const noexcept {
 bool BakedShape::has_uv_cache() const noexcept {
     return fs::exists(uv_config_fn());
 }
-fs::path BakedShape::rasterization_position() const noexcept {
+fs::path BakedShape::position_cache_path() const noexcept {
     return cache_directory() / "position.exr";
 }
-fs::path BakedShape::rasterization_normal() const noexcept {
+fs::path BakedShape::normal_cache_path() const noexcept {
     return cache_directory() / "normal.exr";
 }
 bool BakedShape::has_rasterization_cache() const noexcept {
-    return fs::exists(rasterization_normal()) && fs::exists(rasterization_position());
+    return fs::exists(normal_cache_path()) && fs::exists(position_cache_path());
 }
 
 }// namespace vision

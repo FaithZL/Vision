@@ -41,8 +41,8 @@ struct BakedShape {
 private:
     Shape *_shape{};
     uint2 _resolution{};
-    RegistrableManaged<float4> _normal{Global::instance().pipeline()->resource_array()};
-    RegistrableManaged<float4> _position{Global::instance().pipeline()->resource_array()};
+    RegistrableBuffer<float4> _normal{Global::instance().pipeline()->resource_array()};
+    RegistrableBuffer<float4> _position{Global::instance().pipeline()->resource_array()};
     vector<DeviceMesh> _device_meshes;
 
 public:
@@ -63,8 +63,8 @@ public:
 
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;
-    [[nodiscard]] fs::path rasterization_position() const noexcept;
-    [[nodiscard]] fs::path rasterization_normal() const noexcept;
+    [[nodiscard]] fs::path position_cache_path() const noexcept;
+    [[nodiscard]] fs::path normal_cache_path() const noexcept;
     [[nodiscard]] bool has_rasterization_cache() const noexcept;
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     template<typename Func>
@@ -74,6 +74,7 @@ public:
     void prepare_for_rasterize() noexcept;
     [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const;
     void save_to_cache(const UVSpreadResult &result);
+    void save_rasterization_to_cache() const;
     void remedy_vertices(UVSpreadResult result);
 };
 
