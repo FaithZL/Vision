@@ -94,7 +94,6 @@ public:
                    << device_mesh.triangles.upload(mesh.triangles.data());
             _device_meshes.push_back(ocarina::move(device_mesh));
         });
-//        stream << synchronize() << commit();
     }
 
     [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const {
@@ -179,7 +178,7 @@ public:
     explicit Rasterizer(const RasterizerDesc &desc)
         : Node(desc) {}
     virtual void compile_shader() noexcept = 0;
-    virtual void apply(BakedShape &baked_shape) noexcept = 0;
+    virtual void apply(BakedShape &baked_shape, int) noexcept = 0;
 };
 
 }// namespace vision
