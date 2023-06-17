@@ -8,3 +8,5 @@
 /cmake-build-minsizerel-msvc
 /build
 /vs2019
+
+/**/.cache/*

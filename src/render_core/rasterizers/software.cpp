@@ -28,11 +28,12 @@ public:
             Float2 p1 = v1->lightmap_uv() * make_float2(res);
             Float2 p2 = v2->lightmap_uv() * make_float2(res);
             $if(in_triangle<D>(coord, p0, p1, p2)) {
-                position.write(dispatch_id(), make_float4(1,1,0,1));
-                normal.write(dispatch_id(), make_float4(1,0,1,1));
-
+                Float2 bary = barycentric(coord, p0, p1, p2);
+                Float3 pos = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
+                position.write(dispatch_id(), make_float4(pos,1.f));
+                Float3 norm = triangle_lerp(bary, v0->normal(), v1->normal(), v2->normal());
+                normal.write(dispatch_id(), make_float4(norm,1.f));
             };
-
         };
         _shader = device().compile(vertex_kernel);
     }
@@ -47,7 +48,6 @@ public:
                                   baked_shape.position(),
                                   baked_shape.normal(),
                                   make_uint2(baked_shape.resolution()), i).dispatch(baked_shape.resolution());
-                break ;
             }
         });
     }
