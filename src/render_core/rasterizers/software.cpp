@@ -17,7 +17,7 @@ public:
 
     void compile_shader() noexcept override {
         Kernel kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
-                                   BufferVar<float4> position, BufferVar<float4> normal, Uint2 res, Uint triangle_index) {
+                                   BufferVar<float4> positions, BufferVar<float4> normals, Uint2 res, Uint triangle_index) {
             Float2 coord = (make_float2(dispatch_idx().xy()) + 0.5f);
             Var tri = triangles.read(triangle_index);
             Var v0 = vertices.read(tri.i);
@@ -30,9 +30,9 @@ public:
             $if(in_triangle<D>(coord, p0, p1, p2)) {
                 Float2 bary = barycentric(coord, p0, p1, p2);
                 Float3 pos = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
-                position.write(dispatch_id(), make_float4(pos,1.f));
+                positions.write(dispatch_id(), make_float4(pos,1.f));
                 Float3 norm = triangle_lerp(bary, v0->normal(), v1->normal(), v2->normal());
-                normal.write(dispatch_id(), make_float4(norm,1.f));
+                normals.write(dispatch_id(), make_float4(norm,1.f));
             };
         };
         _shader = device().compile(kernel);
@@ -45,8 +45,8 @@ public:
             const vision::Mesh &mesh = baked_shape.shape()->mesh_at(index);
             for (int i = 0; i < mesh.triangles.size(); ++i) {
                 stream << _shader(device_mesh.vertices, device_mesh.triangles,
-                                  baked_shape.position(),
-                                  baked_shape.normal(),
+                                  baked_shape.positions(),
+                                  baked_shape.normals(),
                                   make_uint2(baked_shape.resolution()), i).dispatch(baked_shape.resolution());
             }
         });

@@ -13,6 +13,21 @@ BakerPipeline::BakerPipeline(const PipelineDesc &desc)
     create_cache_directory_if_necessary();
 }
 
+void BakerPipeline::compile_transform_shader() noexcept {
+    Kernel kernel = [&](BufferVar<float4> positions,
+                        BufferVar<float4> normals, Float4x4 o2w) {
+        Float4 position = positions.read(dispatch_id());
+        Float4 normal = normals.read(dispatch_id());
+        $if(position.w > 0.5f) {
+            Float3 world_pos = transform_point(o2w, position.xyz());
+            Float3 world_norm = transform_normal(o2w, normal.xyz());
+            positions.write(dispatch_id(), make_float4(world_pos, position.w));
+            normals.write(dispatch_id(), make_float4(world_norm, normal.w));
+        };
+    };
+    _transform_shader = device().compile(kernel);
+}
+
 void BakerPipeline::prepare() noexcept {
     auto pixel_num = resolution().x * resolution().y;
     _final_picture.reset_all(device(), pixel_num);
@@ -55,10 +70,17 @@ void BakerPipeline::preprocess() noexcept {
         }
     });
     pipeline()->stream() << synchronize() << commit();
+
+    // save rasterize cache
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         if (!baked_shape.has_rasterization_cache()) {
             baked_shape.save_rasterization_to_cache();
         }
+    });
+
+    // transform to world space
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+
     });
 
     Printer::instance().retrieve_immediately();

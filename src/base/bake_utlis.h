@@ -41,8 +41,8 @@ struct BakedShape {
 private:
     Shape *_shape{};
     uint2 _resolution{};
-    RegistrableBuffer<float4> _normal{Global::instance().pipeline()->resource_array()};
-    RegistrableBuffer<float4> _position{Global::instance().pipeline()->resource_array()};
+    RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
+    RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
     vector<DeviceMesh> _device_meshes;
 
 public:
@@ -57,8 +57,8 @@ public:
     [[nodiscard]] auto sig attr() noexcept { return _##attr; }
     VS_MAKE_ATTR_GET(resolution, )
     VS_MAKE_ATTR_GET(shape, )
-    VS_MAKE_ATTR_GET(position, &)
-    VS_MAKE_ATTR_GET(normal, &)
+    VS_MAKE_ATTR_GET(positions, &)
+    VS_MAKE_ATTR_GET(normals, &)
 #undef VS_MAKE_ATTR_GET
 
     [[nodiscard]] fs::path uv_config_fn() const noexcept;

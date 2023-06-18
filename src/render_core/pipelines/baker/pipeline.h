@@ -16,6 +16,10 @@ private:
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
+    using transform_signature = void(Buffer<float4>,
+                                     Buffer<float4>,
+                                     float4x4 o2w);
+    Shader<transform_signature> _transform_shader;
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc);
@@ -24,7 +28,9 @@ public:
     }
     void compile_shaders() noexcept override {
         _scene.integrator()->compile_shader();
+        compile_transform_shader();
     }
+    void compile_transform_shader() noexcept;
 
     void prepare() noexcept override;
     void render(double dt) noexcept override;

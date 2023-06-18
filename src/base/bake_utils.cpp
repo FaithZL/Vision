@@ -7,11 +7,11 @@
 namespace vision {
 
 void BakedShape::prepare_for_rasterize() noexcept {
-    _normal.super() = shape()->device().create_buffer<float4>(pixel_num());
-    _position.super() = shape()->device().create_buffer<float4>(pixel_num());
+    _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
+    _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
     auto &stream = shape()->pipeline()->stream();
-    stream << _normal.clear()
-           << _position.clear();
+    stream << _normals.clear()
+           << _positions.clear();
     shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
         DeviceMesh device_mesh;
         device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
@@ -71,17 +71,17 @@ void BakedShape::save_to_cache(const UVSpreadResult &result) {
 
 void BakedShape::load_rasterization_from_cache() const {
     ImageIO &position = ImagePool::instance().obtain_image(position_cache_path(), ColorSpace::LINEAR).image();
-    _position.upload_immediately(position.pixel_ptr());
+    _positions.upload_immediately(position.pixel_ptr());
     ImageIO &normal = ImagePool::instance().obtain_image(normal_cache_path(), ColorSpace::LINEAR).image();
-    _normal.upload_immediately(normal.pixel_ptr());
+    _normals.upload_immediately(normal.pixel_ptr());
 }
 
 void BakedShape::save_rasterization_to_cache() const {
     vector<float4> map;
     map.resize(pixel_num());
-    _position.download_immediately(map.data());
+    _positions.download_immediately(map.data());
     ImageIO::save_image(position_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
-    _normal.download_immediately(map.data());
+    _normals.download_immediately(map.data());
     ImageIO::save_image(normal_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
 }
 
