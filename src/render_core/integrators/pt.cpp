@@ -35,7 +35,7 @@ public:
             Geometry &geometry = rp->geometry();
             Float eta_scale = 1.f;
 
-            $for(&bounces, 0, _max_depth) {
+            $for(&bounces, 0, *_max_depth) {
                 Var hit = geometry.trace_closest(rs.ray);
                 comment("miss");
                 $if(hit->is_miss()) {
@@ -128,7 +128,7 @@ public:
                     $break;
                 };
                 throughput *= bsdf_sample.eval.value();
-                $if(lum < _rr_threshold && bounces >= _min_depth) {
+                $if(lum < *_rr_threshold && bounces >= *_min_depth) {
                     Float q = min(0.95f, lum);
                     Float rr = sampler->next_1d();
                     $if(q < rr) {

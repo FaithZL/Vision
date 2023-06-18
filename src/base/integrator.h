@@ -28,7 +28,7 @@ class Sampler;
 //        "rr_threshold": 1
 //    }
 //}
-class Integrator : public Node {
+class Integrator : public Node, public Serializable<float> {
 public:
     using Desc = IntegratorDesc;
     using signature = void(uint);
@@ -47,9 +47,9 @@ public:
 
 class UnidirectionalPathTracing : public Integrator {
 protected:
-    uint _max_depth{};
-    uint _min_depth{};
-    float _rr_threshold{};
+    Serial<uint> _max_depth{};
+    Serial<uint> _min_depth{};
+    Serial<float> _rr_threshold{};
 
 public:
     explicit UnidirectionalPathTracing(const IntegratorDesc &desc)

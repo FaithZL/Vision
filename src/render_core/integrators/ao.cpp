@@ -11,9 +11,9 @@ namespace vision {
 
 class AmbientOcclusionIntegrator : public Integrator {
 private:
-    float _distance{1.f};
-    bool _cos_sample{true};
-    uint _sample_num{64u};
+    Serial<float> _distance{1.f};
+    Serial<uint> _cos_sample{true};
+    Serial<uint> _sample_num{64u};
 
 public:
     explicit AmbientOcclusionIntegrator(const IntegratorDesc &desc)
@@ -48,8 +48,8 @@ public:
                 };
                 Float3 wi;
                 Float pdf;
-                $for(i, _sample_num) {
-                    if (_cos_sample) {
+                $for(i, *_sample_num) {
+                    if (_cos_sample.hv()) {
                         wi = square_to_cosine_hemisphere(sampler->next_2d());
                         pdf = cosine_hemisphere_PDF(geometry::abs_cos_theta(wi));
                     } else {
@@ -58,9 +58,9 @@ public:
                     }
                     it.s_uvn.z = face_forward(it.s_uvn.normal(), -rs.direction());
                     wi = it.s_uvn.to_world(wi);
-                    Bool occ = geom.trace_any(it.spawn_ray(wi, _distance));
+                    Bool occ = geom.trace_any(it.spawn_ray(wi, *_distance));
                     $if(!occ) {
-                        L += dot(wi, it.s_uvn.normal()) / (pdf * _sample_num);
+                        L += dot(wi, it.s_uvn.normal()) / (pdf * *_sample_num);
                     };
                 };
                 $break;
