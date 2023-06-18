@@ -71,9 +71,9 @@ void BakedShape::save_to_cache(const UVSpreadResult &result) {
 
 void BakedShape::load_rasterization_from_cache() const {
     ImageIO &position = ImagePool::instance().obtain_image(position_cache_path(), ColorSpace::LINEAR).image();
-    _positions.upload_immediately(position.pixel_ptr());
     ImageIO &normal = ImagePool::instance().obtain_image(normal_cache_path(), ColorSpace::LINEAR).image();
-    _normals.upload_immediately(normal.pixel_ptr());
+    _shape->pipeline()->stream() << _positions.upload(position.pixel_ptr())
+                                 << _normals.upload(normal.pixel_ptr());
 }
 
 void BakedShape::save_rasterization_to_cache() const {

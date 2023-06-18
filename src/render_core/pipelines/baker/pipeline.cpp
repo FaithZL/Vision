@@ -18,7 +18,7 @@ void BakerPipeline::compile_transform_shader() noexcept {
                         BufferVar<float4> normals, Float4x4 o2w) {
         Float4 position = positions.read(dispatch_id());
         Float4 normal = normals.read(dispatch_id());
-        $if(position.w > 0.5f) {
+        $if(position.w > 0.f) {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = transform_normal(o2w, normal.xyz());
             positions.write(dispatch_id(), make_float4(world_pos, position.w));
@@ -79,11 +79,17 @@ void BakerPipeline::preprocess() noexcept {
     });
 
     // transform to world space
+    compile_transform_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-
+        pipeline()->stream() << _transform_shader(baked_shape.positions(),
+                                                  baked_shape.normals(),
+                                                  baked_shape.shape()->o2w())
+                                    .dispatch(baked_shape.resolution());
     });
+    pipeline()->stream() << synchronize() << commit();
 
     Printer::instance().retrieve_immediately();
+    exit(0);
 }
 
 void BakerPipeline::render(double dt) noexcept {

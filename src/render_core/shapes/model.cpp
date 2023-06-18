@@ -16,7 +16,7 @@ private:
     uint _mat_id{InvalidUI32};
     uchar _inside_medium{InvalidUI8};
     uchar _outside_medium{InvalidUI8};
-    float4x4 o2w;
+    float4x4 _o2w;
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -31,7 +31,7 @@ public:
     explicit Model(const ShapeDesc &desc)
         : Shape(desc),
           _mat_id(desc.material.id),
-          o2w(desc.o2w.mat),
+          _o2w(desc.o2w.mat),
           _inside_medium(desc.inside_medium.id),
           _outside_medium(desc.outside_medium.id) {
         load(desc);
@@ -128,12 +128,14 @@ public:
             mesh.handle.mat_id = _mat_id;
             mesh.handle.outside_medium = _outside_medium;
             mesh.handle.inside_medium = _inside_medium;
-            mesh.handle.o2w = o2w;
+            mesh.handle.o2w = _o2w;
             this->aabb.extend(aabb);
             meshes.push_back(mesh);
         }
         return meshes;
     }
+
+    [[nodiscard]] float4x4 o2w() const noexcept override { return _o2w; }
 
     void load(const ShapeDesc &desc) noexcept {
         auto fn = scene_path() / desc["fn"].as_string();

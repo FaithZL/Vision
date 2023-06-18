@@ -51,6 +51,7 @@ public:
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
     [[nodiscard]] virtual const Mesh &mesh_at(uint i) const noexcept = 0;
+    [[nodiscard]] virtual float4x4 o2w() const noexcept { return handle.o2w; }
 };
 
 }// namespace vision

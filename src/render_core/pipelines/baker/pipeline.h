@@ -28,7 +28,6 @@ public:
     }
     void compile_shaders() noexcept override {
         _scene.integrator()->compile_shader();
-        compile_transform_shader();
     }
     void compile_transform_shader() noexcept;
 
