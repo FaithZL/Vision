@@ -27,6 +27,8 @@ protected:
     float _velocity{5.f};
     float _sensitivity{1.f};
     float _fov_y{20.f};
+    float tan_fov_y_over2{};
+    float4x4 c2w;
     RegistrableManaged<Data> _data;
 
 public:

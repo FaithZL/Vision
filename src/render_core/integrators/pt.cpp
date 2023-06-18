@@ -22,7 +22,7 @@ public:
         Spectrum &spectrum = rp->spectrum();
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
-            decode_self();
+//            load_data();
             Uint2 pixel = dispatch_idx().xy();
             _frame_index = frame_index;
             Bool debug = all(pixel == make_uint2(512, 512));

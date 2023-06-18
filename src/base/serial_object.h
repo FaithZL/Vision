@@ -32,14 +32,14 @@ public:
     /**
      * Serialize the data for upload to device memory
      */
-    virtual void encode_self() noexcept {
+    virtual void encode_data() noexcept {
         encode(_datas);
     }
 
     /**
      * load data from device memory
      */
-    virtual void decode_self() noexcept {
+    virtual void load_data() noexcept {
         DataAccessor<float> da = {0, _datas};
         decode(&da);
     }
