@@ -22,13 +22,13 @@ public:
         Spectrum &spectrum = rp->spectrum();
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
-            camera->load_data();
-//            load_data();
+
             Uint2 pixel = dispatch_idx().xy();
             _frame_index = frame_index;
             Bool debug = all(pixel == make_uint2(512, 512));
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+            camera->load_data();
             RayState rs = camera->generate_ray(ss);
             Float scatter_pdf = 1e16f;
             SampledWavelengths swl = spectrum.sample_wavelength(sampler);
@@ -36,7 +36,7 @@ public:
             SampledSpectrum throughput = {swl.dimension(), 1.f};
             Geometry &geometry = rp->geometry();
             Float eta_scale = 1.f;
-
+//            load_data();
             $for(&bounces, 0, *_max_depth) {
                 Var hit = geometry.trace_closest(rs.ray);
                 comment("miss");

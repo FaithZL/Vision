@@ -42,10 +42,8 @@ void Camera::update_device_data() noexcept {
 
 void Camera::prepare() noexcept {
     Sensor::prepare();
-    encode_data();
-    datas().reset_device_buffer(device());
-    datas().register_self();
-    datas().upload_immediately();
+    prepare_data();
+    upload_immediately();
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {
