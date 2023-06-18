@@ -22,6 +22,9 @@ class SerialObject : public Serializable<float> {
 protected:
     RegistrableManaged<float> _datas{Global::instance().resource_array()};
 
+protected:
+    SerialObject() = default;
+
 public:
     [[nodiscard]] RegistrableManaged<float> &datas() noexcept { return _datas; }
     [[nodiscard]] const RegistrableManaged<float> &datas() const noexcept { return _datas; }

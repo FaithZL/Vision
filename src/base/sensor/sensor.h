@@ -29,7 +29,7 @@ public:
 protected:
     Filter *_filter{};
     Film *_radiance_film{};
-    uchar _medium{InvalidUI8};
+    uint _medium{InvalidUI32};
 
 public:
     explicit Sensor(const SensorDesc &desc);
