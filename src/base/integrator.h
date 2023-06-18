@@ -35,19 +35,45 @@ public:
 
 protected:
     optional<Uint> _frame_index{};
-    uint _max_depth{};
-    uint _min_depth{};
-    float _rr_threshold{};
     ocarina::Shader<signature> _shader;
 
 public:
     explicit Integrator(const IntegratorDesc &desc)
-        : Node(desc),
-          _max_depth(desc["max_depth"].as_uint(16)),
-          _min_depth(desc["min_depth"].as_uint(5)),
-          _rr_threshold(desc["rr_threshold"].as_float(1.f)) {}
+        : Node(desc) {}
     virtual void compile_shader() noexcept = 0;
     virtual void render() const noexcept {}
     [[nodiscard]] Uint frame_index() const noexcept { return *_frame_index; }
 };
+
+class UnidirectionalPathTracing : public Integrator {
+protected:
+    uint _max_depth{};
+    uint _min_depth{};
+    float _rr_threshold{};
+
+public:
+    explicit UnidirectionalPathTracing(const IntegratorDesc &desc)
+        : Integrator(desc),
+          _max_depth(desc["max_depth"].as_uint(16)),
+          _min_depth(desc["min_depth"].as_uint(5)),
+          _rr_threshold(desc["rr_threshold"].as_float(1.f)) {}
+
+    template<typename SF, typename SS>
+    static SampledSpectrum direct_lighting(Interaction it, const SF &sf, LightSample ls,
+                                           Bool occluded, Sampler *sampler,
+                                           const SampledWavelengths &swl, SS &ss) {
+        Float3 wi = normalize(ls.p_light - it.pos);
+        ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
+        ss = sf.sample(it.wo, sampler);
+        Bool is_delta_light = ls.eval.pdf < 0;
+        Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf));
+        ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
+        SampledSpectrum Ld = {swl.dimension(), 0.f};
+        $if(!occluded && scatter_eval.valid() && ls.valid()) {
+            Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
+        };
+        return Ld;
+    }
+};
+
 }// namespace vision

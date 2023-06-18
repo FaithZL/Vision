@@ -9,27 +9,10 @@
 
 namespace vision {
 using namespace ocarina;
-class PathTracingIntegrator : public Integrator {
+class PathTracingIntegrator : public UnidirectionalPathTracing {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
-        : Integrator(desc) {}
-
-    template<typename SF, typename SS>
-    static SampledSpectrum direct_lighting(Interaction it, const SF &sf, LightSample ls,
-                                           Bool occluded, Sampler *sampler,
-                                           const SampledWavelengths &swl, SS &ss) {
-        Float3 wi = normalize(ls.p_light - it.pos);
-        ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
-        ss = sf.sample(it.wo, sampler);
-        Bool is_delta_light = ls.eval.pdf < 0;
-        Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf));
-        ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
-        SampledSpectrum Ld = {swl.dimension(), 0.f};
-        $if(!occluded && scatter_eval.valid() && ls.valid()) {
-            Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
-        };
-        return Ld;
-    }
+        : UnidirectionalPathTracing(desc) {}
 
     void compile_shader() noexcept override {
         Pipeline *rp = pipeline();
