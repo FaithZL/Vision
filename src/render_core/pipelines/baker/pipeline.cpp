@@ -25,7 +25,7 @@ void BakerPipeline::compile_transform_shader() noexcept {
             normals.write(dispatch_id(), make_float4(world_norm, normal.w));
         };
     };
-    _transform_shader = device().compile(kernel);
+    _transform_shader = device().compile(kernel, "transform shader");
 }
 
 void BakerPipeline::prepare() noexcept {

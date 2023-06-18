@@ -17,7 +17,7 @@ void Postprocessor::compile_tone_mapping() noexcept {
         output_pixel.w = 1.f;
         output.write(thread_id(), output_pixel);
     };
-    _tone_mapping_shader = _rp->device().compile(kernel);
+    _tone_mapping_shader = _rp->device().compile(kernel, "tonemapping");
 }
 void Postprocessor::tone_mapping(RegistrableManaged<float4> &input, RegistrableManaged<float4> &output) noexcept {
     Stream &stream = _rp->stream();

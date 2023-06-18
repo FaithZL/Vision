@@ -35,7 +35,7 @@ public:
                 normals.write(dispatch_id(), make_float4(norm,1.f));
             };
         };
-        _shader = device().compile(kernel);
+        _shader = device().compile(kernel, "rasterizer");
     }
 
     void apply(vision::BakedShape &baked_shape) noexcept override {

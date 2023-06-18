@@ -158,7 +158,7 @@ public:
             };
             camera->radiance_film()->add_sample(pixel, spectrum.linear_srgb(Li, swl), frame_index);
         };
-        _shader = rp->device().compile(kernel);
+        _shader = rp->device().compile(kernel, "path tracing integrator");
     }
 
     void render() const noexcept override {
