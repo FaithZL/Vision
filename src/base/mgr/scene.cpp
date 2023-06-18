@@ -35,6 +35,7 @@ Slot Scene::create_slot(const SlotDesc &desc) {
 void Scene::prepare() noexcept {
     _camera->prepare();
     _sampler->prepare();
+    _integrator->prepare();
     _camera->update_device_data();
     prepare_lights();
     prepare_materials();

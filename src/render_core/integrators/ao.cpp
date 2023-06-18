@@ -22,6 +22,8 @@ public:
           _cos_sample(desc["cos_sample"].as_bool(true)),
           _sample_num(desc["sample_num"].as_uint(32u)) {}
 
+    OC_SERIALIZABLE_FUNC(Integrator, _distance, _cos_sample, _sample_num)
+
     void compile_shader() noexcept override {
         Pipeline *rp = pipeline();
         Camera *camera = scene().camera();

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "node.h"
+#include "serial_object.h"
 #include "rhi/common.h"
 #include "base/scattering/interaction.h"
 #include "base/illumination/lightsampler.h"
@@ -16,8 +17,6 @@ namespace vision {
 
 class Pipeline;
 
-class ScatterFunction;
-
 class Sampler;
 
 //"integrator": {
@@ -28,7 +27,7 @@ class Sampler;
 //        "rr_threshold": 1
 //    }
 //}
-class Integrator : public Node, public Serializable<float> {
+class Integrator : public Node, public SerialObject {
 public:
     using Desc = IntegratorDesc;
     using signature = void(uint);
@@ -57,6 +56,15 @@ public:
           _max_depth(desc["max_depth"].as_uint(16)),
           _min_depth(desc["min_depth"].as_uint(5)),
           _rr_threshold(desc["rr_threshold"].as_float(1.f)) {}
+
+    OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
+
+    void prepare() noexcept override {
+        encode_self();
+        datas().reset_device_buffer(device());
+        datas().register_self();
+        datas().upload_immediately();
+    }
 
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(Interaction it, const SF &sf, LightSample ls,

@@ -6,6 +6,7 @@
 
 #include "core/basic_types.h"
 #include "base/node.h"
+#include "base/serial_object.h"
 #include "base/sample.h"
 #include "math/transform.h"
 #include "filter.h"

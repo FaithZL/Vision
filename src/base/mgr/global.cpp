@@ -26,6 +26,14 @@ void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
 
 Pipeline *Global::pipeline() { return _pipeline; }
 
+Device &Global::device() {
+    return pipeline()->device();
+}
+
+ResourceArray &Global::resource_array() {
+    return pipeline()->resource_array();
+}
+
 void Global::set_scene_path(const fs::path &sp) noexcept {
     _scene_path = sp;
 }

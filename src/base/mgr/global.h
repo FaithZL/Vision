@@ -7,6 +7,7 @@
 #include "node_mgr.h"
 #include "rhi/context.h"
 #include "image_pool.h"
+#include "rhi/common.h"
 
 namespace vision {
 class Pipeline;
@@ -32,6 +33,8 @@ public:
     [[nodiscard]] ImagePool &image_pool() {
         return ImagePool::instance();
     }
+    [[nodiscard]] Device &device();
+    [[nodiscard]] ResourceArray &resource_array();
     void set_scene_path(const fs::path &sp) noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;
     [[nodiscard]] fs::path scene_cache_path() const noexcept;
