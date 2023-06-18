@@ -49,13 +49,13 @@ void Camera::prepare() noexcept {
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {
-    float4x4 horizontal = rotation_y<H>(yaw());
-    float4x4 vertical = rotation_x<H>(-pitch());
+    float4x4 horizontal = rotation_y<H>(yaw().hv());
+    float4x4 vertical = rotation_x<H>(-pitch().hv());
     return scale(1, 1, -1) * horizontal * vertical;
 }
 
 float4x4 Camera::camera_to_world() const noexcept {
-    float4x4 translate = translation(position());
+    float4x4 translate = translation(position().hv());
     return translate * camera_to_world_rotation();
 }
 

@@ -49,7 +49,7 @@ void App::on_key_event(int key, int action) noexcept {
     float3 forward = camera->forward();
     float3 up = camera->up();
     float3 right = camera->right();
-    float distance = camera->velocity() * dt;
+    float distance = camera->velocity().hv() * dt;
     switch (key) {
         case 'W':
             camera->move(forward * distance);
@@ -87,7 +87,7 @@ void App::on_scroll_event(float2 scroll) noexcept {
 
 void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
     Camera *camera = pipeline().scene().camera();
-    float sensitivity = camera->sensitivity();
+    float sensitivity = camera->sensitivity().hv();
     camera->update_yaw(d_yaw * sensitivity);
     camera->update_pitch(d_pitch * sensitivity);
 }
