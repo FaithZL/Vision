@@ -89,11 +89,17 @@ public:
             baked_shape.prepare_for_rasterize();
         });
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-            _rasterizer->apply(baked_shape);
+            if (baked_shape.has_rasterization_cache()) {
+                baked_shape.load_rasterization_from_cache();
+            } else {
+                _rasterizer->apply(baked_shape);
+            }
         });
         pipeline()->stream() << synchronize() << commit();
         std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-            baked_shape.save_rasterization_to_cache();
+            if (!baked_shape.has_rasterization_cache()) {
+                baked_shape.save_rasterization_to_cache();
+            }
         });
 
         Printer::instance().retrieve_immediately();

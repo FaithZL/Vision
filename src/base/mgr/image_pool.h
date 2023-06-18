@@ -17,10 +17,12 @@ class ImageWrapper {
 private:
     ImageIO _image_io;
     Texture _texture;
-    uint _id{};
+    uint _id{InvalidUI32};
 
 public:
     ImageWrapper() = default;
+    ImageWrapper(ImageIO image_io)
+        : _image_io(ocarina::move(image_io)) {}
     ImageWrapper(ImageIO image_io, Texture image, uint id)
         : _image_io(ocarina::move(image_io)), _texture(ocarina::move(image)), _id(id) {}
     [[nodiscard]] Texture &texture() noexcept { return _texture; }
@@ -29,6 +31,7 @@ public:
     [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
     [[nodiscard]] uint id() const noexcept { return _id; }
     [[nodiscard]] static ImageWrapper create(const ShaderNodeDesc &desc, Pipeline *rp);
+    [[nodiscard]] static ImageWrapper create(const fs::path &fn, ColorSpace &cs, float3 scale, bool need_device = false);
     [[nodiscard]] TextureUploadCommand *upload() const noexcept;
     [[nodiscard]] TextureDownloadCommand *download() noexcept;
     void upload_immediately() const noexcept;
@@ -50,6 +53,8 @@ public:
     static ImagePool &instance();
     static void destroy_instance();
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
+    [[nodiscard]] ImageWrapper &obtain_image(const fs::path &fn, ColorSpace cs,
+                                             float3 scale = make_float3(1.f), bool need_device = false) noexcept;
     void prepare() noexcept;
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };

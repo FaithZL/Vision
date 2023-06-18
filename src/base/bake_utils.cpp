@@ -69,6 +69,13 @@ void BakedShape::save_to_cache(const UVSpreadResult &result) {
     Context::write_file(uv_config, data_str);
 }
 
+void BakedShape::load_rasterization_from_cache() const {
+    ImageIO &position = ImagePool::instance().obtain_image(position_cache_path(), ColorSpace::LINEAR).image();
+    _position.upload_immediately(position.pixel_ptr());
+    ImageIO &normal = ImagePool::instance().obtain_image(normal_cache_path(), ColorSpace::LINEAR).image();
+    _normal.upload_immediately(normal.pixel_ptr());
+}
+
 void BakedShape::save_rasterization_to_cache() const {
     vector<float4> map;
     map.resize(pixel_num());

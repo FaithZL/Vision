@@ -77,6 +77,7 @@ public:
     void prepare_for_rasterize() noexcept;
     [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const;
     void save_to_cache(const UVSpreadResult &result);
+    void load_rasterization_from_cache() const;
     void save_rasterization_to_cache() const;
     void remedy_vertices(UVSpreadResult result);
 };

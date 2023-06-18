@@ -16,7 +16,7 @@ public:
         : Rasterizer(desc) {}
 
     void compile_shader() noexcept override {
-        Kernel vertex_kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
+        Kernel kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
                                    BufferVar<float4> position, BufferVar<float4> normal, Uint2 res, Uint triangle_index) {
             Float2 coord = (make_float2(dispatch_idx().xy()) + 0.5f);
             Var tri = triangles.read(triangle_index);
@@ -35,7 +35,7 @@ public:
                 normal.write(dispatch_id(), make_float4(norm,1.f));
             };
         };
-        _shader = device().compile(vertex_kernel);
+        _shader = device().compile(kernel);
     }
 
     void apply(vision::BakedShape &baked_shape) noexcept override {
