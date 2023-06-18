@@ -22,7 +22,7 @@ struct SensorSample {
     Float filter_weight{1.f};
 };
 
-class Sensor : public Node, public Serializable<float> {
+class Sensor : public Node, public SerialObject {
 public:
     using Desc = SensorDesc;
 

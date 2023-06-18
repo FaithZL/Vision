@@ -30,6 +30,13 @@ public:
     [[nodiscard]] const RegistrableManaged<float> &datas() const noexcept { return _datas; }
 
     /**
+     * update data to managed memory
+     */
+    virtual void update_data() noexcept {
+        update(_datas);
+    }
+
+    /**
      * Serialize the data for upload to device memory
      */
     virtual void encode_data() noexcept {
