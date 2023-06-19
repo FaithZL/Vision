@@ -104,14 +104,12 @@ RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &norma
     Sampler *sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
     Frame frame(normal.xyz());
-    OCRay ray = vision::spawn_ray(position.xyz(), normal.xyz(), Var(frame.to_world(wi)));
+    OCRay ray = vision::spawn_ray(position.xyz(), normal.xyz(), frame.to_world(wi));
     return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
 }
 
 void BakerPipeline::compile_shaders() noexcept {
     Sampler *sampler = scene().sampler();
-    LightSampler *light_sampler = scene().light_sampler();
-
     Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
                              BufferVar<float4> normals, BufferVar<float4> lightmap) {
         Uint pixel_index = dispatch_id();
