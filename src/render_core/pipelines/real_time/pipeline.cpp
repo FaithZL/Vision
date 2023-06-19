@@ -37,8 +37,12 @@ public:
     }
 
     void render(double dt) noexcept override {
-        Clock clk;
         _scene.integrator()->render();
+    }
+
+    void display(double dt) noexcept override {
+        Clock clk;
+        render(dt);
         double ms = clk.elapse_ms();
         _total_time += ms;
         ++_frame_index;

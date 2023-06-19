@@ -35,6 +35,7 @@ public:
     void compile_transform_shader() noexcept;
     void init_scene(const vision::SceneDesc &scene_desc) override;
     void prepare() noexcept override;
+    void display(double dt) noexcept override;
     void render(double dt) noexcept override;
     void preprocess() noexcept override;
     template<typename Func>

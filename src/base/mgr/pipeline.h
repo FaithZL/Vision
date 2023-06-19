@@ -54,7 +54,7 @@ public:
     }
     virtual void prepare_geometry() noexcept;
     virtual void compile_shaders() noexcept = 0;
-    virtual void prepare() noexcept override = 0;
+    virtual void display(double dt) noexcept = 0;
     virtual void render(double dt) noexcept = 0;
     virtual void upload_data() noexcept { _scene.upload_data(); }
     [[nodiscard]] virtual float4 *final_picture(bool denoise) noexcept;

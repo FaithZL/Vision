@@ -104,6 +104,10 @@ void BakerPipeline::preprocess() noexcept {
 }
 
 void BakerPipeline::render(double dt) noexcept {
+
+}
+
+void BakerPipeline::display(double dt) noexcept {
     Clock clk;
     _scene.integrator()->render();
     double ms = clk.elapse_ms();

@@ -130,7 +130,7 @@ void App::update(double dt) noexcept {
         invalidation = false;
         pipeline().invalidate();
     }
-    pipeline().render(dt);
+    pipeline().display(dt);
     auto &view_buffer = pipeline().view_buffer();
     view_buffer.download_immediately();
     window->set_background(view_buffer.data());
