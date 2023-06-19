@@ -35,6 +35,7 @@ using DataWrap = nlohmann::json;
     [[nodiscard]] auto func(Args &&...args) {           \
         if constexpr (p == EPort::D) {                  \
             static Callable impl = func##_impl<p>;      \
+            impl.function()->set_description(#func);    \
             return impl(OC_FORWARD(args)...);           \
         } else {                                        \
             return func##_impl<p>(OC_FORWARD(args)...); \

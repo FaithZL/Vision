@@ -133,7 +133,7 @@ void BakerPipeline::compile_shaders() noexcept {
 void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
     Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
     Sampler *sampler = scene().sampler();
-
+    OC_INFO_FORMAT("start bake {}", baked_shape.shape()->name());
     for (int i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader(i, baked_shape.positions(),
                                  baked_shape.normals(),
