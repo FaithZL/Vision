@@ -37,7 +37,7 @@ void Camera::update_mat(float4x4 m) noexcept {
 void Camera::update_device_data() noexcept {
     _c2w = camera_to_world();
     Sensor::update_data();
-    datas().upload_immediately();
+    upload_immediately();
 }
 
 void Camera::prepare() noexcept {
@@ -47,13 +47,13 @@ void Camera::prepare() noexcept {
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {
-    float4x4 horizontal = rotation_y<H>(yaw().hv());
-    float4x4 vertical = rotation_x<H>(-pitch().hv());
+    float4x4 horizontal = rotation_y<H>(yaw());
+    float4x4 vertical = rotation_x<H>(-pitch());
     return scale(1, 1, -1) * horizontal * vertical;
 }
 
 float4x4 Camera::camera_to_world() const noexcept {
-    float4x4 translate = translation(_position.hv());
+    float4x4 translate = translation(_position);
     return translate * camera_to_world_rotation();
 }
 
