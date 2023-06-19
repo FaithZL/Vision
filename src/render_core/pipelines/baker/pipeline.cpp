@@ -107,7 +107,13 @@ void BakerPipeline::preprocess() noexcept {
     });
     pipeline()->stream() << synchronize() << commit();
 
+    // bake
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
+    });
+
     Printer::instance().retrieve_immediately();
+    exit(0);
 }
 
 void BakerPipeline::render(double dt) noexcept {

@@ -43,6 +43,7 @@ private:
     uint2 _resolution{};
     RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
     RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
+    RegistrableBuffer<float4> _lightmap{Global::instance().pipeline()->resource_array()};
     vector<DeviceMesh> _device_meshes;
 
 public:
@@ -53,6 +54,10 @@ public:
         return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}", _shape->hash());
     }
 
+    [[nodiscard]] fs::path instance_cache_directory() const noexcept {
+        return Global::instance().scene_cache_path() / ocarina::format("baked_instance_{:016x}", instance_hash());
+    }
+
 #define VS_MAKE_ATTR_GET(attr, sig) \
     [[nodiscard]] auto sig attr() noexcept { return _##attr; }
     VS_MAKE_ATTR_GET(resolution, )
@@ -61,10 +66,12 @@ public:
     VS_MAKE_ATTR_GET(normals, &)
 #undef VS_MAKE_ATTR_GET
 
+    [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;
     [[nodiscard]] fs::path position_cache_path() const noexcept;
     [[nodiscard]] fs::path normal_cache_path() const noexcept;
+    [[nodiscard]] fs::path lightmap_cache_path() const noexcept;
     [[nodiscard]] bool has_rasterization_cache() const noexcept;
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     template<typename Func>

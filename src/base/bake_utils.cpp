@@ -100,18 +100,31 @@ void BakedShape::remedy_vertices(UVSpreadResult result) {
         mesh.triangles = ocarina::move(u_mesh.triangles);
     });
 }
+
+uint64_t BakedShape::instance_hash() const noexcept {
+    return hash64(_shape->hash(), _shape->o2w());
+}
+
 fs::path BakedShape::uv_config_fn() const noexcept {
     return cache_directory() / "uv_config.json";
 }
+
 bool BakedShape::has_uv_cache() const noexcept {
     return fs::exists(uv_config_fn());
 }
+
+fs::path BakedShape::lightmap_cache_path() const noexcept {
+    return instance_cache_directory() / "lightmap.exr";
+}
+
 fs::path BakedShape::position_cache_path() const noexcept {
     return cache_directory() / "position.exr";
 }
+
 fs::path BakedShape::normal_cache_path() const noexcept {
     return cache_directory() / "normal.exr";
 }
+
 bool BakedShape::has_rasterization_cache() const noexcept {
     return fs::exists(normal_cache_path()) && fs::exists(position_cache_path());
 }
