@@ -59,6 +59,8 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
+    [[nodiscard]] virtual Float3 Li(RayState &rs) const noexcept;
+
     void prepare() noexcept override {
         encode_data();
         datas().reset_device_buffer(device());
