@@ -16,13 +16,17 @@ private:
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
+
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
                                      float4x4 o2w);
     Shader<transform_signature> _transform_shader;
+
     using bake_signature = void(uint, Buffer<float4>,
                                 Buffer<float4>, Buffer<float4>);
     Shader<bake_signature> _bake_shader;
+
+    Shader<void(uint)> _display_shader;
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc);

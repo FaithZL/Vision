@@ -139,8 +139,8 @@ void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
                                  baked_shape.normals(),
                                  baked_shape.lightmap())
                         .dispatch(baked_shape.resolution());
+        stream() << synchronize() << commit();
     }
-    stream() << synchronize() << commit();
 }
 
 void BakerPipeline::bake_all() noexcept {
@@ -153,9 +153,6 @@ void BakerPipeline::bake_all() noexcept {
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         baked_shape.save_lightmap_to_cache();
     });
-
-    Printer::instance().retrieve_immediately();
-    exit(0);
 }
 
 void BakerPipeline::render(double dt) noexcept {
