@@ -7,7 +7,6 @@
 #include "base/mgr/pipeline.h"
 #include "base/bake_utlis.h"
 #include "expander.h"
-#include "surface.h"
 
 namespace vision {
 
@@ -17,12 +16,13 @@ private:
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
-    UP<Surface> _surface;
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
                                      float4x4 o2w);
     Shader<transform_signature> _transform_shader;
-    Shader<void(uint)> _bake_shader;
+    using bake_signature = void(uint, Buffer<float4>,
+                                Buffer<float4>, Buffer<float4>);
+    Shader<bake_signature> _bake_shader;
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc);

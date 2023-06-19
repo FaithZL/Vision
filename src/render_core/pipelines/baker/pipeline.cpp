@@ -29,17 +29,16 @@ void BakerPipeline::compile_transform_shader() noexcept {
 }
 
 void BakerPipeline::compile_shaders() noexcept {
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
+                             BufferVar<float4> normals, BufferVar<float4> lightmap) {
 
     };
-
-
+    _bake_shader = device().compile(bake_kernel, "bake kernel");
     _scene.integrator()->compile_shader();
 }
 
 void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
-    _surface = make_unique<Surface>(scene_desc.sensor_desc);
     init_postprocessor(scene_desc);
 }
 
