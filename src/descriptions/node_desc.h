@@ -354,6 +354,7 @@ public:
     string fn;
     uint spp{0u};
     bool save_exit{false};
+    bool denoise{false};
     VISION_DESC_COMMON(Output)
     void init(const ParameterSet &ps) noexcept override;
 };

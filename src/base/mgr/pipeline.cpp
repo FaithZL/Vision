@@ -66,12 +66,14 @@ void Pipeline::deregister_texture(handle_ty index) noexcept {
     _resource_array->remove_texture(index);
 }
 
-
-
-float4 *Pipeline::final_picture() noexcept {
+float4 *Pipeline::final_picture(bool denoise) noexcept {
     RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
-    _postprocessor.denoise(resolution(), &_final_picture, &original, nullptr, nullptr);
-    _postprocessor.tone_mapping(_final_picture, _final_picture);
+    if (denoise) {
+        _postprocessor.denoise(resolution(), &_final_picture, &original, nullptr, nullptr);
+        _postprocessor.tone_mapping(_final_picture, _final_picture);
+    } else {
+        _postprocessor.tone_mapping(original, _final_picture);
+    }
     _final_picture.download_immediately();
     return _final_picture.data();
 }
