@@ -11,6 +11,16 @@ public:
     explicit RealTimeRenderPipeline(const PipelineDesc &desc)
         : Pipeline(desc) {}
 
+    void init_scene(const vision::SceneDesc &scene_desc) override {
+        _scene.init(scene_desc);
+        init_postprocessor(scene_desc);
+    }
+
+    void init_postprocessor(const vision::SceneDesc &scene_desc) override {
+        _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+        _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
+    }
+
     void prepare() noexcept override {
         auto pixel_num = resolution().x * resolution().y;
         _final_picture.reset_all(device(), pixel_num);

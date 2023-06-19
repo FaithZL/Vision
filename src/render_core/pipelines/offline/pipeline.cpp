@@ -22,6 +22,16 @@ public:
         preprocess();
     }
 
+    void init_scene(const vision::SceneDesc &scene_desc) override {
+        _scene.init(scene_desc);
+        init_postprocessor(scene_desc);
+    }
+
+    void init_postprocessor(const vision::SceneDesc &scene_desc) override {
+        _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+        _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
+    }
+
     void compile_shaders() noexcept override {
         _scene.integrator()->compile_shader();
     }

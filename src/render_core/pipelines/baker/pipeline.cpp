@@ -28,6 +28,17 @@ void BakerPipeline::compile_transform_shader() noexcept {
     _transform_shader = device().compile(kernel, "transform shader");
 }
 
+void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
+    _scene.init(scene_desc);
+    _surface = make_unique<Surface>(scene_desc.sensor_desc);
+    init_postprocessor(scene_desc);
+}
+
+void BakerPipeline::init_postprocessor(const vision::SceneDesc &scene_desc) {
+    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+    _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
+}
+
 void BakerPipeline::prepare() noexcept {
     auto pixel_num = resolution().x * resolution().y;
     _final_picture.reset_all(device(), pixel_num);

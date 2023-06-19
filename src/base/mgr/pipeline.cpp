@@ -26,11 +26,6 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     Printer::instance().init(device());
 }
 
-void Pipeline::init_postprocessor(const SceneDesc &scene_desc) {
-    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
-    _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
-}
-
 RegistrableManaged<float4> &Pipeline::view_buffer() {
     return scene().radiance_film()->tone_mapped_buffer();
 }

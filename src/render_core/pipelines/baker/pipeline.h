@@ -7,6 +7,7 @@
 #include "base/mgr/pipeline.h"
 #include "base/bake_utlis.h"
 #include "expander.h"
+#include "surface.h"
 
 namespace vision {
 
@@ -16,6 +17,7 @@ private:
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
+    UP<Surface> _surface;
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
                                      float4x4 o2w);
@@ -29,8 +31,9 @@ public:
     void compile_shaders() noexcept override {
         _scene.integrator()->compile_shader();
     }
+    void init_postprocessor(const vision::SceneDesc &scene_desc) override;
     void compile_transform_shader() noexcept;
-
+    void init_scene(const vision::SceneDesc &scene_desc) override;
     void prepare() noexcept override;
     void render(double dt) noexcept override;
     void preprocess() noexcept override;
