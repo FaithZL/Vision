@@ -100,15 +100,32 @@ void BakerPipeline::preprocess() noexcept {
     stream() << synchronize() << commit();
 }
 
+RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &normal) const noexcept {
+
+    return {};
+}
+
 void BakerPipeline::compile_shaders() noexcept {
+    Sampler *sampler = scene().sampler();
+    LightSampler *light_sampler = scene().light_sampler();
+
     Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
                              BufferVar<float4> normals, BufferVar<float4> lightmap) {
-        lightmap.write(dispatch_id(), make_float4(1.f));
+        Uint pixel_index = dispatch_id();
+        Float4 position = positions.read(pixel_index);
+        Float4 normal = normals.read(pixel_index);
+
+        $if(position.w > 0.5f) {
+            sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
+            RayState rs = generate_ray(position, normal);
+            geometry().trace_closest(rs.ray);
+//            integrator()->Li(rs);
+            lightmap.write(pixel_index, position);
+        };
     };
     _bake_shader = device().compile(bake_kernel, "bake kernel");
     _scene.integrator()->compile_shader();
 }
-
 
 void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
     Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
@@ -117,7 +134,8 @@ void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
     for (int i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader(i, baked_shape.positions(),
                                  baked_shape.normals(),
-                                 baked_shape.lightmap()).dispatch(baked_shape.resolution());
+                                 baked_shape.lightmap())
+                        .dispatch(baked_shape.resolution());
     }
     stream() << synchronize() << commit();
 }

@@ -18,7 +18,7 @@ public:
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
 
     void start_pixel_sample(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
-        _state = tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim));
+        _state.emplace(tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim)));
     }
 
     [[nodiscard]] Float next_1d() noexcept override {
