@@ -28,15 +28,6 @@ void BakerPipeline::compile_transform_shader() noexcept {
     _transform_shader = device().compile(kernel, "transform shader");
 }
 
-void BakerPipeline::compile_shaders() noexcept {
-    Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
-                             BufferVar<float4> normals, BufferVar<float4> lightmap) {
-
-    };
-    _bake_shader = device().compile(bake_kernel, "bake kernel");
-    _scene.integrator()->compile_shader();
-}
-
 void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
     init_postprocessor(scene_desc);
@@ -56,6 +47,7 @@ void BakerPipeline::prepare() noexcept {
     prepare_geometry();
     compile_shaders();
     prepare_resource_array();
+    bake_all();
 }
 
 void BakerPipeline::preprocess() noexcept {
@@ -88,7 +80,7 @@ void BakerPipeline::preprocess() noexcept {
             _rasterizer->apply(baked_shape);
         }
     });
-    pipeline()->stream() << synchronize() << commit();
+    stream() << synchronize() << commit();
 
     // save rasterize cache
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
@@ -100,16 +92,45 @@ void BakerPipeline::preprocess() noexcept {
     // transform to world space
     compile_transform_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        pipeline()->stream() << _transform_shader(baked_shape.positions(),
-                                                  baked_shape.normals(),
-                                                  baked_shape.shape()->o2w())
-                                    .dispatch(baked_shape.resolution());
+        stream() << _transform_shader(baked_shape.positions(),
+                                      baked_shape.normals(),
+                                      baked_shape.shape()->o2w())
+                        .dispatch(baked_shape.resolution());
     });
-    pipeline()->stream() << synchronize() << commit();
+    stream() << synchronize() << commit();
+}
 
+void BakerPipeline::compile_shaders() noexcept {
+    Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
+                             BufferVar<float4> normals, BufferVar<float4> lightmap) {
+        lightmap.write(dispatch_id(), make_float4(1.f));
+    };
+    _bake_shader = device().compile(bake_kernel, "bake kernel");
+    _scene.integrator()->compile_shader();
+}
+
+
+void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
+    Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
+    Sampler *sampler = scene().sampler();
+
+    for (int i = 0; i < sampler->sample_per_pixel(); ++i) {
+        stream() << _bake_shader(i, baked_shape.positions(),
+                                 baked_shape.normals(),
+                                 baked_shape.lightmap()).dispatch(baked_shape.resolution());
+    }
+    stream() << synchronize() << commit();
+}
+
+void BakerPipeline::bake_all() noexcept {
     // bake
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
+        baked_shape.prepare_for_bake();
+        bake(baked_shape);
+    });
+
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.save_lightmap_to_cache();
     });
 
     Printer::instance().retrieve_immediately();

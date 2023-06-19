@@ -22,6 +22,12 @@ void BakedShape::prepare_for_rasterize() noexcept {
     });
 }
 
+void BakedShape::prepare_for_bake() noexcept {
+    _lightmap.super() = shape()->device().create_buffer<float4>(pixel_num());
+    auto &stream = shape()->pipeline()->stream();
+    stream << _lightmap.clear();
+}
+
 UVSpreadResult BakedShape::load_uv_config_from_cache() const {
     DataWrap json = create_json_from_file(uv_config_fn());
     auto res = json["resolution"];
@@ -83,6 +89,13 @@ void BakedShape::save_rasterization_to_cache() const {
     ImageIO::save_image(position_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
     _normals.download_immediately(map.data());
     ImageIO::save_image(normal_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
+}
+
+void BakedShape::save_lightmap_to_cache() const {
+    vector<float4> map;
+    map.resize(pixel_num());
+    _lightmap.download_immediately(map.data());
+    ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
 }
 
 void BakedShape::remedy_vertices(UVSpreadResult result) {

@@ -36,6 +36,8 @@ public:
     void prepare() noexcept override;
     void display(double dt) noexcept override;
     void render(double dt) noexcept override;
+    void bake_all() noexcept;
+    void bake(BakedShape &baked_shape) noexcept;
     void preprocess() noexcept override;
     template<typename Func>
     void for_each_need_bake(Func &&func) {

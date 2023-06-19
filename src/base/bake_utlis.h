@@ -64,6 +64,7 @@ public:
     VS_MAKE_ATTR_GET(shape, )
     VS_MAKE_ATTR_GET(positions, &)
     VS_MAKE_ATTR_GET(normals, &)
+    VS_MAKE_ATTR_GET(lightmap, &)
 #undef VS_MAKE_ATTR_GET
 
     [[nodiscard]] uint64_t instance_hash() const noexcept;
@@ -82,10 +83,12 @@ public:
         });
     }
     void prepare_for_rasterize() noexcept;
+    void prepare_for_bake() noexcept;
     [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const;
     void save_to_cache(const UVSpreadResult &result);
     void load_rasterization_from_cache() const;
     void save_rasterization_to_cache() const;
+    void save_lightmap_to_cache() const;
     void remedy_vertices(UVSpreadResult result);
 };
 
