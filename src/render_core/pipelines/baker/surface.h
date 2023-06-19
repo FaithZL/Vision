@@ -10,12 +10,15 @@ namespace vision {
 
 class Surface : public Sensor {
 private:
-    RegistrableManaged<float4> *_positions{};
-    RegistrableManaged<float4> *_normals{};
+    uint _position_index{InvalidUI32};
+    uint _normal_index{InvalidUI32};
 
 public:
     explicit Surface(const SensorDesc &desc);
-    void update_data(RegistrableManaged<float4>&positions, RegistrableManaged<float4> &normals) noexcept;
+    void init(uint p_index, uint n_index) {
+        _position_index = p_index;
+        _normal_index = n_index;
+    }
     [[nodiscard]] RayState generate_ray(const vision::SensorSample &ss) const noexcept override;
 };
 

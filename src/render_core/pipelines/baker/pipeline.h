@@ -22,15 +22,14 @@ private:
                                      Buffer<float4>,
                                      float4x4 o2w);
     Shader<transform_signature> _transform_shader;
+    Shader<void(uint)> _bake_shader;
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc);
     static void create_cache_directory_if_necessary() {
         Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
-    void compile_shaders() noexcept override {
-        _scene.integrator()->compile_shader();
-    }
+    void compile_shaders() noexcept override;
     void init_postprocessor(const vision::SceneDesc &scene_desc) override;
     void compile_transform_shader() noexcept;
     void init_scene(const vision::SceneDesc &scene_desc) override;

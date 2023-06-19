@@ -28,6 +28,15 @@ void BakerPipeline::compile_transform_shader() noexcept {
     _transform_shader = device().compile(kernel, "transform shader");
 }
 
+void BakerPipeline::compile_shaders() noexcept {
+    Kernel kernel = [&](Uint frame_index) {
+
+    };
+
+
+    _scene.integrator()->compile_shader();
+}
+
 void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
     _surface = make_unique<Surface>(scene_desc.sensor_desc);
@@ -100,11 +109,9 @@ void BakerPipeline::preprocess() noexcept {
     pipeline()->stream() << synchronize() << commit();
 
     Printer::instance().retrieve_immediately();
-    exit(0);
 }
 
 void BakerPipeline::render(double dt) noexcept {
-
 }
 
 void BakerPipeline::display(double dt) noexcept {
