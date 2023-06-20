@@ -43,17 +43,17 @@ public:
     void update_mat(float4x4 m) noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
 
-#define VS_MAKE_MEMBER_GETTER(attr) \
-    [[nodiscard]] auto attr() const noexcept { return _##attr; }
-    VS_MAKE_MEMBER_GETTER(sensitivity)
-    VS_MAKE_MEMBER_GETTER(position)
-    VS_MAKE_MEMBER_GETTER(yaw)
-    VS_MAKE_MEMBER_GETTER(velocity)
-    VS_MAKE_MEMBER_GETTER(pitch)
-#undef VS_MAKE_MEMBER_GETTER
+
+
+    OC_MAKE_MEMBER_GETTER(sensitivity, )
+    OC_MAKE_MEMBER_GETTER(position, )
+    OC_MAKE_MEMBER_GETTER(yaw, )
+    OC_MAKE_MEMBER_GETTER(velocity, )
+    OC_MAKE_MEMBER_GETTER(pitch, )
 
     void move(float3 delta) noexcept { _position += delta; }
-    void set_yaw(float yaw) noexcept { _yaw = yaw; }
+
+    void set_yaw(decltype(_yaw) yaw) noexcept { _yaw = yaw; }
     void update_yaw(float val) noexcept { set_yaw(_yaw + val); }
     void set_pitch(float pitch) noexcept {
         if (pitch > pitch_max) {

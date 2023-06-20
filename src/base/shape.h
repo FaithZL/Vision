@@ -9,6 +9,7 @@
 #include "dsl/rtx_type.h"
 #include "node.h"
 #include "math/box.h"
+#include "core/vs_header.h"
 #include "base/illumination/light.h"
 
 namespace vision {
@@ -47,11 +48,9 @@ public:
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
     [[nodiscard]] bool has_material() const noexcept { return _handle.mat_id != InvalidUI32; }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
-#define VS_MAKE_MEMBER_GETTER(member)                                       \
-    [[nodiscard]] const auto &member() const noexcept { return _##member; } \
-    [[nodiscard]] auto &member() noexcept { return _##member; }
-    VS_MAKE_MEMBER_GETTER(handle)
-#undef VS_MAKE_MEMBER_GETTER
+
+    OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
+
     [[nodiscard]] bool has_emission() const noexcept {
         return _handle.light_id != InvalidUI32;
     }
