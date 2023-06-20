@@ -15,21 +15,21 @@ namespace vision {
 
 using namespace ocarina;
 
-struct UVSpreadVertex {
+struct UnwrapperVertex {
     // Not normalized - values are in Atlas width and height range.
     float2 uv{};
     uint xref{};
 };
 
-struct UVSpreadMesh {
-    vector<UVSpreadVertex> vertices;
+struct UnwrapperMesh {
+    vector<UnwrapperVertex> vertices;
     vector<Triangle> triangles;
 };
 
-struct UVSpreadResult {
+struct UnwrapperResult {
     uint width{};
     uint height{};
-    vector<UVSpreadMesh> meshes;
+    vector<UnwrapperMesh> meshes;
 };
 
 struct DeviceMesh {
@@ -84,22 +84,22 @@ public:
     }
     void prepare_for_rasterize() noexcept;
     void prepare_for_bake() noexcept;
-    [[nodiscard]] UVSpreadResult load_uv_config_from_cache() const;
-    void save_to_cache(const UVSpreadResult &result);
+    [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
+    void save_to_cache(const UnwrapperResult &result);
     void load_rasterization_from_cache() const;
     void save_rasterization_to_cache() const;
     void save_lightmap_to_cache() const;
-    void remedy_vertices(UVSpreadResult result);
+    void remedy_vertices(UnwrapperResult result);
 };
 
-class UVSpreader : public Node {
+class UVUnwrapper : public Node {
 public:
-    using Desc = UVSpreaderDesc;
+    using Desc = UVUnwrapperDesc;
 
 public:
-    explicit UVSpreader(const UVSpreaderDesc &desc)
+    explicit UVUnwrapper(const UVUnwrapperDesc &desc)
         : Node(desc) {}
-    [[nodiscard]] virtual UVSpreadResult apply(const Shape *shape) = 0;
+    [[nodiscard]] virtual UnwrapperResult apply(const Shape *shape) = 0;
 };
 
 class Rasterizer : public Node {

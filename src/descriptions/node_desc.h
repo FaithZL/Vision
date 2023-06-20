@@ -187,9 +187,9 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct UVSpreaderDesc : public NodeDesc {
+struct UVUnwrapperDesc : public NodeDesc {
 public:
-    VISION_DESC_COMMON(UVSpreader)
+    VISION_DESC_COMMON(UVUnwrapper)
     void init(const ParameterSet &ps) noexcept override;
 };
 
@@ -197,7 +197,7 @@ struct PipelineDesc : public NodeDesc {
 public:
     mutable Device *device{nullptr};
     RasterizerDesc rasterizer_desc;
-    UVSpreaderDesc uv_spreader_desc;
+    UVUnwrapperDesc unwrapper_desc;
 
 public:
     VISION_DESC_COMMON(Pipeline)

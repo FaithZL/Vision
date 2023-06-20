@@ -1,4 +1,4 @@
-add_library(vision-uvspreader INTERFACE)
+add_library(vision-uvunwrapper INTERFACE)
 
 function(vision_add_xatlas_plugin name)
     cmake_parse_arguments(PLUGIN "" "CATEGORY" "SOURCES" ${ARGN})
@@ -18,4 +18,4 @@ function(vision_add_xatlas_plugin name)
 endfunction()
 
 
-vision_add_xatlas_plugin(xatlas CATEGORY uvspreader SOURCES xatlas.cpp)
+vision_add_xatlas_plugin(xatlas CATEGORY uvunwrapper SOURCES xatlas.cpp)

@@ -13,7 +13,7 @@ add_subdirectory(warpers)
 add_subdirectory(spectra)
 add_subdirectory(tonemappers)
 add_subdirectory(denoisers)
-add_subdirectory(uvspreaders)
+add_subdirectory(uvunwrappers)
 add_subdirectory(pipelines)
 add_subdirectory(rasterizers)
 
@@ -23,7 +23,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-shape
         vision-tonemapper
         vision-denoiser
-        vision-uvspreader
+        vision-uvunwrapper
         vision-lightsampler
         vision-sensor
         vision-pipeline

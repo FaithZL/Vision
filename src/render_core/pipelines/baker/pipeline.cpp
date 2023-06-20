@@ -8,7 +8,7 @@ namespace vision {
 
 BakerPipeline::BakerPipeline(const PipelineDesc &desc)
     : Pipeline(desc),
-      _uv_spreader(Global::node_mgr().load<UVSpreader>(desc.uv_spreader_desc)),
+      _uv_spreader(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
       _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
     create_cache_directory_if_necessary();
 }
@@ -58,7 +58,7 @@ void BakerPipeline::preprocess() noexcept {
 
     // uv spread
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        UVSpreadResult spread_result;
+        UnwrapperResult spread_result;
         if (baked_shape.has_uv_cache()) {
             spread_result = baked_shape.load_uv_config_from_cache();
         } else {
@@ -141,7 +141,6 @@ void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
                                  baked_shape.normals(),
                                  baked_shape.lightmap())
                         .dispatch(baked_shape.resolution());
-        stream() << synchronize() << commit();
     }
 }
 
@@ -151,10 +150,11 @@ void BakerPipeline::bake_all() noexcept {
         baked_shape.prepare_for_bake();
         bake(baked_shape);
     });
-
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.save_lightmap_to_cache();
-    });
+    stream() << synchronize() << commit();
+    for (int i = 0; i < _baked_shapes.size(); ++i) {
+        _baked_shapes[i].save_lightmap_to_cache();
+        _baked_shapes[i].shape()->handle().lightmap_id = i;
+    }
 }
 
 void BakerPipeline::render(double dt) noexcept {

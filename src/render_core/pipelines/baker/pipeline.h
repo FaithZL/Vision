@@ -21,7 +21,7 @@ namespace vision {
  */
 class BakerPipeline : public Pipeline {
 private:
-    UVSpreader *_uv_spreader{};
+    UVUnwrapper *_uv_spreader{};
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;

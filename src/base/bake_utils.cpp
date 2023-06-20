@@ -28,16 +28,16 @@ void BakedShape::prepare_for_bake() noexcept {
     stream << _lightmap.clear();
 }
 
-UVSpreadResult BakedShape::load_uv_config_from_cache() const {
+UnwrapperResult BakedShape::load_uv_config_from_cache() const {
     DataWrap json = create_json_from_file(uv_config_fn());
     auto res = json["resolution"];
-    UVSpreadResult spread_result;
+    UnwrapperResult spread_result;
     spread_result.width = res[0];
     spread_result.height = res[1];
     _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
         DataWrap elm = json["uv_result"][i];
         auto vertices = elm["vertices"];
-        UVSpreadMesh u_mesh;
+        UnwrapperMesh u_mesh;
         for (auto vertex : vertices) {
             u_mesh.vertices.emplace_back(make_float2(vertex[0], vertex[1]), vertex[2]);
         }
@@ -51,13 +51,13 @@ UVSpreadResult BakedShape::load_uv_config_from_cache() const {
     return spread_result;
 }
 
-void BakedShape::save_to_cache(const UVSpreadResult &result) {
+void BakedShape::save_to_cache(const UnwrapperResult &result) {
     Context::create_directory_if_necessary(cache_directory());
     DataWrap data = DataWrap::object();
     data["resolution"] = {result.width, result.height};
     data["uv_result"] = DataWrap::array();
     _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-        const UVSpreadMesh &u_mesh = result.meshes[i];
+        const UnwrapperMesh &u_mesh = result.meshes[i];
         DataWrap elm = DataWrap::object();
         elm["vertices"] = DataWrap::array();
         for (auto vertex : u_mesh.vertices) {
@@ -98,10 +98,10 @@ void BakedShape::save_lightmap_to_cache() const {
     ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
 }
 
-void BakedShape::remedy_vertices(UVSpreadResult result) {
+void BakedShape::remedy_vertices(UnwrapperResult result) {
     _resolution = make_uint2(result.width, result.height);
     _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-        UVSpreadMesh &u_mesh = result.meshes[i];
+        UnwrapperMesh &u_mesh = result.meshes[i];
         vector<Vertex> vertices;
         vertices.reserve(u_mesh.vertices.size());
         for (auto &vert : u_mesh.vertices) {
