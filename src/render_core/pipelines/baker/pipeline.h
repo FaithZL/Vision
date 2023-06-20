@@ -10,6 +10,15 @@
 
 namespace vision {
 
+/**
+ * Process of baking
+ * 1. merge model, unwrap uv and cache
+ * 2. rasterize position, normal map and cache
+ * 3. transform instance position , normal map to world space
+ * 4. bake
+ * 5. postprocess eg. denoise, padding ...
+ * 6. display
+ */
 class BakerPipeline : public Pipeline {
 private:
     UVSpreader *_uv_spreader{};
