@@ -100,9 +100,10 @@ void BakerPipeline::preprocess() noexcept {
     stream() << synchronize() << commit();
 }
 
-RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &normal) const noexcept {
+RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &normal, Float *scatter_pdf) const noexcept {
     Sampler *sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
+    *scatter_pdf = cosine_hemisphere_PDF(wi.z);
     Frame frame(normal.xyz());
     OCRay ray = vision::spawn_ray(position.xyz(), normal.xyz(), frame.to_world(wi));
     return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
@@ -118,8 +119,9 @@ void BakerPipeline::compile_shaders() noexcept {
 
         $if(position.w > 0.5f) {
             sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
-            RayState rs = generate_ray(position, normal);
-            Float3 L = integrator()->Li(rs);
+            Float scatter_pdf;
+            RayState rs = generate_ray(position, normal, &scatter_pdf);
+            Float3 L = integrator()->Li(rs,scatter_pdf);
             Float3 accum_prev = lightmap.read(pixel_index).xyz();
             Float a = 1.f / (frame_index + 1);
             L = lerp(make_float3(a), accum_prev, L);

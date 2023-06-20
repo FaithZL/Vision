@@ -9,12 +9,11 @@
 
 namespace vision {
 
-Float3 UnidirectionalPathTracing::Li(vision::RayState &rs) const noexcept {
+Float3 UnidirectionalPathTracing::Li(vision::RayState &rs, Float scatter_pdf) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
 
-    Float scatter_pdf = 1e16f;
     SampledWavelengths swl = spectrum().sample_wavelength(sampler);
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};

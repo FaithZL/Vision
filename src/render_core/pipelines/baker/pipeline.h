@@ -42,7 +42,7 @@ public:
     void render(double dt) noexcept override;
     void bake_all() noexcept;
     void bake(BakedShape &baked_shape) noexcept;
-    [[nodiscard]] RayState generate_ray(const Float4& position, const Float4 &normal) const noexcept;
+    [[nodiscard]] RayState generate_ray(const Float4& position, const Float4 &normal, Float *pdf) const noexcept;
     void preprocess() noexcept override;
     template<typename Func>
     void for_each_need_bake(Func &&func) {

@@ -24,8 +24,9 @@ public:
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             camera->load_data();
+            Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
-            camera->radiance_film()->add_sample(pixel, Li(rs), frame_index);
+            camera->radiance_film()->add_sample(pixel, Li(rs, scatter_pdf), frame_index);
         };
         _shader = rp->device().compile(kernel, "path tracing integrator");
     }

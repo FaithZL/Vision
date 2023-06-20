@@ -24,7 +24,7 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _distance, _cos_sample, _sample_num)
 
-    [[nodiscard]] Float3 Li(vision::RayState &rs) const noexcept override {
+    [[nodiscard]] Float3 Li(vision::RayState &rs, Float scatter_pdf) const noexcept override {
         Float3 L = make_float3(0.f);
         Pipeline *rp = pipeline();
         Camera *camera = scene().camera();
@@ -76,7 +76,7 @@ public:
             camera->load_data();
             RayState rs = camera->generate_ray(ss);
 
-            camera->radiance_film()->add_sample(pixel, Li(rs), frame_index);
+            camera->radiance_film()->add_sample(pixel, Li(rs, 0), frame_index);
         };
         _shader = rp->device().compile(kernel);
     }
