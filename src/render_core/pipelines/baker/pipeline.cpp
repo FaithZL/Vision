@@ -65,7 +65,7 @@ void BakerPipeline::preprocess() noexcept {
             spread_result = _uv_spreader->apply(baked_shape.shape());
             baked_shape.save_to_cache(spread_result);
         }
-        baked_shape.remedy_vertices(ocarina::move(spread_result));
+        baked_shape.setup_vertices(ocarina::move(spread_result));
     });
 
     // rasterize
@@ -84,6 +84,7 @@ void BakerPipeline::preprocess() noexcept {
 
     // save rasterize cache
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.normalize_lightmap_uv();
         if (!baked_shape.has_rasterization_cache()) {
             baked_shape.save_rasterization_to_cache();
         }

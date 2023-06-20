@@ -98,7 +98,7 @@ void BakedShape::save_lightmap_to_cache() const {
     ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
 }
 
-void BakedShape::remedy_vertices(UnwrapperResult result) {
+void BakedShape::setup_vertices(UnwrapperResult result) {
     _resolution = make_uint2(result.width, result.height);
     _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
         UnwrapperMesh &u_mesh = result.meshes[i];
@@ -106,11 +106,19 @@ void BakedShape::remedy_vertices(UnwrapperResult result) {
         vertices.reserve(u_mesh.vertices.size());
         for (auto &vert : u_mesh.vertices) {
             Vertex vertex = mesh.vertices[vert.xref];
-            vertex.set_lightmap_uv(vert.uv / make_float2(result.width, result.height));
+            vertex.set_lightmap_uv(vert.uv);
             vertices.push_back(vertex);
         }
         mesh.vertices = ocarina::move(vertices);
         mesh.triangles = ocarina::move(u_mesh.triangles);
+    });
+}
+
+void BakedShape::normalize_lightmap_uv() {
+    _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+        for (auto &vert : mesh.vertices) {
+            vert.set_lightmap_uv(vert.lightmap_uv() / make_float2(resolution()));
+        }
     });
 }
 

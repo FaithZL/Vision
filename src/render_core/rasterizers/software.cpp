@@ -24,9 +24,9 @@ public:
             Var v1 = vertices.read(tri.j);
             Var v2 = vertices.read(tri.k);
 
-            Float2 p0 = v0->lightmap_uv() * make_float2(res);
-            Float2 p1 = v1->lightmap_uv() * make_float2(res);
-            Float2 p2 = v2->lightmap_uv() * make_float2(res);
+            Float2 p0 = v0->lightmap_uv();
+            Float2 p1 = v1->lightmap_uv();
+            Float2 p2 = v2->lightmap_uv();
             $if(in_triangle<D>(coord, p0, p1, p2)) {
                 Float2 bary = barycentric(coord, p0, p1, p2);
                 Float3 pos = triangle_lerp(bary, v0->position(), v1->position(), v2->position());

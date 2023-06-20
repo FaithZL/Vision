@@ -89,7 +89,8 @@ public:
     void load_rasterization_from_cache() const;
     void save_rasterization_to_cache() const;
     void save_lightmap_to_cache() const;
-    void remedy_vertices(UnwrapperResult result);
+    void setup_vertices(UnwrapperResult result);
+    void normalize_lightmap_uv();
 };
 
 class UVUnwrapper : public Node {
