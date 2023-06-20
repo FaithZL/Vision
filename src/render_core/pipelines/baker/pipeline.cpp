@@ -48,6 +48,7 @@ void BakerPipeline::prepare() noexcept {
     compile_shaders();
     prepare_resource_array();
     bake_all();
+    upload_lightmap();
 }
 
 void BakerPipeline::preprocess() noexcept {
@@ -178,13 +179,19 @@ void BakerPipeline::bake_all() noexcept {
     }
 }
 
+void BakerPipeline::upload_lightmap() noexcept {
+
+}
+
 void BakerPipeline::render(double dt) noexcept {
     Clock clk;
-    _scene.integrator()->render();
-    double ms = clk.elapse_ms();
-    _total_time += ms;
+    stream() << _display_shader(frame_index()).dispatch(resolution());
+    stream() << synchronize();
+    stream() << commit();
+//    double ms = clk.elapse_ms();
+//    _total_time += ms;
     ++_frame_index;
-    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+//    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     Printer::instance().retrieve_immediately();
 }
 

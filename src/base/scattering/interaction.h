@@ -96,6 +96,7 @@ public:
     UVN<Float3> s_uvn;
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
+    Uint lightmap_id{InvalidUI32};
 
 private:
     Uint _mat_id{InvalidUI32};
@@ -116,6 +117,7 @@ public:
     void set_light(const Uint &light) noexcept { _light_id = light; }
     [[nodiscard]] Bool has_emission() const noexcept { return _light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return _mat_id != InvalidUI32; }
+    [[nodiscard]] Bool has_lightmap() const noexcept { return lightmap_id != InvalidUI32; }
     [[nodiscard]] Uint material_inst_id() const noexcept;
     [[nodiscard]] Uint material_type_id() const noexcept;
     [[nodiscard]] Uint material_id() const noexcept { return _mat_id; }

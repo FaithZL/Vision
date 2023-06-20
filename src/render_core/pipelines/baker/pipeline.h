@@ -36,6 +36,7 @@ private:
     Shader<bake_signature> _bake_shader;
 
     Shader<void(uint)> _display_shader;
+    uint _lightmap_base_index{InvalidUI32};
 
 public:
     explicit BakerPipeline(const PipelineDesc &desc);
@@ -52,6 +53,7 @@ public:
     void display(double dt) noexcept override;
     void render(double dt) noexcept override;
     void bake_all() noexcept;
+    void upload_lightmap() noexcept;
     void bake(BakedShape &baked_shape) noexcept;
     [[nodiscard]] RayState generate_ray(const Float4& position, const Float4 &normal, Float *pdf) const noexcept;
     void preprocess() noexcept override;
