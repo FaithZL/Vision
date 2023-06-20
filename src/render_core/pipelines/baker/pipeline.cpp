@@ -111,6 +111,12 @@ RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &norma
 }
 
 void BakerPipeline::compile_shaders() noexcept {
+    compile_baker();
+    _scene.integrator()->compile_shader();
+    compile_displayer();
+}
+
+void BakerPipeline::compile_baker() noexcept {
     Sampler *sampler = scene().sampler();
     Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
                              BufferVar<float4> normals, BufferVar<float4> lightmap) {
@@ -130,7 +136,21 @@ void BakerPipeline::compile_shaders() noexcept {
         };
     };
     _bake_shader = device().compile(bake_kernel, "bake kernel");
-    _scene.integrator()->compile_shader();
+}
+
+void BakerPipeline::compile_displayer() noexcept {
+    Camera *camera = scene().camera();
+    Sampler *sampler = scene().sampler();
+    Kernel kernel = [&](Uint frame_index) {
+        Uint2 pixel = dispatch_idx().xy();
+        sampler->start_pixel_sample(pixel, frame_index, 0);
+        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+        camera->load_data();
+        Float scatter_pdf = 1e16f;
+        RayState rs = camera->generate_ray(ss);
+        camera->radiance_film()->add_sample(pixel, integrator()->Li(rs, scatter_pdf), frame_index);
+    };
+    _display_shader = device().compile(kernel, "display");
 }
 
 void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {

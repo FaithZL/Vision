@@ -43,6 +43,8 @@ public:
         Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
     void compile_shaders() noexcept override;
+    void compile_baker() noexcept;
+    void compile_displayer() noexcept;
     void init_postprocessor(const vision::SceneDesc &scene_desc) override;
     void compile_transform_shader() noexcept;
     void init_scene(const vision::SceneDesc &scene_desc) override;

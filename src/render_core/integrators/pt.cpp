@@ -15,7 +15,6 @@ public:
         : UnidirectionalPathTracing(desc) {}
 
     void compile_shader() noexcept override {
-        Pipeline *rp = pipeline();
         Camera *camera = scene().camera();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
@@ -28,7 +27,7 @@ public:
             RayState rs = camera->generate_ray(ss);
             camera->radiance_film()->add_sample(pixel, Li(rs, scatter_pdf), frame_index);
         };
-        _shader = rp->device().compile(kernel, "path tracing integrator");
+        _shader = device().compile(kernel, "path tracing integrator");
     }
 
     void render() const noexcept override {
