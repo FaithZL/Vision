@@ -121,7 +121,7 @@ void BakerPipeline::compile_shaders() noexcept {
             sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
-            Float3 L = integrator()->Li(rs,scatter_pdf);
+            Float3 L = integrator()->Li(rs, scatter_pdf);
             Float3 accum_prev = lightmap.read(pixel_index).xyz();
             Float a = 1.f / (frame_index + 1);
             L = lerp(make_float3(a), accum_prev, L);
@@ -158,9 +158,6 @@ void BakerPipeline::bake_all() noexcept {
 }
 
 void BakerPipeline::render(double dt) noexcept {
-}
-
-void BakerPipeline::display(double dt) noexcept {
     Clock clk;
     _scene.integrator()->render();
     double ms = clk.elapse_ms();
@@ -168,6 +165,10 @@ void BakerPipeline::display(double dt) noexcept {
     ++_frame_index;
     cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
     Printer::instance().retrieve_immediately();
+}
+
+void BakerPipeline::display(double dt) noexcept {
+    render(dt);
 }
 
 }// namespace vision

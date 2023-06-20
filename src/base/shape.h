@@ -25,6 +25,7 @@ public:
         // todo compress unsigned int data
         uint light_id{InvalidUI32};
         uint mat_id{InvalidUI32};
+        uint lightmap_id{InvalidUI32};
         uint mesh_id{InvalidUI32};
         uint inside_medium{InvalidUI32};
         uint outside_medium{InvalidUI32};
@@ -34,29 +35,37 @@ public:
 public:
     Box3f aabb;
     Light *emission{};
-    Handle handle;
+
+protected:
+    Handle _handle;
 
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
     virtual void fill_geometry(Geometry &data) const noexcept = 0;
-    virtual void update_material_id(uint id) noexcept { handle.mat_id = id; }
-    virtual void update_light_id(uint id) noexcept { handle.light_id = id; }
-    [[nodiscard]] bool has_material() const noexcept { return handle.mat_id != InvalidUI32; }
+    virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
+    virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
+    [[nodiscard]] bool has_material() const noexcept { return _handle.mat_id != InvalidUI32; }
+    [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
+#define VS_MAKE_MEMBER_GETTER(member)                                       \
+    [[nodiscard]] const auto &member() const noexcept { return _##member; } \
+    [[nodiscard]] auto &member() noexcept { return _##member; }
+    VS_MAKE_MEMBER_GETTER(handle)
+#undef VS_MAKE_MEMBER_GETTER
     [[nodiscard]] bool has_emission() const noexcept {
-        return handle.light_id != InvalidUI32;
+        return _handle.light_id != InvalidUI32;
     }
     [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
     [[nodiscard]] virtual const Mesh &mesh_at(uint i) const noexcept = 0;
-    [[nodiscard]] virtual float4x4 o2w() const noexcept { return handle.o2w; }
+    [[nodiscard]] virtual float4x4 o2w() const noexcept { return _handle.o2w; }
 };
 
 }// namespace vision
 
-OC_STRUCT(vision::Shape::Handle, light_id, mat_id, mesh_id, inside_medium, outside_medium, o2w){};
+OC_STRUCT(vision::Shape::Handle, light_id, mat_id, lightmap_id, mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
 struct Mesh : public Shape {
