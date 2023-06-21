@@ -93,6 +93,7 @@ public:
     UVN<Float3> g_uvn;
 
     Float2 uv;
+    Float2 lightmap_uv;
     UVN<Float3> s_uvn;
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};

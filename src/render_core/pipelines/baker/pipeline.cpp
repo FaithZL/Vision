@@ -139,6 +139,14 @@ void BakerPipeline::compile_baker() noexcept {
     _bake_shader = device().compile(bake_kernel, "bake kernel");
 }
 
+Float3 BakerPipeline::Li(vision::RayState &rs) const noexcept {
+    Float3 L = make_float3(0.f);
+    Var hit = geometry().trace_closest(rs.ray);
+    Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
+//    L = resource_array()->tex(it.lightmap_uv).sample(3, it.lightmap_uv).as_vec3();
+    return make_float3(it.lightmap_uv, 0.f);
+}
+
 void BakerPipeline::compile_displayer() noexcept {
     Camera *camera = scene().camera();
     Sampler *sampler = scene().sampler();
@@ -149,7 +157,7 @@ void BakerPipeline::compile_displayer() noexcept {
         camera->load_data();
         Float scatter_pdf = 1e16f;
         RayState rs = camera->generate_ray(ss);
-        camera->radiance_film()->add_sample(pixel, integrator()->Li(rs, scatter_pdf), frame_index);
+        camera->radiance_film()->add_sample(pixel,Li(rs), frame_index);
     };
     _display_shader = device().compile(kernel, "display");
 }

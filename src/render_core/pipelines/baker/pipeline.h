@@ -56,6 +56,7 @@ public:
     void upload_lightmap() noexcept;
     void bake(BakedShape &baked_shape) noexcept;
     [[nodiscard]] RayState generate_ray(const Float4& position, const Float4 &normal, Float *pdf) const noexcept;
+    [[nodiscard]] Float3 Li(RayState &rs) const noexcept;
     void preprocess() noexcept override;
     template<typename Func>
     void for_each_need_bake(Func &&func) {
