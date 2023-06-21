@@ -44,6 +44,7 @@ private:
     RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
     RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
     RegistrableBuffer<float4> _lightmap{Global::instance().pipeline()->resource_array()};
+    Texture _lightmap_tex;
     vector<DeviceMesh> _device_meshes;
 
 public:
@@ -65,6 +66,7 @@ public:
     VS_MAKE_ATTR_GET(positions, &)
     VS_MAKE_ATTR_GET(normals, &)
     VS_MAKE_ATTR_GET(lightmap, &)
+    VS_MAKE_ATTR_GET(lightmap_tex, &)
 #undef VS_MAKE_ATTR_GET
 
     [[nodiscard]] uint64_t instance_hash() const noexcept;
@@ -73,6 +75,7 @@ public:
     [[nodiscard]] fs::path position_cache_path() const noexcept;
     [[nodiscard]] fs::path normal_cache_path() const noexcept;
     [[nodiscard]] fs::path lightmap_cache_path() const noexcept;
+    void allocate_lightmap_texture() noexcept;
     [[nodiscard]] bool has_rasterization_cache() const noexcept;
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     template<typename Func>

@@ -98,6 +98,10 @@ void BakedShape::save_lightmap_to_cache() const {
     ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
 }
 
+void BakedShape::allocate_lightmap_texture() noexcept {
+    _lightmap_tex = shape()->device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
+}
+
 void BakedShape::setup_vertices(UnwrapperResult result) {
     _resolution = make_uint2(result.width, result.height);
     _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
