@@ -180,7 +180,15 @@ void BakerPipeline::bake_all() noexcept {
 }
 
 void BakerPipeline::upload_lightmap() noexcept {
+    _lightmap_base_index = pipeline()->resource_array().texture_num();
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.allocate_lightmap_texture();
+        register_texture(baked_shape.lightmap_tex());
+        auto cmd = baked_shape.lightmap_tex().copy_from_buffer_sync(baked_shape.lightmap().handle(), 0);
+        stream() << cmd;
+    });
 
+    stream() << synchronize() << commit();
 }
 
 void BakerPipeline::render(double dt) noexcept {
@@ -188,10 +196,11 @@ void BakerPipeline::render(double dt) noexcept {
     stream() << _display_shader(frame_index()).dispatch(resolution());
     stream() << synchronize();
     stream() << commit();
-//    double ms = clk.elapse_ms();
-//    _total_time += ms;
+    double ms = clk.elapse_ms();
+    _total_time += ms;
     ++_frame_index;
-//    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+    cerr.flush();
     Printer::instance().retrieve_immediately();
 }
 
