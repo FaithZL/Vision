@@ -12,12 +12,13 @@ namespace vision {
 
 /**
  * Process of baking
- * 1. merge model, unwrap uv and cache
+ * 1. unwrap uv and cache
  * 2. rasterize position, normal map and cache
  * 3. transform instance position , normal map to world space
- * 4. bake
+ * 4. bake (to increase parallelism, mesh's normal, position map can be merged) and save to cache
  * 5. postprocess eg. denoise, padding ...
- * 6. display
+ * 6. update geometry data
+ * 7. display
  */
 class BakerPipeline : public Pipeline {
 private:
@@ -55,16 +56,16 @@ public:
     void bake_all() noexcept;
     void upload_lightmap() noexcept;
     void bake(BakedShape &baked_shape) noexcept;
-    [[nodiscard]] RayState generate_ray(const Float4& position, const Float4 &normal, Float *pdf) const noexcept;
+    [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;
     void preprocess() noexcept override;
     template<typename Func>
     void for_each_need_bake(Func &&func) {
         auto &meshes = _scene.shapes();
         std::for_each(meshes.begin(), meshes.end(), [&](vision::Shape *item) {
-//            if (item->has_emission()) {
-//                return;
-//            }
+            //            if (item->has_emission()) {
+            //                return;
+            //            }
             func(item);
         });
     }
