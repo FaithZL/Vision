@@ -103,6 +103,7 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     Var p2 = o2w.apply_point(v2->position());
     Float3 pos = hit->lerp(p0, p1, p2);
     it.pos = pos;
+    it.lightmap_uv = hit->lerp(v0->lightmap_uv(), v1->lightmap_uv(), v2->lightmap_uv());
 
     comment("compute geometry uvn");
     Float3 dp02 = p0 - p2;
