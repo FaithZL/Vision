@@ -143,8 +143,8 @@ Float3 BakerPipeline::Li(vision::RayState &rs) const noexcept {
     Float3 L = make_float3(0.f);
     Var hit = geometry().trace_closest(rs.ray);
     Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
-//    L = resource_array()->tex(it.lightmap_uv).sample(3, it.lightmap_uv).as_vec3();
-    return make_float3(it.lightmap_uv, 0.f);
+//    L = resource_array().tex(it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
+    return make_float3(0.f);
 }
 
 void BakerPipeline::compile_displayer() noexcept {
@@ -201,15 +201,14 @@ void BakerPipeline::upload_lightmap() noexcept {
 
 void BakerPipeline::render(double dt) noexcept {
     Clock clk;
-    stream() << _display_shader(frame_index()).dispatch(resolution());
+    integrator()->render();
+//    stream() << _display_shader(frame_index()).dispatch(resolution());
     stream() << synchronize();
     stream() << commit();
     double ms = clk.elapse_ms();
     _total_time += ms;
     ++_frame_index;
-    cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
-    cerr.flush();
-    Printer::instance().retrieve_immediately();
+    printf("time consuming (current frame: %f, average: %f) frame index: %u\r", ms, _total_time / _frame_index, _frame_index);
 }
 
 void BakerPipeline::display(double dt) noexcept {

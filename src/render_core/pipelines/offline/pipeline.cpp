@@ -46,7 +46,7 @@ public:
         double ms = clk.elapse_ms();
         _total_time += ms;
         ++_frame_index;
-        cerr << ms << "  " << _total_time / _frame_index << "  " << _frame_index << endl;
+        printf("time consuming (current frame: %f, average: %f) frame index: %u\r", ms, _total_time / _frame_index, _frame_index);
         Printer::instance().retrieve_immediately();
     }
 };
