@@ -49,6 +49,7 @@ void BakerPipeline::prepare() noexcept {
     prepare_resource_array();
     bake_all();
     upload_lightmap();
+    prepare_resource_array();
 }
 
 void BakerPipeline::preprocess() noexcept {
@@ -113,7 +114,7 @@ RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &norma
 
 void BakerPipeline::compile_shaders() noexcept {
     compile_baker();
-//    _scene.integrator()->compile_shader();
+    //    _scene.integrator()->compile_shader();
     compile_displayer();
 }
 
@@ -157,19 +158,23 @@ void BakerPipeline::compile_displayer() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
-//        Float scatter_pdf = 1e16f;
+        Float scatter_pdf = 1e16f;
         RayState rs = camera->generate_ray(ss);
 
         Float3 L = make_float3(0.f);
 
         Var hit = geometry().trace_closest(rs.ray);
+        $if(hit->is_miss()) {
+            camera->radiance_film()->add_sample(pixel, L, frame_index);
+            $return();
+        };
+
         Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
-        comment("resource_array start");
-//        $if(it.has_lightmap()) {
-//            L = resource_array().tex(0).sample(3,it.lightmap_uv).as_vec3();
-//        };
-        comment("resource_array end");
-        camera->radiance_film()->add_sample(pixel, make_float3(it.lightmap_uv.xyx()), frame_index);
+
+        $if(it.has_lightmap()) {
+            L = resource_array().tex(_lightmap_base_index + it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
+        };
+        camera->radiance_film()->add_sample(pixel, L, frame_index);
     };
     _display_shader = device().compile(kernel, "display");
 }
@@ -203,12 +208,13 @@ void BakerPipeline::upload_lightmap() noexcept {
     _lightmap_base_index = pipeline()->resource_array().texture_num();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         baked_shape.allocate_lightmap_texture();
+        vector<float4> data;
         auto cmd = baked_shape.lightmap_tex().copy_from_buffer_sync(baked_shape.lightmap().handle(), 0);
+        stream() << cmd << synchronize() << commit();
         register_texture(baked_shape.lightmap_tex());
-        stream() << cmd <<synchronize() << commit();
     });
 
-//    stream() << synchronize() << commit();
+    stream() << synchronize() << commit();
 }
 
 void BakerPipeline::render(double dt) noexcept {
@@ -218,6 +224,7 @@ void BakerPipeline::render(double dt) noexcept {
     stream() << synchronize();
     stream() << commit();
     double ms = clk.elapse_ms();
+    Printer::instance().retrieve_immediately();
     _total_time += ms;
     ++_frame_index;
     printf("time consuming (current frame: %f, average: %f) frame index: %u\r", ms, _total_time / _frame_index, _frame_index);

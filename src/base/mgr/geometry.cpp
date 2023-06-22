@@ -72,7 +72,7 @@ void Geometry::upload() const {
 
 void Geometry::build_accel() {
     accel = rp->device().create_accel();
-    Stream stream = rp->device().create_stream();
+    Stream &stream = rp->stream();
     for (int i = 0; i < _meshes.size(); ++i) {
         Shape::Handle inst = _instances[i];
         ocarina::Mesh &mesh = _meshes[i];
