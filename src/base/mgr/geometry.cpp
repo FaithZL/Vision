@@ -22,6 +22,8 @@ void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, S
     _vertices.append(vert);
     _triangles.append(tri);
     inst.mesh_id = (uint)_mesh_handles.host_buffer().size();
+    if (inst.light_id == InvalidUI32)
+        inst.lightmap_id = inst.mesh_id;
     _instances.push_back(inst);
     _mesh_handles.push_back(mesh_handle);
 }

@@ -114,7 +114,7 @@ RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &norma
 
 void BakerPipeline::compile_shaders() noexcept {
     compile_baker();
-    //    _scene.integrator()->compile_shader();
+        _scene.integrator()->compile_shader();
     compile_displayer();
 }
 
@@ -172,7 +172,7 @@ void BakerPipeline::compile_displayer() noexcept {
         Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
 
         $if(it.has_lightmap()) {
-            L = resource_array().tex(_lightmap_base_index + it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
+            L = resource_array().tex(1 + it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
         };
         camera->radiance_film()->add_sample(pixel, L, frame_index);
     };
@@ -219,7 +219,7 @@ void BakerPipeline::upload_lightmap() noexcept {
 
 void BakerPipeline::render(double dt) noexcept {
     Clock clk;
-    //    integrator()->render();
+//        integrator()->render();
     stream() << _display_shader(frame_index()).dispatch(resolution());
     stream() << synchronize();
     stream() << commit();
