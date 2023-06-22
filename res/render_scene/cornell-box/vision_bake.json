@@ -952,8 +952,8 @@
 		}
 	},
 	"pipeline" : {
-//		"type" : "baker"
-		"type" : "offline"
+		"type" : "baker"
+//		"type" : "offline"
 	},
 	"output" : {
 		"spp" : 0,
