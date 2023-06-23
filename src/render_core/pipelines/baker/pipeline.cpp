@@ -8,7 +8,7 @@ namespace vision {
 
 BakerPipeline::BakerPipeline(const PipelineDesc &desc)
     : Pipeline(desc),
-      _uv_spreader(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
+      _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
       _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
     create_cache_directory_if_necessary();
 }
@@ -64,7 +64,7 @@ void BakerPipeline::preprocess() noexcept {
         if (baked_shape.has_uv_cache()) {
             spread_result = baked_shape.load_uv_config_from_cache();
         } else {
-            spread_result = _uv_spreader->apply(baked_shape.shape());
+            spread_result = _uv_unwrapper->apply(baked_shape.shape());
             baked_shape.save_to_cache(spread_result);
         }
         baked_shape.setup_vertices(ocarina::move(spread_result));
