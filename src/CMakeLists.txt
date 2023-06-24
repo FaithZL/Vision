@@ -4,7 +4,7 @@ function(vision_add_plugin name)
     set(lib_name vision-${PLUGIN_CATEGORY}-${name})
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
-    target_link_libraries(${lib_name} PRIVATE vision-base vision-math)
+    target_link_libraries(${lib_name} PRIVATE vision-render_graph vision-math)
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 
@@ -23,6 +23,7 @@ add_subdirectory(core)
 add_subdirectory(base)
 add_subdirectory(math)
 add_subdirectory(apps)
+add_subdirectory(render_graph)
 
 add_subdirectory(render_core)
 
@@ -33,6 +34,7 @@ add_library(vision-main INTERFACE)
 target_link_libraries(vision-main INTERFACE
         vision-description
         vision-base
+        vision-render_graph
         vision-math
         vision-core)
 
