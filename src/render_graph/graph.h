@@ -17,7 +17,7 @@ private:
 
 public:
     void add_pass(const SP<RenderPass> &pass) noexcept;
-    void add_edge(const string &output, const string &input) noexcept;
+    void add_connection(const string &output, const string &input) noexcept;
 
     void setup() noexcept;
     void compile() noexcept;

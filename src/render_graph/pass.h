@@ -20,6 +20,8 @@ private:
 public:
     RenderPass() = default;
 
+    [[nodiscard]] const RenderResource &get_resource(const string &name) const noexcept;
+
     virtual void setup() noexcept = 0;
     virtual void compile() noexcept = 0;
     virtual void execute() noexcept = 0;
