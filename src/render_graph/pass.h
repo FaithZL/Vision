@@ -10,7 +10,7 @@ namespace vision {
 
 using namespace ocarina;
 
-class Pass {
+class RenderPass {
 public:
     virtual void setup() noexcept = 0;
     virtual void compile() noexcept = 0;
