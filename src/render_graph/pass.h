@@ -12,6 +12,14 @@ namespace vision {
 
 using namespace ocarina;
 
+struct ChannelDesc {
+    string name;
+    string desc;
+    ResourceFormat format;
+};
+
+using ChannelList = vector<ChannelDesc>;
+
 class RenderPass : public Node {
 private:
     std::map<string, RenderResource *> _res_map;
@@ -28,7 +36,8 @@ public:
     void set_resource(const string &name, const T &res) noexcept {
         _res_map.insert(std::make_pair(name, *res));
     }
-
+    [[nodiscard]] virtual ChannelList inputs() const noexcept { return {}; }
+    [[nodiscard]] virtual ChannelList outputs() const noexcept { return {}; }
     virtual void setup() noexcept {}
     virtual void compile() noexcept {}
     virtual void execute() noexcept {}

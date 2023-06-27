@@ -33,8 +33,17 @@ void RenderGraph::_simplification_connections() noexcept {
     _connections = ocarina::move(connections);
 }
 
+void RenderGraph::_build_command_list() noexcept {
+    std::for_each(_connections.rbegin(), _connections.rend(), [&](FieldPair &field_pair){
+        _command_list.push_back(_pass_map[field_pair.first.pass()]);
+    });
+    int i = 0;
+}
+
 void RenderGraph::_build_graph() noexcept {
     _simplification_connections();
+    _build_command_list();
+    _allocate_resource();
 }
 
 void RenderGraph::_allocate_resource() noexcept {

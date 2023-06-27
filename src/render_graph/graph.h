@@ -57,6 +57,7 @@ private:
 
     void _build_graph() noexcept;
     void _simplification_connections() noexcept;
+    void _build_command_list() noexcept;
     void _allocate_resource() noexcept;
 
 public:

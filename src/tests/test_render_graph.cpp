@@ -62,8 +62,10 @@ int main(int argc, char *argv[]) {
 
     graph.mark_output("tonemapping.output");
     graph.build_connection("denoise.output", "tonemapping.input");
-    graph.build_connection("accum.output", "denoise.radiance");
-    graph.build_connection("rt.radiance", "accum.input");
+    graph.build_connection("accum.radiance", "denoise.radiance");
+//    graph.build_connection("accum.normal", "denoise.normal");
+    graph.build_connection("rt.radiance", "accum.radiance");
+    graph.build_connection("rt.normal", "denoise.normal");
 
 
     graph.setup();

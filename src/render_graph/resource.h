@@ -11,6 +11,23 @@
 namespace vision {
 using namespace ocarina;
 
+enum ResourceFormat {
+    BYTE1,
+    BYTE2,
+    BYTE4,
+
+    UINT1,
+    UINT2,
+    UINT4,
+
+    FLOAT1,
+    FLOAT2,
+    FLOAT4,
+
+    UNKNOWN
+
+};
+
 class RenderResource {
 public:
     using Tag = ocarina::RHIResource::Tag;
