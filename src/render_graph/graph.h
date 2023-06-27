@@ -24,6 +24,12 @@ private:
     vector<pair<string, string>> _connections;
     string _output;
 
+private:
+    vector<RenderPass *> _command_list;
+
+    void _build_graph() noexcept;
+    void _allocate_resource() noexcept;
+
 public:
     void add_pass(RenderPass *pass, string name) noexcept {
         _pass_map.insert(std::make_pair(ocarina::move(name), pass));

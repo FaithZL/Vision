@@ -14,7 +14,7 @@ using namespace ocarina;
 
 class RenderPass : public Node {
 private:
-    std::map<string, RenderResource*> _res_map;
+    std::map<string, RenderResource *> _res_map;
 
 public:
     RenderPass() = default;
@@ -29,9 +29,9 @@ public:
         _res_map.insert(std::make_pair(name, *res));
     }
 
-    virtual void setup() noexcept = 0;
-    virtual void compile() noexcept = 0;
-    virtual void execute() noexcept = 0;
+    virtual void setup() noexcept {}
+    virtual void compile() noexcept {}
+    virtual void execute() noexcept {}
 };
 
 }// namespace vision
