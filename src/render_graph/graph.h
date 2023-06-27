@@ -9,6 +9,18 @@
 #include "pass.h"
 
 namespace vision {
+
+namespace detail {
+[[nodiscard]] pair<string, string> pass_channel(const string &fullname) noexcept {
+    string pass;
+    string channel;
+    size_t dot = fullname.find_last_of('.');
+    pass = fullname.substr(0, dot);
+    channel = fullname.substr(dot + 1);
+    return std::make_pair(pass, channel);
+}
+}// namespace detail
+
 using namespace ocarina;
 /**
  * 1. add passes
@@ -18,16 +30,33 @@ using namespace ocarina;
  * 5. execute
  */
 class RenderGraph {
+public:
+    using str_pair = pair<string, string>;
+    class Field {
+    private:
+        str_pair _pair;
+
+    public:
+        Field() = default;
+        Field(const string &str)
+            : _pair(detail::pass_channel(str)) {}
+        [[nodiscard]] string pass() const noexcept { return _pair.first; }
+        [[nodiscard]] string channel() const noexcept { return _pair.second; }
+        [[nodiscard]] string str() const noexcept { return pass() + "." + channel(); }
+    };
+    using FieldPair = pair<Field, Field>;
+
 private:
     unordered_map<string, RenderPass *> _pass_map;
     vector<UP<RenderResource>> _resources;
-    vector<pair<string, string>> _connections;
-    string _output;
+    std::list<FieldPair> _connections;
+    Field _output;
 
 private:
     vector<RenderPass *> _command_list;
 
     void _build_graph() noexcept;
+    void _simplification_connections() noexcept;
     void _allocate_resource() noexcept;
 
 public:

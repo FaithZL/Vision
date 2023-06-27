@@ -60,10 +60,13 @@ int main(int argc, char *argv[]) {
     graph.add_pass(denoise, "denoise");
     graph.add_pass(tonemapping, "tonemapping");
 
-    graph.build_connection("rt.radiance", "accum.input");
-    graph.build_connection("accum.output", "denoise.radiance");
-    graph.build_connection("denoise.output", "tonemapping.input");
     graph.mark_output("tonemapping.output");
+    graph.build_connection("denoise.output", "tonemapping.input");
+    graph.build_connection("accum.output", "denoise.radiance");
+    graph.build_connection("rt.radiance", "accum.input");
+
+
+    graph.setup();
 
     return 0;
 }
