@@ -10,23 +10,34 @@
 
 namespace vision {
 using namespace ocarina;
+
 class RenderResource {
-private:
-    string _name;
-    const Type *_type{};
-    RHIResource *_rhi_resource{};
+public:
+    using Tag = ocarina::RHIResource::Tag;
+
+protected:
+    uint _width{};
+    uint _height{};
+    uint _depth{};
+    Tag _tag{};
 
 public:
-    explicit RenderResource(string name = "")
-        : _name(std::move(name)) {}
+    RenderResource() = default;
+    OC_MAKE_MEMBER_GETTER(width, )
+    OC_MAKE_MEMBER_GETTER(height, )
+    OC_MAKE_MEMBER_GETTER(depth, )
+};
 
-    template<typename T>
-    void emplace(const T &t) noexcept {
-        _rhi_resource = &t;
-        _type = Type::of<T>();
-    }
-    OC_MAKE_MEMBER_GETTER(name,)
-    OC_MAKE_MEMBER_GETTER(type,)
+template<typename T>
+class TResource final : public RenderResource {
+private:
+    T _rhi_resource{};
+
+public:
+    explicit TResource(T &&res)
+        : _rhi_resource(OC_FORWARD(res)) {}
+    OC_MAKE_MEMBER_GETTER(rhi_resource, &)
+    [[nodiscard]] const Type *type() const noexcept { return Type::of<T>(); }
 };
 
 }// namespace vision

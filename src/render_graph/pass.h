@@ -14,13 +14,20 @@ using namespace ocarina;
 
 class RenderPass : public Node {
 private:
-    std::map<string, RenderResource> _input_map;
-    std::map<string, RenderResource> _output_map;
+    std::map<string, RenderResource*> _res_map;
 
 public:
     RenderPass() = default;
-
-    [[nodiscard]] const RenderResource &get_resource(const string &name) const noexcept;
+    [[nodiscard]] const RenderResource *get_resource(const string &name) const noexcept {
+        if (_res_map.find(name) == _res_map.cend()) {
+            return nullptr;
+        }
+        return _res_map.at(name);
+    }
+    template<typename T>
+    void set_resource(const string &name, const T &res) noexcept {
+        _res_map.insert(std::make_pair(name, *res));
+    }
 
     virtual void setup() noexcept = 0;
     virtual void compile() noexcept = 0;
