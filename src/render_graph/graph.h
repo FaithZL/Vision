@@ -49,14 +49,14 @@ public:
 private:
     unordered_map<string, RenderPass *> _pass_map;
     vector<UP<RenderResource>> _resources;
-    std::list<FieldPair> _connections;
+    std::list<FieldPair> _edges;
     Field _output;
 
 private:
     vector<RenderPass *> _command_list;
 
     void _build_graph() noexcept;
-    void _simplification_connections() noexcept;
+    void _simplification() noexcept;
     void _build_command_list() noexcept;
     void _allocate_resource() noexcept;
 
@@ -71,9 +71,9 @@ public:
         _pass_map.clear();
     }
     void clear_connections() noexcept {
-        _connections.clear();
+        _edges.clear();
     }
-    void build_connection(const string &output, const string &input) noexcept;
+    void add_edge(const string &output, const string &input) noexcept;
     void mark_output(const string &output) noexcept;
     void setup() noexcept;
     void compile() noexcept;

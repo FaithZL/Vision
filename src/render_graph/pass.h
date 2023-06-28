@@ -15,6 +15,7 @@ using namespace ocarina;
 struct ChannelDesc {
     string name;
     string desc;
+    bool optional;
     ResourceFormat format;
 };
 
