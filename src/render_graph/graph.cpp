@@ -3,6 +3,7 @@
 //
 
 #include "graph.h"
+#include <stack>
 
 namespace vision {
 
@@ -14,26 +15,32 @@ void RenderGraph::mark_output(const string &output) noexcept {
     _output = Field(output);
 }
 
+RenderGraph::EdgeData RenderGraph::_find_edge(const RenderGraph::Field &dst) noexcept {
+    for (const auto &edge : _edges) {
+        if (dst.str() == edge.dst.str()) {
+            return edge;
+        }
+    }
+    return {};
+}
+
+void RenderGraph::_DFS_traverse(vision::RenderPass *pass) noexcept {
+    for (const auto &input : pass->inputs()) {
+        string dst = pass->name() + "." + input.name;
+        EdgeData edge = _find_edge(dst);
+        if (edge.empty()) {
+            continue ;
+        }
+        RenderPass *output_pass = _pass_map[edge.src.pass()];
+        _DFS_traverse(output_pass);
+    }
+    _pass_set.emplace(pass);
+    int i = 0;
+}
+
 void RenderGraph::_simplification() noexcept {
     RenderPass *output_pass = _pass_map[_output.pass()];
-
-
-    std::list<FieldPair> connections;
-    auto match_input = [&](const string &input) {
-        for (auto iter = _edges.begin(); iter != _edges.end(); ++iter) {
-            if (iter->second.pass() == input) {
-                return iter;
-            }
-        }
-        return _edges.end();
-    };
-    string input_pass = _output.pass();
-    auto iter = _edges.begin();
-    while ((iter = match_input(input_pass)) != _edges.end()) {
-        input_pass = iter->first.pass();
-        connections.push_back(*iter);
-    }
-    _edges = ocarina::move(connections);
+    _DFS_traverse(output_pass);
 }
 
 void RenderGraph::_build_command_list() noexcept {

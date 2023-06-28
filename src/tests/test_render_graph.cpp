@@ -32,10 +32,12 @@ private:
     static constexpr auto kInput = "input";
     static constexpr auto kOutput = "output";
     ChannelList _input = {
-        {"input", "input", false, ResourceFormat::FLOAT4},
+        {"in_radiance", "radiance", false, ResourceFormat::FLOAT4},
+        {"in_normal", "normal", false, ResourceFormat::FLOAT4},
     };
     ChannelList _output = {
-        {"output", "output", false, ResourceFormat::FLOAT4},
+        {"radiance", "radiance", false, ResourceFormat::FLOAT4},
+        {"normal", "normal", false, ResourceFormat::FLOAT4},
     };
 
 public:
@@ -98,7 +100,7 @@ int main(int argc, char *argv[]) {
     graph.add_edge("denoise.output", "tonemapping.input");
     graph.add_edge("accum.radiance", "denoise.radiance");
     //    graph.build_connection("accum.normal", "denoise.normal");
-    graph.add_edge("rt.radiance", "accum.radiance");
+    graph.add_edge("rt.radiance", "accum.in_radiance");
     graph.add_edge("rt.normal", "denoise.normal");
 
     graph.setup();

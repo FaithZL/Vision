@@ -41,6 +41,7 @@ public:
     [[nodiscard]] Device &device() noexcept;
     virtual void prepare() noexcept {}
     [[nodiscard]] string name() const noexcept { return _name; }
+    void set_name(const string &name) noexcept { _name = name; }
     virtual ~Node() = default;
 };
 
