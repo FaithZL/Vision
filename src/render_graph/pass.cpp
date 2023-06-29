@@ -8,7 +8,7 @@
 namespace vision {
 
 RenderPass *RenderPass::create(const std::string &name, const vision::ParameterSet &ps) noexcept {
-    RenderPassDesc desc(name);
+    PassDesc desc(name);
     desc.sub_type = name;
     desc.init(ps);
     return NodeMgr::instance().load<RenderPass>(desc);

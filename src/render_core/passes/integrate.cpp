@@ -14,7 +14,7 @@ private:
     Shader<void(uint, Buffer<float4>)> _shader;
 
 public:
-    explicit IntegratePass(const RenderPassDesc &desc)
+    explicit IntegratePass(const PassDesc &desc)
         : RenderPass(desc) {
     }
 

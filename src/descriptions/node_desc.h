@@ -180,9 +180,9 @@ public:
     }
 };
 
-struct RenderPassDesc : public NodeDesc {
+struct PassDesc : public NodeDesc {
 public:
-    VISION_DESC_COMMON(RenderPass)
+    VISION_DESC_COMMON(Pass)
     void init(const ParameterSet &ps) noexcept override;
 };
 

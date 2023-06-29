@@ -15,10 +15,10 @@ private:
     Shader<void(Buffer<float4>, Buffer<float4>)> _shader;
 
 public:
-    explicit ToneMappingPass(const RenderPassDesc &desc)
+    explicit ToneMappingPass(const PassDesc &desc)
         : RenderPass(desc) {
         ToneMapperDesc tone_mapper_desc;
-        tone_mapper_desc.init({});
+        tone_mapper_desc.init(DataWrap::object());
         _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc);
     }
 

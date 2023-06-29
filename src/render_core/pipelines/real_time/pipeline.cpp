@@ -25,12 +25,24 @@ public:
         _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
     }
 
+    void prepare_render_graph() noexcept override {
+        RenderPass *integrate = RenderPass::create("integrate");
+        _render_graph.add_pass(integrate, "integrate");
+        RenderPass *accum = RenderPass::create("accumulate");
+        _render_graph.add_pass(accum, "accumulate");
+        RenderPass *tonemapping = RenderPass::create("tonemapping");
+        _render_graph.add_pass(tonemapping, "tonemapping");
+        RenderPass *gamma = RenderPass::create("gamma");
+        _render_graph.add_pass(gamma, "gamma");
+    }
+
     void prepare() noexcept override {
         auto pixel_num = resolution().x * resolution().y;
         _final_picture.reset_all(device(), pixel_num);
         _scene.prepare();
         image_pool().prepare();
         prepare_geometry();
+        prepare_render_graph();
         prepare_resource_array();
         compile_shaders();
         preprocess();

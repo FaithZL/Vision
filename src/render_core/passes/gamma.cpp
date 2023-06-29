@@ -12,7 +12,7 @@ private:
     Shader<void(Buffer<float4>, Buffer<float4>)> _shader;
 
 public:
-    explicit GammaCorrectionPass(const RenderPassDesc &desc)
+    explicit GammaCorrectionPass(const PassDesc &desc)
         : RenderPass(desc) {}
 
     void compile() noexcept override {

@@ -12,7 +12,7 @@ private:
     Shader<void(Buffer<float4>, Buffer<float4>, uint)> _shader;
 
 public:
-    explicit AccumulatePass(const RenderPassDesc &desc)
+    explicit AccumulatePass(const PassDesc &desc)
         : RenderPass(desc) {}
 
     void compile() noexcept override {

@@ -58,6 +58,7 @@ public:
         _total_time = 0;
     }
     virtual void prepare_geometry() noexcept;
+    virtual void prepare_render_graph() noexcept {}
     virtual void compile_shaders() noexcept = 0;
     virtual void display(double dt) noexcept = 0;
     virtual void render(double dt) noexcept = 0;
