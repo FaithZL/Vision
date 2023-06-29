@@ -3,10 +3,14 @@
 //
 
 #include "base/mgr/pipeline.h"
+#include "render_graph/graph.h"
 
 namespace vision {
 
 class RealTimeRenderPipeline : public Pipeline {
+private:
+    RenderGraph _render_graph;
+
 public:
     explicit RealTimeRenderPipeline(const PipelineDesc &desc)
         : Pipeline(desc) {}
