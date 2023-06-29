@@ -948,7 +948,7 @@
 		}
 	},
 	"pipeline": {
-		"type": "offline"
+		"type": "real_time"
 	},
 	"output" : {
 		"spp" : 1024,

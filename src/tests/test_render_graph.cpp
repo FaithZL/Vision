@@ -10,8 +10,6 @@
 using namespace vision;
 using namespace ocarina;
 
-namespace vision {
-
 class RTPass : public RenderPass {
 private:
     static constexpr auto kOutput = "radiance";
@@ -79,8 +77,6 @@ public:
     [[nodiscard]] ChannelList inputs() const noexcept override { return _input; }
     [[nodiscard]] ChannelList outputs() const noexcept override { return _output; }
 };
-
-}// namespace vision
 
 int main(int argc, char *argv[]) {
 

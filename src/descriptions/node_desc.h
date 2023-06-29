@@ -176,9 +176,14 @@ public:
 
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
-//        this->scene_path = scene_path;
         init(ps);
     }
+};
+
+struct RenderPassDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(RenderPass)
+    void init(const ParameterSet &ps) noexcept override;
 };
 
 struct RasterizerDesc : public NodeDesc {

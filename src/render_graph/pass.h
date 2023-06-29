@@ -22,11 +22,15 @@ struct ChannelDesc {
 using ChannelList = vector<ChannelDesc>;
 
 class RenderPass : public Node {
+public:
+    using Desc = RenderPassDesc;
+
 private:
     std::map<string, RenderResource *> _res_map;
 
 public:
     RenderPass() = default;
+    explicit RenderPass(const RenderPassDesc &desc) : Node(desc) {}
     [[nodiscard]] const RenderResource *get_resource(const string &name) const noexcept {
         if (_res_map.find(name) == _res_map.cend()) {
             return nullptr;
@@ -39,9 +43,9 @@ public:
     }
     [[nodiscard]] virtual ChannelList inputs() const noexcept { return {}; }
     [[nodiscard]] virtual ChannelList outputs() const noexcept { return {}; }
-    virtual void setup() noexcept {}
     virtual void compile() noexcept {}
-    virtual void execute() noexcept {}
+    virtual Command *dispatch() noexcept {}
+    [[nodiscard]] static RenderPass *create(const string &name, const ParameterSet &ps = {}) noexcept;
 };
 
 }// namespace vision
