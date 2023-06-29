@@ -50,3 +50,5 @@ public:
 };
 
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR(vision::ToneMappingPass)
