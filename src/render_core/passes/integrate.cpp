@@ -11,15 +11,36 @@ namespace vision {
 
 class IntegratePass : public RenderPass {
 private:
-    Integrator *_integrator{};
-    Shader<void(uint)> _shader;
+    Shader<void(uint, Buffer<float4>)> _shader;
 
 public:
     explicit IntegratePass(const RenderPassDesc &desc)
         : RenderPass(desc) {
-        IntegratorDesc integrator_desc;
-        integrator_desc.init({});
-        _integrator = NodeMgr::instance().load<Integrator>(integrator_desc);
+    }
+
+    void compile() noexcept override {
+        Kernel kernel = [&](Uint frame_index, BufferVar<float4> output) {
+
+        };
+        _shader = device().compile(kernel, "integrate pass");
+    }
+
+    [[nodiscard]] Command *dispatch() noexcept override {
+        return _shader(pipeline()->frame_index(),
+                       res<Buffer<float4>>("radiance"))
+            .dispatch(pipeline()->resolution());
+    }
+
+    [[nodiscard]] ChannelList outputs() const noexcept override {
+        return {{"radiance", "radiance", false, ResourceFormat::FLOAT4}};
+    }
+
+    [[nodiscard]] static Integrator *integrator() noexcept {
+        return scene().integrator();
+    }
+
+    [[nodiscard]] static Camera *camera() noexcept {
+        return scene().camera();
     }
 };
 

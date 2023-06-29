@@ -19,6 +19,7 @@ public:
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output, Uint frame_index) {
             Float4 old_pixel = output.read(dispatch_id());
             Float4 new_pixel = lerp(make_float4(1.f / cast<float>(frame_index + 1.f)), old_pixel, input.read(dispatch_id()));
+            new_pixel.w = 1.f;
             output.write(dispatch_id(), new_pixel);
         };
         _shader = device().compile(kernel, "accumulate");

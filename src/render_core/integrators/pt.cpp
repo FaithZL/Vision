@@ -19,7 +19,7 @@ public:
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            _frame_index = frame_index;
+            _frame_index.emplace(frame_index);
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             camera->load_data();
