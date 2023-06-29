@@ -27,6 +27,7 @@ public:
 
 private:
     std::map<string, RenderResource *> _res_map;
+    bool _recompile{false};
 
 public:
     RenderPass() = default;
@@ -37,12 +38,20 @@ public:
         }
         return _res_map.at(name);
     }
+    OC_MAKE_MEMBER_GETTER(recompile, )
     template<typename T>
     void set_resource(const string &name, const T &res) noexcept {
-        _res_map.insert(std::make_pair(name, *res));
+        _res_map.insert(std::make_pair(name, &res));
+    }
+    template<typename T>
+    [[nodiscard]] const T &res(const string &name) const noexcept {
+        const RenderResource *render_resource = get_resource(name);
+        const T *rhi_res = dynamic_cast<const T *>(render_resource->rhi_resource());
+        return *rhi_res;
     }
     [[nodiscard]] virtual ChannelList inputs() const noexcept { return {}; }
     [[nodiscard]] virtual ChannelList outputs() const noexcept { return {}; }
+    virtual void set_parameter(const ParameterSet &ps) noexcept {}
     virtual void compile() noexcept {}
     virtual Command *dispatch() noexcept { return nullptr; }
     [[nodiscard]] static RenderPass *create(const string &name, const ParameterSet &ps = {}) noexcept;

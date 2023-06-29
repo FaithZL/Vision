@@ -3,20 +3,42 @@
 //
 
 #include "render_graph/pass.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
 class AccumulatePass : public RenderPass {
 private:
     Shader<void(Buffer<float4>, Buffer<float4>, uint)> _shader;
+
 public:
     explicit AccumulatePass(const RenderPassDesc &desc)
         : RenderPass(desc) {}
 
     void compile() noexcept override {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output, Uint frame_index) {
-
+            Float4 old_pixel = output.read(dispatch_id());
+            Float4 new_pixel = lerp(make_float4(1.f / cast<float>(frame_index + 1.f)), old_pixel, input.read(dispatch_id()));
+            output.write(dispatch_id(), new_pixel);
         };
+        _shader = device().compile(kernel, "accumulate");
+    }
+
+    [[nodiscard]] ChannelList inputs() const noexcept override {
+        return {
+            {"input", "input", false, ResourceFormat::FLOAT4}};
+    }
+
+    [[nodiscard]] ChannelList outputs() const noexcept override {
+        return {
+            {"output", "output", false, ResourceFormat::FLOAT4}};
+    }
+
+    [[nodiscard]] Command *dispatch() noexcept override {
+        return _shader(res<Buffer<float4>>("input"),
+                       res<Buffer<float4>>("output"),
+                       pipeline()->frame_index())
+            .dispatch(pipeline()->resolution());
     }
 };
 

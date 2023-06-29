@@ -43,6 +43,8 @@ public:
     OC_MAKE_MEMBER_GETTER(width, )
     OC_MAKE_MEMBER_GETTER(height, )
     OC_MAKE_MEMBER_GETTER(depth, )
+    [[nodiscard]] virtual const RHIResource *rhi_resource() const noexcept = 0;
+    [[nodiscard]] virtual RHIResource *rhi_resource() noexcept = 0;
 };
 
 template<typename T>
@@ -53,8 +55,9 @@ private:
 public:
     explicit TResource(T &&res)
         : _rhi_resource(OC_FORWARD(res)) {}
-    OC_MAKE_MEMBER_GETTER(rhi_resource, &)
     [[nodiscard]] const Type *type() const noexcept { return Type::of<T>(); }
+    [[nodiscard]] const RHIResource *rhi_resource() const noexcept override { return &_rhi_resource; }
+    [[nodiscard]] RHIResource *rhi_resource() noexcept override { return &_rhi_resource; }
 };
 
 }// namespace vision
