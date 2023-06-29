@@ -44,7 +44,7 @@ public:
     [[nodiscard]] virtual ChannelList inputs() const noexcept { return {}; }
     [[nodiscard]] virtual ChannelList outputs() const noexcept { return {}; }
     virtual void compile() noexcept {}
-    virtual Command *dispatch() noexcept {}
+    virtual Command *dispatch() noexcept { return nullptr; }
     [[nodiscard]] static RenderPass *create(const string &name, const ParameterSet &ps = {}) noexcept;
 };
 
