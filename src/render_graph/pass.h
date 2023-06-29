@@ -41,7 +41,7 @@ public:
     OC_MAKE_MEMBER_GETTER(recompile, )
     template<typename T>
     void set_resource(const string &name, const T &res) noexcept {
-        _res_map.insert(std::make_pair("name", &res));
+        _res_map.insert(std::make_pair(name, &res));
     }
     template<typename T>
     [[nodiscard]] const T &res(const string &name) const noexcept {
