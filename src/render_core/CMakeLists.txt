@@ -16,6 +16,7 @@ add_subdirectory(denoisers)
 add_subdirectory(uvunwrappers)
 add_subdirectory(pipelines)
 add_subdirectory(rasterizers)
+add_subdirectory(passes)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -24,6 +25,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-tonemapper
         vision-denoiser
         vision-uvunwrapper
+        vision-pass
         vision-lightsampler
         vision-sensor
         vision-pipeline
