@@ -32,6 +32,7 @@ using namespace ocarina;
 class RenderGraph {
 public:
     using str_pair = pair<string, string>;
+
     class Field {
     private:
         str_pair _pair;
@@ -47,20 +48,23 @@ public:
         [[nodiscard]] string str() const noexcept { return pass() + "." + channel(); }
         [[nodiscard]] bool empty() const noexcept { return pass().empty() || channel().empty(); }
     };
+
     struct EdgeData {
         Field src;
         Field dst;
         [[nodiscard]] bool empty() const noexcept { return src.empty() || dst.empty(); }
     };
+
     struct PassList {
     private:
         unordered_set<RenderPass *> _pass_set;
         vector<RenderPass *> _commands;
+
     public:
         OC_MAKE_MEMBER_GETTER(commands, &)
         void push_back(RenderPass *pass) noexcept {
             if (_pass_set.contains(pass)) {
-                return ;
+                return;
             }
             _pass_set.emplace(pass);
             _commands.push_back(pass);
@@ -99,6 +103,10 @@ public:
     }
     void add_edge(const string &output, const string &input) noexcept;
     void mark_output(const string &output) noexcept;
+    [[nodiscard]] static Pipeline *pipeline() noexcept;
+    [[nodiscard]] static Device &device() noexcept;
+    [[nodiscard]] static uint2 resolution() noexcept;
+    [[nodiscard]] static uint pixel_num() noexcept;
     void setup() noexcept;
     void compile() noexcept;
     void execute() noexcept;

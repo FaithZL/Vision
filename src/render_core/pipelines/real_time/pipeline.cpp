@@ -34,6 +34,14 @@ public:
         _render_graph.add_pass(tonemapping, "tonemapping");
         RenderPass *gamma = RenderPass::create("gamma");
         _render_graph.add_pass(gamma, "gamma");
+
+        _render_graph.add_edge("integrate.radiance", "accumulate.input");
+        _render_graph.add_edge("accumulate.output", "tonemapping.input");
+        _render_graph.add_edge("tonemapping.output", "gamma.input");
+        _render_graph.mark_output("gamma.output");
+
+        _render_graph.setup();
+        int i = 0;
     }
 
     void prepare() noexcept override {

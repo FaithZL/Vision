@@ -3,7 +3,8 @@
 //
 
 #include "graph.h"
-#include <stack>
+#include "base/mgr/global.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -13,6 +14,22 @@ void RenderGraph::add_edge(const string &output, const string &input) noexcept {
 
 void RenderGraph::mark_output(const string &output) noexcept {
     _output = Field(output);
+}
+
+Pipeline *RenderGraph::pipeline() noexcept {
+    return Global::instance().pipeline();
+}
+
+Device &RenderGraph::device() noexcept {
+    return pipeline()->device();
+}
+
+uint2 RenderGraph::resolution() noexcept {
+    return pipeline()->resolution();
+}
+
+uint RenderGraph::pixel_num() noexcept {
+    return resolution().x * resolution().y;
 }
 
 RenderGraph::EdgeData RenderGraph::_find_edge(const RenderGraph::Field &dst) noexcept {
@@ -29,7 +46,7 @@ void RenderGraph::DFS_traverse(vision::RenderPass *pass) noexcept {
         string dst = pass->name() + "." + input.name;
         EdgeData edge = _find_edge(dst);
         if (edge.empty()) {
-            continue ;
+            continue;
         }
         _simple_edges.push_back(edge);
         RenderPass *output_pass = _pass_map[edge.src.pass()];
@@ -49,7 +66,17 @@ void RenderGraph::_build_graph() noexcept {
 }
 
 void RenderGraph::_allocate_resource() noexcept {
-
+    for (const auto &edge : _simple_edges) {
+        const Field &src = edge.src;
+        const Field &dst = edge.dst;
+        Buffer<float4> buffer = device().create_buffer<float4>(pixel_num());
+        UP<RenderResource> render_resource = make_unique<TResource<Buffer<float4>>>(ocarina::move(buffer));
+        RenderPass *src_pass = _pass_map[src.pass()];
+        src_pass->set_resource(src.channel(), *render_resource);
+        RenderPass *dst_pass = _pass_map[dst.pass()];
+        dst_pass->set_resource(dst.channel(), *render_resource);
+        _resources.push_back(ocarina::move(render_resource));
+    }
 }
 
 void RenderGraph::setup() noexcept {
@@ -57,6 +84,9 @@ void RenderGraph::setup() noexcept {
 }
 
 void RenderGraph::compile() noexcept {
+    for (const auto &pass : _pass_list.commands()) {
+        pass->compile();
+    }
 }
 
 void RenderGraph::execute() noexcept {

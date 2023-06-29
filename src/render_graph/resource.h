@@ -45,6 +45,7 @@ public:
     OC_MAKE_MEMBER_GETTER(depth, )
     [[nodiscard]] virtual const RHIResource *rhi_resource() const noexcept = 0;
     [[nodiscard]] virtual RHIResource *rhi_resource() noexcept = 0;
+    virtual ~RenderResource() = default;
 };
 
 template<typename T>
