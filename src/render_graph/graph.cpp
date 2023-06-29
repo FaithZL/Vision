@@ -89,6 +89,12 @@ void RenderGraph::compile() noexcept {
     }
 }
 
-void RenderGraph::execute() noexcept {
+vector<Command*> RenderGraph::dispatch() noexcept {
+    vector<Command*> ret;
+    for (const auto &pass : _pass_list.commands()) {
+        ret.push_back(pass->dispatch());
+    }
+    return ret;
 }
+
 }// namespace vision

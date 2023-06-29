@@ -109,7 +109,7 @@ public:
     [[nodiscard]] static uint pixel_num() noexcept;
     void setup() noexcept;
     void compile() noexcept;
-    void execute() noexcept;
+    [[nodiscard]] vector<Command *> dispatch() noexcept;
 };
 
 }// namespace vision
