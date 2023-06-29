@@ -52,8 +52,8 @@ private:
     static constexpr auto kOutput = "output";
 
     ChannelList _input = {
-        {"normal", "normal", true, ResourceFormat::FLOAT4},
         {"radiance", "radiance", false, ResourceFormat::FLOAT4},
+        {"normal", "normal", true, ResourceFormat::FLOAT4},
     };
     ChannelList _output = {
         {"output", "output", false, ResourceFormat::FLOAT4},
@@ -96,7 +96,8 @@ int main(int argc, char *argv[]) {
     graph.add_pass(denoise, "denoise");
     graph.add_pass(tonemapping, "tonemapping");
 
-    graph.mark_output("tonemapping.output");
+//    graph.mark_output("tonemapping.output");
+    graph.mark_output("accum.radiance");
     graph.add_edge("denoise.output", "tonemapping.input");
     graph.add_edge("accum.radiance", "denoise.radiance");
     //    graph.build_connection("accum.normal", "denoise.normal");

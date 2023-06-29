@@ -24,36 +24,32 @@ RenderGraph::EdgeData RenderGraph::_find_edge(const RenderGraph::Field &dst) noe
     return {};
 }
 
-void RenderGraph::_DFS_traverse(vision::RenderPass *pass) noexcept {
+void RenderGraph::DFS_traverse(vision::RenderPass *pass) noexcept {
     for (const auto &input : pass->inputs()) {
         string dst = pass->name() + "." + input.name;
         EdgeData edge = _find_edge(dst);
         if (edge.empty()) {
             continue ;
         }
+        _simple_edges.push_back(edge);
         RenderPass *output_pass = _pass_map[edge.src.pass()];
-        _DFS_traverse(output_pass);
+        DFS_traverse(output_pass);
     }
-    _pass_set.emplace(pass);
-    int i = 0;
+    _pass_list.push_back(pass);
 }
 
 void RenderGraph::_simplification() noexcept {
     RenderPass *output_pass = _pass_map[_output.pass()];
-    _DFS_traverse(output_pass);
-}
-
-void RenderGraph::_build_command_list() noexcept {
-
+    DFS_traverse(output_pass);
 }
 
 void RenderGraph::_build_graph() noexcept {
     _simplification();
-    _build_command_list();
     _allocate_resource();
 }
 
 void RenderGraph::_allocate_resource() noexcept {
+
 }
 
 void RenderGraph::setup() noexcept {

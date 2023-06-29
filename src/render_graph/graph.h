@@ -52,6 +52,20 @@ public:
         Field dst;
         [[nodiscard]] bool empty() const noexcept { return src.empty() || dst.empty(); }
     };
+    struct PassList {
+    private:
+        unordered_set<RenderPass *> _pass_set;
+        vector<RenderPass *> _commands;
+    public:
+        OC_MAKE_MEMBER_GETTER(commands, &)
+        void push_back(RenderPass *pass) noexcept {
+            if (_pass_set.contains(pass)) {
+                return ;
+            }
+            _pass_set.emplace(pass);
+            _commands.push_back(pass);
+        }
+    };
 
 private:
     unordered_map<string, RenderPass *> _pass_map;
@@ -60,14 +74,13 @@ private:
     Field _output;
 
 private:
-    unordered_set<RenderPass *> _pass_set;
-    vector<RenderPass *> _command_list;
+    PassList _pass_list;
+    std::list<EdgeData> _simple_edges;
 
     void _build_graph() noexcept;
     void _simplification() noexcept;
-    void _build_command_list() noexcept;
     void _allocate_resource() noexcept;
-    void _DFS_traverse(RenderPass *pass) noexcept;
+    void DFS_traverse(RenderPass *pass) noexcept;
     [[nodiscard]] EdgeData _find_edge(const Field &dst) noexcept;
 
 public:
