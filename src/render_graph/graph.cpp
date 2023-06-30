@@ -77,6 +77,11 @@ void RenderGraph::_allocate_resource() noexcept {
         dst_pass->set_resource(dst.channel(), *render_resource);
         _resources.push_back(ocarina::move(render_resource));
     }
+    Buffer<float4> buffer = device().create_buffer<float4>(pixel_num());
+    UP<RenderResource> render_resource = make_unique<TResource<Buffer<float4>>>(ocarina::move(buffer));
+    RenderPass *pass = _pass_map[_output.pass()];
+    pass->set_resource(_output.channel(), *render_resource);
+    _resources.push_back(ocarina::move(render_resource));
 }
 
 void RenderGraph::setup() noexcept {

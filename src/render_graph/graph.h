@@ -101,6 +101,11 @@ public:
     void clear_connections() noexcept {
         _edges.clear();
     }
+    template<typename T = Buffer<float4>>
+    [[nodiscard]] const T &output_buffer() const noexcept {
+        RenderPass *pass = _pass_map.at(_output.pass());
+        return pass->res<T>(_output.channel());
+    }
     void add_edge(const string &output, const string &input) noexcept;
     void mark_output(const string &output) noexcept;
     [[nodiscard]] static Pipeline *pipeline() noexcept;
