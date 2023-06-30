@@ -780,8 +780,8 @@
 					"tone_mapper" : {
 //												"type": "reinhard",
 //												"type": "linear",
-//												"type": "aces",
-						"type" : "exposure",
+												"type": "aces",
+//						"type" : "exposure",
 						"param" : {
 							"exposure" : 1.0
 						}
@@ -951,7 +951,7 @@
 		"type": "real_time"
 	},
 	"output" : {
-		"spp" : 1024,
+		"spp" : 0,
 		"save_exit" : false,
 		"fn" : "hero1-CPU.png"
 	}

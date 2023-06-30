@@ -38,13 +38,14 @@ public:
         _render_graph.add_edge("integrate.radiance", "accumulate.input");
         _render_graph.add_edge("accumulate.output", "tonemapping.input");
         _render_graph.add_edge("tonemapping.output", "gamma.input");
-        _render_graph.mark_output("integrate.radiance");
+        _render_graph.mark_output("gamma.output");
 
         _render_graph.setup();
-        int i = 0;
     }
 
-//    [[nodiscard]] view
+    [[nodiscard]] const Buffer<float4> &view_buffer() override {
+        return _render_graph.output_buffer();
+    }
 
     void prepare() noexcept override {
         auto pixel_num = resolution().x * resolution().y;
@@ -59,12 +60,13 @@ public:
     }
 
     void compile_shaders() noexcept override {
-//        _render_graph.compile();
-        _scene.integrator()->compile_shader();
+        _render_graph.compile();
+        //        _scene.integrator()->compile_shader();
     }
 
     void render(double dt) noexcept override {
-        _scene.integrator()->render();
+        //        _scene.integrator()->render();
+        stream() << _render_graph.dispatch() << synchronize() << commit();
     }
 
     void display(double dt) noexcept override {
