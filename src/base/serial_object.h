@@ -42,7 +42,7 @@ public:
      */
     virtual void prepare_data() noexcept {
         encode_data();
-        datas().reset_device_buffer(Global::instance().device());
+        datas().reset_device_buffer_immediately(Global::instance().device());
         datas().register_self();
     }
 

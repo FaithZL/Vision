@@ -64,7 +64,7 @@ public:
 
     void prepare() noexcept override {
         encode_data();
-        datas().reset_device_buffer(device());
+        datas().reset_device_buffer_immediately(device());
         datas().register_self();
         datas().upload_immediately();
     }

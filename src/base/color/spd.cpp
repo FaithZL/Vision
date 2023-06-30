@@ -55,7 +55,7 @@ void SPD::init(vector<float> func) noexcept {
 }
 
 void SPD::prepare() noexcept {
-    _func.reset_device_buffer(_rp->device());
+    _func.reset_device_buffer_immediately(_rp->device());
     _func.register_self();
     _func.upload_immediately();
 }

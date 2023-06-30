@@ -51,10 +51,10 @@ void Geometry::build_meshes() {
 }
 
 void Geometry::reset_device_buffer() {
-    _vertices.reset_device_buffer(rp->device());
-    _triangles.reset_device_buffer(rp->device());
-    _instances.reset_device_buffer(rp->device());
-    _mesh_handles.reset_device_buffer(rp->device());
+    _vertices.reset_device_buffer_immediately(rp->device());
+    _triangles.reset_device_buffer_immediately(rp->device());
+    _instances.reset_device_buffer_immediately(rp->device());
+    _mesh_handles.reset_device_buffer_immediately(rp->device());
 
     _vertices.register_self();
     _triangles.register_self();

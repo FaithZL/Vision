@@ -948,7 +948,7 @@
 		}
 	},
 	"pipeline": {
-		"type": "real_time"
+//		"type": "real_time"
 	},
 	"output" : {
 		"spp" : 0,

@@ -59,8 +59,8 @@ public:
     }
     void prepare() noexcept override {
         _marginal.prepare();
-        _conditional_v_tables.reset_device_buffer(device());
-        _conditional_v_weights.reset_device_buffer(device());
+        _conditional_v_tables.reset_device_buffer_immediately(device());
+        _conditional_v_weights.reset_device_buffer_immediately(device());
         _conditional_v_tables.upload_immediately();
         _conditional_v_weights.upload_immediately();
 
