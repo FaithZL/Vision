@@ -38,11 +38,13 @@ public:
         _render_graph.add_edge("integrate.radiance", "accumulate.input");
         _render_graph.add_edge("accumulate.output", "tonemapping.input");
         _render_graph.add_edge("tonemapping.output", "gamma.input");
-        _render_graph.mark_output("gamma.output");
+        _render_graph.mark_output("integrate.radiance");
 
         _render_graph.setup();
         int i = 0;
     }
+
+//    [[nodiscard]] view
 
     void prepare() noexcept override {
         auto pixel_num = resolution().x * resolution().y;

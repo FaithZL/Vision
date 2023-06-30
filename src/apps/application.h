@@ -66,7 +66,7 @@ public:
     void prepare();
     void update(double dt) noexcept;
     void init_pipeline(const SceneDesc &desc);
-    [[nodiscard]] Pipeline &pipeline() { return *rp; }
+    [[nodiscard]] Pipeline &pipeline() const { return *rp; }
     void check_and_save() noexcept;
     void save_result() noexcept;
     void register_event() noexcept;

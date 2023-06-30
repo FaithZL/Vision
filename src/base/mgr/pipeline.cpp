@@ -26,7 +26,7 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     Printer::instance().init(device());
 }
 
-Buffer<float4> &Pipeline::view_buffer() {
+const Buffer<float4> &Pipeline::view_buffer() {
     return scene().radiance_film()->tone_mapped_buffer().device_buffer();
 }
 
