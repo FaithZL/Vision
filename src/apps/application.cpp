@@ -33,6 +33,7 @@ void App::init_pipeline(const SceneDesc &desc) {
     rp = Global::node_mgr().load<Pipeline>(desc.pipeline_desc);
     Global::instance().set_pipeline(rp);
     pipeline().init_scene(desc);
+    _view_buffer.resize(pipeline().pixel_num());
 }
 
 void App::prepare() {
@@ -132,8 +133,8 @@ void App::update(double dt) noexcept {
     }
     pipeline().display(dt);
     auto &view_buffer = pipeline().view_buffer();
-    view_buffer.download_immediately();
-    window->set_background(view_buffer.data());
+    view_buffer.download_immediately(_view_buffer.data());
+    window->set_background(_view_buffer.data());
     check_and_save();
 }
 

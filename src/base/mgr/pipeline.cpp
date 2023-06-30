@@ -26,8 +26,8 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     Printer::instance().init(device());
 }
 
-RegistrableManaged<float4> &Pipeline::view_buffer() {
-    return scene().radiance_film()->tone_mapped_buffer();
+Buffer<float4> &Pipeline::view_buffer() {
+    return scene().radiance_film()->tone_mapped_buffer().device_buffer();
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {

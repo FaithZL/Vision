@@ -57,6 +57,7 @@ public:
     }
 
     void compile_shaders() noexcept override {
+//        _render_graph.compile();
         _scene.integrator()->compile_shader();
     }
 

@@ -50,7 +50,7 @@ public:
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;
     virtual void init_postprocessor(const SceneDesc &scene_desc) = 0;
-    [[nodiscard]] virtual RegistrableManaged<float4> &view_buffer();
+    [[nodiscard]] virtual Buffer<float4> &view_buffer();
     virtual void preprocess() noexcept {}
     virtual void change_resolution(uint2 res) noexcept;
     virtual void invalidate() noexcept {
@@ -65,6 +65,7 @@ public:
     virtual void upload_data() noexcept { _scene.upload_data(); }
     [[nodiscard]] virtual float4 *final_picture(bool denoise) noexcept;
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
+    [[nodiscard]] uint pixel_num() const noexcept { return resolution().x * resolution().y; }
     /// virtual function end
 
     template<typename T>
