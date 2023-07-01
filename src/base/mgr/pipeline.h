@@ -113,7 +113,7 @@ public:
         Uint i = OC_FORWARD(index);
 #ifndef NDEBUG
         $if(i >= _resource_array.texture_num()) {
-            string tb = backtrace_string();
+            string tb = traceback_string();
             string fmt = "out of texture num: texture index is {}, texture size is {}, traceback is " + tb;
             Printer::instance().warn(fmt, i, _resource_array.texture_num());
             i = 0;
