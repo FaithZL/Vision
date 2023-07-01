@@ -47,21 +47,8 @@ void Pipeline::prepare_geometry() noexcept {
 }
 
 void Pipeline::prepare_resource_array() noexcept {
-    auto ptr = _resource_array.impl();
-
-//    _resource_array.prepare_slotSOA(device());
-//    _stream << _resource_array->upload_buffer_handles_sync()
-//            << _resource_array->upload_texture_handles_sync()
-//            << synchronize() << commit();
-
-    _stream << _resource_array.update_slotSOA_sync() << synchronize() <<  commit();
-    _stream << _resource_array->upload_buffer_handles_sync()
-            << _resource_array->upload_texture_handles_sync()
-            << synchronize() << commit();
-
-
-
-    int i = 0;
+    _stream << _resource_array.update_slotSOA() << synchronize() << commit();
+    _stream << _resource_array.upload_handles() << synchronize() << commit();
 }
 
 void Pipeline::deregister_buffer(handle_ty index) noexcept {
