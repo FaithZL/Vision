@@ -10,12 +10,28 @@
 
 namespace vision {
 
+struct BakeData {
+private:
+    Buffer<float4> _positions;
+    Buffer<float4> _normals;
+    Buffer<float4> _radiance;
+    uint _pixel_num{};
+
+public:
+    BakeData() = default;
+    void allocate(uint buffer_size, Device &device) noexcept;
+    [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
+                                            const Buffer<float4> &positions) noexcept;
+    [[nodiscard]] CommandList clear() noexcept;
+    [[nodiscard]] BufferDownloadCommand* download_radiance(void *ptr, uint offset) const noexcept;
+};
+
 /**
  * Process of baking
  * 1. unwrap uv and cache
  * 2. rasterize position, normal map and cache
  * 3. transform instance position , normal map to world space
- * 4. bake (to increase parallelism, mesh's normal, position map can be merged) and save to cache
+ * 4. bake_old (to increase parallelism, mesh's normal, position map can be merged) and save to cache
  * 5. postprocess eg. denoise, padding ...
  * 6. update geometry data
  * 7. display
@@ -53,9 +69,12 @@ public:
     void prepare() noexcept override;
     void display(double dt) noexcept override;
     void render(double dt) noexcept override;
-    void bake_all() noexcept;
+    void bake_all_old() noexcept;
     void upload_lightmap() noexcept;
-    void bake(BakedShape &baked_shape) noexcept;
+    void bake_old(vision::BakedShape &baked_shape) noexcept;
+
+    void bake_all() noexcept;
+
     [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;
     void preprocess() noexcept override;
