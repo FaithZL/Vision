@@ -34,10 +34,8 @@ CommandList BakeData::append_buffer(const Buffer<ocarina::float4> &normals,
     return ret;
 }
 
-CommandList BakeData::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
-    CommandList ret;
-
-    return ret;
+BufferDownloadCommand * BakeData::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
+    return _radiance.download(ptr, offset);
 }
 
 

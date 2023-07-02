@@ -23,7 +23,7 @@ public:
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
                                             const Buffer<float4> &positions) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
-    [[nodiscard]] CommandList download_radiance(void *ptr, uint offset) const noexcept;
+    [[nodiscard]] BufferDownloadCommand* download_radiance(void *ptr, uint offset) const noexcept;
 };
 
 /**
