@@ -18,14 +18,10 @@ private:
     uint _pixel_num{};
 
 public:
-    explicit BakeData(uint buffer_size, Device &device) {
-        _positions = device.create_buffer<float4>(buffer_size);
-        _normals = device.create_buffer<float4>(buffer_size);
-        _radiance = device.create_buffer<float4>(buffer_size);
-    }
-
-    [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normal,
-                                            const Buffer<float4> &position) noexcept;
+    BakeData() = default;
+    void allocate(uint buffer_size, Device &device) noexcept;
+    [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
+                                            const Buffer<float4> &positions) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] CommandList download_radiance(void *ptr, uint offset) const noexcept;
 };

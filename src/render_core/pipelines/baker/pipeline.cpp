@@ -6,6 +6,12 @@
 
 namespace vision {
 
+void BakeData::allocate(ocarina::uint buffer_size, ocarina::Device &device) noexcept {
+    _positions = device.create_buffer<float4>(buffer_size);
+    _normals = device.create_buffer<float4>(buffer_size);
+    _radiance = device.create_buffer<float4>(buffer_size);
+}
+
 CommandList BakeData::clear() noexcept {
     CommandList ret;
     ret.push_back(_positions.clear());
@@ -17,10 +23,14 @@ CommandList BakeData::clear() noexcept {
     return ret;
 }
 
-CommandList BakeData::append_buffer(const Buffer<ocarina::float4> &normal,
-                                    const Buffer<ocarina::float4> &position) noexcept {
+CommandList BakeData::append_buffer(const Buffer<ocarina::float4> &normals,
+                                    const Buffer<ocarina::float4> &positions) noexcept {
     CommandList ret;
-
+    ret.push_back(_positions.copy_from(positions, 0));
+    ret.push_back(_normals.copy_from(normals, 0));
+    ret.push_back(HostFunctionCommand::create([size = normals.size(), this]{
+        _pixel_num += size;
+    }, true));
     return ret;
 }
 
