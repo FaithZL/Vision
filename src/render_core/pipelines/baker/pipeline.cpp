@@ -6,6 +6,31 @@
 
 namespace vision {
 
+CommandList BakeData::clear() noexcept {
+    CommandList ret;
+    ret.push_back(_positions.clear());
+    ret.push_back(_normals.clear());
+    ret.push_back(_radiance.clear());
+    ret.push_back(HostFunctionCommand::create([&]{
+        _pixel_num = 0;
+    }, true));
+    return ret;
+}
+
+CommandList BakeData::append_buffer(const Buffer<ocarina::float4> &normal,
+                                    const Buffer<ocarina::float4> &position) noexcept {
+    CommandList ret;
+
+    return ret;
+}
+
+CommandList BakeData::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
+    CommandList ret;
+
+    return ret;
+}
+
+
 BakerPipeline::BakerPipeline(const PipelineDesc &desc)
     : Pipeline(desc),
       _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
@@ -47,7 +72,7 @@ void BakerPipeline::prepare() noexcept {
     prepare_geometry();
     compile_shaders();
     prepare_resource_array();
-    bake_all();
+    bake_all_old();
     upload_lightmap();
     prepare_resource_array();
 }
@@ -60,14 +85,14 @@ void BakerPipeline::preprocess() noexcept {
 
     // uv spread
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        UnwrapperResult spread_result;
+        UnwrapperResult unwrap_result;
         if (baked_shape.has_uv_cache()) {
-            spread_result = baked_shape.load_uv_config_from_cache();
+            unwrap_result = baked_shape.load_uv_config_from_cache();
         } else {
-            spread_result = _uv_unwrapper->apply(baked_shape.shape());
-            baked_shape.save_to_cache(spread_result);
+            unwrap_result = _uv_unwrapper->apply(baked_shape.shape());
+            baked_shape.save_to_cache(unwrap_result);
         }
-        baked_shape.setup_vertices(ocarina::move(spread_result));
+        baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
 
     // rasterize
@@ -137,7 +162,7 @@ void BakerPipeline::compile_baker() noexcept {
             lightmap.write(pixel_index, make_float4(L, 1.f));
         };
     };
-    _bake_shader = device().compile(bake_kernel, "bake kernel");
+    _bake_shader = device().compile(bake_kernel, "bake_old kernel");
 }
 
 Float3 BakerPipeline::Li(vision::RayState &rs) const noexcept {
@@ -179,10 +204,10 @@ void BakerPipeline::compile_displayer() noexcept {
     _display_shader = device().compile(kernel, "display");
 }
 
-void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
+void BakerPipeline::bake_old(vision::BakedShape &baked_shape) noexcept {
     Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
     Sampler *sampler = scene().sampler();
-    OC_INFO_FORMAT("start bake {}", baked_shape.shape()->name());
+    OC_INFO_FORMAT("start bake_old {}", baked_shape.shape()->name());
     for (int i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader(i, baked_shape.positions(),
                                  baked_shape.normals(),
@@ -191,17 +216,21 @@ void BakerPipeline::bake(vision::BakedShape &baked_shape) noexcept {
     }
 }
 
-void BakerPipeline::bake_all() noexcept {
+void BakerPipeline::bake_all_old() noexcept {
     // bake
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         baked_shape.prepare_for_bake();
-        bake(baked_shape);
+        bake_old(baked_shape);
     });
     stream() << synchronize() << commit();
     for (int i = 0; i < _baked_shapes.size(); ++i) {
         _baked_shapes[i].save_lightmap_to_cache();
         _baked_shapes[i].shape()->handle().lightmap_id = i;
     }
+}
+
+void BakerPipeline::bake_all() noexcept {
+
 }
 
 void BakerPipeline::upload_lightmap() noexcept {
