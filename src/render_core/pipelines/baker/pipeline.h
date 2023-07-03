@@ -10,7 +10,7 @@
 
 namespace vision {
 
-struct BakeData {
+struct BakeBuffer {
 private:
     Buffer<float4> _positions;
     Buffer<float4> _normals;
@@ -18,12 +18,12 @@ private:
     uint _pixel_num{};
 
 public:
-    BakeData() = default;
+    BakeBuffer() = default;
     void allocate(uint buffer_size, Device &device) noexcept;
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
                                             const Buffer<float4> &positions) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
-    [[nodiscard]] BufferDownloadCommand* download_radiance(void *ptr, uint offset) const noexcept;
+    [[nodiscard]] BufferDownloadCommand *download_radiance(void *ptr, uint offset) const noexcept;
 };
 
 /**
@@ -43,10 +43,14 @@ private:
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
 
+    BakeBuffer _bake_buffer;
+
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
                                      float4x4 o2w);
-    Shader<transform_signature> _transform_shader;
+    Shader<transform_signature> _transform_shader_old;
+
+    Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;
 
     using bake_signature = void(uint, Buffer<float4>,
                                 Buffer<float4>, Buffer<float4>);
@@ -74,6 +78,7 @@ public:
     void bake_old(vision::BakedShape &baked_shape) noexcept;
 
     void bake_all() noexcept;
+    [[nodiscard]] CommandList bake(uint index, uint num) noexcept;
 
     [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;

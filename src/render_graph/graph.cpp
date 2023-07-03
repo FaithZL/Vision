@@ -94,8 +94,8 @@ void RenderGraph::compile() noexcept {
     }
 }
 
-vector<Command*> RenderGraph::dispatch() noexcept {
-    vector<Command*> ret;
+CommandList RenderGraph::dispatch() noexcept {
+    CommandList ret;
     for (const auto &pass : _pass_list.commands()) {
         ret.push_back(pass->dispatch());
     }

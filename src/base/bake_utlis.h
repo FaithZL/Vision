@@ -59,15 +59,12 @@ public:
         return Global::instance().scene_cache_path() / ocarina::format("baked_instance_{:016x}", instance_hash());
     }
 
-#define VS_MAKE_ATTR_GET(attr, sig) \
-    [[nodiscard]] auto sig attr() noexcept { return _##attr; }
-    VS_MAKE_ATTR_GET(resolution, )
-    VS_MAKE_ATTR_GET(shape, )
-    VS_MAKE_ATTR_GET(positions, &)
-    VS_MAKE_ATTR_GET(normals, &)
-    VS_MAKE_ATTR_GET(lightmap, &)
-    VS_MAKE_ATTR_GET(lightmap_tex, &)
-#undef VS_MAKE_ATTR_GET
+    OC_MAKE_MEMBER_GETTER(resolution, )
+    OC_MAKE_MEMBER_GETTER(shape, )
+    OC_MAKE_MEMBER_GETTER(positions, &)
+    OC_MAKE_MEMBER_GETTER(normals, &)
+    OC_MAKE_MEMBER_GETTER(lightmap, &)
+    OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
 
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
@@ -85,11 +82,13 @@ public:
             func(mesh, i++);
         });
     }
-    void prepare_for_rasterize() noexcept;
+    [[nodiscard]] uint perimeter() const noexcept { return resolution().x + resolution().y; }
+    void prepare_for_rasterize_old() noexcept;
+    [[nodiscard]] CommandList prepare_for_rasterize() noexcept;
     void prepare_for_bake() noexcept;
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
-    void load_rasterization_from_cache() const;
+    [[nodiscard]] CommandList load_rasterization_from_cache() const;
     void save_rasterization_to_cache() const;
     void save_lightmap_to_cache() const;
     void setup_vertices(UnwrapperResult result);
@@ -114,7 +113,7 @@ public:
     explicit Rasterizer(const RasterizerDesc &desc)
         : Node(desc) {}
     virtual void compile_shader() noexcept = 0;
-    virtual void apply(BakedShape &baked_shape) noexcept = 0;
+    [[nodiscard]] virtual CommandList apply(BakedShape &baked_shape) noexcept = 0;
 };
 
 }// namespace vision

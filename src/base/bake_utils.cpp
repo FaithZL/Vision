@@ -6,7 +6,7 @@
 
 namespace vision {
 
-void BakedShape::prepare_for_rasterize() noexcept {
+void BakedShape::prepare_for_rasterize_old() noexcept {
     _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
     _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
     auto &stream = shape()->pipeline()->stream();
@@ -20,6 +20,22 @@ void BakedShape::prepare_for_rasterize() noexcept {
                << device_mesh.triangles.upload(mesh.triangles.data());
         _device_meshes.push_back(ocarina::move(device_mesh));
     });
+}
+
+CommandList BakedShape::prepare_for_rasterize() noexcept {
+    CommandList ret;
+    _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
+    _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
+    ret << _normals.clear() << _positions.clear();
+    shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
+        DeviceMesh device_mesh;
+        device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
+        device_mesh.triangles = shape()->device().create_buffer<Triangle>(mesh.triangles.size());
+        ret << device_mesh.vertices.upload(mesh.vertices.data())
+            << device_mesh.triangles.upload(mesh.triangles.data());
+        _device_meshes.push_back(ocarina::move(device_mesh));
+    });
+    return ret;
 }
 
 void BakedShape::prepare_for_bake() noexcept {
@@ -75,11 +91,13 @@ void BakedShape::save_to_cache(const UnwrapperResult &result) {
     Context::write_file(uv_config, data_str);
 }
 
-void BakedShape::load_rasterization_from_cache() const {
+CommandList BakedShape::load_rasterization_from_cache() const {
+    CommandList ret;
     ImageIO &position = ImagePool::instance().obtain_image(position_cache_path(), ColorSpace::LINEAR).image();
     ImageIO &normal = ImagePool::instance().obtain_image(normal_cache_path(), ColorSpace::LINEAR).image();
-    _shape->pipeline()->stream() << _positions.upload(position.pixel_ptr())
-                                 << _normals.upload(normal.pixel_ptr());
+    ret << _positions.upload(position.pixel_ptr())
+        << _normals.upload(normal.pixel_ptr());
+    return ret;
 }
 
 void BakedShape::save_rasterization_to_cache() const {

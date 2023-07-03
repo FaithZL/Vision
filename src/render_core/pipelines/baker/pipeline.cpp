@@ -6,38 +6,37 @@
 
 namespace vision {
 
-void BakeData::allocate(ocarina::uint buffer_size, ocarina::Device &device) noexcept {
+void BakeBuffer::allocate(ocarina::uint buffer_size, ocarina::Device &device) noexcept {
     _positions = device.create_buffer<float4>(buffer_size);
     _normals = device.create_buffer<float4>(buffer_size);
     _radiance = device.create_buffer<float4>(buffer_size);
 }
 
-CommandList BakeData::clear() noexcept {
+CommandList BakeBuffer::clear() noexcept {
     CommandList ret;
     ret.push_back(_positions.clear());
     ret.push_back(_normals.clear());
     ret.push_back(_radiance.clear());
-    ret.push_back(HostFunctionCommand::create([&]{
+    ret.push_back(HostFunctionCommand::create([&] {
         _pixel_num = 0;
-    }, true));
+    },true));
     return ret;
 }
 
-CommandList BakeData::append_buffer(const Buffer<ocarina::float4> &normals,
-                                    const Buffer<ocarina::float4> &positions) noexcept {
+CommandList BakeBuffer::append_buffer(const Buffer<ocarina::float4> &normals,
+                                      const Buffer<ocarina::float4> &positions) noexcept {
     CommandList ret;
     ret.push_back(_positions.copy_from(positions, 0));
     ret.push_back(_normals.copy_from(normals, 0));
-    ret.push_back(HostFunctionCommand::create([size = normals.size(), this]{
+    ret.push_back(HostFunctionCommand::create([size = normals.size(), this] {
         _pixel_num += size;
-    }, true));
+    },true));
     return ret;
 }
 
-BufferDownloadCommand * BakeData::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
+BufferDownloadCommand *BakeBuffer::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
     return _radiance.download(ptr, offset);
 }
-
 
 BakerPipeline::BakerPipeline(const PipelineDesc &desc)
     : Pipeline(desc),
@@ -58,7 +57,7 @@ void BakerPipeline::compile_transform_shader() noexcept {
             normals.write(dispatch_id(), make_float4(world_norm, normal.w));
         };
     };
-    _transform_shader = device().compile(kernel, "transform shader");
+    _transform_shader_old = device().compile(kernel, "transform shader");
 }
 
 void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
@@ -103,16 +102,18 @@ void BakerPipeline::preprocess() noexcept {
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
 
+//    bake_all();
+
     // rasterize
     _rasterizer->compile_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.prepare_for_rasterize();
+        baked_shape.prepare_for_rasterize_old();
     });
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         if (baked_shape.has_rasterization_cache()) {
-            baked_shape.load_rasterization_from_cache();
+            stream() << baked_shape.load_rasterization_from_cache();
         } else {
-            _rasterizer->apply(baked_shape);
+            stream() << _rasterizer->apply(baked_shape);
         }
     });
     stream() << synchronize() << commit();
@@ -128,9 +129,9 @@ void BakerPipeline::preprocess() noexcept {
     // transform to world space
     compile_transform_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        stream() << _transform_shader(baked_shape.positions(),
-                                      baked_shape.normals(),
-                                      baked_shape.shape()->o2w())
+        stream() << _transform_shader_old(baked_shape.positions(),
+                                          baked_shape.normals(),
+                                          baked_shape.shape()->o2w())
                         .dispatch(baked_shape.resolution());
     });
     stream() << synchronize() << commit();
@@ -147,7 +148,7 @@ RayState BakerPipeline::generate_ray(const Float4 &position, const Float4 &norma
 
 void BakerPipeline::compile_shaders() noexcept {
     compile_baker();
-        _scene.integrator()->compile_shader();
+    _scene.integrator()->compile_shader();
     compile_displayer();
 }
 
@@ -237,8 +238,51 @@ void BakerPipeline::bake_all_old() noexcept {
     }
 }
 
-void BakerPipeline::bake_all() noexcept {
+CommandList BakerPipeline::bake(uint index, uint num) noexcept {
+    CommandList ret;
+    ret << _bake_buffer.clear();
+    uint offset = 0;
+    for (uint i = index; i < num; ++i) {
+        BakedShape &bs = _baked_shapes[i];
+        ret << bs.prepare_for_rasterize();
+        if (bs.has_rasterization_cache()) {
+            ret << bs.load_rasterization_from_cache();
+        } else {
+            ret << _rasterizer->apply(bs);
+        }
+        /// transform to world space
 
+        ret << _bake_buffer.append_buffer(bs.normals(), bs.positions());
+        offset += bs.pixel_num();
+    }
+    ret << synchronize();
+    return ret;
+}
+
+void BakerPipeline::bake_all() noexcept {
+    static constexpr auto max_size = 2048 * 1024;
+    _bake_buffer.allocate(max_size, device());
+
+    //    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+    //              [&](const BakedShape &a, const BakedShape &b) {
+    //                  return a.perimeter() > b.perimeter();
+    //              });
+
+    for (uint i = 0; i < _baked_shapes.size();) {
+        uint pixel_num = 0;
+        uint shape_num = 0;
+        for (uint j = i; j < _baked_shapes.size(); ++j) {
+            auto &cur_bs = _baked_shapes[j];
+            if (pixel_num + cur_bs.pixel_num() <= max_size) {
+                pixel_num += cur_bs.pixel_num();
+                shape_num += 1;
+            } else {
+                break;
+            }
+        }
+        stream() << bake(i, shape_num) << synchronize() << commit();
+        i += shape_num;
+    }
 }
 
 void BakerPipeline::upload_lightmap() noexcept {
@@ -256,7 +300,7 @@ void BakerPipeline::upload_lightmap() noexcept {
 
 void BakerPipeline::render(double dt) noexcept {
     Clock clk;
-//        integrator()->render();
+    //        integrator()->render();
     stream() << _display_shader(frame_index()).dispatch(resolution());
     stream() << synchronize();
     stream() << commit();
