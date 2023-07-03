@@ -88,7 +88,7 @@ public:
     void prepare_for_bake() noexcept;
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
-    void load_rasterization_from_cache() const;
+    [[nodiscard]] CommandList load_rasterization_from_cache() const;
     void save_rasterization_to_cache() const;
     void save_lightmap_to_cache() const;
     void setup_vertices(UnwrapperResult result);
@@ -113,7 +113,7 @@ public:
     explicit Rasterizer(const RasterizerDesc &desc)
         : Node(desc) {}
     virtual void compile_shader() noexcept = 0;
-    virtual void apply(BakedShape &baked_shape) noexcept = 0;
+    [[nodiscard]] virtual CommandList apply(BakedShape &baked_shape) noexcept = 0;
 };
 
 }// namespace vision

@@ -91,11 +91,13 @@ void BakedShape::save_to_cache(const UnwrapperResult &result) {
     Context::write_file(uv_config, data_str);
 }
 
-void BakedShape::load_rasterization_from_cache() const {
+CommandList BakedShape::load_rasterization_from_cache() const {
+    CommandList ret;
     ImageIO &position = ImagePool::instance().obtain_image(position_cache_path(), ColorSpace::LINEAR).image();
     ImageIO &normal = ImagePool::instance().obtain_image(normal_cache_path(), ColorSpace::LINEAR).image();
-    _shape->pipeline()->stream() << _positions.upload(position.pixel_ptr())
-                                 << _normals.upload(normal.pixel_ptr());
+    ret << _positions.upload(position.pixel_ptr())
+        << _normals.upload(normal.pixel_ptr());
+    return ret;
 }
 
 void BakedShape::save_rasterization_to_cache() const {

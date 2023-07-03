@@ -111,9 +111,9 @@ void BakerPipeline::preprocess() noexcept {
     });
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         if (baked_shape.has_rasterization_cache()) {
-            baked_shape.load_rasterization_from_cache();
+            stream() << baked_shape.load_rasterization_from_cache();
         } else {
-            _rasterizer->apply(baked_shape);
+            stream() << _rasterizer->apply(baked_shape);
         }
     });
     stream() << synchronize() << commit();
@@ -130,8 +130,8 @@ void BakerPipeline::preprocess() noexcept {
     compile_transform_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         stream() << _transform_shader_old(baked_shape.positions(),
-                                      baked_shape.normals(),
-                                      baked_shape.shape()->o2w())
+                                          baked_shape.normals(),
+                                          baked_shape.shape()->o2w())
                         .dispatch(baked_shape.resolution());
     });
     stream() << synchronize() << commit();
@@ -258,12 +258,12 @@ void BakerPipeline::bake_all() noexcept {
     static constexpr auto max_size = 2048 * 1024;
     _bake_buffer.allocate(max_size, device());
 
-//    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
-//              [&](const BakedShape &a, const BakedShape &b) {
-//                  return a.perimeter() > b.perimeter();
-//              });
+    //    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+    //              [&](const BakedShape &a, const BakedShape &b) {
+    //                  return a.perimeter() > b.perimeter();
+    //              });
 
-    for (uint i = 0; i < _baked_shapes.size(); ) {
+    for (uint i = 0; i < _baked_shapes.size();) {
         uint pixel_num = 0;
         uint shape_num = 0;
         for (uint j = i; j < _baked_shapes.size(); ++j) {
@@ -272,7 +272,7 @@ void BakerPipeline::bake_all() noexcept {
                 pixel_num += cur_bs.pixel_num();
                 shape_num += 1;
             } else {
-                break ;
+                break;
             }
         }
         stream() << bake(i, shape_num) << synchronize() << commit();
