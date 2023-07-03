@@ -102,7 +102,7 @@ void BakerPipeline::preprocess() noexcept {
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
 
-    bake_all();
+//    bake_all();
 
     // rasterize
     _rasterizer->compile_shader();
@@ -245,6 +245,11 @@ CommandList BakerPipeline::bake(uint index, uint num) noexcept {
     for (uint i = index; i < num; ++i) {
         BakedShape &bs = _baked_shapes[i];
         ret << bs.prepare_for_rasterize();
+        if (bs.has_rasterization_cache()) {
+            ret << bs.load_rasterization_from_cache();
+        } else {
+            ret << _rasterizer->apply(bs);
+        }
         /// transform to world space
 
         ret << _bake_buffer.append_buffer(bs.normals(), bs.positions());
