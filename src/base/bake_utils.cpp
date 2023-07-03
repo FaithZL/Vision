@@ -22,6 +22,22 @@ void BakedShape::prepare_for_rasterize_old() noexcept {
     });
 }
 
+CommandList BakedShape::prepare_for_rasterize() noexcept {
+    CommandList ret;
+    _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
+    _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
+    ret << _normals.clear() << _positions.clear();
+    shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
+        DeviceMesh device_mesh;
+        device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
+        device_mesh.triangles = shape()->device().create_buffer<Triangle>(mesh.triangles.size());
+        ret << device_mesh.vertices.upload(mesh.vertices.data())
+            << device_mesh.triangles.upload(mesh.triangles.data());
+        _device_meshes.push_back(ocarina::move(device_mesh));
+    });
+    return ret;
+}
+
 void BakedShape::prepare_for_bake() noexcept {
     _lightmap.super() = shape()->device().create_buffer<float4>(pixel_num());
     auto &stream = shape()->pipeline()->stream();

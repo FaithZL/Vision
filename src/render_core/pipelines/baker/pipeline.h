@@ -48,7 +48,9 @@ private:
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
                                      float4x4 o2w);
-    Shader<transform_signature> _transform_shader;
+    Shader<transform_signature> _transform_shader_old;
+
+
 
     using bake_signature = void(uint, Buffer<float4>,
                                 Buffer<float4>, Buffer<float4>);
@@ -76,7 +78,7 @@ public:
     void bake_old(vision::BakedShape &baked_shape) noexcept;
 
     void bake_all() noexcept;
-    void bake(uint index, uint num) noexcept;
+    [[nodiscard]] CommandList bake(uint index, uint num) noexcept;
 
     [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;

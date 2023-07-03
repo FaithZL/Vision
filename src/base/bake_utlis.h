@@ -84,7 +84,7 @@ public:
     }
     [[nodiscard]] uint perimeter() const noexcept { return resolution().x + resolution().y; }
     void prepare_for_rasterize_old() noexcept;
-
+    [[nodiscard]] CommandList prepare_for_rasterize() noexcept;
     void prepare_for_bake() noexcept;
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);

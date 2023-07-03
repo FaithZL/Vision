@@ -57,7 +57,7 @@ void BakerPipeline::compile_transform_shader() noexcept {
             normals.write(dispatch_id(), make_float4(world_norm, normal.w));
         };
     };
-    _transform_shader = device().compile(kernel, "transform shader");
+    _transform_shader_old = device().compile(kernel, "transform shader");
 }
 
 void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
@@ -129,7 +129,7 @@ void BakerPipeline::preprocess() noexcept {
     // transform to world space
     compile_transform_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        stream() << _transform_shader(baked_shape.positions(),
+        stream() << _transform_shader_old(baked_shape.positions(),
                                       baked_shape.normals(),
                                       baked_shape.shape()->o2w())
                         .dispatch(baked_shape.resolution());
@@ -238,16 +238,20 @@ void BakerPipeline::bake_all_old() noexcept {
     }
 }
 
-void BakerPipeline::bake(uint index, uint num) noexcept {
-    stream() << _bake_buffer.clear();
+CommandList BakerPipeline::bake(uint index, uint num) noexcept {
+    CommandList ret;
+    ret << _bake_buffer.clear();
     uint offset = 0;
     for (uint i = index; i < num; ++i) {
         BakedShape &bs = _baked_shapes[i];
+        ret << bs.prepare_for_rasterize();
         /// transform to world space
-        bs.prepare_for_rasterize_old();
 
+        ret << _bake_buffer.append_buffer(bs.normals(), bs.positions());
+        offset += bs.pixel_num();
     }
-    stream() << synchronize() << commit();
+    ret << synchronize();
+    return ret;
 }
 
 void BakerPipeline::bake_all() noexcept {
@@ -271,7 +275,7 @@ void BakerPipeline::bake_all() noexcept {
                 break ;
             }
         }
-        bake(i, shape_num);
+        stream() << bake(i, shape_num) << synchronize() << commit();
         i += shape_num;
     }
 }
