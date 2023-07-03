@@ -242,8 +242,9 @@ void BakerPipeline::bake(uint index, uint num) noexcept {
     stream() << _bake_buffer.clear();
     for (uint i = index; i < num; ++i) {
         BakedShape &bs = _baked_shapes[i];
-        
+        /// transform to world space
     }
+    stream() << synchronize() << commit();
 }
 
 void BakerPipeline::bake_all() noexcept {
