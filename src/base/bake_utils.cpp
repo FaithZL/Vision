@@ -100,13 +100,19 @@ CommandList BakedShape::load_rasterization_from_cache() const {
     return ret;
 }
 
-void BakedShape::save_rasterization_to_cache() const {
-    vector<float4> map;
-    map.resize(pixel_num());
-    _positions.download_immediately(map.data());
-    ImageIO::save_image(position_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
-    _normals.download_immediately(map.data());
-    ImageIO::save_image(normal_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
+CommandList BakedShape::save_rasterization_to_cache() const {
+    CommandList ret;
+    float4 *ptr = ocarina::allocate<float4>(pixel_num());
+
+    ret << _positions.download(ptr) << [&, ptr] {
+        ImageIO::save_image(position_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
+    };
+
+    ret << _normals.download(ptr) << [&, ptr] {
+        ImageIO::save_image(normal_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
+        ocarina::deallocate(ptr);
+    };
+    return ret;
 }
 
 void BakedShape::save_lightmap_to_cache() const {

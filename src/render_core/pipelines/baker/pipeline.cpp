@@ -90,7 +90,7 @@ void BakerPipeline::preprocess() noexcept {
         _baked_shapes.emplace_back(item);
     });
 
-    // uv spread
+    // uv unwrap
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         UnwrapperResult unwrap_result;
         if (baked_shape.has_uv_cache()) {
@@ -101,8 +101,6 @@ void BakerPipeline::preprocess() noexcept {
         }
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
-
-//    bake_all();
 
     // rasterize
     _rasterizer->compile_shader();
@@ -122,9 +120,12 @@ void BakerPipeline::preprocess() noexcept {
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         baked_shape.normalize_lightmap_uv();
         if (!baked_shape.has_rasterization_cache()) {
-            baked_shape.save_rasterization_to_cache();
+            stream() << baked_shape.save_rasterization_to_cache();
         }
     });
+//    bake_all();
+    stream() << synchronize() << commit();
+//    exit(0);
 
     // transform to world space
     compile_transform_shader();
@@ -242,16 +243,16 @@ CommandList BakerPipeline::bake(uint index, uint num) noexcept {
     CommandList ret;
     ret << _bake_buffer.clear();
     uint offset = 0;
-    for (uint i = index; i < num; ++i) {
+    for (uint i = index; i < index + num; ++i) {
         BakedShape &bs = _baked_shapes[i];
         ret << bs.prepare_for_rasterize();
         if (bs.has_rasterization_cache()) {
             ret << bs.load_rasterization_from_cache();
         } else {
-            ret << _rasterizer->apply(bs);
+            ret << _rasterizer->apply(bs) << bs.save_rasterization_to_cache()
+                << [&]{ bs.normalize_lightmap_uv(); };
         }
         /// transform to world space
-
         ret << _bake_buffer.append_buffer(bs.normals(), bs.positions());
         offset += bs.pixel_num();
     }
