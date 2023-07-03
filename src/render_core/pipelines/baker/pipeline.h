@@ -10,7 +10,7 @@
 
 namespace vision {
 
-struct BakeData {
+struct BakeBuffer {
 private:
     Buffer<float4> _positions;
     Buffer<float4> _normals;
@@ -18,7 +18,7 @@ private:
     uint _pixel_num{};
 
 public:
-    BakeData() = default;
+    BakeBuffer() = default;
     void allocate(uint buffer_size, Device &device) noexcept;
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
                                             const Buffer<float4> &positions) noexcept;
@@ -42,6 +42,8 @@ private:
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
+
+    BakeBuffer _bake_buffer;
 
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
@@ -74,6 +76,7 @@ public:
     void bake_old(vision::BakedShape &baked_shape) noexcept;
 
     void bake_all() noexcept;
+    void bake(uint index, uint num) noexcept;
 
     [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;
