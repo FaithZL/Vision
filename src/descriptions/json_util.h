@@ -9,7 +9,7 @@
 
 namespace vision {
 namespace detail {
-[[nodiscard]] std::string remove_cxx_comment(std::string source) {
+[[nodiscard]] inline std::string remove_cxx_comment(std::string source) {
     if (source.size() < 2) {
         return std::move(source);
     }
@@ -94,7 +94,7 @@ namespace detail {
 }
 }// namespace detail
 
-[[nodiscard]] DataWrap create_json_from_file(const fs::path &fn) {
+[[nodiscard]] inline DataWrap create_json_from_file(const fs::path &fn) {
     std::ifstream fst;
     fst.open(fn.c_str());
     std::stringstream buffer;
