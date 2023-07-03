@@ -14,19 +14,19 @@ void BakeBuffer::allocate(ocarina::uint buffer_size, ocarina::Device &device) no
 
 CommandList BakeBuffer::clear() noexcept {
     CommandList ret;
-    ret.push_back(_positions.clear());
-    ret.push_back(_normals.clear());
-    ret.push_back(_radiance.clear());
-    ret.push_back(HostFunctionCommand::create([&] { _pixel_num = 0; }, true));
+    ret << _positions.clear();
+    ret << _normals.clear();
+    ret << _radiance.clear();
+    ret << [&] { _pixel_num = 0; };
     return ret;
 }
 
 CommandList BakeBuffer::append_buffer(const Buffer<ocarina::float4> &normals,
                                       const Buffer<ocarina::float4> &positions) noexcept {
     CommandList ret;
-    ret.push_back(_positions.copy_from(positions, 0));
-    ret.push_back(_normals.copy_from(normals, 0));
-    ret.push_back(HostFunctionCommand::create([size = normals.size(), this] { _pixel_num += size; }, true));
+    ret << _positions.copy_from(positions, 0);
+    ret << _normals.copy_from(positions, 0);
+    ret << [size = normals.size(), this] { _pixel_num += size; };
     return ret;
 }
 
@@ -42,18 +42,18 @@ BakerPipeline::BakerPipeline(const PipelineDesc &desc)
 }
 
 void BakerPipeline::compile_transform_shader() noexcept {
-        Kernel kernel_old = [&](BufferVar<float4> positions,
-                                BufferVar<float4> normals, Float4x4 o2w) {
-            Float4 position = positions.read(dispatch_id());
-            Float4 normal = normals.read(dispatch_id());
-            $if(position.w > 0.f) {
-                Float3 world_pos = transform_point(o2w, position.xyz());
-                Float3 world_norm = transform_normal(o2w, normal.xyz());
-                positions.write(dispatch_id(), make_float4(world_pos, position.w));
-                normals.write(dispatch_id(), make_float4(world_norm, normal.w));
-            };
+    Kernel kernel_old = [&](BufferVar<float4> positions,
+                            BufferVar<float4> normals, Float4x4 o2w) {
+        Float4 position = positions.read(dispatch_id());
+        Float4 normal = normals.read(dispatch_id());
+        $if(position.w > 0.f) {
+            Float3 world_pos = transform_point(o2w, position.xyz());
+            Float3 world_norm = transform_normal(o2w, normal.xyz());
+            positions.write(dispatch_id(), make_float4(world_pos, position.w));
+            normals.write(dispatch_id(), make_float4(world_norm, normal.w));
         };
-        _transform_shader_old = device().compile(kernel_old, "transform shader old");
+    };
+    _transform_shader_old = device().compile(kernel_old, "transform shader old");
 
     Kernel kernel = [&](BufferVar<float4> positions,
                         BufferVar<float4> normals, Float4x4 o2w,
@@ -115,28 +115,28 @@ void BakerPipeline::preprocess() noexcept {
     // rasterize
     _rasterizer->compile_shader();
     compile_transform_shader();
-            std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-                baked_shape.prepare_for_rasterize_old();
-            });
-            std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-                if (baked_shape.has_rasterization_cache()) {
-                    stream() << baked_shape.load_rasterization_from_cache();
-                } else {
-                    stream() << _rasterizer->apply(baked_shape);
-                }
-            });
-            stream() << synchronize() << commit();
-
-            // save rasterize cache
-            std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-                baked_shape.normalize_lightmap_uv();
-                if (!baked_shape.has_rasterization_cache()) {
-                    stream() << baked_shape.save_rasterization_to_cache();
-                }
-            });
-//    bake_all();
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.prepare_for_rasterize_old();
+    });
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        if (baked_shape.has_rasterization_cache()) {
+            stream() << baked_shape.load_rasterization_from_cache();
+        } else {
+            stream() << _rasterizer->apply(baked_shape);
+        }
+    });
     stream() << synchronize() << commit();
-//    exit(0);
+
+    // save rasterize cache
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.normalize_lightmap_uv();
+        if (!baked_shape.has_rasterization_cache()) {
+            stream() << baked_shape.save_rasterization_to_cache();
+        }
+    });
+    //    bake_all();
+    stream() << synchronize() << commit();
+    //    exit(0);
 
     // transform to world space
     compile_transform_shader();
