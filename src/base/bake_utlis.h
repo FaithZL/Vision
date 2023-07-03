@@ -90,7 +90,8 @@ public:
     void save_to_cache(const UnwrapperResult &result);
     [[nodiscard]] CommandList load_rasterization_from_cache() const;
     [[nodiscard]] CommandList save_rasterization_to_cache() const;
-    void save_lightmap_to_cache() const;
+    void save_lightmap_to_cache_old() const;
+    [[nodiscard]] CommandList save_lightmap_to_cache() const;
     void setup_vertices(UnwrapperResult result);
     void normalize_lightmap_uv();
 };

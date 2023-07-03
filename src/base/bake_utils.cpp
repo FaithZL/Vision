@@ -115,11 +115,22 @@ CommandList BakedShape::save_rasterization_to_cache() const {
     return ret;
 }
 
-void BakedShape::save_lightmap_to_cache() const {
+void BakedShape::save_lightmap_to_cache_old() const {
     vector<float4> map;
     map.resize(pixel_num());
     _lightmap.download_immediately(map.data());
     ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, map.data());
+}
+
+CommandList BakedShape::save_lightmap_to_cache() const {
+    CommandList ret;
+    float4 *ptr = ocarina::allocate<float4>(pixel_num());
+    ret << _lightmap.download(ptr);
+    ret << [&, ptr] {
+        ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
+        ocarina::deallocate(ptr);
+    };
+    return ret;
 }
 
 void BakedShape::allocate_lightmap_texture() noexcept {

@@ -22,7 +22,8 @@ private:
     void _compile_transform() noexcept;
     void _compile_bake() noexcept;
     void _prepare(ocarina::span<BakedShape> baked_shapes) noexcept;
-    void _baking(ocarina::span<BakedShape> baked_shapes) noexcept;
+    void _baking() noexcept;
+    void _save_result(ocarina::span<BakedShape> baked_shapes) noexcept;
 
 public:
     explicit Baker(Rasterizer *rasterizer)
@@ -36,6 +37,7 @@ public:
     [[nodiscard]] static Device &device() noexcept;
     [[nodiscard]] static Stream &stream() noexcept;
     [[nodiscard]] static Pipeline *pipeline() noexcept;
+    [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] BufferDownloadCommand *download_radiance(void *ptr, uint offset) const noexcept;
 };

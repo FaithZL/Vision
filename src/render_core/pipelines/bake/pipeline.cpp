@@ -227,7 +227,7 @@ void BakePipeline::bake_all_old() noexcept {
     });
     stream() << synchronize() << commit();
     for (int i = 0; i < _baked_shapes.size(); ++i) {
-        _baked_shapes[i].save_lightmap_to_cache();
+        _baked_shapes[i].save_lightmap_to_cache_old();
         _baked_shapes[i].shape()->handle().lightmap_id = i;
     }
 }
