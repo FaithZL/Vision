@@ -952,7 +952,7 @@
 		}
 	},
 	"pipeline" : {
-		"type" : "baker"
+		"type" : "bake"
 //		"type" : "offline"
 	},
 	"output" : {

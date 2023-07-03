@@ -31,6 +31,8 @@ private:
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
                                      float4x4 o2w);
+    Baker _baker;
+
     Shader<transform_signature> _transform_shader_old;
 
     Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;

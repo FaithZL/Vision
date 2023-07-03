@@ -6,42 +6,11 @@
 
 namespace vision {
 
-//void Baker::allocate(ocarina::uint buffer_size, ocarina::Device &device) noexcept {
-//    _positions = device.create_buffer<float4>(buffer_size);
-//    _normals = device.create_buffer<float4>(buffer_size);
-//    _radiance = device.create_buffer<float4>(buffer_size);
-//}
-//
-//CommandList Baker::clear() noexcept {
-//    CommandList ret;
-//    ret << _positions.clear();
-//    ret << _normals.clear();
-//    ret << _radiance.clear();
-//    ret << [&] { _pixel_num.clear(); };
-//    return ret;
-//}
-//
-//uint Baker::pixel_num() const noexcept {
-//    return std::accumulate(_pixel_num.begin(), _pixel_num.end(), 0u);
-//}
-//
-//CommandList Baker::append_buffer(const Buffer<ocarina::float4> &normals,
-//                                      const Buffer<ocarina::float4> &positions) noexcept {
-//    CommandList ret;
-//    ret << _positions.copy_from(positions, 0);
-//    ret << _normals.copy_from(positions, 0);
-//    ret << [size = normals.size(), this] { _pixel_num.push_back(size); };
-//    return ret;
-//}
-//
-//BufferDownloadCommand *Baker::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
-//    return _radiance.download(ptr, offset);
-//}
-
 BakePipeline::BakePipeline(const PipelineDesc &desc)
     : Pipeline(desc),
       _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
-      _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
+      _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)),
+      _baker(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
     create_cache_directory_if_necessary();
 }
 
@@ -119,26 +88,27 @@ void BakePipeline::preprocess() noexcept {
     // rasterize
     _rasterizer->compile_shader();
     compile_transform_shader();
-//    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-//        baked_shape.prepare_for_rasterize_old();
-//    });
-//    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-//        if (baked_shape.has_rasterization_cache()) {
-//            stream() << baked_shape.load_rasterization_from_cache();
-//        } else {
-//            stream() << _rasterizer->apply(baked_shape);
-//        }
-//    });
-//    stream() << synchronize() << commit();
-//
-//    // save rasterize cache
-//    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-//        baked_shape.normalize_lightmap_uv();
-//        if (!baked_shape.has_rasterization_cache()) {
-//            stream() << baked_shape.save_rasterization_to_cache();
-//        }
-//    });
+    //    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+    //        baked_shape.prepare_for_rasterize_old();
+    //    });
+    //    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+    //        if (baked_shape.has_rasterization_cache()) {
+    //            stream() << baked_shape.load_rasterization_from_cache();
+    //        } else {
+    //            stream() << _rasterizer->apply(baked_shape);
+    //        }
+    //    });
+    //    stream() << synchronize() << commit();
+    //
+    //    // save rasterize cache
+    //    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+    //        baked_shape.normalize_lightmap_uv();
+    //        if (!baked_shape.has_rasterization_cache()) {
+    //            stream() << baked_shape.save_rasterization_to_cache();
+    //        }
+    //    });
     bake_all();
+
     stream() << synchronize() << commit();
     exit(0);
 
@@ -188,7 +158,6 @@ void BakePipeline::compile_baker() noexcept {
         };
     };
     _bake_shader_old = device().compile(bake_kernel, "bake_old kernel");
-
 
     Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
                         BufferVar<float4> normals, BufferVar<float4> lightmap) {
@@ -244,8 +213,8 @@ void BakePipeline::bake_old(vision::BakedShape &baked_shape) noexcept {
     OC_INFO_FORMAT("start bake_old {}", baked_shape.shape()->name());
     for (int i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader_old(i, baked_shape.positions(),
-                                 baked_shape.normals(),
-                                 baked_shape.lightmap())
+                                     baked_shape.normals(),
+                                     baked_shape.lightmap())
                         .dispatch(baked_shape.resolution());
     }
 }
@@ -299,8 +268,7 @@ CommandList BakePipeline::bake(vision::Baker &bake_buffer) noexcept {
 
 void BakePipeline::bake_all() noexcept {
     static constexpr auto max_size = 2048 * 1024;
-    Baker bake_buffer;
-    bake_buffer.allocate(max_size, device());
+    _baker.allocate(max_size, device());
 
     //    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
     //              [&](const BakedShape &a, const BakedShape &b) {
@@ -319,8 +287,10 @@ void BakePipeline::bake_all() noexcept {
                 break;
             }
         }
-        stream() << prepare_for_bake(i, shape_num, bake_buffer) << synchronize() << commit();
-        stream() << bake(bake_buffer) << synchronize() << commit();
+        stream() << prepare_for_bake(i, shape_num, _baker) << synchronize() << commit();
+        stream() << bake(_baker) << synchronize() << commit();
+
+
         i += shape_num;
     }
 }
