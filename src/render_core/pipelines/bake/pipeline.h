@@ -10,19 +10,20 @@
 
 namespace vision {
 
-struct BakeBuffer {
+struct Baker {
 private:
     Buffer<float4> _positions;
     Buffer<float4> _normals;
     Buffer<float4> _radiance;
-    uint _pixel_num{};
+    vector<uint> _pixel_num;
 
 public:
-    BakeBuffer() = default;
+    Baker() = default;
     void allocate(uint buffer_size, Device &device) noexcept;
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
                                             const Buffer<float4> &positions) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
+    [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] BufferDownloadCommand *download_radiance(void *ptr, uint offset) const noexcept;
 };
 
@@ -36,14 +37,12 @@ public:
  * 6. update geometry data
  * 7. display
  */
-class BakerPipeline : public Pipeline {
+class BakePipeline : public Pipeline {
 private:
     UVUnwrapper *_uv_unwrapper{};
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
-
-    BakeBuffer _bake_buffer;
 
     using transform_signature = void(Buffer<float4>,
                                      Buffer<float4>,
@@ -52,17 +51,17 @@ private:
 
     Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;
 
-
-
     using bake_signature = void(uint, Buffer<float4>,
                                 Buffer<float4>, Buffer<float4>);
-    Shader<bake_signature> _bake_shader;
+    Shader<bake_signature> _bake_shader_old;
+
+    Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
 
     Shader<void(uint)> _display_shader;
     uint _lightmap_base_index{InvalidUI32};
 
 public:
-    explicit BakerPipeline(const PipelineDesc &desc);
+    explicit BakePipeline(const PipelineDesc &desc);
     static void create_cache_directory_if_necessary() {
         Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
@@ -80,7 +79,8 @@ public:
     void bake_old(vision::BakedShape &baked_shape) noexcept;
 
     void bake_all() noexcept;
-    [[nodiscard]] CommandList bake(uint index, uint num) noexcept;
+    [[nodiscard]] CommandList bake(Baker &bake_buffer) noexcept;
+    [[nodiscard]] CommandList prepare_for_bake(uint index, uint num, Baker &bake_buffer) noexcept;
 
     [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;
