@@ -107,7 +107,7 @@ void BakerPipeline::preprocess() noexcept {
     // rasterize
     _rasterizer->compile_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.prepare_for_rasterize();
+        baked_shape.prepare_for_rasterize_old();
     });
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         if (baked_shape.has_rasterization_cache()) {
@@ -240,9 +240,12 @@ void BakerPipeline::bake_all_old() noexcept {
 
 void BakerPipeline::bake(uint index, uint num) noexcept {
     stream() << _bake_buffer.clear();
+    uint offset = 0;
     for (uint i = index; i < num; ++i) {
         BakedShape &bs = _baked_shapes[i];
         /// transform to world space
+        bs.prepare_for_rasterize_old();
+
     }
     stream() << synchronize() << commit();
 }

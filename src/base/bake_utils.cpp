@@ -6,7 +6,7 @@
 
 namespace vision {
 
-void BakedShape::prepare_for_rasterize() noexcept {
+void BakedShape::prepare_for_rasterize_old() noexcept {
     _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
     _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
     auto &stream = shape()->pipeline()->stream();
