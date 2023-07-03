@@ -17,9 +17,7 @@ CommandList BakeBuffer::clear() noexcept {
     ret.push_back(_positions.clear());
     ret.push_back(_normals.clear());
     ret.push_back(_radiance.clear());
-    ret.push_back(HostFunctionCommand::create([&] {
-        _pixel_num = 0;
-    },true));
+    ret.push_back(HostFunctionCommand::create([&] { _pixel_num = 0; }, true));
     return ret;
 }
 
@@ -28,9 +26,7 @@ CommandList BakeBuffer::append_buffer(const Buffer<ocarina::float4> &normals,
     CommandList ret;
     ret.push_back(_positions.copy_from(positions, 0));
     ret.push_back(_normals.copy_from(normals, 0));
-    ret.push_back(HostFunctionCommand::create([size = normals.size(), this] {
-        _pixel_num += size;
-    },true));
+    ret.push_back(HostFunctionCommand::create([size = normals.size(), this] { _pixel_num += size; }, true));
     return ret;
 }
 
@@ -46,18 +42,32 @@ BakerPipeline::BakerPipeline(const PipelineDesc &desc)
 }
 
 void BakerPipeline::compile_transform_shader() noexcept {
+        Kernel kernel_old = [&](BufferVar<float4> positions,
+                                BufferVar<float4> normals, Float4x4 o2w) {
+            Float4 position = positions.read(dispatch_id());
+            Float4 normal = normals.read(dispatch_id());
+            $if(position.w > 0.f) {
+                Float3 world_pos = transform_point(o2w, position.xyz());
+                Float3 world_norm = transform_normal(o2w, normal.xyz());
+                positions.write(dispatch_id(), make_float4(world_pos, position.w));
+                normals.write(dispatch_id(), make_float4(world_norm, normal.w));
+            };
+        };
+        _transform_shader_old = device().compile(kernel_old, "transform shader old");
+
     Kernel kernel = [&](BufferVar<float4> positions,
-                        BufferVar<float4> normals, Float4x4 o2w) {
+                        BufferVar<float4> normals, Float4x4 o2w,
+                        Uint offset, Uint2 res) {
         Float4 position = positions.read(dispatch_id());
         Float4 normal = normals.read(dispatch_id());
         $if(position.w > 0.f) {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = transform_normal(o2w, normal.xyz());
-            positions.write(dispatch_id(), make_float4(world_pos, position.w));
-            normals.write(dispatch_id(), make_float4(world_norm, normal.w));
+            positions.write(dispatch_id(), make_float4(position.xyz(), as<float>(offset + 1)));
+            normals.write(dispatch_id(), make_float4(normal.xyz(), as<float>(res.x)));
         };
     };
-    _transform_shader_old = device().compile(kernel, "transform shader");
+    _transform_shader = device().compile(kernel, "transform shader ");
 }
 
 void BakerPipeline::init_scene(const vision::SceneDesc &scene_desc) {
@@ -104,25 +114,26 @@ void BakerPipeline::preprocess() noexcept {
 
     // rasterize
     _rasterizer->compile_shader();
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.prepare_for_rasterize_old();
-    });
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        if (baked_shape.has_rasterization_cache()) {
-            stream() << baked_shape.load_rasterization_from_cache();
-        } else {
-            stream() << _rasterizer->apply(baked_shape);
-        }
-    });
-    stream() << synchronize() << commit();
+    compile_transform_shader();
+            std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+                baked_shape.prepare_for_rasterize_old();
+            });
+            std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+                if (baked_shape.has_rasterization_cache()) {
+                    stream() << baked_shape.load_rasterization_from_cache();
+                } else {
+                    stream() << _rasterizer->apply(baked_shape);
+                }
+            });
+            stream() << synchronize() << commit();
 
-    // save rasterize cache
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.normalize_lightmap_uv();
-        if (!baked_shape.has_rasterization_cache()) {
-            stream() << baked_shape.save_rasterization_to_cache();
-        }
-    });
+            // save rasterize cache
+            std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+                baked_shape.normalize_lightmap_uv();
+                if (!baked_shape.has_rasterization_cache()) {
+                    stream() << baked_shape.save_rasterization_to_cache();
+                }
+            });
 //    bake_all();
     stream() << synchronize() << commit();
 //    exit(0);
@@ -161,7 +172,7 @@ void BakerPipeline::compile_baker() noexcept {
         Float4 position = positions.read(pixel_index);
         Float4 normal = normals.read(pixel_index);
 
-        $if(position.w > 0.5f) {
+        $if(position.w != 0.f) {
             sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
@@ -250,9 +261,13 @@ CommandList BakerPipeline::bake(uint index, uint num) noexcept {
             ret << bs.load_rasterization_from_cache();
         } else {
             ret << _rasterizer->apply(bs) << bs.save_rasterization_to_cache()
-                << [&]{ bs.normalize_lightmap_uv(); };
+                << [&] { bs.normalize_lightmap_uv(); };
         }
         /// transform to world space
+        ret << _transform_shader(bs.positions(), bs.normals(),
+                                 bs.shape()->o2w(), offset, bs.resolution())
+                   .dispatch(bs.resolution());
+
         ret << _bake_buffer.append_buffer(bs.normals(), bs.positions());
         offset += bs.pixel_num();
     }

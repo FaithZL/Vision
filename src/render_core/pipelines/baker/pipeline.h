@@ -52,6 +52,8 @@ private:
 
     Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;
 
+
+
     using bake_signature = void(uint, Buffer<float4>,
                                 Buffer<float4>, Buffer<float4>);
     Shader<bake_signature> _bake_shader;
