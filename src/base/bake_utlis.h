@@ -43,7 +43,6 @@ private:
     uint2 _resolution{};
     RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
     RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
-    RegistrableBuffer<float4> _lightmap{Global::instance().pipeline()->resource_array()};
     Texture _lightmap_tex;
     vector<DeviceMesh> _device_meshes;
 
@@ -63,7 +62,6 @@ public:
     OC_MAKE_MEMBER_GETTER(shape, )
     OC_MAKE_MEMBER_GETTER(positions, &)
     OC_MAKE_MEMBER_GETTER(normals, &)
-    OC_MAKE_MEMBER_GETTER(lightmap, &)
     OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
 
     [[nodiscard]] uint64_t instance_hash() const noexcept;
@@ -83,10 +81,7 @@ public:
         });
     }
     [[nodiscard]] uint perimeter() const noexcept { return resolution().x + resolution().y; }
-    void prepare_for_rasterize_old() noexcept;
     [[nodiscard]] CommandList prepare_for_rasterize() noexcept;
-    void prepare_for_bake() noexcept;
-    void reallocate_lightmap() noexcept;
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
     [[nodiscard]] CommandList load_rasterization_from_cache() const;

@@ -6,22 +6,6 @@
 
 namespace vision {
 
-void BakedShape::prepare_for_rasterize_old() noexcept {
-    _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
-    _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
-    auto &stream = shape()->pipeline()->stream();
-    stream << _normals.clear()
-           << _positions.clear();
-    shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
-        DeviceMesh device_mesh;
-        device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
-        device_mesh.triangles = shape()->device().create_buffer<Triangle>(mesh.triangles.size());
-        stream << device_mesh.vertices.upload(mesh.vertices.data())
-               << device_mesh.triangles.upload(mesh.triangles.data());
-        _device_meshes.push_back(ocarina::move(device_mesh));
-    });
-}
-
 CommandList BakedShape::prepare_for_rasterize() noexcept {
     CommandList ret;
     _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
@@ -36,17 +20,6 @@ CommandList BakedShape::prepare_for_rasterize() noexcept {
         _device_meshes.push_back(ocarina::move(device_mesh));
     });
     return ret;
-}
-
-void BakedShape::prepare_for_bake() noexcept {
-    _lightmap.super() = shape()->device().create_buffer<float4>(pixel_num());
-    auto &stream = shape()->pipeline()->stream();
-    stream << _lightmap.clear();
-}
-
-void BakedShape::reallocate_lightmap() noexcept {
-    _lightmap.super() = shape()->device().create_buffer<float4>(pixel_num());
-    _lightmap.clear_immediately();
 }
 
 UnwrapperResult BakedShape::load_uv_config_from_cache() const {
@@ -123,7 +96,7 @@ CommandList BakedShape::save_rasterization_to_cache() const {
 CommandList BakedShape::save_lightmap_to_cache() const {
     CommandList ret;
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
-    ret << _lightmap.download(ptr);
+    ret << _lightmap_tex.download(ptr);
     ret << [&, ptr] {
         ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
         ocarina::deallocate(ptr);
