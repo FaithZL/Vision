@@ -27,7 +27,7 @@ private:
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
     Baker _baker;
-    Shader<void(uint)> _display_shader;
+    Shader<void(uint, uint)> _display_shader;
     uint _lightmap_base_index{InvalidUI32};
 
 public:
@@ -42,7 +42,6 @@ public:
     void prepare() noexcept override;
     void display(double dt) noexcept override;
     void render(double dt) noexcept override;
-    void upload_lightmap() noexcept;
 
     void bake_all() noexcept;
     void preprocess() noexcept override;

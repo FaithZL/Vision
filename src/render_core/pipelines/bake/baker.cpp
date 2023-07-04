@@ -98,9 +98,12 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
     for (BakedShape &bs : baked_shapes) {
         Context::create_directory_if_necessary(bs.instance_cache_directory());
         bs.reallocate_lightmap();
+        bs.allocate_lightmap_texture();
         stream() << _radiance.copy_to(bs.lightmap().super(), offset);
+        stream() << bs.lightmap_tex().copy_from_buffer(bs.lightmap().handle(), 0);
         stream() << bs.save_lightmap_to_cache();
         stream() << synchronize() << commit();
+        pipeline()->register_texture(bs.lightmap_tex());
         offset += bs.pixel_num();
     }
 }

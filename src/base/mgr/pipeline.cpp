@@ -49,7 +49,7 @@ void Pipeline::update_geometry() noexcept {
     _geometry.upload();
 }
 
-void Pipeline::prepare_resource_array() noexcept {
+void Pipeline::upload_resource_array() noexcept {
     _stream << _resource_array.update_slotSOA() << synchronize() << commit();
     _stream << _resource_array.upload_handles() << synchronize() << commit();
 }

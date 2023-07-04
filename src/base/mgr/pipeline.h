@@ -90,7 +90,7 @@ public:
     [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
     [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
     [[nodiscard]] const ResourceArray &resource_array() const noexcept { return _resource_array; }
-    void prepare_resource_array() noexcept;
+    void upload_resource_array() noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {

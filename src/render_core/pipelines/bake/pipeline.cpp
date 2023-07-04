@@ -31,11 +31,11 @@ void BakePipeline::prepare() noexcept {
     preprocess();
     prepare_geometry();
     compile_shaders();
-    prepare_resource_array();
+    upload_resource_array();
+    _lightmap_base_index = pipeline()->resource_array().texture_num();
     bake_all();
-    upload_lightmap();
     update_geometry();
-    prepare_resource_array();
+    upload_resource_array();
 }
 
 void BakePipeline::preprocess() noexcept {
@@ -65,7 +65,7 @@ void BakePipeline::compile_shaders() noexcept {
 void BakePipeline::compile_displayer() noexcept {
     Camera *camera = scene().camera();
     Sampler *sampler = scene().sampler();
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index, Uint lightmap_base) {
         Uint2 pixel = dispatch_idx().xy();
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
@@ -83,7 +83,7 @@ void BakePipeline::compile_displayer() noexcept {
         Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
 
         $if(it.has_lightmap()) {
-            L = resource_array().tex(1 + it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
+            L = resource_array().tex(lightmap_base + it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
         };
         camera->radiance_film()->add_sample(pixel, L, frame_index);
     };
@@ -118,22 +118,11 @@ void BakePipeline::bake_all() noexcept {
     }
 }
 
-void BakePipeline::upload_lightmap() noexcept {
-    _lightmap_base_index = pipeline()->resource_array().texture_num();
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.allocate_lightmap_texture();
-        vector<float4> data;
-        auto cmd = baked_shape.lightmap_tex().copy_from_buffer(baked_shape.lightmap().handle(), 0);
-        stream() << cmd << synchronize() << commit();
-        register_texture(baked_shape.lightmap_tex());
-    });
-
-    stream() << synchronize() << commit();
-}
-
 void BakePipeline::render(double dt) noexcept {
     Clock clk;
-    stream() << _display_shader(frame_index()).dispatch(resolution());
+    stream() << _display_shader(frame_index(),
+                                _lightmap_base_index)
+                    .dispatch(resolution());
     stream() << synchronize();
     stream() << commit();
     double ms = clk.elapse_ms();

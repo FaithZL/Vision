@@ -17,7 +17,7 @@ public:
         _scene.prepare();
         image_pool().prepare();
         prepare_geometry();
-        prepare_resource_array();
+        upload_resource_array();
         compile_shaders();
         preprocess();
     }
