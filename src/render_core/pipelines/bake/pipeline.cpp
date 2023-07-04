@@ -14,21 +14,6 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
     create_cache_directory_if_necessary();
 }
 
-void BakePipeline::compile_transform_shader() noexcept {
-    Kernel kernel_old = [&](BufferVar<float4> positions,
-                            BufferVar<float4> normals, Float4x4 o2w) {
-        Float4 position = positions.read(dispatch_id());
-        Float4 normal = normals.read(dispatch_id());
-        $if(position.w > 0.f) {
-            Float3 world_pos = transform_point(o2w, position.xyz());
-            Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
-            positions.write(dispatch_id(), make_float4(world_pos, position.w));
-            normals.write(dispatch_id(), make_float4(world_norm, normal.w));
-        };
-    };
-    _transform_shader_old = device().compile(kernel_old, "transform shader old");
-}
-
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
     init_postprocessor(scene_desc);
@@ -73,7 +58,6 @@ void BakePipeline::preprocess() noexcept {
 
     // rasterize
     _rasterizer->compile_shader();
-    compile_transform_shader();
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         baked_shape.prepare_for_rasterize_old();
     });
@@ -94,14 +78,6 @@ void BakePipeline::preprocess() noexcept {
         }
     });
 
-    // transform to world space
-    compile_transform_shader();
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        stream() << _transform_shader_old(baked_shape.positions(),
-                                          baked_shape.normals(),
-                                          baked_shape.shape()->o2w())
-                        .dispatch(baked_shape.resolution());
-    });
     stream() << synchronize() << commit();
 }
 
@@ -115,39 +91,8 @@ RayState BakePipeline::generate_ray(const Float4 &position, const Float4 &normal
 }
 
 void BakePipeline::compile_shaders() noexcept {
-    compile_baker();
     _scene.integrator()->compile_shader();
     compile_displayer();
-}
-
-void BakePipeline::compile_baker() noexcept {
-    Sampler *sampler = scene().sampler();
-    Kernel bake_kernel = [&](Uint frame_index, BufferVar<float4> positions,
-                             BufferVar<float4> normals, BufferVar<float4> lightmap) {
-        Uint pixel_index = dispatch_id();
-        Float4 position = positions.read(pixel_index);
-        Float4 normal = normals.read(pixel_index);
-
-        $if(position.w != 0.f) {
-            sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
-            Float scatter_pdf;
-            RayState rs = generate_ray(position, normal, &scatter_pdf);
-            Float3 L = integrator()->Li(rs, scatter_pdf);
-            Float3 accum_prev = lightmap.read(pixel_index).xyz();
-            Float a = 1.f / (frame_index + 1);
-            L = lerp(make_float3(a), accum_prev, L);
-            lightmap.write(pixel_index, make_float4(L, 1.f));
-        };
-    };
-    _bake_shader_old = device().compile(bake_kernel, "bake_old kernel");
-
-    Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
-                        BufferVar<float4> normals, BufferVar<float4> lightmap) {
-        Uint pixel_index = dispatch_id();
-        Float4 position = positions.read(pixel_index);
-        Float4 normal = normals.read(pixel_index);
-    };
-    _bake_shader = device().compile(kernel, "bake kernel");
 }
 
 Float3 BakePipeline::Li(vision::RayState &rs) const noexcept {
@@ -187,42 +132,6 @@ void BakePipeline::compile_displayer() noexcept {
         camera->radiance_film()->add_sample(pixel, L, frame_index);
     };
     _display_shader = device().compile(kernel, "display");
-}
-
-
-
-CommandList BakePipeline::prepare_for_bake(uint index, uint num,
-                                           Baker &bake_buffer) noexcept {
-    CommandList ret;
-    ret << bake_buffer.clear();
-    uint offset = 0;
-    for (uint i = index; i < index + num; ++i) {
-        BakedShape &bs = _baked_shapes[i];
-        ret << bs.prepare_for_rasterize();
-        if (bs.has_rasterization_cache()) {
-            ret << bs.load_rasterization_from_cache();
-        } else {
-            ret << _rasterizer->apply(bs) << bs.save_rasterization_to_cache();
-        }
-        ret << [&] { bs.normalize_lightmap_uv(); };
-        /// transform to world space
-        ret << _transform_shader(bs.positions(), bs.normals(),
-                                 bs.shape()->o2w(), offset, bs.resolution())
-                   .dispatch(bs.resolution());
-
-        ret << bake_buffer.append_buffer(bs.normals(), bs.positions());
-        offset += bs.pixel_num();
-    }
-    ret << synchronize();
-    return ret;
-}
-
-CommandList BakePipeline::bake(vision::Baker &bake_buffer) noexcept {
-    CommandList ret;
-    Sampler *sampler = scene().sampler();
-    for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
-    }
-    return ret;
 }
 
 void BakePipeline::bake_all() noexcept {

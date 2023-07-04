@@ -135,7 +135,7 @@ CommandList Baker::append_buffer(const Buffer<ocarina::float4> &normals,
 }
 
 uint Baker::calculate_buffer_size() noexcept {
-    return 1024 * 1024;
+    return 2048 * 1024;
 }
 
 void Baker::allocate() noexcept {

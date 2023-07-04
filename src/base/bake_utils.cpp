@@ -120,13 +120,6 @@ CommandList BakedShape::save_rasterization_to_cache() const {
     return ret;
 }
 
-void BakedShape::save_lightmap_to_cache_old() const {
-    vector<float4> map;
-    map.resize(pixel_num());
-    _lightmap.download_immediately(map.data());
-    ImageIO::save_image(lightmap_cache_path_old(), PixelStorage::FLOAT4, _resolution, map.data());
-}
-
 CommandList BakedShape::save_lightmap_to_cache() const {
     CommandList ret;
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
@@ -180,10 +173,6 @@ bool BakedShape::has_uv_cache() const noexcept {
 
 fs::path BakedShape::lightmap_cache_path() const noexcept {
     return instance_cache_directory() / "lightmap.exr";
-}
-
-fs::path BakedShape::lightmap_cache_path_old() const noexcept {
-    return instance_cache_directory() / "lightmap_old.exr";
 }
 
 fs::path BakedShape::position_cache_path() const noexcept {

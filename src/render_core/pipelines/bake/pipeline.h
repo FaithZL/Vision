@@ -27,22 +27,7 @@ private:
     Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
-
-    using transform_signature = void(Buffer<float4>,
-                                     Buffer<float4>,
-                                     float4x4 o2w);
     Baker _baker;
-
-    Shader<transform_signature> _transform_shader_old;
-
-    Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;
-
-    using bake_signature = void(uint, Buffer<float4>,
-                                Buffer<float4>, Buffer<float4>);
-    Shader<bake_signature> _bake_shader_old;
-
-    Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
-
     Shader<void(uint)> _display_shader;
     uint _lightmap_base_index{InvalidUI32};
 
@@ -52,10 +37,8 @@ public:
         Context::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
     void compile_shaders() noexcept override;
-    void compile_baker() noexcept;
     void compile_displayer() noexcept;
     void init_postprocessor(const vision::SceneDesc &scene_desc) override;
-    void compile_transform_shader() noexcept;
     void init_scene(const vision::SceneDesc &scene_desc) override;
     void prepare() noexcept override;
     void display(double dt) noexcept override;
@@ -63,8 +46,6 @@ public:
     void upload_lightmap() noexcept;
 
     void bake_all() noexcept;
-    [[nodiscard]] CommandList bake(Baker &bake_buffer) noexcept;
-    [[nodiscard]] CommandList prepare_for_bake(uint index, uint num, Baker &bake_buffer) noexcept;
 
     [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
     [[nodiscard]] Float3 Li(RayState &rs) const noexcept;

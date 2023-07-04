@@ -72,7 +72,6 @@ public:
     [[nodiscard]] fs::path position_cache_path() const noexcept;
     [[nodiscard]] fs::path normal_cache_path() const noexcept;
     [[nodiscard]] fs::path lightmap_cache_path() const noexcept;
-    [[nodiscard]] fs::path lightmap_cache_path_old() const noexcept;
     void allocate_lightmap_texture() noexcept;
     [[nodiscard]] bool has_rasterization_cache() const noexcept;
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
@@ -92,7 +91,6 @@ public:
     void save_to_cache(const UnwrapperResult &result);
     [[nodiscard]] CommandList load_rasterization_from_cache() const;
     [[nodiscard]] CommandList save_rasterization_to_cache() const;
-    void save_lightmap_to_cache_old() const;
     [[nodiscard]] CommandList save_lightmap_to_cache() const;
     void setup_vertices(UnwrapperResult result);
     void normalize_lightmap_uv();
