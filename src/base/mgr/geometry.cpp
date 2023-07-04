@@ -74,7 +74,7 @@ void Geometry::reset_device_buffer() {
 }
 
 void Geometry::upload() const {
-    Stream stream = rp->device().create_stream();
+    Stream& stream = rp->stream();
     stream << _vertices.upload()
            << _triangles.upload()
            << _mesh_handles.upload()

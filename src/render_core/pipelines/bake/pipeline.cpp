@@ -9,7 +9,6 @@ namespace vision {
 BakePipeline::BakePipeline(const PipelineDesc &desc)
     : Pipeline(desc),
       _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
-      _rasterizer(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)),
       _baker(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
     create_cache_directory_if_necessary();
 }
@@ -35,6 +34,7 @@ void BakePipeline::prepare() noexcept {
     prepare_resource_array();
     bake_all();
     upload_lightmap();
+    update_geometry();
     prepare_resource_array();
 }
 
@@ -55,54 +55,11 @@ void BakePipeline::preprocess() noexcept {
         }
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
-
-    // rasterize
-    _rasterizer->compile_shader();
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.prepare_for_rasterize_old();
-    });
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        if (baked_shape.has_rasterization_cache()) {
-            stream() << baked_shape.load_rasterization_from_cache();
-        } else {
-            stream() << _rasterizer->apply(baked_shape);
-        }
-    });
-    stream() << synchronize() << commit();
-
-    // save rasterize cache
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.normalize_lightmap_uv();
-        if (!baked_shape.has_rasterization_cache()) {
-            stream() << baked_shape.save_rasterization_to_cache();
-        }
-    });
-
-    stream() << synchronize() << commit();
-}
-
-RayState BakePipeline::generate_ray(const Float4 &position, const Float4 &normal, Float *scatter_pdf) const noexcept {
-    Sampler *sampler = scene().sampler();
-    Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
-    *scatter_pdf = cosine_hemisphere_PDF(wi.z);
-    Frame frame(normal.xyz());
-    OCRay ray = vision::spawn_ray(position.xyz(), normal.xyz(), frame.to_world(wi));
-    return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
 }
 
 void BakePipeline::compile_shaders() noexcept {
     _scene.integrator()->compile_shader();
     compile_displayer();
-}
-
-Float3 BakePipeline::Li(vision::RayState &rs) const noexcept {
-    Float3 L = make_float3(0.f);
-    Var hit = geometry().trace_closest(rs.ray);
-    Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
-    comment("resource_array start");
-    L = resource_array().tex(0).sample(3, it.lightmap_uv).as_vec3();
-    comment("resource_array end");
-    return make_float3(L);
 }
 
 void BakePipeline::compile_displayer() noexcept {
@@ -162,7 +119,7 @@ void BakePipeline::upload_lightmap() noexcept {
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         baked_shape.allocate_lightmap_texture();
         vector<float4> data;
-        auto cmd = baked_shape.lightmap_tex().copy_from_buffer_sync(baked_shape.lightmap().handle(), 0);
+        auto cmd = baked_shape.lightmap_tex().copy_from_buffer(baked_shape.lightmap().handle(), 0);
         stream() << cmd << synchronize() << commit();
         register_texture(baked_shape.lightmap_tex());
     });

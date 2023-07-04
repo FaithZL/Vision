@@ -24,7 +24,6 @@ namespace vision {
 class BakePipeline : public Pipeline {
 private:
     UVUnwrapper *_uv_unwrapper{};
-    Rasterizer *_rasterizer{};
     UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
     Baker _baker;
@@ -46,9 +45,6 @@ public:
     void upload_lightmap() noexcept;
 
     void bake_all() noexcept;
-
-    [[nodiscard]] RayState generate_ray(const Float4 &position, const Float4 &normal, Float *pdf) const noexcept;
-    [[nodiscard]] Float3 Li(RayState &rs) const noexcept;
     void preprocess() noexcept override;
     template<typename Func>
     void for_each_need_bake(Func &&func) {
