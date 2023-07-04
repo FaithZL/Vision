@@ -38,13 +38,11 @@ private:
     xatlas::Atlas *_atlas{};
     Stopwatch _global_stopwatch;
     Stopwatch _stopwatch;
-    uint _padding{};
     vector<float3> _pos;
 
 public:
     explicit XAtlas(const UVUnwrapperDesc &desc)
         : UVUnwrapper(desc),
-          _padding(desc["padding"].as_uint(3)),
           _atlas(nullptr) {
     }
 
@@ -101,6 +99,7 @@ public:
     [[nodiscard]] xatlas::PackOptions pack_options() const noexcept {
         xatlas::PackOptions ret;
         ret.padding = _padding;
+        ret.resolution = 100;
         return ret;
     }
 
@@ -111,7 +110,7 @@ public:
 
     [[nodiscard]] UnwrapperResult apply(const Shape *shape) override {
         Guard __(this);
-        UnwrapperResult spread_result;
+        UnwrapperResult unwrapper_result;
         shape->for_each_mesh([&](const vision::Mesh &mesh, uint) {
             xatlas::MeshDecl decl = mesh_decl(mesh);
             xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
@@ -123,14 +122,15 @@ public:
 
         xatlas::AddMeshJoin(_atlas);
         xatlas::Generate(_atlas, chart_options(), pack_options());
-        spread_result.width = _atlas->width;
-        spread_result.height = _atlas->height;
+        unwrapper_result.width = _atlas->width;
+        unwrapper_result.height = _atlas->height;
         for (int i = 0; i < _atlas->meshCount; ++i) {
             xatlas::Mesh &mesh = _atlas->meshes[i];
             UnwrapperMesh u_mesh;
             for (int j = 0; j < mesh.vertexCount; ++j) {
                 xatlas::Vertex &vertex = mesh.vertexArray[j];
-                u_mesh.vertices.emplace_back(make_float2(vertex.uv[0], vertex.uv[1]), vertex.xref);
+                u_mesh.vertices.emplace_back(make_float2(vertex.uv[0], vertex.uv[1]),
+                                             vertex.xref, vertex.chartIndex);
             }
 
             for (int j = 0; j < mesh.indexCount; j += 3) {
@@ -139,9 +139,9 @@ public:
                 uint i2 = mesh.indexArray[j + 2];
                 u_mesh.triangles.emplace_back(i0, i1, i2);
             }
-            spread_result.meshes.push_back(u_mesh);
+            unwrapper_result.meshes.push_back(u_mesh);
         }
-        return spread_result;
+        return unwrapper_result;
     }
 };
 

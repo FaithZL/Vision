@@ -24,7 +24,6 @@ namespace vision {
 class BakePipeline : public Pipeline {
 private:
     UVUnwrapper *_uv_unwrapper{};
-    UP<Expander> _expander;
     vector<BakedShape> _baked_shapes;
     Baker _baker;
     Shader<void(uint, uint)> _display_shader;

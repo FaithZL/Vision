@@ -19,6 +19,7 @@ struct UnwrapperVertex {
     // Not normalized - values are in Atlas width and height range.
     float2 uv{};
     uint xref{};
+    uint chart_idx{};
 };
 
 struct UnwrapperMesh {
@@ -95,9 +96,12 @@ class UVUnwrapper : public Node {
 public:
     using Desc = UVUnwrapperDesc;
 
+protected:
+    uint _padding{};
+
 public:
     explicit UVUnwrapper(const UVUnwrapperDesc &desc)
-        : Node(desc) {}
+        : Node(desc), _padding(desc["padding"].as_uint(3)) {}
     [[nodiscard]] virtual UnwrapperResult apply(const Shape *shape) = 0;
 };
 
