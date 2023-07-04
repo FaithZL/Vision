@@ -33,6 +33,7 @@ public:
         : _rasterizer(rasterizer) {}
     void compile() noexcept;
     void allocate() noexcept;
+    [[nodiscard]] CommandList deallocate() noexcept;
     [[nodiscard]] uint buffer_size() const noexcept { return _normals.size(); }
     void baking(ocarina::span<BakedShape> baked_shapes) noexcept;
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,

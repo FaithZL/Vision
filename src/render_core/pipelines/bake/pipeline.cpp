@@ -116,6 +116,8 @@ void BakePipeline::bake_all() noexcept {
         _baker.baking(ocarina::span(iter, it));
         iter = it;
     }
+    stream() << _baker.deallocate()
+             << synchronize() << commit();
 }
 
 void BakePipeline::render(double dt) noexcept {

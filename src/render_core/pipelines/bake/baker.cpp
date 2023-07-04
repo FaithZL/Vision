@@ -146,4 +146,13 @@ void Baker::allocate() noexcept {
     _radiance = device().create_buffer<float4>(buffer_size);
 }
 
+CommandList Baker::deallocate() noexcept {
+    CommandList ret;
+    ret << _positions.reallocate(0)
+        << _normals.reallocate(0)
+        << [&] { _pixel_num.clear(); }
+        << _radiance.reallocate(0);
+    return ret;
+}
+
 }// namespace vision
