@@ -34,9 +34,10 @@ void Baker::_compile_bake() noexcept {
                         BufferVar<float4> normals, BufferVar<float4> radiance) {
         Float4 position = positions.read(dispatch_id());
         Float4 normal = normals.read(dispatch_id());
-        $if(position.w !=0.f) {
-//            Printer::instance().info("{} {} {} {} {}", normal, length(normal.xyz()));
-            radiance.write(dispatch_id(), make_float4(1,1,0,1));
+        Uint offset = as<uint>(position.w);
+        Uint res_x = as<uint>(normal.w);
+        $if(res_x != 0u) {
+            radiance.write(dispatch_id(), make_float4(1,0.7,0,1));
         };
     };
     _bake_shader = device().compile(kernel, "baker");
@@ -51,11 +52,11 @@ void Baker::_compile_transform() noexcept {
         $if(position.w > 0.f) {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
-            positions.write(dispatch_id(), make_float4(world_pos, as<float>(offset + 1)));
+            positions.write(dispatch_id(), make_float4(world_pos, as<float>(offset)));
             normals.write(dispatch_id(), make_float4(world_norm, as<float>(res.x)));
         };
     };
-    _transform_shader = device().compile(kernel, "transform shader ");
+    _transform_shader = device().compile(kernel, "transform shader");
 }
 
 void Baker::compile() noexcept {
@@ -76,7 +77,7 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
         stream() << [&] { bs.normalize_lightmap_uv(); };
         stream() << _transform_shader(bs.positions(), bs.normals(),
                                       bs.shape()->o2w(), offset, bs.resolution())
-                        .dispatch(bs.resolution());
+                        .dispatch(bs.resolution()) << Printer::instance().retrieve();
         stream() << append_buffer(bs.normals(), bs.positions());
         stream() << synchronize() << commit();
         offset += bs.pixel_num();
@@ -88,7 +89,7 @@ void Baker::_baking() noexcept {
     for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader(i, _positions,
                                  _normals, _radiance)
-                        .dispatch(pixel_num());
+                        .dispatch(2048 * 1024);
     }
     stream() << Printer::instance().retrieve() << synchronize() << commit();
 }
@@ -97,9 +98,10 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint offset = 0;
     for (BakedShape &bs : baked_shapes) {
         Context::create_directory_if_necessary(bs.instance_cache_directory());
-        stream() << _radiance.copy_to(bs.lightmap().super(), offset)
-                 << synchronize() << commit();
-        stream() << bs.save_lightmap_to_cache() << synchronize() << commit();
+        bs.reallocate_lightmap();
+        stream() << _radiance.copy_to(bs.lightmap().super(), offset);
+        stream() << bs.save_lightmap_to_cache();
+        stream() << synchronize() << commit();
         offset += bs.pixel_num();
     }
 }
@@ -128,7 +130,7 @@ CommandList Baker::append_buffer(const Buffer<ocarina::float4> &normals,
                                  const Buffer<ocarina::float4> &positions) noexcept {
     CommandList ret;
     ret << _positions.copy_from(positions, pixel_num());
-    ret << _normals.copy_from(positions, pixel_num());
+    ret << _normals.copy_from(normals, pixel_num());
     ret << [size = normals.size(), this] { _pixel_num.push_back(size); };
     return ret;
 }

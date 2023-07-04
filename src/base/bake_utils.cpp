@@ -44,6 +44,11 @@ void BakedShape::prepare_for_bake() noexcept {
     stream << _lightmap.clear();
 }
 
+void BakedShape::reallocate_lightmap() noexcept {
+    _lightmap.super() = shape()->device().create_buffer<float4>(pixel_num());
+    _lightmap.clear_immediately();
+}
+
 UnwrapperResult BakedShape::load_uv_config_from_cache() const {
     DataWrap json = create_json_from_file(uv_config_fn());
     auto res = json["resolution"];

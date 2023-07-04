@@ -86,6 +86,7 @@ public:
     void prepare_for_rasterize_old() noexcept;
     [[nodiscard]] CommandList prepare_for_rasterize() noexcept;
     void prepare_for_bake() noexcept;
+    void reallocate_lightmap() noexcept;
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
     [[nodiscard]] CommandList load_rasterization_from_cache() const;
