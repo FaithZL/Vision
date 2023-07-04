@@ -52,4 +52,21 @@ void Global::destroy_instance() {
         s_global = nullptr;
     }
 }
+
+Pipeline *Ctx::pipeline() noexcept {
+    return Global::instance().pipeline();
+}
+
+Device &Ctx::device() noexcept {
+    return pipeline()->device();
+}
+
+Scene &Ctx::scene() noexcept {
+    return pipeline()->scene();
+}
+
+Stream &Ctx::stream() noexcept {
+    return pipeline()->stream();
+}
+
 }// namespace vision

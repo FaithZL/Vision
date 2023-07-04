@@ -5,10 +5,11 @@
 #pragma once
 
 #include "base/bake_utlis.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 
-class Baker {
+class Baker : public Ctx {
 private:
     Buffer<float4> _positions;
     Buffer<float4> _normals;
@@ -24,6 +25,8 @@ private:
     void _prepare(ocarina::span<BakedShape> baked_shapes) noexcept;
     void _baking() noexcept;
     void _save_result(ocarina::span<BakedShape> baked_shapes) noexcept;
+    [[nodiscard]] RayState generate_ray(const Float4 &position,
+                                        const Float4 &normal, Float *pdf) const noexcept;
 
 public:
     explicit Baker(Rasterizer *rasterizer)
@@ -31,17 +34,12 @@ public:
     void compile() noexcept;
     void allocate() noexcept;
     [[nodiscard]] uint buffer_size() const noexcept { return _normals.size(); }
-    [[nodiscard]] static uint calculate_buffer_size() noexcept;
     void baking(ocarina::span<BakedShape> baked_shapes) noexcept;
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
                                             const Buffer<float4> &positions) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
-    [[nodiscard]] static Device &device() noexcept;
-    [[nodiscard]] static Stream &stream() noexcept;
-    [[nodiscard]] static Pipeline *pipeline() noexcept;
-    [[nodiscard]] static Scene &scene() noexcept;
+    [[nodiscard]] static uint calculate_buffer_size() noexcept;
     [[nodiscard]] uint pixel_num() const noexcept;
-    [[nodiscard]] BufferDownloadCommand *download_radiance(void *ptr, uint offset) const noexcept;
 };
 
 }// namespace vision

@@ -3,36 +3,10 @@
 //
 
 #include "baker.h"
-#include "base/mgr/global.h"
+
 
 namespace vision {
 
-uint Baker::calculate_buffer_size() noexcept {
-    return 2048 * 1024;
-}
-
-void Baker::allocate() noexcept {
-    uint buffer_size = calculate_buffer_size();
-    _positions = device().create_buffer<float4>(buffer_size);
-    _normals = device().create_buffer<float4>(buffer_size);
-    _radiance = device().create_buffer<float4>(buffer_size);
-}
-
-Device &Baker::device() noexcept {
-    return pipeline()->device();
-}
-
-Scene &Baker::scene() noexcept {
-    return pipeline()->scene();
-}
-
-Pipeline *Baker::pipeline() noexcept {
-    return Global::instance().pipeline();
-}
-
-Stream &Baker::stream() noexcept {
-    return pipeline()->stream();
-}
 
 void Baker::_compile_bake() noexcept {
     Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
@@ -140,8 +114,17 @@ CommandList Baker::append_buffer(const Buffer<ocarina::float4> &normals,
     return ret;
 }
 
-BufferDownloadCommand *Baker::download_radiance(void *ptr, ocarina::uint offset) const noexcept {
-    return _radiance.download(ptr, offset);
+
+uint Baker::calculate_buffer_size() noexcept {
+    return 2048 * 1024;
 }
+
+void Baker::allocate() noexcept {
+    uint buffer_size = calculate_buffer_size();
+    _positions = device().create_buffer<float4>(buffer_size);
+    _normals = device().create_buffer<float4>(buffer_size);
+    _radiance = device().create_buffer<float4>(buffer_size);
+}
+
 
 }// namespace vision

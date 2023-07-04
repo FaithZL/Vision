@@ -46,4 +46,15 @@ public:
     }
 };
 
+class Ctx {
+protected:
+    Ctx() = default;
+
+public:
+    [[nodiscard]] static Device &device() noexcept;
+    [[nodiscard]] static Stream &stream() noexcept;
+    [[nodiscard]] static Pipeline *pipeline() noexcept;
+    [[nodiscard]] static Scene &scene() noexcept;
+};
+
 }// namespace vision
