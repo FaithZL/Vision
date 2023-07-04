@@ -24,9 +24,12 @@ void Baker::_compile_bake() noexcept {
         Float4 position = positions.read(pixel_index);
         Float4 normal = normals.read(pixel_index);
         Uint offset = as<uint>(position.w);
+        Uint cur_index = pixel_index - offset;
         Uint res_x = as<uint>(normal.w);
+        Uint2 pixel = make_uint2(cur_index % res_x, cur_index / res_x);
+
         $if(res_x != 0u) {
-            sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
+            sampler->start_pixel_sample(pixel, frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
             Float3 L = integrator->Li(rs, scatter_pdf);
@@ -132,7 +135,7 @@ CommandList Baker::append_buffer(const Buffer<ocarina::float4> &normals,
 }
 
 uint Baker::calculate_buffer_size() noexcept {
-    return 2048 * 1024;
+    return 1024 * 1024;
 }
 
 void Baker::allocate() noexcept {

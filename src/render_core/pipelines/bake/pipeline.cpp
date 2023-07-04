@@ -21,26 +21,12 @@ void BakePipeline::compile_transform_shader() noexcept {
         Float4 normal = normals.read(dispatch_id());
         $if(position.w > 0.f) {
             Float3 world_pos = transform_point(o2w, position.xyz());
-            Float3 world_norm = transform_normal(o2w, normal.xyz());
+            Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
             positions.write(dispatch_id(), make_float4(world_pos, position.w));
             normals.write(dispatch_id(), make_float4(world_norm, normal.w));
         };
     };
     _transform_shader_old = device().compile(kernel_old, "transform shader old");
-
-    Kernel kernel = [&](BufferVar<float4> positions,
-                        BufferVar<float4> normals, Float4x4 o2w,
-                        Uint offset, Uint2 res) {
-        Float4 position = positions.read(dispatch_id());
-        Float4 normal = normals.read(dispatch_id());
-        $if(position.w > 0.f) {
-            Float3 world_pos = transform_point(o2w, position.xyz());
-            Float3 world_norm = transform_normal(o2w, normal.xyz());
-            positions.write(dispatch_id(), make_float4(world_pos, as<float>(offset + 1)));
-            normals.write(dispatch_id(), make_float4(world_norm, as<float>(res.x)));
-        };
-    };
-    _transform_shader = device().compile(kernel, "transform shader ");
 }
 
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
@@ -62,9 +48,7 @@ void BakePipeline::prepare() noexcept {
     prepare_geometry();
     compile_shaders();
     prepare_resource_array();
-//    bake_all_old();
     bake_all();
-//    exit(0);
     upload_lightmap();
     prepare_resource_array();
 }
@@ -205,30 +189,7 @@ void BakePipeline::compile_displayer() noexcept {
     _display_shader = device().compile(kernel, "display");
 }
 
-void BakePipeline::bake_old(vision::BakedShape &baked_shape) noexcept {
-    Context::create_directory_if_necessary(baked_shape.instance_cache_directory());
-    Sampler *sampler = scene().sampler();
-    OC_INFO_FORMAT("start bake_old {}", baked_shape.shape()->name());
-    for (int i = 0; i < sampler->sample_per_pixel(); ++i) {
-        stream() << _bake_shader_old(i, baked_shape.positions(),
-                                     baked_shape.normals(),
-                                     baked_shape.lightmap())
-                        .dispatch(baked_shape.resolution());
-    }
-}
 
-void BakePipeline::bake_all_old() noexcept {
-    // bake
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-        baked_shape.prepare_for_bake();
-        bake_old(baked_shape);
-    });
-    stream() << synchronize() << commit();
-    for (int i = 0; i < _baked_shapes.size(); ++i) {
-        _baked_shapes[i].save_lightmap_to_cache_old();
-        _baked_shapes[i].shape()->handle().lightmap_id = i;
-    }
-}
 
 CommandList BakePipeline::prepare_for_bake(uint index, uint num,
                                            Baker &bake_buffer) noexcept {

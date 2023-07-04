@@ -60,9 +60,7 @@ public:
     void prepare() noexcept override;
     void display(double dt) noexcept override;
     void render(double dt) noexcept override;
-    void bake_all_old() noexcept;
     void upload_lightmap() noexcept;
-    void bake_old(vision::BakedShape &baked_shape) noexcept;
 
     void bake_all() noexcept;
     [[nodiscard]] CommandList bake(Baker &bake_buffer) noexcept;
