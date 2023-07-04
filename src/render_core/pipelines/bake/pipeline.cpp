@@ -70,7 +70,6 @@ void BakePipeline::compile_displayer() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
-        Float scatter_pdf = 1e16f;
         RayState rs = camera->generate_ray(ss);
 
         Float3 L = make_float3(0.f);
@@ -94,10 +93,15 @@ void BakePipeline::compile_displayer() noexcept {
 void BakePipeline::bake_all() noexcept {
     _baker.allocate();
     _baker.compile();
-//    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
-//              [&](const BakedShape &a, const BakedShape &b) {
-//                  return a.perimeter() > b.perimeter();
-//              });
+    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+              [&](const BakedShape &a, const BakedShape &b) {
+                  return a.perimeter() > b.perimeter();
+              });
+
+    for (int i = 0; i < _baked_shapes.size(); ++i) {
+        BakedShape &bs = _baked_shapes[i];
+        bs.shape()->handle().lightmap_id = i;
+    }
 
     for (auto iter = _baked_shapes.begin(); iter != _baked_shapes.end();) {
         uint pixel_num = 0;
