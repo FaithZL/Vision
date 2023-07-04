@@ -28,6 +28,17 @@ void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, S
     _mesh_handles.push_back(mesh_handle);
 }
 
+void Geometry::update_shapes(const vector<vision::Shape *> &shapes) {
+    _vertices.host_buffer().clear();
+    _triangles.host_buffer().clear();
+    _instances.host_buffer().clear();
+    _mesh_handles.host_buffer().clear();
+
+    std::for_each(shapes.begin(), shapes.end(), [&](const Shape *shape) {
+        shape->fill_geometry(*this);
+    });
+}
+
 void Geometry::build_meshes() {
     for (const auto &inst : _instances) {
         uint mesh_id = inst.mesh_id;
@@ -170,7 +181,7 @@ Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) 
 }
 
 SampledSpectrum Geometry::Tr(Scene &scene, const SampledWavelengths &swl,
-                    const RayState &ray_state) const noexcept {
+                             const RayState &ray_state) const noexcept {
     Sampler *sampler = scene.sampler();
     SampledSpectrum ret{swl.dimension(), 1.f};
     if (scene.has_medium()) {

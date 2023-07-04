@@ -31,7 +31,15 @@ private:
 public:
     explicit Geometry(Pipeline *rp = nullptr);
 
-    void accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle handle);
+    void accept(const vector<Vertex> &vert,
+                const vector<Triangle> &tri,
+                Shape::Handle handle);
+    /**
+     * update shape attribute
+     * There is no need to update the acceleration structure
+     * @param shapes
+     */
+    void update_shapes(const vector<Shape *> &shapes);
     void reset_device_buffer();
     void build_meshes();
     void build_accel();

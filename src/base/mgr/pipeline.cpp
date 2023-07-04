@@ -37,13 +37,15 @@ void Pipeline::change_resolution(uint2 res) noexcept {
 }
 
 void Pipeline::prepare_geometry() noexcept {
-    for (const Shape *shape : _scene._shapes) {
-        shape->fill_geometry(_geometry);
-    }
+    _geometry.update_shapes(_scene.shapes());
     _geometry.reset_device_buffer();
     _geometry.build_meshes();
     _geometry.upload();
     _geometry.build_accel();
+}
+
+void Pipeline::update_geometry() noexcept {
+
 }
 
 void Pipeline::prepare_resource_array() noexcept {

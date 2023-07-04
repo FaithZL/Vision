@@ -71,7 +71,6 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | Thin-Lens Cameras                         | Planned     |
 | Realistic Cameras                         | Planned     |
 | Fish-Eye Cameras                          | Planned     |
-| Geometry surface(for light map baker)     | Doing       |
 
 ### Illumination
 | Feature                                       | Progress    |
