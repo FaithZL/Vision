@@ -29,7 +29,9 @@ public:
     explicit Baker(Rasterizer *rasterizer)
         : _rasterizer(rasterizer) {}
     void compile() noexcept;
-    void allocate(uint buffer_size, Device &device) noexcept;
+    void allocate() noexcept;
+    [[nodiscard]] uint buffer_size() const noexcept { return _normals.size(); }
+    [[nodiscard]] static uint calculate_buffer_size() noexcept;
     void baking(ocarina::span<BakedShape> baked_shapes) noexcept;
     [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
                                             const Buffer<float4> &positions) noexcept;

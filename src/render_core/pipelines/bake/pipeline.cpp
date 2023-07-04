@@ -267,20 +267,18 @@ CommandList BakePipeline::bake(vision::Baker &bake_buffer) noexcept {
 }
 
 void BakePipeline::bake_all() noexcept {
-    static constexpr auto max_size = 2048 * 1024;
-    _baker.allocate(max_size, device());
+    _baker.allocate();
     _baker.compile();
-    //    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
-    //              [&](const BakedShape &a, const BakedShape &b) {
-    //                  return a.perimeter() > b.perimeter();
-    //              });
-
+    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+              [&](const BakedShape &a, const BakedShape &b) {
+                  return a.perimeter() > b.perimeter();
+              });
 
     for (auto iter = _baked_shapes.begin(); iter != _baked_shapes.end(); ) {
         uint pixel_num = 0;
         auto it = iter;
         for (; it != _baked_shapes.end(); ++it) {
-            if (pixel_num + it->pixel_num() <= max_size) {
+            if (pixel_num + it->pixel_num() <= _baker.buffer_size()) {
                 pixel_num += it->pixel_num();
             } else {
                 break;

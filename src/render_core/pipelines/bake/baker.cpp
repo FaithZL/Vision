@@ -7,10 +7,15 @@
 
 namespace vision {
 
-void Baker::allocate(ocarina::uint buffer_size, ocarina::Device &device) noexcept {
-    _positions = device.create_buffer<float4>(buffer_size);
-    _normals = device.create_buffer<float4>(buffer_size);
-    _radiance = device.create_buffer<float4>(buffer_size);
+uint Baker::calculate_buffer_size() noexcept {
+    return 2048 * 1024;
+}
+
+void Baker::allocate() noexcept {
+    uint buffer_size = calculate_buffer_size();
+    _positions = device().create_buffer<float4>(buffer_size);
+    _normals = device().create_buffer<float4>(buffer_size);
+    _radiance = device().create_buffer<float4>(buffer_size);
 }
 
 Device &Baker::device() noexcept {
