@@ -88,7 +88,7 @@ void Baker::_baking() noexcept {
     for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader(i, _positions,
                                  _normals, _radiance)
-                        .dispatch(2048 * 1024);
+                        .dispatch(pixel_num());
     }
     stream() << Printer::instance().retrieve() << synchronize() << commit();
 }

@@ -172,7 +172,6 @@ void BakePipeline::upload_lightmap() noexcept {
 
 void BakePipeline::render(double dt) noexcept {
     Clock clk;
-    //        integrator()->render();
     stream() << _display_shader(frame_index()).dispatch(resolution());
     stream() << synchronize();
     stream() << commit();
@@ -180,7 +179,7 @@ void BakePipeline::render(double dt) noexcept {
     Printer::instance().retrieve_immediately();
     _total_time += ms;
     ++_frame_index;
-    printf("time consuming (current frame: %f, average: %f) frame index: %u\r", ms, _total_time / _frame_index, _frame_index);
+    printf("time consuming (current frame: %f, average: %f) frame index: %u   \r", ms, _total_time / _frame_index, _frame_index);
 }
 
 void BakePipeline::display(double dt) noexcept {
