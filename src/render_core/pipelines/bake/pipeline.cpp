@@ -62,7 +62,9 @@ void BakePipeline::prepare() noexcept {
     prepare_geometry();
     compile_shaders();
     prepare_resource_array();
-    bake_all_old();
+//    bake_all_old();
+    bake_all();
+//    exit(0);
     upload_lightmap();
     prepare_resource_array();
 }
@@ -88,29 +90,25 @@ void BakePipeline::preprocess() noexcept {
     // rasterize
     _rasterizer->compile_shader();
     compile_transform_shader();
-    //    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-    //        baked_shape.prepare_for_rasterize_old();
-    //    });
-    //    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-    //        if (baked_shape.has_rasterization_cache()) {
-    //            stream() << baked_shape.load_rasterization_from_cache();
-    //        } else {
-    //            stream() << _rasterizer->apply(baked_shape);
-    //        }
-    //    });
-    //    stream() << synchronize() << commit();
-    //
-    //    // save rasterize cache
-    //    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
-    //        baked_shape.normalize_lightmap_uv();
-    //        if (!baked_shape.has_rasterization_cache()) {
-    //            stream() << baked_shape.save_rasterization_to_cache();
-    //        }
-    //    });
-    bake_all();
-
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.prepare_for_rasterize_old();
+    });
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        if (baked_shape.has_rasterization_cache()) {
+            stream() << baked_shape.load_rasterization_from_cache();
+        } else {
+            stream() << _rasterizer->apply(baked_shape);
+        }
+    });
     stream() << synchronize() << commit();
-    exit(0);
+
+    // save rasterize cache
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        baked_shape.normalize_lightmap_uv();
+        if (!baked_shape.has_rasterization_cache()) {
+            stream() << baked_shape.save_rasterization_to_cache();
+        }
+    });
 
     // transform to world space
     compile_transform_shader();
@@ -269,12 +267,12 @@ CommandList BakePipeline::bake(vision::Baker &bake_buffer) noexcept {
 void BakePipeline::bake_all() noexcept {
     _baker.allocate();
     _baker.compile();
-    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
-              [&](const BakedShape &a, const BakedShape &b) {
-                  return a.perimeter() > b.perimeter();
-              });
+//    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+//              [&](const BakedShape &a, const BakedShape &b) {
+//                  return a.perimeter() > b.perimeter();
+//              });
 
-    for (auto iter = _baked_shapes.begin(); iter != _baked_shapes.end(); ) {
+    for (auto iter = _baked_shapes.begin(); iter != _baked_shapes.end();) {
         uint pixel_num = 0;
         auto it = iter;
         for (; it != _baked_shapes.end(); ++it) {

@@ -741,7 +741,7 @@
 		"type" : "independent",
 		"name" : "sampler0",
 		"param" : {
-			"spp" : 1
+			"spp" : 20
 		}
 	},
 	"camera" : {

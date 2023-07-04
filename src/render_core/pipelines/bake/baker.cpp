@@ -4,19 +4,36 @@
 
 #include "baker.h"
 
-
 namespace vision {
 
+RayState Baker::generate_ray(const Float4 &position, const Float4 &normal, Float *scatter_pdf) const noexcept {
+    Sampler *sampler = scene().sampler();
+    Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
+    *scatter_pdf = cosine_hemisphere_PDF(wi.z);
+    Frame frame(normal.xyz());
+    OCRay ray = vision::spawn_ray(position.xyz(), normal.xyz(), frame.to_world(wi));
+    return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
+}
 
 void Baker::_compile_bake() noexcept {
+    Sampler *sampler = scene().sampler();
+    Integrator *integrator = scene().integrator();
     Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
                         BufferVar<float4> normals, BufferVar<float4> radiance) {
-        Float4 position = positions.read(dispatch_id());
-        Float4 normal = normals.read(dispatch_id());
+        Uint pixel_index = dispatch_id();
+        Float4 position = positions.read(pixel_index);
+        Float4 normal = normals.read(pixel_index);
         Uint offset = as<uint>(position.w);
         Uint res_x = as<uint>(normal.w);
         $if(res_x != 0u) {
-            radiance.write(dispatch_id(), make_float4(1,0.7,0,1));
+            sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
+            Float scatter_pdf;
+            RayState rs = generate_ray(position, normal, &scatter_pdf);
+            Float3 L = integrator->Li(rs, scatter_pdf);
+            Float3 accum_prev = radiance.read(pixel_index).xyz();
+            Float a = 1.f / (frame_index + 1);
+            L = lerp(make_float3(a), accum_prev, L);
+            radiance.write(dispatch_id(), make_float4(L, 1.f));
         };
     };
     _bake_shader = device().compile(kernel, "baker");
@@ -56,7 +73,7 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
         stream() << [&] { bs.normalize_lightmap_uv(); };
         stream() << _transform_shader(bs.positions(), bs.normals(),
                                       bs.shape()->o2w(), offset, bs.resolution())
-                        .dispatch(bs.resolution()) << Printer::instance().retrieve();
+                        .dispatch(bs.resolution());
         stream() << append_buffer(bs.normals(), bs.positions());
         stream() << synchronize() << commit();
         offset += bs.pixel_num();
@@ -114,7 +131,6 @@ CommandList Baker::append_buffer(const Buffer<ocarina::float4> &normals,
     return ret;
 }
 
-
 uint Baker::calculate_buffer_size() noexcept {
     return 2048 * 1024;
 }
@@ -125,6 +141,5 @@ void Baker::allocate() noexcept {
     _normals = device().create_buffer<float4>(buffer_size);
     _radiance = device().create_buffer<float4>(buffer_size);
 }
-
 
 }// namespace vision
