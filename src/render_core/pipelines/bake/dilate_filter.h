@@ -7,21 +7,23 @@
 #include "dsl/common.h"
 #include "rhi/common.h"
 #include "core/hash.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 using namespace ocarina;
 
-class DilateFilter : public Hashable {
+class DilateFilter : public Ctx {
 private:
     uint _padding{};
-    Managed<float4> _conv_kernel;
-    Shader<void(Texture, Texture, Buffer<float>)> _shader;
+    Shader<void(Texture, Texture)> _shader;
 
 public:
     explicit DilateFilter(uint padding = 2)
         : _padding(padding) {}
     void set_padding(uint padding) noexcept { _padding = padding; }
     void compile() noexcept;
+    [[nodiscard]] ShaderDispatchCommand *dispatch(const Texture &src,
+                                                  const Texture &dst) const noexcept;
 };
 
 }// namespace vision

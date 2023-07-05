@@ -20,7 +20,6 @@ void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
 
 void BakePipeline::init_postprocessor(const vision::SceneDesc &scene_desc) {
     _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
-    _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
 }
 
 void BakePipeline::prepare() noexcept {
@@ -58,7 +57,6 @@ void BakePipeline::preprocess() noexcept {
 }
 
 void BakePipeline::compile_shaders() noexcept {
-    _scene.integrator()->compile_shader();
     compile_displayer();
 }
 

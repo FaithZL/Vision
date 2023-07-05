@@ -9,7 +9,15 @@ namespace vision {
 using namespace ocarina;
 
 void DilateFilter::compile() noexcept {
+    Kernel kernel = [&](TextureVar src, TextureVar dst) {
 
+    };
+    _shader = device().compile(kernel, "dilate filter");
+}
+
+ShaderDispatchCommand *DilateFilter::dispatch(const Texture &src,
+                                              const Texture &dst) const noexcept {
+    return _shader(src, dst).dispatch(src->resolution());
 }
 
 }// namespace vision

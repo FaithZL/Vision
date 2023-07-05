@@ -6,6 +6,7 @@
 
 #include "base/bake_utlis.h"
 #include "base/mgr/global.h"
+#include "dilate_filter.h"
 
 namespace vision {
 
@@ -16,6 +17,7 @@ private:
     Buffer<float4> _radiance;
     vector<uint> _pixel_num;
     Rasterizer *_rasterizer{};
+    DilateFilter _dilate_filter{1};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
     Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;
 

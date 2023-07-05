@@ -24,7 +24,7 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _distance, _cos_sample, _sample_num)
 
-    [[nodiscard]] Float3 Li(vision::RayState &rs, Float scatter_pdf) const noexcept override {
+    [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept override {
         Float3 L = make_float3(0.f);
         Pipeline *rp = pipeline();
         Sampler *sampler = scene().sampler();
@@ -79,8 +79,6 @@ public:
 
             Pipeline *rp = pipeline();
             Geometry &geom = rp->geometry();
-
-
 
             $while(true) {
                 Var hit = geom.trace_closest(rs.ray);

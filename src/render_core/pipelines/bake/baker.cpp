@@ -32,11 +32,15 @@ void Baker::_compile_bake() noexcept {
             sampler->start_pixel_sample(pixel, frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
-            Float3 L = integrator->Li(rs, scatter_pdf);
-            Float3 accum_prev = radiance.read(pixel_index).xyz();
+            Interaction it;
+            Float3 L = integrator->Li(rs, scatter_pdf, &it);
+            Float4 accum_prev = radiance.read(pixel_index);
             Float a = 1.f / (frame_index + 1);
-            L = lerp(make_float3(a), accum_prev, L);
-            radiance.write(dispatch_id(), make_float4(L, 1.f));
+            L = lerp(make_float3(a), accum_prev.xyz(), L);
+//            $if(dot(it.g_uvn.normal(), rs.direction()) > 0) {
+//                accum_prev.w = 0.f;
+//            };
+            radiance.write(dispatch_id(), make_float4(L, accum_prev.w));
         };
     };
     _bake_shader = device().compile(kernel, "baker");

@@ -9,7 +9,7 @@
 
 namespace vision {
 
-Float3 UnidirectionalPathTracing::Li(vision::RayState &rs, Float scatter_pdf) const noexcept {
+Float3 UnidirectionalPathTracing::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
@@ -58,6 +58,10 @@ Float3 UnidirectionalPathTracing::Li(vision::RayState &rs, Float scatter_pdf) co
             bounces -= 1;
             $continue;
         };
+
+        if (first_it) {
+            $if(bounces == 0) { *first_it = it; };
+        }
 
         comment("hit light");
         $if(it.has_emission()) {
