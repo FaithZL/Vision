@@ -53,7 +53,7 @@ void Baker::_compile_bake() noexcept {
 
         auto is_valid = [&](Uint g_index) -> Bool {
             Float4 p_normal = normals.read(g_index);
-            Uint2 p_res = detail::decode(as<uint>(p_normal.x));
+            Uint2 p_res = detail::decode(as<uint>(p_normal.w));
             return p_res.x > 0;
         };
         Uint u_num = 0;
@@ -68,13 +68,16 @@ void Baker::_compile_bake() noexcept {
                     Int2 p = make_int2(*pixel) + make_int2(x, y);
                     Uint p_index = p.y * res->x + p.x;
                     Uint g_index = offset + p_index;
-                    $if(is_valid(g_index) && in_bound(p) && (x != 0 || y != 0)){
+                    $if(!in_bound(p)) {
+                        $continue;
+                    };
+                    $if(is_valid(g_index) && (x != 0 || y != 0)){
                         Float3 p_pos = positions.read(g_index).xyz();
                         $if(x == 0) {
-                            abs_v = abs(cur_pos - p_pos);
+                            abs_v += abs(cur_pos - p_pos);
                             v_num += 1;
                         } $elif (y == 0) {
-                            abs_u = abs(cur_pos - p_pos);
+                            abs_u += abs(cur_pos - p_pos);
                             u_num += 1;
                         } $else {
 
@@ -84,7 +87,10 @@ void Baker::_compile_bake() noexcept {
             };
             Float3 su = abs_u / cast<float>(u_num);
             Float3 sv = abs_v / cast<float>(v_num);
-            *pos = position.xyz();
+
+            Float3 lb = cur_pos - 0.5f * (su + sv);
+            Float2 u2 = sampler->next_2d();
+            *pos = lb + u2.x * su + u2.y * sv;
             *norm = normal.xyz();
         };
     };
@@ -95,9 +101,9 @@ void Baker::_compile_bake() noexcept {
         Uint2 res;
         Float3 position;
         Float3 normal;
+        sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
         jitter(positions, normals, radiance, &pixel, &res, &normal, &position);
         $if(res.x != 0u) {
-            sampler->start_pixel_sample(pixel, frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
             Interaction it;
@@ -119,6 +125,9 @@ void Baker::_compile_transform() noexcept {
                         Uint offset, Uint2 res) {
         Float4 position = positions.read(dispatch_id());
         Float4 normal = normals.read(dispatch_id());
+        $if(dispatch_id() == 0) {
+            Printer::instance().info("wocaonima {}", offset);
+        };
         $if(position.w > 0.f) {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
@@ -149,8 +158,9 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
                                       bs.shape()->o2w(), offset, bs.resolution())
                         .dispatch(bs.resolution());
         stream() << append_buffer(bs.normals(), bs.positions());
-        stream() << synchronize() << commit();
+        stream() << synchronize() << Printer::instance().retrieve() << commit();
         offset += bs.pixel_num();
+        int i = 0;
     }
 }
 
