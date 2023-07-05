@@ -6,7 +6,7 @@
 
 #include "base/mgr/pipeline.h"
 #include "base/bake_utlis.h"
-#include "expander.h"
+#include "dilate_filter.h"
 #include "baker.h"
 
 namespace vision {

@@ -2,14 +2,14 @@
 // Created by Zero on 2023/6/14.
 //
 
-#include "expander.h"
+#include "dilate_filter.h"
 
 namespace vision {
 
 using namespace ocarina;
 
-uint64_t Expander::_compute_hash() const noexcept {
-    return 0;
+void DilateFilter::compile() noexcept {
+
 }
 
 }// namespace vision
