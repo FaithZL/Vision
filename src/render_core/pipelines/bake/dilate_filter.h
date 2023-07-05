@@ -13,12 +13,12 @@ namespace vision {
 using namespace ocarina;
 
 namespace detail {
-[[nodiscard]] Uint encode(Uint a, Uint b) noexcept {
+[[nodiscard]] inline Uint encode(Uint a, Uint b) noexcept {
     a = a << 16;
     return a | b;
 }
 
-[[nodiscard]] Uint2 decode(Uint arg) noexcept {
+[[nodiscard]] inline Uint2 decode(Uint arg) noexcept {
     Uint a = (0xffff0000 & arg) >> 16;
     Uint b = 0x0000ffff & arg;
     return make_uint2(a, b);

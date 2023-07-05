@@ -33,7 +33,7 @@ void DilateFilter::compile() noexcept {
 
         Uint exterior_num = 0;
         $if(is_interior(pixel_index)) {
-            
+
         };
     };
     _shader = device().compile(kernel, "dilate filter");
