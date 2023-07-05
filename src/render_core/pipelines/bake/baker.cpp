@@ -74,15 +74,13 @@ void Baker::_compile_bake() noexcept {
                     };
                 };
             };
-            Float3 su = abs_u / cast<float>(u_num);
-            Float3 sv = abs_v / cast<float>(v_num);
+
+            Float3 su = select(u_num == 0, make_float3(0.f), abs_u / cast<float>(u_num));
+            Float3 sv = select(v_num == 0, make_float3(0.f), abs_v / cast<float>(v_num));
 
             Float3 lb = cur_pos - 0.5f * (su + sv);
             Float2 u2 = sampler->next_2d();
             *pos = lb + u2.x * su + u2.y * sv;
-            $if(has_nan(su) || has_nan(sv)) {
-                *pos = position.xyz();
-            };
             *norm = cur_norm;
         };
     };
