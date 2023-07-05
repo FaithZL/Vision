@@ -46,14 +46,36 @@ void Baker::_compile_bake() noexcept {
         Uint cur_index = pixel_index - offset;
         *res = detail::decode(as<uint>(normal.w));
         *pixel = make_uint2(cur_index % res->x, cur_index / res->x);
-        //        $for(x, -1, 2) {
-        //            $for(y, -1, 2) {
-        //                Int2 p = make_int2(*pixel) + make_int2(x, y);
-        //            };
-        //        };
 
-        *pos = position.xyz();
-        *norm = normal.xyz();
+        auto in_bound = [&](const Int2 &p) -> Bool {
+            return all(p >= 0) && all(p < make_int2(*res));
+        };
+
+        auto is_valid = [&](Uint g_index) -> Bool {
+            Float4 p_normal = normals.read(g_index);
+            Uint2 p_res = detail::decode(as<uint>(p_normal.x));
+            return p_res.x > 0;
+        };
+
+        $if(res->x > 0) {
+            Uint x_num = 0;
+            Uint y_num = 0;
+            Float3 cur_pos = position.xyz();
+            Float3 cur_norm = normal.xyz();
+            $for(x, -1, 2) {
+                $for(y, -1, 2) {
+                    Int2 p = make_int2(*pixel) + make_int2(x, y);
+                    Uint p_index = p.y * res->x + p.x;
+                    Uint g_index = offset + p_index;
+                    $if(is_valid(g_index) && in_bound(p) && (x != 0 || y != 0)){
+                        Float3 p_pos = positions.read(g_index).xyz();
+                    };
+                };
+            };
+
+            *pos = position.xyz();
+            *norm = normal.xyz();
+        };
     };
 
     Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
