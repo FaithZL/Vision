@@ -6,6 +6,19 @@
 
 namespace vision {
 
+namespace detail {
+[[nodiscard]] Uint encode(Uint a, Uint b) noexcept {
+    a = a << 16;
+    return a | b;
+}
+
+[[nodiscard]] Uint2 decode(Uint arg) noexcept {
+    Uint a = (0xffff0000 & arg) >> 16;
+    Uint b = 0x0000ffff & arg;
+    return make_uint2(a, b);
+}
+}// namespace detail
+
 RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float *scatter_pdf) const noexcept {
     Sampler *sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
@@ -23,7 +36,7 @@ void Baker::_compile_bake() noexcept {
                       const BufferVar<float4> &normals,
                       const BufferVar<float4> &radiance,
                       Uint2 *pixel,
-                      Uint *res_x,
+                      Uint2 *res,
                       Float3 *norm,
                       Float3 *pos) {
         Uint pixel_index = dispatch_id();
@@ -31,8 +44,14 @@ void Baker::_compile_bake() noexcept {
         Float4 normal = normals.read(pixel_index);
         Uint offset = as<uint>(position.w);
         Uint cur_index = pixel_index - offset;
-        *res_x = as<uint>(normal.w);
-        *pixel = make_uint2(cur_index % *res_x, cur_index / *res_x);
+        *res = detail::decode(as<uint>(normal.w));
+        *pixel = make_uint2(cur_index % res->x, cur_index / res->x);
+        //        $for(x, -1, 2) {
+        //            $for(y, -1, 2) {
+        //                Int2 p = make_int2(*pixel) + make_int2(x, y);
+        //            };
+        //        };
+
         *pos = position.xyz();
         *norm = normal.xyz();
     };
@@ -40,11 +59,11 @@ void Baker::_compile_bake() noexcept {
     Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
                         BufferVar<float4> normals, BufferVar<float4> radiance) {
         Uint2 pixel;
-        Uint res_x;
+        Uint2 res;
         Float3 position;
         Float3 normal;
-        jitter(positions, normals, radiance, &pixel, &res_x, &normal, &position);
-        $if(res_x != 0u) {
+        jitter(positions, normals, radiance, &pixel, &res, &normal, &position);
+        $if(res.x != 0u) {
             sampler->start_pixel_sample(pixel, frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
@@ -71,7 +90,7 @@ void Baker::_compile_transform() noexcept {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
             positions.write(dispatch_id(), make_float4(world_pos, as<float>(offset)));
-            normals.write(dispatch_id(), make_float4(world_norm, as<float>(res.x)));
+            normals.write(dispatch_id(), make_float4(world_norm, as<float>(detail::encode(res.x, res.y))));
         };
     };
     _transform_shader = device().compile(kernel, "transform shader");
