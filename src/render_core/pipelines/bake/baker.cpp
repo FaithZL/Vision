@@ -56,12 +56,13 @@ void Baker::_compile_bake() noexcept {
             Uint2 p_res = detail::decode(as<uint>(p_normal.x));
             return p_res.x > 0;
         };
-
+        Uint u_num = 0;
+        Uint v_num = 0;
+        Float3 cur_pos = position.xyz();
+        Float3 cur_norm = normal.xyz();
+        Float3 abs_u = make_float3(0.f);
+        Float3 abs_v = make_float3(0.f);
         $if(res->x > 0) {
-            Uint x_num = 0;
-            Uint y_num = 0;
-            Float3 cur_pos = position.xyz();
-            Float3 cur_norm = normal.xyz();
             $for(x, -1, 2) {
                 $for(y, -1, 2) {
                     Int2 p = make_int2(*pixel) + make_int2(x, y);
@@ -69,10 +70,20 @@ void Baker::_compile_bake() noexcept {
                     Uint g_index = offset + p_index;
                     $if(is_valid(g_index) && in_bound(p) && (x != 0 || y != 0)){
                         Float3 p_pos = positions.read(g_index).xyz();
+                        $if(x == 0) {
+                            abs_v = abs(cur_pos - p_pos);
+                            v_num += 1;
+                        } $elif (y == 0) {
+                            abs_u = abs(cur_pos - p_pos);
+                            u_num += 1;
+                        } $else {
+
+                        };
                     };
                 };
             };
-
+            Float3 su = abs_u / cast<float>(u_num);
+            Float3 sv = abs_v / cast<float>(v_num);
             *pos = position.xyz();
             *norm = normal.xyz();
         };
