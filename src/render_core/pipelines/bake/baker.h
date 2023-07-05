@@ -27,8 +27,8 @@ private:
     void _prepare(ocarina::span<BakedShape> baked_shapes) noexcept;
     void _baking() noexcept;
     void _save_result(ocarina::span<BakedShape> baked_shapes) noexcept;
-    [[nodiscard]] RayState generate_ray(const Float4 &position,
-                                        const Float4 &normal, Float *pdf) const noexcept;
+    [[nodiscard]] RayState generate_ray(const Float3 &position,
+                                        const Float3 &normal, Float *pdf) const noexcept;
 
 public:
     explicit Baker(Rasterizer *rasterizer)

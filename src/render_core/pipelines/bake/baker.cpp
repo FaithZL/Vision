@@ -6,41 +6,56 @@
 
 namespace vision {
 
-RayState Baker::generate_ray(const Float4 &position, const Float4 &normal, Float *scatter_pdf) const noexcept {
+RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float *scatter_pdf) const noexcept {
     Sampler *sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
     *scatter_pdf = cosine_hemisphere_PDF(wi.z);
-    Frame frame(normal.xyz());
-    OCRay ray = vision::spawn_ray(position.xyz(), normal.xyz(), frame.to_world(wi));
+    Frame frame(normal);
+    OCRay ray = vision::spawn_ray(position, normal, frame.to_world(wi));
     return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
 }
 
 void Baker::_compile_bake() noexcept {
     Sampler *sampler = scene().sampler();
     Integrator *integrator = scene().integrator();
-    Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
-                        BufferVar<float4> normals, BufferVar<float4> radiance) {
+
+    auto jitter = [&](const BufferVar<float4> &positions,
+                      const BufferVar<float4> &normals,
+                      const BufferVar<float4> &radiance,
+                      Uint2 *pixel,
+                      Uint *res_x,
+                      Float3 *norm,
+                      Float3 *pos) {
         Uint pixel_index = dispatch_id();
         Float4 position = positions.read(pixel_index);
         Float4 normal = normals.read(pixel_index);
         Uint offset = as<uint>(position.w);
         Uint cur_index = pixel_index - offset;
-        Uint res_x = as<uint>(normal.w);
-        Uint2 pixel = make_uint2(cur_index % res_x, cur_index / res_x);
+        *res_x = as<uint>(normal.w);
+        *pixel = make_uint2(cur_index % *res_x, cur_index / *res_x);
+        *pos = position.xyz();
+        *norm = normal.xyz();
+    };
 
+    Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
+                        BufferVar<float4> normals, BufferVar<float4> radiance) {
+        Uint2 pixel;
+        Uint res_x;
+        Float3 position;
+        Float3 normal;
+        jitter(positions, normals, radiance, &pixel, &res_x, &normal, &position);
         $if(res_x != 0u) {
             sampler->start_pixel_sample(pixel, frame_index, 0);
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
             Interaction it;
             Float3 L = integrator->Li(rs, scatter_pdf, &it);
-            Float4 accum_prev = radiance.read(pixel_index);
+            Float4 result = make_float4(L, 1.f);
+            result.w = select(dot(rs.direction(), it.g_uvn.normal()) > 0, 0.f, 1.f);
+            Float4 accum_prev = radiance.read(dispatch_id());
             Float a = 1.f / (frame_index + 1);
-            L = lerp(make_float3(a), accum_prev.xyz(), L);
-//            $if(dot(it.g_uvn.normal(), rs.direction()) > 0) {
-//                accum_prev.w = 0.f;
-//            };
-            radiance.write(dispatch_id(), make_float4(L, accum_prev.w));
+            result = lerp(make_float4(a), accum_prev, result);
+            radiance.write(dispatch_id(), result);
         };
     };
     _bake_shader = device().compile(kernel, "baker");
