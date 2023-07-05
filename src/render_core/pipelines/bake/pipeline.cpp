@@ -81,7 +81,8 @@ void BakePipeline::compile_displayer() noexcept {
         Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
 
         $if(it.has_lightmap()) {
-            L = resource_array().tex(lightmap_base + it.lightmap_id).sample(3, it.lightmap_uv).as_vec3();
+            Float4 t = resource_array().tex(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
+            L = t.xyz() / 1.f;
         };
         camera->radiance_film()->add_sample(pixel, L, frame_index);
     };

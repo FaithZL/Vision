@@ -71,15 +71,17 @@ void Baker::_compile_bake() noexcept {
                     $if(!in_bound(p)) {
                         $continue;
                     };
-                    $if(is_valid(g_index) && (x != 0 || y != 0)){
+                    $if(is_valid(g_index) && (x != 0 || y != 0)) {
                         Float3 p_pos = positions.read(g_index).xyz();
                         $if(x == 0) {
                             abs_v += abs(cur_pos - p_pos);
                             v_num += 1;
-                        } $elif (y == 0) {
+                        }
+                        $elif(y == 0) {
                             abs_u += abs(cur_pos - p_pos);
                             u_num += 1;
-                        } $else {
+                        }
+                        $else{
 
                         };
                     };
@@ -91,7 +93,10 @@ void Baker::_compile_bake() noexcept {
             Float3 lb = cur_pos - 0.5f * (su + sv);
             Float2 u2 = sampler->next_2d();
             *pos = lb + u2.x * su + u2.y * sv;
-            *norm = normal.xyz();
+            $if(has_nan(su) || has_nan(sv)) {
+                *pos = position.xyz();
+            };
+            *norm = cur_norm;
         };
     };
 
@@ -122,16 +127,13 @@ void Baker::_compile_bake() noexcept {
 void Baker::_compile_transform() noexcept {
     Kernel kernel = [&](BufferVar<float4> positions,
                         BufferVar<float4> normals, Float4x4 o2w,
-                        Uint offset, Uint2 res) {
+                        Uint offset, Uint2 res, Float surface_ofs) {
         Float4 position = positions.read(dispatch_id());
         Float4 normal = normals.read(dispatch_id());
-        $if(dispatch_id() == 0) {
-            Printer::instance().info("wocaonima {}", offset);
-        };
         $if(position.w > 0.f) {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
-            positions.write(dispatch_id(), make_float4(world_pos, as<float>(offset)));
+            positions.write(dispatch_id(), make_float4(world_pos + world_norm * surface_ofs, as<float>(offset)));
             normals.write(dispatch_id(), make_float4(world_norm, as<float>(detail::encode(res.x, res.y))));
         };
     };
@@ -155,12 +157,12 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
         }
         stream() << [&] { bs.normalize_lightmap_uv(); };
         stream() << _transform_shader(bs.positions(), bs.normals(),
-                                      bs.shape()->o2w(), offset, bs.resolution())
+                                      bs.shape()->o2w(), offset,
+                                      bs.resolution(), bs.surface_offset())
                         .dispatch(bs.resolution());
         stream() << append_buffer(bs.normals(), bs.positions());
         stream() << synchronize() << Printer::instance().retrieve() << commit();
         offset += bs.pixel_num();
-        int i = 0;
     }
 }
 

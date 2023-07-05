@@ -65,6 +65,10 @@ public:
     OC_MAKE_MEMBER_GETTER(normals, &)
     OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
 
+    [[nodiscard]] float surface_offset() const noexcept {
+        // todo surface offset is specified by user or calculate by model data
+        return 0.0045f;
+    }
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;

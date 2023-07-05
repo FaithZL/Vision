@@ -19,7 +19,7 @@ private:
     Rasterizer *_rasterizer{};
     DilateFilter _dilate_filter{1};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
-    Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2)> _transform_shader;
+    Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2, float)> _transform_shader;
 
 private:
     void _compile_transform() noexcept;
