@@ -27,7 +27,7 @@ void DilateFilter::compile() noexcept {
 
         auto is_interior = [&](const Uint &g_index) -> Bool {
             Float4 val = src.read(g_index);
-            return val.w < 0.6f;
+            return val.w < 0.99f;
         };
 
         Float weight_sum = 0;
@@ -35,7 +35,7 @@ void DilateFilter::compile() noexcept {
         Float3 color = make_float3(0);
         $if(is_interior(pixel_index)) {
             $for(x, -_padding, _padding + 1) {
-                $for(y, _padding, _padding + 1) {
+                $for(y, -_padding, _padding + 1) {
                     Int2 p = make_int2(pixel) + make_int2(x, y);
                     Uint p_index = p.y * res.x + p.x;
                     Uint g_index = offset + p_index;
@@ -43,11 +43,11 @@ void DilateFilter::compile() noexcept {
                         $continue;
                     };
                     Float4 val = src.read(g_index);
-//                    $if(val.w > 0.99f) {
+                    $if(val.w > 0.99f) {
                         color += val.xyz();
                         weight_sum += val.w;
                         exterior_num += 1;
-//                    };
+                    };
                 };
             };
 //            radiance = make_float4(color / weight_sum, 1.f);
