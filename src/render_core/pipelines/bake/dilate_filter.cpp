@@ -15,7 +15,6 @@ void DilateFilter::compile() noexcept {
         Float4 position = positions.read(pixel_index);
         Float4 normal = normals.read(pixel_index);
         Float4 radiance = src.read(pixel_index);
-        dst.write(pixel_index, radiance);
 
         Uint2 res = detail::decode(as<uint>(normal.w));
         Uint offset = as<uint>(position.w);
@@ -28,13 +27,32 @@ void DilateFilter::compile() noexcept {
 
         auto is_interior = [&](const Uint &g_index) -> Bool {
             Float4 val = src.read(g_index);
-            return val.w < 0.999f;
+            return val.w < 0.6f;
         };
 
+        Float weight_sum = 0;
         Uint exterior_num = 0;
+        Float3 color = make_float3(0);
         $if(is_interior(pixel_index)) {
-
+            $for(x, -_padding, _padding + 1) {
+                $for(y, _padding, _padding + 1) {
+                    Int2 p = make_int2(pixel) + make_int2(x, y);
+                    Uint p_index = p.y * res.x + p.x;
+                    Uint g_index = offset + p_index;
+                    $if(!in_bound(p)) {
+                        $continue;
+                    };
+                    Float4 val = src.read(g_index);
+//                    $if(val.w > 0.99f) {
+                        color += val.xyz();
+                        weight_sum += val.w;
+                        exterior_num += 1;
+//                    };
+                };
+            };
+//            radiance = make_float4(color / weight_sum, 1.f);
         };
+        dst.write(pixel_index, radiance);
     };
     _shader = device().compile(kernel, "dilate filter");
 }

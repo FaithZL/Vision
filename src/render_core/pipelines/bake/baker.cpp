@@ -67,9 +67,6 @@ void Baker::_compile_bake() noexcept {
                         $elif(y == 0) {
                             abs_u += abs(cur_pos - p_pos);
                             u_num += 1;
-                        }
-                        $else{
-
                         };
                     };
                 };

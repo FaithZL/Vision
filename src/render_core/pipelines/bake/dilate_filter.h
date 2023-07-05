@@ -27,14 +27,14 @@ namespace detail {
 
 class DilateFilter : public Ctx {
 private:
-    uint _padding{};
+    int _padding{};
     using signature = void(Buffer<float4>, Buffer<float4>, Buffer<float4>, Buffer<float4>);
     Shader<signature> _shader;
 
 public:
     explicit DilateFilter(uint padding = 2)
         : _padding(padding) {}
-    void set_padding(uint padding) noexcept { _padding = padding; }
+    void set_padding(int padding) noexcept { _padding = padding; }
     void compile() noexcept;
     template<typename... Args>
     [[nodiscard]] ShaderInvoke operator()(Args &&...args) const noexcept {

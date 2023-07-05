@@ -67,7 +67,7 @@ public:
 
     [[nodiscard]] float surface_offset() const noexcept {
         // todo surface offset is specified by user or calculate by model data
-        return 0.0045f;
+        return 0.005f;
     }
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
