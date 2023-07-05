@@ -15,6 +15,7 @@ private:
     Buffer<float4> _positions;
     Buffer<float4> _normals;
     Buffer<float4> _radiance;
+    Buffer<float4> _final_radiance;
     vector<uint> _pixel_num;
     Rasterizer *_rasterizer{};
     DilateFilter _dilate_filter{1};

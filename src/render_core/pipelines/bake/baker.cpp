@@ -144,6 +144,7 @@ void Baker::compile() noexcept {
     _rasterizer->compile_shader();
     _compile_bake();
     _compile_transform();
+    _dilate_filter.compile();
 }
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
@@ -173,7 +174,13 @@ void Baker::_baking() noexcept {
                                  _normals, _radiance)
                         .dispatch(pixel_num());
     }
-    stream() << Printer::instance().retrieve() << synchronize() << commit();
+
+    stream() << Printer::instance().retrieve();
+    stream() << _dilate_filter(_positions, _normals,
+                               _radiance, _final_radiance)
+                    .dispatch(pixel_num())
+             << Printer::instance().retrieve()
+             << synchronize() << commit();
 }
 
 void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
@@ -181,7 +188,7 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
     for (BakedShape &bs : baked_shapes) {
         Context::create_directory_if_necessary(bs.instance_cache_directory());
         bs.allocate_lightmap_texture();
-        stream() << bs.lightmap_tex().copy_from(_radiance, offset);
+        stream() << bs.lightmap_tex().copy_from(_final_radiance, offset);
         stream() << bs.save_lightmap_to_cache();
         stream() << synchronize() << commit();
         pipeline()->register_texture(bs.lightmap_tex());
@@ -227,6 +234,7 @@ void Baker::allocate() noexcept {
     _positions = device().create_buffer<float4>(buffer_size);
     _normals = device().create_buffer<float4>(buffer_size);
     _radiance = device().create_buffer<float4>(buffer_size);
+    _final_radiance = device().create_buffer<float4>(buffer_size);
 }
 
 CommandList Baker::deallocate() noexcept {
@@ -234,7 +242,8 @@ CommandList Baker::deallocate() noexcept {
     ret << _positions.reallocate(0)
         << _normals.reallocate(0)
         << [&] { _pixel_num.clear(); }
-        << _radiance.reallocate(0);
+        << _radiance.reallocate(0)
+        << _final_radiance.reallocate(0);
     return ret;
 }
 
