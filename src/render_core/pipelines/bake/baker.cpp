@@ -6,19 +6,6 @@
 
 namespace vision {
 
-namespace detail {
-[[nodiscard]] Uint encode(Uint a, Uint b) noexcept {
-    a = a << 16;
-    return a | b;
-}
-
-[[nodiscard]] Uint2 decode(Uint arg) noexcept {
-    Uint a = (0xffff0000 & arg) >> 16;
-    Uint b = 0x0000ffff & arg;
-    return make_uint2(a, b);
-}
-}// namespace detail
-
 RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float *scatter_pdf) const noexcept {
     Sampler *sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
@@ -51,7 +38,7 @@ void Baker::_compile_bake() noexcept {
             return all(p >= 0) && all(p < make_int2(*res));
         };
 
-        auto is_valid = [&](Uint g_index) -> Bool {
+        auto is_valid = [&](const Uint &g_index) -> Bool {
             Float4 p_normal = normals.read(g_index);
             Uint2 p_res = detail::decode(as<uint>(p_normal.w));
             return p_res.x > 0;
