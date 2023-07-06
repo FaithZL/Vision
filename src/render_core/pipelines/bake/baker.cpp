@@ -44,7 +44,7 @@ void Baker::_compile_bake() noexcept {
         Float3 cur_norm = normal.xyz();
         Float3 abs_u = make_float3(0.f);
         Float3 abs_v = make_float3(0.f);
-        $if(res->x > 0) {
+        $if(detail::is_valid(normal)) {
             $for(x, -1, 2) {
                 $for(y, -1, 2) {
                     Int2 p = make_int2(*pixel) + make_int2(x, y);
@@ -86,7 +86,7 @@ void Baker::_compile_bake() noexcept {
         Float3 normal;
         sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
         jitter(positions, normals, radiance, &pixel, &res, &normal, &position);
-        $if(res.x != 0u) {
+        $if(detail::is_valid(normals.read(dispatch_id()))) {
             Float scatter_pdf;
             RayState rs = generate_ray(position, normal, &scatter_pdf);
             Interaction it;
@@ -113,8 +113,9 @@ void Baker::_compile_transform() noexcept {
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
             positions.write(dispatch_id(), make_float4(world_pos + world_norm * surface_ofs, as<float>(offset)));
             normals.write(dispatch_id(), make_float4(world_norm, detail::uint2_to_float(res)));
-        } $else {
-//            normals.write(dispatch_id(), make_float4(make_float3(0), detail::uint2_to_float(res)));
+        }
+        $else{
+                        normals.write(dispatch_id(), make_float4(make_float3(0), detail::uint2_to_float(res)));
         };
     };
     _transform_shader = device().compile(kernel, "transform shader");
