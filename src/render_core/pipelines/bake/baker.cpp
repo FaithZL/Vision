@@ -108,15 +108,15 @@ void Baker::_compile_transform() noexcept {
                         Uint offset, Uint2 res, Float surface_ofs) {
         Float4 position = positions.read(dispatch_id());
         Float4 normal = normals.read(dispatch_id());
+        Float3 world_pos = make_float3(0);
+        Float3 world_norm = make_float3(0);
         $if(position.w > 0.f) {
-            Float3 world_pos = transform_point(o2w, position.xyz());
-            Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
-            positions.write(dispatch_id(), make_float4(world_pos + world_norm * surface_ofs, as<float>(offset)));
-            normals.write(dispatch_id(), make_float4(world_norm, detail::uint2_to_float(res)));
-        }
-        $else{
-//                        normals.write(dispatch_id(), make_float4(make_float3(0), detail::uint2_to_float(res)));
+            world_pos = transform_point(o2w, position.xyz());
+            world_norm = normalize(transform_normal(o2w, normal.xyz()));
+            world_pos += world_norm * surface_ofs;
         };
+        positions.write(dispatch_id(), make_float4(world_pos, as<float>(offset)));
+        normals.write(dispatch_id(), make_float4(world_norm, detail::uint2_to_float(res)));
     };
     _transform_shader = device().compile(kernel, "transform shader");
 }

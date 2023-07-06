@@ -37,7 +37,6 @@ void DilateFilter::compile() noexcept {
         Float weight_sum = 0;
         Uint exterior_num = 0;
         Float3 color = make_float3(0);
-
         $if(check(pixel_index)) {
             $for(x, -_padding, _padding + 1) {
                 $for(y, -_padding, _padding + 1) {
