@@ -27,13 +27,15 @@ private:
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<Pixel>, uint, uint, uint2);
     Shader<signature> _rasterizer;
+private:
+    void append(const BakedShape &bs) noexcept;
 
 public:
     BatchMesh() = default;
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] CommandList rasterize() const noexcept;
     void compile() noexcept;
-    void append(const BakedShape &bs) noexcept;
+    void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixels, &)
     OC_MAKE_MEMBER_GETTER(triangle, &)
     OC_MAKE_MEMBER_GETTER(vertices, &)

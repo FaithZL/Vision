@@ -29,6 +29,12 @@ void BatchMesh::compile() noexcept {
     _rasterizer = device().compile(kernel, "rasterize");
 }
 
+void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
+    for (const BakedShape &bs : baked_shapes) {
+        append(bs);
+    }
+}
+
 CommandList BatchMesh::rasterize() const noexcept {
     CommandList ret;
     uint pixel_offset = 0;
@@ -46,6 +52,15 @@ CommandList BatchMesh::rasterize() const noexcept {
 }
 
 void BatchMesh::append(const BakedShape &bs) noexcept {
+    bs.shape()->for_each_mesh([&](const vision::Mesh &mesh, int index) {
+        float4x4 o2w = bs.shape()->o2w();
+        for (const Vertex &vertex : mesh.vertices) {
+            float3 world_pos = transform_point<H>(o2w, vertex.position());
+            float3 world_norm = transform_normal<H>(o2w, vertex.normal());
+            world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
+            _vertices.emplace_back(world_pos, world_norm, vertex.tex_coord(), vertex.lightmap_uv());
+        }
+    });
 }
 
 }// namespace vision
