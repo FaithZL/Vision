@@ -18,77 +18,15 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
 void Baker::_compile_bake() noexcept {
     Sampler *sampler = scene().sampler();
     Integrator *integrator = scene().integrator();
-
-    auto jitter = [&](const BufferVar<float4> &positions,
-                      const BufferVar<float4> &normals,
-                      const BufferVar<float4> &radiance,
-                      Uint2 *pixel,
-                      Uint2 *res,
-                      Float3 *norm,
-                      Float3 *pos) {
+    Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
+                        BufferVar<float4> normals, BufferVar<float4> radiance) {
         Uint pixel_index = dispatch_id();
         Float4 position = positions.read(pixel_index);
         Float4 normal = normals.read(pixel_index);
-        Uint offset = as<uint>(position.w);
-        Uint cur_index = pixel_index - offset;
-        *res = detail::float_to_uint2(normal.w);
-        *pixel = make_uint2(cur_index % res->x, cur_index / res->x);
-
-        auto in_bound = [&](const Int2 &p) -> Bool {
-            return all(p >= 0) && all(p < make_int2(*res));
-        };
-
-        Uint u_num = 0;
-        Uint v_num = 0;
-        Float3 cur_pos = position.xyz();
-        Float3 cur_norm = normal.xyz();
-        Float3 abs_u = make_float3(0.f);
-        Float3 abs_v = make_float3(0.f);
-        $if(detail::is_valid(normal)) {
-            $for(x, -1, 2) {
-                $for(y, -1, 2) {
-                    Int2 p = make_int2(*pixel) + make_int2(x, y);
-                    Uint p_index = p.y * res->x + p.x;
-                    Uint g_index = offset + p_index;
-                    $if(!in_bound(p)) {
-                        $continue;
-                    };
-                    Float4 p_normal = normals.read(g_index);
-                    $if(detail::is_valid(p_normal) && (x != 0 || y != 0)) {
-                        Float3 p_pos = positions.read(g_index).xyz();
-                        $if(x == 0) {
-                            abs_v += abs(cur_pos - p_pos);
-                            v_num += 1;
-                        }
-                        $elif(y == 0) {
-                            abs_u += abs(cur_pos - p_pos);
-                            u_num += 1;
-                        };
-                    };
-                };
-            };
-
-            Float3 su = select(u_num == 0, make_float3(0.f), abs_u / cast<float>(u_num));
-            Float3 sv = select(v_num == 0, make_float3(0.f), abs_v / cast<float>(v_num));
-
-            Float3 lb = cur_pos - 0.5f * (su + sv);
-            Float2 u2 = sampler->next_2d();
-            *pos = lb + u2.x * su + u2.y * sv;
-            *norm = cur_norm;
-        };
-    };
-
-    Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
-                        BufferVar<float4> normals, BufferVar<float4> radiance) {
-        Uint2 pixel;
-        Uint2 res;
-        Float3 position;
-        Float3 normal;
         sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
-        jitter(positions, normals, radiance, &pixel, &res, &normal, &position);
         $if(detail::is_valid(normals.read(dispatch_id()))) {
             Float scatter_pdf;
-            RayState rs = generate_ray(position, normal, &scatter_pdf);
+            RayState rs = generate_ray(position.xyz(), normal.xyz(), &scatter_pdf);
             Interaction it;
             Float3 L = integrator->Li(rs, scatter_pdf, &it);
             Float4 result = make_float4(L, 1.f);
