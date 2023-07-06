@@ -24,6 +24,11 @@ namespace detail {
     Uint b = 0x0000ffff & arg;
     return make_uint2(a, b);
 }
+
+[[nodiscard]] inline Bool is_valid(const Float4 &normal) noexcept {
+    return nonzero(normal.xyz());
+}
+
 }// namespace detail
 
 class Baker : public Ctx {

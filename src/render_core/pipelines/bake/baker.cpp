@@ -38,11 +38,6 @@ void Baker::_compile_bake() noexcept {
             return all(p >= 0) && all(p < make_int2(*res));
         };
 
-        auto is_valid = [&](const Uint &g_index) -> Bool {
-            Float4 p_normal = normals.read(g_index);
-            Uint2 p_res = detail::float_to_uint2(p_normal.w);
-            return p_res.x > 0;
-        };
         Uint u_num = 0;
         Uint v_num = 0;
         Float3 cur_pos = position.xyz();
@@ -58,7 +53,8 @@ void Baker::_compile_bake() noexcept {
                     $if(!in_bound(p)) {
                         $continue;
                     };
-                    $if(is_valid(g_index) && (x != 0 || y != 0)) {
+                    Float4 p_normal = normals.read(g_index);
+                    $if(detail::is_valid(p_normal) && (x != 0 || y != 0)) {
                         Float3 p_pos = positions.read(g_index).xyz();
                         $if(x == 0) {
                             abs_v += abs(cur_pos - p_pos);
@@ -117,6 +113,8 @@ void Baker::_compile_transform() noexcept {
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
             positions.write(dispatch_id(), make_float4(world_pos + world_norm * surface_ofs, as<float>(offset)));
             normals.write(dispatch_id(), make_float4(world_norm, detail::uint2_to_float(res)));
+        } $else {
+//            normals.write(dispatch_id(), make_float4(make_float3(0), detail::uint2_to_float(res)));
         };
     };
     _transform_shader = device().compile(kernel, "transform shader");
