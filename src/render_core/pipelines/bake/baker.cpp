@@ -115,7 +115,7 @@ void Baker::_compile_transform() noexcept {
             normals.write(dispatch_id(), make_float4(world_norm, detail::uint2_to_float(res)));
         }
         $else{
-                        normals.write(dispatch_id(), make_float4(make_float3(0), detail::uint2_to_float(res)));
+//                        normals.write(dispatch_id(), make_float4(make_float3(0), detail::uint2_to_float(res)));
         };
     };
     _transform_shader = device().compile(kernel, "transform shader");
