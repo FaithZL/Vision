@@ -3,6 +3,7 @@
 //
 
 #include "dilate_filter.h"
+#include "baker.h"
 
 namespace vision {
 
@@ -19,7 +20,7 @@ void DilateFilter::compile() noexcept {
         Float4 normal = normals.read(pixel_index);
         Float4 radiance = src.read(pixel_index);
 
-        Uint2 res = detail::decode(as<uint>(normal.w));
+        Uint2 res = detail::float_to_uint2(normal.w);
         Uint offset = as<uint>(position.w);
         Uint cur_index = pixel_index - offset;
         Uint2 pixel = make_uint2(cur_index % res.x, cur_index / res.x);

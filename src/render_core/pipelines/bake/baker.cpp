@@ -31,7 +31,7 @@ void Baker::_compile_bake() noexcept {
         Float4 normal = normals.read(pixel_index);
         Uint offset = as<uint>(position.w);
         Uint cur_index = pixel_index - offset;
-        *res = detail::decode(as<uint>(normal.w));
+        *res = detail::float_to_uint2(normal.w);
         *pixel = make_uint2(cur_index % res->x, cur_index / res->x);
 
         auto in_bound = [&](const Int2 &p) -> Bool {
@@ -40,7 +40,7 @@ void Baker::_compile_bake() noexcept {
 
         auto is_valid = [&](const Uint &g_index) -> Bool {
             Float4 p_normal = normals.read(g_index);
-            Uint2 p_res = detail::decode(as<uint>(p_normal.w));
+            Uint2 p_res = detail::float_to_uint2(p_normal.w);
             return p_res.x > 0;
         };
         Uint u_num = 0;
@@ -116,7 +116,7 @@ void Baker::_compile_transform() noexcept {
             Float3 world_pos = transform_point(o2w, position.xyz());
             Float3 world_norm = normalize(transform_normal(o2w, normal.xyz()));
             positions.write(dispatch_id(), make_float4(world_pos + world_norm * surface_ofs, as<float>(offset)));
-            normals.write(dispatch_id(), make_float4(world_norm, as<float>(detail::encode(res.x, res.y))));
+            normals.write(dispatch_id(), make_float4(world_norm, detail::uint2_to_float(res)));
         };
     };
     _transform_shader = device().compile(kernel, "transform shader");
