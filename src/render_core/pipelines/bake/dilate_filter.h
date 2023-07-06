@@ -32,8 +32,7 @@ private:
     Shader<signature> _shader;
 
 public:
-    explicit DilateFilter(uint padding = 2)
-        : _padding(padding) {}
+    explicit DilateFilter(int padding = 2);
     void set_padding(int padding) noexcept { _padding = padding; }
     void compile() noexcept;
     template<typename... Args>

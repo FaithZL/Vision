@@ -18,7 +18,7 @@ private:
     Buffer<float4> _final_radiance;
     vector<uint> _pixel_num;
     Rasterizer *_rasterizer{};
-    DilateFilter _dilate_filter{1};
+    DilateFilter _dilate_filter{};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
     Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2, float)> _transform_shader;
 

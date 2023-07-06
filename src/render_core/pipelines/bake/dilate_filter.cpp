@@ -8,6 +8,9 @@ namespace vision {
 
 using namespace ocarina;
 
+DilateFilter::DilateFilter(int padding)
+    : _padding(padding) {}
+
 void DilateFilter::compile() noexcept {
     Kernel kernel = [&](BufferVar<float4> positions, BufferVar<float4> normals,
                         BufferVar<float4> src, BufferVar<float4> dst) {
@@ -25,7 +28,7 @@ void DilateFilter::compile() noexcept {
             return all(p >= 0) && all(p < make_int2(res));
         };
 
-        auto is_interior = [&](const Uint &g_index) -> Bool {
+        auto check = [&](const Uint &g_index) -> Bool {
             Float4 val = src.read(g_index);
             return val.w < 0.99f;
         };
@@ -33,7 +36,8 @@ void DilateFilter::compile() noexcept {
         Float weight_sum = 0;
         Uint exterior_num = 0;
         Float3 color = make_float3(0);
-        $if(is_interior(pixel_index)) {
+
+        $if(check(pixel_index)) {
             $for(x, -_padding, _padding + 1) {
                 $for(y, -_padding, _padding + 1) {
                     Int2 p = make_int2(pixel) + make_int2(x, y);
@@ -50,7 +54,10 @@ void DilateFilter::compile() noexcept {
                     };
                 };
             };
-//            radiance = make_float4(color / weight_sum, 1.f);
+            $if(weight_sum != 0) {
+                radiance = make_float4(color / weight_sum,
+                                       weight_sum / cast<float>(exterior_num));
+            };
         };
         dst.write(pixel_index, radiance);
     };
