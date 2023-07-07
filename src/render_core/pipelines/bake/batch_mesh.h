@@ -21,8 +21,6 @@ private:
      * resolution
      */
     Managed<uint4> _pixels;
-    vector<uint> _triangle_nums;
-    vector<uint2> _resolutions;
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
     Shader<signature> _rasterizer;

@@ -9,7 +9,7 @@ namespace vision {
 BakePipeline::BakePipeline(const PipelineDesc &desc)
     : Pipeline(desc),
       _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
-      _baker(Global::node_mgr().load<Rasterizer>(desc.rasterizer_desc)) {
+      _baker() {
     create_cache_directory_if_necessary();
 }
 

@@ -11,27 +11,6 @@
 
 namespace vision {
 
-namespace detail {
-[[nodiscard]] inline Float uint2_to_float(const Uint2 &arg) noexcept {
-    Uint a = arg.x;
-    Uint b = arg.y;
-    a = a << 16;
-    return as<float>(a | b);
-}
-
-[[nodiscard]] inline Uint2 float_to_uint2(const Float &f) noexcept {
-    Uint arg = as<uint>(f);
-    Uint a = (0xffff0000 & arg) >> 16;
-    Uint b = 0x0000ffff & arg;
-    return make_uint2(a, b);
-}
-
-[[nodiscard]] inline Bool is_valid(const Float4 &normal) noexcept {
-    return nonzero(normal.xyz());
-}
-
-}// namespace detail
-
 class Baker : public Ctx {
 private:
     Buffer<float4> _radiance;
@@ -51,7 +30,7 @@ private:
                                         const Float3 &normal, Float *pdf) const noexcept;
 
 public:
-    explicit Baker(Rasterizer *rasterizer) {}
+    Baker() = default;
     void compile() noexcept;
     void allocate() noexcept;
     [[nodiscard]] CommandList deallocate() noexcept;

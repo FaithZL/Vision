@@ -15,8 +15,6 @@ CommandList BatchMesh::clear() noexcept {
     ret << [&] {
         _triangles.host_buffer().clear();
         _vertices.host_buffer().clear();
-        _triangle_nums.clear();
-        _resolutions.clear();
     };
     return ret;
 }
@@ -54,8 +52,6 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) 
             tri_num += mesh.triangles.size();
             vert_offset += mesh.vertices.size();
         });
-        _triangle_nums.push_back(tri_num);
-        _resolutions.push_back(bs.resolution());
         pixel_offset += bs.pixel_num();
     }
 
@@ -80,11 +76,6 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) 
     };
 
     stream() << rasterize() << commit();
-
-//    _pixels.download_immediately();
-//
-//
-//    int i = 0;
 }
 
 void BatchMesh::compile() noexcept {
