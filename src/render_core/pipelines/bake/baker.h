@@ -39,7 +39,7 @@ private:
     Buffer<float4> _radiance;
     Buffer<float4> _final_radiance;
     vector<uint> _pixel_num;
-    BatchMesh _batch_mesh;
+    BatchMesh _batch_mesh{};
     Rasterizer *_rasterizer{};
     DilateFilter _dilate_filter{};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;

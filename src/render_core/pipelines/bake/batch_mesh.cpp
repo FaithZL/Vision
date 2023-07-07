@@ -11,7 +11,7 @@ CommandList BatchMesh::clear() noexcept {
     CommandList ret;
     ret << _triangles.device_buffer().clear();
     ret << _vertices.device_buffer().clear();
-    ret << _pixels.clear();
+    ret << _pixels.device_buffer().clear();
     ret << [&] {
         _triangles.host_buffer().clear();
         _vertices.host_buffer().clear();
@@ -19,6 +19,18 @@ CommandList BatchMesh::clear() noexcept {
         _resolutions.clear();
     };
     return ret;
+}
+
+void BatchMesh::init(ocarina::uint buffer_size) {
+    _pixels.resize(buffer_size);
+    for (int i = 0; i < buffer_size; ++i) {
+        _pixels.at(i) = make_uint4(InvalidUI32);
+    }
+    _pixels.device_buffer() = device().create_buffer<uint4>(buffer_size);
+}
+
+Command* BatchMesh::reset_pixels() noexcept {
+    return _pixels.upload();
 }
 
 void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept {
@@ -49,25 +61,33 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) 
 
     _vertices.reset_device_buffer_immediately(device());
     _triangles.reset_device_buffer_immediately(device());
-    _pixels = device().create_buffer<uint4>(buffer_size);
 
-    CommandList cmd_lst;
-    cmd_lst << _vertices.upload()
-            << _triangles.upload();
-    for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
-        auto [res, offset] = res_offset[i];
-        cmd_lst << _rasterizer(_triangles, _vertices,
-                               _pixels, offset, i, res)
-                       .dispatch(buffer_size);
-        cmd_lst << Printer::instance().retrieve();
-        cmd_lst << synchronize();
-        break;
-    }
-    stream() << cmd_lst << commit();
-    vector<uint4> pd;
-    pd.resize(buffer_size);
-    _pixels.download_immediately(pd.data());
-    int i = 0;
+    auto rasterize = [&]() ->CommandList {
+        CommandList cmd_lst;
+        cmd_lst << _vertices.upload()
+                << reset_pixels()
+                << _triangles.upload();
+
+        for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
+            auto [res, offset] = res_offset[i];
+            cmd_lst << _rasterizer(_triangles, _vertices,
+                                   _pixels, offset, i, make_uint2(6))
+                           .dispatch(buffer_size);
+            cmd_lst << Printer::instance().retrieve();
+            cmd_lst << synchronize();
+            if (i >= 1) {
+                break;
+            }
+        }
+        return cmd_lst;
+    };
+
+    stream() << rasterize() << commit();
+
+//    _pixels.download_immediately();
+//
+//
+//    int i = 0;
 }
 
 void BatchMesh::compile() noexcept {
@@ -92,12 +112,9 @@ void BatchMesh::compile() noexcept {
         Float2 p0 = v0->lightmap_uv();
         Float2 p1 = v1->lightmap_uv();
         Float2 p2 = v2->lightmap_uv();
-        Uint4 pixel{};
+        Uint4 pixel = pixels.read(dispatch_id());
         $if(in_triangle<D>(coord, p0, p1, p2)) {
             pixel.x = triangle_index;
-        }
-        $else {
-            pixel.x = InvalidUI32;
         };
         pixel.y = pixel_offset;
         pixel.z = res.x;
@@ -107,15 +124,5 @@ void BatchMesh::compile() noexcept {
     _rasterizer = device().compile(kernel, "rasterize");
 }
 
-CommandList BatchMesh::rasterize() const noexcept {
-    CommandList ret;
-    uint pixel_offset = 0;
-    uint tri_offset = 0;
-
-    return ret;
-}
-
-void BatchMesh::append(const BakedShape &bs) noexcept {
-}
 
 }// namespace vision

@@ -20,19 +20,18 @@ private:
      * lightmap offset
      * resolution
      */
-    Buffer<uint4> _pixels;
+    Managed<uint4> _pixels;
     vector<uint> _triangle_nums;
     vector<uint2> _resolutions;
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
     Shader<signature> _rasterizer;
-private:
-    void append(const BakedShape &bs) noexcept;
 
 public:
     BatchMesh() = default;
+    void init(uint buffer_size);
     [[nodiscard]] CommandList clear() noexcept;
-    [[nodiscard]] CommandList rasterize() const noexcept;
+    [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
     void setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept;
     OC_MAKE_MEMBER_GETTER(pixels, &)

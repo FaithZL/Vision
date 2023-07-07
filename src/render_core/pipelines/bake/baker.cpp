@@ -158,6 +158,7 @@ void Baker::allocate() noexcept {
     _normals = device().create_buffer<float4>(buffer_size);
     _radiance = device().create_buffer<float4>(buffer_size);
     _final_radiance = device().create_buffer<float4>(buffer_size);
+    _batch_mesh.init(buffer_size);
 }
 
 CommandList Baker::deallocate() noexcept {
