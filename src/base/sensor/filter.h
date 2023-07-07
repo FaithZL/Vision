@@ -40,7 +40,14 @@ public:
     OC_SERIALIZABLE_FUNC(Serializable<float>, _radius)
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
-    [[nodiscard]] Float2 radius() const noexcept { return *_radius; }
+    template<EPort p = D>
+    [[nodiscard]] auto radius() const noexcept {
+        if constexpr (p == D) {
+            return *_radius;
+        } else {
+            return _radius.hv();
+        }
+    }
 };
 
 }// namespace vision

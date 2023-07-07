@@ -11,7 +11,7 @@
 #include "base/mgr/pipeline.h"
 
 namespace vision {
-
+using namespace ocarina;
 class FilterSampler {
 public:
     static constexpr int table_size = 20;
@@ -24,7 +24,49 @@ public:
     FilterSampler()
         : _warper(Global::instance().pipeline()->scene().load_warper2d()) {}
 
+    void prepare(const Filter *filter) {
+        int len = ocarina::sqr(table_size);
+        _lut.resize(len);
+        vector<float> func;
+        func.resize(len);
+        float2 r = filter->radius<H>();
+        for (int i = 0; i < len; ++i) {
+            int x = i % table_size;
+            int y = i / table_size;
+            float2 p = make_float2((x + 0.5f) / table_size * r.x,
+                                   (y + 0.5f) / table_size * r.y);
+            float val = filter->evaluate(p);
+            func[i] = ocarina::abs(val);
+            _lut.at(i) = val;
+        }
+        float sum = std::accumulate(_lut.begin(), _lut.end(), 0.f);
+        float integral = sum / len;
+        std::transform(_lut.cbegin(), _lut.cend(), _lut.begin(), [&](float val) {
+            return val / integral;
+        });
+        _warper->build(ocarina::move(func), make_uint2(table_size));
+        _warper->prepare();
+    }
+
+    template<typename X, typename Y>
+    requires is_all_integral_expr_v<X, Y>
+    [[nodiscard]] Float lut_at(const X &x, const Y &y) noexcept {
+        Var index = y * table_size + x;
+        return _lut.read(index);
+    }
+
+    template<typename V2>
+    [[nodiscard]] Float lut_at(const V2 &v) noexcept {
+        return lut_at(v.x, v.y);
+    }
+    
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept {
+        u = u * 2.f - make_float2(1.f);
+        Float pdf = 0.f;
+        Uint2 offset;
+        Float2 p = _warper->sample_continuous(u, &pdf, &offset);
+//        Float a{1u};
+//        p = p * sign(u);
         return {};
     }
 };
@@ -36,6 +78,10 @@ protected:
 public:
     explicit FittedCurveFilter(const FilterDesc &desc)
         : Filter(desc) {}
+
+    void prepare() noexcept override {
+        _sampler.prepare(this);
+    }
 
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         return _sampler.sample(u);

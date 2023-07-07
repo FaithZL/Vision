@@ -9,14 +9,14 @@ namespace vision {
 
 class GaussianFilter : public FittedCurveFilter {
 private:
+    float _sigma{};
     float _exp_x{};
     float _exp_y{};
-    float _sigma{};
 
 public:
     explicit GaussianFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
-          _sigma(desc["sigma"].as_float(1)),
+          _sigma(desc["sigma"].as_float(1.f)),
           _exp_x(gaussian<H>(_radius.hv().x, 0, _sigma)),
           _exp_y(gaussian<H>(_radius.hv().y, 0, _sigma)) {}
 
