@@ -27,7 +27,7 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | Feature                      | Progress    |
 |------------------------------|-------------|
 | Filter Importance Sampling   | Done        |
-| Mitchell-Netravali Filter    | Planned     |
+| Mitchell-Netravali Filter    | Done        |
 | Box Filter                   | Done        |
 | Triangle Filter              | Done        |
 | Gaussian Filter              | Done        |
