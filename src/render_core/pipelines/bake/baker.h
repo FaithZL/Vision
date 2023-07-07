@@ -43,6 +43,7 @@ private:
     Rasterizer *_rasterizer{};
     DilateFilter _dilate_filter{};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
+    Shader<void(uint, Buffer<Triangle>, Buffer<Vertex>, Buffer<uint4>, Buffer<float4>)> _baker;
     Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2, float)> _transform_shader;
 
 private:

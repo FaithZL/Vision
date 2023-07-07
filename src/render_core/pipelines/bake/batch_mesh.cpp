@@ -71,13 +71,10 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) 
         for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
             auto [res, offset] = res_offset[i];
             cmd_lst << _rasterizer(_triangles, _vertices,
-                                   _pixels, offset, i, make_uint2(6))
+                                   _pixels, offset, i, res)
                            .dispatch(buffer_size);
             cmd_lst << Printer::instance().retrieve();
             cmd_lst << synchronize();
-            if (i >= 1) {
-                break;
-            }
         }
         return cmd_lst;
     };

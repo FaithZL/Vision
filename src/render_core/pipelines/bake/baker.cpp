@@ -18,26 +18,74 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
 void Baker::_compile_bake() noexcept {
     Sampler *sampler = scene().sampler();
     Integrator *integrator = scene().integrator();
-    Kernel kernel = [&](Uint frame_index, BufferVar<float4> positions,
-                        BufferVar<float4> normals, BufferVar<float4> radiance) {
+    Kernel k = [&](Uint frame_index, BufferVar<float4> positions,
+                   BufferVar<float4> normals, BufferVar<float4> radiance) {
         Uint pixel_index = dispatch_id();
         Float4 position = positions.read(pixel_index);
         Float4 normal = normals.read(pixel_index);
         sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
-        $if(detail::is_valid(normals.read(dispatch_id()))) {
-            Float scatter_pdf;
-            RayState rs = generate_ray(position.xyz(), normal.xyz(), &scatter_pdf);
-            Interaction it;
-            Float3 L = integrator->Li(rs, scatter_pdf, &it);
-            Float4 result = make_float4(L, 1.f);
-            result.w = select(dot(rs.direction(), it.g_uvn.normal()) > 0, 0.f, 1.f);
-            Float4 accum_prev = radiance.read(dispatch_id());
-            Float a = 1.f / (frame_index + 1);
-            result = lerp(make_float4(a), accum_prev, result);
-            radiance.write(dispatch_id(), result);
+        $if(!detail::is_valid(normals.read(dispatch_id()))) {
+            $return();
         };
+        Float scatter_pdf;
+        RayState rs = generate_ray(position.xyz(), normal.xyz(), &scatter_pdf);
+        Interaction it;
+        Float3 L = integrator->Li(rs, scatter_pdf, &it);
+        Float4 result = make_float4(L, 1.f);
+        result.w = select(dot(rs.direction(), it.g_uvn.normal()) > 0, 0.f, 1.f);
+        Float4 accum_prev = radiance.read(dispatch_id());
+        Float a = 1.f / (frame_index + 1);
+        result = lerp(make_float4(a), accum_prev, result);
+        radiance.write(dispatch_id(), result);
     };
-    _bake_shader = device().compile(kernel, "baker");
+
+    _bake_shader = device().compile(k, "baker old");
+
+    Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
+                        BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
+                        BufferVar<float4> radiance) {
+        Uint4 pixel_data = pixels.read(dispatch_id());
+        Uint triangle_id = pixel_data.x;
+        Uint pixel_offset = pixel_data.y;
+        Uint2 res = pixel_data.zw();
+        auto is_valid = [&](const Uint &tri_id) {
+            return tri_id != InvalidUI32;
+        };
+        $if(!is_valid(triangle_id)) {
+            $return();
+        };
+        Uint pixel_index = dispatch_id() - pixel_offset;
+
+        Uint x = pixel_index % res.x;
+        Uint y = pixel_index / res.x;
+
+        Float2 coord = make_float2(x + 0.5f, y + 0.5f);
+        Var tri = triangles.read(triangle_id);
+        Var v0 = vertices.read(tri.i);
+        Var v1 = vertices.read(tri.j);
+        Var v2 = vertices.read(tri.k);
+
+        Float2 p0 = v0->lightmap_uv();
+        Float2 p1 = v1->lightmap_uv();
+        Float2 p2 = v2->lightmap_uv();
+        Float3 n0 = v0->normal();
+        Float3 n1 = v1->normal();
+        Float3 n2 = v2->normal();
+
+        Float2 bary = barycentric(coord, p0, p1, p2);
+        Float3 norm;
+        Float3 position = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
+        $if(is_zero(n0) || is_zero(n1) || is_zero(n2)) {
+            Var v02 = v2->position() - v0->position();
+            Var v01 = v1->position() - v0->position();
+            norm = normalize(cross(v01, v02));
+        } $else {
+            norm = normalize(triangle_lerp(bary, n0, n1, n2));
+        };
+        radiance.write(dispatch_id(), make_float4(position, 1.f));
+    };
+
+    _baker = device().compile(kernel, "baker");
 }
 
 void Baker::_compile_transform() noexcept {
@@ -70,7 +118,7 @@ void Baker::compile() noexcept {
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint offset = 0;
 
-    _batch_mesh.setup(baked_shapes,calculate_buffer_size());
+    _batch_mesh.setup(baked_shapes, calculate_buffer_size());
 
     for (BakedShape &bs : baked_shapes) {
         stream() << bs.prepare_for_rasterize();
@@ -94,16 +142,24 @@ void Baker::_baking() noexcept {
     Sampler *sampler = scene().sampler();
     for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _bake_shader(i, _positions,
-                                 _normals, _radiance)
+                                 _normals, _final_radiance)
                         .dispatch(pixel_num());
     }
 
-    stream() << Printer::instance().retrieve();
-    stream() << _dilate_filter(_positions, _normals,
-                               _radiance, _final_radiance)
-                    .dispatch(pixel_num())
-             << Printer::instance().retrieve()
-             << synchronize() << commit();
+//    for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
+//        stream() << _baker(i, _batch_mesh.triangles(),
+//                           _batch_mesh.vertices(),
+//                           _batch_mesh.pixels(),
+//                           _final_radiance).dispatch(pixel_num());
+//        stream() << Printer::instance().retrieve();
+//    }
+
+    //    stream() << Printer::instance().retrieve();
+//    stream() << _dilate_filter(_positions, _normals,
+//                               _radiance, _final_radiance)
+//                    .dispatch(pixel_num())
+//             << Printer::instance().retrieve()
+//             << synchronize() << commit();
 }
 
 void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
