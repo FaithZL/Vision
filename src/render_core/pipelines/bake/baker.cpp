@@ -28,9 +28,11 @@ void Baker::_compile_bake() noexcept {
         auto is_valid = [&](const Uint &tri_id) {
             return tri_id != InvalidUI32;
         };
+
         $if(!is_valid(triangle_id)) {
             $return();
         };
+
         Uint pixel_index = dispatch_id() - pixel_offset;
 
         Uint x = pixel_index % res.x;
@@ -97,6 +99,7 @@ void Baker::_baking() noexcept {
                         .dispatch(_batch_mesh.pixel_num());
     }
 
+    
     stream() << Printer::instance().retrieve();
     stream() << _dilate_filter(_batch_mesh.pixels(),
                                _radiance, _final_radiance)

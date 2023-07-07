@@ -33,17 +33,10 @@ struct UnwrapperResult {
     vector<UnwrapperMesh> meshes;
 };
 
-struct DeviceMesh {
-    Buffer<Vertex> vertices;
-    Buffer<Triangle> triangles;
-};
-
 struct BakedShape {
 private:
     Shape *_shape{};
     uint2 _resolution{};
-//    RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
-//    RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
     Texture _lightmap_tex;
 
 public:
@@ -61,11 +54,6 @@ public:
     OC_MAKE_MEMBER_GETTER(resolution, )
     OC_MAKE_MEMBER_GETTER(shape, )
     OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
-
-    [[nodiscard]] float surface_offset() const noexcept {
-        // todo surface offset is specified by user or calculate by model data
-        return 0.f;
-    }
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;
@@ -91,17 +79,6 @@ public:
     explicit UVUnwrapper(const UVUnwrapperDesc &desc)
         : Node(desc), _padding(desc["padding"].as_uint(3)) {}
     [[nodiscard]] virtual UnwrapperResult apply(const Shape *shape) = 0;
-};
-
-class Rasterizer : public Node {
-public:
-    using Desc = RasterizerDesc;
-
-public:
-    explicit Rasterizer(const RasterizerDesc &desc)
-        : Node(desc) {}
-    virtual void compile_shader() noexcept = 0;
-    [[nodiscard]] virtual CommandList apply(BakedShape &baked_shape) noexcept = 0;
 };
 
 }// namespace vision

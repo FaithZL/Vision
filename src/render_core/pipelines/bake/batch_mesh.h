@@ -21,7 +21,7 @@ private:
      * resolution
      */
     Managed<uint4> _pixels;
-    uint _pixel_num;
+    uint _pixel_num{};
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
     Shader<signature> _rasterizer;
