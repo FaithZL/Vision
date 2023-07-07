@@ -86,7 +86,7 @@ VS_MAKE_CALLABLE(square_to_sphere)
  */
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> PDF_dir_impl(const oc_float<p> &PDF_pos, const oc_float3<p> &normal,
-                                  const oc_float3<p> &wo_un) {
+                                       const oc_float3<p> &wo_un) {
     oc_float<p> cos_theta = abs(dot(normal, normalize(wo_un)));
     return PDF_pos * length_squared(wo_un) / cos_theta;
 }
@@ -127,8 +127,8 @@ VS_MAKE_CALLABLE(sample_linear)
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> sample_tent_impl(oc_float<p> u, oc_float<p> r) {
     return select(u < 0.5f,
-                  -r * sample_linear((0.5f - u) * 2, 1, 0),
-                  r * sample_linear((u - 0.5f) * 2, 1, 0));
+                  -r * sample_linear<p>((0.5f - u) * 2, 1, 0),
+                  r * sample_linear<p>((u - 0.5f) * 2, 1, 0));
 }
 VS_MAKE_CALLABLE(sample_tent)
 
@@ -143,9 +143,9 @@ VS_MAKE_CALLABLE(balance_heuristic)
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> power_heuristic_impl(const oc_int<p> &nf,
-                                          const oc_float<p> &f_PDF,
-                                          const oc_int<p> &ng,
-                                          const oc_float<p> &g_PDF) {
+                                               const oc_float<p> &f_PDF,
+                                               const oc_int<p> &ng,
+                                               const oc_float<p> &g_PDF) {
     oc_float<p> f = nf * f_PDF, g = ng * g_PDF;
     return (f * f) / (f * f + g * g);
 }
@@ -153,7 +153,7 @@ VS_MAKE_CALLABLE(power_heuristic)
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> mis_weight_impl(const oc_float<p> &f_PDF,
-                                     const oc_float<p> &g_PDF) {
+                                          const oc_float<p> &g_PDF) {
     return balance_heuristic<p>(1, f_PDF, 1, g_PDF);
 }
 VS_MAKE_CALLABLE(mis_weight)
