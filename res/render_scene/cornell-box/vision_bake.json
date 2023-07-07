@@ -790,12 +790,14 @@
 				}
 			},
 			"filter" : {
-				"type" : "box",
+				"type" : "gaussian",
+//				"type" : "box",
 				"name" : "boxFilter",
 				"param" : {
+					"sigma" : 1,
 					"radius" : [
-						0.5,
-						0.5
+						1.0,
+						1.0
 					]
 				}
 			}
@@ -952,7 +954,7 @@
 		}
 	},
 	"pipeline" : {
-		"type" : "bake"
+//		"type" : "bake"
 //		"type" : "offline"
 	},
 	"output" : {

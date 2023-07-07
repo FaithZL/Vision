@@ -87,7 +87,9 @@ public:
     }
 
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
-        return _sampler.sample(u);
+        FilterSample fs = _sampler.sample(u);
+        fs.p = fs.p * radius();
+        return fs;
     }
 };
 
