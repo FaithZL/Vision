@@ -31,7 +31,7 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | Box Filter                   | Done        |
 | Triangle Filter              | Done        |
 | Gaussian Filter              | Done        |
-| Lanczos Windowed Sinc Filter | Planned     |
+| Lanczos Windowed Sinc Filter | Done        |
 
 ### Materials
 | Feature                      | Progress    |

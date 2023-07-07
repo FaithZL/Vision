@@ -48,4 +48,22 @@ VS_MAKE_CALLABLE(gaussian)
     return 0.5f * (std::erf((mu - x0) / sigmaRoot2) - std::erf((mu - x1) / sigmaRoot2));
 }
 
+template<EPort p = D>
+[[nodiscard]] oc_float<p> sin_x_over_x_impl(oc_float<p> x) noexcept {
+    return ocarina::select(1 + x * x == 1, 1.f, ocarina::sin(x) / x);
+}
+VS_MAKE_CALLABLE(sin_x_over_x)
+
+template<EPort p = D>
+[[nodiscard]] oc_float<p> sinc(oc_float<p> x) noexcept {
+    return sin_x_over_x<p>(Pi * x);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float<p> windowed_sinc_impl(oc_float<p> x, oc_float<p> radius,
+                                             oc_float<p> tau) noexcept {
+    return ocarina::select(ocarina::abs(x) > radius, 0.f, sinc<p>(x) * sinc<p>(x / tau));
+}
+VS_MAKE_CALLABLE(windowed_sinc)
+
 }// namespace vision
