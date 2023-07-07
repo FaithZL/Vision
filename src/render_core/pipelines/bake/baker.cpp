@@ -85,11 +85,6 @@ void Baker::compile() noexcept {
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
     _batch_mesh.setup(baked_shapes, calculate_buffer_size());
-
-    for (BakedShape &bs : baked_shapes) {
-        bs.normalize_lightmap_uv();
-        _pixel_num.push_back(bs.pixel_num());
-    }
 }
 
 void Baker::_baking() noexcept {
@@ -99,13 +94,13 @@ void Baker::_baking() noexcept {
                            _batch_mesh.vertices(),
                            _batch_mesh.pixels(),
                            _radiance)
-                        .dispatch(pixel_num());
+                        .dispatch(_batch_mesh.pixel_num());
     }
 
     stream() << Printer::instance().retrieve();
     stream() << _dilate_filter(_batch_mesh.pixels(),
                                _radiance, _final_radiance)
-                    .dispatch(pixel_num())
+                    .dispatch(_batch_mesh.pixel_num())
              << synchronize() << commit();
 }
 
@@ -133,12 +128,9 @@ CommandList Baker::clear() noexcept {
     CommandList ret;
     ret << _radiance.clear();
     ret << _final_radiance.clear();
-    ret << [&] { _pixel_num.clear(); };
+    ret << _batch_mesh.clear();
+    ret << _batch_mesh.reset_pixels();
     return ret;
-}
-
-uint Baker::pixel_num() const noexcept {
-    return std::accumulate(_pixel_num.begin(), _pixel_num.end(), 0u);
 }
 
 uint Baker::calculate_buffer_size() noexcept {
@@ -149,13 +141,12 @@ void Baker::allocate() noexcept {
     uint buffer_size = calculate_buffer_size();
     _radiance = device().create_buffer<float4>(buffer_size);
     _final_radiance = device().create_buffer<float4>(buffer_size);
-    _batch_mesh.init(buffer_size);
+    _batch_mesh.allocate(buffer_size);
 }
 
 CommandList Baker::deallocate() noexcept {
     CommandList ret;
     ret << _radiance.reallocate(0)
-        << [&] { _pixel_num.clear(); }
         << _final_radiance.reallocate(0);
     return ret;
 }

@@ -21,17 +21,19 @@ private:
      * resolution
      */
     Managed<uint4> _pixels;
+    uint _pixel_num;
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
     Shader<signature> _rasterizer;
 
 public:
     BatchMesh() = default;
-    void init(uint buffer_size);
+    void allocate(uint buffer_size);
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
     void setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept;
+    OC_MAKE_MEMBER_GETTER(pixel_num,)
     OC_MAKE_MEMBER_GETTER(pixels, &)
     OC_MAKE_MEMBER_GETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER(vertices, &)

@@ -15,7 +15,6 @@ class Baker : public Ctx {
 private:
     Buffer<float4> _radiance;
     Buffer<float4> _final_radiance;
-    vector<uint> _pixel_num;
     BatchMesh _batch_mesh{};
     DilateFilter _dilate_filter{};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
@@ -38,7 +37,6 @@ public:
     void baking(ocarina::span<BakedShape> baked_shapes) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] static uint calculate_buffer_size() noexcept;
-    [[nodiscard]] uint pixel_num() const noexcept;
 };
 
 }// namespace vision

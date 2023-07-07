@@ -15,11 +15,12 @@ CommandList BatchMesh::clear() noexcept {
     ret << [&] {
         _triangles.host_buffer().clear();
         _vertices.host_buffer().clear();
+        _pixel_num = 0;
     };
     return ret;
 }
 
-void BatchMesh::init(ocarina::uint buffer_size) {
+void BatchMesh::allocate(ocarina::uint buffer_size) {
     _pixels.resize(buffer_size);
     for (int i = 0; i < buffer_size; ++i) {
         _pixels.at(i) = make_uint4(InvalidUI32);
@@ -27,15 +28,14 @@ void BatchMesh::init(ocarina::uint buffer_size) {
     _pixels.device_buffer() = device().create_buffer<uint4>(buffer_size);
 }
 
-Command* BatchMesh::reset_pixels() noexcept {
+Command *BatchMesh::reset_pixels() noexcept {
     return _pixels.upload();
 }
 
 void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept {
     uint vert_offset = 0;
     vector<std::pair<uint2, uint>> res_offset;
-    uint pixel_offset = 0u;
-    for (const BakedShape &bs : baked_shapes) {
+    for (BakedShape &bs : baked_shapes) {
         uint tri_num = 0;
         bs.shape()->for_each_mesh([&](const vision::Mesh &mesh, int index) {
             float4x4 o2w = bs.shape()->o2w();
@@ -47,18 +47,19 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) 
             }
             for (const Triangle &tri : mesh.triangles) {
                 _triangles.emplace_back(tri.i + vert_offset, tri.j + vert_offset, tri.k + vert_offset);
-                res_offset.emplace_back(bs.resolution(), pixel_offset);
+                res_offset.emplace_back(bs.resolution(), _pixel_num);
             }
             tri_num += mesh.triangles.size();
             vert_offset += mesh.vertices.size();
         });
-        pixel_offset += bs.pixel_num();
+        bs.normalize_lightmap_uv();
+        _pixel_num += bs.pixel_num();
     }
 
     _vertices.reset_device_buffer_immediately(device());
     _triangles.reset_device_buffer_immediately(device());
 
-    auto rasterize = [&]() ->CommandList {
+    auto rasterize = [&]() -> CommandList {
         CommandList cmd_lst;
         cmd_lst << _vertices.upload()
                 << reset_pixels()
@@ -68,7 +69,7 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) 
             auto [res, offset] = res_offset[i];
             cmd_lst << _rasterizer(_triangles, _vertices,
                                    _pixels, offset, i, res)
-                           .dispatch(buffer_size);
+                           .dispatch(pixel_num());
             cmd_lst << Printer::instance().retrieve();
             cmd_lst << synchronize();
         }
@@ -111,6 +112,5 @@ void BatchMesh::compile() noexcept {
     };
     _rasterizer = device().compile(kernel, "rasterize");
 }
-
 
 }// namespace vision
