@@ -37,8 +37,9 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
 
         Uint x = pixel_index % res.x;
         Uint y = pixel_index / res.x;
-
-        Float2 coord = make_float2(x + 0.5f, y + 0.5f);
+        Float2 u = sampler->next_2d();
+        // todo Handle the case coord outside the triangle
+        Float2 coord = make_float2(x + u.x, y + u.y);
         Var tri = triangles.read(triangle_id);
         Var v0 = vertices.read(tri.i);
         Var v1 = vertices.read(tri.j);
@@ -71,13 +72,11 @@ void Baker::_compile_bake() noexcept {
     Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
-        Uint4 pixel_data = pixels.read(dispatch_id());
         sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
         auto [position, norm, valid] = fetch_geometry_data(triangles, vertices, pixels);
         $if(!valid) {
             $return();
         };
-
         Float scatter_pdf;
         RayState rs = generate_ray(position, norm, &scatter_pdf);
         Interaction it;
