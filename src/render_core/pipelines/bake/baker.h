@@ -34,20 +34,15 @@ namespace detail {
 
 class Baker : public Ctx {
 private:
-    Buffer<float4> _positions;
-    Buffer<float4> _normals;
     Buffer<float4> _radiance;
     Buffer<float4> _final_radiance;
     vector<uint> _pixel_num;
     BatchMesh _batch_mesh{};
-    Rasterizer *_rasterizer{};
     DilateFilter _dilate_filter{};
     Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
     Shader<void(uint, Buffer<Triangle>, Buffer<Vertex>, Buffer<uint4>, Buffer<float4>)> _baker;
-    Shader<void(Buffer<float4>, Buffer<float4>, float4x4, uint, uint2, float)> _transform_shader;
 
 private:
-    void _compile_transform() noexcept;
     void _compile_bake() noexcept;
     void _prepare(ocarina::span<BakedShape> baked_shapes) noexcept;
     void _baking() noexcept;
@@ -56,15 +51,12 @@ private:
                                         const Float3 &normal, Float *pdf) const noexcept;
 
 public:
-    explicit Baker(Rasterizer *rasterizer)
-        : _rasterizer(rasterizer) {}
+    explicit Baker(Rasterizer *rasterizer) {}
     void compile() noexcept;
     void allocate() noexcept;
     [[nodiscard]] CommandList deallocate() noexcept;
-    [[nodiscard]] uint buffer_size() const noexcept { return _normals.size(); }
+    [[nodiscard]] uint buffer_size() const noexcept { return _radiance.size(); }
     void baking(ocarina::span<BakedShape> baked_shapes) noexcept;
-    [[nodiscard]] CommandList append_buffer(const Buffer<float4> &normals,
-                                            const Buffer<float4> &positions) noexcept;
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] static uint calculate_buffer_size() noexcept;
     [[nodiscard]] uint pixel_num() const noexcept;
