@@ -88,7 +88,7 @@ void SamplerDesc::init(const ParameterSet &ps) noexcept {
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
-    sub_type = ps["type"].as_string("box");
+    sub_type = ps["type"].as_string("gaussian");
     set_parameter(ps["param"]);
 }
 
