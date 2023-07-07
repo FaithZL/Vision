@@ -33,4 +33,19 @@ template<EPort p = D>
 }
 VS_MAKE_CALLABLE(lcg)
 
+template<EPort p = D>
+[[nodiscard]] inline oc_float<p> gaussian_impl(oc_float<p> x,
+                                               oc_float<p> mu,
+                                               oc_float<p> sigma) {
+    return 1.f / ocarina::sqrt(2 * Pi * ocarina::sqr(sigma)) *
+           ocarina::exp(-ocarina::sqr(x - mu) / (2 * ocarina::sqr(sigma)));
+}
+VS_MAKE_CALLABLE(gaussian)
+
+[[nodiscard]] inline float gaussian_integral(float x0, float x1, float mu = 0,
+                                             float sigma = 1) {
+    float sigmaRoot2 = sigma * float(1.414213562373095);
+    return 0.5f * (std::erf((mu - x0) / sigmaRoot2) - std::erf((mu - x1) / sigmaRoot2));
+}
+
 }// namespace vision

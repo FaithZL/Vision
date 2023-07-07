@@ -35,10 +35,6 @@ class Warper2D : public Node, public Serializable<> {
 public:
     using Desc = WarperDesc;
 
-private:
-    Warper *_marginal{};
-    vector<Warper *> _conditional_v;
-
 public:
     Warper2D() = default;
     explicit Warper2D(const WarperDesc &desc) : Node(desc) {}

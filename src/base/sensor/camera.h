@@ -43,8 +43,6 @@ public:
     void update_mat(float4x4 m) noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
 
-
-
     OC_MAKE_MEMBER_GETTER(sensitivity, )
     OC_MAKE_MEMBER_GETTER(position, )
     OC_MAKE_MEMBER_GETTER(yaw, )
