@@ -15,7 +15,7 @@ using namespace ocarina;
 class DilateFilter : public Ctx {
 private:
     int _padding{};
-    using signature = void(Buffer<float4>, Buffer<float4>, Buffer<float4>, Buffer<float4>);
+    using signature = void(Buffer<uint4>, Buffer<float4>, Buffer<float4>);
     Shader<signature> _shader;
 
 public:

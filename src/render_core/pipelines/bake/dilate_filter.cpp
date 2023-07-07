@@ -13,15 +13,14 @@ DilateFilter::DilateFilter(int padding)
     : _padding(padding) {}
 
 void DilateFilter::compile() noexcept {
-    Kernel kernel = [&](BufferVar<float4> positions, BufferVar<float4> normals,
+    Kernel kernel = [&](BufferVar<uint4> pixels,
                         BufferVar<float4> src, BufferVar<float4> dst) {
         Uint pixel_index = dispatch_id();
-        Float4 position = positions.read(pixel_index);
-        Float4 normal = normals.read(pixel_index);
+        Uint4 pixel_data = pixels.read(dispatch_id());
         Float4 radiance = src.read(pixel_index);
 
-        Uint2 res = detail::float_to_uint2(normal.w);
-        Uint offset = as<uint>(position.w);
+        Uint2 res = pixel_data.zw();
+        Uint offset = pixel_data.y;
         Uint cur_index = pixel_index - offset;
         Uint2 pixel = make_uint2(cur_index % res.x, cur_index / res.x);
 

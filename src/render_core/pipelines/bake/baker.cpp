@@ -154,7 +154,7 @@ void Baker::_baking() noexcept {
     }
 
     stream() << Printer::instance().retrieve();
-    stream() << _dilate_filter(_positions, _normals,
+    stream() << _dilate_filter(_batch_mesh.pixels(),
                                _radiance, _final_radiance)
                     .dispatch(pixel_num())
              << synchronize() << commit();
