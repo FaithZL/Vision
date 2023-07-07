@@ -13,7 +13,7 @@ namespace vision {
 struct BatchMesh : public Ctx {
 private:
     using Pixel = uint4;
-    Managed<Triangle> _triangle;
+    Managed<Triangle> _triangles;
     Managed<Vertex> _vertices;
     /**
      * store the pixel data eg.
@@ -23,7 +23,7 @@ private:
      */
     Buffer<Pixel> _pixels;
     vector<uint> _triangle_nums;
-    vector<uint> _pixel_nums;
+    vector<uint2> _resolutions;
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<Pixel>, uint, uint, uint2);
     Shader<signature> _rasterizer;
@@ -37,7 +37,7 @@ public:
     void compile() noexcept;
     void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixels, &)
-    OC_MAKE_MEMBER_GETTER(triangle, &)
+    OC_MAKE_MEMBER_GETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER(vertices, &)
 };
 }// namespace vision

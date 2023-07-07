@@ -92,10 +92,10 @@ void BakePipeline::compile_displayer() noexcept {
 void BakePipeline::bake_all() noexcept {
     _baker.allocate();
     _baker.compile();
-    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
-              [&](const BakedShape &a, const BakedShape &b) {
-                  return a.perimeter() > b.perimeter();
-              });
+//    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+//              [&](const BakedShape &a, const BakedShape &b) {
+//                  return a.perimeter() > b.perimeter();
+//              });
 
     for (int i = 0; i < _baked_shapes.size(); ++i) {
         BakedShape &bs = _baked_shapes[i];

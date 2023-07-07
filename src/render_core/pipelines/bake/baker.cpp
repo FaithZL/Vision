@@ -68,6 +68,9 @@ void Baker::compile() noexcept {
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint offset = 0;
+
+    _batch_mesh.setup(baked_shapes);
+
     for (BakedShape &bs : baked_shapes) {
         stream() << bs.prepare_for_rasterize();
         if (bs.has_rasterization_cache()) {
