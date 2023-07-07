@@ -6,22 +6,6 @@
 
 namespace vision {
 
-CommandList BakedShape::prepare_for_rasterize() noexcept {
-    CommandList ret;
-    _normals.super() = shape()->device().create_buffer<float4>(pixel_num());
-    _positions.super() = shape()->device().create_buffer<float4>(pixel_num());
-    ret << _normals.clear() << _positions.clear();
-    shape()->for_each_mesh([&](vision::Mesh &mesh, uint index) {
-        DeviceMesh device_mesh;
-        device_mesh.vertices = shape()->device().create_buffer<Vertex>(mesh.vertices.size());
-        device_mesh.triangles = shape()->device().create_buffer<Triangle>(mesh.triangles.size());
-        ret << device_mesh.vertices.upload(mesh.vertices.data())
-            << device_mesh.triangles.upload(mesh.triangles.data());
-        _device_meshes.push_back(ocarina::move(device_mesh));
-    });
-    return ret;
-}
-
 UnwrapperResult BakedShape::load_uv_config_from_cache() const {
     DataWrap json = create_json_from_file(uv_config_fn());
     auto res = json["resolution"];
@@ -67,30 +51,6 @@ void BakedShape::save_to_cache(const UnwrapperResult &result) {
     string data_str = data.dump(4);
     fs::path uv_config = uv_config_fn();
     Context::write_file(uv_config, data_str);
-}
-
-CommandList BakedShape::load_rasterization_from_cache() const {
-    CommandList ret;
-    ImageIO &position = ImagePool::instance().obtain_image(position_cache_path(), ColorSpace::LINEAR).image();
-    ImageIO &normal = ImagePool::instance().obtain_image(normal_cache_path(), ColorSpace::LINEAR).image();
-    ret << _positions.upload(position.pixel_ptr())
-        << _normals.upload(normal.pixel_ptr());
-    return ret;
-}
-
-CommandList BakedShape::save_rasterization_to_cache() const {
-    CommandList ret;
-    float4 *ptr = ocarina::allocate<float4>(pixel_num());
-
-    ret << _positions.download(ptr) << [&, ptr] {
-        ImageIO::save_image(position_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
-    };
-
-    ret << _normals.download(ptr) << [&, ptr] {
-        ImageIO::save_image(normal_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
-        ocarina::deallocate(ptr);
-    };
-    return ret;
 }
 
 CommandList BakedShape::save_lightmap_to_cache() const {
@@ -146,18 +106,6 @@ bool BakedShape::has_uv_cache() const noexcept {
 
 fs::path BakedShape::lightmap_cache_path() const noexcept {
     return instance_cache_directory() / "lightmap.exr";
-}
-
-fs::path BakedShape::position_cache_path() const noexcept {
-    return cache_directory() / "position.exr";
-}
-
-fs::path BakedShape::normal_cache_path() const noexcept {
-    return cache_directory() / "normal.exr";
-}
-
-bool BakedShape::has_rasterization_cache() const noexcept {
-    return fs::exists(normal_cache_path()) && fs::exists(position_cache_path());
 }
 
 }// namespace vision

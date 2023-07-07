@@ -25,7 +25,6 @@ class BakePipeline : public Pipeline {
 private:
     UVUnwrapper *_uv_unwrapper{};
     vector<BakedShape> _baked_shapes;
-    Baker _baker;
     Shader<void(uint, uint)> _display_shader;
     uint _lightmap_base_index{InvalidUI32};
 

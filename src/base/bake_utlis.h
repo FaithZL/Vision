@@ -42,10 +42,9 @@ struct BakedShape {
 private:
     Shape *_shape{};
     uint2 _resolution{};
-    RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
-    RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
+//    RegistrableBuffer<float4> _normals{Global::instance().pipeline()->resource_array()};
+//    RegistrableBuffer<float4> _positions{Global::instance().pipeline()->resource_array()};
     Texture _lightmap_tex;
-    vector<DeviceMesh> _device_meshes;
 
 public:
     BakedShape() = default;
@@ -61,8 +60,6 @@ public:
 
     OC_MAKE_MEMBER_GETTER(resolution, )
     OC_MAKE_MEMBER_GETTER(shape, )
-    OC_MAKE_MEMBER_GETTER(positions, &)
-    OC_MAKE_MEMBER_GETTER(normals, &)
     OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
 
     [[nodiscard]] float surface_offset() const noexcept {
@@ -72,25 +69,12 @@ public:
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;
-    [[nodiscard]] fs::path position_cache_path() const noexcept;
-    [[nodiscard]] fs::path normal_cache_path() const noexcept;
     [[nodiscard]] fs::path lightmap_cache_path() const noexcept;
     void allocate_lightmap_texture() noexcept;
-    [[nodiscard]] bool has_rasterization_cache() const noexcept;
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
-    template<typename Func>
-    void for_each_device_mesh(const Func &func) noexcept {
-        uint i = 0;
-        std::for_each(_device_meshes.begin(), _device_meshes.end(), [&](DeviceMesh &mesh) {
-            func(mesh, i++);
-        });
-    }
     [[nodiscard]] uint perimeter() const noexcept { return resolution().x + resolution().y; }
-    [[nodiscard]] CommandList prepare_for_rasterize() noexcept;
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
-    [[nodiscard]] CommandList load_rasterization_from_cache() const;
-    [[nodiscard]] CommandList save_rasterization_to_cache() const;
     [[nodiscard]] CommandList save_lightmap_to_cache() const;
     void setup_vertices(UnwrapperResult result);
     void normalize_lightmap_uv();

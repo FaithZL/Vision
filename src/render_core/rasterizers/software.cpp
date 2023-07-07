@@ -51,16 +51,7 @@ public:
 
     [[nodiscard]] CommandList apply(vision::BakedShape &baked_shape) noexcept override {
         CommandList ret;
-        baked_shape.for_each_device_mesh([&](DeviceMesh &device_mesh, uint index) {
-            const vision::Mesh &mesh = baked_shape.shape()->mesh_at(index);
-            for (int i = 0; i < mesh.triangles.size(); ++i) {
-                ret << _shader(device_mesh.vertices, device_mesh.triangles,
-                                  baked_shape.positions(),
-                                  baked_shape.normals(),
-                                  make_uint2(baked_shape.resolution()), i)
-                              .dispatch(baked_shape.resolution());
-            }
-        });
+
         return ret;
     }
 };

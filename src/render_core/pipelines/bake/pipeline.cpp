@@ -8,8 +8,7 @@ namespace vision {
 
 BakePipeline::BakePipeline(const PipelineDesc &desc)
     : Pipeline(desc),
-      _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)),
-      _baker() {
+      _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)) {
     create_cache_directory_if_necessary();
 }
 
@@ -90,12 +89,13 @@ void BakePipeline::compile_displayer() noexcept {
 }
 
 void BakePipeline::bake_all() noexcept {
-    _baker.allocate();
-    _baker.compile();
-//    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
-//              [&](const BakedShape &a, const BakedShape &b) {
-//                  return a.perimeter() > b.perimeter();
-//              });
+    Baker baker;
+    baker.allocate();
+    baker.compile();
+    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+              [&](const BakedShape &a, const BakedShape &b) {
+                  return a.perimeter() > b.perimeter();
+              });
 
     for (int i = 0; i < _baked_shapes.size(); ++i) {
         BakedShape &bs = _baked_shapes[i];
@@ -106,16 +106,16 @@ void BakePipeline::bake_all() noexcept {
         uint pixel_num = 0;
         auto it = iter;
         for (; it != _baked_shapes.end(); ++it) {
-            if (pixel_num + it->pixel_num() <= _baker.buffer_size()) {
+            if (pixel_num + it->pixel_num() <= baker.buffer_size()) {
                 pixel_num += it->pixel_num();
             } else {
                 break;
             }
         }
-        _baker.baking(ocarina::span(iter, it));
+        baker.baking(ocarina::span(iter, it));
         iter = it;
     }
-    stream() << _baker.deallocate()
+    stream() << baker.deallocate()
              << synchronize() << commit();
 }
 
