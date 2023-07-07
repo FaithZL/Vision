@@ -12,7 +12,6 @@ namespace vision {
 
 struct BatchMesh : public Ctx {
 private:
-    using Pixel = uint4;
     Managed<Triangle> _triangles;
     Managed<Vertex> _vertices;
     /**
@@ -21,11 +20,11 @@ private:
      * lightmap offset
      * resolution
      */
-    Buffer<Pixel> _pixels;
+    Buffer<uint4> _pixels;
     vector<uint> _triangle_nums;
     vector<uint2> _resolutions;
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
-                           Buffer<Pixel>, uint, uint, uint2);
+                           Buffer<uint4>, uint, uint, uint2);
     Shader<signature> _rasterizer;
 private:
     void append(const BakedShape &bs) noexcept;
@@ -35,7 +34,7 @@ public:
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] CommandList rasterize() const noexcept;
     void compile() noexcept;
-    void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
+    void setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept;
     OC_MAKE_MEMBER_GETTER(pixels, &)
     OC_MAKE_MEMBER_GETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER(vertices, &)
