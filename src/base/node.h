@@ -38,7 +38,7 @@ public:
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static fs::path scene_path() noexcept;
     [[nodiscard]] static Spectrum &spectrum() noexcept;
-    [[nodiscard]] Device &device() noexcept;
+    [[nodiscard]] static Device &device() noexcept;
     virtual void prepare() noexcept {}
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
