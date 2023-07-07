@@ -17,7 +17,6 @@ private:
     Buffer<float4> _final_radiance;
     BatchMesh _batch_mesh{};
     DilateFilter _dilate_filter{};
-    Shader<void(uint, Buffer<float4>, Buffer<float4>, Buffer<float4>)> _bake_shader;
     Shader<void(uint, Buffer<Triangle>, Buffer<Vertex>, Buffer<uint4>, Buffer<float4>)> _baker;
 
 private:
@@ -25,6 +24,12 @@ private:
     void _prepare(ocarina::span<BakedShape> baked_shapes) noexcept;
     void _baking() noexcept;
     void _save_result(ocarina::span<BakedShape> baked_shapes) noexcept;
+
+    /// device function
+    [[nodiscard]] tuple<Float3, Float3, Bool> fetch_geometry_data(const BufferVar<Triangle> &triangles,
+                                                           const BufferVar<Vertex> &vertices,
+                                                           const BufferVar<uint4> &pixels) noexcept;
+    /// device function
     [[nodiscard]] RayState generate_ray(const Float3 &position,
                                         const Float3 &normal, Float *pdf) const noexcept;
 

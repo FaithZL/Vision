@@ -15,6 +15,53 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
     return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
 }
 
+namespace detail {
+[[nodiscard]] Bool is_valid(const Uint &tri_id) noexcept {
+    return tri_id != InvalidUI32;
+}
+}// namespace detail
+
+tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle> &triangles,
+                                                       const BufferVar<Vertex> &vertices,
+                                                       const BufferVar<uint4> &pixels) noexcept {
+    Sampler *sampler = scene().sampler();
+    Uint4 pixel_data = pixels.read(dispatch_id());
+    Uint triangle_id = pixel_data.x;
+    Uint pixel_offset = pixel_data.y;
+    Uint2 res = pixel_data.zw();
+
+    Uint pixel_index = dispatch_id() - pixel_offset;
+
+    Uint x = pixel_index % res.x;
+    Uint y = pixel_index / res.x;
+
+    Float2 coord = make_float2(x + 0.5f, y + 0.5f);
+    Var tri = triangles.read(triangle_id);
+    Var v0 = vertices.read(tri.i);
+    Var v1 = vertices.read(tri.j);
+    Var v2 = vertices.read(tri.k);
+
+    Float2 p0 = v0->lightmap_uv();
+    Float2 p1 = v1->lightmap_uv();
+    Float2 p2 = v2->lightmap_uv();
+    Float3 n0 = v0->normal();
+    Float3 n1 = v1->normal();
+    Float3 n2 = v2->normal();
+
+    Float2 bary = barycentric(coord, p0, p1, p2);
+    Float3 norm;
+    Float3 position = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
+    $if(is_zero(n0) || is_zero(n1) || is_zero(n2)) {
+        Var v02 = v2->position() - v0->position();
+        Var v01 = v1->position() - v0->position();
+        norm = normalize(cross(v01, v02));
+    }
+    $else {
+        norm = normalize(triangle_lerp(bary, n0, n1, n2));
+    };
+    return {position, norm, detail::is_valid(triangle_id)};
+}
+
 void Baker::_compile_bake() noexcept {
     Sampler *sampler = scene().sampler();
     Integrator *integrator = scene().integrator();
@@ -22,50 +69,19 @@ void Baker::_compile_bake() noexcept {
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
         Uint4 pixel_data = pixels.read(dispatch_id());
+        sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
         Uint triangle_id = pixel_data.x;
         Uint pixel_offset = pixel_data.y;
         Uint2 res = pixel_data.zw();
-        auto is_valid = [&](const Uint &tri_id) {
-            return tri_id != InvalidUI32;
-        };
 
-        $if(!is_valid(triangle_id)) {
+        $if(!detail::is_valid(triangle_id)) {
             $return();
         };
 
-        Uint pixel_index = dispatch_id() - pixel_offset;
-
-        Uint x = pixel_index % res.x;
-        Uint y = pixel_index / res.x;
-
-        Float2 coord = make_float2(x + 0.5f, y + 0.5f);
-        Var tri = triangles.read(triangle_id);
-        Var v0 = vertices.read(tri.i);
-        Var v1 = vertices.read(tri.j);
-        Var v2 = vertices.read(tri.k);
-
-        Float2 p0 = v0->lightmap_uv();
-        Float2 p1 = v1->lightmap_uv();
-        Float2 p2 = v2->lightmap_uv();
-        Float3 n0 = v0->normal();
-        Float3 n1 = v1->normal();
-        Float3 n2 = v2->normal();
-
-        Float2 bary = barycentric(coord, p0, p1, p2);
-        Float3 norm;
-        Float3 position = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
-        $if(is_zero(n0) || is_zero(n1) || is_zero(n2)) {
-            Var v02 = v2->position() - v0->position();
-            Var v01 = v1->position() - v0->position();
-            norm = normalize(cross(v01, v02));
-        }
-        $else {
-            norm = normalize(triangle_lerp(bary, n0, n1, n2));
-        };
+        auto [position, norm, valid] = fetch_geometry_data(triangles, vertices, pixels);
 
         Float scatter_pdf;
-        sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
-        RayState rs = generate_ray(position, norm.xyz(), &scatter_pdf);
+        RayState rs = generate_ray(position, norm, &scatter_pdf);
         Interaction it;
         Float3 L = integrator->Li(rs, scatter_pdf, &it);
         Float4 result = make_float4(L, 1.f);
@@ -99,7 +115,6 @@ void Baker::_baking() noexcept {
                         .dispatch(_batch_mesh.pixel_num());
     }
 
-    
     stream() << Printer::instance().retrieve();
     stream() << _dilate_filter(_batch_mesh.pixels(),
                                _radiance, _final_radiance)
