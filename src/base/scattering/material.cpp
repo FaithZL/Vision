@@ -15,10 +15,23 @@ Uint BSDF::combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept {
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
+ScatterEval BSDF::evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
+    ScatterEval ret = bxdf_set->evaluate_local(wo, wi, flag);
+    return ret;
+}
+
+BSDFSample BSDF::sample_local(ocarina::Float3 wo, ocarina::Uint flag, vision::Sampler *sampler) const noexcept {
+    BSDFSample ret = bxdf_set->sample_local(wo, flag, sampler);
+    return ret;
+}
+
 ScatterEval BSDF::evaluate(Float3 world_wo, Float3 world_wi) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
     ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
+//    $if(!same_hemisphere(world_wo, world_wi, ng)) {
+//        ret.invalidation();
+//    };
     ret.f *= abs_cos_theta(wi);
     return ret;
 }
@@ -28,6 +41,9 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     BSDFSample ret = sample_local(wo, BxDFFlag::All, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame.to_world(ret.wi);
+//    $if(!same_hemisphere(world_wo, ret.wi, ng)) {
+//        ret.invalidation();
+//    };
     return ret;
 }
 
@@ -68,7 +84,7 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
 }
 
 namespace detail {
-void compute_by_normal_map(const Slot &normal_map, Interaction *it,const SampledWavelengths &swl) noexcept {
+void compute_by_normal_map(const Slot &normal_map, Interaction *it, const SampledWavelengths &swl) noexcept {
     Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
     float scale = 1.f;
     normal.x *= scale;
@@ -81,14 +97,14 @@ void compute_by_normal_map(const Slot &normal_map, Interaction *it,const Sampled
     it->s_uvn.y = cross(world_normal, it->s_uvn.x);
 }
 
-void compute_by_bump_map(const Slot &bump_map, Interaction *it,const SampledWavelengths &swl) noexcept {
+void compute_by_bump_map(const Slot &bump_map, Interaction *it, const SampledWavelengths &swl) noexcept {
 }
 }// namespace detail
 
-void Material::_apply_bump(Interaction *it,const SampledWavelengths &swl) const noexcept {
+void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
     switch (_bump.dim()) {
         case 1: detail::compute_by_bump_map(_bump, it, swl); break;
-        case 3: detail::compute_by_normal_map(_bump, it,swl); break;
+        case 3: detail::compute_by_normal_map(_bump, it, swl); break;
         default: break;
     }
 }

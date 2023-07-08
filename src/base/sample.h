@@ -57,6 +57,7 @@ public:
     ScatterEval(const SampledSpectrum &f, const Float &pdf) : f(f), pdf(pdf) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
+    void invalidation() noexcept { pdf = 0; }
 };
 
 struct LightEval {
@@ -69,14 +70,13 @@ public:
     LightEval(const SampledSpectrum &L, const Float &pdf) : L(L), pdf(pdf) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return L / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
+    void invalidation() noexcept { pdf = 0; }
 };
 
 struct SampledDirection {
     Float3 wi;
     Float pdf{1.f};
-    [[nodiscard]] Bool valid() const noexcept {
-        return pdf > 0;
-    }
+    [[nodiscard]] Bool valid() const noexcept {return pdf > 0;}
 };
 
 struct ScatterSample {
@@ -87,9 +87,8 @@ public:
 public:
     explicit ScatterSample(uint dim) noexcept
         : eval(dim), wi(make_float3(0.f)) {}
-    [[nodiscard]] Bool valid() const noexcept {
-        return eval.valid();
-    }
+    [[nodiscard]] Bool valid() const noexcept { return eval.valid(); }
+    void invalidation() noexcept { eval.invalidation(); }
     virtual ~ScatterSample() = default;
 };
 

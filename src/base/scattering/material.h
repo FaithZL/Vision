@@ -34,12 +34,8 @@ public:
     UP<BxDFSet> bxdf_set{};
 
 protected:
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
-        return bxdf_set->evaluate_local(wo, wi, flag);
-    }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
-        return bxdf_set->sample_local(wo, flag, sampler);
-    }
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept;
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept;
 
 public:
     BSDF() = delete;

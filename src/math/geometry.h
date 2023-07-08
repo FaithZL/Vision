@@ -201,11 +201,16 @@ requires is_vector3_expr_v<T>
     return Frame<T>(x, y, cross(x, y));
 }
 
-
 template<typename T, typename U>
 requires is_vector3_expr_v<T> && is_vector3_expr_v<U>
 [[nodiscard]] condition_t<bool, T, U> same_hemisphere(const T &w1, const U &w2) noexcept {
     return w1.z * w2.z > 0;
+}
+
+template<typename T, typename U, typename V>
+requires is_all_vector3_expr_v<T, U, V>
+[[nodiscard]] condition_t<bool, T, U, V> same_hemisphere(const T &w1, const U &w2, const V &n) noexcept {
+    return dot(w1, n) * dot(w2, n) > 0;
 }
 
 }// namespace geometry
