@@ -67,7 +67,14 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
     });
 }
 
+void Material::_apply_bump(Interaction *it) const noexcept {
+
+}
+
 BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept {
+    if (_bump) {
+        _apply_bump(&it);
+    }
     return _compute_BSDF(it, swl);
 }
 

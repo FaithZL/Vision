@@ -77,7 +77,6 @@ protected:
         uint num{0u};
     };
     SlotCursor _slot_cursor;
-    UP<BSDF> _bsdf{};
 
     const Slot &get_slot(uint index) const noexcept {
         const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
@@ -157,6 +156,7 @@ public:
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+    virtual void _apply_bump(Interaction *it) const noexcept;
     [[nodiscard]] virtual BSDF _compute_BSDF(const Interaction &it,
                                              const SampledWavelengths &swl) const noexcept = 0;
 
