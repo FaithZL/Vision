@@ -26,6 +26,12 @@ struct BxDFFlag {
     static constexpr uint SpecRefl = Specular | Reflection;
     static constexpr uint SpecTrans = Specular | Transmission;
     static constexpr uint All = Diffuse | Glossy | Specular | Reflection | Transmission | NearSpec;
+
+    static Bool is_reflection(const Uint &f) noexcept { return f & Reflection; }
+    static Bool is_transmission(const Uint &f) noexcept { return f & Transmission; }
+    static Bool is_diffuse(const Uint &f) noexcept { return f & Diffuse; }
+    static Bool is_glossy(const Uint &f) noexcept { return f & Glossy; }
+    static Bool is_specular(const Uint &f) noexcept { return f & Specular; }
 };
 
 struct RayState {
@@ -55,7 +61,7 @@ public:
 
 public:
     explicit ScatterEval(uint dim) : f(dim), pdf{0.f} {};
-    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdf(pdf),flags(flags) {}
+    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdf(pdf), flags(flags) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
     void invalidation() noexcept { pdf = 0; }

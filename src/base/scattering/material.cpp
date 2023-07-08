@@ -29,9 +29,8 @@ ScatterEval BSDF::evaluate(Float3 world_wo, Float3 world_wi) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
     ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
-    $if(!same_hemisphere(world_wo, world_wi, ng)) {
-//        ret.invalidation();
-    };
+    Bool discard = same_hemisphere(world_wo, world_wi, ng) == BxDFFlag::is_transmission(ret.flags);
+    ret.pdf = select(discard, 0.f, ret.pdf);
     ret.f *= abs_cos_theta(wi);
     return ret;
 }
@@ -41,9 +40,8 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     BSDFSample ret = sample_local(wo, BxDFFlag::All, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame.to_world(ret.wi);
-    $if(!same_hemisphere(world_wo, ret.wi, ng)) {
-//        ret.invalidation();
-    };
+    Bool discard = same_hemisphere(world_wo, ret.wi, ng) == BxDFFlag::is_transmission(ret.eval.flags);
+    ret.eval.pdf = select(discard, 0.f, ret.eval.pdf);
     return ret;
 }
 
