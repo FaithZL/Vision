@@ -67,6 +67,9 @@ public:
     using Desc = MaterialDesc;
 
 protected:
+    Slot _bump{};
+
+protected:
     static constexpr uint stride = sizeof(Slot);
     struct SlotCursor {
         // The offset of the first slot in the object
@@ -103,26 +106,35 @@ public:
     template<typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
+        if (_bump.node()) {
+            ret = OC_FORWARD(func)(ret, _bump);
+        }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
-            ret = func(ret, slot);
+            ret = OC_FORWARD(func)(ret, slot);
         }
         return ret;
     }
 
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
+        if (_bump.node()) {
+            OC_FORWARD(func)(_bump);
+        }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
-            func(slot);
+            OC_FORWARD(func)(slot);
         }
     }
 
     template<typename F>
     void for_each_slot(F &&func) noexcept {
+        if (_bump.node()) {
+            OC_FORWARD(func)(_bump);
+        }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             Slot &slot = get_slot(i);
-            func(slot);
+            OC_FORWARD(func)(slot);
         }
     }
 
