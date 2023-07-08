@@ -35,7 +35,8 @@ public:
     explicit NullMaterial(const MaterialDesc &desc)
         : Material(desc) {}
 
-    [[nodiscard]] BSDF compute_BSDF(const Interaction &it,
+protected:
+    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it,
                                     const SampledWavelengths &swl) const noexcept override {
         return BSDF(it, make_unique<NullBxDFSet>(swl));
     }

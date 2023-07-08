@@ -92,7 +92,8 @@ public:
         _scale->prepare();
     }
 
-    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+protected:
+    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         BSDF b0 = _mat0->compute_BSDF(it, swl);
         BSDF b1 = _mat1->compute_BSDF(it, swl);
         Float scale = _scale.evaluate(it, swl)[0];

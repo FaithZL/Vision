@@ -560,7 +560,8 @@ public:
         init_slot_cursor(&_color, &_diff_trans);
     }
 
-    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+protected:
+    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return BSDF(it, make_unique<PrincipledBxDFSet>(it, swl, pipeline(), _color, _metallic,
                                                             _eta, _roughness, _spec_tint, _anisotropic,
                                                             _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,

@@ -95,7 +95,8 @@ public:
         }
     }
 
-    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+protected:
+    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         if (_sigma) {
             Float sigma = _sigma.evaluate(it, swl).as_scalar();

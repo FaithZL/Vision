@@ -133,7 +133,8 @@ public:
         $if(uc < fr) {
             ret = _refl.sample_wi(wo, sampler->next_2d(), fresnel);
             ret.pdf = fr;
-        } $else {
+        }
+        $else {
             ret = _trans.sample_wi(wo, sampler->next_2d(), fresnel);
             ret.pdf = 1 - fr;
         };
@@ -197,7 +198,8 @@ public:
         _ior->prepare();
     }
 
-    [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+protected:
+    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
         Float ior = _ior.evaluate(it, swl).as_scalar();
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();

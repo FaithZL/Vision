@@ -121,12 +121,14 @@ public:
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
         if (_bump) {
-            OC_FORWARD(func)(_bump);
+            OC_FORWARD(func)
+            (_bump);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
             if (slot) {
-                OC_FORWARD(func)(slot);
+                OC_FORWARD(func)
+                (slot);
             }
         }
     }
@@ -134,12 +136,14 @@ public:
     template<typename F>
     void for_each_slot(F &&func) noexcept {
         if (_bump) {
-            OC_FORWARD(func)(_bump);
+            OC_FORWARD(func)
+            (_bump);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             Slot &slot = get_slot(i);
             if (slot) {
-                OC_FORWARD(func)(slot);
+                OC_FORWARD(func)
+                (slot);
             }
         }
     }
@@ -150,11 +154,13 @@ public:
     void encode(RegistrableManaged<float> &data) const noexcept override;
     void decode(const DataAccessor<float> *da) const noexcept override;
 
+protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+    [[nodiscard]] virtual BSDF _compute_BSDF(const Interaction &it,
+                                             const SampledWavelengths &swl) const noexcept = 0;
 
 public:
-    [[nodiscard]] virtual BSDF compute_BSDF(const Interaction &it,
-                                            const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] BSDF compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept;
 };
 }// namespace vision
