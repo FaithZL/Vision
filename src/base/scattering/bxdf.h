@@ -31,15 +31,15 @@ using namespace ocarina;
 
 class BxDF {
 protected:
-    uint _flag{};
+    uint _flags{};
     const SampledWavelengths *_swl{};
 
 public:
     BxDF() = default;
-    explicit BxDF(const SampledWavelengths &swl, uchar flag = BxDFFlag::Unset) : _flag(flag), _swl(&swl) {}
+    explicit BxDF(const SampledWavelengths &swl, uint flag) : _flags(flag), _swl(&swl) {}
     BxDF(const BxDF &other) = default;
     BxDF &operator=(const BxDF &other) noexcept {
-        _flag = other._flag;
+        _flags = other._flags;
         _swl = other._swl;
         return *this;
     }
@@ -53,9 +53,9 @@ public:
     [[nodiscard]] virtual ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] Uint flag() const noexcept { return _flag; }
+    [[nodiscard]] Uint flags() const noexcept { return _flags; }
     [[nodiscard]] Bool match_flag(Uint bxdf_flag) const noexcept {
-        return ((_flag & bxdf_flag) == _flag);
+        return ((_flags & bxdf_flag) == _flags);
     }
     virtual ~BxDF() = default;
 };
