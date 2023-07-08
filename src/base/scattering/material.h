@@ -90,7 +90,7 @@ protected:
     }
 
 public:
-    explicit Material(const MaterialDesc &desc) : Node(desc) {}
+    explicit Material(const MaterialDesc &desc);
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
         uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
         _slot_cursor.offset = offset;

@@ -69,6 +69,9 @@ public:
         _parameter.set_value(OC_FORWARD(args)...);
     }
     void set_parameter(const ParameterSet &ps) noexcept;
+    [[nodiscard]] bool has_attr(const string &key) const noexcept {
+        return _parameter.contains(key);
+    }
     virtual void init(const ParameterSet &ps) noexcept {
         if (ps.data().is_object())
             name = ps["name"].as_string();

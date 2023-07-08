@@ -165,12 +165,13 @@ public:
         return ParameterSet(_data.value(key, data), key);
     }
 
-    OC_NODISCARD bool contains(const std::string &key) const {
-        return _data.contains(key);
-    }
-
     OC_NODISCARD ParameterSet operator[](uint i) const {
         return ParameterSet(_data[i]);
+    }
+
+    template<typename ...Args>
+    [[nodiscard]] bool contains(Args &&...args) const noexcept {
+        return _data.contains(OC_FORWARD(args)...);
     }
 
     template<typename T>

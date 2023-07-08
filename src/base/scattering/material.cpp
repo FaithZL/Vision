@@ -31,6 +31,12 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     return ret;
 }
 
+Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
+    if (desc.has_attr("bump")) {
+        _bump = scene().create_slot(desc.slot("bump", 1.f, Number));
+    }
+}
+
 uint Material::element_num() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
         return size + slot->element_num();
