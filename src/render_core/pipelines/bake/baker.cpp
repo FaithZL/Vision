@@ -25,6 +25,7 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
                                                        const BufferVar<Vertex> &vertices,
                                                        const BufferVar<uint4> &pixels) noexcept {
     Sampler *sampler = scene().sampler();
+    Filter *filter = scene().camera()->filter();
     Uint4 pixel_data = pixels.read(dispatch_id());
     Uint triangle_id = pixel_data.x;
     Uint pixel_offset = pixel_data.y;
@@ -37,9 +38,7 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
 
         Uint x = pixel_index % res.x;
         Uint y = pixel_index / res.x;
-        Float2 u = sampler->next_2d();
-        // todo Handle the case coord outside the triangle
-        Float2 coord = make_float2(x + u.x, y + u.y);
+
         Var tri = triangles.read(triangle_id);
         Var v0 = vertices.read(tri.i);
         Var v1 = vertices.read(tri.j);
@@ -52,7 +51,11 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
         Float3 n1 = v1->normal();
         Float3 n2 = v2->normal();
 
+        Float2 u = sampler->next_2d();
+        // todo Handle the case coord outside the triangle
+        Float2 coord = make_float2(x + u.x, y + u.y);
         Float2 bary = barycentric(coord, p0, p1, p2);
+
         position = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
         $if(is_zero(n0) || is_zero(n1) || is_zero(n2)) {
             Var v02 = v2->position() - v0->position();

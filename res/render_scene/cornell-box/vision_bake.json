@@ -796,8 +796,8 @@
 				"param" : {
 					"sigma" : 1,
 					"radius" : [
-						1.0,
-						1.0
+						2.0,
+						2.0
 					]
 				}
 			}
@@ -955,7 +955,7 @@
 	},
 	"pipeline" : {
 //		"type" : "bake"
-//		"type" : "offline"
+//		"type" : "real_time"
 	},
 	"output" : {
 		"spp" : 0,
