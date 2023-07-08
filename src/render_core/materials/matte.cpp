@@ -89,7 +89,7 @@ private:
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
-        init_slot_cursor(&_color, 3);
+        init_slot_cursor(&_color, 2);
         if (desc.has_attr("sigma")) {
             _sigma = scene().create_slot(desc.slot("sigma", 1.f, Number));
         }
