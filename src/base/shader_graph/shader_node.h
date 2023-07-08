@@ -51,7 +51,7 @@ private:
     uint _channel_mask{};
 
 private:
-    [[nodiscard]] uint _calculate_mask(string channels) noexcept;
+    [[nodiscard]] static uint _calculate_mask(string channels) noexcept;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 

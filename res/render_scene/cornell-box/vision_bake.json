@@ -484,6 +484,16 @@
 			"type" : "matte",
 			"name" : "Floor",
 			"param" : {
+				"bump": {
+					"channels" : "xyz",
+					"node" : {
+						"type" : "image",
+						"param" : {
+							"fn" : "textures/brickwall_normal.jpg",
+							"color_space" : "srgb"
+						}
+					}
+				},
 				"color" : [
 					0.725,
 					0.71,
