@@ -63,7 +63,7 @@ public:
 
     [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi) const noexcept {
         Float val = f(wo, wi);
-        return {{_swl->dimension(), val}, val};
+        return {{_swl->dimension(), val}, val, 0};
     }
     [[nodiscard]] virtual PhaseSample sample(Float3 wo, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;

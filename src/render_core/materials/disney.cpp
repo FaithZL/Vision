@@ -187,7 +187,6 @@ public:
         BSDFSample ret{swl().dimension()};
         ret.eval = safe_evaluate(wo, wi, nullptr);
         ret.wi = wi;
-        ret.flags = BxDFFlag::GlossyRefl;
         return ret;
     }
 };

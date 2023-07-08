@@ -50,11 +50,12 @@ struct RaySample {
 struct ScatterEval {
 public:
     SampledSpectrum f{};
+    Uint flags{BxDFFlag::Unset};
     Float pdf{0.f};
 
 public:
     explicit ScatterEval(uint dim) : f(dim), pdf{0.f} {};
-    ScatterEval(const SampledSpectrum &f, const Float &pdf) : f(f), pdf(pdf) {}
+    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdf(pdf),flags(flags) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
     void invalidation() noexcept { pdf = 0; }
@@ -76,7 +77,7 @@ public:
 struct SampledDirection {
     Float3 wi;
     Float pdf{1.f};
-    [[nodiscard]] Bool valid() const noexcept {return pdf > 0;}
+    [[nodiscard]] Bool valid() const noexcept { return pdf > 0; }
 };
 
 struct ScatterSample {
@@ -98,7 +99,6 @@ struct PhaseSample : public ScatterSample {
 
 struct BSDFSample : public ScatterSample {
 public:
-    Uint flags{BxDFFlag::Unset};
     Float eta{1.f};
 
 public:

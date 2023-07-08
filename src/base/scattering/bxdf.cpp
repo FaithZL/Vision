@@ -15,7 +15,7 @@ Float BxDF::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
 }
 
 ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    return {f(wo, wi, fresnel), PDF(wo, wi, fresnel)};
+    return {f(wo, wi, fresnel), PDF(wo, wi, fresnel), flag()};
 }
 
 Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
@@ -27,6 +27,7 @@ ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const
     Bool s = safe(wo, wi);
     ret.f = select(s, f(wo, wi, fresnel), 0.f);
     ret.pdf = select(s, PDF(wo, wi, fresnel), 1.f);
+    ret.flags = flag();
     return ret;
 }
 
@@ -70,7 +71,6 @@ BSDFSample MicrofacetReflection::sample(Float3 wo, Sampler *sampler, SP<Fresnel>
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel);
     ret.wi = wi;
-    ret.flags = flag();
     return ret;
 }
 
@@ -108,7 +108,6 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Sampler *sampler, SP<Fresne
     ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
     ret.eta = fresnel->eta()[0];
-    ret.flags = flag();
     return ret;
 }
 
