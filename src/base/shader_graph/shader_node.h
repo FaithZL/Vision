@@ -72,6 +72,8 @@ public:
                                         const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
     [[nodiscard]] float luminance() const noexcept;
+    [[nodiscard]] bool valid() const noexcept { return _node != nullptr; }
+    [[nodiscard]] explicit operator bool() const noexcept { return valid(); }
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,

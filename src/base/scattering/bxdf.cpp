@@ -45,11 +45,6 @@ BSDFSample BxDF::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const 
     return ret;
 }
 
-// LambertReflection
-SampledSpectrum LambertReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    return Kr * InvPi;
-}
-
 // MicrofacetReflection
 SampledSpectrum MicrofacetReflection::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = normalize(wo + wi);
