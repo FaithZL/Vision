@@ -25,7 +25,7 @@ public:
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return pipeline()->tex(*_tex_id).sample(3, ctx.uv);
+        return pipeline()->tex(*_tex_id).sample(4, ctx.uv);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return _image_wrapper.image().average_vector();
