@@ -36,8 +36,26 @@ public:
         A = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
         B = 0.45f * sigma2 / (sigma2 + 0.09f);
     }
+    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return R; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        return R * InvPi;
+        Float sin_theta_i = sin_theta(wi);
+        Float sin_theta_o = sin_theta(wo);
+
+        Float sin_phi_i = sin_phi(wi);
+        Float cos_phi_i = cos_phi(wi);
+        Float sin_phi_o = sin_phi(wo);
+        Float cos_phi_o = cos_phi(wo);
+        Float d_cos = cos_phi_i * cos_phi_o + sin_phi_i * sin_phi_o;
+
+        Float max_cos = ocarina::max(0.f, d_cos);
+
+        Bool cond = abs_cos_theta(wi) > abs_cos_theta(wo);
+        Float sin_alpha = select(cond, sin_theta_o, sin_theta_i);
+        Float tan_beta = select(cond, sin_theta_i/ abs_cos_theta(wi),
+                                sin_theta_o / abs_cos_theta(wo));
+
+
+        return R * InvPi * (A + B * max_cos * sin_alpha * tan_beta);
     }
 };
 
@@ -48,6 +66,8 @@ private:
 public:
     MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
         : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}
+    MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+        : _bxdf(std::make_unique<OrenNayar>(R, sigma, swl)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
@@ -64,21 +84,23 @@ public:
 class MatteMaterial : public Material {
 private:
     Slot _color{};
-    Slot A{};
-    Slot B{};
+    Slot _sigma{};
 
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
         init_slot_cursor(&_color, 3);
-        if (desc.has_attr("A") && desc.has_attr("B")) {
-            A = scene().create_slot(desc.slot("A", 1.f, Number));
-            B = scene().create_slot(desc.slot("B", 1.f, Number));
+        if (desc.has_attr("sigma")) {
+            _sigma = scene().create_slot(desc.slot("sigma", 1.f, Number));
         }
     }
 
     [[nodiscard]] BSDF compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
+        if (_sigma) {
+            Float sigma = _sigma.evaluate(it, swl).as_scalar();
+            return BSDF(it, make_unique<MatteBxDFSet>(kr, sigma, swl));
+        }
         return BSDF(it, make_unique<MatteBxDFSet>(kr, swl));
     }
 };

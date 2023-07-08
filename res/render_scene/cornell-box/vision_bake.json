@@ -494,6 +494,7 @@
 						}
 					}
 				},
+				"sigma" : 1.0,
 				"color" : [
 					0.725,
 					0.71,
@@ -970,6 +971,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "hero3-CPU.png"
+		"fn" : "sigma1.png"
 	}
 }
