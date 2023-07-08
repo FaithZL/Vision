@@ -68,7 +68,7 @@ private:
 public:
     MicrofacetReflection() = default;
     MicrofacetReflection(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::Reflection), Kr(color),
+        : BxDF(swl, BxDFFlag::GlossyRefl), Kr(color),
           _microfacet(m) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
@@ -86,7 +86,7 @@ private:
 public:
     MicrofacetTransmission() = default;
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::Transmission), Kt(color), _microfacet(m) {}
+        : BxDF(swl, BxDFFlag::GlossyTrans), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kt; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;

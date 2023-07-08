@@ -85,14 +85,14 @@ SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fres
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
     SampledSpectrum tr = _microfacet->BTDF(wo, wh, wi, SampledSpectrum(F.dimension(), 1.f) - F, eta);
-    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, tr * Kt);
+    return select(same_hemisphere(wo, wi, wh), 0.f, tr * Kt);
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     Float eta = fresnel->eta()[0];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
-    return select(dot(wo, wh) * dot(wi, wh) > 0, 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
+    return select(same_hemisphere(wo, wi, wh), 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
 }
 
 SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
