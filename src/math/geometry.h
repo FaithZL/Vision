@@ -189,6 +189,19 @@ public:
     }
 };
 
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] Frame<T> frame_from_xz(const T &x, const T &z) noexcept {
+    return Frame<T>(x, cross(x, z), z);
+}
+
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] Frame<T> frame_from_xy(const T &x, const T &y) noexcept {
+    return Frame<T>(x, y, cross(x, y));
+}
+
+
 template<typename T, typename U>
 requires is_vector3_expr_v<T> && is_vector3_expr_v<U>
 [[nodiscard]] condition_t<bool, T, U> same_hemisphere(const T &w1, const U &w2) noexcept {

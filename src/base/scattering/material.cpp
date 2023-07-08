@@ -67,13 +67,35 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
     });
 }
 
-void Material::_apply_bump(Interaction *it) const noexcept {
+namespace detail {
+void compute_by_normal_map(const Slot &normal_map, Interaction *it,const SampledWavelengths &swl) noexcept {
+    Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
+    float scale = 1.f;
+    normal.x *= scale;
+    normal.y *= scale;
+    normal.z = safe_sqrt(1 - length_squared(normal.xy()));
+    Float3 world_normal = it->s_uvn.to_world(normal);
+    world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
+    it->s_uvn.z = world_normal;
+    it->s_uvn.x = normalize(cross(world_normal, it->s_uvn.y));
+    it->s_uvn.y = cross(world_normal, it->s_uvn.x);
+}
 
+void compute_by_bump_map(const Slot &bump_map, Interaction *it,const SampledWavelengths &swl) noexcept {
+}
+}// namespace detail
+
+void Material::_apply_bump(Interaction *it,const SampledWavelengths &swl) const noexcept {
+    switch (_bump.dim()) {
+        case 1: detail::compute_by_bump_map(_bump, it, swl); break;
+        case 3: detail::compute_by_normal_map(_bump, it,swl); break;
+        default: break;
+    }
 }
 
 BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept {
     if (_bump) {
-        _apply_bump(&it);
+        _apply_bump(&it, swl);
     }
     return _compute_BSDF(it, swl);
 }
