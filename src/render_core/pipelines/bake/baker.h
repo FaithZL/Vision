@@ -14,17 +14,23 @@ namespace vision {
     void add_##task##_time(double t) noexcept { task##_time += t; }
 #define VS_PLUS_TASK_TIME(task) +task##_time
 #define VS_CLEAR_TIME(task) task##_time = 0;
-#define VS_TIME_PERCENT(task) \
-    [[nodiscard]] double task##_time_percent() noexcept { return task##_time / total_time(); }
+#define VS_MAKE_GET_TIME_STR(task)                                           \
+    [[nodiscard]] string get_##task##_stats_str() const noexcept {           \
+        return ocarina::format("{} {}", task##_time, task##_time_percent()); \
+    }
 
-#define MAKE_TIME_FUNC(...)                           \
-    MAP(MAKE_ADD_TIME_FUNC, __VA_ARGS__)              \
-    MAP(VS_TIME_PERCENT, __VA_ARGS__)                 \
-    [[nodiscard]] double total_time() noexcept {      \
-        return 0 MAP(VS_PLUS_TASK_TIME, __VA_ARGS__); \
-    }                                                 \
-    void clear_time() noexcept {                      \
-        MAP(VS_CLEAR_TIME, __VA_ARGS__)               \
+#define VS_TIME_PERCENT(task) \
+    [[nodiscard]] double task##_time_percent() const noexcept { return task##_time / total_time(); }
+
+#define MAKE_TIME_FUNC(...)                            \
+    MAP(MAKE_ADD_TIME_FUNC, __VA_ARGS__)               \
+    MAP(VS_TIME_PERCENT, __VA_ARGS__)                  \
+    MAP(VS_MAKE_GET_TIME_STR, __VA_ARGS__)             \
+    [[nodiscard]] double total_time() const noexcept { \
+        return 0 MAP(VS_PLUS_TASK_TIME, __VA_ARGS__);  \
+    }                                                  \
+    void clear_time() noexcept {                       \
+        MAP(VS_CLEAR_TIME, __VA_ARGS__)                \
     }
 struct BakerStats {
 public:
@@ -49,7 +55,6 @@ public:
                                "{} sample per pixel, total sample num is {}",
                                model_num, pixel_num, batch_num, spp, spp * pixel_num);
     }
-
 };
 #undef MAKE_TIME_FUNC
 #undef VS_CLEAR_TIME
