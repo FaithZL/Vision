@@ -83,6 +83,15 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
 }
 
 namespace detail {
+
+[[nodiscard]] Float3 clamp_ns(Float3 ns, Float3 ng, Float3 w) {
+    Float3 w_refl = reflect(w, ns);
+    Printer::instance().info("l {}", length(w_refl));
+    Float3 w_refl_clip = select(same_hemisphere(w, w_refl, ng), w_refl,
+                                normalize(w_refl - ng * dot(w_refl, ng)));
+    return normalize(w_refl_clip + w);
+}
+
 void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
     Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
     Float s = scale.evaluate(*it, swl).as_scalar();
@@ -90,6 +99,7 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
     normal.y *= s;
     Float3 world_normal = it->s_uvn.to_world(normal);
     world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
+    world_normal = clamp_ns(world_normal, it->g_uvn.normal(), it->wo);
     it->s_uvn.z = world_normal;
     it->s_uvn.x = normalize(cross(world_normal, it->s_uvn.y));
     it->s_uvn.y = cross(world_normal, it->s_uvn.x);
