@@ -98,11 +98,11 @@ public:
     Float3 pos;
     Float3 wo;
     Float3 time;
-    Float3 ng;
 
     Float2 uv;
     Float2 lightmap_uv;
-    PartialDerivative<Float3> s_uvn;
+    PartialDerivative<Float3> s_pd;
+    PartialDerivative<Float3> g_pd;
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
     Uint lightmap_id{InvalidUI32};
@@ -139,7 +139,7 @@ public:
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
-        return vision::spawn_ray_to(pos, ng, p);
+        return vision::spawn_ray_to(pos, g_pd.normal(), p);
     }
 };
 
@@ -151,7 +151,7 @@ struct SpacePoint {
     SpacePoint(const Float3 &p, const Float3 &n)
         : pos(p), ng(n) {}
     explicit SpacePoint(const Interaction &it)
-        : pos(it.pos), ng(it.ng) {}
+        : pos(it.pos), ng(it.g_pd.normal()) {}
 
     [[nodiscard]] Float3 robust_pos(const Float3 &dir) const noexcept {
         Float factor = select(dot(ng, dir) > 0, 1.f, -1.f);
@@ -199,7 +199,7 @@ struct LightSampleContext : public SpacePoint {
     Float3 ns;
     LightSampleContext() = default;
     LightSampleContext(const Interaction &it)
-        : SpacePoint(it), ns(it.s_uvn.normal()) {}
+        : SpacePoint(it), ns(it.s_pd.normal()) {}
     LightSampleContext(Float3 p, Float3 ng, Float3 ns)
         : SpacePoint{p, ng}, ns(ns) {}
 };
@@ -222,9 +222,9 @@ struct MaterialEvalContext : public AttrEvalContext {
     MaterialEvalContext(const Interaction &it)
         : AttrEvalContext(it),
           wo(it.wo),
-          ng(it.ng),
-          ns(it.s_uvn.normal()),
-          dp_dus(it.s_uvn.dp_du()) {}
+          ng(it.g_pd.normal()),
+          ns(it.s_pd.normal()),
+          dp_dus(it.s_pd.dp_du()) {}
 };
 
 }// namespace vision

@@ -40,10 +40,10 @@ protected:
 public:
     BSDF() = delete;
     explicit BSDF(const Interaction &it)
-        : shading_frame(it.s_uvn), ng(it.ng) {}
+        : shading_frame(it.s_pd), ng(it.g_pd.normal()) {}
 
     explicit BSDF(const Interaction &it, UP<BxDFSet> &&bxdf_set)
-        : shading_frame(it.s_uvn), ng(it.ng), bxdf_set(ocarina::move(bxdf_set)) {}
+        : shading_frame(it.s_pd), ng(it.g_pd.normal()), bxdf_set(ocarina::move(bxdf_set)) {}
 
     void regularize() noexcept { bxdf_set->regularize(); }
     void mollify() noexcept { bxdf_set->mollify(); }

@@ -61,22 +61,22 @@ Uint Interaction::light_type_id() const noexcept {
 }
 
 OCRay Interaction::spawn_ray(const Float3 &dir) const noexcept {
-    return vision::spawn_ray(pos, ng, dir);
+    return vision::spawn_ray(pos, g_pd.normal(), dir);
 }
 
 OCRay Interaction::spawn_ray(const Float3 &dir, const Float &t) const noexcept {
-    return vision::spawn_ray(pos, ng, dir, t);
+    return vision::spawn_ray(pos, g_pd.normal(), dir, t);
 }
 
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
-    OCRay ray = vision::spawn_ray(pos, ng, dir);
-    Uint medium = select(dot(ng, dir) > 0, mi.outside, mi.inside);
+    OCRay ray = vision::spawn_ray(pos, g_pd.normal(), dir);
+    Uint medium = select(dot(g_pd.normal(), dir) > 0, mi.outside, mi.inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
 RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
-    OCRay ray = vision::spawn_ray_to(pos, ng, p);
-    Uint medium = select(dot(ng, ray->direction()) > 0, mi.outside, mi.inside);
+    OCRay ray = vision::spawn_ray_to(pos, g_pd.normal(), p);
+    Uint medium = select(dot(g_pd.normal(), ray->direction()) > 0, mi.outside, mi.inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 

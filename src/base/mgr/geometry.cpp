@@ -116,8 +116,6 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     it.pos = pos;
     it.lightmap_uv = hit->lerp(v0->lightmap_uv(), v1->lightmap_uv(), v2->lightmap_uv());
 
-    Frame<Float3> frame;
-
     comment("compute geometry uvn");
     Float3 dp02 = p0 - p2;
     Float3 dp12 = p1 - p2;
@@ -138,20 +136,20 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
             dp_du = normalize(p1 - p0);
             dp_dv = normalize(p2 - p0);
         };
-        frame.set(dp_du, dp_dv, normalize(ng_un));
+        it.g_pd.set(dp_du, dp_dv, normalize(ng_un));
     } else {
-        frame.set(dp02, dp12, normalize(ng_un));
+        it.g_pd.set(dp02, dp12, normalize(ng_un));
     }
 
     if (is_complete) {
         comment("compute shading uvn");
         Float3 dn_du, dn_dv;
         Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
-        it.s_uvn.set_frame(frame);
+        it.s_pd = it.g_pd;
 
         $if(!is_zero(normal)) {
             Float3 ns = normalize(o2w.apply_normal(normal));
-            it.s_uvn.update(ns);
+            it.s_pd.update(ns);
         };
 
         Float3 dn1 = v0->normal() - v2->normal();
@@ -171,12 +169,11 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
             dn_du = (duv12[1] * dn1 - duv02[1] * dn2) * inv_det;
             dn_dv = (-duv12[0] * dn1 + duv02[0] * dn2) * inv_det;
         };
-        it.s_uvn.dn_du = dn_du;
-        it.s_uvn.dn_dv = dn_dv;
+        it.s_pd.dn_du = dn_du;
+        it.s_pd.dn_dv = dn_dv;
     }
     Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
     it.uv = uv;
-    it.ng = frame.z;
     return it;
 }
 

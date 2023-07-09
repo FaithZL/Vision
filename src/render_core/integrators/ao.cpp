@@ -49,11 +49,11 @@ public:
                     wi = square_to_hemisphere(sampler->next_2d());
                     pdf = uniform_hemisphere_PDF();
                 }
-                it.s_uvn.z = face_forward(it.s_uvn.normal(), -rs.direction());
-                wi = it.s_uvn.to_world(wi);
+                it.s_pd.z = face_forward(it.s_pd.normal(), -rs.direction());
+                wi = it.s_pd.to_world(wi);
                 Bool occ = geom.trace_any(it.spawn_ray(wi, *_distance));
                 $if(!occ) {
-                    L += dot(wi, it.s_uvn.normal()) / (pdf * *_sample_num);
+                    L += dot(wi, it.s_pd.normal()) / (pdf * *_sample_num);
                 };
             };
             $break;
@@ -100,11 +100,11 @@ public:
                         wi = square_to_hemisphere(sampler->next_2d());
                         pdf = uniform_hemisphere_PDF();
                     }
-                    it.s_uvn.z = face_forward(it.s_uvn.normal(), -rs.direction());
-                    wi = it.s_uvn.to_world(wi);
+                    it.s_pd.z = face_forward(it.s_pd.normal(), -rs.direction());
+                    wi = it.s_pd.to_world(wi);
                     Bool occ = geom.trace_any(it.spawn_ray(wi, *_distance));
                     $if(!occ) {
-                        L += dot(wi, it.s_uvn.normal()) / (pdf * *_sample_num);
+                        L += dot(wi, it.s_pd.normal()) / (pdf * *_sample_num);
                     };
                 };
                 $break;

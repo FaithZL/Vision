@@ -96,14 +96,19 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
     Float s = scale.evaluate(*it, swl).as_scalar();
     normal.x *= s;
     normal.y *= s;
-    Float3 world_normal = it->s_uvn.to_world(normal);
+    Float3 world_normal = it->s_pd.to_world(normal);
     world_normal = normalize(world_normal);
-    world_normal = clamp_ns(world_normal, it->ng, it->wo);
-    world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
-    it->s_uvn.update(world_normal);
+    world_normal = clamp_ns(world_normal, it->g_pd.normal(), it->wo);
+    world_normal = normalize(face_forward(world_normal, it->s_pd.normal()));
+    it->s_pd.update(world_normal);
 }
 
 void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
+    Interaction it_eval = *it;
+    Float du = 0.0005f;
+    it_eval.pos = it->pos + du * it->s_pd.dp_du();
+    it_eval.uv = it->uv + make_float2(du, 0.f);
+//    it_eval.ng = normalize(cross(it->s_uvn.dp_du(), it->s_uvn.dp_dv()) + du * it->s_uvn)
 }
 }// namespace detail
 
