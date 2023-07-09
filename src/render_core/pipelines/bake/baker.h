@@ -13,10 +13,16 @@ namespace vision {
 #define MAKE_ADD_TIME_FUNC(task) \
     void add_##task##_time(double t) noexcept { task##_time += t; }
 #define VS_PLUS_TASK_TIME(task) +task##_time
+#define VS_PLUS_TASK_TIME_STR(task) +get_##task##_stats_str()
 #define VS_CLEAR_TIME(task) task##_time = 0;
-#define VS_MAKE_GET_TIME_STR(task)                                           \
-    [[nodiscard]] string get_##task##_stats_str() const noexcept {           \
-        return ocarina::format("{} {}", task##_time, task##_time_percent()); \
+#define VS_MAKE_GET_TIME_STR(task)                                    \
+    [[nodiscard]] string get_##task##_stats_str() const noexcept {    \
+        return ocarina::format(#task " time is {}, percent is {} \n", \
+                               task##_time, task##_time_percent());   \
+    }
+#define VS_MAKE_GET_TIME_TOTAL_STR(...)                        \
+    [[nodiscard]] string get_total_time_str() const noexcept { \
+        return "" MAP(VS_PLUS_TASK_TIME_STR, __VA_ARGS__);     \
     }
 
 #define VS_TIME_PERCENT(task) \
@@ -26,12 +32,14 @@ namespace vision {
     MAP(MAKE_ADD_TIME_FUNC, __VA_ARGS__)               \
     MAP(VS_TIME_PERCENT, __VA_ARGS__)                  \
     MAP(VS_MAKE_GET_TIME_STR, __VA_ARGS__)             \
+    VS_MAKE_GET_TIME_TOTAL_STR(__VA_ARGS__)            \
     [[nodiscard]] double total_time() const noexcept { \
         return 0 MAP(VS_PLUS_TASK_TIME, __VA_ARGS__);  \
     }                                                  \
     void clear_time() noexcept {                       \
         MAP(VS_CLEAR_TIME, __VA_ARGS__)                \
     }
+
 struct BakerStats {
 public:
     uint model_num{};
@@ -58,6 +66,10 @@ public:
 };
 #undef MAKE_TIME_FUNC
 #undef VS_CLEAR_TIME
+#undef VS_PLUS_TASK_TIME_STR
+#undef VS_TIME_PERCENT
+#undef VS_MAKE_GET_TIME_TOTAL_STR
+#undef VS_MAKE_GET_TIME_STR
 #undef VS_PLUS_TASK_TIME
 #undef MAKE_ADD_TIME_FUNC
 
