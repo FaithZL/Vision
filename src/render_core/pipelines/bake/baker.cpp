@@ -85,7 +85,7 @@ void Baker::_compile_bake() noexcept {
         Interaction it;
         Float3 L = integrator->Li(rs, scatter_pdf, &it);
         Float4 result = make_float4(L, 1.f);
-        result.w = select(dot(rs.direction(), it.g_uvn.normal()) > 0, 0.f, 1.f);
+        result.w = select(dot(rs.direction(), it.ng) > 0, 0.f, 1.f);
         Float4 accum_prev = radiance.read(dispatch_id());
         Float a = 1.f / (frame_index + 1);
         result = lerp(make_float4(a), accum_prev, result);

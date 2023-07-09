@@ -98,7 +98,7 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
     normal.y *= s;
     Float3 world_normal = it->s_uvn.to_world(normal);
     world_normal = normalize(world_normal);
-    world_normal = clamp_ns(world_normal, it->g_uvn.normal(), it->wo);
+    world_normal = clamp_ns(world_normal, it->ng, it->wo);
     world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
     it->s_uvn.update(world_normal);
 }

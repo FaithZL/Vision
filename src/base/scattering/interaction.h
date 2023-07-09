@@ -98,7 +98,6 @@ public:
     Float3 pos;
     Float3 wo;
     Float3 time;
-    PartialDerivative<Float3> g_uvn;
     Float3 ng;
 
     Float2 uv;
@@ -135,13 +134,12 @@ public:
     [[nodiscard]] Uint light_type_id() const noexcept;
     [[nodiscard]] Uint light_id() const noexcept { return _light_id; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
-    [[nodiscard]] Bool on_surface() const noexcept { return g_uvn.valid(); }
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept;
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir, const Float &t) const noexcept;
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
-        return vision::spawn_ray_to(pos, g_uvn.normal(), p);
+        return vision::spawn_ray_to(pos, ng, p);
     }
 };
 
@@ -153,7 +151,7 @@ struct SpacePoint {
     SpacePoint(const Float3 &p, const Float3 &n)
         : pos(p), ng(n) {}
     explicit SpacePoint(const Interaction &it)
-        : pos(it.pos), ng(it.g_uvn.normal()) {}
+        : pos(it.pos), ng(it.ng) {}
 
     [[nodiscard]] Float3 robust_pos(const Float3 &dir) const noexcept {
         Float factor = select(dot(ng, dir) > 0, 1.f, -1.f);
@@ -224,7 +222,7 @@ struct MaterialEvalContext : public AttrEvalContext {
     MaterialEvalContext(const Interaction &it)
         : AttrEvalContext(it),
           wo(it.wo),
-          ng(it.g_uvn.normal()),
+          ng(it.ng),
           ns(it.s_uvn.normal()),
           dp_dus(it.s_uvn.dp_du()) {}
 };
