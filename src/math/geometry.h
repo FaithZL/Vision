@@ -152,7 +152,7 @@ public:
     using vec_ty = T;
     vec_ty x, y, z;
 
-protected:
+public:
     [[nodiscard]] vec_ty nx() const noexcept {
         if constexpr (normalized) {
             return x;
