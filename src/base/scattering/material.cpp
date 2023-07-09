@@ -48,6 +48,7 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     if (desc.has_attr("bump")) {
         _bump = scene().create_slot(desc.slot("bump", 1.f, Number));
+        _bump_scale = scene().create_slot(desc.slot("bump_scale", 1.f, Number));
     }
 }
 
@@ -84,10 +85,9 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
 namespace detail {
 void compute_by_normal_map(const Slot &normal_map, Interaction *it, const SampledWavelengths &swl) noexcept {
     Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
-    float scale = 1.f;
+    float scale = 0.2f;
     normal.x *= scale;
     normal.y *= scale;
-    normal.z = safe_sqrt(1 - length_squared(normal.xy()));
     Float3 world_normal = it->s_uvn.to_world(normal);
     world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
     it->s_uvn.z = world_normal;

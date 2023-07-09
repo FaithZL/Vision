@@ -64,6 +64,7 @@ public:
 
 protected:
     Slot _bump{};
+    Slot _bump_scale{};
 
 protected:
     static constexpr uint stride = sizeof(Slot);
@@ -104,6 +105,9 @@ public:
         if (_bump) {
             ret = OC_FORWARD(func)(ret, _bump);
         }
+        if (_bump_scale) {
+            ret = OC_FORWARD(func)(ret, _bump_scale);
+        }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
             if (slot) {
@@ -116,8 +120,10 @@ public:
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
         if (_bump) {
-            OC_FORWARD(func)
-            (_bump);
+            OC_FORWARD(func)(_bump);
+        }
+        if (_bump_scale) {
+            OC_FORWARD(func)(_bump_scale);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
@@ -131,8 +137,10 @@ public:
     template<typename F>
     void for_each_slot(F &&func) noexcept {
         if (_bump) {
-            OC_FORWARD(func)
-            (_bump);
+            OC_FORWARD(func)(_bump);
+        }
+        if (_bump_scale) {
+            OC_FORWARD(func)(_bump_scale);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             Slot &slot = get_slot(i);
