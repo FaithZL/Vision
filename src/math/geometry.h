@@ -145,12 +145,37 @@ requires is_vector3_expr_v<T>
     return select((p < 0), (p + 2 * Pi), p);
 }
 
-template<typename T>
+template<typename T, bool normalized = true>
 requires is_vector3_expr_v<T>
 struct Frame {
 public:
     using vec_ty = T;
     vec_ty x, y, z;
+
+protected:
+    [[nodiscard]] vec_ty nx() const noexcept {
+        if constexpr (normalized) {
+            return x;
+        } else {
+            return normalize(x);
+        }
+    }
+
+    [[nodiscard]] vec_ty ny() const noexcept {
+        if constexpr (normalized) {
+            return y;
+        } else {
+            return normalize(y);
+        }
+    }
+
+    [[nodiscard]] vec_ty nz() const noexcept {
+        if constexpr (normalized) {
+            return z;
+        } else {
+            return normalize(z);
+        }
+    }
 
 public:
     Frame() = default;
@@ -170,12 +195,12 @@ public:
 
     template<typename TVec>
     [[nodiscard]] auto to_local(const TVec &world_v) const noexcept {
-        return make_float3(dot(world_v, x), dot(world_v, y), dot(world_v, z));
+        return make_float3(dot(world_v, nx()), dot(world_v, ny()), dot(world_v, nz()));
     }
 
     template<typename TVec>
     [[nodiscard]] auto to_world(const TVec &local_v) const noexcept {
-        return x * local_v.x + y * local_v.y + z * local_v.z;
+        return nx() * local_v.x + ny() * local_v.y + nz() * local_v.z;
     }
 
     template<typename U>

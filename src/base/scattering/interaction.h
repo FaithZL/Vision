@@ -15,7 +15,7 @@ using namespace ocarina;
 
 template<typename T>
 requires is_vector3_expr_v<T>
-struct UVN : Frame<T> {
+struct UVN : Frame<T, false> {
 public:
     using vec_ty = T;
 
