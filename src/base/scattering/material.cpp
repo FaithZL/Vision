@@ -83,11 +83,11 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
 }
 
 namespace detail {
-void compute_by_normal_map(const Slot &normal_map, Interaction *it, const SampledWavelengths &swl) noexcept {
+void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
     Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
-    float scale = 0.2f;
-    normal.x *= scale;
-    normal.y *= scale;
+    Float s = scale.evaluate(*it, swl).as_scalar();
+    normal.x *= s;
+    normal.y *= s;
     Float3 world_normal = it->s_uvn.to_world(normal);
     world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
     it->s_uvn.z = world_normal;
@@ -95,14 +95,14 @@ void compute_by_normal_map(const Slot &normal_map, Interaction *it, const Sample
     it->s_uvn.y = cross(world_normal, it->s_uvn.x);
 }
 
-void compute_by_bump_map(const Slot &bump_map, Interaction *it, const SampledWavelengths &swl) noexcept {
+void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
 }
 }// namespace detail
 
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
     switch (_bump.dim()) {
-        case 1: detail::compute_by_bump_map(_bump, it, swl); break;
-        case 3: detail::compute_by_normal_map(_bump, it, swl); break;
+        case 1: detail::compute_by_bump_map(_bump, _bump_scale, it, swl); break;
+        case 3: detail::compute_by_normal_map(_bump, _bump_scale, it, swl); break;
         default: break;
     }
 }
