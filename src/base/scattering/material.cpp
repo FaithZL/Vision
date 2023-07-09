@@ -100,9 +100,7 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
     world_normal = normalize(world_normal);
     world_normal = clamp_ns(world_normal, it->g_uvn.normal(), it->wo);
     world_normal = normalize(face_forward(world_normal, it->s_uvn.normal()));
-    it->s_uvn.z = world_normal;
-    it->s_uvn.x = cross(world_normal, it->s_uvn.ny()) * length(it->s_uvn.dp_du());
-    it->s_uvn.y = cross(world_normal, it->s_uvn.nx()) * length(it->s_uvn.dp_dv());
+    it->s_uvn.update(world_normal);
 }
 
 void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {

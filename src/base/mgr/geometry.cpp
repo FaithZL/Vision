@@ -144,15 +144,10 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     if (is_complete) {
         comment("compute shading uvn");
         Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
-        $if(is_zero(normal)) {
-            it.s_uvn = it.g_uvn;
-        }
-        $else {
+        it.s_uvn = it.g_uvn;
+        $if(!is_zero(normal)) {
             Float3 ns = normalize(o2w.apply_normal(normal));
-            Float3 ss = it.g_uvn.dp_du();
-            Float3 st = normalize(cross(ns, ss));
-            ss = cross(st, ns);
-            it.s_uvn.set(ss, st, ns);
+            it.s_uvn.update(ns);
         };
     }
     Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());

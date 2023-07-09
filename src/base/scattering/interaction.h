@@ -25,6 +25,11 @@ public:
         this->y = frame.y;
         this->z = frame.z;
     }
+    void update(const vec_ty &norm) noexcept {
+        this->z = norm;
+        this->x = normalize(cross(norm, this->y)) * length(this->x);
+        this->y = normalize(cross(norm, this->x)) * length(this->y);
+    }
     [[nodiscard]] vec_ty dp_du() const noexcept { return this->x; }
     [[nodiscard]] vec_ty dp_dv() const noexcept { return this->y; }
     [[nodiscard]] vec_ty normal() const noexcept { return this->z; }
