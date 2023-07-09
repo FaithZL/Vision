@@ -123,11 +123,11 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     Float3 dp12 = p1 - p2;
     Float3 ng_un = cross(dp02, dp12);
     it.prim_area = 0.5f * length(ng_un);
+    Float2 duv02 = v0->tex_coord() - v2->tex_coord();
+    Float2 duv12 = v1->tex_coord() - v2->tex_coord();
+    Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
+    Bool degenerate_uv = abs(det) < float(1e-8);
     if (is_complete) {
-        Float2 duv02 = v0->tex_coord() - v2->tex_coord();
-        Float2 duv12 = v1->tex_coord() - v2->tex_coord();
-        Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
-        Bool degenerate_uv = abs(det) < float(1e-8);
         Float3 dp_du, dp_dv;
         $if(!degenerate_uv) {
             Float inv_det = 1 / det;
@@ -145,12 +145,34 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
 
     if (is_complete) {
         comment("compute shading uvn");
+        Float3 dn_du, dn_dv;
         Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
         it.s_uvn.set_frame(frame);
+
         $if(!is_zero(normal)) {
             Float3 ns = normalize(o2w.apply_normal(normal));
             it.s_uvn.update(ns);
         };
+
+        Float3 dn1 = v0->normal() - v2->normal();
+        Float3 dn2 = v1->normal() - v2->normal();
+        Float3 dn = cross(v2->normal() - v0->normal(),
+                          v1->normal() - v0->normal());
+
+        $if(degenerate_uv) {
+            $if(length_squared(dn)) {
+                dn_du = make_float3(0.f);
+                dn_dv = make_float3(0.f);
+            } $else {
+                coordinate_system(dn, dn_du, dn_dv);
+            };
+        } $else {
+            Float inv_det = 1 / det;
+            dn_du = (duv12[1] * dn1 - duv02[1] * dn2) * inv_det;
+            dn_dv = (-duv12[0] * dn1 + duv02[0] * dn2) * inv_det;
+        };
+        it.s_uvn.dn_du = dn_du;
+        it.s_uvn.dn_dv = dn_dv;
     }
     Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
     it.uv = uv;
