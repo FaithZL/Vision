@@ -86,7 +86,6 @@ namespace detail {
 
 [[nodiscard]] Float3 clamp_ns(Float3 ns, Float3 ng, Float3 w) {
     Float3 w_refl = reflect(w, ns);
-    Printer::instance().info("l {}", length(w_refl));
     Float3 w_refl_clip = select(same_hemisphere(w, w_refl, ng), w_refl,
                                 normalize(w_refl - ng * dot(w_refl, ng)));
     return normalize(w_refl_clip + w);
