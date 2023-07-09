@@ -15,9 +15,12 @@ using namespace ocarina;
 
 template<typename T>
 requires is_vector3_expr_v<T>
-struct UVN : Frame<T, false> {
+struct PartialDerivative : Frame<T, false> {
 public:
     using vec_ty = T;
+public:
+    vec_ty dn_du;
+    vec_ty dn_dv;
 
 public:
     void set_frame(Frame<T> frame) {
@@ -95,11 +98,12 @@ public:
     Float3 pos;
     Float3 wo;
     Float3 time;
-    UVN<Float3> g_uvn;
+    PartialDerivative<Float3> g_uvn;
+    Float3 ng;
 
     Float2 uv;
     Float2 lightmap_uv;
-    UVN<Float3> s_uvn;
+    PartialDerivative<Float3> s_uvn;
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
     Uint lightmap_id{InvalidUI32};

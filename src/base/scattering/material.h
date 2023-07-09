@@ -29,7 +29,7 @@ public:
 
 struct BSDF final {
 public:
-    UVN<Float3> shading_frame;
+    PartialDerivative<Float3> shading_frame;
     Float3 ng;
     UP<BxDFSet> bxdf_set{};
 
