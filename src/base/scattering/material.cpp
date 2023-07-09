@@ -105,10 +105,31 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
 
 void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
     Interaction it_eval = *it;
+
     Float du = 0.0005f;
     it_eval.pos = it->pos + du * it->s_pd.dp_du();
     it_eval.uv = it->uv + make_float2(du, 0.f);
-//    it_eval.ng = normalize(cross(it->s_uvn.dp_du(), it->s_uvn.dp_dv()) + du * it->s_uvn)
+    it_eval.ng = normalize(cross(it->s_pd.dp_du(), it->s_pd.dp_dv()));
+    Float u_displace = bump_map.evaluate(it_eval, swl).as_scalar();
+
+    Float dv = 0.0005f;
+    it_eval.pos = it->pos + dv * it->s_pd.dp_dv();
+    it_eval.uv = it->uv + make_float2(0.f, dv);
+    it_eval.ng = normalize(cross(it->s_pd.dp_du(), it->s_pd.dp_dv()));
+    Float v_displace = bump_map.evaluate(it_eval, swl).as_scalar();
+
+    Float displace = bump_map.evaluate(*it,swl).as_scalar();
+
+    Float3 dp_du = it->s_pd.dp_du() +
+                   (u_displace - displace) / du * it->s_pd.normal() +
+                   displace * it->s_pd.dn_du;
+
+    Float3 dp_dv = it->s_pd.dp_dv() +
+                   (v_displace - displace) / dv * it->s_pd.normal() +
+                    displace * it->s_pd.dn_dv;
+
+    it->s_pd.z = normalize(cross(dp_du, dp_dv));
+    it->s_pd.set(dp_du, dp_dv, normalize(cross(dp_du, dp_dv)));
 }
 }// namespace detail
 
