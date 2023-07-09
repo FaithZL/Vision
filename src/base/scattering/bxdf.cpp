@@ -26,7 +26,7 @@ ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const
     ScatterEval ret{swl().dimension()};
     Bool s = safe(wo, wi);
     ret.f = select(s, f(wo, wi, fresnel), 0.f);
-    ret.pdf = select(s, PDF(wo, wi, fresnel), 1.f);
+    ret.pdf = select(s, PDF(wo, wi, fresnel), 0.f);
     ret.flags = flags();
     return ret;
 }
