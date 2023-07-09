@@ -591,16 +591,16 @@
 			"name" : "Glass",
 			"param" : {
 				"material_name" : "BK7",
-				"bump": {
-					"channels" : "xyz",
-					"node" : {
-						"type" : "image",
-						"param" : {
-							"fn" : "textures/brickwall_normal.jpg",
-							"color_space" : "srgb"
-						}
-					}
-				},
+//				"bump": {
+//					"channels" : "xyz",
+//					"node" : {
+//						"type" : "image",
+//						"param" : {
+//							"fn" : "textures/brickwall_normal.jpg",
+//							"color_space" : "srgb"
+//						}
+//					}
+//				},
 				"bump_scale" : 0.1,
 				"color" : {
 					"channels" : "xyz",
