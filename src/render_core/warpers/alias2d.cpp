@@ -83,7 +83,7 @@ public:
         // sample v
         Float pdf_v;
         Uint iv;
-        Float fv = _marginal.sample_continuous(u.y, &pdf_v, &iv);
+        Float fv = _marginal.sample_continuous(u.y, std::addressof(pdf_v), std::addressof(iv));
 
         // sample u
         Uint buffer_offset = _resolution.x * iv;

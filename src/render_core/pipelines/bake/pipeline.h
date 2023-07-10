@@ -23,10 +23,11 @@ namespace vision {
  */
 class BakePipeline : public Pipeline {
 private:
-    UVUnwrapper *_uv_unwrapper{};
+    BakerStats _baker_stats;
     vector<BakedShape> _baked_shapes;
     Shader<void(uint, uint)> _display_shader;
     uint _lightmap_base_index{InvalidUI32};
+    PipelineDesc _desc;
 
 public:
     explicit BakePipeline(const PipelineDesc &desc);

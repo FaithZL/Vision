@@ -8,7 +8,7 @@ namespace vision {
 
 BakePipeline::BakePipeline(const PipelineDesc &desc)
     : Pipeline(desc),
-      _uv_unwrapper(Global::node_mgr().load<UVUnwrapper>(desc.unwrapper_desc)) {
+      _desc(desc) {
     create_cache_directory_if_necessary();
 }
 
@@ -41,6 +41,7 @@ void BakePipeline::preprocess() noexcept {
     for_each_need_bake([&](Shape *item) {
         _baked_shapes.emplace_back(item);
     });
+    UVUnwrapper *uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
 
     // uv unwrap
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
@@ -48,11 +49,12 @@ void BakePipeline::preprocess() noexcept {
         if (baked_shape.has_uv_cache()) {
             unwrap_result = baked_shape.load_uv_config_from_cache();
         } else {
-            unwrap_result = _uv_unwrapper->apply(baked_shape.shape());
+            unwrap_result = uv_unwrapper->apply(baked_shape.shape());
             baked_shape.save_to_cache(unwrap_result);
         }
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
+    Global::node_mgr().remove(uv_unwrapper);
 }
 
 void BakePipeline::compile_shaders() noexcept {

@@ -71,7 +71,8 @@ public:
         auto rp = scene().pipeline();
         Float pmf;
         Float u_remapped;
-        Uint prim_id = _warper->sample_discrete(u.x, &pmf, &u_remapped);
+        Uint prim_id = _warper->sample_discrete(u.x, addressof(pmf),
+                                                addressof(u_remapped));
         u.x = u_remapped;
         Float2 bary = square_to_triangle(u);
         LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, prim_id, bary);

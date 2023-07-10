@@ -147,7 +147,7 @@ void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const
 
 BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept {
     if (_bump) {
-        _apply_bump(&it, swl);
+        _apply_bump(std::addressof(it), swl);
     }
     return _compute_BSDF(it, swl);
 }

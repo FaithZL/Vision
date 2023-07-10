@@ -68,7 +68,8 @@ public:
         Float pdf_map;
         Uint2 coord;
 
-        Float2 uv = _warper->sample_continuous(u, &pdf_map, &coord);
+        Float2 uv = _warper->sample_continuous(u, std::addressof(pdf_map),
+                                               std::addressof(coord));
         Float theta = uv[1] * Pi;
         Float phi = uv[0] * _2Pi;
         Float sin_theta = sin(theta);
