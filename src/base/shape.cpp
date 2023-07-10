@@ -50,7 +50,7 @@ Box3f Mesh::compute_aabb() const noexcept {
     return box;
 }
 
-vector<float> Mesh::surface_area() const noexcept {
+vector<float> Mesh::surface_areas() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : triangles) {
         float3 v0 = transform_point<H>(_handle.o2w, vertices[tri.i].position());

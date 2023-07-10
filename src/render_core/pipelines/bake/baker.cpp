@@ -147,6 +147,7 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
 
 void Baker::baking(ocarina::span<BakedShape> baked_shapes) noexcept {
     stream() << clear() << synchronize() << commit();
+    _baker_stats.batch_num += 1;
     _prepare(baked_shapes);
     _baking();
     _save_result(baked_shapes);

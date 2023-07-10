@@ -43,7 +43,7 @@ namespace vision {
 struct BakerStats {
 public:
     uint model_num{};
-    uint64_t pixel_num{};
+    size_t pixel_num{};
     uint batch_num{};
     uint spp{};
     double bake_time{};
@@ -55,13 +55,14 @@ public:
     double save_time{};
 
 public:
-    MAKE_TIME_FUNC(raster, bake, filter,
+    MAKE_TIME_FUNC(uv_unwrap, raster,
+                   bake, filter,
                    package, denoise,
-                   uv_unwrap, save)
+                   save)
 
     [[nodiscard]] string get_scene_stats() const noexcept {
-        return ocarina::format("\nmodel num is {}, pixel num is {}, batch num is {}, "
-                               "{} sample per pixel, total sample num is {} \n \n",
+        return ocarina::format("\nmodel num is {}, \npixel num is {},\nbatch num is {},\n"
+                               "{} sample per pixel, \ntotal sample num is {} \n \n",
                                model_num, pixel_num, batch_num, spp, spp * pixel_num);
     }
     [[nodiscard]] string get_total_time_str() const noexcept {
@@ -69,6 +70,9 @@ public:
     }
     [[nodiscard]] string get_all_stats() const noexcept {
         return get_scene_stats() + get_total_time_stats();
+    }
+    void clear() noexcept {
+        *this = BakerStats();
     }
 };
 
@@ -120,7 +124,7 @@ private:
                                         const Float3 &normal, Float *pdf) const noexcept;
 
 public:
-    Baker(BakerStats &baker_stats)
+    explicit Baker(BakerStats &baker_stats)
         : _baker_stats(baker_stats) {}
     void compile() noexcept;
     void allocate() noexcept;

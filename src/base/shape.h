@@ -50,7 +50,11 @@ public:
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
     [[nodiscard]] bool has_emission() const noexcept {return _handle.light_id != InvalidUI32;}
-    [[nodiscard]] virtual vector<float> surface_area() const noexcept = 0;
+    [[nodiscard]] virtual vector<float> surface_areas() const noexcept = 0;
+    [[nodiscard]] virtual float surface_area() const noexcept {
+        vector<float> lst = surface_areas();
+        return std::accumulate(lst.begin(), lst.end(), 0.f);
+    }
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
@@ -85,7 +89,7 @@ public:
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     void init_aabb() noexcept { aabb = compute_aabb(); }
     void fill_geometry(Geometry &data) const noexcept override;
-    [[nodiscard]] vector<float> surface_area() const noexcept override;
+    [[nodiscard]] vector<float> surface_areas() const noexcept override;
     void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
         func(*this, 0);
     }

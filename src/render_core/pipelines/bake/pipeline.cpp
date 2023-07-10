@@ -93,12 +93,19 @@ void BakePipeline::compile_displayer() noexcept {
 
 void BakePipeline::bake_all() noexcept {
     Baker baker{_baker_stats};
+    _baker_stats.model_num = _baked_shapes.size();
+    _baker_stats.spp = scene().sampler()->sample_per_pixel();
+    size_t bake_pixel_num = 0;
     baker.allocate();
     baker.compile();
     std::sort(_baked_shapes.begin(), _baked_shapes.end(),
               [&](const BakedShape &a, const BakedShape &b) {
                   return a.perimeter() > b.perimeter();
               });
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](const BakedShape &bs) {
+        bake_pixel_num += bs.pixel_num();
+    });
+    _baker_stats.pixel_num = bake_pixel_num;
 
     for (int i = 0; i < _baked_shapes.size(); ++i) {
         BakedShape &bs = _baked_shapes[i];

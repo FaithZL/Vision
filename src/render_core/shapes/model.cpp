@@ -179,10 +179,10 @@ public:
         _mat_id = id;
     }
 
-    [[nodiscard]] vector<float> surface_area() const noexcept override {
+    [[nodiscard]] vector<float> surface_areas() const noexcept override {
         vector<float> ret;
         for (const Mesh &mesh : _meshes) {
-            auto v = mesh.surface_area();
+            auto v = mesh.surface_areas();
             ret.insert(ret.cend(), v.cbegin(), v.cend());
         }
         return ret;
