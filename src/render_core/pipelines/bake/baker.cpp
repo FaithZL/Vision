@@ -132,7 +132,7 @@ void Baker::_compile_bake() noexcept {
         Float4 accum_prev = radiance.read(dispatch_id());
         Float a = 1.f / (frame_index + 1);
         result = lerp(make_float4(a), accum_prev, result);
-        radiance.write(dispatch_id(), make_float4(1,1,0,1));
+        radiance.write(dispatch_id(), result);
     };
 
     _baker = device().compile(kernel, "baker");
@@ -155,7 +155,6 @@ void Baker::_baking() noexcept {
         Sampler *sampler = scene().sampler();
         for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
             _baker_stats.set_sample_index(i);
-//            cout << "wocaonima " << endl;
             stream() << _baker(i, _batch_mesh.triangles(),
                                _batch_mesh.vertices(),
                                _batch_mesh.pixels(),
@@ -163,7 +162,6 @@ void Baker::_baking() noexcept {
                             .dispatch(_batch_mesh.pixel_num());
             stream() << synchronize();
             stream() << commit();
-//            cout << "wocaonima ---" << endl;
         }
         stream() << Printer::instance().retrieve() << synchronize();
         stream() << commit();

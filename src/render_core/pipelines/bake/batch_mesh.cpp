@@ -70,7 +70,6 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
                                    _pixels, offset, i, res)
                            .dispatch(pixel_num());
             stream() << synchronize() << commit();
-            cout << _triangles.host_buffer().size() << "   " << i << endl;
         }
     };
 

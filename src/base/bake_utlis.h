@@ -44,11 +44,15 @@ public:
     explicit BakedShape(Shape *shape) : _shape(shape) {}
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
-        return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}", _shape->hash());
+        return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{}_{:016x}",
+                                                                       _shape->name(),
+                                                                       _shape->hash());
     }
 
     [[nodiscard]] fs::path instance_cache_directory() const noexcept {
-        return Global::instance().scene_cache_path() / ocarina::format("baked_instance_{:016x}", instance_hash());
+        return Global::instance().scene_cache_path() / ocarina::format("baked_instance_{}_{:016x}",
+                                                                       _shape->name(),
+                                                                       instance_hash());
     }
 
     OC_MAKE_MEMBER_GETTER(resolution, )
