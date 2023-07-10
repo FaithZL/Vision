@@ -102,10 +102,14 @@ public:
 
     Float2 uv;
     Float2 lightmap_uv;
-    PartialDerivative<Float3> s_pd;
+    PartialDerivative<Float3> shading;
     Float prim_area{0.f};
     Uint prim_id{InvalidUI32};
     Uint lightmap_id{InvalidUI32};
+    Float du_dx;
+    Float du_dy;
+    Float dv_dx;
+    Float dv_dy;
 
 private:
     Uint _mat_id{InvalidUI32};
@@ -199,7 +203,7 @@ struct LightSampleContext : public SpacePoint {
     Float3 ns;
     LightSampleContext() = default;
     LightSampleContext(const Interaction &it)
-        : SpacePoint(it), ns(it.s_pd.normal()) {}
+        : SpacePoint(it), ns(it.shading.normal()) {}
     LightSampleContext(Float3 p, Float3 ng, Float3 ns)
         : SpacePoint{p, ng}, ns(ns) {}
 };
@@ -223,8 +227,8 @@ struct MaterialEvalContext : public AttrEvalContext {
         : AttrEvalContext(it),
           wo(it.wo),
           ng(it.ng),
-          ns(it.s_pd.normal()),
-          dp_dus(it.s_pd.dp_du()) {}
+          ns(it.shading.normal()),
+          dp_dus(it.shading.dp_du()) {}
 };
 
 }// namespace vision

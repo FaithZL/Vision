@@ -16,10 +16,6 @@ namespace vision {
 using namespace ocarina;
 class Spectrum;
 
-#define VS_MAKE_GETTER(member)                                                 \
-    [[nodiscard]] const ImageIO &member() const noexcept { return _##member; } \
-    [[nodiscard]] ImageIO &member() noexcept { return _##member; }
-
 class Pipeline : public Node {
 public:
     using Desc = PipelineDesc;
@@ -135,7 +131,5 @@ public:
         return _resource_array.byte_buffer(OC_FORWARD(index));
     }
 };
-
-#undef VS_MAKE_GETTER
 
 }// namespace vision
