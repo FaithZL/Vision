@@ -219,6 +219,7 @@ void PipelineDesc::init(const vision::ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("offline");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
+    rasterizer_desc.init(param.value("rasterizer", DataWrap::object()));
     unwrapper_desc.init(param.value("uv_unwrapper", DataWrap::object()));
 }
 

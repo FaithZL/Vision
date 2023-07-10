@@ -205,6 +205,7 @@ struct PipelineDesc : public NodeDesc {
 public:
     mutable Device *device{nullptr};
     UVUnwrapperDesc unwrapper_desc;
+    RasterizerDesc rasterizer_desc;
 
 public:
     VISION_DESC_COMMON(Pipeline)
@@ -216,8 +217,6 @@ public:
     VISION_DESC_COMMON(ToneMapper)
     void init(const ParameterSet &ps) noexcept override;
 };
-
-
 
 struct DenoiserDesc : public NodeDesc {
 public:
