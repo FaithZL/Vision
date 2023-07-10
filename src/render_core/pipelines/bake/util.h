@@ -10,15 +10,15 @@ namespace vision {
 
 namespace detail {
 
-template<EPort p>
-[[nodiscard]] inline oc_uint<p> uint2_to_uint(oc_int2<p> arg) noexcept {
+template<EPort p = D>
+[[nodiscard]] inline oc_uint<p> uint2_to_uint(oc_uint2<p> arg) noexcept {
     oc_uint<p> a = arg.x;
     oc_uint<p> b = arg.y;
     a = a << 16;
     return a | b;
 }
 
-template<EPort p>
+template<EPort p = D>
 [[nodiscard]] inline oc_uint2<p> uint_to_uint2(oc_uint<p> id) noexcept {
     oc_uint<p> a = (0xffff0000 & id) >> 16;
     oc_uint<p> b = 0x0000ffff & id;

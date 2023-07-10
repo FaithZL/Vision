@@ -19,7 +19,7 @@ void DilateFilter::compile() noexcept {
         Uint4 pixel_data = pixels.read(dispatch_id());
         Float4 radiance = src.read(pixel_index);
 
-        Uint2 res = pixel_data.zw();
+        Uint2 res = detail::uint_to_uint2(pixel_data.z);
         Uint offset = pixel_data.y;
         Uint cur_index = pixel_index - offset;
         Uint2 pixel = make_uint2(cur_index % res.x, cur_index / res.x);

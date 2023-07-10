@@ -4,6 +4,7 @@
 
 #include "batch_mesh.h"
 #include "baker.h"
+#include "util.h"
 
 namespace vision {
 
@@ -104,8 +105,7 @@ void BatchMesh::compile() noexcept {
             pixel.x = triangle_index;
         };
         pixel.y = pixel_offset;
-        pixel.z = res.x;
-        pixel.w = res.y;
+        pixel.z = detail::uint2_to_uint(res);
         pixels.write(dispatch_id(), pixel);
     };
     shader = device().compile(kernel, "rasterize");

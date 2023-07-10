@@ -29,7 +29,7 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
     Uint4 pixel_data = pixels.read(dispatch_id());
     Uint triangle_id = pixel_data.x;
     Uint pixel_offset = pixel_data.y;
-    Uint2 res = pixel_data.zw();
+    Uint2 res = detail::uint_to_uint2(pixel_data.z);
     Bool valid = detail::is_valid(triangle_id);
     Float3 norm;
     Float3 position;
