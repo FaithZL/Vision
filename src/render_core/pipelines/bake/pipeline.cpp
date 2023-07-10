@@ -44,7 +44,7 @@ void BakePipeline::preprocess() noexcept {
     UVUnwrapper *uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
 
     // uv unwrap
-    Clock clock;
+    VS_BAKER_STATS(_baker_stats, uv_unwrap)
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
         UnwrapperResult unwrap_result;
         if (baked_shape.has_uv_cache()) {
@@ -55,7 +55,6 @@ void BakePipeline::preprocess() noexcept {
         }
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
-    _baker_stats.add_uv_unwrap_time(clock.elapse_s());
     Global::node_mgr().remove(uv_unwrapper);
 }
 

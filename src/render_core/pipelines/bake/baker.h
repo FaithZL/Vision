@@ -52,11 +52,12 @@ public:
     double package_time{};
     double denoise_time{};
     double uv_unwrap_time{};
+    double save_time{};
 
 public:
     MAKE_TIME_FUNC(raster, bake, filter,
                    package, denoise,
-                   uv_unwrap)
+                   uv_unwrap, save)
 
     [[nodiscard]] string get_scene_stats() const noexcept {
         return ocarina::format("\nmodel num is {}, pixel num is {}, batch num is {}, "
@@ -70,6 +71,22 @@ public:
         return get_scene_stats() + get_total_time_stats();
     }
 };
+
+struct BakerGuard {
+    Clock clock;
+    std::function<void(double)> func;
+    explicit BakerGuard(const std::function<void(double)> &f)
+        : func(f) {}
+    ~BakerGuard() {
+        func(clock.elapse_s());
+    }
+};
+
+#define VS_BAKER_STATS(stats, task) \
+    BakerGuard __bg([&](double t) { \
+        stats.add_##task##_time(t); \
+    });
+
 #undef MAKE_TIME_FUNC
 #undef VS_CLEAR_TIME
 #undef VS_PLUS_TASK_TIME_STR
