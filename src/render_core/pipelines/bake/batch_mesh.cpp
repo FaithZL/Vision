@@ -66,7 +66,7 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
 
         for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
             auto [res, offset] = res_offset[i];
-            stream() << _rasterizer(_triangles, _vertices,
+            stream() << shader(_triangles, _vertices,
                                    _pixels, offset, i, res)
                            .dispatch(pixel_num());
             stream() << synchronize() << commit();
@@ -108,7 +108,7 @@ void BatchMesh::compile() noexcept {
         pixel.w = res.y;
         pixels.write(dispatch_id(), pixel);
     };
-    _rasterizer = device().compile(kernel, "rasterize");
+    shader = device().compile(kernel, "rasterize");
 }
 
 }// namespace vision

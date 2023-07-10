@@ -24,16 +24,18 @@ private:
     uint _pixel_num{};
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
-    Shader<signature> _rasterizer;
+    Shader<signature> shader;
+    Rasterizer *_rasterizer{};
 
 public:
-    BatchMesh() = default;
+    BatchMesh(Rasterizer *rasterizer)
+        : _rasterizer(rasterizer) {}
     void allocate(uint buffer_size);
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
     void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
-    OC_MAKE_MEMBER_GETTER(pixel_num,)
+    OC_MAKE_MEMBER_GETTER(pixel_num, )
     OC_MAKE_MEMBER_GETTER(pixels, &)
     OC_MAKE_MEMBER_GETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER(vertices, &)

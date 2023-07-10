@@ -124,7 +124,7 @@ private:
     BakerStats &_baker_stats;
     Buffer<float4> _radiance;
     Buffer<float4> _final_radiance;
-    BatchMesh _batch_mesh{};
+    BatchMesh _batch_mesh;
     DilateFilter _dilate_filter{};
     Shader<void(uint, Buffer<Triangle>, Buffer<Vertex>, Buffer<uint4>, Buffer<float4>)> _baker;
 
@@ -143,8 +143,8 @@ private:
                                         const Float3 &normal, Float *pdf) const noexcept;
 
 public:
-    explicit Baker(BakerStats &baker_stats)
-        : _baker_stats(baker_stats) {}
+    explicit Baker(BakerStats &baker_stats, Rasterizer *rasterizer)
+        : _baker_stats(baker_stats), _batch_mesh(rasterizer) {}
     void compile() noexcept;
     void allocate() noexcept;
     [[nodiscard]] CommandList deallocate() noexcept;

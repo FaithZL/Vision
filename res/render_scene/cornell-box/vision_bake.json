@@ -981,7 +981,7 @@
 		}
 	},
 	"pipeline" : {
-//		"type" : "bake"
+		"type" : "bake"
 //		"type" : "real_time"
 	},
 	"output" : {
