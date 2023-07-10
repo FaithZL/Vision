@@ -11,14 +11,14 @@
 
 namespace vision {
 #define MAKE_ADD_TIME_FUNC(task) \
-    void add_##task##_time(double t) noexcept { task##_time += t; }
-#define VS_PLUS_TASK_TIME(task) +task##_time
+    void add_##task##_time(double t) noexcept { _##task##_time += t; }
+#define VS_PLUS_TASK_TIME(task) +_##task##_time
 #define VS_PLUS_TASK_TIME_STR(task) +get_##task##_stats_str()
-#define VS_CLEAR_TIME(task) task##_time = 0;
+#define VS_CLEAR_TIME(task) _##task##_time = 0;
 #define VS_MAKE_GET_TIME_STR(task)                                                  \
     [[nodiscard]] string get_##task##_stats_str() const noexcept {                  \
         return ocarina::format(#task " time is {:.4f}s, proportion is {:2.2f}% \n", \
-                               task##_time, task##_time_percent() * 100);           \
+                               _##task##_time, task##_time_percent() * 100);        \
     }
 #define VS_MAKE_GET_TIME_TOTAL_STR(...)                                      \
     [[nodiscard]] string get_total_time_stats() const noexcept {             \
@@ -26,7 +26,7 @@ namespace vision {
     }
 
 #define VS_TIME_PERCENT(task) \
-    [[nodiscard]] double task##_time_percent() const noexcept { return task##_time / total_time(); }
+    [[nodiscard]] double task##_time_percent() const noexcept { return _##task##_time / total_time(); }
 
 #define MAKE_TIME_FUNC(...)                            \
     MAP(MAKE_ADD_TIME_FUNC, __VA_ARGS__)               \
@@ -42,17 +42,17 @@ namespace vision {
 
 struct BakerStats {
 private:
-    uint model_num{};
-    size_t pixel_num{};
-    uint batch_index{};
-    uint spp{};
-    double bake_time{};
-    double raster_time{};
-    double filter_time{};
-    double package_time{};
-    double denoise_time{};
-    double uv_unwrap_time{};
-    double save_time{};
+    uint _model_num{};
+    size_t _pixel_num{};
+    uint _batch_index{};
+    uint _spp{};
+    double _bake_time{};
+    double _raster_time{};
+    double _filter_time{};
+    double _package_time{};
+    double _denoise_time{};
+    double _uv_unwrap_time{};
+    double _save_time{};
 
 public:
     MAKE_TIME_FUNC(uv_unwrap, raster,
@@ -63,14 +63,14 @@ public:
     [[nodiscard]] string get_scene_stats() const noexcept {
         return ocarina::format("\nmodel num is {}, \npixel num is {},\nbatch num is {},\n"
                                "{} sample per pixel, \ntotal sample num is {} \n \n",
-                               model_num, pixel_num, batch_index, spp, spp * pixel_num);
+                               _model_num, _pixel_num, _batch_index, _spp, _spp * _pixel_num);
     }
     void on_batch_start() noexcept {
-        batch_index += 1;
+        _batch_index += 1;
     }
-    void set_model_num(uint num) noexcept { model_num = num; }
-    void set_spp(uint num) noexcept { spp = num; }
-    void set_pixel_num(uint num) noexcept { pixel_num = num; }
+    OC_MAKE_MEMBER_SETTER(spp)
+    OC_MAKE_MEMBER_SETTER(model_num)
+    OC_MAKE_MEMBER_SETTER(pixel_num)
     void report_progress() const noexcept;
     [[nodiscard]] string get_total_time_str() const noexcept {
         return ocarina::format("total time is {:.4f}s, \n", total_time());
@@ -79,7 +79,7 @@ public:
         return get_scene_stats() + get_total_time_stats();
     }
     void clear() noexcept { *this = BakerStats(); }
-    [[nodiscard]] bool is_valid() const noexcept { return model_num > 0; }
+    [[nodiscard]] bool is_valid() const noexcept { return _model_num > 0; }
 };
 
 struct BakerGuard {
