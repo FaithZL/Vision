@@ -4,6 +4,7 @@
 			"type" : "quad",
 			"name" : "shape_0",
 			"param" : {
+				"factor" : 7,
 				"width" : 1.0,
 				"height" : 1.0,
 				"material" : "Floor",
@@ -44,6 +45,7 @@
 			"type" : "quad",
 			"name" : "shape_1",
 			"param" : {
+				"factor" : 7,
 				"width" : 1.0,
 				"height" : 1.0,
 				"material" : "Ceiling",
@@ -84,6 +86,7 @@
 			"type" : "quad",
 			"name" : "shape_2",
 			"param" : {
+				"factor" : 7,
 				"width" : 1.0,
 				"height" : 1.0,
 				"material" : "BackWall",
@@ -124,6 +127,7 @@
 			"type" : "quad",
 			"name" : "shape_3",
 			"param" : {
+				"factor" : 7,
 				"width" : 1.0,
 				"height" : 1.0,
 				"material" : "LeftWall",
@@ -164,6 +168,7 @@
 			"type" : "quad",
 			"name" : "shape_4",
 			"param" : {
+				"factor" : 7,
 				"width" : 1.0,
 				"height" : 1.0,
 				"material" : "RightWall",
@@ -763,7 +768,7 @@
 		"type" : "independent",
 		"name" : "sampler0",
 		"param" : {
-			"spp" : 500
+			"spp" : 8000
 		}
 	},
 	"camera" : {

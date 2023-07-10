@@ -96,10 +96,10 @@ public:
         return ret;
     }
 
-    [[nodiscard]] xatlas::PackOptions pack_options() const noexcept {
+    [[nodiscard]] xatlas::PackOptions pack_options(const Shape *shape) const noexcept {
         xatlas::PackOptions ret;
         ret.padding = _padding;
-//        ret.resolution = 300;
+        ret.resolution = shape->lightmap_size();
         return ret;
     }
 
@@ -121,7 +121,7 @@ public:
         });
 
         xatlas::AddMeshJoin(_atlas);
-        xatlas::Generate(_atlas, chart_options(), pack_options());
+        xatlas::Generate(_atlas, chart_options(), pack_options(shape));
         unwrapper_result.width = _atlas->width;
         unwrapper_result.height = _atlas->height;
         for (int i = 0; i < _atlas->meshCount; ++i) {

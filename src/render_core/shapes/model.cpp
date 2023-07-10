@@ -183,7 +183,16 @@ public:
         vector<float> ret;
         for (const Mesh &mesh : _meshes) {
             auto v = mesh.surface_areas();
-            ret.insert(ret.cend(), v.cbegin(), v.cend());
+            append(ret, v);
+        }
+        return ret;
+    }
+
+    [[nodiscard]] vector<float> ref_surface_areas() const noexcept override {
+        vector<float> ret;
+        for (const Mesh &mesh : _meshes) {
+            auto v = mesh.ref_surface_areas();
+            append(ret, v);
         }
         return ret;
     }

@@ -9,7 +9,7 @@
 namespace vision {
 
 Shape::Shape(const ShapeDesc &desc)
-    : Node(desc) {
+    : Node(desc),_factor(desc["factor"].as_float(1.f)) {
     _handle.mat_id = desc.material.id;
     _handle.inside_medium = desc.inside_medium.id;
     _handle.outside_medium = desc.outside_medium.id;
@@ -18,6 +18,13 @@ Shape::Shape(const ShapeDesc &desc)
         _handle.light_id = scene().light_num();
         emission = scene().load_light(desc.emission);
     }
+}
+
+uint Shape::lightmap_size() const noexcept {
+    vector<float> areas = ref_surface_areas();
+    float area = std::accumulate(areas.begin(), areas.end(), 0.f);
+    uint ret = area * _factor * 20;
+    return ocarina::min(ret, 1024u);
 }
 
 Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {}
@@ -56,6 +63,17 @@ vector<float> Mesh::surface_areas() const noexcept {
         float3 v0 = transform_point<H>(_handle.o2w, vertices[tri.i].position());
         float3 v1 = transform_point<H>(_handle.o2w, vertices[tri.j].position());
         float3 v2 = transform_point<H>(_handle.o2w, vertices[tri.k].position());
+        ret.push_back(triangle_area(v0, v1, v2));
+    }
+    return ret;
+}
+
+vector<float> Mesh::ref_surface_areas() const noexcept {
+    vector<float> ret;
+    for (const Triangle &tri : triangles) {
+        float3 v0 = vertices[tri.i].position();
+        float3 v1 = vertices[tri.j].position();
+        float3 v2 = vertices[tri.k].position();
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;

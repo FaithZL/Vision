@@ -39,6 +39,7 @@ public:
 
 protected:
     Handle _handle;
+    float _factor{};
 
 public:
     explicit Shape(const ShapeDesc &desc);
@@ -48,13 +49,11 @@ public:
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
     [[nodiscard]] bool has_material() const noexcept { return _handle.mat_id != InvalidUI32; }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
+    [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept = 0;
+    [[nodiscard]] virtual uint lightmap_size() const noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
     [[nodiscard]] bool has_emission() const noexcept {return _handle.light_id != InvalidUI32;}
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept = 0;
-    [[nodiscard]] virtual float surface_area() const noexcept {
-        vector<float> lst = surface_areas();
-        return std::accumulate(lst.begin(), lst.end(), 0.f);
-    }
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
@@ -90,6 +89,7 @@ public:
     void init_aabb() noexcept { aabb = compute_aabb(); }
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_areas() const noexcept override;
+    [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
     void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
         func(*this, 0);
     }
