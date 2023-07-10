@@ -103,6 +103,9 @@ void Baker::compile() noexcept {
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
     VS_BAKER_STATS(_baker_stats, raster)
+    for (BakedShape &bs : baked_shapes) {
+        bs.prepare_to_bake();
+    }
     _batch_mesh.setup(baked_shapes);
 }
 

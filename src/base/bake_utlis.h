@@ -33,19 +33,28 @@ struct UnwrapperResult {
     vector<UnwrapperMesh> meshes;
 };
 
+struct MergedMesh {
+    Managed<Vertex> vertices;
+    Managed<Triangle> triangles;
+};
+
 struct BakedShape {
 private:
     Shape *_shape{};
     uint2 _resolution{};
     Texture _lightmap_tex;
+    MergedMesh _merged_mesh;
+    Buffer<uint4> _pixels;
+#ifndef NDEBUG
+    Buffer<float4> _pixel_debug;
+#endif
 
 public:
     BakedShape() = default;
     explicit BakedShape(Shape *shape) : _shape(shape) {}
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
-        return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{}_{:016x}",
-                                                                       _shape->name(),
+        return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}",
                                                                        _shape->hash());
     }
 
@@ -54,6 +63,10 @@ public:
                                                                        _shape->name(),
                                                                        instance_hash());
     }
+
+    void prepare_to_bake() noexcept;
+    void merge_meshes() noexcept;
+
 
     OC_MAKE_MEMBER_GETTER(resolution, )
     OC_MAKE_MEMBER_GETTER(shape, )
@@ -68,6 +81,7 @@ public:
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
     [[nodiscard]] CommandList save_lightmap_to_cache() const;
+    [[nodiscard]] CommandList save_rasterize_map_to_cache() const;
     void setup_vertices(UnwrapperResult result);
     void normalize_lightmap_uv();
 };

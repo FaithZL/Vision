@@ -64,6 +64,30 @@ CommandList BakedShape::save_lightmap_to_cache() const {
     return ret;
 }
 
+void BakedShape::merge_meshes() noexcept {
+    uint vert_offset = 0;
+    shape()->for_each_mesh([&](const vision::Mesh &mesh, int index) {
+        float4x4 o2w = shape()->o2w();
+        for (const Vertex &vertex : mesh.vertices) {
+            float3 world_pos = transform_point<H>(o2w, vertex.position());
+            float3 world_norm = transform_normal<H>(o2w, vertex.normal());
+            world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
+            _merged_mesh.vertices.emplace_back(world_pos, world_norm,
+                                               vertex.tex_coord(),
+                                               vertex.lightmap_uv());
+        }
+        for (const Triangle &tri : mesh.triangles) {
+            _merged_mesh.triangles.emplace_back(tri.i + vert_offset,
+                                                tri.j + vert_offset,
+                                                tri.k + vert_offset);
+        }
+    });
+}
+
+void BakedShape::prepare_to_bake() noexcept {
+    merge_meshes();
+}
+
 void BakedShape::allocate_lightmap_texture() noexcept {
     _lightmap_tex = shape()->device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
 }

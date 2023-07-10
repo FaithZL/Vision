@@ -37,7 +37,6 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint vert_offset = 0;
     vector<std::pair<uint2, uint>> res_offset;
     for (BakedShape &bs : baked_shapes) {
-        uint tri_num = 0;
         bs.shape()->for_each_mesh([&](const vision::Mesh &mesh, int index) {
             float4x4 o2w = bs.shape()->o2w();
             for (const Vertex &vertex : mesh.vertices) {
@@ -50,7 +49,6 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
                 _triangles.emplace_back(tri.i + vert_offset, tri.j + vert_offset, tri.k + vert_offset);
                 res_offset.emplace_back(bs.resolution(), _pixel_num);
             }
-            tri_num += mesh.triangles.size();
             vert_offset += mesh.vertices.size();
         });
         bs.normalize_lightmap_uv();
