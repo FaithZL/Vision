@@ -85,4 +85,15 @@ public:
     [[nodiscard]] virtual UnwrapperResult apply(const Shape *shape) = 0;
 };
 
+class Rasterizer : public Node {
+public:
+    using Desc = RasterizerDesc;
+
+public:
+    explicit Rasterizer(const RasterizerDesc &desc)
+        : Node(desc) {}
+    virtual void compile() noexcept = 0;
+    virtual void apply(BakedShape &baked_shape) noexcept = 0;
+};
+
 }// namespace vision
