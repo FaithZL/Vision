@@ -7,15 +7,18 @@
 namespace vision {
 
 void BakerStats::report_progress() const noexcept {
-    printf("spp is %u, "
+    printf("spp is %u,"
            "sample index is %u,"
            "progress is %.2f %% \r", _spp, _sample_index,  _sample_index * 100.f / _spp);
 }
 
 void BakerStats::on_batch_end() noexcept {
+    double t = clock.elapse_s();
     printf("batch end:\n"
-           "total model num is %u, "
+           "elapse time %.3f s,\n"
+           "total model num is %u,\n"
            "cur model progress is %u\n\n",
+           t,
            _model_num,
            _model_counter);
 }
@@ -33,8 +36,8 @@ void BakerStats::on_batch_start(ocarina::span<BakedShape> lst) noexcept {
            "total model num is %u,\n"
            "batch model num is %u,\n"
            "cur model index is %u,\n"
-           "model progress is %.2f%% \n"
-           "pixel progress is %.2f%% \n",
+           "model progress is %.2f%%,\n"
+           "pixel progress is %.2f%%,\n\n",
            _model_num,
            _cur_batch_model_num,
            _model_counter,
