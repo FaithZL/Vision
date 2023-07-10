@@ -100,6 +100,7 @@ public:
         xatlas::PackOptions ret;
         ret.padding = _padding;
         ret.resolution = shape->lightmap_size();
+        ret.bruteForce = true;
         return ret;
     }
 

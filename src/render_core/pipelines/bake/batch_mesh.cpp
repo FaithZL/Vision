@@ -59,24 +59,23 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
     _vertices.reset_device_buffer_immediately(device());
     _triangles.reset_device_buffer_immediately(device());
 
-    auto rasterize = [&]() -> CommandList {
-        CommandList cmd_lst;
-        cmd_lst << _vertices.upload()
+    auto rasterize = [&](){
+        stream() << _vertices.upload()
                 << reset_pixels()
                 << _triangles.upload();
 
         for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
             auto [res, offset] = res_offset[i];
-            cmd_lst << _rasterizer(_triangles, _vertices,
+            stream() << _rasterizer(_triangles, _vertices,
                                    _pixels, offset, i, res)
                            .dispatch(pixel_num());
-            cmd_lst << Printer::instance().retrieve();
-            cmd_lst << synchronize();
+            stream() << synchronize() << commit();
+            cout << _triangles.host_buffer().size() << "   " << i << endl;
         }
-        return cmd_lst;
     };
 
-    stream() << rasterize() << commit();
+    rasterize();
+
 }
 
 void BatchMesh::compile() noexcept {
