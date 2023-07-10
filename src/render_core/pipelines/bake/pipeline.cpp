@@ -3,6 +3,7 @@
 //
 
 #include "pipeline.h"
+#include "core/thread_pool.h"
 
 namespace vision {
 
@@ -93,11 +94,19 @@ void BakePipeline::compile_displayer() noexcept {
 
 void BakePipeline::bake_all() noexcept {
     Baker baker{_baker_stats};
-    _baker_stats.model_num = _baked_shapes.size();
-    _baker_stats.spp = scene().sampler()->sample_per_pixel();
-    size_t bake_pixel_num = 0;
     baker.allocate();
     baker.compile();
+    _baker_stats.set_model_num(_baked_shapes.size());
+
+    async([&]{
+        while (_baker_stats.is_valid()) {
+            _baker_stats.report_progress();
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+        }
+    });
+
+    _baker_stats.set_spp(scene().sampler()->sample_per_pixel());
+    size_t bake_pixel_num = 0;
     std::sort(_baked_shapes.begin(), _baked_shapes.end(),
               [&](const BakedShape &a, const BakedShape &b) {
                   return a.perimeter() > b.perimeter();
@@ -105,7 +114,7 @@ void BakePipeline::bake_all() noexcept {
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](const BakedShape &bs) {
         bake_pixel_num += bs.pixel_num();
     });
-    _baker_stats.pixel_num = bake_pixel_num;
+    _baker_stats.set_pixel_num(bake_pixel_num);
 
     for (int i = 0; i < _baked_shapes.size(); ++i) {
         BakedShape &bs = _baked_shapes[i];
@@ -128,6 +137,7 @@ void BakePipeline::bake_all() noexcept {
     stream() << baker.deallocate()
              << synchronize() << commit();
     OC_INFO(_baker_stats.get_all_stats());
+    _baker_stats.clear();
 }
 
 void BakePipeline::render(double dt) noexcept {

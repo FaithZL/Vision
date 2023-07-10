@@ -41,10 +41,10 @@ namespace vision {
     }
 
 struct BakerStats {
-public:
+private:
     uint model_num{};
     size_t pixel_num{};
-    uint batch_num{};
+    uint batch_index{};
     uint spp{};
     double bake_time{};
     double raster_time{};
@@ -63,17 +63,23 @@ public:
     [[nodiscard]] string get_scene_stats() const noexcept {
         return ocarina::format("\nmodel num is {}, \npixel num is {},\nbatch num is {},\n"
                                "{} sample per pixel, \ntotal sample num is {} \n \n",
-                               model_num, pixel_num, batch_num, spp, spp * pixel_num);
+                               model_num, pixel_num, batch_index, spp, spp * pixel_num);
     }
+    void on_batch_start() noexcept {
+        batch_index += 1;
+    }
+    void set_model_num(uint num) noexcept { model_num = num; }
+    void set_spp(uint num) noexcept { spp = num; }
+    void set_pixel_num(uint num) noexcept { pixel_num = num; }
+    void report_progress() const noexcept;
     [[nodiscard]] string get_total_time_str() const noexcept {
         return ocarina::format("total time is {:.4f}s, \n", total_time());
     }
     [[nodiscard]] string get_all_stats() const noexcept {
         return get_scene_stats() + get_total_time_stats();
     }
-    void clear() noexcept {
-        *this = BakerStats();
-    }
+    void clear() noexcept { *this = BakerStats(); }
+    [[nodiscard]] bool is_valid() const noexcept { return model_num > 0; }
 };
 
 struct BakerGuard {

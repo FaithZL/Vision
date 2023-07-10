@@ -6,6 +6,10 @@
 
 namespace vision {
 
+void BakerStats::report_progress() const noexcept {
+
+}
+
 RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float *scatter_pdf) const noexcept {
     Sampler *sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
@@ -116,9 +120,10 @@ void Baker::_baking() noexcept {
                                _batch_mesh.pixels(),
                                _radiance)
                             .dispatch(_batch_mesh.pixel_num());
+            stream() << synchronize();
+            stream() << commit();
         }
-        stream() << synchronize();
-        stream() << Printer::instance().retrieve();
+        stream() << Printer::instance().retrieve() << synchronize();
         stream() << commit();
     }
 
@@ -147,7 +152,7 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
 
 void Baker::baking(ocarina::span<BakedShape> baked_shapes) noexcept {
     stream() << clear() << synchronize() << commit();
-    _baker_stats.batch_num += 1;
+    _baker_stats.on_batch_start();
     _prepare(baked_shapes);
     _baking();
     _save_result(baked_shapes);
