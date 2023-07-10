@@ -7,6 +7,42 @@
 namespace vision {
 
 void BakerStats::report_progress() const noexcept {
+    printf("spp is %u, "
+           "sample index is %u,"
+           "progress is %.2f %% \r", _spp, _sample_index,  _sample_index * 100.f / _spp);
+}
+
+void BakerStats::on_batch_end() noexcept {
+    printf("batch end:\n"
+           "total model num is %u, "
+           "cur model progress is %u\n\n",
+           _model_num,
+           _model_counter);
+}
+
+void BakerStats::on_batch_start(ocarina::span<BakedShape> lst) noexcept {
+    clock.start();
+    _batch_index += 1;
+    _sample_index = 0;
+    _cur_batch_pixel_num = 0;
+    _cur_batch_model_num = lst.size();
+    std::for_each(lst.begin(), lst.end(), [&](const BakedShape &bs) {
+        return _cur_batch_pixel_num += bs.pixel_num();
+    });
+    printf("batch start\n"
+           "total model num is %u,\n"
+           "batch model num is %u,\n"
+           "cur model index is %u,\n"
+           "model progress is %.2f%% \n"
+           "pixel progress is %.2f%% \n",
+           _model_num,
+           _cur_batch_model_num,
+           _model_counter,
+           _model_counter * 100.f / _model_num,
+           (_pixel_counter * 1.f / _pixel_num) * 100
+           );
+    _model_counter += _cur_batch_model_num;
+    _pixel_counter += _cur_batch_pixel_num;
 
 }
 
@@ -115,6 +151,7 @@ void Baker::_baking() noexcept {
         VS_BAKER_STATS(_baker_stats, bake)
         Sampler *sampler = scene().sampler();
         for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
+            _baker_stats.set_sample_index(i);
             stream() << _baker(i, _batch_mesh.triangles(),
                                _batch_mesh.vertices(),
                                _batch_mesh.pixels(),
@@ -152,9 +189,10 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
 
 void Baker::baking(ocarina::span<BakedShape> baked_shapes) noexcept {
     stream() << clear() << synchronize() << commit();
-    _baker_stats.on_batch_start();
+    _baker_stats.on_batch_start(baked_shapes);
     _prepare(baked_shapes);
     _baking();
+    _baker_stats.on_batch_end();
     _save_result(baked_shapes);
 }
 

@@ -99,7 +99,7 @@ public:
     [[nodiscard]] xatlas::PackOptions pack_options() const noexcept {
         xatlas::PackOptions ret;
         ret.padding = _padding;
-        ret.resolution = 100;
+//        ret.resolution = 300;
         return ret;
     }
 

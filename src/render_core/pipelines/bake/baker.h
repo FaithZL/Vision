@@ -54,6 +54,14 @@ private:
     double _uv_unwrap_time{};
     double _save_time{};
 
+    /// batch stats
+    Clock clock;
+    uint _cur_batch_pixel_num{};
+    uint _cur_batch_model_num{};
+    uint _sample_index{};
+    uint _model_counter{};
+    uint _pixel_counter{};
+
 public:
     MAKE_TIME_FUNC(uv_unwrap, raster,
                    bake, filter,
@@ -65,13 +73,18 @@ public:
                                "{} sample per pixel, \ntotal sample num is {} \n \n",
                                _model_num, _pixel_num, _batch_index, _spp, _spp * _pixel_num);
     }
-    void on_batch_start() noexcept {
-        _batch_index += 1;
-    }
+    void on_batch_start(ocarina::span<BakedShape> lst) noexcept;
+    OC_MAKE_MEMBER_SETTER(sample_index)
     OC_MAKE_MEMBER_SETTER(spp)
     OC_MAKE_MEMBER_SETTER(model_num)
     OC_MAKE_MEMBER_SETTER(pixel_num)
+
+    /**
+     * report cur batch mesh num
+     * spp index
+     */
     void report_progress() const noexcept;
+    void on_batch_end() noexcept;
     [[nodiscard]] string get_total_time_str() const noexcept {
         return ocarina::format("total time is {:.4f}s, \n", total_time());
     }

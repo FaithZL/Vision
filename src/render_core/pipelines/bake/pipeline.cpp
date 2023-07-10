@@ -101,7 +101,7 @@ void BakePipeline::bake_all() noexcept {
     async([&]{
         while (_baker_stats.is_valid()) {
             _baker_stats.report_progress();
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     });
 
