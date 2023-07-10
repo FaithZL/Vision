@@ -104,15 +104,19 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
 }
 
 void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
+    static constexpr float d = 0.0005f;
+
     Interaction it_eval = *it;
 
-    Float du = 0.0015f;
+    Float du = 0.5f * (abs(it->du_dx) + abs(it->du_dy));
+    du = select(du == 0.f, d, du);
     it_eval.pos = it->pos + du * it->shading.dp_du();
     it_eval.uv = it->uv + make_float2(du, 0.f);
     it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
     Float u_displace = bump_map.evaluate(it_eval, swl).as_scalar();
 
-    Float dv = 0.0015f;
+    Float dv = 0.5f * (abs(it->dv_dx) + abs(it->dv_dy));
+    dv = select(dv == 0.f, d, dv);
     it_eval.pos = it->pos + dv * it->shading.dp_dv();
     it_eval.uv = it->uv + make_float2(0.f, dv);
     it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
