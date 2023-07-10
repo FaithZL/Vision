@@ -102,7 +102,7 @@ void Baker::compile() noexcept {
 }
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
-    _batch_mesh.setup(baked_shapes, calculate_buffer_size());
+    _batch_mesh.setup(baked_shapes);
 }
 
 void Baker::_baking() noexcept {

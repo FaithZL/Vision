@@ -32,7 +32,7 @@ public:
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
-    void setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept;
+    void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixel_num,)
     OC_MAKE_MEMBER_GETTER(pixels, &)
     OC_MAKE_MEMBER_GETTER(triangles, &)

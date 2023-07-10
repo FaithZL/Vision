@@ -32,7 +32,7 @@ Command *BatchMesh::reset_pixels() noexcept {
     return _pixels.upload();
 }
 
-void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes, uint buffer_size) noexcept {
+void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint vert_offset = 0;
     vector<std::pair<uint2, uint>> res_offset;
     for (BakedShape &bs : baked_shapes) {
