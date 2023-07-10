@@ -15,10 +15,10 @@ namespace vision {
 #define VS_PLUS_TASK_TIME(task) +task##_time
 #define VS_PLUS_TASK_TIME_STR(task) +get_##task##_stats_str()
 #define VS_CLEAR_TIME(task) task##_time = 0;
-#define VS_MAKE_GET_TIME_STR(task)                                        \
-    [[nodiscard]] string get_##task##_stats_str() const noexcept {        \
-        return ocarina::format(#task " time is {}s, proportion is {}% \n",   \
-                               task##_time, task##_time_percent() * 100); \
+#define VS_MAKE_GET_TIME_STR(task)                                                  \
+    [[nodiscard]] string get_##task##_stats_str() const noexcept {                  \
+        return ocarina::format(#task " time is {:.4f}s, proportion is {:2.2f}% \n", \
+                               task##_time, task##_time_percent() * 100);           \
     }
 #define VS_MAKE_GET_TIME_TOTAL_STR(...)                                      \
     [[nodiscard]] string get_total_time_stats() const noexcept {             \
@@ -64,7 +64,7 @@ public:
                                model_num, pixel_num, batch_num, spp, spp * pixel_num);
     }
     [[nodiscard]] string get_total_time_str() const noexcept {
-        return ocarina::format("total time is {}, \n", total_time());
+        return ocarina::format("total time is {:.4f}s, \n", total_time());
     }
     [[nodiscard]] string get_all_stats() const noexcept {
         return get_scene_stats() + get_total_time_stats();

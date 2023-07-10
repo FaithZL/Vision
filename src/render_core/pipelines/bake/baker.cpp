@@ -102,11 +102,14 @@ void Baker::compile() noexcept {
 }
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
+    Clock clock;
     _batch_mesh.setup(baked_shapes);
+    _baker_stats.add_raster_time(clock.elapse_s());
 }
 
 void Baker::_baking() noexcept {
     Sampler *sampler = scene().sampler();
+    Clock clk;
     for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
         stream() << _baker(i, _batch_mesh.triangles(),
                            _batch_mesh.vertices(),
@@ -114,12 +117,18 @@ void Baker::_baking() noexcept {
                            _radiance)
                         .dispatch(_batch_mesh.pixel_num());
     }
-
+    stream() << synchronize();
     stream() << Printer::instance().retrieve();
+    stream() << commit();
+
+    _baker_stats.add_bake_time(clk.elapse_s());
+
+    clk.start();
     stream() << _dilate_filter(_batch_mesh.pixels(),
                                _radiance, _final_radiance)
                     .dispatch(_batch_mesh.pixel_num())
              << synchronize() << commit();
+    _baker_stats.add_filter_time(clk.elapse_s());
 }
 
 void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
