@@ -1720,7 +1720,7 @@
         "type": "independent",
         "name": "sampler0",
         "param": {
-            "spp": 1
+            "spp": 100
         }
     },
     "camera": {
@@ -1787,6 +1787,9 @@
         "param": {
             "lights": []
         }
+    },
+    "pipeline" :{
+        "type": "bake"
     },
     "render_setting": {
         "polymorphic_mode": 1
