@@ -81,6 +81,7 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
 
 void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint triangle_offset = 0;
+    uint vert_offset = 0;
     uint pixel_offset = 0;
     CommandList cmd_lst;
     for (BakedShape &bs : baked_shapes) {
@@ -89,13 +90,24 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
         cmd_lst << _shader(bs.pixels(), triangle_offset,
                            pixel_offset)
                        .dispatch(bs.resolution());
+        for (Triangle &triangle : mesh.triangles) {
+            triangle.i += vert_offset;
+            triangle.j += vert_offset;
+            triangle.k += vert_offset;
+        }
 
         triangle_offset += mesh.triangles.host_buffer().size();
+        vert_offset += mesh.vertices.host_buffer().size();
         pixel_offset += bs.pixel_num();
         append(_triangles, mesh.triangles);
         append(_vertices, mesh.vertices);
+//        bs.normalize_lightmap_uv();
+//        _pixel_num += bs.pixel_num();
     }
+    _vertices.reset_device_buffer_immediately(device());
+    _triangles.reset_device_buffer_immediately(device());
     stream() << cmd_lst << synchronize() << commit();
+    stream() << _vertices.upload() << _triangles.upload() <<synchronize() << commit();
 }
 
 void BatchMesh::compile() noexcept {

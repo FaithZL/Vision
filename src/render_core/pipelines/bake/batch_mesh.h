@@ -43,5 +43,7 @@ public:
     OC_MAKE_MEMBER_GETTER(pixels, &)
     OC_MAKE_MEMBER_GETTER(triangles_old, &)
     OC_MAKE_MEMBER_GETTER(vertices_old, &)
+    OC_MAKE_MEMBER_GETTER(triangles, &)
+    OC_MAKE_MEMBER_GETTER(vertices, &)
 };
 }// namespace vision
