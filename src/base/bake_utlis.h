@@ -91,10 +91,16 @@ public:
 
 protected:
     uint _padding{};
+    float _scale{};
+    uint _min{};
+    uint _max{};
 
 public:
     explicit UVUnwrapper(const UVUnwrapperDesc &desc)
-        : Node(desc), _padding(desc["padding"].as_uint(3)) {}
+        : Node(desc), _padding(desc["padding"].as_uint(3)),
+          _scale(desc["scale"].as_float(1.f)),
+          _min(desc["min"].as_uint(50)),
+          _max(desc["max"].as_uint(1024)) {}
     [[nodiscard]] virtual UnwrapperResult apply(const Shape *shape) = 0;
 };
 

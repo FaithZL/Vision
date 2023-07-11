@@ -99,7 +99,7 @@ public:
     [[nodiscard]] xatlas::PackOptions pack_options(const Shape *shape) const noexcept {
         xatlas::PackOptions ret;
         ret.padding = _padding;
-        ret.resolution = shape->lightmap_size();
+        ret.resolution = ocarina::clamp(uint(shape->lightmap_size() * _scale), _min, _max);
         ret.bruteForce = true;
         return ret;
     }

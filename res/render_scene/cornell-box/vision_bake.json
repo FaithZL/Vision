@@ -223,9 +223,9 @@
 				"transform" : {
 					"type" : "trs",
 					"param" : {
-						"t": [0,0.6,0],
-						"r": [1,0,0,0],
-						"s": [0.8,0.8,0.8]
+						"t" : [0, 0.6, 0],
+						"r" : [1, 0, 0, 0],
+						"s" : [0.8, 0.8, 0.8]
 					}
 				}
 			}
@@ -1006,7 +1006,18 @@
 		}
 	},
 	"pipeline" : {
-		//		"type" : "bake"
+		"type" : "bake",
+		"param": {
+			"uv_unwrapper": {
+				"type": "xatlas",
+				"param" : {
+					"min": 100,
+					"max": 1024,
+					"scale": 1,
+					"padding": 3
+				}
+			}
+		}
 		//		"type" : "real_time"
 	},
 	"output" : {
