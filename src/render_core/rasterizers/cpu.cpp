@@ -17,13 +17,22 @@ public:
 
     void compile() noexcept override {}
 
-    void scan_line(float2 p0, float2 p1, uint index) noexcept {
+    void write(uint x, uint y, uint4 val) noexcept {
+        OC_ASSERT(all(make_uint2(x,y) < _res));
+        uint index = y * _res.x + x;
+        _pixels[index] = val;
+    }
+
+    void scan_line(float2 p0, float2 p1, uint tri_index) noexcept {
         if (p0.x > p1.x) {
             std::swap(p0, p1);
         }
         float d = p1.x - p0.x;
-        for (int i = 0; i < ; ++i) {
-            
+        uint y = ocarina::round(p0.y);
+        for (uint i = 0; i < d; ++i) {
+            uint x = ocarina::round(p0.x + i);
+            uint4 val = make_uint4(tri_index,as<uint>(1.f),as<uint>(1.f),as<uint>(1.f));
+            write(x, y, val);
         }
     }
 
@@ -42,10 +51,10 @@ public:
         };
 
         auto draw_top = [this, index](float2 p0, float2 p1, float2 p2) {
-            int start_y = ocarina::round(p2.y);
-            int end_y = ocarina::round(p0.y);
+            uint start_y = ocarina::round(p2.y);
+            uint end_y = ocarina::round(p0.y);
 
-            for (int py = start_y; py < end_y; ++py) {
+            for (uint py = start_y; py < end_y; ++py) {
                 float factor = float(py - start_y) / (end_y - start_y);
                 float2 p_start = lerp(factor, p1, p0);
                 float2 p_end = lerp(factor, p2, p0);
@@ -54,10 +63,10 @@ public:
         };
 
         auto draw_bottom = [this, index](float2 p0, float2 p1, float2 p2) {
-            int start_y = ocarina::round(p2.y);
-            int end_y = ocarina::round(p0.y);
+            uint start_y = ocarina::round(p2.y);
+            uint end_y = ocarina::round(p0.y);
 
-            for (int py = start_y; py < end_y; py += 1) {
+            for (uint py = start_y; py < end_y; py += 1) {
                 float factor = float(py - start_y) / (end_y - start_y);
                 float2 p_start = lerp(factor, p2, p0);
                 float2 p_end = lerp(factor, p2, p1);
@@ -74,7 +83,7 @@ public:
         } else if (equal(p1.y, p2.y)) {
             draw_top(p0, p1, p2);
         } else {
-            float factor = float(p1.y - p2.y) / p0.y - p2.y;
+            float factor = float(p1.y - p2.y) / (p0.y - p2.y);
             float2 pc = lerp(factor, p2, p0);
             draw_top(p0, pc, p1);
             draw_bottom(pc, p1, p2);
