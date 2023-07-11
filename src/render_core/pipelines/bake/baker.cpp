@@ -109,8 +109,8 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
         _rasterizer->apply(bs);
         stream() << bs.save_rasterize_map_to_cache() << synchronize() << commit();
     }
-    _batch_mesh.setup(baked_shapes);
     _batch_mesh.batch(baked_shapes);
+    _batch_mesh.setup(baked_shapes);
 }
 
 void Baker::_baking() noexcept {
@@ -122,7 +122,7 @@ void Baker::_baking() noexcept {
             stream() << _baker(i, _batch_mesh.triangles(),
                                _batch_mesh.vertices(),
                                _batch_mesh.pixels(),
-                               _radiance)
+                               _final_radiance)
                             .dispatch(_batch_mesh.pixel_num());
             stream() << synchronize();
             stream() << commit();
@@ -131,13 +131,13 @@ void Baker::_baking() noexcept {
         stream() << commit();
     }
 
-    {
-        VS_BAKER_STATS(_baker_stats, filter)
-        stream() << _dilate_filter(_batch_mesh.pixels(),
-                                   _radiance, _final_radiance)
-                        .dispatch(_batch_mesh.pixel_num())
-                 << synchronize() << commit();
-    }
+//    {
+//        VS_BAKER_STATS(_baker_stats, filter)
+//        stream() << _dilate_filter(_batch_mesh.pixels(),
+//                                   _radiance, _final_radiance)
+//                        .dispatch(_batch_mesh.pixel_num())
+//                 << synchronize() << commit();
+//    }
 }
 
 void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {

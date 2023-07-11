@@ -43,14 +43,14 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
     for (BakedShape &bs : baked_shapes) {
         bs.shape()->for_each_mesh([&](const vision::Mesh &mesh, int index) {
             float4x4 o2w = bs.shape()->o2w();
-            for (const Vertex &vertex : mesh.vertices) {
-                float3 world_pos = transform_point<H>(o2w, vertex.position());
-                float3 world_norm = transform_normal<H>(o2w, vertex.normal());
-                world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
-                _vertices_old.emplace_back(world_pos, world_norm, vertex.tex_coord(), vertex.lightmap_uv());
-            }
+//            for (const Vertex &vertex : mesh.vertices) {
+//                float3 world_pos = transform_point<H>(o2w, vertex.position());
+//                float3 world_norm = transform_normal<H>(o2w, vertex.normal());
+//                world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
+////                _vertices_old.emplace_back(world_pos, world_norm, vertex.tex_coord(), vertex.lightmap_uv());
+//            }
             for (const Triangle &tri : mesh.triangles) {
-                _triangles_old.emplace_back(tri.i + vert_offset, tri.j + vert_offset, tri.k + vert_offset);
+//                _triangles_old.emplace_back(tri.i + vert_offset, tri.j + vert_offset, tri.k + vert_offset);
                 res_offset.emplace_back(bs.resolution(), _pixel_num);
             }
             vert_offset += mesh.vertices.size();
@@ -59,17 +59,17 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
         _pixel_num += bs.pixel_num();
     }
 
-    _vertices_old.reset_device_buffer_immediately(device());
-    _triangles_old.reset_device_buffer_immediately(device());
+//    _vertices_old.reset_device_buffer_immediately(device());
+//    _triangles_old.reset_device_buffer_immediately(device());
 
     auto rasterize = [&]() {
-        stream() << _vertices_old.upload()
+        stream() << _vertices.upload()
                  << reset_pixels()
-                 << _triangles_old.upload();
+                 << _triangles.upload();
 
-        for (uint i = 0; i < _triangles_old.host_buffer().size(); ++i) {
+        for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
             auto [res, offset] = res_offset[i];
-            stream() << _rasterize(_triangles_old, _vertices_old,
+            stream() << _rasterize(_triangles, _vertices,
                                    _pixels, offset, i, res)
                             .dispatch(pixel_num());
             stream() << synchronize() << commit();
