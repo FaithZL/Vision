@@ -3306,12 +3306,12 @@
                 }
             },
             "filter": {
-                "type": "box",
+                "type": "gaussian",
                 "name": "boxFilter",
                 "param": {
                     "radius": [
-                        0.5,
-                        0.5
+                        1.5,
+                        1.5
                     ]
                 }
             }
@@ -3335,9 +3335,23 @@
         }
     },
     "spectrum": {
-        "type": "hero",
+        "type": "srgb",
         "param": {
             "dimension" : 3
+        }
+    },
+    "pipeline" :{
+//                "type": "bake",
+        "param": {
+            "uv_unwrapper": {
+                "type": "xatlas",
+                "param" : {
+                    "min": 300,
+                    "max": 1024,
+                    "scale": 1,
+                    "padding": 3
+                }
+            }
         }
     },
     "render_setting": {

@@ -45,7 +45,7 @@ public:
 
     void apply(vision::BakedShape &bs) noexcept override {
         auto &stream = pipeline()->stream();
-        MergedMesh &mesh = bs.merged_mesh();
+        const MergedMesh &mesh = bs.merged_mesh();
         Buffer<Vertex> vertices = device().create_buffer<Vertex>(mesh.vertices.size());
         Buffer<Triangle> triangles = device().create_buffer<Triangle>(mesh.triangles.size());
         stream << vertices.upload(mesh.vertices.data());
@@ -54,8 +54,8 @@ public:
             stream << _shader(vertices, triangles, i,
                               bs.pixels())
                           .dispatch(bs.resolution());
+            stream << synchronize() << commit();
         }
-        stream << synchronize() << commit();
     }
 };
 
