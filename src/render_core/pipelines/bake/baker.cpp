@@ -97,6 +97,7 @@ void Baker::_compile_bake() noexcept {
 
 void Baker::compile() noexcept {
     _compile_bake();
+    _rasterizer->compile();
     _dilate_filter.compile();
     _batch_mesh.compile();
 }
@@ -104,7 +105,9 @@ void Baker::compile() noexcept {
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
     VS_BAKER_STATS(_baker_stats, raster)
     for (BakedShape &bs : baked_shapes) {
-        bs.prepare_to_bake();
+        bs.prepare_to_rasterize();
+        _rasterizer->apply(bs);
+        stream() << bs.save_rasterize_map_to_cache() << synchronize() << commit();
     }
     _batch_mesh.setup(baked_shapes);
 }
@@ -140,7 +143,6 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
     VS_BAKER_STATS(_baker_stats, save)
     uint offset = 0;
     for (BakedShape &bs : baked_shapes) {
-        Context::create_directory_if_necessary(bs.instance_cache_directory());
         bs.allocate_lightmap_texture();
         stream() << bs.lightmap_tex().copy_from(_final_radiance, offset);
         stream() << bs.save_lightmap_to_cache();

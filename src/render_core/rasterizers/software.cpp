@@ -2,14 +2,14 @@
 // Created by Zero on 2023/7/10.
 //
 
-
 #include "base/bake_utlis.h"
 
 namespace vision {
 
 class SoftwareRasterizer : public Rasterizer {
 private:
-    using signature = void(Buffer<Vertex>, Buffer<Triangle>, Buffer<float4>, Buffer<float4>, uint2, uint);
+    using signature = void(Buffer<Vertex>, Buffer<Triangle>, uint,
+                           Buffer<uint4>, Buffer<float4>);
     Shader<signature> _shader;
 
 public:
@@ -18,7 +18,8 @@ public:
 
     void compile() noexcept override {
         Kernel kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
-                            BufferVar<float4> positions, BufferVar<float4> normals, Uint2 res, Uint triangle_index) {
+                            Uint triangle_index, BufferVar<uint4> pixels,
+                            BufferVar<float4> debug_buffer) {
             Float2 coord = (make_float2(dispatch_idx().xy()) + 0.5f);
             Var tri = triangles.read(triangle_index);
             Var v0 = vertices.read(tri.i);
@@ -28,31 +29,25 @@ public:
             Float2 p0 = v0->lightmap_uv();
             Float2 p1 = v1->lightmap_uv();
             Float2 p2 = v2->lightmap_uv();
+            Uint4 pixel = pixels.read(dispatch_id());
             $if(in_triangle<D>(coord, p0, p1, p2)) {
-                Float2 bary = barycentric(coord, p0, p1, p2);
-                Float3 pos = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
-                positions.write(dispatch_id(), make_float4(pos, 1.f));
-
-                Float3 n0 = v0->normal();
-                Float3 n1 = v1->normal();
-                Float3 n2 = v2->normal();
-                Float3 norm;
-                $if(is_zero(n0) || is_zero(n1) || is_zero(n2)) {
-                    Var v02 = v2->position() - v0->position();
-                    Var v01 = v1->position() - v0->position();
-                    norm = normalize(cross(v01, v02));
-                } $else {
-                    norm = normalize(triangle_lerp(bary, n0, n1, n2));
-                };
-                normals.write(dispatch_id(), make_float4(norm, 1.f));
+                pixel.x = triangle_index;
+                debug_buffer.write(dispatch_id(), make_float4(1, 1, 0, 1));
             };
+            pixels.write(dispatch_id(), pixel);
         };
         _shader = device().compile(kernel, "rasterizer");
     }
 
-    void apply(vision::BakedShape &baked_shape) noexcept override {
+    void apply(vision::BakedShape &bs) noexcept override {
         auto &stream = pipeline()->stream();
-
+        MergedMesh &mesh = bs.merged_mesh();
+        for (uint i = 0; i < mesh.triangles.host_buffer().size(); ++i) {
+            stream << _shader(mesh.vertices, mesh.triangles, i,
+                              bs.pixels(), bs.debug_pixels())
+                          .dispatch(bs.resolution());
+        }
+        stream << synchronize() << commit();
     }
 };
 

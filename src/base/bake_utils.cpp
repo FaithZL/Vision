@@ -54,11 +54,28 @@ void BakedShape::save_to_cache(const UnwrapperResult &result) {
 }
 
 CommandList BakedShape::save_lightmap_to_cache() const {
+    Context::create_directory_if_necessary(instance_cache_directory());
     CommandList ret;
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
     ret << _lightmap_tex.download(ptr);
     ret << [&, ptr] {
         ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
+        ocarina::deallocate(ptr);
+    };
+    return ret;
+}
+
+CommandList BakedShape::save_rasterize_map_to_cache() const {
+    CommandList ret;
+    Context::create_directory_if_necessary(instance_cache_directory());
+    float4 *ptr = ocarina::allocate<float4>(pixel_num());
+    ret << _debug_pixels.download(ptr);
+    ret << [&, ptr] {
+        ImageIO::save_image(rasterize_debug_path(), PixelStorage::FLOAT4,_resolution, ptr);
+    };
+    ret << _pixels.download(ptr);
+    ret << [&, ptr] {
+        ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4,_resolution, ptr);
         ocarina::deallocate(ptr);
     };
     return ret;
@@ -85,8 +102,19 @@ void BakedShape::merge_meshes() noexcept {
 }
 
 void BakedShape::prepare_to_bake() noexcept {
-    merge_meshes();
+
 }
+
+void BakedShape::prepare_to_rasterize() noexcept {
+    merge_meshes();
+    _merged_mesh.triangles.reset_device_buffer_immediately(shape()->device());
+    _merged_mesh.vertices.reset_device_buffer_immediately(shape()->device());
+    _pixels = shape()->device().create_buffer<uint4>(pixel_num());
+    _debug_pixels = shape()->device().create_buffer<float4>(pixel_num());
+    _merged_mesh.triangles.upload_immediately();
+    _merged_mesh.vertices.upload_immediately();
+}
+
 
 void BakedShape::allocate_lightmap_texture() noexcept {
     _lightmap_tex = shape()->device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
@@ -130,6 +158,14 @@ bool BakedShape::has_uv_cache() const noexcept {
 
 fs::path BakedShape::lightmap_cache_path() const noexcept {
     return instance_cache_directory() / "lightmap.exr";
+}
+
+fs::path BakedShape::rasterize_cache_path() const noexcept {
+    return instance_cache_directory() / "rasterize.exr";
+}
+
+fs::path BakedShape::rasterize_debug_path() const noexcept {
+    return instance_cache_directory() / "rasterize_debug.exr";
 }
 
 }// namespace vision

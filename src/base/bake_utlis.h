@@ -45,9 +45,7 @@ private:
     Texture _lightmap_tex;
     MergedMesh _merged_mesh;
     Buffer<uint4> _pixels;
-#ifndef NDEBUG
-    Buffer<float4> _pixel_debug;
-#endif
+    Buffer<float4> _debug_pixels;
 
 public:
     BakedShape() = default;
@@ -65,16 +63,21 @@ public:
     }
 
     void prepare_to_bake() noexcept;
+    void prepare_to_rasterize() noexcept;
     void merge_meshes() noexcept;
-
 
     OC_MAKE_MEMBER_GETTER(resolution, )
     OC_MAKE_MEMBER_GETTER(shape, )
     OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
+    OC_MAKE_MEMBER_GETTER(merged_mesh, &)
+    OC_MAKE_MEMBER_GETTER(pixels, &)
+    OC_MAKE_MEMBER_GETTER(debug_pixels, &)
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;
     [[nodiscard]] fs::path lightmap_cache_path() const noexcept;
+    [[nodiscard]] fs::path rasterize_cache_path() const noexcept;
+    [[nodiscard]] fs::path rasterize_debug_path() const noexcept;
     void allocate_lightmap_texture() noexcept;
     [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] uint perimeter() const noexcept { return resolution().x + resolution().y; }

@@ -25,11 +25,9 @@ private:
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
     Shader<signature> shader;
-    Rasterizer *_rasterizer{};
 
 public:
-    BatchMesh(Rasterizer *rasterizer)
-        : _rasterizer(rasterizer) {}
+    BatchMesh() = default;
     void allocate(uint buffer_size);
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] Command *reset_pixels() noexcept;

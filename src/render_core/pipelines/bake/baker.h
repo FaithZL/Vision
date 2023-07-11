@@ -20,6 +20,7 @@ private:
     Buffer<float4> _final_radiance;
     BatchMesh _batch_mesh;
     DilateFilter _dilate_filter{};
+    Rasterizer * _rasterizer{};
     Shader<void(uint, Buffer<Triangle>, Buffer<Vertex>, Buffer<uint4>, Buffer<float4>)> _baker;
 
 private:
@@ -38,7 +39,7 @@ private:
 
 public:
     explicit Baker(BakerStats &baker_stats, Rasterizer *rasterizer)
-        : _baker_stats(baker_stats), _batch_mesh(rasterizer) {}
+        : _baker_stats(baker_stats),_rasterizer(rasterizer) {}
     void compile() noexcept;
     void allocate() noexcept;
     [[nodiscard]] CommandList deallocate() noexcept;
