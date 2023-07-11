@@ -3341,8 +3341,11 @@
         }
     },
     "pipeline" :{
-//                "type": "bake",
+        "type": "bake",
         "param": {
+            "rasterizer" : {
+                "type": "CPU"
+            },
             "uv_unwrapper": {
                 "type": "xatlas",
                 "param" : {

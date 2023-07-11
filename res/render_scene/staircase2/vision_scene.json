@@ -1720,7 +1720,7 @@
         "type": "independent",
         "name": "sampler0",
         "param": {
-            "spp": 100
+            "spp": 1000
         }
     },
     "camera": {
@@ -1808,8 +1808,11 @@
         }
     },
     "pipeline" :{
-//        "type": "bake",
+        "type": "bake",
         "param": {
+            "rasterizer" : {
+                				"type": "CPU"
+            },
             "uv_unwrapper": {
                 "type": "xatlas",
                 "param" : {

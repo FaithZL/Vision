@@ -28,9 +28,9 @@ public:
             std::swap(p0, p1);
         }
         float d = p1.x - p0.x;
-        uint y = ocarina::round(p0.y);
+        uint y = p0.y;
         for (uint i = 0; i < d; ++i) {
-            uint x = ocarina::round(p0.x + i);
+            uint x = p0.x + i;
             uint4 val = make_uint4(tri_index,as<uint>(1.f),as<uint>(1.f),as<uint>(1.f));
             write(x, y, val);
         }
@@ -47,12 +47,12 @@ public:
         v2 = arr[2];
 
         auto equal = [](float a, float b) {
-            return ocarina::round(a) == ocarina::round(b);
+            return uint(a) == uint(b);
         };
 
         auto draw_top = [this, index](float2 p0, float2 p1, float2 p2) {
-            uint start_y = ocarina::round(p2.y);
-            uint end_y = ocarina::round(p0.y);
+            uint start_y = p2.y;
+            uint end_y = p0.y;
 
             for (uint py = start_y; py < end_y; ++py) {
                 float factor = float(py - start_y) / (end_y - start_y);
@@ -63,8 +63,8 @@ public:
         };
 
         auto draw_bottom = [this, index](float2 p0, float2 p1, float2 p2) {
-            uint start_y = ocarina::round(p2.y);
-            uint end_y = ocarina::round(p0.y);
+            uint start_y = p2.y;
+            uint end_y = p0.y;
 
             for (uint py = start_y; py < end_y; py += 1) {
                 float factor = float(py - start_y) / (end_y - start_y);
