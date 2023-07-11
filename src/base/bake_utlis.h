@@ -34,15 +34,8 @@ struct UnwrapperResult {
 };
 
 struct MergedMesh {
-    Managed<Vertex> vertices;
-    Managed<Triangle> triangles;
-
-    void upload(Device &device) noexcept {
-        triangles.reset_device_buffer_immediately(device);
-        vertices.reset_device_buffer_immediately(device);
-        triangles.upload_immediately();
-        vertices.upload_immediately();
-    }
+    vector<Vertex> vertices;
+    vector<Triangle> triangles;
 };
 
 struct BakedShape {

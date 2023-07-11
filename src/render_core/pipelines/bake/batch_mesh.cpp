@@ -10,14 +10,10 @@ namespace vision {
 
 CommandList BatchMesh::clear() noexcept {
     CommandList ret;
-    ret << _triangles_old.device_buffer().clear();
-    ret << _vertices_old.device_buffer().clear();
     ret << _triangles.device_buffer().clear();
     ret << _vertices.device_buffer().clear();
     ret << _pixels.device_buffer().clear();
     ret << [&] {
-        _triangles_old.host_buffer().clear();
-        _vertices_old.host_buffer().clear();
         _triangles.host_buffer().clear();
         _vertices.host_buffer().clear();
         _pixel_num = 0;
@@ -53,9 +49,8 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
                                     tri.j + vert_offset,
                                     tri.k + vert_offset);
         }
-
-        triangle_offset += mesh.triangles.host_buffer().size();
-        vert_offset += mesh.vertices.host_buffer().size();
+        triangle_offset += mesh.triangles.size();
+        vert_offset += mesh.vertices.size();
         pixel_offset += bs.pixel_num();
         append(_vertices, mesh.vertices);
         bs.normalize_lightmap_uv();
