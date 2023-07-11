@@ -9,7 +9,7 @@ namespace vision {
 class SoftwareRasterizer : public Rasterizer {
 private:
     using signature = void(Buffer<Vertex>, Buffer<Triangle>, uint,
-                           Buffer<uint4>, Buffer<float4>);
+                           Buffer<uint4>);
     Shader<signature> _shader;
 
 public:
@@ -19,8 +19,7 @@ public:
     void compile() noexcept override {
         Sampler *sampler = scene().sampler();
         Kernel kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
-                            Uint triangle_index, BufferVar<uint4> pixels,
-                            BufferVar<float4> debug_buffer) {
+                            Uint triangle_index, BufferVar<uint4> pixels) {
             Float2 coord = (make_float2(dispatch_idx().xy()) + 0.5f);
             Var tri = triangles.read(triangle_index);
             Var v0 = vertices.read(tri.i);
@@ -39,7 +38,6 @@ public:
                 pixel.z = as<uint>(u.y);
                 pixel.w = as<uint>(1.f);
                 pixels.write(dispatch_id(), pixel);
-                debug_buffer.write(dispatch_id(), make_float4(u, sampler->next_1d(), 1.f));
             };
         };
         _shader = device().compile(kernel, "rasterizer");
@@ -50,7 +48,7 @@ public:
         MergedMesh &mesh = bs.merged_mesh();
         for (uint i = 0; i < mesh.triangles.host_buffer().size(); ++i) {
             stream << _shader(mesh.vertices, mesh.triangles, i,
-                              bs.pixels(), bs.debug_pixels())
+                              bs.pixels())
                           .dispatch(bs.resolution());
         }
         stream << synchronize() << commit();

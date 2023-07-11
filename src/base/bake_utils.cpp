@@ -69,10 +69,6 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
     CommandList ret;
     Context::create_directory_if_necessary(instance_cache_directory());
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
-//    ret << _debug_pixels.download(ptr);
-//    ret << [&, ptr] {
-//        ImageIO::save_image(rasterize_debug_path(), PixelStorage::FLOAT4,_resolution, ptr);
-//    };
     ret << _pixels.download(ptr);
     ret << [&, ptr] {
         ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4,_resolution, ptr);
@@ -101,19 +97,12 @@ void BakedShape::merge_meshes() noexcept {
     });
 }
 
-void BakedShape::prepare_to_bake() noexcept {
-
-}
-
 void BakedShape::prepare_to_rasterize() noexcept {
     merge_meshes();
     _merged_mesh.upload(shape()->device());
     _pixels = shape()->device().create_buffer<uint4>(pixel_num());
-    _debug_pixels = shape()->device().create_buffer<float4>(pixel_num());
     _pixels.clear_immediately();
-    _debug_pixels.clear_immediately();
 }
-
 
 void BakedShape::allocate_lightmap_texture() noexcept {
     _lightmap_tex = shape()->device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
@@ -161,10 +150,6 @@ fs::path BakedShape::lightmap_cache_path() const noexcept {
 
 fs::path BakedShape::rasterize_cache_path() const noexcept {
     return instance_cache_directory() / "rasterize.exr";
-}
-
-fs::path BakedShape::rasterize_debug_path() const noexcept {
-    return instance_cache_directory() / "rasterize_debug.exr";
 }
 
 }// namespace vision
