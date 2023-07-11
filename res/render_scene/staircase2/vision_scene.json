@@ -1785,11 +1785,41 @@
     "light_sampler": {
         "type": "uniform",
         "param": {
-            "lights": []
+            "lights": [
+//                {
+//                    "type" : "environment",
+//                    "param": {
+//                        "color": {
+//                            "fn" : "textures/spaichingen_hill_2k.exr",
+//                            "color_space": "linear"
+//                        },
+//                        "o2w" : {
+//                            "type":"yaw_pitch",
+//                            "param": {
+//                                "yaw" :-30
+//                            }
+//                        },
+//                        "scale" : 1
+//                    }
+//                }
+
+
+            ]
         }
     },
     "pipeline" :{
-        "type": "bake"
+//        "type": "bake",
+        "param": {
+            "uv_unwrapper": {
+                "type": "xatlas",
+                "param" : {
+                    "min": 300,
+                    "max": 1024,
+                    "scale": 1,
+                    "padding": 3
+                }
+            }
+        }
     },
     "render_setting": {
         "polymorphic_mode": 1
