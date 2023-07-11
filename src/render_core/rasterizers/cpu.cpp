@@ -18,7 +18,9 @@ public:
     void compile() noexcept override {}
 
     void write(uint x, uint y, uint4 val) noexcept {
-        OC_ASSERT(all(make_uint2(x,y) < _res));
+        OC_ASSERT(all(make_uint2(x, y) <= _res));
+        x = ocarina::clamp(x, 0u, _res.x - 1u);
+        y = ocarina::clamp(y, 0u, _res.y - 1u);
         uint index = y * _res.x + x;
         _pixels[index] = val;
     }
@@ -27,14 +29,42 @@ public:
         if (p0.x > p1.x) {
             std::swap(p0, p1);
         }
-        float d = p1.x - p0.x;
-        uint y = p0.y;
-        for (uint i = 0; i < d; ++i) {
-            uint x = p0.x + i;
-            uint4 val = make_uint4(tri_index,as<uint>(1.f),as<uint>(1.f),as<uint>(1.f));
+        uint y = round(p0.y);
+        for (uint i = floor(p0.x); i < ceil(p1.x); ++i) {
+            uint x = i;
+            uint4 val = make_uint4(tri_index,
+                                   as<uint>(1.f),
+                                   as<uint>(1.f),
+                                   as<uint>(1.f));
             write(x, y, val);
         }
     }
+
+    void draw_top(float2 p0, float2 p1, float2 p2, uint tri_idx) {
+        float start_y = p2.y;
+        float end_y = p0.y;
+        float factor;
+        for (uint py = floor(start_y); py < ceil(end_y); ++py) {
+            factor = float(py - start_y) / (end_y - start_y);
+            factor = ocarina::clamp(factor, 0.f, 1.f);
+            float2 p_start = lerp(factor, p1, p0);
+            float2 p_end = lerp(factor, p2, p0);
+            scan_line(p_start, p_end, tri_idx);
+        }
+    };
+
+    void draw_bottom(float2 p0, float2 p1, float2 p2, uint tri_idx) {
+        float start_y = p2.y;
+        float end_y = p0.y;
+        float factor;
+        for (uint py = floor(start_y); py < ceil(end_y); py += 1) {
+            factor = float(py - start_y) / (end_y - start_y);
+            factor = ocarina::clamp(factor, 0.f, 1.f);
+            float2 p_start = lerp(factor, p2, p0);
+            float2 p_end = lerp(factor, p2, p1);
+            scan_line(p_start, p_end, tri_idx);
+        }
+    };
 
     void draw(Vertex v0, Vertex v1, Vertex v2, uint index) noexcept {
 
@@ -50,43 +80,19 @@ public:
             return uint(a) == uint(b);
         };
 
-        auto draw_top = [this, index](float2 p0, float2 p1, float2 p2) {
-            uint start_y = p2.y;
-            uint end_y = p0.y;
-
-            for (uint py = start_y; py < end_y; ++py) {
-                float factor = float(py - start_y) / (end_y - start_y);
-                float2 p_start = lerp(factor, p1, p0);
-                float2 p_end = lerp(factor, p2, p0);
-                scan_line(p_start, p_end, index);
-            }
-        };
-
-        auto draw_bottom = [this, index](float2 p0, float2 p1, float2 p2) {
-            uint start_y = p2.y;
-            uint end_y = p0.y;
-
-            for (uint py = start_y; py < end_y; py += 1) {
-                float factor = float(py - start_y) / (end_y - start_y);
-                float2 p_start = lerp(factor, p2, p0);
-                float2 p_end = lerp(factor, p2, p1);
-                scan_line(p_start, p_end, index);
-            }
-        };
-
         float2 p0 = v0.lightmap_uv();
         float2 p1 = v1.lightmap_uv();
         float2 p2 = v2.lightmap_uv();
 
         if (equal(p0.y, p1.y)) {
-            draw_bottom(p0, p1, p2);
+            draw_bottom(p0, p1, p2, index);
         } else if (equal(p1.y, p2.y)) {
-            draw_top(p0, p1, p2);
+            draw_top(p0, p1, p2, index);
         } else {
             float factor = float(p1.y - p2.y) / (p0.y - p2.y);
             float2 pc = lerp(factor, p2, p0);
-            draw_top(p0, pc, p1);
-            draw_bottom(pc, p1, p2);
+            draw_top(p0, pc, p1, index);
+            draw_bottom(pc, p1, p2, index);
         }
     }
 
