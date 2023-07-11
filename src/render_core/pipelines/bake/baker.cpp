@@ -118,8 +118,8 @@ void Baker::_baking() noexcept {
         Sampler *sampler = scene().sampler();
         for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
             _baker_stats.set_sample_index(i);
-            stream() << _baker(i, _batch_mesh.triangles(),
-                               _batch_mesh.vertices(),
+            stream() << _baker(i, _batch_mesh.triangles_old(),
+                               _batch_mesh.vertices_old(),
                                _batch_mesh.pixels(),
                                _radiance)
                             .dispatch(_batch_mesh.pixel_num());

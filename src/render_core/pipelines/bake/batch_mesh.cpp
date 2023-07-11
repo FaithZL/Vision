@@ -10,12 +10,12 @@ namespace vision {
 
 CommandList BatchMesh::clear() noexcept {
     CommandList ret;
-    ret << _triangles.device_buffer().clear();
-    ret << _vertices.device_buffer().clear();
+    ret << _triangles_old.device_buffer().clear();
+    ret << _vertices_old.device_buffer().clear();
     ret << _pixels.device_buffer().clear();
     ret << [&] {
-        _triangles.host_buffer().clear();
-        _vertices.host_buffer().clear();
+        _triangles_old.host_buffer().clear();
+        _vertices_old.host_buffer().clear();
         _pixel_num = 0;
     };
     return ret;
@@ -33,6 +33,13 @@ Command *BatchMesh::reset_pixels() noexcept {
     return _pixels.upload();
 }
 
+void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
+    for (BakedShape &bs : baked_shapes) {
+        MergedMesh &mesh = bs.merged_mesh();
+
+    }
+}
+
 void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint vert_offset = 0;
     vector<std::pair<uint2, uint>> res_offset;
@@ -43,10 +50,10 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
                 float3 world_pos = transform_point<H>(o2w, vertex.position());
                 float3 world_norm = transform_normal<H>(o2w, vertex.normal());
                 world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
-                _vertices.emplace_back(world_pos, world_norm, vertex.tex_coord(), vertex.lightmap_uv());
+                _vertices_old.emplace_back(world_pos, world_norm, vertex.tex_coord(), vertex.lightmap_uv());
             }
             for (const Triangle &tri : mesh.triangles) {
-                _triangles.emplace_back(tri.i + vert_offset, tri.j + vert_offset, tri.k + vert_offset);
+                _triangles_old.emplace_back(tri.i + vert_offset, tri.j + vert_offset, tri.k + vert_offset);
                 res_offset.emplace_back(bs.resolution(), _pixel_num);
             }
             vert_offset += mesh.vertices.size();
@@ -55,17 +62,17 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
         _pixel_num += bs.pixel_num();
     }
 
-    _vertices.reset_device_buffer_immediately(device());
-    _triangles.reset_device_buffer_immediately(device());
+    _vertices_old.reset_device_buffer_immediately(device());
+    _triangles_old.reset_device_buffer_immediately(device());
 
     auto rasterize = [&](){
-        stream() << _vertices.upload()
+        stream() << _vertices_old.upload()
                 << reset_pixels()
-                << _triangles.upload();
+                << _triangles_old.upload();
 
-        for (uint i = 0; i < _triangles.host_buffer().size(); ++i) {
+        for (uint i = 0; i < _triangles_old.host_buffer().size(); ++i) {
             auto [res, offset] = res_offset[i];
-            stream() << shader(_triangles, _vertices,
+            stream() << shader(_triangles_old, _vertices_old,
                                    _pixels, offset, i, res)
                            .dispatch(pixel_num());
             stream() << synchronize() << commit();

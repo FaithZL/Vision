@@ -17,6 +17,7 @@ public:
         : Rasterizer(desc) {}
 
     void compile() noexcept override {
+        Sampler *sampler = scene().sampler();
         Kernel kernel = [&](BufferVar<Vertex> vertices, BufferVar<Triangle> triangles,
                             Uint triangle_index, BufferVar<uint4> pixels,
                             BufferVar<float4> debug_buffer) {
@@ -31,10 +32,15 @@ public:
             Float2 p2 = v2->lightmap_uv();
             Uint4 pixel = pixels.read(dispatch_id());
             $if(in_triangle<D>(coord, p0, p1, p2)) {
+                sampler->start_pixel_sample(make_uint2(triangle_index, 0u), 0u, 0u);
                 pixel.x = triangle_index;
-                debug_buffer.write(dispatch_id(), make_float4(1, 1, 0, 1));
+                Float2 u = sampler->next_2d();
+                pixel.y = as<uint>(u.x);
+                pixel.z = as<uint>(u.y);
+                pixel.w = as<uint>(1.f);
+                pixels.write(dispatch_id(), pixel);
+                debug_buffer.write(dispatch_id(), make_float4(u, sampler->next_1d(), 1.f));
             };
-            pixels.write(dispatch_id(), pixel);
         };
         _shader = device().compile(kernel, "rasterizer");
     }

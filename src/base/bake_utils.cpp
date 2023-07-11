@@ -69,10 +69,10 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
     CommandList ret;
     Context::create_directory_if_necessary(instance_cache_directory());
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
-    ret << _debug_pixels.download(ptr);
-    ret << [&, ptr] {
-        ImageIO::save_image(rasterize_debug_path(), PixelStorage::FLOAT4,_resolution, ptr);
-    };
+//    ret << _debug_pixels.download(ptr);
+//    ret << [&, ptr] {
+//        ImageIO::save_image(rasterize_debug_path(), PixelStorage::FLOAT4,_resolution, ptr);
+//    };
     ret << _pixels.download(ptr);
     ret << [&, ptr] {
         ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4,_resolution, ptr);
@@ -83,7 +83,7 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
 
 void BakedShape::merge_meshes() noexcept {
     uint vert_offset = 0;
-    shape()->for_each_mesh([&](const vision::Mesh &mesh, int index) {
+    shape()->for_each_mesh([&](const vision::Mesh &mesh, uint index) {
         float4x4 o2w = shape()->o2w();
         for (const Vertex &vertex : mesh.vertices) {
             float3 world_pos = transform_point<H>(o2w, vertex.position());
@@ -107,12 +107,11 @@ void BakedShape::prepare_to_bake() noexcept {
 
 void BakedShape::prepare_to_rasterize() noexcept {
     merge_meshes();
-    _merged_mesh.triangles.reset_device_buffer_immediately(shape()->device());
-    _merged_mesh.vertices.reset_device_buffer_immediately(shape()->device());
+    _merged_mesh.upload(shape()->device());
     _pixels = shape()->device().create_buffer<uint4>(pixel_num());
     _debug_pixels = shape()->device().create_buffer<float4>(pixel_num());
-    _merged_mesh.triangles.upload_immediately();
-    _merged_mesh.vertices.upload_immediately();
+    _pixels.clear_immediately();
+    _debug_pixels.clear_immediately();
 }
 
 

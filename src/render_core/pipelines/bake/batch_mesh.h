@@ -12,8 +12,8 @@ namespace vision {
 
 struct BatchMesh : public Ctx {
 private:
-    Managed<Triangle> _triangles;
-    Managed<Vertex> _vertices;
+    Managed<Triangle> _triangles_old;
+    Managed<Vertex> _vertices_old;
     /**
      * store the pixel data eg.
      * triangle id
@@ -33,9 +33,10 @@ public:
     [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
     void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
+    void batch(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixel_num, )
     OC_MAKE_MEMBER_GETTER(pixels, &)
-    OC_MAKE_MEMBER_GETTER(triangles, &)
-    OC_MAKE_MEMBER_GETTER(vertices, &)
+    OC_MAKE_MEMBER_GETTER(triangles_old, &)
+    OC_MAKE_MEMBER_GETTER(vertices_old, &)
 };
 }// namespace vision
