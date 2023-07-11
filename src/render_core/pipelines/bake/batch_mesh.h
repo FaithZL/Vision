@@ -27,7 +27,6 @@ private:
     uint _pixel_num{};
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
-    Shader<signature> _rasterize;
 
     Shader<void(Buffer<uint4>, uint, uint, Buffer<uint4>)> _shader;
 
@@ -37,7 +36,6 @@ public:
     [[nodiscard]] CommandList clear() noexcept;
     [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
-    void setup(ocarina::span<BakedShape> baked_shapes) noexcept;
     void batch(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixel_num, )
     OC_MAKE_MEMBER_GETTER(pixels, &)

@@ -30,7 +30,6 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
     Uint triangle_id = pixel_data.x;
     Uint pixel_offset = pixel_data.y;
     Uint2 res = detail::uint_to_uint2(pixel_data.z);
-//    Bool valid = detail::is_valid(triangle_id);
     Bool valid = bit_cast<uint>(1.f) == pixel_data.w;
     Float3 norm;
     Float3 position;
@@ -111,7 +110,6 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
         stream() << bs.save_rasterize_map_to_cache() << synchronize() << commit();
     }
     _batch_mesh.batch(baked_shapes);
-    _batch_mesh.setup(baked_shapes);
 }
 
 void Baker::_baking() noexcept {
@@ -123,7 +121,7 @@ void Baker::_baking() noexcept {
             stream() << _baker(i, _batch_mesh.triangles(),
                                _batch_mesh.vertices(),
                                _batch_mesh.pixels(),
-                               _final_radiance)
+                               _radiance)
                             .dispatch(_batch_mesh.pixel_num());
             stream() << synchronize();
             stream() << commit();
@@ -132,13 +130,13 @@ void Baker::_baking() noexcept {
         stream() << commit();
     }
 
-//    {
-//        VS_BAKER_STATS(_baker_stats, filter)
-//        stream() << _dilate_filter(_batch_mesh.pixels(),
-//                                   _radiance, _final_radiance)
-//                        .dispatch(_batch_mesh.pixel_num())
-//                 << synchronize() << commit();
-//    }
+    {
+        VS_BAKER_STATS(_baker_stats, filter)
+        stream() << _dilate_filter(_batch_mesh.pixels(),
+                                   _radiance, _final_radiance)
+                        .dispatch(_batch_mesh.pixel_num())
+                 << synchronize() << commit();
+    }
 }
 
 void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
