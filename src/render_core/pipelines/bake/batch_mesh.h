@@ -29,7 +29,7 @@ private:
                            Buffer<uint4>, uint, uint, uint2);
     Shader<signature> _rasterize;
 
-    Shader<void(Buffer<uint4>, uint, uint)> _shader;
+    Shader<void(Buffer<uint4>, uint, uint, Buffer<uint4>)> _shader;
 
 public:
     BatchMesh() = default;
