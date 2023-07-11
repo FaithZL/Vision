@@ -18,7 +18,13 @@ public:
     void compile() noexcept override {}
 
     void scan_line(float2 p0, float2 p1, uint index) noexcept {
-
+        if (p0.x > p1.x) {
+            std::swap(p0, p1);
+        }
+        float d = p1.x - p0.x;
+        for (int i = 0; i < ; ++i) {
+            
+        }
     }
 
     void draw(Vertex v0, Vertex v1, Vertex v2, uint index) noexcept {
