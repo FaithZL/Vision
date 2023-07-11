@@ -2,13 +2,14 @@
 // Created by Zero on 2023/7/11.
 //
 
-
 #include "base/bake_utlis.h"
 
 namespace vision {
 
 class GPURasterizer : public Rasterizer {
 private:
+    uint4 *_pixels{};
+    uint2 _res{};
 
 public:
     explicit GPURasterizer(const RasterizerDesc &desc)
@@ -16,8 +17,10 @@ public:
 
     void compile() noexcept override {}
 
-    void draw(Vertex v0, Vertex v1, Vertex v2, uint4 *pixel,
-              uint2 res, uint index) const noexcept {
+    void scan_line(float2 p0, float2 p1, uint index) noexcept {
+    }
+
+    void draw(Vertex v0, Vertex v1, Vertex v2, uint index) noexcept {
 
         ocarina::array<Vertex, 3> arr = {v0, v1, v2};
         std::sort(arr.begin(), arr.end(), [](const Vertex &a, const Vertex &b) {
@@ -31,14 +34,28 @@ public:
             return ocarina::round(a) == ocarina::round(b);
         };
 
-        auto draw_up = [pixel, res, index](float2 p0, float2 p1, float2 p2) {
-            uint start_y = ocarina::round(p0.y);
-            uint end_y = ocarina::round(p2.y);
+        auto draw_top = [this, index](float2 p0, float2 p1, float2 p2) {
+            int start_y = ocarina::round(p0.y);
+            int end_y = ocarina::round(p2.y);
+
+            for (int py = start_y; py < end_y; ++py) {
+                float factor = (py - start_y) * 1.f / (end_y - start_y);
+                float2 p_start = lerp(factor, p0, p1);
+                float2 p_end = lerp(factor, p0, p2);
+                scan_line(p_start, p_end, index);
+            }
         };
 
-        auto draw_down = [pixel, res, index](float2 p0, float2 p1, float2 p2) {
-            uint start_y = ocarina::round(p0.y);
-            uint end_y = ocarina::round(p2.y);
+        auto draw_bottom = [this, index](float2 p0, float2 p1, float2 p2) {
+            int start_y = ocarina::round(p2.y);
+            int end_y = ocarina::round(p0.y);
+
+            for (int py = start_y; py < end_y; py += 1) {
+                float factor = (py - start_y) * 1.f / (end_y - start_y);
+                float2 p_start = lerp(factor, p2, p0);
+                float2 p_end = lerp(factor, p2, p1);
+                scan_line(p_start, p_end, index);
+            }
         };
 
         float2 p0 = v0.lightmap_uv();
@@ -46,11 +63,11 @@ public:
         float2 p2 = v2.lightmap_uv();
 
         if (equal(p0.y, p1.y)) {
-            draw_down(p0, p1, p2);
-        } else if (equal(p0.y, p2.y)) {
-            draw_up(p0, p1, p2);
+            draw_bottom(p0, p1, p2);
+        } else if (equal(p1.y, p2.y)) {
+            draw_top(p0, p1, p2);
+        } else {
         }
-
     }
 
     void apply(vision::BakedShape &bs) noexcept override {
@@ -58,6 +75,8 @@ public:
         auto &stream = pipeline()->stream();
         vector<uint4> pixels;
         pixels.resize(bs.pixel_num());
+        _pixels = pixels.data();
+        _res = bs.resolution();
         const vector<Vertex> &vertices = mesh.vertices;
         const vector<Triangle> &triangles = mesh.triangles;
         for (uint i = 0; i < triangles.size(); ++i) {
@@ -65,9 +84,9 @@ public:
             Vertex v0 = vertices.at(tri.i);
             Vertex v1 = vertices.at(tri.j);
             Vertex v2 = vertices.at(tri.k);
-            draw(v0, v1, v2, pixels.data(), bs.resolution(), i);
+            draw(v0, v1, v2, i);
         }
-        bs.pixels().upload_immediately(pixels.data());
+        bs.pixels().upload_immediately(_pixels);
     }
 };
 
