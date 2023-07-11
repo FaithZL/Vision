@@ -12,10 +12,14 @@ CommandList BatchMesh::clear() noexcept {
     CommandList ret;
     ret << _triangles_old.device_buffer().clear();
     ret << _vertices_old.device_buffer().clear();
+    ret << _triangles.device_buffer().clear();
+    ret << _vertices.device_buffer().clear();
     ret << _pixels.device_buffer().clear();
     ret << [&] {
         _triangles_old.host_buffer().clear();
         _vertices_old.host_buffer().clear();
+        _triangles.host_buffer().clear();
+        _vertices.host_buffer().clear();
         _pixel_num = 0;
     };
     return ret;
@@ -31,13 +35,6 @@ void BatchMesh::allocate(ocarina::uint buffer_size) {
 
 Command *BatchMesh::reset_pixels() noexcept {
     return _pixels.upload();
-}
-
-void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
-    for (BakedShape &bs : baked_shapes) {
-        MergedMesh &mesh = bs.merged_mesh();
-
-    }
 }
 
 void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
@@ -65,27 +62,59 @@ void BatchMesh::setup(ocarina::span<BakedShape> baked_shapes) noexcept {
     _vertices_old.reset_device_buffer_immediately(device());
     _triangles_old.reset_device_buffer_immediately(device());
 
-    auto rasterize = [&](){
+    auto rasterize = [&]() {
         stream() << _vertices_old.upload()
-                << reset_pixels()
-                << _triangles_old.upload();
+                 << reset_pixels()
+                 << _triangles_old.upload();
 
         for (uint i = 0; i < _triangles_old.host_buffer().size(); ++i) {
             auto [res, offset] = res_offset[i];
-            stream() << shader(_triangles_old, _vertices_old,
+            stream() << _rasterize(_triangles_old, _vertices_old,
                                    _pixels, offset, i, res)
-                           .dispatch(pixel_num());
+                            .dispatch(pixel_num());
             stream() << synchronize() << commit();
         }
     };
 
     rasterize();
+}
 
+void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
+    uint triangle_offset = 0;
+    uint pixel_offset = 0;
+    CommandList cmd_lst;
+    for (BakedShape &bs : baked_shapes) {
+        MergedMesh &mesh = bs.merged_mesh();
+
+        cmd_lst << _shader(bs.pixels(), triangle_offset,
+                           pixel_offset)
+                       .dispatch(bs.resolution());
+
+        triangle_offset += mesh.triangles.host_buffer().size();
+        pixel_offset += bs.pixel_num();
+        append(_triangles, mesh.triangles);
+        append(_vertices, mesh.vertices);
+    }
+    stream() << cmd_lst << synchronize() << commit();
 }
 
 void BatchMesh::compile() noexcept {
-    Kernel kernel = [&](BufferVar<Triangle> triangles, BufferVar<Vertex> vertices,
-                        BufferVar<uint4> pixels, Uint pixel_offset, Uint triangle_index, Uint2 res) {
+
+    Kernel kernel = [&](BufferVar<uint4> pixels, Uint triangle_offset, Uint pixel_offset) {
+        Uint2 res = dispatch_dim().xy();
+        Uint4 pixel = pixels.read(dispatch_id());
+        Bool valid = bit_cast<uint>(1.f) == pixel.w;
+        $if(valid) {
+            pixel.x += triangle_offset;
+        };
+        pixel.y = pixel_offset;
+        pixel.z = detail::uint2_to_uint(res);
+        pixels.write(dispatch_id(), pixel);
+    };
+    _shader = device().compile(kernel, "preprocess rasterize");
+
+    Kernel kn = [&](BufferVar<Triangle> triangles, BufferVar<Vertex> vertices,
+                    BufferVar<uint4> pixels, Uint pixel_offset, Uint triangle_index, Uint2 res) {
         Uint pixel_num = res.x * res.y;
         $if(dispatch_id() < pixel_offset || dispatch_id() >= pixel_offset + pixel_num) {
             $return();
@@ -113,7 +142,7 @@ void BatchMesh::compile() noexcept {
         pixel.z = detail::uint2_to_uint(res);
         pixels.write(dispatch_id(), pixel);
     };
-    shader = device().compile(kernel, "rasterize");
+    _rasterize = device().compile(kn, "rasterize");
 }
 
 }// namespace vision

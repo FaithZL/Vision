@@ -14,6 +14,9 @@ struct BatchMesh : public Ctx {
 private:
     Managed<Triangle> _triangles_old;
     Managed<Vertex> _vertices_old;
+
+    Managed<Triangle> _triangles;
+    Managed<Vertex> _vertices;
     /**
      * store the pixel data eg.
      * triangle id
@@ -24,7 +27,9 @@ private:
     uint _pixel_num{};
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
-    Shader<signature> shader;
+    Shader<signature> _rasterize;
+
+    Shader<void(Buffer<uint4>, uint, uint)> _shader;
 
 public:
     BatchMesh() = default;

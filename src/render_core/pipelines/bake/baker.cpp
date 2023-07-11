@@ -110,6 +110,7 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
         stream() << bs.save_rasterize_map_to_cache() << synchronize() << commit();
     }
     _batch_mesh.setup(baked_shapes);
+    _batch_mesh.batch(baked_shapes);
 }
 
 void Baker::_baking() noexcept {
