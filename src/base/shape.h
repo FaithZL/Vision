@@ -52,7 +52,8 @@ public:
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept = 0;
     [[nodiscard]] virtual uint lightmap_size() const noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
-    [[nodiscard]] bool has_emission() const noexcept {return _handle.light_id != InvalidUI32;}
+    virtual void set_lightmap_id(uint id) noexcept = 0;
+    [[nodiscard]] bool has_emission() const noexcept { return _handle.light_id != InvalidUI32; }
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept = 0;
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
@@ -90,6 +91,7 @@ public:
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_areas() const noexcept override;
     [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
+    void set_lightmap_id(ocarina::uint id) noexcept override { handle().lightmap_id = id; }
     void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
         func(*this, 0);
     }

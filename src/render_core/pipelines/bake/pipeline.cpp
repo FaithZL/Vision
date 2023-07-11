@@ -98,7 +98,7 @@ void BakePipeline::bake_all() noexcept {
     baker.compile();
     _baker_stats.set_model_num(_baked_shapes.size());
 
-    async([&]{
+    async([&] {
         while (_baker_stats.is_valid()) {
             _baker_stats.report_progress();
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -118,7 +118,7 @@ void BakePipeline::bake_all() noexcept {
 
     for (int i = 0; i < _baked_shapes.size(); ++i) {
         BakedShape &bs = _baked_shapes[i];
-        bs.shape()->handle().lightmap_id = i;
+        bs.shape()->set_lightmap_id(i);
     }
 
     for (auto iter = _baked_shapes.begin(); iter != _baked_shapes.end();) {

@@ -37,6 +37,12 @@ public:
         load(desc);
     }
 
+    void set_lightmap_id(ocarina::uint id) noexcept override {
+        for (vision::Mesh &mesh : _meshes) {
+            mesh.set_lightmap_id(id);
+        }
+    }
+
     [[nodiscard]] const aiScene *load_scene(const fs::path &fn, Assimp::Importer &ai_importer,
                                             bool swap_handed, bool smooth, bool flip_uv) {
         ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
