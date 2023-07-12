@@ -80,9 +80,6 @@ public:
 
     void write(uint x, uint y, uint4 val) noexcept {
         OC_ASSERT(all(make_uint2(x, y) <= _res));
-        if (x + y == 0) {
-            int i = 0;
-        }
         x = ocarina::clamp(x, 0u, _res.x - 1u);
         y = ocarina::clamp(y, 0u, _res.y - 1u);
         uint index = y * _res.x + x;
