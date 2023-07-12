@@ -29,8 +29,8 @@ public:
         if (p0.x > p1.x) {
             std::swap(p0, p1);
         }
-        uint y = round(p0.y);
-        for (uint i = floor(p0.x); i < ceil(p1.x); ++i) {
+        uint y = p0.y;
+        for (uint i = p0.x; i <= ceil(p1.x); ++i) {
             uint x = i;
             uint4 val = make_uint4(tri_index,
                                    as<uint>(1.f),
@@ -41,23 +41,25 @@ public:
     }
 
     void draw_top(float2 p0, float2 p1, float2 p2, uint tri_idx) {
-        float start_y = p2.y;
-        float end_y = p0.y;
+        uint start_y = p2.y;
+        uint end_y = p0.y;
         float factor;
-        for (uint py = floor(start_y); py < ceil(end_y); ++py) {
+        float2 p_start;
+        float2 p_end;
+        for (uint py = start_y; py <= end_y; ++py) {
             factor = float(py - start_y) / (end_y - start_y);
             factor = ocarina::clamp(factor, 0.f, 1.f);
-            float2 p_start = lerp(factor, p1, p0);
-            float2 p_end = lerp(factor, p2, p0);
+            p_start = lerp(factor, p1, p0);
+            p_end = lerp(factor, p2, p0);
             scan_line(p_start, p_end, tri_idx);
         }
     };
 
     void draw_bottom(float2 p0, float2 p1, float2 p2, uint tri_idx) {
-        float start_y = p2.y;
-        float end_y = p0.y;
+        uint start_y = p2.y;
+        uint end_y = p0.y;
         float factor;
-        for (uint py = floor(start_y); py < ceil(end_y); py += 1) {
+        for (uint py = start_y; py <= end_y; py += 1) {
             factor = float(py - start_y) / (end_y - start_y);
             factor = ocarina::clamp(factor, 0.f, 1.f);
             float2 p_start = lerp(factor, p2, p0);
