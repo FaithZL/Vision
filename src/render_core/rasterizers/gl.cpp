@@ -19,6 +19,7 @@ struct GLContext {
 class OpenGLRasterizer : public Rasterizer {
 private:
     GLContext _context;
+    uint2 _res;
 
 public:
     explicit OpenGLRasterizer(const RasterizerDesc &desc)
@@ -34,7 +35,7 @@ public:
     }
 
     void apply(vision::BakedShape &baked_shape) noexcept override {
-        auto &stream = pipeline()->stream();
+
     }
 };
 
