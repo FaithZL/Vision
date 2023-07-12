@@ -129,6 +129,25 @@ public:
         }
     };
 
+    void draw_bound(float2 p0, float2 p1, float2 p2, uint tri_idx) noexcept {
+        Box2u box;
+        box.extend(make_uint2(p0));
+        box.extend(make_uint2(p1));
+        box.extend(make_uint2(p2));
+        box.upper += make_uint2(1);
+
+        box.for_each([&](uint2 up) {
+            float2 p = make_float2(0.5) + make_float2(up);
+            if (in_triangle<H>(p, p0, p1, p2)) {
+                uint4 val = make_uint4(tri_idx,
+                                       as<uint>(1.f),
+                                       as<uint>(1.f),
+                                       as<uint>(1.f));
+                write(up.x, up.y, val);
+            }
+        });
+    }
+
     void draw(Vertex v0, Vertex v1, Vertex v2, uint index) noexcept {
 
         ocarina::array<Vertex, 3> arr = {v0, v1, v2};
@@ -183,7 +202,8 @@ public:
             Vertex v0 = vertices.at(tri.i);
             Vertex v1 = vertices.at(tri.j);
             Vertex v2 = vertices.at(tri.k);
-            draw(v0, v1, v2, i);
+//            draw(v0, v1, v2, i);
+            draw_bound(v0.lightmap_uv(), v1.lightmap_uv(), v2.lightmap_uv(), i);
         }
         bs.pixels().upload_immediately(_pixels);
     }

@@ -52,6 +52,7 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
         Float3 n2 = v2->normal();
 
         Float2 u = sampler->next_2d();
+        u = make_float2(0.5f);
         // todo Handle the case coord outside the triangle
         Float2 coord = make_float2(x + u.x, y + u.y);
         Float2 bary = barycentric(coord, p0, p1, p2);
