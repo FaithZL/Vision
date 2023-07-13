@@ -33,9 +33,8 @@ void DilateFilter::compile() noexcept {
             return val.w < 0.99f;
         };
 
-        Float weight_sum = 0;
         Uint exterior_num = 0;
-        Float3 color = make_float3(0);
+        Float4 color = make_float4(0);
         $if(check(pixel_index)) {
             $for(x, -_padding, _padding + 1) {
                 $for(y, -_padding, _padding + 1) {
@@ -46,16 +45,15 @@ void DilateFilter::compile() noexcept {
                         $continue;
                     };
                     Float4 val = src.read(g_index);
-                    $if(val.w > 0.99f) {
-                        color += val.xyz();
-                        weight_sum += val.w;
+                    // todo val.w = 0.1f
+                    $if(val.w > 0.f) {
+                        color += val;
                         exterior_num += 1;
                     };
                 };
             };
-            $if(weight_sum != 0) {
-                radiance = make_float4(color / weight_sum,
-                                       weight_sum / cast<float>(exterior_num));
+            $if(exterior_num != 0) {
+                radiance = make_float4(color / cast<float>(exterior_num));
             };
         };
         dst.write(pixel_index, radiance);
