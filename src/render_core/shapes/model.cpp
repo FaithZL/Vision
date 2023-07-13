@@ -135,6 +135,8 @@ public:
             mesh.handle().outside_medium = _outside_medium;
             mesh.handle().inside_medium = _inside_medium;
             mesh.handle().o2w = _o2w;
+            mesh.handle().light_id = handle().light_id;
+            mesh.aabb = aabb;
             this->aabb.extend(aabb);
             meshes.push_back(mesh);
         }

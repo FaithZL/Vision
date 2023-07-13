@@ -239,12 +239,11 @@ public:
 struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
-    LightDesc emission;
+    mutable LightDesc emission;
     NameID material;
     NameID inside_medium;
     NameID outside_medium;
     uint64_t mat_hash{InvalidUI32};
-    uint index{InvalidUI32};
 
     // mesh param
     mutable vector<Vertex> vertices;

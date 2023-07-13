@@ -231,16 +231,16 @@
 //			}
 //		},
 		{
-			"type" : "cube",
+			"type" : "model",
 			"name" : "shape_5",
 			"param" : {
-//				"fn" : "mesh/nanosuit/nanosuit.obj",
-				"fn" : "mesh/planet/planet.obj",
+				"fn" : "mesh/nanosuit/nanosuit.obj",
+//				"fn" : "mesh/planet/planet.obj",
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material" : "Light",
-//				"material" : "ShortBox",
+//				"material" : "Light",
+				"material" : "ShortBox",
 				//				"material" : "substrate",
 				//				"material" : "Mirror",
 				//				"material" : "Metal",
@@ -254,29 +254,29 @@
 						"r" : [1, 0, 0, 0],
 						"s" : [0.1, 0.1, 0.1]
 					}
-				},
-				"emission" : {
-					"type" : "area",
-					"param" : {
-						"color" : {
-							"channels" : "xyz",
-							"node" : [
-								17,
-								12,
-								4
-							]
-						},
-						//						"color" : {
-						//							"channels" : "xyz",
-						//							"node" : {
-						//								"fn" : "Painting3.jpg",
-						//								"color_space" : "srgb"
-						//							}
-						//						},
-						"two_sided" : false,
-						"scale" : 1
-					}
 				}
+//				"emission" : {
+//					"type" : "area",
+//					"param" : {
+//						"color" : {
+//							"channels" : "xyz",
+//							"node" : [
+//								17,
+//								12,
+//								4
+//							]
+//						},
+//						//						"color" : {
+//						//							"channels" : "xyz",
+//						//							"node" : {
+//						//								"fn" : "Painting3.jpg",
+//						//								"color_space" : "srgb"
+//						//							}
+//						//						},
+//						"two_sided" : false,
+//						"scale" : 1
+//					}
+//				}
 			}
 		},
 //				{
@@ -891,8 +891,8 @@
 				}
 			},
 			"filter" : {
-//				"type" : "gaussian",
-								"type" : "box",
+				"type" : "gaussian",
+//								"type" : "box",
 				"name" : "boxFilter",
 				"param" : {
 					"sigma" : 0.2,

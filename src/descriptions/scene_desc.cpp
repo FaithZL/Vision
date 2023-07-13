@@ -19,7 +19,6 @@ void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
 void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     for (uint i = 0; i < shapes.size(); ++i) {
         ShapeDesc sd;
-        sd.index = i;
         sd.init(shapes[i]);
         if (mat_name_to_id.contains(sd.material.name)) {
             sd.material.id = mat_name_to_id[sd.material.name];

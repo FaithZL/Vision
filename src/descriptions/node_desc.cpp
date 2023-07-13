@@ -70,7 +70,6 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
         outside_medium.name = m["outside"].as_string();
     }
     if (_parameter.contains("emission")) {
-        emission.set_value("inst_id", index);
         emission.init(_parameter["emission"]);
     }
 }
