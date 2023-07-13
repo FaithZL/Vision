@@ -33,41 +33,48 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
     Bool valid = bit_cast<uint>(1.f) == pixel_data.w;
     Float3 norm;
     Float3 position;
+
+    auto get_verts = [&](const Uint &triangle_id) -> std::array<Var<Vertex>, 3> {
+        Var tri = triangles.read(triangle_id);
+        Var v0 = vertices.read(tri.i);
+        Var v1 = vertices.read(tri.j);
+        Var v2 = vertices.read(tri.k);
+        return {v0, v1, v2};
+    };
+
     $if(valid) {
         Uint pixel_index = dispatch_id() - pixel_offset;
 
         Uint x = pixel_index % res.x;
         Uint y = pixel_index / res.x;
-
-        Var tri = triangles.read(triangle_id);
-        Var v0 = vertices.read(tri.i);
-        Var v1 = vertices.read(tri.j);
-        Var v2 = vertices.read(tri.k);
-
+        auto [v0, v1, v2] = get_verts(triangle_id);
         Float2 p0 = v0->lightmap_uv();
         Float2 p1 = v1->lightmap_uv();
         Float2 p2 = v2->lightmap_uv();
-        Float3 n0 = v0->normal();
-        Float3 n1 = v1->normal();
-        Float3 n2 = v2->normal();
 
         Float2 u = sampler->next_2d();
         u = make_float2(0.5f);
+        Float2 coord = make_float2(x + u.x, y + u.y);
 
         $if(all(u < make_float2(0.5f))) {
             // left down
-        } $elif (all(u >= make_float2(0.5f))) {
+        }
+        $elif(all(u >= make_float2(0.5f))) {
             // right up
-        } $elif(u.x < 0.5f && u.y >= 0.5f) {
+        }
+        $elif(u.x < 0.5f && u.y >= 0.5f) {
             // left up
-        } $else {
+        }
+        $else{
             // right down
         };
 
         // todo Handle the case coord outside the triangle
-        Float2 coord = make_float2(x + u.x, y + u.y);
-        Float2 bary = barycentric(coord, p0, p1, p2);
 
+        Float2 bary = barycentric(coord, p0, p1, p2);
+        Float3 n0 = v0->normal();
+        Float3 n1 = v1->normal();
+        Float3 n2 = v2->normal();
         position = triangle_lerp(bary, v0->position(), v1->position(), v2->position());
         $if(is_zero(n0) || is_zero(n1) || is_zero(n2)) {
             Var v02 = v2->position() - v0->position();
