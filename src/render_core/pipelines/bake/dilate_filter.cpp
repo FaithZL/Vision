@@ -30,7 +30,7 @@ void DilateFilter::compile() noexcept {
 
         auto check = [&](const Uint &g_index) -> Bool {
             Float4 val = src.read(g_index);
-            return val.w < 0.99f;
+            return val.w < 0.9f;
         };
 
         Uint exterior_num = 0;
