@@ -68,7 +68,7 @@ public:
         u = u * 2.f - make_float2(1.f);
         Float pdf = 0.f;
         Uint2 offset;
-        Float2 p = _warper->sample_continuous(u, std::addressof(pdf), std::addressof(offset));
+        Float2 p = _warper->sample_continuous(abs(u), std::addressof(pdf), std::addressof(offset));
         p = p * sign(u);
         return FilterSample{p, lut_at(offset) / pdf};
     }

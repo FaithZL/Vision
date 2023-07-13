@@ -871,7 +871,7 @@
 				//				"type" : "box",
 				"name" : "boxFilter",
 				"param" : {
-					"sigma" : 1,
+					"sigma" : 0.2,
 					"radius" : [
 						2.0,
 						2.0
@@ -1031,10 +1031,10 @@
 		}
 	},
 	"pipeline" : {
-		"type" : "bake",
+//		"type" : "bake",
 		"param": {
 			"rasterizer" : {
-				"type": "CPU"
+				"type": "gl"
 			},
 			"uv_unwrapper": {
 				"type": "xatlas",
