@@ -22,7 +22,7 @@ public:
     OC_SERIALIZABLE_FUNC(Serializable<>, _integral)
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
-    [[nodiscard]] virtual uint size() const noexcept = 0;
+    [[nodiscard]] virtual Uint size() const noexcept = 0;
     [[nodiscard]] virtual Serial<float> integral() const noexcept { return _integral; }
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
