@@ -30,7 +30,7 @@ private:
     void _save_result(ocarina::span<BakedShape> baked_shapes) noexcept;
 
     /// device function
-    [[nodiscard]] tuple<Float3, Float3, Bool> fetch_geometry_data(const BufferVar<Triangle> &triangles,
+    [[nodiscard]] tuple<Float3, Float3, Bool,Float> fetch_geometry_data(const BufferVar<Triangle> &triangles,
                                                                   const BufferVar<Vertex> &vertices,
                                                                   const BufferVar<uint4> &pixels) noexcept;
     /// device function

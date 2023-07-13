@@ -21,7 +21,7 @@ namespace detail {
 }
 }// namespace detail
 
-tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle> &triangles,
+tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Triangle> &triangles,
                                                        const BufferVar<Vertex> &vertices,
                                                        const BufferVar<uint4> &pixels) noexcept {
     Sampler *sampler = scene().sampler();
@@ -41,7 +41,7 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
         Var v2 = vertices.read(tri.k);
         return {v0, v1, v2};
     };
-
+    Float weight = 1.f;
     $if(valid) {
         Uint pixel_index = dispatch_id() - pixel_offset;
 
@@ -51,24 +51,14 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
         Float2 p0 = v0->lightmap_uv();
         Float2 p1 = v1->lightmap_uv();
         Float2 p2 = v2->lightmap_uv();
+        auto ss = sampler->sensor_sample(make_uint2(x,y), filter);
 
-        Float2 u = sampler->next_2d();
-        u = make_float2(0.5f);
-        Float2 coord = make_float2(x + u.x, y + u.y);
-
-        $if(all(u < make_float2(0.5f))) {
-            // left down
-        }
-        $elif(all(u >= make_float2(0.5f))) {
-            // right up
-        }
-        $elif(u.x < 0.5f && u.y >= 0.5f) {
-            // left up
-        }
-        $else{
-            // right down
+        Float2 coord = ss.p_film;
+        weight = ss.filter_weight;
+        $if(!in_triangle<D>(coord, p0, p1, p2)) {
+            coord = make_float2(x + 0.5f, y + 0.5f);
+            weight = 1.f;
         };
-
         // todo Handle the case coord outside the triangle
 
         Float2 bary = barycentric(coord, p0, p1, p2);
@@ -85,7 +75,7 @@ tuple<Float3, Float3, Bool> Baker::fetch_geometry_data(const BufferVar<Triangle>
             norm = normalize(triangle_lerp(bary, n0, n1, n2));
         };
     };
-    return {position, norm, valid};
+    return {position, norm, valid,weight};
 }
 
 void Baker::_compile_bake() noexcept {
@@ -95,14 +85,14 @@ void Baker::_compile_bake() noexcept {
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
         sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
-        auto [position, norm, valid] = fetch_geometry_data(triangles, vertices, pixels);
+        auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels);
         $if(!valid) {
             $return();
         };
         Float scatter_pdf;
         RayState rs = generate_ray(position, norm, &scatter_pdf);
         Interaction it;
-        Float3 L = integrator->Li(rs, scatter_pdf, &it);
+        Float3 L = integrator->Li(rs, scatter_pdf, &it) * weight;
         Float4 result = make_float4(L, 1.f);
         result.w = select(dot(rs.direction(), it.ng) > 0, 0.f, 1.f);
         Float4 accum_prev = radiance.read(dispatch_id());

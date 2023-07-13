@@ -85,7 +85,7 @@ void BakePipeline::compile_displayer() noexcept {
 
         $if(it.has_lightmap()) {
             Float4 t = resource_array().tex(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
-            L = t.xyz() / 1.f;
+            L = t.xyz() / t.w;
         };
         camera->radiance_film()->add_sample(pixel, L, frame_index);
     };
