@@ -202,7 +202,7 @@ void ToneMapperDesc::init(const vision::ParameterSet &ps) noexcept {
 
 void RasterizerDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
-    sub_type = ps["type"].as_string("software");
+    sub_type = ps["type"].as_string("cpu");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
 }
