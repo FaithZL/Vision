@@ -14,9 +14,12 @@ Shape::Shape(const ShapeDesc &desc)
     _handle.inside_medium = desc.inside_medium.id;
     _handle.outside_medium = desc.outside_medium.id;
     _handle.o2w = desc.o2w.mat;
-    if (desc.emission.valid()) {
+}
+
+void Shape::load_light(const vision::LightDesc &desc) noexcept {
+    if (desc.valid()) {
         _handle.light_id = scene().light_num();
-        emission = scene().load_light(desc.emission);
+        emission = scene().load_light(desc);
     }
 }
 

@@ -45,6 +45,7 @@ public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
     virtual void fill_geometry(Geometry &data) const noexcept = 0;
+    void load_light(const LightDesc &desc) noexcept;
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
     [[nodiscard]] bool has_material() const noexcept { return _handle.mat_id != InvalidUI32; }
