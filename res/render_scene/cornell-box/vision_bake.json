@@ -235,24 +235,26 @@
 			"name" : "shape_5",
 			"param" : {
 				"fn" : "mesh/nanosuit/nanosuit.obj",
+//				"fn" : "mesh/apple.gltf",
 //				"fn" : "mesh/planet/planet.obj",
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
+//				"smooth": true,
 //				"material" : "Light",
 				"material" : "ShortBox",
-				//				"material" : "substrate",
-				//				"material" : "Mirror",
-				//				"material" : "Metal",
-				//				                "material" : "disney",
+//								"material" : "substrate",
+//								"material" : "Mirror",
+//								"material" : "Metal",
+//								                "material" : "disney",
 				//								                "material" : "mix",
-				//				                                "material" : "Glass",
+//								                                "material" : "Glass",
 				"transform" : {
 					"type" : "trs",
 					"param" : {
 						"t" : [0, 0, 0],
 						"r" : [1, 0, 0, 0],
-						"s" : [0.1, 0.1, 0.1]
+						"s" : [0.08, 0.08, 0.08]
 					}
 				}
 //				"emission" : {
@@ -871,6 +873,16 @@
 					]
 				}
 			},
+//			"transform" : {
+//				"type" : "yaw_pitch",
+//				"param" : {
+//					"position" : [
+//						-0.08940657, 1.068205, -0.019081552
+//					],
+//					"yaw": 11.5,
+//					"pitch": -43
+//				}
+//			},
 			"film" : {
 				"type" : "rgb",
 				"param" : {

@@ -128,6 +128,10 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
 void App::update(double dt) noexcept {
     pipeline().upload_data();
     if (invalidation) {
+        Camera *camera = pipeline().scene().camera();
+        float3 pos = camera->position();
+        OC_INFO_FORMAT("camera yaw is {}, pitch is {}, fov is {}, position is ({}, {}, {})", camera->yaw(),
+                       camera->pitch(), camera->fov_y(), pos.x, pos.y, pos.z);
         invalidation = false;
         pipeline().invalidate();
     }
