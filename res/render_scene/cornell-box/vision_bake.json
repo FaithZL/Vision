@@ -1083,7 +1083,7 @@
 		}
 	},
 	"pipeline" : {
-//		"type" : "bake",
+//		"type" : "real_time",
 		"param": {
 			"rasterizer" : {
 				"type": "cpu"

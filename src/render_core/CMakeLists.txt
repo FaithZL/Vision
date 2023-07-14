@@ -14,7 +14,6 @@ add_subdirectory(spectra)
 add_subdirectory(tonemappers)
 add_subdirectory(denoisers)
 add_subdirectory(uvunwrappers)
-add_subdirectory(pipelines)
 add_subdirectory(rasterizers)
 add_subdirectory(passes)
 
@@ -28,7 +27,6 @@ target_link_libraries(vision-plugins INTERFACE
         vision-pass
         vision-lightsampler
         vision-sensor
-        vision-pipeline
         vision-light
         vision-film
         vision-rasterizer
