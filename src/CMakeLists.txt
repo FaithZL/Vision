@@ -41,7 +41,7 @@ add_subdirectory(base)
 add_subdirectory(math)
 add_subdirectory(apps)
 add_subdirectory(render_graph)
-
+add_subdirectory(loaders)
 add_subdirectory(render_core)
 
 add_subdirectory(tests)
@@ -51,6 +51,7 @@ add_library(vision-main INTERFACE)
 target_link_libraries(vision-main INTERFACE
         vision-description
         vision-base
+        vision-loader
         vision-render_graph
         vision-math
         vision-core)
