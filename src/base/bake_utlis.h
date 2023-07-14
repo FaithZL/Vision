@@ -40,7 +40,7 @@ struct MergedMesh {
 
 struct BakedShape {
 private:
-    Shape *_shape{};
+    Mesh *_shape{};
     uint2 _resolution{};
     Texture _lightmap_tex;
     MergedMesh _merged_mesh;
@@ -48,7 +48,7 @@ private:
 
 public:
     BakedShape() = default;
-    explicit BakedShape(Shape *shape) : _shape(shape) {}
+    explicit BakedShape(vision::Mesh *shape) : _shape(shape) {}
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
         return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}",

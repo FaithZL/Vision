@@ -64,7 +64,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             if (desc.emission.valid()) {
-                desc.emission.set_value("inst_id", _shapes.size());
+                desc.emission.set_value("inst_id", _meshes.size());
                 mesh.load_light(desc.emission);
             }
             if (mesh.has_material()) {
@@ -76,7 +76,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 mesh.update_light_id(_light_sampler->lights().encode_id(mesh.handle().light_id, light));
             }
             _aabb.extend(mesh.aabb);
-            _shapes.push_back(&mesh);
+            _meshes.push_back(&mesh);
         });
     }
 }

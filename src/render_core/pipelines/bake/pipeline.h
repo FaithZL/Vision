@@ -46,8 +46,8 @@ public:
     void preprocess() noexcept override;
     template<typename Func>
     void for_each_need_bake(Func &&func) {
-        auto &meshes = _scene.shapes();
-        std::for_each(meshes.begin(), meshes.end(), [&](vision::Shape *item) {
+        auto &meshes = _scene.meshes();
+        std::for_each(meshes.begin(), meshes.end(), [&](vision::Mesh *item) {
             if (item->has_emission()) {
                 return;
             }
