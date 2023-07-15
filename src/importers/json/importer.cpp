@@ -3,3 +3,11 @@
 //
 
 #include "base/importer.h"
+
+namespace vision {
+
+class JsonImporter : public Importer {
+
+};
+
+}

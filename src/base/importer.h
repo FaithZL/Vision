@@ -10,10 +10,12 @@
 
 namespace vision {
 
-class Loader {
+class Importer : public Node {
 public:
-    static Loader *create(const fs::path &fn);
-    [[nodiscard]] virtual Scene load() = 0;
+    using Desc = ImporterDesc;
+public:
+    static Importer *create(const string &ext_name);
+    [[nodiscard]] virtual Scene read_file(const fs::path &fn) = 0;
 };
 
 }// namespace vision
