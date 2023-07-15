@@ -3,10 +3,11 @@
 //
 
 #include "usd_reader.h"
+#include "base/importer.h"
 
 namespace vision {
 
-class USDLoader {
+class USDImporter : public Importer {
 
 };
 
