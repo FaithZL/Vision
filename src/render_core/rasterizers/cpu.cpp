@@ -6,13 +6,13 @@
 
 namespace vision {
 
-class GPURasterizer : public Rasterizer {
+class CPURasterizer : public Rasterizer {
 private:
     uint4 *_pixels{};
     uint2 _res{};
 
 public:
-    explicit GPURasterizer(const RasterizerDesc &desc)
+    explicit CPURasterizer(const RasterizerDesc &desc)
         : Rasterizer(desc) {}
 
     void compile() noexcept override {}
@@ -211,4 +211,4 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::GPURasterizer)
+VS_MAKE_CLASS_CREATOR(vision::CPURasterizer)
