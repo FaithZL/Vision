@@ -20,11 +20,18 @@ void Camera::init(const SensorDesc &desc) noexcept {
 }
 
 RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
+    OCRay ray = generate_ray_in_camera_space(ss);
+    Float4x4 c2w = *_c2w;
+    ray = transform_ray(c2w, ray);
+    return {.ray = ray, .ior = 1.f, .medium = _medium};
+}
+
+OCRay Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {
     uint2 res = _radiance_film->resolution();
     Float2 p = (ss.p_film * 2.f - make_float2(res)) * *_tan_fov_y_over2 / float(res.y);
-    Float3 dir = normalize(p.x * device_right() - p.y * device_up() + device_forward());
-    OCRay ray = make_ray(device_position(), dir);
-    return {.ray = ray, .ior = 1.f, .medium = _medium};
+    Float3 dir = normalize(make_float3(p.x, -p.y, 1.f));
+    OCRay ray = make_ray(make_float3(0.f), dir);
+    return ray;
 }
 
 void Camera::update_mat(float4x4 m) noexcept {

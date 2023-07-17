@@ -30,11 +30,12 @@ protected:
     Serial<float> _tan_fov_y_over2{};
     Serial<float4x4> _c2w;
 
-public:
+protected:
     [[nodiscard]] Float3 device_forward() const noexcept;
     [[nodiscard]] Float3 device_up() const noexcept;
     [[nodiscard]] Float3 device_right() const noexcept;
     [[nodiscard]] Float3 device_position() const noexcept;
+    [[nodiscard]] virtual OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:
     explicit Camera(const SensorDesc &desc);

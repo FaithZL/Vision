@@ -14,7 +14,7 @@ public:
     };
 
 private:
-    Managed<LensData> _lens_data{1};
+    RegistrableManaged<LensData> _lens_data{pipeline()->resource_array()};
 
 public:
     explicit ThinLensCamera(const SensorDesc &desc)
@@ -30,6 +30,7 @@ public:
     void prepare() noexcept override {
         Camera::prepare();
         _lens_data.reset_device_buffer_immediately(pipeline()->device(), 1);
+        _lens_data.register_self();
     }
 };
 }// namespace vision

@@ -132,8 +132,8 @@ template<EPort p = D>
 
 template<EPort p = D>
 [[nodiscard]] var_t<Ray, p> transform_ray(const oc_float4x4<p> &m, var_t<Ray, p> ray) noexcept {
-    ray.update_origin(transform_point(m, ray.origin()));
-    ray.update_direction(transform_vector(m, ray.direction()));
+    ray.org_min = make_float4(transform_point(m, ray.org_min.xyz()), ray.org_min.w);
+    ray.dir_max = make_float4(transform_vector(m, ray.dir_max.xyz()), ray.dir_max.w);
     return ray;
 }
 
