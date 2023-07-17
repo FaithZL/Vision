@@ -3,10 +3,7 @@
 //
 
 #include "base/shape.h"
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/Subdivision.h>
-#include <assimp/scene.h>
+#include "importers/assimp_util.h"
 
 namespace vision {
 
@@ -41,40 +38,6 @@ public:
         for (vision::Mesh &mesh : _meshes) {
             mesh.set_lightmap_id(id);
         }
-    }
-
-    [[nodiscard]] const aiScene *load_scene(const fs::path &fn, Assimp::Importer &ai_importer,
-                                            bool swap_handed, bool smooth, bool flip_uv) {
-        ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
-                                       aiComponent_COLORS |
-                                           aiComponent_BONEWEIGHTS |
-                                           aiComponent_ANIMATIONS |
-                                           aiComponent_LIGHTS |
-                                           aiComponent_CAMERAS |
-                                           aiComponent_TEXTURES |
-                                           aiComponent_MATERIALS);
-        OC_INFO("Loading triangle mesh: ", fn);
-        aiPostProcessSteps normal_flag = smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals;
-        aiPostProcessSteps flip_uv_flag = flip_uv ? aiProcess_FlipUVs : aiPostProcessSteps(0);
-        auto post_process_steps = aiProcess_JoinIdenticalVertices |
-                                  normal_flag |
-                                  aiProcess_PreTransformVertices |
-                                  aiProcess_ImproveCacheLocality |
-                                  aiProcess_FixInfacingNormals |
-                                  aiProcess_FindInvalidData |
-                                  aiProcess_FindDegenerates |
-                                  aiProcess_GenUVCoords |
-                                  aiProcess_TransformUVCoords |
-                                  aiProcess_OptimizeMeshes |
-                                  aiProcess_Triangulate |
-                                  flip_uv_flag;
-        post_process_steps = swap_handed ?
-                                 post_process_steps | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder :
-                                 post_process_steps;
-        auto ai_scene = ai_importer.ReadFile(fn.string().c_str(),
-                                             post_process_steps);
-
-        return ai_scene;
     }
 
     [[nodiscard]] vector<Mesh> process_mesh(const aiScene *ai_scene, uint32_t subdiv_level) {
@@ -148,7 +111,7 @@ public:
     void load(const ShapeDesc &desc) noexcept {
         auto fn = scene_path() / desc["fn"].as_string();
         Assimp::Importer ai_importer;
-        const aiScene *ai_scene = load_scene(fn, ai_importer, desc["swap_handed"].as_bool(false),
+        const aiScene *ai_scene = AssimpUtil::load_scene(fn, ai_importer, desc["swap_handed"].as_bool(false),
                                              desc["smooth"].as_bool(false),
                                              desc["flip_uv"].as_bool(true));
         _meshes = process_mesh(ai_scene, desc["subdiv_level"].as_uint(0u));

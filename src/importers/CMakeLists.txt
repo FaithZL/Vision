@@ -8,7 +8,7 @@ file(GLOB SOURCE_FILES *.c*)
 
 add_library(vision-assimp_util SHARED ${SOURCE_FILES})
 target_link_libraries(vision-assimp_util PUBLIC
-        ocarina-base
+        vision-base
         vision-ext-assimp_config
         ocarina-include)
 
