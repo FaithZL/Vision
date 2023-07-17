@@ -33,10 +33,19 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     _pipeline = Global::node_mgr().load<Pipeline>(desc);
 }
 
-void VisionRendererImpl::init_scene() {
-    Scene &scene = _pipeline->scene();
-    IntegratorDesc integrator_desc;
+const char *integrator_param = R"(
+{
+    "type": "pt",
+    "param" : {
 
+    }
+}
+)";
+
+void VisionRendererImpl::init_scene() {
+    SceneDesc scene_desc;
+    scene_desc.init(DataWrap::object());
+    int i = 0 ;
 }
 
 void VisionRendererImpl::add_instance(vision::sdk::Instance instance) {

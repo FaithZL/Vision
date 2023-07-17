@@ -62,7 +62,7 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     name = ps["name"].as_string();
     set_parameter(ps["param"]);
     ParameterSet param = _parameter;
-    o2w.init(_parameter.data().value("transform", DataWrap()));
+    o2w.init(_parameter.data().value("transform", DataWrap::object()));
     material.name = _parameter["material"].as_string("");
     if (_parameter.contains("medium")) {
         ParameterSet m(_parameter["medium"]);
@@ -82,22 +82,23 @@ bool ShapeDesc::operator==(const ShapeDesc &other) const noexcept {
 void SamplerDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("independent");
-    set_parameter(ps["param"]);
+    ParameterSet param = ps.value("param", DataWrap::object());
+    set_parameter(param);
 }
 
 void FilterDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("gaussian");
-    set_parameter(ps["param"]);
+    set_parameter(ps.value("param", DataWrap::object()));
 }
 
 void SensorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
-    set_parameter(ps["param"]);
-    transform_desc.init(_parameter["transform"]);
-    filter_desc.init(_parameter["filter"]);
-    film_desc.init(_parameter["film"]);
+    set_parameter(ps.value("param"));
+    transform_desc.init(_parameter.value("transform"));
+    filter_desc.init(_parameter.value("filter"));
+    film_desc.init(_parameter.value("film"));
     if (_parameter.contains("medium")) {
         medium.name = _parameter["medium"].as_string();
     }
@@ -106,7 +107,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
-    set_parameter(ps["param"]);
+    set_parameter(ps.value("param"));
 }
 
 namespace detail {
@@ -170,20 +171,20 @@ void MediumDesc::init(const ParameterSet &ps) noexcept {
         sigma_s.init(DataWrap({ss.x, ss.y, ss.z}));
         sigma_a.init(DataWrap({sa.x, sa.y, sa.z}));
     } else {
-        sigma_a.init(_parameter["sigma_a"]);
-        sigma_s.init(_parameter["sigma_s"]);
+        sigma_a.init(_parameter.value("sigma_a"));
+        sigma_s.init(_parameter.value("sigma_s"));
     }
-    scale.init(_parameter["scale"]);
-    g.init(_parameter["g"]);
+    scale.init(_parameter.value("scale"));
+    g.init(_parameter.value("g"));
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("area");
-    ParameterSet param = ps["param"];
-    set_parameter(ps["param"]);
-    color.init(param["color"]);
-    o2w.init(param.data().value("o2w", DataWrap()));
+    ParameterSet param = ps.value("param");
+    set_parameter(ps.value("param"));
+    color.init(param.value("color"));
+    o2w.init(param.value("o2w", DataWrap()));
 }
 
 void UVUnwrapperDesc::init(const vision::ParameterSet &ps) noexcept {
@@ -282,8 +283,8 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 void FilmDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
-    set_parameter(ps["param"]);
-    tone_mapper.init(ps["param"].value("tone_mapper", DataWrap::object()));
+    set_parameter(ps.value("param"));
+    tone_mapper.init(_parameter.value("tone_mapper", DataWrap::object()));
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {

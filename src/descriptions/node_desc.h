@@ -79,6 +79,9 @@ public:
     void init(const char *str) noexcept {
         init(ParameterSet(DataWrap::parse(str)));
     }
+    void init() noexcept {
+        init(ParameterSet{DataWrap::object()});
+    }
     [[nodiscard]] string file_name() const noexcept;
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
@@ -190,7 +193,6 @@ struct ImporterDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Importer)
     void init(const ParameterSet &ps) noexcept override;
-
 };
 
 struct PassDesc : public NodeDesc {

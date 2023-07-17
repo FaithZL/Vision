@@ -102,19 +102,19 @@ void SceneDesc::check_meshes() noexcept {
 }
 
 void SceneDesc::init(const DataWrap &data) noexcept {
-    integrator_desc.init(data.value("integrator", DataWrap()));
+    integrator_desc.init(data.value("integrator", DataWrap::object()));
     spectrum_desc.init(data.value("spectrum", DataWrap::object()));
-    light_sampler_desc.init(data.value("light_sampler", DataWrap()));
-    sampler_desc.init(data.value("sampler", DataWrap()));
+    light_sampler_desc.init(data.value("light_sampler", DataWrap::object()));
+    sampler_desc.init(data.value("sampler", DataWrap::object()));
     warper_desc = WarperDesc("Warper");
     warper_desc.sub_type = "alias";
-    init_material_descs(data.value("materials", DataWrap()));
+    init_material_descs(data.value("materials", DataWrap::object()));
     init_medium_descs(data.value("mediums", DataWrap::object()));
-    init_shape_descs(data.value("shapes", DataWrap()));
-    sensor_desc.init(data.value("camera", DataWrap()));
+    init_shape_descs(data.value("shapes", DataWrap::object()));
+    sensor_desc.init(data.value("camera", DataWrap::object()));
     sensor_desc.medium.name = mediums_desc.global;
     sensor_desc.medium.fill_id(mediums_desc.medium_name_to_id);
-    output_desc.init(data.value("output", DataWrap()));
+    output_desc.init(data.value("output", DataWrap::object()));
     render_setting.init(data.value("render_setting", DataWrap::object()));
     denoiser_desc.init(data.value("denoiser", DataWrap::object()));
     pipeline_desc.init(data.value("pipeline", DataWrap::object()));

@@ -161,7 +161,8 @@ public:
         _data[key] = data;
     }
 
-    OC_NODISCARD ParameterSet value(const string &key, const DataWrap &data) const {
+    OC_NODISCARD ParameterSet value(const string &key,
+                                    const DataWrap &data = DataWrap::object()) const {
         return ParameterSet(_data.value(key, data), key);
     }
 
@@ -169,7 +170,7 @@ public:
         return ParameterSet(_data[i]);
     }
 
-    template<typename ...Args>
+    template<typename... Args>
     [[nodiscard]] bool contains(Args &&...args) const noexcept {
         return _data.contains(OC_FORWARD(args)...);
     }
