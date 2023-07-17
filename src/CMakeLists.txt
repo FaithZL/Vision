@@ -44,7 +44,7 @@ add_subdirectory(render_graph)
 add_subdirectory(importers)
 add_subdirectory(pipelines)
 add_subdirectory(render_core)
-
+add_subdirectory(sdk)
 add_subdirectory(tests)
 
 
