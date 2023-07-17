@@ -10,6 +10,16 @@ class CPURasterizer : public Rasterizer {
 private:
     uint4 *_pixels{};
     uint2 _res{};
+    static constexpr std::array<float2, 10> _color{make_float2(0.5, 0),
+                                                   make_float2(0, 1),
+                                                   make_float2(0, 0.5),
+                                                   make_float2(0.3, 1),
+                                                   make_float2(1, 0.3),
+                                                   make_float2(0.3, 0.6),
+                                                   make_float2(0.6, 0.3),
+                                                   make_float2(0.25, 0.75),
+                                                   make_float2(0.75, 0.25),
+                                                   make_float2(1, 1)};
 
 public:
     explicit CPURasterizer(const RasterizerDesc &desc)
@@ -135,13 +145,17 @@ public:
         box.extend(make_uint2(p1));
         box.extend(make_uint2(p2));
         box.upper += make_uint2(1);
-        // todo change channel and fill color
+
+        uint color_idx = tri_idx % _color.size();
+
+        float2 color = _color[color_idx];
+
         box.for_each([&](uint2 up) {
             float2 p = make_float2(0.5) + make_float2(up);
             if (in_triangle<H>(p, p0, p1, p2)) {
                 uint4 val = make_uint4(tri_idx,
-                                       as<uint>(1.f),
-                                       as<uint>(1.f),
+                                       as<uint>(color.x),
+                                       as<uint>(color.y),
                                        as<uint>(1.f));
                 write(up.x, up.y, val);
             }
@@ -181,7 +195,7 @@ public:
                                as<uint>(1.f),
                                as<uint>(1.f));
         if (all(p0 == p1) && all(p1 == p2)) {
-            return ;
+            return;
         }
         line_bresenham(p0, p1, val);
         line_bresenham(p1, p2, val);
@@ -202,7 +216,7 @@ public:
             Vertex v0 = vertices.at(tri.i);
             Vertex v1 = vertices.at(tri.j);
             Vertex v2 = vertices.at(tri.k);
-//            draw(v0, v1, v2, i);
+            //            draw(v0, v1, v2, i);
             draw_bound(v0.lightmap_uv(), v1.lightmap_uv(), v2.lightmap_uv(), i);
         }
         bs.pixels().upload_immediately(_pixels);

@@ -234,8 +234,8 @@
 			"type" : "model",
 			"name" : "shape_5",
 			"param" : {
-				"fn" : "mesh/nanosuit/nanosuit.obj",
-//				"fn" : "mesh/apple.gltf",
+//				"fn" : "mesh/nanosuit/nanosuit.obj",
+				"fn" : "mesh/apple.gltf",
 //				"fn" : "mesh/planet/planet.obj",
 				"x" : 1,
 				"y" : 1,
@@ -249,34 +249,34 @@
 //								                "material" : "disney",
 				//								                "material" : "mix",
 //								                                "material" : "Glass",
-				"emission" : {
-					"type" : "area",
-					"param" : {
-						"color" : {
-							"channels" : "xyz",
-							"node" : [
-								17,
-								12,
-								4
-							]
-						},
-						//						"color" : {
-						//							"channels" : "xyz",
-						//							"node" : {
-						//								"fn" : "Painting3.jpg",
-						//								"color_space" : "srgb"
-						//							}
-						//						},
-						"two_sided" : false,
-						"scale" : 0.1
-					}
-				},
+//				"emission" : {
+//					"type" : "area",
+//					"param" : {
+//						"color" : {
+//							"channels" : "xyz",
+//							"node" : [
+//								17,
+//								12,
+//								4
+//							]
+//						},
+//						//						"color" : {
+//						//							"channels" : "xyz",
+//						//							"node" : {
+//						//								"fn" : "Painting3.jpg",
+//						//								"color_space" : "srgb"
+//						//							}
+//						//						},
+//						"two_sided" : false,
+//						"scale" : 0.1
+//					}
+//				},
 				"transform" : {
 					"type" : "trs",
 					"param" : {
-						"t" : [0, 0, 0],
+						"t" : [0, 0.6, 0],
 						"r" : [1, 0, 0, 0],
-						"s" : [0.08, 0.08, 0.08]
+						"s" : [0.8, 0.8, 0.8]
 					}
 				}
 			}
@@ -1083,7 +1083,7 @@
 		}
 	},
 	"pipeline" : {
-//		"type" : "real_time",
+		"type" : "bake",
 		"param": {
 			"rasterizer" : {
 				"type": "cpu"
