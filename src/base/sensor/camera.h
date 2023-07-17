@@ -13,11 +13,6 @@ public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
 
-    struct Data {
-        float tan_fov_y_over2{};
-        float4x4 c2w;
-    };
-
 protected:
     constexpr static float pitch_max = 80.f;
 
@@ -86,5 +81,3 @@ public:
 };
 
 }// namespace vision
-
-OC_STRUCT(vision::Camera::Data, tan_fov_y_over2, c2w){};
