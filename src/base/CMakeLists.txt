@@ -5,8 +5,7 @@ add_library(vision-base SHARED ${SOURCE_FILES})
 target_link_libraries(vision-base PUBLIC
         ocarina
         vision-ext
-        vision-description
-        ocarina-include)
+        vision-description)
 
 target_compile_definitions(vision-base PRIVATE VISION_BASE_EXPORT_DLL=1)
 set_target_properties(vision-base PROPERTIES
