@@ -254,7 +254,7 @@ struct Triangle {
 OC_STRUCT(vision::Triangle, i, j, k){};
 
 [[nodiscard]] inline bool operator==(const vision::Triangle &lhs,
-                              const vision::Triangle &rhs) noexcept {
+                                     const vision::Triangle &rhs) noexcept {
     return lhs.i == rhs.i &&
            lhs.j == rhs.j &&
            lhs.k == rhs.k;
@@ -312,6 +312,7 @@ public:
 }// namespace geometry
 }// namespace vision
 
+// clang-format off
 OC_STRUCT(vision::Vertex, pos, n, uv, uv2){
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
@@ -329,3 +330,4 @@ OC_STRUCT(vision::Vertex, pos, n, uv, uv2){
         return make_float2(uv2[0], uv2[1]);
     }
 };
+// clang-format on
