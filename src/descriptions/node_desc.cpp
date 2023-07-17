@@ -32,8 +32,8 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
     if (ps.data().is_null()) {
         return;
     }
-    sub_type = ps["type"].as_string("look_at");
-    ParameterSet param = ps["param"];
+    sub_type = ps["type"].as_string("matrix4x4");
+    ParameterSet param = ps.value("param");
     if (sub_type == "look_at") {
         float3 position = param["position"].as_float3(make_float3(0.f));
         float3 up = param["up"].as_float3(make_float3(0, 1, 0));
@@ -271,7 +271,7 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
 void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("uniform");
-    ParameterSet param = ps["param"];
+    ParameterSet param = ps.value("param");
     set_parameter(param);
     for (const DataWrap &data : param["lights"].data()) {
         LightDesc light_desc;
