@@ -6,3 +6,8 @@ function(vision_add_dll name)
     target_link_libraries(${name} PRIVATE vision-all_libs ${STDCXX_EXTRA_LIBS})
     set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 endfunction()
+
+file(GLOB_RECURSE HEADER_FILES *.h*)
+file(GLOB_RECURSE SOURCE_FILES *.c*)
+
+vision_add_dll(vision-renderer SOURCES ${SOURCE_FILES})
