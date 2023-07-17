@@ -76,6 +76,9 @@ public:
         if (ps.data().is_object())
             name = ps["name"].as_string();
     };
+    void init(const char *str) noexcept {
+        init(ParameterSet(DataWrap::parse(str)));
+    }
     [[nodiscard]] string file_name() const noexcept;
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);

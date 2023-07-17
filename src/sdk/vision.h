@@ -61,7 +61,7 @@ struct Camera {
 class VisionRenderer {
 public:
     virtual ~VisionRenderer() = default;
-    virtual void init_pipeline() = 0;
+    virtual void init_pipeline(const char *rpath) = 0;
     virtual void init_scene() = 0;
     virtual void add_instance(Instance instance) = 0;
     virtual void build_accel() = 0;
