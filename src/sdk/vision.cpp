@@ -11,13 +11,22 @@ namespace vision::sdk {
 class VisionRendererImpl : public VisionRenderer {
 private:
 public:
-    void init_device() override {
+    void init_pipeline() override {
+    }
+
+    void init_scene() override {
     }
 
     void add_instance(Instance instance) override {
     }
 
     void build_accel() override {
+    }
+
+    void update_camera(vision::sdk::Camera camera) override {
+    }
+
+    void update_resolution(uint32_t width, uint32_t height) override {
     }
 };
 

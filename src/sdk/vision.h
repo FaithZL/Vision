@@ -11,9 +11,7 @@
 #include <array>
 #include <vector>
 
-namespace vision {
-
-namespace sdk {
+namespace vision::sdk {
 
 using std::array;
 using std::vector;
@@ -54,17 +52,21 @@ struct Instance {
     Mat4x4 mat4{Mat4x4::identity()};
 };
 
+struct Camera {
+    Mat4x4 c2w{Mat4x4::identity()};
+    float fov_y{35};
+};
+
 class VisionRenderer {
 public:
     virtual ~VisionRenderer() = default;
-    virtual void init_device() = 0;
+    virtual void init_pipeline() = 0;
+    virtual void init_scene() = 0;
     virtual void add_instance(Instance instance) = 0;
-    //    virtual void add_light() = 0;
-    //    virtual void add_material() = 0;
     virtual void build_accel() = 0;
+    virtual void update_camera(Camera camera) = 0;
+    virtual void update_resolution(uint32_t width, uint32_t height) = 0;
 };
-}
-
 }// namespace vision::sdk
 
 using visionCreator = vision::sdk::VisionRenderer *();
