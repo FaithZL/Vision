@@ -135,7 +135,7 @@ public:
         box.extend(make_uint2(p1));
         box.extend(make_uint2(p2));
         box.upper += make_uint2(1);
-
+        // todo change channel and fill color
         box.for_each([&](uint2 up) {
             float2 p = make_float2(0.5) + make_float2(up);
             if (in_triangle<H>(p, p0, p1, p2)) {
