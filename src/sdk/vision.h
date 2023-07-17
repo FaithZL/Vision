@@ -10,6 +10,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <windows.h>
 
 namespace vision::sdk {
 

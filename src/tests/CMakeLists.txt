@@ -15,3 +15,5 @@ vision_add_test(test-spawn_ray SOURCES test_spawn_ray.cpp)
 vision_add_test(test-bxdf SOURCES test_bxdf.cpp)
 vision_add_test(test-warper2d SOURCES test_warper2d.cpp)
 vision_add_test(test-render_graph SOURCES test_render_graph.cpp)
+
+add_executable(vision-test_sdk test_sdk.cpp)

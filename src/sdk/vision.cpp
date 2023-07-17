@@ -5,11 +5,15 @@
 #include "vision.h"
 #include "base/node.h"
 #include "core/stl.h"
+#include "base/mgr/global.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision::sdk {
 
 class VisionRendererImpl : public VisionRenderer {
 private:
+    Pipeline *_pipeline{};
+
 public:
     void init_pipeline() override {
     }
