@@ -48,7 +48,7 @@ public:
         assimp_util.load_scene(fn, desc["swap_handed"].as_bool(false),
                                                          desc["smooth"].as_bool(false),
                                                          desc["flip_uv"].as_bool(true));
-        _meshes = assimp_util.process_mesh(false, desc["subdiv_level"].as_uint(0u));
+        _meshes = assimp_util.parse_meshes(_mat_id == InvalidUI32, desc["subdiv_level"].as_uint(0u));
         for (vision::Mesh &mesh : _meshes) {
             mesh.handle().mat_id = _mat_id;
             mesh.handle().outside_medium = _outside_medium;

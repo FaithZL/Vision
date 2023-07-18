@@ -21,8 +21,10 @@ public:
     const aiScene *load_scene(const fs::path &fn,
                               bool swap_handed = false, bool smooth = true,
                               bool flip_uv = false);
-    [[nodiscard]] vector<vision::Mesh> process_mesh(bool parse_material,
+    [[nodiscard]] vector<vision::Mesh> parse_meshes(bool parse_material,
                                                     uint32_t subdiv_level = 0u);
+    [[nodiscard]] vector<vision::Light *> parse_lights() noexcept;
+    [[nodiscard]] vector<vision::Material *> parse_materials() noexcept;
 };
 
 }// namespace vision

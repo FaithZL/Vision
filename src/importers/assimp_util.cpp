@@ -6,7 +6,17 @@
 
 namespace vision {
 
-vector<vision::Mesh> AssimpUtil::process_mesh(bool parse_material,
+vector<vision::Light *> AssimpUtil::parse_lights() noexcept {
+    vector<vision::Light *> ret;
+    return ret;
+}
+
+vector<vision::Material *> AssimpUtil::parse_materials() noexcept {
+    vector<vision::Material *> ret;
+    return ret;
+}
+
+vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
                                               uint32_t subdiv_level) {
     std::vector<Mesh> meshes;
     const aiScene *ai_scene = _ai_scene;
