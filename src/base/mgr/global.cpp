@@ -24,7 +24,7 @@ Global::~Global() {
 
 void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
 
-Pipeline *Global::pipeline() { return _pipeline; }
+Pipeline *Global::pipeline() { OC_ASSERT(_pipeline); return _pipeline; }
 
 Device &Global::device() {
     return pipeline()->device();
