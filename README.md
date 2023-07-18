@@ -68,7 +68,7 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 | Feature                                   | Progress    |
 |-------------------------------------------|-------------|
 | Pinhole Cameras                           | Done        |
-| Thin-Lens Cameras                         | Planned     |
+| Thin-Lens Cameras                         | Done        |
 | Realistic Cameras                         | Planned     |
 | Fish-Eye Cameras                          | Planned     |
 

@@ -20,10 +20,10 @@ public:
     OC_SERIALIZABLE_FUNC(Camera, _focal_distance, _lens_radius)
     void update_focal_distance(float val) noexcept override {
         float new_val = _focal_distance.hv() + val;
-        if (new_val >= 0.f) {
+        if (new_val > 0.f) {
             _focal_distance = new_val;
         } else {
-            _focal_distance = 0.f;
+            _focal_distance = 0.1f;
         }
     }
     void update_lens_radius(float val) noexcept override {
@@ -42,7 +42,7 @@ public:
     }
     [[nodiscard]] OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept override {
         OCRay ray = Camera::generate_ray_in_camera_space(ss);
-        Float2 p_lens = square_to_disk_impl<D>(ss.u2) * *_lens_radius;
+        Float2 p_lens = square_to_disk<D>(ss.u2) * *_lens_radius;
         Float ft = *_focal_distance / ray->direction().z;
         Float3 p_focus = ray->at(ft);
         ray->update_origin(make_float3(p_lens, 0.f));
