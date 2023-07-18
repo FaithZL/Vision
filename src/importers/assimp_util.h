@@ -17,7 +17,7 @@ private:
     Assimp::Importer _ai_importer;
 
 public:
-    [[nodiscard]] static const aiScene *load_scene(const fs::path &fn, Assimp::Importer &ai_importer,
+    [[nodiscard]] const aiScene *load_scene(const fs::path &fn,
                                                    bool swap_handed = false, bool smooth = true,
                                                    bool flip_uv = false);
     [[nodiscard]] static vector<vision::Mesh> process_mesh(const aiScene *ai_scene, bool parse_material,

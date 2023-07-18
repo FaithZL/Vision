@@ -67,8 +67,8 @@ vector<vision::Mesh> AssimpUtil::process_mesh(const aiScene *ai_scene, bool pars
     return meshes;
 }
 
-const aiScene *AssimpUtil::load_scene(const fs::path &fn, Assimp::Importer &ai_importer, bool swap_handed, bool smooth, bool flip_uv) {
-    ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
+const aiScene *AssimpUtil::load_scene(const fs::path &fn, bool swap_handed, bool smooth, bool flip_uv) {
+    _ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
                                    aiComponent_COLORS |
                                        aiComponent_BONEWEIGHTS |
                                        aiComponent_ANIMATIONS |
@@ -94,7 +94,7 @@ const aiScene *AssimpUtil::load_scene(const fs::path &fn, Assimp::Importer &ai_i
     post_process_steps = swap_handed ?
                              post_process_steps | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder :
                              post_process_steps;
-    auto ai_scene = ai_importer.ReadFile(fn.string().c_str(),
+    auto ai_scene = _ai_importer.ReadFile(fn.string().c_str(),
                                          post_process_steps);
 
     return ai_scene;
