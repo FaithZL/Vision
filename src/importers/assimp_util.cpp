@@ -46,7 +46,7 @@ vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
                 tex_coord = make_float2(0.f);
             }
             normal = has_invalid(normal) ? make_float3(0.f) : normal;
-            tex_coord = has_invalid(normal) ? make_float2(0.f) : tex_coord;
+            tex_coord = has_invalid(tex_coord) ? make_float2(0.f) : tex_coord;
             vertices.emplace_back(position, normal, tex_coord);
         }
 
