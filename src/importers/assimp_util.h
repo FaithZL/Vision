@@ -24,6 +24,7 @@ public:
                               bool flip_uv = false);
     [[nodiscard]] vector<vision::Mesh> parse_meshes(bool parse_material,
                                                     uint32_t subdiv_level = 0u);
+    [[nodiscard]] vision::Light * parse_light(aiLight *ai_light) noexcept;
     [[nodiscard]] vector<vision::Light *> parse_lights() noexcept;
     [[nodiscard]] vector<vision::Material *> parse_materials() noexcept;
     [[nodiscard]] vision::Material *parse_material(aiMaterial *ai_material) noexcept;

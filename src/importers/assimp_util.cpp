@@ -6,8 +6,18 @@
 
 namespace vision {
 
+vision::Light *AssimpUtil::parse_light(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
 vector<vision::Light *> AssimpUtil::parse_lights() noexcept {
     vector<vision::Light *> ret;
+    ret.reserve(_ai_scene->mNumLights);
+    vector<aiLight *> ai_lights(_ai_scene->mNumLights);
+    std::copy(_ai_scene->mLights, _ai_scene->mLights + _ai_scene->mNumLights, ai_lights.begin());
+    for (auto ai_light : ai_lights) {
+        ret.push_back(parse_light(ai_light));
+    }
     return ret;
 }
 
