@@ -39,7 +39,7 @@ protected:
 public:
     explicit Integrator(const IntegratorDesc &desc)
         : Node(desc) {}
-    virtual void compile_shader() noexcept = 0;
+    virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept = 0;
     virtual void render() const noexcept {}
     [[nodiscard]] Uint frame_index() const noexcept { return *_frame_index; }

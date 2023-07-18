@@ -61,7 +61,7 @@ public:
         return L;
     }
 
-    void compile_shader() noexcept override {
+    void compile() noexcept override {
         Pipeline *rp = pipeline();
         Camera *camera = scene().camera();
         Sampler *sampler = scene().sampler();

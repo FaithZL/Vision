@@ -33,7 +33,7 @@ public:
     }
 
     void compile_shaders() noexcept override {
-        _scene.integrator()->compile_shader();
+        _scene.integrator()->compile();
     }
 
     void render(double dt) noexcept override {

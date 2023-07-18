@@ -31,6 +31,7 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     desc.device = _device.get();
     desc.sub_type = "offline";
     _pipeline = Global::node_mgr().load<Pipeline>(desc);
+    Global::instance().set_pipeline(_pipeline);
 }
 
 const char *integrator_param = R"(
@@ -45,7 +46,9 @@ const char *integrator_param = R"(
 void VisionRendererImpl::init_scene() {
     SceneDesc scene_desc;
     scene_desc.init(DataWrap::object());
-    int i = 0 ;
+    Scene &scene = _pipeline->scene();
+    scene.init(scene_desc);
+    int i = 0;
 }
 
 void VisionRendererImpl::add_instance(vision::sdk::Instance instance) {

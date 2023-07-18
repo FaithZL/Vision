@@ -14,7 +14,7 @@ public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : UnidirectionalPathTracing(desc) {}
 
-    void compile_shader() noexcept override {
+    void compile() noexcept override {
         Camera *camera = scene().camera();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
