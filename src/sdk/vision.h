@@ -72,3 +72,23 @@ public:
 
 using visionCreator = vision::sdk::VisionRenderer *();
 using visionDeleter = void(vision::sdk::VisionRenderer *);
+
+template<typename T>
+T *find_symbol(void *handle, const char *name_view) noexcept {
+    auto symbol = GetProcAddress(reinterpret_cast<HMODULE>(handle), name_view);
+    return reinterpret_cast<T *>(symbol);
+}
+
+visionCreator *vision_creator() {
+    void *module = LoadLibraryA("vision-renderer");
+    return find_symbol<visionCreator>(module, "create");
+}
+
+visionDeleter *vision_deleter() {
+    void *module = LoadLibraryA("vision-renderer");
+    return find_symbol<visionDeleter>(module, "destroy");
+}
+
+vision::sdk::VisionRenderer *create_vision() {
+    return vision_creator()();
+}

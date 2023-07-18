@@ -34,21 +34,11 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     Global::instance().set_pipeline(_pipeline);
 }
 
-const char *integrator_param = R"(
-{
-    "type": "pt",
-    "param" : {
-
-    }
-}
-)";
-
 void VisionRendererImpl::init_scene() {
     SceneDesc scene_desc;
     scene_desc.init(DataWrap::object());
     Scene &scene = _pipeline->scene();
     scene.init(scene_desc);
-    int i = 0;
 }
 
 void VisionRendererImpl::add_instance(vision::sdk::Instance instance) {
