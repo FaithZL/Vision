@@ -11,8 +11,18 @@ vector<vision::Light *> AssimpUtil::parse_lights() noexcept {
     return ret;
 }
 
+vision::Material *AssimpUtil::parse_material(aiMaterial *ai_material) noexcept {
+    return nullptr;
+}
+
 vector<vision::Material *> AssimpUtil::parse_materials() noexcept {
     vector<vision::Material *> ret;
+    ret.reserve(_ai_scene->mNumMaterials);
+    vector<aiMaterial *> ai_materials(_ai_scene->mNumMaterials);
+    std::copy(_ai_scene->mMaterials, _ai_scene->mMaterials + _ai_scene->mNumMaterials, ai_materials.begin());
+    for (auto ai_material : ai_materials) {
+        ret.push_back(parse_material(ai_material));
+    }
     return ret;
 }
 
@@ -27,6 +37,12 @@ vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
     } else {
         std::copy(ai_scene->mMeshes, ai_scene->mMeshes + ai_scene->mNumMeshes, ai_meshes.begin());
     }
+
+    vector<vision::Material *> materials;
+    if (parse_material) {
+        materials = parse_materials();
+    }
+
     meshes.reserve(ai_meshes.size());
     for (const auto &ai_mesh : ai_meshes) {
         Box3f aabb;
@@ -79,6 +95,7 @@ vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
 }
 
 const aiScene *AssimpUtil::load_scene(const fs::path &fn, bool swap_handed, bool smooth, bool flip_uv) {
+    _directory = fn.parent_path();
     _ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
                                     aiComponent_COLORS |
                                         aiComponent_BONEWEIGHTS |

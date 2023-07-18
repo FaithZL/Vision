@@ -16,6 +16,7 @@ class AssimpUtil {
 private:
     Assimp::Importer _ai_importer;
     const aiScene *_ai_scene{};
+    fs::path _directory;
 
 public:
     const aiScene *load_scene(const fs::path &fn,
@@ -25,6 +26,7 @@ public:
                                                     uint32_t subdiv_level = 0u);
     [[nodiscard]] vector<vision::Light *> parse_lights() noexcept;
     [[nodiscard]] vector<vision::Material *> parse_materials() noexcept;
+    [[nodiscard]] vision::Material *parse_material(aiMaterial *ai_material) noexcept;
 };
 
 }// namespace vision
