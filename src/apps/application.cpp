@@ -83,7 +83,14 @@ void App::on_window_size_change(uint2 size) noexcept {
 void App::on_scroll_event(float2 scroll) noexcept {
     invalidation = true;
     Camera *camera = pipeline().scene().camera();
-    camera->update_fov_y(scroll.y);
+    if (right_key_press) {
+        camera->update_focal_distance(scroll.y * 0.1);
+    } else if (left_key_press) {
+        camera->update_lens_radius(scroll.y * 0.01);
+    } else {
+        camera->update_fov_y(scroll.y);
+    }
+    invalidation = true;
 }
 
 void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
@@ -130,8 +137,12 @@ void App::update(double dt) noexcept {
     if (invalidation) {
         Camera *camera = pipeline().scene().camera();
         float3 pos = camera->position();
-        OC_INFO_FORMAT("camera yaw is {}, pitch is {}, fov is {}, position is ({}, {}, {})", camera->yaw(),
-                       camera->pitch(), camera->fov_y(), pos.x, pos.y, pos.z);
+        OC_INFO_FORMAT("camera yaw is {:.2f}, pitch is {:.2f}, fov is {:.1f}, focal distance is {:.2f}, "
+                       "lens radius is {:.2f}, position is ({:.2f}, {:.2f}, {:.2f})",
+                       camera->yaw(),
+                       camera->pitch(), camera->fov_y(),
+                       camera->focal_distance(), camera->lens_radius(),
+                       pos.x, pos.y, pos.z);
         invalidation = false;
         pipeline().invalidate();
     }

@@ -46,6 +46,10 @@ public:
     OC_MAKE_MEMBER_GETTER(pitch, )
 
     void move(float3 delta) noexcept { _position += delta; }
+    virtual void update_focal_distance(float val) noexcept {}
+    [[nodiscard]] virtual float focal_distance() const noexcept { return 0; }
+    virtual void update_lens_radius(float val) noexcept {}
+    [[nodiscard]] virtual float lens_radius() const noexcept { return 0; }
 
     void set_yaw(decltype(_yaw) yaw) noexcept { _yaw = yaw; }
     void update_yaw(float val) noexcept { set_yaw(_yaw + val); }
