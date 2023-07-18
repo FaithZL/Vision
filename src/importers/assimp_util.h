@@ -15,13 +15,14 @@ namespace vision {
 class AssimpUtil {
 private:
     Assimp::Importer _ai_importer;
+    const aiScene *_ai_scene{};
 
 public:
-    [[nodiscard]] const aiScene *load_scene(const fs::path &fn,
-                                                   bool swap_handed = false, bool smooth = true,
-                                                   bool flip_uv = false);
-    [[nodiscard]] static vector<vision::Mesh> process_mesh(const aiScene *ai_scene, bool parse_material,
-                                                           uint32_t subdiv_level = 0u);
+    const aiScene *load_scene(const fs::path &fn,
+                              bool swap_handed = false, bool smooth = true,
+                              bool flip_uv = false);
+    [[nodiscard]] vector<vision::Mesh> process_mesh(bool parse_material,
+                                                    uint32_t subdiv_level = 0u);
 };
 
 }// namespace vision

@@ -45,10 +45,10 @@ public:
     void load(const ShapeDesc &desc) noexcept {
         auto fn = scene_path() / desc["fn"].as_string();
         AssimpUtil assimp_util;
-        const aiScene *ai_scene = assimp_util.load_scene(fn, desc["swap_handed"].as_bool(false),
+        assimp_util.load_scene(fn, desc["swap_handed"].as_bool(false),
                                                          desc["smooth"].as_bool(false),
                                                          desc["flip_uv"].as_bool(true));
-        _meshes = AssimpUtil::process_mesh(ai_scene, false, desc["subdiv_level"].as_uint(0u));
+        _meshes = assimp_util.process_mesh(false, desc["subdiv_level"].as_uint(0u));
         for (vision::Mesh &mesh : _meshes) {
             mesh.handle().mat_id = _mat_id;
             mesh.handle().outside_medium = _outside_medium;

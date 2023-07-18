@@ -6,9 +6,10 @@
 
 namespace vision {
 
-vector<vision::Mesh> AssimpUtil::process_mesh(const aiScene *ai_scene, bool parse_material,
+vector<vision::Mesh> AssimpUtil::process_mesh(bool parse_material,
                                               uint32_t subdiv_level) {
     std::vector<Mesh> meshes;
+    const aiScene *ai_scene = _ai_scene;
     vector<aiMesh *> ai_meshes(ai_scene->mNumMeshes);
     if (subdiv_level != 0u) {
         auto subdiv = Assimp::Subdivider::Create(Assimp::Subdivider::CATMULL_CLARKE);
@@ -69,13 +70,13 @@ vector<vision::Mesh> AssimpUtil::process_mesh(const aiScene *ai_scene, bool pars
 
 const aiScene *AssimpUtil::load_scene(const fs::path &fn, bool swap_handed, bool smooth, bool flip_uv) {
     _ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
-                                   aiComponent_COLORS |
-                                       aiComponent_BONEWEIGHTS |
-                                       aiComponent_ANIMATIONS |
-                                       aiComponent_LIGHTS |
-                                       aiComponent_CAMERAS |
-                                       aiComponent_TEXTURES |
-                                       aiComponent_MATERIALS);
+                                    aiComponent_COLORS |
+                                        aiComponent_BONEWEIGHTS |
+                                        aiComponent_ANIMATIONS |
+                                        aiComponent_LIGHTS |
+                                        aiComponent_CAMERAS |
+                                        aiComponent_TEXTURES |
+                                        aiComponent_MATERIALS);
     OC_INFO("Loading triangle mesh: ", fn);
     aiPostProcessSteps normal_flag = smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals;
     aiPostProcessSteps flip_uv_flag = flip_uv ? aiProcess_FlipUVs : aiPostProcessSteps(0);
@@ -95,8 +96,8 @@ const aiScene *AssimpUtil::load_scene(const fs::path &fn, bool swap_handed, bool
                              post_process_steps | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder :
                              post_process_steps;
     auto ai_scene = _ai_importer.ReadFile(fn.string().c_str(),
-                                         post_process_steps);
-
+                                          post_process_steps);
+    _ai_scene = ai_scene;
     return ai_scene;
 }
 
