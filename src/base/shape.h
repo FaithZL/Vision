@@ -10,6 +10,7 @@
 #include "node.h"
 #include "math/box.h"
 #include "core/vs_header.h"
+#include "base/scattering/material.h"
 #include "base/illumination/light.h"
 
 namespace vision {
@@ -44,18 +45,30 @@ protected:
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;
-    virtual void fill_geometry(Geometry &data) const noexcept = 0;
+    virtual void fill_geometry(Geometry &data) const noexcept {
+        OC_ASSERT(false);
+        OC_ERROR("fill_geometry can not called by model");
+    }
     void load_light(const LightDesc &desc) noexcept;
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
     [[nodiscard]] bool has_material() const noexcept { return _handle.mat_id != InvalidUI32; }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
-    [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept = 0;
+    [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
+        OC_ASSERT(false);
+        OC_ERROR("ref_surface_areas can not called by model");
+    }
     [[nodiscard]] virtual uint lightmap_size() const noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
-    virtual void set_lightmap_id(uint id) noexcept = 0;
+    virtual void set_lightmap_id(uint id) noexcept {
+        OC_ASSERT(false);
+        OC_ERROR("set_lightmap_id can not called by model");
+    }
     [[nodiscard]] bool has_emission() const noexcept { return _handle.light_id != InvalidUI32; }
-    [[nodiscard]] virtual vector<float> surface_areas() const noexcept = 0;
+    [[nodiscard]] virtual vector<float> surface_areas() const noexcept {
+        OC_ASSERT(false);
+        OC_ERROR("surface_areas can not called by model");
+    }
     virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
     virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
@@ -78,6 +91,7 @@ public:
 public:
     vector<Vertex> vertices;
     vector<Triangle> triangles;
+    Material *material{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
