@@ -20,7 +20,7 @@ private:
      * lightmap offset
      * resolution
      */
-    Managed<uint4> _pixels;
+    Buffer<uint4> _pixels;
     uint _pixel_num{};
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
@@ -31,7 +31,7 @@ public:
     BatchMesh() = default;
     void allocate(uint buffer_size);
     [[nodiscard]] CommandList clear() noexcept;
-    [[nodiscard]] Command *reset_pixels() noexcept;
+//    [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
     void batch(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixel_num, )

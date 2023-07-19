@@ -15,12 +15,6 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
     return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
 }
 
-namespace detail {
-[[nodiscard]] Bool is_valid(const Uint &tri_id) noexcept {
-    return tri_id != InvalidUI32;
-}
-}// namespace detail
-
 tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Triangle> &triangles,
                                                        const BufferVar<Vertex> &vertices,
                                                        const BufferVar<uint4> &pixels) noexcept {
@@ -175,7 +169,6 @@ CommandList Baker::clear() noexcept {
     ret << _radiance.clear();
     ret << _final_radiance.clear();
     ret << _batch_mesh.clear();
-    ret << _batch_mesh.reset_pixels();
     return ret;
 }
 

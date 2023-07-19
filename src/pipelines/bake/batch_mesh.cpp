@@ -12,7 +12,7 @@ CommandList BatchMesh::clear() noexcept {
     CommandList ret;
     ret << _triangles.device_buffer().clear();
     ret << _vertices.device_buffer().clear();
-    ret << _pixels.device_buffer().clear();
+    ret << _pixels.clear();
     ret << [&] {
         _triangles.host_buffer().clear();
         _vertices.host_buffer().clear();
@@ -22,15 +22,7 @@ CommandList BatchMesh::clear() noexcept {
 }
 
 void BatchMesh::allocate(ocarina::uint buffer_size) {
-    _pixels.resize(buffer_size);
-    for (int i = 0; i < buffer_size; ++i) {
-        _pixels.at(i) = make_uint4(InvalidUI32);
-    }
-    _pixels.device_buffer() = device().create_buffer<uint4>(buffer_size);
-}
-
-Command *BatchMesh::reset_pixels() noexcept {
-    return _pixels.upload();
+    _pixels = device().create_buffer<uint4>(buffer_size);
 }
 
 void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
@@ -57,7 +49,6 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
         _pixel_num += bs.pixel_num();
     }
     stream() << cmd_lst << synchronize() << commit();
-    _pixels.download_immediately();
     _vertices.reset_device_buffer_immediately(device());
     _triangles.reset_device_buffer_immediately(device());
     stream() << _vertices.upload() << _triangles.upload() <<synchronize() << commit();
