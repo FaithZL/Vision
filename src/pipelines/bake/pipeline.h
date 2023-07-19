@@ -14,12 +14,11 @@ namespace vision {
 /**
  * Process of baking
  * 1. unwrap uv and cache
- * 2. rasterize position, normal map and cache
- * 3. transform instance position , normal map to world space
- * 4. bake_old (to increase parallelism, mesh's normal, position map can be merged) and save to cache
- * 5. postprocess eg. denoise, padding ...
- * 6. update geometry data
- * 7. display
+ * 2. rasterize triangle index and cache
+ * 3. bake (to increase parallelism, mesh's normal, position map can be merged) and save to cache
+ * 4. postprocess eg. denoise, padding ...
+ * 5. update geometry data
+ * 6. display
  */
 class BakePipeline : public Pipeline {
 private:
