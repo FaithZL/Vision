@@ -30,6 +30,7 @@ std::pair<string, float4> AssimpParser::parse_texture(const aiMaterial *mat, aiT
         fn = str.C_Str();
         break;
     }
+
     aiColor3D ai_color;
     switch (type) {
         case aiTextureType_DIFFUSE:
@@ -37,6 +38,12 @@ std::pair<string, float4> AssimpParser::parse_texture(const aiMaterial *mat, aiT
             break;
         case aiTextureType_SPECULAR:
             mat->Get(AI_MATKEY_COLOR_SPECULAR, ai_color);
+            break;
+        case aiTextureType_TRANSMISSION:
+            mat->Get(AI_MATKEY_COLOR_TRANSPARENT, ai_color);
+            break;
+        case aiTextureType_HEIGHT:
+            mat->Get(AI_MATKEY_BUMPSCALING, ai_color);
             break;
         default:
             break;
@@ -47,7 +54,7 @@ std::pair<string, float4> AssimpParser::parse_texture(const aiMaterial *mat, aiT
 
 vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexcept {
     // process diffuse
-    auto diff = parse_texture(ai_material, aiTextureType_BASE_COLOR);
+    auto diff = parse_texture(ai_material, aiTextureType_DIFFUSE);
     auto spec = parse_texture(ai_material, aiTextureType_SPECULAR);
     auto bump = parse_texture(ai_material, aiTextureType_HEIGHT);
     auto sheen = parse_texture(ai_material, aiTextureType_SHEEN);
@@ -56,7 +63,15 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     auto refl = parse_texture(ai_material, aiTextureType_REFLECTION);
     auto cc = parse_texture(ai_material, aiTextureType_CLEARCOAT);
     auto trans = parse_texture(ai_material, aiTextureType_TRANSMISSION);
-    return {};
+    MaterialDesc desc;
+    desc.name = ai_material->GetName().C_Str();
+    ParameterSet data = ParameterSet(DataWrap::object());
+    data.set_value("type", "disney");
+    DataWrap param = DataWrap::object();
+
+    data.set_value("param", param);
+    desc.init(data);
+    return desc;
 }
 
 vector<vision::MaterialDesc> AssimpParser::parse_materials() noexcept {
@@ -88,7 +103,7 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
     //    }
 
     meshes.reserve(ai_meshes.size());
-    for (const auto &ai_mesh : ai_meshes) {
+    for (const aiMesh *ai_mesh : ai_meshes) {
         Box3f aabb;
         vector<Vertex> vertices;
         vertices.reserve(ai_mesh->mNumVertices);
