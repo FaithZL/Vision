@@ -12,8 +12,8 @@ namespace vision {
 
 struct BatchMesh : public Ctx {
 private:
-    Managed<Triangle> _triangles;
-    Managed<Vertex> _vertices;
+    Buffer<Triangle> _triangles;
+    Buffer<Vertex> _vertices;
     /**
      * store the pixel data eg.
      * triangle id

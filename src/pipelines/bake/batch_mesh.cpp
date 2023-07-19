@@ -10,12 +10,10 @@ namespace vision {
 
 CommandList BatchMesh::clear() noexcept {
     CommandList ret;
-    ret << _triangles.device_buffer().reset();
-    ret << _vertices.device_buffer().reset();
+    ret << _triangles.reset();
+    ret << _vertices.reset();
     ret << _pixels.reset();
     ret << [&] {
-        _triangles.host_buffer().clear();
-        _vertices.host_buffer().clear();
         _pixel_num = 0;
     };
     return ret;
@@ -29,6 +27,10 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
     uint triangle_offset = 0;
     uint vert_offset = 0;
     uint pixel_offset = 0;
+
+    vector<Triangle> triangles;
+    vector<Vertex> vertices;
+
     CommandList cmd_lst;
     for (BakedShape &bs : baked_shapes) {
         const MergedMesh &mesh = bs.merged_mesh();
@@ -37,21 +39,24 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
                            pixel_offset, _pixels)
                        .dispatch(bs.resolution());
         for (Triangle tri : mesh.triangles) {
-            _triangles.emplace_back(tri.i + vert_offset,
-                                    tri.j + vert_offset,
-                                    tri.k + vert_offset);
+            triangles.emplace_back(tri.i + vert_offset,
+                                   tri.j + vert_offset,
+                                   tri.k + vert_offset);
         }
         triangle_offset += mesh.triangles.size();
         vert_offset += mesh.vertices.size();
         pixel_offset += bs.pixel_num();
-        append(_vertices, mesh.vertices);
+        append(vertices, mesh.vertices);
         bs.normalize_lightmap_uv();
         _pixel_num += bs.pixel_num();
+        cmd_lst << bs.pixels().reset();
     }
     stream() << cmd_lst << synchronize() << commit();
-    _vertices.reset_device_buffer_immediately(device());
-    _triangles.reset_device_buffer_immediately(device());
-    stream() << _vertices.upload() << _triangles.upload() <<synchronize() << commit();
+    _vertices = device().create_buffer<Vertex>(vertices.size());
+    _triangles = device().create_buffer<Triangle>(triangles.size());
+    stream() << _vertices.upload(vertices.data())
+             << _triangles.upload(triangles.data())
+             << synchronize() << commit();
 }
 
 void BatchMesh::compile() noexcept {
