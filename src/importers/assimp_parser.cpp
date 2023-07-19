@@ -2,15 +2,16 @@
 // Created by Zero on 2023/7/17.
 //
 
-#include "assimp_util.h"
+#include "assimp_parser.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 
-vision::Light *AssimpUtil::parse_light(aiLight *ai_light) noexcept {
+vision::Light *AssimpParser::parse_light(aiLight *ai_light) noexcept {
     return nullptr;
 }
 
-vector<vision::Light *> AssimpUtil::parse_lights() noexcept {
+vector<vision::Light *> AssimpParser::parse_lights() noexcept {
     vector<vision::Light *> ret;
     ret.reserve(_ai_scene->mNumLights);
     vector<aiLight *> ai_lights(_ai_scene->mNumLights);
@@ -21,12 +22,45 @@ vector<vision::Light *> AssimpUtil::parse_lights() noexcept {
     return ret;
 }
 
-vision::Material *AssimpUtil::parse_material(aiMaterial *ai_material) noexcept {
-    return nullptr;
+std::pair<string, float4> AssimpParser::parse_texture(const aiMaterial *mat, aiTextureType type) {
+    string fn;
+    for (size_t i = 0; i < mat->GetTextureCount(type); ++i) {
+        aiString str;
+        mat->GetTexture(type, i, &str);
+        fn = str.C_Str();
+        break;
+    }
+    aiColor3D ai_color;
+    switch (type) {
+        case aiTextureType_DIFFUSE:
+            mat->Get(AI_MATKEY_COLOR_DIFFUSE, ai_color);
+            break;
+        case aiTextureType_SPECULAR:
+            mat->Get(AI_MATKEY_COLOR_SPECULAR, ai_color);
+            break;
+        default:
+            break;
+    }
+    float4 color = make_float4(ai_color.r, ai_color.g, ai_color.b, 1);
+    return std::make_pair(fn, color);
 }
 
-vector<vision::Material *> AssimpUtil::parse_materials() noexcept {
-    vector<vision::Material *> ret;
+vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexcept {
+    // process diffuse
+    auto diff = parse_texture(ai_material, aiTextureType_BASE_COLOR);
+    auto spec = parse_texture(ai_material, aiTextureType_SPECULAR);
+    auto bump = parse_texture(ai_material, aiTextureType_HEIGHT);
+    auto sheen = parse_texture(ai_material, aiTextureType_SHEEN);
+    auto metal = parse_texture(ai_material, aiTextureType_METALNESS);
+    auto rough = parse_texture(ai_material, aiTextureType_DIFFUSE_ROUGHNESS);
+    auto refl = parse_texture(ai_material, aiTextureType_REFLECTION);
+    auto cc = parse_texture(ai_material, aiTextureType_CLEARCOAT);
+    auto trans = parse_texture(ai_material, aiTextureType_TRANSMISSION);
+    return {};
+}
+
+vector<vision::MaterialDesc> AssimpParser::parse_materials() noexcept {
+    vector<vision::MaterialDesc> ret;
     ret.reserve(_ai_scene->mNumMaterials);
     vector<aiMaterial *> ai_materials(_ai_scene->mNumMaterials);
     std::copy(_ai_scene->mMaterials, _ai_scene->mMaterials + _ai_scene->mNumMaterials, ai_materials.begin());
@@ -36,8 +70,8 @@ vector<vision::Material *> AssimpUtil::parse_materials() noexcept {
     return ret;
 }
 
-vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
-                                              uint32_t subdiv_level) {
+vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
+                                                uint32_t subdiv_level) {
     std::vector<Mesh> meshes;
     const aiScene *ai_scene = _ai_scene;
     vector<aiMesh *> ai_meshes(ai_scene->mNumMeshes);
@@ -48,10 +82,10 @@ vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
         std::copy(ai_scene->mMeshes, ai_scene->mMeshes + ai_scene->mNumMeshes, ai_meshes.begin());
     }
 
-    vector<vision::Material *> materials;
-    if (parse_material) {
-        materials = parse_materials();
-    }
+    vector<vision::MaterialDesc> materials;
+    //    if (parse_material) {
+    materials = parse_materials();
+    //    }
 
     meshes.reserve(ai_meshes.size());
     for (const auto &ai_mesh : ai_meshes) {
@@ -104,7 +138,7 @@ vector<vision::Mesh> AssimpUtil::parse_meshes(bool parse_material,
     return meshes;
 }
 
-const aiScene *AssimpUtil::load_scene(const fs::path &fn, bool swap_handed, bool smooth, bool flip_uv) {
+const aiScene *AssimpParser::load_scene(const fs::path &fn, bool swap_handed, bool smooth, bool flip_uv) {
     _directory = fn.parent_path();
     _ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
                                     aiComponent_COLORS |

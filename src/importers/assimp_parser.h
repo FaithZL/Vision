@@ -12,7 +12,7 @@
 
 namespace vision {
 
-class AssimpUtil {
+class AssimpParser {
 private:
     Assimp::Importer _ai_importer;
     const aiScene *_ai_scene{};
@@ -24,10 +24,11 @@ public:
                               bool flip_uv = false);
     [[nodiscard]] vector<vision::Mesh> parse_meshes(bool parse_material,
                                                     uint32_t subdiv_level = 0u);
-    [[nodiscard]] vision::Light * parse_light(aiLight *ai_light) noexcept;
+    [[nodiscard]] vision::Light *parse_light(aiLight *ai_light) noexcept;
     [[nodiscard]] vector<vision::Light *> parse_lights() noexcept;
-    [[nodiscard]] vector<vision::Material *> parse_materials() noexcept;
-    [[nodiscard]] vision::Material *parse_material(aiMaterial *ai_material) noexcept;
+    [[nodiscard]] static std::pair<string, float4> parse_texture(const aiMaterial *mat, aiTextureType type);
+    [[nodiscard]] vector<vision::MaterialDesc> parse_materials() noexcept;
+    [[nodiscard]] vision::MaterialDesc parse_material(aiMaterial *ai_material) noexcept;
 };
 
 }// namespace vision
