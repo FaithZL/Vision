@@ -24,7 +24,7 @@ public:
 
     void prepare(RegistrableManaged<float4> &managed) noexcept {
         managed.reset_all(device(), pixel_num());
-        managed.clear_immediately();
+        managed.reset_immediately();
         managed.register_self();
     }
 

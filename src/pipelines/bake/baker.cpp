@@ -166,8 +166,8 @@ void Baker::baking(ocarina::span<BakedShape> baked_shapes) noexcept {
 
 CommandList Baker::clear() noexcept {
     CommandList ret;
-    ret << _radiance.clear();
-    ret << _final_radiance.clear();
+    ret << _radiance.reset();
+    ret << _final_radiance.reset();
     ret << _batch_mesh.clear();
     return ret;
 }

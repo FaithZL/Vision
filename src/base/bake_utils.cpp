@@ -100,7 +100,7 @@ void BakedShape::merge_meshes() noexcept {
 void BakedShape::prepare_to_rasterize() noexcept {
     merge_meshes();
     _pixels = shape()->device().create_buffer<uint4>(pixel_num());
-    _pixels.clear_immediately();
+    _pixels.reset_immediately();
 }
 
 void BakedShape::allocate_lightmap_texture() noexcept {

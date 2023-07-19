@@ -10,9 +10,9 @@ namespace vision {
 
 CommandList BatchMesh::clear() noexcept {
     CommandList ret;
-    ret << _triangles.device_buffer().clear();
-    ret << _vertices.device_buffer().clear();
-    ret << _pixels.clear();
+    ret << _triangles.device_buffer().reset();
+    ret << _vertices.device_buffer().reset();
+    ret << _pixels.reset();
     ret << [&] {
         _triangles.host_buffer().clear();
         _vertices.host_buffer().clear();

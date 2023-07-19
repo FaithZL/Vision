@@ -31,7 +31,6 @@ public:
     BatchMesh() = default;
     void allocate(uint buffer_size);
     [[nodiscard]] CommandList clear() noexcept;
-//    [[nodiscard]] Command *reset_pixels() noexcept;
     void compile() noexcept;
     void batch(ocarina::span<BakedShape> baked_shapes) noexcept;
     OC_MAKE_MEMBER_GETTER(pixel_num, )
