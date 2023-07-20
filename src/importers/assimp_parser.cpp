@@ -53,14 +53,19 @@ std::pair<string, float4> AssimpParser::parse_texture(const aiMaterial *mat, aiT
 }
 
 vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexcept {
-    // process diffuse
-    auto diff = parse_texture(ai_material, aiTextureType_DIFFUSE);
+    auto valid = [](std::pair<string, float4> val) {
+        return !val.first.empty() || nonzero(val.second);
+    };
+
+    auto color = parse_texture(ai_material, aiTextureType_DIFFUSE);
+    color = valid(color) ? color : parse_texture(ai_material, aiTextureType_BASE_COLOR);
     auto spec = parse_texture(ai_material, aiTextureType_SPECULAR);
     auto bump = parse_texture(ai_material, aiTextureType_HEIGHT);
     auto sheen = parse_texture(ai_material, aiTextureType_SHEEN);
     auto metal = parse_texture(ai_material, aiTextureType_METALNESS);
     auto rough = parse_texture(ai_material, aiTextureType_DIFFUSE_ROUGHNESS);
     auto refl = parse_texture(ai_material, aiTextureType_REFLECTION);
+    refl = valid(refl) ? refl : parse_texture(ai_material, aiTextureType_AMBIENT);
     auto cc = parse_texture(ai_material, aiTextureType_CLEARCOAT);
     auto trans = parse_texture(ai_material, aiTextureType_TRANSMISSION);
     MaterialDesc desc;
@@ -68,6 +73,20 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     ParameterSet data = ParameterSet(DataWrap::object());
     data.set_value("type", "disney");
     DataWrap param = DataWrap::object();
+
+    auto get_value = [](std::pair<string, float4> val) ->DataWrap {
+        if (!val.first.empty()) {
+            return val.first;
+        }
+        DataWrap ret = DataWrap::array();
+        ret.push_back(val.second.x);
+        ret.push_back(val.second.y);
+        ret.push_back(val.second.z);
+        ret.push_back(val.second.w);
+        return ret;
+    };
+
+    param["color"] = get_value(color);
 
     data.set_value("param", param);
     desc.init(data);
