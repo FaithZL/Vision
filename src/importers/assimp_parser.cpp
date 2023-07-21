@@ -82,7 +82,6 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
         ret.push_back(val.second.x);
         ret.push_back(val.second.y);
         ret.push_back(val.second.z);
-        ret.push_back(val.second.w);
         return ret;
     };
 
@@ -90,6 +89,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
 
     data.set_value("param", param);
     desc.init(data);
+
     return desc;
 }
 

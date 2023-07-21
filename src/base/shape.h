@@ -37,6 +37,7 @@ public:
 public:
     Box3f aabb;
     Light *emission{};
+    Material *material{};
 
 protected:
     Handle _handle;
