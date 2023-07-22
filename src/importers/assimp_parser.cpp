@@ -4,6 +4,7 @@
 
 #include "assimp_parser.h"
 #include "base/mgr/global.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -58,7 +59,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     };
 
     auto color = parse_texture(ai_material, aiTextureType_DIFFUSE);
-    color = valid(color) ? color : parse_texture(ai_material, aiTextureType_BASE_COLOR);
+//    color = valid(color) ? color : parse_texture(ai_material, aiTextureType_BASE_COLOR);
     auto spec = parse_texture(ai_material, aiTextureType_SPECULAR);
     auto bump = parse_texture(ai_material, aiTextureType_HEIGHT);
     auto sheen = parse_texture(ai_material, aiTextureType_SHEEN);
@@ -71,12 +72,18 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     MaterialDesc desc;
     desc.name = ai_material->GetName().C_Str();
     ParameterSet data = ParameterSet(DataWrap::object());
-    data.set_value("type", "disney");
+    data.set_value("type", "matte");
     DataWrap param = DataWrap::object();
 
-    auto get_value = [](std::pair<string, float4> val) ->DataWrap {
+    auto get_value = [this](std::pair<string, float4> val) -> DataWrap {
         if (!val.first.empty()) {
-            return val.first;
+            DataWrap ret = DataWrap::object();
+            fs::path fn = _directory / val.first;
+            ret["channels"] = "xyz";
+            ret["node"] = DataWrap::object();
+            ret["node"]["fn"] = fn.string();
+            ret["node"]["color_space"] = "linear";
+            return ret;
         }
         DataWrap ret = DataWrap::array();
         ret.push_back(val.second.x);
@@ -117,15 +124,25 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
     }
 
     vector<vision::MaterialDesc> materials;
-    //    if (parse_material) {
-    materials = parse_materials();
-    //    }
+    if (parse_material) {
+        materials = parse_materials();
+    }
 
     meshes.reserve(ai_meshes.size());
+
+    Scene &scene = Global::instance().pipeline()->scene();
+
     for (const aiMesh *ai_mesh : ai_meshes) {
         Box3f aabb;
         vector<Vertex> vertices;
         vertices.reserve(ai_mesh->mNumVertices);
+        uint mat_id = InvalidUI32;
+        if (ai_mesh->mMaterialIndex >= 0 && parse_material) {
+            mat_id = scene.materials().size();
+            const MaterialDesc &desc = materials[ai_mesh->mMaterialIndex];
+            Material *material = Global::node_mgr().load<Material>(desc);
+            scene.materials().push_back(material);
+        }
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {
             auto ai_position = ai_mesh->mVertices[i];
             auto ai_normal = ai_mesh->mNormals[i];
@@ -167,6 +184,7 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
         }
         Mesh mesh(std::move(vertices), std::move(triangle));
         mesh.aabb = aabb;
+        mesh.handle().mat_id = mat_id;
         meshes.push_back(mesh);
     }
     return meshes;

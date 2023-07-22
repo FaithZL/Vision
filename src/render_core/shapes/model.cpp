@@ -50,7 +50,9 @@ public:
                                                          desc["flip_uv"].as_bool(true));
         _meshes = assimp_util.parse_meshes(_mat_id == InvalidUI32, desc["subdiv_level"].as_uint(0u));
         for (vision::Mesh &mesh : _meshes) {
-            mesh.handle().mat_id = _mat_id;
+            if (!mesh.has_material()) {
+                mesh.handle().mat_id = _mat_id;
+            }
             mesh.handle().outside_medium = _outside_medium;
             mesh.handle().inside_medium = _inside_medium;
             mesh.handle().o2w = _o2w;

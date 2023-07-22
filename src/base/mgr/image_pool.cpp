@@ -20,7 +20,11 @@ ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, Pipeline *rp) {
             color_space = (fn.ends_with(".exr") || fn.ends_with(".hdr")) ? "linear" : "srgb";
         }
         ColorSpace cs = color_space == "linear" ? LINEAR : SRGB;
-        image_io = ImageIO::load(Global::instance().scene_path() / desc.file_name(), cs);
+        fs::path fpath = desc.file_name();
+        if (!fpath.is_absolute()) {
+            fpath = Global::instance().scene_path() / fpath;
+        }
+        image_io = ImageIO::load(fpath, cs);
     }
     auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());
     uint id = rp->register_texture(texture);
