@@ -72,7 +72,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     MaterialDesc desc;
     desc.name = ai_material->GetName().C_Str();
     ParameterSet data = ParameterSet(DataWrap::object());
-    data.set_value("type", "matte");
+    data.set_value("type", "disney");
     DataWrap param = DataWrap::object();
 
     auto get_value = [this](std::pair<string, float4> val) -> DataWrap {
