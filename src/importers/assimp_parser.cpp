@@ -59,7 +59,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     };
 
     auto color = parse_texture(ai_material, aiTextureType_DIFFUSE);
-//    color = valid(color) ? color : parse_texture(ai_material, aiTextureType_BASE_COLOR);
+    color = valid(color) ? color : parse_texture(ai_material, aiTextureType_BASE_COLOR);
     auto spec = parse_texture(ai_material, aiTextureType_SPECULAR);
     auto bump = parse_texture(ai_material, aiTextureType_HEIGHT);
     auto sheen = parse_texture(ai_material, aiTextureType_SHEEN);
@@ -75,7 +75,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     data.set_value("type", "disney");
     DataWrap param = DataWrap::object();
 
-    auto get_value = [this](std::pair<string, float4> val) -> DataWrap {
+    auto get_vec3 = [this](std::pair<string, float4> val) -> DataWrap {
         if (!val.first.empty()) {
             DataWrap ret = DataWrap::object();
             fs::path fn = _directory / val.first;
@@ -92,7 +92,21 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
         return ret;
     };
 
-    param["color"] = get_value(color);
+    auto get_scalar = [this](std::pair<string, float4> val) -> DataWrap {
+        if (!val.first.empty()) {
+            DataWrap ret = DataWrap::object();
+            fs::path fn = _directory / val.first;
+            ret["channels"] = "x";
+            ret["node"] = DataWrap::object();
+            ret["node"]["fn"] = fn.string();
+            ret["node"]["color_space"] = "linear";
+            return ret;
+        }
+        return val.second.x;
+    };
+
+    param["color"] = get_vec3(color);
+    param["metallic"] = get_scalar(spec);
 
     data.set_value("param", param);
     desc.init(data);
