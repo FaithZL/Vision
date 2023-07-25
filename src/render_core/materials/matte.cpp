@@ -9,20 +9,6 @@
 
 namespace vision {
 
-class LambertReflection : public BxDF {
-private:
-    SampledSpectrum Kr;
-
-public:
-    explicit LambertReflection(SampledSpectrum kr, const SampledWavelengths &swl)
-        : BxDF(swl, BxDFFlag::DiffRefl),
-          Kr(kr) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
-    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        return Kr * InvPi;
-    }
-};
-
 class OrenNayar : public BxDF {
 private:
     SampledSpectrum R;
