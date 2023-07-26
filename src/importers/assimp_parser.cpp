@@ -60,10 +60,10 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
 
     auto color = parse_texture(ai_material, aiTextureType_DIFFUSE);
     color = valid(color) ? color : parse_texture(ai_material, aiTextureType_BASE_COLOR);
-    auto spec = parse_texture(ai_material, aiTextureType_SPECULAR);
     auto bump = parse_texture(ai_material, aiTextureType_HEIGHT);
     auto sheen = parse_texture(ai_material, aiTextureType_SHEEN);
-    auto metal = parse_texture(ai_material, aiTextureType_METALNESS);
+    auto metallic = parse_texture(ai_material, aiTextureType_METALNESS);
+    metallic = valid(metallic) ? metallic : parse_texture(ai_material, aiTextureType_SPECULAR);
     auto rough = parse_texture(ai_material, aiTextureType_DIFFUSE_ROUGHNESS);
     auto refl = parse_texture(ai_material, aiTextureType_REFLECTION);
     refl = valid(refl) ? refl : parse_texture(ai_material, aiTextureType_AMBIENT);
@@ -106,7 +106,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     };
 
     param["color"] = get_vec3(color);
-    param["metallic"] = get_scalar(spec);
+    param["metallic"] = get_scalar(metallic);
 
     data.set_value("param", param);
     desc.init(data);

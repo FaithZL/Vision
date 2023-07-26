@@ -30,6 +30,10 @@ public:
 class CocosMaterial : public Material {
 private:
     Slot _color{};
+    Slot _spec{};
+    Slot _roughness{};
+    Slot _metallic{};
+
 public:
     explicit CocosMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
