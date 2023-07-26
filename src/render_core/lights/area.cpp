@@ -19,8 +19,17 @@ public:
     explicit AreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           _two_sided{desc["two_sided"].as_bool(false)},
-          _inst_idx(desc["inst_id"].as_uint()) {
+          _inst_idx(desc["inst_id"].as_uint(InvalidUI32)) {
+        if (_inst_idx.hv() == InvalidUI32) {
+            init_geometry(desc);
+        }
     }
+
+    void init_geometry(const LightDesc &desc) {
+        ShapeDesc sd;
+//        sd =
+    }
+
     OC_SERIALIZABLE_FUNC(Light, _inst_idx, _two_sided, *_warper)
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
         return _warper->PMF(prim_id);
