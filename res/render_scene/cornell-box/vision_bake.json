@@ -953,7 +953,7 @@
 //						},
 //						"two_sided" : false,
 //						"scale" : 1,
-//						"transform" : {
+//						"o2w" : {
 //							"type" : "matrix4x4",
 //							"param" : {
 //								"matrix4x4" : [
