@@ -245,9 +245,9 @@
 //				"material" : "ShortBox",
 //								"material" : "substrate",
 //								"material" : "Mirror",
-//								"material" : "Metal",
+								"material" : "Metal",
 //								                "material" : "disney",
-												                "material" : "mix",
+//												                "material" : "mix",
 //								                                "material" : "Glass",
 //				"emission" : {
 //					"type" : "area",
@@ -547,7 +547,7 @@
 						"roughness" : [0.001, 0.001]
 					}
 				},
-				"scale" : 1
+				"scale" : 0.5
 			}
 		},
 		{
