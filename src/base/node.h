@@ -23,7 +23,7 @@ class Node : public Hashable {
 public:
     using Creator = Node *(const NodeDesc &);
     using Deleter = void(Node *);
-    using Wrapper = unique_ptr<Node, Node::Deleter *>;
+    using Wrapper = shared_ptr<Node>;
 
 protected:
     string _name;

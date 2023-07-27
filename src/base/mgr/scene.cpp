@@ -73,6 +73,7 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         Shape *shape = const_cast<Shape *>(load<Shape>(desc));
+        _shapes.push_back(shape);
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
