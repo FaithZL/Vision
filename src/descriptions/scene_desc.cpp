@@ -89,6 +89,7 @@ void SceneDesc::process_materials() noexcept {
     if (has_no_material_light) {
         MaterialDesc md;
         md.sub_type = "null";
+        null_mat_index = material_descs.size();
         material_descs.push_back(md);
     }
 }

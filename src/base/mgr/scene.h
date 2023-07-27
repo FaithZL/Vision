@@ -37,6 +37,7 @@ private:
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
     Spectrum *_spectrum{nullptr};
+    uint _null_mat_index{};
     friend class Pipeline;
 
 public:
@@ -57,7 +58,7 @@ public:
     [[nodiscard]] const auto &materials() const noexcept { return _materials; }
     [[nodiscard]] auto &materials() noexcept { return _materials; }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
-
+    [[nodiscard]] uint null_material_index() noexcept;
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
