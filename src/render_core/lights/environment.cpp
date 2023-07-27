@@ -12,7 +12,7 @@ namespace vision {
 class EnvironmentLight : public Light {
 private:
     Serial<float4x4> _w2o;
-    Warper2D *_warper{};
+    SP<Warper2D> _warper{};
 
 public:
     explicit EnvironmentLight(const LightDesc &desc)

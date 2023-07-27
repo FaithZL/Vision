@@ -31,7 +31,7 @@ private:
     SP<Sampler> _sampler{nullptr};
     SP<Integrator> _integrator{nullptr};
     SP<LightSampler> _light_sampler{nullptr};
-    vector<Shape *> _shapes;
+    vector<SP<Shape>> _shapes;
     vector<vision::Mesh *> _meshes;
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
@@ -67,11 +67,11 @@ public:
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void prepare_lights() noexcept;
-    [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc).get(); }
-    [[nodiscard]] Warper2D *load_warper2d() noexcept {
+    [[nodiscard]] SP <Warper>load_warper() noexcept { return load<Warper>(_warper_desc); }
+    [[nodiscard]] SP<Warper2D> load_warper2d() noexcept {
         WarperDesc warper_desc = _warper_desc;
         warper_desc.sub_type += "2d";
-        return load<Warper2D>(warper_desc).get();
+        return load<Warper2D>(warper_desc);
     }
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);

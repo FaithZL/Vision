@@ -13,7 +13,7 @@ class AreaLight : public Light {
 private:
     Serial<uint> _inst_idx{InvalidUI32};
     Serial<uint> _two_sided{0u};
-    Warper *_warper{nullptr};
+    SP<Warper> _warper{nullptr};
 
 public:
     explicit AreaLight(const LightDesc &desc)

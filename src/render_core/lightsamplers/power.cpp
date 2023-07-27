@@ -10,7 +10,7 @@
 namespace vision {
 class PowerLightSampler : public LightSampler {
 private:
-    Warper *_warper{};
+    SP<Warper> _warper{};
 
 public:
     explicit PowerLightSampler(const LightSamplerDesc &desc)

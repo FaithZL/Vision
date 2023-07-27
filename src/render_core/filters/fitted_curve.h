@@ -18,7 +18,7 @@ public:
     static constexpr int table_size = 20;
 
 private:
-    Warper2D *_warper{};
+    SP<Warper2D> _warper{};
     RegistrableManaged<float> _lut{pipeline()->resource_array()};
 
 public:
