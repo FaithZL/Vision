@@ -10,7 +10,6 @@ namespace vision {
 class Model : public Shape {
 private:
     vector<Mesh> _meshes;
-    uint _mat_id{InvalidUI32};
     uchar _inside_medium{InvalidUI8};
     uchar _outside_medium{InvalidUI8};
     float4x4 _o2w;
@@ -27,7 +26,6 @@ protected:
 public:
     explicit Model(const ShapeDesc &desc)
         : Shape(desc),
-          _mat_id(desc.material.id),
           _o2w(desc.o2w.mat),
           _inside_medium(desc.inside_medium.id),
           _outside_medium(desc.outside_medium.id) {
@@ -46,12 +44,12 @@ public:
         auto fn = scene_path() / desc["fn"].as_string();
         AssimpParser assimp_util;
         assimp_util.load_scene(fn, desc["swap_handed"].as_bool(false),
-                                                         desc["smooth"].as_bool(false),
-                                                         desc["flip_uv"].as_bool(true));
-        _meshes = assimp_util.parse_meshes(_mat_id == InvalidUI32, desc["subdiv_level"].as_uint(0u));
+                               desc["smooth"].as_bool(false),
+                               desc["flip_uv"].as_bool(true));
+        _meshes = assimp_util.parse_meshes(material_index == InvalidUI32, desc["subdiv_level"].as_uint(0u));
         for (vision::Mesh &mesh : _meshes) {
             if (!mesh.has_material()) {
-                mesh.handle().mat_id = _mat_id;
+                mesh.material_index = material_index;
             }
             mesh.handle().outside_medium = _outside_medium;
             mesh.handle().inside_medium = _inside_medium;

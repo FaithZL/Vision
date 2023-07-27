@@ -198,7 +198,7 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
         }
         Mesh mesh(std::move(vertices), std::move(triangle));
         mesh.aabb = aabb;
-        mesh.handle().mat_id = mat_id;
+        mesh.material_index = mat_id;
         meshes.push_back(mesh);
     }
     return meshes;

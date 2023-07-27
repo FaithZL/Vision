@@ -36,7 +36,10 @@ public:
 
 public:
     Box3f aabb;
-    Light *emission{};
+    SP<Light> emission{};
+    SP<Material> material{};
+    uint light_index{InvalidUI32};
+    uint material_index{InvalidUI32};
 
 protected:
     Handle _handle;
@@ -52,7 +55,7 @@ public:
     void load_light(const LightDesc &desc) noexcept;
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] bool has_material() const noexcept { return _handle.mat_id != InvalidUI32; }
+    [[nodiscard]] bool has_material() const noexcept { return material_index != InvalidUI32; }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
         OC_ASSERT(false);
@@ -64,7 +67,7 @@ public:
         OC_ASSERT(false);
         OC_ERROR("set_lightmap_id can not called by model");
     }
-    [[nodiscard]] bool has_emission() const noexcept { return _handle.light_id != InvalidUI32; }
+    [[nodiscard]] bool has_emission() const noexcept { return light_index != InvalidUI32; }
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept {
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");
@@ -91,7 +94,6 @@ public:
 public:
     vector<Vertex> vertices;
     vector<Triangle> triangles;
-    Material *material{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;

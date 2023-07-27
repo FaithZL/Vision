@@ -34,7 +34,7 @@ public:
         Shape *shape = Global::node_mgr().load<Shape>(sd);
         _inst_idx = scene().meshes().size();
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-            mesh.handle().mat_id = scene().null_material_index();
+            mesh.material_index = scene().null_material_index();
             scene().meshes().push_back(&mesh);
         });
     }
