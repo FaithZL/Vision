@@ -11,7 +11,7 @@ RenderPass *RenderPass::create(const std::string &name, const vision::ParameterS
     PassDesc desc(name);
     desc.sub_type = name;
     desc.init(ps);
-    return NodeMgr::instance().load<RenderPass>(desc);
+    return NodeMgr::instance().load<RenderPass>(desc).get();
 }
 
 }// namespace vision

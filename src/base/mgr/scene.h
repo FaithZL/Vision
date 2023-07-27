@@ -63,7 +63,7 @@ public:
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] T *load(const desc_ty &desc) {
-        return Global::node_mgr().load<T>(desc);
+        return Global::node_mgr().load<T>(desc).get();
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void prepare_lights() noexcept;

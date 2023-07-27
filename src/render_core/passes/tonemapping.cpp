@@ -19,7 +19,7 @@ public:
         : RenderPass(desc) {
         ToneMapperDesc tone_mapper_desc;
         tone_mapper_desc.init(DataWrap::object());
-        _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc);
+        _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc).get();
     }
 
     void compile() noexcept override {

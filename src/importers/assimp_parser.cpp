@@ -154,7 +154,7 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
         if (ai_mesh->mMaterialIndex >= 0 && parse_material) {
             mat_id = scene.materials().size();
             const MaterialDesc &desc = materials[ai_mesh->mMaterialIndex];
-            Material *material = Global::node_mgr().load<Material>(desc);
+            Material *material = Global::node_mgr().load<Material>(desc).get();
             scene.materials().push_back(material);
         }
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {

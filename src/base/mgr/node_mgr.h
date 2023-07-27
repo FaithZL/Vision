@@ -31,15 +31,15 @@ private:
 public:
     [[nodiscard]] static NodeMgr &instance() noexcept;
     static void destroy_instance() noexcept;
-    [[nodiscard]] Node *load_node(const NodeDesc &desc);
+    [[nodiscard]] SP<Node> load_node(const NodeDesc &desc);
     void remove(Node *node);
     template<typename T, typename desc_ty>
-    [[nodiscard]] T *load(const desc_ty &desc) {
-        auto ret = dynamic_cast<T *>(load_node(desc));
+    [[nodiscard]] SP<T> load(const desc_ty &desc) {
+        SP<T> ret = std::dynamic_pointer_cast<T>(load_node(desc));
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
-    [[nodiscard]] ShaderNode *load_shader_node(const ShaderNodeDesc &desc);
+    [[nodiscard]] SP<ShaderNode> load_shader_node(const ShaderNodeDesc &desc);
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
 };
 }// namespace vision

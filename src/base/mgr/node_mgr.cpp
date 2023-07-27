@@ -29,21 +29,21 @@ void NodeMgr::remove(vision::Node *node) {
     });
 }
 
-Node *NodeMgr::load_node(const vision::NodeDesc &desc) {
+SP<Node> NodeMgr::load_node(const vision::NodeDesc &desc) {
     const DynamicModule *module = Context::instance().obtain_module(desc.plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
     auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
     _all_nodes.emplace_back(creator(desc), deleter);
-    return _all_nodes.back().get();
+    return _all_nodes.back();
 }
 
-ShaderNode *NodeMgr::load_shader_node(const ShaderNodeDesc &desc) {
+SP<ShaderNode> NodeMgr::load_shader_node(const ShaderNodeDesc &desc) {
     auto ret = load<ShaderNode>(desc);
     return ret;
 }
 
 Slot NodeMgr::create_slot(const SlotDesc &desc) {
-    ShaderNode *shader_node = load_shader_node(desc.node);
+    SP<ShaderNode >shader_node = load_shader_node(desc.node);
     return Slot(shader_node, desc.channels);
 }
 }// namespace vision

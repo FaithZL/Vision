@@ -42,7 +42,7 @@ void BakePipeline::preprocess() noexcept {
     for_each_need_bake([&](vision::Mesh *item) {
         _baked_shapes.emplace_back(item);
     });
-    UVUnwrapper *uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
+    SP<UVUnwrapper> uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
 
     // uv unwrap
     VS_BAKER_STATS(_baker_stats, uv_unwrap)
@@ -56,7 +56,6 @@ void BakePipeline::preprocess() noexcept {
         }
         baked_shape.setup_vertices(ocarina::move(unwrap_result));
     });
-    Global::node_mgr().remove(uv_unwrapper);
 }
 
 void BakePipeline::compile_shaders() noexcept {

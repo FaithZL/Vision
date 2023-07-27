@@ -16,7 +16,6 @@ void App::init(int argc) {
         cli_parser->print_help();
         exit(0);
     }
-    Global::instance().set_pipeline(rp);
     params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
@@ -31,7 +30,7 @@ void App::init(int argc) {
 void App::init_pipeline(const SceneDesc &desc) {
     desc.pipeline_desc.device = &device;
     rp = Global::node_mgr().load<Pipeline>(desc.pipeline_desc);
-    Global::instance().set_pipeline(rp);
+    Global::instance().set_pipeline(rp.get());
     pipeline().init_scene(desc);
     _view_buffer.resize(pipeline().pixel_num());
 }

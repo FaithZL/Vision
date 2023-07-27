@@ -12,7 +12,6 @@
 
 namespace vision {
 
-
 class Baker : public Ctx {
 private:
     BakerStats &_baker_stats;
@@ -20,7 +19,7 @@ private:
     Buffer<float4> _final_radiance;
     BatchMesh _batch_mesh;
     DilateFilter _dilate_filter{};
-    Rasterizer * _rasterizer{};
+    SP<Rasterizer> _rasterizer{};
     Shader<void(uint, Buffer<Triangle>, Buffer<Vertex>, Buffer<uint4>, Buffer<float4>)> _baker;
 
 private:
@@ -30,16 +29,16 @@ private:
     void _save_result(ocarina::span<BakedShape> baked_shapes) noexcept;
 
     /// device function
-    [[nodiscard]] tuple<Float3, Float3, Bool,Float> fetch_geometry_data(const BufferVar<Triangle> &triangles,
-                                                                  const BufferVar<Vertex> &vertices,
-                                                                  const BufferVar<uint4> &pixels) noexcept;
+    [[nodiscard]] tuple<Float3, Float3, Bool, Float> fetch_geometry_data(const BufferVar<Triangle> &triangles,
+                                                                         const BufferVar<Vertex> &vertices,
+                                                                         const BufferVar<uint4> &pixels) noexcept;
     /// device function
     [[nodiscard]] RayState generate_ray(const Float3 &position,
                                         const Float3 &normal, Float *pdf) const noexcept;
 
 public:
-    explicit Baker(BakerStats &baker_stats, Rasterizer *rasterizer)
-        : _baker_stats(baker_stats),_rasterizer(rasterizer) {}
+    explicit Baker(BakerStats &baker_stats, const SP<Rasterizer> &rasterizer)
+        : _baker_stats(baker_stats), _rasterizer(rasterizer) {}
     void compile() noexcept;
     void allocate() noexcept;
     [[nodiscard]] CommandList deallocate() noexcept;

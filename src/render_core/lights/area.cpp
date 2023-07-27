@@ -31,7 +31,7 @@ public:
         sd.set_value("width", desc["width"].as_float(1));
         sd.set_value("height", desc["height"].as_float(1));
         sd.o2w = desc.o2w;
-        Shape *shape = Global::node_mgr().load<Shape>(sd);
+        Shape *shape = Global::node_mgr().load<Shape>(sd).get();
         _inst_idx = scene().meshes().size();
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             mesh.material_index = scene().null_material_index();

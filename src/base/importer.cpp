@@ -17,7 +17,7 @@ Importer *Importer::create(const std::string &ext_name) {
     } else {
         desc.sub_type = "assimp";
     }
-    return Global::node_mgr().load<Importer>(desc);
+    return Global::node_mgr().load<Importer>(desc).get();
 }
 
 }// namespace vision

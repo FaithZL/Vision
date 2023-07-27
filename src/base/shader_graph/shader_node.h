@@ -43,7 +43,7 @@ public:
 
 class Slot : public ocarina::Hashable {
 private:
-    ShaderNode *_node{};
+    SP<ShaderNode> _node{};
     uint _dim{4};
 #ifndef NDEBUG
     string _channels;
@@ -57,7 +57,7 @@ private:
 
 public:
     Slot() = default;
-    explicit Slot(ShaderNode *input, string channels)
+    explicit Slot(SP<ShaderNode> input, string channels)
         : _node(input),
           _dim(channels.size()),
 #ifndef NDEBUG
@@ -80,10 +80,10 @@ public:
                                                     const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                          const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] const ShaderNode *node() const noexcept { return _node; }
-    [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node; }
-    [[nodiscard]] ShaderNode *node() noexcept { return _node; }
-    [[nodiscard]] ShaderNode *operator->() noexcept { return _node; }
+    [[nodiscard]] const ShaderNode *node() const noexcept { return _node.get(); }
+    [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node.get(); }
+    [[nodiscard]] ShaderNode *node() noexcept { return _node.get(); }
+    [[nodiscard]] ShaderNode *operator->() noexcept { return _node.get(); }
 };
 
 }// namespace vision
