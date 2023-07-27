@@ -25,7 +25,7 @@ public:
     using Desc = LightSamplerDesc;
 
 protected:
-    Polymorphic<Light *> _lights;
+    Polymorphic<SP<Light>> _lights;
     Light *_env_light{};
     uint _env_index{InvalidUI32};
     float _env_prob{};
@@ -38,10 +38,10 @@ public:
         _lights.set_mode(OC_FORWARD(args)...);
     }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light; }
-    [[nodiscard]] const Polymorphic<Light *> &lights() const noexcept { return _lights; }
-    [[nodiscard]] Polymorphic<Light *> &lights() noexcept { return _lights; }
+    [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
+    [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
-    void add_light(Light *light) noexcept { _lights.push_back(light); }
+    void add_light(SP<Light> light) noexcept { _lights.push_back(light); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
     [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                                  const SampledWavelengths &swl) const noexcept;
@@ -57,13 +57,13 @@ public:
     template<typename Func>
     void for_each(Func &&func) noexcept {
         if constexpr (std::invocable<Func, Light *>) {
-            for (Light *light : _lights) {
-                func(light);
+            for (SP<Light>light : _lights) {
+                func(light.get());
             }
         } else {
             uint i = 0u;
-            for (Light *light : _lights) {
-                func(light, i++);
+            for (SP<Light>light : _lights) {
+                func(light.get(), i++);
             }
         }
     }
@@ -71,13 +71,13 @@ public:
     template<typename Func>
     void for_each(Func &&func) const noexcept {
         if constexpr (std::invocable<Func, const Light *>) {
-            for (const Light *light : _lights) {
-                func(light);
+            for (const SP<Light>light : _lights) {
+                func(light.get());
             }
         } else {
             uint i = 0u;
-            for (const Light *light : _lights) {
-                func(light, i++);
+            for (const SP<Light>light : _lights) {
+                func(light.get(), i++);
             }
         }
     }

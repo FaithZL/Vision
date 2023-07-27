@@ -84,7 +84,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 mesh.update_material_id(_materials.encode_id(mesh.material_index, material));
             }
             if (mesh.has_emission()) {
-                const Light *light = _light_sampler->lights()[mesh.light_index];
+                const Light *light = _light_sampler->lights()[mesh.light_index].get();
                 mesh.update_light_id(_light_sampler->lights().encode_id(mesh.light_index, light));
             }
             _aabb.extend(mesh.aabb);
@@ -103,7 +103,7 @@ void Scene::load_mediums(const vector<MediumDesc> &descs) {
 Light *Scene::load_light(const LightDesc &desc) {
     OC_ASSERT(_light_sampler != nullptr);
     auto ret = load<Light>(desc);
-    _light_sampler->add_light(ret.get());
+    _light_sampler->add_light(ret);
     return ret.get();
 }
 

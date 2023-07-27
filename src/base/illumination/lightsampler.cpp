@@ -10,14 +10,14 @@ namespace vision {
 LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc), _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
-        Light *light = scene().load<Light>(light_desc).get();
+        SP<Light>light = scene().load<Light>(light_desc);
         add_light(light);
     }
 }
 
 void LightSampler::prepare() noexcept {
-    std::sort(_lights.begin(), _lights.end(), [&](Light *a, Light *b) {
-        return _lights.type_index(a) < _lights.type_index(b);
+    std::sort(_lights.begin(), _lights.end(), [&](SP<Light>a, SP<Light>b) {
+        return _lights.type_index(a.get()) < _lights.type_index(b.get());
     });
     for_each([&](Light *light, uint index) noexcept {
         if (light->type() == LightType::Infinite) {
