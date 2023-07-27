@@ -38,7 +38,7 @@ uint Scene::null_material_index() noexcept {
         MaterialDesc md;
         md.sub_type = "null";
         _null_mat_index = _materials.size();
-        _materials.push_back(load<Material>(md));
+        _materials.push_back(load<Material>(md).get());
     }
     return _null_mat_index;
 }
@@ -63,7 +63,7 @@ void Scene::prepare_lights() noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        _materials.push_back(load<Material>(desc));
+        _materials.push_back(load<Material>(desc).get());
     }
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
                    _materials.type_num(),
@@ -72,7 +72,7 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
-        Shape *shape = const_cast<Shape *>(load<Shape>(desc));
+        Shape *shape = load<Shape>(desc).get();
         _shapes.push_back(shape);
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             if (desc.emission.valid()) {
@@ -96,15 +96,15 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 void Scene::load_mediums(const vector<MediumDesc> &descs) {
     for (const MediumDesc &desc : descs) {
         auto medium = load<Medium>(desc);
-        _mediums.push_back(medium);
+        _mediums.push_back(medium.get());
     }
 }
 
 Light *Scene::load_light(const LightDesc &desc) {
     OC_ASSERT(_light_sampler != nullptr);
     auto ret = load<Light>(desc);
-    _light_sampler->add_light(ret);
-    return ret;
+    _light_sampler->add_light(ret.get());
+    return ret.get();
 }
 
 void Scene::prepare_materials() {

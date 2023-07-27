@@ -15,14 +15,14 @@ private:
 
 private:
     Pipeline *_rp{};
-    Denoiser *_denoiser{};
-    ToneMapper *_tone_mapper{};
+    SP<Denoiser> _denoiser{};
+    SP<ToneMapper> _tone_mapper{};
     ocarina::Shader<signature> _tone_mapping_shader;
 
 public:
     explicit Postprocessor(Pipeline *rp);
-    void set_denoiser(Denoiser *denoiser) noexcept { _denoiser = denoiser; }
-    void set_tone_mapper(ToneMapper *tone_mapper) noexcept {
+    void set_denoiser(SP<Denoiser> denoiser) noexcept { _denoiser = denoiser; }
+    void set_tone_mapper(SP<ToneMapper> tone_mapper) noexcept {
         if (_tone_mapper && tone_mapper->type_hash() == _tone_mapper->type_hash()) {
             return;
         }

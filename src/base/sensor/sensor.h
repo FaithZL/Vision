@@ -27,18 +27,18 @@ public:
     using Desc = SensorDesc;
 
 protected:
-    Filter *_filter{};
-    Film *_radiance_film{};
+    SP<Filter> _filter{};
+    SP<Film> _radiance_film{};
     uint _medium{InvalidUI32};
 
 public:
     explicit Sensor(const SensorDesc &desc);
     OC_SERIALIZABLE_FUNC(Serializable<float>, *_filter, *_radiance_film)
     void prepare() noexcept override;
-    [[nodiscard]] Filter *filter() noexcept { return _filter; }
-    [[nodiscard]] const Filter *filter() const noexcept { return _filter; }
-    [[nodiscard]] auto radiance_film() noexcept { return _radiance_film; }
-    [[nodiscard]] auto radiance_film() const noexcept { return _radiance_film; }
+    [[nodiscard]] Filter *filter() noexcept { return _filter.get(); }
+    [[nodiscard]] const Filter *filter() const noexcept { return _filter.get(); }
+    [[nodiscard]] auto radiance_film() noexcept { return _radiance_film.get(); }
+    [[nodiscard]] auto radiance_film() const noexcept { return _radiance_film.get(); }
     [[nodiscard]] uint2 resolution() noexcept { return _radiance_film->resolution(); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };

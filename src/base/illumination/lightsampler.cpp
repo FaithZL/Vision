@@ -10,7 +10,7 @@ namespace vision {
 LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc), _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
-        Light *light = scene().load<Light>(light_desc);
+        Light *light = scene().load<Light>(light_desc).get();
         add_light(light);
     }
 }

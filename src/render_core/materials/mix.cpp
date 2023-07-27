@@ -67,8 +67,8 @@ public:
 
 class MixMaterial : public Material {
 private:
-    Material *_mat0{};
-    Material *_mat1{};
+    SP<Material> _mat0{};
+    SP<Material> _mat1{};
     Slot _scale{};
 
 public:

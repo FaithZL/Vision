@@ -20,24 +20,24 @@ namespace vision {
 
 using namespace ocarina;
 
-#define MAKE_GETTER(member)                                          \
-    [[nodiscard]] auto member() const noexcept { return _##member; } \
-    [[nodiscard]] auto member() noexcept { return _##member; }
+#define MAKE_GETTER(member)                                                \
+    [[nodiscard]] auto member() const noexcept { return _##member.get(); } \
+    [[nodiscard]] auto member() noexcept { return _##member.get(); }
 
 class Scene {
 private:
     Box3f _aabb;
-    Camera *_camera{nullptr};
-    Sampler *_sampler{nullptr};
-    Integrator *_integrator{nullptr};
-    LightSampler *_light_sampler{nullptr};
+    SP<Camera> _camera{nullptr};
+    SP<Sampler> _sampler{nullptr};
+    SP<Integrator> _integrator{nullptr};
+    SP<LightSampler> _light_sampler{nullptr};
     vector<Shape *> _shapes;
     vector<vision::Mesh *> _meshes;
     Polymorphic<Material *> _materials;
     Polymorphic<Medium *> _mediums;
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
-    Spectrum *_spectrum{nullptr};
+    SP<Spectrum> _spectrum{nullptr};
     uint _null_mat_index{};
     friend class Pipeline;
 
@@ -62,16 +62,16 @@ public:
     [[nodiscard]] uint null_material_index() noexcept;
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     template<typename T, typename desc_ty>
-    [[nodiscard]] T *load(const desc_ty &desc) {
-        return Global::node_mgr().load<T>(desc).get();
+    [[nodiscard]] SP<T> load(const desc_ty &desc) {
+        return Global::node_mgr().load<T>(desc);
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void prepare_lights() noexcept;
-    [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc); }
+    [[nodiscard]] Warper *load_warper() noexcept { return load<Warper>(_warper_desc).get(); }
     [[nodiscard]] Warper2D *load_warper2d() noexcept {
         WarperDesc warper_desc = _warper_desc;
         warper_desc.sub_type += "2d";
-        return load<Warper2D>(warper_desc);
+        return load<Warper2D>(warper_desc).get();
     }
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);
