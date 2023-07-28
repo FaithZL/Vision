@@ -68,7 +68,7 @@ public:
         OC_ASSERT(false);
         OC_ERROR("set_lightmap_id can not called by model");
     }
-    [[nodiscard]] bool has_emission() const noexcept { return light_index != InvalidUI32; }
+    [[nodiscard]] bool has_emission() const noexcept { return emission.get(); }
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept {
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");

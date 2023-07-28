@@ -19,7 +19,6 @@ Shape::Shape(const ShapeDesc &desc)
 
 void Shape::load_light(const vision::LightDesc &desc) noexcept {
     if (desc.valid()) {
-        light_index = scene().light_num();
         emission = scene().load_light(desc);
     }
 }
