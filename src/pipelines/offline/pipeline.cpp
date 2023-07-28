@@ -18,7 +18,7 @@ public:
         image_pool().prepare();
         prepare_geometry();
         upload_resource_array();
-        compile_shaders();
+        compile();
         preprocess();
     }
 
@@ -32,7 +32,7 @@ public:
         _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
     }
 
-    void compile_shaders() noexcept override {
+    void compile() noexcept override {
         _scene.integrator()->compile();
     }
 

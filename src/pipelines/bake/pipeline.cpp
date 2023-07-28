@@ -29,7 +29,7 @@ void BakePipeline::prepare() noexcept {
     image_pool().prepare();
     preprocess();
     prepare_geometry();
-    compile_shaders();
+    compile();
     upload_resource_array();
     _lightmap_base_index = pipeline()->resource_array().texture_num();
     bake_all();
@@ -58,7 +58,7 @@ void BakePipeline::preprocess() noexcept {
     });
 }
 
-void BakePipeline::compile_shaders() noexcept {
+void BakePipeline::compile() noexcept {
     compile_displayer();
 }
 

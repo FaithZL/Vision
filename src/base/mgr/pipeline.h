@@ -56,7 +56,7 @@ public:
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;
     virtual void prepare_render_graph() noexcept {}
-    virtual void compile_shaders() noexcept = 0;
+    virtual void compile() noexcept = 0;
     virtual void display(double dt) noexcept = 0;
     virtual void render(double dt) noexcept = 0;
     virtual void upload_data() noexcept { _scene.upload_data(); }

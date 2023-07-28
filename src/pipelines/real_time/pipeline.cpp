@@ -55,11 +55,11 @@ public:
         prepare_geometry();
         prepare_render_graph();
         upload_resource_array();
-        compile_shaders();
+        compile();
         preprocess();
     }
 
-    void compile_shaders() noexcept override {
+    void compile() noexcept override {
         _render_graph.compile();
         //        _scene.integrator()->compile_shader();
     }
