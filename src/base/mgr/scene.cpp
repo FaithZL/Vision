@@ -95,6 +95,9 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 void Scene::relevance_material_light() {
     for (Mesh *mesh : _meshes) {
         if (mesh->has_material()) {
+            mesh->material_index = _materials.get_index([&](SP<Material> mat) {
+                return mat.get() == mesh->material.get();
+            });
             const Material *material = _materials[mesh->material_index].get();
             mesh->update_material_id(_materials.encode_id(mesh->material_index, material));
         }

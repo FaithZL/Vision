@@ -56,7 +56,7 @@ public:
     void load_light(const LightDesc &desc) noexcept;
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] bool has_material() const noexcept { return material_index != InvalidUI32; }
+    [[nodiscard]] bool has_material() const noexcept { return material.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
         OC_ASSERT(false);
