@@ -49,14 +49,14 @@ void RenderGraph::DFS_traverse(vision::RenderPass *pass) noexcept {
             continue;
         }
         _simple_edges.push_back(edge);
-        RenderPass *output_pass = _pass_map[edge.src.pass()];
+        RenderPass *output_pass = _pass_map[edge.src.pass()].get();
         DFS_traverse(output_pass);
     }
     _pass_list.push_back(pass);
 }
 
 void RenderGraph::_simplification() noexcept {
-    RenderPass *output_pass = _pass_map[_output.pass()];
+    RenderPass *output_pass = _pass_map[_output.pass()].get();
     DFS_traverse(output_pass);
 }
 
@@ -71,15 +71,15 @@ void RenderGraph::_allocate_resource() noexcept {
         const Field &dst = edge.dst;
         Buffer<float4> buffer = device().create_buffer<float4>(pixel_num());
         UP<RenderResource> render_resource = make_unique<TResource<Buffer<float4>>>(ocarina::move(buffer));
-        RenderPass *src_pass = _pass_map[src.pass()];
+        RenderPass *src_pass = _pass_map[src.pass()].get();
         src_pass->set_resource(src.channel(), *render_resource);
-        RenderPass *dst_pass = _pass_map[dst.pass()];
+        RenderPass *dst_pass = _pass_map[dst.pass()].get();
         dst_pass->set_resource(dst.channel(), *render_resource);
         _resources.push_back(ocarina::move(render_resource));
     }
     Buffer<float4> buffer = device().create_buffer<float4>(pixel_num());
     UP<RenderResource> render_resource = make_unique<TResource<Buffer<float4>>>(ocarina::move(buffer));
-    RenderPass *pass = _pass_map[_output.pass()];
+    RenderPass *pass = _pass_map[_output.pass()].get();
     pass->set_resource(_output.channel(), *render_resource);
     _resources.push_back(ocarina::move(render_resource));
 }

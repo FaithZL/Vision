@@ -38,7 +38,7 @@ uint Scene::null_material_index() noexcept {
         MaterialDesc md;
         md.sub_type = "null";
         _null_mat_index = _materials.size();
-        _materials.push_back(load<Material>(md).get());
+        _materials.push_back(load<Material>(md));
     }
     return _null_mat_index;
 }
@@ -63,7 +63,7 @@ void Scene::prepare_lights() noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        _materials.push_back(load<Material>(desc).get());
+        _materials.push_back(load<Material>(desc));
     }
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
                    _materials.type_num(),
@@ -80,7 +80,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 mesh.load_light(desc.emission);
             }
             if (mesh.has_material()) {
-                const Material *material = _materials[mesh.material_index];
+                const Material *material = _materials[mesh.material_index].get();
                 mesh.update_material_id(_materials.encode_id(mesh.material_index, material));
             }
             if (mesh.has_emission()) {
@@ -96,20 +96,20 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 void Scene::load_mediums(const vector<MediumDesc> &descs) {
     for (const MediumDesc &desc : descs) {
         auto medium = load<Medium>(desc);
-        _mediums.push_back(medium.get());
+        _mediums.push_back(medium);
     }
 }
 
-Light *Scene::load_light(const LightDesc &desc) {
+SP<Light> Scene::load_light(const LightDesc &desc) {
     OC_ASSERT(_light_sampler != nullptr);
     auto ret = load<Light>(desc);
     _light_sampler->add_light(ret);
-    return ret.get();
+    return ret;
 }
 
 void Scene::prepare_materials() {
-    _materials.for_each_instance([&](const Material *material) noexcept {
-        const_cast<Material *>(material)->prepare();
+    _materials.for_each_instance([&](const SP<Material> &material) noexcept {
+        material->prepare();
     });
     auto rp = pipeline();
     _materials.prepare(rp->resource_array(), rp->device());

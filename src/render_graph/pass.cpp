@@ -7,11 +7,11 @@
 
 namespace vision {
 
-RenderPass *RenderPass::create(const std::string &name, const vision::ParameterSet &ps) noexcept {
+SP<RenderPass> RenderPass::create(const std::string &name, const vision::ParameterSet &ps) noexcept {
     PassDesc desc(name);
     desc.sub_type = name;
     desc.init(ps);
-    return NodeMgr::instance().load<RenderPass>(desc).get();
+    return NodeMgr::instance().load<RenderPass>(desc);
 }
 
 }// namespace vision

@@ -33,8 +33,8 @@ private:
     SP<LightSampler> _light_sampler{nullptr};
     vector<SP<Shape>> _shapes;
     vector<vision::Mesh *> _meshes;
-    Polymorphic<Material *> _materials;
-    Polymorphic<Medium *> _mediums;
+    Polymorphic<SP<Material>> _materials;
+    Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
     SP<Spectrum> _spectrum{nullptr};
@@ -77,7 +77,7 @@ public:
     void load_shapes(const vector<ShapeDesc> &descs);
     void load_mediums(const vector<MediumDesc> &descs);
     void load_materials(const vector<MaterialDesc> &material_descs);
-    Light *load_light(const LightDesc &desc);
+    SP<Light> load_light(const LightDesc &desc);
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;

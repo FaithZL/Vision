@@ -26,13 +26,13 @@ public:
     }
 
     void prepare_render_graph() noexcept override {
-        RenderPass *integrate = RenderPass::create("integrate");
+        SP<RenderPass> integrate = RenderPass::create("integrate");
         _render_graph.add_pass(integrate, "integrate");
-        RenderPass *accum = RenderPass::create("accumulate");
+        SP<RenderPass> accum = RenderPass::create("accumulate");
         _render_graph.add_pass(accum, "accumulate");
-        RenderPass *tonemapping = RenderPass::create("tonemapping");
+        SP<RenderPass> tonemapping = RenderPass::create("tonemapping");
         _render_graph.add_pass(tonemapping, "tonemapping");
-        RenderPass *gamma = RenderPass::create("gamma");
+        SP<RenderPass> gamma = RenderPass::create("gamma");
         _render_graph.add_pass(gamma, "gamma");
 
         _render_graph.add_edge("integrate.radiance", "accumulate.input");

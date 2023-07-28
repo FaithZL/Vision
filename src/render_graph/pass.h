@@ -54,7 +54,7 @@ public:
     virtual void set_parameter(const ParameterSet &ps) noexcept {}
     virtual void compile() noexcept {}
     virtual Command *dispatch() noexcept { return nullptr; }
-    [[nodiscard]] static RenderPass *create(const string &name, const ParameterSet &ps = DataWrap::object()) noexcept;
+    [[nodiscard]] static SP<RenderPass> create(const string &name, const ParameterSet &ps = DataWrap::object()) noexcept;
 };
 
 }// namespace vision

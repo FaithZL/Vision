@@ -72,7 +72,7 @@ public:
     };
 
 private:
-    unordered_map<string, RenderPass *> _pass_map;
+    unordered_map<string, SP<RenderPass>> _pass_map;
     vector<UP<RenderResource>> _resources;
     std::list<EdgeData> _edges;
     Field _output;
@@ -88,7 +88,7 @@ private:
     [[nodiscard]] EdgeData _find_edge(const Field &dst) noexcept;
 
 public:
-    void add_pass(RenderPass *pass, string name) noexcept {
+    void add_pass(SP<RenderPass> pass, string name) noexcept {
         pass->set_name(name);
         _pass_map.insert(std::make_pair(ocarina::move(name), pass));
     }
@@ -103,7 +103,7 @@ public:
     }
     template<typename T = Buffer<float4>>
     [[nodiscard]] const T &output_buffer() const noexcept {
-        RenderPass *pass = _pass_map.at(_output.pass());
+        SP<RenderPass> pass = _pass_map.at(_output.pass());
         return pass->res<T>(_output.channel());
     }
     void add_edge(const string &output, const string &input) noexcept;
