@@ -57,6 +57,7 @@ void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
 }
 
 void SceneDesc::process_materials() noexcept {
+    return ;
     // merge duplicate materials
     map<uint64_t, MaterialDesc> mat_map;
     map<uint64_t, uint> index_map;

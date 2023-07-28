@@ -25,6 +25,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
     load_mediums(scene_desc.mediums_desc.mediums);
+    relevance_material_light();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
@@ -75,21 +76,32 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
         SP<Shape> shape = load<Shape>(desc);
         _shapes.push_back(shape);
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+            auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
+                return material->name() == mesh.mat_name;
+            });
+            if (iter != _materials.end()) {
+                mesh.material = *iter;
+            }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
                 mesh.load_light(desc.emission);
             }
-            if (mesh.has_material()) {
-                const Material *material = _materials[mesh.material_index].get();
-                mesh.update_material_id(_materials.encode_id(mesh.material_index, material));
-            }
-            if (mesh.has_emission()) {
-                const Light *light = _light_sampler->lights()[mesh.light_index].get();
-                mesh.update_light_id(_light_sampler->lights().encode_id(mesh.light_index, light));
-            }
             _aabb.extend(mesh.aabb);
             _meshes.push_back(&mesh);
         });
+    }
+}
+
+void Scene::relevance_material_light() {
+    for (Mesh *mesh : _meshes) {
+        if (mesh->has_material()) {
+            const Material *material = _materials[mesh->material_index].get();
+            mesh->update_material_id(_materials.encode_id(mesh->material_index, material));
+        }
+        if (mesh->has_emission()) {
+            const Light *light = _light_sampler->lights()[mesh->light_index].get();
+            mesh->update_light_id(_light_sampler->lights().encode_id(mesh->light_index, light));
+        }
     }
 }
 

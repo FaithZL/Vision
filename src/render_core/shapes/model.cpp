@@ -51,6 +51,7 @@ public:
             if (!mesh.has_material()) {
                 mesh.material_index = material_index;
             }
+            mesh.mat_name = mat_name;
             mesh.handle().outside_medium = _outside_medium;
             mesh.handle().inside_medium = _inside_medium;
             mesh.handle().o2w = _o2w;

@@ -9,7 +9,9 @@
 namespace vision {
 
 Shape::Shape(const ShapeDesc &desc)
-    : Node(desc), _factor(desc["factor"].as_float(1.f)) {
+    : Node(desc),
+      _factor(desc["factor"].as_float(1.f)),
+      mat_name(desc["material"].as_string()) {
     material_index = desc.material.id;
     _handle.inside_medium = desc.inside_medium.id;
     _handle.outside_medium = desc.outside_medium.id;
@@ -19,7 +21,7 @@ Shape::Shape(const ShapeDesc &desc)
 void Shape::load_light(const vision::LightDesc &desc) noexcept {
     if (desc.valid()) {
         light_index = scene().light_num();
-        scene().load_light(desc);
+        emission = scene().load_light(desc);
     }
 }
 

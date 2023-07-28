@@ -38,6 +38,7 @@ public:
     Box3f aabb;
     SP<Light> emission{};
     SP<Material> material{};
+    std::string mat_name;
     uint light_index{InvalidUI32};
     uint material_index{InvalidUI32};
 
