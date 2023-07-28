@@ -112,18 +112,16 @@ void Scene::relevance_material_light() {
 }
 
 void Scene::remove_unused_materials() {
-
-//    for (auto iter = _materials.begin(); iter != _materials.end();) {
-//        if (iter->use_count() == 1) {
-//            iter = _materials.erase(iter);
-//        } else {
-//            ++iter;
-//        }
-//    }
-//    _materials.for_each_instance([&](const SP<Material> &mat) {
-//        OC_INFO_FORMAT("ref count {}", mat.use_count());
-//    });
-//    exit(0);
+    for (auto iter = _materials.begin(); iter != _materials.end();) {
+        if (iter->use_count() == 1) {
+            iter = _materials.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+    _materials.for_each_instance([&](const SP<Material> &mat) {
+        OC_INFO_FORMAT("ref count {}", mat.use_count());
+    });
 }
 
 void Scene::load_mediums(const vector<MediumDesc> &descs) {
