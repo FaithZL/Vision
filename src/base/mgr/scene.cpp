@@ -79,7 +79,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
                 return material->name() == mesh.mat_name;
             });
-            if (iter != _materials.end()) {
+            if (iter != _materials.end() && !mesh.has_material()) {
                 mesh.material = *iter;
             }
             if (desc.emission.valid()) {

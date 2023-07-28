@@ -150,11 +150,10 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
         Box3f aabb;
         vector<Vertex> vertices;
         vertices.reserve(ai_mesh->mNumVertices);
-        uint mat_id = InvalidUI32;
+        SP<Material> material;
         if (ai_mesh->mMaterialIndex >= 0 && parse_material) {
-            mat_id = scene.materials().size();
             const MaterialDesc &desc = materials[ai_mesh->mMaterialIndex];
-            SP<Material> material = Global::node_mgr().load<Material>(desc);
+            material = Global::node_mgr().load<Material>(desc);
             scene.materials().push_back(material);
         }
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {
@@ -198,7 +197,7 @@ vector<vision::Mesh> AssimpParser::parse_meshes(bool parse_material,
         }
         Mesh mesh(std::move(vertices), std::move(triangle));
         mesh.aabb = aabb;
-        mesh.material_index = mat_id;
+        mesh.material = material;
         meshes.push_back(mesh);
     }
     return meshes;
