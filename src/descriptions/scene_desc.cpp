@@ -48,14 +48,6 @@ void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
     }
 }
 
-void SceneDesc::check_meshes() noexcept {
-    for (auto sd : shape_descs) {
-        if (!sd.material.valid() && !sd.inside_medium.valid() && !sd.outside_medium.valid()) {
-            OC_WARNING("scene has no material mesh!");
-        }
-    }
-}
-
 void SceneDesc::init(const DataWrap &data) noexcept {
     integrator_desc.init(data.value("integrator", DataWrap::object()));
     spectrum_desc.init(data.value("spectrum", DataWrap::object()));
@@ -73,7 +65,6 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     render_setting.init(data.value("render_setting", DataWrap::object()));
     denoiser_desc.init(data.value("denoiser", DataWrap::object()));
     pipeline_desc.init(data.value("pipeline", DataWrap::object()));
-    check_meshes();
 }
 
 SceneDesc SceneDesc::from_json(const fs::path &path) {

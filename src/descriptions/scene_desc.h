@@ -44,7 +44,6 @@ public:
     void init_shape_descs(const DataWrap &shapes) noexcept;
     void init_medium_descs(const DataWrap &mediums) noexcept;
     void init(const DataWrap &data) noexcept;
-    void check_meshes() noexcept;
 };
 
 }// namespace vision
