@@ -30,7 +30,6 @@ public:
     vector<ShapeDesc> shape_descs;
     OutputDesc output_desc;
     PipelineDesc pipeline_desc;
-    NameID::map_ty mat_name_to_id;
     fs::path scene_path;
     MediumsDesc mediums_desc;
     DenoiserDesc denoiser_desc;
@@ -45,7 +44,6 @@ public:
     void init_shape_descs(const DataWrap &shapes) noexcept;
     void init_medium_descs(const DataWrap &mediums) noexcept;
     void init(const DataWrap &data) noexcept;
-    void process_materials() noexcept;
     void check_meshes() noexcept;
 };
 

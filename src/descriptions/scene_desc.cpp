@@ -12,7 +12,6 @@ void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
         MaterialDesc md;
         md.init(materials[i]);
         material_descs.push_back(md);
-        mat_name_to_id[md.name] = i;
     }
 }
 
@@ -20,13 +19,6 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
     for (uint i = 0; i < shapes.size(); ++i) {
         ShapeDesc sd;
         sd.init(shapes[i]);
-        if (mat_name_to_id.contains(sd.material.name)) {
-            sd.material.id = mat_name_to_id[sd.material.name];
-            sd.mat_hash = material_descs[sd.material.id].hash();
-        } else {
-            sd.material.id = InvalidUI32;
-            sd.mat_hash = InvalidUI64;
-        }
         if (mediums_desc.has_mediums()) {
             if (!mediums_desc.global.empty() && sd.outside_medium.name.empty()) {
                 sd.outside_medium.name = mediums_desc.global;
@@ -56,45 +48,6 @@ void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
     }
 }
 
-void SceneDesc::process_materials() noexcept {
-    return ;
-    // merge duplicate materials
-    map<uint64_t, MaterialDesc> mat_map;
-    map<uint64_t, uint> index_map;
-    auto mats = ocarina::move(material_descs);
-    bool has_no_material_light = false;
-    for (const ShapeDesc &sd : shape_descs) {
-        uint index = material_descs.size();
-        if (sd.material.id == InvalidUI32) {
-            if (sd.emission.valid()) {
-                has_no_material_light = true;
-            }
-            continue;
-        }
-        MaterialDesc md = mats[sd.material.id];
-        if (!mat_map.contains(sd.mat_hash)) {
-            mat_map.insert(make_pair(sd.mat_hash, md));
-            material_descs.push_back(md);
-            index_map.insert(make_pair(sd.mat_hash, index));
-        }
-    }
-    for (ShapeDesc &sd : shape_descs) {
-        if (sd.material.id == InvalidUI32) {
-            if (sd.emission.valid()) {
-                sd.material.id = material_descs.size();
-            }
-            continue;
-        }
-        sd.material.id = index_map[sd.mat_hash];
-    }
-    if (has_no_material_light) {
-        MaterialDesc md;
-        md.sub_type = "null";
-        null_mat_index = material_descs.size();
-        material_descs.push_back(md);
-    }
-}
-
 void SceneDesc::check_meshes() noexcept {
     for (auto sd : shape_descs) {
         if (!sd.material.valid() && !sd.inside_medium.valid() && !sd.outside_medium.valid()) {
@@ -120,7 +73,6 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     render_setting.init(data.value("render_setting", DataWrap::object()));
     denoiser_desc.init(data.value("denoiser", DataWrap::object()));
     pipeline_desc.init(data.value("pipeline", DataWrap::object()));
-    process_materials();
     check_meshes();
 }
 
