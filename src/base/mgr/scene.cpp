@@ -25,6 +25,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_materials(scene_desc.material_descs);
     load_shapes(scene_desc.shape_descs);
     load_mediums(scene_desc.mediums_desc.mediums);
+    remove_unused_materials();
     relevance_material_light();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
@@ -108,6 +109,21 @@ void Scene::relevance_material_light() {
             mesh->update_light_id(_light_sampler->lights().encode_id(mesh->light_index, mesh->emission.get()));
         }
     }
+}
+
+void Scene::remove_unused_materials() {
+
+//    for (auto iter = _materials.begin(); iter != _materials.end();) {
+//        if (iter->use_count() == 1) {
+//            iter = _materials.erase(iter);
+//        } else {
+//            ++iter;
+//        }
+//    }
+//    _materials.for_each_instance([&](const SP<Material> &mat) {
+//        OC_INFO_FORMAT("ref count {}", mat.use_count());
+//    });
+//    exit(0);
 }
 
 void Scene::load_mediums(const vector<MediumDesc> &descs) {

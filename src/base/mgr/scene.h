@@ -78,6 +78,7 @@ public:
     void load_mediums(const vector<MediumDesc> &descs);
     void load_materials(const vector<MaterialDesc> &material_descs);
     void relevance_material_light();
+    void remove_unused_materials();
     SP<Light> load_light(const LightDesc &desc);
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
