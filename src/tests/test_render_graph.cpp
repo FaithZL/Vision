@@ -81,7 +81,7 @@ public:
 int main(int argc, char *argv[]) {
 
     RenderGraph graph;
-    
+
 
     return 0;
 }

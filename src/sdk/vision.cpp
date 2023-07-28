@@ -13,7 +13,7 @@ namespace vision::sdk {
 class VisionRendererImpl : public VisionRenderer {
 private:
     UP<Device> _device;
-    Pipeline *_pipeline{};
+    SP<Pipeline> _pipeline{};
 
 public:
     void init_pipeline(const char *rpath) override;
@@ -31,7 +31,7 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     desc.device = _device.get();
     desc.sub_type = "offline";
     _pipeline = Global::node_mgr().load<Pipeline>(desc);
-    Global::instance().set_pipeline(_pipeline);
+    Global::instance().set_pipeline(_pipeline.get());
 }
 
 void VisionRendererImpl::init_scene() {
