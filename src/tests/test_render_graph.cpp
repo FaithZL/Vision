@@ -81,26 +81,7 @@ public:
 int main(int argc, char *argv[]) {
 
     RenderGraph graph;
-
-    auto rt = new RTPass();
-    auto r_accum = new AccumulatePass();
-    auto denoise = new DenoisePass();
-    auto tonemapping = new TonemappingPass();
-
-    graph.add_pass(rt, "rt");
-    graph.add_pass(r_accum, "accum");
-    graph.add_pass(denoise, "denoise");
-    graph.add_pass(tonemapping, "tonemapping");
-
-//    graph.mark_output("tonemapping.output");
-    graph.mark_output("accum.radiance");
-    graph.add_edge("denoise.output", "tonemapping.input");
-    graph.add_edge("accum.radiance", "denoise.radiance");
-    //    graph.build_connection("accum.normal", "denoise.normal");
-    graph.add_edge("rt.radiance", "accum.in_radiance");
-    graph.add_edge("rt.normal", "denoise.normal");
-
-    graph.setup();
+    
 
     return 0;
 }
