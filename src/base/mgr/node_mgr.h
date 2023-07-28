@@ -18,9 +18,6 @@ public:
     using Iterator = Container::iterator;
 
 private:
-    std::list<Node::Wrapper> _all_nodes;
-
-private:
     NodeMgr() = default;
     NodeMgr(const NodeMgr &) = delete;
     NodeMgr(NodeMgr &&) = delete;
@@ -32,7 +29,6 @@ public:
     [[nodiscard]] static NodeMgr &instance() noexcept;
     static void destroy_instance() noexcept;
     [[nodiscard]] SP<Node> load_node(const NodeDesc &desc);
-    void remove(Node *node);
     template<typename T, typename desc_ty>
     [[nodiscard]] SP<T> load(const desc_ty &desc) {
         SP<T> ret = std::dynamic_pointer_cast<T>(load_node(desc));

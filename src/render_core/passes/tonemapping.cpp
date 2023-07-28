@@ -11,7 +11,7 @@ namespace vision {
 
 class ToneMappingPass : public RenderPass {
 private:
-    mutable ToneMapper *_tone_mapper{};
+    mutable SP<ToneMapper> _tone_mapper{};
     Shader<void(Buffer<float4>, Buffer<float4>)> _shader;
 
 public:
@@ -19,7 +19,7 @@ public:
         : RenderPass(desc) {
         ToneMapperDesc tone_mapper_desc;
         tone_mapper_desc.init(DataWrap::object());
-        _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc).get();
+        _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc);
     }
 
     void compile() noexcept override {
