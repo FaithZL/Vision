@@ -96,17 +96,17 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 void Scene::relevance_material_light() {
     for (Mesh *mesh : _meshes) {
         if (mesh->has_material()) {
-            mesh->material_index = _materials.get_index([&](SP<Material> mat) {
+            uint mat_index = _materials.get_index([&](SP<Material> mat) {
                 return mat.get() == mesh->material.get();
             });
-            const Material *material = _materials[mesh->material_index].get();
-            mesh->update_material_id(_materials.encode_id(mesh->material_index, material));
+            const Material *material = _materials[mat_index].get();
+            mesh->update_material_id(_materials.encode_id(mat_index, material));
         }
         if (mesh->has_emission()) {
-            mesh->light_index = _light_sampler->lights().get_index([&](SP<Light> light) {
+            uint lit_index = _light_sampler->lights().get_index([&](SP<Light> light) {
                 return light.get() == mesh->emission.get();
             });
-            mesh->update_light_id(_light_sampler->lights().encode_id(mesh->light_index, mesh->emission.get()));
+            mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->emission.get()));
         }
     }
 }
