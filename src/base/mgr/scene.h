@@ -77,7 +77,7 @@ public:
     void load_shapes(const vector<ShapeDesc> &descs);
     void load_mediums(const MediumsDesc &desc);
     void load_materials(const vector<MaterialDesc> &material_descs);
-    void relevance_material_light();
+    void fill_mesh_data();
     void remove_unused_materials();
     SP<Light> load_light(const LightDesc &desc);
     void prepare_materials();

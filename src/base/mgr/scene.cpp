@@ -19,13 +19,13 @@ void Scene::init(const SceneDesc &scene_desc) {
     OC_INFO_FORMAT("polymorphic mode is {}", _materials.mode());
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
     _light_sampler->set_mode(_render_setting.polymorphic_mode);
-    _camera = load<Camera>(scene_desc.sensor_desc);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
     load_mediums(scene_desc.mediums_desc);
+    _camera = load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
     remove_unused_materials();
-    relevance_material_light();
+    fill_mesh_data();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
@@ -96,7 +96,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     }
 }
 
-void Scene::relevance_material_light() {
+void Scene::fill_mesh_data() {
     for (Mesh *mesh : _meshes) {
         if (mesh->has_material()) {
             uint mat_index = _materials.get_index([&](SP<Material> mat) {

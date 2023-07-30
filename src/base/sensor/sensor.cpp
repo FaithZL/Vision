@@ -13,7 +13,22 @@ Sensor::Sensor(const SensorDesc &desc)
       _filter(scene().load<Filter>(desc.filter_desc)),
       _radiance_film(scene().load<Film>(desc.film_desc)),
       _medium_id(desc.medium.id) {
-    _medium.name = desc.medium.name;
+    if (!scene().has_medium()) {
+        return ;
+    }
+    if (desc.contains("medium")) {
+        _medium.name = desc["medium"].as_string();
+    } else {
+        _medium = scene().global_medium();
+    }
+    auto &mediums = scene().mediums();
+    auto iter = std::find_if(mediums.begin(), mediums.end(), [&](const SP<Medium> &medium) {
+        return _medium.name == medium->name();
+    });
+    if (iter != mediums.end()) {
+        _medium.object = *iter;
+        _medium_id = _medium.object->index();
+    }
 }
 
 void Sensor::prepare() noexcept {
