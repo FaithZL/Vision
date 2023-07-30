@@ -7,12 +7,12 @@
 
 namespace vision {
 
-class NullBxDFSet : public BxDFSet {
+class BlackBodyBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths &_swl;
 
 public:
-    explicit NullBxDFSet(const SampledWavelengths &swl) : _swl(swl) {}
+    explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : _swl(swl) {}
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_swl.dimension()};
         ret.f = {_swl.dimension(), 0.f};
@@ -30,18 +30,18 @@ public:
     }
 };
 
-class NullMaterial : public Material {
+class BlackBodyMaterial : public Material {
 public:
-    explicit NullMaterial(const MaterialDesc &desc)
+    explicit BlackBodyMaterial(const MaterialDesc &desc)
         : Material(desc) {}
 
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it,
                                     const SampledWavelengths &swl) const noexcept override {
-        return BSDF(it, make_unique<NullBxDFSet>(swl));
+        return BSDF(it, make_unique<BlackBodyBxDFSet>(swl));
     }
 };
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::NullMaterial)
+VS_MAKE_CLASS_CREATOR(vision::BlackBodyMaterial)
