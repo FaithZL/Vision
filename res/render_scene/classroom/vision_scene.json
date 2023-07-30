@@ -3801,6 +3801,7 @@
             "fov_y": 35.98,
             "name": "view1",
             "velocity": 5,
+            "medium": "fog",
             "transform": {
                 "type": "look_at",
                 "param": {

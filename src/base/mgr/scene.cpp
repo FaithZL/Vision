@@ -112,8 +112,12 @@ void Scene::fill_mesh_data() {
             mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->emission.object.get()));
         }
         if (has_medium()) {
-            mesh->update_inside_medium_id(mesh->inside.object->index());
-            mesh->update_outside_medium_id(mesh->outside.object->index());
+            if (mesh->has_inside_medium()) {
+                mesh->update_inside_medium_id(mesh->inside.object->index());
+            }
+            if (mesh->has_outside_medium()) {
+                mesh->update_outside_medium_id(mesh->outside.object->index());
+            }
         }
     }
 }

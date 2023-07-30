@@ -16,11 +16,7 @@ Sensor::Sensor(const SensorDesc &desc)
     if (!scene().has_medium()) {
         return ;
     }
-    if (desc.contains("medium")) {
-        _medium.name = desc["medium"].as_string();
-    } else {
-        _medium = scene().global_medium();
-    }
+    _medium.name = desc["medium"].as_string();
     auto &mediums = scene().mediums();
     auto iter = std::find_if(mediums.begin(), mediums.end(), [&](const SP<Medium> &medium) {
         return _medium.name == medium->name();
