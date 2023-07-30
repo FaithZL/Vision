@@ -22,8 +22,8 @@ void Scene::init(const SceneDesc &scene_desc) {
     _camera = load<Camera>(scene_desc.sensor_desc);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
+    load_mediums(scene_desc.mediums_desc);
     load_shapes(scene_desc.shape_descs);
-    load_mediums(scene_desc.mediums_desc.mediums);
     remove_unused_materials();
     relevance_material_light();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
@@ -113,10 +113,17 @@ void Scene::remove_unused_materials() {
     });
 }
 
-void Scene::load_mediums(const vector<MediumDesc> &descs) {
-    for (const MediumDesc &desc : descs) {
+void Scene::load_mediums(const MediumsDesc &md) {
+    _global_medium.name = md.global;
+    for (const MediumDesc &desc : md.mediums) {
         auto medium = load<Medium>(desc);
         _mediums.push_back(medium);
+    }
+    uint index = _mediums.get_index([&](const SP<Medium> &medium) {
+        return medium->name() == _global_medium.name;
+    });
+    if (index!=InvalidUI32) {
+        _global_medium.object = _mediums[index];
     }
 }
 

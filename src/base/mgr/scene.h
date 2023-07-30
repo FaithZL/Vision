@@ -38,6 +38,7 @@ private:
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
     SP<Spectrum> _spectrum{nullptr};
+    Wrap<Medium> _global_medium{};
     friend class Pipeline;
 
 public:
@@ -73,7 +74,7 @@ public:
     }
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);
-    void load_mediums(const vector<MediumDesc> &descs);
+    void load_mediums(const MediumsDesc &desc);
     void load_materials(const vector<MaterialDesc> &material_descs);
     void relevance_material_light();
     void remove_unused_materials();
