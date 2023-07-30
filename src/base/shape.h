@@ -39,6 +39,8 @@ public:
     Box3f aabb;
     Wrap<Light> emission{};
     Wrap<Material> material{};
+    Wrap<Medium> inside{};
+    Wrap<Medium> outside{};
 
 protected:
     Handle _handle;

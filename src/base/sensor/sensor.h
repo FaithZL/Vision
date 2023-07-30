@@ -9,6 +9,7 @@
 #include "base/serial_object.h"
 #include "base/sample.h"
 #include "math/transform.h"
+#include "base/scattering/medium.h"
 #include "filter.h"
 #include "film.h"
 
@@ -29,6 +30,7 @@ public:
 protected:
     SP<Filter> _filter{};
     SP<Film> _radiance_film{};
+    Wrap<Medium> _medium{};
     Serial<uint> _medium_id{InvalidUI32};
 
 public:
