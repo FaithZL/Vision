@@ -232,59 +232,80 @@
 //		},
 		{
 			"type" : "model",
-			"name" : "shape_5",
+			"name" : "dragon",
 			"param" : {
-//				"fn" : "mesh/nanosuit/nanosuit.obj",
-				"fn" : "mesh/apple.gltf",
-//				"fn" : "mesh/planet/planet.obj",
-				"x" : 1,
-				"y" : 1,
-				"z" : 1,
-//				"smooth": true,
-//				"material" : "Light",
-//				"material" : "ShortBox",
-//								"material" : "substrate",
-//								"material" : "Mirror",
-//								"material" : "Metal",
-//								                "material" : "disney",
-//												                "material" : "mix",
-								                                "material" : "Glass",
+				"material": "Glass",
 				"medium": {
 					"inside" : "fog",
 					"outside" : ""
 				},
-//				"emission" : {
-//					"type" : "area",
-//					"param" : {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [
-//								17,
-//								12,
-//								4
-//							]
-//						},
-//						//						"color" : {
-//						//							"channels" : "xyz",
-//						//							"node" : {
-//						//								"fn" : "Painting3.jpg",
-//						//								"color_space" : "srgb"
-//						//							}
-//						//						},
-//						"two_sided" : false,
-//						"scale" : 0.1
-//					}
-//				},
+				"fn": "mesh/dragon.obj",
+				"subdiv_level": 0,
 				"transform" : {
-					"type" : "trs",
-					"param" : {
-						"t" : [0, 0.6, 0],
-						"r" : [1, 0, 0, 0],
-						"s" : [0.8, 0.8, 0.8]
+					"type": "trs",
+					"param": {
+						"t": [0,0.55,0],
+						"r": [0,1,0,90],
+						"s": [1.35,1.35,1.35]
 					}
 				}
 			}
 		},
+//		{
+//			"type" : "model",
+//			"name" : "shape_5",
+//			"param" : {
+////				"fn" : "mesh/nanosuit/nanosuit.obj",
+//				"fn" : "mesh/apple.gltf",
+////				"fn" : "mesh/planet/planet.obj",
+//				"x" : 1,
+//				"y" : 1,
+//				"z" : 1,
+////				"smooth": true,
+////				"material" : "Light",
+////				"material" : "ShortBox",
+////								"material" : "substrate",
+////								"material" : "Mirror",
+////								"material" : "Metal",
+////								                "material" : "disney",
+////												                "material" : "mix",
+//								                                "material" : "Glass",
+//				"medium": {
+//					"inside" : "fog",
+//					"outside" : ""
+//				},
+////				"emission" : {
+////					"type" : "area",
+////					"param" : {
+////						"color" : {
+////							"channels" : "xyz",
+////							"node" : [
+////								17,
+////								12,
+////								4
+////							]
+////						},
+////						//						"color" : {
+////						//							"channels" : "xyz",
+////						//							"node" : {
+////						//								"fn" : "Painting3.jpg",
+////						//								"color_space" : "srgb"
+////						//							}
+////						//						},
+////						"two_sided" : false,
+////						"scale" : 0.1
+////					}
+////				},
+//				"transform" : {
+//					"type" : "trs",
+//					"param" : {
+//						"t" : [0, 0.6, 0],
+//						"r" : [1, 0, 0, 0],
+//						"s" : [0.8, 0.8, 0.8]
+//					}
+//				}
+//			}
+//		},
 //				{
 //					"type" : "cube",
 //					"name" : "shape_5",
