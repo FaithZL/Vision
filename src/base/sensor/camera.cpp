@@ -23,7 +23,7 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
     OCRay ray = generate_ray_in_camera_space(ss);
     Float4x4 c2w = *_c2w;
     ray = transform_ray(c2w, ray);
-    return {.ray = ray, .ior = 1.f, .medium = _medium};
+    return {.ray = ray, .ior = 1.f, .medium = *_medium_id};
 }
 
 OCRay Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {

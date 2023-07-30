@@ -10,8 +10,8 @@ namespace vision {
 
 Shape::Shape(const ShapeDesc &desc)
     : Node(desc),
-      _factor(desc["factor"].as_float(1.f)),
-      mat_name(desc["material"].as_string()) {
+      _factor(desc["factor"].as_float(1.f)) {
+    material.name = desc["material"].as_string();
     _handle.inside_medium = desc.inside_medium.id;
     _handle.outside_medium = desc.outside_medium.id;
     _handle.o2w = desc.o2w.mat;

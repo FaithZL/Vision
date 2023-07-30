@@ -29,11 +29,11 @@ public:
 protected:
     SP<Filter> _filter{};
     SP<Film> _radiance_film{};
-    uint _medium{InvalidUI32};
+    Serial<uint> _medium_id{InvalidUI32};
 
 public:
     explicit Sensor(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(Serializable<float>, *_filter, *_radiance_film)
+    OC_SERIALIZABLE_FUNC(SerialObject, *_filter, *_radiance_film)
     void prepare() noexcept override;
     [[nodiscard]] Filter *filter() noexcept { return _filter.get(); }
     [[nodiscard]] const Filter *filter() const noexcept { return _filter.get(); }
@@ -44,4 +44,3 @@ public:
 };
 
 }// namespace vision
-

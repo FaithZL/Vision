@@ -45,6 +45,12 @@ public:
     virtual ~Node() = default;
 };
 
+template<typename T>
+struct Wrap {
+    string name;
+    SP<T> object;
+};
+
 }// namespace vision
 
 #define VS_MAKE_CLASS_CREATOR(Class)                                                        \

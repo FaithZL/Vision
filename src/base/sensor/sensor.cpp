@@ -12,7 +12,7 @@ Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
       _filter(scene().load<Filter>(desc.filter_desc)),
       _radiance_film(scene().load<Film>(desc.film_desc)),
-      _medium(desc.medium.id) {}
+      _medium_id(desc.medium.id) {}
 
 void Sensor::prepare() noexcept {
     _filter->prepare();

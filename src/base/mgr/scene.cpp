@@ -78,10 +78,10 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
         _shapes.push_back(shape);
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
-                return material->name() == mesh.mat_name;
+                return material->name() == mesh.material.name;
             });
             if (iter != _materials.end() && !mesh.has_material()) {
-                mesh.material = *iter;
+                mesh.material.object = *iter;
             }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
@@ -97,7 +97,7 @@ void Scene::relevance_material_light() {
     for (Mesh *mesh : _meshes) {
         if (mesh->has_material()) {
             uint mat_index = _materials.get_index([&](SP<Material> mat) {
-                return mat.get() == mesh->material.get();
+                return mat.get() == mesh->material.object.get();
             });
             const Material *material = _materials[mat_index].get();
             mesh->update_material_id(_materials.encode_id(mat_index, material));
