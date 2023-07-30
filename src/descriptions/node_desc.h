@@ -257,8 +257,6 @@ struct ShapeDesc : public NodeDesc {
 public:
     TransformDesc o2w;
     mutable LightDesc emission;
-    NameID inside_medium;
-    NameID outside_medium;
 
 public:
     VISION_DESC_COMMON(Shape)

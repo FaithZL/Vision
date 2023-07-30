@@ -10,8 +10,6 @@ namespace vision {
 class Model : public Shape {
 private:
     vector<Mesh> _meshes;
-    uchar _inside_medium{InvalidUI8};
-    uchar _outside_medium{InvalidUI8};
     float4x4 _o2w;
 
 protected:
@@ -26,9 +24,7 @@ protected:
 public:
     explicit Model(const ShapeDesc &desc)
         : Shape(desc),
-          _o2w(desc.o2w.mat),
-          _inside_medium(desc.inside_medium.id),
-          _outside_medium(desc.outside_medium.id) {
+          _o2w(desc.o2w.mat) {
         load(desc);
     }
 
@@ -51,8 +47,6 @@ public:
             mesh.material.name = material.name;
             mesh.inside = inside;
             mesh.outside = outside;
-            mesh.handle().outside_medium = _outside_medium;
-            mesh.handle().inside_medium = _inside_medium;
             mesh.handle().o2w = _o2w;
             mesh.handle().light_id = handle().light_id;
             this->aabb.extend(aabb);

@@ -15,8 +15,6 @@ Shape::Shape(const ShapeDesc &desc)
     if (scene().has_medium()) {
         init_medium(desc);
     }
-    _handle.inside_medium = desc.inside_medium.id;
-    _handle.outside_medium = desc.outside_medium.id;
     _handle.o2w = desc.o2w.mat;
 }
 

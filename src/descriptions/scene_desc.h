@@ -14,8 +14,6 @@ using namespace ocarina;
 struct MediumsDesc {
     vector<MediumDesc> mediums;
     string global;
-    NameID::map_ty medium_name_to_id;
-    [[nodiscard]] bool has_mediums() const noexcept { return !mediums.empty(); }
 };
 
 struct SceneDesc {

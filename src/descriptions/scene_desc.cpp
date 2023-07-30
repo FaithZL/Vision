@@ -16,19 +16,9 @@ void SceneDesc::init_material_descs(const DataWrap &materials) noexcept {
 }
 
 void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
-    for (uint i = 0; i < shapes.size(); ++i) {
+    for (const auto &shape : shapes) {
         ShapeDesc sd;
-        sd.init(shapes[i]);
-        if (mediums_desc.has_mediums()) {
-            if (!mediums_desc.global.empty() && sd.outside_medium.name.empty()) {
-                sd.outside_medium.name = mediums_desc.global;
-            }
-            if (!mediums_desc.global.empty() && sd.inside_medium.name.empty()) {
-                sd.inside_medium.name = mediums_desc.global;
-            }
-            sd.inside_medium.fill_id(mediums_desc.medium_name_to_id);
-            sd.outside_medium.fill_id(mediums_desc.medium_name_to_id);
-        }
+        sd.init(shape);
         shape_descs.push_back(sd);
     }
 }
@@ -39,12 +29,10 @@ void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
     }
     mediums_desc.global = mediums.value("global", "");
     DataWrap lst = mediums.value("list", DataWrap());
-    for (uint i = 0; i < lst.size(); ++i) {
+    for (const auto &elm : lst) {
         MediumDesc desc;
-        desc.set_value("index", i);
-        desc.init(lst[i]);
+        desc.init(elm);
         mediums_desc.mediums.push_back(desc);
-        mediums_desc.medium_name_to_id[desc.name] = i;
     }
 }
 
@@ -60,7 +48,6 @@ void SceneDesc::init(const DataWrap &data) noexcept {
     init_shape_descs(data.value("shapes", DataWrap::object()));
     sensor_desc.init(data.value("camera", DataWrap::object()));
     sensor_desc.medium.name = mediums_desc.global;
-    sensor_desc.medium.fill_id(mediums_desc.medium_name_to_id);
     output_desc.init(data.value("output", DataWrap::object()));
     render_setting.init(data.value("render_setting", DataWrap::object()));
     denoiser_desc.init(data.value("denoiser", DataWrap::object()));

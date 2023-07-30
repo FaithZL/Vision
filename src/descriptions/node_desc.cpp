@@ -63,11 +63,11 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     set_parameter(ps["param"]);
     ParameterSet param = _parameter;
     o2w.init(_parameter.data().value("transform", DataWrap::object()));
-    if (_parameter.contains("medium")) {
-        ParameterSet m(_parameter["medium"]);
-        inside_medium.name = m["inside"].as_string();
-        outside_medium.name = m["outside"].as_string();
-    }
+//    if (_parameter.contains("medium")) {
+//        ParameterSet m(_parameter["medium"]);
+//        inside_medium.name = m["inside"].as_string();
+//        outside_medium.name = m["outside"].as_string();
+//    }
     if (_parameter.contains("emission")) {
         emission.init(_parameter["emission"]);
     }
