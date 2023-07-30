@@ -8,6 +8,7 @@
 #include "core/basic_types.h"
 #include "dsl/rtx_type.h"
 #include "node.h"
+#include "scattering/medium.h"
 #include "math/box.h"
 #include "core/vs_header.h"
 #include "base/scattering/material.h"
@@ -38,6 +39,10 @@ public:
     Box3f aabb;
     SP<Light> emission{};
     SP<Material> material{};
+    SP<Medium> inside{};
+    SP<Medium> outside{};
+    string inside_name;
+    string outside_name;
     std::string mat_name;
 
 protected:
