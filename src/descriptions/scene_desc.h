@@ -35,7 +35,6 @@ public:
     DenoiserDesc denoiser_desc;
     RenderSettingDesc render_setting;
     ParameterSet ext_param;
-    uint null_mat_index{InvalidUI32};
 
 public:
     SceneDesc() = default;

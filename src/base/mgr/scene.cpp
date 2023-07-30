@@ -13,7 +13,6 @@ Pipeline *Scene::pipeline() noexcept { return Global::instance().pipeline(); }
 
 void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
-    _null_mat_index = scene_desc.null_mat_index;
     _warper_desc = scene_desc.warper_desc;
     _render_setting = scene_desc.render_setting;
     _materials.set_mode(_render_setting.polymorphic_mode);
@@ -33,16 +32,6 @@ void Scene::init(const SceneDesc &scene_desc) {
 
 Slot Scene::create_slot(const SlotDesc &desc) {
     return Global::node_mgr().create_slot(desc);
-}
-
-uint Scene::null_material_index() noexcept {
-    if (_null_mat_index == InvalidUI32) {
-        MaterialDesc md;
-        md.sub_type = "null";
-        _null_mat_index = _materials.size();
-        _materials.push_back(load<Material>(md));
-    }
-    return _null_mat_index;
 }
 
 void Scene::prepare() noexcept {
