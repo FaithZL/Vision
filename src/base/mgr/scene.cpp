@@ -104,9 +104,9 @@ void Scene::relevance_material_light() {
         }
         if (mesh->has_emission()) {
             uint lit_index = _light_sampler->lights().get_index([&](SP<Light> light) {
-                return light.get() == mesh->emission.get();
+                return light.get() == mesh->emission.object.get();
             });
-            mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->emission.get()));
+            mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->emission.object.get()));
         }
     }
 }
