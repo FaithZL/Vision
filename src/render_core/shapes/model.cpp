@@ -49,6 +49,8 @@ public:
         _meshes = assimp_util.parse_meshes(material.name.empty(), desc["subdiv_level"].as_uint(0u));
         for (vision::Mesh &mesh : _meshes) {
             mesh.material.name = material.name;
+            mesh.inside = inside;
+            mesh.outside = outside;
             mesh.handle().outside_medium = _outside_medium;
             mesh.handle().inside_medium = _inside_medium;
             mesh.handle().o2w = _o2w;

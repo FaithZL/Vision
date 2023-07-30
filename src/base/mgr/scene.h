@@ -52,6 +52,7 @@ public:
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
+    OC_MAKE_MEMBER_GETTER(global_medium,)
     [[nodiscard]] auto &meshes() const noexcept { return _meshes; }
     [[nodiscard]] auto &meshes() noexcept { return _meshes; }
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }

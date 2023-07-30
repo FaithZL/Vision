@@ -115,8 +115,10 @@ void Scene::remove_unused_materials() {
 
 void Scene::load_mediums(const MediumsDesc &md) {
     _global_medium.name = md.global;
-    for (const MediumDesc &desc : md.mediums) {
+    for (uint i = 0; i < md.mediums.size(); ++i) {
+        const MediumDesc &desc = md.mediums[i];
         auto medium = load<Medium>(desc);
+        medium->set_index(i);
         _mediums.push_back(medium);
     }
     uint index = _mediums.get_index([&](const SP<Medium> &medium) {

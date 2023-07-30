@@ -17,7 +17,7 @@ class SampledWavelengths;
 
 class Medium : public Node, public Serializable<float> {
 protected:
-    uint _index{};
+    uint _index{InvalidUI32};
     float _scale{};
 
 public:
@@ -26,10 +26,11 @@ public:
 public:
     explicit Medium(const MediumDesc &desc)
         : Node(desc),
-          _index(desc["index"].as_uint(InvalidUI32)),
           _scale(desc.scale["value"].as_float()) {}
     ~Medium() override = default;
-    virtual SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
+    void set_index(uint index) noexcept { _index = index; }
+    virtual SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl,
+                               Sampler *sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const OCRay &ray, Interaction &it,
                                    const SampledWavelengths &swl, Sampler *sampler) const noexcept = 0;
 };

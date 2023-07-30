@@ -46,6 +46,9 @@ protected:
     Handle _handle;
     float _factor{};
 
+protected:
+    void init_medium(const ShapeDesc &desc) noexcept;
+
 public:
     explicit Shape(const ShapeDesc &desc);
     Shape() = default;

@@ -12,10 +12,22 @@ Shape::Shape(const ShapeDesc &desc)
     : Node(desc),
       _factor(desc["factor"].as_float(1.f)) {
     material.name = desc["material"].as_string();
-//    inside.name = desc.
+    if (scene().has_medium()) {
+        init_medium(desc);
+    }
     _handle.inside_medium = desc.inside_medium.id;
     _handle.outside_medium = desc.outside_medium.id;
     _handle.o2w = desc.o2w.mat;
+}
+
+void Shape::init_medium(const vision::ShapeDesc &desc) noexcept {
+    if (desc.contains("medium")) {
+        inside.name = desc["medium"]["inside"].as_string();
+        outside.name = desc["medium"]["outside"].as_string();
+    } else {
+        inside = scene().global_medium();
+        outside = scene().global_medium();
+    }
 }
 
 void Shape::load_light(const vision::LightDesc &desc) noexcept {

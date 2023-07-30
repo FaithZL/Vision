@@ -68,6 +68,10 @@ public:
     void set_value(Args &&...args) noexcept {
         _parameter.set_value(OC_FORWARD(args)...);
     }
+    template<typename ...Args>
+    [[nodiscard]] bool contains(Args &&...args) const noexcept {
+        return _parameter.contains(OC_FORWARD(args)...);
+    }
     void set_parameter(const ParameterSet &ps) noexcept;
     [[nodiscard]] bool has_attr(const string &key) const noexcept {
         return _parameter.contains(key);
@@ -170,6 +174,7 @@ public:
             case 2: return "xy";
             case 3: return "xyz";
             case 4: return "xyzw";
+            default: break;
         }
         return "";
     }
