@@ -57,6 +57,8 @@ public:
         OC_ERROR("fill_geometry can not called by model");
     }
     void load_light(const LightDesc &desc) noexcept;
+    virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
+    virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
     [[nodiscard]] bool has_material() const noexcept { return material.object.get(); }

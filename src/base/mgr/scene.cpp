@@ -76,6 +76,20 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 desc.emission.set_value("inst_id", _meshes.size());
                 mesh.load_light(desc.emission);
             }
+            if (has_medium()) {
+                auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+                    return medium->name() == mesh.inside.name;
+                });
+                if (iter != _mediums.end()) {
+                    mesh.inside.object = *iter;
+                }
+                iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+                    return medium->name() == mesh.outside.name;
+                });
+                if (iter != _mediums.end()) {
+                    mesh.outside.object = *iter;
+                }
+            }
             _aabb.extend(mesh.aabb);
             _meshes.push_back(&mesh);
         });
@@ -96,6 +110,10 @@ void Scene::relevance_material_light() {
                 return light.get() == mesh->emission.object.get();
             });
             mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->emission.object.get()));
+        }
+        if (has_medium()) {
+            mesh->update_inside_medium_id(mesh->inside.object->index());
+            mesh->update_outside_medium_id(mesh->outside.object->index());
         }
     }
 }
@@ -124,7 +142,7 @@ void Scene::load_mediums(const MediumsDesc &md) {
     uint index = _mediums.get_index([&](const SP<Medium> &medium) {
         return medium->name() == _global_medium.name;
     });
-    if (index!=InvalidUI32) {
+    if (index != InvalidUI32) {
         _global_medium.object = _mediums[index];
     }
 }
