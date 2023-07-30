@@ -239,14 +239,14 @@
 					"inside" : "fog",
 					"outside" : ""
 				},
-				"fn": "mesh/dragon.obj",
+				"fn": "mesh/bunny.obj",
 				"subdiv_level": 0,
 				"transform" : {
 					"type": "trs",
 					"param": {
-						"t": [0,0.55,0],
-						"r": [0,1,0,90],
-						"s": [1.35,1.35,1.35]
+						"t": [0.1,0.15,0],
+						"r": [0,1,0,0],
+						"s": [0.6,0.6,0.6]
 					}
 				}
 			}
