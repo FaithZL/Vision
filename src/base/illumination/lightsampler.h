@@ -56,7 +56,7 @@ public:
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
-        if constexpr (std::invocable<Func, Light *>) {
+        if constexpr (std::invocable<Func, SP<Light>>) {
             for (SP<Light> light : _lights) {
                 func(light);
             }
@@ -70,13 +70,13 @@ public:
 
     template<typename Func>
     void for_each(Func &&func) const noexcept {
-        if constexpr (std::invocable<Func, const Light *>) {
-            for (const SP<Light> light : _lights) {
+        if constexpr (std::invocable<Func, SP<const Light>>) {
+            for (const SP<Light> &light : _lights) {
                 func(light);
             }
         } else {
             uint i = 0u;
-            for (const SP<Light> light : _lights) {
+            for (const SP<Light> &light : _lights) {
                 func(light, i++);
             }
         }
