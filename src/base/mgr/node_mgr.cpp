@@ -26,8 +26,8 @@ void NodeMgr::destroy_instance() noexcept {
 SP<Node> NodeMgr::load_node(const vision::NodeDesc &desc) {
     const DynamicModule *module = Context::instance().obtain_module(desc.plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-    SP<Node> ret = SP<Node>(creator(desc), deleter);
+//    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+    SP<Node> ret = SP<Node>(creator(desc));
     return ret;
 }
 

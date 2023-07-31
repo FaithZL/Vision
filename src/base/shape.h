@@ -85,8 +85,8 @@ public:
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");
     }
-    virtual void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept = 0;
-    virtual void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept = 0;
+    virtual void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept = 0;
+    virtual void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept = 0;
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
     [[nodiscard]] virtual const Mesh &mesh_at(uint i) const noexcept = 0;
     [[nodiscard]] virtual float4x4 o2w() const noexcept { return _handle.o2w; }
@@ -168,7 +168,7 @@ OC_STRUCT(vision::Instance::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
-struct Mesh : public Shape {
+struct Mesh : public Shape, public std::enable_shared_from_this<Mesh> {
 public:
     struct Handle {
         uint vertex_offset;
@@ -193,11 +193,11 @@ public:
     [[nodiscard]] vector<float> surface_areas() const noexcept override;
     [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
     void set_lightmap_id(ocarina::uint id) noexcept override { handle().lightmap_id = id; }
-    void for_each_mesh(const std::function<void(vision::Mesh &, uint)> &func) noexcept override {
-        func(*this, 0);
+    void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
+        func(shared_from_this(), 0);
     }
-    void for_each_mesh(const std::function<void(const vision::Mesh &, uint)> &func) const noexcept override {
-        func(*this, 0);
+    void for_each_mesh(const std::function<void( SP<const Mesh> , uint)> &func) const noexcept override {
+        func(shared_from_this(), 0);
     }
     [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
         return *this;

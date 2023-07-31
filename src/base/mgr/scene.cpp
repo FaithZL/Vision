@@ -101,35 +101,35 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         SP<Shape> shape = load<Shape>(desc);
         _shapes.push_back(shape);
-        shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+        shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
-                return material->name() == mesh._material.name;
+                return material->name() == mesh->_material.name;
             });
-            if (iter != _materials.end() && !mesh.has_material()) {
-                mesh._material.object = *iter;
+            if (iter != _materials.end() && !mesh->has_material()) {
+                mesh->_material.object = *iter;
             }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
                 SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
-                mesh.set_emission(light);
-                light->set_mesh(&mesh);
+                mesh->set_emission(light);
+                light->set_mesh(mesh.get());
             }
             if (has_medium()) {
                 auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh._inside.name;
+                    return medium->name() == mesh->_inside.name;
                 });
                 if (iter != _mediums.end()) {
-                    mesh._inside.object = *iter;
+                    mesh->_inside.object = *iter;
                 }
                 iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh._outside.name;
+                    return medium->name() == mesh->_outside.name;
                 });
                 if (iter != _mediums.end()) {
-                    mesh._outside.object = *iter;
+                    mesh->_outside.object = *iter;
                 }
             }
-            _aabb.extend(mesh.aabb);
-            _meshes.push_back(&mesh);
+            _aabb.extend(mesh->aabb);
+            _meshes.push_back(mesh.get());
         });
     }
 }

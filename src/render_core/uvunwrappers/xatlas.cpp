@@ -112,8 +112,8 @@ public:
     [[nodiscard]] UnwrapperResult apply(const Shape *shape) override {
         Guard __(this);
         UnwrapperResult unwrapper_result;
-        shape->for_each_mesh([&](const vision::Mesh &mesh, uint) {
-            xatlas::MeshDecl decl = mesh_decl(mesh);
+        shape->for_each_mesh([&](SP<const Mesh> mesh, uint) {
+            xatlas::MeshDecl decl = mesh_decl(*mesh);
             xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
             if (error != xatlas::AddMeshError::Success) {
                 destroy_xatlas();

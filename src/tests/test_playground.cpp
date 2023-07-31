@@ -28,9 +28,35 @@ float eta_LASF9(float lambda) {
              0.298926886f * sqr(lambda) / (sqr(lambda) - 0.0538736236f) +
              1.80691843f * sqr(lambda) / (sqr(lambda) - 156.530829f);
     return sqrt(f + 1);
+
+}
+
+struct NODE {
+
+};
+
+struct Good : public std::enable_shared_from_this<Good> , public NODE{
+
+};
+
+struct Better : public Good {};
+
+void test() {
+    auto p = ocarina::new_with_allocator<Better>();
+    shared_ptr<NODE> good = shared_ptr<NODE>(p);
+
+//    auto g1 = good->shared_from_this();
+
+    good.reset();
+
+    int i =0;
 }
 
 int main(int argc, char *argv[]) {
+
+    test();
+    return 0;
+
     uint type_id = 0u;
     uint inst_id = 0u;
     vector<uint> func{1, 2, 5, 6, 3};
@@ -54,6 +80,9 @@ int main(int argc, char *argv[]) {
     cout << "index = " << index << endl;
 
     auto tmp = encode_id<H>(1237, 113);
+
+
+
     //    auto [inst, type] = decode_id<H>(tmp);
     //    cout << tmp << endl;
     //    cout << inst << endl << type << endl;

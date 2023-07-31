@@ -34,10 +34,10 @@ public:
         SP<Shape> shape = Global::node_mgr().load<Shape>(sd);
         scene().shapes().push_back(shape);
         _inst_idx = scene().meshes().size();
-        shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-            mesh._material.object = scene().obtain_black_body();
-            scene().meshes().push_back(&mesh);
-            set_mesh(&mesh);
+        shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
+            mesh->_material.object = scene().obtain_black_body();
+            scene().meshes().push_back(mesh.get());
+            set_mesh(mesh.get());
         });
     }
 

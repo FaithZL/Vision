@@ -12,7 +12,7 @@ UnwrapperResult BakedShape::load_uv_config_from_cache() const {
     UnwrapperResult spread_result;
     spread_result.width = res[0];
     spread_result.height = res[1];
-    _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
         DataWrap elm = json["uv_result"][i];
         auto vertices = elm["vertices"];
         UnwrapperMesh u_mesh;
@@ -34,7 +34,7 @@ void BakedShape::save_to_cache(const UnwrapperResult &result) {
     DataWrap data = DataWrap::object();
     data["resolution"] = {result.width, result.height};
     data["uv_result"] = DataWrap::array();
-    _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
         const UnwrapperMesh &u_mesh = result.meshes[i];
         DataWrap elm = DataWrap::object();
         elm["vertices"] = DataWrap::array();
@@ -79,9 +79,9 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
 
 void BakedShape::merge_meshes() noexcept {
     uint vert_offset = 0;
-    shape()->for_each_mesh([&](const vision::Mesh &mesh, uint index) {
+    shape()->for_each_mesh([&](SP<Mesh> mesh, uint index) {
         float4x4 o2w = shape()->o2w();
-        for (const Vertex &vertex : mesh.vertices) {
+        for (const Vertex &vertex : mesh->vertices) {
             float3 world_pos = transform_point<H>(o2w, vertex.position());
             float3 world_norm = transform_normal<H>(o2w, vertex.normal());
             world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
@@ -89,7 +89,7 @@ void BakedShape::merge_meshes() noexcept {
                                                vertex.tex_coord(),
                                                vertex.lightmap_uv());
         }
-        for (const Triangle &tri : mesh.triangles) {
+        for (const Triangle &tri : mesh->triangles) {
             _merged_mesh.triangles.emplace_back(tri.i + vert_offset,
                                                 tri.j + vert_offset,
                                                 tri.k + vert_offset);
@@ -109,23 +109,23 @@ void BakedShape::allocate_lightmap_texture() noexcept {
 
 void BakedShape::setup_vertices(UnwrapperResult result) {
     _resolution = make_uint2(result.width, result.height);
-    _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
         UnwrapperMesh &u_mesh = result.meshes[i];
         vector<Vertex> vertices;
         vertices.reserve(u_mesh.vertices.size());
         for (auto &vert : u_mesh.vertices) {
-            Vertex vertex = mesh.vertices[vert.xref];
+            Vertex vertex = mesh->vertices[vert.xref];
             vertex.set_lightmap_uv(vert.uv);
             vertices.push_back(vertex);
         }
-        mesh.vertices = ocarina::move(vertices);
-        mesh.triangles = ocarina::move(u_mesh.triangles);
+        mesh->vertices = ocarina::move(vertices);
+        mesh->triangles = ocarina::move(u_mesh.triangles);
     });
 }
 
 void BakedShape::normalize_lightmap_uv() {
-    _shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-        for (auto &vert : mesh.vertices) {
+    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
+        for (auto &vert : mesh->vertices) {
             vert.set_lightmap_uv(vert.lightmap_uv() / make_float2(resolution()));
         }
     });
