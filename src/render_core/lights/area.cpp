@@ -26,16 +26,18 @@ public:
     }
 
     void init_geometry(const LightDesc &desc) {
-//        ShapeDesc sd;
-//        sd.sub_type = "quad";
-//        sd.set_value("width", desc["width"].as_float(1));
-//        sd.set_value("height", desc["height"].as_float(1));
-//        sd.o2w = desc.o2w;
-//        Shape *shape = Global::node_mgr().load<Shape>(sd).get();
-//        _inst_idx = scene().meshes().size();
-//        shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-//            scene().meshes().push_back(&mesh);
-//        });
+        ShapeDesc sd;
+        sd.sub_type = "quad";
+        sd.set_value("width", desc["width"].as_float(1));
+        sd.set_value("height", desc["height"].as_float(1));
+        sd.o2w = desc.o2w;
+        SP<Shape> shape = Global::node_mgr().load<Shape>(sd);
+        scene().shapes().push_back(shape);
+        _inst_idx = scene().meshes().size();
+        shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
+            mesh.material.object = scene().obtain_black_body();
+            scene().meshes().push_back(&mesh);
+        });
     }
 
     OC_SERIALIZABLE_FUNC(Light, _inst_idx, _two_sided, *_warper)

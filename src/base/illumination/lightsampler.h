@@ -57,13 +57,13 @@ public:
     template<typename Func>
     void for_each(Func &&func) noexcept {
         if constexpr (std::invocable<Func, Light *>) {
-            for (SP<Light>light : _lights) {
-                func(light.get());
+            for (SP<Light> light : _lights) {
+                func(light);
             }
         } else {
             uint i = 0u;
-            for (SP<Light>light : _lights) {
-                func(light.get(), i++);
+            for (SP<Light> light : _lights) {
+                func(light, i++);
             }
         }
     }
@@ -71,13 +71,13 @@ public:
     template<typename Func>
     void for_each(Func &&func) const noexcept {
         if constexpr (std::invocable<Func, const Light *>) {
-            for (const SP<Light>light : _lights) {
-                func(light.get());
+            for (const SP<Light> light : _lights) {
+                func(light);
             }
         } else {
             uint i = 0u;
-            for (const SP<Light>light : _lights) {
-                func(light.get(), i++);
+            for (const SP<Light> light : _lights) {
+                func(light, i++);
             }
         }
     }

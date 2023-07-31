@@ -34,6 +34,16 @@ Slot Scene::create_slot(const SlotDesc &desc) {
     return Global::node_mgr().create_slot(desc);
 }
 
+SP<Material> Scene::obtain_black_body() noexcept {
+    if (!_black_body) {
+        MaterialDesc md;
+        md.sub_type = "black_body";
+        _black_body = load<Material>(md);
+        _materials.push_back(_black_body);
+    }
+    return _black_body;
+}
+
 void Scene::prepare() noexcept {
     _camera->prepare();
     _sampler->prepare();
@@ -120,6 +130,9 @@ void Scene::fill_mesh_data() {
             }
         }
     }
+//    _light_sampler->for_each([&](SP<Light> light) {
+//
+//    });
 }
 
 void Scene::remove_unused_materials() {

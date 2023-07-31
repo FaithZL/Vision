@@ -39,6 +39,7 @@ private:
     RenderSettingDesc _render_setting{};
     SP<Spectrum> _spectrum{nullptr};
     Wrap<Medium> _global_medium{};
+    SP<Material> _black_body{};
     friend class Pipeline;
 
 public:
@@ -52,22 +53,23 @@ public:
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
-    OC_MAKE_MEMBER_GETTER(global_medium,)
-    [[nodiscard]] auto &meshes() const noexcept { return _meshes; }
-    [[nodiscard]] auto &meshes() noexcept { return _meshes; }
+    OC_MAKE_MEMBER_GETTER(global_medium, )
+    OC_MAKE_MEMBER_GETTER(meshes, &)
+    OC_MAKE_MEMBER_GETTER(shapes, &)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
     [[nodiscard]] const auto &materials() const noexcept { return _materials; }
     [[nodiscard]] auto &materials() noexcept { return _materials; }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
+    [[nodiscard]] SP<Material> obtain_black_body() noexcept;
     template<typename T, typename desc_ty>
     [[nodiscard]] SP<T> load(const desc_ty &desc) {
         return Global::node_mgr().load<T>(desc);
     }
     [[nodiscard]] uint light_num() const noexcept { return _light_sampler->light_num(); }
     void prepare_lights() noexcept;
-    [[nodiscard]] SP <Warper>load_warper() noexcept { return load<Warper>(_warper_desc); }
+    [[nodiscard]] SP<Warper> load_warper() noexcept { return load<Warper>(_warper_desc); }
     [[nodiscard]] SP<Warper2D> load_warper2d() noexcept {
         WarperDesc warper_desc = _warper_desc;
         warper_desc.sub_type += "2d";
