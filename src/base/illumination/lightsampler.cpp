@@ -13,7 +13,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
         SP<Light> light = scene().load<Light>(light_desc);
         if (light->type() == LightType::Area) {
             SP<IAreaLight> emission = std::dynamic_pointer_cast<IAreaLight>(light);
-            emission->shape()->set_emission(emission);
+            emission->mesh()->set_emission(emission);
         }
         add_light(light);
     }
