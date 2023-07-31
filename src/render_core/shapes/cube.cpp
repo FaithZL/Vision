@@ -7,15 +7,16 @@
 
 namespace vision {
 
-class Cube : public vision::Mesh {
+class Cube : public vision::Group {
 public:
-    using Super = vision::Mesh;
+    using Super = vision::Group;
 
 public:
     explicit Cube(const ShapeDesc &desc) : Super(desc) {
         init(desc);
     }
     void init(const ShapeDesc &desc) noexcept {
+        auto mesh = make_shared<Mesh>(desc);
         float x = desc["x"].as_float(1.f);
         float y = desc["y"].as_float(1.f);
         float z = desc["z"].as_float(1.f);
@@ -49,7 +50,7 @@ public:
             float2(0, 1), float2(1, 1), float2(1, 0), float2(0, 0),
             float2(0, 1), float2(1, 1), float2(1, 0), float2(0, 0),
         };
-        triangles = vector<Triangle>{
+        mesh->triangles = vector<Triangle>{
             Triangle(0, 1, 3), Triangle(0, 3, 2),
             Triangle(6, 5, 7), Triangle(4, 5, 6),
             Triangle(10, 9, 11), Triangle(8, 9, 10),
@@ -58,9 +59,10 @@ public:
             Triangle(21, 22, 23), Triangle(20, 21, 23),
         };
         for (int i = 0; i < P.size(); ++i) {
-            vertices.emplace_back(P[i], N[i], UVs[i]);
-            aabb.extend(transform_point<H>(handle().o2w, P[i]));
+            mesh->vertices.emplace_back(P[i], N[i], UVs[i]);
+            mesh->aabb.extend(transform_point<H>(handle().o2w, P[i]));
         }
+        _meshes.push_back(mesh);
     }
 };
 

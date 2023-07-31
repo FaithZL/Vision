@@ -19,7 +19,7 @@ namespace vision {
 struct Geometry;
 struct Mesh;
 
-struct Shape : public Node,public std::enable_shared_from_this<Shape> {
+struct Shape : public Node, public std::enable_shared_from_this<Shape> {
 public:
     using Desc = ShapeDesc;
 
@@ -94,7 +94,8 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Shape::Handle, light_id, mat_id, lightmap_id, mesh_id, inside_medium, outside_medium, o2w){};
+OC_STRUCT(vision::Shape::Handle, light_id, mat_id, lightmap_id,
+          mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
 
@@ -148,10 +149,10 @@ public:
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] const Material* material() const noexcept { return _material.object.get(); }
-    [[nodiscard]] const IAreaLight* emission() const noexcept { return _emission.object.get(); }
-    [[nodiscard]] const Medium* inside_medium() const noexcept { return _inside.object.get(); }
-    [[nodiscard]] const Medium* outside_medium() const noexcept { return _outside.object.get(); }
+    [[nodiscard]] const Material *material() const noexcept { return _material.object.get(); }
+    [[nodiscard]] const IAreaLight *emission() const noexcept { return _emission.object.get(); }
+    [[nodiscard]] const Medium *inside_medium() const noexcept { return _inside.object.get(); }
+    [[nodiscard]] const Medium *outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_material() const noexcept { return _material.object.get(); }
     [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
     [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
@@ -196,7 +197,7 @@ public:
     void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
         func(std::dynamic_pointer_cast<Mesh>(shared_from_this()), 0);
     }
-    void for_each_mesh(const std::function<void(SP<const Mesh> , uint)> &func) const noexcept override {
+    void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept override {
         func(std::dynamic_pointer_cast<const Mesh>(shared_from_this()), 0);
     }
     [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
@@ -210,3 +211,38 @@ public:
 }// namespace vision
 
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
+
+namespace vision {
+
+class Group : public Shape {
+protected:
+    vector<SP<Mesh>> _meshes;
+    Box3f _aabb;
+    float4x4 _o2w;
+
+public:
+    explicit Group(const ShapeDesc &desc)
+        : Shape(desc) {}
+
+    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
+        return *_meshes[i];
+    }
+
+    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
+        return *_meshes[i];
+    }
+
+    void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
+        for (uint i = 0; i < _meshes.size(); ++i) {
+            func(_meshes[i], i);
+        }
+    }
+
+    void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept override {
+        for (uint i = 0; i < _meshes.size(); ++i) {
+            func(_meshes[i], i);
+        }
+    }
+};
+
+}// namespace vision
