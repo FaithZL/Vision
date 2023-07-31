@@ -46,7 +46,7 @@ public:
     template<typename Func>
     void for_each_need_bake(Func &&func) {
         auto &meshes = _scene.meshes();
-        std::for_each(meshes.begin(), meshes.end(), [&](vision::Mesh *item) {
+        std::for_each(meshes.begin(), meshes.end(), [&](SP<vision::Mesh> item) {
             if (item->has_emission()) {
                 return;
             }

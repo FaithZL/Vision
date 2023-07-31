@@ -32,7 +32,7 @@ private:
     SP<Integrator> _integrator{nullptr};
     SP<LightSampler> _light_sampler{nullptr};
     vector<SP<Group>> _shapes;
-    vector<vision::Mesh *> _meshes;
+    vector<SP<Mesh>> _meshes;
     Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;
@@ -95,7 +95,7 @@ public:
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
-    [[nodiscard]] vision::Mesh *get_mesh(uint id) noexcept { return _meshes[id]; }
+    [[nodiscard]] vision::Mesh *get_mesh(uint id) noexcept { return _meshes[id].get(); }
 };
 
 #undef MAKE_GETTER

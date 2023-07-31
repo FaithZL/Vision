@@ -39,8 +39,8 @@ void BakePipeline::prepare() noexcept {
 
 void BakePipeline::preprocess() noexcept {
     // fill baked shape list
-    for_each_need_bake([&](vision::Mesh *item) {
-        _baked_shapes.emplace_back(item);
+    for_each_need_bake([&](SP<vision::Mesh> item) {
+        _baked_shapes.emplace_back(item.get());
     });
     SP<UVUnwrapper> uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
 

@@ -129,13 +129,13 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 }
             }
             _aabb.extend(mesh->aabb);
-            _meshes.push_back(mesh.get());
+            _meshes.push_back(mesh);
         });
     }
 }
 
 void Scene::fill_mesh_data() {
-    for (Mesh *mesh : _meshes) {
+    for (SP<Mesh> mesh : _meshes) {
         if (mesh->has_material()) {
             uint mat_index = _materials.get_index([&](SP<Material> mat) {
                 return mat.get() == mesh->_material.object.get();

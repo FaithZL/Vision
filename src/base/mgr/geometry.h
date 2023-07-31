@@ -39,7 +39,7 @@ public:
      * There is no need to update the acceleration structure
      * @param shapes
      */
-    void update_meshes(const vector<Mesh *> &shapes);
+    void update_meshes(const vector<SP<Mesh>> &shapes);
     void reset_device_buffer();
     void build_meshes();
     void build_accel();

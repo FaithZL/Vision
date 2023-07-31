@@ -36,7 +36,7 @@ public:
         _inst_idx = scene().meshes().size();
         shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
             mesh->_material.object = scene().obtain_black_body();
-            scene().meshes().push_back(mesh.get());
+            scene().meshes().push_back(mesh);
             set_mesh(mesh.get());
         });
     }

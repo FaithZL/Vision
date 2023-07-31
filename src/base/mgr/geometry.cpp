@@ -26,13 +26,13 @@ void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, S
     _mesh_handles.push_back(mesh_handle);
 }
 
-void Geometry::update_meshes(const vector<vision::Mesh *> &shapes) {
+void Geometry::update_meshes(const vector<SP<Mesh>> &shapes) {
     _vertices.host_buffer().clear();
     _triangles.host_buffer().clear();
     _instances.host_buffer().clear();
     _mesh_handles.host_buffer().clear();
 
-    std::for_each(shapes.begin(), shapes.end(), [&](const vision::Mesh *mesh) {
+    std::for_each(shapes.begin(), shapes.end(), [&](SP<vision::Mesh> mesh) {
         mesh->fill_geometry(*this);
     });
 }
