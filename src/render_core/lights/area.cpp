@@ -9,21 +9,21 @@
 
 namespace vision {
 
-class AreaLight : public Light {
+class AreaLight : public IAreaLight {
 private:
-    Serial<uint> _inst_idx{InvalidUI32};
     Serial<uint> _two_sided{0u};
     SP<Warper> _warper{nullptr};
 
 public:
     explicit AreaLight(const LightDesc &desc)
-        : Light(desc, LightType::Area),
-          _two_sided{desc["two_sided"].as_bool(false)},
-          _inst_idx(desc["inst_id"].as_uint(InvalidUI32)) {
+        : IAreaLight(desc),
+          _two_sided{desc["two_sided"].as_bool(false)} {
         if (_inst_idx.hv() == InvalidUI32) {
             init_geometry(desc);
         }
     }
+
+    OC_SERIALIZABLE_FUNC(IAreaLight, _two_sided, *_warper)
 
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;
@@ -40,7 +40,6 @@ public:
         });
     }
 
-    OC_SERIALIZABLE_FUNC(Light, _inst_idx, _two_sided, *_warper)
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
         return _warper->PMF(prim_id);
     }
@@ -56,10 +55,6 @@ public:
             ret += weight;
         }
         return ret;
-    }
-
-    [[nodiscard]] Shape *shape() const noexcept {
-        return scene().get_shape(_inst_idx.hv());
     }
 
     [[nodiscard]] float3 power() const noexcept override {

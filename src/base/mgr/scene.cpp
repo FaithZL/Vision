@@ -130,9 +130,6 @@ void Scene::fill_mesh_data() {
             }
         }
     }
-//    _light_sampler->for_each([&](SP<Light> light) {
-//
-//    });
 }
 
 void Scene::remove_unused_materials() {

@@ -12,6 +12,10 @@ Light::Light(const LightDesc &desc, LightType light_type)
       _color(scene().create_slot(desc.color)),
       _scale(desc["scale"].as_float(1.f)) {}
 
+Shape *IAreaLight::shape() const noexcept {
+    return scene().get_shape(_inst_idx.hv());
+}
+
 LightSample IPointLight::sample_Li(const LightSampleContext &p_ref, Float2 u,
                                    const SampledWavelengths &swl) const noexcept {
     LightSample ret{swl.dimension()};

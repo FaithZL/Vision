@@ -21,11 +21,13 @@ struct LightBound {
 };
 }// namespace vision
 
+// clang-format off
 OC_STRUCT(vision::LightBound, _axis, theta_o, theta_e){
     [[nodiscard]] auto axis() const noexcept {
         return make_float3(_axis[0], _axis[1], _axis[2]);
     }
 };
+// clang-format on
 
 namespace vision {
 
@@ -69,6 +71,20 @@ public:
     [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light)};
     }
+};
+
+class Shape;
+
+class IAreaLight : public Light {
+protected:
+    Serial<uint> _inst_idx{InvalidUI32};
+
+public:
+    explicit IAreaLight(const LightDesc &desc)
+        : Light(desc, LightType::Area),
+          _inst_idx(desc["inst_id"].as_uint(InvalidUI32)) {}
+    OC_SERIALIZABLE_FUNC(Light, _inst_idx)
+    [[nodiscard]] Shape *shape() const noexcept;
 };
 
 class IPointLight : public Light {
