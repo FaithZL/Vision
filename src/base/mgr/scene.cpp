@@ -35,6 +35,7 @@ void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
     tidy_up_materials();
     tidy_up_mediums();
+    tidy_up_meshes();
 }
 
 void Scene::tidy_up_materials() noexcept {
@@ -47,6 +48,12 @@ void Scene::tidy_up_mediums() noexcept {
     _mediums.for_each_instance([&](SP<Medium> medium, uint i) {
         medium->set_index(i);
     });
+}
+
+void Scene::tidy_up_meshes() noexcept {
+    for (uint i = 0; i < _meshes.size(); ++i) {
+        _meshes[i]->set_index(i);
+    }
 }
 
 Slot Scene::create_slot(const SlotDesc &desc) {
@@ -96,10 +103,10 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
         _shapes.push_back(shape);
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
-                return material->name() == mesh.material.name;
+                return material->name() == mesh._material.name;
             });
             if (iter != _materials.end() && !mesh.has_material()) {
-                mesh.material.object = *iter;
+                mesh._material.object = *iter;
             }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
@@ -108,16 +115,16 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             }
             if (has_medium()) {
                 auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh.inside.name;
+                    return medium->name() == mesh._inside.name;
                 });
                 if (iter != _mediums.end()) {
-                    mesh.inside.object = *iter;
+                    mesh._inside.object = *iter;
                 }
                 iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh.outside.name;
+                    return medium->name() == mesh._outside.name;
                 });
                 if (iter != _mediums.end()) {
-                    mesh.outside.object = *iter;
+                    mesh._outside.object = *iter;
                 }
             }
             _aabb.extend(mesh.aabb);
@@ -130,23 +137,23 @@ void Scene::fill_mesh_data() {
     for (Mesh *mesh : _meshes) {
         if (mesh->has_material()) {
             uint mat_index = _materials.get_index([&](SP<Material> mat) {
-                return mat.get() == mesh->material.object.get();
+                return mat.get() == mesh->_material.object.get();
             });
             const Material *material = _materials[mat_index].get();
             mesh->update_material_id(_materials.encode_id(mat_index, material));
         }
         if (mesh->has_emission()) {
             uint lit_index = _light_sampler->lights().get_index([&](SP<Light> light) {
-                return light.get() == mesh->emission.object.get();
+                return light.get() == mesh->_emission.object.get();
             });
-            mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->emission.object.get()));
+            mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->_emission.object.get()));
         }
         if (has_medium()) {
             if (mesh->has_inside_medium()) {
-                mesh->update_inside_medium_id(mesh->inside.object->index());
+                mesh->update_inside_medium_id(mesh->_inside.object->index());
             }
             if (mesh->has_outside_medium()) {
-                mesh->update_outside_medium_id(mesh->outside.object->index());
+                mesh->update_outside_medium_id(mesh->_outside.object->index());
             }
         }
     }

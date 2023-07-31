@@ -37,14 +37,15 @@ public:
 
 public:
     Box3f aabb;
-    Wrap<IAreaLight> emission{};
-    Wrap<Material> material{};
-    Wrap<Medium> inside{};
-    Wrap<Medium> outside{};
+    Wrap<IAreaLight> _emission{};
+    Wrap<Material> _material{};
+    Wrap<Medium> _inside{};
+    Wrap<Medium> _outside{};
 
 protected:
     Handle _handle;
     float _factor{};
+    uint _index{};
 
 protected:
     void init_medium(const ShapeDesc &desc) noexcept;
@@ -56,17 +57,18 @@ public:
         OC_ASSERT(false);
         OC_ERROR("fill_geometry can not called by model");
     }
+    OC_MAKE_MEMBER_GETTER_SETTER(index,)
     void set_emission(const SP<IAreaLight> &light) noexcept {
-        emission.name = light->name();
-        emission.object = light;
+        _emission.name = light->name();
+        _emission.object = light;
     }
     virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] bool has_material() const noexcept { return material.object.get(); }
-    [[nodiscard]] bool has_inside_medium() const noexcept { return inside.object.get(); }
-    [[nodiscard]] bool has_outside_medium() const noexcept { return outside.object.get(); }
+    [[nodiscard]] bool has_material() const noexcept { return _material.object.get(); }
+    [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
+    [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
         OC_ASSERT(false);
@@ -78,7 +80,7 @@ public:
         OC_ASSERT(false);
         OC_ERROR("set_lightmap_id can not called by model");
     }
-    [[nodiscard]] bool has_emission() const noexcept { return emission.object.get(); }
+    [[nodiscard]] bool has_emission() const noexcept { return _emission.object.get(); }
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept {
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");

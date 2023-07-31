@@ -35,7 +35,7 @@ public:
         scene().shapes().push_back(shape);
         _inst_idx = scene().meshes().size();
         shape->for_each_mesh([&](vision::Mesh &mesh, uint i) {
-            mesh.material.object = scene().obtain_black_body();
+            mesh._material.object = scene().obtain_black_body();
             scene().meshes().push_back(&mesh);
         });
     }

@@ -11,7 +11,7 @@ namespace vision {
 Shape::Shape(const ShapeDesc &desc)
     : Node(desc),
       _factor(desc["factor"].as_float(1.f)) {
-    material.name = desc["material"].as_string();
+    _material.name = desc["material"].as_string();
     if (scene().has_medium()) {
         init_medium(desc);
     }
@@ -20,11 +20,11 @@ Shape::Shape(const ShapeDesc &desc)
 
 void Shape::init_medium(const vision::ShapeDesc &desc) noexcept {
     if (desc.contains("medium")) {
-        inside.name = desc["medium"]["inside"].as_string();
-        outside.name = desc["medium"]["outside"].as_string();
+        _inside.name = desc["medium"]["inside"].as_string();
+        _outside.name = desc["medium"]["outside"].as_string();
     } else {
-        inside = scene().global_medium();
-        outside = scene().global_medium();
+        _inside = scene().global_medium();
+        _outside = scene().global_medium();
     }
 }
 
