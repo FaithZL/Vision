@@ -84,7 +84,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
-                SP<Light> light = load_light(desc.emission);
+                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
                 mesh.set_emission(light);
             }
             if (has_medium()) {
@@ -160,13 +160,6 @@ void Scene::load_mediums(const MediumsDesc &md) {
     if (index != InvalidUI32) {
         _global_medium.object = _mediums[index];
     }
-}
-
-SP<Light> Scene::load_light(const LightDesc &desc) {
-    OC_ASSERT(_light_sampler != nullptr);
-    auto ret = load<Light>(desc);
-    _light_sampler->add_light(ret);
-    return ret;
 }
 
 void Scene::prepare_materials() {

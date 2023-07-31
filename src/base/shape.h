@@ -37,7 +37,7 @@ public:
 
 public:
     Box3f aabb;
-    Wrap<Light> emission{};
+    Wrap<IAreaLight> emission{};
     Wrap<Material> material{};
     Wrap<Medium> inside{};
     Wrap<Medium> outside{};
@@ -56,7 +56,7 @@ public:
         OC_ASSERT(false);
         OC_ERROR("fill_geometry can not called by model");
     }
-    void set_emission(const SP<Light> &light) noexcept {
+    void set_emission(const SP<IAreaLight> &light) noexcept {
         emission.name = light->name();
         emission.object = light;
     }

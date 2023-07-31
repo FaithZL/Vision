@@ -81,7 +81,13 @@ public:
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_mesh_data();
     void remove_unused_materials();
-    SP<Light> load_light(const LightDesc &desc);
+    template<typename T = Light>
+    SP<T> load_light(const LightDesc &desc) {
+        OC_ASSERT(_light_sampler != nullptr);
+        auto ret = load<T>(desc);
+        _light_sampler->add_light(ret);
+        return ret;
+    }
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
