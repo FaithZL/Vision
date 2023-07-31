@@ -19,7 +19,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
     }
 }
 
-void LightSampler::prepare() noexcept {
+void LightSampler::tidy_up() noexcept {
     std::sort(_lights.begin(), _lights.end(), [&](SP<Light> a, SP<Light> b) {
         return _lights.type_index(a.get()) < _lights.type_index(b.get());
     });
@@ -28,6 +28,12 @@ void LightSampler::prepare() noexcept {
             _env_light = light.get();
             _env_index = index;
         }
+        light->set_index(index);
+    });
+}
+
+void LightSampler::prepare() noexcept {
+    for_each([&](SP<Light> light, uint index) noexcept {
         light->prepare();
     });
     auto rp = pipeline();

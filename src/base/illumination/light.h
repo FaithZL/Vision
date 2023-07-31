@@ -47,6 +47,7 @@ protected:
     const LightType _type{LightType::Area};
     Serial<float> _scale{1.f};
     Slot _color{};
+    uint _index{InvalidUI32};
 
 protected:
     [[nodiscard]] float3 average() const noexcept {
@@ -60,6 +61,7 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }

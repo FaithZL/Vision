@@ -24,10 +24,21 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_mediums(scene_desc.mediums_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
+    tidy_up();
     remove_unused_materials();
     fill_mesh_data();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
+}
+
+void Scene::tidy_up() noexcept {
+    _light_sampler->tidy_up();
+    _materials.for_each_instance([&](SP<Material> material, uint i) {
+        material->set_index(i);
+    });
+    _mediums.for_each_instance([&](SP<Medium> medium, uint i) {
+        medium->set_index(i);
+    });
 }
 
 Slot Scene::create_slot(const SlotDesc &desc) {

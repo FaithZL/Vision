@@ -65,6 +65,7 @@ public:
 protected:
     Slot _bump{};
     Slot _bump_scale{};
+    uint _index{InvalidUI32};
 
 protected:
     static constexpr uint stride = sizeof(Slot);
@@ -74,7 +75,6 @@ protected:
         uint num{0u};
     };
     SlotCursor _slot_cursor;
-
     const Slot &get_slot(uint index) const noexcept {
         const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
         return head[index];
@@ -87,6 +87,7 @@ protected:
 
 public:
     explicit Material(const MaterialDesc &desc);
+    OC_MAKE_MEMBER_GETTER_SETTER(index,)
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
         uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
         _slot_cursor.offset = offset;
