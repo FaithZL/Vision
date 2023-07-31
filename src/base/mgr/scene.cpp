@@ -24,8 +24,8 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_mediums(scene_desc.mediums_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
-    tidy_up();
     remove_unused_materials();
+    tidy_up();
     fill_mesh_data();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
@@ -33,9 +33,17 @@ void Scene::init(const SceneDesc &scene_desc) {
 
 void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
+    tidy_up_materials();
+    tidy_up_mediums();
+}
+
+void Scene::tidy_up_materials() noexcept {
     _materials.for_each_instance([&](SP<Material> material, uint i) {
         material->set_index(i);
     });
+}
+
+void Scene::tidy_up_mediums() noexcept {
     _mediums.for_each_instance([&](SP<Medium> medium, uint i) {
         medium->set_index(i);
     });
@@ -152,9 +160,7 @@ void Scene::remove_unused_materials() {
             ++iter;
         }
     }
-    _materials.for_each_instance([&](const SP<Material> &mat) {
-        OC_INFO_FORMAT("ref count {}", mat.use_count());
-    });
+    tidy_up_materials();
 }
 
 void Scene::load_mediums(const MediumsDesc &md) {

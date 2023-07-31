@@ -62,6 +62,8 @@ public:
     [[nodiscard]] auto &materials() noexcept { return _materials; }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
     void tidy_up() noexcept;
+    void tidy_up_materials() noexcept;
+    void tidy_up_mediums() noexcept;
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     [[nodiscard]] SP<Material> obtain_black_body() noexcept;
     template<typename T, typename desc_ty>
