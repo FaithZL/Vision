@@ -28,12 +28,6 @@ void Shape::init_medium(const vision::ShapeDesc &desc) noexcept {
     }
 }
 
-void Shape::load_light(const vision::LightDesc &desc) noexcept {
-    if (desc.valid()) {
-        emission.object = scene().load_light(desc);
-    }
-}
-
 uint Shape::lightmap_size() const noexcept {
     vector<float> areas = ref_surface_areas();
     float area = std::accumulate(areas.begin(), areas.end(), 0.f);

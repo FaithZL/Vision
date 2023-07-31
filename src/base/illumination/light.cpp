@@ -13,7 +13,7 @@ Light::Light(const LightDesc &desc, LightType light_type)
       _scale(desc["scale"].as_float(1.f)) {}
 
 Shape *IAreaLight::shape() const noexcept {
-    return scene().get_shape(_inst_idx.hv());
+    return scene().get_mesh(_inst_idx.hv());
 }
 
 LightSample IPointLight::sample_Li(const LightSampleContext &p_ref, Float2 u,

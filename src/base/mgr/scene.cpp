@@ -84,7 +84,8 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
-                mesh.load_light(desc.emission);
+                SP<Light> light = load_light(desc.emission);
+                mesh.set_emission(light);
             }
             if (has_medium()) {
                 auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {

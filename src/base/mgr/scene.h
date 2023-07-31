@@ -85,7 +85,7 @@ public:
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
-    [[nodiscard]] Shape *get_shape(uint id) noexcept { return _meshes[id]; }
+    [[nodiscard]] vision::Mesh *get_mesh(uint id) noexcept { return _meshes[id]; }
 };
 
 #undef MAKE_GETTER
