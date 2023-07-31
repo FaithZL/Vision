@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     Buffer v_buffer = device.create_buffer<float3>(vertices.size());
     Buffer t_buffer = device.create_buffer<Triangle>(triangle.size());
 
-    ocarina::Mesh cube = device.create_mesh(v_buffer.view(), t_buffer.view());
+    ocarina::RHIMesh cube = device.create_mesh(v_buffer.view(), t_buffer.view());
 
     stream << v_buffer.upload_sync(vertices.data());
     stream << t_buffer.upload_sync(triangle.data());

@@ -19,7 +19,7 @@ private:
     RegistrableManaged<Triangle> _triangles;
     RegistrableManaged<Shape::Handle> _instances;
     RegistrableManaged<Mesh::Handle> _mesh_handles;
-    vector<ocarina::Mesh> _meshes;
+    vector<ocarina::RHIMesh> _meshes;
 
 public:
     ocarina::Accel accel;

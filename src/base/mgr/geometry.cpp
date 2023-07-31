@@ -41,7 +41,7 @@ void Geometry::build_meshes() {
     for (const auto &inst : _instances) {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = _mesh_handles[mesh_id];
-        ocarina::Mesh mesh;
+        ocarina::RHIMesh mesh;
         if (mesh_id == _mesh_handles.host_buffer().size() - 1) {
             // last element
             BufferView<Vertex> verts = _vertices.device_buffer().view(mesh_handle.vertex_offset, 0);
@@ -86,7 +86,7 @@ void Geometry::build_accel() {
     Stream &stream = rp->stream();
     for (int i = 0; i < _meshes.size(); ++i) {
         Shape::Handle inst = _instances[i];
-        ocarina::Mesh &mesh = _meshes[i];
+        ocarina::RHIMesh &mesh = _meshes[i];
         stream << mesh.build_bvh();
         accel.add_mesh(mesh, inst.o2w);
     }
