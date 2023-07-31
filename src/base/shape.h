@@ -19,7 +19,7 @@ namespace vision {
 struct Geometry;
 struct Mesh;
 
-struct Shape : public Node {
+struct Shape : public Node,public std::enable_shared_from_this<Shape> {
 public:
     using Desc = ShapeDesc;
 
@@ -168,7 +168,7 @@ OC_STRUCT(vision::Instance::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
-struct Mesh : public Shape, public std::enable_shared_from_this<Mesh> {
+struct Mesh : public Shape {
 public:
     struct Handle {
         uint vertex_offset;
@@ -194,10 +194,10 @@ public:
     [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
     void set_lightmap_id(ocarina::uint id) noexcept override { handle().lightmap_id = id; }
     void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
-        func(shared_from_this(), 0);
+        func(std::dynamic_pointer_cast<Mesh>(shared_from_this()), 0);
     }
-    void for_each_mesh(const std::function<void( SP<const Mesh> , uint)> &func) const noexcept override {
-        func(shared_from_this(), 0);
+    void for_each_mesh(const std::function<void(SP<const Mesh> , uint)> &func) const noexcept override {
+        func(std::dynamic_pointer_cast<const Mesh>(shared_from_this()), 0);
     }
     [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
         return *this;

@@ -28,10 +28,12 @@ private:
 public:
     [[nodiscard]] static NodeMgr &instance() noexcept;
     static void destroy_instance() noexcept;
-    [[nodiscard]] SP<Node> load_node(const NodeDesc &desc);
     template<typename T, typename desc_ty>
     [[nodiscard]] SP<T> load(const desc_ty &desc) {
-        SP<T> ret = std::dynamic_pointer_cast<T>(load_node(desc));
+        const DynamicModule *module = Context::instance().obtain_module(desc.plugin_name());
+        auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
+        auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+        SP<T> ret = SP<T>(dynamic_cast<T *>(creator(desc)), deleter);
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
