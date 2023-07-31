@@ -39,7 +39,7 @@ public:
                 float x = cos(phi) * r;
                 float z = sin(phi) * r;
                 float3 p = make_float3(x, y, z);
-                aabb.extend(transform_point<H>(handle().o2w, p));
+                mesh->aabb.extend(transform_point<H>(_o2w, p));
                 float2 t = make_float2(u, v);
 
                 mesh->vertices.emplace_back(p, normalize(p), t);
@@ -82,7 +82,7 @@ public:
             mesh->triangles.push_back(tri);
         }
         for (auto & vertex : mesh->vertices) {
-            aabb.extend(transform_point<H>(handle().o2w, vertex.position()));
+            mesh->aabb.extend(transform_point<H>(_o2w, vertex.position()));
         }
         _meshes.push_back(mesh);
     }

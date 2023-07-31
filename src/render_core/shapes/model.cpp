@@ -3,6 +3,7 @@
 //
 
 #include "base/shape.h"
+#include "base/mgr/scene.h"
 #include "importers/assimp_parser.h"
 
 namespace vision {
@@ -20,14 +21,23 @@ public:
         assimp_util.load_scene(fn, desc["swap_handed"].as_bool(false),
                                desc["smooth"].as_bool(false),
                                desc["flip_uv"].as_bool(true));
-        _meshes = assimp_util.parse_meshes(_material.name.empty(), desc["subdiv_level"].as_uint(0u));
+        string mat_name = desc["material"].as_string();
+        Wrap<Medium> inside;
+        Wrap<Medium> outside;
+        if (desc.contains("medium")) {
+            inside.name = desc["medium"]["inside"].as_string();
+            outside.name = desc["medium"]["outside"].as_string();
+        } else {
+            inside = scene().global_medium();
+            outside = scene().global_medium();
+        }
+
+        _meshes = assimp_util.parse_meshes(mat_name.empty(), desc["subdiv_level"].as_uint(0u));
         for (SP<Mesh> mesh : _meshes) {
-            mesh->_material.name = _material.name;
-            mesh->_inside = _inside;
-            mesh->_outside = _outside;
+            mesh->_material.name = mat_name;
+            mesh->_inside = inside;
+            mesh->_outside = outside;
             mesh->handle().o2w = _o2w;
-            mesh->handle().light_id = handle().light_id;
-            this->aabb.extend(aabb);
         }
     }
 };

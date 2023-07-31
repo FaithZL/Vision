@@ -31,7 +31,7 @@ public:
         sd.set_value("width", desc["width"].as_float(1));
         sd.set_value("height", desc["height"].as_float(1));
         sd.o2w = desc.o2w;
-        SP<Shape> shape = Global::node_mgr().load<Shape>(sd);
+        SP<Group> shape = Global::node_mgr().load<Group>(sd);
         scene().shapes().push_back(shape);
         _inst_idx = scene().meshes().size();
         shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {

@@ -25,7 +25,7 @@ public:
                          make_float3(-width, 0, height),
                          make_float3(-width, 0, -height)};
 
-        for (auto p : P) { aabb.extend(p); }
+        for (auto p : P) { mesh->aabb.extend(p); }
         vector<float3> N(4, make_float3(0, 1, 0));
         vector<float2> UV{make_float2(1, 1),
                           make_float2(1, 0),
@@ -33,7 +33,7 @@ public:
                           make_float2(0, 0)};
         for (int i = 0; i < P.size(); ++i) {
             mesh->vertices.emplace_back(P[i], N[i], UV[i]);
-            mesh->aabb.extend(transform_point<H>(handle().o2w, P[i]));
+            mesh->aabb.extend(transform_point<H>(_o2w, P[i]));
         }
         mesh->triangles = {Triangle{0, 1, 2}, Triangle{2, 1, 3}};
         _meshes.push_back(mesh);

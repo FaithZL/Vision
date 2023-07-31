@@ -214,7 +214,10 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 namespace vision {
 
-class Group : public Shape {
+class Group : public Node {
+public:
+    using Desc = ShapeDesc;
+
 protected:
     vector<SP<Mesh>> _meshes;
     Box3f _aabb;
@@ -222,23 +225,23 @@ protected:
 
 public:
     explicit Group(const ShapeDesc &desc)
-        : Shape(desc),_o2w(desc.o2w.mat) {}
+        : Node(desc), _o2w(desc.o2w.mat) {}
 
-    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
+    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept {
         return *_meshes[i];
     }
 
-    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
+    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept {
         return *_meshes[i];
     }
 
-    void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
+    void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept {
         for (uint i = 0; i < _meshes.size(); ++i) {
             func(_meshes[i], i);
         }
     }
 
-    void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept override {
+    void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept {
         for (uint i = 0; i < _meshes.size(); ++i) {
             func(_meshes[i], i);
         }

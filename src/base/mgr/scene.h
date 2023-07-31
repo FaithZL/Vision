@@ -31,7 +31,7 @@ private:
     SP<Sampler> _sampler{nullptr};
     SP<Integrator> _integrator{nullptr};
     SP<LightSampler> _light_sampler{nullptr};
-    vector<SP<Shape>> _shapes;
+    vector<SP<Group>> _shapes;
     vector<vision::Mesh *> _meshes;
     Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
