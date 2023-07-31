@@ -7,34 +7,12 @@
 
 namespace vision {
 
-class Model : public Shape {
-private:
-    vector<SP<Mesh>> _meshes;
-    float4x4 _o2w;
-
-protected:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        uint64_t ret = Hash64::default_seed;
-        for (const SP<Mesh> &mesh : _meshes) {
-            ret = hash64(mesh->hash(), ret);
-        }
-        return ret;
-    }
-
+class Model : public Group {
 public:
     explicit Model(const ShapeDesc &desc)
-        : Shape(desc),
-          _o2w(desc.o2w.mat) {
+        : Group(desc) {
         load(desc);
     }
-
-    void set_lightmap_id(ocarina::uint id) noexcept override {
-        for (const SP<Mesh> &mesh : _meshes) {
-            mesh->set_lightmap_id(id);
-        }
-    }
-
-    [[nodiscard]] float4x4 o2w() const noexcept override { return _o2w; }
 
     void load(const ShapeDesc &desc) noexcept {
         auto fn = scene_path() / desc["fn"].as_string();
@@ -50,26 +28,6 @@ public:
             mesh->handle().o2w = _o2w;
             mesh->handle().light_id = handle().light_id;
             this->aabb.extend(aabb);
-        }
-    }
-
-    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
-        return *_meshes[i].get();
-    }
-
-    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
-        return *_meshes[i].get();
-    }
-
-    void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
-        for (uint i = 0; i < _meshes.size(); ++i) {
-            func(_meshes[i], i);
-        }
-    }
-
-    void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept override {
-        for (uint i = 0; i < _meshes.size(); ++i) {
-            func(_meshes[i], i);
         }
     }
 };

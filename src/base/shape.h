@@ -222,7 +222,7 @@ protected:
 
 public:
     explicit Group(const ShapeDesc &desc)
-        : Shape(desc) {}
+        : Shape(desc),_o2w(desc.o2w.mat) {}
 
     [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
         return *_meshes[i];
