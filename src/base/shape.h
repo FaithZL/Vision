@@ -19,6 +19,26 @@ namespace vision {
 struct Geometry;
 struct Mesh;
 
+#define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
+    void set_##attr(decltype(_##attr.object) val) noexcept { \
+        _##attr.object = val;                                \
+    }                                                        \
+    void set_##attr##_name(const string &name) noexcept {    \
+        _##attr.name = name;                                 \
+    }                                                        \
+    void set_##attr(decltype(_##attr) val) noexcept {        \
+        _##attr = val;                                       \
+    }                                                        \
+    [[nodiscard]] auto attr() const noexcept {               \
+        return _##attr.object.get();                         \
+    }                                                        \
+    [[nodiscard]] auto attr() noexcept {                     \
+        return _##attr.object.get();                         \
+    }                                                        \
+    [[nodiscard]] string attr##_name() const noexcept {      \
+        return _##attr.name;                                 \
+    }
+
 struct Handle {
     // todo compress unsigned int data
     uint light_id{InvalidUI32};
@@ -58,35 +78,11 @@ public:
         OC_ERROR("fill_geometry can not called by model");
     }
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
-
-#define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
-    void set_##attr(decltype(_##attr.object) val) noexcept { \
-        _##attr.object = val;                                \
-    }                                                        \
-    void set_##attr##_name(const string &name) noexcept {    \
-        _##attr.name = name;                                 \
-    }                                                        \
-    void set_##attr(decltype(_##attr) val) noexcept {        \
-        _##attr = val;                                       \
-    }                                                        \
-    [[nodiscard]] auto attr() const noexcept {               \
-        return _##attr.object.get();                         \
-    }                                                        \
-    [[nodiscard]] auto attr() noexcept {                     \
-        return _##attr.object.get();                         \
-    }                                                        \
-    [[nodiscard]] string attr##_name() const noexcept {      \
-        return _##attr.name;                                 \
-    }
-
     void set_mesh(SP<Mesh> mesh) noexcept { _mesh = mesh; }
     VS_MAKE_ATTR_SETTER_GETTER(inside)
     VS_MAKE_ATTR_SETTER_GETTER(outside)
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
-
-#undef VS_MAKE_ATTR_SETTER_GETTER
-
     void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
     virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
@@ -168,10 +164,21 @@ protected:
     Box3f _aabb;
     float4x4 _o2w;
 
+    Wrap<IAreaLight> _emission{};
+    Wrap<Material> _material{};
+    Wrap<Medium> _inside{};
+    Wrap<Medium> _outside{};
+
+protected:
+    void init_medium(const ShapeDesc &desc) noexcept;
+
 public:
-    explicit Group(const ShapeDesc &desc)
-        : Node(desc), _o2w(desc.o2w.mat) {}
+    explicit Group(const ShapeDesc &desc);
     OC_MAKE_MEMBER_GETTER(o2w, )
+    VS_MAKE_ATTR_SETTER_GETTER(inside)
+    VS_MAKE_ATTR_SETTER_GETTER(outside)
+    VS_MAKE_ATTR_SETTER_GETTER(material)
+    VS_MAKE_ATTR_SETTER_GETTER(emission)
     [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept {
         return *_meshes[i];
     }
@@ -192,5 +199,7 @@ public:
         }
     }
 };
+
+#undef VS_MAKE_ATTR_SETTER_GETTER
 
 }// namespace vision

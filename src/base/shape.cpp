@@ -87,4 +87,22 @@ vector<float> Mesh::ref_surface_areas() const noexcept {
     return ret;
 }
 
+Group::Group(const vision::ShapeDesc &desc)
+    : Node(desc), _o2w(desc.o2w.mat) {
+    _material.name = desc["material"].as_string();
+    if (scene().has_medium()) {
+        init_medium(desc);
+    }
+}
+
+void Group::init_medium(const vision::ShapeDesc &desc) noexcept {
+    if (desc.contains("medium")) {
+        _inside.name = desc["medium"]["inside"].as_string();
+        _outside.name = desc["medium"]["outside"].as_string();
+    } else {
+        _inside = scene().global_medium();
+        _outside = scene().global_medium();
+    }
+}
+
 }// namespace vision
