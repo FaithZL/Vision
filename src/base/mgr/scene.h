@@ -31,7 +31,7 @@ private:
     SP<Sampler> _sampler{nullptr};
     SP<Integrator> _integrator{nullptr};
     SP<LightSampler> _light_sampler{nullptr};
-    vector<SP<Group>> _shapes;
+    vector<SP<Group>> _groups;
     vector<SP<Mesh>> _meshes;
     vector<Instance> _instances;
     Polymorphic<SP<Material>> _materials;
@@ -56,7 +56,7 @@ public:
     MAKE_GETTER(light_sampler)
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(meshes, &)
-    OC_MAKE_MEMBER_GETTER(shapes, &)
+    OC_MAKE_MEMBER_GETTER(groups, &)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
     [[nodiscard]] const auto &materials() const noexcept { return _materials; }

@@ -32,7 +32,7 @@ public:
         sd.set_value("height", desc["height"].as_float(1));
         sd.o2w = desc.o2w;
         SP<Group> shape = Global::node_mgr().load<Group>(sd);
-        scene().shapes().push_back(shape);
+        scene().groups().push_back(shape);
         _inst_idx = scene().meshes().size();
         shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
             mesh->_material.object = scene().obtain_black_body();

@@ -56,8 +56,7 @@ public:
     }
 
     [[nodiscard]] fs::path instance_cache_directory() const noexcept {
-        return Global::instance().scene_cache_path() / ocarina::format("baked_instance_{}_{:016x}",
-                                                                       _shape->name(),
+        return Global::instance().scene_cache_path() / ocarina::format("baked_instance_{:016x}",
                                                                        instance_hash());
     }
 
