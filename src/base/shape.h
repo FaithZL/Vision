@@ -123,6 +123,25 @@ OC_STRUCT(vision::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
+class Instance : public Shape {
+protected:
+    Handle _handle;
+    float _factor{};
+    uint _index{};
+    SP<Mesh> _mesh{};
+
+public:
+    explicit Instance(SP<Mesh> mesh) : _mesh(mesh) {}
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
+    OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
+    void fill_geometry(vision::Geometry &data) const noexcept override;
+    [[nodiscard]] Box3f compute_aabb() const noexcept;
+    void init_aabb() noexcept { aabb = compute_aabb(); }
+};
+}// namespace vision
+
+namespace vision {
 struct Mesh : public Shape {
 public:
     struct Handle {

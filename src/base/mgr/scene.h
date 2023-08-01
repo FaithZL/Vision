@@ -33,6 +33,7 @@ private:
     SP<LightSampler> _light_sampler{nullptr};
     vector<SP<Group>> _groups;
     vector<SP<Mesh>> _meshes;
+    vector<Instance> _instances;
     Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;

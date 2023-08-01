@@ -102,8 +102,6 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
         SP<Group> group = load<Group>(desc);
         _groups.push_back(group);
         group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-            float4x4 o2w = group->o2w();
-
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
                 return material->name() == mesh->material_name();
             });

@@ -35,6 +35,23 @@ uint Shape::lightmap_size() const noexcept {
     return ret;
 }
 
+void Instance::fill_geometry(vision::Geometry &data) const noexcept {
+    data.accept(_mesh->vertices, _mesh->triangles, _handle);
+}
+
+Box3f Instance::compute_aabb() const noexcept {
+    Box3f box;
+    for (const Triangle &tri : _mesh->triangles) {
+        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.i].position());
+        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.j].position());
+        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.k].position());
+        box.extend(v0);
+        box.extend(v1);
+        box.extend(v2);
+    }
+    return box;
+}
+
 Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {}
 
 void Mesh::fill_geometry(Geometry &data) const noexcept {
