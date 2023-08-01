@@ -35,8 +35,6 @@ public:
     using Desc = ShapeDesc;
 
 public:
-
-public:
     Box3f aabb;
     Wrap<IAreaLight> _emission{};
     Wrap<Material> _material{};
@@ -47,6 +45,7 @@ protected:
     Handle _handle;
     float _factor{};
     uint _index{};
+    SP<Mesh> _mesh{};
 
 protected:
     void init_medium(const ShapeDesc &desc) noexcept;
@@ -63,6 +62,20 @@ public:
         _emission.name = light->name();
         _emission.object = light;
     }
+    void set_material(const SP<Material> &m) noexcept {
+        _material.name = m->name();
+        _material.object = m;
+    }
+    void set_mesh(SP<Mesh> mesh) noexcept { _mesh = mesh; }
+    void set_inside(const SP<Medium> &inside) noexcept {
+        _inside.name = inside->name();
+        _inside.object = inside;
+    }
+    void set_outside(const SP<Medium> &outside) noexcept {
+        _outside.name = outside->name();
+        _outside.object = outside;
+    }
+    void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
     virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
@@ -71,6 +84,10 @@ public:
     [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
     [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
+    [[nodiscard]] const Material *material() const noexcept { return _material.object.get(); }
+    [[nodiscard]] const IAreaLight *emission() const noexcept { return _emission.object.get(); }
+    [[nodiscard]] const Medium *inside_medium() const noexcept { return _inside.object.get(); }
+    [[nodiscard]] const Medium *outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
         OC_ASSERT(false);
         OC_ERROR("ref_surface_areas can not called by model");
@@ -99,76 +116,6 @@ public:
 }// namespace vision
 
 OC_STRUCT(vision::Handle, light_id, mat_id, lightmap_id,
-          mesh_id, inside_medium, outside_medium, o2w){};
-
-namespace vision {
-
-class Instance {
-public:
-    struct Handle {
-        // todo compress unsigned int data
-        uint light_id{InvalidUI32};
-        uint mat_id{InvalidUI32};
-        uint lightmap_id{InvalidUI32};
-        uint mesh_id{InvalidUI32};
-        uint inside_medium{InvalidUI32};
-        uint outside_medium{InvalidUI32};
-        float4x4 o2w;
-    };
-
-private:
-    SP<Mesh> _mesh{};
-    Wrap<IAreaLight> _emission{};
-    Wrap<Material> _material{};
-    Wrap<Medium> _inside{};
-    Wrap<Medium> _outside{};
-    Handle _handle;
-
-public:
-    Box3f aabb;
-
-public:
-    Instance() = default;
-    void fill_geometry(Geometry &data) const noexcept;
-    void set_emission(const SP<IAreaLight> &light) noexcept {
-        _emission.name = light->name();
-        _emission.object = light;
-    }
-    void set_material(const SP<Material> &m) noexcept {
-        _material.name = m->name();
-        _material.object = m;
-    }
-    void set_mesh(SP<Mesh> mesh) noexcept { _mesh = mesh; }
-    void set_inside(const SP<Medium> &inside) noexcept {
-        _inside.name = inside->name();
-        _inside.object = inside;
-    }
-    void set_outside(const SP<Medium> &outside) noexcept {
-        _outside.name = outside->name();
-        _outside.object = outside;
-    }
-    void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
-    virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
-    virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
-    virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
-    virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] const Material *material() const noexcept { return _material.object.get(); }
-    [[nodiscard]] const IAreaLight *emission() const noexcept { return _emission.object.get(); }
-    [[nodiscard]] const Medium *inside_medium() const noexcept { return _inside.object.get(); }
-    [[nodiscard]] const Medium *outside_medium() const noexcept { return _outside.object.get(); }
-    [[nodiscard]] bool has_material() const noexcept { return _material.object.get(); }
-    [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
-    [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
-    [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
-    OC_MAKE_MEMBER_GETTER_SETTER(handle, )
-    virtual void set_lightmap_id(uint id) noexcept {
-        _handle.lightmap_id = id;
-    }
-};
-
-}// namespace vision
-
-OC_STRUCT(vision::Instance::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
