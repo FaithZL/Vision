@@ -77,9 +77,8 @@ public:
     }
     [[nodiscard]] virtual uint lightmap_size() const noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
-    virtual void set_lightmap_id(uint id) noexcept {
-        OC_ASSERT(false);
-        OC_ERROR("set_lightmap_id can not called by model");
+    void set_lightmap_id(uint id) noexcept {
+        _handle.lightmap_id = id;
     }
     [[nodiscard]] bool has_emission() const noexcept { return _emission.object.get(); }
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept {
@@ -94,8 +93,6 @@ public:
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");
     }
-    [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
-    [[nodiscard]] virtual const Mesh &mesh_at(uint i) const noexcept = 0;
     [[nodiscard]] virtual float4x4 o2w() const noexcept { return _handle.o2w; }
 };
 
@@ -199,15 +196,6 @@ public:
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_areas() const noexcept override;
     [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
-    void set_lightmap_id(ocarina::uint id) noexcept override {
-        handle().lightmap_id = id;
-    }
-    [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
-        return *this;
-    }
-    [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept override {
-        return *this;
-    }
 };
 
 }// namespace vision
