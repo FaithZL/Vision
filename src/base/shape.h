@@ -96,8 +96,6 @@ public:
     [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
     [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
-    [[nodiscard]] const Medium *inside_medium() const noexcept { return _inside.object.get(); }
-    [[nodiscard]] const Medium *outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
         OC_ASSERT(false);
         OC_ERROR("ref_surface_areas can not called by model");

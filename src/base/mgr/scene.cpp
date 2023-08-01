@@ -148,10 +148,10 @@ void Scene::fill_mesh_data() {
         }
         if (has_medium()) {
             if (mesh->has_inside_medium()) {
-                mesh->update_inside_medium_id(mesh->inside_medium()->index());
+                mesh->update_inside_medium_id(mesh->inside()->index());
             }
             if (mesh->has_outside_medium()) {
-                mesh->update_outside_medium_id(mesh->inside_medium()->index());
+                mesh->update_outside_medium_id(mesh->outside()->index());
             }
         }
     }
