@@ -117,6 +117,20 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 instance.set_emission(light);
                 light->set_instance(&instance);
             }
+            if (has_medium()) {
+                auto inside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+                    return medium->name() == instance.inside_name();
+                });
+                if (inside != _mediums.end()) {
+                    instance.set_inside(*inside);
+                }
+                auto outside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+                    return medium->name() == instance.outside_name();
+                });
+                if (outside != _mediums.end()) {
+                    instance.set_outside(*outside);
+                }
+            }
         });
 
         group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
