@@ -12,20 +12,18 @@ UnwrapperResult BakedShape::load_uv_config_from_cache() const {
     UnwrapperResult spread_result;
     spread_result.width = res[0];
     spread_result.height = res[1];
-    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-        DataWrap elm = json["uv_result"][i];
-        auto vertices = elm["vertices"];
-        UnwrapperMesh u_mesh;
-        for (auto vertex : vertices) {
-            u_mesh.vertices.emplace_back(make_float2(vertex[0], vertex[1]), vertex[2]);
-        }
+    DataWrap elm = json["uv_result"][0];
+    auto vertices = elm["vertices"];
+    UnwrapperMesh u_mesh;
+    for (auto vertex : vertices) {
+        u_mesh.vertices.emplace_back(make_float2(vertex[0], vertex[1]), vertex[2]);
+    }
 
-        auto triangles = elm["triangles"];
-        for (auto tri : triangles) {
-            u_mesh.triangles.emplace_back(tri[0], tri[1], tri[2]);
-        }
-        spread_result.meshes.push_back(u_mesh);
-    });
+    auto triangles = elm["triangles"];
+    for (auto tri : triangles) {
+        u_mesh.triangles.emplace_back(tri[0], tri[1], tri[2]);
+    }
+    spread_result.meshes.push_back(u_mesh);
     return spread_result;
 }
 
@@ -71,7 +69,7 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
     ret << _pixels.download(ptr);
     ret << [&, ptr] {
-        ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4,_resolution, ptr);
+        ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
         ocarina::deallocate(ptr);
     };
     return ret;
@@ -79,22 +77,20 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
 
 void BakedShape::merge_meshes() noexcept {
     uint vert_offset = 0;
-    shape()->for_each_mesh([&](SP<Mesh> mesh, uint index) {
-        float4x4 o2w = shape()->o2w();
-        for (const Vertex &vertex : mesh->vertices) {
-            float3 world_pos = transform_point<H>(o2w, vertex.position());
-            float3 world_norm = transform_normal<H>(o2w, vertex.normal());
-            world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
-            _merged_mesh.vertices.emplace_back(world_pos, world_norm,
-                                               vertex.tex_coord(),
-                                               vertex.lightmap_uv());
-        }
-        for (const Triangle &tri : mesh->triangles) {
-            _merged_mesh.triangles.emplace_back(tri.i + vert_offset,
-                                                tri.j + vert_offset,
-                                                tri.k + vert_offset);
-        }
-    });
+    float4x4 o2w = shape()->o2w();
+    for (const Vertex &vertex : _shape->vertices) {
+        float3 world_pos = transform_point<H>(o2w, vertex.position());
+        float3 world_norm = transform_normal<H>(o2w, vertex.normal());
+        world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
+        _merged_mesh.vertices.emplace_back(world_pos, world_norm,
+                                           vertex.tex_coord(),
+                                           vertex.lightmap_uv());
+    }
+    for (const Triangle &tri : _shape->triangles) {
+        _merged_mesh.triangles.emplace_back(tri.i + vert_offset,
+                                            tri.j + vert_offset,
+                                            tri.k + vert_offset);
+    }
 }
 
 void BakedShape::prepare_to_rasterize() noexcept {
@@ -109,26 +105,22 @@ void BakedShape::allocate_lightmap_texture() noexcept {
 
 void BakedShape::setup_vertices(UnwrapperResult result) {
     _resolution = make_uint2(result.width, result.height);
-    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-        UnwrapperMesh &u_mesh = result.meshes[i];
-        vector<Vertex> vertices;
-        vertices.reserve(u_mesh.vertices.size());
-        for (auto &vert : u_mesh.vertices) {
-            Vertex vertex = mesh->vertices[vert.xref];
-            vertex.set_lightmap_uv(vert.uv);
-            vertices.push_back(vertex);
-        }
-        mesh->vertices = ocarina::move(vertices);
-        mesh->triangles = ocarina::move(u_mesh.triangles);
-    });
+    UnwrapperMesh &u_mesh = result.meshes[0];
+    vector<Vertex> vertices;
+    vertices.reserve(u_mesh.vertices.size());
+    for (auto &vert : u_mesh.vertices) {
+        Vertex vertex = _shape->vertices[vert.xref];
+        vertex.set_lightmap_uv(vert.uv);
+        vertices.push_back(vertex);
+    }
+    _shape->vertices = ocarina::move(vertices);
+    _shape->triangles = ocarina::move(u_mesh.triangles);
 }
 
 void BakedShape::normalize_lightmap_uv() {
-    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-        for (auto &vert : mesh->vertices) {
-            vert.set_lightmap_uv(vert.lightmap_uv() / make_float2(resolution()));
-        }
-    });
+    for (auto &vert : _shape->vertices) {
+        vert.set_lightmap_uv(vert.lightmap_uv() / make_float2(resolution()));
+    }
 }
 
 uint64_t BakedShape::instance_hash() const noexcept {

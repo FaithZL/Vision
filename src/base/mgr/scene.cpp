@@ -99,9 +99,11 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
-        SP<Group> shape = load<Group>(desc);
-        _shapes.push_back(shape);
-        shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
+        SP<Group> group = load<Group>(desc);
+        _shapes.push_back(group);
+        group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
+            float4x4 o2w = group->o2w();
+
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
                 return material->name() == mesh->_material.name;
             });

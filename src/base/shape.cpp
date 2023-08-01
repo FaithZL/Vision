@@ -87,4 +87,8 @@ vector<float> Mesh::ref_surface_areas() const noexcept {
     return ret;
 }
 
+void Instance::fill_geometry(vision::Geometry &data) const noexcept {
+
+}
+
 }// namespace vision

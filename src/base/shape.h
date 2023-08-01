@@ -119,7 +119,7 @@ public:
     };
 
 private:
-    Mesh *_mesh{};
+    SP<Mesh> _mesh{};
     Wrap<IAreaLight> _emission{};
     Wrap<Material> _material{};
     Wrap<Medium> _inside{};
@@ -131,10 +131,7 @@ public:
 
 public:
     Instance() = default;
-    virtual void fill_geometry(Geometry &data) const noexcept {
-        OC_ASSERT(false);
-        OC_ERROR("fill_geometry can not called by model");
-    }
+    void fill_geometry(Geometry &data) const noexcept;
     void set_emission(const SP<IAreaLight> &light) noexcept {
         _emission.name = light->name();
         _emission.object = light;
@@ -143,6 +140,7 @@ public:
         _material.name = m->name();
         _material.object = m;
     }
+    void set_mesh(SP<Mesh> mesh) noexcept { _mesh = mesh; }
     void set_inside(const SP<Medium> &inside) noexcept {
         _inside.name = inside->name();
         _inside.object = inside;
@@ -151,6 +149,7 @@ public:
         _outside.name = outside->name();
         _outside.object = outside;
     }
+    void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
     virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
@@ -199,7 +198,9 @@ public:
     void fill_geometry(Geometry &data) const noexcept override;
     [[nodiscard]] vector<float> surface_areas() const noexcept override;
     [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
-    void set_lightmap_id(ocarina::uint id) noexcept override { handle().lightmap_id = id; }
+    void set_lightmap_id(ocarina::uint id) noexcept override {
+        handle().lightmap_id = id;
+    }
     [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
         return *this;
     }
@@ -226,7 +227,7 @@ protected:
 public:
     explicit Group(const ShapeDesc &desc)
         : Node(desc), _o2w(desc.o2w.mat) {}
-
+    OC_MAKE_MEMBER_GETTER(o2w,)
     [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept {
         return *_meshes[i];
     }
