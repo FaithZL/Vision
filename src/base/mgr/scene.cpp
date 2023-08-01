@@ -105,10 +105,10 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             float4x4 o2w = group->o2w();
 
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
-                return material->name() == mesh->_material.name;
+                return material->name() == mesh->material_name();
             });
             if (iter != _materials.end() && !mesh->has_material()) {
-                mesh->_material.object = *iter;
+                mesh->set_material(*iter);
             }
             if (desc.emission.valid()) {
                 desc.emission.set_value("inst_id", _meshes.size());
@@ -118,16 +118,16 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             }
             if (has_medium()) {
                 auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh->_inside.name;
+                    return medium->name() == mesh->inside_name();
                 });
                 if (iter != _mediums.end()) {
-                    mesh->_inside.object = *iter;
+                    mesh->set_inside(*iter);
                 }
                 iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh->_outside.name;
+                    return medium->name() == mesh->outside_name();
                 });
                 if (iter != _mediums.end()) {
-                    mesh->_outside.object = *iter;
+                    mesh->set_outside(*iter);
                 }
             }
             _aabb.extend(mesh->aabb);
@@ -139,24 +139,19 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 void Scene::fill_mesh_data() {
     for (SP<Mesh> mesh : _meshes) {
         if (mesh->has_material()) {
-            uint mat_index = _materials.get_index([&](SP<Material> mat) {
-                return mat.get() == mesh->_material.object.get();
-            });
-            const Material *material = _materials[mat_index].get();
-            mesh->update_material_id(_materials.encode_id(mat_index, material));
+            const Material *material = mesh->material();
+            mesh->update_material_id(_materials.encode_id(material->index(), material));
         }
         if (mesh->has_emission()) {
-            uint lit_index = _light_sampler->lights().get_index([&](SP<Light> light) {
-                return light.get() == mesh->_emission.object.get();
-            });
-            mesh->update_light_id(_light_sampler->lights().encode_id(lit_index, mesh->_emission.object.get()));
+            const Light *emission = mesh->emission();
+            mesh->update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
         }
         if (has_medium()) {
             if (mesh->has_inside_medium()) {
-                mesh->update_inside_medium_id(mesh->_inside.object->index());
+                mesh->update_inside_medium_id(mesh->inside_medium()->index());
             }
             if (mesh->has_outside_medium()) {
-                mesh->update_outside_medium_id(mesh->_outside.object->index());
+                mesh->update_outside_medium_id(mesh->inside_medium()->index());
             }
         }
     }

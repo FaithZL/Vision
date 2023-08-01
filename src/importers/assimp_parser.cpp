@@ -197,7 +197,7 @@ vector<SP<Mesh>> AssimpParser::parse_meshes(bool parse_material,
         }
         auto mesh = make_shared<Mesh>(std::move(vertices), std::move(triangle));
         mesh->aabb = aabb;
-        mesh->_material.object = material;
+        mesh->set_material(material);
         meshes.push_back(mesh);
     }
     return meshes;

@@ -36,16 +36,16 @@ public:
 
 public:
     Box3f aabb;
-    Wrap<IAreaLight> _emission{};
-    Wrap<Material> _material{};
-    Wrap<Medium> _inside{};
-    Wrap<Medium> _outside{};
 
 protected:
     Handle _handle;
     float _factor{};
     uint _index{};
     SP<Mesh> _mesh{};
+    Wrap<IAreaLight> _emission{};
+    Wrap<Material> _material{};
+    Wrap<Medium> _inside{};
+    Wrap<Medium> _outside{};
 
 protected:
     void init_medium(const ShapeDesc &desc) noexcept;
@@ -58,23 +58,35 @@ public:
         OC_ERROR("fill_geometry can not called by model");
     }
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    void set_emission(const SP<IAreaLight> &light) noexcept {
-        _emission.name = light->name();
-        _emission.object = light;
+
+#define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
+    void set_##attr(decltype(_##attr.object) val) noexcept { \
+        _##attr.object = val;                                \
+    }                                                        \
+    void set_##attr##_name(const string &name) noexcept {    \
+        _##attr.name = name;                                 \
+    }                                                        \
+    void set_##attr(decltype(_##attr) val) noexcept {        \
+        _##attr = val;                                       \
+    }                                                        \
+    [[nodiscard]] auto attr() const noexcept {               \
+        return _##attr.object.get();                         \
+    }                                                        \
+    [[nodiscard]] auto attr() noexcept {                     \
+        return _##attr.object.get();                         \
+    }                                                        \
+    [[nodiscard]] string attr##_name() const noexcept {      \
+        return _##attr.name;                                 \
     }
-    void set_material(const SP<Material> &m) noexcept {
-        _material.name = m->name();
-        _material.object = m;
-    }
+
     void set_mesh(SP<Mesh> mesh) noexcept { _mesh = mesh; }
-    void set_inside(const SP<Medium> &inside) noexcept {
-        _inside.name = inside->name();
-        _inside.object = inside;
-    }
-    void set_outside(const SP<Medium> &outside) noexcept {
-        _outside.name = outside->name();
-        _outside.object = outside;
-    }
+    VS_MAKE_ATTR_SETTER_GETTER(inside)
+    VS_MAKE_ATTR_SETTER_GETTER(outside)
+    VS_MAKE_ATTR_SETTER_GETTER(material)
+    VS_MAKE_ATTR_SETTER_GETTER(emission)
+
+#undef VS_MAKE_ATTR_SETTER_GETTER
+
     void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
     virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
@@ -84,8 +96,6 @@ public:
     [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
     [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
-    [[nodiscard]] const Material *material() const noexcept { return _material.object.get(); }
-    [[nodiscard]] const IAreaLight *emission() const noexcept { return _emission.object.get(); }
     [[nodiscard]] const Medium *inside_medium() const noexcept { return _inside.object.get(); }
     [[nodiscard]] const Medium *outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
@@ -163,7 +173,7 @@ protected:
 public:
     explicit Group(const ShapeDesc &desc)
         : Node(desc), _o2w(desc.o2w.mat) {}
-    OC_MAKE_MEMBER_GETTER(o2w,)
+    OC_MAKE_MEMBER_GETTER(o2w, )
     [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept {
         return *_meshes[i];
     }

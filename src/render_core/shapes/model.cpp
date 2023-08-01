@@ -34,9 +34,9 @@ public:
 
         _meshes = assimp_util.parse_meshes(mat_name.empty(), desc["subdiv_level"].as_uint(0u));
         for (SP<Mesh> mesh : _meshes) {
-            mesh->_material.name = mat_name;
-            mesh->_inside = inside;
-            mesh->_outside = outside;
+            mesh->set_material_name(mat_name);
+            mesh->set_inside(inside);
+            mesh->set_outside(outside);
             mesh->handle().o2w = _o2w;
         }
     }
