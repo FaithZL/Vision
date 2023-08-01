@@ -112,12 +112,12 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 instance.set_material(*iter);
             }
 
-            //            if (desc.emission.valid()) {
-            //                desc.emission.set_value("inst_id", _meshes.size());
-            //                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
-            //                instance.set_emission(light);
-            //                light->set_instance(&instance);
-            //            }
+            if (desc.emission.valid()) {
+                desc.emission.set_value("inst_id", _instances.size());
+                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+                instance.set_emission(light);
+                light->set_instance(&instance);
+            }
             if (has_medium()) {
                 auto inside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
                     return medium->name() == instance.inside_name();
@@ -135,36 +135,36 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             _instances.push_back(instance);
         });
 
-        group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-            auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
-                return material->name() == mesh->material_name();
-            });
-            if (iter != _materials.end() && !mesh->has_material()) {
-                mesh->set_material(*iter);
-            }
-            if (desc.emission.valid()) {
-                desc.emission.set_value("inst_id", _meshes.size());
-                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
-                mesh->set_emission(light);
-                light->set_mesh(mesh.get());
-            }
-            if (has_medium()) {
-                auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh->inside_name();
-                });
-                if (iter != _mediums.end()) {
-                    mesh->set_inside(*iter);
-                }
-                iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == mesh->outside_name();
-                });
-                if (iter != _mediums.end()) {
-                    mesh->set_outside(*iter);
-                }
-            }
-            _aabb.extend(mesh->aabb);
-            _meshes.push_back(mesh);
-        });
+        //        group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
+        //            auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
+        //                return material->name() == mesh->material_name();
+        //            });
+        //            if (iter != _materials.end() && !mesh->has_material()) {
+        //                mesh->set_material(*iter);
+        //            }
+        //            if (desc.emission.valid()) {
+        //                desc.emission.set_value("inst_id", _meshes.size());
+        //                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+        //                mesh->set_emission(light);
+        //                light->set_mesh(mesh.get());
+        //            }
+        //            if (has_medium()) {
+        //                auto iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+        //                    return medium->name() == mesh->inside_name();
+        //                });
+        //                if (iter != _mediums.end()) {
+        //                    mesh->set_inside(*iter);
+        //                }
+        //                iter = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+        //                    return medium->name() == mesh->outside_name();
+        //                });
+        //                if (iter != _mediums.end()) {
+        //                    mesh->set_outside(*iter);
+        //                }
+        //            }
+        //            _aabb.extend(mesh->aabb);
+        //            _meshes.push_back(mesh);
+        //        });
     }
 }
 

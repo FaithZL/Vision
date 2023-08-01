@@ -39,6 +39,17 @@ void Instance::fill_geometry(vision::Geometry &data) const noexcept {
     data.accept(_mesh->vertices, _mesh->triangles, _handle);
 }
 
+vector<float> Instance::surface_areas() const noexcept {
+    vector<float> ret;
+    for (const Triangle &tri : _mesh->triangles) {
+        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.i].position());
+        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.j].position());
+        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.k].position());
+        ret.push_back(triangle_area(v0, v1, v2));
+    }
+    return ret;
+}
+
 Box3f Instance::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : _mesh->triangles) {
@@ -121,12 +132,14 @@ void Group::post_init(const vision::ShapeDesc &desc) {
             instance.set_inside_name(inside);
             instance.set_outside_name(outside);
             instance.set_material_name(mat_name);
+            instance.set_o2w(desc.o2w.mat);
         });
     } else {
         for_each([&](Instance &instance, uint i) {
             instance.set_inside(scene().global_medium());
             instance.set_outside(scene().global_medium());
             instance.set_material_name(mat_name);
+            instance.set_o2w(desc.o2w.mat);
         });
     }
 }

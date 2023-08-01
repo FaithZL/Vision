@@ -99,7 +99,7 @@ public:
 
     void prepare() noexcept override {
         _warper = scene().load_warper();
-        vector<float> weights = mesh()->surface_areas();
+        vector<float> weights = instance()->surface_areas();
         _warper->build(std::move(weights));
         _warper->prepare();
     }

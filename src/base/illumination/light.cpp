@@ -24,6 +24,10 @@ vision::Mesh *IAreaLight::mesh() const noexcept {
     return scene().get_mesh(_inst_idx.hv());
 }
 
+Instance *IAreaLight::instance() const noexcept {
+    return scene().get_instance(_inst_idx.hv());
+}
+
 LightSample IPointLight::sample_Li(const LightSampleContext &p_ref, Float2 u,
                                    const SampledWavelengths &swl) const noexcept {
     LightSample ret{swl.dimension()};

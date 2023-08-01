@@ -184,6 +184,7 @@ public:
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
+    [[nodiscard]] vector<float> surface_areas() const noexcept;
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
 };
 }// namespace vision

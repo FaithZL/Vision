@@ -91,6 +91,7 @@ public:
     OC_SERIALIZABLE_FUNC(Light, _inst_idx)
     void set_mesh(const vision::Mesh *m) noexcept;
     void set_instance(const Instance *inst) noexcept;
+    [[nodiscard]] Instance *instance() const noexcept;
     [[nodiscard]] vision::Mesh *mesh() const noexcept;
 };
 
