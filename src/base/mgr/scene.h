@@ -57,6 +57,7 @@ public:
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(meshes, &)
     OC_MAKE_MEMBER_GETTER(groups, &)
+    OC_MAKE_MEMBER_GETTER(instances, &)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
     [[nodiscard]] const auto &materials() const noexcept { return _materials; }
@@ -85,6 +86,7 @@ public:
     void load_mediums(const MediumsDesc &desc);
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_mesh_data();
+    void fill_instances();
     void remove_unused_materials();
     template<typename T = Light>
     SP<T> load_light(const LightDesc &desc) {

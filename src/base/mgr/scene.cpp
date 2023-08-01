@@ -27,6 +27,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     remove_unused_materials();
     tidy_up();
     fill_mesh_data();
+    fill_instances();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
@@ -111,12 +112,12 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                 instance.set_material(*iter);
             }
 
-            if (desc.emission.valid()) {
-                desc.emission.set_value("inst_id", _meshes.size());
-                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
-                instance.set_emission(light);
-                light->set_instance(&instance);
-            }
+            //            if (desc.emission.valid()) {
+            //                desc.emission.set_value("inst_id", _meshes.size());
+            //                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+            //                instance.set_emission(light);
+            //                light->set_instance(&instance);
+            //            }
             if (has_medium()) {
                 auto inside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
                     return medium->name() == instance.inside_name();
@@ -131,6 +132,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                     instance.set_outside(*outside);
                 }
             }
+            _instances.push_back(instance);
         });
 
         group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
@@ -177,11 +179,32 @@ void Scene::fill_mesh_data() {
             mesh->update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
         }
         if (has_medium()) {
-            if (mesh->has_inside_medium()) {
+            if (mesh->has_inside()) {
                 mesh->update_inside_medium_id(mesh->inside()->index());
             }
-            if (mesh->has_outside_medium()) {
+            if (mesh->has_outside()) {
                 mesh->update_outside_medium_id(mesh->outside()->index());
+            }
+        }
+    }
+}
+
+void Scene::fill_instances() {
+    for (Instance &instance : _instances) {
+        if (instance.has_material()) {
+            const Material *material = instance.material();
+            instance.update_material_id(_materials.encode_id(material->index(), material));
+        }
+        if (instance.has_emission()) {
+            const Light *emission = instance.emission();
+            instance.update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
+        }
+        if (has_medium()) {
+            if (instance.has_inside()) {
+                instance.update_inside_medium_id(instance.inside()->index());
+            }
+            if (instance.has_outside()) {
+                instance.update_outside_medium_id(instance.outside()->index());
             }
         }
     }

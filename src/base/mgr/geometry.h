@@ -40,6 +40,8 @@ public:
      * @param shapes
      */
     void update_meshes(const vector<SP<Mesh>> &shapes);
+
+    void update_instances(const vector<Instance> &instances);
     void reset_device_buffer();
     void build_meshes();
     void build_accel();

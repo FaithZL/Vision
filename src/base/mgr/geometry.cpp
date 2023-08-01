@@ -37,6 +37,17 @@ void Geometry::update_meshes(const vector<SP<Mesh>> &shapes) {
     });
 }
 
+void Geometry::update_instances(const vector<vision::Instance> &instances) {
+    _vertices.host_buffer().clear();
+    _triangles.host_buffer().clear();
+    _instances.host_buffer().clear();
+    _mesh_handles.host_buffer().clear();
+
+    std::for_each(instances.begin(), instances.end(), [&](const Instance &instance) {
+        instance.fill_geometry(*this);
+    });
+}
+
 void Geometry::build_meshes() {
     for (const auto &inst : _instances) {
         uint mesh_id = inst.mesh_id;

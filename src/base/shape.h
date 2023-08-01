@@ -35,6 +35,9 @@ struct Mesh;
     [[nodiscard]] auto attr() noexcept {                     \
         return _##attr.object.get();                         \
     }                                                        \
+    [[nodiscard]] bool has_##attr() const noexcept {         \
+        return bool(attr());                                 \
+    }                                                        \
     [[nodiscard]] string attr##_name() const noexcept {      \
         return _##attr.name;                                 \
     }
@@ -88,9 +91,6 @@ public:
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] bool has_material() const noexcept { return _material.object.get(); }
-    [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
-    [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
     [[nodiscard]] virtual vector<float> ref_surface_areas() const noexcept {
         OC_ASSERT(false);
@@ -101,7 +101,6 @@ public:
     void set_lightmap_id(uint id) noexcept {
         _handle.lightmap_id = id;
     }
-    [[nodiscard]] bool has_emission() const noexcept { return _emission.object.get(); }
     [[nodiscard]] virtual vector<float> surface_areas() const noexcept {
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");
@@ -185,9 +184,6 @@ public:
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
-    [[nodiscard]] bool has_material() const noexcept { return _material.object.get(); }
-    [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
-    [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
     [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
 };
 }// namespace vision
