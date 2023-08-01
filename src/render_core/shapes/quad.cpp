@@ -14,6 +14,7 @@ public:
 public:
     explicit Quad(const ShapeDesc &desc) : Super(desc) {
         init(desc);
+        post_init(desc);
     }
 
     void init(const ShapeDesc &desc) noexcept {
@@ -37,6 +38,8 @@ public:
         }
         mesh->triangles = {Triangle{0, 1, 2}, Triangle{2, 1, 3}};
         _meshes.push_back(mesh);
+
+        _instances.emplace_back(mesh);
     }
 };
 

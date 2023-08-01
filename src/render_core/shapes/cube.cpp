@@ -14,6 +14,7 @@ public:
 public:
     explicit Cube(const ShapeDesc &desc) : Super(desc) {
         init(desc);
+        post_init(desc);
     }
     void init(const ShapeDesc &desc) noexcept {
         auto mesh = make_shared<Mesh>(desc);
@@ -63,6 +64,8 @@ public:
             mesh->aabb.extend(transform_point<H>(_o2w, P[i]));
         }
         _meshes.push_back(mesh);
+
+        _instances.emplace_back(mesh);
     }
 };
 

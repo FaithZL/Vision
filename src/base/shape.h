@@ -219,7 +219,7 @@ public:
     VS_MAKE_ATTR_SETTER_GETTER(outside)
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
-
+    void post_init(const ShapeDesc &desc);
     [[nodiscard]] Instance &instance(uint i) noexcept { return _instances[i]; }
     [[nodiscard]] const Instance &instance(uint i) const noexcept { return _instances[i]; }
     void for_each(const std::function<void(const Instance &, uint)> &func) const noexcept {

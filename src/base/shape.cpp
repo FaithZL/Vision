@@ -112,6 +112,25 @@ Group::Group(const vision::ShapeDesc &desc)
     }
 }
 
+void Group::post_init(const vision::ShapeDesc &desc) {
+    string mat_name = desc["material"].as_string();
+    if (desc.contains("medium")) {
+        string inside = desc["medium"]["inside"].as_string();
+        string outside = desc["medium"]["outside"].as_string();
+        for_each([&](Instance &instance, uint i) {
+            instance.set_inside_name(inside);
+            instance.set_outside_name(outside);
+            instance.set_material_name(mat_name);
+        });
+    } else {
+        for_each([&](Instance &instance, uint i) {
+            instance.set_inside(scene().global_medium());
+            instance.set_outside(scene().global_medium());
+            instance.set_material_name(mat_name);
+        });
+    }
+}
+
 void Group::init_medium(const vision::ShapeDesc &desc) noexcept {
     if (desc.contains("medium")) {
         _inside.name = desc["medium"]["inside"].as_string();

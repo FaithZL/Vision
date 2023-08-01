@@ -13,6 +13,7 @@ public:
     explicit Model(const ShapeDesc &desc)
         : Group(desc) {
         load(desc);
+        post_init(desc);
     }
 
     void load(const ShapeDesc &desc) noexcept {
