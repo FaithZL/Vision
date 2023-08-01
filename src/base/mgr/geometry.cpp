@@ -16,7 +16,7 @@ Geometry::Geometry(Pipeline *rp)
       _instances(rp->resource_array()),
       _mesh_handles(rp->resource_array()) {}
 
-void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Shape::Handle inst) {
+void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, Handle inst) {
     Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host_buffer().size(),
                              .triangle_offset = (uint)_triangles.host_buffer().size()};
     _vertices.append(vert);
@@ -85,7 +85,7 @@ void Geometry::build_accel() {
     accel = rp->device().create_accel();
     Stream &stream = rp->stream();
     for (int i = 0; i < _meshes.size(); ++i) {
-        Shape::Handle inst = _instances[i];
+        Handle inst = _instances[i];
         ocarina::RHIMesh &mesh = _meshes[i];
         stream << mesh.build_bvh();
         accel.add_mesh(mesh, inst.o2w);

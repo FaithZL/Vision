@@ -19,21 +19,22 @@ namespace vision {
 struct Geometry;
 struct Mesh;
 
+struct Handle {
+    // todo compress unsigned int data
+    uint light_id{InvalidUI32};
+    uint mat_id{InvalidUI32};
+    uint lightmap_id{InvalidUI32};
+    uint mesh_id{InvalidUI32};
+    uint inside_medium{InvalidUI32};
+    uint outside_medium{InvalidUI32};
+    float4x4 o2w;
+};
+
 struct Shape : public Node {
 public:
     using Desc = ShapeDesc;
 
 public:
-    struct Handle {
-        // todo compress unsigned int data
-        uint light_id{InvalidUI32};
-        uint mat_id{InvalidUI32};
-        uint lightmap_id{InvalidUI32};
-        uint mesh_id{InvalidUI32};
-        uint inside_medium{InvalidUI32};
-        uint outside_medium{InvalidUI32};
-        float4x4 o2w;
-    };
 
 public:
     Box3f aabb;
@@ -100,7 +101,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Shape::Handle, light_id, mat_id, lightmap_id,
+OC_STRUCT(vision::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
