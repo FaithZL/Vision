@@ -19,7 +19,7 @@ namespace vision {
 struct Geometry;
 struct Mesh;
 
-struct Shape : public Node, public std::enable_shared_from_this<Shape> {
+struct Shape : public Node {
 public:
     using Desc = ShapeDesc;
 
@@ -85,8 +85,14 @@ public:
         OC_ASSERT(false);
         OC_ERROR("surface_areas can not called by model");
     }
-    virtual void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept = 0;
-    virtual void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept = 0;
+    virtual void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept {
+        OC_ASSERT(false);
+        OC_ERROR("surface_areas can not called by model");
+    }
+    virtual void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept {
+        OC_ASSERT(false);
+        OC_ERROR("surface_areas can not called by model");
+    }
     [[nodiscard]] virtual Mesh &mesh_at(uint i) noexcept = 0;
     [[nodiscard]] virtual const Mesh &mesh_at(uint i) const noexcept = 0;
     [[nodiscard]] virtual float4x4 o2w() const noexcept { return _handle.o2w; }
@@ -194,12 +200,6 @@ public:
     [[nodiscard]] vector<float> surface_areas() const noexcept override;
     [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
     void set_lightmap_id(ocarina::uint id) noexcept override { handle().lightmap_id = id; }
-    void for_each_mesh(const std::function<void(SP<Mesh>, uint)> &func) noexcept override {
-        func(std::dynamic_pointer_cast<Mesh>(shared_from_this()), 0);
-    }
-    void for_each_mesh(const std::function<void(SP<const Mesh>, uint)> &func) const noexcept override {
-        func(std::dynamic_pointer_cast<const Mesh>(shared_from_this()), 0);
-    }
     [[nodiscard]] const Mesh &mesh_at(ocarina::uint i) const noexcept override {
         return *this;
     }
