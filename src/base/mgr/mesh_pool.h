@@ -11,7 +11,8 @@ namespace vision {
 
 class MeshPool {
 private:
-    std::map<uint64_t, SP<Mesh>> _map;
+    std::map<uint64_t, SP<Mesh>> _mesh_map;
+    vector<Mesh *> _meshes;
 
 private:
     static MeshPool *s_mesh_pool;
@@ -28,6 +29,12 @@ public:
     [[nodiscard]] SP<Mesh> get_mesh(uint64_t hash) noexcept;
     void add_mesh(uint64_t hash, SP<Mesh> mesh) noexcept;
     void add_mesh(SP<Mesh> mesh) noexcept;
+    void for_each(const std::function<void(Mesh *, uint)> &func) noexcept;
+    void for_each(const std::function<void(const Mesh *, uint)> &func) const noexcept;
+    void tidy_up() noexcept;
+    bool remove(SP<Mesh> mesh) noexcept;
+    bool remove(uint64_t hash) noexcept;
+    bool remove(const Mesh *mesh) noexcept;
 };
 
 }// namespace vision

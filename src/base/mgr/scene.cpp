@@ -101,6 +101,24 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         SP<Group> group = load<Group>(desc);
         _groups.push_back(group);
+
+        group->for_each([&](Instance &instance, uint i) {
+            auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
+                return material->name() == instance.material_name();
+            });
+
+            if (iter != _materials.end() && !instance.has_material()) {
+                instance.set_material(*iter);
+            }
+
+            if (desc.emission.valid()) {
+                desc.emission.set_value("inst_id", _meshes.size());
+                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+                instance.set_emission(light);
+                light->set_instance(&instance);
+            }
+        });
+
         group->for_each_mesh([&](SP<Mesh> mesh, uint i) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
                 return material->name() == mesh->material_name();
