@@ -123,25 +123,6 @@ OC_STRUCT(vision::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
-class Instance : public Shape {
-protected:
-    Handle _handle;
-    float _factor{};
-    uint _index{};
-    SP<Mesh> _mesh{};
-
-public:
-    explicit Instance(SP<Mesh> mesh) : _mesh(mesh) {}
-    OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
-    OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
-    void fill_geometry(vision::Geometry &data) const noexcept override;
-    [[nodiscard]] Box3f compute_aabb() const noexcept;
-    void init_aabb() noexcept { aabb = compute_aabb(); }
-};
-}// namespace vision
-
-namespace vision {
 struct Mesh : public Shape {
 public:
     struct Handle {
@@ -173,6 +154,45 @@ public:
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 namespace vision {
+class Instance {
+public:
+    Box3f aabb;
+
+protected:
+    Handle _handle;
+    float _factor{};
+    uint _index{};
+    Wrap<IAreaLight> _emission{};
+    Wrap<Material> _material{};
+    Wrap<Medium> _inside{};
+    Wrap<Medium> _outside{};
+    SP<Mesh> _mesh{};
+
+public:
+    explicit Instance(SP<Mesh> mesh) : _mesh(mesh) {}
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
+    OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
+    void fill_geometry(vision::Geometry &data) const noexcept;
+    [[nodiscard]] Box3f compute_aabb() const noexcept;
+    void init_aabb() noexcept { aabb = compute_aabb(); }
+    VS_MAKE_ATTR_SETTER_GETTER(inside)
+    VS_MAKE_ATTR_SETTER_GETTER(outside)
+    VS_MAKE_ATTR_SETTER_GETTER(material)
+    VS_MAKE_ATTR_SETTER_GETTER(emission)
+    void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
+    virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
+    virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
+    virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
+    virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
+    [[nodiscard]] bool has_material() const noexcept { return _material.object.get(); }
+    [[nodiscard]] bool has_inside_medium() const noexcept { return _inside.object.get(); }
+    [[nodiscard]] bool has_outside_medium() const noexcept { return _outside.object.get(); }
+    [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
+};
+}// namespace vision
+
+namespace vision {
 
 class Group : public Node {
 public:
@@ -180,6 +200,7 @@ public:
 
 protected:
     vector<SP<Mesh>> _meshes;
+    vector<Instance> _instances;
     Box3f _aabb;
     float4x4 _o2w;
 
@@ -198,6 +219,20 @@ public:
     VS_MAKE_ATTR_SETTER_GETTER(outside)
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
+
+    [[nodiscard]] Instance &instance(uint i) noexcept { return _instances[i]; }
+    [[nodiscard]] const Instance &instance(uint i) const noexcept { return _instances[i]; }
+    void for_each(const std::function<void(const Instance &, uint)> &func) const noexcept {
+        for (uint i = 0; i < _instances.size(); ++i) {
+            func(_instances[i], i);
+        }
+    }
+    void for_each(const std::function<void(Instance &, uint)> &func) noexcept {
+        for (uint i = 0; i < _instances.size(); ++i) {
+            func(_instances[i], i);
+        }
+    }
+
     [[nodiscard]] Mesh &mesh_at(ocarina::uint i) noexcept {
         return *_meshes[i];
     }
