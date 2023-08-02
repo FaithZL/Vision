@@ -125,9 +125,9 @@ vector<vision::MaterialDesc> AssimpParser::parse_materials() noexcept {
     return ret;
 }
 
-vector<Instance> AssimpParser::parse_meshes(bool parse_material,
+vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
                                             uint32_t subdiv_level) {
-    std::vector<Instance> instances;
+    std::vector<ShapeInstance> instances;
     const aiScene *ai_scene = _ai_scene;
     vector<aiMesh *> ai_meshes(ai_scene->mNumMeshes);
     if (subdiv_level != 0u) {
@@ -196,7 +196,7 @@ vector<Instance> AssimpParser::parse_meshes(bool parse_material,
             }
         }
         auto mesh = make_shared<Mesh>(std::move(vertices), std::move(triangle));
-        Instance instance(mesh);
+        ShapeInstance instance(mesh);
         instance.set_material(material);
         instances.push_back(instance);
     }

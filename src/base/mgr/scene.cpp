@@ -92,10 +92,10 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
-        SP<Group> group = load<Group>(desc);
+        SP<ShapeGroup> group = load<ShapeGroup>(desc);
         _groups.push_back(group);
 
-        group->for_each([&](Instance &instance, uint i) {
+        group->for_each([&](ShapeInstance &instance, uint i) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
                 return material->name() == instance.material_name();
             });
@@ -131,7 +131,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 }
 
 void Scene::fill_instances() {
-    for (Instance &instance : _instances) {
+    for (ShapeInstance &instance : _instances) {
         if (instance.has_material()) {
             const Material *material = instance.material();
             instance.update_material_id(_materials.encode_id(material->index(), material));

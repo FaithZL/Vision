@@ -31,8 +31,8 @@ private:
     SP<Sampler> _sampler{nullptr};
     SP<Integrator> _integrator{nullptr};
     SP<LightSampler> _light_sampler{nullptr};
-    vector<SP<Group>> _groups;
-    vector<Instance> _instances;
+    vector<SP<ShapeGroup>> _groups;
+    vector<ShapeInstance> _instances;
     Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;
@@ -94,8 +94,8 @@ public:
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
-    [[nodiscard]] Instance *get_instance(uint id) noexcept { return &_instances[id]; }
-    [[nodiscard]] const Instance *get_instance(uint id) const noexcept { return &_instances[id]; }
+    [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return &_instances[id]; }
+    [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return &_instances[id]; }
 };
 
 #undef MAKE_GETTER

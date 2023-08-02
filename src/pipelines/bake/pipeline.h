@@ -46,7 +46,7 @@ public:
     template<typename Func>
     void for_each_need_bake(Func &&func) {
         auto &instances = _scene.instances();
-        std::for_each(instances.begin(), instances.end(), [&](Instance &item) {
+        std::for_each(instances.begin(), instances.end(), [&](ShapeInstance &item) {
             if (item.has_emission()) {
                 return;
             }

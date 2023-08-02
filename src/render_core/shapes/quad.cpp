@@ -7,9 +7,9 @@
 
 namespace vision {
 
-class Quad : public vision::Group {
+class Quad : public vision::ShapeGroup {
 public:
-    using Super = vision::Group;
+    using Super = vision::ShapeGroup;
 
 public:
     explicit Quad(const ShapeDesc &desc) : Super(desc) {

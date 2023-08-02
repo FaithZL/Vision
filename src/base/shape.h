@@ -42,7 +42,7 @@ struct Mesh;
         return _##attr.name;                                 \
     }
 
-struct Handle {
+struct InstanceHandle {
     // todo compress unsigned int data
     uint light_id{InvalidUI32};
     uint mat_id{InvalidUI32};
@@ -55,7 +55,7 @@ struct Handle {
 
 }// namespace vision
 
-OC_STRUCT(vision::Handle, light_id, mat_id, lightmap_id,
+OC_STRUCT(vision::InstanceHandle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
@@ -91,12 +91,12 @@ public:
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 namespace vision {
-class Instance {
+class ShapeInstance {
 public:
     Box3f aabb;
 
 protected:
-    Handle _handle;
+    InstanceHandle _handle;
     float _factor{};
     uint _index{};
     Wrap<IAreaLight> _emission{};
@@ -106,7 +106,7 @@ protected:
     SP<Mesh> _mesh{};
 
 public:
-    explicit Instance(SP<Mesh> mesh) : _mesh(mesh) {}
+    explicit ShapeInstance(SP<Mesh> mesh) : _mesh(mesh) {}
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
@@ -131,29 +131,29 @@ public:
 
 namespace vision {
 
-class Group : public Node {
+class ShapeGroup : public Node {
 public:
     using Desc = ShapeDesc;
 
 protected:
-    vector<Instance> _instances;
+    vector<ShapeInstance> _instances;
     Box3f _aabb;
     Wrap<IAreaLight> _emission{};
     Wrap<Material> _material{};
 
 public:
-    explicit Group(const ShapeDesc &desc);
+    explicit ShapeGroup(const ShapeDesc &desc);
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
     void post_init(const ShapeDesc &desc);
-    [[nodiscard]] Instance &instance(uint i) noexcept { return _instances[i]; }
-    [[nodiscard]] const Instance &instance(uint i) const noexcept { return _instances[i]; }
-    void for_each(const std::function<void(const Instance &, uint)> &func) const noexcept {
+    [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return _instances[i]; }
+    [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return _instances[i]; }
+    void for_each(const std::function<void(const ShapeInstance &, uint)> &func) const noexcept {
         for (uint i = 0; i < _instances.size(); ++i) {
             func(_instances[i], i);
         }
     }
-    void for_each(const std::function<void(Instance &, uint)> &func) noexcept {
+    void for_each(const std::function<void(ShapeInstance &, uint)> &func) noexcept {
         for (uint i = 0; i < _instances.size(); ++i) {
             func(_instances[i], i);
         }

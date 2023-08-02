@@ -7,9 +7,9 @@
 
 namespace vision {
 
-class Sphere : public vision::Group {
+class Sphere : public vision::ShapeGroup {
 public:
-    using Super = vision::Group;
+    using Super = vision::ShapeGroup;
 
 public:
     explicit Sphere(const ShapeDesc &desc) : Super(desc) {

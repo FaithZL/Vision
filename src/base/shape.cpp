@@ -8,11 +8,11 @@
 
 namespace vision {
 
-void Instance::fill_geometry(vision::Geometry &data) const noexcept {
+void ShapeInstance::fill_geometry(vision::Geometry &data) const noexcept {
     data.accept(_mesh->vertices, _mesh->triangles, _handle);
 }
 
-vector<float> Instance::surface_areas() const noexcept {
+vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : _mesh->triangles) {
         float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.i].position());
@@ -23,7 +23,7 @@ vector<float> Instance::surface_areas() const noexcept {
     return ret;
 }
 
-Box3f Instance::compute_aabb() const noexcept {
+Box3f ShapeInstance::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : _mesh->triangles) {
         float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.i].position());
@@ -78,17 +78,17 @@ vector<float> Mesh::surface_areas() const noexcept {
     return ret;
 }
 
-Group::Group(const vision::ShapeDesc &desc)
+ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
     : Node(desc) {
     _material.name = desc["material"].as_string();
 }
 
-void Group::post_init(const vision::ShapeDesc &desc) {
+void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
     string mat_name = desc["material"].as_string();
     if (desc.contains("medium")) {
         string inside = desc["medium"]["inside"].as_string();
         string outside = desc["medium"]["outside"].as_string();
-        for_each([&](Instance &instance, uint i) {
+        for_each([&](ShapeInstance &instance, uint i) {
             instance.set_inside_name(inside);
             instance.set_outside_name(outside);
             instance.set_material_name(mat_name);
@@ -97,7 +97,7 @@ void Group::post_init(const vision::ShapeDesc &desc) {
             _aabb.extend(instance.aabb);
         });
     } else {
-        for_each([&](Instance &instance, uint i) {
+        for_each([&](ShapeInstance &instance, uint i) {
             instance.set_inside(scene().global_medium());
             instance.set_outside(scene().global_medium());
             instance.set_material_name(mat_name);

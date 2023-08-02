@@ -76,21 +76,21 @@ public:
 };
 
 class Mesh;
-class Instance;
+class ShapeInstance;
 
 class IAreaLight : public Light {
 protected:
     Serial<uint> _inst_idx{InvalidUI32};
     const vision::Mesh *_mesh{};
-    const Instance *_instance{};
+    const ShapeInstance *_instance{};
 
 public:
     explicit IAreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           _inst_idx(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_SERIALIZABLE_FUNC(Light, _inst_idx)
-    void set_instance(const Instance *inst) noexcept;
-    [[nodiscard]] Instance *instance() const noexcept;
+    void set_instance(const ShapeInstance *inst) noexcept;
+    [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 
 class IPointLight : public Light {

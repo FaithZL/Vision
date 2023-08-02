@@ -31,10 +31,10 @@ public:
         sd.set_value("width", desc["width"].as_float(1));
         sd.set_value("height", desc["height"].as_float(1));
         sd.o2w = desc.o2w;
-        SP<Group> shape = Global::node_mgr().load<Group>(sd);
+        SP<ShapeGroup> shape = Global::node_mgr().load<ShapeGroup>(sd);
         scene().groups().push_back(shape);
         _inst_idx = scene().instances().size();
-        shape->for_each([&](Instance &instance, uint i) {
+        shape->for_each([&](ShapeInstance &instance, uint i) {
             instance.set_material(scene().obtain_black_body());
             scene().instances().push_back(instance);
             set_instance(&instance);

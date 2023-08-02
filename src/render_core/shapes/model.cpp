@@ -8,10 +8,10 @@
 
 namespace vision {
 
-class Model : public Group {
+class Model : public ShapeGroup {
 public:
     explicit Model(const ShapeDesc &desc)
-        : Group(desc) {
+        : ShapeGroup(desc) {
         load(desc);
         post_init(desc);
     }

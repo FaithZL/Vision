@@ -17,7 +17,7 @@ struct Geometry {
 private:
     RegistrableManaged<Vertex> _vertices;
     RegistrableManaged<Triangle> _triangles;
-    RegistrableManaged<Handle> _instances;
+    RegistrableManaged<InstanceHandle> _instances;
     RegistrableManaged<Mesh::Handle> _mesh_handles;
     vector<ocarina::RHIMesh> _meshes;
 
@@ -33,13 +33,13 @@ public:
 
     void accept(const vector<Vertex> &vert,
                 const vector<Triangle> &tri,
-                Handle handle);
+                InstanceHandle handle);
     /**
      * update shape attribute
      * There is no need to update the acceleration structure
      * @param shapes
      */
-    void update_instances(const vector<Instance> &instances);
+    void update_instances(const vector<ShapeInstance> &instances);
     void reset_device_buffer();
     void build_meshes();
     void build_accel();
