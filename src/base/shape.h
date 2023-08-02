@@ -17,30 +17,6 @@
 namespace vision {
 
 struct Geometry;
-struct Mesh;
-
-#define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
-    void set_##attr(decltype(_##attr.object) val) noexcept { \
-        _##attr.object = val;                                \
-    }                                                        \
-    void set_##attr##_name(const string &name) noexcept {    \
-        _##attr.name = name;                                 \
-    }                                                        \
-    void set_##attr(decltype(_##attr) val) noexcept {        \
-        _##attr = val;                                       \
-    }                                                        \
-    [[nodiscard]] auto attr() const noexcept {               \
-        return _##attr.object.get();                         \
-    }                                                        \
-    [[nodiscard]] auto attr() noexcept {                     \
-        return _##attr.object.get();                         \
-    }                                                        \
-    [[nodiscard]] bool has_##attr() const noexcept {         \
-        return bool(attr());                                 \
-    }                                                        \
-    [[nodiscard]] string attr##_name() const noexcept {      \
-        return _##attr.name;                                 \
-    }
 
 struct InstanceHandle {
     // todo compress unsigned int data
@@ -89,6 +65,29 @@ public:
 }// namespace vision
 
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
+
+#define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
+    void set_##attr(decltype(_##attr.object) val) noexcept { \
+        _##attr.object = val;                                \
+    }                                                        \
+    void set_##attr##_name(const string &name) noexcept {    \
+        _##attr.name = name;                                 \
+    }                                                        \
+    void set_##attr(decltype(_##attr) val) noexcept {        \
+        _##attr = val;                                       \
+    }                                                        \
+    [[nodiscard]] auto attr() const noexcept {               \
+        return _##attr.object.get();                         \
+    }                                                        \
+    [[nodiscard]] auto attr() noexcept {                     \
+        return _##attr.object.get();                         \
+    }                                                        \
+    [[nodiscard]] bool has_##attr() const noexcept {         \
+        return bool(attr());                                 \
+    }                                                        \
+    [[nodiscard]] string attr##_name() const noexcept {      \
+        return _##attr.name;                                 \
+    }
 
 namespace vision {
 class ShapeInstance {
