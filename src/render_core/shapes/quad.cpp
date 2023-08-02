@@ -35,7 +35,6 @@ public:
             mesh->vertices.emplace_back(P[i], N[i], UV[i]);
         }
         mesh->triangles = {Triangle{0, 1, 2}, Triangle{2, 1, 3}};
-        _meshes.push_back(mesh);
 
         _instances.emplace_back(mesh);
     }

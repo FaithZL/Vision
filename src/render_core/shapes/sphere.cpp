@@ -80,7 +80,6 @@ public:
             Triangle tri{vert_end, vert_end - idx2, vert_end - idx1};
             mesh->triangles.push_back(tri);
         }
-        _meshes.push_back(mesh);
         _instances.emplace_back(mesh);
     }
 };

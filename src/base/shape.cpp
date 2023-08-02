@@ -8,33 +8,6 @@
 
 namespace vision {
 
-Shape::Shape(const ShapeDesc &desc)
-    : Node(desc),
-      _factor(desc["factor"].as_float(1.f)) {
-    _material.name = desc["material"].as_string();
-    if (scene().has_medium()) {
-        init_medium(desc);
-    }
-    _handle.o2w = desc.o2w.mat;
-}
-
-void Shape::init_medium(const vision::ShapeDesc &desc) noexcept {
-    if (desc.contains("medium")) {
-        _inside.name = desc["medium"]["inside"].as_string();
-        _outside.name = desc["medium"]["outside"].as_string();
-    } else {
-        _inside = scene().global_medium();
-        _outside = scene().global_medium();
-    }
-}
-
-uint Shape::lightmap_size() const noexcept {
-    vector<float> areas = ref_surface_areas();
-    float area = std::accumulate(areas.begin(), areas.end(), 0.f);
-    uint ret = area * _factor * 20;
-    return ret;
-}
-
 void Instance::fill_geometry(vision::Geometry &data) const noexcept {
     data.accept(_mesh->vertices, _mesh->triangles, _handle);
 }
@@ -106,11 +79,8 @@ vector<float> Mesh::surface_areas() const noexcept {
 }
 
 Group::Group(const vision::ShapeDesc &desc)
-    : Node(desc), _o2w(desc.o2w.mat) {
+    : Node(desc) {
     _material.name = desc["material"].as_string();
-    if (scene().has_medium()) {
-        init_medium(desc);
-    }
 }
 
 void Group::post_init(const vision::ShapeDesc &desc) {
@@ -124,6 +94,7 @@ void Group::post_init(const vision::ShapeDesc &desc) {
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
             instance.init_aabb();
+            _aabb.extend(instance.aabb);
         });
     } else {
         for_each([&](Instance &instance, uint i) {
@@ -132,17 +103,8 @@ void Group::post_init(const vision::ShapeDesc &desc) {
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
             instance.init_aabb();
+            _aabb.extend(instance.aabb);
         });
-    }
-}
-
-void Group::init_medium(const vision::ShapeDesc &desc) noexcept {
-    if (desc.contains("medium")) {
-        _inside.name = desc["medium"]["inside"].as_string();
-        _outside.name = desc["medium"]["outside"].as_string();
-    } else {
-        _inside = scene().global_medium();
-        _outside = scene().global_medium();
     }
 }
 
