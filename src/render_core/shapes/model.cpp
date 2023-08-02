@@ -23,23 +23,7 @@ public:
                                desc["smooth"].as_bool(false),
                                desc["flip_uv"].as_bool(true));
         string mat_name = desc["material"].as_string();
-        Wrap<Medium> inside;
-        Wrap<Medium> outside;
-        if (desc.contains("medium")) {
-            inside.name = desc["medium"]["inside"].as_string();
-            outside.name = desc["medium"]["outside"].as_string();
-        } else {
-            inside = scene().global_medium();
-            outside = scene().global_medium();
-        }
-
-        _meshes = assimp_util.parse_meshes(mat_name.empty(), desc["subdiv_level"].as_uint(0u));
-        for (SP<Mesh> mesh : _meshes) {
-            mesh->set_material_name(mat_name);
-            mesh->set_inside(inside);
-            mesh->set_outside(outside);
-            mesh->handle().o2w = _o2w;
-        }
+        _instances = assimp_util.parse_meshes(mat_name.empty(), desc["subdiv_level"].as_uint(0u));
     }
 };
 

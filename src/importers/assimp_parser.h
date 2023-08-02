@@ -22,8 +22,8 @@ public:
     const aiScene *load_scene(const fs::path &fn,
                               bool swap_handed = false, bool smooth = true,
                               bool flip_uv = false);
-    [[nodiscard]] vector<SP<Mesh>> parse_meshes(bool parse_material,
-                                                    uint32_t subdiv_level = 0u);
+    [[nodiscard]] vector<Instance> parse_meshes(bool parse_material,
+                                                uint32_t subdiv_level = 0u);
     [[nodiscard]] vision::Light *parse_light(aiLight *ai_light) noexcept;
     [[nodiscard]] vector<vision::Light *> parse_lights() noexcept;
     [[nodiscard]] static std::pair<string, float4> parse_texture(const aiMaterial *mat, aiTextureType type);
