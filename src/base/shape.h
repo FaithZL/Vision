@@ -122,7 +122,7 @@ OC_STRUCT(vision::Handle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
-struct Mesh : public Shape {
+struct Mesh : public Hashable {
 public:
     struct Handle {
         uint vertex_offset;
@@ -134,6 +134,9 @@ public:
     vector<Triangle> triangles;
 
 protected:
+    uint _index{};
+
+protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 public:
@@ -141,11 +144,11 @@ public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
         : vertices(std::move(vert)), triangles(std::move(tri)) {}
     Mesh() = default;
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
     [[nodiscard]] Box3f compute_aabb() const noexcept;
-    void init_aabb() noexcept { aabb = compute_aabb(); }
-    void fill_geometry(Geometry &data) const noexcept override;
-    [[nodiscard]] vector<float> surface_areas() const noexcept override;
-    [[nodiscard]] vector<float> ref_surface_areas() const noexcept override;
+    [[nodiscard]] uint lightmap_size() const noexcept;
+    void fill_geometry(Geometry &data) const noexcept;
+    [[nodiscard]] vector<float> surface_areas() const noexcept;
 };
 
 }// namespace vision

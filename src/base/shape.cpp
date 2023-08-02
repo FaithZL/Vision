@@ -63,10 +63,10 @@ Box3f Instance::compute_aabb() const noexcept {
     return box;
 }
 
-Mesh::Mesh(const ShapeDesc &desc) : Shape(desc) {}
+Mesh::Mesh(const ShapeDesc &desc) {}
 
 void Mesh::fill_geometry(Geometry &data) const noexcept {
-    data.accept(vertices, triangles, _handle);
+    //    data.accept(vertices, triangles, _handle);
 }
 
 uint64_t Mesh::_compute_hash() const noexcept {
@@ -83,9 +83,9 @@ uint64_t Mesh::_compute_hash() const noexcept {
 Box3f Mesh::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : triangles) {
-        float3 v0 = transform_point<H>(_handle.o2w, vertices[tri.i].position());
-        float3 v1 = transform_point<H>(_handle.o2w, vertices[tri.j].position());
-        float3 v2 = transform_point<H>(_handle.o2w, vertices[tri.k].position());
+        float3 v0 = vertices[tri.i].position();
+        float3 v1 = vertices[tri.j].position();
+        float3 v2 = vertices[tri.k].position();
         box.extend(v0);
         box.extend(v1);
         box.extend(v2);
@@ -93,18 +93,14 @@ Box3f Mesh::compute_aabb() const noexcept {
     return box;
 }
 
-vector<float> Mesh::surface_areas() const noexcept {
-    vector<float> ret;
-    for (const Triangle &tri : triangles) {
-        float3 v0 = transform_point<H>(_handle.o2w, vertices[tri.i].position());
-        float3 v1 = transform_point<H>(_handle.o2w, vertices[tri.j].position());
-        float3 v2 = transform_point<H>(_handle.o2w, vertices[tri.k].position());
-        ret.push_back(triangle_area(v0, v1, v2));
-    }
+uint Mesh::lightmap_size() const noexcept {
+    vector<float> areas = surface_areas();
+    float area = std::accumulate(areas.begin(), areas.end(), 0.f);
+    uint ret = area * 20;
     return ret;
 }
 
-vector<float> Mesh::ref_surface_areas() const noexcept {
+vector<float> Mesh::surface_areas() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : triangles) {
         float3 v0 = vertices[tri.i].position();
@@ -133,6 +129,7 @@ void Group::post_init(const vision::ShapeDesc &desc) {
             instance.set_outside_name(outside);
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
+            instance.init_aabb();
         });
     } else {
         for_each([&](Instance &instance, uint i) {
@@ -140,6 +137,7 @@ void Group::post_init(const vision::ShapeDesc &desc) {
             instance.set_outside(scene().global_medium());
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
+            instance.init_aabb();
         });
     }
 }

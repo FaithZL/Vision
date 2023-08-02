@@ -61,7 +61,6 @@ public:
         };
         for (int i = 0; i < P.size(); ++i) {
             mesh->vertices.emplace_back(P[i], N[i], UVs[i]);
-            mesh->aabb.extend(transform_point<H>(_o2w, P[i]));
         }
         _meshes.push_back(mesh);
 

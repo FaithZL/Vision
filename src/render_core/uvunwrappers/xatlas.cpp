@@ -96,7 +96,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] xatlas::PackOptions pack_options(const Shape *shape) const noexcept {
+    [[nodiscard]] xatlas::PackOptions pack_options(const Mesh *shape) const noexcept {
         xatlas::PackOptions ret;
         ret.padding = _padding;
         ret.resolution = ocarina::clamp(uint(shape->lightmap_size() * _scale), _min, _max);
@@ -112,14 +112,12 @@ public:
     [[nodiscard]] UnwrapperResult apply(const Mesh *shape) override {
         Guard __(this);
         UnwrapperResult unwrapper_result;
-//        shape->for_each_mesh([&](SP<const Mesh> mesh, uint) {
-            xatlas::MeshDecl decl = mesh_decl(*shape);
-            xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
-            if (error != xatlas::AddMeshError::Success) {
-                destroy_xatlas();
-                OC_ERROR("xatlas adding mesh error");
-            }
-//        });
+        xatlas::MeshDecl decl = mesh_decl(*shape);
+        xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
+        if (error != xatlas::AddMeshError::Success) {
+            destroy_xatlas();
+            OC_ERROR("xatlas adding mesh error");
+        }
 
         xatlas::AddMeshJoin(_atlas);
         xatlas::Generate(_atlas, chart_options(), pack_options(shape));
