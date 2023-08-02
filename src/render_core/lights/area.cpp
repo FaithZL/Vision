@@ -39,11 +39,6 @@ public:
             scene().instances().push_back(instance);
             set_instance(&instance);
         });
-//        shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-//            mesh->set_material(scene().obtain_black_body());
-//            scene().meshes().push_back(mesh);
-//            set_mesh(mesh.get());
-//        });
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
@@ -56,7 +51,7 @@ public:
 
     [[nodiscard]] float surface_area() const noexcept {
         float ret = 0.f;
-        vector<float> weights = mesh()->surface_areas();
+        vector<float> weights = _instance->surface_areas();
         for (float weight : weights) {
             ret += weight;
         }

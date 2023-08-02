@@ -37,7 +37,6 @@ void Pipeline::change_resolution(uint2 res) noexcept {
 }
 
 void Pipeline::prepare_geometry() noexcept {
-//    _geometry.update_meshes(_scene.meshes());
     _geometry.update_instances(_scene.instances());
     _geometry.reset_device_buffer();
     _geometry.upload();
@@ -46,7 +45,7 @@ void Pipeline::prepare_geometry() noexcept {
 }
 
 void Pipeline::update_geometry() noexcept {
-    _geometry.update_meshes(_scene.meshes());
+    _geometry.update_instances(_scene.instances());
     _geometry.upload();
 }
 

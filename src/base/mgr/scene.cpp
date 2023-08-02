@@ -26,7 +26,6 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_shapes(scene_desc.shape_descs);
     remove_unused_materials();
     tidy_up();
-    fill_mesh_data();
     fill_instances();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
@@ -36,7 +35,6 @@ void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
     tidy_up_materials();
     tidy_up_mediums();
-    tidy_up_meshes();
 }
 
 void Scene::tidy_up_materials() noexcept {
@@ -49,12 +47,6 @@ void Scene::tidy_up_mediums() noexcept {
     _mediums.for_each_instance([&](SP<Medium> medium, uint i) {
         medium->set_index(i);
     });
-}
-
-void Scene::tidy_up_meshes() noexcept {
-    for (uint i = 0; i < _meshes.size(); ++i) {
-        _meshes[i]->set_index(i);
-    }
 }
 
 Slot Scene::create_slot(const SlotDesc &desc) {
@@ -136,27 +128,6 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
             _aabb.extend(instance.aabb);
             _instances.push_back(instance);
         });
-    }
-}
-
-void Scene::fill_mesh_data() {
-    for (SP<Mesh> mesh : _meshes) {
-        if (mesh->has_material()) {
-            const Material *material = mesh->material();
-            mesh->update_material_id(_materials.encode_id(material->index(), material));
-        }
-        if (mesh->has_emission()) {
-            const Light *emission = mesh->emission();
-            mesh->update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
-        }
-        if (has_medium()) {
-            if (mesh->has_inside()) {
-                mesh->update_inside_medium_id(mesh->inside()->index());
-            }
-            if (mesh->has_outside()) {
-                mesh->update_outside_medium_id(mesh->outside()->index());
-            }
-        }
     }
 }
 

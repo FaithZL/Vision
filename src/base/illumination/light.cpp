@@ -12,16 +12,8 @@ Light::Light(const LightDesc &desc, LightType light_type)
       _color(scene().create_slot(desc.color)),
       _scale(desc["scale"].as_float(1.f)) {}
 
-void IAreaLight::set_mesh(const vision::Mesh *m) noexcept {
-    _mesh = m;
-}
-
 void IAreaLight::set_instance(const vision::Instance *inst) noexcept {
     _instance = inst;
-}
-
-vision::Mesh *IAreaLight::mesh() const noexcept {
-    return scene().get_mesh(_inst_idx.hv());
 }
 
 Instance *IAreaLight::instance() const noexcept {

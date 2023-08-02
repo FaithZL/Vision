@@ -32,7 +32,6 @@ private:
     SP<Integrator> _integrator{nullptr};
     SP<LightSampler> _light_sampler{nullptr};
     vector<SP<Group>> _groups;
-    vector<SP<Mesh>> _meshes;
     vector<Instance> _instances;
     Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
@@ -55,7 +54,6 @@ public:
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
     OC_MAKE_MEMBER_GETTER(global_medium, )
-    OC_MAKE_MEMBER_GETTER(meshes, &)
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
@@ -66,7 +64,6 @@ public:
     void tidy_up() noexcept;
     void tidy_up_materials() noexcept;
     void tidy_up_mediums() noexcept;
-    void tidy_up_meshes() noexcept;
     [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     [[nodiscard]] SP<Material> obtain_black_body() noexcept;
     template<typename T, typename desc_ty>
@@ -85,7 +82,6 @@ public:
     void load_shapes(const vector<ShapeDesc> &descs);
     void load_mediums(const MediumsDesc &desc);
     void load_materials(const vector<MaterialDesc> &material_descs);
-    void fill_mesh_data();
     void fill_instances();
     void remove_unused_materials();
     template<typename T = Light>
@@ -98,7 +94,6 @@ public:
     void prepare_materials();
     [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
     void upload_data() noexcept;
-    [[nodiscard]] vision::Mesh *get_mesh(uint id) noexcept { return _meshes[id].get(); }
     [[nodiscard]] Instance *get_instance(uint id) noexcept { return &_instances[id]; }
     [[nodiscard]] const Instance *get_instance(uint id) const noexcept { return &_instances[id]; }
 };
