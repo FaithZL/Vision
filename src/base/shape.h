@@ -179,6 +179,8 @@ public:
     VS_MAKE_ATTR_SETTER_GETTER(outside)
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
+    void set_lightmap_id(uint id) noexcept { _handle.lightmap_id = id; }
+    [[nodiscard]] float4x4 o2w() const noexcept { return _handle.o2w; }
     void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
     virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
     virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }

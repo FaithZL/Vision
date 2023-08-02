@@ -39,8 +39,8 @@ void BakePipeline::prepare() noexcept {
 
 void BakePipeline::preprocess() noexcept {
     // fill baked shape list
-    for_each_need_bake([&](SP<vision::Mesh> item) {
-        _baked_shapes.emplace_back(item.get());
+    for_each_need_bake([&](Instance &item) {
+        _baked_shapes.emplace_back(&item);
     });
     SP<UVUnwrapper> uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
 
@@ -51,7 +51,7 @@ void BakePipeline::preprocess() noexcept {
         if (baked_shape.has_uv_cache()) {
             unwrap_result = baked_shape.load_uv_config_from_cache();
         } else {
-            unwrap_result = uv_unwrapper->apply(baked_shape.shape());
+            unwrap_result = uv_unwrapper->apply(baked_shape.shape()->mesh().get());
             baked_shape.save_to_cache(unwrap_result);
         }
         baked_shape.setup_vertices(ocarina::move(unwrap_result));

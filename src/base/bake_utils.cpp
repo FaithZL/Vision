@@ -32,20 +32,17 @@ void BakedShape::save_to_cache(const UnwrapperResult &result) {
     DataWrap data = DataWrap::object();
     data["resolution"] = {result.width, result.height};
     data["uv_result"] = DataWrap::array();
-    _shape->for_each_mesh([&](SP<Mesh> mesh, uint i) {
-        const UnwrapperMesh &u_mesh = result.meshes[i];
-        DataWrap elm = DataWrap::object();
-        elm["vertices"] = DataWrap::array();
-        for (auto vertex : u_mesh.vertices) {
-            elm["vertices"].push_back({vertex.uv.x, vertex.uv.y, vertex.xref});
-        }
-        elm["triangles"] = DataWrap::array();
-        for (Triangle tri : u_mesh.triangles) {
-            elm["triangles"].push_back({tri.i, tri.j, tri.k});
-        }
-        data["uv_result"].push_back(elm);
-    });
-
+    const UnwrapperMesh &u_mesh = result.meshes[0];
+    DataWrap elm = DataWrap::object();
+    elm["vertices"] = DataWrap::array();
+    for (auto vertex : u_mesh.vertices) {
+        elm["vertices"].push_back({vertex.uv.x, vertex.uv.y, vertex.xref});
+    }
+    elm["triangles"] = DataWrap::array();
+    for (Triangle tri : u_mesh.triangles) {
+        elm["triangles"].push_back({tri.i, tri.j, tri.k});
+    }
+    data["uv_result"].push_back(elm);
     string data_str = data.dump(4);
     fs::path uv_config = uv_config_fn();
     Context::write_file(uv_config, data_str);
@@ -78,7 +75,7 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
 void BakedShape::merge_meshes() noexcept {
     uint vert_offset = 0;
     float4x4 o2w = shape()->o2w();
-    for (const Vertex &vertex : _shape->vertices) {
+    for (const Vertex &vertex : _shape->mesh()->vertices) {
         float3 world_pos = transform_point<H>(o2w, vertex.position());
         float3 world_norm = transform_normal<H>(o2w, vertex.normal());
         world_norm = select(nonzero(world_norm), normalize(world_norm), world_norm);
@@ -86,7 +83,7 @@ void BakedShape::merge_meshes() noexcept {
                                            vertex.tex_coord(),
                                            vertex.lightmap_uv());
     }
-    for (const Triangle &tri : _shape->triangles) {
+    for (const Triangle &tri : _shape->mesh()->triangles) {
         _merged_mesh.triangles.emplace_back(tri.i + vert_offset,
                                             tri.j + vert_offset,
                                             tri.k + vert_offset);
@@ -95,12 +92,12 @@ void BakedShape::merge_meshes() noexcept {
 
 void BakedShape::prepare_to_rasterize() noexcept {
     merge_meshes();
-    _pixels = shape()->device().create_buffer<uint4>(pixel_num());
+    _pixels = device().create_buffer<uint4>(pixel_num());
     _pixels.reset_immediately();
 }
 
 void BakedShape::allocate_lightmap_texture() noexcept {
-    _lightmap_tex = shape()->device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
+    _lightmap_tex = device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
 }
 
 void BakedShape::setup_vertices(UnwrapperResult result) {
@@ -109,22 +106,22 @@ void BakedShape::setup_vertices(UnwrapperResult result) {
     vector<Vertex> vertices;
     vertices.reserve(u_mesh.vertices.size());
     for (auto &vert : u_mesh.vertices) {
-        Vertex vertex = _shape->vertices[vert.xref];
+        Vertex vertex = _shape->mesh()->vertices[vert.xref];
         vertex.set_lightmap_uv(vert.uv);
         vertices.push_back(vertex);
     }
-    _shape->vertices = ocarina::move(vertices);
-    _shape->triangles = ocarina::move(u_mesh.triangles);
+    _shape->mesh()->vertices = ocarina::move(vertices);
+    _shape->mesh()->triangles = ocarina::move(u_mesh.triangles);
 }
 
 void BakedShape::normalize_lightmap_uv() {
-    for (auto &vert : _shape->vertices) {
+    for (auto &vert : _shape->mesh()->vertices) {
         vert.set_lightmap_uv(vert.lightmap_uv() / make_float2(resolution()));
     }
 }
 
 uint64_t BakedShape::instance_hash() const noexcept {
-    return hash64(_shape->hash(), _shape->o2w());
+    return hash64(_shape->mesh()->hash(), _shape->o2w());
 }
 
 fs::path BakedShape::uv_config_fn() const noexcept {

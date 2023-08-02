@@ -38,9 +38,9 @@ struct MergedMesh {
     vector<Triangle> triangles;
 };
 
-struct BakedShape {
+struct BakedShape : public Ctx {
 private:
-    Mesh *_shape{};
+    Instance *_shape{};
     uint2 _resolution{};
     Texture _lightmap_tex;
     MergedMesh _merged_mesh;
@@ -48,11 +48,11 @@ private:
 
 public:
     BakedShape() = default;
-    explicit BakedShape(vision::Mesh *shape) : _shape(shape) {}
+    explicit BakedShape(vision::Instance *shape) : _shape(shape) {}
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
         return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}",
-                                                                       _shape->hash());
+                                                                       _shape->mesh()->hash());
     }
 
     [[nodiscard]] fs::path instance_cache_directory() const noexcept {
@@ -100,7 +100,7 @@ public:
           _scale(desc["scale"].as_float(1.f)),
           _min(desc["min"].as_uint(50)),
           _max(desc["max"].as_uint(1024)) {}
-    [[nodiscard]] virtual UnwrapperResult apply(const Shape *shape) = 0;
+    [[nodiscard]] virtual UnwrapperResult apply(const Mesh *shape) = 0;
 };
 
 class Rasterizer : public Node {
