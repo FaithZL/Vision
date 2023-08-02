@@ -132,6 +132,8 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                     instance.set_outside(*outside);
                 }
             }
+            instance.init_aabb();
+            _aabb.extend(instance.aabb);
             _instances.push_back(instance);
         });
 
