@@ -63,12 +63,6 @@ Box3f Instance::compute_aabb() const noexcept {
     return box;
 }
 
-Mesh::Mesh(const ShapeDesc &desc) {}
-
-void Mesh::fill_geometry(Geometry &data) const noexcept {
-    //    data.accept(vertices, triangles, _handle);
-}
-
 uint64_t Mesh::_compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
     for (Vertex vertex : vertices) {

@@ -17,7 +17,7 @@ public:
         post_init(desc);
     }
     void init(const ShapeDesc &desc) noexcept {
-        auto mesh = make_shared<Mesh>(desc);
+        auto mesh = make_shared<Mesh>();
         float x = desc["x"].as_float(1.f);
         float y = desc["y"].as_float(1.f);
         float z = desc["z"].as_float(1.f);

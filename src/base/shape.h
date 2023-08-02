@@ -140,14 +140,12 @@ protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 public:
-    explicit Mesh(const ShapeDesc &desc);
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
         : vertices(std::move(vert)), triangles(std::move(tri)) {}
     Mesh() = default;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
-    void fill_geometry(Geometry &data) const noexcept;
     [[nodiscard]] vector<float> surface_areas() const noexcept;
 };
 

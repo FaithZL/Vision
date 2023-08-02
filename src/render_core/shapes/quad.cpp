@@ -18,7 +18,7 @@ public:
     }
 
     void init(const ShapeDesc &desc) noexcept {
-        auto mesh = make_shared<Mesh>(desc);
+        auto mesh = make_shared<Mesh>();
         float width = desc["width"].as_float(1.f) / 2;
         float height = desc["height"].as_float(1.f) / 2;
         vector<float3> P{make_float3(width, 0, height),

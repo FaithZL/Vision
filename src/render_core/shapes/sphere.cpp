@@ -17,7 +17,7 @@ public:
         post_init(desc);
     }
     void init(const ShapeDesc &desc) noexcept {
-        auto mesh = make_shared<Mesh>(desc);
+        auto mesh = make_shared<Mesh>();
         float radius = desc["radius"].as_float(1.f);
         uint theta_div = desc["sub_div"].as_uint(60u);
         uint phi_div = 2 * theta_div;
