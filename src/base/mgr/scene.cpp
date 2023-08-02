@@ -6,6 +6,7 @@
 #include "rhi/dynamic_module.h"
 #include "pipeline.h"
 #include "base/scattering/interaction.h"
+#include "mesh_pool.h"
 
 namespace vision {
 
@@ -34,6 +35,7 @@ void Scene::init(const SceneDesc &scene_desc) {
 void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
     tidy_up_materials();
+    MeshPool::instance().tidy_up();
     tidy_up_mediums();
 }
 
@@ -94,7 +96,7 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         SP<ShapeGroup> group = load<ShapeGroup>(desc);
         _groups.push_back(group);
-
+        _aabb.extend(group->aabb);
         group->for_each([&](ShapeInstance &instance, uint i) {
             auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
                 return material->name() == instance.material_name();
@@ -124,7 +126,6 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
                     instance.set_outside(*outside);
                 }
             }
-            _aabb.extend(instance.aabb);
             _instances.push_back(instance);
         });
     }

@@ -35,6 +35,7 @@ public:
             float3(x, -y, z), float3(x, y, z), float3(x, y, -z), float3(x, -y, -z), // +x
             float3(-x, -y, z), float3(-x, y, z), float3(-x, y, -z), float3(-x, -y, -z), // -x
         };
+
         auto N = vector<float3>{
             float3(0, 0, 1), float3(0, 0, 1), float3(0, 0, 1), float3(0, 0, 1),
             float3(0, 0, -1), float3(0, 0, -1), float3(0, 0, -1), float3(0, 0, -1),
@@ -43,6 +44,7 @@ public:
             float3(1, 0, 0), float3(1, 0, 0), float3(1, 0, 0), float3(1, 0, 0),
             float3(-1, 0, 0), float3(-1, 0, 0), float3(-1, 0, 0), float3(-1, 0, 0),
         };
+
         auto UVs = vector<float2>{
             float2(0, 0), float2(1, 0), float2(0, 1), float2(1, 1),
             float2(0, 1), float2(1, 1), float2(0, 0), float2(1, 0),
@@ -51,6 +53,7 @@ public:
             float2(0, 1), float2(1, 1), float2(1, 0), float2(0, 0),
             float2(0, 1), float2(1, 1), float2(1, 0), float2(0, 0),
         };
+        
         mesh->triangles = vector<Triangle>{
             Triangle(0, 1, 3), Triangle(0, 3, 2),
             Triangle(6, 5, 7), Triangle(4, 5, 6),

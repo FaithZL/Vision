@@ -56,6 +56,7 @@ public:
             Triangle tri{0, (i + 1) % phi_div + 1, i + 1};
             mesh->triangles.push_back(tri);
         }
+
         for (uint i = 0; i < theta_div - 2; ++i) {
             uint vert_start = 1 + i * phi_div;
             for (int j = 0; j < phi_div; ++j) {
@@ -73,6 +74,7 @@ public:
                 vert_start ++;
             }
         }
+
         uint vert_end = mesh->vertices.size() - 1;
         for (uint i = 0; i < phi_div; ++i) {
             uint idx1 = i + 1;
@@ -80,6 +82,7 @@ public:
             Triangle tri{vert_end, vert_end - idx2, vert_end - idx1};
             mesh->triangles.push_back(tri);
         }
+
         _instances.emplace_back(mesh);
     }
 };

@@ -94,7 +94,7 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
             instance.init_aabb();
-            _aabb.extend(instance.aabb);
+            aabb.extend(instance.aabb);
         });
     } else {
         for_each([&](ShapeInstance &instance, uint i) {
@@ -103,7 +103,7 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
             instance.init_aabb();
-            _aabb.extend(instance.aabb);
+            aabb.extend(instance.aabb);
         });
     }
 }

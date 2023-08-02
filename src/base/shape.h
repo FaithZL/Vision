@@ -134,10 +134,11 @@ namespace vision {
 class ShapeGroup : public Node {
 public:
     using Desc = ShapeDesc;
+public:
+    Box3f aabb;
 
 protected:
     vector<ShapeInstance> _instances;
-    Box3f _aabb;
     Wrap<IAreaLight> _emission{};
     Wrap<Material> _material{};
 
