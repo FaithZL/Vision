@@ -19,7 +19,7 @@ public:
     void init_pipeline(const char *rpath) override;
     void init_scene() override;
     void clear_geometries() override;
-    void add_instance(Instance instance) override;
+    void add_instance(const Instance &instance) override;
     void build_accel() override;
     void update_camera(vision::sdk::Camera camera) override;
     void update_resolution(uint32_t width, uint32_t height) override;
@@ -46,7 +46,7 @@ void VisionRendererImpl::init_scene() {
     scene.init(scene_desc);
 }
 
-void VisionRendererImpl::add_instance(vision::sdk::Instance instance) {
+void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance) {
     std::cout << "wocaonima de" << std::endl;
 }
 

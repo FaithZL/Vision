@@ -10,6 +10,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <memory>
 #include <windows.h>
 
 namespace vision::sdk {
@@ -46,8 +47,8 @@ public:
 // clang-format on
 
 struct Instance {
-    vector<Vertex> vertices{};
-    vector<Triple> triangles{};
+    std::shared_ptr<Triple> triangles{};
+    std::shared_ptr<Vertex> vertices{};
     uint32_t mat_id{~0u};
     uint32_t light_id{~0u};
     Mat4x4 mat4{Mat4x4::identity()};
@@ -64,7 +65,7 @@ public:
     virtual void init_pipeline(const char *rpath) = 0;
     virtual void init_scene() = 0;
     virtual void clear_geometries() = 0;
-    virtual void add_instance(Instance instance) = 0;
+    virtual void add_instance(const Instance &instance) = 0;
     virtual void build_accel() = 0;
     virtual void update_camera(Camera camera) = 0;
     virtual void update_resolution(uint32_t width, uint32_t height) = 0;
