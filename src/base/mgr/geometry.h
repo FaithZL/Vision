@@ -19,7 +19,6 @@ private:
     RegistrableManaged<Triangle> _triangles;
     RegistrableManaged<InstanceHandle> _instances;
     RegistrableManaged<Mesh::Handle> _mesh_handles;
-    vector<ocarina::RHIMesh> _meshes;
 
 public:
     ocarina::Accel accel;
@@ -41,8 +40,8 @@ public:
      */
     void update_instances(const vector<ShapeInstance> &instances);
     void reset_device_buffer();
-    void build_meshes();
     void build_accel();
+    void build_TLAS(vector<RHIMesh> &meshes);
     void upload() const;
     void clear() noexcept;
 

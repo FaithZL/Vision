@@ -40,7 +40,6 @@ void Pipeline::prepare_geometry() noexcept {
     _geometry.update_instances(_scene.instances());
     _geometry.reset_device_buffer();
     _geometry.upload();
-    _geometry.build_meshes();
     _geometry.build_accel();
 }
 

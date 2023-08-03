@@ -37,7 +37,8 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
     });
 }
 
-void Geometry::build_meshes() {
+void Geometry::build_accel() {
+    vector<RHIMesh> meshes;
     for (const auto &inst : _instances) {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = _mesh_handles[mesh_id];
@@ -55,8 +56,9 @@ void Geometry::build_meshes() {
             BufferView<Triangle> tris = _triangles.device_buffer().view(mesh_handle.triangle_offset, tri_count);
             mesh = rp->device().create_mesh(verts, tris);
         }
-        _meshes.push_back(std::move(mesh));
+        meshes.push_back(std::move(mesh));
     }
+    build_TLAS(meshes);
 }
 
 void Geometry::reset_device_buffer() {
@@ -89,12 +91,12 @@ void Geometry::clear() noexcept {
     accel.clear();
 }
 
-void Geometry::build_accel() {
+void Geometry::build_TLAS(vector<RHIMesh> &meshes) {
     accel = rp->device().create_accel();
     Stream &stream = rp->stream();
-    for (int i = 0; i < _meshes.size(); ++i) {
+    for (int i = 0; i < _instances.host_buffer().size(); ++i) {
         InstanceHandle inst = _instances[i];
-        ocarina::RHIMesh &mesh = _meshes[i];
+        ocarina::RHIMesh &mesh = meshes[inst.mesh_id];
         stream << mesh.build_bvh();
         accel.add_mesh(mesh, inst.o2w);
     }
