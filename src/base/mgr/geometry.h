@@ -44,6 +44,7 @@ public:
     void build_meshes();
     void build_accel();
     void upload() const;
+    void clear() noexcept;
 
     // for dsl
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;

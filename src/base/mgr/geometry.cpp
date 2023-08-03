@@ -81,6 +81,14 @@ void Geometry::upload() const {
     stream << commit();
 }
 
+void Geometry::clear() noexcept {
+    _vertices.clear();
+    _triangles.clear();
+    _instances.clear();
+    _mesh_handles.clear();
+    accel.clear();
+}
+
 void Geometry::build_accel() {
     accel = rp->device().create_accel();
     Stream &stream = rp->stream();
