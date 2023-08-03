@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     stream << t_buffer.upload_sync(triangle.data());
 
     Accel accel = device.create_accel();
-    accel.add_mesh(cube, make_float4x4(1.f));
+//    accel.add_mesh(cube, make_float4x4(1.f));
     stream << accel.build_bvh();
     stream << synchronize() << commit();
 
