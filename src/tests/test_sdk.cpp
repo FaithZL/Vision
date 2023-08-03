@@ -8,8 +8,8 @@
 using namespace vision::sdk;
 
 int main(int argc, char *argv[]) {
-
-    auto vr = create_vision();
+    HMODULE module;
+    auto vr = create_vision(module);
     vr->init_pipeline(std::filesystem::path(argv[0]).parent_path().string().c_str());
     vr->init_scene();
 

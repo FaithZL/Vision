@@ -20,6 +20,7 @@ public:
     void init_scene() override;
     void add_instance(Instance instance) override;
     void build_accel() override;
+    void clear_geometries() override;
     void update_camera(vision::sdk::Camera camera) override;
     void update_resolution(uint32_t width, uint32_t height) override;
 };
@@ -32,6 +33,11 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     desc.sub_type = "offline";
     _pipeline = Global::node_mgr().load<Pipeline>(desc);
     Global::instance().set_pipeline(_pipeline.get());
+}
+
+void VisionRendererImpl::clear_geometries() {
+
+
 }
 
 void VisionRendererImpl::init_scene() {

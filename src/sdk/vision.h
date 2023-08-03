@@ -63,6 +63,7 @@ public:
     virtual ~VisionRenderer() = default;
     virtual void init_pipeline(const char *rpath) = 0;
     virtual void init_scene() = 0;
+    virtual void clear_geometries() = 0;
     virtual void add_instance(Instance instance) = 0;
     virtual void build_accel() = 0;
     virtual void update_camera(Camera camera) = 0;
@@ -74,21 +75,16 @@ using visionCreator = vision::sdk::VisionRenderer *();
 using visionDeleter = void(vision::sdk::VisionRenderer *);
 
 template<typename T>
-T *find_symbol(void *handle, const char *name_view) noexcept {
-    auto symbol = GetProcAddress(reinterpret_cast<HMODULE>(handle), name_view);
+T *find_symbol(HMODULE &handle, const char *name_view) noexcept {
+    auto symbol = GetProcAddress(handle, name_view);
     return reinterpret_cast<T *>(symbol);
 }
 
-visionCreator *vision_creator() {
-    void *module = LoadLibraryA("vision-renderer");
+static visionCreator *vision_creator(HMODULE &module) {
+    module = LoadLibraryA("vision-renderer");
     return find_symbol<visionCreator>(module, "create");
 }
 
-visionDeleter *vision_deleter() {
-    void *module = LoadLibraryA("vision-renderer");
-    return find_symbol<visionDeleter>(module, "destroy");
-}
-
-vision::sdk::VisionRenderer *create_vision() {
-    return vision_creator()();
+static vision::sdk::VisionRenderer *create_vision(HMODULE &module) {
+    return vision_creator(module)();
 }
