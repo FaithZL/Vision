@@ -20,10 +20,10 @@ using std::vector;
 
 struct Vertex {
 public:
-    array<float, 3> pos;
-    array<float, 3> n;
-    array<float, 2> uv;
-    array<float, 2> uv2;
+    array<float, 3> pos{};
+    array<float, 3> n{};
+    array<float, 2> uv{};
+    array<float, 2> uv2{};
 };
 
 struct Triple {
@@ -48,7 +48,9 @@ public:
 
 struct Instance {
     std::shared_ptr<Triple> triangles{};
+    uint32_t tri_num{~0u};
     std::shared_ptr<Vertex> vertices{};
+    uint32_t vert_num{~0u};
     uint32_t mat_id{~0u};
     uint32_t light_id{~0u};
     Mat4x4 mat4{Mat4x4::identity()};
