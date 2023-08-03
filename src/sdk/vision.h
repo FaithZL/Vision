@@ -46,8 +46,8 @@ public:
 // clang-format on
 
 struct Instance {
-    vector<Vertex> vertices;
-    vector<Triple> triangles;
+    vector<Vertex> vertices{};
+    vector<Triple> triangles{};
     uint32_t mat_id{~0u};
     uint32_t light_id{~0u};
     Mat4x4 mat4{Mat4x4::identity()};
