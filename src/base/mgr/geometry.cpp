@@ -38,7 +38,8 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
 }
 
 void Geometry::build_accel() {
-    vector<RHIMesh> meshes;
+    accel = rp->device().create_accel();
+    Stream &stream = rp->stream();
     for (const auto &inst : _instances) {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = _mesh_handles[mesh_id];
@@ -56,9 +57,14 @@ void Geometry::build_accel() {
             BufferView<Triangle> tris = _triangles.device_buffer().view(mesh_handle.triangle_offset, tri_count);
             mesh = rp->device().create_mesh(verts, tris);
         }
-        meshes.push_back(std::move(mesh));
+        stream << mesh.build_bvh();
+        accel.add_mesh(ocarina::move(mesh), inst.o2w);
     }
-    build_TLAS(meshes);
+
+    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel.vertex_num(), accel.triangle_num());
+    stream << accel.build_bvh();
+    stream << synchronize();
+    stream << commit();
 }
 
 void Geometry::reset_device_buffer() {
@@ -89,21 +95,6 @@ void Geometry::clear() noexcept {
     _instances.clear();
     _mesh_handles.clear();
     accel.clear();
-}
-
-void Geometry::build_TLAS(vector<RHIMesh> &meshes) {
-    accel = rp->device().create_accel();
-    Stream &stream = rp->stream();
-    for (int i = 0; i < _instances.host_buffer().size(); ++i) {
-        InstanceHandle inst = _instances[i];
-        ocarina::RHIMesh &mesh = meshes[inst.mesh_id];
-        stream << mesh.build_bvh();
-        accel.add_mesh(mesh, inst.o2w);
-    }
-    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel.vertex_num(), accel.triangle_num());
-    stream << accel.build_bvh();
-    stream << synchronize();
-    stream << commit();
 }
 
 Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {

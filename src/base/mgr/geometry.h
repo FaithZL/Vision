@@ -41,7 +41,6 @@ public:
     void update_instances(const vector<ShapeInstance> &instances);
     void reset_device_buffer();
     void build_accel();
-    void build_TLAS(vector<RHIMesh> &meshes);
     void upload() const;
     void clear() noexcept;
 
