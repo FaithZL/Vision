@@ -54,9 +54,7 @@ void VisionRendererImpl::compile() {
         RayState rs = camera->generate_ray(ss);
         Uint2 res = dispatch_dim().xy();
         Uint2 center = res / 2u;
-        $if(all(center == pixel)) {
-            Printer::instance().info("{} {} {}, {} {} {}", rs.origin(), rs.direction());
-        };
+
 
         Float3 L = make_float3(0.f);
 
@@ -66,7 +64,15 @@ void VisionRendererImpl::compile() {
             $return();
         };
 
-        buffer.write(dispatch_id(), make_float4(1, 1, 0, 1));
+        Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
+
+        L = (it.ng + 1.f) / 2.f;
+
+        $if(all(center == pixel)) {
+            Printer::instance().info_with_location("inst {}, prim {}", hit.inst_id, hit.prim_id);
+        };
+
+        buffer.write(dispatch_id(), make_float4(L, 1.f));
     };
     _shader = _device->compile(kernel);
 }
