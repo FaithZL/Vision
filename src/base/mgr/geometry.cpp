@@ -80,7 +80,7 @@ void Geometry::reset_device_buffer() {
 }
 
 void Geometry::upload() const {
-    Stream& stream = rp->stream();
+    Stream &stream = rp->stream();
     stream << _vertices.upload()
            << _triangles.upload()
            << _mesh_handles.upload()
@@ -90,10 +90,10 @@ void Geometry::upload() const {
 }
 
 void Geometry::clear() noexcept {
-    _vertices.clear();
-    _triangles.clear();
-    _instances.clear();
-    _mesh_handles.clear();
+    _vertices.clear_all();
+    _triangles.clear_all();
+    _instances.clear_all();
+    _mesh_handles.clear_all();
     accel.clear();
 }
 
@@ -164,10 +164,12 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
             $if(length_squared(dn)) {
                 dn_du = make_float3(0.f);
                 dn_dv = make_float3(0.f);
-            } $else {
+            }
+            $else {
                 coordinate_system(dn, dn_du, dn_dv);
             };
-        } $else {
+        }
+        $else {
             Float inv_det = 1 / det;
             dn_du = (duv12[1] * dn1 - duv02[1] * dn2) * inv_det;
             dn_dv = (-duv12[0] * dn1 + duv02[0] * dn2) * inv_det;

@@ -37,6 +37,7 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
 
 void VisionRendererImpl::clear_geometries() {
     std::cout << "clear_geometries" << std::endl;
+    _pipeline->clear_geometry();
 }
 
 void VisionRendererImpl::init_scene() {
