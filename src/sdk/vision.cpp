@@ -43,11 +43,10 @@ void VisionRendererImpl::compile() {
     auto camera = _pipeline->scene().camera();
     auto film = camera->radiance_film();
     auto sampler = _pipeline->scene().sampler();
-    auto& buffer = film->original_buffer();
-    Buffer<float4> &b = buffer.device_buffer();
+    Buffer<float4>& buffer = film->original_buffer().device_buffer();
     Kernel kernel = [&](Uint frame_index) {
-        b.write(dispatch_id(), make_float4(1,1,0,1));
-//        film->add_sample(dispatch_idx().xy(), make_float4(1, 1, 0, 1), frame_index);
+
+        buffer.write(dispatch_id(), make_float4(1,1,0,1));
     };
     _shader = _device->compile(kernel);
 }
@@ -169,6 +168,7 @@ void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
     auto film = camera->radiance_film();
     film->set_resolution(make_uint2(width, height));
     _pipeline->scene().prepare();
+    _pipeline->upload_resource_array();
 }
 
 }// namespace vision::sdk
