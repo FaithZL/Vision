@@ -101,6 +101,7 @@ Part of the scene comes from https://benedikt-bitterli.me/resources/
 
 ![](gallery/dispersion.png)
 ![](gallery/dispersion-hero.png)
+![](gallery/bunny-sss-dof.png)
 ![](gallery/prism.png)
 ![](gallery/staircase.png)
 ![](gallery/bathroom.png)
