@@ -24,6 +24,7 @@ public:
     void build_accel() override;
     void update_camera(vision::sdk::Camera camera) override;
     void update_resolution(uint32_t width, uint32_t height) override;
+    void download_radiance(void *data) override;
 };
 
 void VisionRendererImpl::init_pipeline(const char *rpath) {
@@ -47,6 +48,13 @@ void VisionRendererImpl::init_scene() {
     scene_desc.init(DataWrap::object());
     Scene &scene = _pipeline->scene();
     scene.init(scene_desc);
+}
+
+void VisionRendererImpl::download_radiance(void *data) {
+    Stream &stream = _pipeline->stream();
+    auto camera = _pipeline->scene().camera();
+    auto &buffer = camera->radiance_film()->original_buffer();
+    buffer.device_buffer().download_immediately(data);
 }
 
 vision::Vertex from_sdk_vertex(const sdk::Vertex &vert) {
@@ -109,6 +117,7 @@ void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
     float4x4 o2w = from_array(c.c2w.m);
     auto camera = _pipeline->scene().camera();
     camera->update_mat(o2w);
+    camera->set_fov_y(c.fov_y);
     OC_INFO("update_camera");
 }
 

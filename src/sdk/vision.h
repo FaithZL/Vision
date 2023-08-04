@@ -69,6 +69,7 @@ public:
     virtual void build_accel() = 0;
     virtual void update_camera(Camera camera) = 0;
     virtual void update_resolution(uint32_t width, uint32_t height) = 0;
+    virtual void download_radiance(void *data) = 0;
 };
 }// namespace vision::sdk
 
