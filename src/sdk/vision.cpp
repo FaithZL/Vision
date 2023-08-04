@@ -30,6 +30,7 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     PipelineDesc desc;
     Context::instance().init(rpath);
     _device = make_unique<Device>(Context::instance().create_device("cuda"));
+    _device->init_rtx();
     desc.device = _device.get();
     desc.sub_type = "offline";
     _pipeline = Global::node_mgr().load<Pipeline>(desc);
@@ -96,6 +97,12 @@ void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance) {
 }
 
 void VisionRendererImpl::build_accel() {
+    Geometry &geom = _pipeline->geometry();
+    Accel &accel = geom.accel;
+    auto impl = accel.impl();
+    _pipeline->prepare_geometry();
+    _pipeline->upload_resource_array();
+    OC_INFO("build accel");
 }
 
 void VisionRendererImpl::update_camera(vision::sdk::Camera camera) {

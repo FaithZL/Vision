@@ -14,7 +14,8 @@ Geometry::Geometry(Pipeline *rp)
     : rp(rp), _vertices(rp->resource_array()),
       _triangles(rp->resource_array()),
       _instances(rp->resource_array()),
-      _mesh_handles(rp->resource_array()) {}
+      _mesh_handles(rp->resource_array()),
+      accel(rp->device().create_accel()) {}
 
 void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, InstanceHandle inst) {
     Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host_buffer().size(),
@@ -38,7 +39,6 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
 }
 
 void Geometry::build_accel() {
-    accel = rp->device().create_accel();
     Stream &stream = rp->stream();
     for (const auto &inst : _instances) {
         uint mesh_id = inst.mesh_id;
@@ -58,7 +58,7 @@ void Geometry::build_accel() {
             mesh = rp->device().create_mesh(verts, tris);
         }
         stream << mesh.build_bvh();
-        accel.add_mesh(ocarina::move(mesh), inst.o2w);
+        accel.add_instance(ocarina::move(mesh), inst.o2w);
     }
 
     OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel.vertex_num(), accel.triangle_num());
