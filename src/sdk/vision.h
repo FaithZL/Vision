@@ -51,8 +51,6 @@ struct Instance {
     uint32_t tri_num{~0u};
     std::shared_ptr<Vertex> vertices{};
     uint32_t vert_num{~0u};
-    uint32_t mat_id{~0u};
-    uint32_t light_id{~0u};
     Mat4x4 mat4{Mat4x4::identity()};
 };
 

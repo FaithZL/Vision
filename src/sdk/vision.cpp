@@ -5,6 +5,7 @@
 #include "vision.h"
 #include "base/node.h"
 #include "core/stl.h"
+#include "base/shape.h"
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
 
@@ -47,20 +48,59 @@ void VisionRendererImpl::init_scene() {
     scene.init(scene_desc);
 }
 
+vision::Vertex from_sdk_vertex(const sdk::Vertex &vert) {
+    vision::Vertex vertex;
+    vertex.pos = vert.pos;
+    vertex.n = vert.n;
+    vertex.uv = vert.uv;
+    return vertex;
+}
+
+Triangle from_triple(const sdk::Triple &triple) {
+    return bit_cast<Triangle>(triple);
+}
+
+float4x4 from_array(std::array<float, 16> arr) {
+    float4x4 ret;
+    for (int i = 0; i < 16; ++i) {
+        int x = i / 4;
+        int y = i % 4;
+        ret[x][y] = arr[i];
+    }
+    return ret;
+}
+
+ShapeInstance from_sdk_instance(const sdk::Instance &inst) {
+
+    SP<Mesh> mesh = std::make_shared<Mesh>();
+    for (int i = 0; i < inst.vert_num; ++i) {
+        mesh->vertices.push_back(from_sdk_vertex(inst.vertices.get()[i]));
+    }
+
+    for (int i = 0; i < inst.tri_num; ++i) {
+        mesh->triangles.push_back(from_triple(inst.triangles.get()[i]));
+    }
+
+    ShapeInstance ret{mesh};
+
+    ret.set_o2w(from_array(inst.mat4.m));
+
+    return ret;
+}
+
 void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance) {
-    std::cout << "wocaonima de" << std::endl;
+    SP<ShapeGroup> group = std::make_shared<ShapeGroup>(ShapeDesc{});
+    ShapeInstance inst = from_sdk_instance(instance);
+    group->add_instance(inst);
 }
 
 void VisionRendererImpl::build_accel() {
-
 }
 
 void VisionRendererImpl::update_camera(vision::sdk::Camera camera) {
-
 }
 
 void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
-
 }
 
 }// namespace vision::sdk

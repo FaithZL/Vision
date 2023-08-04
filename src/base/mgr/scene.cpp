@@ -92,42 +92,46 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
                    _materials.all_instance_num());
 }
 
+void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
+    _groups.push_back(group);
+    _aabb.extend(group->aabb);
+    group->for_each([&](ShapeInstance &instance, uint i) {
+        auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
+            return material->name() == instance.material_name();
+        });
+
+        if (iter != _materials.end() && !instance.has_material()) {
+            instance.set_material(*iter);
+        }
+
+        if (desc.emission.valid()) {
+            desc.emission.set_value("inst_id", _instances.size());
+            SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+            instance.set_emission(light);
+            light->set_instance(&instance);
+        }
+        if (has_medium()) {
+            auto inside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+                return medium->name() == instance.inside_name();
+            });
+            if (inside != _mediums.end()) {
+                instance.set_inside(*inside);
+            }
+            auto outside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+                return medium->name() == instance.outside_name();
+            });
+            if (outside != _mediums.end()) {
+                instance.set_outside(*outside);
+            }
+        }
+        _instances.push_back(instance);
+    });
+}
+
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         SP<ShapeGroup> group = load<ShapeGroup>(desc);
-        _groups.push_back(group);
-        _aabb.extend(group->aabb);
-        group->for_each([&](ShapeInstance &instance, uint i) {
-            auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
-                return material->name() == instance.material_name();
-            });
-
-            if (iter != _materials.end() && !instance.has_material()) {
-                instance.set_material(*iter);
-            }
-
-            if (desc.emission.valid()) {
-                desc.emission.set_value("inst_id", _instances.size());
-                SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
-                instance.set_emission(light);
-                light->set_instance(&instance);
-            }
-            if (has_medium()) {
-                auto inside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == instance.inside_name();
-                });
-                if (inside != _mediums.end()) {
-                    instance.set_inside(*inside);
-                }
-                auto outside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
-                    return medium->name() == instance.outside_name();
-                });
-                if (outside != _mediums.end()) {
-                    instance.set_outside(*outside);
-                }
-            }
-            _instances.push_back(instance);
-        });
+        add_shape(group, desc);
     }
 }
 

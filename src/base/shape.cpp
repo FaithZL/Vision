@@ -83,6 +83,10 @@ ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
     _material.name = desc["material"].as_string();
 }
 
+void ShapeGroup::add_instance(const vision::ShapeInstance &instance) noexcept {
+    _instances.push_back(instance);
+}
+
 void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
     string mat_name = desc["material"].as_string();
     if (desc.contains("medium")) {

@@ -148,6 +148,7 @@ public:
     void post_init(const ShapeDesc &desc);
     [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return _instances[i]; }
     [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return _instances[i]; }
+    void add_instance(const ShapeInstance &instance) noexcept;
     void for_each(const std::function<void(const ShapeInstance &, uint)> &func) const noexcept {
         for (uint i = 0; i < _instances.size(); ++i) {
             func(_instances[i], i);

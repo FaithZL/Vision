@@ -295,8 +295,8 @@ public:
         return make_float2(uv2[0], uv2[1]);
     }
 
-    void set_lightmap_uv(float2 uv) noexcept {
-        uv2 = {uv.x, uv.y};
+    void set_lightmap_uv(float2 uv_) noexcept {
+        uv2 = {uv_.x, uv_.y};
     }
 
 #define VS_ATTR_OFFSET(attr)                               \
