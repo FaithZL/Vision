@@ -128,6 +128,11 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
     });
 }
 
+void Scene::clear_shapes() noexcept {
+    _instances.clear();
+    _groups.clear();
+}
+
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
         SP<ShapeGroup> group = load<ShapeGroup>(desc);

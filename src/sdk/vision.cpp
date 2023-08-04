@@ -92,6 +92,7 @@ void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance) {
     SP<ShapeGroup> group = std::make_shared<ShapeGroup>(ShapeDesc{});
     ShapeInstance inst = from_sdk_instance(instance);
     group->add_instance(inst);
+    _pipeline->scene().add_shape(group);
 }
 
 void VisionRendererImpl::build_accel() {

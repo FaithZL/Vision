@@ -50,6 +50,7 @@ void Pipeline::update_geometry() noexcept {
 
 void Pipeline::clear_geometry() noexcept {
     _geometry.clear();
+    _scene.clear_shapes();
 }
 
 void Pipeline::upload_resource_array() noexcept {

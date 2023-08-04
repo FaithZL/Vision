@@ -81,6 +81,7 @@ public:
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);
     void add_shape(const SP<ShapeGroup>& group, ShapeDesc desc = {});
+    void clear_shapes() noexcept;
     void load_mediums(const MediumsDesc &desc);
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
