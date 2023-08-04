@@ -44,16 +44,17 @@ void VisionRendererImpl::compile() {
     auto camera = _pipeline->scene().camera();
     auto film = camera->radiance_film();
     auto sampler = _pipeline->scene().sampler();
-    Buffer<float4>& buffer = film->original_buffer().device_buffer();
+    Buffer<float4> &buffer = film->original_buffer().device_buffer();
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
-        sampler->start_pixel_sample(pixel, frame_index, 0);
+        sampler->start_pixel_sample(pixel, 0, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
 
         RayState rs = camera->generate_ray(ss);
-
-        $if(dispatch_id() == 0) {
+        Uint2 res = dispatch_dim().xy();
+        Uint2 center = res / 2u;
+        $if(all(center == pixel)) {
             Printer::instance().info("{} {} {}, {} {} {}", rs.origin(), rs.direction());
         };
 
@@ -61,11 +62,11 @@ void VisionRendererImpl::compile() {
 
         Var hit = geometry.trace_closest(rs.ray);
         $if(hit->is_miss()) {
-            buffer.write(dispatch_id(), make_float4(0,0,0,1));
+            buffer.write(dispatch_id(), make_float4(0, 0, 0, 1));
             $return();
         };
 
-        buffer.write(dispatch_id(), make_float4(1,1,0,1));
+        buffer.write(dispatch_id(), make_float4(1, 1, 0, 1));
     };
     _shader = _device->compile(kernel);
 }
@@ -78,9 +79,12 @@ void VisionRendererImpl::render() {
     if (!_shader.has_function()) {
         return;
     }
+    _pipeline->upload_data();
     stream << _shader(_frame_index).dispatch(res) << synchronize();
     stream << commit();
-    Printer::instance().retrieve_immediately();
+    Printer::instance().retrieve_immediately([&](const char *str) {
+        int i = 0;
+    });
     ++_frame_index;
 }
 
