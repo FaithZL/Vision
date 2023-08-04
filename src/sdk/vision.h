@@ -64,6 +64,9 @@ public:
     virtual ~VisionRenderer() = default;
     virtual void init_pipeline(const char *rpath) = 0;
     virtual void init_scene() = 0;
+    virtual void compile() = 0;
+    virtual void render() = 0;
+    virtual void invalidation() = 0;
     virtual void clear_geometries() = 0;
     virtual void add_instance(const Instance &instance) = 0;
     virtual void build_accel() = 0;

@@ -15,10 +15,16 @@ class VisionRendererImpl : public VisionRenderer {
 private:
     UP<Device> _device;
     SP<Pipeline> _pipeline{};
+    ocarina::Shader<void(uint)> _shader;
+    uint _frame_index{0u};
+    bool _prepared{false};
 
 public:
     void init_pipeline(const char *rpath) override;
     void init_scene() override;
+    void compile() override;
+    void render() override;
+    void invalidation() override;
     void clear_geometries() override;
     void add_instance(const Instance &instance) override;
     void build_accel() override;
@@ -26,6 +32,42 @@ public:
     void update_resolution(uint32_t width, uint32_t height) override;
     void download_radiance(void *data) override;
 };
+
+void VisionRendererImpl::compile() {
+    if (_shader.has_function()) {
+        return;
+    }
+    if (!_prepared) {
+        return;
+    }
+    auto camera = _pipeline->scene().camera();
+    auto film = camera->radiance_film();
+    auto sampler = _pipeline->scene().sampler();
+    auto& buffer = film->original_buffer();
+    Buffer<float4> &b = buffer.device_buffer();
+    Kernel kernel = [&](Uint frame_index) {
+        b.write(dispatch_id(), make_float4(1,1,0,1));
+//        film->add_sample(dispatch_idx().xy(), make_float4(1, 1, 0, 1), frame_index);
+    };
+    _shader = _device->compile(kernel);
+}
+
+void VisionRendererImpl::render() {
+    Stream &stream = _pipeline->stream();
+    auto camera = _pipeline->scene().camera();
+    auto film = camera->radiance_film();
+    uint2 res = film->resolution();
+    if (!_shader.has_function()) {
+        return;
+    }
+    stream << _shader(_frame_index).dispatch(res) << synchronize();
+    stream << commit();
+    ++_frame_index;
+}
+
+void VisionRendererImpl::invalidation() {
+    _frame_index = 0;
+}
 
 void VisionRendererImpl::init_pipeline(const char *rpath) {
     PipelineDesc desc;
@@ -110,6 +152,7 @@ void VisionRendererImpl::build_accel() {
     auto impl = accel.impl();
     _pipeline->prepare_geometry();
     _pipeline->upload_resource_array();
+    _prepared = true;
     OC_INFO("build accel");
 }
 
