@@ -105,7 +105,11 @@ void VisionRendererImpl::build_accel() {
     OC_INFO("build accel");
 }
 
-void VisionRendererImpl::update_camera(vision::sdk::Camera camera) {
+void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
+    float4x4 o2w = from_array(c.c2w.m);
+    auto camera = _pipeline->scene().camera();
+    camera->update_mat(o2w);
+    OC_INFO("update_camera");
 }
 
 void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
