@@ -6,7 +6,7 @@
 #include "rhi/dynamic_module.h"
 #include "pipeline.h"
 #include "base/scattering/interaction.h"
-#include "mesh_pool.h"
+#include "mesh_registry.h"
 
 namespace vision {
 
@@ -35,7 +35,7 @@ void Scene::init(const SceneDesc &scene_desc) {
 void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
     tidy_up_materials();
-    MeshPool::instance().tidy_up();
+    MeshRegistry::instance().tidy_up();
     tidy_up_mediums();
 }
 

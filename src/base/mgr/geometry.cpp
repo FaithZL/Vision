@@ -7,7 +7,7 @@
 #include "scene.h"
 #include "base/scattering/medium.h"
 #include "pipeline.h"
-#include "mesh_pool.h"
+#include "mesh_registry.h"
 
 namespace vision {
 
@@ -24,7 +24,7 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
     _instances.host_buffer().clear();
     _mesh_handles.host_buffer().clear();
 
-    MeshPool::instance().for_each([&](const Mesh *mesh, uint i) {
+    MeshRegistry::instance().for_each([&](const Mesh *mesh, uint i) {
         Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host_buffer().size(),
                                  .triangle_offset = (uint)_triangles.host_buffer().size()};
         _vertices.append(mesh->vertices);

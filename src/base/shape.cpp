@@ -7,7 +7,7 @@
 #include <utility>
 #include "base/mgr/scene.h"
 #include "base/mgr/geometry.h"
-#include "base/mgr/mesh_pool.h"
+#include "base/mgr/mesh_registry.h"
 
 namespace vision {
 
@@ -15,7 +15,7 @@ ShapeInstance::ShapeInstance(SP<vision::Mesh> mesh)
     : _mesh(ocarina::move(mesh)) {}
 
 ShapeInstance::ShapeInstance(vision::Mesh mesh)
-    : _mesh(MeshPool::instance().register_(ocarina::move(mesh))) {}
+    : _mesh(MeshRegistry::instance().register_(ocarina::move(mesh))) {}
 
 void ShapeInstance::fill_mesh_id() noexcept {
     _handle.mesh_id = _mesh->index();

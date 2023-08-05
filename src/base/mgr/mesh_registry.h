@@ -9,21 +9,21 @@
 
 namespace vision {
 
-class MeshPool {
+class MeshRegistry {
 private:
     std::map<uint64_t, SP<Mesh>> _mesh_map;
     vector<Mesh *> _meshes;
 
 private:
-    static MeshPool *s_mesh_pool;
-    MeshPool() = default;
-    MeshPool(const MeshPool &) = delete;
-    MeshPool(MeshPool &&) = delete;
-    MeshPool operator=(const MeshPool &) = delete;
-    MeshPool operator=(MeshPool &&) = delete;
+    static MeshRegistry *s_mesh_registry;
+    MeshRegistry() = default;
+    MeshRegistry(const MeshRegistry &) = delete;
+    MeshRegistry(MeshRegistry &&) = delete;
+    MeshRegistry operator=(const MeshRegistry &) = delete;
+    MeshRegistry operator=(MeshRegistry &&) = delete;
 
 public:
-    static MeshPool &instance();
+    static MeshRegistry &instance();
     static void destroy_instance();
     [[nodiscard]] SP<const Mesh> get_mesh(uint64_t hash) const noexcept;
     [[nodiscard]] SP<Mesh> get_mesh(uint64_t hash) noexcept;

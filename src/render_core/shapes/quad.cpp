@@ -4,7 +4,7 @@
 
 #include "base/shape.h"
 #include "math/transform.h"
-#include "base/mgr/mesh_pool.h"
+#include "base/mgr/mesh_registry.h"
 
 namespace vision {
 
