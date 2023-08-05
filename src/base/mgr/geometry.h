@@ -13,6 +13,7 @@ namespace vision {
 using namespace ocarina;
 class Scene;
 class Pipeline;
+class ShapeInstance;
 struct Geometry {
 private:
     RegistrableManaged<Vertex> _vertices;

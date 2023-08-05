@@ -21,6 +21,10 @@ void ShapeInstance::fill_geometry(vision::Geometry &data) const noexcept {
     data.accept(_mesh->vertices, _mesh->triangles, _handle);
 }
 
+void ShapeInstance::fill_mesh_id() noexcept {
+    _handle.mesh_id = _mesh->index();
+}
+
 vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : _mesh->triangles) {

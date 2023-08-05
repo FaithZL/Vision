@@ -150,6 +150,7 @@ void Scene::fill_instances() {
             const Light *emission = instance.emission();
             instance.update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
         }
+        instance.fill_mesh_id();
         if (has_medium()) {
             if (instance.has_inside()) {
                 instance.update_inside_medium_id(instance.inside()->index());
