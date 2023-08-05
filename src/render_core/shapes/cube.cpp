@@ -65,7 +65,7 @@ public:
         for (int i = 0; i < P.size(); ++i) {
             mesh->vertices.emplace_back(P[i], N[i], UVs[i]);
         }
-        _instances.emplace_back(mesh);
+        add_instance(ShapeInstance(mesh));
     }
 };
 

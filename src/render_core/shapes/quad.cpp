@@ -4,6 +4,7 @@
 
 #include "base/shape.h"
 #include "math/transform.h"
+#include "base/mgr/mesh_pool.h"
 
 namespace vision {
 
@@ -35,8 +36,7 @@ public:
             mesh->vertices.emplace_back(P[i], N[i], UV[i]);
         }
         mesh->triangles = {Triangle{0, 1, 2}, Triangle{2, 1, 3}};
-
-        _instances.emplace_back(mesh);
+        add_instance(ShapeInstance(mesh));
     }
 };
 

@@ -83,7 +83,7 @@ public:
             mesh->triangles.push_back(tri);
         }
 
-        _instances.emplace_back(mesh);
+        add_instance(ShapeInstance(mesh));
     }
 };
 
