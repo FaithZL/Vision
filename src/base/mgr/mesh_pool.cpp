@@ -28,18 +28,21 @@ bool MeshPool::contain(const SP<const vision::Mesh> &mesh) noexcept {
     return contain(mesh.get());
 }
 
-bool MeshPool::add_mesh(SP<vision::Mesh> mesh) noexcept {
+SP<Mesh> MeshPool::register_(SP<vision::Mesh> mesh) noexcept {
     uint64_t hash = mesh->hash();
-    return add_mesh(hash, ocarina::move(mesh));
+    if (!contain(hash)) {
+        _mesh_map.insert(make_pair(hash, mesh));
+        _meshes.push_back(mesh.get());
+    }
+    return mesh;
 }
 
-bool MeshPool::add_mesh(uint64_t hash, SP<vision::Mesh> mesh) noexcept {
-    if (contain(hash)) {
-        return false;
+SP<Mesh> MeshPool::register_(vision::Mesh mesh) noexcept {
+    uint64_t hash = mesh.hash();
+    if (!contain(hash)) {
+        return register_(make_shared<Mesh>(ocarina::move(mesh)));
     }
-    _meshes.push_back(mesh.get());
-    _mesh_map.insert(make_pair(hash, ocarina::move(mesh)));
-    return true;
+    return get_mesh(hash);
 }
 
 bool MeshPool::remove(SP<vision::Mesh> mesh) noexcept {

@@ -3,10 +3,19 @@
 //
 
 #include "shape.h"
+
+#include <utility>
 #include "base/mgr/scene.h"
 #include "base/mgr/geometry.h"
+#include "base/mgr/mesh_pool.h"
 
 namespace vision {
+
+ShapeInstance::ShapeInstance(SP<vision::Mesh> mesh)
+    : _mesh(ocarina::move(mesh)) {}
+
+ShapeInstance::ShapeInstance(vision::Mesh mesh)
+    : _mesh(MeshPool::instance().register_(ocarina::move(mesh))) {}
 
 void ShapeInstance::fill_geometry(vision::Geometry &data) const noexcept {
     data.accept(_mesh->vertices, _mesh->triangles, _handle);
@@ -88,7 +97,7 @@ void ShapeGroup::add_instance(const vision::ShapeInstance &instance) noexcept {
 }
 
 void ShapeGroup::add_instances(const vector<vision::ShapeInstance> &instances) noexcept {
-    for (const auto&instance : instances) {
+    for (const auto &instance : instances) {
         add_instance(instance);
     }
 }

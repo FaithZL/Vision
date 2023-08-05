@@ -30,8 +30,8 @@ public:
     [[nodiscard]] bool contain(const SP<const Mesh> &mesh) noexcept;
     [[nodiscard]] bool contain(const Mesh *mesh) noexcept;
     [[nodiscard]] bool contain(uint64_t hash) noexcept;
-    bool add_mesh(uint64_t hash, SP<Mesh> mesh) noexcept;
-    bool add_mesh(SP<Mesh> mesh) noexcept;
+    [[nodiscard]] SP<Mesh> register_(Mesh mesh) noexcept;
+    [[nodiscard]] SP<Mesh> register_(SP<Mesh> mesh) noexcept;
     void for_each(const std::function<void(Mesh *, uint)> &func) noexcept;
     void for_each(const std::function<void(const Mesh *, uint)> &func) const noexcept;
     void tidy_up() noexcept;

@@ -105,7 +105,8 @@ protected:
     SP<Mesh> _mesh{};
 
 public:
-    explicit ShapeInstance(SP<Mesh> mesh) : _mesh(mesh) {}
+    explicit ShapeInstance(SP<Mesh> mesh);
+    explicit ShapeInstance(Mesh mesh);
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
