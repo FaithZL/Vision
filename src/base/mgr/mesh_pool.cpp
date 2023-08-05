@@ -15,14 +15,31 @@ MeshPool &MeshPool::instance() {
     return *s_mesh_pool;
 }
 
-void MeshPool::add_mesh(SP<vision::Mesh> mesh) noexcept {
-    uint64_t hash = mesh->hash();
-    add_mesh(hash, ocarina::move(mesh));
+bool MeshPool::contain(uint64_t hash) noexcept {
+    auto iter = _mesh_map.find(hash);
+    return iter != _mesh_map.cend();
 }
 
-void MeshPool::add_mesh(uint64_t hash, SP<vision::Mesh> mesh) noexcept {
+bool MeshPool::contain(const vision::Mesh *mesh) noexcept {
+    return contain(mesh->hash());
+}
+
+bool MeshPool::contain(const SP<const vision::Mesh> &mesh) noexcept {
+    return contain(mesh.get());
+}
+
+bool MeshPool::add_mesh(SP<vision::Mesh> mesh) noexcept {
+    uint64_t hash = mesh->hash();
+    return add_mesh(hash, ocarina::move(mesh));
+}
+
+bool MeshPool::add_mesh(uint64_t hash, SP<vision::Mesh> mesh) noexcept {
+    if (contain(hash)) {
+        return false;
+    }
     _meshes.push_back(mesh.get());
     _mesh_map.insert(make_pair(hash, ocarina::move(mesh)));
+    return true;
 }
 
 bool MeshPool::remove(SP<vision::Mesh> mesh) noexcept {
