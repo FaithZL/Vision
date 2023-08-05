@@ -196,7 +196,7 @@ void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
     float4x4 o2w = from_array(c.c2w.m);
     auto camera = _pipeline->scene().camera();
     camera->set_mat(o2w);
-    camera->set_fov_y(c.fov_y);
+    camera->set_fov_y(45);
     OC_INFO("update_camera");
 }
 
