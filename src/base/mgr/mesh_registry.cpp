@@ -9,10 +9,10 @@ namespace vision {
 MeshRegistry *MeshRegistry::s_mesh_registry = nullptr;
 
 MeshRegistry &MeshRegistry::instance() {
-    if (s_mesh_pool == nullptr) {
-        s_mesh_pool = new MeshRegistry();
+    if (s_mesh_registry == nullptr) {
+        s_mesh_registry = new MeshRegistry();
     }
-    return *s_mesh_pool;
+    return *s_mesh_registry;
 }
 
 bool MeshRegistry::contain(uint64_t hash) noexcept {
