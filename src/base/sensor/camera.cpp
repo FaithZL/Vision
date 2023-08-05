@@ -41,6 +41,11 @@ void Camera::update_mat(float4x4 m) noexcept {
     _c2w = camera_to_world();
 }
 
+void Camera::set_mat(ocarina::float4x4 m) noexcept {
+    _c2w = m;
+    _position = make_float3(m[3]);
+}
+
 void Camera::update_device_data() noexcept {
     _c2w = camera_to_world();
     Sensor::update_data();

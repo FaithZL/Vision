@@ -37,6 +37,7 @@ public:
     OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
+    void set_mat(float4x4 m) noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
 
     OC_MAKE_MEMBER_GETTER(sensitivity, )

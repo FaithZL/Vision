@@ -40,6 +40,8 @@ void VisionRendererImpl::compile() {
     if (!_prepared) {
         return;
     }
+    _pipeline->scene().prepare();
+    _pipeline->upload_resource_array();
     auto &geometry = _pipeline->geometry();
     auto camera = _pipeline->scene().camera();
     auto film = camera->radiance_film();
@@ -68,8 +70,8 @@ void VisionRendererImpl::compile() {
 
         L = (it.ng + 1.f) / 2.f;
 
-        $if(all(center == pixel)) {
-            Printer::instance().info_with_location("inst {}, prim {}", hit.inst_id, hit.prim_id);
+        $if(all(0u == pixel)) {
+            Printer::instance().info_with_location("inst {}, prim {}, pos {} {} {}", hit.inst_id, hit.prim_id, it.pos);
         };
 
         buffer.write(dispatch_id(), make_float4(L, 1.f));
@@ -85,10 +87,15 @@ void VisionRendererImpl::render() {
     if (!_shader.has_function()) {
         return;
     }
+
+    float3 up = camera->up();
+    float3 right = camera->right();
+    float3 forward = camera->forward();
+
     _pipeline->upload_data();
     stream << _shader(_frame_index).dispatch(res) << synchronize();
     stream << commit();
-    Printer::instance().retrieve_immediately([&](const char *str) {
+    Printer::instance().retrieve_immediately([&](int ,const char *str) {
         int i = 0;
     });
     ++_frame_index;
@@ -188,7 +195,7 @@ void VisionRendererImpl::build_accel() {
 void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
     float4x4 o2w = from_array(c.c2w.m);
     auto camera = _pipeline->scene().camera();
-    camera->update_mat(o2w);
+    camera->set_mat(o2w);
     camera->set_fov_y(c.fov_y);
     OC_INFO("update_camera");
 }
