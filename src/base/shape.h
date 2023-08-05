@@ -48,6 +48,7 @@ public:
 
 protected:
     uint _index{};
+    bool _normalized{false};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
@@ -57,6 +58,7 @@ public:
         : vertices(std::move(vert)), triangles(std::move(tri)) {}
     Mesh() = default;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    void normalize_lightmap_uv(uint2 res) noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
     [[nodiscard]] vector<float> surface_areas() const noexcept;

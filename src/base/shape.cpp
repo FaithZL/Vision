@@ -56,6 +56,16 @@ uint64_t Mesh::_compute_hash() const noexcept {
     return ret;
 }
 
+void Mesh::normalize_lightmap_uv(uint2 res) noexcept {
+    if (_normalized) {
+        return;
+    }
+    for (Vertex &vertex : vertices) {
+        vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(res));
+    }
+    _normalized = true;
+}
+
 Box3f Mesh::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : triangles) {

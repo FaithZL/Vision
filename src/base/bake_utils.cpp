@@ -115,9 +115,7 @@ void BakedShape::setup_vertices(UnwrapperResult result) {
 }
 
 void BakedShape::normalize_lightmap_uv() {
-    for (auto &vert : _shape->mesh()->vertices) {
-        vert.set_lightmap_uv(vert.lightmap_uv() / make_float2(resolution()));
-    }
+    _shape->mesh()->normalize_lightmap_uv(resolution());
 }
 
 uint64_t BakedShape::instance_hash() const noexcept {
