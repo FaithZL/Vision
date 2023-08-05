@@ -112,7 +112,6 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
-    void fill_geometry(vision::Geometry &data) const noexcept;
     void fill_mesh_id() noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     void init_aabb() noexcept { aabb = compute_aabb(); }

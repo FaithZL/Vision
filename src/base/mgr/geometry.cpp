@@ -18,16 +18,6 @@ Geometry::Geometry(Pipeline *rp)
       _mesh_handles(rp->resource_array()),
       accel(rp->device().create_accel()) {}
 
-void Geometry::accept(const vector<Vertex> &vert, const vector<Triangle> &tri, InstanceHandle inst) {
-    Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host_buffer().size(),
-                             .triangle_offset = (uint)_triangles.host_buffer().size()};
-    _vertices.append(vert);
-    _triangles.append(tri);
-    inst.mesh_id = (uint)_mesh_handles.host_buffer().size();
-    _instances.push_back(inst);
-    _mesh_handles.push_back(mesh_handle);
-}
-
 void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {
     _vertices.host_buffer().clear();
     _triangles.host_buffer().clear();
