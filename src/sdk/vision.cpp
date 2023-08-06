@@ -161,11 +161,11 @@ ShapeInstance from_sdk_instance(const sdk::Instance &inst) {
 
     SP<Mesh> mesh = std::make_shared<Mesh>();
     for (int i = 0; i < inst.vert_num; ++i) {
-        mesh->vertices.push_back(from_sdk_vertex(inst.vertices.get()[i]));
+        mesh->vertices().push_back(from_sdk_vertex(inst.vertices.get()[i]));
     }
 
     for (int i = 0; i < inst.tri_num; ++i) {
-        mesh->triangles.push_back(from_triple(inst.triangles.get()[i]));
+        mesh->triangles().push_back(from_triple(inst.triangles.get()[i]));
     }
 
     ShapeInstance ret{mesh};
