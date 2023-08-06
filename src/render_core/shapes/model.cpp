@@ -9,6 +9,14 @@
 namespace vision {
 
 class Model : public ShapeGroup {
+private:
+    // todo model cache
+    struct CacheData {
+        vector<std::pair<uint64_t, uint>> meshes;
+        vector<uint64_t> materials;
+        uint64_t custom_mat;
+    };
+
 public:
     explicit Model(const ShapeDesc &desc)
         : ShapeGroup(desc) {
