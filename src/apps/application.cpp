@@ -29,15 +29,8 @@ void App::init(int argc) {
 }
 
 void App::init_pipeline() {
-    PipelineDesc pipeline_desc;
-    pipeline_desc.device = &device;
-    pipeline_desc.init(DataWrap::object());
-    pipeline_desc.sub_type = cli_parser->pipeline();
-
-    rp = Global::node_mgr().load<Pipeline>(pipeline_desc);
-    Global::instance().set_pipeline(rp.get());
-    Importer::import_scene(params.scene_file, &(pipeline().scene()));
-    pipeline().init_postprocessor(denoiser_desc);
+    Global::instance().set_device(&device);
+    rp = Importer::import_scene(params.scene_file);
     _view_buffer.resize(pipeline().pixel_num());
 }
 

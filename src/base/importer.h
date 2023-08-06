@@ -17,7 +17,8 @@ public:
 public:
     explicit Importer(const ImporterDesc &desc) : Node(desc) {}
     static SP<Importer> create(const string &ext_name);
-    static void import_scene(const fs::path &fn, Scene *scene);
+    static SP<Pipeline> import_scene(const fs::path &fn);
+    [[nodiscard]] virtual SP<Pipeline> create_pipeline(const fs::path &fn) = 0;
     virtual void read_file(const fs::path &fn, Scene *scene) = 0;
 };
 

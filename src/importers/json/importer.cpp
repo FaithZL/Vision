@@ -4,6 +4,7 @@
 
 #include "base/importer.h"
 #include "descriptions/json_util.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -12,6 +13,15 @@ private:
 public:
     explicit JsonImporter(const ImporterDesc &desc)
         : Importer(desc) {}
+
+    [[nodiscard]] SP<Pipeline> create_pipeline(const fs::path &fn) override {
+        auto scene_desc = SceneDesc::from_json(fn);
+        SP<Pipeline> ret = Global::node_mgr().load<Pipeline>(scene_desc.pipeline_desc);
+        Global::instance().set_pipeline(ret.get());
+        ret->init_scene(scene_desc);
+        ret->init_postprocessor(scene_desc.denoiser_desc);
+        return ret;
+    }
 
     void read_file(const fs::path &fn, Scene *scene) override {
         auto scene_desc = SceneDesc::from_json(fn);

@@ -11,6 +11,10 @@ public:
     explicit AssimpImporter(const ImporterDesc &desc)
         : Importer(desc) {}
 
+    [[nodiscard]] SP<Pipeline> create_pipeline(const fs::path &fn) override {
+        return nullptr;
+    }
+
     void read_file(const fs::path &fn, Scene *scene) override {
 
     }
