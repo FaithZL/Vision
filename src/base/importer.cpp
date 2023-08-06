@@ -22,7 +22,7 @@ SP<Importer> Importer::create(const std::string &ext_name) {
 
 SP<Pipeline> Importer::import_scene(const fs::path &fn) {
     auto importer = Importer::create(fn.extension().string());
-    return importer->create_pipeline(fn);
+    return importer->read_file(fn);
 }
 
 }// namespace vision
