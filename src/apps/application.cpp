@@ -6,6 +6,7 @@
 #include "core/basic_types.h"
 #include "ext/imgui/imgui.h"
 #include "base/mgr/global.h"
+#include "base/importer.h"
 
 namespace vision {
 using namespace ocarina;
@@ -29,14 +30,25 @@ void App::init(int argc) {
 
 void App::init_pipeline(const SceneDesc &desc) {
     desc.pipeline_desc.device = &device;
+
+//    PipelineDesc pipeline_desc;
+//    pipeline_desc.device = &device;
+//    pipeline_desc.init(DataWrap::object());
+
     rp = Global::node_mgr().load<Pipeline>(desc.pipeline_desc);
     Global::instance().set_pipeline(rp.get());
+//    Scene scene = Importer::import_scene(params.scene_file);
+//    pipeline().set_scene(ocarina::move(scene));
     pipeline().init_scene(desc);
     _view_buffer.resize(pipeline().pixel_num());
 }
 
 void App::prepare() {
     scene_desc = SceneDesc::from_json(params.scene_file);
+
+//    auto scene = Importer::import_scene(params.scene_file);
+//    pipeline().set_scene(ocarina::move(scene));
+
     init_pipeline(scene_desc);
     pipeline().prepare();
     window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
@@ -153,14 +165,14 @@ void App::update(double dt) noexcept {
 }
 
 void App::check_and_save() noexcept {
-    OutputDesc desc = scene_desc.output_desc;
+    OutputDesc desc = output_desc;
     if (pipeline().frame_index() == desc.spp || need_save) {
         save_result();
     }
 }
 
 void App::save_result() noexcept {
-    OutputDesc desc = scene_desc.output_desc;
+    OutputDesc desc = output_desc;
     ImageIO::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
                         pipeline().resolution(), pipeline().final_picture(desc.denoise));
     if (desc.save_exit) {

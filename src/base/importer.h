@@ -17,6 +17,7 @@ public:
 public:
     explicit Importer(const ImporterDesc &desc) : Node(desc) {}
     static SP<Importer> create(const string &ext_name);
+    static Scene import_scene(const fs::path &fn);
     [[nodiscard]] virtual Scene read_file(const fs::path &fn) = 0;
 };
 

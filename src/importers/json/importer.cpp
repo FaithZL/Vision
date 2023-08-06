@@ -3,6 +3,7 @@
 //
 
 #include "base/importer.h"
+#include "descriptions/json_util.h"
 
 namespace vision {
 

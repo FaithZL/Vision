@@ -47,6 +47,7 @@ public:
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
     SceneDesc scene_desc;
+    OutputDesc output_desc;
     SP<Pipeline> rp{};
     vector<float4> _view_buffer;
     float2 last_cursor_pos = make_float2(0);

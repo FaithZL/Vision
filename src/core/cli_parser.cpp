@@ -20,6 +20,8 @@ void CLIParser::init(int argc, char **argv) {
         "Renderer",
         {{"d, device", "Select compute device: cuda",
           cxxopts::value<std::string>()->default_value("cuda")},
+         {"p, pipeline", "Select render pipeline: offline",
+          cxxopts::value<std::string>()->default_value("offline")},
          {"r, runtime-dir", "Specify runtime directory",
           cxxopts::value<fs::path>()->default_value(
               fs::canonical(argv[0]).parent_path().parent_path().string())},
@@ -80,6 +82,10 @@ bool CLIParser::clear_cache() const noexcept {
 
 string CLIParser::backend() const noexcept {
     return _parse_result()["device"].as<std::string>();
+}
+
+string CLIParser::pipeline() const noexcept {
+    return _parse_result()["pipeline"].as<string>();
 }
 
 string CLIParser::cli_positional_option() const {
