@@ -17,8 +17,8 @@ public:
 public:
     explicit Importer(const ImporterDesc &desc) : Node(desc) {}
     static SP<Importer> create(const string &ext_name);
-    static Scene import_scene(const fs::path &fn);
-    [[nodiscard]] virtual Scene read_file(const fs::path &fn) = 0;
+    static void import_scene(const fs::path &fn, Scene *scene);
+    virtual void read_file(const fs::path &fn, Scene *scene) = 0;
 };
 
 }// namespace vision

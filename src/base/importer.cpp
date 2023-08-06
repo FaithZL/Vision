@@ -20,9 +20,9 @@ SP<Importer> Importer::create(const std::string &ext_name) {
     return Global::node_mgr().load<Importer>(desc);
 }
 
-Scene Importer::import_scene(const fs::path &fn) {
+void Importer::import_scene(const fs::path &fn, Scene *scene) {
     auto importer = Importer::create(fn.extension().string());
-    return importer->read_file(fn);
+    importer->read_file(fn, scene);
 }
 
 }// namespace vision

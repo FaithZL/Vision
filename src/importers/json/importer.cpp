@@ -13,8 +13,9 @@ public:
     explicit JsonImporter(const ImporterDesc &desc)
         : Importer(desc) {}
 
-    [[nodiscard]] Scene read_file(const fs::path &fn) override {
-        return {};
+    void read_file(const fs::path &fn, Scene *scene) override {
+        auto scene_desc = SceneDesc::from_json(fn);
+        scene->init(scene_desc);
     }
 };
 

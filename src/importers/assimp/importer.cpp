@@ -11,8 +11,8 @@ public:
     explicit AssimpImporter(const ImporterDesc &desc)
         : Importer(desc) {}
 
-    [[nodiscard]] Scene read_file(const fs::path &fn) override {
-        return {};
+    void read_file(const fs::path &fn, Scene *scene) override {
+
     }
 };
 

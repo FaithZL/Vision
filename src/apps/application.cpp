@@ -31,20 +31,20 @@ void App::init(int argc) {
 void App::init_pipeline(const SceneDesc &desc) {
     desc.pipeline_desc.device = &device;
 
-//    PipelineDesc pipeline_desc;
-//    pipeline_desc.device = &device;
-//    pipeline_desc.init(DataWrap::object());
+    PipelineDesc pipeline_desc;
+    pipeline_desc.device = &device;
+    pipeline_desc.init(DataWrap::object());
 
-    rp = Global::node_mgr().load<Pipeline>(desc.pipeline_desc);
+    rp = Global::node_mgr().load<Pipeline>(pipeline_desc);
     Global::instance().set_pipeline(rp.get());
-//    Scene scene = Importer::import_scene(params.scene_file);
+    Importer::import_scene(params.scene_file, &(pipeline().scene()));
 //    pipeline().set_scene(ocarina::move(scene));
-    pipeline().init_scene(desc);
+//    pipeline().init_postprocessor(desc);
     _view_buffer.resize(pipeline().pixel_num());
 }
 
 void App::prepare() {
-    scene_desc = SceneDesc::from_json(params.scene_file);
+//    scene_desc = SceneDesc::from_json(params.scene_file);
 
 //    auto scene = Importer::import_scene(params.scene_file);
 //    pipeline().set_scene(ocarina::move(scene));
