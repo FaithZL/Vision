@@ -15,6 +15,7 @@
 #include "base/scattering/medium.h"
 #include "base/warper.h"
 #include "base/color/spectrum.h"
+#include "material_registry.h"
 
 namespace vision {
 
@@ -33,7 +34,6 @@ private:
     SP<LightSampler> _light_sampler{nullptr};
     vector<SP<ShapeGroup>> _groups;
     vector<ShapeInstance> _instances;
-    Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
@@ -48,6 +48,8 @@ public:
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
+    [[nodiscard]] auto &material_registry() const noexcept { return MaterialRegistry::instance(); }
+    [[nodiscard]] auto &material_registry() noexcept { return MaterialRegistry::instance(); }
     MAKE_GETTER(integrator)
     MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)
@@ -58,8 +60,8 @@ public:
     OC_MAKE_MEMBER_GETTER(instances, &)
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
-    [[nodiscard]] const auto &materials() const noexcept { return _materials; }
-    [[nodiscard]] auto &materials() noexcept { return _materials; }
+    [[nodiscard]] const auto &materials() const noexcept { return material_registry().materials(); }
+    [[nodiscard]] auto &materials() noexcept { return material_registry().materials(); }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
     void tidy_up() noexcept;
     void tidy_up_materials() noexcept;
@@ -80,12 +82,11 @@ public:
     }
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);
-    void add_shape(const SP<ShapeGroup>& group, ShapeDesc desc = {});
+    void add_shape(const SP<ShapeGroup> &group, ShapeDesc desc = {});
     void clear_shapes() noexcept;
     void load_mediums(const MediumsDesc &desc);
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
-    void remove_unused_materials();
     template<typename T = Light>
     SP<T> load_light(const LightDesc &desc) {
         OC_ASSERT(_light_sampler != nullptr);

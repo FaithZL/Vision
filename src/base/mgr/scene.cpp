@@ -16,8 +16,8 @@ void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
     _warper_desc = scene_desc.warper_desc;
     _render_setting = scene_desc.render_setting;
-    _materials.set_mode(_render_setting.polymorphic_mode);
-    OC_INFO_FORMAT("polymorphic mode is {}", _materials.mode());
+    materials().set_mode(_render_setting.polymorphic_mode);
+    OC_INFO_FORMAT("polymorphic mode is {}", materials().mode());
     _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
     _light_sampler->set_mode(_render_setting.polymorphic_mode);
     _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
@@ -25,7 +25,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_mediums(scene_desc.mediums_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
-    remove_unused_materials();
+    material_registry().remove_unused_materials();
     tidy_up();
     fill_instances();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
@@ -34,13 +34,13 @@ void Scene::init(const SceneDesc &scene_desc) {
 
 void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
-    tidy_up_materials();
+    material_registry().tidy_up();
     MeshRegistry::instance().tidy_up();
     tidy_up_mediums();
 }
 
 void Scene::tidy_up_materials() noexcept {
-    _materials.for_each_instance([&](SP<Material> material, uint i) {
+    materials().for_each_instance([&](SP<Material> material, uint i) {
         material->set_index(i);
     });
 }
@@ -60,7 +60,7 @@ SP<Material> Scene::obtain_black_body() noexcept {
         MaterialDesc md;
         md.sub_type = "black_body";
         _black_body = load<Material>(md);
-        _materials.push_back(_black_body);
+        materials().push_back(_black_body);
     }
     return _black_body;
 }
@@ -85,22 +85,22 @@ void Scene::prepare_lights() noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        _materials.push_back(load<Material>(desc));
+        materials().push_back(load<Material>(desc));
     }
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
-                   _materials.type_num(),
-                   _materials.all_instance_num());
+                   materials().type_num(),
+                   materials().all_instance_num());
 }
 
 void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
     _groups.push_back(group);
     _aabb.extend(group->aabb);
     group->for_each([&](ShapeInstance &instance, uint i) {
-        auto iter = std::find_if(_materials.begin(), _materials.end(), [&](SP<Material> &material) {
+        auto iter = materials().find_if([&](SP<Material> &material) {
             return material->name() == instance.material_name();
         });
 
-        if (iter != _materials.end() && !instance.has_material()) {
+        if (iter != materials().end() && !instance.has_material()) {
             instance.set_material(*iter);
         }
 
@@ -111,13 +111,13 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
             light->set_instance(&instance);
         }
         if (has_medium()) {
-            auto inside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+            auto inside = _mediums.find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance.inside_name();
             });
             if (inside != _mediums.end()) {
                 instance.set_inside(*inside);
             }
-            auto outside = std::find_if(_mediums.begin(), _mediums.end(), [&](SP<Medium> &medium) {
+            auto outside = _mediums.find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance.outside_name();
             });
             if (outside != _mediums.end()) {
@@ -144,7 +144,7 @@ void Scene::fill_instances() {
     for (ShapeInstance &instance : _instances) {
         if (instance.has_material()) {
             const Material *material = instance.material();
-            instance.update_material_id(_materials.encode_id(material->index(), material));
+            instance.update_material_id(materials().encode_id(material->index(), material));
         }
         if (instance.has_emission()) {
             const Light *emission = instance.emission();
@@ -160,17 +160,6 @@ void Scene::fill_instances() {
             }
         }
     }
-}
-
-void Scene::remove_unused_materials() {
-    for (auto iter = _materials.begin(); iter != _materials.end();) {
-        if (iter->use_count() == 1) {
-            iter = _materials.erase(iter);
-        } else {
-            ++iter;
-        }
-    }
-    tidy_up_materials();
 }
 
 void Scene::load_mediums(const MediumsDesc &md) {
@@ -190,11 +179,11 @@ void Scene::load_mediums(const MediumsDesc &md) {
 }
 
 void Scene::prepare_materials() {
-    _materials.for_each_instance([&](const SP<Material> &material) noexcept {
+    materials().for_each_instance([&](const SP<Material> &material) noexcept {
         material->prepare();
     });
     auto rp = pipeline();
-    _materials.prepare(rp->resource_array(), rp->device());
+    materials().prepare(rp->resource_array(), rp->device());
 }
 
 void Scene::upload_data() noexcept {
