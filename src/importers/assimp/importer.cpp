@@ -3,10 +3,14 @@
 //
 
 #include "base/importer.h"
+#include "importers/assimp_parser.h"
 
 namespace vision {
 
 class AssimpImporter : public Importer {
+private:
+
+
 public:
     explicit AssimpImporter(const ImporterDesc &desc)
         : Importer(desc) {}
