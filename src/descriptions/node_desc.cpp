@@ -63,11 +63,6 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     set_parameter(ps["param"]);
     ParameterSet param = _parameter;
     o2w.init(_parameter.data().value("transform", DataWrap::object()));
-//    if (_parameter.contains("medium")) {
-//        ParameterSet m(_parameter["medium"]);
-//        inside_medium.name = m["inside"].as_string();
-//        outside_medium.name = m["outside"].as_string();
-//    }
     if (_parameter.contains("emission")) {
         emission.init(_parameter["emission"]);
     }
@@ -304,7 +299,7 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
     }
     spp = ps["spp"].as_uint(0u);
     save_exit = ps["save_exit"].as_uint(0u);
-    fn = ps["fn"].as_string();
+    fn = ps["fn"].as_string("output.png");
     denoise = ps["denoise"].as_bool(true);
 }
 

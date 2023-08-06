@@ -28,28 +28,21 @@ void App::init(int argc) {
     prepare();
 }
 
-void App::init_pipeline(const SceneDesc &desc) {
-    desc.pipeline_desc.device = &device;
-
+void App::init_pipeline() {
     PipelineDesc pipeline_desc;
     pipeline_desc.device = &device;
     pipeline_desc.init(DataWrap::object());
+    pipeline_desc.sub_type = cli_parser->pipeline();
 
     rp = Global::node_mgr().load<Pipeline>(pipeline_desc);
     Global::instance().set_pipeline(rp.get());
     Importer::import_scene(params.scene_file, &(pipeline().scene()));
-//    pipeline().set_scene(ocarina::move(scene));
-//    pipeline().init_postprocessor(desc);
+    pipeline().init_postprocessor(denoiser_desc);
     _view_buffer.resize(pipeline().pixel_num());
 }
 
 void App::prepare() {
-//    scene_desc = SceneDesc::from_json(params.scene_file);
-
-//    auto scene = Importer::import_scene(params.scene_file);
-//    pipeline().set_scene(ocarina::move(scene));
-
-    init_pipeline(scene_desc);
+    init_pipeline();
     pipeline().prepare();
     window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
     register_event();

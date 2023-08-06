@@ -46,7 +46,7 @@ public:
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;
-    virtual void init_postprocessor(const SceneDesc &scene_desc) = 0;
+    virtual void init_postprocessor(const DenoiserDesc &desc) = 0;
     [[nodiscard]] virtual const Buffer<float4> &view_buffer();
     virtual void preprocess() noexcept {}
     virtual void change_resolution(uint2 res) noexcept;

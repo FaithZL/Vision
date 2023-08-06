@@ -15,11 +15,11 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
 
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
-    init_postprocessor(scene_desc);
+    init_postprocessor(scene_desc.denoiser_desc);
 }
 
-void BakePipeline::init_postprocessor(const vision::SceneDesc &scene_desc) {
-    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
+    _postprocessor.set_denoiser(_scene.load<Denoiser>(desc));
 }
 
 void BakePipeline::prepare() noexcept {

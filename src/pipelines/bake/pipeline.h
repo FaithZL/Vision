@@ -35,7 +35,7 @@ public:
     }
     void compile() noexcept override;
     void compile_displayer() noexcept;
-    void init_postprocessor(const vision::SceneDesc &scene_desc) override;
+    void init_postprocessor(const DenoiserDesc &desc) override;
     void init_scene(const vision::SceneDesc &scene_desc) override;
     void prepare() noexcept override;
     void display(double dt) noexcept override;
