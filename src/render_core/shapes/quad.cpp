@@ -33,9 +33,9 @@ public:
                           make_float2(0, 1),
                           make_float2(0, 0)};
         for (int i = 0; i < P.size(); ++i) {
-            mesh.vertices.emplace_back(P[i], N[i], UV[i]);
+            mesh.vertices().emplace_back(P[i], N[i], UV[i]);
         }
-        mesh.triangles = {Triangle{0, 1, 2}, Triangle{2, 1, 3}};
+        mesh.set_triangles({Triangle{0, 1, 2}, Triangle{2, 1, 3}});
         add_instance(ShapeInstance(mesh));
     }
 };

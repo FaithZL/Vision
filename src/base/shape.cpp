@@ -23,10 +23,10 @@ void ShapeInstance::fill_mesh_id() noexcept {
 
 vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
-    for (const Triangle &tri : _mesh->triangles) {
-        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.i].position());
-        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.j].position());
-        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.k].position());
+    for (const Triangle &tri : _mesh->triangles()) {
+        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.i].position());
+        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.j].position());
+        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.k].position());
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;
@@ -34,10 +34,10 @@ vector<float> ShapeInstance::surface_areas() const noexcept {
 
 Box3f ShapeInstance::compute_aabb() const noexcept {
     Box3f box;
-    for (const Triangle &tri : _mesh->triangles) {
-        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.i].position());
-        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.j].position());
-        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices[tri.k].position());
+    for (const Triangle &tri : _mesh->triangles()) {
+        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.i].position());
+        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.j].position());
+        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.k].position());
         box.extend(v0);
         box.extend(v1);
         box.extend(v2);
@@ -47,10 +47,10 @@ Box3f ShapeInstance::compute_aabb() const noexcept {
 
 uint64_t Mesh::_compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
-    for (Vertex vertex : vertices) {
+    for (Vertex vertex : _vertices) {
         ret = hash64(vertex, ret);
     }
-    for (Triangle triangle : triangles) {
+    for (Triangle triangle : _triangles) {
         ret = hash64(triangle, ret);
     }
     return ret;
@@ -60,7 +60,7 @@ void Mesh::normalize_lightmap_uv(uint2 res) noexcept {
     if (_normalized) {
         return;
     }
-    for (Vertex &vertex : vertices) {
+    for (Vertex &vertex : _vertices) {
         vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(res));
     }
     _normalized = true;
@@ -68,10 +68,10 @@ void Mesh::normalize_lightmap_uv(uint2 res) noexcept {
 
 Box3f Mesh::compute_aabb() const noexcept {
     Box3f box;
-    for (const Triangle &tri : triangles) {
-        float3 v0 = vertices[tri.i].position();
-        float3 v1 = vertices[tri.j].position();
-        float3 v2 = vertices[tri.k].position();
+    for (const Triangle &tri : _triangles) {
+        float3 v0 = _vertices[tri.i].position();
+        float3 v1 = _vertices[tri.j].position();
+        float3 v2 = _vertices[tri.k].position();
         box.extend(v0);
         box.extend(v1);
         box.extend(v2);
@@ -88,10 +88,10 @@ uint Mesh::lightmap_size() const noexcept {
 
 vector<float> Mesh::surface_areas() const noexcept {
     vector<float> ret;
-    for (const Triangle &tri : triangles) {
-        float3 v0 = vertices[tri.i].position();
-        float3 v1 = vertices[tri.j].position();
-        float3 v2 = vertices[tri.k].position();
+    for (const Triangle &tri : _triangles) {
+        float3 v0 = _vertices[tri.i].position();
+        float3 v1 = _vertices[tri.j].position();
+        float3 v2 = _vertices[tri.k].position();
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;

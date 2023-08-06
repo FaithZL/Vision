@@ -54,16 +54,16 @@ public:
             float2(0, 1), float2(1, 1), float2(1, 0), float2(0, 0),
         };
         
-        mesh.triangles = vector<Triangle>{
+        mesh.set_triangles(vector<Triangle>{
             Triangle(0, 1, 3), Triangle(0, 3, 2),
             Triangle(6, 5, 7), Triangle(4, 5, 6),
             Triangle(10, 9, 11), Triangle(8, 9, 10),
             Triangle(13, 14, 15), Triangle(13, 12, 14),
             Triangle(18, 17, 19), Triangle(17, 16, 19),
             Triangle(21, 22, 23), Triangle(20, 21, 23),
-        };
+        });
         for (int i = 0; i < P.size(); ++i) {
-            mesh.vertices.emplace_back(P[i], N[i], UVs[i]);
+            mesh.vertices().emplace_back(P[i], N[i], UVs[i]);
         }
         add_instance(ShapeInstance(mesh));
     }

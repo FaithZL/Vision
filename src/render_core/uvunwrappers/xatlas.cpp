@@ -66,8 +66,8 @@ public:
 
     [[nodiscard]] static xatlas::MeshDecl mesh_decl(const vision::Mesh &mesh) {
         xatlas::MeshDecl ret;
-        const vector<Vertex> &vertices = mesh.vertices;
-        const vector<Triangle> &triangle = mesh.triangles;
+        const vector<Vertex> &vertices = mesh.vertices();
+        const vector<Triangle> &triangle = mesh.triangles();
 
         // fill position
         ret.vertexCount = vertices.size();

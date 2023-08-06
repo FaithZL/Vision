@@ -42,22 +42,27 @@ public:
         uint triangle_offset;
     };
 
-public:
-    vector<Vertex> vertices;
-    vector<Triangle> triangles;
-
 protected:
+    vector<Vertex> _vertices;
+    vector<Triangle> _triangles;
     uint _index{};
+
+    // auto unwrap light map uv is not normalized
     bool _normalized{false};
+    // after unwrap light map uv, mesh vertices layout maybe has changed
+    bool _cleanup{false};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
-        : vertices(std::move(vert)), triangles(std::move(tri)) {}
+        : _vertices(std::move(vert)), _triangles(std::move(tri)) {}
     Mesh() = default;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(cleanup, )
     void normalize_lightmap_uv(uint2 res) noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
