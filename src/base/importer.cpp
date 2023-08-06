@@ -8,7 +8,7 @@
 
 namespace vision {
 
-Importer *Importer::create(const std::string &ext_name) {
+SP<Importer> Importer::create(const std::string &ext_name) {
     ImporterDesc desc;
     if (ext_name == "json" || ext_name == "bson") {
         desc.sub_type = "json";
@@ -17,7 +17,7 @@ Importer *Importer::create(const std::string &ext_name) {
     } else {
         desc.sub_type = "assimp";
     }
-    return Global::node_mgr().load<Importer>(desc).get();
+    return Global::node_mgr().load<Importer>(desc);
 }
 
 }// namespace vision

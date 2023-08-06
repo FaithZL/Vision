@@ -38,8 +38,8 @@ private:
     Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
-    MaterialRegistry &_material_registry{MaterialRegistry::instance()};
-    MeshRegistry &_mesh_registry{MeshRegistry::instance()};
+    MaterialRegistry *_material_registry{&MaterialRegistry::instance()};
+    MeshRegistry *_mesh_registry{&MeshRegistry::instance()};
     SP<Spectrum> _spectrum{nullptr};
     Wrap<Medium> _global_medium{};
     SP<Material> _black_body{};
@@ -59,7 +59,8 @@ public:
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)
-    OC_MAKE_MEMBER_GETTER(material_registry, &)
+    [[nodiscard]] const auto &material_registry() const noexcept { return *_material_registry; }
+    [[nodiscard]] auto &material_registry() noexcept { return *_material_registry; }
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
     [[nodiscard]] const auto &materials() const noexcept { return material_registry().materials(); }

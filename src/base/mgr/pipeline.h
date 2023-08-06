@@ -42,6 +42,7 @@ public:
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
     [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
+    void set_scene(Scene scene) noexcept { _scene = ocarina::move(scene);}
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;
