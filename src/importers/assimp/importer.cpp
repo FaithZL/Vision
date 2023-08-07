@@ -22,8 +22,6 @@ public:
         for (const auto &inst : instances) {
             SP<ShapeGroup> group = make_shared<ShapeGroup>(inst);
         }
-
-
         return ret;
     }
 
@@ -43,6 +41,11 @@ public:
         std::for_each(shapes.begin(), shapes.end(), [&](const SP<ShapeGroup>& shape) {
             scene.add_shape(shape);
             scene.add_material(shape->instance(0).material());
+        });
+
+        auto lights = _parser.parse_lights();
+        std::for_each(lights.begin(), lights.end(), [&](SP<Light> light) {
+            scene.add_light(ocarina::move(light));
         });
 
         return ret;

@@ -25,9 +25,6 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_mediums(scene_desc.mediums_desc);
     _camera = load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
-    material_registry().remove_unused_materials();
-    tidy_up();
-    fill_instances();
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
 }
@@ -69,6 +66,9 @@ SP<Material> Scene::obtain_black_body() noexcept {
 }
 
 void Scene::prepare() noexcept {
+    material_registry().remove_unused_materials();
+    tidy_up();
+    fill_instances();
     _camera->prepare();
     _sampler->prepare();
     _integrator->prepare();
@@ -86,8 +86,12 @@ void Scene::prepare_lights() noexcept {
                    light.all_instance_num());
 }
 
-void Scene::add_material(SP<vision::Material> material) {
+void Scene::add_material(SP<vision::Material> material) noexcept {
     materials().push_back(ocarina::move(material));
+}
+
+void Scene::add_light(SP<vision::Light> light) noexcept {
+    _light_sampler->add_light(ocarina::move(light));
 }
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {

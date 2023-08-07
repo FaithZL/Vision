@@ -8,12 +8,16 @@
 
 namespace vision {
 
-vision::Light *AssimpParser::parse_light(aiLight *ai_light) noexcept {
+SP<vision::Camera> AssimpParser::parse_camera() noexcept {
     return nullptr;
 }
 
-vector<vision::Light *> AssimpParser::parse_lights() noexcept {
-    vector<vision::Light *> ret;
+SP<vision::Light> AssimpParser::parse_light(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
+vector<SP<vision::Light>> AssimpParser::parse_lights() noexcept {
+    vector<SP<vision::Light>> ret;
     ret.reserve(_ai_scene->mNumLights);
     vector<aiLight *> ai_lights(_ai_scene->mNumLights);
     std::copy(_ai_scene->mLights, _ai_scene->mLights + _ai_scene->mNumLights, ai_lights.begin());

@@ -103,6 +103,7 @@ ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
 }
 
 ShapeGroup::ShapeGroup(const vision::ShapeInstance &inst) {
+    aabb.extend(inst.aabb);
     _instances.push_back(inst);
 }
 

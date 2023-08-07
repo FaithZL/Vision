@@ -88,9 +88,10 @@ public:
     void add_shape(const SP<ShapeGroup> &group, ShapeDesc desc = {});
     void clear_shapes() noexcept;
     void load_mediums(const MediumsDesc &desc);
-    void add_material(SP<Material> material);
+    void add_material(SP<Material> material)noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
+    void add_light(SP<Light> light) noexcept;
     template<typename T = Light>
     SP<T> load_light(const LightDesc &desc) {
         OC_ASSERT(_light_sampler != nullptr);

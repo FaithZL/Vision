@@ -9,6 +9,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/Subdivision.h>
 #include <assimp/scene.h>
+#include "base/sensor/camera.h"
 
 namespace vision {
 
@@ -23,9 +24,10 @@ public:
                               bool swap_handed = false, bool smooth = true,
                               bool flip_uv = false);
     [[nodiscard]] vector<ShapeInstance> parse_meshes(bool parse_material,
-                                                uint32_t subdiv_level = 0u);
-    [[nodiscard]] vision::Light *parse_light(aiLight *ai_light) noexcept;
-    [[nodiscard]] vector<vision::Light *> parse_lights() noexcept;
+                                                     uint32_t subdiv_level = 0u);
+    [[nodiscard]] SP<vision::Camera> parse_camera() noexcept;
+    [[nodiscard]] SP<vision::Light> parse_light(aiLight *ai_light) noexcept;
+    [[nodiscard]] vector<SP<vision::Light>> parse_lights() noexcept;
     [[nodiscard]] static std::pair<string, float4> parse_texture(const aiMaterial *mat, aiTextureType type);
     [[nodiscard]] vector<vision::MaterialDesc> parse_materials() noexcept;
     [[nodiscard]] vision::MaterialDesc parse_material(aiMaterial *ai_material) noexcept;
