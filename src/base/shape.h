@@ -154,7 +154,7 @@ protected:
 
 public:
     ShapeGroup() = default;
-    explicit ShapeGroup(const ShapeInstance &inst);
+    explicit ShapeGroup(ShapeInstance inst);
     explicit ShapeGroup(const ShapeDesc &desc);
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)

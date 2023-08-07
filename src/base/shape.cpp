@@ -102,7 +102,8 @@ ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
     _material.name = desc["material"].as_string();
 }
 
-ShapeGroup::ShapeGroup(const vision::ShapeInstance &inst) {
+ShapeGroup::ShapeGroup(vision::ShapeInstance inst) {
+    inst.init_aabb();
     aabb.extend(inst.aabb);
     _instances.push_back(inst);
 }
