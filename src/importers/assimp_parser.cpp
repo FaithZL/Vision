@@ -14,12 +14,17 @@ SP<vision::Camera> AssimpParser::parse_camera() noexcept {
 
 SP<vision::Light> AssimpParser::point_light(aiLight *ai_light) noexcept {
     LightDesc desc;
-    desc.sub_type = "point";
     DataWrap param = DataWrap::object();
     auto color = assimp::from_color3(ai_light->mColorDiffuse);
     param["color"] = DataWrap::array({color.x, color.y, color.z});
-
-    return nullptr;
+    auto pos = assimp::from_vec3(ai_light->mPosition);
+    param["position"] = DataWrap ::array({pos.x, pos.y, pos.z});
+    DataWrap ps = DataWrap::object();
+    ps["param"] = param;
+    ps["type"] = "point";
+    desc.init(ps);
+    auto ret = Global::node_mgr().load<Light>(desc);
+    return ret;
 }
 
 SP<vision::Light> AssimpParser::area_light(aiLight *ai_light) noexcept {
@@ -181,13 +186,13 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {
             auto ai_position = ai_mesh->mVertices[i];
             auto ai_normal = ai_mesh->mNormals[i];
-            float3 position = make_float3(ai_position.x, ai_position.y, ai_position.z);
+            float3 position = assimp::from_vec3(ai_position);
             aabb.extend(position);
-            float3 normal = make_float3(ai_normal.x, ai_normal.y, ai_normal.z);
+            float3 normal = assimp::from_vec3(ai_normal);
             float2 tex_coord;
             if (ai_mesh->mTextureCoords[0] != nullptr) {
                 auto ai_tex_coord = ai_mesh->mTextureCoords[0][i];
-                tex_coord = make_float2(ai_tex_coord.x, ai_tex_coord.y);
+                tex_coord = assimp::from_vec3(ai_tex_coord).xy();
             } else {
                 tex_coord = make_float2(0.f);
             }
