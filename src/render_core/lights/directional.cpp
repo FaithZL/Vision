@@ -44,21 +44,21 @@ public:
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
-        ret.p_light = p_ref.pos + w_light();
-        ret.eval.pdf = 0.f;
-        ret.eval.L = _color.eval_illumination_spectrum(ret.p_light, swl).sample * scale();
+        ret.p_light = p_ref.pos + w_light() * *_world_radius;
+        ret.eval = evaluate(p_ref, LightEvalContext(ret.p_light), swl);
         return ret;
     }
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
-        return SampledSpectrum{swl.dimension()};
+        return _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
     }
 
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
-        return 0.f;
+        // using -1 for delta light
+        return -1.f;
     }
 };
 
