@@ -12,7 +12,25 @@ SP<vision::Camera> AssimpParser::parse_camera() noexcept {
     return nullptr;
 }
 
+SP<vision::Light> AssimpParser::point_light(aiLight *ai_light) noexcept {
+    LightDesc desc;
+    desc.sub_type = "point";
+    DataWrap param = DataWrap::object();
+    auto color = assimp::from_color3(ai_light->mColorDiffuse);
+    param["color"] = DataWrap::array({color.x, color.y, color.z});
+
+    return nullptr;
+}
+
+SP<vision::Light> AssimpParser::area_light(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
 SP<vision::Light> AssimpParser::parse_light(aiLight *ai_light) noexcept {
+    switch (ai_light->mType) {
+        case aiLightSource_POINT:
+            return point_light(ai_light);
+    }
     return nullptr;
 }
 

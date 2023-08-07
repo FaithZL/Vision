@@ -81,7 +81,6 @@ class ShapeInstance;
 class IAreaLight : public Light {
 protected:
     Serial<uint> _inst_idx{InvalidUI32};
-    const vision::Mesh *_mesh{};
     const ShapeInstance *_instance{};
 
 public:
