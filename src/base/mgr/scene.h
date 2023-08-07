@@ -88,7 +88,7 @@ public:
     void add_shape(const SP<ShapeGroup> &group, ShapeDesc desc = {});
     void clear_shapes() noexcept;
     void load_mediums(const MediumsDesc &desc);
-    void add_material(SP<Material> material)noexcept;
+    void add_material(SP<Material> material) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
     void add_light(SP<Light> light) noexcept;
@@ -100,7 +100,9 @@ public:
         return ret;
     }
     void prepare_materials();
-    [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
+    [[nodiscard]] float3 world_center() const noexcept { return _aabb.center(); }
+    [[nodiscard]] float world_radius() const noexcept { return _aabb.radius(); }
+    [[nodiscard]] float world_diameter() const noexcept { return world_radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return &_instances[id]; }
     [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return &_instances[id]; }

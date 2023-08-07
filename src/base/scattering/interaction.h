@@ -18,6 +18,7 @@ requires is_vector3_expr_v<T>
 struct PartialDerivative : Frame<T, false> {
 public:
     using vec_ty = T;
+
 public:
     vec_ty dn_du;
     vec_ty dn_dv;
@@ -212,6 +213,8 @@ struct AttrEvalContext {
     Float3 pos;
     Float2 uv;
     AttrEvalContext() = default;
+    AttrEvalContext(const Float3 &pos)
+        : pos(pos) {}
     AttrEvalContext(const Interaction &it)
         : pos(it.pos), uv(it.uv) {}
     AttrEvalContext(const Float2 &uv)

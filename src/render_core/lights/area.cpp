@@ -9,6 +9,26 @@
 
 namespace vision {
 
+//    "type": "area",
+//    "param": {
+//        "color" : {
+//            "channels" : "xyz",
+//            "node" : [17,12,4]
+//        },
+//        "two_sided" : false,
+//        "scale" : 1,
+//        "o2w" : {
+//            "type" : "matrix4x4",
+//            "param" : {
+//                "matrix4x4" : [
+//                    [1,0,0,0],
+//                    [0,1,0,0],
+//                    [0,0,1,0],
+//                    [0,0,0,1]
+//                ]
+//            }
+//        }
+//    }
 class AreaLight : public IAreaLight {
 private:
     Serial<uint> _two_sided{0u};
