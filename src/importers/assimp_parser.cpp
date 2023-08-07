@@ -8,8 +8,24 @@
 
 namespace vision {
 
-SP<vision::Camera> AssimpParser::parse_camera() noexcept {
-    return nullptr;
+float4x4 AssimpParser::parse_camera(aiCamera *ai_camera) noexcept {
+    SensorDesc desc;
+    DataWrap param = DataWrap::object();
+    float3 pos = assimp::from_vec3(ai_camera->mPosition);
+    float3 up = assimp::from_vec3(ai_camera->mUp);
+    float3 target_pos = assimp::from_vec3(ai_camera->mLookAt);
+    return look_at<H>(pos, target_pos, up);
+}
+
+vector<float4x4> AssimpParser::parse_cameras() noexcept {
+    vector<float4x4> ret;
+    ret.reserve(_ai_scene->mNumLights);
+    vector<aiCamera *> ai_cameras(_ai_scene->mNumLights);
+    std::copy(_ai_scene->mCameras, _ai_scene->mCameras + _ai_scene->mNumCameras, ai_cameras.begin());
+    for (auto ai_camera : ai_cameras) {
+        ret.push_back(parse_camera(ai_camera));
+    }
+    return ret;
 }
 
 SP<vision::Light> AssimpParser::point_light(aiLight *ai_light) noexcept {

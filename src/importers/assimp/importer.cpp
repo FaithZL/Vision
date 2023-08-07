@@ -21,6 +21,7 @@ public:
         vector<ShapeInstance> instances = _parser.parse_meshes(true, 0);
         for (const auto &inst : instances) {
             SP<ShapeGroup> group = make_shared<ShapeGroup>(inst);
+            ret.push_back(group);
         }
         return ret;
     }
@@ -48,6 +49,8 @@ public:
             scene.add_light(ocarina::move(light));
         });
 
+        auto cameras = _parser.parse_cameras();
+        scene.camera()->update_mat(cameras[0]);
         return ret;
     }
 };

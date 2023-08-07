@@ -45,7 +45,8 @@ public:
                               bool flip_uv = false);
     [[nodiscard]] vector<ShapeInstance> parse_meshes(bool parse_material,
                                                      uint32_t subdiv_level = 0u);
-    [[nodiscard]] SP<vision::Camera> parse_camera() noexcept;
+    [[nodiscard]] vector<float4x4> parse_cameras() noexcept;
+    [[nodiscard]] float4x4 parse_camera(aiCamera *ai_camera) noexcept;
     [[nodiscard]] SP<vision::Light> point_light(aiLight *ai_light) noexcept;
     [[nodiscard]] SP<vision::Light> spot_light(aiLight *ai_light) noexcept;
     [[nodiscard]] SP<vision::Light> area_light(aiLight *ai_light) noexcept;

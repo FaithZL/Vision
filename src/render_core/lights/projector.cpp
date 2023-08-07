@@ -7,6 +7,28 @@
 #include "base/mgr/pipeline.h"
 
 namespace vision {
+
+//    "type" : "projector",
+//    "param" : {
+//        "angle" : 6,
+//        "color" : {
+//            "channels" : "xyz",
+//            "node" : {
+//                "fn" : "Painting3.jpg",
+//                "color_space" : "srgb"
+//            }
+//        },
+//        "ratio" : 1,
+//        "o2w" : {
+//            "type" : "look_at",
+//            "param" : {
+//                "position" : [0,1,6.8],
+//                "up" : [0,1,0],
+//                "target_pos" : [0,1,0]
+//            }
+//        },
+//        "scale" : 300
+//    }
 class Projector : public IPointLight {
 private:
     Serial<float4x4> _o2w;
