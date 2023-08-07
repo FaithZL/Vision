@@ -102,6 +102,10 @@ ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
     _material.name = desc["material"].as_string();
 }
 
+ShapeGroup::ShapeGroup(const vision::ShapeInstance &inst) {
+    _instances.push_back(inst);
+}
+
 void ShapeGroup::add_instance(const vision::ShapeInstance &instance) noexcept {
     _instances.push_back(instance);
 }

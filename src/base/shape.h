@@ -84,10 +84,10 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
         _##attr = val;                                       \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
-        return _##attr.object.get();                         \
+        return _##attr.object;                               \
     }                                                        \
     [[nodiscard]] auto attr() noexcept {                     \
-        return _##attr.object.get();                         \
+        return _##attr.object;                               \
     }                                                        \
     [[nodiscard]] bool has_##attr() const noexcept {         \
         return bool(attr());                                 \
@@ -153,6 +153,8 @@ protected:
     Wrap<Material> _material{};
 
 public:
+    ShapeGroup() = default;
+    explicit ShapeGroup(const ShapeInstance &inst);
     explicit ShapeGroup(const ShapeDesc &desc);
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)

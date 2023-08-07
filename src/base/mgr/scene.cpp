@@ -37,6 +37,9 @@ void Scene::tidy_up() noexcept {
     material_registry().tidy_up();
     MeshRegistry::instance().tidy_up();
     tidy_up_mediums();
+    OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
+                   materials().type_num(),
+                   materials().all_instance_num());
 }
 
 void Scene::tidy_up_materials() noexcept {
@@ -83,13 +86,14 @@ void Scene::prepare_lights() noexcept {
                    light.all_instance_num());
 }
 
+void Scene::add_material(SP<vision::Material> material) {
+    materials().push_back(ocarina::move(material));
+}
+
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        materials().push_back(load<Material>(desc));
+        add_material(ocarina::move(load<Material>(desc)));
     }
-    OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
-                   materials().type_num(),
-                   materials().all_instance_num());
 }
 
 void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
@@ -143,11 +147,11 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 void Scene::fill_instances() {
     for (ShapeInstance &instance : _instances) {
         if (instance.has_material()) {
-            const Material *material = instance.material();
+            const Material *material = instance.material().get();
             instance.update_material_id(materials().encode_id(material->index(), material));
         }
         if (instance.has_emission()) {
-            const Light *emission = instance.emission();
+            const Light *emission = instance.emission().get();
             instance.update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
         }
         instance.fill_mesh_id();
