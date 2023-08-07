@@ -50,6 +50,8 @@ public:
     [[nodiscard]] SP<vision::Light> point_light(aiLight *ai_light) noexcept;
     [[nodiscard]] SP<vision::Light> spot_light(aiLight *ai_light) noexcept;
     [[nodiscard]] SP<vision::Light> area_light(aiLight *ai_light) noexcept;
+    [[nodiscard]] SP<vision::Light> environment(aiLight *ai_light) noexcept;
+    [[nodiscard]] SP<vision::Light> directional(aiLight *ai_light) noexcept;
     [[nodiscard]] SP<vision::Light> parse_light(aiLight *ai_light) noexcept;
     [[nodiscard]] vector<SP<vision::Light>> parse_lights() noexcept;
     [[nodiscard]] static std::pair<string, float4> parse_texture(const aiMaterial *mat, aiTextureType type);

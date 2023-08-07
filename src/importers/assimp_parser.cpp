@@ -47,6 +47,18 @@ SP<vision::Light> AssimpParser::area_light(aiLight *ai_light) noexcept {
     return nullptr;
 }
 
+SP<vision::Light> AssimpParser::spot_light(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
+SP<vision::Light> AssimpParser::environment(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
+SP<vision::Light> AssimpParser::directional(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
 SP<vision::Light> AssimpParser::parse_light(aiLight *ai_light) noexcept {
     switch (ai_light->mType) {
         case aiLightSource_POINT:
