@@ -9,7 +9,6 @@
 namespace vision {
 
 class JsonImporter : public Importer {
-private:
 public:
     explicit JsonImporter(const ImporterDesc &desc)
         : Importer(desc) {}

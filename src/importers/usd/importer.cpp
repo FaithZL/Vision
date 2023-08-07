@@ -6,9 +6,15 @@
 #include "base/importer.h"
 
 namespace vision {
-
 class USDImporter : public Importer {
+public:
+    explicit USDImporter(const ImporterDesc &desc)
+        : Importer(desc) {}
 
+    [[nodiscard]] SP<Pipeline> read_file(const fs::path &fn) override {
+        return nullptr;
+    }
 };
+}// namespace vision
 
-}
+VS_MAKE_CLASS_CREATOR(vision::USDImporter)
