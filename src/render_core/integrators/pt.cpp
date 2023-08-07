@@ -15,7 +15,7 @@ public:
         : UnidirectionalPathTracing(desc) {}
 
     void compile() noexcept override {
-        Camera *camera = scene().camera();
+        Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();

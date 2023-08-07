@@ -43,7 +43,7 @@ void App::prepare() {
 
 void App::on_key_event(int key, int action) noexcept {
     double dt = window->dt();
-    Camera *camera = pipeline().scene().camera();
+    Camera *camera = pipeline().scene().camera().get();
     float3 forward = camera->forward();
     float3 up = camera->up();
     float3 right = camera->right();
@@ -79,7 +79,7 @@ void App::on_window_size_change(uint2 size) noexcept {
 
 void App::on_scroll_event(float2 scroll) noexcept {
     invalidation = true;
-    Camera *camera = pipeline().scene().camera();
+    auto camera = pipeline().scene().camera();
     if (right_key_press) {
         camera->update_focal_distance(scroll.y * 0.1);
     } else if (left_key_press) {
@@ -91,7 +91,7 @@ void App::on_scroll_event(float2 scroll) noexcept {
 }
 
 void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
-    Camera *camera = pipeline().scene().camera();
+    auto camera = pipeline().scene().camera();
     float sensitivity = camera->sensitivity();
     camera->update_yaw(d_yaw * sensitivity);
     camera->update_pitch(d_pitch * sensitivity);
@@ -107,7 +107,7 @@ void App::on_cursor_move(float2 pos) noexcept {
     if (right_key_press) {
         update_camera_view(delta.x, -delta.y);
     } else if (left_key_press) {
-        Camera *camera = pipeline().scene().camera();
+        auto camera = pipeline().scene().camera();
         float3 forward = camera->forward();
         float3 right = camera->right();
         delta *= 0.05f;
@@ -132,7 +132,7 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
 void App::update(double dt) noexcept {
     pipeline().upload_data();
     if (invalidation) {
-        Camera *camera = pipeline().scene().camera();
+        auto camera = pipeline().scene().camera();
         float3 pos = camera->position();
         OC_INFO_FORMAT("camera yaw is {:.2f}, pitch is {:.2f}, fov is {:.1f}, focal distance is {:.2f}, "
                        "lens radius is {:.2f}, position is ({:.2f}, {:.2f}, {:.2f})",

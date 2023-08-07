@@ -52,10 +52,10 @@ public:
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
     MAKE_GETTER(integrator)
-    MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
+    OC_MAKE_MEMBER_GETTER_SETTER(camera, &)
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)
