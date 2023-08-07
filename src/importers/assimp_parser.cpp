@@ -31,10 +31,13 @@ vector<float4x4> AssimpParser::parse_cameras() noexcept {
 SP<vision::Light> AssimpParser::point_light(aiLight *ai_light) noexcept {
     LightDesc desc;
     DataWrap param = DataWrap::object();
+
     auto color = assimp::from_color3(ai_light->mColorDiffuse);
     param["color"] = to_json(color);
+
     auto pos = assimp::from_vec3(ai_light->mPosition);
     param["position"] = to_json(pos);
+    
     DataWrap ps = DataWrap::object();
     ps["param"] = param;
     ps["type"] = "point";
@@ -54,8 +57,9 @@ SP<vision::Light> AssimpParser::spot_light(aiLight *ai_light) noexcept {
     param["color"] = to_json(color);
 
     float angle = degrees(ai_light->mAngleOuterCone);
-    float falloff = angle - degrees(ai_light->mAngleInnerCone);
     param["angle"] = angle;
+
+    float falloff = angle - degrees(ai_light->mAngleInnerCone);
     param["falloff"] = falloff;
 
     auto pos = assimp::from_vec3(ai_light->mPosition);
@@ -79,10 +83,13 @@ SP<vision::Light> AssimpParser::environment(aiLight *ai_light) noexcept {
 SP<vision::Light> AssimpParser::directional_light(aiLight *ai_light) noexcept {
     LightDesc desc;
     DataWrap param = DataWrap::object();
+
     auto color = assimp::from_color3(ai_light->mColorDiffuse);
     param["color"] = to_json(color);
+
     auto dir = assimp::from_vec3(ai_light->mDirection);
     param["direction"] = to_json(dir);
+
     DataWrap ps = DataWrap::object();
     ps["param"] = param;
     ps["type"] = "directional";
@@ -93,13 +100,12 @@ SP<vision::Light> AssimpParser::directional_light(aiLight *ai_light) noexcept {
 
 SP<vision::Light> AssimpParser::parse_light(aiLight *ai_light) noexcept {
     switch (ai_light->mType) {
-//        case aiLightSource_POINT:
-//            return point_light(ai_light);
+        case aiLightSource_POINT:
+            return point_light(ai_light);
         case aiLightSource_DIRECTIONAL:
             return directional_light(ai_light);
-//        case aiLightSource_SPOT:
-//            return spot_light(ai_light);
-        case aiLightSource_AMBIENT: break;
+        case aiLightSource_SPOT:
+            return spot_light(ai_light);
         default:
             break;
     }
