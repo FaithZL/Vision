@@ -105,6 +105,7 @@ ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
 ShapeGroup::ShapeGroup(vision::ShapeInstance inst) {
     inst.init_aabb();
     aabb.extend(inst.aabb);
+    inst.set_name(ocarina::format("{}_0", name()));
     _instances.push_back(inst);
 }
 
@@ -129,6 +130,7 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
             instance.init_aabb();
+            instance.set_name(ocarina::format("{}_{}", name(), i));
             aabb.extend(instance.aabb);
         });
     } else {
@@ -138,6 +140,7 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
             instance.set_material_name(mat_name);
             instance.set_o2w(desc.o2w.mat);
             instance.init_aabb();
+            instance.set_name(ocarina::format("{}_{}", name(), i));
             aabb.extend(instance.aabb);
         });
     }

@@ -98,9 +98,6 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 namespace vision {
 class ShapeInstance {
-public:
-    Box3f aabb;
-
 protected:
     InstanceHandle _handle;
     float _factor{};
@@ -110,12 +107,17 @@ protected:
     Wrap<Medium> _inside{};
     Wrap<Medium> _outside{};
     SP<Mesh> _mesh{};
+    string _name;
+
+public:
+    Box3f aabb;
 
 public:
     explicit ShapeInstance(SP<Mesh> mesh);
     explicit ShapeInstance(Mesh mesh);
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
+    OC_MAKE_MEMBER_GETTER_SETTER(name, )
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
     void fill_mesh_id() noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
