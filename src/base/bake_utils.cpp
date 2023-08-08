@@ -57,7 +57,7 @@ CommandList BakedShape::save_lightmap_to_cache() const {
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
     ret << _lightmap_tex.download(ptr);
     ret << [&, ptr] {
-        ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
+        ImageIO::save_image(lightmap_cache_path(), PixelStorage::FLOAT4, resolution(), ptr);
         ocarina::deallocate(ptr);
     };
     return ret;
@@ -69,7 +69,7 @@ CommandList BakedShape::save_rasterize_map_to_cache() const {
     float4 *ptr = ocarina::allocate<float4>(pixel_num());
     ret << _pixels.download(ptr);
     ret << [&, ptr] {
-        ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4, _resolution, ptr);
+        ImageIO::save_image(rasterize_cache_path(), PixelStorage::FLOAT4, resolution(), ptr);
         ocarina::deallocate(ptr);
     };
     return ret;
@@ -103,26 +103,8 @@ void BakedShape::allocate_lightmap_texture() noexcept {
     _lightmap_tex = device().create_texture(resolution(), ocarina::PixelStorage::FLOAT4);
 }
 
-void BakedShape::setup_vertices(UnwrapperResult result) {
-    _resolution = make_uint2(result.width, result.height);
-    if (_shape->mesh()->cleanup()) {
-        return;
-    }
-    UnwrapperMesh &u_mesh = result.meshes[0];
-    vector<Vertex> vertices;
-    vertices.reserve(u_mesh.vertices.size());
-    for (auto &vert : u_mesh.vertices) {
-        Vertex vertex = _shape->mesh()->vertices()[vert.xref];
-        vertex.set_lightmap_uv(vert.uv);
-        vertices.push_back(vertex);
-    }
-    _shape->mesh()->set_vertices(ocarina::move(vertices));
-    _shape->mesh()->set_triangles(ocarina::move(u_mesh.triangles));
-    _shape->mesh()->set_cleanup(true);
-}
-
 void BakedShape::normalize_lightmap_uv() {
-    _shape->mesh()->normalize_lightmap_uv(resolution());
+    _shape->mesh()->normalize_lightmap_uv();
 }
 
 uint64_t BakedShape::instance_hash() const noexcept {

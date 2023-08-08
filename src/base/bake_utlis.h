@@ -41,7 +41,6 @@ struct MergedMesh {
 struct BakedShape : public Ctx {
 private:
     ShapeInstance *_shape{};
-    uint2 _resolution{};
     Texture _lightmap_tex;
     MergedMesh _merged_mesh;
     Buffer<uint4> _pixels;
@@ -62,8 +61,7 @@ public:
 
     void prepare_to_rasterize() noexcept;
     void merge_meshes() noexcept;
-
-    OC_MAKE_MEMBER_GETTER(resolution, )
+    [[nodiscard]] uint2 resolution() const noexcept { return _shape->mesh()->resolution(); }
     OC_MAKE_MEMBER_GETTER(shape, )
     OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
     OC_MAKE_MEMBER_GETTER(merged_mesh, &)
@@ -74,13 +72,12 @@ public:
     [[nodiscard]] fs::path lightmap_cache_path() const noexcept;
     [[nodiscard]] fs::path rasterize_cache_path() const noexcept;
     void allocate_lightmap_texture() noexcept;
-    [[nodiscard]] size_t pixel_num() const noexcept { return _resolution.x * _resolution.y; }
+    [[nodiscard]] size_t pixel_num() const noexcept { return resolution().x * resolution().y; }
     [[nodiscard]] uint perimeter() const noexcept { return resolution().x + resolution().y; }
     [[nodiscard]] UnwrapperResult load_uv_config_from_cache() const;
     void save_to_cache(const UnwrapperResult &result);
     [[nodiscard]] CommandList save_lightmap_to_cache() const;
     [[nodiscard]] CommandList save_rasterize_map_to_cache() const;
-    void setup_vertices(UnwrapperResult result);
     void normalize_lightmap_uv();
 };
 

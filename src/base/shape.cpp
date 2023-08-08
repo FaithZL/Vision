@@ -3,7 +3,7 @@
 //
 
 #include "shape.h"
-
+#include "bake_utlis.h"
 #include <utility>
 #include "base/mgr/scene.h"
 #include "base/mgr/geometry.h"
@@ -56,12 +56,27 @@ uint64_t Mesh::_compute_hash() const noexcept {
     return ret;
 }
 
-void Mesh::normalize_lightmap_uv(uint2 res) noexcept {
+void Mesh::setup_lightmap_uv(const UnwrapperResult &result) {
+    _resolution = make_uint2(result.width, result.height);
+    const UnwrapperMesh &u_mesh = result.meshes[0];
+    vector<Vertex> vertices;
+    vertices.reserve(u_mesh.vertices.size());
+    for (auto &vert : u_mesh.vertices) {
+        Vertex vertex = _vertices[vert.xref];
+        vertex.set_lightmap_uv(vert.uv);
+        vertices.push_back(vertex);
+    }
+    set_vertices(ocarina::move(vertices));
+    set_triangles(u_mesh.triangles);
+    _has_lightmap_uv = true;
+}
+
+void Mesh::normalize_lightmap_uv() noexcept {
     if (_normalized) {
         return;
     }
     for (Vertex &vertex : _vertices) {
-        vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(res));
+        vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(_resolution));
     }
     _normalized = true;
 }

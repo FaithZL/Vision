@@ -35,6 +35,9 @@ OC_STRUCT(vision::InstanceHandle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
+
+class UnwrapperResult;
+
 struct Mesh : public Hashable {
 public:
     struct Handle {
@@ -47,11 +50,11 @@ protected:
     vector<Triangle> _triangles;
     uint _index{};
 
+    bool _has_lightmap_uv{false};
+    /// light map resolution
     uint2 _resolution;
-    // auto unwrap light map uv is not normalized
+    /// auto unwrap light map uv is not normalized
     bool _normalized{false};
-    // after unwrap light map uv, mesh vertices layout maybe has changed
-    bool _cleanup{false};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
@@ -63,9 +66,10 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
     OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
-    OC_MAKE_MEMBER_GETTER_SETTER(cleanup, )
+    OC_MAKE_MEMBER_GETTER_SETTER(has_lightmap_uv, )
     OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
-    void normalize_lightmap_uv(uint2 res) noexcept;
+    void normalize_lightmap_uv() noexcept;
+    void setup_lightmap_uv(const UnwrapperResult &result);
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
     [[nodiscard]] vector<float> surface_areas() const noexcept;

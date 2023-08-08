@@ -47,6 +47,10 @@ void BakePipeline::preprocess() noexcept {
     // uv unwrap
     VS_BAKER_STATS(_baker_stats, uv_unwrap)
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        Mesh *mesh = baked_shape.shape()->mesh().get();
+        if (mesh->has_lightmap_uv()) {
+            return ;
+        }
         UnwrapperResult unwrap_result;
         if (baked_shape.has_uv_cache()) {
             unwrap_result = baked_shape.load_uv_config_from_cache();
@@ -54,7 +58,7 @@ void BakePipeline::preprocess() noexcept {
             unwrap_result = uv_unwrapper->apply(baked_shape.shape()->mesh().get());
             baked_shape.save_to_cache(unwrap_result);
         }
-        baked_shape.setup_vertices(ocarina::move(unwrap_result));
+        mesh->setup_lightmap_uv(unwrap_result);
     });
 }
 
