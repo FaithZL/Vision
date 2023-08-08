@@ -94,6 +94,14 @@ Box3f Mesh::compute_aabb() const noexcept {
     return box;
 }
 
+float2 Mesh::lightmap_uv_unnormalized(uint index) const noexcept {
+    float2 ret = _vertices[index].lightmap_uv();
+    if (_normalized) {
+        ret *= make_float2(_resolution);
+    }
+    return ret;
+}
+
 uint Mesh::lightmap_size() const noexcept {
     vector<float> areas = surface_areas();
     float area = std::accumulate(areas.begin(), areas.end(), 0.f);

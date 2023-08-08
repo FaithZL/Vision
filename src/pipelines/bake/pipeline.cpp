@@ -140,6 +140,11 @@ void BakePipeline::bake_all() noexcept {
         baker.baking(ocarina::span(iter, it));
         iter = it;
     }
+
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &bs) {
+        bs.normalize_lightmap_uv();
+    });
+
     stream() << baker.deallocate()
              << synchronize() << commit();
     OC_INFO(_baker_stats.get_all_stats());

@@ -70,6 +70,7 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
     void normalize_lightmap_uv() noexcept;
     void setup_lightmap_uv(const UnwrapperResult &result);
+    [[nodiscard]] float2 lightmap_uv_unnormalized(uint index) const noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
     [[nodiscard]] vector<float> surface_areas() const noexcept;

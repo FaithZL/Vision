@@ -47,7 +47,6 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
         vert_offset += mesh.vertices.size();
         pixel_offset += bs.pixel_num();
         append(vertices, mesh.vertices);
-        bs.normalize_lightmap_uv();
         _pixel_num += bs.pixel_num();
         cmd_lst << bs.pixels().reset();
     }
