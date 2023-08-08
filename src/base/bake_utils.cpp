@@ -6,6 +6,9 @@
 
 namespace vision {
 
+BakedShape::BakedShape(vision::ShapeInstance *shape)
+    : _shape(shape) {}
+
 UnwrapperResult BakedShape::load_uv_config_from_cache() const {
     DataWrap json = create_json_from_file(uv_config_fn());
     auto res = json["resolution"];
@@ -103,7 +106,7 @@ void BakedShape::allocate_lightmap_texture() noexcept {
 void BakedShape::setup_vertices(UnwrapperResult result) {
     _resolution = make_uint2(result.width, result.height);
     if (_shape->mesh()->cleanup()) {
-        return ;
+        return;
     }
     UnwrapperMesh &u_mesh = result.meshes[0];
     vector<Vertex> vertices;

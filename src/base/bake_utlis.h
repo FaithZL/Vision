@@ -48,7 +48,7 @@ private:
 
 public:
     BakedShape() = default;
-    explicit BakedShape(vision::ShapeInstance *shape) : _shape(shape) {}
+    explicit BakedShape(vision::ShapeInstance *shape);
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
         return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}",

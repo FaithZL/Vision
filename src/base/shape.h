@@ -47,6 +47,7 @@ protected:
     vector<Triangle> _triangles;
     uint _index{};
 
+    uint2 _resolution;
     // auto unwrap light map uv is not normalized
     bool _normalized{false};
     // after unwrap light map uv, mesh vertices layout maybe has changed
@@ -63,6 +64,7 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
     OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER_SETTER(cleanup, )
+    OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
     void normalize_lightmap_uv(uint2 res) noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
