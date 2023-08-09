@@ -21,7 +21,7 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 |---------------------------------------------------------|-----------|
 | Offline render                                          | Done      |
 | Real time render                                        | Planned   |
-| Lightmap bake                                           | Doing     |
+| Lightmap bake                                           | Doing(75%)|
 
 ### Reconstruction Filters
 | Feature                      | Progress    |
@@ -91,11 +91,12 @@ The vision renderer uses embeded DSL codegen technology derived from luisa compu
 |---------------------|-----------------------------------------------------|
 | GPU                 | Done (with CUDA + OptiX)                            |
 
-### Exporters
+### Exporter/Importer
 | Feature             | Progress                                            |
 |---------------------|-----------------------------------------------------|
 | Blender             | Planned                                             |
 | 3DS Max             | Planned                                             |
+| USD                 | Doing                                               |
 
 Part of the scene comes from https://benedikt-bitterli.me/resources/
 
