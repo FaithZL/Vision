@@ -524,6 +524,25 @@ public:
     }
 };
 
+//    "type" : "disney",
+//    "param" : {
+//        "color" : [
+//            1,1,1
+//        ],
+//        "ior" : 1.5,
+//        "roughness" : 0.1,
+//        "metallic" : 1,
+//        "spec_tint" : 0.0,
+//        "anisotropic" : 0,
+//        "sheen" : 0,
+//        "sheen_tint" : 0,
+//        "clearcoat" : 0,
+//        "clearcoat_alpha" : 0.1,
+//        "spec_trans" : 1,
+//        "flatness" : 0.98,
+//        "scatter_distance" : [0, 0, 0],
+//        "diff_trans" : 0.11
+//    }
 class DisneyMaterial : public Material {
 private:
     Slot _color{};

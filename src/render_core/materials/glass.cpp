@@ -160,6 +160,19 @@ public:
     }
 };
 
+//    "type" : "glass",
+//    "param" : {
+//        "material_name" : "BK7",
+//        "color" : {
+//            "channels" : "xyz",
+//            "node" : [
+//                1,
+//                1,
+//                1
+//            ]
+//        },
+//        "roughness" : [0.001, 0.001]
+//    }
 class GlassMaterial : public Material {
 private:
     Slot _color{};
