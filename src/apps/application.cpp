@@ -188,9 +188,9 @@ void App::register_event() noexcept {
         on_scroll_event(OC_FORWARD(args)...);
     });
     //todo check resize bug
-    //    window->set_window_size_callback([&]<typename... Args>(Args && ...args) {
-    //        on_window_size_change(OC_FORWARD(args)...);
-    //    });
+    window->set_window_size_callback([&]<typename... Args>(Args && ...args) {
+//        on_window_size_change(OC_FORWARD(args)...);
+    });
 }
 
 }// namespace vision
