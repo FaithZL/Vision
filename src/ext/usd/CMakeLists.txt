@@ -2,7 +2,9 @@
 add_library(vision-usd INTERFACE)
 target_include_directories(vision-usd
         INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/boost-1_78
+        )
 
 target_link_directories(vision-usd INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/usd)
