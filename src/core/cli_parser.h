@@ -35,6 +35,7 @@ public:
     }
     [[nodiscard]] bool clear_cache() const noexcept;
     [[nodiscard]] string backend() const noexcept;
+    [[nodiscard]] string pipeline() const noexcept;
     [[nodiscard]] fs::path scene_file() const noexcept;
     [[nodiscard]] fs::path working_dir() const noexcept;
     [[nodiscard]] fs::path runtime_dir() const noexcept;

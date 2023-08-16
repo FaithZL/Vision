@@ -6,8 +6,6 @@
 
 #include "ext/nlohmann/json.hpp"
 
-using DataWrap = nlohmann::json;
-
 #ifdef __cplusplus
 #define VS_EXTERN_C extern "C"
 #define VS_NOEXCEPT noexcept

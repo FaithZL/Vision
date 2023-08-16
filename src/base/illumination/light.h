@@ -81,7 +81,6 @@ class ShapeInstance;
 class IAreaLight : public Light {
 protected:
     Serial<uint> _inst_idx{InvalidUI32};
-    const vision::Mesh *_mesh{};
     const ShapeInstance *_instance{};
 
 public:
@@ -98,7 +97,7 @@ public:
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
-        // using -1 for delta position light
+        // using -1 for delta light
         return -1.f;
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;

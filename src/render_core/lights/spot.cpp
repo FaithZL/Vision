@@ -6,6 +6,16 @@
 #include "base/mgr/pipeline.h"
 
 namespace vision {
+
+//    "type" : "spot",
+//    "param" : {
+//        "angle" : 20,
+//        "falloff" : 2,
+//        "direction" : [0.2, -1, 0],
+//        "color" : [1, 1, 1],
+//        "position" : [-0.5, 1.9, 0],
+//        "scale" : 1
+//    }
 class SpotLight : public IPointLight {
 private:
     Serial<float3> _position;

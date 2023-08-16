@@ -23,6 +23,7 @@ private:
 
 private:
     Pipeline *_pipeline{nullptr};
+    Device *_device{nullptr};
     fs::path _scene_path;
 
 public:
@@ -33,7 +34,8 @@ public:
     [[nodiscard]] ImagePool &image_pool() {
         return ImagePool::instance();
     }
-    [[nodiscard]] Device &device();
+    [[nodiscard]] Device &device() noexcept { return *_device; }
+    void set_device(Device *val) noexcept { _device = val; }
     [[nodiscard]] ResourceArray &resource_array();
     void set_scene_path(const fs::path &sp) noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;

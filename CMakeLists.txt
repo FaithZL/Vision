@@ -30,3 +30,10 @@ add_custom_target(CP_OIDN_CUDA ALL
         COMMAND copy src\\ext\\oidn\\OpenImageDenoise_device_cuda.dll bin
         DEPENDS OpenImageDenoise_device_cuda
         )
+
+add_custom_target(CP_USD ALL
+        COMMAND
+        copy ..\\src\\ext\\usd\\bin\\*.dll bin &&
+        copy ..\\src\\ext\\usd\\lib\\*.dll bin &&
+        xcopy ..\\src\\ext\\usd\\lib\\usd\\ bin\\usd\\  /s/y
+        )

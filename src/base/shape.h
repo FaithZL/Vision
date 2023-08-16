@@ -35,6 +35,9 @@ OC_STRUCT(vision::InstanceHandle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
+
+class UnwrapperResult;
+
 struct Mesh : public Hashable {
 public:
     struct Handle {
@@ -42,21 +45,32 @@ public:
         uint triangle_offset;
     };
 
-public:
-    vector<Vertex> vertices;
-    vector<Triangle> triangles;
-
 protected:
+    vector<Vertex> _vertices;
+    vector<Triangle> _triangles;
     uint _index{};
+
+    bool _has_lightmap_uv{false};
+    /// light map resolution
+    uint2 _resolution;
+    /// auto unwrap light map uv is not normalized
+    bool _normalized{false};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
-        : vertices(std::move(vert)), triangles(std::move(tri)) {}
+        : _vertices(std::move(vert)), _triangles(std::move(tri)) {}
     Mesh() = default;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(has_lightmap_uv, )
+    OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
+    void normalize_lightmap_uv() noexcept;
+    void setup_lightmap_uv(const UnwrapperResult &result);
+    [[nodiscard]] float2 lightmap_uv_unnormalized(uint index) const noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     [[nodiscard]] uint lightmap_size() const noexcept;
     [[nodiscard]] vector<float> surface_areas() const noexcept;
@@ -77,10 +91,10 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
         _##attr = val;                                       \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
-        return _##attr.object.get();                         \
+        return _##attr.object;                               \
     }                                                        \
     [[nodiscard]] auto attr() noexcept {                     \
-        return _##attr.object.get();                         \
+        return _##attr.object;                               \
     }                                                        \
     [[nodiscard]] bool has_##attr() const noexcept {         \
         return bool(attr());                                 \
@@ -91,9 +105,6 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 namespace vision {
 class ShapeInstance {
-public:
-    Box3f aabb;
-
 protected:
     InstanceHandle _handle;
     float _factor{};
@@ -103,13 +114,19 @@ protected:
     Wrap<Medium> _inside{};
     Wrap<Medium> _outside{};
     SP<Mesh> _mesh{};
+    string _name;
 
 public:
-    explicit ShapeInstance(SP<Mesh> mesh) : _mesh(mesh) {}
+    Box3f aabb;
+
+public:
+    explicit ShapeInstance(SP<Mesh> mesh);
+    explicit ShapeInstance(Mesh mesh);
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
+    OC_MAKE_MEMBER_GETTER_SETTER(name, )
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
-    void fill_geometry(vision::Geometry &data) const noexcept;
+    void fill_mesh_id() noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     void init_aabb() noexcept { aabb = compute_aabb(); }
     VS_MAKE_ATTR_SETTER_GETTER(inside)
@@ -133,15 +150,20 @@ namespace vision {
 class ShapeGroup : public Node {
 public:
     using Desc = ShapeDesc;
+
 public:
     Box3f aabb;
 
-protected:
+private:
     vector<ShapeInstance> _instances;
+
+protected:
     Wrap<IAreaLight> _emission{};
     Wrap<Material> _material{};
 
 public:
+    ShapeGroup() = default;
+    explicit ShapeGroup(ShapeInstance inst);
     explicit ShapeGroup(const ShapeDesc &desc);
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
@@ -149,6 +171,7 @@ public:
     [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return _instances[i]; }
     [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return _instances[i]; }
     void add_instance(const ShapeInstance &instance) noexcept;
+    void add_instances(const vector<ShapeInstance> &instances) noexcept;
     void for_each(const std::function<void(const ShapeInstance &, uint)> &func) const noexcept {
         for (uint i = 0; i < _instances.size(); ++i) {
             func(_instances[i], i);

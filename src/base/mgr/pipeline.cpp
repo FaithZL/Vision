@@ -19,7 +19,7 @@ Pipeline::Pipeline(Device *device)
 
 Pipeline::Pipeline(const vision::PipelineDesc &desc)
     : Node(desc),
-      _device(desc.device),
+      _device(&Global::instance().device()),
       _geometry(this),
       _stream(device().create_stream()),
       _resource_array(device().create_resource_array()) {

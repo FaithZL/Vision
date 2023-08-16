@@ -15,11 +15,11 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
 
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
-    init_postprocessor(scene_desc);
+    init_postprocessor(scene_desc.denoiser_desc);
 }
 
-void BakePipeline::init_postprocessor(const vision::SceneDesc &scene_desc) {
-    _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
+    _postprocessor.set_denoiser(_scene.load<Denoiser>(desc));
 }
 
 void BakePipeline::prepare() noexcept {
@@ -47,6 +47,10 @@ void BakePipeline::preprocess() noexcept {
     // uv unwrap
     VS_BAKER_STATS(_baker_stats, uv_unwrap)
     std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+        Mesh *mesh = baked_shape.shape()->mesh().get();
+        if (mesh->has_lightmap_uv()) {
+            return ;
+        }
         UnwrapperResult unwrap_result;
         if (baked_shape.has_uv_cache()) {
             unwrap_result = baked_shape.load_uv_config_from_cache();
@@ -54,7 +58,7 @@ void BakePipeline::preprocess() noexcept {
             unwrap_result = uv_unwrapper->apply(baked_shape.shape()->mesh().get());
             baked_shape.save_to_cache(unwrap_result);
         }
-        baked_shape.setup_vertices(ocarina::move(unwrap_result));
+        mesh->setup_lightmap_uv(unwrap_result);
     });
 }
 
@@ -63,7 +67,7 @@ void BakePipeline::compile() noexcept {
 }
 
 void BakePipeline::compile_displayer() noexcept {
-    Camera *camera = scene().camera();
+    Camera *camera = scene().camera().get();
     Sampler *sampler = scene().sampler();
     Kernel kernel = [&](Uint frame_index, Uint lightmap_base) {
         Uint2 pixel = dispatch_idx().xy();
@@ -136,6 +140,11 @@ void BakePipeline::bake_all() noexcept {
         baker.baking(ocarina::span(iter, it));
         iter = it;
     }
+
+    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &bs) {
+        bs.normalize_lightmap_uv();
+    });
+
     stream() << baker.deallocate()
              << synchronize() << commit();
     OC_INFO(_baker_stats.get_all_stats());

@@ -114,6 +114,20 @@ public:
     }
 };
 
+//    "type" : "substrate",
+//    "param" : {
+//        "roughness" : 0.001,
+//        "spec" : [
+//            0.04,
+//            0.04,
+//            0.04
+//        ],
+//        "color" : [
+//            0.725,
+//            0.71,
+//            0.68
+//        ]
+//    }
 class SubstrateMaterial : public Material {
 private:
     Slot _diff{};

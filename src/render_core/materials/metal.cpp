@@ -46,6 +46,11 @@ public:
     }
 };
 
+//    "type" : "metal",
+//    "param" : {
+//        "material_name" : "Cu",
+//        "roughness" : [0.001, 0.001]
+//    }
 class MetalMaterial : public Material {
 private:
     Slot _eta;

@@ -8,17 +8,120 @@
 
 namespace vision {
 
-vision::Light *AssimpParser::parse_light(aiLight *ai_light) noexcept {
+float4x4 AssimpParser::parse_camera(aiCamera *ai_camera) noexcept {
+    SensorDesc desc;
+    DataWrap param = DataWrap::object();
+    float3 pos = assimp::from_vec3(ai_camera->mPosition);
+    float3 up = assimp::from_vec3(ai_camera->mUp);
+    float3 target_pos = assimp::from_vec3(ai_camera->mLookAt);
+    return look_at<H>(pos, target_pos, up);
+}
+
+vector<float4x4> AssimpParser::parse_cameras() noexcept {
+    vector<float4x4> ret;
+    ret.reserve(_ai_scene->mNumCameras);
+    vector<aiCamera *> ai_cameras(_ai_scene->mNumCameras);
+    std::copy(_ai_scene->mCameras, _ai_scene->mCameras + _ai_scene->mNumCameras, ai_cameras.begin());
+    for (auto ai_camera : ai_cameras) {
+        ret.push_back(parse_camera(ai_camera));
+    }
+    return ret;
+}
+
+SP<vision::Light> AssimpParser::point_light(aiLight *ai_light) noexcept {
+    LightDesc desc;
+    DataWrap param = DataWrap::object();
+
+    auto color = assimp::from_color3(ai_light->mColorDiffuse);
+    param["color"] = to_json(color);
+
+    auto pos = assimp::from_vec3(ai_light->mPosition);
+    param["position"] = to_json(pos);
+    
+    DataWrap ps = DataWrap::object();
+    ps["param"] = param;
+    ps["type"] = "point";
+    desc.init(ps);
+    auto ret = Global::node_mgr().load<Light>(desc);
+    return ret;
+}
+
+SP<vision::Light> AssimpParser::area_light(aiLight *ai_light) noexcept {
     return nullptr;
 }
 
-vector<vision::Light *> AssimpParser::parse_lights() noexcept {
-    vector<vision::Light *> ret;
+SP<vision::Light> AssimpParser::spot_light(aiLight *ai_light) noexcept {
+    LightDesc desc;
+    DataWrap param = DataWrap::object();
+    auto color = assimp::from_color3(ai_light->mColorDiffuse);
+    param["color"] = to_json(color);
+
+    float angle = degrees(ai_light->mAngleOuterCone);
+    param["angle"] = angle;
+
+    float falloff = angle - degrees(ai_light->mAngleInnerCone);
+    param["falloff"] = falloff;
+
+    auto pos = assimp::from_vec3(ai_light->mPosition);
+    param["position"] = to_json(pos);
+
+    auto direction = assimp::from_vec3(ai_light->mDirection);
+    param["direction"] = to_json(direction);
+
+    DataWrap ps = DataWrap::object();
+    ps["param"] = param;
+    ps["type"] = "spot";
+    desc.init(ps);
+    auto ret = Global::node_mgr().load<Light>(desc);
+    return ret;
+}
+
+SP<vision::Light> AssimpParser::environment(aiLight *ai_light) noexcept {
+    return nullptr;
+}
+
+SP<vision::Light> AssimpParser::directional_light(aiLight *ai_light) noexcept {
+    LightDesc desc;
+    DataWrap param = DataWrap::object();
+
+    auto color = assimp::from_color3(ai_light->mColorDiffuse);
+    param["color"] = to_json(color);
+
+    auto dir = assimp::from_vec3(ai_light->mDirection);
+    param["direction"] = to_json(dir);
+
+    DataWrap ps = DataWrap::object();
+    ps["param"] = param;
+    ps["type"] = "directional";
+    desc.init(ps);
+    auto ret = Global::node_mgr().load<Light>(desc);
+    return ret;
+}
+
+SP<vision::Light> AssimpParser::parse_light(aiLight *ai_light) noexcept {
+    switch (ai_light->mType) {
+        case aiLightSource_POINT:
+            return point_light(ai_light);
+        case aiLightSource_DIRECTIONAL:
+            return directional_light(ai_light);
+        case aiLightSource_SPOT:
+            return spot_light(ai_light);
+        default:
+            break;
+    }
+    return nullptr;
+}
+
+vector<SP<vision::Light>> AssimpParser::parse_lights() noexcept {
+    vector<SP<vision::Light>> ret;
     ret.reserve(_ai_scene->mNumLights);
     vector<aiLight *> ai_lights(_ai_scene->mNumLights);
     std::copy(_ai_scene->mLights, _ai_scene->mLights + _ai_scene->mNumLights, ai_lights.begin());
     for (auto ai_light : ai_lights) {
-        ret.push_back(parse_light(ai_light));
+        auto light = parse_light(ai_light);
+        if (light) {
+            ret.push_back(light);
+        }
     }
     return ret;
 }
@@ -126,7 +229,7 @@ vector<vision::MaterialDesc> AssimpParser::parse_materials() noexcept {
 }
 
 vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
-                                            uint32_t subdiv_level) {
+                                                 uint32_t subdiv_level) {
     std::vector<ShapeInstance> instances;
     const aiScene *ai_scene = _ai_scene;
     vector<aiMesh *> ai_meshes(ai_scene->mNumMeshes);
@@ -159,13 +262,13 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {
             auto ai_position = ai_mesh->mVertices[i];
             auto ai_normal = ai_mesh->mNormals[i];
-            float3 position = make_float3(ai_position.x, ai_position.y, ai_position.z);
+            float3 position = assimp::from_vec3(ai_position);
             aabb.extend(position);
-            float3 normal = make_float3(ai_normal.x, ai_normal.y, ai_normal.z);
+            float3 normal = assimp::from_vec3(ai_normal);
             float2 tex_coord;
             if (ai_mesh->mTextureCoords[0] != nullptr) {
                 auto ai_tex_coord = ai_mesh->mTextureCoords[0][i];
-                tex_coord = make_float2(ai_tex_coord.x, ai_tex_coord.y);
+                tex_coord = assimp::from_vec3(ai_tex_coord).xy();
             } else {
                 tex_coord = make_float2(0.f);
             }
@@ -195,7 +298,7 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
                 continue;
             }
         }
-        auto mesh = make_shared<Mesh>(std::move(vertices), std::move(triangle));
+        Mesh mesh(std::move(vertices), std::move(triangle));
         ShapeInstance instance(mesh);
         instance.set_material(material);
         instances.push_back(instance);

@@ -7,6 +7,16 @@
 #include "base/color/spectrum.h"
 
 namespace vision {
+
+//"type" : "point",
+//"param" : {
+//    "color" : {
+//        "channels" : "xyz",
+//        "node" : [1, 1, 1]
+//    },
+//    "position" : [-0.5, 1.8, 0],
+//    "scale" : 0.2
+//}
 class PointLight : public IPointLight {
 private:
     Serial<float3> _position;

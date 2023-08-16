@@ -13,7 +13,7 @@ Camera::Camera(const SensorDesc &desc)
 }
 
 void Camera::init(const SensorDesc &desc) noexcept {
-    _velocity = desc["velocity"].as_float(5.f);
+    _velocity = desc["velocity"].as_float(10.f);
     _sensitivity = desc["sensitivity"].as_float(0.5f);
     set_fov_y(desc["fov_y"].as_float(20.f));
     update_mat(desc.transform_desc.mat);

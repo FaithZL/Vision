@@ -13,6 +13,7 @@ namespace vision {
 using namespace ocarina;
 class Scene;
 class Pipeline;
+class ShapeInstance;
 struct Geometry {
 private:
     RegistrableManaged<Vertex> _vertices;
@@ -30,9 +31,6 @@ private:
 public:
     explicit Geometry(Pipeline *rp = nullptr);
 
-    void accept(const vector<Vertex> &vert,
-                const vector<Triangle> &tri,
-                InstanceHandle handle);
     /**
      * update shape attribute
      * There is no need to update the acceleration structure

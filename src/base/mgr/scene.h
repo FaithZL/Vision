@@ -15,6 +15,8 @@
 #include "base/scattering/medium.h"
 #include "base/warper.h"
 #include "base/color/spectrum.h"
+#include "material_registry.h"
+#include "mesh_registry.h"
 
 namespace vision {
 
@@ -33,10 +35,11 @@ private:
     SP<LightSampler> _light_sampler{nullptr};
     vector<SP<ShapeGroup>> _groups;
     vector<ShapeInstance> _instances;
-    Polymorphic<SP<Material>> _materials;
     Polymorphic<SP<Medium>> _mediums;
     WarperDesc _warper_desc;
     RenderSettingDesc _render_setting{};
+    MaterialRegistry *_material_registry{&MaterialRegistry::instance()};
+    MeshRegistry *_mesh_registry{&MeshRegistry::instance()};
     SP<Spectrum> _spectrum{nullptr};
     Wrap<Medium> _global_medium{};
     SP<Material> _black_body{};
@@ -49,17 +52,19 @@ public:
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
     MAKE_GETTER(integrator)
-    MAKE_GETTER(camera)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
+    OC_MAKE_MEMBER_GETTER_SETTER(camera, &)
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)
+    [[nodiscard]] const auto &material_registry() const noexcept { return *_material_registry; }
+    [[nodiscard]] auto &material_registry() noexcept { return *_material_registry; }
     [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
     [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
-    [[nodiscard]] const auto &materials() const noexcept { return _materials; }
-    [[nodiscard]] auto &materials() noexcept { return _materials; }
+    [[nodiscard]] const auto &materials() const noexcept { return material_registry().materials(); }
+    [[nodiscard]] auto &materials() noexcept { return material_registry().materials(); }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
     void tidy_up() noexcept;
     void tidy_up_materials() noexcept;
@@ -80,12 +85,13 @@ public:
     }
     [[nodiscard]] bool has_medium() const noexcept { return !_mediums.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);
-    void add_shape(const SP<ShapeGroup>& group, ShapeDesc desc = {});
+    void add_shape(const SP<ShapeGroup> &group, ShapeDesc desc = {});
     void clear_shapes() noexcept;
     void load_mediums(const MediumsDesc &desc);
+    void add_material(SP<Material> material) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
-    void remove_unused_materials();
+    void add_light(SP<Light> light) noexcept;
     template<typename T = Light>
     SP<T> load_light(const LightDesc &desc) {
         OC_ASSERT(_light_sampler != nullptr);
@@ -94,7 +100,9 @@ public:
         return ret;
     }
     void prepare_materials();
-    [[nodiscard]] float world_diameter() const noexcept { return _aabb.radius() * 2; }
+    [[nodiscard]] float3 world_center() const noexcept { return _aabb.center(); }
+    [[nodiscard]] float world_radius() const noexcept { return _aabb.radius(); }
+    [[nodiscard]] float world_diameter() const noexcept { return world_radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return &_instances[id]; }
     [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return &_instances[id]; }

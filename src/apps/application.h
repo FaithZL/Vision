@@ -46,7 +46,7 @@ public:
     UP<CLIParser> cli_parser{};
     Device device;
     mutable Window::Wrapper window{nullptr, nullptr};
-    SceneDesc scene_desc;
+    OutputDesc output_desc;
     SP<Pipeline> rp{};
     vector<float4> _view_buffer;
     float2 last_cursor_pos = make_float2(0);
@@ -60,12 +60,13 @@ public:
     App(int argc, char *argv[])
         : cli_parser(make_unique<CLIParser>(argc, argv)),
           device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())) {
+        output_desc.init(DataWrap::object());
         init(argc);
     }
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;
-    void init_pipeline(const SceneDesc &desc);
+    void init_pipeline();
     [[nodiscard]] Pipeline &pipeline() const { return *rp; }
     void check_and_save() noexcept;
     void save_result() noexcept;

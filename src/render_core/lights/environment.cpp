@@ -9,6 +9,20 @@
 
 namespace vision {
 
+//    "type" : "environment",
+//    "param": {
+//        "color": {
+//            "fn" : "textures/spruit_sunrise_2k.hdr",
+//            "color_space": "linear"
+//        },
+//        "o2w" : {
+//            "type":"yaw_pitch",
+//            "param": {
+//                "yaw" :-30
+//            }
+//        },
+//        "scale" : 3
+//    }
 class EnvironmentLight : public Light {
 private:
     Serial<float4x4> _w2o;

@@ -26,7 +26,6 @@ LightSample IPointLight::sample_Li(const LightSampleContext &p_ref, Float2 u,
     LightEvalContext p_light;
     p_light.pos = position();
     ret.eval = evaluate(p_ref, p_light, swl);
-    Float3 wi_un = position() - p_ref.pos;
     ret.p_light = p_light.pos;
     return ret;
 }

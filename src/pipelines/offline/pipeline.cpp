@@ -24,11 +24,11 @@ public:
 
     void init_scene(const vision::SceneDesc &scene_desc) override {
         _scene.init(scene_desc);
-        init_postprocessor(scene_desc);
+        init_postprocessor(scene_desc.denoiser_desc);
     }
 
-    void init_postprocessor(const vision::SceneDesc &scene_desc) override {
-        _postprocessor.set_denoiser(_scene.load<Denoiser>(scene_desc.denoiser_desc));
+    void init_postprocessor(const DenoiserDesc &desc) override {
+        _postprocessor.set_denoiser(_scene.load<Denoiser>(desc));
         _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
     }
 

@@ -12,6 +12,17 @@ using namespace ocarina;
 
 namespace vision {
 
+using DataWrap = nlohmann::json;
+
+template<typename T, size_t N>
+DataWrap to_json(Vector<T, N> vec) {
+    DataWrap ret = DataWrap ::array({});
+    for (int i = 0; i < N; ++i) {
+        ret.push_back(vec[i]);
+    }
+    return ret;
+}
+
 class ParameterSet {
 private:
     std::string _key;

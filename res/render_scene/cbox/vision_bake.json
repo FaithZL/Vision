@@ -234,6 +234,57 @@
 			"type" : "model",
 			"name" : "shape_5",
 			"param" : {
+				//				"fn" : "mesh/nanosuit/nanosuit.obj",
+				"fn" : "mesh/apple.gltf",
+				//				"fn" : "mesh/planet/planet.obj",
+				"x" : 1,
+				"y" : 1,
+				"z" : 1,
+				//				"smooth": true,
+				//				"material" : "Light",
+				"material" : "ShortBox",
+				//								"material" : "substrate",
+				//								"material" : "Mirror",
+				//								"material" : "Metal",
+				//								                "material" : "disney",
+				//												                "material" : "mix",
+				//								                                "material" : "Glass",
+				//				"emission" : {
+				//					"type" : "area",
+				//					"param" : {
+				//						"color" : {
+				//							"channels" : "xyz",
+				//							"node" : [
+				//								17,
+				//								12,
+				//								4
+				//							]
+				//						},
+				//						//						"color" : {
+				//						//							"channels" : "xyz",
+				//						//							"node" : {
+				//						//								"fn" : "Painting3.jpg",
+				//						//								"color_space" : "srgb"
+				//						//							}
+				//						//						},
+				//						"two_sided" : false,
+				//						"scale" : 0.1
+				//					}
+				//				},
+				"transform" : {
+					"type" : "trs",
+					"param" : {
+						"t" : [0, 0.8, 0],
+						"r" : [1, 0, 0, 0],
+						"s" : [0.4, 0.4, 0.4]
+					}
+				}
+			}
+		},
+		{
+			"type" : "model",
+			"name" : "shape_5",
+			"param" : {
 //				"fn" : "mesh/nanosuit/nanosuit.obj",
 				"fn" : "mesh/apple.gltf",
 //				"fn" : "mesh/planet/planet.obj",
@@ -274,9 +325,9 @@
 				"transform" : {
 					"type" : "trs",
 					"param" : {
-						"t" : [0, 0.6, 0],
+						"t" : [0, 0.3, 0],
 						"r" : [1, 0, 0, 0],
-						"s" : [0.8, 0.8, 0.8]
+						"s" : [0.4, 0.4, 0.4]
 					}
 				}
 			}
