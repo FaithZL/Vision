@@ -134,12 +134,7 @@ void App::update(double dt) noexcept {
     if (invalidation) {
         auto camera = pipeline().scene().camera();
         float3 pos = camera->position();
-        OC_INFO_FORMAT("camera yaw is {:.2f}, pitch is {:.2f}, fov is {:.1f}, focal distance is {:.2f}, "
-                       "lens radius is {:.2f}, position is ({:.2f}, {:.2f}, {:.2f})",
-                       camera->yaw(),
-                       camera->pitch(), camera->fov_y(),
-                       camera->focal_distance(), camera->lens_radius(),
-                       pos.x, pos.y, pos.z);
+        OC_INFO(camera->to_string());
         invalidation = false;
         pipeline().invalidate();
     }
