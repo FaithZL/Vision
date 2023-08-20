@@ -10,6 +10,7 @@ namespace vision {
 
 using namespace ocarina;
 
+// from blender cycles
 class IESFile {
 protected:
     /**
