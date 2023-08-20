@@ -19,13 +19,13 @@ protected:
      * and always span the full range from 0бу to 360бу.
      * The vertical angles correspond to phi and always start at 0бу.
      */
-    vector<float> v_angles, h_angles;
+    vector<float> _v_angles, _h_angles;
 
     /**
      * The actual values are stored here, with every entry storing the values
      * of one horizontal segment.
      */
-    vector<vector<float>> intensity;
+    vector<vector<float>> _intensity;
 
     /**
      * Types of angle representation in IES files. Currently, only B and C are supported.

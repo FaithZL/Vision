@@ -64,33 +64,33 @@ bool IESFile::load(const string &ies) {
 }
 
 void IESFile::clear() {
-    intensity.clear();
-    v_angles.clear();
-    h_angles.clear();
+    _intensity.clear();
+    _v_angles.clear();
+    _h_angles.clear();
 }
 
 int IESFile::packed_size() {
-    if (v_angles.size() && h_angles.size() > 0) {
-        return 2 + h_angles.size() + v_angles.size() + h_angles.size() * v_angles.size();
+    if (_v_angles.size() && _h_angles.size() > 0) {
+        return 2 + _h_angles.size() + _v_angles.size() + _h_angles.size() * _v_angles.size();
     }
     return 0;
 }
 
 void IESFile::pack(float *data) {
-    if (v_angles.empty() || h_angles.empty()) {
+    if (_v_angles.empty() || _h_angles.empty()) {
         return;
     }
-    *(data++) = bit_cast<float>(int(h_angles.size()));
-    *(data++) = bit_cast<float>(int(v_angles.size()));
+    *(data++) = bit_cast<float>(int(_h_angles.size()));
+    *(data++) = bit_cast<float>(int(_v_angles.size()));
 
-    memcpy(data, &h_angles[0], h_angles.size() * sizeof(float));
-    data += h_angles.size();
-    memcpy(data, &v_angles[0], v_angles.size() * sizeof(float));
-    data += v_angles.size();
+    memcpy(data, &_h_angles[0], _h_angles.size() * sizeof(float));
+    data += _h_angles.size();
+    memcpy(data, &_v_angles[0], _v_angles.size() * sizeof(float));
+    data += _v_angles.size();
 
-    for (int h = 0; h < intensity.size(); h++) {
-        memcpy(data, &intensity[h][0], v_angles.size() * sizeof(float));
-        data += v_angles.size();
+    for (int h = 0; h < _intensity.size(); h++) {
+        memcpy(data, &_intensity[h][0], _v_angles.size() * sizeof(float));
+        data += _v_angles.size();
     }
 }
 
@@ -161,21 +161,21 @@ bool IESFile::parse(const string &ies) {
      */
     factor *= 0.0706650768394;
 
-    v_angles.reserve(v_angles_num);
+    _v_angles.reserve(v_angles_num);
     for (int i = 0; i < v_angles_num; i++) {
-        v_angles.push_back((float)parser.get_double());
+        _v_angles.push_back((float)parser.get_double());
     }
 
-    h_angles.reserve(h_angles_num);
+    _h_angles.reserve(h_angles_num);
     for (int i = 0; i < h_angles_num; i++) {
-        h_angles.push_back((float)parser.get_double());
+        _h_angles.push_back((float)parser.get_double());
     }
 
-    intensity.resize(h_angles_num);
+    _intensity.resize(h_angles_num);
     for (int i = 0; i < h_angles_num; i++) {
-        intensity[i].reserve(v_angles_num);
+        _intensity[i].reserve(v_angles_num);
         for (int j = 0; j < v_angles_num; j++) {
-            intensity[i].push_back((float)(factor * parser.get_double()));
+            _intensity[i].push_back((float)(factor * parser.get_double()));
         }
     }
 
@@ -184,17 +184,17 @@ bool IESFile::parse(const string &ies) {
 
 bool IESFile::process_type_b() {
     vector<vector<float>> newintensity;
-    newintensity.resize(v_angles.size());
-    for (int i = 0; i < v_angles.size(); i++) {
-        newintensity[i].reserve(h_angles.size());
-        for (int j = 0; j < h_angles.size(); j++) {
-            newintensity[i].push_back(intensity[j][i]);
+    newintensity.resize(_v_angles.size());
+    for (int i = 0; i < _v_angles.size(); i++) {
+        newintensity[i].reserve(_h_angles.size());
+        for (int j = 0; j < _h_angles.size(); j++) {
+            newintensity[i].push_back(_intensity[j][i]);
         }
     }
-    intensity.swap(newintensity);
-    h_angles.swap(v_angles);
+    _intensity.swap(newintensity);
+    _h_angles.swap(_v_angles);
 
-    float h_first = h_angles[0], h_last = h_angles[h_angles.size() - 1];
+    float h_first = _h_angles[0], h_last = _h_angles[_h_angles.size() - 1];
     if (h_last != 90.0f) {
         return false;
     }
@@ -206,23 +206,23 @@ bool IESFile::process_type_b() {
          */
         vector<float> new_h_angles;
         vector<vector<float>> new_intensity;
-        int hnum = h_angles.size();
+        int hnum = _h_angles.size();
         new_h_angles.reserve(2 * hnum - 1);
         new_intensity.reserve(2 * hnum - 1);
         for (int i = hnum - 1; i > 0; i--) {
-            new_h_angles.push_back(90.0f - h_angles[i]);
-            new_intensity.push_back(intensity[i]);
+            new_h_angles.push_back(90.0f - _h_angles[i]);
+            new_intensity.push_back(_intensity[i]);
         }
         for (int i = 0; i < hnum; i++) {
-            new_h_angles.push_back(90.0f + h_angles[i]);
-            new_intensity.push_back(intensity[i]);
+            new_h_angles.push_back(90.0f + _h_angles[i]);
+            new_intensity.push_back(_intensity[i]);
         }
-        h_angles.swap(new_h_angles);
-        intensity.swap(new_intensity);
+        _h_angles.swap(new_h_angles);
+        _intensity.swap(new_intensity);
     } else if (h_first == -90.0f) {
         /* We have full 180бу coverage, so just shift to match the angle range convention. */
-        for (int i = 0; i < h_angles.size(); i++) {
-            h_angles[i] += 90.0f;
+        for (int i = 0; i < _h_angles.size(); i++) {
+            _h_angles[i] += 90.0f;
         }
     }
     /**
@@ -230,10 +230,10 @@ bool IESFile::process_type_b() {
      * has to cover all 360бу. Therefore, we copy the 0бу entry to 360бу to ensure full coverage
      * and seamless interpolation.
      */
-    h_angles.push_back(360.0f);
-    intensity.push_back(intensity[0]);
+    _h_angles.push_back(360.0f);
+    _intensity.push_back(_intensity[0]);
 
-    float v_first = v_angles[0], v_last = v_angles[v_angles.size() - 1];
+    float v_first = _v_angles[0], v_last = _v_angles[_v_angles.size() - 1];
     if (v_last != 90.0f) {
         return false;
     }
@@ -243,29 +243,29 @@ bool IESFile::process_type_b() {
          * full 180бу range.
          */
         vector<float> new_v_angles;
-        int hnum = h_angles.size();
-        int vnum = v_angles.size();
+        int hnum = _h_angles.size();
+        int vnum = _v_angles.size();
         new_v_angles.reserve(2 * vnum - 1);
         for (int i = vnum - 1; i > 0; i--) {
-            new_v_angles.push_back(90.0f - v_angles[i]);
+            new_v_angles.push_back(90.0f - _v_angles[i]);
         }
         for (int i = 0; i < vnum; i++) {
-            new_v_angles.push_back(90.0f + v_angles[i]);
+            new_v_angles.push_back(90.0f + _v_angles[i]);
         }
         for (int i = 0; i < hnum; i++) {
             vector<float> new_intensity;
             new_intensity.reserve(2 * vnum - 1);
             for (int j = vnum - 2; j >= 0; j--) {
-                new_intensity.push_back(intensity[i][j]);
+                new_intensity.push_back(_intensity[i][j]);
             }
-            new_intensity.insert(new_intensity.end(), intensity[i].begin(), intensity[i].end());
-            intensity[i].swap(new_intensity);
+            new_intensity.insert(new_intensity.end(), _intensity[i].begin(), _intensity[i].end());
+            _intensity[i].swap(new_intensity);
         }
-        v_angles.swap(new_v_angles);
+        _v_angles.swap(new_v_angles);
     } else if (v_first == -90.0f) {
         /* We have full 180бу coverage, so just shift to match the angle range convention. */
-        for (int i = 0; i < v_angles.size(); i++) {
-            v_angles[i] += 90.0f;
+        for (int i = 0; i < _v_angles.size(); i++) {
+            _v_angles[i] += 90.0f;
         }
     }
 
@@ -273,61 +273,61 @@ bool IESFile::process_type_b() {
 }
 
 bool IESFile::process_type_c() {
-    if (h_angles[0] == 90.0f) {
+    if (_h_angles[0] == 90.0f) {
         /* Some files are stored from 90бу to 270бу, so we just rotate them to the regular 0бу-180бу range
      * here. */
-        for (int i = 0; i < h_angles.size(); i++) {
-            h_angles[i] -= 90.0f;
+        for (int i = 0; i < _h_angles.size(); i++) {
+            _h_angles[i] -= 90.0f;
         }
     }
 
-    if (h_angles[0] != 0.0f) {
+    if (_h_angles[0] != 0.0f) {
         return false;
     }
 
-    if (h_angles.size() == 1) {
-        h_angles.push_back(360.0f);
-        intensity.push_back(intensity[0]);
+    if (_h_angles.size() == 1) {
+        _h_angles.push_back(360.0f);
+        _intensity.push_back(_intensity[0]);
     }
 
-    if (h_angles[h_angles.size() - 1] == 90.0f) {
+    if (_h_angles[_h_angles.size() - 1] == 90.0f) {
         /**
          * Only one quadrant is defined, so we need to mirror twice (from one to two, then to four).
          * Since the two->four mirroring step might also be required if we get an input of two
          * quadrants, we only do the first mirror here and later do the second mirror in either case.
          */
-        int hnum = h_angles.size();
+        int hnum = _h_angles.size();
         for (int i = hnum - 2; i >= 0; i--) {
-            h_angles.push_back(180.0f - h_angles[i]);
-            intensity.push_back(intensity[i]);
+            _h_angles.push_back(180.0f - _h_angles[i]);
+            _intensity.push_back(_intensity[i]);
         }
     }
 
-    if (h_angles[h_angles.size() - 1] == 180.0f) {
+    if (_h_angles[_h_angles.size() - 1] == 180.0f) {
         /* Mirror half to the full range. */
-        int hnum = h_angles.size();
+        int hnum = _h_angles.size();
         for (int i = hnum - 2; i >= 0; i--) {
-            h_angles.push_back(360.0f - h_angles[i]);
-            intensity.push_back(intensity[i]);
+            _h_angles.push_back(360.0f - _h_angles[i]);
+            _intensity.push_back(_intensity[i]);
         }
     }
 
     /* Some files skip the 360бу entry (contrary to standard) because it's supposed to be identical to
    * the 0бу entry. If the file has a discernible order in its spacing, just fix this. */
-    if (h_angles[h_angles.size() - 1] != 360.0f) {
-        int hnum = h_angles.size();
-        float last_step = h_angles[hnum - 1] - h_angles[hnum - 2];
-        float first_step = h_angles[1] - h_angles[0];
-        float difference = 360.0f - h_angles[hnum - 1];
+    if (_h_angles[_h_angles.size() - 1] != 360.0f) {
+        int hnum = _h_angles.size();
+        float last_step = _h_angles[hnum - 1] - _h_angles[hnum - 2];
+        float first_step = _h_angles[1] - _h_angles[0];
+        float difference = 360.0f - _h_angles[hnum - 1];
         if (last_step == difference || first_step == difference) {
-            h_angles.push_back(360.0f);
-            intensity.push_back(intensity[0]);
+            _h_angles.push_back(360.0f);
+            _intensity.push_back(_intensity[0]);
         } else {
             return false;
         }
     }
 
-    float v_first = v_angles[0], v_last = v_angles[v_angles.size() - 1];
+    float v_first = _v_angles[0], v_last = _v_angles[_v_angles.size() - 1];
     if (v_first == 90.0f) {
         if (v_last != 180.0f) {
             return false;
@@ -340,7 +340,7 @@ bool IESFile::process_type_c() {
 }
 
 bool IESFile::process() {
-    if (h_angles.size() == 0 || v_angles.size() == 0) {
+    if (_h_angles.size() == 0 || _v_angles.size() == 0) {
         return false;
     }
 
@@ -355,16 +355,16 @@ bool IESFile::process() {
         }
     }
 
-    assert(v_angles[0] == 0.0f || v_angles[0] == 90.0f);
-    assert(h_angles[0] == 0.0f);
-    assert(h_angles[h_angles.size() - 1] == 360.0f);
+    assert(_v_angles[0] == 0.0f || _v_angles[0] == 90.0f);
+    assert(_h_angles[0] == 0.0f);
+    assert(_h_angles[_h_angles.size() - 1] == 360.0f);
 
     /* Convert from deg to rad. */
-    for (int i = 0; i < v_angles.size(); i++) {
-        v_angles[i] *= Pi / 180.f;
+    for (int i = 0; i < _v_angles.size(); i++) {
+        _v_angles[i] *= Pi / 180.f;
     }
-    for (int i = 0; i < h_angles.size(); i++) {
-        h_angles[i] *= Pi / 180.f;
+    for (int i = 0; i < _h_angles.size(); i++) {
+        _h_angles[i] *= Pi / 180.f;
     }
 
     return true;
