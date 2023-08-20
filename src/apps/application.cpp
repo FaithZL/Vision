@@ -133,7 +133,6 @@ void App::update(double dt) noexcept {
     pipeline().upload_data();
     if (invalidation) {
         auto camera = pipeline().scene().camera();
-        float3 pos = camera->position();
         OC_INFO(camera->to_string());
         invalidation = false;
         pipeline().invalidate();
