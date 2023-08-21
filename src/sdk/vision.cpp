@@ -110,6 +110,7 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     Context::instance().init(rpath);
     _device = make_unique<Device>(Context::instance().create_device("cuda"));
     _device->init_rtx();
+    Global::instance().set_device(_device.get());
     desc.device = _device.get();
     desc.sub_type = "offline";
     _pipeline = Global::node_mgr().load<Pipeline>(desc);
@@ -178,11 +179,14 @@ ShapeInstance from_sdk_instance(const sdk::Instance &inst) {
 void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance) {
     SP<ShapeGroup> group = std::make_shared<ShapeGroup>(ShapeDesc{});
     ShapeInstance inst = from_sdk_instance(instance);
+    inst.set_mesh(MeshRegistry::instance().register_(inst.mesh()));
     group->add_instance(inst);
     _pipeline->scene().add_shape(group);
 }
 
 void VisionRendererImpl::build_accel() {
+    _pipeline->scene().tidy_up();
+    _pipeline->scene().fill_instances();
     Geometry &geom = _pipeline->geometry();
     Accel &accel = geom.accel;
     auto impl = accel.impl();

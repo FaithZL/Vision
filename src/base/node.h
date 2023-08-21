@@ -40,6 +40,7 @@ public:
     [[nodiscard]] static Spectrum &spectrum() noexcept;
     [[nodiscard]] static Device &device() noexcept;
     virtual void prepare() noexcept {}
+    [[nodiscard]] virtual string to_string() noexcept { return "node"; }
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
     virtual ~Node() = default;

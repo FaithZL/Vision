@@ -6,6 +6,10 @@
 /cmake-build-release-msvc
 /cmake-build-relwithdebinfo-msvc
 /cmake-build-minsizerel-msvc
+/cmake-build-debug-clang
+/cmake-build-release-clang
+/cmake-build-relwithdebinfo-clang
+/cmake-build-minsizerel-clang
 /build
 /vs2019
 
