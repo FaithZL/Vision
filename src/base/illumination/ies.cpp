@@ -88,8 +88,8 @@ void IESFile::pack(float *data) {
     memcpy(data, &_v_angles[0], _v_angles.size() * sizeof(float));
     data += _v_angles.size();
 
-    for (int h = 0; h < _intensity.size(); h++) {
-        memcpy(data, &_intensity[h][0], _v_angles.size() * sizeof(float));
+    for (auto & h : _intensity) {
+        memcpy(data, &h[0], _v_angles.size() * sizeof(float));
         data += _v_angles.size();
     }
 }
@@ -130,10 +130,10 @@ bool IESFile::parse(const string &ies) {
     int h_angles_num = parser.get_long(); /* Number of horizontal angles */
     type = (IESType)parser.get_long();    /* Photometric type */
 
-    /* TODO(lukas): Test whether the current type B processing can also deal with type A files.
-   * In theory the only difference should be orientation which we ignore anyways, but with IES you
-   * never know...
-   */
+    /** TODO(lukas): Test whether the current type B processing can also deal with type A files.
+     * In theory the only difference should be orientation which we ignore anyways, but with IES you
+     * never know...
+     */
     if (type != TYPE_B && type != TYPE_C) {
         return false;
     }
@@ -264,8 +264,8 @@ bool IESFile::process_type_b() {
         _v_angles.swap(new_v_angles);
     } else if (v_first == -90.0f) {
         /* We have full 180бу coverage, so just shift to match the angle range convention. */
-        for (int i = 0; i < _v_angles.size(); i++) {
-            _v_angles[i] += 90.0f;
+        for (float & _v_angle : _v_angles) {
+            _v_angle += 90.0f;
         }
     }
 
