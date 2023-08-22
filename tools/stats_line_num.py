@@ -23,6 +23,8 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
             continue
         if ".natvis" in fn:
             continue
+        if "json.hpp" in fn:
+            continue
         if "ocarina" in fn:
             continue
         try:
@@ -64,8 +66,6 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src/ocarina/src")):
         if ".natvis" in fn:
             continue
         try:
-            # print(file)
-            
             f = open(fn, "r")
             count += len(f.readlines())
         except :
