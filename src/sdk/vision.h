@@ -12,8 +12,11 @@
 #include <vector>
 #include <memory>
 #include <windows.h>
+#include "json.hpp"
 
 namespace vision::sdk {
+
+using Value = nlohmann::json;
 
 using std::array;
 using std::vector;
@@ -51,6 +54,7 @@ struct Instance {
     uint32_t tri_num{~0u};
     std::shared_ptr<Vertex> vertices{};
     uint32_t vert_num{~0u};
+    Value mat{Value::object()};
     Mat4x4 mat4{Mat4x4::identity()};
 };
 
