@@ -7,6 +7,7 @@
 #include "ext/imgui/imgui.h"
 #include "base/mgr/global.h"
 #include "base/importer.h"
+#include "rhi/stats.h"
 
 namespace vision {
 using namespace ocarina;
@@ -162,6 +163,7 @@ void App::save_result() noexcept {
 }
 
 int App::run() noexcept {
+    OC_INFO(MemoryStats::instance().buffer_info());
     window->run([&](double dt) {
         update(dt);
     });
