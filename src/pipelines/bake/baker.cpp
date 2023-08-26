@@ -178,8 +178,8 @@ uint Baker::calculate_buffer_size() noexcept {
 
 void Baker::allocate() noexcept {
     uint buffer_size = calculate_buffer_size();
-    _radiance = device().create_buffer<float4>(buffer_size);
-    _final_radiance = device().create_buffer<float4>(buffer_size);
+    _radiance = device().create_buffer<float4>(buffer_size, "bake radiance");
+    _final_radiance = device().create_buffer<float4>(buffer_size, "bake final radiance");
     _batch_mesh.allocate(buffer_size);
 }
 

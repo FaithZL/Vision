@@ -20,7 +20,7 @@ CommandList BatchMesh::clear() noexcept {
 }
 
 void BatchMesh::allocate(ocarina::uint buffer_size) {
-    _pixels = device().create_buffer<uint4>(buffer_size);
+    _pixels = device().create_buffer<uint4>(buffer_size, "batch mesh pixel");
 }
 
 void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
@@ -51,8 +51,8 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
         cmd_lst << bs.pixels().reset();
     }
     stream() << cmd_lst << synchronize() << commit();
-    _vertices = device().create_buffer<Vertex>(vertices.size());
-    _triangles = device().create_buffer<Triangle>(triangles.size());
+    _vertices = device().create_buffer<Vertex>(vertices.size(), "batched mesh vertices");
+    _triangles = device().create_buffer<Triangle>(triangles.size(), "batched mesh triangles");
     stream() << _vertices.upload(vertices.data())
              << _triangles.upload(triangles.data())
              << synchronize() << commit();

@@ -13,7 +13,7 @@ public:
 
     void prepare() noexcept override {
         auto pixel_num = resolution().x * resolution().y;
-        _final_picture.reset_all(device(), pixel_num);
+        _final_picture.reset_all(device(), pixel_num, "offline final picture");
         _scene.prepare();
         image_pool().prepare();
         prepare_geometry();

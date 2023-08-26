@@ -68,10 +68,10 @@ void Geometry::build_accel() {
 }
 
 void Geometry::reset_device_buffer() {
-    _vertices.reset_device_buffer_immediately(rp->device());
-    _triangles.reset_device_buffer_immediately(rp->device());
-    _instances.reset_device_buffer_immediately(rp->device());
-    _mesh_handles.reset_device_buffer_immediately(rp->device());
+    _vertices.reset_device_buffer_immediately(rp->device(), "Geometry vertices");
+    _triangles.reset_device_buffer_immediately(rp->device(), "Geometry triangles");
+    _instances.reset_device_buffer_immediately(rp->device(), "Geometry instances");
+    _mesh_handles.reset_device_buffer_immediately(rp->device(), "Geometry mesh handles");
 
     _vertices.register_self();
     _triangles.register_self();
