@@ -7,12 +7,12 @@
 
 namespace vision {
 
-class CocosBxDFSet : public BxDFSet {
+class PbrBxDFSet : public BxDFSet {
 private:
     UP<BxDF> _bxdf;
 
 public:
-    CocosBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
+    PbrBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
         : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
@@ -27,7 +27,7 @@ public:
     }
 };
 
-class CocosMaterial : public Material {
+class PbrMaterial : public Material {
 private:
     Slot _color{};
     Slot _spec{};
@@ -35,7 +35,7 @@ private:
     Slot _metallic{};
 
 public:
-    explicit CocosMaterial(const MaterialDesc &desc)
+    explicit PbrMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
         init_slot_cursor(&_color, 1);
     }
@@ -43,10 +43,10 @@ public:
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        return BSDF(it, make_unique<CocosBxDFSet>(kr, swl));
+        return BSDF(it, make_unique<PbrBxDFSet>(kr, swl));
     }
 };
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::CocosMaterial)
+VS_MAKE_CLASS_CREATOR(vision::PbrMaterial)
