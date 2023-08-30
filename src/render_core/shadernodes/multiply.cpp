@@ -22,9 +22,9 @@ namespace vision {
 //        },
 //        "rhs" : {
 //            "channels" : "xyz",
-//                         "node" : {
+//            "node" : {
 //                "type": "number",
-//                         "param": {
+//                "param": {
 //                    "value": [0.9,1,0.9]
 //                }
 //            }
