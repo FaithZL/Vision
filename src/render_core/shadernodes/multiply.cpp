@@ -6,6 +6,31 @@
 #include "base/mgr/scene.h"
 
 namespace vision {
+
+//{
+//    "type" : "multiply",
+//        "param" : {
+//        "lhs" : {
+//            "channels" : "xyz",
+//            "node" : {
+//                "type" : "image",
+//                "param" : {
+//                    "fn" : "checker.jpg",
+//                    "color_space" : "srgb"
+//                }
+//            }
+//        },
+//        "rhs" : {
+//            "channels" : "xyz",
+//                         "node" : {
+//                "type": "number",
+//                         "param": {
+//                    "value": [0.9,1,0.9]
+//                }
+//            }
+//        }
+//    }
+//}
 class Multiply : public ShaderNode {
 private:
     Slot _lhs;
