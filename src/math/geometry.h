@@ -279,8 +279,20 @@ public:
           uv{uv.x, uv.y},
           uv2{uv2.x, uv2.y} {}
 
+    void set_position(float3 p) noexcept {
+        pos[0] = p[0];
+        pos[1] = p[1];
+        pos[2] = p[2];
+    }
+
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
+    }
+
+    void set_normal(float3 n_) noexcept {
+        n[0] = n_[0];
+        n[1] = n_[1];
+        n[2] = n_[2];
     }
 
     [[nodiscard]] auto normal() const noexcept {
