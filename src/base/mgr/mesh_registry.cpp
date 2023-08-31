@@ -34,7 +34,7 @@ SP<Mesh> MeshRegistry::register_(SP<vision::Mesh> mesh) noexcept {
         _mesh_map.insert(make_pair(hash, mesh));
         _meshes.push_back(mesh.get());
     }
-    return mesh;
+    return get_mesh(hash);
 }
 
 SP<Mesh> MeshRegistry::register_(vision::Mesh mesh) noexcept {
@@ -81,6 +81,11 @@ SP<const Mesh> MeshRegistry::get_mesh(uint64_t hash) const noexcept {
         return _mesh_map.at(hash);
     }
     return nullptr;
+}
+
+void MeshRegistry::clear() noexcept {
+    _mesh_map.clear();
+    _meshes.clear();
 }
 
 void MeshRegistry::for_each(const std::function<void(Mesh *, uint)> &func) noexcept {

@@ -35,6 +35,7 @@ public:
     void for_each(const std::function<void(Mesh *, uint)> &func) noexcept;
     void for_each(const std::function<void(const Mesh *, uint)> &func) const noexcept;
     void tidy_up() noexcept;
+    void clear() noexcept;
     bool remove(SP<Mesh> mesh) noexcept;
     bool remove(uint64_t hash) noexcept;
     bool remove(const Mesh *mesh) noexcept;
