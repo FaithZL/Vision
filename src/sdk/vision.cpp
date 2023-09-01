@@ -26,7 +26,7 @@ public:
     void render() override;
     void invalidation() override;
     void clear_geometries() override;
-    void add_instance(const Instance &instance) override;
+    void add_instance(const Instance &instance, const char *mat) override;
     void build_accel() override;
     void update_camera(vision::sdk::Camera camera) override;
     void update_resolution(uint32_t width, uint32_t height) override;
@@ -176,10 +176,14 @@ ShapeInstance from_sdk_instance(const sdk::Instance &inst) {
     return ret;
 }
 
-void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance) {
+void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance, const char *mat) {
     SP<ShapeGroup> group = std::make_shared<ShapeGroup>(ShapeDesc{});
+    MaterialDesc md;
+    md.init(Value::parse(mat));
+    auto material = NodeMgr::instance().load<Material>(md);
     ShapeInstance inst = from_sdk_instance(instance);
     inst.set_mesh(MeshRegistry::instance().register_(inst.mesh()));
+    inst.set_material(material);
     group->add_instance(inst);
     _pipeline->scene().add_shape(group);
 }
