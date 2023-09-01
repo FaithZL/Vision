@@ -180,10 +180,11 @@ void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance, con
     SP<ShapeGroup> group = std::make_shared<ShapeGroup>(ShapeDesc{});
     MaterialDesc md;
     md.init(Value::parse(mat));
-    auto material = NodeMgr::instance().load<Material>(md);
     ShapeInstance inst = from_sdk_instance(instance);
     inst.set_mesh(MeshRegistry::instance().register_(inst.mesh()));
-    inst.set_material(material);
+//    auto material = NodeMgr::instance().load<Material>(md);
+//    inst.set_material(material);
+//    _pipeline->scene().add_material(material);
     group->add_instance(inst);
     _pipeline->scene().add_shape(group);
 }
