@@ -54,7 +54,7 @@ struct Instance {
     uint32_t tri_num{~0u};
     std::shared_ptr<Vertex> vertices{};
     uint32_t vert_num{~0u};
-    Value mat{Value::object()};
+    std::string mat{};
     Mat4x4 mat4{Mat4x4::identity()};
 };
 
@@ -72,7 +72,7 @@ public:
     virtual void render() = 0;
     virtual void invalidation() = 0;
     virtual void clear_geometries() = 0;
-    virtual void add_instance(const Instance &instance) = 0;
+    virtual void add_instance(const Instance &instance, const char *mat) = 0;
     virtual void build_accel() = 0;
     virtual void update_camera(Camera camera) = 0;
     virtual void update_resolution(uint32_t width, uint32_t height) = 0;
