@@ -3856,7 +3856,7 @@
                 "name" : "fog",
                 "param" : {
                     "g" : 0,
-                    "scale" : 0.0233,
+                    "scale" : 0.0231,
                     "sigma_s" : [1, 1, 1],
                     "sigma_a" : [0, 0, 0]
                 }
