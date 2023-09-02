@@ -54,8 +54,8 @@ struct Instance {
     uint32_t tri_num{~0u};
     std::shared_ptr<Vertex> vertices{};
     uint32_t vert_num{~0u};
-    std::string mat{};
     Mat4x4 mat4{Mat4x4::identity()};
+    std::string mat{};
 };
 
 struct Camera {
