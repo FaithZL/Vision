@@ -11,20 +11,25 @@
 namespace vision {
 using namespace ocarina;
 
-template<EPort p = D>
-class WeightedReservoir {
-private:
-    oc_float<p> _weight_sum{};
-    oc_float3<p> _value{};
-    oc_uint<p> _sample_num{};
+struct Reservoir {
+public:
+    static constexpr EPort p = H;
+    oc_float<p> weight_sum;
+    oc_float3<p> value;
 
 public:
-    WeightedReservoir() = default;
-    void sample(oc_float<p> u, oc_float<p> weight, oc_float3<p> value) {
-        _sample_num += 1;
-        _weight_sum += weight;
-        _value = select(u < (weight / _weight_sum), value, _value);
+    void update(oc_float<p> u, oc_float<p> weight, oc_float3<p> v) {
+        weight_sum += weight;
+        value = select(u < (weight / weight_sum), v, value);
     }
 };
 
 }// namespace vision
+
+OC_STRUCT(vision::Reservoir, weight_sum, value) {
+    static constexpr EPort p = D;
+    void update(oc_float<p> u, oc_float<p> weight, oc_float3<p> v) {
+        weight_sum += weight;
+        value = select(u < (weight / weight_sum), v, value);
+    }
+};
