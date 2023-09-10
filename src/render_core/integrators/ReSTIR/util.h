@@ -15,12 +15,12 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_float3<p> value{};
+    oc_uint<p> value{};
     oc_uint<p> sample_num{};
     oc_float3<p> W{};
 
 public:
-    void update(oc_float<p> u, oc_float<p> weight, oc_float3<p> v) {
+    void update(oc_float<p> u, oc_float<p> weight, oc_uint<p> v) {
         weight_sum += weight;
         sample_num += 1;
         value = select(u < (weight / weight_sum), v, value);
@@ -36,7 +36,7 @@ public:
 
 OC_STRUCT(vision::Reservoir, weight_sum, value, sample_num, W) {
     static constexpr EPort p = D;
-    void update(oc_float<p> u, oc_float<p> weight, oc_float3<p> v) {
+    void update(oc_float<p> u, oc_float<p> weight, oc_uint<p> v) {
         weight_sum += weight;
         sample_num += 1;
         value = select(u < (weight / weight_sum), v, value);
