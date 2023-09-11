@@ -1185,7 +1185,7 @@
 				}
 			}
 		}
-		//		"type" : "real_time"
+		//		"type" : "customized"
 	},
 	"output" : {
 		"spp" : 0,
