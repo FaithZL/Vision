@@ -10,25 +10,36 @@
 
 namespace vision {
 using namespace ocarina;
+struct RSVSample {
+    int inst;
+    uint prim;
+};
+}// namespace vision
+OC_STRUCT(vision::RSVSample, inst, prim){
+
+};
+
+namespace vision {
+using namespace ocarina;
 
 struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_uint<p> value{};
-    oc_uint<p> sample_num{};
+    RSVSample sample{};
+    oc_uint<p> M{};
     oc_float3<p> W{};
 
 public:
-    void update(oc_float<p> u, oc_float<p> weight, oc_uint<p> v) {
+    void update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
         weight_sum += weight;
-        sample_num += 1;
-        value = select(u < (weight / weight_sum), v, value);
+        M += 1;
+        sample = select(u < (weight / M), v, sample);
     }
 
     template<typename Func>
     void update_W(Func &&func) noexcept {
-        W = weight_sum / cast<float>(sample_num) / func(value);
+        W = weight_sum / cast<float>(M) / func(sample);
     }
 
     void reset_W() noexcept {
@@ -38,16 +49,16 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Reservoir, weight_sum, value, sample_num, W) {
+OC_STRUCT(vision::Reservoir, weight_sum, sample, M, W) {
     static constexpr EPort p = D;
-    void update(oc_float<p> u, oc_float<p> weight, oc_uint<p> v) {
+    void update(oc_float<p> u, oc_float<p> weight, Var<vision::RSVSample> v) {
         weight_sum += weight;
-        sample_num += 1;
-        value = select(u < (weight / weight_sum), v, value);
+        M += 1;
+        sample = select(u < (weight / weight_sum), v, sample);
     }
     template<typename Func>
     void update_W(Func && func) noexcept {
-        W = weight_sum / cast<float>(sample_num) / func(value);
+        W = weight_sum / cast<float>(M) / func(sample);
     }
     void reset_W() noexcept {
         W = make_float3(0.f);
@@ -67,13 +78,11 @@ template<typename Func>
         const OCReservoir &rsv = reservoirs[i];
         Float u = rands[i];
         Float factor = cast<float>(all(rsv.W == 0.f));
-        ret->update(u, rsv.weight_sum * factor, rsv.value);
-        ret.sample_num += rsv.sample_num;
+        ret->update(u, rsv.weight_sum * factor, rsv.sample);
+        ret.M += rsv.M;
     }
     ret->update_W(OC_FORWARD(func));
     return ret;
 }
-
-
 
 }// namespace vision
