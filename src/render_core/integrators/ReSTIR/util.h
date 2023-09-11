@@ -13,9 +13,10 @@ using namespace ocarina;
 struct RSVSample {
     int inst;
     uint prim;
+    float2 bary;
 };
 }// namespace vision
-OC_STRUCT(vision::RSVSample, inst, prim){
+OC_STRUCT(vision::RSVSample, inst, prim, bary){
 
 };
 
