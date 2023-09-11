@@ -216,7 +216,7 @@ void PassDesc::init(const vision::ParameterSet &ps) noexcept {
 
 void PipelineDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
-    sub_type = ps["type"].as_string("offline");
+    sub_type = ps["type"].as_string("fixed");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
     rasterizer_desc.init(param.value("rasterizer", DataWrap::object()));

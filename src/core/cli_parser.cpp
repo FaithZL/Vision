@@ -21,7 +21,7 @@ void CLIParser::init(int argc, char **argv) {
         {{"d, device", "Select compute device: cuda",
           cxxopts::value<std::string>()->default_value("cuda")},
          {"p, pipeline", "Select render pipeline: offline",
-          cxxopts::value<std::string>()->default_value("offline")},
+          cxxopts::value<std::string>()->default_value("fixed")},
          {"r, runtime-dir", "Specify runtime directory",
           cxxopts::value<fs::path>()->default_value(
               fs::canonical(argv[0]).parent_path().parent_path().string())},
