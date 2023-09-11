@@ -3,3 +3,5 @@
 //
 
 #include "util.h"
+#include "direct.h"
+#include "indirect.h"

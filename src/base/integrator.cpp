@@ -9,7 +9,7 @@
 
 namespace vision {
 
-Float3 UnidirectionalPathTracing::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
+Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();

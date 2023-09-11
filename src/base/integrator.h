@@ -45,14 +45,14 @@ public:
     [[nodiscard]] Uint frame_index() const noexcept { return *_frame_index; }
 };
 
-class UnidirectionalPathTracing : public Integrator {
+class IlluminationIntegrator : public Integrator {
 protected:
     Serial<uint> _max_depth{};
     Serial<uint> _min_depth{};
     Serial<float> _rr_threshold{};
 
 public:
-    explicit UnidirectionalPathTracing(const IntegratorDesc &desc)
+    explicit IlluminationIntegrator(const IntegratorDesc &desc)
         : Integrator(desc),
           _max_depth(desc["max_depth"].as_uint(16)),
           _min_depth(desc["min_depth"].as_uint(5)),

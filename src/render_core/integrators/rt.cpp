@@ -1,5 +1,5 @@
 //
-// Created by Zero on 12/09/2022.
+// Created by Zero on 2023/9/11.
 //
 
 #include "base/integrator.h"
@@ -8,11 +8,15 @@
 #include "base/color/spectrum.h"
 
 namespace vision {
-using namespace ocarina;
-class PathTracingIntegrator : public IlluminationIntegrator {
+
+class RealTimeIntegrator : public IlluminationIntegrator {
+private:
+    uint M{1u};
+
 public:
-    explicit PathTracingIntegrator(const IntegratorDesc &desc)
-        : IlluminationIntegrator(desc) {}
+    explicit RealTimeIntegrator(const IntegratorDesc &desc)
+        : IlluminationIntegrator(desc),
+          M(desc["M"].as_uint(1)) {}
 
     void compile() noexcept override {
         Camera *camera = scene().camera().get();
@@ -39,6 +43,7 @@ public:
         stream << commit();
     }
 };
+
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::PathTracingIntegrator)
+VS_MAKE_CLASS_CREATOR(vision::RealTimeIntegrator)
