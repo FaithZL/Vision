@@ -27,7 +27,7 @@ public:
     }
 
     template<typename Func>
-    void update_W(Func &&func) const noexcept {
+    void update_W(Func &&func) noexcept {
         W = weight_sum / cast<float>(sample_num) / func(value);
     }
 
@@ -46,7 +46,7 @@ OC_STRUCT(vision::Reservoir, weight_sum, value, sample_num, W) {
         value = select(u < (weight / weight_sum), v, value);
     }
     template<typename Func>
-    void update_W(Func && func) const noexcept {
+    void update_W(Func && func) noexcept {
         W = weight_sum / cast<float>(sample_num) / func(value);
     }
     void reset_W() noexcept {
@@ -59,8 +59,17 @@ using namespace ocarina;
 
 using OCReservoir = Var<Reservoir>;
 
-[[nodiscard]] OCReservoir combine_reservoirs(Uint value, const vector<OCReservoir> &reservoirs) {
-    return {};
+template<typename Func>
+[[nodiscard]] OCReservoir combine_reservoirs(const vector<OCReservoir> &reservoirs,
+                                             const vector<Float> &rands, Func &&func) {
+    OCReservoir ret;
+    for (uint i = 0; i < reservoirs.size(); ++i) {
+        const OCReservoir &rsv = reservoirs[i];
+        const Float &u = rands[i];
+//        Float
+//        ret->update(u, )
+    }
+    return ret;
 }
 
 }// namespace vision
