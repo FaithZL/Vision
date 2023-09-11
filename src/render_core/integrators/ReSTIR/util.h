@@ -30,6 +30,10 @@ public:
     void update_W(Func &&func) const noexcept {
         W = weight_sum / cast<float>(sample_num) / func(value);
     }
+
+    void reset_W() noexcept {
+        W = make_float3(0.f);
+    }
 };
 
 }// namespace vision
@@ -45,6 +49,9 @@ OC_STRUCT(vision::Reservoir, weight_sum, value, sample_num, W) {
     void update_W(Func && func) const noexcept {
         W = weight_sum / cast<float>(sample_num) / func(value);
     }
+    void reset_W() noexcept {
+        W = make_float3(0.f);
+    }
 };
 
 namespace vision {
@@ -52,6 +59,8 @@ using namespace ocarina;
 
 using OCReservoir = Var<Reservoir>;
 
-
+[[nodiscard]] OCReservoir combine_reservoirs(Uint value, const vector<OCReservoir> &reservoirs) {
+    return {};
+}
 
 }// namespace vision
