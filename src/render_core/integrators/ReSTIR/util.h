@@ -63,13 +63,17 @@ template<typename Func>
 [[nodiscard]] OCReservoir combine_reservoirs(const vector<OCReservoir> &reservoirs,
                                              const vector<Float> &rands, Func &&func) {
     OCReservoir ret;
-    for (uint i = 0; i < reservoirs.size(); ++i) {
+    for (int i = 0; i < reservoirs.size(); ++i) {
         const OCReservoir &rsv = reservoirs[i];
-        const Float &u = rands[i];
-//        Float
-//        ret->update(u, )
+        Float u = rands[i];
+        Float factor = cast<float>(all(rsv.W == 0.f));
+        ret->update(u, rsv.weight_sum * factor, rsv.value);
+        ret.sample_num += rsv.sample_num;
     }
+    ret->update_W(OC_FORWARD(func));
     return ret;
 }
+
+
 
 }// namespace vision
