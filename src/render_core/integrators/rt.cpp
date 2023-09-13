@@ -32,7 +32,7 @@ public:
             Float3 L = Li(rs, scatter_pdf, nullptr) * ss.filter_weight;
             camera->radiance_film()->add_sample(pixel, L, frame_index);
         };
-        _shader = device().compile(kernel, "path tracing integrator");
+        _shader = device().compile(kernel, "real time integrator");
     }
 
     void render() const noexcept override {

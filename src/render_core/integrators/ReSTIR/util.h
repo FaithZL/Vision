@@ -29,7 +29,7 @@ public:
     oc_float<p> weight_sum{};
     RSVSample sample{};
     oc_uint<p> M{};
-    oc_float3<p> W{};
+    oc_float<p> W{};
 
 public:
     void update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
@@ -44,7 +44,7 @@ public:
     }
 
     void reset_W() noexcept {
-        W = make_float3(0.f);
+        W = 0.f;
     }
 };
 
@@ -62,7 +62,7 @@ OC_STRUCT(vision::Reservoir, weight_sum, sample, M, W) {
         W = weight_sum / cast<float>(M) / func(sample);
     }
     void reset_W() noexcept {
-        W = make_float3(0.f);
+        W = 0.f;
     }
 };
 
@@ -78,7 +78,7 @@ template<typename Func>
     for (int i = 0; i < reservoirs.size(); ++i) {
         const OCReservoir &rsv = reservoirs[i];
         Float u = rands[i];
-        Float factor = cast<float>(all(rsv.W == 0.f));
+        Float factor = cast<float>(rsv.W == 0.f);
         ret->update(u, rsv.weight_sum * factor, rsv.sample);
         ret.M += rsv.M;
     }
