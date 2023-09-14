@@ -9,13 +9,23 @@
 #include "base/mgr/global.h"
 
 namespace vision {
-
+/**
+ * generate initial candidates
+ * evaluate visibility for initial candidates
+ * temporal reuse
+ * spatial reuse and iterate
+ */
 class ReSTIRDI : public SerialObject, public Ctx {
 private:
     uint M{};
+    Buffer<Reservoir> _reservoirs;
+    Buffer<Reservoir> _prev_reservoirs;
+
 
 public:
     explicit ReSTIRDI(uint M) : M(M) {}
+
+
 };
 
 }// namespace vision
