@@ -12,12 +12,12 @@ namespace vision {
 
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
-    uint M{1u};
+    ReSTIRDI _direct;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          M(desc["M"].as_uint(1)) {}
+          _direct(desc["M"].as_uint(1)) {}
 
     void compile() noexcept override {
         Camera *camera = scene().camera().get();
