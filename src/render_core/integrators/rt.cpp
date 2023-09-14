@@ -6,6 +6,7 @@
 #include "base/mgr/pipeline.h"
 #include "math/warp.h"
 #include "base/color/spectrum.h"
+#include "ReSTIR/direct.h"
 
 namespace vision {
 

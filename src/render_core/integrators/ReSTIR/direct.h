@@ -3,3 +3,13 @@
 //
 
 #pragma once
+
+#include "util.h"
+
+namespace vision {
+
+class ReSTIRDI {
+
+};
+
+}
