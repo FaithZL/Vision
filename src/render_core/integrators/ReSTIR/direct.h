@@ -20,12 +20,18 @@ private:
     uint M{};
     Buffer<Reservoir> _reservoirs;
     Buffer<Reservoir> _prev_reservoirs;
-
+    /**
+     * generate initial candidates
+     * check visibility
+     * temporal reuse
+     */
+    Shader<void(uint)> _temporal_reuse;
+    Shader<void(uint)> _spatial_reuse;
+    Shader<void(uint)> _shading;
 
 public:
     explicit ReSTIRDI(uint M) : M(M) {}
-
-
+    void compile() noexcept;
 };
 
 }// namespace vision

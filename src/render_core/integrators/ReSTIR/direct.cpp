@@ -6,4 +6,7 @@
 
 namespace vision {
 
+void ReSTIRDI::compile() noexcept {
 }
+
+}// namespace vision
