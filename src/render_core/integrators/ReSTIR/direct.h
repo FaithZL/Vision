@@ -34,13 +34,13 @@ private:
 
 public:
     explicit ReSTIRDI(uint M) : M(M) {}
+    void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();
         compile_shader1();
     }
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
-
     [[nodiscard]] CommandList launch() const noexcept;
 };
 

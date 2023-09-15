@@ -26,6 +26,12 @@ void ReSTIRDI::compile_shader1() noexcept {
     _shader1 = device().compile(kernel, "spatial reuse and shading");
 }
 
+void ReSTIRDI::prepare() noexcept {
+    const Pipeline *rp = pipeline();
+    _prev_reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
+    _reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
+}
+
 CommandList ReSTIRDI::launch() const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();

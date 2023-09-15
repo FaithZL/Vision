@@ -19,6 +19,10 @@ public:
         : IlluminationIntegrator(desc),
           _direct(desc["M"].as_uint(1)) {}
 
+    void prepare() noexcept override {
+        _direct.prepare();
+    }
+
     void compile() noexcept override {
         _direct.compile();
 
