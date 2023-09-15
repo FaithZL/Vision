@@ -35,7 +35,7 @@ public:
     void update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
         weight_sum += weight;
         M += 1;
-//        sample = select(u < (weight / M), v, sample);
+        sample = ocarina::select(u < (weight / M), v, sample);
     }
 
     template<typename Func>

@@ -42,6 +42,13 @@ public:
         val.w = 1.f;
         _frame.write(index, val);
     }
+    void update_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
+        Uint index = pixel_index(pixel);
+        _radiance.write(index, val);
+        val = linear_to_srgb(_tone_mapper->apply(val));
+        val.w = 1.f;
+        _frame.write(index, val);
+    }
     [[nodiscard]] const RegistrableManaged<float4> &tone_mapped_buffer() const noexcept override { return _frame; }
     [[nodiscard]] RegistrableManaged<float4> &tone_mapped_buffer() noexcept override { return _frame; }
     [[nodiscard]] const RegistrableManaged<float4> &original_buffer() const noexcept override { return _radiance; }

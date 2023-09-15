@@ -20,14 +20,17 @@ private:
     uint M{};
     Buffer<Reservoir> _reservoirs;
     Buffer<Reservoir> _prev_reservoirs;
+
     /**
      * generate initial candidates
      * check visibility
      * temporal reuse
      */
-    Shader<void(uint)> _temporal_reuse;
-    Shader<void(uint)> _spatial_reuse;
-    Shader<void(uint)> _shading;
+    Shader<void(uint)> _pass1;
+    /**
+     * spatial reuse and shading
+     */
+    Shader<void(uint)> _pass2;
 
 public:
     explicit ReSTIRDI(uint M) : M(M) {}
