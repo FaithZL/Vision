@@ -20,6 +20,8 @@ public:
           _direct(desc["M"].as_uint(1)) {}
 
     void compile() noexcept override {
+        _direct.compile();
+
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
