@@ -14,7 +14,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     Camera *camera = scene().camera().get();
     Sampler *sampler = scene().sampler();
 
-    auto RIS = [&] (Uint2 pixel, OCHit hit, RayState rs) {
+    auto RIS = [&](Uint2 pixel, OCHit hit, RayState rs) {
         OCReservoir ret;
         $if(!hit->is_miss()) {
             for (int i = 0; i < M; ++i) {
@@ -24,9 +24,7 @@ void ReSTIRDI::compile_shader0() noexcept {
                 sample.light_index = sampled_light.light_index;
                 sample.PMF = sampled_light.PMF;
                 sample.u = sampler->next_2d();
-                auto [type_id, inst_id] = light_sampler->extract_light_id(sampled_light.light_index);
 
-//                ret->update(sampler->next_1d(), )
             }
         };
         return ret;
@@ -35,8 +33,8 @@ void ReSTIRDI::compile_shader0() noexcept {
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
         sampler->start_pixel_sample(pixel, frame_index, 0);
-        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
+        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         OCReservoir rsv = RIS(pixel, hit, rs);

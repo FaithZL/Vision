@@ -812,7 +812,7 @@
 			},
 			"filter" : {
 //				"type" : "box",
-				"type" : "mitchell",
+				"type" : "gaussian",
 				"name" : "boxFilter",
 				"param" : {
 					"radius" : [
