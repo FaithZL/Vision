@@ -14,17 +14,32 @@ void ReSTIRDI::compile_shader0() noexcept {
     Camera *camera = scene().camera().get();
     Sampler *sampler = scene().sampler();
 
-    auto RIS = [&] (Uint2 pixel) {
+    auto RIS = [&] (Uint2 pixel, OCHit hit, RayState rs) {
         OCReservoir ret;
-        for (int i = 0; i < M; ++i) {
+        $if(!hit->is_miss()) {
+            for (int i = 0; i < M; ++i) {
+                Interaction it = geometry.compute_surface_interaction(hit, false);
+                SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+                OCRSVSample sample;
+                sample.light_index = sampled_light.light_index;
+                sample.PMF = sampled_light.PMF;
+                sample.u = sampler->next_2d();
+                auto [type_id, inst_id] = light_sampler->extract_light_id(sampled_light.light_index);
 
-        }
+//                ret->update(sampler->next_1d(), )
+            }
+        };
         return ret;
     };
 
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
-        OCReservoir rsv = RIS(pixel);
+        sampler->start_pixel_sample(pixel, frame_index, 0);
+        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+        camera->load_data();
+        RayState rs = camera->generate_ray(ss);
+        Var hit = geometry.trace_closest(rs.ray);
+        OCReservoir rsv = RIS(pixel, hit, rs);
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");

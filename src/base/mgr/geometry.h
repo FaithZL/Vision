@@ -25,9 +25,6 @@ public:
     ocarina::Accel accel;
     Pipeline *rp{};
 
-private:
-    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
-
 public:
     explicit Geometry(Pipeline *rp = nullptr);
 
@@ -51,6 +48,7 @@ public:
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
     [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
+    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept {
         auto ret = compute_surface_interaction(hit, true);
         ret.wo = normalize(-ray->direction());
