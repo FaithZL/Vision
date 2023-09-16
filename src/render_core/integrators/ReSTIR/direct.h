@@ -18,6 +18,7 @@ namespace vision {
 class ReSTIRDI : public SerialObject, public Ctx {
 private:
     uint M{};
+    uint n{};
     Buffer<Reservoir> _reservoirs;
     Buffer<Reservoir> _prev_reservoirs;
 
@@ -41,7 +42,7 @@ public:
     }
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
-    [[nodiscard]] CommandList launch() const noexcept;
+    [[nodiscard]] CommandList estimate() const noexcept;
 };
 
 }// namespace vision

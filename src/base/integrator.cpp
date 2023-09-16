@@ -17,7 +17,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     SampledWavelengths swl = spectrum().sample_wavelength(sampler);
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};
-    Geometry &geometry = rp->geometry();
+    const Geometry &geometry = rp->geometry();
 
     Float eta_scale = 1.f;
     $for(&bounces, 0, *_max_depth) {

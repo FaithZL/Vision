@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "dsl/common.h"
 #include "base/node.h"
 #include "core/stl.h"
@@ -42,7 +44,7 @@ public:
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
     [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
-    void add_light(SP<Light> light) noexcept { _lights.push_back(light); }
+    void add_light(SP<Light> light) noexcept { _lights.push_back(ocarina::move(light)); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
     [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                                  const SampledWavelengths &swl) const noexcept;

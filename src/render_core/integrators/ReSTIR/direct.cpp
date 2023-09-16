@@ -8,10 +8,23 @@
 namespace vision {
 
 void ReSTIRDI::compile_shader0() noexcept {
+    Pipeline *rp = pipeline();
+    const Geometry &geometry = rp->geometry();
+    LightSampler *light_sampler = scene().light_sampler();
     Camera *camera = scene().camera().get();
     Sampler *sampler = scene().sampler();
-    Kernel kernel = [&](Uint frame_index) {
 
+    auto RIS = [&] (Uint2 pixel) {
+        OCReservoir ret;
+        for (int i = 0; i < M; ++i) {
+
+        }
+        return ret;
+    };
+
+    Kernel kernel = [&](Uint frame_index) {
+        Uint2 pixel = dispatch_idx().xy();
+        OCReservoir rsv = RIS(pixel);
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");
@@ -32,7 +45,7 @@ void ReSTIRDI::prepare() noexcept {
     _reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
 }
 
-CommandList ReSTIRDI::launch() const noexcept {
+CommandList ReSTIRDI::estimate() const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     ret << _shader0(rp->frame_index()).dispatch(rp->resolution());
