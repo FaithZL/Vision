@@ -13,8 +13,9 @@ void ReSTIRDI::compile_shader0() noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Camera *camera = scene().camera().get();
     Sampler *sampler = scene().sampler();
+    Spectrum &spectrum = rp->spectrum();
 
-    auto RIS = [&](Uint2 pixel, OCHit hit, RayState rs) {
+    auto RIS = [&](Uint2 pixel, OCHit hit, RayState rs, const SampledWavelengths &swl) {
         OCReservoir ret;
         $if(!hit->is_miss()) {
             for (int i = 0; i < M; ++i) {
@@ -24,6 +25,7 @@ void ReSTIRDI::compile_shader0() noexcept {
                 sample.light_index = sampled_light.light_index;
                 sample.PMF = sampled_light.PMF;
                 sample.u = sampler->next_2d();
+                LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
 
             }
         };
@@ -34,10 +36,11 @@ void ReSTIRDI::compile_shader0() noexcept {
         Uint2 pixel = dispatch_idx().xy();
         sampler->start_pixel_sample(pixel, frame_index, 0);
         camera->load_data();
+        SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
-        OCReservoir rsv = RIS(pixel, hit, rs);
+        OCReservoir rsv = RIS(pixel, hit, rs, swl);
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");
