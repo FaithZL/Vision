@@ -11,14 +11,15 @@
 namespace vision {
 using namespace ocarina;
 struct RSVSample {
-    int inst;
-    uint prim;
-    float2 bary;
+    uint light_index{};
+    uint prim_id{};
+    float2 u;
 };
 }// namespace vision
-OC_STRUCT(vision::RSVSample, inst, prim, bary){
 
-};
+// clang-format off
+OC_STRUCT(vision::RSVSample, light_index, prim_id, u) {};
+// clang-format on
 
 namespace vision {
 using namespace ocarina;
