@@ -29,7 +29,7 @@ public:
         AssimpParser parser;
         parser.load_scene(fn, desc["swap_handed"].as_bool(false),
                                desc["smooth"].as_bool(false),
-                               desc["flip_uv"].as_bool(false));
+                               desc["flip_uv"].as_bool(true));
         string mat_name = desc["material"].as_string();
         auto instances = parser.parse_meshes(mat_name.empty(), desc["subdiv_level"].as_uint(0u));
         add_instances(instances);
