@@ -122,6 +122,19 @@ public:
         };
         return ret;
     }
+    [[nodiscard]] SampledSpectrum f(ocarina::Float3 wo, ocarina::Float3 wi, ocarina::Uint flag) const noexcept override {
+        SampledSpectrum ret{_refl.swl().dimension()};
+        auto fresnel = _fresnel->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        $if(same_hemisphere(wo, wi)) {
+            ret = _refl.f(wo, wi, fresnel);
+        }
+        $else {
+            ret = _trans.f(wo, wi, fresnel);
+        };
+        return ret;
+    }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
                                              Sampler *sampler) const noexcept override {
         Float uc = sampler->next_1d();

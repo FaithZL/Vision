@@ -16,6 +16,9 @@ struct BxDFSet {
 public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, Uint flag) const noexcept {
+        return SampledSpectrum{3, 0};
+    }
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
         OC_ASSERT(false);
@@ -55,6 +58,7 @@ public:
     }
     [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
+    [[nodiscard]] SampledSpectrum f(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
@@ -87,7 +91,7 @@ protected:
 
 public:
     explicit Material(const MaterialDesc &desc);
-    OC_MAKE_MEMBER_GETTER_SETTER(index,)
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
         uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
         _slot_cursor.offset = offset;
@@ -121,10 +125,12 @@ public:
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
         if (_bump) {
-            OC_FORWARD(func)(_bump);
+            OC_FORWARD(func)
+            (_bump);
         }
         if (_bump_scale) {
-            OC_FORWARD(func)(_bump_scale);
+            OC_FORWARD(func)
+            (_bump_scale);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
@@ -138,10 +144,12 @@ public:
     template<typename F>
     void for_each_slot(F &&func) noexcept {
         if (_bump) {
-            OC_FORWARD(func)(_bump);
+            OC_FORWARD(func)
+            (_bump);
         }
         if (_bump_scale) {
-            OC_FORWARD(func)(_bump_scale);
+            OC_FORWARD(func)
+            (_bump_scale);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             Slot &slot = get_slot(i);
@@ -161,7 +169,7 @@ public:
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
-    virtual void _apply_bump(Interaction *it,const SampledWavelengths &swl) const noexcept;
+    virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual BSDF _compute_BSDF(const Interaction &it,
                                              const SampledWavelengths &swl) const noexcept = 0;
 

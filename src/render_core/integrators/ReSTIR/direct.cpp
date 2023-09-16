@@ -15,7 +15,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = rp->spectrum();
 
-    auto RIS = [&](Uint2 pixel, OCHit hit, RayState rs, const SampledWavelengths &swl) {
+    auto RIS = [&](Uint2 pixel, OCHit hit, RayState rs, SampledWavelengths &swl) {
         OCReservoir ret;
         $if(!hit->is_miss()) {
             for (int i = 0; i < M; ++i) {
@@ -26,7 +26,17 @@ void ReSTIRDI::compile_shader0() noexcept {
                 sample.PMF = sampled_light.PMF;
                 sample.u = sampler->next_2d();
                 LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
+                Float3 wi = normalize(ls.p_light - it.pos);
+                Float pq = 1.f;
+                scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+                    BSDF bsdf = material->compute_BSDF(it, swl);
+                    if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+                        $if(*dispersive) {
+                            swl.invalidation_secondary();
+                        };
+                    }
 
+                });
             }
         };
         return ret;

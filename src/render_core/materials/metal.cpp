@@ -31,11 +31,14 @@ private:
 
 public:
     ConductorBxDFSet(const SP<Fresnel> &fresnel,
-                  MicrofacetReflection refl)
+                     MicrofacetReflection refl)
         : _fresnel(fresnel), _refl(ocarina::move(refl)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _refl.safe_evaluate(wo, wi, _fresnel->clone());
+    }
+    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, Uint flag) const noexcept override {
+        return _refl.f(wo, wi, _fresnel->clone());
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         return _refl.sample(wo, sampler, _fresnel->clone());
