@@ -7,11 +7,12 @@
 
 namespace vision {
 
-OCReservoir ReSTIRDI::RIS(Uint2 pixel, Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept {
+OCReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept {
     Pipeline *rp = pipeline();
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = rp->spectrum();
+    comment("RIS start");
     OCReservoir ret;
     $if(hit) {
         for (int i = 0; i < M; ++i) {
@@ -39,6 +40,7 @@ OCReservoir ReSTIRDI::RIS(Uint2 pixel, Bool hit, const Interaction &it, SampledW
             ret->update(sampler->next_1d(), weight, sample);
         }
     };
+    comment("RIS end");
     return ret;
 }
 
@@ -62,23 +64,38 @@ void ReSTIRDI::compile_shader0() noexcept {
         $if(!hit->is_miss()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, false);
         };
-        OCReservoir rsv = RIS(pixel, !hit->is_miss(), it, swl);
+        OCReservoir rsv = RIS(!hit->is_miss(), it, swl);
 
         $if(!hit->is_miss()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
         };
 
+        OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
+        comment("temporal reuse");
+        rsv = combine_reservoirs({prev_rsv, rsv}, {sampler->next_1d(), sampler->next_1d()});
         _reservoirs.write(dispatch_id(), rsv);
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");
 }
 
+OCReservoir ReSTIRDI::spatial_reuse(const Uint2 &pixel) const noexcept {
+    OCReservoir ret;
+
+
+
+    return ret;
+}
+
 void ReSTIRDI::compile_shader1() noexcept {
     Camera *camera = scene().camera().get();
     Sampler *sampler = scene().sampler();
+    uint2 res = pipeline()->resolution();
     Kernel kernel = [&](Uint frame_index) {
+        Uint2 pixel = dispatch_idx().xy();
+
+        OCReservoir rsv = spatial_reuse(pixel);
 
     };
     _shader1 = device().compile(kernel, "spatial reuse and shading");

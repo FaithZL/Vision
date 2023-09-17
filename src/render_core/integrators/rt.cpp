@@ -17,7 +17,9 @@ private:
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(desc["M"].as_uint(1)) {}
+          _direct(desc["M"].as_uint(1),
+                  desc["n"].as_uint(3),
+                  desc["spatial"].as_uint(1)) {}
 
     void prepare() noexcept override {
         _direct.prepare();

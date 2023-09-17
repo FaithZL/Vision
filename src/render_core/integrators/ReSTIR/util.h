@@ -78,16 +78,17 @@ using namespace ocarina;
 
 using OCReservoir = Var<Reservoir>;
 
-template<typename Func>
-[[nodiscard]] OCReservoir combine_reservoirs(const vector<OCReservoir> &reservoirs,
-                                             const vector<Float> &rands, Func &&func) {
+[[nodiscard]] inline OCReservoir combine_reservoirs(const vector<OCReservoir> &reservoirs,
+                                                    const vector<Float> &rands) {
     OCReservoir ret;
+    comment("combine_reservoirs start");
     for (int i = 0; i < reservoirs.size(); ++i) {
         const OCReservoir &rsv = reservoirs[i];
         Float u = rands[i];
         ret->update(u, rsv.weight_sum, rsv.sample);
         ret.M += rsv.M;
     }
+    comment("combine_reservoirs end");
     return ret;
 }
 
