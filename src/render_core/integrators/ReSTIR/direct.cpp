@@ -7,7 +7,7 @@
 
 namespace vision {
 
-OCReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept {
+OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept {
     Pipeline *rp = pipeline();
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
@@ -44,7 +44,7 @@ OCReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it, SampledWavelengths &s
     return ret;
 }
 
-void ReSTIRDI::compile_shader0() noexcept {
+void ReSTIR::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
     Camera *camera = scene().camera().get();
@@ -53,10 +53,9 @@ void ReSTIRDI::compile_shader0() noexcept {
 
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
-
         sampler->start_pixel_sample(pixel, frame_index, 0);
-        camera->load_data();
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
+        camera->load_data();
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
@@ -73,41 +72,66 @@ void ReSTIRDI::compile_shader0() noexcept {
 
         OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
         comment("temporal reuse");
-        rsv = combine_reservoirs({prev_rsv, rsv}, {sampler->next_1d(), sampler->next_1d()});
+        rsv->merge(prev_rsv, sampler->next_1d());
         _reservoirs.write(dispatch_id(), rsv);
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");
 }
 
-OCReservoir ReSTIRDI::spatial_reuse(const Uint2 &pixel) const noexcept {
+OCReservoir ReSTIR::spatial_reuse(const Uint2 &pixel) const noexcept {
+    Sampler *sampler = scene().sampler();
     OCReservoir ret;
-
-
-
+    uint2 res = pipeline()->resolution();
+    Uint min_x = max(0u, pixel.x - _spatial);
+    Uint max_x = min(pixel.x + _spatial, res.x - 1);
+    Uint min_y = max(0u, pixel.y - _spatial);
+    Uint max_y = min(pixel.y + _spatial, res.y - 1);
+    $for(x, min_x, max_x) {
+        $for(y, min_y, max_y) {
+            Uint index = y * res.x + x;
+            OCReservoir rsv = _reservoirs.read(index);
+            ret->merge(rsv, sampler->next_1d());
+        };
+    };
     return ret;
 }
 
-void ReSTIRDI::compile_shader1() noexcept {
-    Camera *camera = scene().camera().get();
+Float3 ReSTIR::shading(const vision::OCReservoir &rsv, SampledWavelengths &swl) const noexcept {
+    LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
-    uint2 res = pipeline()->resolution();
+    Spectrum &spectrum = pipeline()->spectrum();
+    SampledSpectrum value = {swl.dimension(), 0.f};
+
+    return spectrum.linear_srgb(value, swl);
+}
+
+void ReSTIR::compile_shader1() noexcept {
+    Camera *camera = scene().camera().get();
+    Film *film = camera->radiance_film();
+    Sampler *sampler = scene().sampler();
+    Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
-
+        sampler->start_pixel_sample(pixel, frame_index, 0);
+        SampledWavelengths swl = spectrum.sample_wavelength(sampler);
+        sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir rsv = spatial_reuse(pixel);
-
+        Float3 L = shading(rsv, swl);
+        film->update_sample(pixel, L, frame_index);
+        _prev_reservoirs.write(dispatch_id(), rsv);
     };
     _shader1 = device().compile(kernel, "spatial reuse and shading");
 }
 
-void ReSTIRDI::prepare() noexcept {
+void ReSTIR::prepare() noexcept {
     const Pipeline *rp = pipeline();
     _prev_reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
     _reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
+    GBuffer = device().create_buffer<GData>(rp->pixel_num());
 }
 
-CommandList ReSTIRDI::estimate() const noexcept {
+CommandList ReSTIR::estimate() const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     ret << _shader0(rp->frame_index()).dispatch(rp->resolution());

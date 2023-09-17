@@ -31,6 +31,52 @@ OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF, pos) {
 // clang-format on
 
 namespace vision {
+
+struct GData {
+    array<float, 3> p;
+    array<float, 3> n;
+    void set_pos(float3 val) noexcept {
+        p[0] = val[0];
+        p[1] = val[1];
+        p[2] = val[2];
+    }
+    void set_ng(float3 val) noexcept {
+        n[0] = val[0];
+        n[1] = val[1];
+        n[2] = val[2];
+    }
+    [[nodiscard]] auto pos() const noexcept {
+        return make_float3(p[0], p[1], p[2]);
+    }
+    [[nodiscard]] auto ng() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
+};
+
+}// namespace vision
+
+// clang-format off
+OC_STRUCT(vision::GData, p, n) {
+    void set_pos(Float3 val) noexcept {
+        p[0] = val[0];
+        p[1] = val[1];
+        p[2] = val[2];
+    }
+    void set_ng(Float3 val) noexcept {
+        n[0] = val[0];
+        n[1] = val[1];
+        n[2] = val[2];
+    }
+    [[nodiscard]] auto pos() const noexcept {
+        return make_float3(p[0], p[1], p[2]);
+    }
+    [[nodiscard]] auto ng() const noexcept {
+        return make_float3(n[0], n[1], n[2]);
+    }
+};
+// clang-format on
+
+namespace vision {
 using OCRSVSample = Var<RSVSample>;
 }
 
@@ -55,6 +101,10 @@ public:
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
+    void merge(const Reservoir &rsv, float u) noexcept {
+        update(u, rsv.weight_sum, rsv.sample);
+        M += rsv.M;
+    }
 };
 
 }// namespace vision
@@ -71,25 +121,13 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
+    void merge(const Var<vision::Reservoir> &rsv, Float u) noexcept {
+        update(u, rsv.weight_sum, rsv.sample);
+        M += rsv.M;
+    }
 };
 
 namespace vision {
 using namespace ocarina;
-
 using OCReservoir = Var<Reservoir>;
-
-[[nodiscard]] inline OCReservoir combine_reservoirs(const vector<OCReservoir> &reservoirs,
-                                                    const vector<Float> &rands) {
-    OCReservoir ret;
-    comment("combine_reservoirs start");
-    for (int i = 0; i < reservoirs.size(); ++i) {
-        const OCReservoir &rsv = reservoirs[i];
-        Float u = rands[i];
-        ret->update(u, rsv.weight_sum, rsv.sample);
-        ret.M += rsv.M;
-    }
-    comment("combine_reservoirs end");
-    return ret;
-}
-
 }// namespace vision

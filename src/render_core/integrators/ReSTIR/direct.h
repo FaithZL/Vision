@@ -15,13 +15,14 @@ namespace vision {
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDI : public SerialObject, public Ctx {
+class ReSTIR : public SerialObject, public Ctx {
 private:
     uint M{};
     uint n{};
     uint _spatial{1};
     Buffer<Reservoir> _reservoirs;
     Buffer<Reservoir> _prev_reservoirs;
+    Buffer<GData> GBuffer;
 
     /**
      * generate initial candidates
@@ -35,7 +36,7 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    explicit ReSTIRDI(uint M, uint n, uint spatial)
+    explicit ReSTIR(uint M, uint n, uint spatial)
         : M(M), n(n), _spatial(spatial) {}
     void prepare() noexcept;
     void compile() noexcept {
@@ -44,6 +45,7 @@ public:
     }
     [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(const Uint2 &pixel) const noexcept;
+    [[nodiscard]] Float3 shading(const OCReservoir &rsv,SampledWavelengths &swl) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate() const noexcept;

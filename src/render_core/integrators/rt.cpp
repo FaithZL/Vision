@@ -12,7 +12,7 @@ namespace vision {
 
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
-    ReSTIRDI _direct;
+    ReSTIR _direct;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
