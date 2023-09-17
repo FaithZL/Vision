@@ -30,14 +30,14 @@ public:
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
         return make_float4(rgb.xyz(), luminance(rgb.xyz()));
     }
-    [[nodiscard]] ColorDecode params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept override {
-        return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
+    [[nodiscard]] SampledSpectrum params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept override {
+        return SampledSpectrum(val.xyz());
     }
-    [[nodiscard]] ColorDecode params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept override {
-        return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
+    [[nodiscard]] SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept override {
+        return SampledSpectrum(val.xyz());
     }
-    [[nodiscard]] ColorDecode params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept override {
-        return {.sample = SampledSpectrum(val.xyz()), .strength = luminance(val.xyz())};
+    [[nodiscard]] SampledSpectrum params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept override {
+        return SampledSpectrum(val.xyz());
     }
 
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {

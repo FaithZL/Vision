@@ -303,43 +303,41 @@ public:
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
         return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
     }
-    [[nodiscard]] ColorDecode params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept override {
         RGBIlluminationSpectrum spec{val, _illuminant_d65};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
             sp[i] = spec.eval(swl.lambda(i));
         }
-        // todo strength
-        return {.sample = sp, .strength = val.w};
+        return sp;
     }
-    [[nodiscard]] ColorDecode params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] SampledSpectrum params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept override {
         RGBUnboundSpectrum spec{val};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
             sp[i] = spec.eval(swl.lambda(i));
         }
-        // todo strength
-        return {.sample = sp, .strength = val.w};
+        return sp;
     }
-    [[nodiscard]] ColorDecode params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] SampledSpectrum params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept override {
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz()});
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
             sp[i] = spec.eval(swl.lambda(i));
         }
-        return {.sample = sp, .strength = val.w};
+        return sp;
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
-        return params_to_albedo(c, swl);
+        return {params_to_albedo(c, swl), luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        return params_to_illumination(c, swl);
+        return {params_to_illumination(c, swl), luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        return params_to_unbound(c, swl);
+        return {params_to_unbound(c, swl), luminance(rgb)};
     }
 };
 
