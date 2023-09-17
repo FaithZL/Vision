@@ -76,7 +76,7 @@ void ReSTIR::compile_shader0() noexcept {
         OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
         comment("temporal reuse");
 //        $if(frame_index > 0) {
-//            rsv->merge(prev_rsv, sampler->next_1d());
+//            rsv = combine_reservoir(rsv, prev_rsv, sampler->next_1d());
 //        };
         _reservoirs.write(dispatch_id(), rsv);
         _hits.write(dispatch_id(), hit);
