@@ -248,9 +248,6 @@ public:
     [[nodiscard]] virtual float4 albedo_params(float4 rgb) const noexcept = 0;
     [[nodiscard]] virtual float4 illumination_params(float4 rgb) const noexcept = 0;
     [[nodiscard]] virtual float4 unbound_params(float4 rgb) const noexcept = 0;
-//    [[nodiscard]] virtual SampledSpectrum params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept = 0;
-//    [[nodiscard]] virtual SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept = 0;
-//    [[nodiscard]] virtual SampledSpectrum params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept = 0;

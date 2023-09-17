@@ -27,7 +27,7 @@ void ReSTIRDI::compile_shader0() noexcept {
                 sample.u = sampler->next_2d();
                 LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
                 Float3 wi = normalize(ls.p_light - it.pos);
-                Float pq = 1.f;
+                SampledSpectrum f{swl.dimension()};
                 scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                     BSDF bsdf = material->compute_BSDF(it, swl);
                     if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
@@ -35,9 +35,15 @@ void ReSTIRDI::compile_shader0() noexcept {
                             swl.invalidation_secondary();
                         };
                     }
-
+                    ScatterEval eval = bsdf.evaluate(-normalize(rs.direction()), wi);
+                    f = eval.f;
                 });
+                f = f * ls.eval.L;
+                Float pq = f.average();
+                Float weight = pq / sample.PMF;
+                ret->update(sampler->next_1d(), weight, sample);
             }
+            ret->update_W();
         };
         return ret;
     };
@@ -51,6 +57,9 @@ void ReSTIRDI::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         OCReservoir rsv = RIS(pixel, hit, rs, swl);
+
+
+
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");

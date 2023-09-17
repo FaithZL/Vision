@@ -14,11 +14,12 @@ struct RSVSample {
     uint light_index{};
     uint prim_id{};
     float2 u;
+    float pq;
     float PMF;
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::RSVSample, light_index, prim_id, u, PMF) {};
+OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF) {};
 // clang-format on
 
 namespace vision {
@@ -42,12 +43,9 @@ public:
         M += 1;
         sample = ocarina::select(u < (weight / M), v, sample);
     }
-
-    template<typename Func>
-    void update_W(Func &&func) noexcept {
-        W = weight_sum / cast<float>(M) / func(sample);
+    void update_W() noexcept {
+        W = weight_sum / cast<float>(M) / sample.pq;
     }
-
     void invalidate() noexcept { W = 0.f; }
 };
 
@@ -60,9 +58,8 @@ OC_STRUCT(vision::Reservoir, weight_sum, sample, M, W) {
         M += 1;
         sample = select(u < (weight / weight_sum), v, sample);
     }
-    template<typename Func>
-    void update_W(Func && func) noexcept {
-        W = weight_sum / cast<float>(M) / func(sample);
+    void update_W() noexcept {
+        W = weight_sum / cast<float>(M) / sample.pq;
     }
     void invalidate() noexcept { W = 0.f; }
 };
