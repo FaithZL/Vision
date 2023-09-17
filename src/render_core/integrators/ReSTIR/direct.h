@@ -22,7 +22,7 @@ private:
     uint _spatial{1};
     Buffer<Reservoir> _reservoirs;
     Buffer<Reservoir> _prev_reservoirs;
-    Buffer<GData> GBuffer;
+    Buffer<Hit> _hits;
 
     /**
      * generate initial candidates

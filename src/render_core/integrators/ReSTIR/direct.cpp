@@ -74,6 +74,7 @@ void ReSTIR::compile_shader0() noexcept {
         comment("temporal reuse");
         rsv->merge(prev_rsv, sampler->next_1d());
         _reservoirs.write(dispatch_id(), rsv);
+        _hits.write(dispatch_id(), hit);
     };
     _shader0 = device().compile(kernel, "generate initial candidates, "
                                         "check visibility,temporal reuse");
@@ -99,11 +100,31 @@ OCReservoir ReSTIR::spatial_reuse(const Uint2 &pixel) const noexcept {
 
 Float3 ReSTIR::shading(const vision::OCReservoir &rsv, SampledWavelengths &swl) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
-    Sampler *sampler = scene().sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    SampledSpectrum value = {swl.dimension(), 0.f};
+    const Camera *camera = scene().camera().get();
+    const Geometry &geometry = pipeline()->geometry();
 
-    return spectrum.linear_srgb(value, swl);
+    SampledSpectrum value = {swl.dimension(), 0.f};
+    Var hit = _hits.read(dispatch_id());
+    Interaction it = geometry.compute_surface_interaction(hit, false);
+    SampledLight sampled_light;
+    sampled_light.light_index = rsv.sample.light_index;
+    sampled_light.PMF = rsv.sample.PMF;
+    LightSample ls = light_sampler->sample(sampled_light, it, rsv.sample.u, swl);
+    Float3 wo = normalize(camera->device_position() - it.pos);
+    Float3 wi = normalize(rsv.sample->p_light() - it.pos);
+    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+        BSDF bsdf = material->compute_BSDF(it, swl);
+        if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+            $if(*dispersive) {
+                swl.invalidation_secondary();
+            };
+        }
+        ScatterEval se = bsdf.evaluate(wo, wi);
+        value = ls.eval.L * se.f;
+    });
+
+    return spectrum.linear_srgb(value, swl) * rsv->W();
 }
 
 void ReSTIR::compile_shader1() noexcept {
@@ -113,6 +134,7 @@ void ReSTIR::compile_shader1() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
+        camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
@@ -128,7 +150,7 @@ void ReSTIR::prepare() noexcept {
     const Pipeline *rp = pipeline();
     _prev_reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
     _reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
-    GBuffer = device().create_buffer<GData>(rp->pixel_num());
+    _hits = device().create_buffer<Hit>(rp->pixel_num());
 }
 
 CommandList ReSTIR::estimate() const noexcept {

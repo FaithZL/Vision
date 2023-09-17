@@ -31,7 +31,7 @@ OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF, pos) {
 // clang-format on
 
 namespace vision {
-
+using namespace ocarina;
 struct GData {
     array<float, 3> p;
     array<float, 3> n;

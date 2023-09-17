@@ -13,6 +13,8 @@ public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
 
+    [[nodiscard]] Float3 device_position() const noexcept;
+
 protected:
     constexpr static float pitch_max = 80.f;
 
@@ -29,7 +31,6 @@ protected:
     [[nodiscard]] Float3 device_forward() const noexcept;
     [[nodiscard]] Float3 device_up() const noexcept;
     [[nodiscard]] Float3 device_right() const noexcept;
-    [[nodiscard]] Float3 device_position() const noexcept;
     [[nodiscard]] virtual OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:
