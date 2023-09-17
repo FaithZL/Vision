@@ -22,6 +22,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             sample.PMF = sampled_light.PMF;
             sample.u = sampler->next_2d();
             LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
+
             Float3 wi = normalize(ls.p_light - it.pos);
             SampledSpectrum f{swl.dimension()};
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
@@ -37,6 +38,8 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             f = f * ls.eval.L;
             Float pq = f.average();
             Float weight = pq / sample.PMF;
+            sample.pq = pq;
+            sample->set_pos(ls.p_light);
             ret->update(sampler->next_1d(), weight, sample);
         }
     };
@@ -61,7 +64,7 @@ void ReSTIR::compile_shader0() noexcept {
         Var hit = geometry.trace_closest(rs.ray);
         Interaction it;
         $if(!hit->is_miss()) {
-            it = geometry.compute_surface_interaction(hit, rs.ray, false);
+            it = geometry.compute_surface_interaction(hit, rs.ray, true);
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl);
 
@@ -72,7 +75,7 @@ void ReSTIR::compile_shader0() noexcept {
 
         OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
         comment("temporal reuse");
-        rsv->merge(prev_rsv, sampler->next_1d());
+//        rsv->merge(prev_rsv, sampler->next_1d());
         _reservoirs.write(dispatch_id(), rsv);
         _hits.write(dispatch_id(), hit);
     };
@@ -98,15 +101,15 @@ OCReservoir ReSTIR::spatial_reuse(const Uint2 &pixel) const noexcept {
     return ret;
 }
 
-Float3 ReSTIR::shading(const vision::OCReservoir &rsv, SampledWavelengths &swl) const noexcept {
+Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
+                       SampledWavelengths &swl) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     const Camera *camera = scene().camera().get();
     const Geometry &geometry = pipeline()->geometry();
 
     SampledSpectrum value = {swl.dimension(), 0.f};
-    Var hit = _hits.read(dispatch_id());
-    Interaction it = geometry.compute_surface_interaction(hit, false);
+    Interaction it = geometry.compute_surface_interaction(hit, true);
     SampledLight sampled_light;
     sampled_light.light_index = rsv.sample.light_index;
     sampled_light.PMF = rsv.sample.PMF;
@@ -139,9 +142,17 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir rsv = spatial_reuse(pixel);
-        Float3 L = shading(rsv, swl);
-        film->update_sample(pixel, L, frame_index);
+//        OCReservoir rsv = _reservoirs.read(dispatch_id());
+        $if(all(dispatch_idx().xy() == make_uint2(142, 963))) {
+            Printer::instance().info("{} {} {}-- {} -----", rsv.sample->p_light(), rsv->W());
+        };
+        Var hit = _hits.read(dispatch_id());
+        Float3 L = make_float3(0.f);
+        $if(!hit->is_miss()) {
+            L = shading(rsv, hit, swl);
+        };
         _prev_reservoirs.write(dispatch_id(), rsv);
+        film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial reuse and shading");
 }

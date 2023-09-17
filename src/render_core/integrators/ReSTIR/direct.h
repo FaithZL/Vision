@@ -45,7 +45,8 @@ public:
     }
     [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(const Uint2 &pixel) const noexcept;
-    [[nodiscard]] Float3 shading(const OCReservoir &rsv,SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
+                                 SampledWavelengths &swl) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate() const noexcept;

@@ -20,12 +20,22 @@ struct RSVSample {
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }
+    void set_pos(float3 p) noexcept {
+        pos[0] = p[0];
+        pos[1] = p[1];
+        pos[2] = p[2];
+    }
 };
 }// namespace vision
 // clang-format off
 OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF, pos) {
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
+    }
+    void set_pos(Float3 p) noexcept {
+        pos[0] = p[0];
+        pos[1] = p[1];
+        pos[2] = p[2];
     }
 };
 // clang-format on
