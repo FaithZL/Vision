@@ -91,8 +91,8 @@ OCReservoir ReSTIR::spatial_reuse(const Uint2 &pixel) const noexcept {
     Uint max_x = min(pixel.x + _spatial, res.x - 1);
     Uint min_y = max(0u, pixel.y - _spatial);
     Uint max_y = min(pixel.y + _spatial, res.y - 1);
-    $for(x, min_x, max_x) {
-        $for(y, min_y, max_y) {
+    $for(x, min_x, max_x + 1) {
+        $for(y, min_y, max_y + 1) {
             Uint index = y * res.x + x;
             OCReservoir rsv = _reservoirs.read(index);
             ret->merge(rsv, sampler->next_1d());
@@ -142,10 +142,9 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir rsv = spatial_reuse(pixel);
-//        OCReservoir rsv = _reservoirs.read(dispatch_id());
-        $if(all(dispatch_idx().xy() == make_uint2(142, 963))) {
-            Printer::instance().info("{} {} {}-- {} -----", rsv.sample->p_light(), rsv->W());
-        };
+//        $if(all(dispatch_idx().xy() == make_uint2(142, 963))) {
+//            Printer::instance().info("{} {} {}-- {} -----", rsv.sample->p_light(), rsv->W());
+//        };
         Var hit = _hits.read(dispatch_id());
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
@@ -158,10 +157,16 @@ void ReSTIR::compile_shader1() noexcept {
 }
 
 void ReSTIR::prepare() noexcept {
-    const Pipeline *rp = pipeline();
-    _prev_reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
-    _reservoirs = device().create_buffer<Reservoir>(rp->pixel_num());
-    _hits = device().create_buffer<Hit>(rp->pixel_num());
+    Pipeline *rp = pipeline();
+    _prev_reservoirs.set_resource_array(rp->resource_array());
+    _reservoirs.set_resource_array(rp->resource_array());
+    _hits.set_resource_array(rp->resource_array());
+    _prev_reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num());
+    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num());
+    _hits.super() = device().create_buffer<Hit>(rp->pixel_num());
+    _prev_reservoirs.register_self();
+    _reservoirs.register_self();
+    _hits.register_self();
 }
 
 CommandList ReSTIR::estimate() const noexcept {
