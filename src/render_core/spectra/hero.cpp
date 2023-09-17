@@ -303,7 +303,7 @@ public:
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
         return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
     }
-    [[nodiscard]] SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept {
         RGBIlluminationSpectrum spec{val, _illuminant_d65};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
@@ -311,7 +311,7 @@ public:
         }
         return sp;
     }
-    [[nodiscard]] SampledSpectrum params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] SampledSpectrum params_to_unbound(Float4 val, const SampledWavelengths &swl) const noexcept {
         RGBUnboundSpectrum spec{val};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
@@ -319,7 +319,7 @@ public:
         }
         return sp;
     }
-    [[nodiscard]] SampledSpectrum params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] SampledSpectrum params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept {
         RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz()});
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
