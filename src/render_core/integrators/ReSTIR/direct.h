@@ -20,9 +20,9 @@ private:
     uint M{};
     uint n{};
     uint _spatial{1};
-    RegistrableBuffer<Reservoir> _reservoirs;
-    RegistrableBuffer<Reservoir> _prev_reservoirs;
-    RegistrableBuffer<Hit> _hits;
+    mutable RegistrableManaged<Reservoir> _reservoirs;
+    mutable RegistrableManaged<Reservoir> _prev_reservoirs;
+    mutable RegistrableManaged<Hit> _hits;
 
     /**
      * generate initial candidates

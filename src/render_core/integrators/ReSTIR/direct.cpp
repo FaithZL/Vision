@@ -19,9 +19,9 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
             OCRSVSample sample;
             sample.light_index = sampled_light.light_index;
-            sample.PMF = sampled_light.PMF;
             sample.u = sampler->next_2d();
             LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
+            sample.PMF = sampled_light.PMF;
 
             Float3 wi = normalize(ls.p_light - it.pos);
             SampledSpectrum f{swl.dimension()};
@@ -37,7 +37,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             });
             f = f * ls.eval.L;
             Float pq = f.average();
-            Float weight = pq / sample.PMF;
+            Float weight = pq / ls.eval.pdf;
             sample.pq = pq;
             sample->set_pos(ls.p_light);
             ret->update(sampler->next_1d(), weight, sample);
@@ -75,7 +75,9 @@ void ReSTIR::compile_shader0() noexcept {
 
         OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
         comment("temporal reuse");
-//        rsv->merge(prev_rsv, sampler->next_1d());
+//        $if(frame_index > 0) {
+//            rsv->merge(prev_rsv, sampler->next_1d());
+//        };
         _reservoirs.write(dispatch_id(), rsv);
         _hits.write(dispatch_id(), hit);
     };
@@ -142,14 +144,16 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir rsv = spatial_reuse(pixel);
-//        $if(all(dispatch_idx().xy() == make_uint2(142, 963))) {
-//            Printer::instance().info("{} {} {}-- {} -----", rsv.sample->p_light(), rsv->W());
-//        };
+//        OCReservoir rsv = _reservoirs.read(dispatch_id());
         Var hit = _hits.read(dispatch_id());
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             L = shading(rsv, hit, swl);
         };
+        $if(all(dispatch_idx().xy() == make_uint2(0,0))) {
+            Printer::instance().info("{} {} {} ----------", rsv.M, rsv.weight_sum, rsv->W());
+        };
+
         _prev_reservoirs.write(dispatch_id(), rsv);
         film->update_sample(pixel, L, frame_index);
     };
@@ -161,9 +165,11 @@ void ReSTIR::prepare() noexcept {
     _prev_reservoirs.set_resource_array(rp->resource_array());
     _reservoirs.set_resource_array(rp->resource_array());
     _hits.set_resource_array(rp->resource_array());
-    _prev_reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num());
-    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num());
-    _hits.super() = device().create_buffer<Hit>(rp->pixel_num());
+
+    _prev_reservoirs.reset_all(device(), rp->pixel_num());
+    _reservoirs.reset_all(device(), rp->pixel_num());
+    _hits.reset_all(device(), rp->pixel_num());
+
     _prev_reservoirs.register_self();
     _reservoirs.register_self();
     _hits.register_self();
@@ -174,6 +180,8 @@ CommandList ReSTIR::estimate() const noexcept {
     const Pipeline *rp = pipeline();
     ret << _shader0(rp->frame_index()).dispatch(rp->resolution());
     ret << _shader1(rp->frame_index()).dispatch(rp->resolution());
+    ret << _prev_reservoirs.download();
+    ret << _reservoirs.download();
     return ret;
 }
 
