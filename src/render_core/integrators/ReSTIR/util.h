@@ -41,8 +41,8 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    RSVSample sample{};
     oc_uint<p> M{};
+    RSVSample sample{};
 
 public:
     void update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
@@ -54,11 +54,12 @@ public:
         return weight_sum / (M * sample.pq);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
+    [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
 };
 
 }// namespace vision
 
-OC_STRUCT(vision::Reservoir, weight_sum, sample, M) {
+OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
     static constexpr EPort p = D;
     void update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
@@ -69,6 +70,7 @@ OC_STRUCT(vision::Reservoir, weight_sum, sample, M) {
         return weight_sum / (M * sample.pq);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
+    [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
 };
 
 namespace vision {

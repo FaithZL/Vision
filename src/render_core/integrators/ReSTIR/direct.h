@@ -40,6 +40,7 @@ public:
         compile_shader0();
         compile_shader1();
     }
+    [[nodiscard]] OCReservoir RIS(Uint2 pixel, Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate() const noexcept;
