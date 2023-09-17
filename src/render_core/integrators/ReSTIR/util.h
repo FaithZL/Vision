@@ -107,7 +107,8 @@ public:
         sample = ocarina::select(u < (weight / M), v, sample);
     }
     [[nodiscard]] auto W() const noexcept {
-        return weight_sum / (M * sample.pq);
+        auto f = weight_sum / (M * sample.pq);
+        return ocarina::select(M * sample.pq == 0.f, 0.f, f);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
@@ -127,7 +128,8 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
         sample = select(u < (weight / weight_sum), v, sample);
     }
     [[nodiscard]] auto W() const noexcept {
-        return weight_sum / (M * sample.pq);
+        auto f = weight_sum / (M * sample.pq);
+        return ocarina::select(M * sample.pq == 0.f, 0.f, f);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }

@@ -150,10 +150,6 @@ void ReSTIR::compile_shader1() noexcept {
         $if(!hit->is_miss()) {
             L = shading(rsv, hit, swl);
         };
-        $if(all(dispatch_idx().xy() == make_uint2(0,0))) {
-            Printer::instance().info("{} {} {} ----------", rsv.M, rsv.weight_sum, rsv->W());
-        };
-
         _prev_reservoirs.write(dispatch_id(), rsv);
         film->update_sample(pixel, L, frame_index);
     };
