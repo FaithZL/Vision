@@ -43,7 +43,6 @@ void ReSTIRDI::compile_shader0() noexcept {
                 Float weight = pq / sample.PMF;
                 ret->update(sampler->next_1d(), weight, sample);
             }
-            ret->update_W();
         };
         return ret;
     };

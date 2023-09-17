@@ -16,10 +16,18 @@ struct RSVSample {
     float2 u;
     float pq;
     float PMF;
+    array<float, 3> pos;
+    [[nodiscard]] auto p_light() const noexcept {
+        return make_float3(pos[0], pos[1], pos[2]);
+    }
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF) {};
+OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF, pos) {
+    [[nodiscard]] auto p_light() const noexcept {
+        return make_float3(pos[0], pos[1], pos[2]);
+    }
+};
 // clang-format on
 
 namespace vision {
@@ -35,7 +43,6 @@ public:
     oc_float<p> weight_sum{};
     RSVSample sample{};
     oc_uint<p> M{};
-    oc_float<p> W{};
 
 public:
     void update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
@@ -43,25 +50,25 @@ public:
         M += 1;
         sample = ocarina::select(u < (weight / M), v, sample);
     }
-    void update_W() noexcept {
-        W = weight_sum / cast<float>(M) / sample.pq;
+    [[nodiscard]] auto W() const noexcept {
+        return weight_sum / (M * sample.pq);
     }
-    void invalidate() noexcept { W = 0.f; }
+    void invalidate() noexcept { weight_sum = 0.f; }
 };
 
 }// namespace vision
 
-OC_STRUCT(vision::Reservoir, weight_sum, sample, M, W) {
+OC_STRUCT(vision::Reservoir, weight_sum, sample, M) {
     static constexpr EPort p = D;
     void update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
         M += 1;
         sample = select(u < (weight / weight_sum), v, sample);
     }
-    void update_W() noexcept {
-        W = weight_sum / cast<float>(M) / sample.pq;
+    [[nodiscard]] auto W() const noexcept {
+        return weight_sum / (M * sample.pq);
     }
-    void invalidate() noexcept { W = 0.f; }
+    void invalidate() noexcept { weight_sum = 0.f; }
 };
 
 namespace vision {
@@ -76,11 +83,9 @@ template<typename Func>
     for (int i = 0; i < reservoirs.size(); ++i) {
         const OCReservoir &rsv = reservoirs[i];
         Float u = rands[i];
-        Float factor = cast<float>(rsv.W == 0.f);
-        ret->update(u, rsv.weight_sum * factor, rsv.sample);
+        ret->update(u, rsv.weight_sum, rsv.sample);
         ret.M += rsv.M;
     }
-    ret->update_W(OC_FORWARD(func));
     return ret;
 }
 
