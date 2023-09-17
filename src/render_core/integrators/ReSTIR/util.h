@@ -112,10 +112,6 @@ public:
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
-    void merge(const Reservoir &rsv, float u) noexcept {
-        update(u, rsv.weight_sum, rsv.sample);
-        M += rsv.M;
-    }
 };
 
 }// namespace vision
@@ -133,13 +129,18 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
-    void merge(const Var<vision::Reservoir> &rsv, Float u) noexcept {
-        update(u, rsv.weight_sum, rsv.sample);
-        M += rsv.M;
-    }
 };
 
 namespace vision {
 using namespace ocarina;
 using OCReservoir = Var<Reservoir>;
+[[nodiscard]] inline OCReservoir combine_reservoir(const OCReservoir &r0,
+                                                   const OCReservoir &r1,
+                                                   const Float &u) noexcept {
+    OCReservoir ret;
+    ret = r0;
+    ret->update(u, r1.weight_sum, r1.sample);
+    ret.M = r0.M + r1.M;
+    return ret;
+}
 }// namespace vision

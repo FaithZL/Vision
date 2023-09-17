@@ -97,7 +97,8 @@ OCReservoir ReSTIR::spatial_reuse(const Uint2 &pixel) const noexcept {
         $for(y, min_y, max_y + 1) {
             Uint index = y * res.x + x;
             OCReservoir rsv = _reservoirs.read(index);
-            ret->merge(rsv, sampler->next_1d());
+
+            ret = combine_reservoir(ret, rsv, sampler->next_1d());
         };
     };
     return ret;
@@ -144,7 +145,6 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir rsv = spatial_reuse(pixel);
-//        OCReservoir rsv = _reservoirs.read(dispatch_id());
         Var hit = _hits.read(dispatch_id());
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
@@ -176,8 +176,6 @@ CommandList ReSTIR::estimate() const noexcept {
     const Pipeline *rp = pipeline();
     ret << _shader0(rp->frame_index()).dispatch(rp->resolution());
     ret << _shader1(rp->frame_index()).dispatch(rp->resolution());
-    ret << _prev_reservoirs.download();
-    ret << _reservoirs.download();
     return ret;
 }
 
