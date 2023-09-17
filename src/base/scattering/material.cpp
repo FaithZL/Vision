@@ -35,13 +35,6 @@ ScatterEval BSDF::evaluate(Float3 world_wo, Float3 world_wi) const noexcept {
     return ret;
 }
 
-SampledSpectrum BSDF::f(ocarina::Float3 world_wo, ocarina::Float3 world_wi) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
-    Float3 wi = shading_frame.to_local(world_wi);
-    SampledSpectrum ret = bxdf_set->f(wo, wi, BxDFFlag::All);
-    return ret;
-}
-
 BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     BSDFSample ret = sample_local(wo, BxDFFlag::All, sampler);

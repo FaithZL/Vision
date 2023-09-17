@@ -20,11 +20,6 @@ public:
         return ret;
     }
 
-    [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, Uint flag) const noexcept override {
-        SampledSpectrum ret{_swl.dimension(), 0.f};
-        return ret;
-    }
-
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{_swl.dimension()};
         return ret;

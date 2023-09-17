@@ -16,9 +16,6 @@ struct BxDFSet {
 public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
-    [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, Uint flag) const noexcept {
-        return SampledSpectrum{3, 0};
-    }
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
         OC_ASSERT(false);
@@ -58,7 +55,6 @@ public:
     }
     [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
-    [[nodiscard]] SampledSpectrum f(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
