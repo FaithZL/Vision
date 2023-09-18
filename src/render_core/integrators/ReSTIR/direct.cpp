@@ -7,7 +7,8 @@
 
 namespace vision {
 
-OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept {
+OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
+                        const Uint &frame_index) const noexcept {
     Pipeline *rp = pipeline();
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
@@ -25,6 +26,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
 
             Float3 wi = normalize(ls.p_light - it.pos);
             SampledSpectrum f{swl.dimension()};
+            ScatterEval eval{swl.dimension()};
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 BSDF bsdf = material->compute_BSDF(it, swl);
                 if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
@@ -32,13 +34,12 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
                         swl.invalidation_secondary();
                     };
                 }
-                ScatterEval eval = bsdf.evaluate(it.wo, wi);
-                f = eval.f;
+                eval = bsdf.evaluate(it.wo, wi);
             });
-            f = f * ls.eval.L;
-            Float pq = f.average();
-            Float weight = pq / ls.eval.pdf;
-            sample.p_hat = pq;
+            f = eval.f * ls.eval.L;
+            Float p_hat = f.average();
+            Float weight = select(ls.eval.pdf == 0.f, 0.f, p_hat / ls.eval.pdf);
+            sample.p_hat = p_hat;
             sample->set_pos(ls.p_light);
             ret->update(sampler->next_1d(), weight, sample);
         }
@@ -66,7 +67,7 @@ void ReSTIR::compile_shader0() noexcept {
         $if(!hit->is_miss()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
         };
-        OCReservoir rsv = RIS(!hit->is_miss(), it, swl);
+        OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
 
         $if(!hit->is_miss()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
@@ -79,7 +80,7 @@ void ReSTIR::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel) const noexcept {
+OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) const noexcept {
     Sampler *sampler = scene().sampler();
     OCReservoir ret;
     int2 res = make_int2(pipeline()->resolution());
@@ -106,7 +107,7 @@ OCReservoir ReSTIR::temporal_reuse(const OCReservoir &rsv) const noexcept {
 }
 
 Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
-                       SampledWavelengths &swl) const noexcept {
+                       SampledWavelengths &swl, const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     const Camera *camera = scene().camera().get();
@@ -144,12 +145,7 @@ Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
             value = value * rsv->W();
         });
     };
-    Float3 ret = spectrum.linear_srgb(value + Le, swl);
-    Uint2 pixel = dispatch_idx().xy();
-//    $if(all(pixel == make_uint2(535, 477)) && ret.x > 0.8f) {
-//        Printer::instance().info("{} {}  --{} -------{}---", rsv.weight_sum, rsv.M, rsv.sample.p_hat, rsv->W());
-//    };
-    return ret;
+    return spectrum.linear_srgb(value + Le, swl);
 }
 
 void ReSTIR::compile_shader1() noexcept {
@@ -163,12 +159,12 @@ void ReSTIR::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel));
+        OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel), frame_index);
         Var hit = _hits.read(dispatch_id());
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             OCReservoir st_rsv = temporal_reuse(spatial_rsv);
-            L = shading(st_rsv, hit, swl);
+            L = shading(spatial_rsv, hit, swl, frame_index);
         };
         _prev_reservoirs.write(dispatch_id(), spatial_rsv);
         film->update_sample(pixel, L, frame_index);

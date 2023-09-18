@@ -42,11 +42,12 @@ public:
         compile_shader0();
         compile_shader1();
     }
-    [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] OCReservoir spatial_reuse(const Int2 &pixel) const noexcept;
+    [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
+                                  const Uint &frame_index) const noexcept;
+    [[nodiscard]] OCReservoir spatial_reuse(const Int2 &pixel, const Uint &frame_index) const noexcept;
     [[nodiscard]] OCReservoir temporal_reuse(const OCReservoir &rsv) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
-                                 SampledWavelengths &swl) const noexcept;
+                                 SampledWavelengths &swl, const Uint &frame_index) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate() const noexcept;

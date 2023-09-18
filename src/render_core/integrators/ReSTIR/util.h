@@ -27,6 +27,7 @@ struct RSVSample {
     }
 };
 }// namespace vision
+
 // clang-format off
 OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, PMF, pos) {
     [[nodiscard]] auto p_light() const noexcept {
