@@ -36,11 +36,10 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             });
             f = eval.f * ls.eval.L;
             Float p_hat = f.average();
-            Float weight = select(ls.eval.pdf == 0.f, 0.f, p_hat / ls.eval.pdf);
             sample.p_hat = p_hat;
             sample.pdf = ls.eval.pdf;
             sample->set_pos(ls.p_light);
-            ret->update(sampler->next_1d(), weight, sample);
+            ret->update(sampler->next_1d(), sample);
         }
     };
     comment("RIS end");

@@ -58,7 +58,7 @@ OC_STRUCT(vision::GData, hit, t) {
 namespace vision {
 using OCGData = Var<GData>;
 using OCRSVSample = Var<RSVSample>;
-}
+}// namespace vision
 
 namespace vision {
 using namespace ocarina;
@@ -76,9 +76,13 @@ public:
         M += 1;
         sample = ocarina::select(u < (weight / M), v, sample);
     }
+    void update(oc_float<p> u, RSVSample v) {
+        oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
+        update(u, weight, v);
+    }
     [[nodiscard]] auto W() const noexcept {
-        auto f = weight_sum / (M * sample.p_hat);
-        return ocarina::select(M * sample.p_hat == 0.f, 0.f, f);
+        auto denominator = M * sample.p_hat;
+        return ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
@@ -93,9 +97,13 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
         M += 1;
         sample = select(u < (weight / weight_sum), v, sample);
     }
+    void update(oc_float<p> u, vision::OCRSVSample v) {
+        oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
+        update(u, weight, v);
+    }
     [[nodiscard]] auto W() const noexcept {
-        auto f = weight_sum / (M * sample.p_hat);
-        return ocarina::select(M * sample.p_hat == 0.f, 0.f, f);
+        auto denominator = M * sample.p_hat;
+        return ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
