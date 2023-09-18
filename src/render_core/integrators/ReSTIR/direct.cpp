@@ -38,7 +38,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             f = f * ls.eval.L;
             Float pq = f.average();
             Float weight = pq / ls.eval.pdf;
-            sample.pq = pq;
+            sample.p_hat = pq;
             sample->set_pos(ls.p_light);
             ret->update(sampler->next_1d(), weight, sample);
         }
@@ -144,8 +144,12 @@ Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
             value = value * rsv->W();
         });
     };
-
-    return spectrum.linear_srgb(value + Le, swl);
+    Float3 ret = spectrum.linear_srgb(value + Le, swl);
+    Uint2 pixel = dispatch_idx().xy();
+//    $if(all(pixel == make_uint2(535, 477)) && ret.x > 0.8f) {
+//        Printer::instance().info("{} {}  --{} -------{}---", rsv.weight_sum, rsv.M, rsv.sample.p_hat, rsv->W());
+//    };
+    return ret;
 }
 
 void ReSTIR::compile_shader1() noexcept {

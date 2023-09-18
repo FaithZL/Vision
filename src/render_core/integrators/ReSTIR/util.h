@@ -14,7 +14,7 @@ struct RSVSample {
     uint light_index{};
     uint prim_id{};
     float2 u;
-    float pq;
+    float p_hat;
     float PMF;
     array<float, 3> pos;
     [[nodiscard]] auto p_light() const noexcept {
@@ -28,7 +28,7 @@ struct RSVSample {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::RSVSample, light_index, prim_id, u, pq, PMF, pos) {
+OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, PMF, pos) {
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }
@@ -107,8 +107,8 @@ public:
         sample = ocarina::select(u < (weight / M), v, sample);
     }
     [[nodiscard]] auto W() const noexcept {
-        auto f = weight_sum / (M * sample.pq);
-        return ocarina::select(M * sample.pq == 0.f, 0.f, f);
+        auto f = weight_sum / (M * sample.p_hat);
+        return ocarina::select(M * sample.p_hat == 0.f, 0.f, f);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
@@ -124,8 +124,8 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
         sample = select(u < (weight / weight_sum), v, sample);
     }
     [[nodiscard]] auto W() const noexcept {
-        auto f = weight_sum / (M * sample.pq);
-        return ocarina::select(M * sample.pq == 0.f, 0.f, f);
+        auto f = weight_sum / (M * sample.p_hat);
+        return ocarina::select(M * sample.p_hat == 0.f, 0.f, f);
     }
     void invalidate() noexcept { weight_sum = 0.f; }
     [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }

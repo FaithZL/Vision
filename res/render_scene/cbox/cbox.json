@@ -520,33 +520,37 @@
 //						}
 //					}
 //				}
-				"color" : {
-					"channels" : "xyz",
-					"node" : {
-						"type" : "multiply",
-						"param" : {
-							"lhs" : {
-								"channels" : "xyz",
-								"node" : {
-									"type" : "image",
-									"param" : {
-										"fn" : "checker.jpg",
-										"color_space" : "srgb"
-									}
-								}
-							},
-							"rhs" : {
-								"channels" : "xyz",
-								"node" : {
-									"type": "number",
-									"param": {
-										"value": [0.9,1,0.9]
-									}
-								}
-							}
-						}
-					}
-				}
+				"color" : [
+					0.725,
+					0.71,
+					0.68
+				]
+//				"color" : {
+//					"channels" : "xyz",
+//					"node" : {
+//						"type" : "multiply",
+//						"param" : {
+//							"lhs" : {
+//								"channels" : "xyz",
+//								"node" : {
+//									"type" : "image",
+//									"param" : {
+//										"fn" : "checker.jpg",
+//										"color_space" : "srgb"
+//									}
+//								}
+//							},
+//							"rhs" : {
+//								"channels" : "xyz",
+//								"node" : {
+//									"type": "number",
+//									"param": {
+//										"value": [0.9,1,0.9]
+//									}
+//								}
+//							}
+//						}
+//					}
 			}
 		},
 		{
@@ -811,13 +815,13 @@
 				}
 			},
 			"filter" : {
-//				"type" : "box",
-				"type" : "gaussian",
+				"type" : "box",
+//				"type" : "gaussian",
 				"name" : "boxFilter",
 				"param" : {
 					"radius" : [
-						2,
-						2
+						0.5,
+						0.5
 					]
 				}
 			}
