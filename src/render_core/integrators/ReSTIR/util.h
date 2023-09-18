@@ -44,50 +44,19 @@ OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, pdf, pos) {
 namespace vision {
 using namespace ocarina;
 struct GData {
-    array<float, 3> p;
-    array<float, 3> n;
-    void set_pos(float3 val) noexcept {
-        p[0] = val[0];
-        p[1] = val[1];
-        p[2] = val[2];
-    }
-    void set_ng(float3 val) noexcept {
-        n[0] = val[0];
-        n[1] = val[1];
-        n[2] = val[2];
-    }
-    [[nodiscard]] auto pos() const noexcept {
-        return make_float3(p[0], p[1], p[2]);
-    }
-    [[nodiscard]] auto ng() const noexcept {
-        return make_float3(n[0], n[1], n[2]);
-    }
+    Hit hit{};
+    float t{};
 };
 
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::GData, p, n) {
-    void set_pos(Float3 val) noexcept {
-        p[0] = val[0];
-        p[1] = val[1];
-        p[2] = val[2];
-    }
-    void set_ng(Float3 val) noexcept {
-        n[0] = val[0];
-        n[1] = val[1];
-        n[2] = val[2];
-    }
-    [[nodiscard]] auto pos() const noexcept {
-        return make_float3(p[0], p[1], p[2]);
-    }
-    [[nodiscard]] auto ng() const noexcept {
-        return make_float3(n[0], n[1], n[2]);
-    }
+OC_STRUCT(vision::GData, hit, t) {
 };
 // clang-format on
 
 namespace vision {
+using OCGData = Var<GData>;
 using OCRSVSample = Var<RSVSample>;
 }
 

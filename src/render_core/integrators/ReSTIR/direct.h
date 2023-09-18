@@ -22,7 +22,7 @@ private:
     int _spatial{1};
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
-    mutable RegistrableManaged<Hit> _hits;
+    mutable RegistrableManaged<GData> GBuffer;
 
     /**
      * generate initial candidates

@@ -73,7 +73,9 @@ void ReSTIR::compile_shader0() noexcept {
             rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
         };
         _reservoirs.write(dispatch_id(), rsv);
-        _hits.write(dispatch_id(), hit);
+        OCGData data;
+        data.hit = hit;
+        GBuffer.write(dispatch_id(), data);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
                                         "check visibility");
@@ -158,7 +160,8 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel), frame_index);
-        Var hit = _hits.read(dispatch_id());
+        Var data = GBuffer.read(dispatch_id());
+        Var hit = data.hit;
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             OCReservoir st_rsv = temporal_reuse(spatial_rsv);
@@ -174,15 +177,15 @@ void ReSTIR::prepare() noexcept {
     Pipeline *rp = pipeline();
     _prev_reservoirs.set_resource_array(rp->resource_array());
     _reservoirs.set_resource_array(rp->resource_array());
-    _hits.set_resource_array(rp->resource_array());
+    GBuffer.set_resource_array(rp->resource_array());
 
     _prev_reservoirs.reset_all(device(), rp->pixel_num());
     _reservoirs.reset_all(device(), rp->pixel_num());
-    _hits.reset_all(device(), rp->pixel_num());
+    GBuffer.reset_all(device(), rp->pixel_num());
 
     _prev_reservoirs.register_self();
     _reservoirs.register_self();
-    _hits.register_self();
+    GBuffer.register_self();
 }
 
 CommandList ReSTIR::estimate() const noexcept {
