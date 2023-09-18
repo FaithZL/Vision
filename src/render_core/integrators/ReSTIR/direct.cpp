@@ -113,25 +113,38 @@ Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
     const Geometry &geometry = pipeline()->geometry();
 
     SampledSpectrum value = {swl.dimension(), 0.f};
+    SampledSpectrum Le = {swl.dimension(), 0.f};
     Interaction it = geometry.compute_surface_interaction(hit, true);
-    SampledLight sampled_light;
-    sampled_light.light_index = rsv.sample.light_index;
-    sampled_light.PMF = rsv.sample.PMF;
-    LightSample ls = light_sampler->sample(sampled_light, it, rsv.sample.u, swl);
-    Float3 wo = normalize(camera->device_position() - it.pos);
-    Float3 wi = normalize(rsv.sample->p_light() - it.pos);
-    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-        BSDF bsdf = material->compute_BSDF(it, swl);
-        if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
-            $if(*dispersive) {
-                swl.invalidation_secondary();
-            };
-        }
-        ScatterEval se = bsdf.evaluate(wo, wi);
-        value = ls.eval.L * se.f;
-    });
 
-    return spectrum.linear_srgb(value, swl) * rsv->W();
+    $if(it.has_emission()) {
+        light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
+            if (light->type() != LightType::Area) { return; }
+            LightSampleContext p_ref;
+            p_ref.pos = camera->device_position();
+            LightEval le = light->evaluate(p_ref, it, swl);
+            Le = le.L;
+        });
+    }
+    $else {
+        SampledLight sampled_light;
+        sampled_light.light_index = rsv.sample.light_index;
+        sampled_light.PMF = rsv.sample.PMF;
+        LightSample ls = light_sampler->sample(sampled_light, it, rsv.sample.u, swl);
+        Float3 wo = normalize(camera->device_position() - it.pos);
+        Float3 wi = normalize(rsv.sample->p_light() - it.pos);
+        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+            BSDF bsdf = material->compute_BSDF(it, swl);
+            if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+                $if(*dispersive) {
+                    swl.invalidation_secondary();
+                };
+            }
+            ScatterEval se = bsdf.evaluate(wo, wi);
+            value = ls.eval.L * se.f;
+        });
+    };
+
+    return spectrum.linear_srgb(value * rsv->W() + Le, swl);
 }
 
 void ReSTIR::compile_shader1() noexcept {
