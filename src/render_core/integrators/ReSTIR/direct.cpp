@@ -141,10 +141,11 @@ Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
             }
             ScatterEval se = bsdf.evaluate(wo, wi);
             value = ls.eval.L * se.f;
+            value = value * rsv->W();
         });
     };
 
-    return spectrum.linear_srgb(value * rsv->W() + Le, swl);
+    return spectrum.linear_srgb(value + Le, swl);
 }
 
 void ReSTIR::compile_shader1() noexcept {
