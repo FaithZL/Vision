@@ -15,7 +15,7 @@ struct RSVSample {
     uint prim_id{};
     float2 u;
     float p_hat;
-    float PMF;
+    float pdf;
     array<float, 3> pos;
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
@@ -29,7 +29,7 @@ struct RSVSample {
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, PMF, pos) {
+OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, pdf, pos) {
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }

@@ -22,8 +22,6 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             sample.light_index = sampled_light.light_index;
             sample.u = sampler->next_2d();
             LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
-            sample.PMF = sampled_light.PMF;
-
             Float3 wi = normalize(ls.p_light - it.pos);
             SampledSpectrum f{swl.dimension()};
             ScatterEval eval{swl.dimension()};
@@ -40,6 +38,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             Float p_hat = f.average();
             Float weight = select(ls.eval.pdf == 0.f, 0.f, p_hat / ls.eval.pdf);
             sample.p_hat = p_hat;
+            sample.pdf = ls.eval.pdf;
             sample->set_pos(ls.p_light);
             ret->update(sampler->next_1d(), weight, sample);
         }
@@ -129,7 +128,6 @@ Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
     $else {
         SampledLight sampled_light;
         sampled_light.light_index = rsv.sample.light_index;
-        sampled_light.PMF = rsv.sample.PMF;
         LightSample ls = light_sampler->sample(sampled_light, it, rsv.sample.u, swl);
         Float3 wo = normalize(camera->device_position() - it.pos);
         Float3 wi = normalize(rsv.sample->p_light() - it.pos);
