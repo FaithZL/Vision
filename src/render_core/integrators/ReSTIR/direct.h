@@ -18,7 +18,7 @@ namespace vision {
 class ReSTIR : public SerialObject, public Ctx {
 private:
     uint M{};
-    uint n{};
+    uint _iterate_num{};
     int _spatial{1};
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
@@ -27,17 +27,16 @@ private:
     /**
      * generate initial candidates
      * check visibility
-     * temporal reuse
      */
     Shader<void(uint)> _shader0;
     /**
-     * spatial reuse and shading
+     * spatial temporal reuse and shading
      */
     Shader<void(uint)> _shader1;
 
 public:
     explicit ReSTIR(uint M, uint n, uint spatial)
-        : M(M), n(n), _spatial(spatial) {}
+        : M(M), _iterate_num(n), _spatial(spatial) {}
     void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();
@@ -45,6 +44,7 @@ public:
     }
     [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(const Int2 &pixel) const noexcept;
+    [[nodiscard]] OCReservoir temporal_reuse(const OCReservoir &rsv) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
                                  SampledWavelengths &swl) const noexcept;
     void compile_shader0() noexcept;

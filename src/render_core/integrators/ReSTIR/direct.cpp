@@ -72,19 +72,11 @@ void ReSTIR::compile_shader0() noexcept {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
         };
-
-        OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
-        comment("temporal reuse");
-        $if(all(pixel == make_uint2(500, 500))) {
-            Printer::instance().info("{} {} --------------", prev_rsv.M, prev_rsv.weight_sum);
-            Printer::instance().info("{} {} --------------", rsv.M, rsv.weight_sum);
-        };
-        rsv = combine_reservoir(rsv, prev_rsv, sampler->next_1d());
         _reservoirs.write(dispatch_id(), rsv);
         _hits.write(dispatch_id(), hit);
     };
-    _shader0 = device().compile(kernel, "generate initial candidates, "
-                                        "check visibility,temporal reuse");
+    _shader0 = device().compile(kernel, "generate initial candidates and "
+                                        "check visibility");
 }
 
 OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel) const noexcept {
@@ -95,14 +87,22 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel) const noexcept {
     Int max_x = min(pixel.x + _spatial, res.x - 1);
     Int min_y = max(0, pixel.y - _spatial);
     Int max_y = min(pixel.y + _spatial, res.y - 1);
-    $for(x, min_x, max_x + 1) {
-        $for(y, min_y, max_y + 1) {
-            Uint index = y * res.x + x;
-            OCReservoir rsv = _reservoirs.read(index);
-            ret = combine_reservoir(ret, rsv, sampler->next_1d());
+    for (int i = 0; i < _iterate_num; ++i) {
+        $for(x, min_x, max_x + 1) {
+            $for(y, min_y, max_y + 1) {
+                Uint index = y * res.x + x;
+                OCReservoir rsv = _reservoirs.read(index);
+                ret = combine_reservoir(ret, rsv, sampler->next_1d());
+            };
         };
-    };
+    }
     return ret;
+}
+
+OCReservoir ReSTIR::temporal_reuse(const OCReservoir &rsv) const noexcept {
+    OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
+    Sampler *sampler = scene().sampler();
+    return combine_reservoir(rsv, prev_rsv, sampler->next_1d());
 }
 
 Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
@@ -145,16 +145,17 @@ void ReSTIR::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        OCReservoir rsv = spatial_reuse(make_int2(pixel));
+        OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel));
         Var hit = _hits.read(dispatch_id());
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
-            L = shading(rsv, hit, swl);
+            OCReservoir st_rsv = temporal_reuse(spatial_rsv);
+            L = shading(st_rsv, hit, swl);
         };
-        _prev_reservoirs.write(dispatch_id(), rsv);
+        _prev_reservoirs.write(dispatch_id(), spatial_rsv);
         film->update_sample(pixel, L, frame_index);
     };
-    _shader1 = device().compile(kernel, "spatial reuse and shading");
+    _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
 }
 
 void ReSTIR::prepare() noexcept {
