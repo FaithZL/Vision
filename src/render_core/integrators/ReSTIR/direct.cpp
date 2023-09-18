@@ -75,9 +75,11 @@ void ReSTIR::compile_shader0() noexcept {
 
         OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
         comment("temporal reuse");
-//        $if(frame_index > 0) {
-//            rsv = combine_reservoir(rsv, prev_rsv, sampler->next_1d());
-//        };
+        $if(all(pixel == make_uint2(500, 500))) {
+            Printer::instance().info("{} {} --------------", prev_rsv.M, prev_rsv.weight_sum);
+            Printer::instance().info("{} {} --------------", rsv.M, rsv.weight_sum);
+        };
+        rsv = combine_reservoir(rsv, prev_rsv, sampler->next_1d());
         _reservoirs.write(dispatch_id(), rsv);
         _hits.write(dispatch_id(), hit);
     };
@@ -85,19 +87,18 @@ void ReSTIR::compile_shader0() noexcept {
                                         "check visibility,temporal reuse");
 }
 
-OCReservoir ReSTIR::spatial_reuse(const Uint2 &pixel) const noexcept {
+OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel) const noexcept {
     Sampler *sampler = scene().sampler();
     OCReservoir ret;
-    uint2 res = pipeline()->resolution();
-    Uint min_x = max(0u, pixel.x - _spatial);
-    Uint max_x = min(pixel.x + _spatial, res.x - 1);
-    Uint min_y = max(0u, pixel.y - _spatial);
-    Uint max_y = min(pixel.y + _spatial, res.y - 1);
+    int2 res = make_int2(pipeline()->resolution());
+    Int min_x = max(0, pixel.x - _spatial);
+    Int max_x = min(pixel.x + _spatial, res.x - 1);
+    Int min_y = max(0, pixel.y - _spatial);
+    Int max_y = min(pixel.y + _spatial, res.y - 1);
     $for(x, min_x, max_x + 1) {
         $for(y, min_y, max_y + 1) {
             Uint index = y * res.x + x;
             OCReservoir rsv = _reservoirs.read(index);
-
             ret = combine_reservoir(ret, rsv, sampler->next_1d());
         };
     };
@@ -144,7 +145,7 @@ void ReSTIR::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        OCReservoir rsv = spatial_reuse(pixel);
+        OCReservoir rsv = spatial_reuse(make_int2(pixel));
         Var hit = _hits.read(dispatch_id());
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
