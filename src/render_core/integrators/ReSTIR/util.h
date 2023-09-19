@@ -45,13 +45,19 @@ namespace vision {
 using namespace ocarina;
 struct GData {
     Hit hit{};
-    float t{};
+    float4 normal_t;
 };
 
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::GData, hit, t) {
+OC_STRUCT(vision::GData, hit, normal_t) {
+    void set_normal(const Float3 &n) {
+        normal_t = make_float4(n, normal_t.w);
+    }
+    [[nodiscard]] Float3 normal() const noexcept { return normal_t.xyz();}
+    void set_t_max(const Float &t) { normal_t.w = t; }
+    [[nodiscard]] Float t_max() const noexcept { return normal_t.w;}
 };
 // clang-format on
 

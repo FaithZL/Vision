@@ -19,7 +19,9 @@ public:
         : IlluminationIntegrator(desc),
           _direct(desc["M"].as_uint(1),
                   desc["n"].as_uint(3),
-                  desc["spatial"].as_uint(1)) {}
+                  desc["spatial"].as_uint(1),
+                  desc["theta"].as_float(20),
+                  desc["depth"].as_float(0.01f)) {}
 
     void prepare() noexcept override {
         _direct.prepare();
@@ -27,28 +29,12 @@ public:
 
     void compile() noexcept override {
         _direct.compile();
-
-        Camera *camera = scene().camera().get();
-        Sampler *sampler = scene().sampler();
-//        ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
-//            Uint2 pixel = dispatch_idx().xy();
-//            _frame_index.emplace(frame_index);
-//            sampler->start_pixel_sample(pixel, frame_index, 0);
-//            camera->load_data();
-//            SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-//            Float scatter_pdf = 1e16f;
-//            RayState rs = camera->generate_ray(ss);
-//            Float3 L = Li(rs, scatter_pdf, nullptr) * ss.filter_weight;
-//            camera->radiance_film()->add_sample(pixel, L, frame_index);
-//        };
-//        _shader = device().compile(kernel, "real time integrator");
     }
 
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << _direct.estimate();
-//        stream << _shader(rp->frame_index()).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
     }

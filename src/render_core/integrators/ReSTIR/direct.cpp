@@ -62,8 +62,12 @@ void ReSTIR::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         Interaction it;
+        OCGData data;
+        data.hit = hit;
+        data->set_t_max(0.f);
         $if(!hit->is_miss()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
+            data->set_t_max(rs.t_max());
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
 
@@ -72,8 +76,6 @@ void ReSTIR::compile_shader0() noexcept {
             rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
         };
         _reservoirs.write(dispatch_id(), rsv);
-        OCGData data;
-        data.hit = hit;
         GBuffer.write(dispatch_id(), data);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
@@ -88,10 +90,19 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     Int max_x = min(pixel.x + _spatial, res.x - 1);
     Int min_y = max(0, pixel.y - _spatial);
     Int max_y = min(pixel.y + _spatial, res.y - 1);
+    OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
+
+//    auto H = [&](const OCRSVSample &sample) {
+//        Bool cond =
+//    };
+
     for (int i = 0; i < _iterate_num; ++i) {
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
+                $if(index == dispatch_id()) {
+                    $continue;
+                };
                 OCReservoir rsv = _reservoirs.read(index);
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             };
