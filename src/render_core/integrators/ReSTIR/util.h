@@ -74,6 +74,7 @@ public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
     oc_uint<p> M{};
+    oc_float<p> W{};
     RSVSample sample{};
 
 public:
@@ -86,17 +87,19 @@ public:
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         update(u, weight, v);
     }
-    [[nodiscard]] auto W() const noexcept {
+    void update_W() noexcept {
         auto denominator = M * sample.p_hat;
-        return ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
+        W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
-    void invalidate() noexcept { weight_sum = 0.f; }
-    [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
+    [[nodiscard]] auto compute_weight_sum() const noexcept {
+        return sample.p_hat * W * M;
+    }
+    void reset_W() noexcept { W = 0.f; }
 };
 
 }// namespace vision
 
-OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
+OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample) {
     static constexpr EPort p = D;
     void update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
@@ -107,12 +110,14 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, sample) {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         update(u, weight, v);
     }
-    [[nodiscard]] auto W() const noexcept {
+    void update_W() noexcept {
         auto denominator = M * sample.p_hat;
-        return ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
+        W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
-    void invalidate() noexcept { weight_sum = 0.f; }
-    [[nodiscard]] auto valid() const noexcept { return weight_sum > 0.f; }
+    [[nodiscard]] auto compute_weight_sum() const noexcept {
+        return sample.p_hat * W * M;
+    }
+    void reset_W() noexcept { W = 0.f; }
 };
 
 namespace vision {
@@ -123,8 +128,9 @@ using OCReservoir = Var<Reservoir>;
                                                    const Float &u) noexcept {
     OCReservoir ret;
     ret = r0;
-    ret->update(u, r1.weight_sum, r1.sample);
+    ret->update(u, r1->compute_weight_sum(), r1.sample);
     ret.M = r0.M + r1.M;
+    ret->update_W();
     return ret;
 }
 }// namespace vision
