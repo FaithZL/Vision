@@ -105,9 +105,9 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
-                $if(index == dispatch_id()) {
-                    $continue;
-                };
+//                $if(index == dispatch_id()) {
+//                    $continue;
+//                };
                 OCReservoir rsv = _reservoirs.read(index);
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             };
@@ -180,7 +180,7 @@ void ReSTIR::compile_shader1() noexcept {
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             OCReservoir st_rsv = temporal_reuse(spatial_rsv);
-            L = shading(spatial_rsv, hit, swl, frame_index);
+            L = shading(st_rsv, hit, swl, frame_index);
         };
         _prev_reservoirs.write(dispatch_id(), spatial_rsv);
         film->update_sample(pixel, L, frame_index);
