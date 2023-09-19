@@ -91,11 +91,15 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     Int min_y = max(0, pixel.y - _spatial);
     Int max_y = min(pixel.y + _spatial, res.y - 1);
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
+    OCGData cur_data = GBuffer.read(dispatch_id());
 
-//    auto H = [&](const OCRSVSample &sample) {
-//        Bool cond =
-//    };
-
+    auto H = [&](const OCRSVSample &sample, const OCGData &data) {
+        Bool cond0 = abs_dot(data->normal(), cur_data->normal()) > _epsilon_dot;
+        Bool cond1 = (abs(data->t_max() - cur_data->t_max()) / cur_data->t_max()) < _epsilon_depth;
+        Bool ret = cond0 && cond1;
+        return cast<float>(ret);
+    };
+    Float Z = 0.f;
     for (int i = 0; i < _iterate_num; ++i) {
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {

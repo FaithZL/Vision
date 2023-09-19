@@ -839,6 +839,8 @@
 			"rr_threshold" : 1,
 			"spatial" : 2,
 			"n": 1,
+			"theta": 20,
+			"depth": 0.1,
 			"M": 1
 		}
 	},

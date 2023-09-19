@@ -39,7 +39,7 @@ private:
 public:
     explicit ReSTIR(uint M, uint n, uint spatial, float theta, float depth)
         : M(M), _iterate_num(n), _spatial(spatial),
-          _epsilon_dot(cosf(theta)), _epsilon_depth(depth) {}
+          _epsilon_dot(cosf(radians(theta))), _epsilon_depth(depth) {}
     void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();
