@@ -63,7 +63,7 @@ void ReSTIR::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         Interaction it;
-        OCGData data;
+        OCSurfaceData data;
         data.hit = hit;
         data->set_t_max(0.f);
         $if(!hit->is_miss()) {
@@ -92,9 +92,9 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     Int min_y = max(0, pixel.y - _spatial);
     Int max_y = min(pixel.y + _spatial, res.y - 1);
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
-    OCGData cur_data = GBuffer.read(dispatch_id());
+    OCSurfaceData cur_data = GBuffer.read(dispatch_id());
 
-    auto H = [&](const OCRSVSample &sample, const OCGData &data) {
+    auto H = [&](const OCRSVSample &sample, const OCSurfaceData &data) {
         Bool cond0 = abs_dot(data->normal(), cur_data->normal()) > _epsilon_dot;
         Bool cond1 = (abs(data->t_max() - cur_data->t_max()) / cur_data->t_max()) < _epsilon_depth;
         Bool ret = cond0 && cond1;

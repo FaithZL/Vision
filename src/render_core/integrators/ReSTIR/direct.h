@@ -24,7 +24,7 @@ private:
     float _epsilon_depth{};
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
-    mutable RegistrableManaged<GData> GBuffer;
+    mutable RegistrableManaged<SurfaceData> GBuffer;
 
     /**
      * generate initial candidates

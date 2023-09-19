@@ -43,7 +43,7 @@ OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, pdf, pos) {
 
 namespace vision {
 using namespace ocarina;
-struct GData {
+struct SurfaceData {
     Hit hit{};
     float4 normal_t;
 };
@@ -51,7 +51,7 @@ struct GData {
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::GData, hit, normal_t) {
+OC_STRUCT(vision::SurfaceData, hit, normal_t) {
     void set_normal(const Float3 &n) {
         normal_t = make_float4(n, normal_t.w);
     }
@@ -62,7 +62,7 @@ OC_STRUCT(vision::GData, hit, normal_t) {
 // clang-format on
 
 namespace vision {
-using OCGData = Var<GData>;
+using OCSurfaceData = Var<SurfaceData>;
 using OCRSVSample = Var<RSVSample>;
 }// namespace vision
 
