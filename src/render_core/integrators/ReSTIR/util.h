@@ -47,7 +47,6 @@ struct SurfaceData {
     Hit hit{};
     float4 normal_t;
 };
-
 }// namespace vision
 
 // clang-format off
@@ -78,14 +77,16 @@ public:
     RSVSample sample{};
 
 public:
-    void update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
+    bool update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
         weight_sum += weight;
         M += 1;
-        sample = ocarina::select(u < (weight / M), v, sample);
+        bool ret = u < (weight / weight_sum);
+        sample = ocarina::select(ret, v, sample);
+        return ret;
     }
-    void update(oc_float<p> u, RSVSample v) {
+    bool update(oc_float<p> u, RSVSample v) {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
-        update(u, weight, v);
+        return update(u, weight, v);
     }
     void update_W() noexcept {
         auto denominator = M * sample.p_hat;
@@ -101,14 +102,16 @@ public:
 
 OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample) {
     static constexpr EPort p = D;
-    void update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
+    Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
         M += 1;
-        sample = select(u < (weight / weight_sum), v, sample);
+        Bool ret = u < (weight / weight_sum);
+        sample = select(ret, v, sample);
+        return ret;
     }
-    void update(oc_float<p> u, vision::OCRSVSample v) {
+    Bool update(oc_float<p> u, vision::OCRSVSample v) {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
-        update(u, weight, v);
+        return update(u, weight, v);
     }
     void update_W() noexcept {
         auto denominator = M * sample.p_hat;
