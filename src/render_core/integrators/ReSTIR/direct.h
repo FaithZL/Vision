@@ -20,8 +20,8 @@ private:
     uint M{};
     uint _iterate_num{};
     int _spatial{1};
-    float _epsilon_dot{};
-    float _epsilon_depth{};
+    float _dot_threshold{};
+    float _depth_threshold{};
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
     mutable RegistrableManaged<SurfaceData> GBuffer;
@@ -39,7 +39,7 @@ private:
 public:
     explicit ReSTIR(uint M, uint n, uint spatial, float theta, float depth)
         : M(M), _iterate_num(n), _spatial(spatial),
-          _epsilon_dot(cosf(radians(theta))), _epsilon_depth(depth) {}
+          _dot_threshold(cosf(radians(theta))), _depth_threshold(depth) {}
     void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();
@@ -51,6 +51,8 @@ public:
     [[nodiscard]] OCReservoir temporal_reuse(const OCReservoir &rsv) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
+    [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
+                                   const OCSurfaceData &another_surface) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate() const noexcept;

@@ -136,4 +136,13 @@ using OCReservoir = Var<Reservoir>;
     ret->update_W();
     return ret;
 }
+
+[[nodiscard]] inline Bool is_neighbor(const OCSurfaceData &cur_surface,
+                                      const OCSurfaceData &another_surface,
+                                      float dot_threshold, float depth_threshold) noexcept {
+    Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
+    Bool cond1 = (abs(cur_surface->t_max() - another_surface->t_max()) / cur_surface->t_max()) < depth_threshold;
+    return cond0 && cond1;
+}
+
 }// namespace vision
