@@ -46,11 +46,12 @@ using namespace ocarina;
 struct SurfaceData {
     Hit hit{};
     float4 normal_t;
+    uint mat_id{};
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::SurfaceData, hit, normal_t) {
+OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
     void set_normal(const Float3 &n) {
         normal_t = make_float4(n, normal_t.w);
     }
@@ -142,7 +143,7 @@ using OCReservoir = Var<Reservoir>;
                                       float dot_threshold, float depth_threshold) noexcept {
     Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
     Bool cond1 = (abs(cur_surface->t_max() - another_surface->t_max()) / cur_surface->t_max()) < depth_threshold;
-    return cond0 && cond1;
+    return cond0 && cond1 && (cur_surface.mat_id == another_surface.mat_id);
 }
 
 }// namespace vision
