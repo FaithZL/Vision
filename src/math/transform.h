@@ -51,7 +51,7 @@ requires is_scalar_expr_v<T>
 template<EPort p = D>
 [[nodiscard]] inline oc_float4x4<p> perspective(oc_float<p> fov_y, const oc_float<p> &z_near,
                                                 const oc_float<p> &z_far, oc_bool<p> radian = false) {
-    fov_y = select(radian, fov_y, radians(fov_y));
+    fov_y = ocarina::select(radian, fov_y, radians(fov_y));
     oc_float<p> inv_tan = 1 / tan(fov_y / 2.f);
     oc_float4x4<p> mat = make_float4x4(
         inv_tan, 0, 0, 0,

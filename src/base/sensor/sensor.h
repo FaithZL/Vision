@@ -42,6 +42,7 @@ public:
     [[nodiscard]] auto radiance_film() noexcept { return _radiance_film.get(); }
     [[nodiscard]] auto radiance_film() const noexcept { return _radiance_film.get(); }
     [[nodiscard]] uint2 resolution() noexcept { return _radiance_film->resolution(); }
+    virtual void set_resolution(uint2 res) noexcept { _radiance_film->set_resolution(res); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 

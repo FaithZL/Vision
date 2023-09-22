@@ -9,6 +9,7 @@
 #include "dsl/common.h"
 #include "base/node.h"
 #include "tonemapper.h"
+#include "math/box.h"
 
 namespace vision {
 using namespace ocarina;
@@ -29,12 +30,14 @@ public:
 
 protected:
     uint2 _resolution;
+    Box2f _screen_window;
     SP<ToneMapper> _tone_mapper{};
 
 public:
     explicit Film(const FilmDesc &desc);
     OC_SERIALIZABLE_FUNC(Serializable<float>, *_tone_mapper)
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
+    [[nodiscard]] Box2f screen_window() const noexcept { return _screen_window; }
     [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     void set_resolution(uint2 res) noexcept { _resolution = res; }
     [[nodiscard]] auto tone_mapper() const noexcept { return _tone_mapper; }

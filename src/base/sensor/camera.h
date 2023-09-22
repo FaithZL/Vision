@@ -12,12 +12,13 @@ class Camera : public Sensor {
 public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
+    constexpr static float z_near = 0.01f;
+    constexpr static float z_far = 1000.f;
+    constexpr static float pitch_max = 80.f;
 
     [[nodiscard]] Float3 device_position() const noexcept;
 
 protected:
-    constexpr static float pitch_max = 80.f;
-
     float3 _position;
     float _yaw{};
     float _pitch{};
@@ -26,16 +27,21 @@ protected:
     float _fov_y{20.f};
     Serial<float> _tan_fov_y_over2{};
     Serial<float4x4> _c2w;
+    Serial<float4x4> _raster_to_screen{};
+    Serial<float4x4> _camera_to_screen{};
+    Serial<float4x4> _raster_to_camera{};
 
 protected:
     [[nodiscard]] Float3 device_forward() const noexcept;
     [[nodiscard]] Float3 device_up() const noexcept;
     [[nodiscard]] Float3 device_right() const noexcept;
+    void _update_raster() noexcept;
     [[nodiscard]] virtual OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:
     explicit Camera(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w)
+    OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w, _raster_to_screen,
+                         _camera_to_screen, _raster_to_camera)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_mat(float4x4 m) noexcept;
@@ -53,6 +59,7 @@ public:
     virtual void update_lens_radius(float val) noexcept {}
     [[nodiscard]] virtual float lens_radius() const noexcept { return 0; }
 
+    void set_resolution(ocarina::uint2 res) noexcept override;
     void set_yaw(decltype(_yaw) yaw) noexcept { _yaw = yaw; }
     void update_yaw(float val) noexcept { set_yaw(_yaw + val); }
     void set_pitch(float pitch) noexcept {
@@ -74,6 +81,7 @@ public:
             _fov_y = new_fov_y;
         }
         _tan_fov_y_over2 = tan(radians(_fov_y) * 0.5f);
+        _update_raster();
     }
     void update_fov_y(float val) noexcept { set_fov_y(fov_y() + val); }
     virtual void update_device_data() noexcept;

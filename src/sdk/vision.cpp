@@ -212,7 +212,7 @@ void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
 void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
     auto camera = _pipeline->scene().camera();
     auto film = camera->radiance_film();
-    film->set_resolution(make_uint2(width, height));
+    camera->set_resolution(make_uint2(width, height));
     _pipeline->scene().prepare();
     _pipeline->upload_resource_array();
 }
