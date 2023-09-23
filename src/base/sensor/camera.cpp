@@ -10,6 +10,7 @@ namespace vision {
 Camera::Camera(const SensorDesc &desc)
     : Sensor(desc) {
     init(desc);
+    _update_resolution(_radiance_film->resolution());
 }
 
 void Camera::init(const SensorDesc &desc) noexcept {
@@ -36,11 +37,15 @@ OCRay Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const
 
 void Camera::set_resolution(ocarina::uint2 res) noexcept {
     Sensor::set_resolution(res);
+    _update_resolution(res);
+}
+
+void Camera::_update_resolution(uint2 res) noexcept {
     Box2f scrn = radiance_film()->screen_window();
     float2 span = scrn.span();
     float4x4 screen_to_raster = transform::scale(res.x, res.y, 1u) *
-                                transform::scale(1 / span.x, 1/ -span.y, 1.f) *
-                                transform::translation(-scrn.lower.x, - scrn.upper.y, 0.f);
+                                transform::scale(1 / span.x, 1 / -span.y, 1.f) *
+                                transform::translation(-scrn.lower.x, -scrn.upper.y, 0.f);
     _raster_to_screen = inverse(screen_to_raster);
     _update_raster();
 }
@@ -48,6 +53,7 @@ void Camera::set_resolution(ocarina::uint2 res) noexcept {
 void Camera::_update_raster() noexcept {
     _camera_to_screen = transform::perspective<H>(fov_y(), z_near, z_far);
     _raster_to_camera = inverse(_camera_to_screen.hv()) * _raster_to_screen.hv();
+    int i = 0;
 }
 
 void Camera::update_mat(float4x4 m) noexcept {

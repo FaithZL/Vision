@@ -36,6 +36,7 @@ protected:
     [[nodiscard]] Float3 device_up() const noexcept;
     [[nodiscard]] Float3 device_right() const noexcept;
     void _update_raster() noexcept;
+    void _update_resolution(uint2 res) noexcept;
     [[nodiscard]] virtual OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:

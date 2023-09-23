@@ -51,10 +51,10 @@ public:
     }
     [[nodiscard]] string to_string() noexcept override {
         return ocarina::format("camera yaw is {:.2f}, pitch is {:.2f}, fov is {:.1f}, focal distance is {:.2f}, "
-                                              "lens radius is {:.2f}, position is ({:.2f}, {:.2f}, {:.2f})",
-                                              yaw(),pitch(), fov_y(),
-                                              focal_distance(), lens_radius(),
-                                              position().x, position().y, position().z);
+                               "lens radius is {:.2f}, position is ({:.2f}, {:.2f}, {:.2f})",
+                               yaw(), pitch(), fov_y(),
+                               focal_distance(), lens_radius(),
+                               position().x, position().y, position().z);
     }
 };
 }// namespace vision
