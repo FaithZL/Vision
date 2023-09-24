@@ -28,10 +28,9 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
 }
 
 OCRay Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {
-    uint2 res = _radiance_film->resolution();
-    Float2 p = (ss.p_film * 2.f - make_float2(res)) * *_tan_fov_y_over2 / float(res.y);
-    Float3 dir = normalize(make_float3(p.x, -p.y, 1.f));
-    OCRay ray = make_ray(make_float3(0.f), dir);
+    Float3 p_film = make_float3(ss.p_film, 0.f);
+    Float3 p_sensor = transform_point(*_raster_to_camera, p_film);
+    OCRay ray = make_ray(make_float3(0.f),normalize(p_sensor));
     return ray;
 }
 
@@ -53,7 +52,6 @@ void Camera::_update_resolution(uint2 res) noexcept {
 void Camera::_update_raster() noexcept {
     _camera_to_screen = transform::perspective<H>(fov_y(), z_near, z_far);
     _raster_to_camera = inverse(_camera_to_screen.hv()) * _raster_to_screen.hv();
-    int i = 0;
 }
 
 void Camera::update_mat(float4x4 m) noexcept {
