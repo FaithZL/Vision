@@ -33,7 +33,7 @@ public:
         SensorSample ss;
         FilterSample fs = filter->sample(next_2d());
         ss.p_film = make_float2(pixel) + make_float2(0.5f) + fs.p;
-        ss.u2 = next_2d();
+        ss.p_lens = next_2d();
         ss.time = next_1d();
         ss.filter_weight = fs.weight;
         return ss;
