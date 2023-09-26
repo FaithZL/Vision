@@ -51,7 +51,7 @@ void Camera::_update_resolution(uint2 res) noexcept {
 
 void Camera::_update_raster() noexcept {
     _camera_to_screen = transform::perspective<H>(fov_y(), z_near, z_far);
-    _raster_to_camera = inverse(_camera_to_screen.hv()) * _raster_to_screen.hv();
+    _raster_to_camera = inverse(_camera_to_screen) * _raster_to_screen;
 }
 
 void Camera::update_mat(float4x4 m) noexcept {

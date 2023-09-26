@@ -28,8 +28,8 @@ protected:
     Serial<float> _tan_fov_y_over2{};
     Serial<float4x4> _c2w;
     Serial<float4x4> _prev_c2w;
-    Serial<float4x4> _raster_to_screen{};
-    Serial<float4x4> _camera_to_screen{};
+    float4x4 _raster_to_screen{};
+    float4x4 _camera_to_screen{};
     Serial<float4x4> _raster_to_camera{};
     Serial<float4x4> _prev_r2c{};
 
@@ -43,8 +43,8 @@ protected:
 
 public:
     explicit Camera(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w, _prev_c2w, _raster_to_screen,
-                         _camera_to_screen, _raster_to_camera, _prev_r2c)
+    OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w, _prev_c2w,
+                         _raster_to_camera, _prev_r2c)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_mat(float4x4 m) noexcept;
