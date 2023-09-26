@@ -6,9 +6,9 @@
 
 namespace vision {
 
-class OfflineRenderPipeline : public Pipeline {
+class FixedRenderPipeline : public Pipeline {
 public:
-    explicit OfflineRenderPipeline(const PipelineDesc &desc)
+    explicit FixedRenderPipeline(const PipelineDesc &desc)
         : Pipeline(desc) {}
 
     void prepare() noexcept override {
@@ -39,18 +39,8 @@ public:
     void render(double dt) noexcept override {
         _scene.integrator()->render();
     }
-
-    void display(double dt) noexcept override {
-        Clock clk;
-        render(dt);
-        double ms = clk.elapse_ms();
-        _total_time += ms;
-        ++_frame_index;
-        printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, _total_time / _frame_index, _frame_index);
-        Printer::instance().retrieve_immediately();
-    }
 };
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::OfflineRenderPipeline)
+VS_MAKE_CLASS_CREATOR(vision::FixedRenderPipeline)

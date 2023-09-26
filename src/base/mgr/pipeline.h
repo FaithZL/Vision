@@ -59,7 +59,7 @@ public:
     virtual void update_geometry() noexcept;
     virtual void prepare_render_graph() noexcept {}
     virtual void compile() noexcept = 0;
-    virtual void display(double dt) noexcept = 0;
+    virtual void display(double dt) noexcept;
     virtual void render(double dt) noexcept = 0;
     virtual void before_render() noexcept {}
     virtual void after_render() noexcept {}

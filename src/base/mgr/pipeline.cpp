@@ -67,6 +67,16 @@ void Pipeline::deregister_texture(handle_ty index) noexcept {
     _resource_array->remove_texture(index);
 }
 
+void Pipeline::display(double dt) noexcept {
+    Clock clk;
+    render(dt);
+    double ms = clk.elapse_ms();
+    _total_time += ms;
+    ++_frame_index;
+    printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, _total_time / _frame_index, _frame_index);
+    Printer::instance().retrieve_immediately();
+}
+
 float4 *Pipeline::final_picture(bool denoise) noexcept {
     RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
     if (denoise) {

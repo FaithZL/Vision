@@ -7,12 +7,12 @@
 
 namespace vision {
 
-class RealTimeRenderPipeline : public Pipeline {
+class CustomizedRenderPipeline : public Pipeline {
 private:
     RenderGraph _render_graph;
 
 public:
-    explicit RealTimeRenderPipeline(const PipelineDesc &desc)
+    explicit CustomizedRenderPipeline(const PipelineDesc &desc)
         : Pipeline(desc) {}
 
     void init_scene(const vision::SceneDesc &scene_desc) override {
@@ -61,25 +61,13 @@ public:
 
     void compile() noexcept override {
         _render_graph.compile();
-        //        _scene.integrator()->compile_shader();
     }
 
     void render(double dt) noexcept override {
-        //        _scene.integrator()->render();
         stream() << _render_graph.dispatch() << synchronize() << commit();
-    }
-
-    void display(double dt) noexcept override {
-        Clock clk;
-        render(dt);
-        double ms = clk.elapse_ms();
-        _total_time += ms;
-        ++_frame_index;
-        printf("time consuming (current frame: %f, average: %f) frame index: %u   \r", ms, _total_time / _frame_index, _frame_index);
-        Printer::instance().retrieve_immediately();
     }
 };
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::RealTimeRenderPipeline)
+VS_MAKE_CLASS_CREATOR(vision::CustomizedRenderPipeline)
