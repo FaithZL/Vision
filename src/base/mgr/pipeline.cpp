@@ -67,9 +67,19 @@ void Pipeline::deregister_texture(handle_ty index) noexcept {
     _resource_array->remove_texture(index);
 }
 
+void Pipeline::before_render() noexcept {
+
+}
+
+void Pipeline::after_render() noexcept {
+    scene().camera()->after_render();
+}
+
 void Pipeline::display(double dt) noexcept {
     Clock clk;
+    before_render();
     render(dt);
+    after_render();
     double ms = clk.elapse_ms();
     _total_time += ms;
     ++_frame_index;
