@@ -42,7 +42,7 @@ public:
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
     [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
-    void set_scene(Scene scene) noexcept { _scene = ocarina::move(scene);}
+    void set_scene(Scene scene) noexcept { _scene = ocarina::move(scene); }
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;
@@ -61,6 +61,8 @@ public:
     virtual void compile() noexcept = 0;
     virtual void display(double dt) noexcept = 0;
     virtual void render(double dt) noexcept = 0;
+    virtual void before_render() noexcept {}
+    virtual void after_render() noexcept {}
     virtual void upload_data() noexcept { _scene.upload_data(); }
     [[nodiscard]] virtual float4 *final_picture(bool denoise) noexcept;
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
