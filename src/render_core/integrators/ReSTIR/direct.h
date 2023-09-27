@@ -25,7 +25,7 @@ private:
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
     mutable RegistrableManaged<SurfaceData> _surfaces;
-    RegistrableManaged<float3> &_motion_vec;
+    RegistrableManaged<float2> &_motion_vectors;
 
     /**
      * generate initial candidates
@@ -38,13 +38,13 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    explicit ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float3> &motion_vec)
+    explicit ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float2> &motion_vec)
         : M(desc["M"].as_uint(1)),
           _iterate_num(desc["n"].as_uint(3)),
           _spatial(desc["spatial"].as_uint(1)),
           _dot_threshold(cosf(radians(desc["theta"].as_float(20)))),
           _depth_threshold(desc["depth"].as_float(0.01f)),
-          _motion_vec(motion_vec){}
+          _motion_vectors(motion_vec){}
 
     void prepare() noexcept;
     void compile() noexcept {
@@ -53,6 +53,7 @@ public:
     }
     [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
+    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(const Int2 &pixel, const Uint &frame_index) const noexcept;
     [[nodiscard]] OCReservoir temporal_reuse(const OCReservoir &rsv) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,

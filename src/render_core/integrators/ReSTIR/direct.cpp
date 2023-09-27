@@ -52,6 +52,21 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
     return ret;
 }
 
+Float2 ReSTIR::compute_motion_vec(const Float2 &p_film) const noexcept {
+    Pipeline *rp = pipeline();
+    const Geometry &geometry = rp->geometry();
+    Camera *camera = scene().camera().get();
+
+    Float2 ret = make_float2(0.f);
+    OCSurfaceData prev_surface = _surfaces.read(dispatch_id());
+    $if(prev_surface->valid()) {
+        Interaction it = geometry.compute_surface_interaction(prev_surface.hit, false);
+        Float3 raster_coord = camera->prev_raster_coord(it.pos);
+        ret = p_film - raster_coord.xy();
+    };
+    return ret;
+}
+
 void ReSTIR::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
@@ -68,6 +83,10 @@ void ReSTIR::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         Interaction it;
+
+        Float2 motion_vec = compute_motion_vec(ss.p_film);
+        _motion_vectors.write(dispatch_id(), motion_vec);
+
         OCSurfaceData data;
         data.hit = hit;
         data->set_t_max(0.f);
@@ -104,9 +123,9 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
-//                $if(index == dispatch_id()) {
-//                    $continue;
-//                };
+                //                $if(index == dispatch_id()) {
+                //                    $continue;
+                //                };
                 OCReservoir rsv = _reservoirs.read(index);
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             };
