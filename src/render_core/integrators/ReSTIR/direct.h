@@ -24,7 +24,8 @@ private:
     float _depth_threshold{};
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
-    mutable RegistrableManaged<SurfaceData> GBuffer;
+    mutable RegistrableManaged<SurfaceData> _surfaces;
+    RegistrableManaged<float3> &_motion_vec;
 
     /**
      * generate initial candidates
@@ -37,9 +38,14 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    explicit ReSTIR(uint M, uint n, uint spatial, float theta, float depth)
-        : M(M), _iterate_num(n), _spatial(spatial),
-          _dot_threshold(cosf(radians(theta))), _depth_threshold(depth) {}
+    explicit ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float3> &motion_vec)
+        : M(desc["M"].as_uint(1)),
+          _iterate_num(desc["n"].as_uint(3)),
+          _spatial(desc["spatial"].as_uint(1)),
+          _dot_threshold(cosf(radians(desc["theta"].as_float(20)))),
+          _depth_threshold(desc["depth"].as_float(0.01f)),
+          _motion_vec(motion_vec){}
+
     void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();

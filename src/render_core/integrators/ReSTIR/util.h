@@ -57,6 +57,7 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
     }
     [[nodiscard]] Float3 normal() const noexcept { return normal_t.xyz();}
     void set_t_max(const Float &t) { normal_t.w = t; }
+    [[nodiscard]] Bool valid() { return t_max() > 0.f; }
     [[nodiscard]] Float t_max() const noexcept { return normal_t.w;}
 };
 // clang-format on

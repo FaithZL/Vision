@@ -82,7 +82,7 @@ void ReSTIR::compile_shader0() noexcept {
             rsv.W = select(occluded, 0.f, rsv.W);
         };
         _reservoirs.write(dispatch_id(), rsv);
-        GBuffer.write(dispatch_id(), data);
+        _surfaces.write(dispatch_id(), data);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
                                         "check visibility");
@@ -97,7 +97,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     Int min_y = max(0, pixel.y - _spatial);
     Int max_y = min(pixel.y + _spatial, res.y - 1);
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
-    OCSurfaceData cur_data = GBuffer.read(dispatch_id());
+    OCSurfaceData cur_data = _surfaces.read(dispatch_id());
 
     Float Z = 0.f;
     for (int i = 0; i < _iterate_num; ++i) {
@@ -174,7 +174,7 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel), frame_index);
-        Var data = GBuffer.read(dispatch_id());
+        Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
@@ -191,15 +191,15 @@ void ReSTIR::prepare() noexcept {
     Pipeline *rp = pipeline();
     _prev_reservoirs.set_resource_array(rp->resource_array());
     _reservoirs.set_resource_array(rp->resource_array());
-    GBuffer.set_resource_array(rp->resource_array());
+    _surfaces.set_resource_array(rp->resource_array());
 
     _prev_reservoirs.reset_all(device(), rp->pixel_num());
     _reservoirs.reset_all(device(), rp->pixel_num());
-    GBuffer.reset_all(device(), rp->pixel_num());
+    _surfaces.reset_all(device(), rp->pixel_num());
 
     _prev_reservoirs.register_self();
     _reservoirs.register_self();
-    GBuffer.register_self();
+    _surfaces.register_self();
 }
 
 CommandList ReSTIR::estimate() const noexcept {

@@ -13,18 +13,18 @@ namespace vision {
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIR _direct;
+    RegistrableManaged<float3> _motion_vec;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(desc["M"].as_uint(1),
-                  desc["n"].as_uint(3),
-                  desc["spatial"].as_uint(1),
-                  desc["theta"].as_float(20),
-                  desc["depth"].as_float(0.01f)) {}
+          _direct(desc, _motion_vec) {}
 
     void prepare() noexcept override {
         _direct.prepare();
+        Pipeline *rp = pipeline();
+        _motion_vec.set_resource_array(rp->resource_array());
+        _motion_vec.reset_all(device(), rp->pixel_num());
     }
 
     void compile() noexcept override {
