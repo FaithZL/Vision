@@ -18,7 +18,7 @@ public:
 
     [[nodiscard]] Float3 device_position() const noexcept;
 
-protected:
+public:
     float3 _position;
     float _yaw{};
     float _pitch{};
@@ -30,7 +30,7 @@ protected:
     float4x4 _raster_to_screen{};
     float4x4 _camera_to_screen{};
     Serial<float4x4> _raster_to_camera{};
-    Serial<float4x4> _prev_r2w{};
+    Serial<float4x4> _prev_w2r{};
 
 protected:
     [[nodiscard]] Float3 device_forward() const noexcept;
@@ -43,7 +43,7 @@ protected:
 public:
     explicit Camera(const SensorDesc &desc);
     OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w,
-                         _raster_to_camera, _prev_r2w)
+                         _raster_to_camera, _prev_w2r)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_mat(float4x4 m) noexcept;

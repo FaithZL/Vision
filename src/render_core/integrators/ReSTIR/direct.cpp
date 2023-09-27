@@ -62,6 +62,9 @@ Float2 ReSTIR::compute_motion_vec(const Float2 &p_film) const noexcept {
     $if(prev_surface->valid()) {
         Interaction it = geometry.compute_surface_interaction(prev_surface.hit, false);
         Float3 raster_coord = camera->prev_raster_coord(it.pos);
+//        $if(all(dispatch_idx().xy() == make_uint2(1023,1023))) {
+//            Printer::instance().info("-------  {} {} {} ----------------", normalize(it.pos - camera->device_position()));
+//        };
         ret = p_film - raster_coord.xy();
     };
     return ret;
@@ -83,7 +86,9 @@ void ReSTIR::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         Interaction it;
-
+        $if(all(dispatch_idx().xy() == make_uint2(1023,1023))) {
+            Printer::instance().info("-------  {} {} {} +++++++----------------", normalize(rs.direction()));
+        };
         Float2 motion_vec = compute_motion_vec(ss.p_film);
         _motion_vectors.write(dispatch_id(), motion_vec);
 
