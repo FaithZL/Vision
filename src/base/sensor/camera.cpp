@@ -67,12 +67,15 @@ void Camera::set_mat(ocarina::float4x4 m) noexcept {
 }
 
 void Camera::after_render() noexcept {
-    _prev_w2r = inverse(_c2w.hv() * _raster_to_camera.hv());
+    _prev_c2r = inverse(_raster_to_camera.hv());
+    _prev_w2c = inverse(_c2w.hv());
 }
 
 Float3 Camera::prev_raster_coord(const Float3 &pos) {
-    Float3 ret = transform_vector(*_prev_w2r, normalize(pos - device_position()));
-    ret = ret / ret.z;
+    Float3 dir = pos - device_position();
+    dir = transform_vector(*_prev_w2c, dir);
+    dir /= dir.z;
+    Float3 ret = transform_point(*_prev_c2r, dir);
     return ret;
 }
 
