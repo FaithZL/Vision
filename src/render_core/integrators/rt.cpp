@@ -37,6 +37,8 @@ public:
         stream << _direct.estimate();
         stream << synchronize();
         stream << commit();
+//        float2 vec = _motion_vectors.at(0);
+//        cout << vec.x << "  " << vec.y << endl;
     }
 };
 

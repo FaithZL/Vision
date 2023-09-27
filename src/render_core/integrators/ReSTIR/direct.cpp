@@ -222,6 +222,7 @@ CommandList ReSTIR::estimate() const noexcept {
     const Pipeline *rp = pipeline();
     ret << _shader0(rp->frame_index()).dispatch(rp->resolution());
     ret << _shader1(rp->frame_index()).dispatch(rp->resolution());
+    ret << _motion_vectors.download();
     return ret;
 }
 
