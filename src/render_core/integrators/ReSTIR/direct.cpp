@@ -118,14 +118,10 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_data = _surfaces.read(dispatch_id());
 
-    Float Z = 0.f;
     for (int i = 0; i < _iterate_num; ++i) {
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
-                //                $if(index == dispatch_id()) {
-                //                    $continue;
-                //                };
                 OCReservoir rsv = _reservoirs.read(index);
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             };
