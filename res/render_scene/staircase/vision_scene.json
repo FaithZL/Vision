@@ -31479,6 +31479,9 @@
             "lights": []
         }
     },
+    "pipeline": {
+        "type": "customized"
+    },
     "output": {
         "spp": 0,
         "fn": "srgb.png"
