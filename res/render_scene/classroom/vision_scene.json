@@ -3900,6 +3900,11 @@
             "dimension": 3
         }
     },
+
+    "pipeline": {
+        "type": "customized"
+    },
+
     "render_setting": {
         "polymorphic_mode": 1
     },
