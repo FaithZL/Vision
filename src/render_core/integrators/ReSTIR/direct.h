@@ -18,10 +18,12 @@ namespace vision {
 class ReSTIR : public SerialObject, public Ctx {
 private:
     uint M{};
-    uint _iterate_num{};
-    int _spatial{1};
+    uint _spatial_iterator{};
+    int _spatial_radius{1};
+    uint _history_limit{};
     float _dot_threshold{};
     float _depth_threshold{};
+
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
     mutable RegistrableManaged<SurfaceData> _surfaces;
@@ -38,10 +40,11 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    explicit ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float2> &motion_vec)
+    ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float2> &motion_vec)
         : M(desc["M"].as_uint(1)),
-          _iterate_num(desc["n"].as_uint(3)),
-          _spatial(desc["spatial"].as_uint(1)),
+          _spatial_iterator(desc["n"].as_uint(3)),
+          _spatial_radius(desc["spatial"].as_uint(1)),
+          _history_limit(desc["history"].as_uint(10)),
           _dot_threshold(cosf(radians(desc["theta"].as_float(20)))),
           _depth_threshold(desc["depth"].as_float(0.01f)),
           _motion_vectors(motion_vec){}

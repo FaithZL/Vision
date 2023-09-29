@@ -107,14 +107,14 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     Sampler *sampler = scene().sampler();
     OCReservoir ret;
     int2 res = make_int2(pipeline()->resolution());
-    Int min_x = max(0, pixel.x - _spatial);
-    Int max_x = min(pixel.x + _spatial, res.x - 1);
-    Int min_y = max(0, pixel.y - _spatial);
-    Int max_y = min(pixel.y + _spatial, res.y - 1);
+    Int min_x = max(0, pixel.x - _spatial_radius);
+    Int max_x = min(pixel.x + _spatial_radius, res.x - 1);
+    Int min_y = max(0, pixel.y - _spatial_radius);
+    Int max_y = min(pixel.y + _spatial_radius, res.y - 1);
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_data = _surfaces.read(dispatch_id());
 
-    for (int i = 0; i < _iterate_num; ++i) {
+    for (int i = 0; i < _spatial_iterator; ++i) {
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
