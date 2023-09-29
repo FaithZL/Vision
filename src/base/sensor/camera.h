@@ -50,6 +50,7 @@ public:
     void set_mat(float4x4 m) noexcept;
     virtual void before_render() noexcept {}
     virtual void after_render() noexcept;
+    void store_prev_data() noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
     [[nodiscard]] Float3 prev_raster_coord(const Float3 &pos);
 

@@ -39,7 +39,7 @@ public:
         stream << commit();
         float2 vec = _motion_vectors.at(0);
 //        if (vec.x > 0.01)
-//        cout << vec.x << "  " << vec.y << endl;
+//            cout << vec.x << "  " << vec.y << endl;
     }
 };
 

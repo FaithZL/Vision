@@ -67,6 +67,10 @@ void Camera::set_mat(ocarina::float4x4 m) noexcept {
 }
 
 void Camera::after_render() noexcept {
+    store_prev_data();
+}
+
+void Camera::store_prev_data() noexcept {
     _prev_c2r = inverse(_raster_to_camera.hv());
     _prev_w2c = inverse(_c2w.hv());
 }
@@ -89,6 +93,7 @@ void Camera::prepare() noexcept {
     Sensor::prepare();
     prepare_data();
     upload_immediately();
+    store_prev_data();
 }
 
 float4x4 Camera::camera_to_world_rotation() const noexcept {
