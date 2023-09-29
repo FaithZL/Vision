@@ -134,7 +134,7 @@ void App::update(double dt) noexcept {
     pipeline().upload_data();
     if (invalidation) {
         auto camera = pipeline().scene().camera();
-        OC_INFO(camera->to_string());
+//        OC_INFO(camera->to_string());
         invalidation = false;
         pipeline().invalidate();
     }

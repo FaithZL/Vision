@@ -53,7 +53,7 @@ public:
     }
     [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
-    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film) const noexcept;
+    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3& cur_pos, const Bool &is_hit) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(const Int2 &pixel, const Uint &frame_index) const noexcept;
     [[nodiscard]] OCReservoir temporal_reuse(const OCReservoir &rsv) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,

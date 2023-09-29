@@ -52,19 +52,14 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
     return ret;
 }
 
-Float2 ReSTIR::compute_motion_vec(const Float2 &p_film) const noexcept {
+Float2 ReSTIR::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
     Camera *camera = scene().camera().get();
 
     Float2 ret = make_float2(0.f);
-    OCSurfaceData prev_surface = _surfaces.read(dispatch_id());
-    $if(prev_surface->valid()) {
-        Interaction it = geometry.compute_surface_interaction(prev_surface.hit, false);
-        Float3 raster_coord = camera->prev_raster_coord(it.pos);
-//        $if(all(dispatch_idx().xy() == make_uint2(1023,1023))) {
-//            Printer::instance().info("-------  {} {} {} ----------------", raster_coord);
-//        };
+    $if(is_hit) {
+        Float3 raster_coord = camera->prev_raster_coord(cur_pos);
         ret = p_film - raster_coord.xy();
     };
     return ret;
@@ -86,18 +81,17 @@ void ReSTIR::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
         Interaction it;
-        Float2 motion_vec = compute_motion_vec(ss.p_film);
-        _motion_vectors.write(dispatch_id(), motion_vec);
 
         OCSurfaceData data;
         data.hit = hit;
         data->set_t_max(0.f);
-        $if(!hit->is_miss()) {
+        $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
             data->set_t_max(rs.t_max());
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
-
+        Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
+        _motion_vectors.write(dispatch_id(), motion_vec);
         $if(!hit->is_miss()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv.W = select(occluded, 0.f, rsv.W);
