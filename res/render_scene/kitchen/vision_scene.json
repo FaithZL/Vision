@@ -13510,6 +13510,9 @@
             "lights": []
         }
     },
+    "pipeline" : {
+//        "type": "customized"
+    },
     "render_setting": {
         "polymorphic_mode" : 1
     },
