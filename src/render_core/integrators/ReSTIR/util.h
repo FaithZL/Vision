@@ -74,8 +74,9 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_uint<p> M{};
+    oc_float<p> M{};
     oc_float<p> W{};
+    oc_uint<p> sample_num{};
     RSVSample sample{};
 
 public:
@@ -102,7 +103,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample) {
+OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample_num, sample) {
     static constexpr EPort p = D;
     Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
