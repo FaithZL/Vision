@@ -87,6 +87,9 @@ public:
         sample = ocarina::select(ret, v, sample);
         return ret;
     }
+    void normalize() noexcept {
+
+    }
     bool update(oc_float<p> u, RSVSample v) {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         return update(u, weight, v);
@@ -105,6 +108,9 @@ public:
 
 OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample_num, sample) {
     static constexpr EPort p = D;
+    void normalize() noexcept {
+
+    }
     Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
         M += 1;
