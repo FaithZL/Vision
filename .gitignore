@@ -10,6 +10,10 @@
 /cmake-build-release-clang
 /cmake-build-relwithdebinfo-clang
 /cmake-build-minsizerel-clang
+/cmake-build-debug-llvm
+/cmake-build-release-llvm
+/cmake-build-relwithdebinfo-llvm
+/cmake-build-minsizerel-llvm
 /build
 /vs2019
 
