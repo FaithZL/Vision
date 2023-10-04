@@ -326,6 +326,23 @@ public:
 
 // clang-format off
 OC_STRUCT(vision::Vertex, pos, n, uv, uv2){
+    void set_position(Float3 p) noexcept {
+        pos[0] = p[0];
+        pos[1] = p[1];
+        pos[2] = p[2];
+    }
+
+    void set_normal(Float3 n_) noexcept {
+        n[0] = n_[0];
+        n[1] = n_[1];
+        n[2] = n_[2];
+    }
+
+    void set_lightmap_uv(Float2 uv_) noexcept {
+        uv2[0] = uv_[0];
+        uv2[1] = uv_[1];
+    }
+
     [[nodiscard]] auto position() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }
