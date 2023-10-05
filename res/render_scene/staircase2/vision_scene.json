@@ -1809,7 +1809,7 @@
     },
     "pipeline" :{
 //        "type": "bake",
-            "type": "customized",
+//            "type": "customized",
         "param": {
             "rasterizer" : {
                 				"type": "CPU"

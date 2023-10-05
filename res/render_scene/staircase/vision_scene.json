@@ -31480,7 +31480,7 @@
         }
     },
     "pipeline": {
-        "type": "customized"
+//        "type": "customized"
     },
     "output": {
         "spp": 0,
