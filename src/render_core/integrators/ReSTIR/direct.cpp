@@ -88,6 +88,7 @@ void ReSTIR::compile_shader0() noexcept {
         $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
             data->set_t_max(rs.t_max());
+            data->set_normal(it.ng);
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
@@ -119,10 +120,15 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
                 OCReservoir rsv = _reservoirs.read(index);
-                ret = combine_reservoir(ret, rsv, sampler->next_1d());
+                OCSurfaceData other_surf = _surfaces.read(index);
+                $if(is_neighbor(cur_data, other_surf)) {
+                    ret = combine_reservoir(ret, rsv, sampler->next_1d());
+                };
             };
         };
     }
+    ret.sample = cur_rsv.sample;
+    ret->update_W();
     return ret;
 }
 
