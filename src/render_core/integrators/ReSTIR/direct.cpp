@@ -135,7 +135,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
 OCReservoir ReSTIR::temporal_reuse(const OCReservoir &rsv) const noexcept {
     OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
     Sampler *sampler = scene().sampler();
-    return combine_reservoir(rsv, prev_rsv, sampler->next_1d());
+    return rsv;
 }
 
 Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
