@@ -127,8 +127,8 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
             };
         };
     }
-    ret.sample = cur_rsv.sample;
-    ret->update_W();
+//    ret.sample = cur_rsv.sample;
+//    ret->update_W();
     return ret;
 }
 
