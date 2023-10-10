@@ -127,8 +127,12 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample_num, sample) {
         return update(u, weight, v);
     }
     void update_W() noexcept {
-        auto denominator = M * sample.p_hat;
+        Float denominator = M * sample.p_hat;
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
+    }
+    void update_W_MIS(const Float &pdf_sum) noexcept {
+        Float mis = sample.pdf / pdf_sum;
+        W = ocarina::select(sample.p_hat == 0.f, 0.f, mis * weight_sum / sample.p_hat);
     }
     [[nodiscard]] auto compute_weight_sum() const noexcept {
         return sample.p_hat * W * M;
@@ -147,6 +151,19 @@ using OCReservoir = Var<Reservoir>;
     ret->update(u, r1->compute_weight_sum(), r1.sample);
     ret.M = r0.M + r1.M;
     ret->update_W();
+    return ret;
+}
+
+[[nodiscard]] inline OCReservoir combine_reservoir_MIS(const OCReservoir &r0,
+                                                       const OCReservoir &r1,
+                                                       const Float &u,
+                                                       Float *pdf_sum) noexcept {
+    OCReservoir ret;
+    ret = r0;
+    ret->update(u, r1->compute_weight_sum(), r1.sample);
+    ret.M = r0.M + r1.M;
+    *pdf_sum += r1.sample.pdf * r1.M;
+    ret->update_W_MIS(*pdf_sum);
     return ret;
 }
 

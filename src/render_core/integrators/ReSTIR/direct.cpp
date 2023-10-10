@@ -114,7 +114,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     Int max_y = min(pixel.y + _spatial_radius, res.y - 1);
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_data = _surfaces.read(dispatch_id());
-
+    Float pdf_sum = cur_rsv.sample.pdf;
     for (int i = 0; i < _spatial_iterate; ++i) {
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
@@ -127,8 +127,6 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
             };
         };
     }
-//    ret.sample = cur_rsv.sample;
-//    ret->update_W();
     return ret;
 }
 
