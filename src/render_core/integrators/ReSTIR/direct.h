@@ -21,6 +21,7 @@ private:
     uint _spatial_iterate{};
     int _spatial_radius{1};
     uint _history_limit{};
+    bool _mis{};
     float _dot_threshold{};
     float _depth_threshold{};
 
@@ -47,6 +48,7 @@ public:
           _history_limit(desc["history"].as_uint(10)),
           _dot_threshold(cosf(radians(desc["theta"].as_float(20)))),
           _depth_threshold(desc["depth"].as_float(0.01f)),
+          _mis(desc["mis"].as_bool(false)),
           _motion_vectors(motion_vec){}
 
     void prepare() noexcept;
