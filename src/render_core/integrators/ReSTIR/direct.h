@@ -46,7 +46,7 @@ public:
           _spatial_iterate(desc["n"].as_uint(3)),
           _spatial_radius(desc["spatial"].as_int(1)),
           _history_limit(desc["history"].as_uint(10)),
-          _dot_threshold(cosf(radians(desc["theta"].as_float(20)))),
+          _dot_threshold(cosf(radians(desc["theta"].as_float(5)))),
           _depth_threshold(desc["depth"].as_float(0.01f)),
           _mis(desc["mis"].as_bool(false)),
           _motion_vectors(motion_vec){}
