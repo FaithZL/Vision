@@ -7,9 +7,43 @@
 #include "core/basic_types.h"
 #include "core/stl.h"
 #include "dsl/common.h"
+#include "descriptions/parameter_set.h"
 
 namespace vision {
 using namespace ocarina;
+
+struct SpatialResamplingParam {
+public:
+    float dot_threshold{};
+    float depth_threshold{};
+    float sampling_radius{};
+    uint sample_num{};
+    uint iterate_num{};
+
+public:
+    explicit SpatialResamplingParam(const ParameterSet &ps)
+        : dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
+          depth_threshold(ps["depth"].as_float(0.01f)),
+          sampling_radius(ps["radius"].as_float(3.f)),
+          sample_num(ps["sample_num"].as_uint(5)),
+          iterate_num(ps["iterate_num"].as_uint(1)) {}
+};
+
+struct TemporalResamplingParam {
+public:
+    uint history_limit{};
+    float2 motion_vec_threshold{};
+    float dot_threshold{};
+    float depth_threshold{};
+
+public:
+    TemporalResamplingParam(const ParameterSet &ps, uint2 res)
+        : history_limit(ps["history"].as_uint(10)),
+          motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
+          dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
+          depth_threshold(ps["depth"].as_float(0.01f)) {}
+};
+
 struct RSVSample {
     uint light_index{};
     uint prim_id{};

@@ -44,7 +44,7 @@ public:
     ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float2> &motion_vec)
         : M(desc["M"].as_uint(1)),
           _spatial_iterate(desc["n"].as_uint(3)),
-          _spatial_radius(desc["spatial"].as_int(1)),
+          _spatial_radius(desc["spatial_radius"].as_int(1)),
           _history_limit(desc["history"].as_uint(10)),
           _dot_threshold(cosf(radians(desc["theta"].as_float(5)))),
           _depth_threshold(desc["depth"].as_float(0.01f)),
