@@ -21,6 +21,7 @@ public:
     uint iterate_num{};
 
 public:
+    SpatialResamplingParam() = default;
     explicit SpatialResamplingParam(const ParameterSet &ps)
         : dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
           depth_threshold(ps["depth"].as_float(0.01f)),
@@ -37,11 +38,12 @@ public:
     float depth_threshold{};
 
 public:
+    TemporalResamplingParam() = default;
     TemporalResamplingParam(const ParameterSet &ps, uint2 res)
         : history_limit(ps["history"].as_uint(10)),
           motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
           dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
-          depth_threshold(ps["depth"].as_float(0.01f)) {}
+          depth_threshold(ps["depth"].as_float(0.1f)) {}
 };
 
 struct RSVSample {
