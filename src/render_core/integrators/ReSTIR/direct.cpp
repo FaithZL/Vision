@@ -11,17 +11,22 @@ ReSTIR::ReSTIR(const vision::IntegratorDesc &desc, RegistrableManaged<ocarina::f
     : M(desc["M"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"], pipeline()->resolution()),
-      _spatial_iterate(desc["n"].as_uint(3)),
       _spatial_radius(desc["spatial_radius"].as_int(1)),
-      _history_limit(desc["history"].as_uint(10)),
-      _dot_threshold(cosf(radians(desc["theta"].as_float(5)))),
-      _depth_threshold(desc["depth"].as_float(0.01f)),
       _mis(desc["mis"].as_bool(false)),
       _motion_vectors(motion_vec) {}
 
 Bool ReSTIR::is_neighbor(const OCSurfaceData &cur_surface,
                          const OCSurfaceData &another_surface) const noexcept {
-    return vision::is_neighbor(cur_surface, another_surface, _dot_threshold, _depth_threshold);
+    return vision::is_neighbor(cur_surface, another_surface,
+                               _spatial.dot_threshold,
+                               _spatial.depth_threshold);
+}
+
+Bool ReSTIR::is_temporal_valid(const OCSurfaceData &cur_surface,
+                               const OCSurfaceData &prev_surface) const noexcept {
+    return vision::is_neighbor(cur_surface, prev_surface,
+                               _temporal.dot_threshold,
+                               _temporal.depth_threshold);
 }
 
 OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
@@ -127,7 +132,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_data = _surfaces.read(dispatch_id());
     Float pdf_sum = cur_rsv.sample.pdf;
-    for (int i = 0; i < _spatial_iterate; ++i) {
+    for (int i = 0; i < _spatial.iterate_num; ++i) {
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;

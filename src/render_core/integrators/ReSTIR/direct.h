@@ -18,12 +18,8 @@ namespace vision {
 class ReSTIR : public SerialObject, public Ctx {
 private:
     uint M{};
-    uint _spatial_iterate{};
     int _spatial_radius{1};
-    uint _history_limit{};
     bool _mis{};
-    float _dot_threshold{};
-    float _depth_threshold{};
 
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
@@ -60,6 +56,8 @@ public:
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept;
+    [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
+                                         const OCSurfaceData &prev_surface) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate() const noexcept;
