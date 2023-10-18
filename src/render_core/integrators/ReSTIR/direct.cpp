@@ -132,11 +132,27 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_data = _surfaces.read(dispatch_id());
     Float pdf_sum = cur_rsv.sample.pdf;
+
+//    $for(i, _spatial.iterate_num) {
+//        Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
+//        Int2 offset_i = make_int2(ocarina::round(offset));
+//        Int2 another_pixel = pixel + offset_i;
+//        $if(!in_screen(another_pixel, res)) {
+//            $continue;
+//        };
+//        Uint index = another_pixel.y * res.x + another_pixel.x;
+//        OCReservoir rsv = _reservoirs.read(index);
+//        OCSurfaceData other_surf = _surfaces.read(index);
+//        $if(is_neighbor(cur_data, other_surf)) {
+//            if (_mis) {
+//                ret = combine_reservoir_MIS(ret, rsv, sampler->next_1d(), &pdf_sum);
+//            } else {
+//                ret = combine_reservoir(ret, rsv, sampler->next_1d());
+//            }
+//        };
+//    };
+
     for (int i = 0; i < _spatial.iterate_num; ++i) {
-        Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
-        Float2 offset_i = ocarina::round(offset);
-
-
         $for(x, min_x, max_x + 1) {
             $for(y, min_y, max_y + 1) {
                 Uint index = y * res.x + x;
