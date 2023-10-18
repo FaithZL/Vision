@@ -838,8 +838,7 @@
 				"theta": 5,
 				"depth": 0.01,
 				"radius": 3,
-				"sample_num": 5,
-				"iterate": 1
+				"iterate_num": 1
 			},
 			"temporal": {
 				"theta": 5,

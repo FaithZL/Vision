@@ -17,7 +17,6 @@ public:
     float dot_threshold{};
     float depth_threshold{};
     float sampling_radius{};
-    uint sample_num{};
     uint iterate_num{};
 
 public:
@@ -26,8 +25,7 @@ public:
         : dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
           depth_threshold(ps["depth"].as_float(0.01f)),
           sampling_radius(ps["radius"].as_float(3.f)),
-          sample_num(ps["sample_num"].as_uint(5)),
-          iterate_num(ps["iterate_num"].as_uint(1)) {}
+          iterate_num(ps["iterate_num"].as_uint(5)) {}
 };
 
 struct TemporalResamplingParam {
