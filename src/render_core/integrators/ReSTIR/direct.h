@@ -18,7 +18,6 @@ namespace vision {
 class ReSTIR : public SerialObject, public Ctx {
 private:
     uint M{};
-    int _spatial_radius{1};
     bool _mis{};
 
     SpatialResamplingParam _spatial;
