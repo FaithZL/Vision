@@ -851,7 +851,7 @@
 			"max_depth" : 16,
 			"rr_threshold" : 1,
 			"spatial_radius" : 2,
-			"mis": false,
+//			"mis": false,
 			"M": 10
 		}
 	},

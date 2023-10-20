@@ -11,7 +11,7 @@ ReSTIR::ReSTIR(const vision::IntegratorDesc &desc, RegistrableManaged<ocarina::f
     : M(desc["M"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"], pipeline()->resolution()),
-      _mis(desc["mis"].as_bool(false)),
+      _mis(desc["mis"].as_bool(true)),
       _motion_vectors(motion_vec) {}
 
 Bool ReSTIR::is_neighbor(const OCSurfaceData &cur_surface,
