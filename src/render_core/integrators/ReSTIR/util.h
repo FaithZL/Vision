@@ -190,6 +190,12 @@ using OCReservoir = Var<Reservoir>;
     return ret;
 }
 
+[[nodiscard]] inline OCReservoir combine_reservoirs(const Array<Reservoir> &reservoirs) noexcept {
+    OCReservoir ret;
+
+    return ret;
+}
+
 [[nodiscard]] inline OCReservoir combine_reservoir_MIS(const OCReservoir &r0,
                                                        const OCReservoir &r1,
                                                        const Float &u,
