@@ -7,6 +7,7 @@
 #include "core/basic_types.h"
 #include "core/stl.h"
 #include "dsl/common.h"
+#include "base/sampler.h"
 #include "descriptions/parameter_set.h"
 
 namespace vision {
@@ -191,8 +192,13 @@ using OCReservoir = Var<Reservoir>;
 }
 
 [[nodiscard]] inline OCReservoir combine_reservoirs(OCReservoir cur_rsv,
-                                                    const Container<Reservoir> &reservoirs) noexcept {
-
+                                                    const Container<Reservoir> &reservoirs,
+                                                    Sampler *sampler) noexcept {
+    reservoirs.for_each([&](const OCReservoir &rsv) {
+        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+        cur_rsv.M += rsv.M;
+    });
+    cur_rsv->update_W();
     return cur_rsv;
 }
 

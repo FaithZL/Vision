@@ -144,7 +144,6 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
             } else {
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             }
-            reservoirs.push_back(rsv);
         };
     };
     return ret;
