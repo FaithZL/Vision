@@ -127,7 +127,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     OCSurfaceData cur_data = _surfaces.read(dispatch_id());
     Float pdf_sum = ret.sample.pdf;
 
-    Container<Reservoir> reservoirs{_spatial.iterate_num};
+    Container<uint> rsv_idx{_spatial.iterate_num};
     $for(i, _spatial.iterate_num) {
         Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
         Int2 offset_i = make_int2(ocarina::round(offset));
@@ -136,16 +136,18 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
             $continue;
         };
         Uint index = another_pixel.y * res.x + another_pixel.x;
-        OCReservoir rsv = _reservoirs.read(index);
         OCSurfaceData other_surf = _surfaces.read(index);
         $if(is_neighbor(cur_data, other_surf)) {
+            OCReservoir rsv = _reservoirs.read(index);
             if (_mis) {
                 ret = combine_reservoir_MIS(ret, rsv, sampler->next_1d(), &pdf_sum);
             } else {
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             }
+//            rsv_idx.push_back(index);
         };
     };
+//    ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
     return ret;
 }
 

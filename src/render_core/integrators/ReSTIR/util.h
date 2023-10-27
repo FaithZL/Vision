@@ -192,9 +192,11 @@ using OCReservoir = Var<Reservoir>;
 }
 
 [[nodiscard]] inline OCReservoir combine_reservoirs(OCReservoir cur_rsv,
-                                                    const Container<Reservoir> &reservoirs,
+                                                    const Container<uint> &rsv_idx,
+                                                    const Buffer<Reservoir> &reservoirs,
                                                     Sampler *sampler) noexcept {
-    reservoirs.for_each([&](const OCReservoir &rsv) {
+    rsv_idx.for_each([&](const Uint &idx) {
+        OCReservoir rsv = reservoirs.read(idx);
         cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
         cur_rsv.M += rsv.M;
     });
