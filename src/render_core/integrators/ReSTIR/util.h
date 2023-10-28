@@ -167,8 +167,8 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample_num, sample) {
         Float denominator = M * sample.p_hat;
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
-    void update_W_MIS(const Float &pdf_sum) noexcept {
-        Float mis = sample.p_hat / pdf_sum;
+    void update_W_MIS(const Float &p_sum) noexcept {
+        Float mis = sample.p_hat / p_sum;
         W = ocarina::select(sample.p_hat == 0.f, 0.f, mis * weight_sum / sample.p_hat);
     }
     [[nodiscard]] auto compute_weight_sum() const noexcept {
@@ -215,6 +215,21 @@ using OCReservoir = Var<Reservoir>;
     *pdf_sum += r1.sample.p_hat * r1.M;
     ret->update_W_MIS(*pdf_sum);
     return ret;
+}
+
+[[nodiscard]] inline OCReservoir combine_reservoirs_MIS(OCReservoir cur_rsv,
+                                                        const Container<uint> &rsv_idx,
+                                                        const Buffer<Reservoir> &reservoirs,
+                                                        Sampler *sampler) noexcept {
+    Float p_sum = 0.f;
+    rsv_idx.for_each([&](const Uint &idx) {
+        OCReservoir rsv = reservoirs.read(idx);
+        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+        cur_rsv.M += rsv.M;
+        p_sum += rsv.sample.p_hat * rsv.M;
+    });
+    cur_rsv->update_W_MIS(p_sum);
+    return cur_rsv;
 }
 
 [[nodiscard]] inline Bool is_neighbor(const OCSurfaceData &cur_surface,

@@ -144,10 +144,14 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
             } else {
                 ret = combine_reservoir(ret, rsv, sampler->next_1d());
             }
-//            rsv_idx.push_back(index);
+            rsv_idx.push_back(index);
         };
     };
-//    ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
+//    if (_mis) {
+//        ret = combine_reservoirs_MIS(ret, rsv_idx, _reservoirs, sampler);
+//    } else {
+//        ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
+//    }
     return ret;
 }
 
