@@ -139,19 +139,14 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         OCSurfaceData other_surf = _surfaces.read(index);
         $if(is_neighbor(cur_data, other_surf)) {
             OCReservoir rsv = _reservoirs.read(index);
-            if (_mis) {
-                ret = combine_reservoir_MIS(ret, rsv, sampler->next_1d(), &pdf_sum);
-            } else {
-                ret = combine_reservoir(ret, rsv, sampler->next_1d());
-            }
             rsv_idx.push_back(index);
         };
     };
-//    if (_mis) {
-//        ret = combine_reservoirs_MIS(ret, rsv_idx, _reservoirs, sampler);
-//    } else {
-//        ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
-//    }
+    if (_mis) {
+        ret = combine_reservoirs_MIS(ret, rsv_idx, _reservoirs, sampler);
+    } else {
+        ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
+    }
     return ret;
 }
 
