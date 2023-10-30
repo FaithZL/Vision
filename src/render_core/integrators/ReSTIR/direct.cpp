@@ -112,6 +112,7 @@ void ReSTIR::compile_shader0() noexcept {
         $if(!hit->is_miss()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv.W = select(occluded, 0.f, rsv.W);
+            rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
         };
         _reservoirs.write(dispatch_id(), rsv);
         _surfaces.write(dispatch_id(), data);
@@ -138,7 +139,6 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         Uint index = another_pixel.y * res.x + another_pixel.x;
         OCSurfaceData other_surf = _surfaces.read(index);
         $if(is_neighbor(cur_data, other_surf)) {
-            OCReservoir rsv = _reservoirs.read(index);
             rsv_idx.push_back(index);
         };
     };
