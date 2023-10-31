@@ -207,17 +207,18 @@ using OCReservoir = Var<Reservoir>;
 [[nodiscard]] inline OCReservoir combine_reservoir_MIS(const OCReservoir &r0,
                                                        const OCReservoir &r1,
                                                        const Float &u,
-                                                       Float *pdf_sum) noexcept {
+                                                       Float *p_sum) noexcept {
     OCReservoir ret;
     ret = r0;
     ret->update(u, r1->compute_weight_sum(), r1.sample);
     ret.M = r0.M + r1.M;
-    *pdf_sum += r1.sample.p_hat * r1.M;
-    ret->update_W_MIS(*pdf_sum);
+    *p_sum += r1.sample.p_hat * r1.M;
+    ret->update_W_MIS(*p_sum);
     return ret;
 }
 
 [[nodiscard]] inline OCReservoir combine_reservoirs_MIS(OCReservoir cur_rsv,
+                                                        const OCSurfaceData &cur_surf,
                                                         const Container<uint> &rsv_idx,
                                                         const Buffer<Reservoir> &reservoirs,
                                                         Sampler *sampler) noexcept {
