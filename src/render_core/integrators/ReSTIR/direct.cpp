@@ -33,7 +33,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
     Pipeline *rp = pipeline();
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
-    Spectrum &spectrum = rp->spectrum();
+    Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
     OCReservoir ret;
     $if(hit) {
