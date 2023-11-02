@@ -182,11 +182,13 @@ namespace vision {
 
 [[nodiscard]] inline Float compute_p_hat(const Scene &scene, const Interaction &it,
                                          SampledWavelengths &swl,
-                                         const OCRSVSample &sample) noexcept {
+                                         const OCRSVSample &sample,
+                                         LightSample *output_ls = nullptr) noexcept {
     LightSampler *light_sampler = scene.light_sampler();
     Spectrum &spectrum = *scene.spectrum();
     SampledLight sampled_light;
     sampled_light.light_index = sample.light_index;
+    sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
     LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
     Float3 wi = normalize(ls.p_light - it.pos);
     SampledSpectrum f{swl.dimension()};
@@ -201,6 +203,9 @@ namespace vision {
         eval = bsdf.evaluate(it.wo, wi);
     });
     f = eval.f * ls.eval.L;
+    if (output_ls) {
+        *output_ls = ls;
+    }
     Float p_hat = f.average();
     return p_hat;
 }

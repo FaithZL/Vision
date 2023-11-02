@@ -42,21 +42,8 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             OCRSVSample sample;
             sample.light_index = sampled_light.light_index;
             sample.u = sampler->next_2d();
-            LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
-            Float3 wi = normalize(ls.p_light - it.pos);
-            SampledSpectrum f{swl.dimension()};
-            ScatterEval eval{swl.dimension()};
-            scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-                BSDF bsdf = material->compute_BSDF(it, swl);
-                if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
-                    $if(*dispersive) {
-                        swl.invalidation_secondary();
-                    };
-                }
-                eval = bsdf.evaluate(it.wo, wi);
-            });
-            f = eval.f * ls.eval.L;
-            Float p_hat = f.average();
+            LightSample ls{swl.dimension()};
+            Float p_hat = compute_p_hat(scene(), it, swl, sample, &ls);
             sample.p_hat = p_hat;
             sample.pdf = ls.eval.pdf;
             sample->set_pos(ls.p_light);
