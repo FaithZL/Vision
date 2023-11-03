@@ -236,35 +236,6 @@ using OCReservoir = Var<Reservoir>;
     return cur_rsv;
 }
 
-[[nodiscard]] inline OCReservoir combine_reservoir_MIS(const OCReservoir &r0,
-                                                       const OCReservoir &r1,
-                                                       const Float &u,
-                                                       Float *p_sum) noexcept {
-    OCReservoir ret;
-    ret = r0;
-    ret->update(u, r1->compute_weight_sum(), r1.sample);
-    ret.M = r0.M + r1.M;
-    *p_sum += r1.sample.p_hat * r1.M;
-    ret->update_W_MIS(*p_sum);
-    return ret;
-}
-
-[[nodiscard]] inline OCReservoir combine_reservoirs_MIS(OCReservoir cur_rsv,
-                                                        const Geometry &geometry,
-                                                        const Container<uint> &rsv_idx,
-                                                        const Buffer<Reservoir> &reservoirs,
-                                                        Sampler *sampler) noexcept {
-    Float p_sum = 0.f;
-    rsv_idx.for_each([&](const Uint &idx) {
-        OCReservoir rsv = reservoirs.read(idx);
-        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
-        cur_rsv.M += rsv.M;
-        p_sum += rsv.sample.p_hat * rsv.M;
-    });
-    cur_rsv->update_W_MIS(p_sum);
-    return cur_rsv;
-}
-
 [[nodiscard]] inline Bool is_neighbor(const OCSurfaceData &cur_surface,
                                       const OCSurfaceData &another_surface,
                                       float dot_threshold, float depth_threshold) noexcept {

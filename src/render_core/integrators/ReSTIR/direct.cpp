@@ -53,6 +53,30 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
     return ret;
 }
 
+OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept {
+    Float p_sum = 0.f;
+    Sampler *sampler = scene().sampler();
+    rsv_idx.for_each([&](const Uint &idx) {
+        OCReservoir rsv = _reservoirs.read(idx);
+        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+        cur_rsv.M += rsv.M;
+        p_sum += rsv.sample.p_hat * rsv.M;
+    });
+    cur_rsv->update_W_MIS(p_sum);
+    return cur_rsv;
+}
+
+OCReservoir ReSTIR::combine_reservoirs(OCReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept {
+    Sampler *sampler = scene().sampler();
+    rsv_idx.for_each([&](const Uint &idx) {
+        OCReservoir rsv = _reservoirs.read(idx);
+        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+        cur_rsv.M += rsv.M;
+    });
+    cur_rsv->update_W();
+    return cur_rsv;
+}
+
 Float2 ReSTIR::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
@@ -111,7 +135,6 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     int2 res = make_int2(pipeline()->resolution());
     OCReservoir ret = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-    const Geometry &geometry = pipeline()->geometry();
     Container<uint> rsv_idx{_spatial.iterate_num};
     $for(i, _spatial.iterate_num) {
         Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
@@ -127,9 +150,9 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         };
     };
     if (_mis) {
-        ret = combine_reservoirs_MIS(ret, geometry, rsv_idx, _reservoirs, sampler);
+        ret = combine_reservoirs_MIS(ret, rsv_idx);
     } else {
-        ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
+        ret = combine_reservoirs(ret, rsv_idx);
     }
     return ret;
 }
