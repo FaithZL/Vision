@@ -129,7 +129,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         };
     };
     if (_mis) {
-        ret = combine_reservoirs_MIS(ret, cur_surf, rsv_idx, _reservoirs, sampler);
+        ret = combine_reservoirs_MIS(ret, scene(), rsv_idx, _reservoirs, sampler);
     } else {
         ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
     }
