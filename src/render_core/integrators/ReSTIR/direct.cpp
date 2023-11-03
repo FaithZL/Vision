@@ -30,10 +30,8 @@ Bool ReSTIR::is_temporal_valid(const OCSurfaceData &cur_surface,
 
 OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                         const Uint &frame_index) const noexcept {
-    Pipeline *rp = pipeline();
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
-    Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
     OCReservoir ret;
     $if(hit) {
@@ -113,7 +111,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
     int2 res = make_int2(pipeline()->resolution());
     OCReservoir ret = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-
+    const Geometry &geometry = pipeline()->geometry();
     Container<uint> rsv_idx{_spatial.iterate_num};
     $for(i, _spatial.iterate_num) {
         Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
@@ -129,7 +127,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         };
     };
     if (_mis) {
-        ret = combine_reservoirs_MIS(ret, scene(), rsv_idx, _reservoirs, sampler);
+        ret = combine_reservoirs_MIS(ret, geometry, rsv_idx, _reservoirs, sampler);
     } else {
         ret = combine_reservoirs(ret, rsv_idx, _reservoirs, sampler);
     }

@@ -250,7 +250,7 @@ using OCReservoir = Var<Reservoir>;
 }
 
 [[nodiscard]] inline OCReservoir combine_reservoirs_MIS(OCReservoir cur_rsv,
-                                                        const Scene &scene,
+                                                        const Geometry &geometry,
                                                         const Container<uint> &rsv_idx,
                                                         const Buffer<Reservoir> &reservoirs,
                                                         Sampler *sampler) noexcept {
