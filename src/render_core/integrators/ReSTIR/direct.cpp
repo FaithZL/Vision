@@ -53,11 +53,20 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
     return ret;
 }
 
-OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept {
+OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
+                                           SampledWavelengths &swl,
+                                           const Container<uint> &rsv_idx) const noexcept {
     Float p_sum = 0.f;
     Sampler *sampler = scene().sampler();
+    const Geometry &geom = pipeline()->geometry();
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
+        OCSurfaceData surf = _surfaces.read(idx);
+
+        Interaction it = geom.compute_surface_interaction(surf.hit, true);
+
+        Float p_hat = compute_p_hat(scene(), it, swl, rsv.sample);
+
         cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
         cur_rsv.M += rsv.M;
         p_sum += rsv.sample.p_hat * rsv.M;
@@ -130,7 +139,8 @@ void ReSTIR::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) const noexcept {
+OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, SampledWavelengths &swl,
+                                  const Uint &frame_index) const noexcept {
     Sampler *sampler = scene().sampler();
     int2 res = make_int2(pipeline()->resolution());
     OCReservoir ret = _reservoirs.read(dispatch_id());
@@ -150,7 +160,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, const Uint &frame_index) co
         };
     };
     if (_mis) {
-        ret = combine_reservoirs_MIS(ret, rsv_idx);
+        ret = combine_reservoirs_MIS(ret, swl, rsv_idx);
     } else {
         ret = combine_reservoirs(ret, rsv_idx);
     }
@@ -215,7 +225,7 @@ void ReSTIR::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel), frame_index);
+        OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
