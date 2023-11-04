@@ -56,35 +56,26 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
 OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
                                            SampledWavelengths &swl,
                                            const Container<uint> &rsv_idx) const noexcept {
-    Float p_sum = 0.f;
     Sampler *sampler = scene().sampler();
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
+    Float p_sum = 0.f;
+    OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
+    it.wo = normalize(c_pos - it.pos);
+
+    p_sum += cur_rsv.sample.p_hat * cur_rsv.M;
+
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
-        OCSurfaceData surf = _surfaces.read(idx);
-
-        Interaction it = geom.compute_surface_interaction(surf.hit, true);
-        it.wo = normalize(c_pos - it.pos);
-
         Float p_hat = compute_p_hat(scene(), it, swl, rsv.sample);
 
         cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+
         cur_rsv.M += rsv.M;
         p_sum += p_hat * rsv.M;
     });
-    OCSurfaceData surf = _surfaces.read(dispatch_id());
-    $if(surf.hit->is_hit()) {
-        Interaction it = geom.compute_surface_interaction(surf.hit, true);
-        it.wo = normalize(c_pos - it.pos);
-        Float p_hat = compute_p_hat(scene(), it, swl, cur_rsv.sample);
-        cur_rsv.sample.p_hat = p_hat;
-        p_sum += p_hat;
-    }
-    $else {
-        Printer::instance().info("{} {} {}  ------------------", cur_rsv.M, cur_rsv.W, cur_rsv.weight_sum);
-    };
 
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
@@ -174,11 +165,13 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, SampledWavelengths &swl,
             rsv_idx.push_back(index);
         };
     };
-    if (_mis) {
-        ret = combine_reservoirs_MIS(ret, swl, rsv_idx);
-    } else {
-        ret = combine_reservoirs(ret, rsv_idx);
-    }
+    $if(cur_surf.hit->is_hit()) {
+        if (_mis) {
+            ret = combine_reservoirs_MIS(ret, swl, rsv_idx);
+        } else {
+            ret = combine_reservoirs(ret, rsv_idx);
+        }
+    };
     return ret;
 }
 
