@@ -58,19 +58,31 @@ OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
                                            const Container<uint> &rsv_idx) const noexcept {
     Float p_sum = 0.f;
     Sampler *sampler = scene().sampler();
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
+    Uint p_index = dispatch_id();
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
         OCSurfaceData surf = _surfaces.read(idx);
 
         Interaction it = geom.compute_surface_interaction(surf.hit, true);
+        it.wo = normalize(c_pos - it.pos);
 
         Float p_hat = compute_p_hat(scene(), it, swl, rsv.sample);
 
-        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+        Bool replace =  cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
+        p_index = ocarina::select(replace, idx, p_index);
         cur_rsv.M += rsv.M;
-        p_sum += rsv.sample.p_hat * rsv.M;
+        p_sum += p_hat * rsv.M;
     });
+
+//    OCSurfaceData surf = _surfaces.read(dispatch_id());
+//    Interaction it = geom.compute_surface_interaction(surf.hit, true);
+//    it.wo = normalize(c_pos - it.pos);
+//    Float p_hat = compute_p_hat(scene(), it, swl, cur_rsv.sample);
+////    cur_rsv.sample.p_hat;
+//    p_sum += p_hat;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
 }
