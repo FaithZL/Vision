@@ -10,7 +10,9 @@
 
 namespace vision {
 
-class ReSTIRGI {
+
+
+class ReSTIR_GI {
 
 };
 

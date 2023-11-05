@@ -65,12 +65,18 @@ public:
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
-    [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref,
+                                             const LightEvalContext &p_light,
+                                             const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
-    [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, Float2 u, const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref,
+                                       const LightEvalContext &p_light) const noexcept = 0;
+    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+                                                const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
-    [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light, const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref,
+                                             const LightEvalContext &p_light,
+                                             const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light)};
     }
 };
