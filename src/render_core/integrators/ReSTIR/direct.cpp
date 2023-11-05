@@ -64,30 +64,39 @@ OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
     OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
-
-    p_sum += cur_rsv.sample.p_hat * cur_rsv.M;
+    Float temp_M = cur_rsv.M;
 
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
         Float p_hat = compute_p_hat(scene(), it, swl, rsv.sample);
-
         cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
-
         cur_rsv.M += rsv.M;
         p_sum += p_hat * rsv.M;
     });
 
+    cur_rsv.sample.p_hat = compute_p_hat(scene(), it, swl, cur_rsv.sample);
+    p_sum += cur_rsv.sample.p_hat * temp_M;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
 }
 
-OCReservoir ReSTIR::combine_reservoirs(OCReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept {
+OCReservoir ReSTIR::combine_reservoirs(OCReservoir cur_rsv,
+                                       SampledWavelengths &swl,
+                                       const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    const Geometry &geom = pipeline()->geometry();
+    OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
+    it.wo = normalize(c_pos - it.pos);
+    Float temp_M = cur_rsv.M;
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
         cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
         cur_rsv.M += rsv.M;
     });
+    //    cur_rsv.sample.p_hat = compute_p_hat(scene(), it, swl, cur_rsv.sample);
     cur_rsv->update_W();
     return cur_rsv;
 }
@@ -169,7 +178,7 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, SampledWavelengths &swl,
         if (_mis) {
             ret = combine_reservoirs_MIS(ret, swl, rsv_idx);
         } else {
-            ret = combine_reservoirs(ret, rsv_idx);
+            ret = combine_reservoirs(ret, swl, rsv_idx);
         }
     };
     return ret;
