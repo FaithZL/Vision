@@ -8,8 +8,6 @@
 #include "core/stl.h"
 #include "dsl/common.h"
 #include "base/sampler.h"
-#include "base/mgr/scene.h"
-#include "descriptions/parameter_set.h"
 
 namespace vision {
 using namespace ocarina;

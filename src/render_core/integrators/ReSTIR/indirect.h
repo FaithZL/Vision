@@ -11,9 +11,10 @@
 namespace vision {
 
 
-
-class ReSTIR_GI {
-
+class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
+private:
+    SpatialResamplingParam _spatial;
+    TemporalResamplingParam _temporal;
 };
 
 }
