@@ -48,13 +48,17 @@ public:
     }
     [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
+    [[nodiscard]] static Float compute_p_hat(const Interaction &it,
+                                             SampledWavelengths &swl,
+                                             const OCRSVSample &sample,
+                                             LightSample *output_ls = nullptr) noexcept;
     [[nodiscard]] OCReservoir combine_reservoirs_MIS(OCReservoir cur_rsv,
                                                      SampledWavelengths &swl,
                                                      const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] OCReservoir combine_reservoirs(OCReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3& cur_pos, const Bool &is_hit) const noexcept;
+    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(const Int2 &pixel,
                                             SampledWavelengths &swl,
                                             const Uint &frame_index) const noexcept;

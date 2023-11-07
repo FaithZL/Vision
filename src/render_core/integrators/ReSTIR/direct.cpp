@@ -28,6 +28,36 @@ Bool ReSTIR::is_temporal_valid(const OCSurfaceData &cur_surface,
                                _temporal.depth_threshold);
 }
 
+Float ReSTIR::compute_p_hat(const vision::Interaction &it,
+                            vision::SampledWavelengths &swl,
+                            const vision::OCRSVSample &sample,
+                            vision::LightSample *output_ls) noexcept {
+    LightSampler *light_sampler = scene().light_sampler();
+    Spectrum &spectrum = *scene().spectrum();
+    SampledLight sampled_light;
+    sampled_light.light_index = sample.light_index;
+    sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
+    LightSample ls = light_sampler->sample(sampled_light, it, sample.u, swl);
+    Float3 wi = normalize(ls.p_light - it.pos);
+    SampledSpectrum f{swl.dimension()};
+    ScatterEval eval{swl.dimension()};
+    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+        BSDF bsdf = material->compute_BSDF(it, swl);
+        if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+            $if(*dispersive) {
+                swl.invalidation_secondary();
+            };
+        }
+        eval = bsdf.evaluate(it.wo, wi);
+    });
+    f = eval.f * ls.eval.L;
+    if (output_ls) {
+        *output_ls = ls;
+    }
+    Float p_hat = f.average();
+    return p_hat;
+}
+
 OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                         const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
@@ -41,7 +71,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
             sample.light_index = sampled_light.light_index;
             sample.u = sampler->next_2d();
             LightSample ls{swl.dimension()};
-            Float p_hat = compute_p_hat(scene(), it, swl, sample, &ls);
+            Float p_hat = compute_p_hat(it, swl, sample, &ls);
             sample.p_hat = p_hat;
             sample.pdf = ls.eval.pdf;
             sample->set_pos(ls.p_light);
@@ -68,13 +98,13 @@ OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
 
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
-        Float p_hat = compute_p_hat(scene(), it, swl, rsv.sample);
+        Float p_hat = compute_p_hat(it, swl, rsv.sample);
         cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
         cur_rsv.M += rsv.M;
         p_sum += p_hat * rsv.M;
     });
 
-    cur_rsv.sample.p_hat = compute_p_hat(scene(), it, swl, cur_rsv.sample);
+    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     p_sum += cur_rsv.sample.p_hat * temp_M;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
