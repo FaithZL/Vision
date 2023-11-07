@@ -7,6 +7,7 @@
 #include "util.h"
 #include "base/serial_object.h"
 #include "base/mgr/global.h"
+#include "indirect_util.h"
 
 namespace vision {
 
