@@ -8,44 +8,9 @@
 #include "core/stl.h"
 #include "dsl/common.h"
 #include "base/sampler.h"
+#include "common.h"
 
-namespace vision {
-using namespace ocarina;
-
-struct SpatialResamplingParam {
-public:
-    float dot_threshold{};
-    float depth_threshold{};
-    float sampling_radius{};
-    uint iterate_num{};
-
-public:
-    SpatialResamplingParam() = default;
-    explicit SpatialResamplingParam(const ParameterSet &ps)
-        : dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
-          depth_threshold(ps["depth"].as_float(0.01f)),
-          sampling_radius(ps["radius"].as_float(3.f)),
-          iterate_num(ps["iterate_num"].as_uint(5)) {}
-};
-
-struct TemporalResamplingParam {
-public:
-    uint history_limit{};
-    float sampling_radius{};
-    float2 motion_vec_threshold{};
-    float dot_threshold{};
-    float depth_threshold{};
-
-public:
-    TemporalResamplingParam() = default;
-    TemporalResamplingParam(const ParameterSet &ps, uint2 res)
-        : history_limit(ps["history"].as_uint(10)),
-          sampling_radius(ps["radius"].as_float(2.f)),
-          motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
-          dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
-          depth_threshold(ps["depth"].as_float(0.1f)) {}
-};
-
+namespace vision::ReSTIRDirect {
 struct RSVSample {
     uint light_index{};
     uint prim_id{};
@@ -62,10 +27,10 @@ struct RSVSample {
         pos[2] = p[2];
     }
 };
-}// namespace vision
+}// namespace vision::ReSTIRDirect
 
 // clang-format off
-OC_STRUCT(vision::RSVSample, light_index, prim_id, u, p_hat, pdf, pos) {
+OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, prim_id, u, p_hat, pdf, pos) {
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }
@@ -100,12 +65,13 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using OCSurfaceData = Var<SurfaceData>;
-using OCRSVSample = Var<RSVSample>;
+using OCRSVSample = Var<ReSTIRDirect::RSVSample>;
 }// namespace vision
 
 namespace vision {
 using namespace ocarina;
 
+namespace ReSTIRDirect {
 struct Reservoir {
 public:
     static constexpr EPort p = H;
@@ -141,10 +107,11 @@ public:
     }
     void reset_W() noexcept { W = 0.f; }
 };
+}// namespace ReSTIRDirect
 
 }// namespace vision
 
-OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample_num, sample) {
+OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample_num, sample) {
     static constexpr EPort p = D;
     void normalize() noexcept {
         weight_sum /= M;
@@ -177,9 +144,9 @@ OC_STRUCT(vision::Reservoir, weight_sum, M, W, sample_num, sample) {
 };
 
 namespace vision {
-
+using namespace ReSTIRDirect;
 using namespace ocarina;
-using OCReservoir = Var<Reservoir>;
+using OCReservoir = Var<ReSTIRDirect::Reservoir>;
 [[nodiscard]] inline OCReservoir combine_reservoir(const OCReservoir &r0,
                                                    const OCReservoir &r1,
                                                    const Float &u) noexcept {

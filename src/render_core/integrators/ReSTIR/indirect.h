@@ -4,18 +4,19 @@
 
 #pragma once
 
-#include "util.h"
+#include "common.h"
 #include "base/serial_object.h"
 #include "base/mgr/global.h"
 #include "indirect_util.h"
 
 namespace vision {
 
-
+using namespace ReSTIRIndirect;
 class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
+    RSVSample s;
 };
 
 }
