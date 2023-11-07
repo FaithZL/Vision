@@ -11,12 +11,10 @@
 
 namespace vision {
 
-using namespace ReSTIRIndirect;
 class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
-    RSVSample s;
 };
 
 }

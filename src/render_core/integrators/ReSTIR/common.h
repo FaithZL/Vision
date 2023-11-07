@@ -2,6 +2,8 @@
 // Created by Zero on 2023/11/7.
 //
 
+#pragma once
+
 #include "core/stl.h"
 #include "descriptions/parameter_set.h"
 #include "math/base.h"

@@ -7,6 +7,7 @@
 #include "math/warp.h"
 #include "base/color/spectrum.h"
 #include "ReSTIR/direct.h"
+#include "ReSTIR/indirect.h"
 
 namespace vision {
 
