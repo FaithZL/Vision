@@ -14,6 +14,7 @@ namespace vision {
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIR _direct;
+    ReSTIRIndirectIllumination _indirect;
     RegistrableManaged<float2> _motion_vectors;
 
 public:
