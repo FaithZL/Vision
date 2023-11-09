@@ -54,7 +54,7 @@ struct RSVSample {
     vector<float> L;
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, p_hat, pdf, f, L){};
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, p_hat, pdf, u, L){};
 
 namespace vision::ReSTIRIndirect {
 using IIRSVSample = Var<RSVSample>;
