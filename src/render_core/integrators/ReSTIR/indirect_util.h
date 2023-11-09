@@ -34,7 +34,7 @@ OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
         pos[0] = p[0];
         pos[1] = p[1];
         pos[2] = p[2];
-}
+    }
     [[nodiscard]] auto position() const noexcept { return make_float3(pos[0], pos[1], pos[2]); }
     void set_normal(Float3 n) noexcept {
         ng[0] = n[0];
@@ -50,10 +50,11 @@ struct RSVSample {
     SurfacePoint sample_point;
     float p_hat;
     float pdf;
+    float2 u;
     vector<float> L;
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, p_hat, pdf, L){};
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, p_hat, pdf, f, L){};
 
 namespace vision::ReSTIRIndirect {
 using IIRSVSample = Var<RSVSample>;
