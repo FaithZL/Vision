@@ -69,7 +69,7 @@ public:
         return ret;
     }
     void normalize() noexcept {
-        weight_sum /= M;
+        weight_sum /= sample_num;
         M = 1.f;
     }
     bool update(oc_float<p> u, RSVSample v) {
@@ -92,7 +92,7 @@ public:
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample_num, sample) {
     static constexpr EPort p = D;
     void normalize() noexcept {
-        weight_sum /= M;
+        weight_sum /= sample_num;
         M = 1.f;
     }
     Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
@@ -132,6 +132,7 @@ using OCReservoir = Var<ReSTIRDirect::Reservoir>;
     ret = r0;
     ret->update(u, r1->compute_weight_sum(), r1.sample);
     ret.M = r0.M + r1.M;
+    ret.sample_num = r0.sample_num + r1.sample_num;
     ret->update_W();
     return ret;
 }
