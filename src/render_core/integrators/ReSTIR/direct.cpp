@@ -7,7 +7,7 @@
 
 namespace vision {
 
-ReSTIR::ReSTIR(const vision::IntegratorDesc &desc, RegistrableManaged<ocarina::float2> &motion_vec)
+ReSTIR::ReSTIR(const ParameterSet &desc, RegistrableManaged<ocarina::float2> &motion_vec)
     : M(desc["M"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"], pipeline()->resolution()),

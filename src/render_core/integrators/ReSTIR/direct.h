@@ -39,7 +39,7 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    ReSTIR(const IntegratorDesc &desc, RegistrableManaged<float2> &motion_vec);
+    ReSTIR(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec);
 
     void prepare() noexcept;
     void compile() noexcept {

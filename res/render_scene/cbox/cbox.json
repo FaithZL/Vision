@@ -834,25 +834,27 @@
 		"type" : "rt",
 //		"type" : "pt",
 		"param" : {
-			"spatial": {
-				"theta": 5,
-				"depth": 0.01,
-				"radius": 3,
-				"iterate_num": 5
-			},
-			"temporal": {
-				"theta": 5,
-				"depth": 0.01,
-				"radius": 2,
-				"motion_vec": 0.15,
-				"history": 10
+			"direct": {
+				"spatial": {
+					"theta": 5,
+					"depth": 0.01,
+					"radius": 3,
+					"iterate_num": 5
+				},
+				"temporal": {
+					"theta": 5,
+					"depth": 0.01,
+					"radius": 2,
+					"motion_vec": 0.15,
+					"history": 10
+				},
+				"M": 10,
+				//			"mis": false,
+				"spatial_radius" : 2
 			},
 			"min_depth" : 0,
 			"max_depth" : 16,
-			"rr_threshold" : 1,
-			"spatial_radius" : 2,
-//			"mis": false,
-			"M": 10
+			"rr_threshold" : 1
 		}
 	},
 	"spectrum" : {

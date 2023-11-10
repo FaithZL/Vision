@@ -20,7 +20,7 @@ private:
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(desc, _motion_vectors) {}
+          _direct(desc["direct"], _motion_vectors) {}
 
     void prepare() noexcept override {
         _direct.prepare();
