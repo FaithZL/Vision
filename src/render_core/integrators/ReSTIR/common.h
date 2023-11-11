@@ -19,6 +19,7 @@ public:
     float depth_threshold{};
     float sampling_radius{};
     uint iterate_num{};
+    bool open{};
 
 public:
     SpatialResamplingParam() = default;
@@ -26,7 +27,8 @@ public:
         : dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
           depth_threshold(ps["depth"].as_float(0.01f)),
           sampling_radius(ps["radius"].as_float(3.f)),
-          iterate_num(ps["iterate_num"].as_uint(5)) {}
+          iterate_num(ps["iterate_num"].as_uint(5)),
+          open{ps["open"].as_bool(true)} {}
 };
 
 struct TemporalResamplingParam {
@@ -36,6 +38,7 @@ public:
     float2 motion_vec_threshold{};
     float dot_threshold{};
     float depth_threshold{};
+    bool open{};
 
 public:
     TemporalResamplingParam() = default;
@@ -44,7 +47,8 @@ public:
           sampling_radius(ps["radius"].as_float(2.f)),
           motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
           dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
-          depth_threshold(ps["depth"].as_float(0.1f)) {}
+          depth_threshold(ps["depth"].as_float(0.1f)),
+          open{ps["open"].as_bool(true)} {}
 };
 
 }// namespace vision

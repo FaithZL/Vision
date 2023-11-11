@@ -187,6 +187,9 @@ void ReSTIR::compile_shader0() noexcept {
 OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
                                   const Int2 &pixel, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept {
+    if (!_spatial.open) {
+        return rsv;
+    }
     Sampler *sampler = scene().sampler();
     int2 res = make_int2(pipeline()->resolution());
     OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
@@ -215,6 +218,9 @@ OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
 }
 
 OCReservoir ReSTIR::temporal_reuse(const OCReservoir &rsv) const noexcept {
+    if (!_temporal.open) {
+        return rsv;
+    }
     OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
     Sampler *sampler = scene().sampler();
     return rsv;
@@ -273,13 +279,15 @@ void ReSTIR::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
-        OCReservoir spatial_rsv = spatial_reuse(cur_rsv, make_int2(pixel), swl, frame_index);
+        OCReservoir temporal_rsv = temporal_reuse(cur_rsv);
+        OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             L = shading(spatial_rsv, hit, swl, frame_index);
         };
+        _prev_reservoirs.write(dispatch_id(), cur_rsv);
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
