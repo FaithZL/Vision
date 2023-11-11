@@ -143,10 +143,7 @@ OCReservoir ReSTIR::combine_reservoir(const OCReservoir &r0,
 }
 
 Float2 ReSTIR::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
-    Pipeline *rp = pipeline();
-    const Geometry &geometry = rp->geometry();
     Camera *camera = scene().camera().get();
-
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
         Float3 raster_coord = camera->prev_raster_coord(cur_pos);
@@ -228,11 +225,15 @@ OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
     return rsv;
 }
 
-OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv,SampledWavelengths &swl) const noexcept {
+OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const SensorSample &ss,
+                                   SampledWavelengths &swl) const noexcept {
     if (!_temporal.open) {
         return rsv;
     }
-    OCReservoir prev_rsv = _prev_reservoirs.read(dispatch_id());
+    Float2 motion_vec = _motion_vectors.read(dispatch_id());
+    Float2 prev_p_film = ss.p_film - motion_vec;
+    Uint index = dispatch_id(make_uint2(prev_p_film));
+    OCReservoir prev_rsv = _prev_reservoirs.read(index);
     rsv = combine_reservoir(rsv, prev_rsv, swl);
     return rsv;
 }
@@ -288,9 +289,11 @@ void ReSTIR::compile_shader1() noexcept {
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
+        camera->load_data();
+        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
-        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, swl);
+        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, ss, swl);
         OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
