@@ -56,20 +56,17 @@ public:
     oc_float<p> weight_sum{};
     oc_float<p> M{};
     oc_float<p> W{};
-    oc_uint<p> sample_num{};
     RSVSample sample{};
 
 public:
     bool update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
         weight_sum += weight;
         M += 1;
-        sample_num += 1;
         bool ret = u < (weight / weight_sum);
         sample = ocarina::select(ret, v, sample);
         return ret;
     }
     void normalize() noexcept {
-        weight_sum /= sample_num;
         M = 1.f;
     }
     bool update(oc_float<p> u, RSVSample v) {
@@ -89,16 +86,14 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample_num, sample) {
+OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
     static constexpr EPort p = D;
     void normalize() noexcept {
-        weight_sum /= sample_num;
         M = 1.f;
     }
     Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
         weight_sum += weight;
         M += 1;
-        sample_num += 1;
         Bool ret = u < (weight / weight_sum);
         sample = select(ret, v, sample);
         return ret;
@@ -132,7 +127,6 @@ using OCReservoir = Var<ReSTIRDirect::Reservoir>;
     ret = r0;
     ret->update(u, r1->compute_weight_sum(), r1.sample);
     ret.M = r0.M + r1.M;
-    ret.sample_num = r0.sample_num + r1.sample_num;
     ret->update_W();
     return ret;
 }
