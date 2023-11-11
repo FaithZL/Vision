@@ -58,12 +58,15 @@ public:
     [[nodiscard]] OCReservoir combine_reservoirs(OCReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
+    [[nodiscard]] OCReservoir combine_reservoir(const OCReservoir &r0,
+                                                const OCReservoir &r1,
+                                                SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(OCReservoir rsv,
                                             const Int2 &pixel,
                                             SampledWavelengths &swl,
                                             const Uint &frame_index) const noexcept;
-    [[nodiscard]] OCReservoir temporal_reuse(const OCReservoir &rsv) const noexcept;
+    [[nodiscard]] OCReservoir temporal_reuse(OCReservoir rsv,SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,

@@ -851,7 +851,7 @@
 					"history": 10
 				},
 				"M": 10,
-				//			"mis": false,
+//				"mis": false,
 				"spatial_radius" : 2
 			},
 			"min_depth" : 0,

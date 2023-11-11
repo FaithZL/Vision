@@ -114,30 +114,6 @@ namespace vision {
 using namespace ReSTIRDirect;
 using namespace ocarina;
 using OCReservoir = Var<ReSTIRDirect::Reservoir>;
-[[nodiscard]] inline OCReservoir combine_reservoir(const OCReservoir &r0,
-                                                   const OCReservoir &r1,
-                                                   const Float &u) noexcept {
-    OCReservoir ret;
-    ret = r0;
-    ret->update(u, r1->compute_weight_sum(), r1.sample);
-    ret.M = r0.M + r1.M;
-    ret->update_W();
-    return ret;
-}
-
-[[nodiscard]] inline OCReservoir combine_reservoirs(OCReservoir cur_rsv,
-                                                    const Container<uint> &rsv_idx,
-                                                    const Buffer<Reservoir> &reservoirs,
-                                                    Sampler *sampler) noexcept {
-    rsv_idx.for_each([&](const Uint &idx) {
-        OCReservoir rsv = reservoirs.read(idx);
-        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
-        cur_rsv.M += rsv.M;
-    });
-    cur_rsv->update_W();
-    return cur_rsv;
-}
-
 [[nodiscard]] inline Bool is_neighbor(const OCSurfaceData &cur_surface,
                                       const OCSurfaceData &another_surface,
                                       float dot_threshold, float depth_threshold) noexcept {
