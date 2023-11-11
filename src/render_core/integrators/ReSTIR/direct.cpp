@@ -184,11 +184,11 @@ void ReSTIR::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, SampledWavelengths &swl,
+OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
+                                  const Int2 &pixel, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept {
     Sampler *sampler = scene().sampler();
     int2 res = make_int2(pipeline()->resolution());
-    OCReservoir ret = _reservoirs.read(dispatch_id());
     OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
     Container<uint> rsv_idx{_spatial.iterate_num};
     $for(i, _spatial.iterate_num) {
@@ -206,12 +206,12 @@ OCReservoir ReSTIR::spatial_reuse(const Int2 &pixel, SampledWavelengths &swl,
     };
     $if(cur_surf.hit->is_hit()) {
         if (_mis) {
-            ret = combine_reservoirs_MIS(ret, swl, rsv_idx);
+            rsv = combine_reservoirs_MIS(rsv, swl, rsv_idx);
         } else {
-            ret = combine_reservoirs(ret, swl, rsv_idx);
+            rsv = combine_reservoirs(rsv, swl, rsv_idx);
         }
     };
-    return ret;
+    return rsv;
 }
 
 OCReservoir ReSTIR::temporal_reuse(const OCReservoir &rsv) const noexcept {
@@ -272,15 +272,14 @@ void ReSTIR::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        OCReservoir spatial_rsv = spatial_reuse(make_int2(pixel), swl, frame_index);
+        OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
+        OCReservoir spatial_rsv = spatial_reuse(cur_rsv, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
-            OCReservoir st_rsv = temporal_reuse(spatial_rsv);
-            L = shading(st_rsv, hit, swl, frame_index);
+            L = shading(spatial_rsv, hit, swl, frame_index);
         };
-        _prev_reservoirs.write(dispatch_id(), spatial_rsv);
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
