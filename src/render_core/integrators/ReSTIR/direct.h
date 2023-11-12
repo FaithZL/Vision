@@ -61,7 +61,8 @@ public:
     [[nodiscard]] OCReservoir combine_reservoir(const OCReservoir &r0,
                                                 const OCReservoir &r1,
                                                 SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept;
+    [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
+                                            const Bool &is_hit) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(OCReservoir rsv,
                                             const OCSurfaceData cur_surf,
                                             const Int2 &pixel,
