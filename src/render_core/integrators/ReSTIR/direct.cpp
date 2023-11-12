@@ -233,11 +233,21 @@ OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf
     }
     Float2 motion_vec = _motion_vectors.read(dispatch_id());
     Float2 prev_p_film = ss.p_film - motion_vec;
-    Uint index = dispatch_id(make_uint2(prev_p_film));
-    OCReservoir prev_rsv = _prev_reservoirs.read(index);
-    OCSurfaceData another_surf = _surfaces.read(index);
-    $if(is_neighbor(cur_surf, another_surf)) {
-        rsv = combine_reservoir(rsv, prev_rsv, swl);
+    int2 res = make_int2(pipeline()->resolution());
+    $if(in_screen(make_int2(prev_p_film),res)) {
+//        $if(all(dispatch_idx().xy() == make_uint2(512)) && all(motion_vec != 0.f)) {
+//            Printer::instance().info("prev: {} {}, cur : {} {} _________________", prev_p_film, motion_vec);
+//        };
+
+        Uint index = dispatch_id(make_uint2(prev_p_film));
+        OCReservoir prev_rsv = _prev_reservoirs.read(index);
+        OCSurfaceData another_surf = _surfaces.read(index);
+//        $if(all(dispatch_idx().xy() == make_uint2(265,250))) {
+//            Printer::instance().info("u:{} {}--{}-----{} {}-------", prev_rsv.sample.u, prev_rsv.sample.p_hat, prev_p_film);
+//        };
+        $if(is_neighbor(cur_surf, another_surf)) {
+            rsv = combine_reservoir(rsv, prev_rsv, swl);
+        };
     };
     return rsv;
 }
@@ -305,8 +315,11 @@ void ReSTIR::compile_shader1() noexcept {
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             L = shading(spatial_rsv, hit, swl, frame_index);
+            $if(all(dispatch_idx().xy() == make_uint2(265,250))) {
+                Printer::instance().info("u:{} {} {}  ---------", L);
+            };
         };
-        _prev_reservoirs.write(dispatch_id(), cur_rsv);
+        _prev_reservoirs.write(dispatch_id(), temporal_rsv);
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
