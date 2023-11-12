@@ -15,7 +15,7 @@ namespace vision {
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIR : public SerialObject, public Ctx {
+class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
     uint M{};
     bool _mis{};
@@ -39,7 +39,7 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    ReSTIR(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec);
+    ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec);
 
     void prepare() noexcept;
     void compile() noexcept {

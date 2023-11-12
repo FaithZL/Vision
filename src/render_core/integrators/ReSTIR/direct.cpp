@@ -7,28 +7,28 @@
 
 namespace vision {
 
-ReSTIR::ReSTIR(const ParameterSet &desc, RegistrableManaged<ocarina::float2> &motion_vec)
+ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<ocarina::float2> &motion_vec)
     : M(desc["M"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"], pipeline()->resolution()),
       _mis(desc["mis"].as_bool(true)),
       _motion_vectors(motion_vec) {}
 
-Bool ReSTIR::is_neighbor(const OCSurfaceData &cur_surface,
+Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
                          const OCSurfaceData &another_surface) const noexcept {
     return vision::is_neighbor(cur_surface, another_surface,
                                _spatial.dot_threshold,
                                _spatial.depth_threshold);
 }
 
-Bool ReSTIR::is_temporal_valid(const OCSurfaceData &cur_surface,
+Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surface,
                                const OCSurfaceData &prev_surface) const noexcept {
     return vision::is_neighbor(cur_surface, prev_surface,
                                _temporal.dot_threshold,
                                _temporal.depth_threshold);
 }
 
-Float ReSTIR::compute_p_hat(const vision::Interaction &it,
+Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
                             vision::SampledWavelengths &swl,
                             const vision::OCRSVSample &sample,
                             vision::LightSample *output_ls) noexcept {
@@ -58,7 +58,7 @@ Float ReSTIR::compute_p_hat(const vision::Interaction &it,
     return p_hat;
 }
 
-OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
+OCReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                         const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
@@ -83,7 +83,7 @@ OCReservoir ReSTIR::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl
     return ret;
 }
 
-OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
+OCReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(OCReservoir cur_rsv,
                                            SampledWavelengths &swl,
                                            const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
@@ -110,7 +110,7 @@ OCReservoir ReSTIR::combine_reservoirs_MIS(OCReservoir cur_rsv,
     return cur_rsv;
 }
 
-OCReservoir ReSTIR::combine_reservoirs(OCReservoir cur_rsv,
+OCReservoir ReSTIRDirectIllumination::combine_reservoirs(OCReservoir cur_rsv,
                                        SampledWavelengths &swl,
                                        const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
@@ -130,7 +130,7 @@ OCReservoir ReSTIR::combine_reservoirs(OCReservoir cur_rsv,
     return cur_rsv;
 }
 
-OCReservoir ReSTIR::combine_reservoir(const OCReservoir &r0,
+OCReservoir ReSTIRDirectIllumination::combine_reservoir(const OCReservoir &r0,
                                       const OCReservoir &r1,
                                       SampledWavelengths &swl) const noexcept {
     OCReservoir ret;
@@ -142,7 +142,7 @@ OCReservoir ReSTIR::combine_reservoir(const OCReservoir &r0,
     return ret;
 }
 
-Float2 ReSTIR::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
+Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
     Camera *camera = scene().camera().get();
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
@@ -152,7 +152,7 @@ Float2 ReSTIR::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, c
     return ret;
 }
 
-void ReSTIR::compile_shader0() noexcept {
+void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
     Camera *camera = scene().camera().get();
@@ -192,7 +192,7 @@ void ReSTIR::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
+OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv,
                                   const OCSurfaceData cur_surf,
                                   const Int2 &pixel, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept {
@@ -225,7 +225,7 @@ OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
     return rsv;
 }
 
-OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
+OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
                                    const SensorSample &ss,
                                    SampledWavelengths &swl) const noexcept {
     if (!_temporal.open) {
@@ -235,16 +235,9 @@ OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf
     Float2 prev_p_film = ss.p_film - motion_vec;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film),res)) {
-//        $if(all(dispatch_idx().xy() == make_uint2(512)) && all(motion_vec != 0.f)) {
-//            Printer::instance().info("prev: {} {}, cur : {} {} _________________", prev_p_film, motion_vec);
-//        };
-
         Uint index = dispatch_id(make_uint2(prev_p_film));
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
         OCSurfaceData another_surf = _surfaces.read(index);
-//        $if(all(dispatch_idx().xy() == make_uint2(265,250))) {
-//            Printer::instance().info("u:{} {}--{}-----{} {}-------", prev_rsv.sample.u, prev_rsv.sample.p_hat, prev_p_film);
-//        };
         $if(is_neighbor(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
         };
@@ -252,7 +245,7 @@ OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf
     return rsv;
 }
 
-Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
+Float3 ReSTIRDirectIllumination::shading(const vision::OCReservoir &rsv, const OCHit &hit,
                        SampledWavelengths &swl, const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
@@ -293,7 +286,7 @@ Float3 ReSTIR::shading(const vision::OCReservoir &rsv, const OCHit &hit,
     return spectrum.linear_srgb(value + Le, swl);
 }
 
-void ReSTIR::compile_shader1() noexcept {
+void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     Sampler *sampler = scene().sampler();
@@ -315,9 +308,6 @@ void ReSTIR::compile_shader1() noexcept {
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             L = shading(spatial_rsv, hit, swl, frame_index);
-            $if(all(dispatch_idx().xy() == make_uint2(265,250))) {
-                Printer::instance().info("u:{} {} {}  ---------", L);
-            };
         };
         _prev_reservoirs.write(dispatch_id(), temporal_rsv);
         film->update_sample(pixel, L, frame_index);
@@ -325,7 +315,7 @@ void ReSTIR::compile_shader1() noexcept {
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
 }
 
-void ReSTIR::prepare() noexcept {
+void ReSTIRDirectIllumination::prepare() noexcept {
     Pipeline *rp = pipeline();
     _prev_reservoirs.set_resource_array(rp->resource_array());
     _reservoirs.set_resource_array(rp->resource_array());
@@ -340,7 +330,7 @@ void ReSTIR::prepare() noexcept {
     _surfaces.register_self();
 }
 
-CommandList ReSTIR::estimate() const noexcept {
+CommandList ReSTIRDirectIllumination::estimate() const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     ret << _shader0(rp->frame_index()).dispatch(rp->resolution());

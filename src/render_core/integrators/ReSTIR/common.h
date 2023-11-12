@@ -43,7 +43,7 @@ public:
 public:
     TemporalResamplingParam() = default;
     TemporalResamplingParam(const ParameterSet &ps, uint2 res)
-        : history_limit(ps["history"].as_uint(10)),
+        : history_limit(ps["history"].as_uint(20)),
           sampling_radius(ps["radius"].as_float(2.f)),
           motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
           dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
