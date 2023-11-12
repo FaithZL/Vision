@@ -63,10 +63,12 @@ public:
                                                 SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept;
     [[nodiscard]] OCReservoir spatial_reuse(OCReservoir rsv,
+                                            const OCSurfaceData cur_surf,
                                             const Int2 &pixel,
                                             SampledWavelengths &swl,
                                             const Uint &frame_index) const noexcept;
     [[nodiscard]] OCReservoir temporal_reuse(OCReservoir rsv,
+                                             const OCSurfaceData cur_surf,
                                              const SensorSample &ss,
                                              SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,

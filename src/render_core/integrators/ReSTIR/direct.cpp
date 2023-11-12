@@ -193,6 +193,7 @@ void ReSTIR::compile_shader0() noexcept {
 }
 
 OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
+                                  const OCSurfaceData cur_surf,
                                   const Int2 &pixel, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept {
     if (!_spatial.open) {
@@ -200,7 +201,6 @@ OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
     }
     Sampler *sampler = scene().sampler();
     int2 res = make_int2(pipeline()->resolution());
-    OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
     Container<uint> rsv_idx{_spatial.iterate_num};
     $for(i, _spatial.iterate_num) {
         Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
@@ -225,7 +225,8 @@ OCReservoir ReSTIR::spatial_reuse(OCReservoir rsv,
     return rsv;
 }
 
-OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const SensorSample &ss,
+OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
+                                   const SensorSample &ss,
                                    SampledWavelengths &swl) const noexcept {
     if (!_temporal.open) {
         return rsv;
@@ -234,7 +235,10 @@ OCReservoir ReSTIR::temporal_reuse(OCReservoir rsv, const SensorSample &ss,
     Float2 prev_p_film = ss.p_film - motion_vec;
     Uint index = dispatch_id(make_uint2(prev_p_film));
     OCReservoir prev_rsv = _prev_reservoirs.read(index);
-    rsv = combine_reservoir(rsv, prev_rsv, swl);
+    OCSurfaceData another_surf = _surfaces.read(index);
+    $if(is_neighbor(cur_surf, another_surf)) {
+        rsv = combine_reservoir(rsv, prev_rsv, swl);
+    };
     return rsv;
 }
 
@@ -293,8 +297,9 @@ void ReSTIR::compile_shader1() noexcept {
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
-        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, ss, swl);
-        OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, make_int2(pixel), swl, frame_index);
+        OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
+        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl);
+        OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
