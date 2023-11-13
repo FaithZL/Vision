@@ -185,6 +185,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             rsv.W = select(occluded, 0.f, rsv.W);
             rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
         };
+        rsv.frame_index = frame_index;
         _reservoirs.write(dispatch_id(), rsv);
         _surfaces.write(dispatch_id(), data);
     };
@@ -234,8 +235,26 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
     Float2 prev_p_film = ss.p_film - motion_vec;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
+
         Uint index = dispatch_id(make_uint2(prev_p_film));
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
+
+        $if(all(dispatch_idx().xy() == make_uint2(262,250))) {
+            Printer::instance().info("*** {}, {} {}, {}, {} {} =============", rsv.frame_index, prev_p_film, index ,_prev_reservoirs.read(index).sample.u);
+            $if(all(abs(motion_vec) > 1.f)) {
+            OCReservoir p = _prev_reservoirs.read(dispatch_id());
+                Printer::instance().info("{}, {} {}, {}, {} {} ++++++++++++++++++++", p.frame_index, prev_p_film,dispatch_id(make_uint2(prev_p_film)), p.sample.u);
+            };
+        };
+
+        $if(all(dispatch_idx().xy() == make_uint2(249,236))) {
+            OCReservoir pr = _prev_reservoirs.read(dispatch_id());
+            Printer::instance().info("&&& {}, {} {}, {}, {} {} =============", rsv.frame_index, prev_p_film,dispatch_id(make_uint2(prev_p_film)), pr.sample.u);
+//            $if(all(abs(motion_vec) > 1.f)) {
+//                OCReservoir p = _prev_reservoirs.read(dispatch_id());
+//                Printer::instance().info("{} {} {} {} {} ++++++++++++++++++++", p.frame_index, prev_p_film, p.sample.u);
+//            };
+        };
         OCSurfaceData another_surf = _surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
@@ -301,6 +320,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
         OCReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl);
+        temporal_rsv.frame_index = frame_index;
         OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
