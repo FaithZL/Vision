@@ -54,7 +54,7 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_float<p> M{};
+    oc_uint<p> M{};
     oc_float<p> W{};
     RSVSample sample{};
 
@@ -74,7 +74,7 @@ public:
         auto denominator = M * sample.p_hat;
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
-    [[nodiscard]] auto compute_weight_sum() const noexcept {
+    [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
         return sample.p_hat * W * M;
     }
     void reset_W() noexcept { W = 0.f; }
@@ -104,7 +104,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
         Float mis = sample.p_hat / p_sum;
         W = ocarina::select(sample.p_hat == 0.f, 0.f, mis * weight_sum / sample.p_hat);
     }
-    [[nodiscard]] auto compute_weight_sum() const noexcept {
+    [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
         return sample.p_hat * W * M;
     }
     void reset_W() noexcept { W = 0.f; }
@@ -114,12 +114,4 @@ namespace vision {
 using namespace ReSTIRDirect;
 using namespace ocarina;
 using OCReservoir = Var<ReSTIRDirect::Reservoir>;
-[[nodiscard]] inline Bool is_neighbor(const OCSurfaceData &cur_surface,
-                                      const OCSurfaceData &another_surface,
-                                      float dot_threshold, float depth_threshold) noexcept {
-    Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
-    Bool cond1 = (abs(cur_surface->t_max() - another_surface->t_max()) / cur_surface->t_max()) < depth_threshold;
-    return cond0 && cond1 && (cur_surface.mat_id == another_surface.mat_id);
-}
-
 }// namespace vision
