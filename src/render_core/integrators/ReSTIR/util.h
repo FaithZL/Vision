@@ -59,16 +59,21 @@ public:
     RSVSample sample{};
 
 public:
-    bool update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
+    bool update(oc_float<p> u, oc_float<p> weight, RSVSample v) noexcept {
         weight_sum += weight;
         M += 1;
         bool ret = u < (weight / weight_sum);
         sample = ocarina::select(ret, v, sample);
         return ret;
     }
-    bool update(oc_float<p> u, RSVSample v) {
+    bool update(oc_float<p> u, RSVSample v) noexcept {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         return update(u, weight, v);
+    }
+    void truncation(oc_uint<p> limit) noexcept {
+        oc_float<p> factor = cast<float>(limit) / M;
+        M = ocarina::select(factor < 1.f, limit, M);
+        weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
     }
     void update_W() noexcept {
         auto denominator = M * sample.p_hat;
@@ -84,16 +89,21 @@ public:
 
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
     static constexpr EPort p = D;
-    Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) {
+    Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) noexcept {
         weight_sum += weight;
         M += 1;
         Bool ret = u < (weight / weight_sum);
         sample = select(ret, v, sample);
         return ret;
     }
-    Bool update(oc_float<p> u, vision::OCRSVSample v) {
+    Bool update(oc_float<p> u, vision::OCRSVSample v) noexcept {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         return update(u, weight, v);
+    }
+    void truncation(oc_uint<p> limit) noexcept {
+        oc_float<p> factor = cast<float>(limit) / M;
+        M = ocarina::select(factor < 1.f, limit, M);
+        weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
     }
     void update_W() noexcept {
         Float denominator = M * sample.p_hat;
