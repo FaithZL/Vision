@@ -77,7 +77,6 @@ public:
     [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
         return sample.p_hat * W * M;
     }
-    void reset_W() noexcept { W = 0.f; }
 };
 }// namespace ReSTIRDirect
 
@@ -107,7 +106,6 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
     [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
         return sample.p_hat * W * M;
     }
-    void reset_W() noexcept { W = 0.f; }
 };
 
 namespace vision {
