@@ -354,18 +354,12 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     Pipeline *rp = pipeline();
     _prev_reservoirs.set_resource_array(rp->resource_array());
     _reservoirs.set_resource_array(rp->resource_array());
-    //    _surfaces.set_resource_array(rp->resource_array());
-    //    _prev_surfaces.set_resource_array(rp->resource_array());
 
     _prev_reservoirs.reset_all(device(), rp->pixel_num());
     _reservoirs.reset_all(device(), rp->pixel_num());
-    //    _surfaces.reset_all(device(), rp->pixel_num());
-    //    _prev_surfaces.reset_all(device(), rp->pixel_num());
 
     _prev_reservoirs.register_self();
     _reservoirs.register_self();
-    //    _surfaces.register_self();
-    //    _prev_surfaces.register_self();
 }
 
 CommandList ReSTIRDirectIllumination::estimate() const noexcept {
