@@ -103,8 +103,7 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(OCReservoir cur_rsv
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
-        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
-        cur_rsv.M += rsv.M;
+        cur_rsv->update(sampler->next_1d(), rsv);
         p_sum += p_hat * rsv.M;
     });
 
@@ -112,6 +111,37 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(OCReservoir cur_rsv
     p_sum += cur_rsv.sample.p_hat * temp_M;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
+}
+
+OCReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(const OCReservoir &r0,
+                                                            const OCSurfaceData &s0,
+                                                            const OCReservoir &r1,
+                                                            const OCSurfaceData &s1,
+                                                            SampledWavelengths &swl) const noexcept {
+    Sampler *sampler = scene().sampler();
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    const Geometry &geom = pipeline()->geometry();
+
+    Interaction it = geom.compute_surface_interaction(s0.hit, true);
+    it.wo = normalize(c_pos - it.pos);
+
+    Float p_hat_00 = compute_p_hat(it, swl, r0.sample);
+    Float p_hat_01 = compute_p_hat(it, swl, r1.sample);
+
+    it = geom.compute_surface_interaction(s1.hit, true);
+    it.wo = normalize(c_pos - it.pos);
+
+    Float p_hat_10 = compute_p_hat(it, swl, r0.sample);
+    Float p_hat_11 = compute_p_hat(it, swl, r1.sample);
+
+    OCReservoir rsv = r0;
+
+    Bool replace = rsv->update(sampler->next_1d(), r1);
+
+//    Float p_sum = 0.f;
+
+    return rsv;
 }
 
 OCReservoir ReSTIRDirectIllumination::combine_reservoirs(OCReservoir cur_rsv,
@@ -126,8 +156,7 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs(OCReservoir cur_rsv,
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
         OCReservoir rsv = _reservoirs.read(idx);
-        cur_rsv->update(sampler->next_1d(), rsv->compute_weight_sum(), rsv.sample);
-        cur_rsv.M += rsv.M;
+        cur_rsv->update(sampler->next_1d(), rsv);
     });
     cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     cur_rsv->update_W();
@@ -140,8 +169,7 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoir(const OCReservoir &r0,
     OCReservoir ret;
     ret = r0;
     Float u = scene().sampler()->next_1d();
-    ret->update(u, r1->compute_weight_sum(), r1.sample);
-    ret.M = r0.M + r1.M;
+    ret->update(u, r1);
     ret->update_W();
     return ret;
 }
@@ -182,11 +210,11 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             data->set_t_max(rs.t_max());
             data->set_normal(it.ng);
         };
-        OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
+        OCReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
         _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
         _motion_vectors.write(dispatch_id(), motion_vec);
-        $if(!hit->is_miss()) {
+        $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv.W = select(occluded, 0.f, rsv.W);
             rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);

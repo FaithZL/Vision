@@ -100,6 +100,12 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         return update(u, weight, v);
     }
+    Bool update(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv) noexcept {
+        auto temp_M = M;
+        Bool ret = update(u, rsv->compute_weight_sum(), rsv.sample);
+        M = temp_M + rsv.M;
+        return ret;
+    }
     void truncation(oc_uint<p> limit) noexcept {
         oc_float<p> factor = cast<float>(limit) / M;
         M = ocarina::select(factor < 1.f, limit, M);
