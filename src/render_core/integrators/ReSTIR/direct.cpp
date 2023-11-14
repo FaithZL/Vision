@@ -257,11 +257,11 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
 //    $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id();
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
-        prev_rsv->truncation(_temporal.history_limit);
-        OCSurfaceData another_surf = _surfaces.read(index);
-        $if(is_temporal_valid(cur_surf, another_surf)) {
+        prev_rsv->truncation(_temporal.limit);
+        OCSurfaceData another_surf = _surfaces.read(dispatch_id(make_uint2(prev_p_film)));
+//        $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
-        };
+//        };
 //    };
     return rsv;
 }
