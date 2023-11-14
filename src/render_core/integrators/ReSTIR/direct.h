@@ -25,8 +25,8 @@ private:
 
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
-    mutable RegistrableManaged<SurfaceData> _surfaces;
-    mutable RegistrableManaged<SurfaceData> _prev_surfaces;
+    RegistrableManaged<SurfaceData> &_surfaces;
+    RegistrableManaged<SurfaceData> &_prev_surfaces;
     RegistrableManaged<float2> &_motion_vectors;
 
     /**
@@ -40,7 +40,9 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec);
+    ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
+                             RegistrableManaged<SurfaceData> &surfaces,
+                             RegistrableManaged<SurfaceData> &prev_surfaces);
 
     void prepare() noexcept;
     void compile() noexcept {
