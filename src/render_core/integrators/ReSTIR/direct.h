@@ -26,6 +26,7 @@ private:
     mutable RegistrableManaged<Reservoir> _reservoirs;
     mutable RegistrableManaged<Reservoir> _prev_reservoirs;
     mutable RegistrableManaged<SurfaceData> _surfaces;
+    mutable RegistrableManaged<SurfaceData> _prev_surfaces;
     RegistrableManaged<float2> &_motion_vectors;
 
     /**

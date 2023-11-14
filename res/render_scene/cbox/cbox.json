@@ -845,10 +845,10 @@
 				"temporal": {
 //					"open": false,
 					"theta": 2,
-					"depth": 0.01,
+					"depth": 1,
 					"radius": 2,
 					"motion_vec": 0.15,
-					"limit": 8000000
+					"limit": 200
 				},
 				"M": 10,
 //				"mis": false,

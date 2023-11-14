@@ -170,6 +170,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         Interaction it;
 
         OCSurfaceData data;
+        _prev_surfaces.write(dispatch_id(), _surfaces.read(dispatch_id()));
         data.hit = hit;
         data->set_t_max(0.f);
         $if(hit->is_hit()) {
@@ -179,9 +180,6 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
-        $if(any(abs(motion_vec) > 1.f) && all(dispatch_idx().xy() == make_uint2(534,427))) {
-            Printer::instance().info("{} {}", motion_vec);
-        };
         _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
         _motion_vectors.write(dispatch_id(), motion_vec);
         $if(!hit->is_miss()) {
@@ -242,7 +240,7 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
         Uint index = dispatch_id(make_uint2(prev_p_film));
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
         prev_rsv->truncation(_temporal.limit);
-        OCSurfaceData another_surf = _surfaces.read(index);
+        OCSurfaceData another_surf = _prev_surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
         };
@@ -325,14 +323,17 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     _prev_reservoirs.set_resource_array(rp->resource_array());
     _reservoirs.set_resource_array(rp->resource_array());
     _surfaces.set_resource_array(rp->resource_array());
+    _prev_surfaces.set_resource_array(rp->resource_array());
 
     _prev_reservoirs.reset_all(device(), rp->pixel_num());
     _reservoirs.reset_all(device(), rp->pixel_num());
     _surfaces.reset_all(device(), rp->pixel_num());
+    _prev_surfaces.reset_all(device(), rp->pixel_num());
 
     _prev_reservoirs.register_self();
     _reservoirs.register_self();
     _surfaces.register_self();
+    _prev_surfaces.register_self();
 }
 
 CommandList ReSTIRDirectIllumination::estimate() const noexcept {
