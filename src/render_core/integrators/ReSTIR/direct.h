@@ -71,7 +71,8 @@ public:
     [[nodiscard]] OCReservoir temporal_reuse(OCReservoir rsv,
                                              const OCSurfaceData cur_surf,
                                              const SensorSample &ss,
-                                             SampledWavelengths &swl) const noexcept;
+                                             SampledWavelengths &swl,
+                                             const Uint &frame_index) const noexcept;
     [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,

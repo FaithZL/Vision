@@ -227,10 +227,12 @@ OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv,const OCSurf
 
 OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
                                                      const SensorSample &ss,
-                                                     SampledWavelengths &swl) const noexcept {
+                                                     SampledWavelengths &swl,
+                                                     const Uint &frame_index) const noexcept {
     if (!_temporal.open) {
         return rsv;
     }
+    OCReservoir r2;
     Float2 motion_vec = _motion_vectors.read(dispatch_id());
     Float2 prev_p_film = ss.p_film - motion_vec;
     int2 res = make_int2(pipeline()->resolution());
@@ -238,7 +240,7 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
 
         Uint index = dispatch_id(make_uint2(prev_p_film));
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
-
+        r2 = prev_rsv;
         $if(all(dispatch_idx().xy() == make_uint2(262,250))) {
             Printer::instance().info("*** {}, {} {}, {}, {} {} =============", rsv.frame_index, prev_p_film, index ,_prev_reservoirs.read(index).sample.u);
             $if(all(abs(motion_vec) > 1.f)) {
@@ -259,6 +261,9 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
         };
+    };
+    $if(all(dispatch_idx().xy() == make_uint2(262,250)) || all(dispatch_idx().xy() == make_uint2(249,236))) {
+        Printer::instance().info("{} write {} {}, u: {} {}: cu : {} {}",frame_index ,dispatch_idx().xy(), r2.sample.u,_prev_reservoirs.read(dispatch_id()).sample.u);
     };
     return rsv;
 }
@@ -319,7 +324,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl);
+        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
         temporal_rsv.frame_index = frame_index;
         OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
