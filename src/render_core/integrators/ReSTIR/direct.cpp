@@ -147,7 +147,7 @@ Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const 
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
         Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
-
+        ret = p_film - raster_coord;
         $if(in_screen(make_int2(raster_coord), make_int2(pipeline()->resolution()))) {
             OCReservoir pre_rsv = _reservoirs.read(dispatch_id(make_uint2(raster_coord)));
             _prev_reservoirs.write(dispatch_id(), pre_rsv);
@@ -155,7 +155,7 @@ Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const 
         $else {
             _prev_reservoirs.write(dispatch_id(), OCReservoir{});
         };
-        ret = p_film - raster_coord;
+
     }
     $else {
         _prev_reservoirs.write(dispatch_id(), OCReservoir{});
@@ -212,7 +212,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
+OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv, const OCSurfaceData &cur_surf,
                                                     const Int2 &pixel, SampledWavelengths &swl,
                                                     const Uint &frame_index) const noexcept {
     if (!_spatial.open) {
@@ -244,7 +244,7 @@ OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv, const OCSur
     return rsv;
 }
 
-OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
+OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSurfaceData& cur_surf,
                                                      const SensorSample &ss,
                                                      SampledWavelengths &swl,
                                                      const Uint &frame_index) const noexcept {
