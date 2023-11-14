@@ -146,8 +146,18 @@ Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const 
     Camera *camera = scene().camera().get();
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
-        Float3 raster_coord = camera->prev_raster_coord(cur_pos);
-        ret = p_film - raster_coord.xy();
+        Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
+        $if(in_screen(make_int2(raster_coord), make_int2(pipeline()->resolution()))) {
+            OCReservoir pre_rsv = _reservoirs.read(dispatch_id(make_uint2(raster_coord)));
+            _prev_reservoirs.write(dispatch_id(), pre_rsv);
+        }
+        $else {
+            _prev_reservoirs.write(dispatch_id(), OCReservoir{});
+        };
+        ret = p_film - raster_coord;
+    }
+    $else {
+        _prev_reservoirs.write(dispatch_id(), OCReservoir{});
     };
     return ret;
 }
@@ -179,6 +189,8 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
+
+        //        _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
         _motion_vectors.write(dispatch_id(), motion_vec);
         $if(!hit->is_miss()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
@@ -193,7 +205,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv,const OCSurfaceData cur_surf,
+OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv, const OCSurfaceData cur_surf,
                                                     const Int2 &pixel, SampledWavelengths &swl,
                                                     const Uint &frame_index) const noexcept {
     if (!_spatial.open) {
@@ -232,38 +244,16 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
     if (!_temporal.open) {
         return rsv;
     }
-    OCReservoir r2;
     Float2 motion_vec = _motion_vectors.read(dispatch_id());
     Float2 prev_p_film = ss.p_film - motion_vec;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
-
-        Uint index = dispatch_id(make_uint2(prev_p_film));
+        Uint index = dispatch_id();
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
-        r2 = prev_rsv;
-        $if(all(dispatch_idx().xy() == make_uint2(262,250))) {
-            Printer::instance().info("*** {}, {} {}, {}, {} {} =============", rsv.frame_index, prev_p_film, index ,_prev_reservoirs.read(index).sample.u);
-            $if(all(abs(motion_vec) > 1.f)) {
-            OCReservoir p = _prev_reservoirs.read(dispatch_id());
-                Printer::instance().info("{}, {} {}, {}, {} {} ++++++++++++++++++++", p.frame_index, prev_p_film,dispatch_id(make_uint2(prev_p_film)), p.sample.u);
-            };
-        };
-
-        $if(all(dispatch_idx().xy() == make_uint2(249,236))) {
-            OCReservoir pr = _prev_reservoirs.read(dispatch_id());
-            Printer::instance().info("&&& {}, {} {}, {}, {} {} =============", rsv.frame_index, prev_p_film,dispatch_id(make_uint2(prev_p_film)), pr.sample.u);
-//            $if(all(abs(motion_vec) > 1.f)) {
-//                OCReservoir p = _prev_reservoirs.read(dispatch_id());
-//                Printer::instance().info("{} {} {} {} {} ++++++++++++++++++++", p.frame_index, prev_p_film, p.sample.u);
-//            };
-        };
         OCSurfaceData another_surf = _surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
         };
-    };
-    $if(all(dispatch_idx().xy() == make_uint2(262,250)) || all(dispatch_idx().xy() == make_uint2(249,236))) {
-        Printer::instance().info("{} write {} {}, u: {} {}: cu : {} {}",frame_index ,dispatch_idx().xy(), r2.sample.u,_prev_reservoirs.read(dispatch_id()).sample.u);
     };
     return rsv;
 }
@@ -333,7 +323,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         $if(!hit->is_miss()) {
             L = shading(spatial_rsv, hit, swl, frame_index);
         };
-        _prev_reservoirs.write(dispatch_id(), temporal_rsv);
+        _reservoirs.write(dispatch_id(), temporal_rsv);
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
