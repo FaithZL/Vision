@@ -9,6 +9,11 @@
 #include "base/importer.h"
 #include "rhi/stats.h"
 
+#define VS_KEY_RIGHT              262
+#define VS_KEY_LEFT               263
+#define VS_KEY_DOWN               264
+#define VS_KEY_UP                 265
+
 namespace vision {
 using namespace ocarina;
 
@@ -43,12 +48,16 @@ void App::prepare() {
 }
 
 void App::on_key_event(int key, int action) noexcept {
+    if (action == 0) {
+        return;
+    }
     double dt = window->dt();
     Camera *camera = pipeline().scene().camera().get();
     float3 forward = camera->forward();
     float3 up = camera->up();
     float3 right = camera->right();
     float distance = camera->velocity() * dt;
+    float sens = 1.f;
     switch (key) {
         case 'W':
             camera->move(forward * distance);
@@ -67,6 +76,18 @@ void App::on_key_event(int key, int action) noexcept {
             break;
         case 'E':
             camera->move(up * distance);
+            break;
+        case VS_KEY_UP:
+            update_camera_view(0, sens);
+            break;
+        case VS_KEY_DOWN:
+            update_camera_view(0, -sens);
+            break;
+        case VS_KEY_LEFT:
+            update_camera_view(-sens, 0);
+            break;
+        case VS_KEY_RIGHT:
+            update_camera_view(sens, 0);
             break;
         default:
             return;

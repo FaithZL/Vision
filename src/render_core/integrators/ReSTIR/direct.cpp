@@ -147,6 +147,7 @@ Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const 
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
         Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
+
         $if(in_screen(make_int2(raster_coord), make_int2(pipeline()->resolution()))) {
             OCReservoir pre_rsv = _reservoirs.read(dispatch_id(make_uint2(raster_coord)));
             _prev_reservoirs.write(dispatch_id(), pre_rsv);
@@ -159,6 +160,10 @@ Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const 
     $else {
         _prev_reservoirs.write(dispatch_id(), OCReservoir{});
     };
+//    $if(all(dispatch_idx().xy() == make_uint2(300))) {
+//        Float3 p = camera->device_position();
+//        Printer::instance().info("{} {} {} =================", p);
+//    };
     return ret;
 }
 
@@ -189,7 +194,9 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         };
         OCReservoir rsv = RIS(!hit->is_miss(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
-
+        $if(any(abs(motion_vec) > 1.f) && all(dispatch_idx().xy() == make_uint2(534,427))) {
+            Printer::instance().info("{} {}", motion_vec);
+        };
         //        _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
         _motion_vectors.write(dispatch_id(), motion_vec);
         $if(!hit->is_miss()) {
@@ -247,14 +254,15 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
     Float2 motion_vec = _motion_vectors.read(dispatch_id());
     Float2 prev_p_film = ss.p_film - motion_vec;
     int2 res = make_int2(pipeline()->resolution());
-    $if(in_screen(make_int2(prev_p_film), res)) {
+//    $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id();
         OCReservoir prev_rsv = _prev_reservoirs.read(index);
+        prev_rsv->truncation(_temporal.history_limit);
         OCSurfaceData another_surf = _surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, prev_rsv, swl);
         };
-    };
+//    };
     return rsv;
 }
 
