@@ -18,12 +18,13 @@ private:
     RegistrableManaged<float2> _motion_vectors;
     RegistrableManaged<SurfaceData> _surfaces;
     RegistrableManaged<SurfaceData> _prev_surfaces;
-    mutable uint _frame_index{};
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
           _direct(desc["direct"], _motion_vectors, _surfaces, _prev_surfaces) {}
+
+    void invalidation() const noexcept override {}
 
     void prepare() noexcept override {
         _direct.prepare();

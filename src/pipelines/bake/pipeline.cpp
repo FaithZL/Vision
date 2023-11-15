@@ -161,8 +161,7 @@ void BakePipeline::render(double dt) noexcept {
     double ms = clk.elapse_ms();
     Printer::instance().retrieve_immediately();
     _total_time += ms;
-    ++_frame_index;
-    printf("time consuming (current frame: %f, average: %f) frame index: %u   \r", ms, _total_time / _frame_index, _frame_index);
+    printf("time consuming (current frame: %f, average: %f) frame index: %u   \r", ms, _total_time / frame_index(), frame_index());
 }
 
 void BakePipeline::display(double dt) noexcept {

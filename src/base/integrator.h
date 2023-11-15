@@ -33,7 +33,7 @@ public:
     using signature = void(uint);
 
 protected:
-    uint _frame_index{};
+    mutable uint _frame_index{};
     ocarina::Shader<signature> _shader;
 
 public:
@@ -41,6 +41,8 @@ public:
         : Node(desc) {}
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept = 0;
+    [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
+    virtual void invalidation() const noexcept { _frame_index = 0u; }
     virtual void render() const noexcept {}
 };
 

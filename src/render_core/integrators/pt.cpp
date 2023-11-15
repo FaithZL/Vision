@@ -33,7 +33,7 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << _shader(rp->frame_index()).dispatch(rp->resolution());
+        stream << _shader(_frame_index++).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
     }
