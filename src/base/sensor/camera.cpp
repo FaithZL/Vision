@@ -76,9 +76,9 @@ void Camera::store_prev_data() noexcept {
 }
 
 Float3 Camera::prev_raster_coord(Float3 pos) {
-    Float3 dir = transform_point(*_prev_w2c, pos);
-    dir /= dir.z;
-    Float3 ret = transform_point(*_prev_c2r, dir);
+    pos = transform_point(*_prev_w2c, pos);
+    pos /= pos.z;
+    Float3 ret = transform_point(*_prev_c2r, pos);
     return ret;
 }
 

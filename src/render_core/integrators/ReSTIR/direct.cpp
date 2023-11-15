@@ -139,7 +139,14 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(const OCReservoir &r
 
     Bool replace = rsv->update(sampler->next_1d(), r1);
 
-//    Float p_sum = 0.f;
+    Float p_sum = 0.f;
+    $if(replace) {
+
+    } $else {
+
+    };
+
+
 
     return rsv;
 }
