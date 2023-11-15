@@ -215,8 +215,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         _motion_vectors.write(dispatch_id(), motion_vec);
         $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
-            rsv.W = select(occluded, 0.f, rsv.W);
-            rsv.weight_sum = select(occluded, 0.f, rsv.weight_sum);
+            rsv->process_occluded(occluded);
         };
         _reservoirs.write(dispatch_id(), rsv);
         _surfaces.write(dispatch_id(), data);
@@ -241,7 +240,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
         $if(!in_screen(another_pixel, res)) {
             $continue;
         };
-        Uint index = another_pixel.y * res.x + another_pixel.x;
+        Uint index = dispatch_id(another_pixel);
         OCSurfaceData other_surf = _surfaces.read(index);
         $if(is_neighbor(cur_surf, other_surf)) {
             rsv_idx.push_back(index);

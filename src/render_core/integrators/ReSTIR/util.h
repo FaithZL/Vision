@@ -81,9 +81,17 @@ public:
         M = ocarina::select(factor < 1.f, limit, M);
         weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
     }
+    void process_occluded(oc_bool<p> occluded) noexcept {
+        W = ocarina::select(occluded, 0.f, W);
+        weight_sum = ocarina::select(occluded, 0.f, weight_sum);
+    }
     void update_W() noexcept {
         auto denominator = M * sample.p_hat;
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
+    }
+    void update_W_MIS(const float &p_sum) noexcept {
+        float mis = sample.p_hat / p_sum;
+        W = ocarina::select(sample.p_hat == 0.f, 0.f, mis * weight_sum / sample.p_hat);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
         return sample.p_hat * W * M;
@@ -116,6 +124,10 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
         oc_float<p> factor = cast<float>(limit) / M;
         M = ocarina::select(factor < 1.f, limit, M);
         weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
+    }
+    void process_occluded(oc_bool<p> occluded) noexcept {
+        W = ocarina::select(occluded, 0.f, W);
+        weight_sum = ocarina::select(occluded, 0.f, weight_sum);
     }
     void update_W() noexcept {
         Float denominator = M * sample.p_hat;
