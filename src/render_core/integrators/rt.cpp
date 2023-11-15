@@ -18,6 +18,7 @@ private:
     RegistrableManaged<float2> _motion_vectors;
     RegistrableManaged<SurfaceData> _surfaces;
     RegistrableManaged<SurfaceData> _prev_surfaces;
+    mutable uint _frame_index{};
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
@@ -47,7 +48,7 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << _direct.estimate();
+        stream << _direct.estimate(_frame_index++);
         stream << synchronize();
         stream << commit();
         float2 vec = _motion_vectors.at(0);

@@ -369,11 +369,11 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     _reservoirs.register_self();
 }
 
-CommandList ReSTIRDirectIllumination::estimate() const noexcept {
+CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    ret << _shader0(rp->frame_index()).dispatch(rp->resolution());
-    ret << _shader1(rp->frame_index()).dispatch(rp->resolution());
+    ret << _shader0(frame_index).dispatch(rp->resolution());
+    ret << _shader1(frame_index).dispatch(rp->resolution());
     ret << _motion_vectors.download();
     return ret;
 }

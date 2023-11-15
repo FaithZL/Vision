@@ -89,7 +89,7 @@ public:
                                          const OCSurfaceData &prev_surface) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
-    [[nodiscard]] CommandList estimate() const noexcept;
+    [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 
 }// namespace vision

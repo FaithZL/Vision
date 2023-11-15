@@ -33,7 +33,7 @@ public:
     using signature = void(uint);
 
 protected:
-    optional<Uint> _frame_index{};
+    uint _frame_index{};
     ocarina::Shader<signature> _shader;
 
 public:
@@ -42,7 +42,6 @@ public:
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept = 0;
     virtual void render() const noexcept {}
-    [[nodiscard]] Uint frame_index() const noexcept { return *_frame_index; }
 };
 
 class IlluminationIntegrator : public Integrator {
