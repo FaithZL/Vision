@@ -334,15 +334,22 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 1);
         DIReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-        cur_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
-        _reservoirs.write(dispatch_id(), cur_rsv);
-        cur_rsv = spatial_reuse(cur_rsv, cur_surf, make_int2(pixel), swl, frame_index);
+        DIReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
+        _reservoirs.write(dispatch_id(), temporal_rsv);
+        DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
-            L = shading(cur_rsv, hit, swl, frame_index);
+            L = shading(st_rsv, hit, swl, frame_index);
         };
+        Float l = L.x;
+//        $if(l > 0.5f && dispatch_idx().y > 300) {
+//            Printer::instance().info_with_location("{} {} {} ========{} {} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat, frame_index);
+//        };
+//        $if(all(dispatch_idx().xy() == make_uint2(519, 480))) {
+//            Printer::instance().info_with_location("{} {} {} ========{} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat);
+//        };
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");

@@ -836,14 +836,14 @@
 		"param" : {
 			"direct": {
 				"spatial": {
-					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.01,
-					"radius": 3,
+					"radius": 0.9,
 					"iterate_num": 5
 				},
 				"temporal": {
-					"open": false,
+//					"open": false,
 					"theta": 2,
 					"depth": 1,
 					"radius": 2,
