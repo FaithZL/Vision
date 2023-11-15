@@ -49,39 +49,39 @@ public:
         compile_shader0();
         compile_shader1();
     }
-    [[nodiscard]] OCReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
+    [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
                                              SampledWavelengths &swl,
-                                             const OCRSVSample &sample,
+                                             const DIRSVSample &sample,
                                              LightSample *output_ls = nullptr) noexcept;
-    [[nodiscard]] OCReservoir combine_reservoirs_MIS(OCReservoir cur_rsv,
+    [[nodiscard]] DIReservoir combine_reservoirs_MIS(DIReservoir cur_rsv,
                                                      SampledWavelengths &swl,
                                                      const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] OCReservoir combine_reservoirs(OCReservoir cur_rsv,
+    [[nodiscard]] DIReservoir combine_reservoirs(DIReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] OCReservoir combine_reservoir(const OCReservoir &r0,
-                                                const OCReservoir &r1,
+    [[nodiscard]] DIReservoir combine_reservoir(const DIReservoir &r0,
+                                                const DIReservoir &r1,
                                                 SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] OCReservoir combine_reservoir_MIS(const OCReservoir &r0,
-                                                    const OCSurfaceData &s0,
-                                                    const OCReservoir &r1,
-                                                    const OCSurfaceData &S1,
+    [[nodiscard]] DIReservoir combine_reservoir_MIS(DIReservoir r0,
+                                                    OCSurfaceData s0,
+                                                    DIReservoir r1,
+                                                    OCSurfaceData S1,
                                                     SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
                                             const Bool &is_hit) const noexcept;
-    [[nodiscard]] OCReservoir spatial_reuse(OCReservoir rsv,
+    [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
                                             const OCSurfaceData &cur_surf,
                                             const Int2 &pixel,
                                             SampledWavelengths &swl,
                                             const Uint &frame_index) const noexcept;
-    [[nodiscard]] OCReservoir temporal_reuse(OCReservoir rsv,
+    [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
                                              const OCSurfaceData& cur_surf,
                                              const SensorSample &ss,
                                              SampledWavelengths &swl,
                                              const Uint &frame_index) const noexcept;
-    [[nodiscard]] Float3 shading(const OCReservoir &rsv, const OCHit &hit,
+    [[nodiscard]] Float3 shading(const DIReservoir &rsv, const OCHit &hit,
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept;

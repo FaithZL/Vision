@@ -34,7 +34,7 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
 
 Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
                                               vision::SampledWavelengths &swl,
-                                              const vision::OCRSVSample &sample,
+                                              const vision::DIRSVSample &sample,
                                               vision::LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
@@ -62,16 +62,16 @@ Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
     return p_hat;
 }
 
-OCReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
+DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                           const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
     comment("RIS start");
-    OCReservoir ret;
+    DIReservoir ret;
     $if(hit) {
         for (int i = 0; i < M; ++i) {
             SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
-            OCRSVSample sample;
+            DIRSVSample sample;
             sample.light_index = sampled_light.light_index;
             sample.u = sampler->next_2d();
             LightSample ls{swl.dimension()};
@@ -87,7 +87,7 @@ OCReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     return ret;
 }
 
-OCReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(OCReservoir cur_rsv,
+DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv,
                                                              SampledWavelengths &swl,
                                                              const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
@@ -101,7 +101,7 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(OCReservoir cur_rsv
     Float temp_M = cur_rsv.M;
 
     rsv_idx.for_each([&](const Uint &idx) {
-        OCReservoir rsv = _reservoirs.read(idx);
+        DIReservoir rsv = _reservoirs.read(idx);
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
         cur_rsv->update(sampler->next_1d(), rsv);
         p_sum += p_hat * rsv.M;
@@ -113,10 +113,10 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(OCReservoir cur_rsv
     return cur_rsv;
 }
 
-OCReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(const OCReservoir &r0,
-                                                            const OCSurfaceData &s0,
-                                                            const OCReservoir &r1,
-                                                            const OCSurfaceData &s1,
+DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir r0,
+                                                            OCSurfaceData s0,
+                                                            DIReservoir r1,
+                                                            OCSurfaceData s1,
                                                             SampledWavelengths &swl) const noexcept {
     Sampler *sampler = scene().sampler();
     Camera *camera = scene().camera().get();
@@ -129,29 +129,21 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(const OCReservoir &r
     Float p_hat_00 = compute_p_hat(it, swl, r0.sample);
     Float p_hat_01 = compute_p_hat(it, swl, r1.sample);
 
-    it = geom.compute_surface_interaction(s1.hit, true);
-    it.wo = normalize(c_pos - it.pos);
-
-    Float p_hat_10 = compute_p_hat(it, swl, r0.sample);
-    Float p_hat_11 = compute_p_hat(it, swl, r1.sample);
-
-    OCReservoir rsv = r0;
-
+    DIReservoir rsv = r0;
+    Float p_sum = p_hat_00 * r0.M + p_hat_01 * r1.M;
     Bool replace = rsv->update(sampler->next_1d(), r1);
 
-    Float p_sum = 0.f;
-    $if(replace) {
-
-    } $else {
-
+    $if(!replace) {
+        rsv.sample.p_hat = p_hat_00;
+    }
+    $else {
+        rsv.sample.p_hat = p_hat_01;
     };
-
-
-
+    rsv->update_W_MIS(p_sum);
     return rsv;
 }
 
-OCReservoir ReSTIRDirectIllumination::combine_reservoirs(OCReservoir cur_rsv,
+DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
                                                          SampledWavelengths &swl,
                                                          const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
@@ -162,7 +154,7 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs(OCReservoir cur_rsv,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
-        OCReservoir rsv = _reservoirs.read(idx);
+        DIReservoir rsv = _reservoirs.read(idx);
         cur_rsv->update(sampler->next_1d(), rsv);
     });
     cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
@@ -170,10 +162,10 @@ OCReservoir ReSTIRDirectIllumination::combine_reservoirs(OCReservoir cur_rsv,
     return cur_rsv;
 }
 
-OCReservoir ReSTIRDirectIllumination::combine_reservoir(const OCReservoir &r0,
-                                                        const OCReservoir &r1,
+DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
+                                                        const DIReservoir &r1,
                                                         SampledWavelengths &swl) const noexcept {
-    OCReservoir ret;
+    DIReservoir ret;
     ret = r0;
     Float u = scene().sampler()->next_1d();
     ret->update(u, r1);
@@ -217,7 +209,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             data->set_t_max(rs.t_max());
             data->set_normal(it.ng);
         };
-        OCReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
+        DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
         _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
         _motion_vectors.write(dispatch_id(), motion_vec);
@@ -233,7 +225,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
                                         "check visibility");
 }
 
-OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv, const OCSurfaceData &cur_surf,
+DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
                                                     const Int2 &pixel, SampledWavelengths &swl,
                                                     const Uint &frame_index) const noexcept {
     if (!_spatial.open) {
@@ -265,7 +257,7 @@ OCReservoir ReSTIRDirectIllumination::spatial_reuse(OCReservoir rsv, const OCSur
     return rsv;
 }
 
-OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSurfaceData &cur_surf,
+DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
                                                      const SensorSample &ss,
                                                      SampledWavelengths &swl,
                                                      const Uint &frame_index) const noexcept {
@@ -277,17 +269,21 @@ OCReservoir ReSTIRDirectIllumination::temporal_reuse(OCReservoir rsv, const OCSu
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
-        OCReservoir prev_rsv = _prev_reservoirs.read(index);
+        DIReservoir prev_rsv = _prev_reservoirs.read(index);
         prev_rsv->truncation(_temporal.limit);
         OCSurfaceData another_surf = _prev_surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_reservoir(rsv, prev_rsv, swl);
+//            if (_mis) {
+//                rsv = combine_reservoir_MIS(rsv, cur_surf, prev_rsv, another_surf,swl);
+//            } else {
+                rsv = combine_reservoir(rsv, prev_rsv, swl);
+//            }
         };
     };
     return rsv;
 }
 
-Float3 ReSTIRDirectIllumination::shading(const vision::OCReservoir &rsv, const OCHit &hit,
+Float3 ReSTIRDirectIllumination::shading(const vision::DIReservoir &rsv, const OCHit &hit,
                                          SampledWavelengths &swl, const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
@@ -341,16 +337,19 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         camera->load_data();
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        OCReservoir cur_rsv = _reservoirs.read(dispatch_id());
+        DIReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-        OCReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
-        OCReservoir spatial_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
+        DIReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
+        DIReservoir spatial_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var data = _surfaces.read(dispatch_id());
         Var hit = data.hit;
         Float3 L = make_float3(0.f);
         $if(!hit->is_miss()) {
             L = shading(spatial_rsv, hit, swl, frame_index);
         };
+//        $if(all(dispatch_idx().xy() == make_uint2(457, 477))) {
+//            Printer::instance().info("{} {} {} ======{}===========", L, temporal_rsv.W);
+//        };
         _reservoirs.write(dispatch_id(), temporal_rsv);
         film->update_sample(pixel, L, frame_index);
     };

@@ -43,7 +43,7 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, prim_id, u, p_hat, pdf, 
 // clang-format on
 
 namespace vision {
-using OCRSVSample = Var<ReSTIRDirect::RSVSample>;
+using DIRSVSample = Var<ReSTIRDirect::RSVSample>;
 }// namespace vision
 
 namespace vision {
@@ -95,14 +95,14 @@ public:
 
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
     static constexpr EPort p = D;
-    Bool update(oc_float<p> u, oc_float<p> weight, vision::OCRSVSample v) noexcept {
+    Bool update(oc_float<p> u, oc_float<p> weight, vision::DIRSVSample v) noexcept {
         weight_sum += weight;
         M += 1;
         Bool ret = u < (weight / weight_sum);
         sample = select(ret, v, sample);
         return ret;
     }
-    Bool update(oc_float<p> u, vision::OCRSVSample v) noexcept {
+    Bool update(oc_float<p> u, vision::DIRSVSample v) noexcept {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         return update(u, weight, v);
     }
@@ -133,5 +133,5 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
 namespace vision {
 using namespace ReSTIRDirect;
 using namespace ocarina;
-using OCReservoir = Var<ReSTIRDirect::Reservoir>;
+using DIReservoir = Var<ReSTIRDirect::Reservoir>;
 }// namespace vision
