@@ -46,8 +46,8 @@ public:
         : limit(ps["limit"].as_uint(20)),
           sampling_radius(ps["radius"].as_float(2.f)),
           motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
-          dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
-          depth_threshold(ps["depth"].as_float(0.1f)),
+          dot_threshold(cosf(radians(ps["theta"].as_float(2)))),
+          depth_threshold(ps["depth"].as_float(1)),
           open{ps["open"].as_bool(true)} {}
 };
 

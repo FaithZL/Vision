@@ -26,7 +26,6 @@ protected:
     Geometry _geometry{this};
     ResourceArray _resource_array{};
     mutable Stream _stream;
-    double _total_time{};
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
 
@@ -51,9 +50,9 @@ public:
     virtual void change_resolution(uint2 res) noexcept;
     virtual void invalidate() noexcept {
         integrator()->invalidation();
-        _total_time = 0;
     }
     [[nodiscard]] uint frame_index() const noexcept { return integrator()->frame_index(); }
+    [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     virtual void clear_geometry() noexcept;
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;

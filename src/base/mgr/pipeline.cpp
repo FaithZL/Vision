@@ -81,9 +81,8 @@ void Pipeline::display(double dt) noexcept {
     render(dt);
     after_render();
     double ms = clk.elapse_ms();
-    _total_time += ms;
-//    printf("\n");
-    printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, _total_time / frame_index(), frame_index());
+    integrator()->accumulate_render_time(ms);
+    printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, render_time() / frame_index(), frame_index());
     Printer::instance().retrieve_immediately();
 }
 
