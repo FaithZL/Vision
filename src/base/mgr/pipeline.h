@@ -26,6 +26,7 @@ protected:
     Geometry _geometry{this};
     ResourceArray _resource_array{};
     mutable Stream _stream;
+
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
 
@@ -34,13 +35,15 @@ protected:
     [[nodiscard]] const Integrator *integrator() const noexcept { return scene().integrator(); }
 
 public:
+    OutputDesc output_desc;
+
+public:
     explicit Pipeline(Device *device);
     explicit Pipeline(const PipelineDesc &desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
     [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
-    void set_scene(Scene scene) noexcept { _scene = ocarina::move(scene); }
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;

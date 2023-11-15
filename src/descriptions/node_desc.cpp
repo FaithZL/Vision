@@ -300,7 +300,7 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
     spp = ps["spp"].as_uint(0u);
     save_exit = ps["save_exit"].as_uint(0u);
     fn = ps["fn"].as_string("output.png");
-    denoise = ps["denoise"].as_bool(true);
+    denoise = ps["denoise"].as_bool(false);
 }
 
 void RenderSettingDesc::init(const ParameterSet &ps) noexcept {

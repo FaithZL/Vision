@@ -19,6 +19,7 @@ public:
         Global::instance().set_pipeline(ret.get());
         ret->init_scene(scene_desc);
         ret->init_postprocessor(scene_desc.denoiser_desc);
+        ret->output_desc = scene_desc.output_desc;
         return ret;
     }
 };

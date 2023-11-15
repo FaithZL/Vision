@@ -167,14 +167,14 @@ void App::update(double dt) noexcept {
 }
 
 void App::check_and_save() noexcept {
-    OutputDesc desc = output_desc;
+    OutputDesc desc = rp->output_desc;
     if (pipeline().frame_index() == desc.spp || need_save) {
         save_result();
     }
 }
 
 void App::save_result() noexcept {
-    OutputDesc desc = output_desc;
+    OutputDesc desc = rp->output_desc;
     ImageIO::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
                         pipeline().resolution(), pipeline().final_picture(desc.denoise));
     if (desc.save_exit) {
