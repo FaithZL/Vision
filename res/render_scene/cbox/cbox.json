@@ -836,7 +836,7 @@
 		"param" : {
 			"direct": {
 				"spatial": {
-//					"open": false,
+					"open": false,
 					"theta": 5,
 					"depth": 0.01,
 					"radius": 3,
@@ -850,9 +850,8 @@
 					"motion_vec": 0.15,
 					"limit": 80
 				},
-				"M": 10,
 //				"mis": true,
-				"spatial_radius" : 2
+				"M": 10
 			},
 			"min_depth" : 0,
 			"max_depth" : 16,
@@ -1001,6 +1000,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "hero3-CPU.png"
+		"fn" : "hero5-CPU.png"
 	}
 }
