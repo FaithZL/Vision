@@ -198,12 +198,14 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
-        Interaction it;
+
+//        _prev_surfaces.write(dispatch_id(), _surfaces.read(dispatch_id()));
+//        _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
 
         OCSurfaceData data;
-        _prev_surfaces.write(dispatch_id(), _surfaces.read(dispatch_id()));
         data.hit = hit;
         data->set_t_max(0.f);
+        Interaction it;
         $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
             data->set_t_max(rs.t_max());
@@ -211,7 +213,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         };
         DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
-        _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
+
         _motion_vectors.write(dispatch_id(), motion_vec);
         $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
@@ -343,12 +345,12 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
             L = shading(st_rsv, hit, swl, frame_index);
         };
         Float l = L.x;
-//        $if(l > 0.5f && dispatch_idx().y > 300) {
-//            Printer::instance().info_with_location("{} {} {} ========{} {} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat, frame_index);
-//        };
-//        $if(all(dispatch_idx().xy() == make_uint2(519, 480))) {
-//            Printer::instance().info_with_location("{} {} {} ========{} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat);
-//        };
+//                $if(l > 0.5f && dispatch_idx().y > 300) {
+//                    Printer::instance().info_with_location("{} {} {} ========{} {} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat, frame_index);
+//                };
+//                $if(all(dispatch_idx().xy() == make_uint2(519, 480))) {
+//                    Printer::instance().info_with_location("{} {} {} ========{} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat);
+//                };
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
@@ -371,6 +373,8 @@ CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept 
     const Pipeline *rp = pipeline();
     ret << _shader0(frame_index).dispatch(rp->resolution());
     ret << _shader1(frame_index).dispatch(rp->resolution());
+    ret << _prev_reservoirs.copy_from(_reservoirs.device_buffer(), 0);
+    ret << _prev_surfaces.copy_from(_surfaces.device_buffer(), 0);
     ret << _motion_vectors.download();
     return ret;
 }
