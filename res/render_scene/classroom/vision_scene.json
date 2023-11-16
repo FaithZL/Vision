@@ -3833,7 +3833,7 @@
                 }
             },
             "filter": {
-                "type": "gaussian",
+                "type": "box",
                 "name": "boxFilter",
                 "param": {
                     "radius": [
