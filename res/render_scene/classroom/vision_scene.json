@@ -3849,7 +3849,7 @@
     },
     "mediums" : {
         "global" : "fog",
-        "process" : true,
+//        "process" : true,
         "list": [
             {
                 "type" : "homogeneous",
@@ -3863,14 +3863,42 @@
             }
         ]
     },
-    "integrator": {
-        "type": "pt",
-        "param": {
-            "min_depth": 5,
-            "max_depth": 16,
-            "rr_threshold": 1
+    "integrator" : {
+//                "type" : "rt",
+        "type" : "pt",
+        "param" : {
+            "direct": {
+                "spatial": {
+                    "open": false,
+                    "theta": 5,
+                    "depth": 0.01,
+                    "radius": 1,
+                    "iterate_num": 5
+                },
+                "temporal": {
+                    "open": false,
+                    "theta": 2,
+                    "depth": 1,
+                    "radius": 2,
+                    "motion_vec": 0.15,
+                    "history_limit": 2
+                },
+                //				"mis": true,
+                "M": 10
+            },
+            "min_depth" : 0,
+            "max_depth" : 16,
+            "rr_threshold" : 1
         }
     },
+//    "integrator": {
+//        "type": "pt",
+//        "param": {
+//            "min_depth": 5,
+//            "max_depth": 16,
+//            "rr_threshold": 1
+//        }
+//    },
     "light_sampler": {
         "type": "uniform",
         "param": {
@@ -3888,7 +3916,7 @@
                                 "yaw" :-30
                             }
                         },
-                        "scale" : 500
+                        "scale" : 0.5
                     }
                 }
             ]
@@ -3902,7 +3930,7 @@
     },
 
     "pipeline": {
-        "type": "customized"
+//        "type": "customized"
     },
 
     "render_setting": {

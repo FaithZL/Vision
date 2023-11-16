@@ -12098,7 +12098,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "KettleGreen",
             "param": {
                 "color": [
@@ -12190,7 +12190,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "SmallWorktop",
             "param": {
                 "color": {
@@ -12242,7 +12242,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Plates",
             "param": {
                 "color": [
@@ -12279,7 +12279,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Tabletop",
             "param": {
                 "color": {
@@ -12331,7 +12331,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "LeftPage",
             "param": {
                 "color": {
@@ -12351,7 +12351,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "BookPages",
             "param": {
                 "color": {
@@ -12381,7 +12381,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Tomatoes",
             "param": {
                 "color": [
@@ -12402,7 +12402,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Pepper-Green",
             "param": {
                 "color": [
@@ -12423,7 +12423,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Pepper-Yellow",
             "param": {
                 "color": [
@@ -12444,7 +12444,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Pepper-Red",
             "param": {
                 "color": [
@@ -12507,7 +12507,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "ChoppingKnifeHandle",
             "param": {
                 "color": [
@@ -12549,7 +12549,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "WhitePot",
             "param": {
                 "color": [
@@ -12570,7 +12570,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Worktops",
             "param": {
                 "color": {
@@ -12622,7 +12622,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "CookerBlack",
             "param": {
                 "color": [
@@ -12643,7 +12643,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "CookerIron",
             "param": {
                 "color": [
@@ -12966,7 +12966,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "TableCross",
             "param": {
                 "color": [
@@ -12987,7 +12987,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "PotHandles",
             "param": {
                 "color": [
@@ -13029,7 +13029,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "KettleHandle",
             "param": {
                 "color": [
@@ -13071,7 +13071,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "BurnersTop",
             "param": {
                 "color": [
@@ -13143,7 +13143,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "WoodTop",
             "param": {
                 "color": {
@@ -13173,7 +13173,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Cable",
             "param": {
                 "color": [
@@ -13194,7 +13194,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "CeilingLightFitting",
             "param": {
                 "color": [
@@ -13215,7 +13215,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Floor",
             "param": {
                 "color": {
@@ -13300,7 +13300,7 @@
             }
         },
         {
-            "type": "substrate",
+            "type": "matte",
             "name": "Lamp",
             "param": {
                 "color": [
@@ -13491,8 +13491,8 @@
         "type": "alias_table"
     },
     "integrator" : {
-//        "type" : "rt",
-        		"type" : "pt",
+        "type" : "rt",
+//        		"type" : "pt",
         "param" : {
             "direct": {
                 "spatial": {
@@ -13539,7 +13539,7 @@
         }
     },
     "pipeline" : {
-        "type": "customized"
+//        "type": "customized"
     },
     "render_setting": {
         "polymorphic_mode" : 1
