@@ -69,7 +69,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     comment("RIS start");
     DIReservoir ret;
     $if(hit) {
-        for (int i = 0; i < M; ++i) {
+        $for (i,M) {
             SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
             DIRSVSample sample;
             sample.light_index = sampled_light.light_index;
@@ -80,7 +80,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             sample.pdf = ls.eval.pdf;
             sample->set_pos(ls.p_light);
             ret->update(sampler->next_1d(), sample);
-        }
+        };
     };
     ret->update_W();
     comment("RIS end");
