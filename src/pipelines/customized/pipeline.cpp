@@ -65,6 +65,7 @@ public:
 
     void render(double dt) noexcept override {
         stream() << _render_graph.dispatch() << synchronize() << commit();
+        integrator()->increase_frame_index();
     }
 };
 

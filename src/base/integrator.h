@@ -44,6 +44,8 @@ public:
     virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept = 0;
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
+    void increase_frame_index() const noexcept { _frame_index++; }
+    void reset_frame_index() const noexcept { _frame_index = 0; }
     void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
     virtual void invalidation() const noexcept {
         _frame_index = 0u;
