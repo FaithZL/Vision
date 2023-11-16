@@ -228,6 +228,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         Interaction it;
         $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
+            cur_surf.mat_id = it.material_id();
             cur_surf->set_t_max(rs.t_max());
             cur_surf->set_normal(it.ng);
         };
