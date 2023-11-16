@@ -199,17 +199,14 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
 
-//        _prev_surfaces.write(dispatch_id(), _surfaces.read(dispatch_id()));
-//        _prev_reservoirs.write(dispatch_id(), _reservoirs.read(dispatch_id()));
-
-        OCSurfaceData data;
-        data.hit = hit;
-        data->set_t_max(0.f);
+        OCSurfaceData cur_surf;
+        cur_surf.hit = hit;
+        cur_surf->set_t_max(0.f);
         Interaction it;
         $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
-            data->set_t_max(rs.t_max());
-            data->set_normal(it.ng);
+            cur_surf->set_t_max(rs.t_max());
+            cur_surf->set_normal(it.ng);
         };
         DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
@@ -220,7 +217,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             rsv->process_occluded(occluded);
         };
         _reservoirs.write(dispatch_id(), rsv);
-        _surfaces.write(dispatch_id(), data);
+        _surfaces.write(dispatch_id(), cur_surf);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
                                         "check visibility");
