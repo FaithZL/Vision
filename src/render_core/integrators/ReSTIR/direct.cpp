@@ -212,10 +212,12 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
 
         _motion_vectors.write(dispatch_id(), motion_vec);
+
         $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv->process_occluded(occluded);
         };
+        rsv = temporal_reuse(rsv, cur_surf, ss, swl, frame_index);
         _reservoirs.write(dispatch_id(), rsv);
         _surfaces.write(dispatch_id(), cur_surf);
     };
@@ -333,8 +335,9 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 1);
         DIReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-        DIReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
-        _reservoirs.write(dispatch_id(), temporal_rsv);
+//        DIReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
+//        _reservoirs.write(dispatch_id(), temporal_rsv);
+        DIReservoir temporal_rsv = _reservoirs.read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
