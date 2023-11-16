@@ -78,6 +78,7 @@ public:
                                             const Uint &frame_index) const noexcept;
     [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
                                              const OCSurfaceData& cur_surf,
+                                             const Float2 &motion_vec,
                                              const SensorSample &ss,
                                              SampledWavelengths &swl,
                                              const Uint &frame_index) const noexcept;

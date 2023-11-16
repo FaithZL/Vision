@@ -183,6 +183,29 @@ Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const 
     return ret;
 }
 
+DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
+                                                     const Float2 &motion_vec,
+                                                     const SensorSample &ss,
+                                                     SampledWavelengths &swl,
+                                                     const Uint &frame_index) const noexcept {
+    if (!_temporal.open) {
+        return rsv;
+    }
+    Float2 prev_p_film = ss.p_film - motion_vec;
+    int2 res = make_int2(pipeline()->resolution());
+    $if(in_screen(make_int2(prev_p_film), res)) {
+        Uint index = dispatch_id(make_uint2(prev_p_film));
+        DIReservoir prev_rsv = _prev_reservoirs.read(index);
+        prev_rsv->truncation(_temporal.limit);
+        OCSurfaceData another_surf = _prev_surfaces.read(index);
+        $if(is_temporal_valid(cur_surf, another_surf)) {
+            rsv = combine_reservoir(rsv, prev_rsv, swl);
+        };
+    };
+    return rsv;
+}
+
+
 void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
@@ -217,7 +240,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv->process_occluded(occluded);
         };
-        rsv = temporal_reuse(rsv, cur_surf, ss, swl, frame_index);
+        rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, swl, frame_index);
         _reservoirs.write(dispatch_id(), rsv);
         _surfaces.write(dispatch_id(), cur_surf);
     };
@@ -253,28 +276,6 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
         } else {
             rsv = combine_reservoirs(rsv, swl, rsv_idx);
         }
-    };
-    return rsv;
-}
-
-DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
-                                                     const SensorSample &ss,
-                                                     SampledWavelengths &swl,
-                                                     const Uint &frame_index) const noexcept {
-    if (!_temporal.open) {
-        return rsv;
-    }
-    Float2 motion_vec = _motion_vectors.read(dispatch_id());
-    Float2 prev_p_film = ss.p_film - motion_vec;
-    int2 res = make_int2(pipeline()->resolution());
-    $if(in_screen(make_int2(prev_p_film), res)) {
-        Uint index = dispatch_id(make_uint2(prev_p_film));
-        DIReservoir prev_rsv = _prev_reservoirs.read(index);
-        prev_rsv->truncation(_temporal.limit);
-        OCSurfaceData another_surf = _prev_surfaces.read(index);
-        $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_reservoir(rsv, prev_rsv, swl);
-        };
     };
     return rsv;
 }
@@ -335,8 +336,6 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 1);
         DIReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-//        DIReservoir temporal_rsv = temporal_reuse(cur_rsv, cur_surf, ss, swl, frame_index);
-//        _reservoirs.write(dispatch_id(), temporal_rsv);
         DIReservoir temporal_rsv = _reservoirs.read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
@@ -344,13 +343,6 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         $if(!hit->is_miss()) {
             L = shading(st_rsv, hit, swl, frame_index);
         };
-        Float l = L.x;
-//                $if(l > 0.5f && dispatch_idx().y > 300) {
-//                    Printer::instance().info_with_location("{} {} {} ========{} {} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat, frame_index);
-//                };
-//                $if(all(dispatch_idx().xy() == make_uint2(519, 480))) {
-//                    Printer::instance().info_with_location("{} {} {} ========{} {} {}========", L, st_rsv.W, st_rsv.M, st_rsv.sample.p_hat);
-//                };
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
@@ -375,7 +367,6 @@ CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept 
     ret << _shader1(frame_index).dispatch(rp->resolution());
     ret << _prev_reservoirs.copy_from(_reservoirs.device_buffer(), 0);
     ret << _prev_surfaces.copy_from(_surfaces.device_buffer(), 0);
-    ret << _motion_vectors.download();
     return ret;
 }
 

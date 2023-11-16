@@ -349,7 +349,7 @@
 						//							}
 						//						},
 						"two_sided" : false,
-						"scale" : 1
+						"scale" : 0.5
 					}
 				}
 			}
@@ -848,7 +848,7 @@
 					"depth": 1,
 					"radius": 2,
 					"motion_vec": 0.15,
-					"limit": 80
+					"history_limit": 80
 				},
 //				"mis": true,
 				"M": 10
