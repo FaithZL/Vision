@@ -9,6 +9,7 @@
 #include "math/base.h"
 #include "dsl/var.h"
 #include "ast/type_registry.h"
+#include "dsl/struct.h"
 
 namespace vision {
 using namespace ocarina;
@@ -153,46 +154,4 @@ template<EPort p = D>
 
 }// namespace vision
 
-//OC_STRUCT(vision::math::Box2u, lower, upper) {};
-
-template<>
-struct ocarina::is_struct<vision::math::Box2u> : std::true_type {};
-template<>
-struct ocarina::struct_member_tuple<vision::math::Box2u> {
-    using this_type = vision::math::Box2u;
-    static constexpr string_view members[] = {"lower", "upper"};
-    using type = ocarina::tuple<std::remove_cvref_t<decltype(this_type::lower)>, std::remove_cvref_t<decltype(this_type::upper)>>;
-    using offset = std::index_sequence<__builtin_offsetof(this_type, lower), __builtin_offsetof(this_type, upper)>;
-    static_assert(is_valid_reflection_v<this_type, type, offset>, "may be order of members is wrong!");
-    static_assert(sizeof(this_type) >= 4);
-    static constexpr auto member_index(ocarina::string_view name) { return std::find(std::begin(members), std::end(members), name) - std::begin(members); }
-};
-template<>
-struct ocarina::TypeDesc<vision::math::Box2u> {
-    using this_type = vision::math::Box2u;
-    static ocarina::string description() noexcept {
-        static thread_local ocarina::string s = ocarina::format([] {struct FMT_COMPILE_STRING:fmt::compile_string{using char_type=fmt::remove_cvref_t<decltype("struct<{}" ",{}" ",{}" ">"[0])>;constexpr operator fmt::basic_string_view<char_type>()const{return fmt::detail_exported::compile_string_to_view<char_type>("struct<{}" ",{}" ",{}" ">");}};return FMT_COMPILE_STRING(); }(), alignof(this_type), ocarina::TypeDesc<std::remove_cvref_t<decltype(this_type::lower)>>::description(), ocarina::TypeDesc<std::remove_cvref_t<decltype(this_type::upper)>>::description());
-        return s;
-    }
-};
-namespace ocarina { namespace detail {
-template<>
-struct Computable<vision::math::Box2u> {
-public:
-    using this_type = vision::math::Box2u;
-    static constexpr auto cname = "vision::math::Box2u";
-private:
-    const Expression *_expression{nullptr};
-public:
-    [[nodiscard]] const Expression *expression() const noexcept { return _expression; }
-protected:
-    explicit Computable(const Expression *e) noexcept : _expression{e} {}
-    Computable(Computable &&) noexcept = default;
-    Computable(const Computable &) noexcept = default;
-public:
-    dsl_t<std::remove_cvref_t<decltype(this_type::lower)>>(lower){Function::current()->member(Type::of<this_type>()->get_member("lower"), expression(), ocarina::struct_member_tuple<this_type>::member_index("lower"))};
-    dsl_t<std::remove_cvref_t<decltype(this_type::upper)>>(upper){Function::current()->member(Type::of<this_type>()->get_member("upper"), expression(), ocarina::struct_member_tuple<this_type>::member_index("upper"))};
-};
-}}// namespace ocarina::detail
-template<>
-struct ocarina::Proxy<vision::math::Box2u> : public ocarina::detail::Computable<vision::math::Box2u> {};
+OC_STRUCT(vision::math::Box2u, lower, upper) {};
