@@ -9,7 +9,7 @@
 #include "math/transform.h"
 #include "base/scattering/interaction.h"
 #include "math/geometry.h"
-#include "math/constants.h"
+#include "core/constants.h"
 #include "render_core/spectra/srgb2spec.h"
 #include "base/color/spd.h"
 

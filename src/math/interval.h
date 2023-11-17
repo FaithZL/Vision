@@ -6,7 +6,7 @@
 
 #include "core/basic_types.h"
 #include "core/concepts.h"
-#include "math/constants.h"
+#include "core/constants.h"
 
 namespace vision {
 using namespace ocarina;

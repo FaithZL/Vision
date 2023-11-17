@@ -8,7 +8,6 @@
 #include "core/string_util.h"
 #include "math/transform.h"
 #include "math/geometry.h"
-#include "math/constants.h"
 #include "base/scattering/microfacet.h"
 
 using namespace vision;

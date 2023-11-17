@@ -8,7 +8,6 @@
 #include "core/string_util.h"
 #include "math/transform.h"
 #include "math/geometry.h"
-#include "math/constants.h"
 #include "base/scattering/interaction.h"
 #include "base/scattering/bxdf.h"
 
