@@ -17,7 +17,7 @@ public:
     void compile() noexcept override {
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
-        ocarina::Kernel<signature> kernel = [&](Uint frame_index, Int2 debug_pixel) -> void {
+        ocarina::Kernel<signature> kernel = [&](Uint frame_index, OCDebugData debug_data) -> void {
             Uint2 pixel = dispatch_idx().xy();
             sampler->start_pixel_sample(pixel, frame_index, 0);
             camera->load_data();
@@ -33,7 +33,7 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << _shader(_frame_index++, _debug_pixel).dispatch(rp->resolution());
+        stream << _shader(_frame_index++, _debug_data).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
     }
