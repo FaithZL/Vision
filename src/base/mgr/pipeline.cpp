@@ -24,6 +24,7 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
       _stream(device().create_stream()),
       _resource_array(device().create_resource_array()) {
     Printer::instance().init(device());
+    Debugger::instance().init(device());
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
