@@ -6,6 +6,29 @@
 
 namespace vision {
 
+Bool SampledWavelengths::secondary_valid() const noexcept {
+    if (dimension() == 1) {
+        return false;
+    }
+    Bool ret = true;
+    for (uint i = 1; i < dimension(); ++i) {
+        ret = ret & (pdf(i) != 0.f);
+    }
+    return ret;
+}
+
+void SampledWavelengths::invalidation_secondary() noexcept {
+    if (dimension() == 1) {
+        return;
+    }
+    $if(secondary_valid()) {
+        for (uint i = 1; i < dimension(); ++i) {
+            _pdfs[i] = 0.f;
+        }
+        _pdfs[0] /= dimension();
+    };
+}
+
 SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {
     uint n = std::max({p.dimension(), t.dimension(), f.dimension()});
     OC_ASSERT((p.dimension() == 1u || p.dimension() == n) &&
