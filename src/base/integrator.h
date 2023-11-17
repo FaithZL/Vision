@@ -30,7 +30,7 @@ class Sampler;
 class Integrator : public Node, public SerialObject {
 public:
     using Desc = IntegratorDesc;
-    using signature = void(uint);
+    using signature = void(uint, int2 debug_pixel);
 
 protected:
     mutable uint _frame_index{};
@@ -49,6 +49,7 @@ public:
     void increase_frame_index() const noexcept { _frame_index++; }
     void reset_frame_index() const noexcept { _frame_index = 0; }
     void set_debug_pixel(int2 pixel) const noexcept { _debug_pixel = pixel; }
+    void reset_debug_pixel() const noexcept { _debug_pixel = make_int2(-1); }
     void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
     virtual void invalidation() const noexcept {
         _frame_index = 0u;

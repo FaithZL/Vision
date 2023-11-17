@@ -149,7 +149,9 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
         case 2: need_save = bool(action); break;
         default: break;
     }
-    pipeline().set_debug_pixel(make_int2(pos));
+    if (left_key_press) {
+        pipeline().set_debug_pixel(make_int2(pos));
+    }
 }
 
 void App::update(double dt) noexcept {
