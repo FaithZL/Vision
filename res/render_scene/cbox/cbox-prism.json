@@ -682,7 +682,7 @@
         "polymorphic_mode" : 1
     },
     "output": {
-        "spp": 1024,
+        "spp": 0,
         "fn": "dispersion-hero.png"
     }
 }
