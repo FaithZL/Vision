@@ -10,6 +10,7 @@
 #include "dsl/var.h"
 #include "ast/type_registry.h"
 #include "dsl/struct.h"
+#include "dsl/builtin.h"
 
 namespace vision {
 using namespace ocarina;
@@ -154,4 +155,8 @@ template<EPort p = D>
 
 }// namespace vision
 
-OC_STRUCT(vision::math::Box2u, lower, upper) {};
+OC_STRUCT(vision::math::Box2u, lower, upper) {
+    [[nodiscard]] Bool contains(const Uint2 &point) const noexcept {
+        return ocarina::all(point >= lower) && ocarina::all(upper >= point);
+    }
+};
