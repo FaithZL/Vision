@@ -67,7 +67,7 @@ public:
         Sampler *sampler = scene().sampler();
         Geometry &geom = rp->geometry();
 
-        ocarina::Kernel<signature> kernel = [&](Uint frame_index, OCDebugData debug_data) -> void {
+        ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
             sampler->start_pixel_sample(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
@@ -117,7 +117,7 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << _shader(_frame_index++, _debug_data).dispatch(rp->resolution());
+        stream << _shader(_frame_index++).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
     }

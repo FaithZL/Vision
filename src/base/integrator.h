@@ -30,12 +30,11 @@ class Sampler;
 class Integrator : public Node, public SerialObject {
 public:
     using Desc = IntegratorDesc;
-    using signature = void(uint, DebugData);
+    using signature = void(uint);
 
 protected:
     mutable uint _frame_index{};
     mutable double _render_time{};
-    mutable DebugData _debug_data;
     ocarina::Shader<signature> _shader;
 
 public:

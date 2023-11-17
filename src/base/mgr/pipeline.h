@@ -59,7 +59,6 @@ public:
     void set_debug_pixel(int2 pixel) const noexcept {
 
     }
-    void filp_debugger() const noexcept {}
     virtual void clear_geometry() noexcept;
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;
