@@ -73,7 +73,6 @@ void Pipeline::before_render() noexcept {
 
 void Pipeline::after_render() noexcept {
     scene().camera()->after_render();
-    integrator()->reset_debug_pixel();
 }
 
 void Pipeline::display(double dt) noexcept {

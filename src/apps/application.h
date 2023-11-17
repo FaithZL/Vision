@@ -56,7 +56,10 @@ public:
 
     bool key_r_press{false};
     bool key_f_press{false};
+
+    // debugger switching
     bool key_g_press{false};
+
     LaunchParams params;
 
 public:

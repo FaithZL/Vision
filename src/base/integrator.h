@@ -35,7 +35,6 @@ public:
 protected:
     mutable uint _frame_index{};
     mutable double _render_time{};
-    mutable int2 _debug_pixel{make_int2(-1)};
     mutable DebugData _debug_data;
     ocarina::Shader<signature> _shader;
 
@@ -48,8 +47,6 @@ public:
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
     void increase_frame_index() const noexcept { _frame_index++; }
     void reset_frame_index() const noexcept { _frame_index = 0; }
-    void set_debug_pixel(int2 pixel) const noexcept { _debug_pixel = pixel; }
-    void reset_debug_pixel() const noexcept { _debug_pixel = make_int2(-1); }
     void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
     virtual void invalidation() const noexcept {
         _frame_index = 0u;
