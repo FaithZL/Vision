@@ -9,10 +9,10 @@
 #include "base/importer.h"
 #include "rhi/stats.h"
 
-#define VS_KEY_RIGHT              262
-#define VS_KEY_LEFT               263
-#define VS_KEY_DOWN               264
-#define VS_KEY_UP                 265
+#define VS_KEY_RIGHT 262
+#define VS_KEY_LEFT 263
+#define VS_KEY_DOWN 264
+#define VS_KEY_UP 265
 
 namespace vision {
 using namespace ocarina;
@@ -48,6 +48,18 @@ void App::prepare() {
 }
 
 void App::on_key_event(int key, int action) noexcept {
+    switch (key) {
+        case 'F':
+            key_f_press = bool(action);
+            return;
+        case 'R':
+            key_r_press = bool(action);
+            return;
+        case 'G':
+
+        default:
+            break;
+    }
     if (action == 0) {
         return;
     }
@@ -102,9 +114,9 @@ void App::on_window_size_change(uint2 size) noexcept {
 void App::on_scroll_event(float2 scroll) noexcept {
     invalidation = true;
     auto camera = pipeline().scene().camera();
-    if (right_key_press) {
+    if (key_f_press) {
         camera->update_focal_distance(scroll.y * 0.1);
-    } else if (left_key_press) {
+    } else if (key_r_press) {
         camera->update_lens_radius(scroll.y * 0.01);
     } else {
         camera->update_fov_y(scroll.y);
@@ -128,14 +140,6 @@ void App::on_cursor_move(float2 pos) noexcept {
     last_cursor_pos = pos;
     if (right_key_press) {
         update_camera_view(delta.x, -delta.y);
-    } else if (left_key_press) {
-        auto camera = pipeline().scene().camera();
-        float3 forward = camera->forward();
-        float3 right = camera->right();
-        delta *= 0.05f;
-        delta.y *= -1;
-        float3 dir = forward * delta.y + right * delta.x;
-        camera->move(dir);
     } else {
         return;
     }
@@ -208,8 +212,8 @@ void App::register_event() noexcept {
         on_scroll_event(OC_FORWARD(args)...);
     });
     //todo check resize bug
-    window->set_window_size_callback([&]<typename... Args>(Args && ...args) {
-//        on_window_size_change(OC_FORWARD(args)...);
+    window->set_window_size_callback([&]<typename... Args>(Args &&...args) {
+        //        on_window_size_change(OC_FORWARD(args)...);
     });
 }
 
