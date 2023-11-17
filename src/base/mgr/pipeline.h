@@ -56,6 +56,7 @@ public:
     }
     [[nodiscard]] uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
+    void set_debug_pixel(int2 pixel) const noexcept { integrator()->set_debug_pixel(pixel); }
     virtual void clear_geometry() noexcept;
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;
