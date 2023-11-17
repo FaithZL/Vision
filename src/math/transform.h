@@ -7,7 +7,7 @@
 #include "core/basic_types.h"
 #include "dsl/common.h"
 #include "core/concepts.h"
-#include "box.h"
+#include "ocarina/src/math/box.h"
 
 namespace vision {
 using namespace ocarina;
