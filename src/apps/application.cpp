@@ -56,6 +56,10 @@ void App::on_key_event(int key, int action) noexcept {
             key_r_press = bool(action);
             return;
         case 'G':
+            key_g_press = bool(action);
+            if (key_g_press) {
+//                pipeline().
+            }
             return;
         default:
             break;

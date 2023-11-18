@@ -51,14 +51,7 @@ public:
     [[nodiscard]] virtual const Buffer<float4> &view_buffer();
     virtual void preprocess() noexcept {}
     virtual void change_resolution(uint2 res) noexcept;
-    virtual void invalidate() noexcept {
-        integrator()->invalidation();
-    }
-    [[nodiscard]] uint frame_index() const noexcept { return integrator()->frame_index(); }
-    [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
-    void set_debug_pixel(int2 pixel) const noexcept {
-
-    }
+    virtual void invalidate() noexcept {integrator()->invalidation();}
     virtual void clear_geometry() noexcept;
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;
@@ -73,6 +66,14 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     [[nodiscard]] uint pixel_num() const noexcept { return resolution().x * resolution().y; }
     /// virtual function end
+
+
+    [[nodiscard]] uint frame_index() const noexcept { return integrator()->frame_index(); }
+    [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
+    static void flip_debugger() noexcept { Debugger::instance().filp_enabled(); }
+    void set_debug_pixel(int2 pixel) const noexcept {
+
+    }
 
     template<typename T>
     requires is_buffer_or_view_v<T>
