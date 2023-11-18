@@ -62,6 +62,11 @@ void App::on_key_event(int key, int action) noexcept {
                 cout << ocarina::format("\n Debugger state is {}", Debugger::instance().is_enabled()) << endl;
             }
             return;
+        case 'Z':
+            if (action) {
+                pipeline().filp_show_fps();
+            }
+            return ;
         default:
             break;
     }
@@ -153,7 +158,15 @@ void App::on_cursor_move(float2 pos) noexcept {
 
 void App::on_mouse_event(int button, int action, float2 pos) noexcept {
     switch (button) {
-        case 0: left_key_press = bool(action); break;
+        case 0: {
+            left_key_press = bool(action);
+            switch (action) {
+                case 1: Debugger::instance().set_lower(make_uint2(pos)); break;
+                case 0: Debugger::instance().set_upper(make_uint2(pos)); break;
+                default:break;
+            }
+            break;
+        }
         case 1: right_key_press = bool(action); break;
         case 2: need_save = bool(action); break;
         default: break;

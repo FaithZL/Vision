@@ -25,6 +25,9 @@ public:
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
             Float3 L = Li(rs, scatter_pdf, nullptr) * ss.filter_weight;
+            Debugger::instance().execute([&] {
+                Printer::instance().info("{} {}  ---------------", dispatch_idx().xy());
+            });
             camera->radiance_film()->add_sample(pixel, L, frame_index);
         };
         _shader = device().compile(kernel, "path tracing integrator");

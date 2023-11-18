@@ -26,7 +26,7 @@ protected:
     Geometry _geometry{this};
     ResourceArray _resource_array{};
     mutable Stream _stream;
-
+    bool _show_fps{true};
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
 
@@ -51,7 +51,7 @@ public:
     [[nodiscard]] virtual const Buffer<float4> &view_buffer();
     virtual void preprocess() noexcept {}
     virtual void change_resolution(uint2 res) noexcept;
-    virtual void invalidate() noexcept {integrator()->invalidation();}
+    virtual void invalidate() noexcept { integrator()->invalidation(); }
     virtual void clear_geometry() noexcept;
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;
@@ -67,10 +67,10 @@ public:
     [[nodiscard]] uint pixel_num() const noexcept { return resolution().x * resolution().y; }
     /// virtual function end
 
-
     [[nodiscard]] uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     static void flip_debugger() noexcept { Debugger::instance().filp_enabled(); }
+    void filp_show_fps() noexcept { _show_fps = !_show_fps; }
     template<typename T>
     requires is_buffer_or_view_v<T>
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {

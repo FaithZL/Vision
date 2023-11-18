@@ -49,12 +49,11 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
+        stream << Debugger::instance().upload();
         stream << _direct.estimate(_frame_index++);
         stream << synchronize();
         stream << commit();
-        float2 vec = _motion_vectors.at(0);
-        //        if (vec.x > 0.01)
-        //            cout << vec.x << "  " << vec.y << endl;
+        Debugger::instance().reset_range();
     }
 };
 
