@@ -344,6 +344,9 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         $if(!hit->is_miss()) {
             L = shading(st_rsv, hit, swl, frame_index);
         };
+        Debugger::instance().execute([&] {
+            Printer::instance().info("{} {}  ---------------", dispatch_idx().xy());
+        });
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");

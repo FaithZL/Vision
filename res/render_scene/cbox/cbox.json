@@ -833,12 +833,12 @@
 		"type" : "alias_table"
 	},
 	"integrator" : {
-//		"type" : "rt",
-		"type" : "pt",
+		"type" : "rt",
+//		"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {
-					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.01,
 					"radius": 3,
@@ -861,7 +861,7 @@
 		}
 	},
 	"spectrum" : {
-		"type" : "hero",
+//		"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}
