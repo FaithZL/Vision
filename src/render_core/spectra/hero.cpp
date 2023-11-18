@@ -22,6 +22,20 @@ template<EPort p = EPort::D>
 }
 VS_MAKE_CALLABLE(visible_wavelength_PDF)
 
+//template<EPort p = EPort::D>
+//[[nodiscard]] oc_float<p> sample_visible_wavelength_impl(const oc_float<p> &u) noexcept {
+//    using namespace cie;
+//    return visible_wavelength_min + (visible_wavelength_max - visible_wavelength_min) * u;
+//}
+//VS_MAKE_CALLABLE(sample_visible_wavelength)
+
+//template<EPort p = EPort::D>
+//[[nodiscard]] oc_float<p> visible_wavelength_PDF_impl(const oc_float<p> &lambda) noexcept {
+//    using namespace cie;
+//    return 1 / (visible_wavelength_max - visible_wavelength_min);
+//}
+//VS_MAKE_CALLABLE(visible_wavelength_PDF)
+
 class RGBSigmoidPolynomial {
 private:
     array<Float, 3> _c;
