@@ -69,7 +69,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     comment("RIS start");
     DIReservoir ret;
     $if(hit) {
-        $for (i,M) {
+        $for(i, M) {
             SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
             DIRSVSample sample;
             sample.light_index = sampled_light.light_index;
@@ -163,12 +163,19 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
 }
 
 DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
+                                                        OCSurfaceData cur_surf,
                                                         const DIReservoir &r1,
                                                         SampledWavelengths &swl) const noexcept {
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    const Geometry &geom = pipeline()->geometry();
     DIReservoir ret;
     ret = r0;
     Float u = scene().sampler()->next_1d();
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
+    it.wo = normalize(c_pos - it.pos);
     ret->update(u, r1);
+    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
     ret->update_W();
     return ret;
 }
@@ -199,12 +206,11 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
         prev_rsv->truncation(_temporal.limit);
         OCSurfaceData another_surf = _prev_surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_reservoir(rsv, prev_rsv, swl);
+            rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
         };
     };
     return rsv;
 }
-
 
 void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
@@ -344,9 +350,10 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         $if(!hit->is_miss()) {
             L = shading(st_rsv, hit, swl, frame_index);
         };
-        Debugger::instance().execute([&] {
-            Printer::instance().info("{} {}  ---------------", dispatch_idx().xy());
-        });
+        //        Debugger::instance().execute([&] {
+        //            Printer::instance().info("W :{}, p_hat: {} ,M :  {}--  weight sum :{}-------------", st_rsv.W, st_rsv.sample.p_hat, st_rsv.M, st_rsv.weight_sum);
+        //            Printer::instance().info("L :{} {} {}  ---------", L);
+        //        });
         film->update_sample(pixel, L, frame_index);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");

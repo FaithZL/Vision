@@ -62,6 +62,7 @@ public:
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_reservoir(const DIReservoir &r0,
+                                                OCSurfaceData cur_surf,
                                                 const DIReservoir &r1,
                                                 SampledWavelengths &swl) const noexcept;
     [[nodiscard]] DIReservoir combine_reservoir_MIS(DIReservoir r0,
