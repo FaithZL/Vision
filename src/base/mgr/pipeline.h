@@ -71,10 +71,6 @@ public:
     [[nodiscard]] uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     static void flip_debugger() noexcept { Debugger::instance().filp_enabled(); }
-    void set_debug_pixel(int2 pixel) const noexcept {
-
-    }
-
     template<typename T>
     requires is_buffer_or_view_v<T>
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {

@@ -58,7 +58,8 @@ void App::on_key_event(int key, int action) noexcept {
         case 'G':
             key_g_press = bool(action);
             if (key_g_press) {
-//                pipeline().
+                Debugger::instance().filp_enabled();
+                cout << ocarina::format("\n Debugger state is {}", Debugger::instance().is_enabled()) << endl;
             }
             return;
         default:
@@ -157,16 +158,13 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
         case 2: need_save = bool(action); break;
         default: break;
     }
-    if (left_key_press) {
-        pipeline().set_debug_pixel(make_int2(pos));
-    }
 }
 
 void App::update(double dt) noexcept {
     pipeline().upload_data();
     if (invalidation) {
         auto camera = pipeline().scene().camera();
-//        OC_INFO(camera->to_string());
+        //        OC_INFO(camera->to_string());
         invalidation = false;
         pipeline().invalidate();
     }
