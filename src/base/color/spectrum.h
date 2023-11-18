@@ -20,8 +20,9 @@ private:
 
 public:
     explicit SampledWavelengths(uint dim) noexcept : _lambdas{dim}, _pdfs{dim} {}
-    [[nodiscard]] auto lambda(const Uint &i) const noexcept { return _lambdas[i]; }
-    [[nodiscard]] auto pdf(const Uint &i) const noexcept { return _pdfs[i]; }
+    [[nodiscard]] Float lambda(const Uint &i) const noexcept { return _lambdas[i]; }
+    [[nodiscard]] Float pdf(const Uint &i) const noexcept { return _pdfs[i]; }
+    [[nodiscard]] Float pdf_sum() const noexcept;
     void set_lambda(const Uint &i, const Float &lambda) noexcept { _lambdas[i] = lambda; }
     void set_pdf(const Uint &i, const Float &pdf) noexcept { _pdfs[i] = pdf; }
     [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(_lambdas.size()); }

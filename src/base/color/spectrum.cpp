@@ -6,6 +6,14 @@
 
 namespace vision {
 
+Float SampledWavelengths::pdf_sum() const noexcept {
+    Float sum = 0.f;
+    for (int i = 0; i < _pdfs.size(); ++i) {
+        sum += _pdfs[i];
+    }
+    return sum;
+}
+
 Bool SampledWavelengths::secondary_valid() const noexcept {
     if (dimension() == 1) {
         return false;
