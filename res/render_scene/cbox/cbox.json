@@ -256,9 +256,9 @@
 				"z" : 1,
 				                "material": "TallBox",
 				//                "material": "Mirror2",
-				//                "material": "Glass2",
+//				                "material": "Glass2",
 //								"material" : "Ag",
-//				"material" : "Glass",
+//				"material" : "disney",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -648,14 +648,14 @@
 				],
 				"ior" : 1.5,
 				"roughness" : 0.1,
-				"metallic" : 1,
+				"metallic" : 0,
 				"spec_tint" : 0.0,
 				"anisotropic" : 0,
 				"sheen" : 0,
 				"sheen_tint" : 0,
 				"clearcoat" : 0,
 				"clearcoat_alpha" : 0.1,
-				"spec_trans" : 1,
+				"spec_trans" : 0.95,
 				"flatness" : 0.98,
 				"scatter_distance" : [0, 0, 0],
 				"diff_trans" : 0.11
@@ -842,7 +842,7 @@
 //					"open": false,
 					"theta": 5,
 					"depth": 0.01,
-					"radius": 1,
+					"radius": 5,
 					"iterate_num": 3
 				},
 				"temporal": {
@@ -861,12 +861,7 @@
 			"rr_threshold" : 1
 		}
 	},
-	"spectrum" : {
-//		"type" : "hero",
-		"param" : {
-			"dimension" : 3
-		}
-	},
+
 	"light_sampler" : {
 		"type" : "uniform",
 		"param" : {
@@ -997,12 +992,18 @@
 			"backend": "GPU"
 		}
 	},
+	"spectrum" : {
+//		"type" : "hero",
+		"param" : {
+			"dimension" : 4
+		}
+	},
 	"pipeline": {
 //		"type": "customized"
 	},
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "hero5-CPU.png"
+		"fn" : "1f.png"
 	}
 }

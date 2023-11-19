@@ -107,7 +107,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
         p_sum += p_hat * rsv.M;
     });
 
-    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+//    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     p_sum += cur_rsv.sample.p_hat * temp_M;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
@@ -157,7 +157,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
         DIReservoir rsv = _reservoirs.read(idx);
         cur_rsv->update(sampler->next_1d(), rsv);
     });
-    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+//    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     cur_rsv->update_W();
     return cur_rsv;
 }
@@ -175,7 +175,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     ret->update(u, r1);
-    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
+//    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
     ret->update_W();
     return ret;
 }
