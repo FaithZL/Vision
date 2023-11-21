@@ -13491,8 +13491,8 @@
         "type": "alias_table"
     },
     "integrator" : {
-        "type" : "rt",
-//        		"type" : "pt",
+//        "type" : "rt",
+        		"type" : "pt",
         "param" : {
             "direct": {
                 "spatial": {
@@ -13513,9 +13513,9 @@
                 //				"mis": true,
                 "M": 20
             },
-            "min_depth" : 0,
-            "max_depth" : 16,
-            "rr_threshold" : 1
+            "min_depth": 5,
+            "max_depth": 16,
+            "rr_threshold": 1
         }
     },
 //    "integrator": {

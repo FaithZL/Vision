@@ -177,7 +177,6 @@ template<EPort p = EPort::D>
         case Beckmann: {
             oc_float<p> tan_theta_2, phi;
             oc_float<p> log_sample = log(1 - u[0]);
-            oc_assert(!ocarina::isinf(log_sample), "inf log sample");
             phi = atan(alpha_y / alpha_x *
                        tan(_2Pi * u[1] + PiOver2));
             phi = select(u[1] > .5f, phi + Pi, phi);
@@ -241,7 +240,6 @@ template<EPort p = EPort::D>
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh));
     oc_float<p> dwh_dwi = abs_dot(wi, wh) / denom;
     oc_float<p> ret = PDF_wh * dwh_dwi;
-//    oc_assert(!invalid(ret), "invalid pdf transmission {}", ret);
     return ret;
 }
 
@@ -251,7 +249,6 @@ template<EPort p = EPort::D>
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
     oc_float<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
-    //    oc_assert(!has_invalid(ret) && all(ret > 0.f), "invalid brdf ! {}  {}", cos_theta_o, cos_theta_i);
     return ret;
 }
 
@@ -279,7 +276,6 @@ template<EPort p = EPort::D>
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
     oc_float<p> factor = rcp(sqr(eta));
-    //    oc_assert(!has_invalid(ft) && all(ft > 0.f), "invalid btdf({},{},{}) ! ", ft.x, ft.y, ft.z);
     return ft * factor;
 }
 
