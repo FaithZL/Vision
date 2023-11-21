@@ -214,12 +214,13 @@ public:
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
-        Float ior = _ior.evaluate(it, swl).as_scalar();
+        Array<float> iors = _ior.evaluate(it, swl);
+
         Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
         alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), ior},
+        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors},
                                                       swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);

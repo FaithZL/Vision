@@ -17,7 +17,7 @@ Bool SampledWavelengths::secondary_valid() const noexcept {
     return ret;
 }
 
-void SampledWavelengths::invalidation_secondary() noexcept {
+void SampledWavelengths::invalidation_secondary() const noexcept {
     if (dimension() == 1) {
         return;
     }

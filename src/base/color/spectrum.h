@@ -16,7 +16,7 @@ static constexpr float3 rgb_spectrum_peak_wavelengths = make_float3(602.785f, 53
 class SampledWavelengths {
 private:
     Array<float> _lambdas;
-    Array<float> _pdfs;
+    mutable Array<float> _pdfs;
 
 public:
     explicit SampledWavelengths(uint dim) noexcept : _lambdas{dim}, _pdfs{dim} {}
@@ -39,7 +39,7 @@ public:
         return make_float4(_pdfs[0], _pdfs[1], _pdfs[2], _pdfs[3]);
     }
     [[nodiscard]] Bool secondary_valid() const noexcept;
-    void invalidation_secondary() noexcept;
+    void invalidation_secondary() const noexcept;
 };
 
 class SampledSpectrum {
