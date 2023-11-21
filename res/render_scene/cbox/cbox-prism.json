@@ -666,7 +666,7 @@
         }
     },
     "pipeline": {
-        "type" : "customized"
+//        "type" : "customized"
     },
     "spectrum" : {
         "type" : "hero",

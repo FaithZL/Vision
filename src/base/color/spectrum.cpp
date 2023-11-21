@@ -6,14 +6,6 @@
 
 namespace vision {
 
-Float SampledWavelengths::pdf_sum() const noexcept {
-    Float sum = 0.f;
-    for (int i = 0; i < _pdfs.size(); ++i) {
-        sum += _pdfs[i];
-    }
-    return sum;
-}
-
 Bool SampledWavelengths::secondary_valid() const noexcept {
     if (dimension() == 1) {
         return false;
@@ -33,8 +25,15 @@ void SampledWavelengths::invalidation_secondary() noexcept {
         for (uint i = 1; i < dimension(); ++i) {
             _pdfs[i] = 0.f;
         }
-        _pdfs[0] /= dimension();
     };
+}
+
+Uint SampledWavelengths::valid_dimension() const noexcept {
+    Uint ret = 0;
+    for (int i = 0; i < dimension(); ++i) {
+        ret += ocarina::select(pdf(i) > 0.f, 1, 0);
+    }
+    return ret;
 }
 
 SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {

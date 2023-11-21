@@ -278,7 +278,7 @@ public:
                                safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
                                safe_div(_cie_z.eval(swl.lambda(i)) * sp[i], swl.pdf(i)));
         }
-        float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
+        Float factor = 1.f / (swl.valid_dimension() * SPD::cie_y_integral());
         return sum * factor;
     }
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {

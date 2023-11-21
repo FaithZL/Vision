@@ -22,10 +22,10 @@ public:
     explicit SampledWavelengths(uint dim) noexcept : _lambdas{dim}, _pdfs{dim} {}
     [[nodiscard]] Float lambda(const Uint &i) const noexcept { return _lambdas[i]; }
     [[nodiscard]] Float pdf(const Uint &i) const noexcept { return _pdfs[i]; }
-    [[nodiscard]] Float pdf_sum() const noexcept;
     void set_lambda(const Uint &i, const Float &lambda) noexcept { _lambdas[i] = lambda; }
-    void set_pdf(const Uint &i, const Float &pdf) noexcept { _pdfs[i] = pdf; }
+    void set_pdf(const Uint &i, const Float &p) noexcept { _pdfs[i] = p; }
     [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(_lambdas.size()); }
+    [[nodiscard]] Uint valid_dimension() const noexcept;
     [[nodiscard]] Float3 lambda_vec3() const noexcept {
         return make_float3(_lambdas[0], _lambdas[1], _lambdas[2]);
     }
