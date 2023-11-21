@@ -29,10 +29,9 @@ void SampledWavelengths::invalidation_secondary() const noexcept {
 }
 
 Uint SampledWavelengths::valid_dimension() const noexcept {
-    Uint ret = 0;
-    for (int i = 0; i < dimension(); ++i) {
-        ret += ocarina::select(pdf(i) > 0.f, 1, 0);
-    }
+    Uint ret = _pdfs.reduce(0u, [&](Uint num, auto f) {
+        return num + ocarina::select(f > 0.f, 1, 0);
+    });
     return ret;
 }
 
