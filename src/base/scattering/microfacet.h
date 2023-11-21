@@ -171,7 +171,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
-//            CHECK_UNIT_VEC(wh)
+            //            CHECK_UNIT_VEC(wh)
             return wh;
         }
         case Beckmann: {
@@ -186,7 +186,7 @@ template<EPort p = EPort::D>
             oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
-//            CHECK_UNIT_VEC(wh)
+            //            CHECK_UNIT_VEC(wh)
             return wh;
         }
         default:
@@ -214,7 +214,7 @@ template<EPort p = EPort::D>
                                             const oc_float3<p> &wo,
                                             const oc_float3<p> &wh) {
     oc_float<p> ret = pdf_wh / (4 * abs_dot(wo, wh));
-//    oc_assert(!invalid(ret), "invalid pdf reflection {}", ret);
+    //    oc_assert(!invalid(ret), "invalid pdf reflection {}", ret);
     return ret;
 }
 
@@ -243,9 +243,17 @@ template<EPort p = EPort::D>
     return ret;
 }
 
+[[nodiscard]] inline Array<float> PDF_wi_transmission(const Float &PDF_wh, const Float3 &wo, const Float3 &wh,
+                                                      const Float3 &wi, const Array<float> &etas) {
+    Array<float> denom = sqr(dot(wi, wh) * etas + dot(wo, wh));
+    Array<float> dwh_dwi = abs_dot(wi, wh) / denom;
+    Array<float> ret = PDF_wh * dwh_dwi;
+    return ret;
+}
+
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> BRDF_div_fr(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
-                                       const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+                                      const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
     oc_float<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
@@ -267,12 +275,12 @@ template<EPort p = EPort::D>
  */
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
-                                       const oc_float<p> &eta, const oc_float<p> &alpha_x,
-                                       const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+                                      const oc_float<p> &eta, const oc_float<p> &alpha_x,
+                                      const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
     oc_float<p> numerator = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) *
-                             abs(dot(wi, wh) * dot(wo, wh));
+                            abs(dot(wi, wh) * dot(wo, wh));
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
     oc_float<p> factor = rcp(sqr(eta));
@@ -286,9 +294,9 @@ template<EPort p = EPort::D>
  * @return
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wi,const oc_float<p> &cos_theta_i,
-                                       const oc_float<p> &cos_theta_o, const oc_float<p> &eta,
-                                       const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+[[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wi, const oc_float<p> &cos_theta_i,
+                                      const oc_float<p> &cos_theta_o, const oc_float<p> &eta,
+                                      const oc_float<p> &alpha_x, const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float3<p> wh = normalize(wo + wi * eta);
     return BTDF_div_ft<p>(wo, wh, wi, cos_theta_i, cos_theta_o, eta, alpha_x, alpha_y, type);
 }
@@ -331,6 +339,16 @@ public:
 
     [[nodiscard]] virtual oc_float<p> PDF_wi_transmission(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float<p> eta) const noexcept {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
+    }
+
+    [[nodiscard]] virtual Array<float> PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
+                                                           const Float3 &wi, const Array<float> &etas) const noexcept {
+        return microfacet::PDF_wi_transmission(pdf_wh, wo, wh, wi, etas);
+    }
+
+    [[nodiscard]] virtual Array<float> PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
+                                                           const Float3 &wi, const Array<float> &etas) const noexcept {
+        return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, etas);
     }
 
     [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
