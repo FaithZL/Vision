@@ -665,6 +665,9 @@
             "rr_threshold": 1
         }
     },
+    "pipeline": {
+        "type" : "customized"
+    },
     "spectrum" : {
         "type" : "hero",
         "param" : {
