@@ -99,17 +99,13 @@ public:
     }
 
     [[nodiscard]] Float sum() const noexcept {
-        return values().reduce(0.f, [](auto r, auto x) noexcept { return r + x; });
+        return values().sum();
     }
     [[nodiscard]] Float max() const noexcept {
-        return values().reduce(0.f, [](auto r, auto x) noexcept {
-            return ocarina::max(r, x);
-        });
+        return values().max();
     }
     [[nodiscard]] Float min() const noexcept {
-        return values().reduce(std::numeric_limits<float>::max(), [](auto r, auto x) noexcept {
-            return ocarina::min(r, x);
-        });
+        return values().min();
     }
 
     [[nodiscard]] Float average() const noexcept {
@@ -117,11 +113,11 @@ public:
     }
     template<typename F>
     [[nodiscard]] Bool any(F &&f) const noexcept {
-        return values().reduce(false, [&f](auto ans, auto value) noexcept { return ans || f(value); });
+        return values().any(OC_FORWARD(f));
     }
     template<typename F>
     [[nodiscard]] Bool all(F &&f) const noexcept {
-        return values().reduce(true, [&f](auto ans, auto value) noexcept { return ans && f(value); });
+        return values().all(OC_FORWARD(f));
     }
     [[nodiscard]] Bool is_zero() const noexcept {
         return all([](auto x) noexcept { return x == 0.f; });
@@ -129,10 +125,10 @@ public:
     template<typename F>
     [[nodiscard]] Bool none(F &&f) const noexcept { return !any(std::forward<F>(f)); }
     [[nodiscard]] SampledSpectrum operator+() const noexcept {
-        return map([](Float s) noexcept { return s; });
+        return *this;
     }
     [[nodiscard]] SampledSpectrum operator-() const noexcept {
-        return map([](Float s) noexcept { return -s; });
+        return SampledSpectrum(-values());
     }
 
 #define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
