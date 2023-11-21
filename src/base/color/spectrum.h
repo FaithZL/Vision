@@ -23,9 +23,10 @@ public:
     [[nodiscard]] Float lambda(const Uint &i) const noexcept { return _lambdas[i]; }
     [[nodiscard]] Float pdf(const Uint &i) const noexcept { return _pdfs[i]; }
     void set_lambda(const Uint &i, const Float &lambda) noexcept { _lambdas[i] = lambda; }
-    void set_pdf(const Uint &i, const Float &p) noexcept { _pdfs[i] = p; }
+    void set_pdf(const Uint &i, const Float &p) const noexcept { _pdfs[i] = p; }
     [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(_lambdas.size()); }
     [[nodiscard]] Uint valid_dimension() const noexcept;
+    void invalidation_channel(Uint idx) const noexcept { set_pdf(idx, 0); }
     [[nodiscard]] Float3 lambda_vec3() const noexcept {
         return make_float3(_lambdas[0], _lambdas[1], _lambdas[2]);
     }
