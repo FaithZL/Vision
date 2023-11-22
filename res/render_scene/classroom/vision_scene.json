@@ -3829,6 +3829,7 @@
                         1280,
                         720
                     ],
+//                    "gamma": false,
                     "fb_state": 0
                 }
             },
@@ -3837,8 +3838,8 @@
                 "name": "boxFilter",
                 "param": {
                     "radius": [
-                        0,
-                        0
+                        0.5,
+                        0.5
                     ]
                 }
             }
@@ -3872,7 +3873,7 @@
 //                    "open": false,
                     "theta": 5,
                     "depth": 0.01,
-                    "radius": 1,
+                    "radius": 20,
                     "iterate_num": 5
                 },
                 "temporal": {
