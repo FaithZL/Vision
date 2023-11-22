@@ -41,7 +41,7 @@ public:
         ret.f = eval0.f * _scale + eval1.f * (1 - _scale);
         ret.pdf = eval0.pdf * _scale + eval1.pdf * (1 - _scale);
         // todo review this
-        ret.flags = select(any(eval0.pdf > 0.f), eval0.flags, eval1.flags);
+        ret.flags = select(eval0.pdf > 0.f, eval0.flags, eval1.flags);
         return ret;
     }
 

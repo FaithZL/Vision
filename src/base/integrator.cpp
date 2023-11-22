@@ -125,7 +125,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             };
             throughput /= q;
         };
-        scatter_pdf = bsdf_sample.eval.pdf[0];
+        scatter_pdf = bsdf_sample.eval.pdf;
         rs = it.spawn_ray_state(bsdf_sample.wi);
     };
     return spectrum().linear_srgb(value, swl);
