@@ -60,15 +60,15 @@ public:
             Float3 wh = _microfacet->sample_wh(wo, u);
             ret.wi = reflect(wo, wh);
             ret.eval.f = f_specular(wo, ret.wi);
-            ret.eval.pdf = PDF_specular(wo, ret.wi);
-            ret.eval.pdf = select(safe(wo, ret.wi), ret.eval.pdf, 0.f) * fr;
+            ret.eval.pdfs = PDF_specular(wo, ret.wi);
+            ret.eval.pdfs = select(safe(wo, ret.wi), ret.eval.pdfs[0], 0.f) * fr;
         }
         $else {
             u.x = remapping(u.x, fr, 1.f);
             ret.wi = square_to_cosine_hemisphere(u);
             ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
             ret.eval.f = f_diffuse(wo, ret.wi);
-            ret.eval.pdf = PDF_diffuse(wo, ret.wi) * (1 - fr);
+            ret.eval.pdfs = PDF_diffuse(wo, ret.wi) * (1 - fr);
         };
         return ret;
     }

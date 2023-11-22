@@ -16,7 +16,7 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_swl.dimension()};
         ret.f = {_swl.dimension(), 0.f};
-        ret.pdf = 1.f;
+        ret.pdfs = 1.f;
         return ret;
     }
 

@@ -57,14 +57,20 @@ struct ScatterEval {
 public:
     SampledSpectrum f{};
     Uint flags{BxDFFlag::Unset};
-    Float pdf{0.f};
+    SampledSpectrum pdfs{};
 
 public:
-    explicit ScatterEval(uint dim) : f(dim), pdf{0.f} {};
-    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdf(pdf), flags(flags) {}
-    [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdf; }
-    [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
-    void invalidation() noexcept { pdf = 0; }
+    explicit ScatterEval(uint dim) : f(dim), pdfs(dim) {};
+    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdfs(f.dimension()),flags(flags) {
+        pdfs = pdf;
+    }
+    [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdfs; }
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdfs.any([&](auto v) {
+            return v > 0.f;
+        });
+    }
+    void invalidation() noexcept { pdfs = 0; }
 };
 
 struct LightEval {

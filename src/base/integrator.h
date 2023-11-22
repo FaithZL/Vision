@@ -86,7 +86,7 @@ public:
         ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
         ss = sf.sample(it.wo, sampler);
         Bool is_delta_light = ls.eval.pdf < 0;
-        Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf));
+        Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdfs[0]));
         ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
         SampledSpectrum Ld = {swl.dimension(), 0.f};
         $if(!occluded && scatter_eval.valid() && ls.valid()) {
