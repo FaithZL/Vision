@@ -60,10 +60,13 @@ public:
     Array<float> pdfs{};
 
 public:
-    explicit ScatterEval(uint dim) : f(dim), pdfs(dim) {};
-    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdfs(f.dimension()),flags(flags) {
+    explicit ScatterEval(uint dim) : f(dim), pdfs(dim){};
+    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags)
+        : f(f), pdfs(f.dimension()), flags(flags) {
         pdfs = pdf;
     }
+    ScatterEval(const SampledSpectrum &f, const Array<float> &pdf, const Uint &flags)
+        : f(f), pdfs(pdf), flags(flags) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return SampledSpectrum(f.values() / pdfs); }
     [[nodiscard]] Bool valid() const noexcept {
         return pdfs.any([&](auto v) {
