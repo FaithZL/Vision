@@ -13,12 +13,14 @@ class RGBFilm : public Film {
 private:
     RegistrableManaged<float4> _radiance;
     RegistrableManaged<float4> _frame;
+    bool _gamma{true};
 
 public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
           _radiance(pipeline()->resource_array()),
-          _frame(pipeline()->resource_array()) {}
+          _frame(pipeline()->resource_array()),
+          _gamma(desc["gamma"].as_bool(true)) {}
 
     OC_SERIALIZABLE_FUNC(Film, _radiance, _frame)
 
@@ -38,14 +40,20 @@ public:
         Float4 accum_prev = _radiance.read(index);
         val = lerp(make_float4(a), accum_prev, val);
         _radiance.write(index, val);
-        val = linear_to_srgb(_tone_mapper->apply(val));
+        val = _tone_mapper->apply(val);
+        if (_gamma) {
+            val = linear_to_srgb(val);
+        }
         val.w = 1.f;
         _frame.write(index, val);
     }
     void update_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Uint index = pixel_index(pixel);
         _radiance.write(index, val);
-        val = linear_to_srgb(_tone_mapper->apply(val));
+        val = _tone_mapper->apply(val);
+        if (_gamma) {
+            val = linear_to_srgb(val);
+        }
         val.w = 1.f;
         _frame.write(index, val);
     }

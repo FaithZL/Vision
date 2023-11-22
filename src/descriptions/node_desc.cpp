@@ -277,7 +277,8 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
 void FilmDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
-    set_parameter(ps.value("param"));
+    ParameterSet param = ps.value("param", DataWrap::object());
+    set_parameter(param);
     tone_mapper.init(_parameter.value("tone_mapper", DataWrap::object()));
 }
 

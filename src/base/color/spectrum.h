@@ -80,6 +80,11 @@ public:
     [[nodiscard]] Float operator[](const Uint &i) const noexcept {
         return dimension() == 1u ? _values[0u] : _values[i];
     }
+    void operator=(const Float &value) noexcept {
+        for (int i = 0; i < dimension(); ++i) {
+            _values[i] = value;
+        }
+    }
     [[nodiscard]] Float3 vec3() const noexcept {
         return _values.as_vec3();
     }
