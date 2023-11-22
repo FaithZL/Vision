@@ -150,11 +150,11 @@ public:
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(uc < fr) {
             ret = _refl.sample(wo, sampler, fresnel);
-            ret.eval.pdfs *= fr;
+            ret.eval.pdf *= fr;
         }
         $else {
             ret = _trans.sample(wo, sampler, fresnel);
-            ret.eval.pdfs *= 1 - fr;
+            ret.eval.pdf *= 1 - fr;
         };
         return ret;
     }

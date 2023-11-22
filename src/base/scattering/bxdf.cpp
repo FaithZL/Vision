@@ -22,7 +22,7 @@ Array<float> BxDF::PDFs(ocarina::Float3 wo, ocarina::Float3 wi, SP<vision::Fresn
 }
 
 ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    return {f(wo, wi, fresnel), PDFs(wo, wi, fresnel), flags()};
+    return {f(wo, wi, fresnel), PDF(wo, wi, fresnel), flags()};
 }
 
 Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
@@ -33,7 +33,7 @@ ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const
     ScatterEval ret{swl().dimension()};
     Bool s = safe(wo, wi);
     ret.f = select(s, f(wo, wi, fresnel), 0.f);
-    ret.pdfs = select(s, PDF(wo, wi, fresnel), 0.f);
+    ret.pdf = select(s, PDF(wo, wi, fresnel), 0.f);
     ret.flags = flags();
     return ret;
 }
@@ -49,7 +49,7 @@ BSDFSample BxDF::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const 
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
     ret.eval = evaluate(wo, wi, fresnel);
-    ret.eval.pdfs *= pdf;
+    ret.eval.pdf *= pdf;
     return ret;
 }
 
@@ -123,7 +123,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, Sampler *sampler, SP<Fresne
     BSDFSample ret{swl().dimension()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel);
-    ret.eval.pdfs = select(valid, ret.eval.pdfs, 0.f);
+    ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
     ret.eta = fresnel->eta()[0];
     return ret;

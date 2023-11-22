@@ -465,7 +465,7 @@ public:
             }
         };
         ret.f = f;
-        ret.pdfs = pdf;
+        ret.pdf = pdf;
         return ret;
     }
 
@@ -521,7 +521,7 @@ public:
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
         ret.wi = sampled_direction.wi;
-        ret.eval.pdfs = select(sampled_direction.valid(), ret.eval.pdfs * sampled_direction.pdf, 0.f);
+        ret.eval.pdf = select(sampled_direction.valid(), ret.eval.pdf * sampled_direction.pdf, 0.f);
         return ret;
     }
 };

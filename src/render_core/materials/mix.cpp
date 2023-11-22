@@ -39,9 +39,9 @@ public:
         ScatterEval eval1 = _b1->evaluate_local(wo, wi, flag);
         ScatterEval ret{eval0.f.dimension()};
         ret.f = eval0.f * _scale + eval1.f * (1 - _scale);
-        ret.pdfs = eval0.pdfs * _scale + eval1.pdfs * (1 - _scale);
+        ret.pdf = eval0.pdf * _scale + eval1.pdf * (1 - _scale);
         // todo review this
-        ret.flags = select(any(eval0.pdfs > 0.f), eval0.flags, eval1.flags);
+        ret.flags = select(any(eval0.pdf > 0.f), eval0.flags, eval1.flags);
         return ret;
     }
 
@@ -62,7 +62,7 @@ public:
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, flag);
         ret.wi = sd.wi;
-        ret.eval.pdfs = select(sd.valid(), ret.eval.pdfs * sd.pdf, 0.f);
+        ret.eval.pdf = select(sd.valid(), ret.eval.pdf * sd.pdf, 0.f);
         return ret;
     }
 };
