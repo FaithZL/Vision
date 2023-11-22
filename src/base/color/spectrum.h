@@ -80,10 +80,11 @@ public:
     [[nodiscard]] Float operator[](const Uint &i) const noexcept {
         return dimension() == 1u ? _values[0u] : _values[i];
     }
-    void operator=(const Float &value) noexcept {
+    SampledSpectrum &operator=(const Float &value) noexcept {
         for (int i = 0; i < dimension(); ++i) {
             _values[i] = value;
         }
+        return *this;
     }
     [[nodiscard]] Float3 vec3() const noexcept {
         return _values.as_vec3();
@@ -137,33 +138,36 @@ public:
         return SampledSpectrum(-values());
     }
 
-#define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                         \
-    [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                              \
-        return map([rhs](const auto &lvalue) { return lvalue op rhs; });                                      \
-    }                                                                                                         \
-    [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                    \
-        OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                \
-        SampledSpectrum s(values() op rhs.values());                                                          \
-        return s;                                                                                             \
-    }                                                                                                         \
-    [[nodiscard]] friend SampledSpectrum operator op(const Float &lhs, const SampledSpectrum &rhs) noexcept { \
-        return SampledSpectrum(lhs op rhs.values());                                                          \
-    }                                                                                                         \
-    SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                              \
-        for (int i = 0; i < dimension(); ++i) {                                                               \
-            (*this)[i] op## = rhs;                                                                            \
-        }                                                                                                     \
-        return *this;                                                                                         \
-    }                                                                                                         \
-    SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                    \
-        OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                \
-        if (rhs.dimension() == 1u) {                                                                          \
-            return *this op## = rhs[0u];                                                                      \
-        }                                                                                                     \
-        for (uint i = 0; i < dimension(); ++i) {                                                              \
-            (*this)[i] op## = rhs[i];                                                                         \
-        }                                                                                                     \
-        return *this;                                                                                         \
+#define VS_MAKE_SPECTRUM_OPERATOR(op)                                                                                \
+    [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                                     \
+        return SampledSpectrum(values() op rhs);                                                                     \
+    }                                                                                                                \
+    [[nodiscard]] SampledSpectrum operator op(const Array<float> &rhs) const noexcept {                              \
+        return SampledSpectrum(values() op rhs);                                                                     \
+    }                                                                                                                \
+    [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                           \
+        OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                       \
+        SampledSpectrum s(values() op rhs.values());                                                                 \
+        return s;                                                                                                    \
+    }                                                                                                                \
+    [[nodiscard]] friend SampledSpectrum operator op(const Float &lhs, const SampledSpectrum &rhs) noexcept {        \
+        return SampledSpectrum(lhs op rhs.values());                                                                 \
+    }                                                                                                                \
+    [[nodiscard]] friend SampledSpectrum operator op(const Array<float> &lhs, const SampledSpectrum &rhs) noexcept { \
+        return SampledSpectrum(lhs op rhs.values());                                                                 \
+    }                                                                                                                \
+    SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                                     \
+        _values op## = rhs;                                                                                          \
+        return *this;                                                                                                \
+    }                                                                                                                \
+    SampledSpectrum &operator op##=(const Array<float> &rhs) noexcept {                                              \
+        _values op## = rhs;                                                                                          \
+        return *this;                                                                                                \
+    }                                                                                                                \
+    SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                           \
+        OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                       \
+        _values op## = rhs.values();                                                                                 \
+        return *this;                                                                                                \
     }
 
     VS_MAKE_SPECTRUM_OPERATOR(+)

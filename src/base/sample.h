@@ -57,14 +57,14 @@ struct ScatterEval {
 public:
     SampledSpectrum f{};
     Uint flags{BxDFFlag::Unset};
-    SampledSpectrum pdfs{};
+    Array<float> pdfs{};
 
 public:
     explicit ScatterEval(uint dim) : f(dim), pdfs(dim) {};
     ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags) : f(f), pdfs(f.dimension()),flags(flags) {
         pdfs = pdf;
     }
-    [[nodiscard]] SampledSpectrum value() const noexcept { return f / pdfs; }
+    [[nodiscard]] SampledSpectrum value() const noexcept { return SampledSpectrum(f.values() / pdfs); }
     [[nodiscard]] Bool valid() const noexcept {
         return pdfs.any([&](auto v) {
             return v > 0.f;
