@@ -61,7 +61,7 @@ public:
             ret.wi = reflect(wo, wh);
             ret.eval.f = f_specular(wo, ret.wi);
             ret.eval.pdfs = PDF_specular(wo, ret.wi);
-            ret.eval.pdfs = select(safe(wo, ret.wi), ret.eval.pdfs, Var(0.f)) * fr;
+            ret.eval.pdfs = select(safe(wo, ret.wi), ret.eval.pdfs, 0.f) * fr;
         }
         $else {
             u.x = remapping(u.x, fr, 1.f);

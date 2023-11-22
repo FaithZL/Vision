@@ -521,7 +521,7 @@ public:
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
         ret.wi = sampled_direction.wi;
-        ret.eval.pdfs = select(sampled_direction.valid(), ret.eval.pdfs[0] * sampled_direction.pdf, 0.f);
+        ret.eval.pdfs = select(sampled_direction.valid(), ret.eval.pdfs * sampled_direction.pdf, 0.f);
         return ret;
     }
 };
@@ -583,9 +583,9 @@ public:
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return BSDF(it, make_unique<PrincipledBxDFSet>(it, swl, pipeline(), _color, _metallic,
-                                                            _eta, _roughness, _spec_tint, _anisotropic,
-                                                            _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
-                                                            _spec_trans, _flatness, _diff_trans));
+                                                       _eta, _roughness, _spec_tint, _anisotropic,
+                                                       _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
+                                                       _spec_trans, _flatness, _diff_trans));
     }
 };
 
