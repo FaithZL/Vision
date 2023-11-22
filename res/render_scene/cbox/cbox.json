@@ -834,8 +834,8 @@
 		"type" : "alias_table"
 	},
 	"integrator" : {
-		"type" : "rt",
-//		"type" : "pt",
+//		"type" : "rt",
+		"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {
