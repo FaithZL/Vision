@@ -102,6 +102,17 @@ Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) con
     return select(same_hemisphere(wo, wi, wh), 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
 }
 
+Array<float> MicrofacetTransmission::PDFs(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+    SampledSpectrum etas = fresnel->eta();
+    Array<float> ret{etas.dimension()};
+    ret = etas.values().map([&](Uint index, auto eta) {
+        Float3 wh = normalize(wo + wi * eta);
+        wh = face_forward(wh, make_float3(0, 0, 1));
+        return select(same_hemisphere(wo, wi, wh), 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
+    });
+    return ret;
+}
+
 SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = _microfacet->sample_wh(wo, u);
     auto [valid, wi] = refract(wo, wh, fresnel->eta()[0]);

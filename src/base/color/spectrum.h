@@ -81,9 +81,11 @@ public:
         return dimension() == 1u ? _values[0u] : _values[i];
     }
     SampledSpectrum &operator=(const Float &value) noexcept {
-        for (int i = 0; i < dimension(); ++i) {
-            _values[i] = value;
-        }
+        _values = value;
+        return *this;
+    }
+    SampledSpectrum &operator=(const Array<float> &value) noexcept {
+        _values = value;
         return *this;
     }
     [[nodiscard]] Float3 vec3() const noexcept {
