@@ -86,6 +86,8 @@ void Baker::_compile_bake() noexcept {
         Float scatter_pdf;
         RayState rs = generate_ray(position, norm, &scatter_pdf);
         Interaction it;
+        Array<float> scattering_pdf{pipeline()->spectrum().dimension()};
+        scattering_pdf = scatter_pdf;
         Float3 L = integrator->Li(rs, scatter_pdf, &it) * weight;
         Float4 result = make_float4(L, 1.f);
         result.w = select(dot(rs.direction(), it.ng) > 0, 0.f, 1.f);
