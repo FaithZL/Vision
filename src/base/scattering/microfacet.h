@@ -365,6 +365,11 @@ public:
         return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, _alpha_x, _alpha_y, _type) * Ft;
     }
 
+    [[nodiscard]] virtual oc_float<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
+                                           const oc_float<p> &Ft, oc_float<p> eta) const noexcept {
+        return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, _alpha_x, _alpha_y, _type) * Ft;
+    }
+
     [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
         return this->BTDF(wo, wh, wi, Ft, eta);
@@ -392,6 +397,9 @@ public:
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh,
+                             Float3 wi, const Float &Ft,
+                             Float eta) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
 
@@ -416,6 +424,9 @@ public:
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh,
+                             Float3 wi, const Float &Ft,
+                             Float eta) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
 

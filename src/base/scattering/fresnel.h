@@ -19,6 +19,10 @@ protected:
 public:
     explicit Fresnel(const SampledWavelengths &swl, const Pipeline *rp) : _swl(swl), _rp(rp) {}
     [[nodiscard]] virtual SampledSpectrum evaluate(Float cos_theta) const noexcept = 0;
+    [[nodiscard]] virtual Float evaluate(Float cos_theta, Uint channel) const noexcept {
+        OC_ERROR("Fresnel evaluate by channel invalid !");
+        return 0.f;
+    }
     [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
         return {_swl.dimension(), 1.f};
@@ -39,6 +43,9 @@ public:
           _eta(ior) {}
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
+    }
+    [[nodiscard]] Float evaluate(ocarina::Float cos_theta, ocarina::Uint channel) const noexcept override {
+        return fresnel_dielectric<D>(cos_theta, _eta[channel]);
     }
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         SampledSpectrum fr = _eta.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
