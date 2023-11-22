@@ -159,6 +159,10 @@ template<EPort p = EPort::D>
 }
 VS_MAKE_CALLABLE(mis_weight)
 
+[[nodiscard]] Array<float> mis_weight(const Array<float> &f_PDF, const Array<float> &g_PDF) {
+    return f_PDF / (f_PDF + g_PDF);
+}
+
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> robust_mis_weight_impl(const oc_float<p> &f_PDF,
                                                  const oc_float<p> &g_PDF) {
