@@ -1180,7 +1180,7 @@
 		}
 	},
 	"pipeline" : {
-//		"type" : "bake",
+		"type" : "bake",
 		"param": {
 			"rasterizer" : {
 				"type": "cpu"

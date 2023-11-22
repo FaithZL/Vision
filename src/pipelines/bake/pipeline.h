@@ -40,6 +40,8 @@ public:
     void prepare() noexcept override;
     void display(double dt) noexcept override;
     void render(double dt) noexcept override;
+    // todo
+    [[nodiscard]] uint frame_index() const noexcept override { return 1; }
 
     void bake_all() noexcept;
     void preprocess() noexcept override;

@@ -16,6 +16,7 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
     init_postprocessor(scene_desc.denoiser_desc);
+    _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
 }
 
 void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
