@@ -214,7 +214,6 @@ template<EPort p = EPort::D>
                                             const oc_float3<p> &wo,
                                             const oc_float3<p> &wh) {
     oc_float<p> ret = pdf_wh / (4 * abs_dot(wo, wh));
-    //    oc_assert(!invalid(ret), "invalid pdf reflection {}", ret);
     return ret;
 }
 
