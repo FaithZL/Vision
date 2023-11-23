@@ -14,7 +14,7 @@ Pipeline::Pipeline(Device *device)
       _geometry(this),
       _stream(device->create_stream()),
       _resource_array(device->create_resource_array()) {
-    Printer::instance().init(*device);
+    Env::printer().init(*device);
 }
 
 Pipeline::Pipeline(const vision::PipelineDesc &desc)
@@ -23,8 +23,8 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
       _geometry(this),
       _stream(device().create_stream()),
       _resource_array(device().create_resource_array()) {
-    Printer::instance().init(device());
-    Debugger::instance().init(device());
+    Env::printer().init(device());
+    Env::debugger().init(device());
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
@@ -86,7 +86,7 @@ void Pipeline::display(double dt) noexcept {
     if (_show_fps) {
         printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, render_time() / frame_index(), frame_index());
     }
-    Printer::instance().retrieve_immediately();
+    Env::printer().retrieve_immediately();
 }
 
 float4 *Pipeline::final_picture(bool denoise) noexcept {

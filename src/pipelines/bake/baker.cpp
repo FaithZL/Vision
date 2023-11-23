@@ -131,7 +131,7 @@ void Baker::_baking() noexcept {
             stream() << synchronize();
             stream() << commit();
         }
-        stream() << Printer::instance().retrieve() << synchronize();
+        stream() << Env::printer().retrieve() << synchronize();
         stream() << commit();
     }
 

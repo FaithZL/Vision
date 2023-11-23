@@ -58,8 +58,8 @@ void App::on_key_event(int key, int action) noexcept {
         case 'G':
             key_g_press = bool(action);
             if (key_g_press) {
-                Debugger::instance().filp_enabled();
-                cout << ocarina::format("\n Debugger state is {}", Debugger::instance().is_enabled()) << endl;
+                Env::debugger().filp_enabled();
+                cout << ocarina::format("\n Debugger state is {}", Env::debugger().is_enabled()) << endl;
             }
             return;
         case 'Z':
@@ -161,8 +161,8 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
         case 0: {
             left_key_press = bool(action);
             switch (action) {
-                case 1: Debugger::instance().set_lower(make_uint2(pos)); break;
-                case 0: Debugger::instance().set_upper(make_uint2(pos)); break;
+                case 1: Env::debugger().set_lower(make_uint2(pos)); break;
+                case 0: Env::debugger().set_upper(make_uint2(pos)); break;
                 default:break;
             }
             break;

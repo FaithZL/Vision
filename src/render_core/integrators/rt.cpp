@@ -49,11 +49,11 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << Debugger::instance().upload();
+        stream << Env::debugger().upload();
         stream << _direct.estimate(_frame_index++);
         stream << synchronize();
         stream << commit();
-        Debugger::instance().reset_range();
+        Env::debugger().reset_range();
     }
 };
 

@@ -71,7 +71,7 @@ void VisionRendererImpl::compile() {
         L = (it.ng + 1.f) / 2.f;
 
         $if(all(0u == pixel)) {
-            Printer::instance().info_with_location("inst {}, prim {}, pos {} {} {}", hit.inst_id, hit.prim_id, it.pos);
+            Env::printer().info_with_location("inst {}, prim {}, pos {} {} {}", hit.inst_id, hit.prim_id, it.pos);
         };
 
         buffer.write(dispatch_id(), make_float4(L, 1.f));
@@ -95,7 +95,7 @@ void VisionRendererImpl::render() {
     _pipeline->upload_data();
     stream << _shader(_frame_index).dispatch(res) << synchronize();
     stream << commit();
-    Printer::instance().retrieve_immediately([&](int ,const char *str) {
+    Env::printer().retrieve_immediately([&](int ,const char *str) {
         int i = 0;
     });
     ++_frame_index;

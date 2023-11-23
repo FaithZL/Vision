@@ -160,7 +160,7 @@ void BakePipeline::render(double dt) noexcept {
     stream() << synchronize();
     stream() << commit();
     double ms = clk.elapse_ms();
-    Printer::instance().retrieve_immediately();
+    Env::printer().retrieve_immediately();
     integrator()->accumulate_render_time(ms);
     printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, render_time() / frame_index(), frame_index());
 }

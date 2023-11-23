@@ -69,7 +69,7 @@ public:
 
     [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
-    static void flip_debugger() noexcept { Debugger::instance().filp_enabled(); }
+    static void flip_debugger() noexcept { Env::debugger().filp_enabled(); }
     void filp_show_fps() noexcept { _show_fps = !_show_fps; }
     template<typename T>
     requires is_buffer_or_view_v<T>
@@ -117,7 +117,7 @@ public:
         $if(i >= _resource_array.texture_num()) {
             string tb = traceback_string();
             string fmt = "out of texture num: texture index is {}, texture size is {}, traceback is " + tb;
-            Printer::instance().warn(fmt, i, _resource_array.texture_num());
+            Env::printer().warn(fmt, i, _resource_array.texture_num());
             i = 0;
         };
 #endif
