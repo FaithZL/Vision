@@ -8,6 +8,14 @@ set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
 set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT ON CACHE BOOL "" FORCE)
+
+if (MSVC)
+    add_compile_options(
+            /wd4819
+    )
+
+endif ()
+
 add_subdirectory(assimp)
 set_target_properties(assimp PROPERTIES UNITY_BUILD OFF)
 if (UNIX AND NOT APPLE)
@@ -27,22 +35,22 @@ add_subdirectory(oidn)
 set_target_properties(OpenImageDenoise
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_BINARY_DIR}/bin/
-        )
+)
 
 set_target_properties(OpenImageDenoise_core
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_BINARY_DIR}/bin/
-        )
+)
 
 set_target_properties(OpenImageDenoise_device_cpu
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_BINARY_DIR}/bin/
-        )
+)
 
 set_target_properties(OpenImageDenoise_device_cuda
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_BINARY_DIR}/bin/
-        )
+)
 
 add_library(vision-ext-oidn INTERFACE)
 target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
