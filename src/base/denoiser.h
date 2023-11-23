@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "node.h"
 
 namespace vision {

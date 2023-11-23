@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/basic_types.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "core/concepts.h"
 #include "ocarina/src/math/box.h"
 

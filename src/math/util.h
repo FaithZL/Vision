@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/basic_types.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "core/vs_header.h"
 
 namespace vision {

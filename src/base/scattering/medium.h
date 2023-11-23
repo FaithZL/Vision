@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "math/optics.h"
 #include "base/node.h"
 #include "interaction.h"

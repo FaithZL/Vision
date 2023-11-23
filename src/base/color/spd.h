@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "rhi/common.h"
 #include "base/mgr/pipeline.h"
 #include "cie.h"

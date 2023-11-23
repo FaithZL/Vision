@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "base/node.h"
 #include "core/stl.h"
 #include "light.h"

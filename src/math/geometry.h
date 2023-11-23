@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/basic_types.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 
 namespace vision {
 using namespace ocarina;

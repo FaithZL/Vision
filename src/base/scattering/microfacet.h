@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/basic_types.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "math/base.h"
 #include "math/geometry.h"
 #include "math/optics.h"

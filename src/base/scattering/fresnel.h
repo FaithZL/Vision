@@ -5,7 +5,7 @@
 #pragma once
 
 #include "math/optics.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "core/stl.h"
 
 namespace vision {

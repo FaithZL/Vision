@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/stl.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "descriptions/parameter_set.h"
 #include "math/base.h"
 

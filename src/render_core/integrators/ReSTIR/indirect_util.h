@@ -6,7 +6,7 @@
 
 #include "core/basic_types.h"
 #include "core/stl.h"
-#include "dsl/common.h"
+#include "dsl/dsl.h"
 #include "base/sampler.h"
 
 namespace vision::ReSTIRIndirect {
