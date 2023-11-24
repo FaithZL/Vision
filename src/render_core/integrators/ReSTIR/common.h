@@ -37,7 +37,6 @@ struct TemporalResamplingParam {
 public:
     uint limit{};
     float sampling_radius{};
-    float2 motion_vec_threshold{};
     float dot_threshold{};
     float depth_threshold{};
     bool open{};
@@ -47,7 +46,6 @@ public:
     TemporalResamplingParam(const ParameterSet &ps, uint M, uint n, uint2 res)
         : limit(ps["history_limit"].as_uint(5) * M * n),
           sampling_radius(ps["radius"].as_float(2.f)),
-          motion_vec_threshold(ps["motion_vec"].as_float2(make_float2(0.15f)) * make_float2(res)),
           dot_threshold(cosf(radians(ps["theta"].as_float(2)))),
           depth_threshold(ps["depth"].as_float(1)),
           open{ps["open"].as_bool(true)} {}

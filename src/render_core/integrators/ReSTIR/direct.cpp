@@ -198,7 +198,9 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     if (!_temporal.open) {
         return rsv;
     }
+    Sampler *sampler = scene().sampler();
     Float2 prev_p_film = ss.p_film - motion_vec;
+    prev_p_film += square_to_disk(sampler->next_2d()) * _temporal.sampling_radius;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
