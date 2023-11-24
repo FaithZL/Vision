@@ -22,7 +22,8 @@ private:
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(desc["direct"], _motion_vectors, _surfaces, _prev_surfaces) {}
+          _direct(desc["direct"], _motion_vectors, _surfaces, _prev_surfaces),
+          _indirect(desc["indirect"], _motion_vectors, _surfaces, _prev_surfaces) {}
 
     void invalidation() const noexcept override {}
 
