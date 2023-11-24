@@ -38,7 +38,6 @@ public:
     OutputDesc output_desc;
 
 public:
-    explicit Pipeline(Device *device);
     explicit Pipeline(const PipelineDesc &desc);
     [[nodiscard]] const Device &device() const noexcept { return *_device; }
     [[nodiscard]] Device &device() noexcept { return *_device; }

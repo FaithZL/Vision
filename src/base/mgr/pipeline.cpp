@@ -9,15 +9,6 @@
 
 namespace vision {
 
-Pipeline::Pipeline(Device *device)
-    : _device(device),
-      _geometry(this),
-      _stream(device->create_stream()),
-      _resource_array(device->create_resource_array()) {
-    Env::printer().init(this->device());
-    Env::debugger().init(this->device());
-}
-
 Pipeline::Pipeline(const vision::PipelineDesc &desc)
     : Node(desc),
       _device(&Global::instance().device()),
