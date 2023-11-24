@@ -111,16 +111,7 @@ public:
     template<typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] ResourceArrayTexture tex(Index &&index) const noexcept {
-        Uint i = OC_FORWARD(index);
-#ifndef NDEBUG
-        $if(i >= _resource_array.texture_num()) {
-            string tb = traceback_string();
-            string fmt = "out of texture num: texture index is {}, texture size is {}, traceback is " + tb;
-            Env::printer().warn(fmt, i, _resource_array.texture_num());
-            i = 0;
-        };
-#endif
-        return _resource_array.tex(i);
+        return _resource_array.tex(OC_FORWARD(index));
     }
 
     template<typename T, typename Index>

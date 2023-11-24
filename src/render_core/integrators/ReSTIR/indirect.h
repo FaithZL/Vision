@@ -15,6 +15,13 @@ class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
+
+public:
+    ReSTIRIndirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
+                               RegistrableManaged<SurfaceData> &surfaces,
+                               RegistrableManaged<SurfaceData> &prev_surfaces);
+
+    void prepare() noexcept;
 };
 
-}
+}// namespace vision
