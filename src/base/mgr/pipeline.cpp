@@ -14,7 +14,8 @@ Pipeline::Pipeline(Device *device)
       _geometry(this),
       _stream(device->create_stream()),
       _resource_array(device->create_resource_array()) {
-    Env::printer().init(*device);
+    Env::printer().init(this->device());
+    Env::debugger().init(this->device());
 }
 
 Pipeline::Pipeline(const vision::PipelineDesc &desc)
@@ -25,6 +26,7 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
       _resource_array(device().create_resource_array()) {
     Env::printer().init(device());
     Env::debugger().init(device());
+    Env::set_code_obfuscation(false);
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
