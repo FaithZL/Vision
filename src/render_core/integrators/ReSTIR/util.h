@@ -54,7 +54,7 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_uint<p> M{};
+    oc_float<p> M{};
     oc_float<p> pdf_sum{};
     oc_float<p> W{};
     RSVSample sample{};
@@ -82,7 +82,7 @@ public:
     }
     void truncation(oc_uint<p> limit) noexcept {
         oc_float<p> factor = cast<float>(limit) / M;
-        M = ocarina::select(factor < 1.f, limit, M);
+        M = ocarina::select(factor < 1.f, cast<float>(limit), M);
         weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
         pdf_sum = ocarina::select(factor < 1.f, pdf_sum * factor, pdf_sum);
     }
@@ -130,7 +130,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, pdf_sum, W, sample) {
     }
     void truncation(oc_uint<p> limit) noexcept {
         oc_float<p> factor = cast<float>(limit) / M;
-        M = ocarina::select(factor < 1.f, limit, M);
+        M = ocarina::select(factor < 1.f, cast<float>(limit), M);
         weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
         pdf_sum = ocarina::select(factor < 1.f, pdf_sum * factor, pdf_sum);
     }
