@@ -18,6 +18,51 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _surfaces(surfaces),
       _prev_surfaces(prev_surfaces) {}
 
+void ReSTIRDirectIllumination::compile_gen_candidates() noexcept {
+    Pipeline *rp = pipeline();
+    const Geometry &geometry = rp->geometry();
+    Camera *camera = scene().camera().get();
+    Sampler *sampler = scene().sampler();
+    Spectrum &spectrum = rp->spectrum();
+    Kernel kernel = [&](Uint frame_index) {
+        Uint2 pixel = dispatch_idx().xy();
+        sampler->start_pixel_sample(pixel, frame_index, 0);
+        SampledWavelengths swl = spectrum.sample_wavelength(sampler);
+        camera->load_data();
+        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+        RayState rs = camera->generate_ray(ss);
+        Var hit = geometry.trace_closest(rs.ray);
+
+        OCSurfaceData cur_surf;
+        cur_surf.hit = hit;
+        cur_surf->set_t_max(0.f);
+        Interaction it;
+        $if(hit->is_hit()) {
+            it = geometry.compute_surface_interaction(hit, rs.ray, true);
+            cur_surf.mat_id = it.material_id();
+            cur_surf->set_t_max(rs.t_max());
+            cur_surf->set_normal(it.ng);
+        };
+        DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
+    };
+}
+
+void ReSTIRDirectIllumination::compile_test_visibility() noexcept {
+
+}
+
+void ReSTIRDirectIllumination::compile_temporal_reuse() noexcept {
+
+}
+
+void ReSTIRDirectIllumination::compile_spatial_reuse() noexcept {
+
+}
+
+void ReSTIRDirectIllumination::compile_shading() noexcept {
+
+}
+
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
                                            const OCSurfaceData &another_surface) const noexcept {
     return vision::is_neighbor(cur_surface, another_surface,

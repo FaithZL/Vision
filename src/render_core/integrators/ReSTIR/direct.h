@@ -39,6 +39,12 @@ private:
      */
     Shader<void(uint)> _shader1;
 
+    Shader<void(uint)> _gen_candidates;
+    Shader<void(uint)> _test_visibility;
+    Shader<void(uint)> _temporal_reuse;
+    Shader<void(uint)> _spatial_reuse;
+    Shader<void(uint)> _shading;
+
 public:
     ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
                              RegistrableManaged<SurfaceData> &surfaces,
@@ -49,6 +55,13 @@ public:
         compile_shader0();
         compile_shader1();
     }
+
+    void compile_gen_candidates() noexcept;
+    void compile_test_visibility() noexcept;
+    void compile_temporal_reuse() noexcept;
+    void compile_spatial_reuse() noexcept;
+    void compile_shading() noexcept;
+
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
