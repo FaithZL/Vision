@@ -27,9 +27,9 @@ void ReSTIRDirectIllumination::compile_gen_candidates() noexcept {
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
         sampler->start_pixel_sample(pixel, frame_index, 0);
-        SampledWavelengths swl = spectrum.sample_wavelength(sampler);
-        camera->load_data();
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+        camera->load_data();
+        SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
 
@@ -43,24 +43,42 @@ void ReSTIRDirectIllumination::compile_gen_candidates() noexcept {
             cur_surf->set_t_max(rs.t_max());
             cur_surf->set_normal(it.ng);
         };
+        Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
         DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
+        _motion_vectors.write(dispatch_id(), motion_vec);
+        _reservoirs.write(dispatch_id(), rsv);
+        _surfaces.write(dispatch_id(), cur_surf);
     };
+    _gen_candidates = device().compile(kernel, "gen_candidates");
 }
 
 void ReSTIRDirectIllumination::compile_test_visibility() noexcept {
-
+    Pipeline *rp = pipeline();
+    const Geometry &geometry = rp->geometry();
+    Camera *camera = scene().camera().get();
+    Sampler *sampler = scene().sampler();
+    Spectrum &spectrum = rp->spectrum();
+    Kernel kernel = [&](Uint frame_index) {
+        Uint2 pixel = dispatch_idx().xy();
+        OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
+        sampler->start_pixel_sample(pixel, frame_index, 0);
+        DIReservoir rsv = _reservoirs.read(dispatch_id());
+        $if(cur_surf.hit->is_hit()) {
+            Interaction it = geometry.compute_surface_interaction(cur_surf.hit, true);
+            Bool occluded = geometry.occluded(it, rsv.sample->p_light());
+            rsv->process_occluded(occluded);
+            _reservoirs.write(dispatch_id(), rsv);
+        };
+    };
 }
 
 void ReSTIRDirectIllumination::compile_temporal_reuse() noexcept {
-
 }
 
 void ReSTIRDirectIllumination::compile_spatial_reuse() noexcept {
-
 }
 
 void ReSTIRDirectIllumination::compile_shading() noexcept {
-
 }
 
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
@@ -152,7 +170,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
         p_sum += p_hat * rsv.M;
     });
 
-//    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+    //    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     p_sum += cur_rsv.sample.p_hat * temp_M;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
@@ -202,7 +220,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
         DIReservoir rsv = _reservoirs.read(idx);
         cur_rsv->update(sampler->next_1d(), rsv);
     });
-//    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+    //    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     cur_rsv->update_W();
     return cur_rsv;
 }
@@ -220,7 +238,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     ret->update(u, r1);
-//    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
+    //    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
     ret->update_W();
     return ret;
 }
