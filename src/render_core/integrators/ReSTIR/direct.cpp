@@ -176,26 +176,26 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
     return cur_rsv;
 }
 
-DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir r0,
-                                                            OCSurfaceData s0,
-                                                            DIReservoir r1,
-                                                            OCSurfaceData s1,
+DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir cur_rsv,
+                                                            OCSurfaceData cur_surf,
+                                                            DIReservoir neighbor_rsv,
+                                                            OCSurfaceData neighbor_surf,
                                                             SampledWavelengths &swl) const noexcept {
     Sampler *sampler = scene().sampler();
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
 
-    Interaction it = geom.compute_surface_interaction(s0.hit, true);
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
 
-    Float p_hat_00 = compute_p_hat(it, swl, r0.sample);
-    Float p_hat_01 = compute_p_hat(it, swl, r1.sample);
+    Float p_hat_00 = compute_p_hat(it, swl, cur_rsv.sample);
+    Float p_hat_01 = compute_p_hat(it, swl, neighbor_rsv.sample);
 
-    DIReservoir rsv = r0;
-    Float p_sum = p_hat_00 * r0.M + p_hat_01 * r1.M;
-    Float p_hat = compute_p_hat(it, swl, r1.sample);
-    Bool replace = rsv->update(sampler->next_1d(), r1, p_hat);
+    DIReservoir rsv = cur_rsv;
+    Float p_sum = p_hat_00 * cur_rsv.M + p_hat_01 * neighbor_rsv.M;
+    Float p_hat = compute_p_hat(it, swl, neighbor_rsv.sample);
+    Bool replace = rsv->update(sampler->next_1d(), neighbor_rsv, p_hat);
 
     $if(!replace) {
         rsv.sample.p_hat = p_hat_00;

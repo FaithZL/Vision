@@ -78,10 +78,10 @@ public:
                                                 OCSurfaceData cur_surf,
                                                 const DIReservoir &r1,
                                                 SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] DIReservoir combine_reservoir_MIS(DIReservoir r0,
-                                                    OCSurfaceData s0,
-                                                    DIReservoir r1,
-                                                    OCSurfaceData S1,
+    [[nodiscard]] DIReservoir combine_reservoir_MIS(DIReservoir cur_rsv,
+                                                    OCSurfaceData cur_surf,
+                                                    DIReservoir neighbor_rsv,
+                                                    OCSurfaceData neighbor_surf,
                                                     SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
                                             const Bool &is_hit) const noexcept;
