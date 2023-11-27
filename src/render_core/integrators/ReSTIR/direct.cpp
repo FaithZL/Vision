@@ -274,7 +274,11 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
         prev_rsv->truncation(_temporal.limit);
         OCSurfaceData another_surf = _prev_surfaces.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
+            if (_mis) {
+                rsv = combine_reservoir_MIS(rsv, cur_surf, prev_rsv, another_surf, swl);
+            } else {
+                rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
+            }
         };
     };
     return rsv;
