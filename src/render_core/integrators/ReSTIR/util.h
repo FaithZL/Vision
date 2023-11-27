@@ -55,7 +55,7 @@ public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
     oc_float<p> M{};
-    oc_float<p> pdf_sum{};
+    oc_float<p> p_sum{};
     oc_float<p> W{};
     RSVSample sample{};
 
@@ -63,17 +63,17 @@ public:
     bool update(oc_float<p> u, oc_float<p> weight, RSVSample v) noexcept {
         weight_sum += weight;
         M += 1;
-        pdf_sum += v.pdf;
+        p_sum += v.pdf;
         bool ret = u < (weight / weight_sum);
         sample = ocarina::select(ret, v, sample);
         return ret;
     }
     bool update(oc_float<p> u, vision::ReSTIRDirect::Reservoir rsv, oc_float<p> p_hat) noexcept {
         auto temp_M = M;
-        auto org_pdf_sum = pdf_sum;
+        auto org_p_sum = p_sum;
         bool ret = update(u, rsv.compute_weight_sum(p_hat), rsv.sample);
         M = temp_M + rsv.M;
-        pdf_sum = org_pdf_sum + rsv.pdf_sum;
+        p_sum = org_p_sum + rsv.p_sum;
         return ret;
     }
     bool update(oc_float<p> u, RSVSample v) noexcept {
@@ -84,7 +84,7 @@ public:
         oc_float<p> factor = cast<float>(limit) / M;
         M = ocarina::select(factor < 1.f, cast<float>(limit), M);
         weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
-        pdf_sum = ocarina::select(factor < 1.f, pdf_sum * factor, pdf_sum);
+        p_sum = ocarina::select(factor < 1.f, p_sum * factor, p_sum);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
         W = ocarina::select(occluded, 0.f, W);
@@ -106,11 +106,11 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, pdf_sum, W, sample) {
+OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, p_sum, W, sample) {
     static constexpr EPort p = D;
     Bool update(oc_float<p> u, oc_float<p> weight, vision::DIRSVSample v) noexcept {
         weight_sum += weight;
-        pdf_sum += v.pdf;
+        p_sum += v.pdf;
         M += 1;
         Bool ret = u < (weight / weight_sum);
         sample = select(ret, v, sample);
@@ -122,17 +122,17 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, pdf_sum, W, sample) {
     }
     Bool update(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv, oc_float<p> p_hat) noexcept {
         auto temp_M = M;
-        auto org_pdf_sum = pdf_sum;
+        auto org_pdf_sum = p_sum;
         Bool ret = update(u, rsv->compute_weight_sum(p_hat), rsv.sample);
         M = temp_M + rsv.M;
-        pdf_sum = org_pdf_sum + rsv.pdf_sum;
+        p_sum = org_pdf_sum + rsv.p_sum;
         return ret;
     }
     void truncation(oc_uint<p> limit) noexcept {
         oc_float<p> factor = cast<float>(limit) / M;
         M = ocarina::select(factor < 1.f, cast<float>(limit), M);
         weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
-        pdf_sum = ocarina::select(factor < 1.f, pdf_sum * factor, pdf_sum);
+        p_sum = ocarina::select(factor < 1.f, p_sum * factor, p_sum);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
         W = ocarina::select(occluded, 0.f, W);

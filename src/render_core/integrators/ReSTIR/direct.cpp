@@ -170,7 +170,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
         p_sum += p_hat * rsv.M;
     });
 
-    //    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     p_sum += cur_rsv.sample.p_hat * temp_M;
     cur_rsv->update_W_MIS(p_sum);
     return cur_rsv;
