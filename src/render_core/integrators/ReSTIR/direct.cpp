@@ -166,7 +166,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = _reservoirs.read(idx);
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
-        cur_rsv->update(sampler->next_1d(), rsv);
+        cur_rsv->update(sampler->next_1d(), rsv, p_hat);
         p_sum += p_hat * rsv.M;
     });
 
@@ -194,7 +194,8 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir r0,
 
     DIReservoir rsv = r0;
     Float p_sum = p_hat_00 * r0.M + p_hat_01 * r1.M;
-    Bool replace = rsv->update(sampler->next_1d(), r1);
+    Float p_hat = compute_p_hat(it, swl, r1.sample);
+    Bool replace = rsv->update(sampler->next_1d(), r1, p_hat);
 
     $if(!replace) {
         rsv.sample.p_hat = p_hat_00;
@@ -218,9 +219,10 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = _reservoirs.read(idx);
-        cur_rsv->update(sampler->next_1d(), rsv);
+        Float p_hat = compute_p_hat(it, swl, rsv.sample);
+        cur_rsv->update(sampler->next_1d(), rsv, p_hat);
     });
-    //    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
     cur_rsv->update_W();
     return cur_rsv;
 }
@@ -237,8 +239,9 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
     Float u = scene().sampler()->next_1d();
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
-    ret->update(u, r1);
-    //    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
+    Float p_hat = compute_p_hat(it, swl, r1.sample);
+    ret->update(u, r1, p_hat);
+    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
     ret->update_W();
     return ret;
 }

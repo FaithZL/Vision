@@ -68,10 +68,10 @@ public:
         sample = ocarina::select(ret, v, sample);
         return ret;
     }
-    bool update(oc_float<p> u, vision::ReSTIRDirect::Reservoir rsv) noexcept {
+    bool update(oc_float<p> u, vision::ReSTIRDirect::Reservoir rsv, oc_float<p> p_hat) noexcept {
         auto temp_M = M;
         auto org_pdf_sum = pdf_sum;
-        bool ret = update(u, rsv.compute_weight_sum(), rsv.sample);
+        bool ret = update(u, rsv.compute_weight_sum(p_hat), rsv.sample);
         M = temp_M + rsv.M;
         pdf_sum = org_pdf_sum + rsv.pdf_sum;
         return ret;
@@ -98,8 +98,8 @@ public:
         float mis = sample.p_hat / p_sum;
         W = ocarina::select(sample.p_hat == 0.f, 0.f, mis * weight_sum / sample.p_hat);
     }
-    [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
-        return sample.p_hat * W * M;
+    [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
+        return p_hat * W * M;
     }
 };
 }// namespace ReSTIRDirect
@@ -120,10 +120,10 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, pdf_sum, W, sample) {
         oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
         return update(u, weight, v);
     }
-    Bool update(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv) noexcept {
+    Bool update(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv, oc_float<p> p_hat) noexcept {
         auto temp_M = M;
         auto org_pdf_sum = pdf_sum;
-        Bool ret = update(u, rsv->compute_weight_sum(), rsv.sample);
+        Bool ret = update(u, rsv->compute_weight_sum(p_hat), rsv.sample);
         M = temp_M + rsv.M;
         pdf_sum = org_pdf_sum + rsv.pdf_sum;
         return ret;
@@ -146,8 +146,8 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, pdf_sum, W, sample) {
         Float mis = sample.p_hat / p_sum;
         W = ocarina::select(sample.p_hat == 0.f, 0.f, mis * weight_sum / sample.p_hat);
     }
-    [[nodiscard]] oc_float<p> compute_weight_sum() const noexcept {
-        return sample.p_hat * W * M;
+    [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
+        return p_hat * W * M;
     }
 };
 

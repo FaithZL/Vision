@@ -839,17 +839,17 @@
 		"param" : {
 			"direct": {
 				"spatial": {
-//					"open": false,
+					"open": false,
 					"theta": 5,
 					"depth": 0.01,
-					"radius": 5,
+					"radius": 20,
 					"iterate_num": 3
 				},
 				"temporal": {
 //					"open": false,
 					"theta": 2,
 					"depth": 1,
-					"radius": 1,
+					"radius": 3,
 					"motion_vec": 0.15,
 					"history_limit": 10
 				},
