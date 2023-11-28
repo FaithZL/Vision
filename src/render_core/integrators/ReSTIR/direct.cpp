@@ -193,13 +193,9 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir cur_rsv,
     rsv->update(sampler->next_1d(), neighbor_rsv, p_hat);
     p_hat = compute_p_hat(it, swl, rsv.sample);
 
-//    Float w = neighbor_rsv.weight_sum;
-
     rsv->update_W(p_hat);
 
-//    $condition_info("{}  {}  {}=================", neighbor_rsv.weight_sum, w, neighbor_rsv.M);
-//    neighbor_rsv->update_W_MIS(p_hat, ls.eval.pdf);
-//    $condition_info("{}  {}  {}=================", neighbor_rsv.weight_sum, w, neighbor_rsv.M);
+    rsv->update_W_MIS(p_hat, ls.eval.pdf);
 
     return rsv;
 }
