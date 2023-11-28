@@ -161,7 +161,6 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
     OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
-    Float temp_M = cur_rsv.M;
 
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = _reservoirs.read(idx);
@@ -188,17 +187,20 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir cur_rsv,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
 
-    Float p_hat_00 = compute_p_hat(it, swl, cur_rsv.sample);
-    Float p_hat_01 = compute_p_hat(it, swl, neighbor_rsv.sample);
-
     DIReservoir rsv = cur_rsv;
-    Float p_sum = p_hat_00 * cur_rsv.M + p_hat_01 * neighbor_rsv.M;
     LightSample ls{swl.dimension()};
     Float p_hat = compute_p_hat(it, swl, neighbor_rsv.sample, &ls);
-    Bool replace = rsv->update(sampler->next_1d(), neighbor_rsv, p_hat);
+    rsv->update(sampler->next_1d(), neighbor_rsv, p_hat);
+    p_hat = compute_p_hat(it, swl, rsv.sample);
 
-    p_hat = ocarina::select(replace, p_hat_01, p_hat_00);
-    rsv->update_W_MIS(p_hat, ls.eval.pdf);
+//    Float w = neighbor_rsv.weight_sum;
+
+    rsv->update_W(p_hat);
+
+//    $condition_info("{}  {}  {}=================", neighbor_rsv.weight_sum, w, neighbor_rsv.M);
+//    neighbor_rsv->update_W_MIS(p_hat, ls.eval.pdf);
+//    $condition_info("{}  {}  {}=================", neighbor_rsv.weight_sum, w, neighbor_rsv.M);
+
     return rsv;
 }
 
@@ -406,7 +408,6 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         camera->load_data();
-        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         sampler->start_pixel_sample(pixel, frame_index, 1);
         DIReservoir cur_rsv = _reservoirs.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces.read(dispatch_id());

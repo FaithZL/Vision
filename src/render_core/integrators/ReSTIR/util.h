@@ -96,8 +96,10 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, p_sum, W, sample) {
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
     void update_W_MIS(const Float &p_hat, const Float &pdf) noexcept {
-        Float mis = pdf / p_sum;
-        W = ocarina::select(p_hat == 0.f, 0.f, mis * weight_sum / p_hat);
+        Float mis = 1.f / M;
+        Float mis2 = pdf / p_sum;
+//        $condition_info("{} {} {}", 1.f / M, pdf / p_sum, weight_sum);
+        W = ocarina::select(p_hat == 0.f, 0.f, mis2 * weight_sum / p_hat);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
         return p_hat * W * M;

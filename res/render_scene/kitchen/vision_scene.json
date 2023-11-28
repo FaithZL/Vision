@@ -13491,31 +13491,31 @@
         "type": "alias_table"
     },
     "integrator" : {
-//        "type" : "rt",
-        		"type" : "pt",
+        "type" : "rt",
+        //		"type" : "pt",
         "param" : {
             "direct": {
                 "spatial": {
-//                    					"open": false,
+//                                        					"open": false,
                     "theta": 5,
                     "depth": 0.01,
-                    "radius": 3,
-                    "iterate_num": 15
+                    "radius": 29,
+                    "iterate_num": 1
                 },
                 "temporal": {
-//                    					"open": false,
+                                        					"open": false,
                     "theta": 2,
                     "depth": 1,
-                    "radius": 2,
+                    "radius": 0,
                     "motion_vec": 0.15,
-                    "history_limit": 1
+                    "history_limit": 20
                 },
-                //				"mis": true,
-                "M": 20
+                				"mis": true,
+                "M": 10
             },
-            "min_depth": 5,
-            "max_depth": 16,
-            "rr_threshold": 1
+            "min_depth" : 5,
+            "max_depth" : 16,
+            "rr_threshold" : 1
         }
     },
 //    "integrator": {
