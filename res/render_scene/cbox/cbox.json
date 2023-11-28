@@ -978,7 +978,7 @@
 		"param" : {
 			"direct": {
 				"spatial": {
-					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.01,
 					"radius": 20,
@@ -988,7 +988,7 @@
 					//					"open": false,
 					"theta": 2,
 					"depth": 1,
-					"radius": 4,
+					"radius": 0,
 					"motion_vec": 0.15,
 					"history_limit": 10
 				},
