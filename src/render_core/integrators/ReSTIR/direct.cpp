@@ -131,6 +131,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     Sampler *sampler = scene().sampler();
     comment("RIS start");
     DIReservoir ret;
+    Float final_p_hat{0.f};
     $if(hit) {
         $for(i, M) {
             SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
@@ -139,13 +140,12 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             sample.u = sampler->next_2d();
             LightSample ls{swl.dimension()};
             Float p_hat = compute_p_hat(it, swl, sample, &ls);
-            sample.p_hat = p_hat;
-            sample.pdf = ls.eval.pdf;
             sample->set_pos(ls.p_light);
-            ret->update(sampler->next_1d(), sample);
+            Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
+            final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
         };
     };
-    ret->update_W();
+    ret->update_W(final_p_hat);
     comment("RIS end");
     return ret;
 }
@@ -169,10 +169,9 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs_MIS(DIReservoir cur_rsv
         cur_rsv->update(sampler->next_1d(), rsv, p_hat);
         p_sum += p_hat * rsv.M;
     });
-
-    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
-    p_sum += cur_rsv.sample.p_hat * temp_M;
-    cur_rsv->update_W_MIS(p_sum);
+    LightSample ls{swl.dimension()};
+    Float p_hat = compute_p_hat(it, swl, cur_rsv.sample, &ls);
+    cur_rsv->update_W_MIS(p_hat, ls.eval.pdf);
     return cur_rsv;
 }
 
@@ -194,16 +193,12 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir_MIS(DIReservoir cur_rsv,
 
     DIReservoir rsv = cur_rsv;
     Float p_sum = p_hat_00 * cur_rsv.M + p_hat_01 * neighbor_rsv.M;
-    Float p_hat = compute_p_hat(it, swl, neighbor_rsv.sample);
+    LightSample ls{swl.dimension()};
+    Float p_hat = compute_p_hat(it, swl, neighbor_rsv.sample, &ls);
     Bool replace = rsv->update(sampler->next_1d(), neighbor_rsv, p_hat);
 
-    $if(!replace) {
-        rsv.sample.p_hat = p_hat_00;
-    }
-    $else {
-        rsv.sample.p_hat = p_hat_01;
-    };
-    rsv->update_W_MIS(p_sum);
+    p_hat = ocarina::select(replace, p_hat_01, p_hat_00);
+    rsv->update_W_MIS(p_hat, ls.eval.pdf);
     return rsv;
 }
 
@@ -222,8 +217,8 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
         cur_rsv->update(sampler->next_1d(), rsv, p_hat);
     });
-    cur_rsv.sample.p_hat = compute_p_hat(it, swl, cur_rsv.sample);
-    cur_rsv->update_W();
+    Float p_hat = compute_p_hat(it, swl, cur_rsv.sample);
+    cur_rsv->update_W(p_hat);
     return cur_rsv;
 }
 
@@ -241,8 +236,8 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
     it.wo = normalize(c_pos - it.pos);
     Float p_hat = compute_p_hat(it, swl, r1.sample);
     ret->update(u, r1, p_hat);
-    ret.sample.p_hat = compute_p_hat(it, swl, ret.sample);
-    ret->update_W();
+    p_hat = compute_p_hat(it, swl, ret.sample);
+    ret->update_W(p_hat);
     return ret;
 }
 

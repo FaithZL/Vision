@@ -839,11 +839,11 @@
 		"param" : {
 			"direct": {
 				"spatial": {
-//					"open": false,
+					"open": false,
 					"theta": 5,
 					"depth": 0.01,
-					"radius": 30,
-					"iterate_num": 3
+					"radius": 20,
+					"iterate_num": 1
 				},
 				"temporal": {
 //					"open": false,
@@ -853,11 +853,11 @@
 					"motion_vec": 0.15,
 					"history_limit": 10
 				},
-				"mis": true,
+//				"mis": true,
 				"M": 10
 			},
 			"min_depth" : 0,
-			"max_depth" : 16,
+			"max_depth" : 1,
 			"rr_threshold" : 1
 		}
 	},
@@ -1004,6 +1004,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "1f.png"
+		"fn" : "spatial-mis-hat.png"
 	}
 }
