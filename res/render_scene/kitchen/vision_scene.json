@@ -13496,7 +13496,7 @@
         "param" : {
             "direct": {
                 "spatial": {
-                                        					"open": false,
+//                                        					"open": false,
                     "theta": 5,
                     "depth": 0.01,
                     "radius": 29,
@@ -13505,7 +13505,7 @@
                 "temporal": {
 //                                        					"open": false,
                     "theta": 10,
-                    "depth": 1,
+                    "depth": 0.2,
                     "radius": 0,
                     "motion_vec": 0.15,
                     "history_limit": 20

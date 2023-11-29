@@ -18,69 +18,6 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _surfaces(surfaces),
       _prev_surfaces(prev_surfaces) {}
 
-void ReSTIRDirectIllumination::compile_gen_candidates() noexcept {
-    Pipeline *rp = pipeline();
-    const Geometry &geometry = rp->geometry();
-    Camera *camera = scene().camera().get();
-    Sampler *sampler = scene().sampler();
-    Spectrum &spectrum = rp->spectrum();
-    Kernel kernel = [&](Uint frame_index) {
-        Uint2 pixel = dispatch_idx().xy();
-        sampler->start_pixel_sample(pixel, frame_index, 0);
-        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-        camera->load_data();
-        SampledWavelengths swl = spectrum.sample_wavelength(sampler);
-        RayState rs = camera->generate_ray(ss);
-        Var hit = geometry.trace_closest(rs.ray);
-
-        OCSurfaceData cur_surf;
-        cur_surf.hit = hit;
-        cur_surf->set_t_max(0.f);
-        Interaction it;
-        $if(hit->is_hit()) {
-            it = geometry.compute_surface_interaction(hit, rs.ray, true);
-            cur_surf.mat_id = it.material_id();
-            cur_surf->set_t_max(rs.t_max());
-            cur_surf->set_normal(it.ng);
-        };
-        Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
-        DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
-        _motion_vectors.write(dispatch_id(), motion_vec);
-        _reservoirs.write(dispatch_id(), rsv);
-        _surfaces.write(dispatch_id(), cur_surf);
-    };
-    _gen_candidates = device().compile(kernel, "gen_candidates");
-}
-
-void ReSTIRDirectIllumination::compile_test_visibility() noexcept {
-    Pipeline *rp = pipeline();
-    const Geometry &geometry = rp->geometry();
-    Camera *camera = scene().camera().get();
-    Sampler *sampler = scene().sampler();
-    Spectrum &spectrum = rp->spectrum();
-    Kernel kernel = [&](Uint frame_index) {
-        Uint2 pixel = dispatch_idx().xy();
-        OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-        sampler->start_pixel_sample(pixel, frame_index, 0);
-        DIReservoir rsv = _reservoirs.read(dispatch_id());
-        $if(cur_surf.hit->is_hit()) {
-            Interaction it = geometry.compute_surface_interaction(cur_surf.hit, true);
-            Bool occluded = geometry.occluded(it, rsv.sample->p_light());
-            rsv->process_occluded(occluded);
-            _reservoirs.write(dispatch_id(), rsv);
-        };
-    };
-}
-
-void ReSTIRDirectIllumination::compile_temporal_reuse() noexcept {
-}
-
-void ReSTIRDirectIllumination::compile_spatial_reuse() noexcept {
-}
-
-void ReSTIRDirectIllumination::compile_shading() noexcept {
-}
-
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
                                            const OCSurfaceData &another_surface) const noexcept {
     return vision::is_neighbor(cur_surface, another_surface,
@@ -301,7 +238,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
             cur_surf.mat_id = it.material_id();
             cur_surf->set_t_max(rs.t_max());
-            cur_surf->set_normal(it.ng);
+            cur_surf->set_normal(it.shading.normal());
         };
         DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());

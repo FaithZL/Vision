@@ -56,12 +56,6 @@ public:
         compile_shader1();
     }
 
-    void compile_gen_candidates() noexcept;
-    void compile_test_visibility() noexcept;
-    void compile_temporal_reuse() noexcept;
-    void compile_spatial_reuse() noexcept;
-    void compile_shading() noexcept;
-
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
