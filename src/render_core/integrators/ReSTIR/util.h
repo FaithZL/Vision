@@ -14,8 +14,8 @@ namespace vision::ReSTIRDirect {
 struct RSVSample {
     uint light_index{};
     uint prim_id{};
-    float2 u;
-    array<float, 3> pos;
+    float2 u{};
+    array<float, 3> pos{};
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }

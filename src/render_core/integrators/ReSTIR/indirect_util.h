@@ -48,9 +48,9 @@ OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
 namespace vision::ReSTIRIndirect {
 struct RSVSample {
     SurfacePoint sample_point;
-    float p_hat;
-    float pdf;
-    float2 u;
+    float p_hat{};
+    float pdf{};
+    float2 u{};
     vector<float> L;
 };
 }// namespace vision::ReSTIRIndirect

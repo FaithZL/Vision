@@ -57,7 +57,7 @@ namespace vision {
 using namespace ocarina;
 struct SurfaceData {
     Hit hit{};
-    float4 normal_t;
+    float4 normal_t{};
     uint mat_id{};
 };
 }// namespace vision

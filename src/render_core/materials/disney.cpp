@@ -149,7 +149,7 @@ public:
             Bool valid = !is_zero(wh);
             wh = normalize(wh);
             Float Dr = GTR1(abs_cos_theta(wh), alpha);
-            Float Fr = fresnel_schlick((0.04f), dot(wo, wh));
+            Float Fr = fresnel_schlick<D>(0.04f, dot(wo, wh));
             Float Gr = smithG_GGX(abs_cos_theta(wo), 0.25f) * smithG_GGX(abs_cos_theta(wi), 0.25f);
             Float ret = weight * Gr * Fr * Dr * 0.25f;
             return select(valid, ret, 0.f);
