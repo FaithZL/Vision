@@ -300,14 +300,14 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
 
 void ReSTIRDirectIllumination::prepare() noexcept {
     Pipeline *rp = pipeline();
-    _reservoirs1.set_resource_array(rp->resource_array());
     _reservoirs0.set_resource_array(rp->resource_array());
+    _reservoirs1.set_resource_array(rp->resource_array());
 
-    _reservoirs1.reset_all(device(), rp->pixel_num());
     _reservoirs0.reset_all(device(), rp->pixel_num());
+    _reservoirs1.reset_all(device(), rp->pixel_num());
 
-    _reservoirs1.register_self();
     _reservoirs0.register_self();
+    _reservoirs1.register_self();
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
