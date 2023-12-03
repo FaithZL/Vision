@@ -15,8 +15,8 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _temporal(desc["temporal"], M, _spatial.iterate_num, pipeline()->resolution()),
       _mis(desc["mis"].as_bool(false)),
       _motion_vectors(motion_vec),
-      _surfaces(surfaces),
-      _prev_surfaces(prev_surfaces) {}
+      _surfaces0(surfaces),
+      _surfaces1(prev_surfaces) {}
 
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
                                            const OCSurfaceData &another_surface) const noexcept {
@@ -94,11 +94,11 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
-    OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
+    OCSurfaceData cur_surf = _surfaces0.read(dispatch_id());
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir rsv = _reservoirs.read(idx);
+        DIReservoir rsv = _reservoirs0.read(idx);
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
         cur_rsv->update(sampler->next_1d(), rsv, p_hat);
     });
@@ -150,9 +150,9 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
-        DIReservoir prev_rsv = _prev_reservoirs.read(index);
+        DIReservoir prev_rsv = _reservoirs1.read(index);
         prev_rsv->truncation(_temporal.limit);
-        OCSurfaceData another_surf = _prev_surfaces.read(index);
+        OCSurfaceData another_surf = _surfaces1.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
         };
@@ -196,8 +196,8 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             rsv->process_occluded(occluded);
         };
         rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, swl, frame_index);
-        _reservoirs.write(dispatch_id(), rsv);
-        _surfaces.write(dispatch_id(), cur_surf);
+        _reservoirs0.write(dispatch_id(), rsv);
+        _surfaces0.write(dispatch_id(), cur_surf);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
                                         "check visibility");
@@ -220,7 +220,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
             $continue;
         };
         Uint index = dispatch_id(another_pixel);
-        OCSurfaceData other_surf = _surfaces.read(index);
+        OCSurfaceData other_surf = _surfaces0.read(index);
         $if(is_neighbor(cur_surf, other_surf)) {
             rsv_idx.push_back(index);
         };
@@ -284,9 +284,9 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        DIReservoir cur_rsv = _reservoirs.read(dispatch_id());
-        OCSurfaceData cur_surf = _surfaces.read(dispatch_id());
-        DIReservoir temporal_rsv = _reservoirs.read(dispatch_id());
+        DIReservoir cur_rsv = _reservoirs0.read(dispatch_id());
+        OCSurfaceData cur_surf = _surfaces0.read(dispatch_id());
+        DIReservoir temporal_rsv = _reservoirs0.read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
@@ -300,14 +300,14 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
 
 void ReSTIRDirectIllumination::prepare() noexcept {
     Pipeline *rp = pipeline();
-    _prev_reservoirs.set_resource_array(rp->resource_array());
-    _reservoirs.set_resource_array(rp->resource_array());
+    _reservoirs1.set_resource_array(rp->resource_array());
+    _reservoirs0.set_resource_array(rp->resource_array());
 
-    _prev_reservoirs.reset_all(device(), rp->pixel_num());
-    _reservoirs.reset_all(device(), rp->pixel_num());
+    _reservoirs1.reset_all(device(), rp->pixel_num());
+    _reservoirs0.reset_all(device(), rp->pixel_num());
 
-    _prev_reservoirs.register_self();
-    _reservoirs.register_self();
+    _reservoirs1.register_self();
+    _reservoirs0.register_self();
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
@@ -315,8 +315,8 @@ CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept 
     const Pipeline *rp = pipeline();
     ret << _shader0(frame_index).dispatch(rp->resolution());
     ret << _shader1(frame_index).dispatch(rp->resolution());
-    ret << _prev_reservoirs.copy_from(_reservoirs.device_buffer(), 0);
-    ret << _prev_surfaces.copy_from(_surfaces.device_buffer(), 0);
+    ret << _reservoirs1.copy_from(_reservoirs0.device_buffer(), 0);
+    ret << _surfaces1.copy_from(_surfaces0.device_buffer(), 0);
     return ret;
 }
 

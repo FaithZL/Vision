@@ -16,14 +16,14 @@ private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
     RegistrableManaged<float2> _motion_vectors;
-    RegistrableManaged<SurfaceData> _surfaces;
-    RegistrableManaged<SurfaceData> _prev_surfaces;
+    RegistrableManaged<SurfaceData> _surfaces0;
+    RegistrableManaged<SurfaceData> _surfaces1;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(desc["direct"], _motion_vectors, _surfaces, _prev_surfaces),
-          _indirect(desc["indirect"], _motion_vectors, _surfaces, _prev_surfaces) {}
+          _direct(desc["direct"], _motion_vectors, _surfaces0, _surfaces1),
+          _indirect(desc["indirect"], _motion_vectors, _surfaces0, _surfaces1) {}
 
     void invalidation() const noexcept override {}
 
@@ -34,13 +34,13 @@ public:
         _motion_vectors.reset_all(device(), rp->pixel_num());
         _motion_vectors.register_self();
 
-        _surfaces.set_resource_array(rp->resource_array());
-        _surfaces.reset_all(device(), rp->pixel_num());
-        _surfaces.register_self();
+        _surfaces0.set_resource_array(rp->resource_array());
+        _surfaces0.reset_all(device(), rp->pixel_num());
+        _surfaces0.register_self();
 
-        _prev_surfaces.set_resource_array(rp->resource_array());
-        _prev_surfaces.reset_all(device(), rp->pixel_num());
-        _prev_surfaces.register_self();
+        _surfaces1.set_resource_array(rp->resource_array());
+        _surfaces1.reset_all(device(), rp->pixel_num());
+        _surfaces1.register_self();
     }
 
     void compile() noexcept override {
