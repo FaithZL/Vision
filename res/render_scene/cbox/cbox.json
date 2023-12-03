@@ -973,8 +973,8 @@
 //		"type": "customized"
 	},
 	"integrator" : {
-//		"type" : "rt",
-				"type" : "pt",
+		"type" : "rt",
+//				"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {

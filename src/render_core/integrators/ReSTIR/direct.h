@@ -39,12 +39,6 @@ private:
      */
     Shader<void(uint)> _shader1;
 
-    Shader<void(uint)> _gen_candidates;
-    Shader<void(uint)> _test_visibility;
-    Shader<void(uint)> _temporal_reuse;
-    Shader<void(uint)> _spatial_reuse;
-    Shader<void(uint)> _shading;
-
 public:
     ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
                              RegistrableManaged<SurfaceData> &surfaces,
@@ -62,9 +56,6 @@ public:
                                              SampledWavelengths &swl,
                                              const DIRSVSample &sample,
                                              LightSample *output_ls = nullptr) noexcept;
-    [[nodiscard]] DIReservoir combine_reservoirs_MIS(DIReservoir cur_rsv,
-                                                     SampledWavelengths &swl,
-                                                     const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_reservoirs(DIReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
@@ -72,11 +63,6 @@ public:
                                                 OCSurfaceData cur_surf,
                                                 const DIReservoir &r1,
                                                 SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] DIReservoir combine_reservoir_MIS(DIReservoir cur_rsv,
-                                                    OCSurfaceData cur_surf,
-                                                    DIReservoir neighbor_rsv,
-                                                    OCSurfaceData neighbor_surf,
-                                                    SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
                                             const Bool &is_hit) const noexcept;
     [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
