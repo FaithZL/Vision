@@ -114,7 +114,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir rsv = _reservoirs0.read(idx);
+        DIReservoir rsv = cur_reservoir().read(idx);
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
         cur_rsv->update(sampler->next_1d(), rsv, p_hat);
     });
@@ -166,7 +166,7 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
-        DIReservoir prev_rsv = _reservoirs1.read(index);
+        DIReservoir prev_rsv = other_reservoir().read(index);
         prev_rsv->truncation(_temporal.limit);
         OCSurfaceData another_surf = _surfaces1.read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
@@ -214,7 +214,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             rsv->process_occluded(occluded);
         };
         rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, swl, frame_index);
-        _reservoirs0.write(dispatch_id(), rsv);
+        cur_reservoir().write(dispatch_id(), rsv);
         _surfaces0.write(dispatch_id(), cur_surf);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
@@ -305,7 +305,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCSurfaceData cur_surf = _surfaces0.read(dispatch_id());
-        DIReservoir temporal_rsv = _reservoirs0.read(dispatch_id());
+        DIReservoir temporal_rsv = cur_reservoir().read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
@@ -336,7 +336,6 @@ CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept 
     uint other = (frame_index + 1) % 2;
     ret << _shader0(frame_index, cur, other).dispatch(rp->resolution());
     ret << _shader1(frame_index, cur, other).dispatch(rp->resolution());
-    ret << _reservoirs1.copy_from(_reservoirs0.device_buffer(), 0);
     ret << _surfaces1.copy_from(_surfaces0.device_buffer(), 0);
     return ret;
 }
