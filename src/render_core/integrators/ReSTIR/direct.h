@@ -30,7 +30,7 @@ private:
     RegistrableManaged<float2> &_motion_vectors;
 
     optional<Uint> _cur;
-    optional<Uint> _prev;
+    optional<Uint> _other;
 
     /**
      * generate initial candidates
@@ -56,9 +56,9 @@ public:
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
     [[nodiscard]] ResourceArrayBuffer<Reservoir> cur_reservoir() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<Reservoir> prev_reservoir() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> other_reservoir() const noexcept;
     [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<SurfaceData> prev_surface() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<SurfaceData> other_surface() const noexcept;
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
