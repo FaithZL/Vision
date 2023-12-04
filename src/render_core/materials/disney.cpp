@@ -26,6 +26,7 @@ public:
             Float Fi = schlick_weight(abs_cos_theta(wi));
             return InvPi * (1 - 0.5f * Fo) * (1 - 0.5f * Fi);
         };
+        impl.function()->set_description("disney::Diffuse::f");
         return _color * impl(wi, wi);
     }
 };
@@ -56,6 +57,7 @@ public:
             Float ret = InvPi * ss;
             return select(valid, ret, 0.f);
         };
+        impl.function()->set_description("disney::FakeSS::f");
         return _color * impl(wo, wi, _roughness);
     }
 };
@@ -86,6 +88,7 @@ public:
             Float ret = InvPi * Rr * (Fo + Fi + Fo * Fi * (Rr - 1));
             return select(valid, ret, 0.f);
         };
+        impl.function()->set_description("disney::Retro::f");
         return _color * impl(wo, wi, _roughness);
     }
 };
@@ -109,6 +112,7 @@ public:
             Float ret = schlick_weight(cos_theta_d);
             return select(valid, ret, 0.f);
         };
+        impl.function()->set_description("disney::Sheen::f");
         return _color * impl(wo, wi);
     }
 };
@@ -119,6 +123,7 @@ public:
         return (alpha2 - 1) /
                (Pi * log(alpha2) * (1 + (alpha2 - 1) * sqr(cos_theta)));
     };
+    impl.function()->set_description("disney::GTR1");
     return impl(cos_theta, alpha);
 }
 
@@ -128,6 +133,7 @@ public:
         Float cos_theta_2 = sqr(cos_theta);
         return 1 / (cos_theta + sqrt(alpha2 + cos_theta_2 - alpha2 * cos_theta_2));
     };
+    impl.function()->set_description("disney::smithG_GGX");
     return impl(cos_theta, alpha);
 }
 
@@ -154,6 +160,7 @@ public:
             Float ret = weight * Gr * Fr * Dr * 0.25f;
             return select(valid, ret, 0.f);
         };
+        impl.function()->set_description("disney::Clearcoat::f");
         return {swl().dimension(), impl(wo, wi, _weight, _alpha)};
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
@@ -165,6 +172,7 @@ public:
             Float ret = Dr * abs_cos_theta(wh) / (4 * dot(wo, wh));
             return select(valid, ret, 0.f);
         };
+        impl.function()->set_description("disney::Clearcoat::PDF");
         return impl(wo, wi, _alpha);
     }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
@@ -177,6 +185,7 @@ public:
             wh = select(same_hemisphere(wo, wh), wh, -wh);
             return reflect(wo, wh);
         };
+        impl.function()->set_description("disney::Clearcoat::sample_wi");
         Float3 wi = impl(wo, u, _alpha);
         return {wi, 1.f};
     }
@@ -230,18 +239,21 @@ public:
         static CALLABLE_TYPE impl = [](Float3 wh, Float ax, Float ay) {
             return microfacet::D_<D>(wh, ax, ay, type);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::D");
         return impl(wh, _alpha_x, _alpha_y);
     }
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float2 u, Float ax, Float ay) {
             return microfacet::sample_wh<D>(wo, u, ax, ay, type);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::sample_wh");
         return impl(wo, u, _alpha_x, _alpha_y);
     }
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wh, Float ax, Float ay) {
             return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::PDF_wh");
         return impl(wo, wh, _alpha_x, _alpha_y);
     }
 
@@ -249,6 +261,7 @@ public:
         static CALLABLE_TYPE impl = [](Float pdf_wh, Float3 wo, Float3 wh) {
             return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_reflection");
         return impl(pdf_wh, wo, wh);
     }
 
@@ -261,6 +274,7 @@ public:
         static CALLABLE_TYPE impl = [](Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) {
             return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_transmission");
         return impl(pdf_wh, wo, wh, wi, eta);
     }
 
@@ -272,6 +286,7 @@ public:
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wh, Float3 wi, Float ax, Float ay) {
             return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::BRDF_div_fr");
         return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
     }
 
@@ -285,6 +300,7 @@ public:
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
             return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
+        impl.function()->set_description("disney::DisneyMicrofacet::BTDF_div_ft");
         return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
     }
 
