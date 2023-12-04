@@ -18,6 +18,22 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _surfaces0(surfaces),
       _surfaces1(prev_surfaces) {}
 
+OCSurfaceData ReSTIRDirectIllumination::cur_surface(const ocarina::Uint &index) const noexcept {
+    return pipeline()->buffer<SurfaceData>(_cur.value() + surface_base()).read(index);
+}
+
+OCSurfaceData ReSTIRDirectIllumination::prev_surface(const ocarina::Uint &index) const noexcept {
+    return pipeline()->buffer<SurfaceData>(_prev.value() + surface_base()).read(index);
+}
+
+DIReservoir ReSTIRDirectIllumination::cur_reservoir(const ocarina::Uint &index) const noexcept {
+    return pipeline()->buffer<Reservoir>(_cur.value() + reservoir_base()).read(index);
+}
+
+DIReservoir ReSTIRDirectIllumination::prev_reservoir(const ocarina::Uint &index) const noexcept {
+    return pipeline()->buffer<Reservoir>(_prev.value() + reservoir_base()).read(index);
+}
+
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
                                            const OCSurfaceData &another_surface) const noexcept {
     return vision::is_neighbor(cur_surface, another_surface,
@@ -167,7 +183,9 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = rp->spectrum();
 
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index, Uint cur, Uint prev) {
+        _cur.emplace(cur);
+        _prev.emplace(prev);
         Uint2 pixel = dispatch_idx().xy();
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
@@ -277,7 +295,9 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Film *film = camera->radiance_film();
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index, Uint cur, Uint prev) {
+        _cur.emplace(cur);
+        _prev.emplace(prev);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 0);
@@ -313,8 +333,10 @@ void ReSTIRDirectIllumination::prepare() noexcept {
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    ret << _shader0(frame_index).dispatch(rp->resolution());
-    ret << _shader1(frame_index).dispatch(rp->resolution());
+    uint cur = frame_index % 2;
+    uint prev = (frame_index + 1) % 2;
+    ret << _shader0(frame_index, cur, prev).dispatch(rp->resolution());
+    ret << _shader1(frame_index, cur, prev).dispatch(rp->resolution());
     ret << _reservoirs1.copy_from(_reservoirs0.device_buffer(), 0);
     ret << _surfaces1.copy_from(_surfaces0.device_buffer(), 0);
     return ret;

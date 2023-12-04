@@ -29,15 +29,18 @@ private:
     RegistrableManaged<SurfaceData> &_surfaces1;
     RegistrableManaged<float2> &_motion_vectors;
 
+    optional<Uint> _cur;
+    optional<Uint> _prev;
+
     /**
      * generate initial candidates
      * check visibility
      */
-    Shader<void(uint)> _shader0;
+    Shader<void(uint, uint, uint)> _shader0;
     /**
      * spatial temporal reuse and shading
      */
-    Shader<void(uint)> _shader1;
+    Shader<void(uint, uint, uint)> _shader1;
 
 public:
     ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
@@ -50,6 +53,12 @@ public:
         compile_shader1();
     }
 
+    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
+    [[nodiscard]] DIReservoir cur_reservoir(const Uint &index) const noexcept;
+    [[nodiscard]] DIReservoir prev_reservoir(const Uint &index) const noexcept;
+    [[nodiscard]] OCSurfaceData cur_surface(const Uint &index) const noexcept;
+    [[nodiscard]] OCSurfaceData prev_surface(const Uint &index) const noexcept;
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
