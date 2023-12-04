@@ -55,10 +55,10 @@ public:
 
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
-    [[nodiscard]] DIReservoir cur_reservoir(const Uint &index) const noexcept;
-    [[nodiscard]] DIReservoir prev_reservoir(const Uint &index) const noexcept;
-    [[nodiscard]] OCSurfaceData cur_surface(const Uint &index) const noexcept;
-    [[nodiscard]] OCSurfaceData prev_surface(const Uint &index) const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> cur_reservoir() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> prev_reservoir() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<SurfaceData> prev_surface() const noexcept;
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,

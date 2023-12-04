@@ -18,20 +18,20 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _surfaces0(surfaces),
       _surfaces1(prev_surfaces) {}
 
-OCSurfaceData ReSTIRDirectIllumination::cur_surface(const ocarina::Uint &index) const noexcept {
-    return pipeline()->buffer<SurfaceData>(_cur.value() + surface_base()).read(index);
+ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const noexcept {
+    return pipeline()->buffer<SurfaceData>(_cur.value() + surface_base());
 }
 
-OCSurfaceData ReSTIRDirectIllumination::prev_surface(const ocarina::Uint &index) const noexcept {
-    return pipeline()->buffer<SurfaceData>(_prev.value() + surface_base()).read(index);
+ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::prev_surface() const noexcept {
+    return pipeline()->buffer<SurfaceData>(_prev.value() + surface_base());
 }
 
-DIReservoir ReSTIRDirectIllumination::cur_reservoir(const ocarina::Uint &index) const noexcept {
-    return pipeline()->buffer<Reservoir>(_cur.value() + reservoir_base()).read(index);
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
+    return pipeline()->buffer<Reservoir>(_cur.value() + reservoir_base());
 }
 
-DIReservoir ReSTIRDirectIllumination::prev_reservoir(const ocarina::Uint &index) const noexcept {
-    return pipeline()->buffer<Reservoir>(_prev.value() + reservoir_base()).read(index);
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::prev_reservoir() const noexcept {
+    return pipeline()->buffer<Reservoir>(_prev.value() + reservoir_base());
 }
 
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
@@ -304,7 +304,6 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 1);
-        DIReservoir cur_rsv = _reservoirs0.read(dispatch_id());
         OCSurfaceData cur_surf = _surfaces0.read(dispatch_id());
         DIReservoir temporal_rsv = _reservoirs0.read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
