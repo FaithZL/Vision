@@ -44,8 +44,8 @@ private:
 
 public:
     ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
-                             RegistrableManaged<SurfaceData> &surfaces,
-                             RegistrableManaged<SurfaceData> &prev_surfaces);
+                             RegistrableManaged<SurfaceData> &surfaces0,
+                             RegistrableManaged<SurfaceData> &surfaces1);
 
     void prepare() noexcept;
     void compile() noexcept {
