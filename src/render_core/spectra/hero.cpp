@@ -155,6 +155,7 @@ public:
             };
             return c;
         };
+        decode.function()->set_description("RGBToSpectrumTable::decode");
         return make_float4(decode(_rp->resource_array().var(), _base_index, rgb),
                            cie::linear_srgb_to_y(rgb));
     }
