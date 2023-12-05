@@ -18,19 +18,23 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _surfaces0(surfaces0),
       _surfaces1(surfaces1) {}
 
-ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const noexcept {
+ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::prev_surface() const noexcept {
     return pipeline()->buffer<SurfaceData>((_frame_index.value() % 2) + surface_base());
 }
 
-ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::other_surface() const noexcept {
+ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const noexcept {
     return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) % 2) + surface_base());
 }
 
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::prev_reservoir() const noexcept {
     return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
 }
 
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::other_reservoir() const noexcept {
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
+    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
+}
+
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::next_reservoir() const noexcept {
     return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
 }
 
@@ -166,9 +170,9 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
-        DIReservoir prev_rsv = other_reservoir().read(index);
+        DIReservoir prev_rsv = prev_reservoir().read(index);
         prev_rsv->truncation(_temporal.limit);
-        OCSurfaceData another_surf = other_surface().read(index);
+        OCSurfaceData another_surf = prev_surface().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
         };
