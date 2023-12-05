@@ -266,7 +266,7 @@ public:
         for (uint i = 0; i < sp.dimension(); ++i) {
             sum += safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i));
         }
-        float factor = 1.f / (swl.dimension() * SPD::cie_y_integral());
+        Float factor = 1.f / (swl.valid_dimension() * SPD::cie_y_integral());
         return sum * factor;
     }
     [[nodiscard]] Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
