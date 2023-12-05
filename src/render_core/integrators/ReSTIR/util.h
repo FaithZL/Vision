@@ -65,6 +65,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, p_sum, W, sample) {
     static constexpr EPort p = D;
     Bool update(oc_float<p> u, oc_float<p> p_hat, oc_float<p> pdf, vision::DIRSVSample v) noexcept {
         oc_float<p> weight = p_hat / pdf;
+        weight = ocarina::select(pdf == 0, 0.f, weight);
         weight_sum += weight;
         p_sum += pdf;
         M += 1;
@@ -94,12 +95,6 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, p_sum, W, sample) {
     void update_W(oc_float<p> p_hat) noexcept {
         Float denominator = M * p_hat;
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
-    }
-    void update_W_MIS(const Float &p_hat, const Float &pdf) noexcept {
-        Float mis = 1.f / M;
-        Float mis2 = pdf / p_sum;
-//        $condition_info("{} {} {}", 1.f / M, pdf / p_sum, weight_sum);
-        W = ocarina::select(p_hat == 0.f, 0.f, mis2 * weight_sum / p_hat);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
         return p_hat * W * M;
