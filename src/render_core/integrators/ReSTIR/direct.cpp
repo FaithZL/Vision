@@ -313,7 +313,6 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
             L = shading(st_rsv, hit, swl, frame_index);
         };
         film->update_sample(pixel, L, frame_index);
-//        _temp_reservoirs.write(dispatch_id(), st_rsv);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
 }
@@ -328,9 +327,9 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     _reservoirs1.reset_all(device(), rp->pixel_num());
     _reservoirs1.register_self();
 
-    _temp_reservoirs.set_resource_array(rp->resource_array());
-    _temp_reservoirs.reset_all(device(), rp->pixel_num());
-    _temp_reservoirs.register_self();
+    _reservoirs2.set_resource_array(rp->resource_array());
+    _reservoirs2.reset_all(device(), rp->pixel_num());
+    _reservoirs2.register_self();
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
@@ -338,12 +337,8 @@ CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept 
     const Pipeline *rp = pipeline();
     uint cur = frame_index % 2;
     uint other = (frame_index + 1) % 2;
-    const Buffer<Reservoir> &target_rsv = cur == 0 ?
-                                              _reservoirs0.device_buffer() :
-                                              _reservoirs1.device_buffer();
     ret << _shader0(frame_index, cur, other).dispatch(rp->resolution());
     ret << _shader1(frame_index, cur, other).dispatch(rp->resolution());
-//    ret << target_rsv.copy_from(_temp_reservoirs.device_buffer());
     return ret;
 }
 
