@@ -19,19 +19,19 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
       _surfaces1(surfaces1) {}
 
 ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const noexcept {
-    return pipeline()->buffer<SurfaceData>(_cur.value() + surface_base());
+    return pipeline()->buffer<SurfaceData>((_frame_index.value() % 2) + surface_base());
 }
 
 ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::other_surface() const noexcept {
-    return pipeline()->buffer<SurfaceData>(_other.value() + surface_base());
+    return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) % 2) + surface_base());
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(_cur.value() + reservoir_base());
+    return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::other_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(_other.value() + reservoir_base());
+    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
 }
 
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
@@ -183,9 +183,8 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = rp->spectrum();
 
-    Kernel kernel = [&](Uint frame_index, Uint cur, Uint other) {
-        _cur.emplace(cur);
-        _other.emplace(other);
+    Kernel kernel = [&](Uint frame_index) {
+        _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         sampler->start_pixel_sample(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
@@ -295,9 +294,8 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Film *film = camera->radiance_film();
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    Kernel kernel = [&](Uint frame_index, Uint cur, Uint other) {
-        _cur.emplace(cur);
-        _other.emplace(other);
+    Kernel kernel = [&](Uint frame_index) {
+        _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 0);
@@ -335,10 +333,8 @@ void ReSTIRDirectIllumination::prepare() noexcept {
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    uint cur = frame_index % 2;
-    uint other = (frame_index + 1) % 2;
-    ret << _shader0(frame_index, cur, other).dispatch(rp->resolution());
-    ret << _shader1(frame_index, cur, other).dispatch(rp->resolution());
+    ret << _shader0(frame_index).dispatch(rp->resolution());
+    ret << _shader1(frame_index).dispatch(rp->resolution());
     return ret;
 }
 

@@ -30,18 +30,17 @@ private:
     RegistrableManaged<SurfaceData> &_surfaces1;
     RegistrableManaged<float2> &_motion_vectors;
 
-    optional<Uint> _cur;
-    optional<Uint> _other;
+    optional<Uint> _frame_index;
 
     /**
      * generate initial candidates
      * check visibility
      */
-    Shader<void(uint, uint, uint)> _shader0;
+    Shader<void(uint)> _shader0;
     /**
      * spatial temporal reuse and shading
      */
-    Shader<void(uint, uint, uint)> _shader1;
+    Shader<void(uint)> _shader1;
 
 public:
     ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
