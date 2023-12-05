@@ -27,15 +27,15 @@ ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const n
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::prev_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
+    return pipeline()->buffer<Reservoir>((_frame_index.value() % 3) + reservoir_base());
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
+    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 2) % 3) + reservoir_base());
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::next_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
+    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 3) + reservoir_base());
 }
 
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
@@ -315,6 +315,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
             L = shading(st_rsv, hit, swl, frame_index);
         };
         film->update_sample(pixel, L, frame_index);
+        next_reservoir().write(dispatch_id(), st_rsv);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
 }
