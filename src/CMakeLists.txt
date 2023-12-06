@@ -45,7 +45,9 @@ add_subdirectory(importers)
 add_subdirectory(pipelines)
 add_subdirectory(render_core)
 add_subdirectory(sdk)
-add_subdirectory(tests)
+if(${OCARINA_BUILD_TESTS})
+    add_subdirectory(tests)
+endif()
 
 
 add_library(vision-main INTERFACE)
