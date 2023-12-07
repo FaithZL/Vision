@@ -37,18 +37,10 @@ public:
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
         Uint index = pixel_index(pixel);
-        Float4 accum_prev = _radiance.read(index);
-        val = lerp(make_float4(a), accum_prev, val);
-        _radiance.write(index, val);
-        val = _tone_mapper->apply(val);
-        if (_gamma) {
-            val = linear_to_srgb(val);
+        if (_accumulation.hv()) {
+            Float4 accum_prev = _radiance.read(index);
+            val = lerp(make_float4(a), accum_prev, val);
         }
-        val.w = 1.f;
-        _frame.write(index, val);
-    }
-    void update_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
-        Uint index = pixel_index(pixel);
         _radiance.write(index, val);
         val = _tone_mapper->apply(val);
         if (_gamma) {

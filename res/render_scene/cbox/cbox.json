@@ -772,64 +772,6 @@
 			"spp" : 1
 		}
 	},
-	"camera" : {
-		"type" : "thin_lens",
-		"param" : {
-			"fov_y" : 19.5,
-			"name" : "view1",
-			"velocity" : 15,
-			"transform" : {
-				"type" : "look_at",
-				"param" : {
-					"position" : [
-						0,
-						1,
-						6.8
-					],
-					"up" : [
-						0,
-						1,
-						0
-					],
-					"target_pos" : [
-						0,
-						1,
-						0
-					]
-				}
-			},
-			"film" : {
-				"type" : "rgb",
-				"param" : {
-					"resolution" : [
-						1024,
-						1024
-					],
-					"fb_state" : 0,
-					"tone_mapper" : {
-//												"type": "reinhard",
-//												"type": "linear",
-												"type": "aces",
-//						"type" : "exposure",
-						"param" : {
-							"exposure" : 1.0
-						}
-					}
-				}
-			},
-			"filter" : {
-				"type" : "box",
-//				"type" : "gaussian",
-				"name" : "boxFilter",
-				"param" : {
-					"radius" : [
-						0.5,
-						0.5
-					]
-				}
-			}
-		}
-	},
 	"warper" : {
 		"type" : "alias_table"
 	},
@@ -998,6 +940,65 @@
 			"min_depth" : 0,
 			"max_depth" : 16,
 			"rr_threshold" : 1
+		}
+	},
+	"camera" : {
+		"type" : "thin_lens",
+		"param" : {
+			"fov_y" : 19.5,
+			"name" : "view1",
+			"velocity" : 15,
+			"transform" : {
+				"type" : "look_at",
+				"param" : {
+					"position" : [
+						0,
+						1,
+						6.8
+					],
+					"up" : [
+						0,
+						1,
+						0
+					],
+					"target_pos" : [
+						0,
+						1,
+						0
+					]
+				}
+			},
+			"film" : {
+				"type" : "rgb",
+				"param" : {
+					"accumulation": 0,
+					"resolution" : [
+						1024,
+						1024
+					],
+					"fb_state" : 0,
+					"tone_mapper" : {
+						//												"type": "reinhard",
+						//												"type": "linear",
+						"type": "aces",
+						//						"type" : "exposure",
+						"param" : {
+							"exposure" : 1.0
+						}
+					}
+				}
+			},
+			"filter" : {
+				"type" : "box",
+				//				"type" : "gaussian",
+				"name" : "boxFilter",
+				"param" : {
+					"radius" : [
+						0.5,
+						0.5
+					]
+				}
+			}
 		}
 	},
 	"output" : {

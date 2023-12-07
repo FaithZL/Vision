@@ -9,6 +9,14 @@
 
 namespace vision {
 
+void Integrator::invalidation() const noexcept {
+    Film *film = scene().radiance_film();
+    if (film->enable_accumulation()) {
+        _frame_index = 0u;
+        _render_time = 0;
+    }
+}
+
 Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();

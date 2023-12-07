@@ -47,10 +47,7 @@ public:
     void increase_frame_index() const noexcept { _frame_index++; }
     void reset_frame_index() const noexcept { _frame_index = 0; }
     void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
-    virtual void invalidation() const noexcept {
-        _frame_index = 0u;
-        _render_time = 0;
-    }
+    virtual void invalidation() const noexcept;
     virtual void render() const noexcept {}
 };
 

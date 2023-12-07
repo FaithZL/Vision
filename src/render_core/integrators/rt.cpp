@@ -25,8 +25,6 @@ public:
           _direct(desc["direct"], _motion_vectors, _surfaces0, _surfaces1),
           _indirect(desc["indirect"], _motion_vectors, _surfaces0, _surfaces1) {}
 
-    void invalidation() const noexcept override {}
-
     void prepare() noexcept override {
         _direct.prepare();
         Pipeline *rp = pipeline();
