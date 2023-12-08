@@ -81,9 +81,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         return ret;
     }
     void truncation(oc_uint<p> limit) noexcept {
-        oc_float<p> factor = cast<float>(limit) / M;
-        M = ocarina::select(factor < 1.f, cast<float>(limit), M);
-        weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
+        M = ocarina::min(cast<float>(limit), M);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
         W = ocarina::select(occluded, 0.f, W);

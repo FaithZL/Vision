@@ -44,7 +44,7 @@ public:
 public:
     TemporalResamplingParam() = default;
     TemporalResamplingParam(const ParameterSet &ps, uint M, uint n, uint2 res)
-        : limit(ps["history_limit"].as_uint(5) * M * n),
+        : limit(ps["history_limit"].as_uint(5)),
           sampling_radius(ps["radius"].as_float(2.f)),
           dot_threshold(cosf(radians(ps["theta"].as_float(2)))),
           depth_threshold(ps["depth"].as_float(1)),

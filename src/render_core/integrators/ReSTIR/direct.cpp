@@ -167,11 +167,12 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     Sampler *sampler = scene().sampler();
     Float2 prev_p_film = ss.p_film - motion_vec;
     prev_p_film += square_to_disk(sampler->next_2d()) * _temporal.sampling_radius;
+    Uint limit = rsv.M * _temporal.limit;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
         DIReservoir prev_rsv = prev_reservoir().read(index);
-        prev_rsv->truncation(_temporal.limit);
+        prev_rsv->truncation(limit);
         OCSurfaceData another_surf = prev_surface().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
