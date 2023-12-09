@@ -56,8 +56,8 @@ public:
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
     [[nodiscard]] ResourceArrayBuffer<Reservoir> prev_reservoir() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> passthrough_reservoir() const noexcept;
     [[nodiscard]] ResourceArrayBuffer<Reservoir> cur_reservoir() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<Reservoir> next_reservoir() const noexcept;
     [[nodiscard]] ResourceArrayBuffer<SurfaceData> prev_surface() const noexcept;
     [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept;
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,

@@ -30,11 +30,11 @@ ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::prev_reservoir() const 
     return pipeline()->buffer<Reservoir>((_frame_index.value() % 3) + reservoir_base());
 }
 
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::passthrough_reservoir() const noexcept {
     return pipeline()->buffer<Reservoir>(((_frame_index.value() + 2) % 3) + reservoir_base());
 }
 
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::next_reservoir() const noexcept {
+ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
     return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 3) + reservoir_base());
 }
 
@@ -118,7 +118,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir rsv = cur_reservoir().read(idx);
+        DIReservoir rsv = passthrough_reservoir().read(idx);
         Float p_hat = compute_p_hat(it, swl, rsv.sample);
         cur_rsv->update(sampler->next_1d(), rsv, p_hat);
     });
@@ -218,7 +218,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             rsv->process_occluded(occluded);
         };
         rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, swl, frame_index);
-        cur_reservoir().write(dispatch_id(), rsv);
+        passthrough_reservoir().write(dispatch_id(), rsv);
         cur_surface().write(dispatch_id(), cur_surf);
     };
     _shader0 = device().compile(kernel, "generate initial candidates and "
@@ -308,7 +308,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         camera->load_data();
         sampler->start_pixel_sample(pixel, frame_index, 1);
         OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
-        DIReservoir temporal_rsv = cur_reservoir().read(dispatch_id());
+        DIReservoir temporal_rsv = passthrough_reservoir().read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
@@ -316,7 +316,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
             L = shading(st_rsv, hit, swl, frame_index);
         };
         film->add_sample(pixel, L, frame_index);
-        next_reservoir().write(dispatch_id(), st_rsv);
+        cur_reservoir().write(dispatch_id(), st_rsv);
     };
     _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
 }
