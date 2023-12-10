@@ -27,15 +27,15 @@ ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const n
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::prev_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>((_frame_index.value() % 3) + reservoir_base());
+    return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::passthrough_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 2) % 3) + reservoir_base());
+    return pipeline()->buffer<Reservoir>(2 + reservoir_base());
 }
 
 ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 3) + reservoir_base());
+    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
 }
 
 Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
