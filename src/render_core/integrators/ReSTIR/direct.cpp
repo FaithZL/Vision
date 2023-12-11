@@ -253,7 +253,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
     return rsv;
 }
 
-Float3 ReSTIRDirectIllumination::shading(const vision::DIReservoir &rsv, const OCHit &hit,
+Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &hit,
                                          SampledWavelengths &swl, const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
@@ -286,6 +286,8 @@ Float3 ReSTIRDirectIllumination::shading(const vision::DIReservoir &rsv, const O
                     swl.invalidation_secondary();
                 };
             }
+            Bool occluded = geometry.occluded(it, rsv.sample->p_light());
+            rsv->process_occluded(occluded);
             ScatterEval se = bsdf.evaluate(wo, wi);
             value = ls.eval.L * se.f;
             value = value * rsv.W;
