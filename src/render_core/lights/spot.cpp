@@ -45,9 +45,12 @@ public:
         Float ret = Pow<4>(factor);
         return ret;
     }
+    [[nodiscard]] Float3 direction(const LightSampleContext &p_ref) const noexcept override {
+        return *_direction;
+    }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
-                             const LightEvalContext &p_light,
-                             const SampledWavelengths &swl) const noexcept override {
+                                     const LightEvalContext &p_light,
+                                     const SampledWavelengths &swl) const noexcept override {
         Float3 w_un = p_ref.pos - position();
         Float3 w = normalize(w_un);
         SampledSpectrum value = _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();

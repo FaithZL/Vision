@@ -77,7 +77,7 @@ public:
     [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
-        return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light)};
+        return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light), p_light.ng};
     }
 };
 
@@ -105,6 +105,9 @@ public:
                                const LightEvalContext &p_light) const noexcept override {
         // using -1 for delta light
         return -1.f;
+    }
+    [[nodiscard]] virtual Float3 direction(const LightSampleContext &p_ref) const noexcept {
+        return normalize(p_ref.pos - position());
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,

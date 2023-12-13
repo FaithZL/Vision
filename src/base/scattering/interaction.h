@@ -177,7 +177,7 @@ struct SpacePoint {
 struct GeometrySurfacePoint : public SpacePoint {
     Float2 uv{};
     GeometrySurfacePoint() = default;
-    explicit GeometrySurfacePoint(const Float3 &p) : SpacePoint(p) {}
+    using SpacePoint::SpacePoint;
     explicit GeometrySurfacePoint(const Interaction &it, Float2 uv)
         : SpacePoint(it), uv(uv) {}
     GeometrySurfacePoint(Float3 p, Float3 ng, Float2 uv)
@@ -190,8 +190,8 @@ struct GeometrySurfacePoint : public SpacePoint {
  */
 struct LightEvalContext : public GeometrySurfacePoint {
     Float PDF_pos{};
+    using GeometrySurfacePoint::GeometrySurfacePoint;
     LightEvalContext() = default;
-    explicit LightEvalContext(const Float3 &p) : GeometrySurfacePoint(p) {}
     LightEvalContext(const GeometrySurfacePoint &gsp, Float PDF_pos)
         : GeometrySurfacePoint(gsp), PDF_pos(PDF_pos) {}
     LightEvalContext(Float3 p, Float3 ng, Float2 uv, Float PDF_pos)

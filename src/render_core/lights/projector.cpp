@@ -82,6 +82,9 @@ public:
         return (2 * solid_angle) / (4 * Pi) * average();
     }
     [[nodiscard]] Float3 position() const noexcept override { return (*_o2w)[3].xyz(); }
+    [[nodiscard]] Float3 direction(const LightSampleContext &p_ref) const noexcept override {
+        return transform_vector<D>(*_o2w, make_float3(0,0,1));
+    }
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {

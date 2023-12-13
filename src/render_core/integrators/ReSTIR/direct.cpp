@@ -55,6 +55,9 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, SampledWavelengths &swl,
                                              const DIRSVSample &sample, LightSample *output_ls) const noexcept {
     SampledSpectrum ret{swl.dimension()};
+    LightSampler *light_sampler = scene().light_sampler();
+    Spectrum &spectrum = *scene().spectrum();
+    SampledLight sampled_light;
     return ret;
 }
 

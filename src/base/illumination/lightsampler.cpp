@@ -95,7 +95,7 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
 
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                      const SampledWavelengths &swl) const noexcept {
-    LightEval ret = {{swl.dimension(), 0.f}, 0.f};
+    LightEval ret = LightEval{swl.dimension()};
     dispatch_light(it.light_id(), [&](const Light *light) {
         if (light->type() != LightType::Area) { return; }
         LightEvalContext p_light{it};

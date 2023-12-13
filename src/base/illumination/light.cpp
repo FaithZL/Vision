@@ -24,6 +24,7 @@ LightSample IPointLight::sample_Li(const LightSampleContext &p_ref, Float2 u,
                                    const SampledWavelengths &swl) const noexcept {
     LightSample ret{swl.dimension()};
     LightEvalContext p_light;
+    p_light.ng = direction(p_ref);
     p_light.pos = position();
     ret.eval = evaluate(p_ref, p_light, swl);
     ret.p_light = p_light.pos;

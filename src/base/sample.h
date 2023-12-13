@@ -71,11 +71,13 @@ public:
 struct LightEval {
 public:
     SampledSpectrum L{};
+    Float3 normal{};
     Float pdf{0.f};
 
 public:
     explicit LightEval(uint dim) : L(dim), pdf{0.f} {};
-    LightEval(const SampledSpectrum &L, const Float &pdf) : L(L), pdf(pdf) {}
+    LightEval(const SampledSpectrum &L, const Float &pdf, const Float3 &n)
+        : L(L), pdf(pdf), normal(n) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return L / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
     void invalidation() noexcept { pdf = 0; }
