@@ -52,6 +52,12 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
                                _temporal.depth_threshold);
 }
 
+SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, SampledWavelengths &swl,
+                                             const DIRSVSample &sample, LightSample *output_ls) const noexcept {
+    SampledSpectrum ret{swl.dimension()};
+    return ret;
+}
+
 Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
                                               vision::SampledWavelengths &swl,
                                               const vision::DIRSVSample &sample,

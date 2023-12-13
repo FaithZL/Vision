@@ -304,6 +304,9 @@ public:
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
         return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
     }
+    [[nodiscard]] Float luminance(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return sp.average();
+    }
     [[nodiscard]] SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept {
         RGBIlluminationSpectrum spec{val, _illuminant_d65};
         SampledSpectrum sp{dimension()};
@@ -330,15 +333,15 @@ public:
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
-        return {params_to_albedo(c, swl), luminance(rgb)};
+        return {params_to_albedo(c, swl), ocarina::luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        return {params_to_illumination(c, swl), luminance(rgb)};
+        return {params_to_illumination(c, swl), ocarina::luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
         Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
-        return {params_to_unbound(c, swl), luminance(rgb)};
+        return {params_to_unbound(c, swl), ocarina::luminance(rgb)};
     }
 };
 

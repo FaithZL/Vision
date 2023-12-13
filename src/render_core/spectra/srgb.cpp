@@ -22,16 +22,20 @@ public:
     }
 
     [[nodiscard]] float4 albedo_params(float4 rgb) const noexcept override {
-        return make_float4(rgb.xyz(), luminance(rgb.xyz()));
+        return make_float4(rgb.xyz(), ocarina::luminance(rgb.xyz()));
     }
     [[nodiscard]] float4 illumination_params(float4 rgb) const noexcept override {
-        return make_float4(rgb.xyz(), luminance(rgb.xyz()));
+        return make_float4(rgb.xyz(), ocarina::luminance(rgb.xyz()));
     }
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
-        return make_float4(rgb.xyz(), luminance(rgb.xyz()));
+        return make_float4(rgb.xyz(), ocarina::luminance(rgb.xyz()));
     }
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::linear_srgb_to_y(linear_srgb(sp, swl));
+    }
+
+    [[nodiscard]] Float luminance(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
+        return ocarina::luminance(sp.vec3());
     }
 
     [[nodiscard]] Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
@@ -42,13 +46,13 @@ public:
         return sp.vec3();
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        return {.sample = SampledSpectrum(rgb), .strength = ocarina::luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        return {.sample = SampledSpectrum(rgb), .strength = ocarina::luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        return {.sample = SampledSpectrum(rgb), .strength = luminance(rgb)};
+        return {.sample = SampledSpectrum(rgb), .strength = ocarina::luminance(rgb)};
     }
 };
 
