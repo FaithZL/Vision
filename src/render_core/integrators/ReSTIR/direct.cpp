@@ -53,18 +53,7 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
 }
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, SampledWavelengths &swl,
-                                             const DIRSVSample &sample, LightSample *output_ls) const noexcept {
-    SampledSpectrum ret{swl.dimension()};
-    LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = *scene().spectrum();
-    SampledLight sampled_light;
-    return ret;
-}
-
-Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
-                                              vision::SampledWavelengths &swl,
-                                              const vision::DIRSVSample &sample,
-                                              vision::LightSample *output_ls) noexcept {
+                                             const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     SampledLight sampled_light;
@@ -87,7 +76,21 @@ Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
     if (output_ls) {
         *output_ls = ls;
     }
-    Float p_hat = f.average();
+    return f;
+}
+
+Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
+                                              vision::SampledWavelengths &swl,
+                                              const vision::DIRSVSample &sample,
+                                              vision::LightSample *output_ls) noexcept {
+    LightSample ls{swl.dimension()};
+    SampledSpectrum f = Li(it, swl, sample, &ls);
+    if (output_ls) {
+        *output_ls = ls;
+    }
+    Float p_hat = pipeline()->spectrum().luminance(f, swl);
+    Float3 wo = normalize(it.pos - sample->p_light());
+//    p_hat = p_hat * saturate(dot(wo, ls.eval.normal));
     return p_hat;
 }
 
@@ -285,22 +288,11 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
     $else {
         SampledLight sampled_light;
         sampled_light.light_index = rsv.sample.light_index;
-        LightSample ls = light_sampler->sample(sampled_light, it, rsv.sample.u, swl);
-        Float3 wo = normalize(camera->device_position() - it.pos);
-        Float3 wi = normalize(rsv.sample->p_light() - it.pos);
-        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-            BSDF bsdf = material->compute_BSDF(it, swl);
-            if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
-                $if(*dispersive) {
-                    swl.invalidation_secondary();
-                };
-            }
-            Bool occluded = geometry.occluded(it, rsv.sample->p_light());
-            rsv->process_occluded(occluded);
-            ScatterEval se = bsdf.evaluate(wo, wi);
-            value = ls.eval.L * se.f;
-            value = value * rsv.W;
-        });
+        it.wo = normalize(camera->device_position() - it.pos);
+        value = Li(it, swl, rsv.sample);
+        Bool occluded = geometry.occluded(it, rsv.sample->p_light());
+        rsv->process_occluded(occluded);
+        value = value * rsv.W;
     };
     return spectrum.linear_srgb(value + Le, swl);
 }
