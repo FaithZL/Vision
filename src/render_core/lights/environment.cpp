@@ -67,7 +67,7 @@ public:
         Float sin_theta = sin(theta);
         Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
         Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
-        return {L(local_dir, swl), select(sin_theta == 0, 0.f, pdf), -world_dir};
+        return {L(local_dir, swl), select(sin_theta == 0, 0.f, pdf)};
     }
 
     [[nodiscard]] float3 power() const noexcept override {
@@ -93,7 +93,7 @@ public:
         Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
         Float3 pos = p_ref.pos + world_dir * scene().world_diameter();
         pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
-        ret.eval = LightEval(L(local_dir, swl), pdf_dir, -world_dir);
+        ret.eval = LightEval(L(local_dir, swl), pdf_dir);
         ret.p_light = pos;
         return ret;
     }

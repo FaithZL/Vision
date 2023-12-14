@@ -77,7 +77,7 @@ public:
     [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
-        return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light), p_light.ng};
+        return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light)};
     }
 };
 
