@@ -14,13 +14,6 @@ Float BxDF::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     return cosine_hemisphere_PDF(abs_cos_theta(wi));
 }
 
-Array<float> BxDF::PDFs(ocarina::Float3 wo, ocarina::Float3 wi, SP<vision::Fresnel> fresnel) const noexcept {
-    Float pdf = PDF(wo, wi, fresnel);
-    Array<float> ret{swl().dimension()};
-    ret = pdf;
-    return ret;
-}
-
 ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     return {f(wo, wi, fresnel), PDF(wo, wi, fresnel), flags()};
 }
@@ -100,17 +93,6 @@ Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) con
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     return select(same_hemisphere(wo, wi, wh), 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
-}
-
-Array<float> MicrofacetTransmission::PDFs(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    SampledSpectrum etas = fresnel->eta();
-    Array<float> ret{etas.dimension()};
-    ret = etas.values().map([&](Uint index, auto eta) {
-        Float3 wh = normalize(wo + wi * eta);
-        wh = face_forward(wh, make_float3(0, 0, 1));
-        return select(same_hemisphere(wo, wi, wh), 0.f, _microfacet->PDF_wi_transmission(wo, wh, wi, eta));
-    });
-    return ret;
 }
 
 SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
