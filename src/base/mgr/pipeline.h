@@ -61,7 +61,7 @@ public:
     virtual void before_render() noexcept;
     virtual void after_render() noexcept;
     virtual void upload_data() noexcept { _scene.upload_data(); }
-    [[nodiscard]] virtual float4 *final_picture(bool denoise) noexcept;
+    [[nodiscard]] virtual float4 *final_picture(const OutputDesc &desc) noexcept;
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
     [[nodiscard]] uint pixel_num() const noexcept { return resolution().x * resolution().y; }
     /// virtual function end

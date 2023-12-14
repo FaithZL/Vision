@@ -11,7 +11,7 @@ namespace vision {
 class Pipeline;
 class Postprocessor {
 private:
-    using signature = void(Buffer<float4>, Buffer<float4>);
+    using signature = void(Buffer<float4>, Buffer<float4>, bool);
 
 private:
     Pipeline *_rp{};
@@ -34,6 +34,8 @@ public:
     void denoise(Args &&...args) const noexcept {
         _denoiser->apply(OC_FORWARD(args)...);
     }
-    void tone_mapping(RegistrableManaged<float4> &input, RegistrableManaged<float4> &output) noexcept;
+    void tone_mapping(RegistrableManaged<float4> &input,
+                      RegistrableManaged<float4> &output,
+                      bool gamma = false) noexcept;
 };
 }// namespace vision
