@@ -88,6 +88,12 @@ public:
         return radiance * select(dot(w, p_light.ng) > 0 || (*_two_sided), 1.f, 0.f);
     }
 
+    [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
+                                     const LightEvalContext &p_light,
+                                     const SampledWavelengths &swl) const noexcept override {
+        return L(p_light, p_ref.pos - p_light.pos, swl);
+    }
+
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {

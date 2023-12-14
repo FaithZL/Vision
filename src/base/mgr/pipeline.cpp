@@ -17,8 +17,8 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
       _resource_array(device().create_resource_array()) {
     Env::printer().init(device());
     Env::debugger().init(device());
-//    Env::set_code_obfuscation(true);
-//    Env::set_valid_check(false);
+    Env::set_code_obfuscation(desc["obfuscation"].as_bool(false));
+    Env::set_valid_check(desc["valid_check"].as_bool(false));
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {

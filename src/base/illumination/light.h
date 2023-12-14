@@ -65,6 +65,11 @@ public:
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
+    [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
+                                             const LightEvalContext &p_light,
+                                             const SampledWavelengths &swl) const noexcept {
+        return {swl.dimension(), 0.f};
+    }
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
