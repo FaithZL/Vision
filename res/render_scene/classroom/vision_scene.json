@@ -3795,13 +3795,60 @@
             "spp": 1
         }
     },
+    "warper": {
+        "type": "alias_table"
+    },
+    "mediums" : {
+        "global" : "fog",
+//        "process" : true,
+        "list": [
+            {
+                "type" : "homogeneous",
+                "name" : "fog",
+                "param" : {
+                    "g" : 0,
+                    "scale" : 0.0231,
+                    "sigma_s" : [1, 1, 1],
+                    "sigma_a" : [0, 0, 0]
+                }
+            }
+        ]
+    },
+    "integrator" : {
+        "type" : "rt",
+//        		"type" : "pt",
+        "param" : {
+            "direct": {
+                "spatial": {
+//                    					"open": false,
+                    "theta": 5,
+                    "depth": 0.3,
+                    "radius": 29,
+                    "sample_num": 1
+                },
+                "temporal": {
+//                    					"open": false,
+                    "theta": 2,
+                    "depth": 0.5,
+                    "radius": 0,
+                    "motion_vec": 0.15,
+                    "history_limit": 10
+                },
+                //				"mis": true,
+                "M": 10
+            },
+            "min_depth" : 5,
+            "max_depth" : 16,
+            "rr_threshold" : 1
+        }
+    },
     "camera": {
         "type": "thin_lens",
         "param": {
             "fov_y": 35.98,
             "name": "view1",
             "velocity": 5,
-//            "medium": "fog",
+            //            "medium": "fog",
             "transform": {
                 "type": "look_at",
                 "param": {
@@ -3825,11 +3872,12 @@
             "film": {
                 "type": "rgb",
                 "param": {
+                    "accumulation": 0,
                     "resolution": [
                         1280,
                         720
                     ],
-//                    "gamma": false,
+                    //                    "gamma": false,
                     "fb_state": 0
                 }
             },
@@ -3845,61 +3893,6 @@
             }
         }
     },
-    "warper": {
-        "type": "alias_table"
-    },
-    "mediums" : {
-        "global" : "fog",
-//        "process" : true,
-        "list": [
-            {
-                "type" : "homogeneous",
-                "name" : "fog",
-                "param" : {
-                    "g" : 0,
-                    "scale" : 0.0231,
-                    "sigma_s" : [1, 1, 1],
-                    "sigma_a" : [0, 0, 0]
-                }
-            }
-        ]
-    },
-    "integrator" : {
-//        "type" : "rt",
-        		"type" : "pt",
-        "param" : {
-            "direct": {
-                "spatial": {
-//                    					"open": false,
-                    "theta": 5,
-                    "depth": 0.01,
-                    "radius": 29,
-                    "sample_num": 1
-                },
-                "temporal": {
-//                    					"open": false,
-                    "theta": 2,
-                    "depth": 1,
-                    "radius": 0,
-                    "motion_vec": 0.15,
-                    "history_limit": 20
-                },
-                //				"mis": true,
-                "M": 10
-            },
-            "min_depth" : 5,
-            "max_depth" : 16,
-            "rr_threshold" : 1
-        }
-    },
-//    "integrator": {
-//        "type": "pt",
-//        "param": {
-//            "min_depth": 5,
-//            "max_depth": 16,
-//            "rr_threshold": 1
-//        }
-//    },
     "light_sampler": {
         "type": "uniform",
         "param": {

@@ -30,7 +30,7 @@ private:
 
 public:
     explicit EnvironmentLight(const LightDesc &desc)
-        : Light(desc, LightType::Infinite){
+        : Light(desc, LightType::Infinite) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);
@@ -42,13 +42,13 @@ public:
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
 
-    [[nodiscard]] SampledSpectrum L(Float3 local_dir,const SampledWavelengths &swl) const {
+    [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
         Float2 uv = UV(local_dir);
         return _color.eval_illumination_spectrum(uv, swl).sample * scale();
     }
 
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref, const LightEvalContext &p_light,
-                             const SampledWavelengths &swl) const noexcept override {
+                                     const SampledWavelengths &swl) const noexcept override {
         OC_ERROR("environment PDF_wi can not be called");
         return {3u, 0.f};
     }
@@ -59,7 +59,7 @@ public:
     }
 
     [[nodiscard]] LightEval evaluate_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light,
-                                     const SampledWavelengths &swl) const noexcept override {
+                                        const SampledWavelengths &swl) const noexcept override {
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
         Float3 local_dir = transform_vector(*_w2o, world_dir);
         Float theta = spherical_theta(local_dir);
@@ -76,7 +76,7 @@ public:
     }
 
     [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
-                                        const SampledWavelengths &swl) const noexcept override {
+                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
 
         Float pdf_map;
@@ -96,6 +96,11 @@ public:
         ret.eval = LightEval(L(local_dir, swl), pdf_dir);
         ret.p_light = pos;
         return ret;
+    }
+
+    [[nodiscard]] LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
+                                          const SampledWavelengths &swl) const noexcept override {
+        return sample_dir(p_ref, u, swl);
     }
 
     [[nodiscard]] vector<float> calculate_weights() noexcept {
