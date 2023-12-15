@@ -49,7 +49,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
+    [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
         return _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();

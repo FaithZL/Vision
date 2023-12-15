@@ -94,12 +94,6 @@ public:
         return L(p_light, p_ref.pos - p_light.pos, swl);
     }
 
-    [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
-                                     const LightEvalContext &p_light,
-                                     const SampledWavelengths &swl) const noexcept override {
-        return L(p_light, p_ref.pos - p_light.pos, swl);
-    }
-
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
         Float ret = vision::PDF_dir(p_light.PDF_pos, p_light.ng, p_ref.pos - p_light.pos);

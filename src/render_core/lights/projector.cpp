@@ -85,7 +85,7 @@ public:
     [[nodiscard]] Float3 direction(const LightSampleContext &p_ref) const noexcept override {
         return transform_vector<D>(*_o2w, make_float3(0,0,1));
     }
-    [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref,
+    [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
         Float3 p = transform_point(inverse(*_o2w), p_ref.pos);

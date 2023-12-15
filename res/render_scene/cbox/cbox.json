@@ -914,8 +914,8 @@
 	"pipeline": {
 //		"type": "customized",
 		"param": {
-			"obfuscation" : true,
-			"valid_check" : false
+			"obfuscation" : false,
+			"valid_check" : true
 		}
 	},
 	"integrator" : {

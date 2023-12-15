@@ -47,7 +47,7 @@ public:
         return _color.eval_illumination_spectrum(uv, swl).sample * scale();
     }
 
-    [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light,
+    [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
         OC_ERROR("environment PDF_wi can not be called");
         return {3u, 0.f};

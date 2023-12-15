@@ -67,11 +67,6 @@ public:
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
     [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
-                                             const SampledWavelengths &swl) const noexcept {
-        return {swl.dimension(), 0.f};
-    }
-    [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref,
-                                             const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_wi(const LightSampleContext &p_ref,
@@ -82,7 +77,7 @@ public:
     [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
-        return {Li(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
+        return {Le(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
     }
 };
 
