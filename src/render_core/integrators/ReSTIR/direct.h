@@ -88,7 +88,7 @@ public:
                                              const SensorSample &ss,
                                              SampledWavelengths &swl,
                                              const Uint &frame_index) const noexcept;
-    [[nodiscard]] Float3 shading(DIReservoir rsv, const OCHit &hit,
+    [[nodiscard]] Float3 shading(DIReservoir &rsv, const OCHit &hit,
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept;
