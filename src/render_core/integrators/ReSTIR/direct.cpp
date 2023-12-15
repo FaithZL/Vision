@@ -89,8 +89,6 @@ Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
         *output_ls = ls;
     }
     Float p_hat = pipeline()->spectrum().luminance(f, swl);
-    Float3 wo = normalize(it.pos - sample->p_light());
-//    p_hat = p_hat * saturate(dot(wo, ls.eval.normal));
     return p_hat;
 }
 
