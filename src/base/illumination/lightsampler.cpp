@@ -107,15 +107,15 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
     return ret;
 }
 
-LightSample LightSampler::sample(const LightSampleContext &lsc, Sampler *sampler,
+LightSample LightSampler::sample_dir(const LightSampleContext &lsc, Sampler *sampler,
                                  const SampledWavelengths &swl) const noexcept {
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
     SampledLight sampled_light = select_light(lsc, u_light);
-    return sample(sampled_light, lsc, u_surface, swl);
+    return sample_dir(sampled_light, lsc, u_surface, swl);
 }
 
-LightSample LightSampler::sample(const SampledLight &sampled_light,
+LightSample LightSampler::sample_dir(const SampledLight &sampled_light,
                                  const LightSampleContext &lsc,
                                  const Float2 &u,
                                  const SampledWavelengths &swl) const noexcept {
