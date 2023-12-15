@@ -49,8 +49,8 @@ public:
 
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
-        OC_ERROR("environment PDF_wi can not be called");
-        return {3u, 0.f};
+        OC_ERROR("environment Le can not be called");
+        return {swl.dimension(), 0.f};
     }
 
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
@@ -78,10 +78,8 @@ public:
     [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                          const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
-
         Float pdf_map;
         Uint2 coord;
-
         Float2 uv = _warper->sample_continuous(u, std::addressof(pdf_map),
                                                std::addressof(coord));
         Float theta = uv[1] * Pi;
