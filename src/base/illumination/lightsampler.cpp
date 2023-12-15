@@ -122,7 +122,7 @@ LightSample LightSampler::sample(const SampledLight &sampled_light,
     LightSample ret{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        ret = light->sample_Li(lsc, u, swl);
+        ret = light->sample_dir(lsc, u, swl);
         ret.eval.pdf *= sampled_light.PMF;
     });
     return ret;

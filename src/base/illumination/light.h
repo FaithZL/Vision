@@ -74,15 +74,15 @@ public:
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
-    [[nodiscard]] virtual Float PDF_Li(const LightSampleContext &p_ref,
+    [[nodiscard]] virtual Float PDF_wi(const LightSampleContext &p_ref,
                                        const LightEvalContext &p_light) const noexcept = 0;
-    [[nodiscard]] virtual LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                                 const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
     [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
-        return {Li(p_ref, p_light, swl), PDF_Li(p_ref, p_light)};
+        return {Li(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
     }
 };
 
@@ -106,7 +106,7 @@ public:
 class IPointLight : public Light {
 public:
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
-    [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
+    [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
         // using -1 for delta light
         return -1.f;
@@ -115,7 +115,7 @@ public:
         return normalize(p_ref.pos - position());
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override;
 };
 

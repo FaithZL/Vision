@@ -49,12 +49,12 @@ public:
 
     [[nodiscard]] SampledSpectrum Li(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                              const SampledWavelengths &swl) const noexcept override {
-        OC_ERROR("environment PDF_Li can not be called");
+        OC_ERROR("environment PDF_wi can not be called");
         return {3u, 0.f};
     }
 
-    [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
-        OC_ERROR("environment PDF_Li can not be called")
+    [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
+        OC_ERROR("environment PDF_wi can not be called")
         return 0;
     }
 
@@ -75,7 +75,7 @@ public:
         return Pi * ocarina::sqr(world_radius) * average();
     }
 
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
 

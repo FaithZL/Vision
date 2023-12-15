@@ -41,7 +41,7 @@ public:
         return average() * Pi * ocarina::sqr(_world_radius.hv());
     }
 
-    [[nodiscard]] LightSample sample_Li(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         ret.p_light = p_ref.pos + w_light() * *_world_radius;
@@ -55,7 +55,7 @@ public:
         return _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
     }
 
-    [[nodiscard]] Float PDF_Li(const LightSampleContext &p_ref,
+    [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
         // using -1 for delta light
         return -1.f;
