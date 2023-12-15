@@ -68,16 +68,39 @@ public:
     [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] static Float G(const LightSampleContext &p_ref,
+                                 const LightEvalContext &p_light) noexcept {
+        Float3 w = p_ref.pos - p_light.pos;
+        return dot(normalize(w), p_light.ng) / length_squared(w);
+    }
+    [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref,
+                                             const LightEvalContext &p_light,
+                                             const SampledWavelengths &swl) const noexcept {
+        return Le(p_ref, p_light, swl);
+    }
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_wi(const LightSampleContext &p_ref,
                                        const LightEvalContext &p_light) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF_point(const LightSampleContext &p_ref,
+                                          const LightEvalContext &p_light) const noexcept {
+        return PDF_wi(p_ref, p_light);
+    }
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
-                                                const SampledWavelengths &swl) const noexcept = 0;
+                                                 const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
     [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
-                                             const LightEvalContext &p_light,
-                                             const SampledWavelengths &swl) const noexcept {
+                                                const LightEvalContext &p_light,
+                                                const SampledWavelengths &swl) const noexcept {
         return {Le(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
+    }
+    [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
+                                                  const SampledWavelengths &swl) const noexcept {
+        return sample_dir(p_ref, u, swl);
+    }
+    [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
+                                                   const LightEvalContext &p_light,
+                                                   const SampledWavelengths &swl) const noexcept {
+        return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light)};
     }
 };
 
@@ -111,7 +134,7 @@ public:
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
-                                        const SampledWavelengths &swl) const noexcept override;
+                                         const SampledWavelengths &swl) const noexcept override;
 };
 
 }// namespace vision
