@@ -111,9 +111,7 @@ public:
         return select(ocarina::isinf(ret), 0.f, ret);
     }
 
-    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
-                                         const SampledWavelengths &swl) const noexcept override {
-        LightSample ret{swl.dimension()};
+    [[nodiscard]] LightEvalContext sample_surface(Float2 u) const noexcept {
         auto rp = scene().pipeline();
         Float pmf;
         Float u_remapped;
@@ -123,7 +121,23 @@ public:
         Float2 bary = square_to_triangle(u);
         LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
+        return p_light;
+    }
+
+    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
+                                         const SampledWavelengths &swl) const noexcept override {
+        LightSample ret{swl.dimension()};
+        LightEvalContext p_light = sample_surface(u);
         ret.eval = evaluate_wi(p_ref, p_light, swl);
+        ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
+        return ret;
+    }
+
+    [[nodiscard]] LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
+                                         const SampledWavelengths &swl) const noexcept override {
+        LightSample ret{swl.dimension()};
+        LightEvalContext p_light = sample_surface(u);
+        ret.eval = evaluate_point(p_ref, p_light, swl);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
     }

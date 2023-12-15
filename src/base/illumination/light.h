@@ -76,13 +76,15 @@ public:
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
-        return Le(p_ref, p_light, swl);
+        OC_ERROR_FORMAT("{} Li error", class_name());
+        return SampledSpectrum{swl.dimension(), 0.f};
     }
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_wi(const LightSampleContext &p_ref,
                                        const LightEvalContext &p_light) const noexcept = 0;
     [[nodiscard]] virtual Float PDF_point(const LightSampleContext &p_ref,
                                           const LightEvalContext &p_light) const noexcept {
+        OC_ERROR_FORMAT("{} PDF_point error", class_name());
         return PDF_wi(p_ref, p_light);
     }
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
@@ -95,7 +97,8 @@ public:
     }
     [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
                                                   const SampledWavelengths &swl) const noexcept {
-        return sample_dir(p_ref, u, swl);
+        OC_ERROR_FORMAT("{} sample_area error", class_name());
+        return LightSample{swl.dimension()};
     }
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
                                                    const LightEvalContext &p_light,
