@@ -453,83 +453,87 @@ public:
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_spec_refl->swl().dimension()};
-        SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
-        Float pdf = 0.f;
-        auto fresnel = _fresnel->clone();
-        Float cos_theta_o = cos_theta(wo);
-        fresnel->correct_eta(cos_theta_o);
-        $if(same_hemisphere(wo, wi)) {
-            if (_diffuse_index != InvalidUI32) {
-                f = f_diffuse(wo, wi, fresnel);
-                ret.flags = BxDFFlag::DiffRefl;
-                pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
-            }
+        $outline {
+            SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
+            Float pdf = 0.f;
+            auto fresnel = _fresnel->clone();
+            Float cos_theta_o = cos_theta(wo);
+            fresnel->correct_eta(cos_theta_o);
+            $if(same_hemisphere(wo, wi)) {
+                if (_diffuse_index != InvalidUI32) {
+                    f = f_diffuse(wo, wi, fresnel);
+                    ret.flags = BxDFFlag::DiffRefl;
+                    pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
+                }
 
-            f += _spec_refl->f(wo, wi, fresnel);
-            pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
-            ret.flags = BxDFFlag::GlossyRefl;
-            if (_clearcoat.has_value()) {
-                f += _clearcoat->f(wo, wi, fresnel);
-                pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
+                f += _spec_refl->f(wo, wi, fresnel);
+                pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
+                ret.flags = BxDFFlag::GlossyRefl;
+                if (_clearcoat.has_value()) {
+                    f += _clearcoat->f(wo, wi, fresnel);
+                    pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
+                }
             }
-        }
-        $else {
-            if (_spec_trans.has_value()) {
-                f = _spec_trans->f(wo, wi, fresnel);
-                ret.flags = BxDFFlag::GlossyTrans;
-                pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
-            }
+            $else {
+                if (_spec_trans.has_value()) {
+                    f = _spec_trans->f(wo, wi, fresnel);
+                    ret.flags = BxDFFlag::GlossyTrans;
+                    pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
+                }
+            };
+            ret.f = f;
+            ret.pdf = pdf;
         };
-        ret.f = f;
-        ret.pdf = pdf;
         return ret;
     }
 
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        Float uc = sampler->next_1d();
-        Float2 u = sampler->next_2d();
+        return $outline {
+            Float uc = sampler->next_1d();
+            Float2 u = sampler->next_2d();
+            SampledDirection sampled_direction;
 
-        Uint sampling_strategy = 0u;
-        Float sum_weights = 0.f;
-        for (uint i = 0; i < _sampling_strategy_num; ++i) {
-            sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
-            sum_weights += _sampling_weights[i];
-        }
+            Uint sampling_strategy = 0u;
+            Float sum_weights = 0.f;
+            for (uint i = 0; i < _sampling_strategy_num; ++i) {
+                sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+                sum_weights += _sampling_weights[i];
+            }
+            auto fresnel = _fresnel->clone();
+            Float cos_theta_o = cos_theta(wo);
+            fresnel->correct_eta(cos_theta_o);
 
-        auto fresnel = _fresnel->clone();
-        Float cos_theta_o = cos_theta(wo);
-        fresnel->correct_eta(cos_theta_o);
-        SampledDirection sampled_direction;
 
-        $switch(sampling_strategy) {
-            if (_diffuse.has_value()) {
-                $case(_diffuse_index) {
-                    sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
+            $switch(sampling_strategy) {
+                if (_diffuse.has_value()) {
+                    $case(_diffuse_index) {
+                        sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
+                        $break;
+                    };
+                }
+                $case(_spec_refl_index) {
+                    sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
                     $break;
                 };
-            }
-            $case(_spec_refl_index) {
-                sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
-                $break;
+                if (_clearcoat.has_value()) {
+                    $case(_clearcoat_index) {
+                        sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
+                        $break;
+                    };
+                }
+                if (_spec_trans.has_value()) {
+                    $case(_spec_trans_index) {
+                        sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
+                        $break;
+                    };
+                }
+                $default {
+                    unreachable();
+                    $break;
+                };
             };
-            if (_clearcoat.has_value()) {
-                $case(_clearcoat_index) {
-                    sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
-                    $break;
-                };
-            }
-            if (_spec_trans.has_value()) {
-                $case(_spec_trans_index) {
-                    sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
-                    $break;
-                };
-            }
-            $default {
-                unreachable();
-                $break;
-            };
+            return sampled_direction;
         };
-        return sampled_direction;
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {

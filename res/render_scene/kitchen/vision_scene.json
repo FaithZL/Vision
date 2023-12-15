@@ -13443,8 +13443,8 @@
         "type": "alias_table"
     },
     "integrator" : {
-        "type" : "rt",
-//        		"type" : "pt",
+//        "type" : "rt",
+        		"type" : "pt",
         "param" : {
             "direct": {
                 "spatial": {
@@ -13499,7 +13499,7 @@
             "film": {
                 "type": "rgb",
                 "param": {
-                    "accumulation": 0,
+//                    "accumulation": 0,
                     "resolution": [
                         1440,
                         968
