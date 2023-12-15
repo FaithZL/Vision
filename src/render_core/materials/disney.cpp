@@ -453,7 +453,7 @@ public:
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_spec_refl->swl().dimension()};
-        $outline {
+        outline([&] {
             SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
             Float pdf = 0.f;
             auto fresnel = _fresnel->clone();
@@ -483,12 +483,13 @@ public:
             };
             ret.f = f;
             ret.pdf = pdf;
-        };
+        },
+                "PrincipledBxDFSet::evaluate_local");
         return ret;
     }
 
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        return $outline {
+        return outline([&] {
             Float uc = sampler->next_1d();
             Float2 u = sampler->next_2d();
             SampledDirection sampled_direction;
@@ -502,7 +503,6 @@ public:
             auto fresnel = _fresnel->clone();
             Float cos_theta_o = cos_theta(wo);
             fresnel->correct_eta(cos_theta_o);
-
 
             $switch(sampling_strategy) {
                 if (_diffuse.has_value()) {
@@ -533,7 +533,8 @@ public:
                 };
             };
             return sampled_direction;
-        };
+        },
+                       "PrincipledBxDFSet::sample_wi");
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
