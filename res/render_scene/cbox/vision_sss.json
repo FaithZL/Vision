@@ -1028,7 +1028,7 @@
 //					}
 //				}
 //				{
-//					"type" : "environment",
+//					"type" : "spherical",
 //					"param": {
 //						"color": {
 //							"fn" : "textures/spruit_sunrise_2k.hdr",

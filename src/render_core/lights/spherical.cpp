@@ -9,7 +9,7 @@
 
 namespace vision {
 
-//    "type" : "environment",
+//    "type" : "spherical",
 //    "param": {
 //        "color": {
 //            "fn" : "textures/spruit_sunrise_2k.hdr",
@@ -23,13 +23,13 @@ namespace vision {
 //        },
 //        "scale" : 3
 //    }
-class EnvironmentLight : public Light {
+class SphericalMap : public Light {
 private:
     Serial<float4x4> _w2o;
     SP<Warper2D> _warper{};
 
 public:
-    explicit EnvironmentLight(const LightDesc &desc)
+    explicit SphericalMap(const LightDesc &desc)
         : Light(desc, LightType::Infinite) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
@@ -49,12 +49,12 @@ public:
 
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
-        OC_ERROR("environment Le can not be called");
+        OC_ERROR("Spherical Le can not be called");
         return {swl.dimension(), 0.f};
     }
 
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
-        OC_ERROR("environment PDF_wi can not be called")
+        OC_ERROR("Spherical PDF_wi can not be called")
         return 0;
     }
 
@@ -146,4 +146,4 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::EnvironmentLight)
+VS_MAKE_CLASS_CREATOR(vision::SphericalMap)

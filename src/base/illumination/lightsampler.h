@@ -39,6 +39,7 @@ public:
     void set_mode(Args &&...args) noexcept {
         _lights.set_mode(OC_FORWARD(args)...);
     }
+    [[nodiscard]] float other_prob() const noexcept { return 1 - _env_prob; }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }

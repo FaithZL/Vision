@@ -3998,7 +3998,7 @@
         "param": {
             "lights": [
                 {
-                    "type": "environment",
+                    "type": "spherical",
                     "param": {
                         "color": [
                             1,

@@ -1787,7 +1787,7 @@
         "param": {
             "lights": [
 //                {
-//                    "type" : "environment",
+//                    "type" : "spherical",
 //                    "param": {
 //                        "color": {
 //                            "fn" : "textures/spaichingen_hill_2k.exr",
