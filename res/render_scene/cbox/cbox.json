@@ -939,6 +939,7 @@
 					"history_limit": 10
 				},
 //								"mis": true,
+				"correct_mode" : 0,
 				"M": 10
 			},
 			"min_depth" : 0,

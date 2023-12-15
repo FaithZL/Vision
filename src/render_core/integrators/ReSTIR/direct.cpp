@@ -13,7 +13,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
     : M(desc["M"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),
-      _mis(desc["mis"].as_bool(false)),
+      _correct_mode(static_cast<CorrectMode>(desc["correct_mode"].as_int(0))),
       _motion_vectors(motion_vec),
       _surfaces0(surfaces0),
       _surfaces1(surfaces1) {}
