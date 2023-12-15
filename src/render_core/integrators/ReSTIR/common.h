@@ -13,23 +13,30 @@ namespace vision {
 
 using namespace ocarina;
 
+enum CorrectMode {
+    Off,
+    Basic,
+    Pairwise,
+    Debias
+};
+
 struct SpatialResamplingParam {
 public:
     float dot_threshold{};
     float depth_threshold{};
     float sampling_radius{};
-    uint iterate_num{};
+    uint sample_num{};
     bool open{};
 
 public:
     SpatialResamplingParam() = default;
     explicit SpatialResamplingParam(const ParameterSet &ps)
         : dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
-          depth_threshold(ps["depth"].as_float(0.01f)),
-          sampling_radius(ps["radius"].as_float(3.f)),
-          iterate_num(ps["iterate_num"].as_uint(5)),
+          depth_threshold(ps["depth"].as_float(0.3f)),
+          sampling_radius(ps["radius"].as_float(30)),
+          sample_num(ps["sample_num"].as_uint(1)),
           open{ps["open"].as_bool(true)} {
-        iterate_num = open ? iterate_num : 1;
+        sample_num = open ? sample_num : 1;
     }
 };
 
@@ -43,11 +50,11 @@ public:
 
 public:
     TemporalResamplingParam() = default;
-    TemporalResamplingParam(const ParameterSet &ps, uint M, uint n, uint2 res)
+    TemporalResamplingParam(const ParameterSet &ps)
         : limit(ps["history_limit"].as_uint(5)),
-          sampling_radius(ps["radius"].as_float(2.f)),
-          dot_threshold(cosf(radians(ps["theta"].as_float(2)))),
-          depth_threshold(ps["depth"].as_float(1)),
+          sampling_radius(ps["radius"].as_float(4)),
+          dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
+          depth_threshold(ps["depth"].as_float(0.5)),
           open{ps["open"].as_bool(true)} {}
 };
 

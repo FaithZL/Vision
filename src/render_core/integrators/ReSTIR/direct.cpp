@@ -12,7 +12,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
                                                    RegistrableManaged<SurfaceData> &surfaces1)
     : M(desc["M"].as_uint(1)),
       _spatial(desc["spatial"]),
-      _temporal(desc["temporal"], M, _spatial.iterate_num, pipeline()->resolution()),
+      _temporal(desc["temporal"]),
       _mis(desc["mis"].as_bool(false)),
       _motion_vectors(motion_vec),
       _surfaces0(surfaces0),
@@ -176,7 +176,6 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     }
     Sampler *sampler = scene().sampler();
     Float2 prev_p_film = ss.p_film - motion_vec;
-    prev_p_film += square_to_disk(sampler->next_2d()) * _temporal.sampling_radius;
     Uint limit = rsv.M * _temporal.limit;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
@@ -243,8 +242,8 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
     }
     Sampler *sampler = scene().sampler();
     int2 res = make_int2(pipeline()->resolution());
-    Container<uint> rsv_idx{_spatial.iterate_num};
-    $for(i, _spatial.iterate_num) {
+    Container<uint> rsv_idx{_spatial.sample_num};
+    $for(i, _spatial.sample_num) {
         Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
         Int2 offset_i = make_int2(ocarina::round(offset));
         Int2 another_pixel = pixel + offset_i;
