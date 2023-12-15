@@ -56,23 +56,27 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, SampledWavel
                                              const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
-    SampledLight sampled_light;
-    sampled_light.light_index = sample.light_index;
-    sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
-    LightSample ls = light_sampler->sample_area(sampled_light, it, sample.u, swl);
-    Float3 wi = normalize(ls.p_light - it.pos);
     SampledSpectrum f{swl.dimension()};
-    ScatterEval eval{swl.dimension()};
-    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-        BSDF bsdf = material->compute_BSDF(it, swl);
-        if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
-            $if(*dispersive) {
-                swl.invalidation_secondary();
-            };
-        }
-        eval = bsdf.evaluate(it.wo, wi);
-    });
-    f = eval.f * ls.eval.L;
+    LightSample ls{swl.dimension()};
+    outline([&] {
+        SampledLight sampled_light;
+        sampled_light.light_index = sample.light_index;
+        sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
+        ls = light_sampler->sample_area(sampled_light, it, sample.u, swl);
+        Float3 wi = normalize(ls.p_light - it.pos);
+        ScatterEval eval{swl.dimension()};
+        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+            BSDF bsdf = material->compute_BSDF(it, swl);
+            if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+                $if(*dispersive) {
+                    swl.invalidation_secondary();
+                };
+            }
+            eval = bsdf.evaluate(it.wo, wi);
+        });
+        f = eval.f * ls.eval.L;
+    },
+            "ReSTIRDirectIllumination::Li");
     if (output_ls) {
         *output_ls = ls;
     }
