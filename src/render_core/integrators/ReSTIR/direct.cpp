@@ -281,7 +281,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
             if (light->type() != LightType::Area) { return; }
             LightSampleContext p_ref;
             p_ref.pos = camera->device_position();
-            LightEval le = light->evaluate(p_ref, it, swl);
+            LightEval le = light->evaluate_wi(p_ref, it, swl);
             Le = le.L;
         });
     }

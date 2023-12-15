@@ -58,7 +58,7 @@ public:
         return 0;
     }
 
-    [[nodiscard]] LightEval evaluate(const LightSampleContext &p_ref, const LightEvalContext &p_light,
+    [[nodiscard]] LightEval evaluate_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
         Float3 local_dir = transform_vector(*_w2o, world_dir);

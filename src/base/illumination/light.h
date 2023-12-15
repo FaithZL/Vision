@@ -79,7 +79,7 @@ public:
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                                 const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
-    [[nodiscard]] virtual LightEval evaluate(const LightSampleContext &p_ref,
+    [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};

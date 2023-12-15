@@ -100,7 +100,7 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
         if (light->type() != LightType::Area) { return; }
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
-        ret = light->evaluate(p_ref, p_light, swl);
+        ret = light->evaluate_wi(p_ref, p_light, swl);
         Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
         ret.pdf *= pmf;
     });
@@ -131,7 +131,7 @@ LightSample LightSampler::sample(const SampledLight &sampled_light,
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
-    LightEval ret = env_light()->evaluate(p_ref, p_light, swl);
+    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
     OC_ASSERT(_env_index != InvalidUI32 && _env_light != nullptr);
     Float pmf = PMF(p_ref, _env_index);
     ret.pdf *= pmf;
