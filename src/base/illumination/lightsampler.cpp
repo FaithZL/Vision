@@ -25,7 +25,7 @@ void LightSampler::tidy_up() noexcept {
     });
     for_each([&](SP<Light> light, uint index) noexcept {
         if (light->type() == LightType::Infinite) {
-            _env_light = light.get();
+            _env_light = light;
             _env_index = index;
         }
         light->set_index(index);
@@ -143,12 +143,15 @@ LightSample LightSampler::sample_area(const SampledLight &sampled_light,
     LightSample ret{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     dispatch_light(type_id, inst_id, [&](const Light *light) {
+        auto type = light->type();
+        if (type != LightType::Area || type != LightType::Infinite) {
+            return;
+        }
         ret = light->sample_area(lsc, u, swl);
         ret.eval.pdf *= sampled_light.PMF;
     });
     return ret;
 }
-
 
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {

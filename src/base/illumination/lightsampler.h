@@ -28,7 +28,7 @@ public:
 
 protected:
     Polymorphic<SP<Light>> _lights;
-    Light *_env_light{};
+    SP<Light> _env_light{};
     uint _env_index{InvalidUI32};
     float _env_prob{};
 
@@ -39,7 +39,7 @@ public:
     void set_mode(Args &&...args) noexcept {
         _lights.set_mode(OC_FORWARD(args)...);
     }
-    [[nodiscard]] const Light *env_light() const noexcept { return _env_light; }
+    [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
     [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }
