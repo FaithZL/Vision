@@ -54,15 +54,15 @@ public:
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &lsc, Sampler *sampler,
-                                             const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_dir(const SampledLight &sampled_light,
-                                             const LightSampleContext &lsc,
-                                             const Float2& u, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &lsc, Sampler *sampler,
                                                  const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_area(const SampledLight &sampled_light,
+    [[nodiscard]] virtual LightSample sample_dir(const SampledLight &sampled_light,
                                                  const LightSampleContext &lsc,
-                                                 const Float2& u, const SampledWavelengths &swl) const noexcept;
+                                                 const Float2 &u, const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &lsc, Sampler *sampler,
+                                                  const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual LightSample sample_area(const SampledLight &sampled_light,
+                                                  const LightSampleContext &lsc,
+                                                  const Float2 &u, const SampledWavelengths &swl) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>

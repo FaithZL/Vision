@@ -1024,8 +1024,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
+		"spp" : 1024,
 		"save_exit" : false,
-		"fn" : "ReSTIR.exr"
+		"fn" : "env-old.exr"
 	}
 }
