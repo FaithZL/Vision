@@ -178,14 +178,14 @@ private:
     Slot _color{};
     Slot _ior{};
     Slot _roughness{};
-    bool _remapping_roughness{false};
+    bool _remapping_roughness{true};
 
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
           _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
           _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.01f)))),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
+          _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
         init_ior(desc);
         init_slot_cursor(&_color, 3);
     }

@@ -507,7 +507,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "substrate",
 			"name" : "BackWall",
 			"param" : {
 //				"color" : {
@@ -526,8 +526,9 @@
 					0.71,
 					0.68
 				],
+				"remapping_roughness": true,
 				"roughness":
-				0.015
+				0.1
 //				"color" : {
 //					"channels" : "xyz",
 //					"node" : {
@@ -919,8 +920,8 @@
 		}
 	},
 	"integrator" : {
-		"type" : "rt",
-//				"type" : "pt",
+//		"type" : "rt",
+				"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {
@@ -976,7 +977,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-					"accumulation": 0,
+//					"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024

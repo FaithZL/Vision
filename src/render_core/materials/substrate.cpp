@@ -133,14 +133,14 @@ private:
     Slot _diff{};
     Slot _spec{};
     Slot _roughness{};
-    bool _remapping_roughness{false};
+    bool _remapping_roughness{true};
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
         : Material(desc), _diff(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
           _spec(scene().create_slot(desc.slot("spec", make_float3(0.05f), Albedo))),
           _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.001f)))),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {
+          _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
         init_slot_cursor(&_diff, 3);
     }
 
