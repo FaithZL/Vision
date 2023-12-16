@@ -80,6 +80,7 @@ public:
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
+    [[nodiscard]] virtual bool is_black() const noexcept { return false; }
     [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;

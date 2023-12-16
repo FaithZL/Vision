@@ -17,7 +17,7 @@ namespace vision {
 //        "scale" : 1,
 //        "direction" : [1,1,1]
 //    }
-class DirectionalLight : public Light {
+class DirectionalLight : public Environment {
 private:
     Serial<float3> _direction;
     Serial<float> _world_radius;
@@ -25,7 +25,7 @@ private:
 
 public:
     explicit DirectionalLight(const LightDesc &desc)
-        : Light(desc, LightType::DeltaDirection | LightType::Infinite),
+        : Environment(desc, LightType::DeltaDirection | LightType::Infinite),
           _direction(desc["direction"].as_float3(make_float3(-1.f))) {}
 
     void prepare() noexcept override {
