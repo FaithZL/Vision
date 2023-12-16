@@ -104,7 +104,8 @@ public:
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                                  const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
-    [[nodiscard]] bool is(LightType t) const noexcept { return bool(t & _type); }
+    [[nodiscard]] bool match(LightType t) const noexcept { return static_cast<bool>(t & _type); }
+    [[nodiscard]] bool is(LightType t) const noexcept { return t == _type; }
     [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
                                                 const LightEvalContext &p_light,
                                                 const SampledWavelengths &swl) const noexcept {

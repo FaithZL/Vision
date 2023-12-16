@@ -11,7 +11,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc), _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
         SP<Light> light = scene().load<Light>(light_desc);
-        if (light->is(LightType::Area)) {
+        if (light->match(LightType::Area)) {
             SP<IAreaLight> emission = std::dynamic_pointer_cast<IAreaLight>(light);
             emission->instance()->set_emission(emission);
         }
@@ -24,7 +24,7 @@ void LightSampler::tidy_up() noexcept {
         return _lights.type_index(a.get()) < _lights.type_index(b.get());
     });
     for_each([&](SP<Light> light, uint index) noexcept {
-        if (light->is(LightType::Infinite)) {
+        if (light->match(LightType::Infinite)) {
             _env_light = light;
             _env_index = index;
         }
@@ -97,7 +97,7 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
                                      const SampledWavelengths &swl) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
     dispatch_light(it.light_id(), [&](const Light *light) {
-        if (!light->is(LightType::Area)) {
+        if (!light->match(LightType::Area)) {
             return;
         }
         LightEvalContext p_light{it};
@@ -145,7 +145,7 @@ LightSample LightSampler::sample_area(const SampledLight &sampled_light,
     LightSample ret{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        if (!light->is(LightType::Area | LightType::Infinite)) {
+        if (!light->match(LightType::Area | LightType::Infinite)) {
             return;
         }
         ret = light->sample_area(lsc, u, swl);
