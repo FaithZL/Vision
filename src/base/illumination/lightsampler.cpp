@@ -37,7 +37,9 @@ void LightSampler::prepare() noexcept {
     });
     auto rp = pipeline();
     _lights.prepare(rp->resource_array(), rp->device());
-    _env_light->prepare();
+    if (_env_light) {
+        _env_light->prepare();
+    }
     if (!_env_light) {
         _env_prob = 0;
     } else if (_lights.empty()) {
@@ -118,14 +120,30 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
                                      const SampledWavelengths &swl) const noexcept {
     Float2 u_surface = sampler->next_2d();
     LightSample ls{swl.dimension()};
-    $if(sampler->next_1d() < _env_prob) {
+
+    auto sample_env = [&] {
         ls = sample_environment_wi(lsc, u_surface, swl);
         ls.eval.pdf *= _env_prob;
-    } $else {
+    };
+
+    auto sample_light = [&] {
         SampledLight sampled_light = select_light(lsc, sampler->next_1d());
         ls = sample_light_wi(sampled_light, lsc, u_surface, swl);
         ls.eval.pdf *= light_prob();
     };
+
+    if (_env_prob == 0) {
+        sample_light();
+    } else if (_env_prob == 1) {
+        sample_env();
+    } else {
+        $if(sampler->next_1d() < _env_prob) {
+            sample_env();
+        }
+        $else {
+            sample_light();
+        };
+    }
     return ls;
 }
 
@@ -150,17 +168,33 @@ LightSample LightSampler::sample_light_wi(const SampledLight &sampled_light,
 }
 
 LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
-                                     const SampledWavelengths &swl) const noexcept {
+                                       const SampledWavelengths &swl) const noexcept {
     Float2 u_surface = sampler->next_2d();
     LightSample ls{swl.dimension()};
-    $if(sampler->next_1d() < _env_prob) {
-        ls = sample_environment_wi(lsc, u_surface, swl);
+
+    auto sample_env = [&] {
+        ls = sample_environment_point(lsc, u_surface, swl);
         ls.eval.pdf *= _env_prob;
-    } $else {
+    };
+
+    auto sample_light = [&] {
         SampledLight sampled_light = select_light(lsc, sampler->next_1d());
-        ls = sample_light_wi(sampled_light, lsc, u_surface, swl);
+        ls = sample_light_point(sampled_light, lsc, u_surface, swl);
         ls.eval.pdf *= light_prob();
     };
+
+    if (_env_prob == 0) {
+        sample_light();
+    } else if (_env_prob == 1) {
+        sample_env();
+    } else {
+        $if(sampler->next_1d() < _env_prob) {
+            sample_env();
+        }
+        $else {
+            sample_light();
+        };
+    }
     return ls;
 }
 
