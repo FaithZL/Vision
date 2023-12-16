@@ -30,14 +30,28 @@ OC_STRUCT(vision::LightBound, _axis, theta_o, theta_e){
 // clang-format on
 
 namespace vision {
-
 // LightType Definition
 enum class LightType {
-    Area,
-    DeltaPosition,
-    DeltaDirection,
-    Infinite
+    Area = 1 << 0,
+    DeltaPosition = 1 << 1,
+    DeltaDirection = 1 << 2,
+    Infinite = 1 << 3
 };
+}// namespace vision
+
+#define VS_MAKE_LIGHT_TYPE_OP(op)                                                                          \
+    inline auto operator op(vision::LightType lhs, vision::LightType rhs) {                                \
+        return static_cast<vision::LightType>(ocarina::to_underlying(lhs) op ocarina::to_underlying(rhs)); \
+    }
+
+VS_MAKE_LIGHT_TYPE_OP(|)
+VS_MAKE_LIGHT_TYPE_OP(&)
+VS_MAKE_LIGHT_TYPE_OP(<<)
+VS_MAKE_LIGHT_TYPE_OP(>>)
+
+#undef VS_MAKE_LIGHT_TYPE_OP
+
+namespace vision {
 
 class Light : public Node, public Serializable<float> {
 public:
@@ -90,6 +104,7 @@ public:
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                                  const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
+    [[nodiscard]] bool is(LightType t) const noexcept { return bool(t & _type); }
     [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
                                                 const LightEvalContext &p_light,
                                                 const SampledWavelengths &swl) const noexcept {

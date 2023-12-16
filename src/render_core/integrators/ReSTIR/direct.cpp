@@ -279,7 +279,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &
 
     $if(it.has_emission()) {
         light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
-            if (light->type() != LightType::Area) { return; }
+            if (!light->is(LightType::Area)) { return; }
             LightSampleContext p_ref;
             p_ref.pos = camera->device_position();
             LightEval le = light->evaluate_wi(p_ref, it, swl);
