@@ -20,6 +20,11 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
         }
         add_light(light);
     }
+    if (!_env_light) {
+        _env_prob = 0;
+    } else if (_lights.empty()) {
+        _env_prob = 1;
+    }
 }
 
 void LightSampler::tidy_up() noexcept {
@@ -143,10 +148,10 @@ LightSample LightSampler::sample_area(const LightSampleContext &lsc, Sampler *sa
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
     SampledLight sampled_light = select_light(lsc, u_light);
-    return sample_light_dir(sampled_light, lsc, u_surface, swl);
+    return sample_light_area(sampled_light, lsc, u_surface, swl);
 }
 
-LightSample LightSampler::sample_area(const SampledLight &sampled_light,
+LightSample LightSampler::sample_light_area(const SampledLight &sampled_light,
                                      const LightSampleContext &lsc,
                                      const Float2 &u,
                                      const SampledWavelengths &swl) const noexcept {

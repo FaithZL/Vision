@@ -39,6 +39,7 @@ public:
         _lights.set_mode(OC_FORWARD(args)...);
     }
     [[nodiscard]] float light_prob() const noexcept { return 1 - _env_prob; }
+    [[nodiscard]] float env_prob() const noexcept { return _env_prob; }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
@@ -60,7 +61,7 @@ public:
                                                  const Float2 &u, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &lsc, Sampler *sampler,
                                                   const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_area(const SampledLight &sampled_light,
+    [[nodiscard]] virtual LightSample sample_light_area(const SampledLight &sampled_light,
                                                   const LightSampleContext &lsc,
                                                   const Float2 &u, const SampledWavelengths &swl) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;

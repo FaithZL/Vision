@@ -62,7 +62,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, SampledWavel
         SampledLight sampled_light;
         sampled_light.light_index = sample.light_index;
         sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
-        ls = light_sampler->sample_area(sampled_light, it, sample.u, swl);
+        ls = light_sampler->sample_light_area(sampled_light, it, sample.u, swl);
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval eval{swl.dimension()};
         scene().materials().dispatch(it.material_id(), [&](const Material *material) {
