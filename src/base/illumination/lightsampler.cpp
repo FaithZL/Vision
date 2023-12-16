@@ -40,15 +40,6 @@ void LightSampler::prepare() noexcept {
     if (_env_light) {
         _env_light->prepare();
     }
-    correct_env_prob();
-}
-
-void LightSampler::correct_env_prob() noexcept {
-    if (!_env_light) {
-        _env_prob = 0;
-    } else if (_lights.empty()) {
-        _env_prob = 1;
-    }
 }
 
 Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
@@ -127,7 +118,7 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
 
     auto sample_env = [&] {
         ls = sample_environment_wi(lsc, u_surface, swl);
-        ls.eval.pdf *= _env_prob;
+        ls.eval.pdf *= env_prob();
     };
 
     auto sample_light = [&] {
@@ -136,12 +127,12 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
         ls.eval.pdf *= light_prob();
     };
 
-    if (_env_prob == 0) {
+    if (env_prob() == 0) {
         sample_light();
-    } else if (_env_prob == 1) {
+    } else if (env_prob() == 1) {
         sample_env();
     } else {
-        $if(sampler->next_1d() < _env_prob) {
+        $if(sampler->next_1d() < env_prob()) {
             sample_env();
         }
         $else {
@@ -178,7 +169,7 @@ LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *s
 
     auto sample_env = [&] {
         ls = sample_environment_point(lsc, u_surface, swl);
-        ls.eval.pdf *= _env_prob;
+        ls.eval.pdf *= env_prob();
     };
 
     auto sample_light = [&] {
@@ -187,12 +178,12 @@ LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *s
         ls.eval.pdf *= light_prob();
     };
 
-    if (_env_prob == 0) {
+    if (env_prob() == 0) {
         sample_light();
-    } else if (_env_prob == 1) {
+    } else if (env_prob() == 1) {
         sample_env();
     } else {
-        $if(sampler->next_1d() < _env_prob) {
+        $if(sampler->next_1d() < env_prob()) {
             sample_env();
         }
         $else {
@@ -226,7 +217,7 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
-    ret.pdf *= _env_prob;
+    ret.pdf *= env_prob();
     return ret;
 }
 

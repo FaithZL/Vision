@@ -15,9 +15,15 @@ public:
     }
     [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
-        ret.light_index = min(u * float(light_num()), float(light_num()) - 1);
-        ret.PMF = 1.f / light_num();
-        return ret;
+        auto sample = [&] {
+            ret.light_index = min(u * float(light_num()), float(light_num()) - 1);
+            ret.PMF = 1.f / light_num();
+            return ret;
+        };
+        if (env_prob() == 1) {
+
+        }
+        return sample();
     }
 };
 }// namespace vision
