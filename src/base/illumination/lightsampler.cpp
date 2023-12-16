@@ -40,6 +40,10 @@ void LightSampler::prepare() noexcept {
     if (_env_light) {
         _env_light->prepare();
     }
+    correct_env_prob();
+}
+
+void LightSampler::correct_env_prob() noexcept {
     if (!_env_light) {
         _env_prob = 0;
     } else if (_lights.empty()) {
@@ -212,9 +216,6 @@ LightSample LightSampler::sample_light_point(const SampledLight &sampled_light,
     LightSample ret{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        if (!light->match(LightType::Area | LightType::Infinite)) {
-            return;
-        }
         ret = light->sample_point(lsc, u, swl);
         ret.eval.pdf *= sampled_light.PMF;
     });

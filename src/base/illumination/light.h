@@ -91,19 +91,17 @@ public:
     [[nodiscard]] virtual SampledSpectrum Li(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept {
-        OC_ERROR_FORMAT("{} Li error", class_name());
-        return SampledSpectrum{swl.dimension(), 0.f};
+        return Le(p_ref, p_light, swl);
     }
     [[nodiscard]] virtual Float PMF(const Uint &prim_id) const noexcept { return 0.f; }
     [[nodiscard]] virtual Float PDF_wi(const LightSampleContext &p_ref,
                                        const LightEvalContext &p_light) const noexcept = 0;
     [[nodiscard]] virtual Float PDF_point(const LightSampleContext &p_ref,
                                           const LightEvalContext &p_light) const noexcept {
-        OC_ERROR_FORMAT("{} PDF_point error", class_name());
         return PDF_wi(p_ref, p_light);
     }
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
-                                                 const SampledWavelengths &swl) const noexcept = 0;
+                                                const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
     [[nodiscard]] bool match(LightType t) const noexcept { return static_cast<bool>(t & _type); }
     [[nodiscard]] bool is(LightType t) const noexcept { return t == _type; }
@@ -114,8 +112,7 @@ public:
     }
     [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
                                                   const SampledWavelengths &swl) const noexcept {
-        OC_ERROR_FORMAT("{} sample_point error", class_name());
-        return LightSample{swl.dimension()};
+        return sample_wi(p_ref, u, swl);
     }
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
                                                    const LightEvalContext &p_light,

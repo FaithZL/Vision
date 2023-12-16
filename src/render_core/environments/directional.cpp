@@ -25,7 +25,7 @@ private:
 
 public:
     explicit DirectionalLight(const LightDesc &desc)
-        : Light(desc, LightType::DeltaDirection),
+        : Light(desc, LightType::DeltaDirection | LightType::Infinite),
           _direction(desc["direction"].as_float3(make_float3(-1.f))) {}
 
     void prepare() noexcept override {

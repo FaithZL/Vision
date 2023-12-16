@@ -96,11 +96,6 @@ public:
         return ret;
     }
 
-    [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
-                                          const SampledWavelengths &swl) const noexcept override {
-        return sample_wi(p_ref, u, swl);
-    }
-
     [[nodiscard]] vector<float> calculate_weights() noexcept {
         uint2 res = _color.node()->resolution();
         vector<float> weights(res.x * res.y, 0);
