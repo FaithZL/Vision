@@ -9,6 +9,9 @@ namespace vision {
 
 LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc), _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
+    if (desc.env_desc.valid()) {
+        _env_light = scene().load<Environment>(desc.env_desc);
+    }
     for (const LightDesc &light_desc : desc.light_descs) {
         SP<Light> light = scene().load<Light>(light_desc);
         if (light->match(LightType::Area)) {
@@ -24,10 +27,6 @@ void LightSampler::tidy_up() noexcept {
         return _lights.type_index(a.get()) < _lights.type_index(b.get());
     });
     for_each([&](SP<Light> light, uint index) noexcept {
-        if (light->match(LightType::Infinite)) {
-            _env_light = light;
-            _env_index = index;
-        }
         light->set_index(index);
     });
 }
@@ -38,6 +37,7 @@ void LightSampler::prepare() noexcept {
     });
     auto rp = pipeline();
     _lights.prepare(rp->resource_array(), rp->device());
+    _env_light->prepare();
 }
 
 Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
@@ -104,20 +104,28 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_wi(p_ref, p_light, swl);
         Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
-        ret.pdf *= pmf;
+        ret.pdf *= pmf * light_prob();
     });
     return ret;
 }
 
 LightSample LightSampler::sample_dir(const LightSampleContext &lsc, Sampler *sampler,
-                                 const SampledWavelengths &swl) const noexcept {
+                                     const SampledWavelengths &swl) const noexcept {
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
-    SampledLight sampled_light = select_light(lsc, u_light);
-    return sample_dir(sampled_light, lsc, u_surface, swl);
+    LightSample ls{swl.dimension()};
+    $if(sampler->next_1d() < _env_prob) {
+        ls = _env_light->sample_dir(lsc, u_surface, swl);
+        ls.eval.pdf *= _env_prob;
+    } $else {
+        SampledLight sampled_light = select_light(lsc, u_light);
+        ls = sample_light_dir(sampled_light, lsc, u_surface, swl);
+        ls.eval.pdf *= light_prob();
+    };
+    return ls;
 }
 
-LightSample LightSampler::sample_dir(const SampledLight &sampled_light,
+LightSample LightSampler::sample_light_dir(const SampledLight &sampled_light,
                                  const LightSampleContext &lsc,
                                  const Float2 &u,
                                  const SampledWavelengths &swl) const noexcept {
@@ -135,7 +143,7 @@ LightSample LightSampler::sample_area(const LightSampleContext &lsc, Sampler *sa
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
     SampledLight sampled_light = select_light(lsc, u_light);
-    return sample_dir(sampled_light, lsc, u_surface, swl);
+    return sample_light_dir(sampled_light, lsc, u_surface, swl);
 }
 
 LightSample LightSampler::sample_area(const SampledLight &sampled_light,
@@ -158,9 +166,7 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
-    OC_ASSERT(_env_index != InvalidUI32 && _env_light != nullptr);
-    Float pmf = PMF(p_ref, _env_index);
-    ret.pdf *= pmf;
+    ret.pdf *= _env_prob;
     return ret;
 }
 

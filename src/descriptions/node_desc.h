@@ -90,6 +90,7 @@ public:
     [[nodiscard]] string plugin_name() const noexcept {
         return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
     }
+    void set_type(string_view type) noexcept { _type = type; }
     [[nodiscard]] virtual bool operator==(const NodeDesc &other) const noexcept {
         return hash() == other.hash();
     }
@@ -347,6 +348,7 @@ public:
 struct LightSamplerDesc : public NodeDesc {
 public:
     vector<LightDesc> light_descs;
+    LightDesc env_desc;
     VISION_DESC_COMMON(LightSampler)
     void init(const ParameterSet &ps) noexcept override;
 };

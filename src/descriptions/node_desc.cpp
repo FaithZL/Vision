@@ -272,6 +272,10 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
         light_desc.init(data);
         light_descs.push_back(light_desc);
     }
+    if (param.contains("environment")) {
+        env_desc.set_type("environment");
+        env_desc.init(param.value("environment"));
+    }
 }
 
 void FilmDesc::init(const ParameterSet &ps) noexcept {

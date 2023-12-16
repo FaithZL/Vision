@@ -8,6 +8,7 @@
 #include "base/node.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/sample.h"
+#include "base/serial_object.h"
 #include "base/color/spectrum.h"
 
 namespace vision {
@@ -154,6 +155,16 @@ public:
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
                                          const SampledWavelengths &swl) const noexcept override;
+};
+
+class Environment : public Light, public SerialObject {
+public:
+    using Light::Light;
+    void prepare() noexcept override {
+        Light::prepare();
+        prepare_data();
+        upload_immediately();
+    }
 };
 
 }// namespace vision

@@ -23,14 +23,14 @@ namespace vision {
 //        },
 //        "scale" : 3
 //    }
-class SphericalMap : public Light {
+class SphericalMap : public Environment {
 private:
     Serial<float4x4> _w2o;
     SP<Warper2D> _warper{};
 
 public:
-    explicit SphericalMap(const LightDesc &desc)
-        : Light(desc, LightType::Infinite) {
+    explicit SphericalMap(const Desc &desc)
+        : Environment(desc, LightType::Infinite) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);

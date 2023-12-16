@@ -28,8 +28,7 @@ public:
 
 protected:
     Polymorphic<SP<Light>> _lights;
-    SP<Light> _env_light{};
-    uint _env_index{InvalidUI32};
+    SP<Environment> _env_light{};
     float _env_prob{};
 
 public:
@@ -39,7 +38,7 @@ public:
     void set_mode(Args &&...args) noexcept {
         _lights.set_mode(OC_FORWARD(args)...);
     }
-    [[nodiscard]] float other_prob() const noexcept { return 1 - _env_prob; }
+    [[nodiscard]] float light_prob() const noexcept { return 1 - _env_prob; }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
@@ -56,7 +55,7 @@ public:
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &lsc, Sampler *sampler,
                                                  const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_dir(const SampledLight &sampled_light,
+    [[nodiscard]] virtual LightSample sample_light_dir(const SampledLight &sampled_light,
                                                  const LightSampleContext &lsc,
                                                  const Float2 &u, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &lsc, Sampler *sampler,
