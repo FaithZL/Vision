@@ -64,6 +64,9 @@ public:
     }
 
     virtual void upload_immediately() noexcept {
+        if (datas().host_buffer().empty()) {
+            return;
+        }
         datas().upload_immediately();
     }
 

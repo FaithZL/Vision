@@ -275,6 +275,8 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     if (param.contains("environment")) {
         env_desc.set_type("environment");
         env_desc.init(param.value("environment"));
+    } else {
+        env_desc.sub_type = "black";
     }
 }
 
