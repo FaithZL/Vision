@@ -13,17 +13,11 @@ public:
     [[nodiscard]] Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept override {
         return 1.f / light_num();
     }
-    [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
+    [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
-        auto sample = [&] {
-            ret.light_index = min(u * float(light_num()), float(light_num()) - 1);
-            ret.PMF = 1.f / light_num();
-            return ret;
-        };
-        if (env_prob() == 1) {
-
-        }
-        return sample();
+        ret.light_index = min(u * float(light_num()), float(light_num()) - 1);
+        ret.PMF = 1.f / light_num();
+        return ret;
     }
 };
 }// namespace vision

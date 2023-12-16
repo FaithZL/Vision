@@ -95,6 +95,10 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
     return {type_id, inst_id};
 }
 
+SampledLight LightSampler::select_light(const LightSampleContext &lsc, const Float &u) const noexcept {
+    return _select_light(lsc, u);
+}
+
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                      const SampledWavelengths &swl) const noexcept {
     LightEval ret = LightEval{swl.dimension()};

@@ -31,6 +31,9 @@ protected:
     SP<Environment> _env_light{};
     float _env_prob{};
 
+protected:
+    [[nodiscard]] virtual SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
+
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
@@ -54,7 +57,7 @@ public:
                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
+    [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
