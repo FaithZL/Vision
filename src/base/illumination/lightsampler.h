@@ -54,12 +54,12 @@ public:
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
-    [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &lsc, Sampler *sampler,
+    [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
                                                  const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_light_dir(const SampledLight &sampled_light,
+    [[nodiscard]] virtual LightSample sample_light_wi(const SampledLight &sampled_light,
                                                  const LightSampleContext &lsc,
                                                  const Float2 &u, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &lsc, Sampler *sampler,
+    [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &lsc, Sampler *sampler,
                                                   const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample sample_light_area(const SampledLight &sampled_light,
                                                   const LightSampleContext &lsc,

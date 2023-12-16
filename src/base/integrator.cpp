@@ -84,7 +84,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
 
         comment("estimate direct lighting");
         comment("sample light");
-        LightSample light_sample = light_sampler->sample_dir(it, sampler, swl);
+        LightSample light_sample = light_sampler->sample_wi(it, sampler, swl);
         RayState shadow_ray;
         Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
         SampledSpectrum tr = geometry.Tr(scene(), swl, shadow_ray);

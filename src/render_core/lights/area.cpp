@@ -124,7 +124,7 @@ public:
         return p_light;
     }
 
-    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                          const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         LightEvalContext p_light = sample_surface(u);
@@ -133,7 +133,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
                                          const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         LightEvalContext p_light = sample_surface(u);

@@ -41,7 +41,7 @@ public:
         return average() * Pi * ocarina::sqr(_world_radius.hv());
     }
 
-    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         ret.p_light = p_ref.pos + w_light() * *_world_radius;

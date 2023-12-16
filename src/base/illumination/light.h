@@ -102,7 +102,7 @@ public:
         OC_ERROR_FORMAT("{} PDF_point error", class_name());
         return PDF_wi(p_ref, p_light);
     }
-    [[nodiscard]] virtual LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                                  const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
     [[nodiscard]] bool match(LightType t) const noexcept { return static_cast<bool>(t & _type); }
@@ -112,9 +112,9 @@ public:
                                                 const SampledWavelengths &swl) const noexcept {
         return {Le(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
     }
-    [[nodiscard]] virtual LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
                                                   const SampledWavelengths &swl) const noexcept {
-        OC_ERROR_FORMAT("{} sample_area error", class_name());
+        OC_ERROR_FORMAT("{} sample_point error", class_name());
         return LightSample{swl.dimension()};
     }
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
@@ -153,7 +153,7 @@ public:
         return normalize(p_ref.pos - position());
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
-    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                          const SampledWavelengths &swl) const noexcept override;
 };
 

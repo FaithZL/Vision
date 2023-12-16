@@ -75,7 +75,7 @@ public:
         return Pi * ocarina::sqr(world_radius) * average();
     }
 
-    [[nodiscard]] LightSample sample_dir(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                          const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         Float pdf_map;
@@ -96,9 +96,9 @@ public:
         return ret;
     }
 
-    [[nodiscard]] LightSample sample_area(const LightSampleContext &p_ref, Float2 u,
+    [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
                                           const SampledWavelengths &swl) const noexcept override {
-        return sample_dir(p_ref, u, swl);
+        return sample_wi(p_ref, u, swl);
     }
 
     [[nodiscard]] vector<float> calculate_weights() noexcept {
