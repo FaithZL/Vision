@@ -5,11 +5,11 @@
 #pragma once
 
 #include <utility>
-
 #include "dsl/dsl.h"
 #include "base/node.h"
 #include "core/stl.h"
 #include "light.h"
+#include "math/warp.h"
 #include "base/scattering/interaction.h"
 
 namespace vision {
@@ -31,6 +31,9 @@ protected:
     SP<Environment> _env_light{};
     float _env_prob{};
     uint _env_index{InvalidUI32};
+
+protected:
+    [[nodiscard]] virtual SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
 
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
@@ -56,16 +59,14 @@ public:
                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
+    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, Float u) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
                                                 const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_environment_wi(const LightSampleContext &lsc, Float2 u,
-                                                            const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_light_wi(const SampledLight &sampled_light,
-                                                      const LightSampleContext &lsc,
-                                                      const Float2 &u, const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual LightSample sample_wi(const SampledLight &sampled_light,
+                                                const LightSampleContext &lsc,
+                                                const Float2 &u, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &lsc, Sampler *sampler,
                                                    const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample sample_environment_point(const LightSampleContext &lsc, Float2 u,
