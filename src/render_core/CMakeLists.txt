@@ -2,7 +2,6 @@ add_subdirectory(films)
 add_subdirectory(filters)
 add_subdirectory(samplers)
 add_subdirectory(lights)
-add_subdirectory(environments)
 add_subdirectory(lightsamplers)
 add_subdirectory(integrators)
 add_subdirectory(materials)
@@ -29,7 +28,6 @@ target_link_libraries(vision-plugins INTERFACE
         vision-lightsampler
         vision-sensor
         vision-light
-        vision-environment
         vision-film
         vision-rasterizer
         vision-shadernode
