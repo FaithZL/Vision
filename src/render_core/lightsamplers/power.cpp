@@ -16,7 +16,7 @@ public:
     explicit PowerLightSampler(const LightSamplerDesc &desc)
         : LightSampler(desc) {}
 
-    [[nodiscard]] Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept override {
+    [[nodiscard]] Float _PMF(const LightSampleContext &lsc, const Uint &index) const noexcept override {
         return _warper->PMF(index);
     }
 
