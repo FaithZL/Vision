@@ -124,6 +124,7 @@ LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const Lig
     dispatch_light(type_id, inst_id, [&](const Light *light) {
         ls = light->sample_wi(lsc, u, swl);
     });
+    ls.eval.pdf *= sampled_light.PMF;
     return ls;
 }
 
@@ -140,7 +141,7 @@ LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *s
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
     SampledLight sampled_light = select_light(lsc, u_light);
-    return sample_wi(sampled_light, lsc, u_surface, swl);
+    return sample_point(sampled_light, lsc, u_surface, swl);
 }
 
 LightSample LightSampler::sample_point(const SampledLight &sampled_light, const LightSampleContext &lsc,
@@ -150,6 +151,7 @@ LightSample LightSampler::sample_point(const SampledLight &sampled_light, const 
     dispatch_light(type_id, inst_id, [&](const Light *light) {
         ls = light->sample_point(lsc, u, swl);
     });
+    ls.eval.pdf *= sampled_light.PMF;
     return ls;
 }
 
@@ -158,7 +160,6 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
     Float pmf = PMF(p_ref, _env_index);
-    $condition_info("{} =====================", pmf);
     ret.pdf *= pmf;
     return ret;
 }
