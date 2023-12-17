@@ -108,22 +108,13 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_wi(p_ref, p_light, swl);
         Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
-        ret.pdf *= pmf * light_prob();
+        ret.pdf *= pmf;
     });
     return ret;
 }
 
 SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) const noexcept {
-    SampledLight ret;
-    $if(u < env_prob()) {
-        ret = {_env_index, env_prob()};
-    }
-    $else {
-        u = remapping(u, light_prob(), 1.f);
-        ret = _select_light(lsc, u);
-        ret.PMF *= light_prob();
-    };
-    return ret;
+    return _select_light(lsc, u);
 }
 
 LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
@@ -131,7 +122,7 @@ LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const Lig
     LightSample ls{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-      ls = light->sample_wi(lsc, u, swl);
+        ls = light->sample_wi(lsc, u, swl);
     });
     return ls;
 }
@@ -166,7 +157,9 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
-    ret.pdf *= env_prob();
+    Float pmf = PMF(p_ref, _env_index);
+    $condition_info("{} =====================", pmf);
+    ret.pdf *= pmf;
     return ret;
 }
 
