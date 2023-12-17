@@ -20,6 +20,12 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
         }
         add_light(light);
     }
+    _env_index = light_num();
+    add_light(_env_light);
+}
+
+Uint LightSampler::correct_index(Uint index) const noexcept {
+    return ocarina::select(index < _env_index, index, index + 1u);
 }
 
 void LightSampler::tidy_up() noexcept {
@@ -37,9 +43,6 @@ void LightSampler::prepare() noexcept {
     });
     auto rp = pipeline();
     _lights.prepare(rp->resource_array(), rp->device());
-    if (_env_light) {
-        _env_light->prepare();
-    }
 }
 
 Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
@@ -93,10 +96,6 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
     }
     OC_ASSERT(false);
     return {type_id, inst_id};
-}
-
-SampledLight LightSampler::select_light(const LightSampleContext &lsc, const Float &u) const noexcept {
-    return _select_light(lsc, u);
 }
 
 LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,

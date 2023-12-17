@@ -17,8 +17,7 @@ public:
     [[nodiscard]] bool is_black() const noexcept { return true; }
     explicit Black(const LightDesc &desc)
         : Environment(desc, LightType::Infinite) {}
-        [[nodiscard]] float3 power() const noexcept { return make_float3(0.f); }
-
+    [[nodiscard]] float3 power() const noexcept override { return make_float3(0.f); }
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {

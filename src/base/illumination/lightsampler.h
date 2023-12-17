@@ -30,9 +30,7 @@ protected:
     Polymorphic<SP<Light>> _lights;
     SP<Environment> _env_light{};
     float _env_prob{};
-
-protected:
-    [[nodiscard]] virtual SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
+    uint _env_index{InvalidUI32};
 
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
@@ -43,7 +41,7 @@ public:
     }
     [[nodiscard]] float light_prob() const noexcept { return 1 - env_prob(); }
     [[nodiscard]] float env_prob() const noexcept {
-        return (!_env_light) ? 0 : (_lights.empty() ? 1: _env_prob);
+        return (!_env_light && _env_light->is_black()) ? 0 : (_lights.empty() ? 1 : _env_prob);
     }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
@@ -51,13 +49,14 @@ public:
     [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
     [[nodiscard]] uint all_light_num() const noexcept { return light_num() + static_cast<int>(bool(_env_light)); }
+    [[nodiscard]] Uint correct_index(Uint index) const noexcept;
     void add_light(SP<Light> light) noexcept { _lights.push_back(ocarina::move(light)); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
     [[nodiscard]] virtual LightEval evaluate_hit(const LightSampleContext &p_ref, const Interaction &it,
                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept;
+    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,

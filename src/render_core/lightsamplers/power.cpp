@@ -20,7 +20,7 @@ public:
         return _warper->PMF(index);
     }
 
-    [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
+    [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
         ret.light_index = _warper->sample_discrete(u, nullptr, nullptr);
         ret.PMF = PMF(lsc, ret.light_index);
