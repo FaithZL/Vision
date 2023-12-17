@@ -779,6 +779,7 @@
 	"light_sampler" : {
 		"type" : "uniform",
 		"param" : {
+			"env_prob": 0.9,
 			"lights" : [
 				{
 					"type" : "spherical",

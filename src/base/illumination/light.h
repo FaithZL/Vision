@@ -155,14 +155,9 @@ public:
                                          const SampledWavelengths &swl) const noexcept override;
 };
 
-class Environment : public Light, public SerialObject {
+class Environment : public Light {
 public:
     using Light::Light;
-    void prepare() noexcept override {
-        Light::prepare();
-        prepare_data();
-        upload_immediately();
-    }
 };
 
 }// namespace vision
