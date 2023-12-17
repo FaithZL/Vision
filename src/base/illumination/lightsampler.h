@@ -39,19 +39,17 @@ public:
     explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
     template<typename... Args>
-    void set_mode(Args &&...args) noexcept {
-        _lights.set_mode(OC_FORWARD(args)...);
-    }
-    [[nodiscard]] float light_prob() const noexcept { return 1 - env_prob(); }
+    void set_mode(Args &&...args) noexcept { _lights.set_mode(OC_FORWARD(args)...); }
     [[nodiscard]] float env_prob() const noexcept {
-        return (!_env_light && _env_light->is_black()) ? 0 : (_lights.empty() ? 1 : _env_prob);
+        return (!_env_light) ? 0 : (_lights.empty() ? 1 : _env_prob);
     }
     [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
     [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }
     [[nodiscard]] uint light_num() const noexcept { return _lights.size(); }
-    [[nodiscard]] uint all_light_num() const noexcept { return light_num() + static_cast<int>(bool(_env_light)); }
+    [[nodiscard]] uint punctual_light_num() const noexcept { return light_num() - environment_light_num(); }
+    [[nodiscard]] uint environment_light_num() const noexcept { return static_cast<int>(bool(_env_light)); }
     [[nodiscard]] Uint correct_index(Uint index) const noexcept;
     void add_light(SP<Light> light) noexcept { _lights.push_back(ocarina::move(light)); }
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
