@@ -22,8 +22,6 @@ public:
             sampler->start_pixel_sample(pixel, frame_index, 0);
             camera->load_data();
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-            Array<float> scattering_pdf{spectrum().dimension()};
-            scattering_pdf = 1e16f;
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
             Float3 L = Li(rs, scatter_pdf, nullptr) * ss.filter_weight;
