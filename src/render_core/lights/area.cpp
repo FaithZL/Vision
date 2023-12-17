@@ -15,6 +15,8 @@ namespace vision {
 //            "channels" : "xyz",
 //            "node" : [17,12,4]
 //        },
+//        "width" : 1,
+//        "height" : 1,
 //        "two_sided" : false,
 //        "scale" : 1,
 //        "o2w" : {

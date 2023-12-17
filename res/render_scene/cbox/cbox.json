@@ -781,22 +781,22 @@
 		"param" : {
 			"env_prob": 0.9,
 			"lights" : [
-				{
-					"type" : "spherical",
-					"param": {
-						"color": {
-							"fn" : "textures/spruit_sunrise_2k.hdr",
-							"color_space": "linear"
-						},
-						"o2w" : {
-							"type":"yaw_pitch",
-							"param": {
-								"yaw" :-30
-							}
-						},
-						"scale" : 0.5
-					}
-				}
+//				{
+//					"type" : "spherical",
+//					"param": {
+//						"color": {
+//							"fn" : "textures/spruit_sunrise_2k.hdr",
+//							"color_space": "linear"
+//						},
+//						"o2w" : {
+//							"type":"yaw_pitch",
+//							"param": {
+//								"yaw" :-30
+//							}
+//						},
+//						"scale" : 0.5
+//					}
+//				}
 				//				{
 				//					"type" : "spot",
 				//					"param" : {
@@ -819,17 +819,64 @@
 				//						"scale" : 3
 				//					}
 				//				},
-				//				{
-				//					"type" : "point",
-				//					"param" : {
-				//						"color" : {
-				//							"channels" : "xyz",
-				//							"node" : [1, 1, 1]
-				//						},
-				//						"position" : [-0.5, 1.8, 0],
-				//						"scale" : 0.2
-				//					}
-				//				},
+								{
+									"type" : "point",
+									"param" : {
+										"color" : {
+											"channels" : "xyz",
+											"node" : [1, 1, 1]
+										},
+										"position" : [-0.5, 1.8, 0],
+										"scale" : 0.2
+									}
+								},
+				{
+					"type": "area",
+					"param": {
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								17,
+								12,
+								4
+							]
+						},
+						"width" : 0.2,
+						"two_sided" : false,
+						"scale" : 0.3,
+						"o2w" : {
+							"type" : "matrix4x4",
+							"param" : {
+								"matrix4x4" : [
+									[
+										0.4699999988079071,
+										-4.108870399477382e-08,
+										-4.108870399477382e-08,
+										0.0
+									],
+									[
+										-1.56137076601226e-08,
+										-0.1785999983549118,
+										1.3649937003794234e-15,
+										0.0
+									],
+									[
+										-3.3220654671595184e-08,
+										0.0,
+										-0.3799999952316284,
+										0.0
+									],
+									[
+										0.4999999888241291,
+										1.7800000190734863,
+										-0.029999999329447746,
+										1.0
+									]
+								]
+							}
+						}
+					}
+				}
 				//				{
 				//					"type" : "point",
 				//					"param" : {
@@ -1025,8 +1072,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 1024,
+		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "env-new.exr"
+		"fn" : "ls-1.exr"
 	}
 }
