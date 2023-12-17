@@ -16,7 +16,7 @@ public:
     [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
         ret.light_index = min(u * float(light_num()), float(light_num()) - 1);
-        ret.light_index = correct_index(ret.light_index);
+//        ret.light_index = correct_index(ret.light_index);
         ret.PMF = 1.f / light_num();
         return ret;
     }

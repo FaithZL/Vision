@@ -9,19 +9,18 @@ namespace vision {
 
 LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc), _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
-    if (desc.env_desc.valid()) {
-        _env_light = scene().load<Environment>(desc.env_desc);
-    }
     for (const LightDesc &light_desc : desc.light_descs) {
         SP<Light> light = scene().load<Light>(light_desc);
         if (light->match(LightType::Area)) {
             SP<IAreaLight> emission = std::dynamic_pointer_cast<IAreaLight>(light);
             emission->instance()->set_emission(emission);
         }
+        if (light->match(LightType::Infinite)) {
+            _env_light = std::dynamic_pointer_cast<Environment>(light);
+            _env_index = _lights.size();
+        }
         add_light(light);
     }
-    _env_index = light_num();
-    add_light(_env_light);
 }
 
 Uint LightSampler::correct_index(Uint index) const noexcept {
@@ -127,6 +126,16 @@ SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) 
     return ret;
 }
 
+LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
+                                    const Float2 &u, const SampledWavelengths &swl) const noexcept {
+    LightSample ls{swl.dimension()};
+    auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
+    dispatch_light(type_id, inst_id, [&](const Light *light) {
+      ls = light->sample_wi(lsc, u, swl);
+    });
+    return ls;
+}
+
 LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *sampler,
                                     const SampledWavelengths &swl) const noexcept {
     Float u_light = sampler->next_1d();
@@ -135,65 +144,22 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
     return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
-                                    const Float2 &u, const SampledWavelengths &swl) const noexcept {
-    LightSample ls{swl.dimension()};
-    auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
-    dispatch_light(type_id, inst_id, [&](const Light *light) {
-        ls = light->sample_wi(lsc, u, swl);
-    });
-    return ls;
-}
-
 LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
                                        const SampledWavelengths &swl) const noexcept {
+    Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
-    LightSample ls{swl.dimension()};
-
-    auto sample_env = [&] {
-        ls = sample_environment_point(lsc, u_surface, swl);
-        ls.eval.pdf *= env_prob();
-    };
-
-    auto sample_light = [&] {
-        SampledLight sampled_light = select_light(lsc, sampler->next_1d());
-        ls = sample_light_point(sampled_light, lsc, u_surface, swl);
-        ls.eval.pdf *= light_prob();
-    };
-
-    if (env_prob() == 0) {
-        sample_light();
-    } else if (env_prob() == 1) {
-        sample_env();
-    } else {
-        $if(sampler->next_1d() < env_prob()) {
-            sample_env();
-        }
-        $else {
-            sample_light();
-        };
-    }
-    return ls;
+    SampledLight sampled_light = select_light(lsc, u_light);
+    return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSample LightSampler::sample_environment_point(const LightSampleContext &lsc, Float2 u,
-                                                const SampledWavelengths &swl) const noexcept {
+LightSample LightSampler::sample_point(const SampledLight &sampled_light, const LightSampleContext &lsc,
+                                       const Float2 &u, const SampledWavelengths &swl) const noexcept {
     LightSample ls{swl.dimension()};
-    ls = _env_light->sample_point(lsc, u, swl);
-    return ls;
-}
-
-LightSample LightSampler::sample_light_point(const SampledLight &sampled_light,
-                                     const LightSampleContext &lsc,
-                                     const Float2 &u,
-                                     const SampledWavelengths &swl) const noexcept {
-    LightSample ret{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        ret = light->sample_point(lsc, u, swl);
-        ret.eval.pdf *= sampled_light.PMF;
+        ls = light->sample_point(lsc, u, swl);
     });
-    return ret;
+    return ls;
 }
 
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
