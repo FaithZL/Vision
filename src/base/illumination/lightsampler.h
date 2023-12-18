@@ -30,7 +30,6 @@ protected:
     Polymorphic<SP<Light>> _lights;
     SP<Environment> _env_light{};
     float _env_prob{};
-    uint _env_index{InvalidUI32};
 
 protected:
     [[nodiscard]] virtual SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept = 0;

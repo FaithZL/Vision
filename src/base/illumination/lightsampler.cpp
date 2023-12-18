@@ -17,14 +17,13 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
         }
         if (light->match(LightType::Infinite)) {
             _env_light = std::dynamic_pointer_cast<Environment>(light);
-            _env_index = _lights.size();
         }
         add_light(light);
     }
 }
 
 Uint LightSampler::correct_index(Uint index) const noexcept {
-    return ocarina::select(index < _env_index, index, index + 1u);
+    return ocarina::select(index < _env_light->index(), index, index + 1u);
 }
 
 void LightSampler::tidy_up() noexcept {
@@ -159,7 +158,7 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
-    Float pmf = PMF(p_ref, _env_index);
+    Float pmf = PMF(p_ref, _env_light->index());
     ret.pdf *= pmf;
     return ret;
 }
