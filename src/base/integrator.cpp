@@ -25,11 +25,11 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     SampledWavelengths swl = spectrum().sample_wavelength(sampler);
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};
+    SampledSpectrum curr_throughput = {swl.dimension(), 1.f};
     const Geometry &geometry = rp->geometry();
-    BSDFSample bsdf_sample{swl.dimension()};
 
     Float eta_scale = 1.f;
-    Uint bounces = 0u;
+    Int bounces = 0;
     $loop {
         $if(bounces >= *_max_depth) {
             $break;
@@ -94,6 +94,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         SampledSpectrum tr = geometry.Tr(scene(), swl, shadow_ray);
 
         comment("sample bsdf");
+        BSDFSample bsdf_sample{swl.dimension()};
         SampledSpectrum Ld = {swl.dimension(), 0.f};
         auto sample_surface = [&]() {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
