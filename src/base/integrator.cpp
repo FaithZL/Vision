@@ -123,14 +123,14 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             sample_surface();
         }
         value += throughput * Ld * tr;
-        eta_scale *= sqr(bsdf_sample.eta);
         Float lum = throughput.max();
         $if(!bsdf_sample.valid() || lum == 0.f) {
             $break;
         };
+        eta_scale *= sqr(rcp(bsdf_sample.eta));
         curr_throughput = bsdf_sample.eval.value();
         throughput *= curr_throughput;
-        $if(lum < *_rr_threshold && bounces >= *_min_depth) {
+        $if(lum * eta_scale < *_rr_threshold && bounces >= *_min_depth) {
             Float q = min(0.95f, lum);
             Float rr = sampler->next_1d();
             $if(q < rr) {
