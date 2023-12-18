@@ -8,14 +8,17 @@
 
 namespace vision {
 class UniformLightSampler : public LightSampler {
-public:
-    explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
+protected:
     [[nodiscard]] Float _PMF(const LightSampleContext &lsc, const Uint &index) const noexcept override {
         if (_env_separate) {
             return 1.f / punctual_light_num();
         }
         return 1.f / light_num();
     }
+
+public:
+    explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
+
     [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
         if (_env_separate) {

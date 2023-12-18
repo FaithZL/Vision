@@ -12,18 +12,19 @@ class PowerLightSampler : public LightSampler {
 private:
     SP<Warper> _warper{};
 
-public:
-    explicit PowerLightSampler(const LightSamplerDesc &desc)
-        : LightSampler(desc) {}
-
+protected:
     [[nodiscard]] Float _PMF(const LightSampleContext &lsc, const Uint &index) const noexcept override {
         return _warper->PMF(index);
     }
 
+public:
+    explicit PowerLightSampler(const LightSamplerDesc &desc)
+        : LightSampler(desc) {}
+
     [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
         ret.light_index = _warper->sample_discrete(u, nullptr, nullptr);
-        ret.PMF = PMF(lsc, ret.light_index);
+        ret.PMF = _PMF(lsc, ret.light_index);
         return ret;
     }
 
