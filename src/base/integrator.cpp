@@ -93,7 +93,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         RayState shadow_ray;
         Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
         SampledSpectrum tr = geometry.Tr(scene(), swl, shadow_ray);
-        
+
         comment("sample bsdf");
         SampledSpectrum Ld = {swl.dimension(), 0.f};
         auto sample_surface = [&]() {
