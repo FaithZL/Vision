@@ -128,7 +128,8 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         $if(!bsdf_sample.valid() || lum == 0.f) {
             $break;
         };
-        throughput *= bsdf_sample.eval.value();
+        curr_throughput = bsdf_sample.eval.value();
+        throughput *= curr_throughput;
         $if(lum < *_rr_threshold && bounces >= *_min_depth) {
             Float q = min(0.95f, lum);
             Float rr = sampler->next_1d();
