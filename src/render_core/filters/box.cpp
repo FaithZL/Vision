@@ -10,6 +10,7 @@ namespace vision {
 class BoxFilter : public Filter {
 public:
     explicit BoxFilter(const FilterDesc &desc) : Filter(desc) {}
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         Float2 p = make_float2(lerp(u[0], -radius().x, radius().x),
                                lerp(u[1], -radius().y, radius().y));

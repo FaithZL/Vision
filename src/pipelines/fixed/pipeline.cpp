@@ -10,7 +10,7 @@ class FixedRenderPipeline : public Pipeline {
 public:
     explicit FixedRenderPipeline(const PipelineDesc &desc)
         : Pipeline(desc) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         auto pixel_num = resolution().x * resolution().y;
         _final_picture.reset_all(device(), pixel_num, "offline final picture");

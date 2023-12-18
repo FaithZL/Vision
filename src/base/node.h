@@ -41,6 +41,7 @@ public:
     [[nodiscard]] static Device &device() noexcept;
     virtual void prepare() noexcept {}
     [[nodiscard]] virtual string to_string() noexcept { return "node"; }
+    [[nodiscard]] virtual string_view impl_type() const noexcept = 0;
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
     virtual ~Node() = default;

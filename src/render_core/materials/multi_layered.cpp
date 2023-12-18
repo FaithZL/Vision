@@ -25,7 +25,7 @@ public:
           _thickness(scene().create_slot(desc.slot("_thickness", 1.f, Number))),
           _bottom(scene().load<Material>(*desc.mat0)),
           _top(scene().load<Material>(*desc.mat1)) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _bottom->prepare();
         _top->prepare();

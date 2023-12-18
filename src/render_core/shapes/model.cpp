@@ -23,7 +23,7 @@ public:
         load(desc);
         post_init(desc);
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void load(const ShapeDesc &desc) noexcept {
         auto fn = scene_path() / desc["fn"].as_string();
         AssimpParser parser;

@@ -18,6 +18,7 @@ public:
           _lens_radius(desc["lens_radius"].as_float(0.f)) {
     }
     OC_SERIALIZABLE_FUNC(Camera, _focal_distance, _lens_radius)
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void update_focal_distance(float val) noexcept override {
         float new_val = _focal_distance.hv() + val;
         if (new_val > 0.f) {

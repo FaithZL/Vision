@@ -13,6 +13,7 @@ private:
 
 public:
     explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_uniform() const noexcept override {
         return _t->is_uniform() && A->is_uniform() && B->is_uniform();
     }

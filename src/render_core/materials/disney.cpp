@@ -583,6 +583,14 @@ private:
     Slot _diff_trans{};
     bool _thin{false};
 
+protected:
+    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        return BSDF(it, make_unique<PrincipledBxDFSet>(it, swl, pipeline(), _color, _metallic,
+                                                       _eta, _roughness, _spec_tint, _anisotropic,
+                                                       _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
+                                                       _spec_trans, _flatness, _diff_trans));
+    }
+
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
@@ -600,14 +608,7 @@ public:
           _diff_trans(scene().create_slot(desc.slot("diff_trans", 0.f, Number))) {
         init_slot_cursor(&_color, &_diff_trans);
     }
-
-protected:
-    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        return BSDF(it, make_unique<PrincipledBxDFSet>(it, swl, pipeline(), _color, _metallic,
-                                                       _eta, _roughness, _spec_tint, _anisotropic,
-                                                       _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
-                                                       _spec_trans, _flatness, _diff_trans));
-    }
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 };
 
 }// namespace vision

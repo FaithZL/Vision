@@ -43,6 +43,7 @@ public:
           _rhs(Global::node_mgr().create_slot(*desc.slot("rhs"))) {}
 
     OC_SERIALIZABLE_FUNC(ShaderNode, *_lhs.node(), *_rhs.node())
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_uniform() const noexcept override {
         return _lhs->is_uniform() && _rhs->is_uniform();
     }

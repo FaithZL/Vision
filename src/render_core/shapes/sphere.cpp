@@ -16,6 +16,7 @@ public:
         init(desc);
         post_init(desc);
     }
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void init(const ShapeDesc &desc) noexcept {
         Mesh mesh;
         float radius = desc["radius"].as_float(1.f);

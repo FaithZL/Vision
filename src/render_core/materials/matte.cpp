@@ -72,15 +72,6 @@ private:
     Slot _color{};
     Slot _sigma{};
 
-public:
-    explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
-        init_slot_cursor(&_color, 2);
-        if (desc.has_attr("sigma")) {
-            _sigma = scene().create_slot(desc.slot("sigma", 1.f, Number));
-        }
-    }
-
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
@@ -90,6 +81,16 @@ protected:
         }
         return BSDF(it, make_unique<MatteBxDFSet>(kr, swl));
     }
+
+public:
+    explicit MatteMaterial(const MaterialDesc &desc)
+        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
+        init_slot_cursor(&_color, 2);
+        if (desc.has_attr("sigma")) {
+            _sigma = scene().create_slot(desc.slot("sigma", 1.f, Number));
+        }
+    }
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 };
 }// namespace vision
 

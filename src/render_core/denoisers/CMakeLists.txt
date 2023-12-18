@@ -6,6 +6,7 @@ function(vision_add_oidn_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-main vision-ext-oidn)
+    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}")
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/oidn/include)
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})

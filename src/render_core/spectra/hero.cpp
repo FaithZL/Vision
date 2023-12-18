@@ -237,7 +237,7 @@ public:
           _cie_z(SPD::create_cie_z(pipeline())) {
         _rgb_to_spectrum_table.init();
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _illuminant_d65.prepare();
         _rgb_to_spectrum_table.prepare();

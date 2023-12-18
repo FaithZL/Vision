@@ -15,6 +15,7 @@ public:
         : ToneMapper(desc),
           _exposure(desc["exposure"].as_float(1.f)) {}
     OC_SERIALIZABLE_FUNC(ToneMapper, _exposure)
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] Float4 apply(const ocarina::Float4 &input) const noexcept override {
         return 1.f - exp(-input * *_exposure);
     }

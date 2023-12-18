@@ -46,7 +46,7 @@ public:
           _device{create_device()} {
         _device.commit();
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void apply(ocarina::uint2 res, RegistrableManaged<ocarina::float4> *output,
                RegistrableManaged<ocarina::float4> *color,
                RegistrableManaged<ocarina::float4> *normal,

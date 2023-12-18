@@ -10,6 +10,7 @@ class ReinhardToneMapper : public ToneMapper {
 public:
     explicit ReinhardToneMapper(const ToneMapperDesc &desc)
         : ToneMapper(desc) {}
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] Float4 apply(const ocarina::Float4 &input) const noexcept override {
         return input / (input + 1.f);
     }

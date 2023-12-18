@@ -23,7 +23,7 @@ public:
           _gamma(desc["gamma"].as_bool(true)) {}
 
     OC_SERIALIZABLE_FUNC(Film, _radiance, _frame)
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare(RegistrableManaged<float4> &managed) noexcept {
         managed.reset_all(device(), pixel_num());
         managed.reset_immediately();

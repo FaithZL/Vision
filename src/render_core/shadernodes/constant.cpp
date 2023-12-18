@@ -13,6 +13,7 @@ private:
 public:
     explicit Constant(const ShaderNodeDesc &desc)
         : ShaderNode(desc), _value(desc["value"].as_vector<float>()) {}
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_zero() const noexcept override {
         return std::all_of(_value.begin(), _value.end(), [](float elm) { return elm == 0; });
     }

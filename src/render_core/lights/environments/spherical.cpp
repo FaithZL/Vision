@@ -37,7 +37,7 @@ public:
     }
 
     OC_SERIALIZABLE_FUNC(Light, _w2o, *_warper)
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] Float2 UV(Float3 local_dir) const {
         return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }

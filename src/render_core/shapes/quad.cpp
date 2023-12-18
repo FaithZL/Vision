@@ -17,7 +17,7 @@ public:
         init(desc);
         post_init(desc);
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void init(const ShapeDesc &desc) noexcept {
         Mesh mesh;
         float width = desc["width"].as_float(1.f) / 2;

@@ -6,6 +6,7 @@ function(vision_add_usd_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-base vision-math vision-usd)
+    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 

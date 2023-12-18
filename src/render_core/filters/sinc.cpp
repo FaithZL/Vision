@@ -16,7 +16,7 @@ public:
     explicit LanczosSincFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
           _tau(desc["tau"].as_float(3.f)) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
         return windowed_sinc<H>(p.x, _radius.hv().x, _tau) *
                windowed_sinc<H>(p.y, _radius.hv().y, _tau) * 4;

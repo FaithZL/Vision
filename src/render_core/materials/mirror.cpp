@@ -44,7 +44,7 @@ public:
           _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
         init_slot_cursor(&_color, 2);
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;

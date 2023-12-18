@@ -34,6 +34,7 @@ public:
         : Warper(desc),
           _table(pipeline()->resource_array()),
           _func(pipeline()->resource_array()) {}
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     OC_SERIALIZABLE_FUNC(Warper, _table, _func)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;

@@ -20,6 +20,7 @@ public:
           _conditional_v_tables(pipeline()->resource_array()),
           _conditional_v_weights(pipeline()->resource_array()) {
     }
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     OC_SERIALIZABLE_FUNC(Warper2D, _marginal, _conditional_v_tables, _conditional_v_weights)
     void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v

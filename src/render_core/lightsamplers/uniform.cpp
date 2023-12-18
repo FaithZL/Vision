@@ -18,7 +18,7 @@ protected:
 
 public:
     explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
         if (_env_separate) {

@@ -14,7 +14,7 @@ private:
 public:
     explicit AccumulatePass(const PassDesc &desc)
         : RenderPass(desc) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output, Uint frame_index) {
             Float4 old_pixel = output.read(dispatch_id());

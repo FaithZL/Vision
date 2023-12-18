@@ -13,7 +13,7 @@ class PathTracingIntegrator : public IlluminationIntegrator {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();

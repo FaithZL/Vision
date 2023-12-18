@@ -17,7 +17,7 @@ public:
     explicit IntegratePass(const PassDesc &desc)
         : RenderPass(desc) {
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
         Kernel kernel = [&](Uint frame_index, BufferVar<float4> output) {
             Uint2 pixel = dispatch_idx().xy();

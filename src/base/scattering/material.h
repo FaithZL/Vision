@@ -93,7 +93,7 @@ public:
         _slot_cursor.offset = offset;
         _slot_cursor.num = num;
     }
-
+    [[nodiscard]] virtual string_view impl_type() const noexcept { return ""; }
     void init_slot_cursor(const Slot *head, const Slot *back) noexcept {
         uint offset = reinterpret_cast<const char *>(head) - reinterpret_cast<char *>(this);
         _slot_cursor.offset = offset;

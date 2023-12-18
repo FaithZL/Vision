@@ -21,6 +21,7 @@ public:
         _tex_id = _image_wrapper.id();
     }
     OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
 
     [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,

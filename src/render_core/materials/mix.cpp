@@ -79,7 +79,7 @@ public:
           _mat0(scene().load<Material>(*desc.mat0)),
           _mat1(scene().load<Material>(*desc.mat1)),
           _scale(scene().create_slot(desc.slot("scale", 0.5f, Number))) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     OC_SERIALIZABLE_FUNC(Material, *_mat0, *_mat1, *_scale.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(_mat0->type_hash(), _mat1->type_hash(), _scale.type_hash());

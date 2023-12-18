@@ -10,7 +10,7 @@ class SRGBSpectrum : public Spectrum {
 public:
     explicit SRGBSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc) {}
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
         SampledWavelengths swl{dimension()};
         auto lambdas = rgb_spectrum_peak_wavelengths;

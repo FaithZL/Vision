@@ -21,7 +21,7 @@ public:
         tone_mapper_desc.init(DataWrap::object());
         _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc);
     }
-
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output) {
             Float4 pixel = input.read(dispatch_id());

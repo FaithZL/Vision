@@ -26,6 +26,7 @@ public:
         : IPointLight(desc),
           _position(desc["position"].as_float3()) {}
     OC_SERIALIZABLE_FUNC(IPointLight, _position)
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] float3 power() const noexcept override {
         return 4 * Pi * average();
     }
