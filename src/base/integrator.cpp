@@ -68,7 +68,6 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             //todo remove no material mesh in non volumetric scene
             comment("process no material interaction for volumetric rendering");
             rs = it.spawn_ray_state(rs.direction());
-            bounces -= 1;
             $continue;
         };
 
