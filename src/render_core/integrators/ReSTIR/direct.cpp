@@ -11,6 +11,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, Reg
                                                    RegistrableManaged<SurfaceData> &surfaces0,
                                                    RegistrableManaged<SurfaceData> &surfaces1)
     : M(desc["M"].as_uint(1)),
+      _bsdf_num(desc["bsdf_num"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),
       _correct_mode(static_cast<CorrectMode>(desc["correct_mode"].as_int(0))),
@@ -114,6 +115,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             sample->set_pos(ls.p_light);
             Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
             final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+        };
+        $for(i, _bsdf_num) {
+            DIRSVSample sample;
+            sample->init();
+
         };
     };
     ret->update_W(final_p_hat);

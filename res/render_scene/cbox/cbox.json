@@ -1006,8 +1006,9 @@
 					"history_limit": 10
 				},
 				//								"mis": true,
-				"correct_mode" : 0,
-				"M": 10
+				"M": 10,
+				"bsdf_num": 1,
+				"correct_mode" : 0
 			},
 			"min_depth" : 0,
 			"max_depth" : 16,

@@ -18,6 +18,7 @@ namespace vision {
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
     uint M{};
+    uint _bsdf_num{};
     CorrectMode _correct_mode;
 
     SpatialResamplingParam _spatial;

@@ -29,6 +29,13 @@ struct RSVSample {
 
 // clang-format off
 OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, prim_id, u, pos) {
+    void init() noexcept {
+        light_index = InvalidUI32;
+        prim_id = InvalidUI32;
+    }
+    [[nodiscard]] Bool valid() const noexcept {
+        return light_index == InvalidUI32;
+    }
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }
