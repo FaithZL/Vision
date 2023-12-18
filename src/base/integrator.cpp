@@ -25,12 +25,10 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     SampledWavelengths swl = spectrum().sample_wavelength(sampler);
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};
-    Float lum = 1;
     const Geometry &geometry = rp->geometry();
 
     Float eta_scale = 1.f;
-    Int bounces = 0;
-    $loop {
+    $for(&bounces, 0, *_max_depth) {
         Var hit = geometry.trace_closest(rs.ray);
         comment("miss");
         $if(hit->is_miss()) {
@@ -65,6 +63,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             //todo remove no material mesh in non volumetric scene
             comment("process no material interaction for volumetric rendering");
             rs = it.spawn_ray_state(rs.direction());
+            bounces -= 1;
             $continue;
         };
 
@@ -83,29 +82,16 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             value += eval.L * throughput * weight * tr;
         };
 
-        $if(bounces >= *_max_depth) {
-            $break;
-        };
-
-        $if(lum * eta_scale < *_rr_threshold && bounces >= *_min_depth) {
-            Float q = min(0.95f, lum);
-            Float rr = sampler->next_1d();
-            $if(q < rr) {
-                $break;
-            };
-            throughput /= q;
-        };
-
         comment("estimate direct lighting");
         comment("sample light");
         LightSample light_sample = light_sampler->sample_wi(it, sampler, swl);
         RayState shadow_ray;
         Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
         SampledSpectrum tr = geometry.Tr(scene(), swl, shadow_ray);
-
         comment("sample bsdf");
         BSDFSample bsdf_sample{swl.dimension()};
         SampledSpectrum Ld = {swl.dimension(), 0.f};
+
         auto sample_surface = [&]() {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 BSDF bsdf = material->compute_BSDF(it, swl);
@@ -133,15 +119,22 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             sample_surface();
         }
         value += throughput * Ld * tr;
-        lum = throughput.max();
+        eta_scale *= sqr(bsdf_sample.eta);
+        Float lum = throughput.max();
         $if(!bsdf_sample.valid() || lum == 0.f) {
             $break;
         };
-        eta_scale *= sqr(rcp(bsdf_sample.eta));
         throughput *= bsdf_sample.eval.value();
+        $if(lum < *_rr_threshold && bounces >= *_min_depth) {
+            Float q = min(0.95f, lum);
+            Float rr = sampler->next_1d();
+            $if(q < rr) {
+                $break;
+            };
+            throughput /= q;
+        };
         scatter_pdf = bsdf_sample.eval.pdf;
         rs = it.spawn_ray_state(bsdf_sample.wi);
-        bounces += 1;
     };
     return spectrum().linear_srgb(value, swl);
 }

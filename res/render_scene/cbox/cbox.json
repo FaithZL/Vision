@@ -207,13 +207,13 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				                                "material" : "ShortBox",
+				"material" : "ShortBox",
 				//				"material" : "substrate",
 				//				"material" : "Mirror",
-//				"material" : "Metal",
-//								                "material" : "disney",
-//												                "material" : "mix",
-//								                                "material" : "Glass",
+				//				"material" : "Metal",
+				//								                "material" : "disney",
+				//												                "material" : "mix",
+				//								                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -254,11 +254,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				                "material": "TallBox",
+				"material": "TallBox",
 				//                "material": "Mirror2",
-//				                "material": "Glass2",
-//								"material" : "Ag",
-//				"material" : "disney",
+				//				                "material": "Glass2",
+				//								"material" : "Ag",
+				//				"material" : "disney",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -510,17 +510,17 @@
 			"type" : "substrate",
 			"name" : "BackWall",
 			"param" : {
-//				"color" : {
-//					"channels" : "xyz",
-//					"node" : {
-//						"type" : "image",
-//						"param" : {
-//							"fn" : "checker.jpg",
-//							"color_space" : "srgb"
-//						}
-//						}
-//					}
-//				}
+				//				"color" : {
+				//					"channels" : "xyz",
+				//					"node" : {
+				//						"type" : "image",
+				//						"param" : {
+				//							"fn" : "checker.jpg",
+				//							"color_space" : "srgb"
+				//						}
+				//						}
+				//					}
+				//				}
 				"color" : [
 					0.725,
 					0.71,
@@ -529,47 +529,47 @@
 				"remapping_roughness": true,
 				"roughness":
 				0.1
-//				"color" : {
-//					"channels" : "xyz",
-//					"node" : {
-//						"type" : "multiply",
-//						"param" : {
-//							"lhs" : {
-//								"channels" : "xyz",
-//								"node" : {
-//									"type" : "image",
-//									"param" : {
-//										"fn" : "checker.jpg",
-//										"color_space" : "srgb"
-//									}
-//								}
-//							},
-//							"rhs" : {
-//								"channels" : "xyz",
-//								"node" : {
-//									"type": "number",
-//									"param": {
-//										"value": [0.9,1,0.9]
-//									}
-//								}
-//							}
-//						}
-//					}
+				//				"color" : {
+				//					"channels" : "xyz",
+				//					"node" : {
+				//						"type" : "multiply",
+				//						"param" : {
+				//							"lhs" : {
+				//								"channels" : "xyz",
+				//								"node" : {
+				//									"type" : "image",
+				//									"param" : {
+				//										"fn" : "checker.jpg",
+				//										"color_space" : "srgb"
+				//									}
+				//								}
+				//							},
+				//							"rhs" : {
+				//								"channels" : "xyz",
+				//								"node" : {
+				//									"type": "number",
+				//									"param": {
+				//										"value": [0.9,1,0.9]
+				//									}
+				//								}
+				//							}
+				//						}
+				//					}
 			}
 		},
-//		{
-//			"type" : "matte",
-//			"name" : "BackWall2",
-//			"param" : {
-//				"color" : {
-//					"channels" : "xyz",
-//					"node" : {
-//						"fn" : "checker.jpg",
-//						"color_space" : "srgb"
-//					}
-//				}
-//			}
-//		},
+		//		{
+		//			"type" : "matte",
+		//			"name" : "BackWall2",
+		//			"param" : {
+		//				"color" : {
+		//					"channels" : "xyz",
+		//					"node" : {
+		//						"fn" : "checker.jpg",
+		//						"color_space" : "srgb"
+		//					}
+		//				}
+		//			}
+		//		},
 		{
 			"type" : "matte",
 			"name" : "ShortBox",
@@ -599,16 +599,16 @@
 			"name" : "Glass",
 			"param" : {
 				"material_name" : "BK7",
-//				"bump": {
-//					"channels" : "xyz",
-//					"node" : {
-//						"type" : "image",
-//						"param" : {
-//							"fn" : "textures/brickwall_normal.jpg",
-//							"color_space" : "srgb"
-//						}
-//					}
-//				},
+				//				"bump": {
+				//					"channels" : "xyz",
+				//					"node" : {
+				//						"type" : "image",
+				//						"param" : {
+				//							"fn" : "textures/brickwall_normal.jpg",
+				//							"color_space" : "srgb"
+				//						}
+				//					}
+				//				},
 				"bump_scale" : 0.1,
 				"color" : {
 					"channels" : "xyz",
@@ -687,25 +687,25 @@
 				"roughness" : [0.001, 0.001]
 			}
 		},
-//		{
-//			"type" : "metal",
-//			"name" : "Ag",
-//			"param" : {
-//				"material_name" : "Ag",
-//				"bump": {
-//					"channels" : "xyz",
-//					"node" : {
-//						"type" : "image",
-//						"param" : {
-//							"fn" : "textures/brickwall_normal.jpg",
-//							"color_space" : "srgb"
-//						}
-//					}
-//				},
-//				"bump_scale" : 0.1,
-//				"roughness" : 0.21
-//			}
-//		},
+		//		{
+		//			"type" : "metal",
+		//			"name" : "Ag",
+		//			"param" : {
+		//				"material_name" : "Ag",
+		//				"bump": {
+		//					"channels" : "xyz",
+		//					"node" : {
+		//						"type" : "image",
+		//						"param" : {
+		//							"fn" : "textures/brickwall_normal.jpg",
+		//							"color_space" : "srgb"
+		//						}
+		//					}
+		//				},
+		//				"bump_scale" : 0.1,
+		//				"roughness" : 0.21
+		//			}
+		//		},
 		{
 			"type" : "mirror",
 			"name" : "Mirror",
@@ -777,28 +777,28 @@
 		"type" : "alias_table"
 	},
 	"light_sampler" : {
-//		"type" : "uniform",
-		"type" : "power",
+		"type" : "uniform",
+		//		"type" : "power",
 		"param" : {
-//			"env_separate": true,
+			//			"env_separate": true,
 			"env_prob": 0.8,
 			"lights" : [
-				{
-					"type" : "spherical",
-					"param": {
-						"color": {
-							"fn" : "textures/spruit_sunrise_2k.hdr",
-							"color_space": "linear"
-						},
-						"o2w" : {
-							"type":"yaw_pitch",
-							"param": {
-								"yaw" :-30
-							}
-						},
-						"scale" : 0.5
-					}
-				}
+				//				{
+				//					"type" : "spherical",
+				//					"param": {
+				//						"color": {
+				//							"fn" : "textures/spruit_sunrise_2k.hdr",
+				//							"color_space": "linear"
+				//						},
+				//						"o2w" : {
+				//							"type":"yaw_pitch",
+				//							"param": {
+				//								"yaw" :-30
+				//							}
+				//						},
+				//						"scale" : 0.5
+				//					}
+				//				}
 				//				{
 				//					"type" : "spot",
 				//					"param" : {
@@ -821,64 +821,64 @@
 				//						"scale" : 3
 				//					}
 				//				},
-//								{
-//									"type" : "point",
-//									"param" : {
-//										"color" : {
-//											"channels" : "xyz",
-//											"node" : [1, 1, 1]
-//										},
-//										"position" : [-0.5, 1.8, 0],
-//										"scale" : 0.2
-//									}
-//								},
-//				{
-//					"type": "area",
-//					"param": {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [
-//								17,
-//								12,
-//								4
-//							]
-//						},
-//						"width" : 0.2,
-//						"two_sided" : false,
-//						"scale" : 0.3,
-//						"o2w" : {
-//							"type" : "matrix4x4",
-//							"param" : {
-//								"matrix4x4" : [
-//									[
-//										0.4699999988079071,
-//										-4.108870399477382e-08,
-//										-4.108870399477382e-08,
-//										0.0
-//									],
-//									[
-//										-1.56137076601226e-08,
-//										-0.1785999983549118,
-//										1.3649937003794234e-15,
-//										0.0
-//									],
-//									[
-//										-3.3220654671595184e-08,
-//										0.0,
-//										-0.3799999952316284,
-//										0.0
-//									],
-//									[
-//										0.4999999888241291,
-//										1.7800000190734863,
-//										-0.029999999329447746,
-//										1.0
-//									]
-//								]
-//							}
-//						}
-//					}
-//				}
+				//								{
+				//									"type" : "point",
+				//									"param" : {
+				//										"color" : {
+				//											"channels" : "xyz",
+				//											"node" : [1, 1, 1]
+				//										},
+				//										"position" : [-0.5, 1.8, 0],
+				//										"scale" : 0.2
+				//									}
+				//								},
+				//				{
+				//					"type": "area",
+				//					"param": {
+				//						"color" : {
+				//							"channels" : "xyz",
+				//							"node" : [
+				//								17,
+				//								12,
+				//								4
+				//							]
+				//						},
+				//						"width" : 0.2,
+				//						"two_sided" : false,
+				//						"scale" : 0.3,
+				//						"o2w" : {
+				//							"type" : "matrix4x4",
+				//							"param" : {
+				//								"matrix4x4" : [
+				//									[
+				//										0.4699999988079071,
+				//										-4.108870399477382e-08,
+				//										-4.108870399477382e-08,
+				//										0.0
+				//									],
+				//									[
+				//										-1.56137076601226e-08,
+				//										-0.1785999983549118,
+				//										1.3649937003794234e-15,
+				//										0.0
+				//									],
+				//									[
+				//										-3.3220654671595184e-08,
+				//										0.0,
+				//										-0.3799999952316284,
+				//										0.0
+				//									],
+				//									[
+				//										0.4999999888241291,
+				//										1.7800000190734863,
+				//										-0.029999999329447746,
+				//										1.0
+				//									]
+				//								]
+				//							}
+				//						}
+				//					}
+				//				}
 				//				{
 				//					"type" : "point",
 				//					"param" : {
@@ -973,39 +973,39 @@
 		}
 	},
 	"spectrum" : {
-//		"type" : "hero",
+		//		"type" : "hero",
 		"param" : {
 			"dimension" : 4
 		}
 	},
 	"pipeline": {
-//		"type": "customized",
+		//		"type": "customized",
 		"param": {
-			"obfuscation" : false,
-			"valid_check" : true
+//			"obfuscation" : false,
+//			"valid_check" : true
 		}
 	},
 	"integrator" : {
-//		"type" : "rt",
-				"type" : "pt",
+		//		"type" : "rt",
+		"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {
-//					"open": false,
+					//					"open": false,
 					"theta": 5,
 					"depth": 0.3,
 					"radius": 30,
 					"sample_num": 1
 				},
 				"temporal": {
-//										"open": false,
+					//										"open": false,
 					"theta": 2,
 					"depth": 1,
 					"radius": 0,
 					"motion_vec": 0.15,
 					"history_limit": 10
 				},
-//								"mis": true,
+				//								"mis": true,
 				"correct_mode" : 0,
 				"M": 10
 			},
@@ -1043,7 +1043,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-//					"accumulation": 0,
+					//					"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
@@ -1074,7 +1074,7 @@
 		}
 	},
 	"output" : {
-		"spp" : 256,
+		"spp" : 0,
 		"save_exit" : false,
 		"fn" : "ls-41.exr"
 	}
