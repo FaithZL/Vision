@@ -26,6 +26,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};
     const Geometry &geometry = rp->geometry();
+    Float lum = 0;
 
     Float eta_scale = 1.f;
     $for(&bounces, 0, *_max_depth) {
@@ -120,12 +121,12 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         }
         value += throughput * Ld * tr;
         eta_scale *= sqr(bsdf_sample.eta);
-        Float lum = throughput.max();
+        lum = throughput.max();
         $if(!bsdf_sample.valid() || lum == 0.f) {
             $break;
         };
         throughput *= bsdf_sample.eval.value();
-        $if(lum < *_rr_threshold && bounces >= *_min_depth) {
+        $if(eta_scale * lum < *_rr_threshold && bounces >= *_min_depth) {
             Float q = min(0.95f, lum);
             Float rr = sampler->next_1d();
             $if(q < rr) {
