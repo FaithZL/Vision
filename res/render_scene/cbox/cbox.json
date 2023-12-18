@@ -780,7 +780,7 @@
 //		"type" : "uniform",
 		"type" : "power",
 		"param" : {
-			"env_separate": true,
+//			"env_separate": true,
 			"env_prob": 0.9,
 			"lights" : [
 				{

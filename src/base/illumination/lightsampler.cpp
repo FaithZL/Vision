@@ -127,7 +127,8 @@ Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const 
         Float ret = 0;
         $if(index == _env_light->index()) {
             ret = env_prob();
-        } $else {
+        }
+        $else {
             ret = (1 - env_prob()) * _PMF(lsc, index);
         };
         return ret;
@@ -139,13 +140,14 @@ SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) 
     if (_env_separate) {
         if (env_prob() == 1) {
             return SampledLight{0, 1.f};
-        } else if(env_prob() == 0) {
+        } else if (env_prob() == 0) {
             return _select_light(lsc, u);
         }
         SampledLight sampled_light;
         $if(u < env_prob()) {
             sampled_light = SampledLight{_env_light->index(), env_prob()};
-        } $else {
+        }
+        $else {
             u = remapping(u, env_prob(), 1);
             sampled_light = _select_light(lsc, u);
             sampled_light.PMF *= 1 - env_prob();
@@ -174,14 +176,6 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
     return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
-                                       const SampledWavelengths &swl) const noexcept {
-    Float u_light = sampler->next_1d();
-    Float2 u_surface = sampler->next_2d();
-    SampledLight sampled_light = select_light(lsc, u_light);
-    return sample_point(sampled_light, lsc, u_surface, swl);
-}
-
 LightSample LightSampler::sample_point(const SampledLight &sampled_light, const LightSampleContext &lsc,
                                        const Float2 &u, const SampledWavelengths &swl) const noexcept {
     LightSample ls{swl.dimension()};
@@ -191,6 +185,14 @@ LightSample LightSampler::sample_point(const SampledLight &sampled_light, const 
     });
     ls.eval.pdf *= sampled_light.PMF;
     return ls;
+}
+
+LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
+                                       const SampledWavelengths &swl) const noexcept {
+    Float u_light = sampler->next_1d();
+    Float2 u_surface = sampler->next_2d();
+    SampledLight sampled_light = select_light(lsc, u_light);
+    return sample_point(sampled_light, lsc, u_surface, swl);
 }
 
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
