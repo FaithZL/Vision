@@ -17,7 +17,6 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
         }
         if (light->match(LightType::Infinite)) {
             _env_light = std::dynamic_pointer_cast<Environment>(light);
-            _env_index = _lights.size();
         }
         add_light(light);
     }
@@ -25,7 +24,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
 
 Uint LightSampler::correct_index(Uint index) const noexcept {
     if (env_light()) {
-        return ocarina::select(index < _env_index, index, index + 1u);
+        return ocarina::select(index < _env_light->index(), index, index + 1u);
     }
     return index;
 }
@@ -123,7 +122,7 @@ Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const 
         return _PMF(lsc, index);
     }
     Float ret = 0;
-    $if(index == _env_index) {
+    $if(index == _env_light->index()) {
         ret = env_prob();
     } $else {
         ret = (1 - env_prob())* _PMF(lsc, index);
@@ -139,7 +138,7 @@ SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) 
     }
     SampledLight sampled_light;
     $if(u < env_prob()) {
-        sampled_light = SampledLight{_env_index, env_prob()};
+        sampled_light = SampledLight{_env_light->index(), env_prob()};
     } $else {
         u = remapping(u, env_prob(), 1);
         sampled_light = _select_light(lsc, u);
@@ -190,7 +189,7 @@ LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
-    Float pmf = PMF(p_ref, _env_index);
+    Float pmf = PMF(p_ref, _env_light->index());
     ret.pdf *= pmf;
     return ret;
 }
