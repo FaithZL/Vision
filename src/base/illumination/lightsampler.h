@@ -29,6 +29,7 @@ public:
 protected:
     Polymorphic<SP<Light>> _lights;
     SP<Environment> _env_light{};
+    bool _env_separate{false};
     float _env_prob{};
 
 protected:

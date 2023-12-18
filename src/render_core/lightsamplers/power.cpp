@@ -31,9 +31,19 @@ public:
         LightSampler::prepare();
         _warper = scene().load_warper();
         vector<float> weights;
-        _lights.for_each_instance([&](SP<Light> light) {
-            weights.push_back(luminance(light->power()));
-        });
+        if (_env_separate) {
+            _lights.for_each_instance([&](SP<Light> light) {
+                float weight = 0;
+                if (!light->match(LightType::Infinite)) {
+                    weight = luminance(light->power());
+                }
+                weights.push_back(weight);
+            });
+        } else {
+            _lights.for_each_instance([&](SP<Light> light) {
+                weights.push_back(luminance(light->power()));
+            });
+        }
         _warper->build(std::move(weights));
         _warper->prepare();
     }

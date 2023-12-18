@@ -8,7 +8,9 @@
 namespace vision {
 
 LightSampler::LightSampler(const LightSamplerDesc &desc)
-    : Node(desc), _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
+    : Node(desc),
+      _env_separate(desc["env_separate"].as_bool(false)),
+      _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
         SP<Light> light = scene().load<Light>(light_desc);
         if (light->match(LightType::Area)) {
@@ -23,7 +25,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
 }
 
 Uint LightSampler::correct_index(Uint index) const noexcept {
-    if (env_light()) {
+    if (env_light() && _env_separate) {
         return ocarina::select(index < _env_light->index(), index, index + 1u);
     }
     return index;
@@ -116,35 +118,41 @@ LightEval LightSampler::evaluate_hit(const LightSampleContext &p_ref, const Inte
 }
 
 Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const noexcept {
-    if (env_prob() == 1) {
-        return 1.f;
-    } else if (env_prob() == 0) {
-        return _PMF(lsc, index);
+    if (_env_separate) {
+        if (env_prob() == 1) {
+            return 1.f;
+        } else if (env_prob() == 0) {
+            return _PMF(lsc, index);
+        }
+        Float ret = 0;
+        $if(index == _env_light->index()) {
+            ret = env_prob();
+        } $else {
+            ret = (1 - env_prob()) * _PMF(lsc, index);
+        };
+        return ret;
     }
-    Float ret = 0;
-    $if(index == _env_light->index()) {
-        ret = env_prob();
-    } $else {
-        ret = (1 - env_prob())* _PMF(lsc, index);
-    };
-    return ret;
+    return _PMF(lsc, index);
 }
 
 SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) const noexcept {
-    if (env_prob() == 1) {
-        return SampledLight{0, 1.f};
-    } else if(env_prob() == 0) {
-        return _select_light(lsc, u);
+    if (_env_separate) {
+        if (env_prob() == 1) {
+            return SampledLight{0, 1.f};
+        } else if(env_prob() == 0) {
+            return _select_light(lsc, u);
+        }
+        SampledLight sampled_light;
+        $if(u < env_prob()) {
+            sampled_light = SampledLight{_env_light->index(), env_prob()};
+        } $else {
+            u = remapping(u, env_prob(), 1);
+            sampled_light = _select_light(lsc, u);
+            sampled_light.PMF *= 1 - env_prob();
+        };
+        return sampled_light;
     }
-    SampledLight sampled_light;
-    $if(u < env_prob()) {
-        sampled_light = SampledLight{_env_light->index(), env_prob()};
-    } $else {
-        u = remapping(u, env_prob(), 1);
-        sampled_light = _select_light(lsc, u);
-        sampled_light.PMF *= 1 - env_prob();
-    };
-    return sampled_light;
+    return _select_light(lsc, u);
 }
 
 LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
