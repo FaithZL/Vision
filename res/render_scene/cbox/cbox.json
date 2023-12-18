@@ -778,27 +778,27 @@
 	},
 	"light_sampler" : {
 		"type" : "uniform",
-		//		"type" : "power",
+//				"type" : "power",
 		"param" : {
-			//			"env_separate": true,
-			"env_prob": 0.8,
+//						"env_separate": true,
+			"env_prob": 0.1,
 			"lights" : [
-				//				{
-				//					"type" : "spherical",
-				//					"param": {
-				//						"color": {
-				//							"fn" : "textures/spruit_sunrise_2k.hdr",
-				//							"color_space": "linear"
-				//						},
-				//						"o2w" : {
-				//							"type":"yaw_pitch",
-				//							"param": {
-				//								"yaw" :-30
-				//							}
-				//						},
-				//						"scale" : 0.5
-				//					}
-				//				}
+//								{
+//									"type" : "spherical",
+//									"param": {
+//										"color": {
+//											"fn" : "textures/spruit_sunrise_2k.hdr",
+//											"color_space": "linear"
+//										},
+//										"o2w" : {
+//											"type":"yaw_pitch",
+//											"param": {
+//												"yaw" :-30
+//											}
+//										},
+//										"scale" : 0.5
+//									}
+//								}
 				//				{
 				//					"type" : "spot",
 				//					"param" : {
@@ -986,8 +986,8 @@
 		}
 	},
 	"integrator" : {
-		//		"type" : "rt",
-		"type" : "pt",
+				"type" : "rt",
+//		"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {
@@ -1043,7 +1043,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-					//					"accumulation": 0,
+										"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
@@ -1076,6 +1076,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "ls-41.exr"
+		"fn" : "vision.exr"
 	}
 }
