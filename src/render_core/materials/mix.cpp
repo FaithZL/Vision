@@ -99,7 +99,6 @@ public:
         _scale->prepare();
     }
 
-protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         Float scale = _scale.evaluate(it, swl)[0];
         return make_unique<MixBxDFSet>(_mat0->create_lobe_set(it, swl), _mat1->create_lobe_set(it, swl), scale);
