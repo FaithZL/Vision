@@ -62,6 +62,12 @@ class Material : public Node, public Serializable<float> {
 public:
     using Desc = MaterialDesc;
 
+    struct Evaluator : PolyExecutor<BxDFSet> {
+    public:
+        PartialDerivative<Float3> shading_frame;
+        Float3 ng;
+    };
+
 protected:
     Slot _bump{};
     Slot _bump_scale{};

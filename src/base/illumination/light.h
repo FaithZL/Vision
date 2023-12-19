@@ -80,7 +80,6 @@ public:
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
     [[nodiscard]] Float scale() const noexcept { return *_scale; }
-    [[nodiscard]] virtual bool is_black() const noexcept { return false; }
     [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
@@ -112,7 +111,7 @@ public:
         return {Le(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
     }
     [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
-                                                  const SampledWavelengths &swl) const noexcept {
+                                                   const SampledWavelengths &swl) const noexcept {
         return sample_wi(p_ref, u, swl);
     }
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
@@ -152,7 +151,7 @@ public:
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
-                                         const SampledWavelengths &swl) const noexcept override;
+                                        const SampledWavelengths &swl) const noexcept override;
 };
 
 class Environment : public Light {
