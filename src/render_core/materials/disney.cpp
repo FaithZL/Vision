@@ -335,7 +335,10 @@ protected:
         return hash64(_fresnel->type_hash(), _diffuse.has_value(),
                       _retro.has_value(), _sheen.has_value(),
                       _fake_ss.has_value(), _spec_refl.has_value(),
-                      _clearcoat.has_value(), _spec_trans.has_value());
+                      _clearcoat.has_value(), _spec_trans.has_value(),
+                      _diffuse_index, _spec_refl_index,
+                      _clearcoat_index, _spec_trans_index,
+                      _sampling_strategy_num);
     }
 
 private:
