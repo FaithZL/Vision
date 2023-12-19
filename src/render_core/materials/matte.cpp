@@ -90,6 +90,9 @@ protected:
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         if (_sigma) {
             Float sigma = _sigma.evaluate(it, swl).as_scalar();
+            evaluator.link(make_unique<MatteBxDFSet>(kr, sigma, swl));
+        } else {
+            evaluator.link(make_unique<MatteBxDFSet>(kr, swl));
         }
     }
 

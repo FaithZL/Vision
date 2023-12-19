@@ -66,6 +66,8 @@ public:
     public:
         PartialDerivative<Float3> shading_frame;
         Float3 ng;
+        explicit Evaluator(const Interaction &it)
+            : shading_frame(it.shading), ng(it.ng) {}
     };
 
 protected:

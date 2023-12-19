@@ -986,8 +986,8 @@
 		}
 	},
 	"integrator" : {
-				"type" : "rt",
-//		"type" : "pt",
+//				"type" : "rt",
+		"type" : "pt",
 		"param" : {
 			"direct": {
 				"spatial": {
@@ -1044,7 +1044,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-										"accumulation": 0,
+//										"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
@@ -1075,8 +1075,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
+		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "vision.exr"
+		"fn" : "old-256.exr"
 	}
 }
