@@ -173,14 +173,7 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual BSDF _compute_BSDF(const Interaction &it,
-                                             const SampledWavelengths &swl) const noexcept {
-        return BSDF(it, nullptr);
-    }
-
-    virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept {
-        return nullptr;
-    }
+    virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
 
 public:
     [[nodiscard]] static Evaluator create_evaluator(Interaction it) noexcept;

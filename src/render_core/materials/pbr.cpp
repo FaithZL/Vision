@@ -51,10 +51,6 @@ protected:
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         return make_unique<PbrBxDFSet>(kr, swl);
     }
-    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        return BSDF(it, make_unique<PbrBxDFSet>(kr, swl));
-    }
 };
 
 }// namespace vision

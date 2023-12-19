@@ -601,12 +601,6 @@ protected:
                                               _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
                                               _spec_trans, _flatness, _diff_trans);
     }
-    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        return BSDF(it, make_unique<PrincipledBxDFSet>(it, swl, pipeline(), _color, _metallic,
-                                                       _eta, _roughness, _spec_tint, _anisotropic,
-                                                       _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
-                                                       _spec_trans, _flatness, _diff_trans));
-    }
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)

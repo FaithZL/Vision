@@ -149,7 +149,12 @@ BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const
     if (_bump) {
         _apply_bump(std::addressof(it), swl);
     }
-    return _compute_BSDF(it, swl);
+    return BSDF(it, create_lobe_set(it, swl));
+}
+
+void Material::build_evaluator(Evaluator &evaluator, Interaction it,
+                               const SampledWavelengths &swl) const noexcept {
+
 }
 
 Material::Evaluator Material::create_evaluator(Interaction it) noexcept {

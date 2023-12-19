@@ -231,20 +231,6 @@ protected:
         MicrofacetTransmission trans(color, swl, microfacet);
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD);
     }
-    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
-        Array<float> iors = _ior.evaluate(it, swl);
-
-        Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors},
-                                                      swl, pipeline());
-        MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
-        MicrofacetTransmission trans(color, swl, microfacet);
-        return BSDF(it, make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD));
-    }
 };
 }// namespace vision
 

@@ -111,19 +111,6 @@ public:
         MicrofacetReflection bxdf(kr, swl, microfacet);
         return make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf));
     }
-
-    [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        SampledSpectrum eta = SampledSpectrum{_eta.evaluate(it, swl)};
-        SampledSpectrum k = SampledSpectrum{_k.evaluate(it, swl)};
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
-        MicrofacetReflection bxdf(kr, swl, microfacet);
-        return BSDF(it, make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf)));
-    }
 };
 
 }// namespace vision
