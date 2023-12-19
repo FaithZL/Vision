@@ -127,7 +127,7 @@ public:
     }
 
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
-                                         const SampledWavelengths &swl) const noexcept override {
+                                        const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         LightEvalContext p_light = sample_surface(u);
         ret.eval = evaluate_wi(p_ref, p_light, swl);
@@ -136,7 +136,7 @@ public:
     }
 
     [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
-                                         const SampledWavelengths &swl) const noexcept override {
+                                           const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         LightEvalContext p_light = sample_surface(u);
         ret.eval = evaluate_point(p_ref, p_light, swl);

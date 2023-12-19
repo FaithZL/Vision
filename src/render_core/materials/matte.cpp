@@ -82,6 +82,13 @@ protected:
         return BSDF(it, make_unique<MatteBxDFSet>(kr, swl));
     }
 
+    void _build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept override {
+        SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
+        if (_sigma) {
+            Float sigma = _sigma.evaluate(it, swl).as_scalar();
+        }
+    }
+
 public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
