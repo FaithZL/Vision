@@ -152,11 +152,8 @@ BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const
     return _compute_BSDF(it, swl);
 }
 
-void Material::build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept {
-    if (_bump) {
-        _apply_bump(std::addressof(it), swl);
-    }
-    _build_evaluator(evaluator, it, swl);
+Material::Evaluator Material::create_evaluator(Interaction it) noexcept {
+    return Evaluator(it);
 }
 
 uint64_t Material::_compute_type_hash() const noexcept {

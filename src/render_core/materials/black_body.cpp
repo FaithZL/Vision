@@ -36,6 +36,9 @@ protected:
                                      const SampledWavelengths &swl) const noexcept override {
         return BSDF(it, make_unique<BlackBodyBxDFSet>(swl));
     }
+    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+        return make_unique<BlackBodyBxDFSet>(swl);
+    }
 
 public:
     explicit BlackBodyMaterial(const MaterialDesc &desc)

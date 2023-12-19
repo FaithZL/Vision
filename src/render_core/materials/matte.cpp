@@ -47,7 +47,7 @@ public:
 
 class MatteBxDFSet : public BxDFSet {
 private:
-    UP<BxDF> _bxdf;
+    SP<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
@@ -56,9 +56,9 @@ protected:
 
 public:
     MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}
+        : _bxdf(std::make_shared<LambertReflection>(kr, swl)) {}
     MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
-        : _bxdf(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+        : _bxdf(std::make_shared<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf->safe_evaluate(wo, wi, nullptr);
@@ -78,22 +78,16 @@ private:
 
 protected:
     [[nodiscard]] BSDF _compute_BSDF(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        if (_sigma) {
-            Float sigma = _sigma.evaluate(it, swl).as_scalar();
-            return BSDF(it, make_unique<MatteBxDFSet>(kr, sigma, swl));
-        }
-        return BSDF(it, make_unique<MatteBxDFSet>(kr, swl));
+        return BSDF(it, create_lobe_set(it, swl));
     }
 
-    void _build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         if (_sigma) {
             Float sigma = _sigma.evaluate(it, swl).as_scalar();
-            evaluator.link(make_unique<MatteBxDFSet>(kr, sigma, swl));
-        } else {
-            evaluator.link(make_unique<MatteBxDFSet>(kr, swl));
+            return make_unique<MatteBxDFSet>(kr, sigma, swl);
         }
+        return make_unique<MatteBxDFSet>(kr, swl);
     }
 
 public:
