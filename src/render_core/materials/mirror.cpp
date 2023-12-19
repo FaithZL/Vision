@@ -13,6 +13,11 @@ private:
     SP<const Fresnel> _fresnel;
     MicrofacetReflection _bxdf;
 
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+        return hash64(_fresnel->type_hash(), _bxdf.type_hash());
+    }
+
 public:
     MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}

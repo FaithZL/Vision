@@ -12,7 +12,7 @@
 
 namespace vision {
 
-struct BxDFSet {
+struct BxDFSet : public ocarina::Hashable {
 public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;

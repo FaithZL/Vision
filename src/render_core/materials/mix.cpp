@@ -15,6 +15,11 @@ private:
     UP<BxDFSet> _b1;
     Float _scale;
 
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+        return hash64(_b0->type_hash(), _b1->type_hash());
+    }
+
 public:
     MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float scale)
         : _b0(ocarina::move(b0)), _b1(ocarina::move(b1)), _scale(scale) {}

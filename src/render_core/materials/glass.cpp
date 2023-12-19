@@ -96,6 +96,11 @@ private:
     MicrofacetTransmission _trans;
     Bool _dispersive{};
 
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+        return hash64(_fresnel->type_hash(), _refl.type_hash(), _trans.type_hash());
+    }
+
 public:
     DielectricBxDFSet(const SP<Fresnel> &fresnel,
                       MicrofacetReflection refl,

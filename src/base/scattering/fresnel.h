@@ -11,7 +11,7 @@
 namespace vision {
 class Pipeline;
 
-class Fresnel {
+class Fresnel : public ocarina::Hashable {
 protected:
     const SampledWavelengths &_swl;
     const Pipeline *_rp{};

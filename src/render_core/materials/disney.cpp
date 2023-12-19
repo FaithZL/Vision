@@ -330,6 +330,14 @@ private:
     uint _spec_trans_index{InvalidUI32};
     uint _sampling_strategy_num{0u};
 
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+        return hash64(_fresnel->type_hash(), _diffuse.has_value(),
+                      _retro.has_value(), _sheen.has_value(),
+                      _fake_ss.has_value(), _spec_refl.has_value(),
+                      _clearcoat.has_value(), _spec_trans.has_value());
+    }
+
 private:
     template<typename T, typename... Args>
     [[nodiscard]] SampledSpectrum lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {

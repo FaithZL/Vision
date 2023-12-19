@@ -11,6 +11,11 @@ class PbrBxDFSet : public BxDFSet {
 private:
     UP<BxDF> _bxdf;
 
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+        return hash64(_bxdf->type_hash());
+    }
+
 public:
     PbrBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
         : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}

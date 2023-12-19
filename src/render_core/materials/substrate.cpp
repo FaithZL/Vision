@@ -97,6 +97,11 @@ private:
     SP<const Fresnel> _fresnel;
     FresnelBlend _bxdf;
 
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+        return hash64(_bxdf.type_hash(), _fresnel->type_hash());
+    }
+
 public:
     SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf)
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}

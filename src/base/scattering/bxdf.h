@@ -29,7 +29,7 @@ using namespace ocarina;
     return lerp(schlick_weight(cos_theta), R0, 1.f);
 }
 
-class BxDF {
+class BxDF : public ocarina::Hashable {
 protected:
     uint _flags{};
     const SampledWavelengths *_swl{};
