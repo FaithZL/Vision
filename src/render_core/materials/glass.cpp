@@ -216,7 +216,6 @@ public:
         _ior->prepare();
     }
 
-protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
         Array<float> iors = _ior.evaluate(it, swl);

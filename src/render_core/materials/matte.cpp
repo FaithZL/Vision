@@ -76,8 +76,7 @@ private:
     Slot _color{};
     Slot _sigma{};
 
-protected:
-
+public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         if (_sigma) {
@@ -86,8 +85,6 @@ protected:
         }
         return make_unique<MatteBxDFSet>(kr, swl);
     }
-
-public:
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo))) {
         init_slot_cursor(&_color, 2);

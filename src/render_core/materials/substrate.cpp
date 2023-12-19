@@ -150,7 +150,6 @@ public:
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 
-protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, swl).sample;

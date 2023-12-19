@@ -101,10 +101,8 @@ public:
 
 protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        BSDF b0 = _mat0->compute_BSDF(it, swl);
-        BSDF b1 = _mat1->compute_BSDF(it, swl);
         Float scale = _scale.evaluate(it, swl)[0];
-        return make_unique<MixBxDFSet>(ocarina::move(b0.bxdf_set), ocarina::move(b1.bxdf_set), scale);
+        return make_unique<MixBxDFSet>(_mat0->create_lobe_set(it, swl), _mat1->create_lobe_set(it, swl), scale);
     }
 };
 
