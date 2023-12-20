@@ -160,8 +160,8 @@ void Material::build_evaluator(Evaluator &evaluator, Interaction it,
     _build_evaluator(evaluator, it, swl);
 }
 
-Material::Evaluator Material::create_evaluator(Interaction it) noexcept {
-    return Evaluator(it);
+Material::Evaluator Material::create_evaluator(Interaction it,const SampledWavelengths &swl) noexcept {
+    return Evaluator(it, swl);
 }
 
 uint64_t Material::_compute_type_hash() const noexcept {

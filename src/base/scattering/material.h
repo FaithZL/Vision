@@ -21,6 +21,7 @@ public:
         OC_ASSERT(false);
         return {};
     }
+    virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
@@ -61,13 +62,19 @@ class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
 protected:
     PartialDerivative<Float3> shading_frame;
     Float3 ng;
+    const SampledWavelengths *swl{};
+
+protected:
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept;
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept;
+
 public:
-    explicit MaterialEvaluator(const Interaction &it)
-        : shading_frame(it.shading), ng(it.ng) {}
+    explicit MaterialEvaluator(const Interaction &it, const SampledWavelengths &swl)
+        : shading_frame(it.shading), ng(it.ng), swl(&swl) {}
 
     void regularize() noexcept;
     void mollify() noexcept;
-    [[nodiscard]] SampledSpectrum albedo() const noexcept ;
+    [[nodiscard]] SampledSpectrum albedo() const noexcept;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
@@ -187,7 +194,7 @@ public:
     [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     virtual void _build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] static Evaluator create_evaluator(Interaction it) noexcept;
+    [[nodiscard]] static Evaluator create_evaluator(Interaction it, const SampledWavelengths &swl) noexcept;
     [[nodiscard]] BSDF compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept;
 };
