@@ -81,7 +81,7 @@ private:
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
                           const SampledWavelengths &swl) const noexcept override {
-//        evaluator.link(ocarina::dynamic_unique_pointer_cast<MixBxDFSet>(create_lobe_set(it, swl)));
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<MixBxDFSet>(create_lobe_set(it, swl)));
     }
 
 public:
