@@ -6,6 +6,8 @@ include_directories(src)
 
 project(Vision)
 
+add_definitions(-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/")
@@ -14,7 +16,11 @@ set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
 set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 
 #set(OCARINA_BUILD_TESTS FALSE)
-
+if (MSVC)
+add_compile_options(
+        /wd4996
+)
+endif ()
 
 function(vision_add_application name)
     cmake_parse_arguments(APP "" "" "SOURCES" ${ARGN})
