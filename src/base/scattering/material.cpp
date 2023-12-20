@@ -157,7 +157,7 @@ void Material::build_evaluator(Evaluator &evaluator, Interaction it,
     if (_bump) {
         _apply_bump(std::addressof(it), swl);
     }
-    evaluator.link(create_lobe_set(it,swl));
+    _build_evaluator(evaluator, it, swl);
 }
 
 Material::Evaluator Material::create_evaluator(Interaction it) noexcept {

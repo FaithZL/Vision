@@ -11,8 +11,8 @@ namespace vision {
 
 class MixBxDFSet : public BxDFSet {
 private:
-    UP<BxDFSet> _b0;
-    UP<BxDFSet> _b1;
+    SP<BxDFSet> _b0;
+    SP<BxDFSet> _b1;
     Float _scale;
 
 protected:
@@ -21,7 +21,7 @@ protected:
     }
 
 public:
-    MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float scale)
+    MixBxDFSet(SP<BxDFSet> &&b0, SP<BxDFSet> &&b1, Float scale)
         : _b0(ocarina::move(b0)), _b1(ocarina::move(b1)), _scale(scale) {}
     [[nodiscard]] SampledSpectrum albedo() const noexcept override {
         return _b0->albedo() * _scale + _b1->albedo() * (1 - _scale);
@@ -77,6 +77,12 @@ private:
     SP<Material> _mat0{};
     SP<Material> _mat1{};
     Slot _scale{};
+
+protected:
+    void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
+                          const SampledWavelengths &swl) const noexcept override {
+//        evaluator.link(ocarina::dynamic_unique_pointer_cast<MixBxDFSet>(create_lobe_set(it, swl)));
+    }
 
 public:
     explicit MixMaterial(const MaterialDesc &desc)

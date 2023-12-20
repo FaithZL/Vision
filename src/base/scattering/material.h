@@ -175,6 +175,7 @@ protected:
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
 
 public:
+    virtual void _build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] static Evaluator create_evaluator(Interaction it) noexcept;
     [[nodiscard]] BSDF compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept;

@@ -63,6 +63,12 @@ private:
     Slot _roughness{};
     bool _remapping_roughness{false};
 
+protected:
+    void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
+                          const SampledWavelengths &swl) const noexcept override {
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<ConductorBxDFSet>(create_lobe_set(it, swl)));
+    }
+
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),

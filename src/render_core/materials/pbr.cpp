@@ -9,7 +9,7 @@ namespace vision {
 
 class PbrBxDFSet : public BxDFSet {
 private:
-    UP<BxDF> _bxdf;
+    SP<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
@@ -18,7 +18,7 @@ protected:
 
 public:
     PbrBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}
+        : _bxdf(std::make_shared<LambertReflection>(kr, swl)) {}
 
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
@@ -38,6 +38,12 @@ private:
     Slot _spec{};
     Slot _roughness{};
     Slot _metallic{};
+
+protected:
+    void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
+                          const SampledWavelengths &swl) const noexcept override {
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<PbrBxDFSet>(create_lobe_set(it, swl)));
+    }
 
 public:
     explicit PbrMaterial(const MaterialDesc &desc)

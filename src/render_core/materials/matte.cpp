@@ -37,9 +37,8 @@ public:
 
         Bool cond = abs_cos_theta(wi) > abs_cos_theta(wo);
         Float sin_alpha = select(cond, sin_theta_o, sin_theta_i);
-        Float tan_beta = select(cond, sin_theta_i/ abs_cos_theta(wi),
+        Float tan_beta = select(cond, sin_theta_i / abs_cos_theta(wi),
                                 sin_theta_o / abs_cos_theta(wo));
-
 
         return R * InvPi * (A + B * max_cos * sin_alpha * tan_beta);
     }
@@ -75,6 +74,12 @@ class MatteMaterial : public Material {
 private:
     Slot _color{};
     Slot _sigma{};
+
+protected:
+    void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
+                          const SampledWavelengths &swl) const noexcept override {
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<MatteBxDFSet>(create_lobe_set(it, swl)));
+    }
 
 public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {

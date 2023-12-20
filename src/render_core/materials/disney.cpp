@@ -594,6 +594,12 @@ private:
     Slot _diff_trans{};
     bool _thin{false};
 
+protected:
+    void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
+                          const SampledWavelengths &swl) const noexcept override {
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<PrincipledBxDFSet>(create_lobe_set(it, swl)));
+    }
+
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
         : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
