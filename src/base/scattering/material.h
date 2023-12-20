@@ -61,6 +61,7 @@ public:
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
 public:
     using Super = PolyEvaluator<BxDFSet>;
+
 protected:
     PartialDerivative<Float3> shading_frame;
     Float3 ng;
@@ -194,9 +195,9 @@ protected:
 
 public:
     [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
-    virtual void _build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept = 0;
+    virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it, const SampledWavelengths &swl) const noexcept = 0;
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] static Evaluator create_evaluator(Interaction it, const SampledWavelengths &swl) noexcept;
+    [[nodiscard]] Evaluator create_evaluator(const Interaction &it, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] BSDF compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept;
 };

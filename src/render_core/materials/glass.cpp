@@ -186,7 +186,7 @@ private:
     bool _remapping_roughness{true};
 
 protected:
-    void _build_evaluator(Material::Evaluator &evaluator, Interaction it,
+    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
                           const SampledWavelengths &swl) const noexcept override {
         evaluator.link(ocarina::dynamic_unique_pointer_cast<DielectricBxDFSet>(create_lobe_set(it, swl)));
     }

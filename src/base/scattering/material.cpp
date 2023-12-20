@@ -216,16 +216,19 @@ BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const
     return BSDF(it, create_lobe_set(it, swl));
 }
 
+MaterialEvaluator Material::create_evaluator(const Interaction &it,
+                                             const SampledWavelengths &swl) const noexcept {
+    MaterialEvaluator evaluator{it, swl};
+    build_evaluator(evaluator, it, swl);
+    return evaluator;
+}
+
 void Material::build_evaluator(Evaluator &evaluator, Interaction it,
                                const SampledWavelengths &swl) const noexcept {
     if (_bump) {
         _apply_bump(std::addressof(it), swl);
     }
     _build_evaluator(evaluator, it, swl);
-}
-
-Material::Evaluator Material::create_evaluator(Interaction it, const SampledWavelengths &swl) noexcept {
-    return Evaluator(it, swl);
 }
 
 uint64_t Material::_compute_type_hash() const noexcept {
