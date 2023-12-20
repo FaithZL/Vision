@@ -254,6 +254,10 @@ public:
         return bsdf->is_dispersive();
     }
 
+    [[nodiscard]] optional<Bool> is_dispersive(const MaterialEvaluator *evaluator) const noexcept override {
+        return evaluator->is_dispersive();
+    }
+
     [[nodiscard]] bool is_complete() const noexcept override { return true; }
 
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {

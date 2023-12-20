@@ -225,6 +225,8 @@ struct ColorDecode {
 
 class Sampler;
 class BSDF;
+class MaterialEvaluator;
+
 class Spectrum : public Node {
 public:
     using Desc = SpectrumDesc;
@@ -235,6 +237,7 @@ public:
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual bool is_complete() const noexcept { return false; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept { return {}; }
+    [[nodiscard]] virtual optional<Bool> is_dispersive(const MaterialEvaluator *bsdf) const noexcept { return {}; }
     [[nodiscard]] virtual float4 albedo_params(float4 rgb) const noexcept = 0;
     [[nodiscard]] virtual float4 illumination_params(float4 rgb) const noexcept = 0;
     [[nodiscard]] virtual float4 unbound_params(float4 rgb) const noexcept = 0;
