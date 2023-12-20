@@ -58,16 +58,16 @@ public:
         : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}
     MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
         : _bxdf(std::make_unique<OrenNayar>(R, sigma, swl)) {}
-    MatteBxDFSet &operator=(const BxDFSet &other) noexcept override {
-        OC_ASSERT(dynamic_cast<const MatteBxDFSet *>(&other));
-        *this = dynamic_cast<MatteBxDFSet &>(const_cast<BxDFSet &>(other));
-        return *this;
-    }
+
+    // clang-format off
+    VS_MAKE_BxDFSet_ASSIGNMENT(MatteBxDFSet)
     MatteBxDFSet &operator=(const MatteBxDFSet &other) noexcept {
         BxDFSet::operator=(other);
         *_bxdf = *other._bxdf;
         return *this;
     }
+    // clang-format on
+
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf->safe_evaluate(wo, wi, nullptr);

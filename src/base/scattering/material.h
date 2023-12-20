@@ -28,6 +28,13 @@ public:
     virtual ~BxDFSet() = default;
 };
 
+#define VS_MAKE_BxDFSet_ASSIGNMENT(ClassName)                            \
+    ClassName &operator=(const BxDFSet &other) noexcept override {       \
+        OC_ASSERT(dynamic_cast<const ClassName *>(&other));              \
+        *this = dynamic_cast<ClassName &>(const_cast<BxDFSet &>(other)); \
+        return *this;                                                    \
+    }
+
 struct BSDF final {
 protected:
     PartialDerivative<Float3> shading_frame;

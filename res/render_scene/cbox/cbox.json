@@ -576,6 +576,7 @@
 			"type" : "matte",
 			"name" : "ShortBox",
 			"param" : {
+				"sigma" : 0.5,
 				"color" : [
 					0.725,
 					0.71,

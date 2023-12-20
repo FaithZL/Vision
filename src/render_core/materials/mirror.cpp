@@ -21,19 +21,15 @@ protected:
 public:
     MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
-
-    MirrorBxDFSet &operator=(const BxDFSet &other) noexcept override {
-        OC_ASSERT(dynamic_cast<const MirrorBxDFSet *>(&other));
-        *this = dynamic_cast<MirrorBxDFSet &>(const_cast<BxDFSet &>(other));
-        return *this;
-    }
-    MirrorBxDFSet &operator=(const MirrorBxDFSet &other) noexcept {
+    // clang-format off
+    VS_MAKE_BxDFSet_ASSIGNMENT(MirrorBxDFSet)
+    MirrorBxDFSet & operator=(const MirrorBxDFSet &other) noexcept {
         BxDFSet::operator=(other);
         *_fresnel = *other._fresnel;
         _bxdf = other._bxdf;
         return *this;
     }
-
+    // clang-format on
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
