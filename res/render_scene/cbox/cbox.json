@@ -207,10 +207,10 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-//				"material" : "ShortBox",
+				"material" : "ShortBox",
 //								"material" : "substrate",
 //								"material" : "Mirror",
-								"material" : "Metal",
+//								"material" : "Ag",
 //												                "material" : "disney",
 //																                "material" : "mix",
 				//								                                "material" : "Glass",
@@ -256,6 +256,7 @@
 				"z" : 1,
 				"material": "TallBox",
 //				"material" : "mix",
+//				"material" : "Mirror",
 				//                "material": "Mirror2",
 				//				                "material": "Glass2",
 //												"material" : "Metal",
@@ -688,25 +689,25 @@
 				"roughness" : [0.001, 0.001]
 			}
 		},
-		//		{
-		//			"type" : "metal",
-		//			"name" : "Ag",
-		//			"param" : {
-		//				"material_name" : "Ag",
-		//				"bump": {
-		//					"channels" : "xyz",
-		//					"node" : {
-		//						"type" : "image",
-		//						"param" : {
-		//							"fn" : "textures/brickwall_normal.jpg",
-		//							"color_space" : "srgb"
-		//						}
-		//					}
-		//				},
-		//				"bump_scale" : 0.1,
-		//				"roughness" : 0.21
-		//			}
-		//		},
+				{
+					"type" : "metal",
+					"name" : "Ag",
+					"param" : {
+						"material_name" : "Ag",
+//						"bump": {
+//							"channels" : "xyz",
+//							"node" : {
+//								"type" : "image",
+//								"param" : {
+//									"fn" : "textures/brickwall_normal.jpg",
+//									"color_space" : "srgb"
+//								}
+//							}
+//						},
+//						"bump_scale" : 0.1,
+						"roughness" : 0.21
+					}
+				},
 		{
 			"type" : "mirror",
 			"name" : "Mirror",
@@ -965,7 +966,7 @@
 		}
 	},
 	"render_setting" : {
-		"polymorphic_mode" : 1
+		"polymorphic_mode" : 0
 	},
 	"denoiser" : {
 		"type" : "oidn",

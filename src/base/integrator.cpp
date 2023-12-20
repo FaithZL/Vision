@@ -95,13 +95,13 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
 
         auto sample_surface = [&]() {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-                BSDF bsdf = material->compute_BSDF(it, swl);
-                if (auto dispersive = spectrum().is_dispersive(&bsdf)) {
+                MaterialEvaluator evaluator = material->create_evaluator(it, swl);
+                if (auto dispersive = spectrum().is_dispersive(&evaluator)) {
                     $if(*dispersive) {
                         swl.invalidation_secondary();
                     };
                 }
-                Ld = direct_lighting(it, bsdf, light_sample, occluded,
+                Ld = direct_lighting(it, evaluator, light_sample, occluded,
                                      sampler, swl, bsdf_sample);
             });
         };
