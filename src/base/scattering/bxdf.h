@@ -38,7 +38,7 @@ public:
     BxDF() = default;
     explicit BxDF(const SampledWavelengths &swl, uint flag) : _flags(flag), _swl(&swl) {}
     BxDF(const BxDF &other) = default;
-    BxDF &operator=(const BxDF &other) noexcept {
+    virtual BxDF &operator=(const BxDF &other) noexcept {
         _flags = other._flags;
         _swl = other._swl;
         return *this;
@@ -68,6 +68,10 @@ public:
     explicit LambertReflection(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           Kr(kr) {}
+    LambertReflection &operator=(const BxDF &other) noexcept override {
+        *this = dynamic_cast<decltype(*this) &>(const_cast<BxDF &>(other));
+        return *this;
+    }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         return Kr * InvPi;

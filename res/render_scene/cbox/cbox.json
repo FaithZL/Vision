@@ -209,8 +209,8 @@
 				"z" : 1,
 //				"material" : "ShortBox",
 //								"material" : "substrate",
-								"material" : "Mirror",
-				//				"material" : "Metal",
+//								"material" : "Mirror",
+								"material" : "Metal",
 //												                "material" : "disney",
 //																                "material" : "mix",
 				//								                                "material" : "Glass",
@@ -254,11 +254,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-//				"material": "TallBox",
+				"material": "TallBox",
 //				"material" : "mix",
 				//                "material": "Mirror2",
 				//				                "material": "Glass2",
-												"material" : "Metal",
+//												"material" : "Metal",
 				//				"material" : "disney",
 				"transform" : {
 					"type" : "matrix4x4",
@@ -508,7 +508,7 @@
 			}
 		},
 		{
-			"type" : "substrate",
+			"type" : "matte",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {
@@ -1078,6 +1078,6 @@
 	"output" : {
 		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "old-256-.exr"
+		"fn" : "old-256.exr"
 	}
 }

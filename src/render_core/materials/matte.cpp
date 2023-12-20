@@ -46,7 +46,7 @@ public:
 
 class MatteBxDFSet : public BxDFSet {
 private:
-    SP<BxDF> _bxdf;
+    UP<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
@@ -55,9 +55,19 @@ protected:
 
 public:
     MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : _bxdf(std::make_shared<LambertReflection>(kr, swl)) {}
+        : _bxdf(std::make_unique<LambertReflection>(kr, swl)) {}
     MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
-        : _bxdf(std::make_shared<OrenNayar>(R, sigma, swl)) {}
+        : _bxdf(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+    MatteBxDFSet &operator=(const BxDFSet &other) noexcept override {
+        OC_ASSERT(dynamic_cast<const MatteBxDFSet *>(&other));
+        *this = dynamic_cast<MatteBxDFSet &>(const_cast<BxDFSet &>(other));
+        return *this;
+    }
+    MatteBxDFSet &operator=(const MatteBxDFSet &other) noexcept {
+        BxDFSet::operator=(other);
+        *_bxdf = *_bxdf;
+        return *this;
+    }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf->safe_evaluate(wo, wi, nullptr);

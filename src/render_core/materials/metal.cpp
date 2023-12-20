@@ -20,7 +20,7 @@ public:
         return fresnel_complex(abs_cos_theta, _eta, _k);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConductor>(_eta, _k, _swl, _rp);
+        return make_shared<FresnelConductor>(_eta, _k, *_swl, _rp);
     }
 };
 
