@@ -38,6 +38,70 @@ BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
     return ret;
 }
 
+ScatterEval MaterialEvaluator::evaluate_local(ocarina::Float3 wo, ocarina::Float3 wi, ocarina::Uint flag) const noexcept {
+    ScatterEval ret{swl->dimension()};
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->evaluate_local(wo, wi, flag);
+    });
+    return ret;
+}
+
+BSDFSample MaterialEvaluator::sample_local(ocarina::Float3 wo, ocarina::Uint flag, vision::Sampler *sampler) const noexcept {
+    BSDFSample ret{swl->dimension()};
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->sample_local(wo, flag, sampler);
+    });
+    return ret;
+}
+
+void MaterialEvaluator::regularize() noexcept {
+    dispatch([&](const BxDFSet *lobe_set) {
+        lobe_set->regularize();
+    });
+}
+
+void MaterialEvaluator::mollify() noexcept {
+    dispatch([&](const BxDFSet *lobe_set) {
+        lobe_set->mollify();
+    });
+}
+
+SampledSpectrum MaterialEvaluator::albedo() const noexcept {
+    SampledSpectrum ret{swl->dimension()};
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->albedo();
+    });
+    return ret;
+}
+
+optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
+    optional<Bool> ret;
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->is_dispersive();
+    });
+    return ret;
+}
+
+ScatterEval MaterialEvaluator::evaluate(ocarina::Float3 world_wo, ocarina::Float3 world_wi) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    Float3 wi = shading_frame.to_local(world_wi);
+    ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
+    Bool discard = same_hemisphere(world_wo, world_wi, ng) == BxDFFlag::is_transmission(ret.flags);
+    ret.pdf = select(discard, 0.f, ret.pdf);
+    ret.f *= abs_cos_theta(wi);
+    return ret;
+}
+
+BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler *sampler) const noexcept {
+    Float3 wo = shading_frame.to_local(world_wo);
+    BSDFSample ret = sample_local(wo, BxDFFlag::All, sampler);
+    ret.eval.f *= abs_cos_theta(ret.wi);
+    ret.wi = shading_frame.to_world(ret.wi);
+    Bool discard = same_hemisphere(world_wo, ret.wi, ng) == BxDFFlag::is_transmission(ret.eval.flags);
+    ret.eval.pdf = select(discard, 0.f, ret.eval.pdf);
+    return ret;
+}
+
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     if (desc.has_attr("bump")) {
         _bump = scene().create_slot(desc.slot("bump", 1.f, Number));
@@ -115,7 +179,7 @@ void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *i
     it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
     Float v_displace = bump_map.evaluate(it_eval, swl).as_scalar();
 
-    Float displace = bump_map.evaluate(*it,swl).as_scalar();
+    Float displace = bump_map.evaluate(*it, swl).as_scalar();
 
     Float3 dp_du = it->shading.dp_du() +
                    (u_displace - displace) / du * it->shading.normal() +
@@ -123,7 +187,7 @@ void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *i
 
     Float3 dp_dv = it->shading.dp_dv() +
                    (v_displace - displace) / dv * it->shading.normal() +
-                    displace * it->shading.dn_dv;
+                   displace * it->shading.dn_dv;
 
     it->shading.z = normalize(cross(dp_du, dp_dv));
     it->shading.set(dp_du, dp_dv, normalize(cross(dp_du, dp_dv)));
@@ -160,7 +224,7 @@ void Material::build_evaluator(Evaluator &evaluator, Interaction it,
     _build_evaluator(evaluator, it, swl);
 }
 
-Material::Evaluator Material::create_evaluator(Interaction it,const SampledWavelengths &swl) noexcept {
+Material::Evaluator Material::create_evaluator(Interaction it, const SampledWavelengths &swl) noexcept {
     return Evaluator(it, swl);
 }
 

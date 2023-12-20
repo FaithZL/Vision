@@ -22,8 +22,8 @@ public:
         return {};
     }
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
-    virtual void regularize() noexcept {}
-    virtual void mollify() noexcept {}
+    virtual void regularize() const noexcept {}
+    virtual void mollify() const noexcept {}
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -52,13 +52,15 @@ public:
         return bxdf_set->albedo();
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept {
-        return bxdf_set != nullptr ? bxdf_set->is_dispersive() : optional<Bool>{};
+        return bxdf_set->is_dispersive();
     }
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
+public:
+    using Super = PolyEvaluator<BxDFSet>;
 protected:
     PartialDerivative<Float3> shading_frame;
     Float3 ng;
