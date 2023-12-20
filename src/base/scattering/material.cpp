@@ -8,13 +8,6 @@
 
 namespace vision {
 
-Uint BSDF::combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept {
-    Bool reflect = same_hemisphere(wo, wi);
-    Uint non_reflect = ~BxDFFlag::Reflection;
-    Uint non_trans = ~BxDFFlag::Transmission;
-    return select(reflect, flag & non_trans, flag & non_reflect);
-}
-
 ScatterEval BSDF::evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
     ScatterEval ret = bxdf_set->evaluate_local(wo, wi, flag);
     return ret;
@@ -136,6 +129,13 @@ void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *i
     it->shading.set(dp_du, dp_dv, normalize(cross(dp_du, dp_dv)));
 }
 }// namespace detail
+
+Uint Material::combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept {
+    Bool reflect = same_hemisphere(wo, wi);
+    Uint non_reflect = ~BxDFFlag::Reflection;
+    Uint non_trans = ~BxDFFlag::Transmission;
+    return select(reflect, flag & non_trans, flag & non_reflect);
+}
 
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
     switch (_bump.dim()) {

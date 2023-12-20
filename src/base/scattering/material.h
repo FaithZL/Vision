@@ -53,7 +53,6 @@ public:
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept {
         return bxdf_set != nullptr ? bxdf_set->is_dispersive() : optional<Bool>{};
     }
-    [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
@@ -68,6 +67,13 @@ public:
         Float3 ng;
         explicit Evaluator(const Interaction &it)
             : shading_frame(it.shading), ng(it.ng) {}
+
+        void regularize() noexcept;
+        void mollify() noexcept;
+        [[nodiscard]] SampledSpectrum albedo() const noexcept ;
+        [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
+        [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
+        [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
     };
 
 protected:
@@ -175,6 +181,7 @@ protected:
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
 
 public:
+    [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
     virtual void _build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] static Evaluator create_evaluator(Interaction it) noexcept;
