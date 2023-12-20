@@ -28,7 +28,7 @@ public:
 };
 
 struct BSDF final {
-public:
+protected:
     PartialDerivative<Float3> shading_frame;
     Float3 ng;
     UP<BxDFSet> bxdf_set{};
@@ -57,24 +57,27 @@ public:
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
 };
 
+class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
+protected:
+    PartialDerivative<Float3> shading_frame;
+    Float3 ng;
+public:
+    explicit MaterialEvaluator(const Interaction &it)
+        : shading_frame(it.shading), ng(it.ng) {}
+
+    void regularize() noexcept;
+    void mollify() noexcept;
+    [[nodiscard]] SampledSpectrum albedo() const noexcept ;
+    [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
+    [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
+    [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
+};
+
 class Material : public Node, public Serializable<float> {
 public:
     using Desc = MaterialDesc;
 
-    struct Evaluator : PolyEvaluator<BxDFSet> {
-    public:
-        PartialDerivative<Float3> shading_frame;
-        Float3 ng;
-        explicit Evaluator(const Interaction &it)
-            : shading_frame(it.shading), ng(it.ng) {}
-
-        void regularize() noexcept;
-        void mollify() noexcept;
-        [[nodiscard]] SampledSpectrum albedo() const noexcept ;
-        [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
-        [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
-        [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
-    };
+    using Evaluator = MaterialEvaluator;
 
 protected:
     Slot _bump{};
