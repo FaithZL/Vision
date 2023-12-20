@@ -16,7 +16,7 @@ private:
     Float _scale;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(_b0->type_hash(), _b1->type_hash());
     }
 

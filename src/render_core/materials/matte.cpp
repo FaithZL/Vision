@@ -49,7 +49,7 @@ private:
     UP<BxDF> _bxdf;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _bxdf->type_hash();
     }
 

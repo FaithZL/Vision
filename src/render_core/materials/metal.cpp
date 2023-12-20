@@ -30,7 +30,7 @@ private:
     MicrofacetReflection _refl;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(_fresnel->type_hash(), _refl.type_hash());
     }
 

@@ -331,7 +331,7 @@ private:
     uint _sampling_strategy_num{0u};
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(_fresnel->type_hash(), _diffuse.has_value(),
                       _retro.has_value(), _sheen.has_value(),
                       _fake_ss.has_value(), _spec_refl.has_value(),

@@ -98,7 +98,7 @@ private:
     FresnelBlend _bxdf;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept {
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(_bxdf.type_hash(), _fresnel->type_hash());
     }
 
