@@ -207,11 +207,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material" : "ShortBox",
-				//				"material" : "substrate",
-				//				"material" : "Mirror",
+//				"material" : "ShortBox",
+//								"material" : "substrate",
+								"material" : "Mirror",
 				//				"material" : "Metal",
-				//								                "material" : "disney",
+//												                "material" : "disney",
 //																                "material" : "mix",
 				//								                                "material" : "Glass",
 				"transform" : {
@@ -254,11 +254,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material": "TallBox",
+//				"material": "TallBox",
 //				"material" : "mix",
 				//                "material": "Mirror2",
 				//				                "material": "Glass2",
-				//								"material" : "Ag",
+												"material" : "Metal",
 				//				"material" : "disney",
 				"transform" : {
 					"type" : "matrix4x4",
@@ -508,7 +508,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "substrate",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {
@@ -1078,6 +1078,6 @@
 	"output" : {
 		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "old-256.exr"
+		"fn" : "old-256-.exr"
 	}
 }
