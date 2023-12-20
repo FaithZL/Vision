@@ -65,7 +65,7 @@ public:
     }
     MatteBxDFSet &operator=(const MatteBxDFSet &other) noexcept {
         BxDFSet::operator=(other);
-        *_bxdf = *_bxdf;
+        *_bxdf = *other._bxdf;
         return *this;
     }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
