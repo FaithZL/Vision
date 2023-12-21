@@ -989,8 +989,8 @@
 		}
 	},
 	"integrator" : {
-//				"type" : "rt",
-		"type" : "pt",
+				"type" : "rt",
+//		"type" : "pt",
 		"param" : {
 			"separate": false,
 			"direct": {

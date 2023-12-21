@@ -67,7 +67,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, SampledWavel
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval eval{swl.dimension()};
         scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-            BSDF bsdf = material->compute_BSDF(it, swl);
+            MaterialEvaluator bsdf = material->create_evaluator(it, swl);
             if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
                 $if(*dispersive) {
                     swl.invalidation_secondary();

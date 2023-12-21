@@ -35,36 +35,6 @@ public:
         return *this;                                                    \
     }
 
-struct BSDF final {
-protected:
-    PartialDerivative<Float3> shading_frame;
-    Float3 ng;
-    UP<BxDFSet> bxdf_set{};
-
-protected:
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept;
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept;
-
-public:
-    BSDF() = delete;
-    explicit BSDF(const Interaction &it)
-        : shading_frame(it.shading), ng(it.ng) {}
-
-    explicit BSDF(const Interaction &it, UP<BxDFSet> &&bxdf_set)
-        : shading_frame(it.shading), ng(it.ng), bxdf_set(ocarina::move(bxdf_set)) {}
-
-    void regularize() noexcept { bxdf_set->regularize(); }
-    void mollify() noexcept { bxdf_set->mollify(); }
-    [[nodiscard]] SampledSpectrum albedo() const noexcept {
-        return bxdf_set->albedo();
-    }
-    [[nodiscard]] optional<Bool> is_dispersive() const noexcept {
-        return bxdf_set->is_dispersive();
-    }
-    [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi) const noexcept;
-    [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler) const noexcept;
-};
-
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
 public:
     using Super = PolyEvaluator<BxDFSet>;
@@ -205,7 +175,6 @@ public:
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it, const SampledWavelengths &swl) const noexcept = 0;
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Evaluator create_evaluator(const Interaction &it, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] BSDF compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept;
 };
 }// namespace vision

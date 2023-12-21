@@ -250,10 +250,6 @@ public:
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
 
-    [[nodiscard]] optional<Bool> is_dispersive(const BSDF *bsdf) const noexcept override {
-        return bsdf->is_dispersive();
-    }
-
     [[nodiscard]] optional<Bool> is_dispersive(const MaterialEvaluator *evaluator) const noexcept override {
         return evaluator->is_dispersive();
     }

@@ -8,36 +8,6 @@
 
 namespace vision {
 
-ScatterEval BSDF::evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept {
-    ScatterEval ret = bxdf_set->evaluate_local(wo, wi, flag);
-    return ret;
-}
-
-BSDFSample BSDF::sample_local(ocarina::Float3 wo, ocarina::Uint flag, vision::Sampler *sampler) const noexcept {
-    BSDFSample ret = bxdf_set->sample_local(wo, flag, sampler);
-    return ret;
-}
-
-ScatterEval BSDF::evaluate(Float3 world_wo, Float3 world_wi) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
-    Float3 wi = shading_frame.to_local(world_wi);
-    ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
-    Bool discard = same_hemisphere(world_wo, world_wi, ng) == BxDFFlag::is_transmission(ret.flags);
-    ret.pdf = select(discard, 0.f, ret.pdf);
-    ret.f *= abs_cos_theta(wi);
-    return ret;
-}
-
-BSDFSample BSDF::sample(Float3 world_wo, Sampler *sampler) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
-    BSDFSample ret = sample_local(wo, BxDFFlag::All, sampler);
-    ret.eval.f *= abs_cos_theta(ret.wi);
-    ret.wi = shading_frame.to_world(ret.wi);
-    Bool discard = same_hemisphere(world_wo, ret.wi, ng) == BxDFFlag::is_transmission(ret.eval.flags);
-    ret.eval.pdf = select(discard, 0.f, ret.eval.pdf);
-    return ret;
-}
-
 ScatterEval MaterialEvaluator::evaluate_local(ocarina::Float3 wo, ocarina::Float3 wi, ocarina::Uint flag) const noexcept {
     ScatterEval ret{swl->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
@@ -207,13 +177,6 @@ void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const
         case 3: detail::compute_by_normal_map(_bump, _bump_scale, it, swl); break;
         default: break;
     }
-}
-
-BSDF Material::compute_BSDF(Interaction it, const SampledWavelengths &swl) const noexcept {
-    if (_bump) {
-        _apply_bump(std::addressof(it), swl);
-    }
-    return BSDF(it, create_lobe_set(it, swl));
 }
 
 MaterialEvaluator Material::create_evaluator(const Interaction &it,
