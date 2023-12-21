@@ -992,6 +992,7 @@
 //				"type" : "rt",
 		"type" : "pt",
 		"param" : {
+			"separate": false,
 			"direct": {
 				"spatial": {
 					//					"open": false,
@@ -1080,6 +1081,6 @@
 	"output" : {
 		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "old-256.exr"
+		"fn" : "old-256-nonseparate.exr"
 	}
 }
