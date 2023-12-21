@@ -23,6 +23,7 @@ public:
         OC_ERROR("Fresnel evaluate by channel invalid !");
         return 0.f;
     }
+    virtual Fresnel &operator=(const Fresnel &other) noexcept = default;
     [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
         return {_swl->dimension(), 1.f};
@@ -41,6 +42,10 @@ public:
     explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp),
           _eta(ior) {}
+    FresnelDielectric &operator=(const Fresnel &other) noexcept override {
+        *this = *dynamic_cast<decltype(this)>(const_cast<Fresnel *>(&other));
+        return *this;
+    }
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }

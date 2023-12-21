@@ -23,6 +23,16 @@ protected:
 public:
     MixBxDFSet(SP<BxDFSet> &&b0, SP<BxDFSet> &&b1, Float scale)
         : _b0(ocarina::move(b0)), _b1(ocarina::move(b1)), _scale(scale) {}
+    // clang-format off
+    VS_MAKE_BxDFSet_ASSIGNMENT(MixBxDFSet)
+    MixBxDFSet &operator=(const MixBxDFSet &other) noexcept {
+        BxDFSet::operator=(other);
+        *_b0 = *other._b0;
+        *_b1 = *other._b1;
+        _scale = other._scale;
+        return *this;
+    }
+    // clang-format on
     [[nodiscard]] SampledSpectrum albedo() const noexcept override {
         return _b0->albedo() * _scale + _b1->albedo() * (1 - _scale);
     }

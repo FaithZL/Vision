@@ -38,11 +38,7 @@ public:
     BxDF() = default;
     explicit BxDF(const SampledWavelengths &swl, uint flag) : _flags(flag), _swl(&swl) {}
     BxDF(const BxDF &other) = default;
-    virtual BxDF &operator=(const BxDF &other) noexcept {
-        _flags = other._flags;
-        _swl = other._swl;
-        return *this;
-    }
+    virtual BxDF &operator=(const BxDF &other) noexcept = default;
     virtual void regularize() noexcept {}
     [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *_swl; }
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;

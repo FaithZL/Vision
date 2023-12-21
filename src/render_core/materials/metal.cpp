@@ -41,6 +41,7 @@ public:
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(ConductorBxDFSet)
     ConductorBxDFSet &operator=(const ConductorBxDFSet &other) noexcept {
+        BxDFSet::operator=(other);
         *_fresnel = *other._fresnel;
         _refl = other._refl;
         return *this;
