@@ -11,8 +11,8 @@ namespace vision {
 
 class MixBxDFSet : public BxDFSet {
 private:
-    SP<BxDFSet> _b0;
-    SP<BxDFSet> _b1;
+    UP<BxDFSet> _b0;
+    UP<BxDFSet> _b1;
     Float _scale;
 
 protected:
@@ -21,7 +21,7 @@ protected:
     }
 
 public:
-    MixBxDFSet(SP<BxDFSet> &&b0, SP<BxDFSet> &&b1, Float scale)
+    MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float scale)
         : _b0(ocarina::move(b0)), _b1(ocarina::move(b1)), _scale(scale) {}
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MixBxDFSet)
