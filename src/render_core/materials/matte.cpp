@@ -47,7 +47,7 @@ public:
 
 class MatteBxDFSet : public BxDFSet {
 private:
-    deep_copy_unique_ptr<BxDF> _bxdf;
+    DCUP<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {

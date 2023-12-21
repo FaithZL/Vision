@@ -11,8 +11,8 @@ namespace vision {
 
 class MixBxDFSet : public BxDFSet {
 private:
-    deep_copy_unique_ptr<BxDFSet> _b0;
-    deep_copy_unique_ptr<BxDFSet> _b1;
+    DCUP<BxDFSet> _b0;
+    DCUP<BxDFSet> _b1;
     Float _scale;
 
 protected:

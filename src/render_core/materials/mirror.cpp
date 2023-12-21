@@ -10,7 +10,7 @@ namespace vision {
 
 class MirrorBxDFSet : public BxDFSet {
 private:
-    deep_copy_shared_ptr<Fresnel> _fresnel;
+    DCSP<Fresnel> _fresnel;
     MicrofacetReflection _bxdf;
 
 protected:

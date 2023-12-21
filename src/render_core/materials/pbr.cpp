@@ -9,7 +9,7 @@ namespace vision {
 
 class PbrBxDFSet : public BxDFSet {
 private:
-    deep_copy_shared_ptr<BxDF> _bxdf;
+    DCSP<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {

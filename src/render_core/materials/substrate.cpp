@@ -12,7 +12,7 @@ namespace vision {
 class FresnelBlend : public BxDF {
 private:
     SampledSpectrum Rd, Rs;
-    deep_copy_shared_ptr<Microfacet<D>> _microfacet;
+    DCSP<Microfacet<D>> _microfacet;
 
 public:
     FresnelBlend(SampledSpectrum Rd, SampledSpectrum Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
