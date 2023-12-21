@@ -22,8 +22,8 @@ public:
         return {};
     }
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
-    virtual void regularize() const noexcept {}
-    virtual void mollify() const noexcept {}
+    virtual void regularize() noexcept {}
+    virtual void mollify() noexcept {}
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };

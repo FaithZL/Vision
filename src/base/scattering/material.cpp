@@ -55,13 +55,13 @@ BSDFSample MaterialEvaluator::sample_local(ocarina::Float3 wo, ocarina::Uint fla
 }
 
 void MaterialEvaluator::regularize() noexcept {
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](BxDFSet *lobe_set) {
         lobe_set->regularize();
     });
 }
 
 void MaterialEvaluator::mollify() noexcept {
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](BxDFSet *lobe_set) {
         lobe_set->mollify();
     });
 }
