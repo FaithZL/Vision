@@ -12,13 +12,15 @@ namespace vision {
 class FresnelBlend : public BxDF {
 private:
     SampledSpectrum Rd, Rs;
-    SP<Microfacet<D>> _microfacet;
+    deep_copy_shared_ptr<Microfacet<D>> _microfacet;
 
 public:
     FresnelBlend(SampledSpectrum Rd, SampledSpectrum Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::Reflection), Rd(Rd), Rs(Rs), _microfacet(m) {}
-
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Rd; }
+    // clang-format off
+    VS_MAKE_BxDF_ASSIGNMENT(FresnelBlend)
+        // clang-format on
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Rd; }
 
     [[nodiscard]] SampledSpectrum f_diffuse(Float3 wo, Float3 wi) const noexcept {
         SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd * (SampledSpectrum(swl().dimension(), 1.f) - Rs) *
@@ -105,16 +107,8 @@ protected:
 public:
     SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf)
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
-    // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
-    SubstrateBxDFSet &operator=(const SubstrateBxDFSet &other) noexcept {
-        BxDFSet::operator=(other);
-        *_fresnel = *other._fresnel;
-        _bxdf = other._bxdf;
-        return *this;
-    }
-    // clang-format on
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }

@@ -9,7 +9,7 @@ namespace vision {
 
 class PbrBxDFSet : public BxDFSet {
 private:
-    SP<BxDF> _bxdf;
+    deep_copy_shared_ptr<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
@@ -21,10 +21,6 @@ public:
         : _bxdf(std::make_shared<LambertReflection>(kr, swl)) {}
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(PbrBxDFSet)
-    PbrBxDFSet &operator=(const PbrBxDFSet &other) noexcept {
-        *_bxdf = *other._bxdf;
-        return *this;
-    }
     // clang-format on
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {

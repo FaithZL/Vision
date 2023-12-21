@@ -19,17 +19,14 @@ public:
         ret.pdf = 1.f;
         return ret;
     }
-    // clang-format off
-    VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
-    // clang-format on
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{_swl->dimension()};
         return ret;
     }
-
     [[nodiscard]] SampledSpectrum albedo() const noexcept override {
         return {_swl->dimension(), 0.f};
     }
+    VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
 };
 
 class BlackBodyMaterial : public Material {

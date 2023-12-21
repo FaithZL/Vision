@@ -56,6 +56,12 @@ public:
     virtual ~BxDF() = default;
 };
 
+#define VS_MAKE_BxDF_ASSIGNMENT(ClassName)                            \
+    ClassName &operator=(const BxDF &other) noexcept override {       \
+        *this = dynamic_cast<ClassName &>(const_cast<BxDF &>(other)); \
+        return *this;                                                 \
+    }
+
 class LambertReflection : public BxDF {
 private:
     SampledSpectrum Kr;
@@ -64,11 +70,8 @@ public:
     explicit LambertReflection(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           Kr(kr) {}
-    LambertReflection &operator=(const BxDF &other) noexcept override {
-        *this = dynamic_cast<decltype(*this) &>(const_cast<BxDF &>(other));
-        return *this;
-    }
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
+    VS_MAKE_BxDF_ASSIGNMENT(LambertReflection)
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         return Kr * InvPi;
     }
@@ -77,14 +80,14 @@ public:
 class MicrofacetReflection : public BxDF {
 private:
     SampledSpectrum Kr;
-    SP<Microfacet<D>> _microfacet;
+    deep_copy_shared_ptr<Microfacet<D>> _microfacet;
 
 public:
-    MicrofacetReflection() = default;
+    VS_MAKE_BxDF_ASSIGNMENT(MicrofacetReflection)
+        MicrofacetReflection() = default;
     MicrofacetReflection(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::GlossyRefl), Kr(color),
           _microfacet(m) {}
-
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Kr; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
@@ -95,10 +98,11 @@ public:
 class MicrofacetTransmission : public BxDF {
 private:
     SampledSpectrum Kt;
-    SP<Microfacet<D>> _microfacet;
+    deep_copy_shared_ptr<Microfacet<D>> _microfacet;
 
 public:
-    MicrofacetTransmission() = default;
+    VS_MAKE_BxDF_ASSIGNMENT(MicrofacetTransmission)
+        MicrofacetTransmission() = default;
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::GlossyTrans), Kt(color), _microfacet(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;

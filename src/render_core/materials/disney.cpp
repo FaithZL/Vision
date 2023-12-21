@@ -19,7 +19,10 @@ public:
     explicit Diffuse(SampledSpectrum color, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    // clang-format off
+    VS_MAKE_BxDF_ASSIGNMENT(Diffuse)
+        // clang-format on
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
             Float Fo = schlick_weight(abs_cos_theta(wo));
@@ -42,7 +45,10 @@ public:
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    // clang-format off
+    VS_MAKE_BxDF_ASSIGNMENT(FakeSS)
+        // clang-format on
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
@@ -68,7 +74,8 @@ private:
     Float _roughness;
 
 public:
-    Retro() = default;
+    VS_MAKE_BxDF_ASSIGNMENT(Retro)
+        Retro() = default;
     explicit Retro(SampledSpectrum color, Float r, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
@@ -98,7 +105,8 @@ private:
     SampledSpectrum _color;
 
 public:
-    Sheen() = default;
+    VS_MAKE_BxDF_ASSIGNMENT(Sheen)
+        Sheen() = default;
     explicit Sheen(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(kr) {}
@@ -143,6 +151,7 @@ private:
     Float _alpha;
 
 public:
+    VS_MAKE_BxDF_ASSIGNMENT(Clearcoat)
     Clearcoat() = default;
     Clearcoat(Float weight, Float alpha, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::GlossyRefl),
@@ -464,27 +473,7 @@ public:
             _sampling_weights[i] *= inv_sum_weights;
         }
     }
-    // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
-    PrincipledBxDFSet & operator=(const PrincipledBxDFSet &other) noexcept {
-        BxDFSet::operator=(other);
-        *_fresnel = *other._fresnel;
-        _diffuse = other._diffuse;
-        _retro = other._retro;
-        _sheen = other._sheen;
-        _fake_ss = other._fake_ss;
-        _spec_refl = other._spec_refl;
-        _clearcoat = other._clearcoat;
-        _spec_trans = other._spec_trans;
-        _sampling_weights = other._sampling_weights;
-        _diffuse_index = other._diffuse_index;
-        _spec_refl_index = other._spec_refl_index;
-        _clearcoat_index = other._clearcoat_index;
-        _spec_trans_index = other._spec_trans_index;
-        _sampling_strategy_num = other._sampling_strategy_num;
-        return *this;
-    }
-    // clang-format on
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_spec_refl->swl().dimension()};

@@ -22,7 +22,8 @@ public:
         A = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
         B = 0.45f * sigma2 / (sigma2 + 0.09f);
     }
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return R; }
+    VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return R; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float sin_theta_i = sin_theta(wi);
         Float sin_theta_o = sin_theta(wo);
@@ -46,7 +47,7 @@ public:
 
 class MatteBxDFSet : public BxDFSet {
 private:
-    UP<BxDF> _bxdf;
+    deep_copy_unique_ptr<BxDF> _bxdf;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
@@ -61,14 +62,9 @@ public:
 
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MatteBxDFSet)
-    MatteBxDFSet &operator=(const MatteBxDFSet &other) noexcept {
-        BxDFSet::operator=(other);
-        *_bxdf = *other._bxdf;
-        return *this;
-    }
-    // clang-format on
+        // clang-format on
 
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _bxdf->safe_evaluate(wo, wi, nullptr);
     }

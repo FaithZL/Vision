@@ -91,7 +91,7 @@ public:
 
 class DielectricBxDFSet : public BxDFSet {
 private:
-    SP<Fresnel> _fresnel;
+    deep_copy_shared_ptr<Fresnel> _fresnel;
     MicrofacetReflection _refl;
     MicrofacetTransmission _trans;
     Bool _dispersive{};
@@ -109,20 +109,8 @@ public:
         : _fresnel(fresnel),
           _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
           _dispersive(dispersive) {}
-
-    // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
-    DielectricBxDFSet &operator=(const DielectricBxDFSet &other) noexcept {
-        BxDFSet::operator=(other);
-        *_fresnel = *other._fresnel;
-        _refl = other._refl;
-        _trans = other._trans;
-        _dispersive = other._dispersive;
-        return *this;
-    }
-    // clang-format on
-
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         return _dispersive;
     }
