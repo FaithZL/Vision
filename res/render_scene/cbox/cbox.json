@@ -207,13 +207,13 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material" : "ShortBox",
+//				"material" : "ShortBox",
 //								"material" : "substrate",
 //								"material" : "Mirror",
 //								"material" : "Ag",
 //												                "material" : "disney",
-//																                "material" : "mix",
-				//								                                "material" : "Glass",
+																                "material" : "mix",
+//												                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -254,11 +254,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material": "TallBox",
-//				"material" : "mix",
+//				"material": "TallBox",
+				"material" : "mix2",
 //				"material" : "Mirror",
 				//                "material": "Mirror2",
-				//				                "material": "Glass2",
+//								                "material": "Glass2",
 //												"material" : "Metal",
 				//				"material" : "disney",
 				"transform" : {
@@ -444,6 +444,45 @@
 							"channels" : "xyz",
 							"node" : [
 								1,
+								1,
+								1
+							]
+						},
+						"roughness" : [0.001, 0.001]
+					}
+				},
+				"mat1" : {
+					"type" : "glass",
+					"name" : "Glass",
+					"param" : {
+						"material_name" : "BK7",
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								1,
+								1,
+								1
+							]
+						},
+						"roughness" : [0.001, 0.001]
+					}
+				},
+				"scale" : 0.5
+			}
+		},
+		{
+			"type" : "mix",
+			"name" : "mix2",
+			"param" : {
+				"mat0" : {
+					"type" : "glass",
+					"name" : "Glass",
+					"param" : {
+						"material_name" : "BK7",
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								0,
 								1,
 								1
 							]
@@ -989,10 +1028,10 @@
 		}
 	},
 	"integrator" : {
-				"type" : "rt",
-//		"type" : "pt",
+//				"type" : "rt",
+		"type" : "pt",
 		"param" : {
-			"separate": false,
+			"separate": true,
 			"direct": {
 				"spatial": {
 					//					"open": false,

@@ -34,6 +34,11 @@ public:
     [[nodiscard]] virtual SP<Fresnel> clone() const noexcept = 0;
 };
 
+#define VS_MAKE_Fresnel_ASSIGNMENT(ClassName)                              \
+    ClassName &operator=(const Fresnel &other) noexcept override {         \
+        *this = *dynamic_cast<ClassName *>(const_cast<Fresnel *>(&other)); \
+        return *this;                                                      \
+    }
 class FresnelDielectric : public Fresnel {
 private:
     SampledSpectrum _eta;
@@ -42,10 +47,6 @@ public:
     explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp),
           _eta(ior) {}
-    FresnelDielectric &operator=(const Fresnel &other) noexcept override {
-        *this = *dynamic_cast<decltype(this)>(const_cast<Fresnel *>(&other));
-        return *this;
-    }
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
@@ -60,6 +61,7 @@ public:
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelDielectric>(_eta, *_swl, _rp);
     }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
 };
 
 class FresnelNoOp : public Fresnel {
@@ -69,6 +71,7 @@ public:
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelNoOp>(*_swl, _rp);
     }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelNoOp)
 };
 
 }// namespace vision

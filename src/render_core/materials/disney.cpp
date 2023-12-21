@@ -219,10 +219,6 @@ public:
     FresnelDisney(const SampledSpectrum &R0, Float metallic, Float eta,
                   const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
-    FresnelDisney &operator=(const Fresnel &other) noexcept override {
-        *this = *dynamic_cast<decltype(this)>(const_cast<Fresnel *>(&other));
-        return *this;
-    }
     void correct_eta(Float cos_theta) noexcept override {
         _eta = select(cos_theta > 0, _eta, rcp(_eta));
     }
@@ -235,6 +231,7 @@ public:
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelDisney>(R0, _metallic, _eta, *_swl, _rp);
     }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelDisney)
 };
 
 }// namespace disney

@@ -22,6 +22,7 @@ public:
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelConductor>(_eta, _k, *_swl, _rp);
     }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
 class ConductorBxDFSet : public BxDFSet {
@@ -38,15 +39,7 @@ public:
     ConductorBxDFSet(const SP<Fresnel> &fresnel,
                      MicrofacetReflection refl)
         : _fresnel(fresnel), _refl(ocarina::move(refl)) {}
-    // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(ConductorBxDFSet)
-    ConductorBxDFSet &operator=(const ConductorBxDFSet &other) noexcept {
-        BxDFSet::operator=(other);
-        *_fresnel = *other._fresnel;
-        _refl = other._refl;
-        return *this;
-    }
-    // clang-format on
     [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         return _refl.safe_evaluate(wo, wi, _fresnel->clone());
