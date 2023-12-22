@@ -322,7 +322,7 @@ public:
 
 class PrincipledBxDFSet : public BxDFSet {
 private:
-    SP<Fresnel> _fresnel{};
+    DCSP<Fresnel> _fresnel{};
     optional<Diffuse> _diffuse{};
     optional<Retro> _retro{};
     optional<Sheen> _sheen{};
@@ -433,7 +433,7 @@ public:
         Float SchlickR0 = schlick_R0_from_eta(eta);
         SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
-        _fresnel = make_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
+        _fresnel = make_deep_copy_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
         Float anisotropic = anisotropic_slot.evaluate(it, swl).as_scalar();
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),

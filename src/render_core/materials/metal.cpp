@@ -27,7 +27,7 @@ public:
 
 class ConductorBxDFSet : public BxDFSet {
 private:
-    SP<Fresnel> _fresnel;
+    DCSP<Fresnel> _fresnel;
     MicrofacetReflection _refl;
 
 protected:
