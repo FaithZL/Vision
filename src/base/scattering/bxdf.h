@@ -80,7 +80,7 @@ public:
 class MicrofacetReflection : public BxDF {
 private:
     SampledSpectrum Kr;
-    deep_copy_shared_ptr<Microfacet<D>> _microfacet;
+    DCSP<Microfacet<D>> _microfacet;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(MicrofacetReflection)
@@ -98,7 +98,7 @@ public:
 class MicrofacetTransmission : public BxDF {
 private:
     SampledSpectrum Kt;
-    deep_copy_shared_ptr<Microfacet<D>> _microfacet;
+    DCSP<Microfacet<D>> _microfacet;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(MicrofacetTransmission)
