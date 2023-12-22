@@ -98,11 +98,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
                 MaterialEvaluator evaluator(it, swl);
                 scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                     material->build_evaluator(evaluator, it, swl);
-                    if (auto dispersive = spectrum().is_dispersive(&evaluator)) {
-                        $if(*dispersive) {
-                            swl.invalidation_secondary();
-                        };
-                    }
+                    swl.check_dispersive(spectrum(), evaluator);
                 });
                 Ld = direct_lighting(it, evaluator, light_sample, occluded,
                                      sampler, swl, bsdf_sample);
@@ -110,11 +106,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             }
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator evaluator = material->create_evaluator(it, swl);
-                if (auto dispersive = spectrum().is_dispersive(&evaluator)) {
-                    $if(*dispersive) {
-                        swl.invalidation_secondary();
-                    };
-                }
+                swl.check_dispersive(spectrum(), evaluator);
                 Ld = direct_lighting(it, evaluator, light_sample, occluded,
                                      sampler, swl, bsdf_sample);
             });

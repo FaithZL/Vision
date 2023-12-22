@@ -146,11 +146,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             MaterialEvaluator bsdf(it, swl);
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 material->build_evaluator(bsdf, it, swl);
-                if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
-                    $if(*dispersive) {
-                        swl.invalidation_secondary();
-                    };
-                }
+                swl.check_dispersive(spectrum, bsdf);
             });
             $for(i, M) {
                 sample_light(&bsdf);

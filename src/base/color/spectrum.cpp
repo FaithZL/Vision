@@ -3,6 +3,7 @@
 //
 
 #include "spectrum.h"
+#include "base/scattering/material.h"
 
 namespace vision {
 
@@ -26,6 +27,15 @@ void SampledWavelengths::invalidation_secondary() const noexcept {
             _pdfs[i] = 0.f;
         }
     };
+}
+
+void SampledWavelengths::check_dispersive(const Spectrum &spectrum,
+                                          const MaterialEvaluator &bsdf) noexcept{
+    if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+        $if(*dispersive) {
+            invalidation_secondary();
+        };
+    }
 }
 
 Uint SampledWavelengths::valid_dimension() const noexcept {
