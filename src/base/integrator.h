@@ -69,6 +69,8 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
+    OC_MAKE_MEMBER_GETTER(separate,)
+
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept override;
 
     void prepare() noexcept override {

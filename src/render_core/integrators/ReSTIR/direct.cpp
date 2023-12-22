@@ -3,14 +3,17 @@
 //
 
 #include "direct.h"
+#include "base/integrator.h"
 #include "base/mgr/pipeline.h"
 
 namespace vision {
 
-ReSTIRDirectIllumination::ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<ocarina::float2> &motion_vec,
+ReSTIRDirectIllumination::ReSTIRDirectIllumination(Integrator *integrator, const ParameterSet &desc,
+                                                   RegistrableManaged<float2> &motion_vec,
                                                    RegistrableManaged<SurfaceData> &surfaces0,
                                                    RegistrableManaged<SurfaceData> &surfaces1)
-    : M(desc["M"].as_uint(1)),
+    : _integrator(integrator),
+      M(desc["M"].as_uint(1)),
       _bsdf_num(desc["bsdf_num"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),

@@ -9,6 +9,9 @@
 #include "base/mgr/global.h"
 
 namespace vision {
+
+class Integrator;
+
 /**
  * generate initial candidates
  * evaluate visibility for initial candidates
@@ -17,6 +20,7 @@ namespace vision {
  */
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
+    const Integrator *_integrator{};
     uint M{};
     uint _bsdf_num{};
     CorrectMode _correct_mode;
@@ -44,7 +48,8 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    ReSTIRDirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
+    ReSTIRDirectIllumination(Integrator *integrator, const ParameterSet &desc,
+                             RegistrableManaged<float2> &motion_vec,
                              RegistrableManaged<SurfaceData> &surfaces0,
                              RegistrableManaged<SurfaceData> &surfaces1);
 
@@ -64,7 +69,7 @@ public:
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, SampledWavelengths &swl,
-                                     const DIRSVSample &sample,LightSample *output_ls = nullptr) noexcept;
+                                            const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
                                              SampledWavelengths &swl,
                                              const DIRSVSample &sample,
@@ -84,7 +89,7 @@ public:
                                             SampledWavelengths &swl,
                                             const Uint &frame_index) const noexcept;
     [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
-                                             const OCSurfaceData& cur_surf,
+                                             const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,
                                              const SensorSample &ss,
                                              SampledWavelengths &swl,

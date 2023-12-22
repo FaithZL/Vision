@@ -22,7 +22,7 @@ private:
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(desc["direct"], _motion_vectors, _surfaces0, _surfaces1),
+          _direct(this, desc["direct"], _motion_vectors, _surfaces0, _surfaces1),
           _indirect(desc["indirect"], _motion_vectors, _surfaces0, _surfaces1) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
