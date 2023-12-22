@@ -152,7 +152,7 @@ private:
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(Clearcoat)
-    Clearcoat() = default;
+        Clearcoat() = default;
     Clearcoat(Float weight, Float alpha, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::GlossyRefl),
           _weight(weight),
@@ -322,6 +322,7 @@ public:
 
 class PrincipledBxDFSet : public BxDFSet {
 private:
+    const SampledWavelengths *_swl{};
     DCSP<Fresnel> _fresnel{};
     optional<Diffuse> _diffuse{};
     optional<Retro> _retro{};
@@ -357,7 +358,7 @@ private:
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
-        return SampledSpectrum(lobe->swl().dimension(), 0.f);
+        return SampledSpectrum(_swl->dimension(), 0.f);
     }
 
     template<typename T, typename... Args>
@@ -384,7 +385,7 @@ public:
                       Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
                       Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
                       Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
-                      Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) {
+                      Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) : _swl(&swl) {
 
         auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
@@ -471,7 +472,7 @@ public:
         }
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
         ScatterEval ret{_spec_refl->swl().dimension()};
         outline([&] {
