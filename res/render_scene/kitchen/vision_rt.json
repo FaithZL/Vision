@@ -13446,6 +13446,7 @@
         "type" : "rt",
 //        		"type" : "pt",
         "param" : {
+//            "separate" : true,
             "direct": {
                 "spatial": {
 //                                        					"open": false,
