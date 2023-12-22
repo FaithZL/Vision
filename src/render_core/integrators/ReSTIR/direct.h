@@ -70,15 +70,14 @@ public:
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
                                             const SampledWavelengths &swl, LightSample *output_ls = nullptr) noexcept;
-    [[nodiscard]] static Float compute_p_hat(const Interaction &it, MaterialEvaluator *bsdf,
-                                             const SampledWavelengths &swl, LightSample *output_ls = nullptr) noexcept;
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,const  SampledWavelengths &swl,
                                             const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
-    [[nodiscard]] static Float compute_p_hat(const Interaction &it,
-                                             MaterialEvaluator *bsdf,
-                                             const SampledWavelengths &swl,
-                                             const DIRSVSample &sample,
-                                             LightSample *output_ls) noexcept;
+    template<typename ...Args>
+    [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {
+        SampledSpectrum f = Li(OC_FORWARD(args)...);
+        Float p_hat = luminance(f.vec3());
+        return p_hat;
+    }
     [[nodiscard]] DIReservoir combine_reservoirs(DIReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
