@@ -68,9 +68,10 @@ public:
     [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept;
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
-    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, SampledWavelengths &swl,
-                                            const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
+    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, SampledWavelengths &swl,
+                                     const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
+                                             MaterialEvaluator *bsdf,
                                              SampledWavelengths &swl,
                                              const DIRSVSample &sample,
                                              LightSample *output_ls = nullptr) noexcept;
