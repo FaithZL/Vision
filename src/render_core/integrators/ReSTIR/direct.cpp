@@ -61,26 +61,39 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     Sampler *sampler = scene().sampler();
+    const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
-    BSDFSample bsdf_sample{swl.dimension()};
+
+    auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
+        BSDFSample bsdf_sample = bsdf->sample(it.wo, sampler);
+        RayState rs = it.spawn_ray_state(bsdf_sample.wi);
+        Var hit = geometry.trace_closest(rs.ray);
+        Interaction next_it = geometry.compute_surface_interaction(hit, true);
+        $if(next_it.has_emission()) {
+            LightSampleContext p_ref;
+            p_ref.pos = rs.origin();
+            p_ref.ng = rs.direction();
+            LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
+            f = bsdf_sample.eval.value() * eval.L;
+        };
+    };
+
     if (!bsdf) {
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
                 swl.check_dispersive(spectrum, bsdf);
-                bsdf_sample = bsdf.sample(it.wo, sampler);
-                RayState rs = it.spawn_ray_state(bsdf_sample.wi);
+                sample_bsdf(&bsdf);
             });
         },
                 "ReSTIRDirectIllumination::Li sample BSDF");
     } else {
         outline([&] {
-
+            sample_bsdf(bsdf);
         },
                 "ReSTIRDirectIllumination::Li sample BSDF");
     }
-
     return f;
 }
 
