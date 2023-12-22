@@ -8,7 +8,7 @@
 
 namespace vision {
 
-ReSTIRDirectIllumination::ReSTIRDirectIllumination(Integrator *integrator, const ParameterSet &desc,
+ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
                                                    RegistrableManaged<float2> &motion_vec,
                                                    RegistrableManaged<SurfaceData> &surfaces0,
                                                    RegistrableManaged<SurfaceData> &surfaces1)
@@ -117,21 +117,35 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     DIReservoir ret;
     Float final_p_hat{0.f};
     $if(hit) {
-        $for(i, M) {
-            SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
-            DIRSVSample sample;
-            sample.light_index = sampled_light.light_index;
-            sample.u = sampler->next_2d();
-            LightSample ls{swl.dimension()};
-            Float p_hat = compute_p_hat(it, nullptr, swl, sample, &ls);
-            sample->set_pos(ls.p_light);
-            Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
-            final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
-        };
-        $for(i, _bsdf_num) {
-            DIRSVSample sample;
-            sample->init();
-        };
+        if (_integrator->separate()) {
+            MaterialEvaluator bsdf(it, swl);
+            scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+                material->build_evaluator(bsdf, it, swl);
+            });
+            $for(i, M) {
+                SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+                DIRSVSample sample;
+                sample.light_index = sampled_light.light_index;
+                sample.u = sampler->next_2d();
+                LightSample ls{swl.dimension()};
+                Float p_hat = compute_p_hat(it, &bsdf, swl, sample, &ls);
+                sample->set_pos(ls.p_light);
+                Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
+                final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+            };
+        } else {
+            $for(i, M) {
+                SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+                DIRSVSample sample;
+                sample.light_index = sampled_light.light_index;
+                sample.u = sampler->next_2d();
+                LightSample ls{swl.dimension()};
+                Float p_hat = compute_p_hat(it, nullptr, swl, sample, &ls);
+                sample->set_pos(ls.p_light);
+                Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
+                final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+            };
+        }
     };
     ret->update_W(final_p_hat);
     comment("RIS end");

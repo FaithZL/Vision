@@ -10,7 +10,7 @@
 
 namespace vision {
 
-class Integrator;
+class IlluminationIntegrator;
 
 /**
  * generate initial candidates
@@ -20,7 +20,7 @@ class Integrator;
  */
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
-    const Integrator *_integrator{};
+    const IlluminationIntegrator *_integrator{};
     uint M{};
     uint _bsdf_num{};
     CorrectMode _correct_mode;
@@ -48,7 +48,7 @@ private:
     Shader<void(uint)> _shader1;
 
 public:
-    ReSTIRDirectIllumination(Integrator *integrator, const ParameterSet &desc,
+    ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
                              RegistrableManaged<float2> &motion_vec,
                              RegistrableManaged<SurfaceData> &surfaces0,
                              RegistrableManaged<SurfaceData> &surfaces1);
