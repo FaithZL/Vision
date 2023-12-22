@@ -77,9 +77,12 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
             p_ref.ng = rs.direction();
             LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
             f = bsdf_sample.eval.value() * eval.L;
+            rsv_sample->light_index = light_sampler->combine_to_light_index(it.light_type_id(),
+                                                                            it.light_inst_id());
+            rsv_sample->prim_id = it.prim_id;
+            rsv_sample->u = it.uv;
         };
     };
-
     if (!bsdf) {
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
