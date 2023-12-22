@@ -56,6 +56,17 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
                                _temporal.depth_threshold);
 }
 
+SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
+                                             SampledWavelengths &swl, Float3 wi,
+                                             LightSample *output_ls) noexcept {
+    LightSampler *light_sampler = scene().light_sampler();
+    Spectrum &spectrum = *scene().spectrum();
+    SampledSpectrum f{swl.dimension()};
+    LightSample ls{swl.dimension()};
+
+    return f;
+}
+
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, SampledWavelengths &swl,
                                              const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
@@ -113,37 +124,48 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                                           const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
+    Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
     DIReservoir ret;
     Float final_p_hat{0.f};
+
+    auto sample_light = [&](MaterialEvaluator *bsdf) {
+        SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+        DIRSVSample sample;
+        sample.light_index = sampled_light.light_index;
+        sample.u = sampler->next_2d();
+        LightSample ls{swl.dimension()};
+        Float p_hat = compute_p_hat(it, bsdf, swl, sample, &ls);
+        sample->set_pos(ls.p_light);
+        Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
+        final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+    };
+
     $if(hit) {
         if (_integrator->separate()) {
             MaterialEvaluator bsdf(it, swl);
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 material->build_evaluator(bsdf, it, swl);
+                if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+                    $if(*dispersive) {
+                        swl.invalidation_secondary();
+                    };
+                }
             });
             $for(i, M) {
-                SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+                sample_light(&bsdf);
+            };
+            $for(i, _bsdf_num) {
                 DIRSVSample sample;
-                sample.light_index = sampled_light.light_index;
-                sample.u = sampler->next_2d();
-                LightSample ls{swl.dimension()};
-                Float p_hat = compute_p_hat(it, &bsdf, swl, sample, &ls);
-                sample->set_pos(ls.p_light);
-                Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
-                final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+                sample->init();
             };
         } else {
             $for(i, M) {
-                SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+                sample_light(nullptr);
+            };
+            $for(i, _bsdf_num) {
                 DIRSVSample sample;
-                sample.light_index = sampled_light.light_index;
-                sample.u = sampler->next_2d();
-                LightSample ls{swl.dimension()};
-                Float p_hat = compute_p_hat(it, nullptr, swl, sample, &ls);
-                sample->set_pos(ls.p_light);
-                Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
-                final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+                sample->init();
             };
         }
     };

@@ -1031,7 +1031,7 @@
 				"type" : "rt",
 //		"type" : "pt",
 		"param" : {
-			"separate": true,
+//			"separate": true,
 			"direct": {
 				"spatial": {
 					//					"open": false,
