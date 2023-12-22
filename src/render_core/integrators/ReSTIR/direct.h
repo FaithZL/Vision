@@ -69,15 +69,16 @@ public:
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                            SampledWavelengths &swl, Float3 wi,
-                                            LightSample *output_ls = nullptr) noexcept;
-    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, SampledWavelengths &swl,
+                                            const SampledWavelengths &swl, LightSample *output_ls = nullptr) noexcept;
+    [[nodiscard]] static Float compute_p_hat(const Interaction &it, MaterialEvaluator *bsdf,
+                                             const SampledWavelengths &swl, LightSample *output_ls = nullptr) noexcept;
+    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,const  SampledWavelengths &swl,
                                             const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
     [[nodiscard]] static Float compute_p_hat(const Interaction &it,
                                              MaterialEvaluator *bsdf,
-                                             SampledWavelengths &swl,
+                                             const SampledWavelengths &swl,
                                              const DIRSVSample &sample,
-                                             LightSample *output_ls = nullptr) noexcept;
+                                             LightSample *output_ls) noexcept;
     [[nodiscard]] DIReservoir combine_reservoirs(DIReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;

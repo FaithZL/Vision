@@ -57,17 +57,28 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
 }
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                             SampledWavelengths &swl, Float3 wi,
-                                             LightSample *output_ls) noexcept {
+                                             const SampledWavelengths &swl, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
+    Sampler *sampler = scene().sampler();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
 
     return f;
 }
 
-SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, SampledWavelengths &swl,
+Float ReSTIRDirectIllumination::compute_p_hat(const Interaction &it, MaterialEvaluator *bsdf,
+                                              const SampledWavelengths &swl, LightSample *output_ls) noexcept {
+    LightSample ls{swl.dimension()};
+    SampledSpectrum f = Li(it, bsdf, swl, &ls);
+    if (output_ls) {
+        *output_ls = ls;
+    }
+    Float p_hat = pipeline()->spectrum().luminance(f, swl);
+    return p_hat;
+}
+
+SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                              const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
@@ -83,11 +94,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
-                if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
-                    $if(*dispersive) {
-                        swl.invalidation_secondary();
-                    };
-                }
+                swl.check_dispersive(spectrum, bsdf);
                 eval = bsdf.evaluate(it.wo, wi);
             });
             f = eval.f * ls.eval.L;
@@ -108,7 +115,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
 
 Float ReSTIRDirectIllumination::compute_p_hat(const vision::Interaction &it,
                                               MaterialEvaluator *bsdf,
-                                              vision::SampledWavelengths &swl,
+                                              const vision::SampledWavelengths &swl,
                                               const vision::DIRSVSample &sample,
                                               vision::LightSample *output_ls) noexcept {
     LightSample ls{swl.dimension()};
@@ -141,6 +148,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
     };
 
+    auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
+        DIRSVSample sample;
+        sample->init();
+    };
+
     $if(hit) {
         if (_integrator->separate()) {
             MaterialEvaluator bsdf(it, swl);
@@ -152,16 +164,14 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                 sample_light(&bsdf);
             };
             $for(i, _bsdf_num) {
-                DIRSVSample sample;
-                sample->init();
+                sample_bsdf(&bsdf);
             };
         } else {
             $for(i, M) {
                 sample_light(nullptr);
             };
             $for(i, _bsdf_num) {
-                DIRSVSample sample;
-                sample->init();
+                sample_bsdf(nullptr);
             };
         }
     };
@@ -182,10 +192,10 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     it.wo = normalize(c_pos - it.pos);
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = passthrough_reservoir().read(idx);
-        Float p_hat = compute_p_hat(it, nullptr, swl, rsv.sample);
+        Float p_hat = compute_p_hat(it, nullptr, swl, rsv.sample, nullptr);
         cur_rsv->update(sampler->next_1d(), rsv, p_hat);
     });
-    Float p_hat = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
+    Float p_hat = compute_p_hat(it, nullptr, swl, cur_rsv.sample, nullptr);
     cur_rsv->update_W(p_hat);
     return cur_rsv;
 }
@@ -202,9 +212,9 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
     Float u = scene().sampler()->next_1d();
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
-    Float p_hat = compute_p_hat(it, nullptr, swl, r1.sample);
+    Float p_hat = compute_p_hat(it, nullptr, swl, r1.sample, nullptr);
     ret->update(u, r1, p_hat);
-    p_hat = compute_p_hat(it, nullptr, swl, ret.sample);
+    p_hat = compute_p_hat(it, nullptr, swl, ret.sample, nullptr);
     ret->update_W(p_hat);
     return ret;
 }
