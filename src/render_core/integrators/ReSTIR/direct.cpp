@@ -56,17 +56,18 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
                                _temporal.depth_threshold);
 }
 
-SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                             const SampledWavelengths &swl, LightSample *output_ls) noexcept {
+SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, MaterialEvaluator *bsdf,
+                                                    const SampledWavelengths &swl, DIRSVSample *rsv_sample,
+                                                    BSDFSample *output_bs) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     Sampler *sampler = scene().sampler();
     const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
-
+    BSDFSample bsdf_sample{swl.dimension()};
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
-        BSDFSample bsdf_sample = bsdf->sample(it.wo, sampler);
+        bsdf_sample = bsdf->sample(it.wo, sampler);
         RayState rs = it.spawn_ray_state(bsdf_sample.wi);
         Var hit = geometry.trace_closest(rs.ray);
         Interaction next_it = geometry.compute_surface_interaction(hit, true);
@@ -87,18 +88,21 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
                 sample_bsdf(&bsdf);
             });
         },
-                "ReSTIRDirectIllumination::Li sample BSDF");
+                "ReSTIRDirectIllumination::sample_Li from BSDF");
     } else {
         outline([&] {
             sample_bsdf(bsdf);
         },
-                "ReSTIRDirectIllumination::Li sample BSDF");
+                "ReSTIRDirectIllumination::sample_Li from BSDF");
+    }
+    if (output_bs) {
+        *output_bs = bsdf_sample;
     }
     return f;
 }
 
-SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                             const DIRSVSample &sample, LightSample *output_ls) noexcept {
+SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
+                                                    const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
@@ -118,13 +122,13 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             });
             f = eval.f * ls.eval.L;
         },
-                "ReSTIRDirectIllumination::Li sample light");
+                "ReSTIRDirectIllumination::sample_Li from light");
     } else {
         outline([&] {
             eval = bsdf->evaluate(it.wo, wi);
             f = eval.f * ls.eval.L;
         },
-                "ReSTIRDirectIllumination::Li sample light");
+                "ReSTIRDirectIllumination::sample_Li from light");
     }
     if (output_ls) {
         *output_ls = ls;
@@ -351,10 +355,8 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &
         });
     }
     $else {
-        SampledLight sampled_light;
-        sampled_light.light_index = rsv.sample.light_index;
         it.wo = normalize(camera->device_position() - it.pos);
-        value = Li(it, nullptr, swl, rsv.sample);
+        value = sample_Li(it, nullptr, swl, rsv.sample);
         Bool occluded = geometry.occluded(it, rsv.sample->p_light());
         rsv->process_occluded(occluded);
         value = value * rsv.W;
