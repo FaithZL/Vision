@@ -77,7 +77,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             LightSampleContext p_ref;
             p_ref.pos = rs.origin();
             p_ref.ng = rs.direction();
-            LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
+            LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
             SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
             Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
             value += eval.L * throughput * weight * tr;

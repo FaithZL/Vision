@@ -74,7 +74,7 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
             Interaction next_it = geometry.compute_surface_interaction(hit, true);
             $if(next_it.has_emission()) {
                 LightSampleContext p_ref;
-                LightEval eval = light_sampler->evaluate_hit(it, next_it, swl);
+                LightEval eval = light_sampler->evaluate_hit_point(it, next_it, swl);
                 f = bsdf_sample.eval.f * eval.L;
                 rsv_sample->light_index = light_sampler->combine_to_light_index(it.light_type_id(),
                                                                                 it.light_inst_id());
@@ -175,7 +175,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         BSDFSample bs{swl.dimension()};
         Float p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
         Bool replace = ret->update(sampler->next_1d(), p_hat, bs.eval.pdf, sample);
-//        $condition_info("bsdf {} / {} = {}", p_hat, bs.eval.pdf, p_hat / bs.eval.pdf);
+        $condition_info("bsdf {} / {} = {}", p_hat, bs.eval.pdf, p_hat / bs.eval.pdf);
         final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
     };
 
@@ -196,6 +196,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             $for(i, M) {
                 sample_light(nullptr);
             };
+            $condition_info("light ------weight {}", ret.weight_sum / ret.M);
 //            $for(i, _bsdf_num) {
 //                sample_bsdf(nullptr);
 //            };
