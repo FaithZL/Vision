@@ -135,7 +135,7 @@ public:
           _inst_idx(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_SERIALIZABLE_FUNC(Light, _inst_idx)
     void set_instance(const ShapeInstance *inst) noexcept;
-    [[nodiscard]] virtual Float combine(const Uint &index, const Float &u) const noexcept;
+    [[nodiscard]] virtual Float combine(const Uint &index, const Float &u) const noexcept = 0;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 
