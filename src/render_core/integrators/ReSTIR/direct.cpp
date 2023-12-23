@@ -287,7 +287,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
-        sampler->start_pixel_sample(pixel, frame_index, 0);
+        sampler->start(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         camera->load_data();
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
@@ -388,10 +388,10 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
-        sampler->start_pixel_sample(pixel, frame_index, 0);
+        sampler->start(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
         camera->load_data();
-        sampler->start_pixel_sample(pixel, frame_index, 1);
+        sampler->start(pixel, frame_index, 1);
         OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
         DIReservoir temporal_rsv = passthrough_reservoir().read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);

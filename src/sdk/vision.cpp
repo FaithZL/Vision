@@ -49,7 +49,7 @@ void VisionRendererImpl::compile() {
     Buffer<float4> &buffer = film->original_buffer().device_buffer();
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
-        sampler->start_pixel_sample(pixel, 0, 0);
+        sampler->start(pixel, 0, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
 

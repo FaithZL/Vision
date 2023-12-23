@@ -20,7 +20,7 @@ public:
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            sampler->start_pixel_sample(pixel, frame_index, 0);
+            sampler->start(pixel, frame_index, 0);
             camera->load_data();
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;

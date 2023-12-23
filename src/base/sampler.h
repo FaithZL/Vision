@@ -23,7 +23,7 @@ public:
         : Node(desc), _spp(desc["spp"].as_uint(1u)) {}
     [[nodiscard]] virtual Float next_1d() noexcept = 0;
     [[nodiscard]] virtual uint sample_per_pixel() const noexcept { return _spp; }
-    virtual void start_pixel_sample(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept = 0;
+    virtual void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept = 0;
     [[nodiscard]] virtual Float2 next_2d() noexcept {
         Float x = next_1d();
         Float y = next_1d();

@@ -69,7 +69,7 @@ public:
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Uint2 pixel = dispatch_idx().xy();
-            sampler->start_pixel_sample(pixel, frame_index, 0);
+            sampler->start(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             camera->load_data();
             RayState rs = camera->generate_ray(ss);

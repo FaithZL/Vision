@@ -78,7 +78,7 @@ void Baker::_compile_bake() noexcept {
     Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
-        sampler->start_pixel_sample(dispatch_idx().xy(), frame_index, 0);
+        sampler->start(dispatch_idx().xy(), frame_index, 0);
         auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels);
         $if(!valid) {
             $return();
