@@ -79,8 +79,15 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
             f = bsdf_sample.eval.value() * eval.L;
             rsv_sample->light_index = light_sampler->combine_to_light_index(it.light_type_id(),
                                                                             it.light_inst_id());
-            rsv_sample->prim_id = it.prim_id;
-            rsv_sample->u = it.uv;
+            Float u_remapped = 0.f;
+            light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
+                const IAreaLight *area_light = dynamic_cast<const IAreaLight *>(light);
+                if (!area_light) {
+                    return ;
+                }
+                u_remapped = area_light->combine(next_it.prim_id, it.uv.x);
+            });
+            rsv_sample->u = make_float2(u_remapped, it.uv.x);
         };
     };
     if (!bsdf) {
