@@ -69,25 +69,26 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         bsdf_sample = bsdf->sample(it.wo, sampler);
         RayState rs = it.spawn_ray_state(bsdf_sample.wi);
-        Var hit = geometry.trace_closest(rs.ray);
-        Interaction next_it = geometry.compute_surface_interaction(hit, true);
-        $if(next_it.has_emission()) {
-            LightSampleContext p_ref;
-            p_ref.pos = rs.origin();
-            p_ref.ng = rs.direction();
-            LightEval eval = light_sampler->evaluate_hit(p_ref, it, swl);
-            f = bsdf_sample.eval.value() * eval.L;
-            rsv_sample->light_index = light_sampler->combine_to_light_index(it.light_type_id(),
-                                                                            it.light_inst_id());
-            Float u_remapped = 0.f;
-            light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
-                const IAreaLight *area_light = dynamic_cast<const IAreaLight *>(light);
-                if (!area_light) {
-                    return ;
-                }
-                u_remapped = area_light->combine(next_it.prim_id, it.uv.x);
-            });
-            rsv_sample->u = make_float2(u_remapped, it.uv.x);
+        OCHit hit = geometry.trace_closest(rs.ray);
+        $if(hit->is_hit()) {
+            Interaction next_it = geometry.compute_surface_interaction(hit, true);
+            $if(next_it.has_emission()) {
+                LightSampleContext p_ref;
+                LightEval eval = light_sampler->evaluate_hit(it, next_it, swl);
+                f = bsdf_sample.eval.f * eval.L;
+                rsv_sample->light_index = light_sampler->combine_to_light_index(it.light_type_id(),
+                                                                                it.light_inst_id());
+                Float u_remapped = 0.f;
+                light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
+                    const IAreaLight *area_light = dynamic_cast<const IAreaLight *>(light);
+                    if (!area_light) {
+                        return;
+                    }
+                    u_remapped = area_light->combine(next_it.prim_id, it.uv.x);
+                });
+                rsv_sample->u = make_float2(u_remapped, it.uv.x);
+                (*rsv_sample)->set_pos(next_it.pos);
+            };
         };
     };
     if (!bsdf) {
@@ -161,15 +162,21 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         sample.light_index = sampled_light.light_index;
         sample.u = sampler->next_2d();
         LightSample ls{swl.dimension()};
-        Float p_hat = compute_p_hat(it, bsdf, swl, sample, &ls);
+        Float p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
         Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
+//        $condition_info("light {} / {} = {}", p_hat, ls.eval.pdf, p_hat / ls.eval.pdf);
         final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
     };
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         sample->init();
+        BSDFSample bs{swl.dimension()};
+        Float p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
+        Bool replace = ret->update(sampler->next_1d(), p_hat, bs.eval.pdf, sample);
+//        $condition_info("bsdf {} / {} = {}", p_hat, bs.eval.pdf, p_hat / bs.eval.pdf);
+        final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
     };
 
     $if(hit) {
@@ -180,18 +187,18 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                 swl.check_dispersive(spectrum, bsdf);
             });
             $for(i, M) {
-                sample_light(&bsdf);
+                sample_light(addressof(bsdf));
             };
-            $for(i, _bsdf_num) {
-                sample_bsdf(&bsdf);
-            };
+//            $for(i, _bsdf_num) {
+//                sample_bsdf(addressof(bsdf));
+//            };
         } else {
             $for(i, M) {
                 sample_light(nullptr);
             };
-            $for(i, _bsdf_num) {
-                sample_bsdf(nullptr);
-            };
+//            $for(i, _bsdf_num) {
+//                sample_bsdf(nullptr);
+//            };
         }
     };
     ret->update_W(final_p_hat);
