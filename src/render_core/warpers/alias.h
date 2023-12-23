@@ -48,6 +48,7 @@ public:
     [[nodiscard]] Float PMF(const Uint &i) const noexcept override {
         return select(*integral() > 0, func_at(i) / (*integral() * size()), 0.f);
     }
+    [[nodiscard]] Float combine(const Uint &index, const Float &u) const noexcept override;
     [[nodiscard]] pair<Uint, Float> offset_u_remapped(Float u, const Uint &size) const noexcept;
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override;
     [[nodiscard]] Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept override;
@@ -118,6 +119,11 @@ namespace detail {
 }
 
 }// namespace detail
+
+Float AliasTable::combine(const Uint &index, const Float &u) const noexcept {
+    Float ret = (index + u) / cast<float>(size());
+    return ret;
+}
 
 pair<Uint, Float> AliasTable::offset_u_remapped(Float u, const Uint &size) const noexcept {
     u = u * size;

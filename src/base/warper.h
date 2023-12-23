@@ -27,6 +27,7 @@ public:
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &i) const noexcept = 0;
+    [[nodiscard]] virtual Float combine(const Uint &index, const Float &u) const noexcept = 0;
     [[nodiscard]] virtual Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept = 0;
     [[nodiscard]] virtual Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept = 0;
 };

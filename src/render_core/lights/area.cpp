@@ -63,6 +63,10 @@ public:
         });
     }
 
+    [[nodiscard]] Float combine(const Uint &index, const Float &u) const noexcept {
+        return _warper->combine(index, u);
+    }
+
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
         return _warper->PMF(prim_id);
     }
