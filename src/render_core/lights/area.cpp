@@ -63,7 +63,7 @@ public:
         });
     }
 
-    [[nodiscard]] Float combine(const Uint &index, const Float &u) const noexcept {
+    [[nodiscard]] Float combine(const Uint &index, const Float &u) const noexcept override {
         return _warper->combine(index, u);
     }
 
