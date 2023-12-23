@@ -21,8 +21,8 @@ class IlluminationIntegrator;
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
     const IlluminationIntegrator *_integrator{};
-    uint M{};
-    uint _bsdf_num{};
+    uint M_light{};
+    uint M_bsdf{};
     CorrectMode _correct_mode;
 
     SpatialResamplingParam _spatial;

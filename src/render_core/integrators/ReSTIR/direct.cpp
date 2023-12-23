@@ -13,8 +13,8 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
                                                    RegistrableManaged<SurfaceData> &surfaces0,
                                                    RegistrableManaged<SurfaceData> &surfaces1)
     : _integrator(integrator),
-      M(desc["M"].as_uint(1)),
-      _bsdf_num(desc["bsdf_num"].as_uint(1)),
+      M_light(desc["M_light"].as_uint(10)),
+      M_bsdf(desc["M_bsdf"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),
       _correct_mode(static_cast<CorrectMode>(desc["correct_mode"].as_int(0))),
@@ -186,20 +186,19 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                 material->build_evaluator(bsdf, it, swl);
                 swl.check_dispersive(spectrum, bsdf);
             });
-            $for(i, M) {
+            $for(i, M_light) {
                 sample_light(addressof(bsdf));
             };
-//            $for(i, _bsdf_num) {
+            $for(i, M_bsdf) {
 //                sample_bsdf(addressof(bsdf));
-//            };
+            };
         } else {
-            $for(i, M) {
+            $for(i, M_light) {
                 sample_light(nullptr);
             };
-            $condition_info("light ------weight {}", ret.weight_sum / ret.M);
-//            $for(i, _bsdf_num) {
+            $for(i, M_bsdf) {
 //                sample_bsdf(nullptr);
-//            };
+            };
         }
     };
     ret->update_W(final_p_hat);
