@@ -217,7 +217,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = passthrough_reservoir().read(idx);
         Float p_hat = compute_p_hat(it, nullptr, swl, rsv.sample);
-        cur_rsv->update(sampler->next_1d(), rsv, p_hat);
+        cur_rsv->combine(sampler->next_1d(), rsv, p_hat);
     });
     Float p_hat = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
     cur_rsv->update_W(p_hat);
@@ -237,7 +237,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
     Float p_hat = compute_p_hat(it, nullptr, swl, r1.sample, nullptr);
-    ret->update(u, r1, p_hat);
+    ret->combine(u, r1, p_hat);
     p_hat = compute_p_hat(it, nullptr, swl, ret.sample, nullptr);
     ret->update_W(p_hat);
     return ret;

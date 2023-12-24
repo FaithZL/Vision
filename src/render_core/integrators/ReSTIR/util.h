@@ -80,7 +80,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         weight = ocarina::select(pdf == 0, 0.f, weight);
         return update(u, v, weight, 1);
     }
-    Bool update(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv, oc_float<p> p_hat) noexcept {
+    Bool combine(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv, oc_float<p> p_hat) noexcept {
         oc_float<p> weight = rsv->compute_weight_sum(p_hat);
         return update(u, rsv.sample, weight, rsv.M);
     }
