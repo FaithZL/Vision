@@ -1024,7 +1024,7 @@
 		//		"type": "customized",
 		"param": {
 //			"obfuscation" : false,
-//			"valid_check" : true
+			"valid_check" : true
 		}
 	},
 	"integrator" : {
