@@ -61,6 +61,11 @@ public:
     oc_float<p> W{};
     oc_float<p> canonical_weight{};
     RSVSample sample{};
+    template<EPort p_ = D>
+    [[nodiscard]] static oc_float<p_> calculate_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                                       oc_float<p_> pdf) noexcept {
+        return mis_weight * p_hat / pdf;
+    }
 };
 }// namespace ReSTIRDirect
 
@@ -68,7 +73,7 @@ public:
 
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, sample) {
     static constexpr EPort p = D;
-    Bool update(oc_float<p> u, vision::DIRSVSample v, oc_float<p> weight, oc_float<p> sample_M) noexcept {
+    Bool update(oc_float<p> u, vision::DIRSVSample v, oc_float<p> weight, oc_uint<p> sample_M = 1u) noexcept {
         weight_sum += weight;
         M += sample_M;
         Bool ret = u * weight_sum < weight;
@@ -85,7 +90,10 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         return update(u, rsv.sample, weight, rsv.M);
     }
     void truncation(oc_uint<p> limit) noexcept {
+        oc_float<p> factor = cast<float>(limit) / M;
         M = ocarina::min(limit, M);
+////        weight_sum = ocarina::select(factor < 1, weight_sum * factor, weight_sum);
+//        W = ocarina::select(factor < 1, W * factor, W);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
         W = ocarina::select(occluded, 0.f, W);

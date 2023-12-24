@@ -164,7 +164,9 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         LightSample ls{swl.dimension()};
         Float p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
-        Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
+        Float weight = Reservoir::calculate_weight(1.f / M_light, p_hat, ls.eval.pdf);
+//        Bool replace = ret->update(sampler->next_1d(), sample, weight);
+Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
         final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
     };
 
@@ -172,9 +174,9 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         DIRSVSample sample;
         sample->init();
         BSDFSample bs{swl.dimension()};
-        Float p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
-        Bool replace = ret->update(sampler->next_1d(), p_hat, bs.eval.pdf, sample);
-        final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+//        Float p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
+//        Bool replace = ret->update(sampler->next_1d(), p_hat, bs.eval.pdf, sample);
+//        final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
     };
 
     $if(hit) {

@@ -1041,7 +1041,7 @@
 					"sample_num": 1
 				},
 				"temporal": {
-					"open": false,
+//					"open": false,
 					"theta": 2,
 					"depth": 1,
 					"radius": 0,
