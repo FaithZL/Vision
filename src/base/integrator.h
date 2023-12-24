@@ -83,12 +83,12 @@ public:
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(Interaction it, const SF &sf, LightSample ls,
                                            Bool occluded, Sampler *sampler,
-                                           const SampledWavelengths &swl, SS &ss) {
+                                           const SampledWavelengths &swl, SS &ss, bool mis = true) {
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
         ss = sf.sample(it.wo, sampler);
         Bool is_delta_light = ls.eval.pdf < 0;
-        Float weight = select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf));
+        Float weight = mis ? (select(is_delta_light, 1.f, mis_weight<D>(ls.eval.pdf, scatter_eval.pdf))) : 1.f;
         ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
         SampledSpectrum Ld = {swl.dimension(), 0.f};
         $if(!occluded && scatter_eval.valid() && ls.valid()) {

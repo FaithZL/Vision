@@ -26,62 +26,69 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};
     const Geometry &geometry = rp->geometry();
-    Float lum = 0;
+
+    bool only_direct = _max_depth.hv() < 2;
+
+    std::function<void()> sample_bsdf;
+    Interaction it;
 
     Float eta_scale = 1.f;
     $for(&bounces, 0, *_max_depth) {
         Var hit = geometry.trace_closest(rs.ray);
-        comment("miss");
-        $if(hit->is_miss()) {
-            if (light_sampler->env_light()) {
+        sample_bsdf = [&] {
+            comment("miss");
+            $if(hit->is_miss()) {
+                if (light_sampler->env_light()) {
+                    LightSampleContext p_ref;
+                    p_ref.pos = rs.origin();
+                    p_ref.ng = rs.direction();
+                    SampledSpectrum tr = {swl.dimension(), 1.f};
+                    if (scene().has_medium()) {
+                        rs.ray.dir_max.w = scene().world_diameter();
+                        tr = geometry.Tr(scene(), swl, rs);
+                    }
+                    LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
+                    Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
+                    value += eval.L * tr * throughput * weight;
+                }
+                $break;
+            };
+
+            it = geometry.compute_surface_interaction(hit, rs.ray);
+
+            if (scene().has_medium()) {
+                $if(rs.in_medium()) {
+                    scene().mediums().dispatch_instance(rs.medium, [&](const Medium *medium) {
+                        SampledSpectrum medium_throughput = medium->sample(rs.ray, it, swl, sampler);
+                        throughput *= medium_throughput;
+                    });
+                };
+            }
+
+            $if(!it.has_material() && !it.has_phase()) {
+                //todo remove no material mesh in non volumetric scene
+                comment("process no material interaction for volumetric rendering");
+                rs = it.spawn_ray_state(rs.direction());
+                bounces -= 1;
+                $continue;
+            };
+
+            if (first_it) {
+                $if(bounces == 0) { *first_it = it; };
+            }
+
+            comment("hit light");
+            $if(it.has_emission()) {
                 LightSampleContext p_ref;
                 p_ref.pos = rs.origin();
                 p_ref.ng = rs.direction();
-                SampledSpectrum tr = {swl.dimension(), 1.f};
-                if (scene().has_medium()) {
-                    rs.ray.dir_max.w = scene().world_diameter();
-                    tr = geometry.Tr(scene(), swl, rs);
-                }
-                LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
+                LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
+                SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
                 Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
-                value += eval.L * tr * throughput * weight;
-            }
-            $break;
-        };
-
-        Interaction it = geometry.compute_surface_interaction(hit, rs.ray);
-
-        if (scene().has_medium()) {
-            $if(rs.in_medium()) {
-                scene().mediums().dispatch_instance(rs.medium, [&](const Medium *medium) {
-                    SampledSpectrum medium_throughput = medium->sample(rs.ray, it, swl, sampler);
-                    throughput *= medium_throughput;
-                });
+                value += eval.L * throughput * weight * tr;
             };
-        }
-
-        $if(!it.has_material() && !it.has_phase()) {
-            //todo remove no material mesh in non volumetric scene
-            comment("process no material interaction for volumetric rendering");
-            rs = it.spawn_ray_state(rs.direction());
-            bounces -= 1;
-            $continue;
         };
-
-        if (first_it) {
-            $if(bounces == 0) { *first_it = it; };
-        }
-
-        comment("hit light");
-        $if(it.has_emission()) {
-            LightSampleContext p_ref;
-            p_ref.pos = rs.origin();
-            p_ref.ng = rs.direction();
-            LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
-            SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
-            Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
-            value += eval.L * throughput * weight * tr;
-        };
+        sample_bsdf();
 
         comment("estimate direct lighting");
         comment("sample light");
@@ -127,7 +134,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         }
         value += throughput * Ld * tr;
         eta_scale *= sqr(bsdf_sample.eta);
-        lum = throughput.max();
+        Float lum = throughput.max();
         $if(!bsdf_sample.valid() || lum == 0.f) {
             $break;
         };
@@ -143,6 +150,11 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         scatter_pdf = bsdf_sample.eval.pdf;
         rs = it.spawn_ray_state(bsdf_sample.wi);
     };
+
+    if (only_direct) {
+        sample_bsdf();
+    }
+
     return spectrum().linear_srgb(value, swl);
 }
 
