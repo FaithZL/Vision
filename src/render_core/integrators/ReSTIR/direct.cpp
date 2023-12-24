@@ -162,12 +162,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         sample.light_index = sampled_light.light_index;
         sample.u = sampler->next_2d();
         LightSample ls{swl.dimension()};
-        Float p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
+        sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
-        Float weight = Reservoir::calculate_weight(1.f / M_light, p_hat, ls.eval.pdf);
-//        Bool replace = ret->update(sampler->next_1d(), sample, weight);
-Bool replace = ret->update(sampler->next_1d(), p_hat, ls.eval.pdf, sample);
-        final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
+        Float weight = Reservoir::calculate_weight(1.f / M_light, sample.p_hat, ls.eval.pdf);
+        Bool replace = ret->update(sampler->next_1d(), sample, weight);
+        final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
     };
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {

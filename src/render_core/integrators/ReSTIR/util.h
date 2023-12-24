@@ -14,6 +14,7 @@ namespace vision::ReSTIRDirect {
 struct RSVSample {
     uint light_index{};
     float2 u{};
+    float p_hat{};
     array<float, 3> pos{};
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
@@ -27,7 +28,7 @@ struct RSVSample {
 }// namespace vision::ReSTIRDirect
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, u, pos) {
+OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, u, p_hat, pos) {
     void init() noexcept {
         light_index = InvalidUI32;
     }
@@ -80,31 +81,27 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         sample = select(ret, v, sample);
         return ret;
     }
-    Bool update(oc_float<p> u, oc_float<p> p_hat, oc_float<p> pdf, vision::DIRSVSample v) noexcept {
-        oc_float<p> weight = p_hat / pdf;
-        weight = ocarina::select(pdf == 0, 0.f, weight);
-        return update(u, v, weight, 1);
-    }
+    //    Bool update(oc_float<p> u, oc_float<p> p_hat, oc_float<p> pdf, vision::DIRSVSample v) noexcept {
+    //        oc_float<p> weight = p_hat / pdf;
+    //        weight = ocarina::select(pdf == 0, 0.f, weight);
+    //        return update(u, v, weight, 1);
+    //    }
     Bool combine(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv, oc_float<p> p_hat) noexcept {
         oc_float<p> weight = rsv->compute_weight_sum(p_hat);
         return update(u, rsv.sample, weight, rsv.M);
     }
     void truncation(oc_uint<p> limit) noexcept {
-        oc_float<p> factor = cast<float>(limit) / M;
         M = ocarina::min(limit, M);
-////        weight_sum = ocarina::select(factor < 1, weight_sum * factor, weight_sum);
-//        W = ocarina::select(factor < 1, W * factor, W);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
         W = ocarina::select(occluded, 0.f, W);
         weight_sum = ocarina::select(occluded, 0.f, weight_sum);
     }
     void update_W(oc_float<p> p_hat) noexcept {
-        Float denominator = M * p_hat;
-        W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
+        W = ocarina::select(p_hat == 0.f, 0.f, weight_sum / p_hat);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
-        return p_hat * W * M;
+        return p_hat * W;
     }
 };
 
