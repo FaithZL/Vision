@@ -29,13 +29,14 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
 
     bool only_direct = _max_depth.hv() < 2;
 
-    std::function<void()> sample_bsdf;
+    OCHit hit;
     Interaction it;
+    std::function<void(Uint &)> mis_bsdf;
 
     Float eta_scale = 1.f;
     $for(&bounces, 0, *_max_depth) {
-        Var hit = geometry.trace_closest(rs.ray);
-        sample_bsdf = [&] {
+        mis_bsdf = [&] (Uint &bounces){
+            hit = geometry.trace_closest(rs.ray);
             comment("miss");
             $if(hit->is_miss()) {
                 if (light_sampler->env_light()) {
@@ -88,7 +89,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
                 value += eval.L * throughput * weight * tr;
             };
         };
-        sample_bsdf();
+        mis_bsdf(bounces);
 
         comment("estimate direct lighting");
         comment("sample light");
@@ -152,7 +153,9 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     };
 
     if (only_direct) {
-        sample_bsdf();
+        $for(&bounce, 1u) {
+            mis_bsdf(bounce);
+        };
     }
 
     return spectrum().linear_srgb(value, swl);
