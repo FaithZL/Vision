@@ -548,7 +548,7 @@
 			}
 		},
 		{
-			"type" : "substrate",
+			"type" : "mirror",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {
@@ -825,22 +825,22 @@
 //						"env_separate": true,
 			"env_prob": 0.1,
 			"lights" : [
-								{
-									"type" : "spherical",
-									"param": {
-										"color": {
-											"fn" : "textures/sky.exr",
-											"color_space": "linear"
-										},
-										"o2w" : {
-											"type":"yaw_pitch",
-											"param": {
-												"yaw" :-30
-											}
-										},
-										"scale" : 0.05
-									}
-								}
+//								{
+//									"type" : "spherical",
+//									"param": {
+//										"color": {
+//											"fn" : "textures/sky.exr",
+//											"color_space": "linear"
+//										},
+//										"o2w" : {
+//											"type":"yaw_pitch",
+//											"param": {
+//												"yaw" :-30
+//											}
+//										},
+//										"scale" : 0.05
+//									}
+//								}
 				//				{
 				//					"type" : "spot",
 				//					"param" : {
@@ -1024,12 +1024,12 @@
 		//		"type": "customized",
 		"param": {
 //			"obfuscation" : false,
-			"valid_check" : true
+//			"valid_check" : true
 		}
 	},
 	"integrator" : {
-//				"type" : "rt",
-		"type" : "pt",
+				"type" : "rt",
+//		"type" : "pt",
 		"param" : {
 //			"separate": true,
 			"direct": {
@@ -1118,8 +1118,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 256,
+		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "old-256.exr"
+		"fn" : "old-10.exr"
 	}
 }
