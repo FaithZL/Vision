@@ -84,9 +84,13 @@ public:
     [[nodiscard]] DIReservoir combine_reservoirs(DIReservoir cur_rsv,
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] DIReservoir combine_reservoir(const DIReservoir &r0,
+    [[nodiscard]] DIReservoir combine_reservoir(const DIReservoir &cur_rsv,
                                                 OCSurfaceData cur_surf,
-                                                const DIReservoir &r1,
+                                                const DIReservoir &other_rsv,
+                                                SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] DIReservoir combine_temporal(const DIReservoir &cur_rsv,
+                                                OCSurfaceData cur_surf,
+                                                const DIReservoir &other_rsv,
                                                 SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
                                             const Bool &is_hit) const noexcept;

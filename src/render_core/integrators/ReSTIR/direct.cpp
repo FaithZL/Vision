@@ -225,24 +225,43 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     return cur_rsv;
 }
 
-DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &r0,
+DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &cur_rsv,
                                                         OCSurfaceData cur_surf,
-                                                        const DIReservoir &r1,
+                                                        const DIReservoir &other_rsv,
                                                         SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
     DIReservoir ret;
-    ret = r0;
+    ret = cur_rsv;
     Float u = scene().sampler()->next_1d();
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
-    Float p_hat = compute_p_hat(it, nullptr, swl, r1.sample, nullptr);
-    ret->combine(u, r1, p_hat);
+    Float p_hat = compute_p_hat(it, nullptr, swl, other_rsv.sample, nullptr);
+    ret->combine(u, other_rsv, p_hat);
     p_hat = compute_p_hat(it, nullptr, swl, ret.sample, nullptr);
     ret->update_W(p_hat);
     return ret;
 }
+
+DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rsv,
+                                                        OCSurfaceData cur_surf,
+                                                        const DIReservoir &other_rsv,
+                                                        SampledWavelengths &swl) const noexcept {
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    const Geometry &geom = pipeline()->geometry();
+    DIReservoir ret;
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
+    it.wo = normalize(c_pos - it.pos);
+    Float m_cur = balance_heuristic(cur_rsv.M, 1, other_rsv.M, 1);
+    Float p_hat = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
+    Float cur_weight = m_cur * cur_rsv.W * p_hat;
+    
+
+    return ret;
+}
+
 
 Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
     Camera *camera = scene().camera().get();
