@@ -548,7 +548,7 @@
 			}
 		},
 		{
-			"type" : "mirror",
+			"type" : "matte",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {
@@ -1028,7 +1028,7 @@
 		}
 	},
 	"integrator" : {
-				"type" : "rt",
+				"type" : "pt",
 //		"type" : "pt",
 		"param" : {
 //			"separate": true,
@@ -1049,12 +1049,12 @@
 					"history_limit": 10
 				},
 				//								"mis": true,
-				"M_light": 10,
+				"M_light": 1,
 				"M_bsdf": 1,
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
-			"max_depth" : 1,
+			"max_depth" : 16,
 			"rr_threshold" : 1
 		}
 	},
@@ -1118,8 +1118,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
+		"spp" : 1024,
 		"save_exit" : false,
-		"fn" : "old-10.exr"
+		"fn" : "new-1024.exr"
 	}
 }
