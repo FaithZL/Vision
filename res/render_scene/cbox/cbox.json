@@ -1024,7 +1024,7 @@
 		//		"type": "customized",
 		"param": {
 //			"obfuscation" : false,
-			"valid_check" : true
+//			"valid_check" : true
 		}
 	},
 	"integrator" : {
@@ -1049,7 +1049,7 @@
 					"history_limit": 10
 				},
 				//								"mis": true,
-				"M_light": 10,
+				"M_light": 0,
 				"M_bsdf": 10,
 				"correct_mode" : 0
 			},
