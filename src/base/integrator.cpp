@@ -31,6 +31,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
 
     OCHit hit;
     Interaction it;
+    Float3 prev_surface_ng = rs.direction();
     std::function<void(Uint &)> mis_bsdf = [&](Uint &bounces) {
         hit = geometry.trace_closest(rs.ray);
         comment("miss");
@@ -78,12 +79,13 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         $if(it.has_emission()) {
             LightSampleContext p_ref;
             p_ref.pos = rs.origin();
-            p_ref.ng = rs.direction();
+            p_ref.ng = prev_surface_ng;
             LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
             SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
             Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
             value += eval.L * throughput * weight * tr;
         };
+        prev_surface_ng = it.ng;
     };
 
     Float eta_scale = 1.f;
