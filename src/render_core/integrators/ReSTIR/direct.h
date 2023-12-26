@@ -68,10 +68,6 @@ public:
     [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept;
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
-    /// sample Li from BSDF
-    [[nodiscard]] static SampledSpectrum sample_Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                                   const SampledWavelengths &swl, DIRSVSample *rsv_sample,
-                                                   BSDFSample *output_bs = nullptr) noexcept;
     /// sample Li from light
     [[nodiscard]] static SampledSpectrum sample_Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                                    const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
@@ -85,10 +81,6 @@ public:
                                                  SampledWavelengths &swl,
                                                  const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_reservoir(const DIReservoir &cur_rsv,
-                                                OCSurfaceData cur_surf,
-                                                const DIReservoir &other_rsv,
-                                                SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] DIReservoir combine_temporal(const DIReservoir &cur_rsv,
                                                 OCSurfaceData cur_surf,
                                                 const DIReservoir &other_rsv,
                                                 SampledWavelengths &swl) const noexcept;

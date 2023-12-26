@@ -33,7 +33,7 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, u, p_hat, pos) {
         light_index = InvalidUI32;
     }
     [[nodiscard]] Bool valid() const noexcept {
-        return light_index == InvalidUI32;
+        return light_index != InvalidUI32;
     }
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
@@ -81,11 +81,11 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         sample = select(ret, v, sample);
         return ret;
     }
-    //    Bool update(oc_float<p> u, oc_float<p> p_hat, oc_float<p> pdf, vision::DIRSVSample v) noexcept {
-    //        oc_float<p> weight = p_hat / pdf;
-    //        weight = ocarina::select(pdf == 0, 0.f, weight);
-    //        return update(u, v, weight, 1);
-    //    }
+    Bool update(oc_float<p> u, oc_float<p> p_hat, oc_float<p> pdf, vision::DIRSVSample v) noexcept {
+        oc_float<p> weight = p_hat / pdf;
+        weight = ocarina::select(pdf == 0, 0.f, weight);
+        return update(u, v, weight, 1);
+    }
     Bool combine(oc_float<p> u, Var<vision::ReSTIRDirect::Reservoir> rsv, oc_float<p> p_hat) noexcept {
         oc_float<p> weight = rsv->compute_weight_sum(p_hat);
         return update(u, rsv.sample, weight, rsv.M);
@@ -98,10 +98,11 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         weight_sum = ocarina::select(occluded, 0.f, weight_sum);
     }
     void update_W(oc_float<p> p_hat) noexcept {
-        W = ocarina::select(p_hat == 0.f, 0.f, weight_sum / p_hat);
+        oc_float<p> denominator = p_hat * M;
+        W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
-        return p_hat * W;
+        return p_hat * W * M;
     }
 };
 
