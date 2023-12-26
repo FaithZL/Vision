@@ -74,8 +74,10 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
             Interaction next_it = geometry.compute_surface_interaction(hit, true);
             $if(next_it.has_emission()) {
                 LightSampleContext p_ref;
-                LightEval eval = light_sampler->evaluate_hit_wi(it, next_it, swl);
+//                LightEval eval = light_sampler->evaluate_hit_point(it, next_it, swl);
+                LightEval eval = light_sampler->evaluate_hit_point(it, next_it, swl);
                 f = bsdf_sample.eval.f * eval.L;
+
                 rsv_sample->light_index = light_sampler->combine_to_light_index(next_it.light_type_id(),
                                                                                 next_it.light_inst_id());
                 Float u_remapped = 0.f;
@@ -85,9 +87,11 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
                         return;
                     }
                     u_remapped = area_light->combine(next_it.prim_id, next_it.uv.x);
+                    rsv_sample->u = make_float2(u_remapped, next_it.uv.y);
+                    $condition_info("{} {} {} =========================", next_it.pos);
+                    area_light->sample_wi(it, rsv_sample->u, swl);
+                    (*rsv_sample)->set_pos(next_it.pos);
                 });
-                rsv_sample->u = make_float2(u_remapped, next_it.uv.x);
-                (*rsv_sample)->set_pos(next_it.pos);
             };
         };
     };
@@ -121,7 +125,9 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
     SampledLight sampled_light;
     sampled_light.light_index = sample.light_index;
     sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
-    ls = light_sampler->sample_point(sampled_light, it, sample.u, swl);
+    $if(sample.light_index != InvalidUI32) {
+//        ls = light_sampler->sample_wi(sampled_light, it, sample.u, swl);
+    };
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension()};
     if (!bsdf) {
@@ -154,6 +160,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
     DIReservoir ret;
+    ret.sample->init();
     Float final_p_hat{0.f};
 
     auto sample_light = [&](MaterialEvaluator *bsdf) {
@@ -176,7 +183,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         sample.p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
         Float weight = Reservoir::calculate_weight((1.f) / (M_light + M_bsdf), sample.p_hat, bs.eval.pdf);
         $if(sample.p_hat > 0) {
-            $condition_info("{} : {}  : {}-------------", sample.p_hat, bs.eval.pdf, weight);
+//            $condition_info("{} : {}  : {}-------------", sample.p_hat, bs.eval.pdf, weight);
         };
         Bool replace = ret->update(sampler->next_1d(), sample, weight);
         final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
@@ -207,7 +214,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     ret->update_W(final_p_hat);
 
     $if(final_p_hat > 0) {
-        $condition_info("{} =={}  =   {}== -----------final_p_hat = {} -- p_hat = {}",ret.weight_sum , ret.M, 1.f/ret.W, final_p_hat, ret.sample.p_hat);
+//        $condition_info("{} =={}  =   {}== -----------final_p_hat = {} -- p_hat = {}",ret.weight_sum , ret.M, 1.f/ret.W, final_p_hat, ret.sample.p_hat);
     };
     comment("RIS end");
     return ret;
@@ -417,15 +424,13 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &
                 p_ref.pos = ray->origin();
                 p_ref.ng = it.ng;
                 LightEval eval = light_sampler->evaluate_hit_wi(p_ref, next_it, swl);
-                value = eval.L * bs.eval.value();
-//                $info_with_location("{} {} {}       {} {} {}       ", ray->origin(), ray->direction());
+                value = eval.L * bs.eval.f / bs.eval.pdf;
             };
         };
 //        it.wo = normalize(camera->device_position() - it.pos);
 //        value = sample_Li(it, nullptr, swl, rsv.sample);
 //        Bool occluded = geometry.occluded(it, rsv.sample->p_light());
 //        rsv->process_occluded(occluded);
-//        $condition_info("L : {} {} {}   W :  {}             ", value.vec3(), rsv.W);
 //        value = value * rsv.W;
     };
 
