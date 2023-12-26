@@ -1054,7 +1054,7 @@
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
-			"max_depth" : 16,
+			"max_depth" : 1,
 			"rr_threshold" : 1
 		}
 	},
@@ -1095,8 +1095,8 @@
 					"fb_state" : 0,
 					"tone_mapper" : {
 						//												"type": "reinhard",
-						//												"type": "linear",
-						"type": "aces",
+																		"type": "linear",
+//						"type": "aces",
 						//						"type" : "exposure",
 						"param" : {
 							"exposure" : 1.0
@@ -1118,8 +1118,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
+		"spp" : 20,
 		"save_exit" : false,
-		"fn" : "new-1024.exr"
+		"fn" : "newres-20.exr"
 	}
 }

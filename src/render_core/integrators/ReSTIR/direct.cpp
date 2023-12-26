@@ -78,7 +78,6 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
                 f = bsdf_sample.eval.f * eval.L;
                 rsv_sample->light_index = light_sampler->combine_to_light_index(next_it.light_type_id(),
                                                                                 next_it.light_inst_id());
-                $condition_info("{} {} {}      ===================", eval.L.vec3());
                 Float u_remapped = 0.f;
                 light_sampler->dispatch_light(next_it.light_id(), [&](const Light *light) {
                     const IAreaLight *area_light = dynamic_cast<const IAreaLight *>(light);
@@ -176,7 +175,9 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         BSDFSample bs{swl.dimension()};
         sample.p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
         Float weight = Reservoir::calculate_weight((1.f) / (M_light + M_bsdf), sample.p_hat, bs.eval.pdf);
-
+        $if(sample.p_hat > 0) {
+            $condition_info("{} : {}  : {}-------------", sample.p_hat, bs.eval.pdf, weight);
+        };
         Bool replace = ret->update(sampler->next_1d(), sample, weight);
         final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
     };
@@ -204,6 +205,10 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         }
     };
     ret->update_W(final_p_hat);
+
+    $if(final_p_hat > 0) {
+        $condition_info("{} =={}  =   {}== -----------final_p_hat = {} -- p_hat = {}",ret.weight_sum , ret.M, 1.f/ret.W, final_p_hat, ret.sample.p_hat);
+    };
     comment("RIS end");
     return ret;
 }
@@ -375,13 +380,15 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
 Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &hit,
                                          SampledWavelengths &swl, const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
+    Sampler *sampler = scene().sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     const Camera *camera = scene().camera().get();
     const Geometry &geometry = pipeline()->geometry();
-
+    Float3 c_pos = camera->device_position();
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum Le = {swl.dimension(), 0.f};
     Interaction it = geometry.compute_surface_interaction(hit, true);
+    it.wo = normalize(c_pos - it.pos);
 
     $if(it.has_emission()) {
         light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
@@ -393,11 +400,33 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &
         });
     }
     $else {
-        it.wo = normalize(camera->device_position() - it.pos);
-        value = sample_Li(it, nullptr, swl, rsv.sample);
-        Bool occluded = geometry.occluded(it, rsv.sample->p_light());
-        rsv->process_occluded(occluded);
-        value = value * rsv.W;
+        Interaction next_it;
+        OCRay ray;
+        OCHit hit;
+        BSDFSample bs{swl.dimension()};
+        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+            auto bsdf = material->create_evaluator(it, swl);
+            bs = bsdf.sample(it.wo, sampler);
+        });
+        ray = it.spawn_ray(bs.wi);
+        hit = geometry.trace_closest(ray);
+        $if(hit->is_hit()) {
+            next_it = geometry.compute_surface_interaction(hit, ray, true);
+            $if(next_it.has_emission()) {
+                LightSampleContext p_ref;
+                p_ref.pos = ray->origin();
+                p_ref.ng = it.ng;
+                LightEval eval = light_sampler->evaluate_hit_wi(p_ref, next_it, swl);
+                value = eval.L * bs.eval.value();
+//                $info_with_location("{} {} {}       {} {} {}       ", ray->origin(), ray->direction());
+            };
+        };
+//        it.wo = normalize(camera->device_position() - it.pos);
+//        value = sample_Li(it, nullptr, swl, rsv.sample);
+//        Bool occluded = geometry.occluded(it, rsv.sample->p_light());
+//        rsv->process_occluded(occluded);
+//        $condition_info("L : {} {} {}   W :  {}             ", value.vec3(), rsv.W);
+//        value = value * rsv.W;
     };
 
     return spectrum.linear_srgb(value + Le, swl);
