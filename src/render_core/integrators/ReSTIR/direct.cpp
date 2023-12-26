@@ -74,10 +74,11 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
             Interaction next_it = geometry.compute_surface_interaction(hit, true);
             $if(next_it.has_emission()) {
                 LightSampleContext p_ref;
-                LightEval eval = light_sampler->evaluate_hit_point(it, next_it, swl);
+                LightEval eval = light_sampler->evaluate_hit_wi(it, next_it, swl);
                 f = bsdf_sample.eval.f * eval.L;
                 rsv_sample->light_index = light_sampler->combine_to_light_index(next_it.light_type_id(),
                                                                                 next_it.light_inst_id());
+                $condition_info("{} {} {}      ===================", eval.L.vec3());
                 Float u_remapped = 0.f;
                 light_sampler->dispatch_light(next_it.light_id(), [&](const Light *light) {
                     const IAreaLight *area_light = dynamic_cast<const IAreaLight *>(light);
@@ -173,18 +174,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         DIRSVSample sample;
         sample->init();
         BSDFSample bs{swl.dimension()};
-        sample.p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs)) * 100;
+        sample.p_hat = compute_p_hat(it, bsdf, swl, addressof(sample), addressof(bs));
         Float weight = Reservoir::calculate_weight((1.f) / (M_light + M_bsdf), sample.p_hat, bs.eval.pdf);
-
-        $if(weight > 0.f) {
-//            $condition_info("{} {} {}     ----------", sample.p_hat, sample.u);
-        };
 
         Bool replace = ret->update(sampler->next_1d(), sample, weight);
         final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
-//        Bool replace = ret->update(sampler->next_1d(), p_hat, bs.eval.pdf, sample);
-//        final_p_hat = ocarina::select(replace, p_hat, final_p_hat);
-
     };
 
     $if(hit) {
@@ -198,7 +192,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                 sample_light(addressof(bsdf));
             };
             $for(i, M_bsdf) {
-//                sample_bsdf(addressof(bsdf));
+                sample_bsdf(addressof(bsdf));
             };
         } else {
             $for(i, M_light) {
@@ -405,7 +399,6 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &
         rsv->process_occluded(occluded);
         value = value * rsv.W;
     };
-    $condition_info("{} {} {}  {} {}  -------- {} ---------------", value.vec3(), rsv.sample.u, rsv.sample.light_index);
 
     return spectrum.linear_srgb(value + Le, swl);
 }
