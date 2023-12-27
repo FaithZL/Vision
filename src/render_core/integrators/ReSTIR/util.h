@@ -74,6 +74,12 @@ public:
 
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, sample) {
     static constexpr EPort p = D;
+    void init() noexcept {
+        sample->init();
+    }
+    [[nodiscard]] Bool valid() const noexcept {
+        return sample->valid();
+    }
     Bool update(oc_float<p> u, vision::DIRSVSample v, oc_float<p> weight, oc_uint<p> sample_M = 1u) noexcept {
         weight_sum += weight;
         M += sample_M;
