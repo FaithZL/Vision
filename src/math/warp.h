@@ -165,15 +165,20 @@ template<EPort p = EPort::D>
 VS_MAKE_CALLABLE(power_heuristic)
 
 template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> mis_weight_n_impl(const oc_int<p> &nf,
+                                            const oc_float<p> &f_PDF,
+                                            const oc_int<p> &ng,
+                                            const oc_float<p> &g_PDF) {
+    return balance_heuristic<p>(ng, f_PDF, ng, g_PDF);
+}
+VS_MAKE_CALLABLE(mis_weight_n)
+
+template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> mis_weight_impl(const oc_float<p> &f_PDF,
                                           const oc_float<p> &g_PDF) {
-    return balance_heuristic<p>(1, f_PDF, 1, g_PDF);
+    return mis_weight_n<p>(1, f_PDF, 1, g_PDF);
 }
 VS_MAKE_CALLABLE(mis_weight)
-
-[[nodiscard]] inline Array<float> mis_weight_array(const Array<float> &f_PDF, const Array<float> &g_PDF) {
-    return f_PDF / (f_PDF + g_PDF);
-}
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> robust_mis_weight_impl(const oc_float<p> &f_PDF,
