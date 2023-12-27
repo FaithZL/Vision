@@ -282,7 +282,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
     return rsv;
 }
 
-Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir &rsv, const OCHit &hit,
+Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &hit,
                                          SampledWavelengths &swl, const Uint &frame_index) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
