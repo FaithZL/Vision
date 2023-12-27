@@ -18,6 +18,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),
       _correct_mode(static_cast<CorrectMode>(desc["correct_mode"].as_int(0))),
+      _debias(desc["debias"].as_bool(false)),
       _motion_vectors(motion_vec),
       _surfaces0(surfaces0),
       _surfaces1(surfaces1) {}

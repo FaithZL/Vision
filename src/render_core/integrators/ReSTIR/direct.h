@@ -24,6 +24,7 @@ private:
     uint M_light{};
     uint M_bsdf{};
     CorrectMode _correct_mode;
+    bool _debias{false};
 
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;

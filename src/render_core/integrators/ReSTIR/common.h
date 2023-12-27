@@ -16,8 +16,7 @@ using namespace ocarina;
 enum CorrectMode {
     Off,
     Basic,
-    Pairwise,
-    Debias
+    Pairwise
 };
 
 struct SpatialResamplingParam {
