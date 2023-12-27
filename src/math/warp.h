@@ -28,7 +28,7 @@ template<EPort p = EPort::D>
 }
 VS_MAKE_CALLABLE(square_to_disk)
 
-[[nodiscard]] inline float uniform_disk_PDF() {
+[[nodiscard]] constexpr float uniform_disk_PDF() {
     return ocarina::InvPi;
 }
 
@@ -77,7 +77,7 @@ template<EPort p = EPort::D>
 }
 VS_MAKE_CALLABLE(square_to_sphere)
 
-[[nodiscard]] inline float uniform_sphere_PDF() {
+[[nodiscard]] constexpr float uniform_sphere_PDF() {
     return ocarina::Inv4Pi;
 }
 
