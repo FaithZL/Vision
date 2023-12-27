@@ -1028,8 +1028,8 @@
 		}
 	},
 	"integrator" : {
-//				"type" : "rt",
-		"type" : "pt",
+				"type" : "rt",
+//		"type" : "pt",
 		"param" : {
 //			"mis_mode": 0,
 //			"separate": true,
@@ -1088,7 +1088,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-//										"accumulation": 0,
+										"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
