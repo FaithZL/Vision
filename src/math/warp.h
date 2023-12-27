@@ -82,16 +82,28 @@ VS_MAKE_CALLABLE(square_to_sphere)
 }
 
 /**
- * p(dir) = p(pos) * r^2 / cos(theta)
- * @return
+ * pdf_wi = pdf_point * r^2 / cos_theta
+ * @return pdf_wi
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> PDF_dir_impl(const oc_float<p> &PDF_pos, const oc_float3<p> &normal,
-                                       const oc_float3<p> &wo_un) {
+[[nodiscard]] oc_float<p> PDF_wi_impl(const oc_float<p> &pdf_point, const oc_float3<p> &normal,
+                                      const oc_float3<p> &wo_un) noexcept {
     oc_float<p> cos_theta = abs(dot(normal, normalize(wo_un)));
-    return PDF_pos * length_squared(wo_un) / cos_theta;
+    return pdf_point * length_squared(wo_un) / cos_theta;
 }
-VS_MAKE_CALLABLE(PDF_dir)
+VS_MAKE_CALLABLE(PDF_wi)
+
+/**
+ * pdf_point = pdf_wi * cos_theta / r^2
+ * @return pdf_point
+ */
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> PDF_point_impl(const oc_float<p> &pdf_wi, const oc_float3<p> &normal,
+                                         const oc_float3<p> &wo_un) noexcept {
+    oc_float<p> cos_theta = abs(dot(normal, normalize(wo_un)));
+    return pdf_wi * cos_theta / length_squared(wo_un);
+}
+VS_MAKE_CALLABLE(PDF_point)
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float3<p> square_to_hemisphere_impl(const oc_float2<p> &sample) {
