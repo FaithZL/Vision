@@ -51,11 +51,18 @@ public:
     virtual void render() const noexcept {}
 };
 
+enum MISMode {
+    EBoth = 0,
+    ELight,
+    EBSDF
+};
+
 class IlluminationIntegrator : public Integrator {
 protected:
     Serial<uint> _max_depth{};
     Serial<uint> _min_depth{};
     Serial<float> _rr_threshold{};
+    MISMode _mis_mode{};
     /// Material computation is separated from access memory
     bool _separate{false};
 
@@ -65,6 +72,7 @@ public:
           _max_depth(desc["max_depth"].as_uint(16)),
           _min_depth(desc["min_depth"].as_uint(5)),
           _rr_threshold(desc["rr_threshold"].as_float(1.f)),
+          _mis_mode(MISMode(desc["mis_mode"].as_int(0))),
           _separate(desc["separate"].as_bool(false)) {}
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
@@ -81,7 +89,7 @@ public:
     }
 
     template<typename SF, typename SS>
-    static SampledSpectrum direct_lighting(Interaction it, const SF &sf, LightSample ls,
+    static SampledSpectrum direct_lighting(const Interaction &it, const SF &sf, LightSample ls,
                                            Bool occluded, Sampler *sampler,
                                            const SampledWavelengths &swl, SS &ss, bool mis = true) {
         Float3 wi = normalize(ls.p_light - it.pos);

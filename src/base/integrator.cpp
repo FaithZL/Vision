@@ -32,6 +32,35 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     OCHit hit;
     Interaction it;
     Float3 prev_surface_ng = rs.direction();
+
+    auto correct_bsdf_weight = [this](Float weight, Uint bounce) {
+        switch (_mis_mode) {
+            case MISMode::EBSDF: {
+                weight = 1.f;
+                break;
+            }
+            case MISMode::ELight: {
+                weight = ocarina::select(bounce == 0, weight, 0.f);
+                break;
+            }
+            default: break;
+        }
+        return weight;
+    };
+
+    auto direct_light_mis = [this]<typename... Args>(Args &&...args) -> SampledSpectrum {
+        switch (_mis_mode) {
+            case MISMode::EBSDF: {
+                return direct_lighting(OC_FORWARD(args)...) * 0.f;
+            }
+            case MISMode::ELight: {
+                return direct_lighting(OC_FORWARD(args)..., false);
+            }
+            default: break;
+        }
+        return direct_lighting(OC_FORWARD(args)...);
+    };
+
     std::function<void(Uint &)> mis_bsdf = [&](Uint &bounces) {
         hit = geometry.trace_closest(rs.ray);
         comment("miss");
@@ -47,6 +76,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
                 }
                 LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
                 Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
+                weight = correct_bsdf_weight(weight, bounces);
                 value += eval.L * tr * throughput * weight;
             }
             $break;
@@ -83,6 +113,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
             SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
             Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
+            weight = correct_bsdf_weight(weight, bounces);
             value += eval.L * throughput * weight * tr;
         };
         prev_surface_ng = it.ng;
@@ -109,22 +140,22 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
                     material->build_evaluator(evaluator, it, swl);
                     swl.check_dispersive(spectrum(), evaluator);
                 });
-                Ld = direct_lighting(it, evaluator, light_sample, occluded,
-                                     sampler, swl, bsdf_sample);
+                Ld = direct_light_mis(it, evaluator, light_sample, occluded,
+                                      sampler, swl, bsdf_sample);
                 return;
             }
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator evaluator = material->create_evaluator(it, swl);
                 swl.check_dispersive(spectrum(), evaluator);
-                Ld = direct_lighting(it, evaluator, light_sample, occluded,
-                                     sampler, swl, bsdf_sample);
+                Ld = direct_light_mis(it, evaluator, light_sample, occluded,
+                                      sampler, swl, bsdf_sample);
             });
         };
 
         if (scene().has_medium()) {
             $if(it.has_phase()) {
                 PhaseSample ps{swl.dimension()};
-                Ld = direct_lighting(it, it.phase, light_sample, occluded, sampler, swl, ps);
+                Ld = direct_light_mis(it, it.phase, light_sample, occluded, sampler, swl, ps);
                 bsdf_sample.eval = ps.eval;
                 bsdf_sample.wi = ps.wi;
             }

@@ -1028,9 +1028,10 @@
 		}
 	},
 	"integrator" : {
-				"type" : "rt",
-//		"type" : "pt",
+//				"type" : "rt",
+		"type" : "pt",
 		"param" : {
+//			"mis_mode": 0,
 //			"separate": true,
 			"direct": {
 				"spatial": {
@@ -1054,7 +1055,7 @@
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
-			"max_depth" : 1,
+			"max_depth" : 16,
 			"rr_threshold" : 1
 		}
 	},
@@ -1087,7 +1088,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-										"accumulation": 0,
+//										"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
@@ -1118,8 +1119,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
+		"spp" : 1024,
 		"save_exit" : false,
-		"fn" : "newres-20.exr"
+		"fn" : "mis-mode0-1024.exr"
 	}
 }
