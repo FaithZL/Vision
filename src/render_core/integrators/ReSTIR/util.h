@@ -13,6 +13,7 @@
 namespace vision::ReSTIRDirect {
 struct RSVSample {
     uint light_index{};
+    uint prim_id{};
     float2 u{};
     float p_hat{};
     array<float, 3> pos{};
@@ -28,7 +29,7 @@ struct RSVSample {
 }// namespace vision::ReSTIRDirect
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index, u, p_hat, pos) {
+OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, u, p_hat, pos) {
     void init() noexcept {
         light_index = InvalidUI32;
     }

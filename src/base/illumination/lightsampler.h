@@ -56,9 +56,10 @@ public:
     [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept;
     [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, Float u) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
-                                                 const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightEval evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
                                                     const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual LightEval evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
+                                                       const Float& pdf_wi,
+                                                       const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                                   const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;

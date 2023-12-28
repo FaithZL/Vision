@@ -118,6 +118,7 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
 }
 
 LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
+                                           const Float &pdf_wi,
                                            const SampledWavelengths &swl) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
     dispatch_light(it.light_id(), [&](const Light *light) {
@@ -126,7 +127,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
         }
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
-        ret = light->evaluate_point(p_ref, p_light, swl);
+        ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
         Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
         ret.pdf *= pmf;
     });

@@ -101,7 +101,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
     DIReservoir ret;
-    ret.sample->init();
+    ret->init();
     Float final_p_hat{0.f};
 
     auto sample_light = [&](MaterialEvaluator *bsdf) {

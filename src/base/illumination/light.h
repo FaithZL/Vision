@@ -10,6 +10,7 @@
 #include "base/sample.h"
 #include "base/serial_object.h"
 #include "base/color/spectrum.h"
+#include "math/warp.h"
 
 namespace vision {
 struct LightBound {
@@ -100,6 +101,12 @@ public:
                                           const LightEvalContext &p_light) const noexcept {
         return PDF_wi(p_ref, p_light);
     }
+    [[nodiscard]] virtual Float PDF_point(const LightSampleContext &p_ref,
+                                          const LightEvalContext &p_light,
+                                          const Float &pdf_wi) const noexcept {
+        Float ret = vision::PDF_point(pdf_wi, p_light.ng, p_ref.pos - p_light.pos);
+        return select(ocarina::isinf(ret), 0.f, ret);
+    }
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                                 const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
@@ -113,6 +120,12 @@ public:
     [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
                                                    const SampledWavelengths &swl) const noexcept {
         return sample_wi(p_ref, u, swl);
+    }
+    [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
+                                                   const LightEvalContext &p_light,
+                                                   const Float &pdf_wi,
+                                                   const SampledWavelengths &swl) const noexcept {
+        return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light, pdf_wi)};
     }
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
                                                    const LightEvalContext &p_light,
