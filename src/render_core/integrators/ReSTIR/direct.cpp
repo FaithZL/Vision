@@ -68,7 +68,7 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
     sampled_light.light_index = sample.light_index;
     sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
     $if(sample->valid()) {
-        ls = light_sampler->sample_point(sampled_light, it, sample.u, swl);
+        ls = light_sampler->sample_point(sampled_light, it, sample.uv, swl);
     };
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension()};
@@ -109,7 +109,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
         DIRSVSample sample;
         sample.light_index = sampled_light.light_index;
-        sample.u = sampler->next_2d();
+        sample.uv = sampler->next_2d();
         LightSample ls{swl.dimension()};
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
