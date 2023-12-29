@@ -57,9 +57,8 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
                                _temporal.depth_threshold);
 }
 
-
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                                    const DIRSVSample &sample, LightSample *output_ls) noexcept {
+                                             const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
@@ -106,6 +105,18 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     Float final_p_hat{0.f};
 
     auto sample_light = [&](MaterialEvaluator *bsdf) {
+        DIRSVSample sample;
+        sample->init();
+        LightSurfacePoint lsp = light_sampler->sample_point(it, sampler);
+        sample->set(lsp);
+        LightSample ls{swl.dimension()};
+        sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
+        sample->set_pos(ls.p_light);
+        Bool replace = ret->update(sampler->next_1d(), sample.p_hat, ls.eval.pdf, sample);
+        final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
+    };
+
+    auto sample_light_old = [&](MaterialEvaluator *bsdf) {
         SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
         DIRSVSample sample;
         sample.light_index = sampled_light.light_index;
@@ -126,11 +137,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                 swl.check_dispersive(spectrum, bsdf);
             });
             $for(i, M_light) {
-                sample_light(addressof(bsdf));
+                sample_light_old(addressof(bsdf));
             };
         } else {
             $for(i, M_light) {
-                sample_light(nullptr);
+                sample_light_old(nullptr);
             };
         }
     };
