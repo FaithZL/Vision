@@ -222,7 +222,7 @@ LightSample LightSampler::evaluate(const LightSampleContext &lsc, const LightSur
     Float pmf = PMF(lsc, lsp.light_index);
     LightSample ls{swl.dimension()};
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        ls = evaluate(lsc, lsp, swl);
+        ls = light->evaluate(lsc, lsp, swl);
     });
     ls.eval.pdf *= pmf;
     return ls;

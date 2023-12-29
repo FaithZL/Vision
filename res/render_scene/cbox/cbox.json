@@ -1035,14 +1035,14 @@
 //			"separate": true,
 			"direct": {
 				"spatial": {
-					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.3,
 					"radius": 30,
 					"sample_num": 1
 				},
 				"temporal": {
-					"open": false,
+//					"open": false,
 					"theta": 2,
 					"depth": 1,
 					"radius": 0,
@@ -1055,7 +1055,7 @@
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
-			"max_depth" : 16,
+			"max_depth" : 1,
 			"rr_threshold" : 1
 		}
 	},
@@ -1121,6 +1121,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "mis-mode0-1024.exr"
+		"fn" : "mis-mode0-pt.exr"
 	}
 }

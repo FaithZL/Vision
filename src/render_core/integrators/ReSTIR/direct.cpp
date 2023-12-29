@@ -63,11 +63,11 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
-    SampledLight sampled_light;
-    sampled_light.light_index = sample.light_index;
-    sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
+//    SampledLight sampled_light;
+//    sampled_light.light_index = sample.light_index;
+//    sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
     $if(sample->valid()) {
-        ls = light_sampler->sample_point(sampled_light, it, sample.uv, swl);
+        ls = light_sampler->evaluate(it, sample->lsp(), swl);
     };
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension()};
@@ -108,7 +108,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         DIRSVSample sample;
         sample->init();
         LightSurfacePoint lsp = light_sampler->sample_point(it, sampler);
-        sample->set(lsp);
+        sample->set_lsp(lsp);
         LightSample ls{swl.dimension()};
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
@@ -137,11 +137,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
                 swl.check_dispersive(spectrum, bsdf);
             });
             $for(i, M_light) {
-                sample_light_old(addressof(bsdf));
+                sample_light(addressof(bsdf));
             };
         } else {
             $for(i, M_light) {
-                sample_light_old(nullptr);
+                sample_light(nullptr);
             };
         }
     };

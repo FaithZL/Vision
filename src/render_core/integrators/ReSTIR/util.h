@@ -40,10 +40,17 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, uv, p_hat, pos) 
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
     }
-    void set(const vision::LightSurfacePoint &lsp) noexcept {
+    void set_lsp(const vision::LightSurfacePoint &lsp) noexcept {
         uv = lsp.uv;
         light_index = lsp.light_index;
         prim_id = lsp.prim_id;
+    }
+    vision::LightSurfacePoint lsp() const noexcept {
+        vision::LightSurfacePoint lsp;
+        lsp.uv = uv;
+        lsp.light_index = light_index;
+        lsp.prim_id = prim_id;
+        return lsp;
     }
     void set_pos(Float3 p) noexcept {
         pos[0] = p[0];
