@@ -205,14 +205,6 @@ LightSample LightSampler::sample_point(const SampledLight &sampled_light, const 
 }
 
 LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
-                                       const SampledWavelengths &swl) const noexcept {
-    Float u_light = sampler->next_1d();
-    Float2 u_surface = sampler->next_2d();
-    SampledLight sampled_light = select_light(lsc, u_light);
-    return sample_point(sampled_light, lsc, u_surface, swl);
-}
-
-LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
                                        const SampledWavelengths &swl,
                                        Uint *light_index, Uint *prim_id, Float *u) const noexcept {
     LightSample ls{swl.dimension()};
