@@ -8,6 +8,7 @@
 #include "core/stl.h"
 #include "dsl/dsl.h"
 #include "base/sampler.h"
+#include "base/illumination/light.h"
 #include "common.h"
 
 namespace vision::ReSTIRDirect {
@@ -38,6 +39,11 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, u, p_hat, pos) {
     }
     [[nodiscard]] auto p_light() const noexcept {
         return make_float3(pos[0], pos[1], pos[2]);
+    }
+    void set_light_surface_point(const vision::LightSurfacePoint &lsp) noexcept {
+        u = lsp.u;
+        light_index = lsp.light_index;
+        prim_id = lsp.prim_id;
     }
     void set_pos(Float3 p) noexcept {
         pos[0] = p[0];

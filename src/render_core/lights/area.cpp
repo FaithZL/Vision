@@ -132,6 +132,14 @@ public:
         return prim_id;
     }
 
+    [[nodiscard]] LightSurfacePoint sample_point(ocarina::Float2 u) const noexcept override {
+        Uint prim_id = _warper->sample_discrete(u.x, nullptr, addressof(u.x));
+        LightSurfacePoint lsp;
+        lsp.prim_id = prim_id;
+        lsp.u = u;
+        return lsp;
+    }
+
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};

@@ -204,6 +204,18 @@ LightSample LightSampler::sample_point(const SampledLight &sampled_light, const 
     return ls;
 }
 
+LightSurfacePoint LightSampler::sample_point(const vision::LightSampleContext &lsc, vision::Sampler *sampler) const noexcept {
+    LightSurfacePoint lsp;
+    SampledLight sampled_light = select_light(lsc, sampler->next_1d());
+    auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
+    Float2 u = sampler->next_2d();
+    dispatch_light(type_id, inst_id, [&](const Light *light) {
+        lsp = light->sample_point(u);
+    });
+    lsp.light_index = sampled_light.light_index;
+    return lsp;
+}
+
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};

@@ -55,6 +55,15 @@ VS_MAKE_LIGHT_TYPE_OP(>>)
 
 namespace vision {
 
+struct LightSurfacePoint {
+    Uint light_index;
+    Uint prim_id;
+    /**
+     * 2D random variable, express a point on a primitive
+     */
+    Float2 u;
+};
+
 class Light : public Node, public Serializable<float> {
 public:
     using Desc = LightDesc;
@@ -122,6 +131,11 @@ public:
         return sample_wi(p_ref, u, swl);
     }
 
+    [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
+                                                     const SampledWavelengths &swl) const noexcept {
+        return LightSample{swl.dimension()};
+    }
+
     /**
      * sample primitive from area light
      * area light and spherical must be override this function
@@ -131,6 +145,12 @@ public:
      */
     [[nodiscard]] virtual Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept {
         return 0u;
+    }
+
+    [[nodiscard]] virtual LightSurfacePoint sample_point(Float2 u) const noexcept {
+        LightSurfacePoint ret;
+        ret.u = u;
+        return ret;
     }
 
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
