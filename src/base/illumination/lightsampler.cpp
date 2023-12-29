@@ -216,6 +216,18 @@ LightSurfacePoint LightSampler::sample_point(const vision::LightSampleContext &l
     return lsp;
 }
 
+LightSample LightSampler::evaluate(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
+                                   const SampledWavelengths &swl) const noexcept {
+    auto [type_id, inst_id] = extract_light_id(lsp.light_index);
+    Float pmf = PMF(lsc, lsp.light_index);
+    LightSample ls{swl.dimension()};
+    dispatch_light(type_id, inst_id, [&](const Light *light) {
+        ls = evaluate(lsc, lsp, swl);
+    });
+    ls.eval.pdf *= pmf;
+    return ls;
+}
+
 LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};

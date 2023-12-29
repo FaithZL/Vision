@@ -149,6 +149,17 @@ public:
         return ret;
     }
 
+    [[nodiscard]] LightSample evaluate(const LightSampleContext &p_ref, const LightSurfacePoint &lsp,
+                                       const SampledWavelengths &swl) const noexcept override {
+        LightSample ret{swl.dimension()};
+        Float pmf = _warper->PDF(lsp.prim_id);
+        auto rp = scene().pipeline();
+        LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, lsp.prim_id, lsp.uv);
+        ret.eval = evaluate_point(p_ref, p_light, swl);
+        ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
+        return ret;
+    }
+
     [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
                                            const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
