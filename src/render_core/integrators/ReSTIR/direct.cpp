@@ -58,7 +58,7 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
 }
 
 
-SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
+SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                                     const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
@@ -328,7 +328,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
             };
         };
         it.wo = normalize(camera->device_position() - it.pos);
-        value = sample_Li(it, nullptr, swl, rsv.sample);
+        value = Li(it, nullptr, swl, rsv.sample);
         Bool occluded = geometry.occluded(it, rsv.sample->p_light());
         rsv->process_occluded(occluded);
         value = value * rsv.W;
