@@ -66,8 +66,8 @@ SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, Mater
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
 
-    SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
-    sample->light_index = sampled_light.light_index;
+    ls = light_sampler->sample_point(it, sampler, swl, addressof(sample->light_index),
+                                     addressof(sample->prim_id), addressof(sample->u));
 
     return f;
 }

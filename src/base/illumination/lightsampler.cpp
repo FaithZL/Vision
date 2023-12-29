@@ -206,7 +206,7 @@ LightSample LightSampler::sample_point(const SampledLight &sampled_light, const 
 
 LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *sampler,
                                        const SampledWavelengths &swl,
-                                       Uint *light_index, Uint *prim_id, Float *u) const noexcept {
+                                       Uint *light_index, Uint *prim_id, Float2 *u) const noexcept {
     LightSample ls{swl.dimension()};
     Float u_light = sampler->next_1d();
     SampledLight sampled_light = select_light(lsc, u_light);
@@ -214,8 +214,9 @@ LightSample LightSampler::sample_point(const LightSampleContext &lsc, Sampler *s
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     Float2 u_surface = sampler->next_2d();
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-//        *prim_id = light->sample_primitive(addressof(u_surface), )
+        ls = light->sample_point(lsc, swl, u, prim_id);
     });
+    ls.eval.pdf *= sampled_light.PMF;
     return ls;
 }
 
