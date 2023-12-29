@@ -132,6 +132,8 @@ public:
                                                    const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light)};
     }
+
+    [[nodiscard]] virtual Uint sample_primitive(Float2 *u, Float *pmf) const noexcept { return 0; }
 };
 
 class Mesh;

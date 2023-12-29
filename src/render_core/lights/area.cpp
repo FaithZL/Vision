@@ -114,16 +114,21 @@ public:
     }
 
     [[nodiscard]] LightEvalContext sample_surface(Float2 u) const noexcept {
-        auto rp = scene().pipeline();
         Float pmf;
-        Float u_remapped;
-        Uint prim_id = _warper->sample_discrete(u.x, addressof(pmf),
-                                                addressof(u_remapped));
-        u.x = u_remapped;
+        Uint prim_id = sample_primitive(addressof(u), addressof(pmf));
         Float2 bary = square_to_triangle(u);
+        auto rp = scene().pipeline();
         LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, prim_id, bary);
         p_light.PDF_pos *= pmf;
         return p_light;
+    }
+
+    [[nodiscard]] Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept override {
+        Float u_remapped;
+        Uint prim_id = _warper->sample_discrete(u->x, pmf,
+                                                addressof(u_remapped));
+        u->x = u_remapped;
+        return prim_id;
     }
 
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
