@@ -132,11 +132,11 @@ public:
         return prim_id;
     }
 
-    [[nodiscard]] LightSurfacePoint sample_point(ocarina::Float2 u) const noexcept override {
+    [[nodiscard]] LightSurfacePoint sample_point(Float2 u) const noexcept override {
         Uint prim_id = _warper->sample_discrete(u.x, nullptr, addressof(u.x));
         LightSurfacePoint lsp;
         lsp.prim_id = prim_id;
-        lsp.u = u;
+        lsp.uv = square_to_triangle(u);
         return lsp;
     }
 

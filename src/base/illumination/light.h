@@ -61,7 +61,7 @@ struct LightSurfacePoint {
     /**
      * 2D random variable, express a point on a primitive
      */
-    Float2 u;
+    Float2 uv;
 };
 
 class Light : public Node, public Serializable<float> {
@@ -149,8 +149,13 @@ public:
 
     [[nodiscard]] virtual LightSurfacePoint sample_point(Float2 u) const noexcept {
         LightSurfacePoint ret;
-        ret.u = u;
+        ret.uv = u;
         return ret;
+    }
+
+    [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, const LightSurfacePoint &lsp,
+                                                     const SampledWavelengths &swl) const noexcept {
+        return LightSample{swl.dimension()};
     }
 
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
@@ -197,6 +202,14 @@ public:
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override;
+    [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, const LightSurfacePoint &lsp,
+                                             const SampledWavelengths &swl) const noexcept override {
+        LightSample ls{swl.dimension()};
+        LightEvalContext lec{position()};
+        ls.eval = Light::evaluate_point(p_ref, lec, swl);
+        ls.p_light = position();
+        return ls;
+    }
 };
 
 class Environment : public Light {
