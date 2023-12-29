@@ -10,7 +10,7 @@
 #include "core/basic_types.h"
 #include "parameter_set.h"
 #include "math/geometry.h"
-#include "rhi/dynamic_module.h"
+#include "ocarina/src/core/dynamic_module.h"
 
 namespace vision {
 
