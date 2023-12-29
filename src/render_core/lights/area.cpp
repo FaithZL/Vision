@@ -116,6 +116,10 @@ public:
     [[nodiscard]] LightEvalContext sample_surface(Float2 u) const noexcept {
         Float pmf;
         Uint prim_id = sample_primitive(addressof(u), addressof(pmf));
+        return sample_surface(u, prim_id, pmf);
+    }
+
+    [[nodiscard]] LightEvalContext sample_surface(Float2 u, Uint prim_id, Float pmf) const noexcept {
         Float2 bary = square_to_triangle(u);
         auto rp = scene().pipeline();
         LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, prim_id, bary);
