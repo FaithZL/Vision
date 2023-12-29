@@ -57,6 +57,21 @@ Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surfac
                                _temporal.depth_threshold);
 }
 
+SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, MaterialEvaluator *bsdf,
+                                                    const SampledWavelengths &swl, DIRSVSample *sample,
+                                                    LightSample *output_ls) noexcept {
+    LightSampler *light_sampler = scene().light_sampler();
+    Sampler *sampler = scene().sampler();
+    Spectrum &spectrum = *scene().spectrum();
+    SampledSpectrum f{swl.dimension()};
+    LightSample ls{swl.dimension()};
+
+    SampledLight sampled_light = light_sampler->select_light(it, sampler->next_1d());
+    sample->light_index = sampled_light.light_index;
+
+    return f;
+}
+
 SampledSpectrum ReSTIRDirectIllumination::sample_Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                                     const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
