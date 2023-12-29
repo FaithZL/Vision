@@ -72,10 +72,6 @@ public:
 
     /// sample Li from light
     [[nodiscard]] static SampledSpectrum sample_Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                                   DIRSVSample *sample, LightSample *output_ls = nullptr) noexcept;
-
-    /// sample Li from light
-    [[nodiscard]] static SampledSpectrum sample_Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                                    const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
     template<typename... Args>
     [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {

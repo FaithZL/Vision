@@ -122,12 +122,17 @@ public:
         return sample_wi(p_ref, u, swl);
     }
 
-    /// area light and spherical must be override this function
-    [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &p_ref,
-                                                   const SampledWavelengths &swl,
-                                                   Float2 *u, Uint *prim_id) const noexcept {
-        return sample_wi(p_ref, *u, swl);
+    /**
+     * sample primitive from area light
+     * area light and spherical must be override this function
+     * @param u input uniform 2D random variable, out put remapped
+     * @param pmf
+     * @return
+     */
+    [[nodiscard]] virtual Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept {
+        return 0u;
     }
+
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
                                                    const LightEvalContext &p_light,
                                                    const Float &pdf_wi,

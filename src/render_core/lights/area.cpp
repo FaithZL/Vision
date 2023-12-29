@@ -126,11 +126,9 @@ public:
         return p_light;
     }
 
-    [[nodiscard]] Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept {
-        Float u_remapped;
+    [[nodiscard]] Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept override {
         Uint prim_id = _warper->sample_discrete(u->x, pmf,
-                                                addressof(u_remapped));
-        u->x = u_remapped;
+                                                addressof(u->x));
         return prim_id;
     }
 
@@ -147,18 +145,6 @@ public:
                                            const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         LightEvalContext p_light = sample_surface(u);
-        ret.eval = evaluate_point(p_ref, p_light, swl);
-        ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
-        return ret;
-    }
-
-    [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref,
-                                           const SampledWavelengths &swl,
-                                           Float2 *u, Uint *prim_id) const noexcept override {
-        LightSample ret{swl.dimension()};
-        Float pmf;
-        *prim_id = sample_primitive(u, addressof(pmf));
-        LightEvalContext p_light = sample_surface(*u, *prim_id, pmf);
         ret.eval = evaluate_point(p_ref, p_light, swl);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
