@@ -58,9 +58,6 @@ namespace vision {
 struct LightSurfacePoint {
     Uint light_index;
     Uint prim_id;
-    /**
-     * 2D random variable, express a point on a primitive
-     */
     Float2 uv;
 };
 
@@ -78,6 +75,12 @@ protected:
     [[nodiscard]] float3 average() const noexcept {
         auto a = _color.average();
         return make_float3(a[0], a[1], a[2]) * _scale.hv();
+    }
+
+    [[nodiscard]] virtual LightEval _evaluate_point(const LightSampleContext &p_ref,
+                                                    const LightEvalContext &p_light,
+                                                    const SampledWavelengths &swl) const noexcept {
+        return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light)};
     }
 
 public:
@@ -126,30 +129,16 @@ public:
                                                 const SampledWavelengths &swl) const noexcept {
         return {Le(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
     }
-    [[nodiscard]] virtual LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
-                                                   const SampledWavelengths &swl) const noexcept {
-        return sample_wi(p_ref, u, swl);
-    }
 
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                                      const SampledWavelengths &swl) const noexcept {
         return LightSample{swl.dimension()};
     }
 
-    /**
-     * sample primitive from area light
-     * area light and spherical must be override this function
-     * @param u input uniform 2D random variable, out put remapped
-     * @param pmf
-     * @return
-     */
-    [[nodiscard]] virtual Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept {
-        return 0u;
-    }
-
-    [[nodiscard]] virtual LightSurfacePoint sample_point(Float2 u) const noexcept {
+    [[nodiscard]] virtual LightSurfacePoint sample_only(Float2 u) const noexcept {
         LightSurfacePoint ret;
         ret.uv = u;
+        ret.prim_id = 0;
         return ret;
     }
 
@@ -158,11 +147,6 @@ public:
                                                    const Float &pdf_wi,
                                                    const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light, pdf_wi)};
-    }
-    [[nodiscard]] virtual LightEval _evaluate_point(const LightSampleContext &p_ref,
-                                                    const LightEvalContext &p_light,
-                                                    const SampledWavelengths &swl) const noexcept {
-        return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light)};
     }
 };
 

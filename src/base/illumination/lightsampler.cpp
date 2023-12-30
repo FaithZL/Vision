@@ -193,13 +193,13 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
     return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSurfacePoint LightSampler::sample_point(const vision::LightSampleContext &lsc, vision::Sampler *sampler) const noexcept {
+LightSurfacePoint LightSampler::sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept {
     LightSurfacePoint lsp;
     SampledLight sampled_light = select_light(lsc, sampler->next_1d());
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
     Float2 u = sampler->next_2d();
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        lsp = light->sample_point(u);
+        lsp = light->sample_only(u);
     });
     lsp.light_index = sampled_light.light_index;
     return lsp;

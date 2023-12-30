@@ -104,7 +104,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     auto sample_light = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         sample->init();
-        LightSurfacePoint lsp = light_sampler->sample_point(it, sampler);
+        LightSurfacePoint lsp = light_sampler->sample_only(it, sampler);
         sample->set_lsp(lsp);
         LightSample ls{swl.dimension()};
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));

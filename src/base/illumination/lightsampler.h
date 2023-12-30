@@ -71,7 +71,7 @@ public:
                                                 const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                                      const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSurfacePoint sample_point(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
+    [[nodiscard]] virtual LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>

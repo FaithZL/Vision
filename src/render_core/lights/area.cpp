@@ -114,7 +114,7 @@ public:
 
     [[nodiscard]] LightEvalContext sample_surface(Float2 u) const noexcept {
         Float pmf;
-        Uint prim_id = sample_primitive(addressof(u), addressof(pmf));
+        Uint prim_id = _warper->sample_discrete(u.x, addressof(pmf), addressof(u.x));
         return sample_surface(u, prim_id, pmf);
     }
 
@@ -126,13 +126,7 @@ public:
         return p_light;
     }
 
-    [[nodiscard]] Uint sample_primitive(ocarina::Float2 *u, Float *pmf) const noexcept override {
-        Uint prim_id = _warper->sample_discrete(u->x, pmf,
-                                                addressof(u->x));
-        return prim_id;
-    }
-
-    [[nodiscard]] LightSurfacePoint sample_point(Float2 u) const noexcept override {
+    [[nodiscard]] LightSurfacePoint sample_only(Float2 u) const noexcept override {
         Uint prim_id = _warper->sample_discrete(u.x, nullptr, addressof(u.x));
         LightSurfacePoint lsp;
         lsp.prim_id = prim_id;
@@ -157,15 +151,6 @@ public:
         LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, lsp.prim_id, lsp.uv);
         ret.eval = _evaluate_point(p_ref, p_light, swl);
         ret.eval.pdf *= pmf;
-        ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
-        return ret;
-    }
-
-    [[nodiscard]] LightSample sample_point(const LightSampleContext &p_ref, Float2 u,
-                                           const SampledWavelengths &swl) const noexcept override {
-        LightSample ret{swl.dimension()};
-        LightEvalContext p_light = sample_surface(u);
-        ret.eval = _evaluate_point(p_ref, p_light, swl);
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
     }
