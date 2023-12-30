@@ -131,6 +131,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         }
     };
     ret->update_W(final_p_hat);
+    ret->truncation(1);
     comment("RIS end");
     return ret;
 }
