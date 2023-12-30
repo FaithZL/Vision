@@ -193,17 +193,6 @@ LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler *samp
     return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSample LightSampler::sample_point(const SampledLight &sampled_light, const LightSampleContext &lsc,
-                                       const Float2 &u, const SampledWavelengths &swl) const noexcept {
-    LightSample ls{swl.dimension()};
-    auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
-    dispatch_light(type_id, inst_id, [&](const Light *light) {
-        ls = light->sample_point(lsc, u, swl);
-    });
-    ls.eval.pdf *= sampled_light.PMF;
-    return ls;
-}
-
 LightSurfacePoint LightSampler::sample_point(const vision::LightSampleContext &lsc, vision::Sampler *sampler) const noexcept {
     LightSurfacePoint lsp;
     SampledLight sampled_light = select_light(lsc, sampler->next_1d());

@@ -69,9 +69,6 @@ public:
                                                 const Float2 &u, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
                                                 const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_point(const SampledLight &sampled_light,
-                                                   const LightSampleContext &lsc,
-                                                   const Float2 &u, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                                      const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual LightSurfacePoint sample_point(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
