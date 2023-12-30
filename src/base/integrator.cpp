@@ -75,7 +75,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
                     tr = geometry.Tr(scene(), swl, rs);
                 }
                 LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
-                Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
+                Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
                 weight = correct_bsdf_weight(weight, bounces);
                 value += eval.L * tr * throughput * weight;
             }
@@ -112,7 +112,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             p_ref.ng = prev_surface_ng;
             LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
             SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
-            Float weight = mis_weight<D>(scatter_pdf, eval.pdf);
+            Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
             weight = correct_bsdf_weight(weight, bounces);
             value += eval.L * throughput * weight * tr;
         };

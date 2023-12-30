@@ -165,28 +165,37 @@ template<EPort p = EPort::D>
 VS_MAKE_CALLABLE(power_heuristic)
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> mis_weight_n_impl(const oc_int<p> &nf,
+[[nodiscard]] oc_float<p> MIS_weight_n_impl(const oc_int<p> &nf,
                                             const oc_float<p> &f_PDF,
                                             const oc_int<p> &ng,
                                             const oc_float<p> &g_PDF) {
     return balance_heuristic<p>(ng, f_PDF, ng, g_PDF);
 }
-VS_MAKE_CALLABLE(mis_weight_n)
+VS_MAKE_CALLABLE(MIS_weight_n)
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> mis_weight_impl(const oc_float<p> &f_PDF,
+[[nodiscard]] oc_float<p> MIS_weight_impl(const oc_float<p> &f_PDF,
                                           const oc_float<p> &g_PDF) {
-    return mis_weight_n<p>(1, f_PDF, 1, g_PDF);
+    return MIS_weight_n<p>(1, f_PDF, 1, g_PDF);
 }
-VS_MAKE_CALLABLE(mis_weight)
+VS_MAKE_CALLABLE(MIS_weight)
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> robust_mis_weight_impl(const oc_float<p> &f_PDF,
+[[nodiscard]] oc_float<p> robust_MIS_weight_impl(const oc_float<p> &f_PDF,
                                                  const oc_float<p> &g_PDF) {
     return select(f_PDF > g_PDF,
                   1.f / (1.f + sqr(g_PDF / f_PDF)),
                   1.f - 1.f / (1.f + sqr(f_PDF / g_PDF)));
 }
-VS_MAKE_CALLABLE(robust_mis_weight)
+VS_MAKE_CALLABLE(robust_MIS_weight)
+
+template<EPort p = EPort::D>
+[[nodiscard]] oc_float<p> robust_MIS_weight_n_impl(const oc_int<p> &nf,
+                                                   const oc_float<p> &f_PDF,
+                                                   const oc_int<p> &ng,
+                                                   const oc_float<p> &g_PDF) {
+    return robust_MIS_weight<p>(nf * f_PDF, ng * g_PDF);
+}
+VS_MAKE_CALLABLE(robust_MIS_weight_n)
 
 }// namespace vision
