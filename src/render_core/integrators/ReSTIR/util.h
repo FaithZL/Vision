@@ -45,7 +45,7 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, uv, p_hat, pos) 
         light_index = lsp.light_index;
         prim_id = lsp.prim_id;
     }
-    vision::LightSurfacePoint lsp() const noexcept {
+    [[nodiscard]] vision::LightSurfacePoint lsp() const noexcept {
         vision::LightSurfacePoint lsp;
         lsp.uv = uv;
         lsp.light_index = light_index;
@@ -118,7 +118,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         weight_sum = ocarina::select(occluded, 0.f, weight_sum);
     }
     void update_W(oc_float<p> p_hat) noexcept {
-        oc_float<p> denominator = p_hat * M;
+        oc_float<p> denominator = p_hat;
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
