@@ -135,7 +135,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     return ret;
 }
 
-DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
+DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
                                                          SampledWavelengths &swl,
                                                          const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
@@ -155,7 +155,7 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoirs(DIReservoir cur_rsv,
     return cur_rsv;
 }
 
-DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &cur_rsv,
+DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rsv,
                                                         OCSurfaceData cur_surf,
                                                         const DIReservoir &other_rsv,
                                                         SampledWavelengths &swl) const noexcept {
@@ -211,7 +211,7 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
         prev_rsv->truncation(limit);
         OCSurfaceData another_surf = prev_surface().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_reservoir(rsv, cur_surf, prev_rsv, swl);
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, swl);
         };
     };
     return rsv;
@@ -284,7 +284,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
         };
     };
     $if(cur_surf.hit->is_hit()) {
-        rsv = combine_reservoirs(rsv, swl, rsv_idx);
+        rsv = combine_spatial(rsv, swl, rsv_idx);
     };
     return rsv;
 }
