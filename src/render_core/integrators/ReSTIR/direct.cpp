@@ -136,8 +136,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
 }
 
 DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
-                                                         SampledWavelengths &swl,
-                                                         const Container<uint> &rsv_idx) const noexcept {
+                                                      SampledWavelengths &swl,
+                                                      const Container<uint> &rsv_idx) const noexcept {
     Sampler *sampler = scene().sampler();
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
@@ -145,29 +145,39 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
+
+    DIReservoir ret;
+    Uint sample_num = rsv_idx.count() + 1;
+    Float cur_weight = Reservoir::cal_weight(1.f / sample_num,
+                                             cur_rsv.sample.p_hat, cur_rsv.W);
+    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
+
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = passthrough_reservoir().read(idx);
-        Float p_hat = compute_p_hat(it, nullptr, swl, rsv.sample);
-        cur_rsv->combine(sampler->next_1d(), rsv, p_hat);
+        rsv.sample.p_hat = compute_p_hat(it, nullptr, swl, rsv.sample);
+        Float neighbor_weight = Reservoir::cal_weight(1.f / sample_num,
+                                                      rsv.sample.p_hat, rsv.W);
+        ret->update(sampler->next_1d(), rsv.sample, neighbor_weight, rsv.M);
     });
-    Float p_hat = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
-    cur_rsv->update_W(p_hat);
-    return cur_rsv;
+    // todo optimize p_hat
+    Float p_hat = compute_p_hat(it, nullptr, swl, ret.sample);
+    ret->update_W(p_hat);
+    return ret;
 }
 
 DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rsv,
-                                                        OCSurfaceData cur_surf,
-                                                        const DIReservoir &other_rsv,
-                                                        SampledWavelengths &swl) const noexcept {
+                                                       OCSurfaceData cur_surf,
+                                                       const DIReservoir &other_rsv,
+                                                       SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
     Sampler *sampler = scene().sampler();
-    DIReservoir ret;
 
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
 
+    DIReservoir ret;
     Float cur_weight = Reservoir::cal_weight(MIS_weight(cur_rsv.M, other_rsv.M),
                                              cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
@@ -177,7 +187,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     Float other_weight = Reservoir::cal_weight(MIS_weight(other_rsv.M, cur_rsv.M),
                                                other_sample.p_hat, other_rsv.W);
     Bool replace = ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
-
+    // todo optimize p_hat
     Float p_hat = ocarina::select(replace, other_sample.p_hat, cur_rsv.sample.p_hat);
     ret->update_W(p_hat);
     return ret;
@@ -274,9 +284,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
         Float2 offset = square_to_disk(sampler->next_2d()) * _spatial.sampling_radius;
         Int2 offset_i = make_int2(ocarina::round(offset));
         Int2 another_pixel = pixel + offset_i;
-        $if(!in_screen(another_pixel, res)) {
-            $continue;
-        };
+        another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
         Uint index = dispatch_id(another_pixel);
         OCSurfaceData other_surf = cur_surface().read(index);
         $if(is_neighbor(cur_surf, other_surf)) {
