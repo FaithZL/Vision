@@ -3800,7 +3800,7 @@
     },
     "mediums" : {
         "global" : "fog",
-        "process" : true,
+//        "process" : true,
         "list": [
             {
                 "type" : "homogeneous",
@@ -3815,8 +3815,8 @@
         ]
     },
     "integrator" : {
-//        "type" : "rt",
-        		"type" : "pt",
+        "type" : "rt",
+//        		"type" : "pt",
         "param" : {
             "direct": {
                 "spatial": {
@@ -3872,7 +3872,7 @@
             "film": {
                 "type": "rgb",
                 "param": {
-//                    "accumulation": 0,
+                    "accumulation": 0,
                     "resolution": [
                         1280,
                         720
@@ -3910,7 +3910,7 @@
                                 "yaw" :-30
                             }
                         },
-                        "scale" : 300
+                        "scale" : 0.5
                     }
                 }
             ]
