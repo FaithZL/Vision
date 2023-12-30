@@ -78,8 +78,8 @@ public:
     RSVSample sample{};
     template<EPort p_ = D>
     [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> MIS_weight, oc_float<p_> p_hat,
-                                                 oc_float<p_> pdf) noexcept {
-        return MIS_weight * p_hat / pdf;
+                                                 oc_float<p_> W) noexcept {
+        return MIS_weight * p_hat * W;
     }
 };
 }// namespace ReSTIRDirect
@@ -122,7 +122,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
     }
     [[nodiscard]] oc_float<p> compute_weight_sum(oc_float<p> p_hat) const noexcept {
-        return p_hat * W * M;
+        return p_hat * W;
     }
 };
 

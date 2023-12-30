@@ -109,7 +109,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         LightSample ls{swl.dimension()};
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
-        Float weight = Reservoir::cal_weight(1.f / M_light, sample.p_hat, ls.eval.pdf);
+        Float weight = Reservoir::cal_weight(1.f / M_light, sample.p_hat, 1.f / ls.eval.pdf);
         Bool replace = ret->update(sampler->next_1d(), sample, weight);
         final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
     };
@@ -162,14 +162,23 @@ DIReservoir ReSTIRDirectIllumination::combine_reservoir(const DIReservoir &cur_r
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     const Geometry &geom = pipeline()->geometry();
+    Sampler *sampler = scene().sampler();
     DIReservoir ret;
-    ret = cur_rsv;
-    Float u = scene().sampler()->next_1d();
+
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
-    Float p_hat = compute_p_hat(it, nullptr, swl, other_rsv.sample, nullptr);
-    ret->combine(u, other_rsv, p_hat);
-    p_hat = compute_p_hat(it, nullptr, swl, ret.sample, nullptr);
+
+    Float cur_weight = Reservoir::cal_weight(MIS_weight(cur_rsv.M, other_rsv.M),
+                                             cur_rsv.sample.p_hat, cur_rsv.W);
+    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
+
+    auto other_sample = other_rsv.sample;
+    other_sample.p_hat = compute_p_hat(it, nullptr, swl, other_rsv.sample);
+    Float other_weight = Reservoir::cal_weight(MIS_weight(other_rsv.M, cur_rsv.M),
+                                               other_sample.p_hat, other_rsv.W);
+    Bool replace = ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
+
+    Float p_hat = ocarina::select(replace, other_sample.p_hat, cur_rsv.sample.p_hat);
     ret->update_W(p_hat);
     return ret;
 }
