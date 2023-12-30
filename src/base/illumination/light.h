@@ -131,9 +131,7 @@ public:
     }
 
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
-                                                     const SampledWavelengths &swl) const noexcept {
-        return LightSample{swl.dimension()};
-    }
+                                                     const SampledWavelengths &swl) const noexcept = 0;
 
     [[nodiscard]] virtual LightSurfacePoint sample_only(Float2 u) const noexcept {
         LightSurfacePoint ret;
@@ -142,10 +140,10 @@ public:
         return ret;
     }
 
-    [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
-                                                   const LightEvalContext &p_light,
-                                                   const Float &pdf_wi,
-                                                   const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] LightEval evaluate_point(const LightSampleContext &p_ref,
+                                           const LightEvalContext &p_light,
+                                           const Float &pdf_wi,
+                                           const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light, pdf_wi)};
     }
 };
