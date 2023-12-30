@@ -77,8 +77,8 @@ public:
     oc_float<p> canonical_weight{};
     RSVSample sample{};
     template<EPort p_ = D>
-    [[nodiscard]] static oc_float<p_> calculate_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
-                                                       oc_float<p_> pdf) noexcept {
+    [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                                 oc_float<p_> pdf) noexcept {
         return mis_weight * p_hat / pdf;
     }
 };

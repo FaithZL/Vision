@@ -70,11 +70,9 @@ public:
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
 
-
-
     /// evaluate Li from light
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                                   const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
+                                            const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
     template<typename... Args>
     [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {
         SampledSpectrum f = Li(OC_FORWARD(args)...);
