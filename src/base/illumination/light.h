@@ -153,20 +153,15 @@ public:
         return ret;
     }
 
-    [[nodiscard]] virtual LightSample evaluate(const LightSampleContext &p_ref, const LightSurfacePoint &lsp,
-                                               const SampledWavelengths &swl) const noexcept {
-        return LightSample{swl.dimension()};
-    }
-
     [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
                                                    const LightEvalContext &p_light,
                                                    const Float &pdf_wi,
                                                    const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light, pdf_wi)};
     }
-    [[nodiscard]] virtual LightEval evaluate_point(const LightSampleContext &p_ref,
-                                                   const LightEvalContext &p_light,
-                                                   const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual LightEval _evaluate_point(const LightSampleContext &p_ref,
+                                                    const LightEvalContext &p_light,
+                                                    const SampledWavelengths &swl) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light)};
     }
 };
@@ -202,11 +197,11 @@ public:
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override;
-    [[nodiscard]] LightSample evaluate(const LightSampleContext &p_ref, const LightSurfacePoint &lsp,
-                                       const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
+                                             const SampledWavelengths &swl) const noexcept override {
         LightSample ls{swl.dimension()};
         LightEvalContext lec{position()};
-        ls.eval = evaluate_point(p_ref, lec, swl);
+        ls.eval = _evaluate_point(p_ref, lec, swl);
         ls.p_light = position();
         return ls;
     }

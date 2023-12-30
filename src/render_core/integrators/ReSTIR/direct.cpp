@@ -63,11 +63,8 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
-//    SampledLight sampled_light;
-//    sampled_light.light_index = sample.light_index;
-//    sampled_light.PMF = light_sampler->PMF(it, sample.light_index);
     $if(sample->valid()) {
-        ls = light_sampler->evaluate(it, sample->lsp(), swl);
+        ls = light_sampler->evaluate_point(it, sample->lsp(), swl);
     };
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension()};
