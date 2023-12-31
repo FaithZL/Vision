@@ -56,7 +56,7 @@ VS_MAKE_LIGHT_TYPE_OP(>>)
 namespace vision {
 
 struct LightSurfacePoint {
-    Uint light_index;
+    Uint light_index{InvalidUI32};
     Uint prim_id;
     Float2 uv;
 };

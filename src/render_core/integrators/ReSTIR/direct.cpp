@@ -49,10 +49,15 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     }
     OCRay ray = it.spawn_ray(bs->wi);
     OCHit hit = geometry.trace_closest(ray);
+    LightEval le{swl.dimension()};
+    LightSurfacePoint lsp;
     $if(hit->is_hit()) {
         Interaction next_it = geometry.compute_surface_interaction(hit, ray);
         $if(next_it.has_emission()) {
-
+            le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf, swl, &lsp);
+            (*sample)->set_pos(next_it.pos);
+            (*sample)->set_lsp(lsp);
+            bs->eval.pdf = le.pdf;
         };
     };
 
@@ -105,6 +110,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     auto sample_light = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         sample->init();
+        //todo merge sample and evaluate
         LightSurfacePoint lsp = light_sampler->sample_only(it, sampler);
         sample->set_lsp(lsp);
         LightSample ls{swl.dimension()};
@@ -119,6 +125,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         sample->init();
         BSDFSample bs{swl.dimension()};
         Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs);
+        sample.p_hat = p_hat;
     };
 
     $if(hit) {
