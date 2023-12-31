@@ -122,6 +122,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
                                            const SampledWavelengths &swl,
                                            LightSurfacePoint *lsp) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
+    Uint light_index = combine_to_light_index(it.light_type_id(), it.light_inst_id());
     dispatch_light(it.light_id(), [&](const Light *light) {
         if (!light->match(LightType::Area)) {
             return;
@@ -131,6 +132,11 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
         ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
         Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
         ret.pdf *= pmf;
+        if (lsp) {
+            lsp->light_index = light_index;
+            lsp->prim_id = it.prim_id;
+            lsp->uv = it.uv;
+        }
     });
     return ret;
 }
