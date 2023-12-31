@@ -126,6 +126,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         BSDFSample bs{swl.dimension()};
         Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs);
         sample.p_hat = p_hat;
+        Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / bs.eval.pdf);
     };
 
     $if(hit) {
