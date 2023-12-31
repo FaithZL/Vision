@@ -23,40 +23,6 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _surfaces0(surfaces0),
       _surfaces1(surfaces1) {}
 
-ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::prev_surface() const noexcept {
-    return pipeline()->buffer<SurfaceData>((_frame_index.value() % 2) + surface_base());
-}
-
-ResourceArrayBuffer<SurfaceData> ReSTIRDirectIllumination::cur_surface() const noexcept {
-    return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) % 2) + surface_base());
-}
-
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::prev_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
-}
-
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::passthrough_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(2 + reservoir_base());
-}
-
-ResourceArrayBuffer<Reservoir> ReSTIRDirectIllumination::cur_reservoir() const noexcept {
-    return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
-}
-
-Bool ReSTIRDirectIllumination::is_neighbor(const OCSurfaceData &cur_surface,
-                                           const OCSurfaceData &another_surface) const noexcept {
-    return vision::is_neighbor(cur_surface, another_surface,
-                               _spatial.dot_threshold,
-                               _spatial.depth_threshold);
-}
-
-Bool ReSTIRDirectIllumination::is_temporal_valid(const OCSurfaceData &cur_surface,
-                                                 const OCSurfaceData &prev_surface) const noexcept {
-    return vision::is_neighbor(cur_surface, prev_surface,
-                               _temporal.dot_threshold,
-                               _temporal.depth_threshold);
-}
-
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                              const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();

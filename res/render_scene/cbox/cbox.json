@@ -548,7 +548,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "substrate",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {

@@ -7,6 +7,7 @@
 #include "util.h"
 #include "base/serial_object.h"
 #include "base/mgr/global.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -59,14 +60,35 @@ public:
         compile_shader0();
         compile_shader1();
     }
-
+    [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
+                                   const OCSurfaceData &another_surface) const noexcept {
+        return vision::is_neighbor(cur_surface, another_surface,
+                                   _spatial.dot_threshold,
+                                   _spatial.depth_threshold);
+    }
+    [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
+                                         const OCSurfaceData &prev_surface) const noexcept {
+        return vision::is_neighbor(cur_surface, prev_surface,
+                                   _temporal.dot_threshold,
+                                   _temporal.depth_threshold);
+    }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
-    [[nodiscard]] ResourceArrayBuffer<Reservoir> prev_reservoir() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<Reservoir> passthrough_reservoir() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<Reservoir> cur_reservoir() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<SurfaceData> prev_surface() const noexcept;
-    [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept;
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> prev_reservoir() const noexcept {
+        return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
+    }
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> passthrough_reservoir() const noexcept {
+        return pipeline()->buffer<Reservoir>(2 + reservoir_base());
+    }
+    [[nodiscard]] ResourceArrayBuffer<Reservoir> cur_reservoir() const noexcept {
+        return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
+    }
+    [[nodiscard]] ResourceArrayBuffer<SurfaceData> prev_surface() const noexcept {
+        return pipeline()->buffer<SurfaceData>((_frame_index.value() % 2) + surface_base());
+    }
+    [[nodiscard]] ResourceArrayBuffer<SurfaceData> cur_surface() const noexcept {
+        return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) % 2) + surface_base());
+    }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
 
@@ -80,12 +102,12 @@ public:
         return p_hat;
     }
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
-                                                 SampledWavelengths &swl,
-                                                 const Container<uint> &rsv_idx) const noexcept;
+                                              SampledWavelengths &swl,
+                                              const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_temporal(const DIReservoir &cur_rsv,
-                                                OCSurfaceData cur_surf,
-                                                const DIReservoir &other_rsv,
-                                                SampledWavelengths &swl) const noexcept;
+                                               OCSurfaceData cur_surf,
+                                               const DIReservoir &other_rsv,
+                                               SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
                                             const Bool &is_hit) const noexcept;
     [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
@@ -101,10 +123,6 @@ public:
                                              const Uint &frame_index) const noexcept;
     [[nodiscard]] Float3 shading(DIReservoir rsv, const OCHit &hit,
                                  SampledWavelengths &swl, const Uint &frame_index) const noexcept;
-    [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
-                                   const OCSurfaceData &another_surface) const noexcept;
-    [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
-                                         const OCSurfaceData &prev_surface) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
