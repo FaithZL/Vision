@@ -27,6 +27,7 @@ public:
         : _image_io(ocarina::move(image_io)), _texture(ocarina::move(image)), _id(id) {}
     [[nodiscard]] Texture &texture() noexcept { return _texture; }
     [[nodiscard]] const Texture &texture() const noexcept { return _texture; }
+    [[nodiscard]] uint channel_num() const noexcept { return _texture.channel_num(); }
     [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
     [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
     [[nodiscard]] uint id() const noexcept { return _id; }
