@@ -74,7 +74,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
                     rs.ray.dir_max.w = scene().world_diameter();
                     tr = geometry.Tr(scene(), swl, rs);
                 }
-                LightEval eval = light_sampler->evaluate_miss(p_ref, rs.direction(), swl);
+                LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
                 Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
                 weight = correct_bsdf_weight(weight, bounces);
                 value += eval.L * tr * throughput * weight;

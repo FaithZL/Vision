@@ -53,25 +53,26 @@ public:
     [[nodiscard]] uint environment_light_num() const noexcept { return static_cast<int>(bool(_env_light)); }
     [[nodiscard]] Uint correct_index(Uint index) const noexcept;
     void add_light(SP<Light> light) noexcept { _lights.push_back(ocarina::move(light)); }
-    [[nodiscard]] virtual Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept;
-    [[nodiscard]] virtual SampledLight select_light(const LightSampleContext &lsc, Float u) const noexcept;
-    [[nodiscard]] virtual LightEval evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
-                                                    const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightEval evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
-                                                       const Float &pdf_wi,
-                                                       const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightEval evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
-                                                  const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept;
+    [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, Float u) const noexcept;
+    [[nodiscard]] LightEval evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
+                                            const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] LightEval evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
+                                               const Float &pdf_wi,
+                                               const SampledWavelengths &swl,
+                                               LightSurfacePoint *lsp) const noexcept;
+    [[nodiscard]] LightEval evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
+                                             const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
-    [[nodiscard]] virtual LightSample sample_wi(const SampledLight &sampled_light,
+    [[nodiscard]] LightSample sample_wi(const SampledLight &sampled_light,
                                                 const LightSampleContext &lsc,
                                                 const Float2 &u, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
+    [[nodiscard]] LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
                                                 const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
+    [[nodiscard]] LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                                      const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
+    [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     template<typename Func>

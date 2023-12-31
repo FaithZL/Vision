@@ -119,7 +119,8 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
 
 LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
                                            const Float &pdf_wi,
-                                           const SampledWavelengths &swl) const noexcept {
+                                           const SampledWavelengths &swl,
+                                           LightSurfacePoint *lsp) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
     dispatch_light(it.light_id(), [&](const Light *light) {
         if (!light->match(LightType::Area)) {
@@ -217,7 +218,7 @@ LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const Li
     return ls;
 }
 
-LightEval LightSampler::evaluate_miss(const LightSampleContext &p_ref, Float3 wi,
+LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
                                       const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);

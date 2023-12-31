@@ -28,6 +28,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
                                              BSDFSample *bs) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
+    const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
     Sampler *sampler = scene().sampler();
 
@@ -47,7 +48,13 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
                 "ReSTIRDirectIllumination::Li from bsdf");
     }
     OCRay ray = it.spawn_ray(bs->wi);
-    
+    OCHit hit = geometry.trace_closest(ray);
+    $if(hit->is_hit()) {
+        Interaction next_it = geometry.compute_surface_interaction(hit, ray);
+        $if(next_it.has_emission()) {
+
+        };
+    };
 
     return f;
 }
