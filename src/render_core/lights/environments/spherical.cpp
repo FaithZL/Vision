@@ -91,12 +91,17 @@ public:
         return ret;
     }
 
+    [[nodiscard]] LightSurfacePoint sample_only(ocarina::Float2 u) const noexcept override {
+        LightSurfacePoint lsp;
+        Float2 uv = _warper->sample_continuous(u, nullptr, nullptr);
+        lsp.uv = uv;
+        return lsp;
+    }
+
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                              const SampledWavelengths &swl) const noexcept override {
-        Float pdf_map;
-        Float2 uv = _warper->sample_continuous(lsp.uv, std::addressof(pdf_map),
-                                               nullptr);
-        return evaluate(p_ref, uv, pdf_map, swl);
+        Float pdf_map = _warper->PDF(lsp.uv);
+        return evaluate(p_ref, lsp.uv, pdf_map, swl);
     }
 
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
