@@ -9,9 +9,9 @@
 namespace vision {
 
 ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
-                                                   RegistrableManaged<float2> &motion_vec,
-                                                   RegistrableManaged<SurfaceData> &surfaces0,
-                                                   RegistrableManaged<SurfaceData> &surfaces1)
+                                                   RegistrableBuffer<float2> &motion_vec,
+                                                   RegistrableBuffer<SurfaceData> &surfaces0,
+                                                   RegistrableBuffer<SurfaceData> &surfaces1)
     : _integrator(integrator),
       M_light(desc["M_light"].as_uint(10)),
       M_bsdf(desc["M_bsdf"].as_uint(1)),
@@ -358,16 +358,16 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     Reservoir rsv;
     vector<Reservoir> vec{rp->pixel_num(), rsv};
 
-    auto init_rsv = [&](RegistrableBuffer<Reservoir> &reservoirs) {
+    auto init_buffer = [&](RegistrableBuffer<Reservoir> &reservoirs, const string desc = "") {
         reservoirs.set_resource_array(rp->resource_array());
-        reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num());
+        reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num(), desc);
         reservoirs.register_self();
         reservoirs.upload_immediately(vec.data());
     };
 
-    init_rsv(_reservoirs0);
-    init_rsv(_reservoirs1);
-    init_rsv(_reservoirs2);
+    init_buffer(_reservoirs0, "ReSTIRDirectIllumination::_reservoirs0");
+    init_buffer(_reservoirs1, "ReSTIRDirectIllumination::_reservoirs1");
+    init_buffer(_reservoirs2, "ReSTIRDirectIllumination::_reservoirs2");
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {

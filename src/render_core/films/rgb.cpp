@@ -24,15 +24,14 @@ public:
 
     OC_SERIALIZABLE_FUNC(Film, _radiance, _frame)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
-    void prepare(RegistrableManaged<float4> &managed) noexcept {
-        managed.reset_all(device(), pixel_num());
-        managed.reset_immediately();
-        managed.register_self();
-    }
-
     void prepare() noexcept override {
-        prepare(_radiance);
-        prepare(_frame);
+        auto prepare = [&](RegistrableManaged<float4> &managed, const string &desc = "") noexcept {
+            managed.reset_all(device(), pixel_num(), desc);
+            managed.reset_immediately();
+            managed.register_self();
+        };
+        prepare(_radiance, "RGBFilm::_radiance");
+        prepare(_frame, "RGBFilm::_frame");
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);

@@ -33,9 +33,9 @@ private:
     mutable RegistrableBuffer<Reservoir> _reservoirs0;
     mutable RegistrableBuffer<Reservoir> _reservoirs1;
     mutable RegistrableBuffer<Reservoir> _reservoirs2;
-    RegistrableManaged<SurfaceData> &_surfaces0;
-    RegistrableManaged<SurfaceData> &_surfaces1;
-    RegistrableManaged<float2> &_motion_vectors;
+    RegistrableBuffer<SurfaceData> &_surfaces0;
+    RegistrableBuffer<SurfaceData> &_surfaces1;
+    RegistrableBuffer<float2> &_motion_vectors;
 
     optional<Uint> _frame_index;
 
@@ -51,9 +51,9 @@ private:
 
 public:
     ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
-                             RegistrableManaged<float2> &motion_vec,
-                             RegistrableManaged<SurfaceData> &surfaces0,
-                             RegistrableManaged<SurfaceData> &surfaces1);
+                             RegistrableBuffer<float2> &motion_vec,
+                             RegistrableBuffer<SurfaceData> &surfaces0,
+                             RegistrableBuffer<SurfaceData> &surfaces1);
 
     void prepare() noexcept;
     void compile() noexcept {

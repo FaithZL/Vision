@@ -19,14 +19,14 @@ private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
-    RegistrableManaged<SurfaceData> &_surfaces;
-    RegistrableManaged<SurfaceData> &_prev_surfaces;
-    RegistrableManaged<float2> &_motion_vectors;
+    RegistrableBuffer<SurfaceData> &_surfaces;
+    RegistrableBuffer<SurfaceData> &_prev_surfaces;
+    RegistrableBuffer<float2> &_motion_vectors;
 
 public:
-    ReSTIRIndirectIllumination(const ParameterSet &desc, RegistrableManaged<float2> &motion_vec,
-                               RegistrableManaged<SurfaceData> &surfaces,
-                               RegistrableManaged<SurfaceData> &prev_surfaces);
+    ReSTIRIndirectIllumination(const ParameterSet &desc, RegistrableBuffer<float2> &motion_vec,
+                               RegistrableBuffer<SurfaceData> &surfaces,
+                               RegistrableBuffer<SurfaceData> &prev_surfaces);
 
     void prepare() noexcept;
 };

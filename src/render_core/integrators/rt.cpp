@@ -15,9 +15,9 @@ class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
-    RegistrableManaged<float2> _motion_vectors;
-    RegistrableManaged<SurfaceData> _surfaces0;
-    RegistrableManaged<SurfaceData> _surfaces1;
+    RegistrableBuffer<float2> _motion_vectors;
+    RegistrableBuffer<SurfaceData> _surfaces0;
+    RegistrableBuffer<SurfaceData> _surfaces1;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
@@ -28,17 +28,14 @@ public:
     void prepare() noexcept override {
         _direct.prepare();
         Pipeline *rp = pipeline();
-        _motion_vectors.set_resource_array(rp->resource_array());
-        _motion_vectors.reset_all(device(), rp->pixel_num());
-        _motion_vectors.register_self();
-
-        _surfaces0.set_resource_array(rp->resource_array());
-        _surfaces0.reset_all(device(), rp->pixel_num());
-        _surfaces0.register_self();
-
-        _surfaces1.set_resource_array(rp->resource_array());
-        _surfaces1.reset_all(device(), rp->pixel_num());
-        _surfaces1.register_self();
+        auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
+            buffer.set_resource_array(rp->resource_array());
+            buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
+            buffer.register_self();
+        };
+        init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
+        init_buffer(_surfaces0, "RealTimeIntegrator::_surfaces0");
+        init_buffer(_surfaces1, "RealTimeIntegrator::_surfaces1");
     }
 
     void compile() noexcept override {
