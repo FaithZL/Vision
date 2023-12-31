@@ -58,6 +58,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             (*sample)->set_pos(next_it.pos);
             (*sample)->set_lsp(lsp);
             bs->eval.pdf = le.pdf;
+            f = bs->eval.f * le.L;
         };
     };
 
@@ -116,7 +117,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         LightSample ls{swl.dimension()};
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
-        Float weight = Reservoir::cal_weight(1.f / M_light, sample.p_hat, 1.f / ls.eval.pdf);
+        Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / ls.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
@@ -127,6 +128,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs);
         sample.p_hat = p_hat;
         Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / bs.eval.pdf);
+        ret->update(sampler->next_1d(), sample, weight);
     };
 
     $if(hit) {
