@@ -375,29 +375,21 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
 }
 
 void ReSTIRDirectIllumination::prepare() noexcept {
+    using ReSTIRDirect::Reservoir;
     Pipeline *rp = pipeline();
+    Reservoir rsv;
+    vector<Reservoir> vec{rp->pixel_num(), rsv};
 
-    _reservoirs0.set_resource_array(rp->resource_array());
-    _reservoirs0.reset_all(device(), rp->pixel_num());
-    _reservoirs0.register_self();
+    auto init_rsv = [&](RegistrableBuffer<Reservoir> &reservoirs) {
+        reservoirs.set_resource_array(rp->resource_array());
+        reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num());
+        reservoirs.register_self();
+        reservoirs.upload_immediately(vec.data());
+    };
 
-    _reservoirs1.set_resource_array(rp->resource_array());
-    _reservoirs1.reset_all(device(), rp->pixel_num());
-    _reservoirs1.register_self();
-
-    _reservoirs2.set_resource_array(rp->resource_array());
-    _reservoirs2.reset_all(device(), rp->pixel_num());
-    _reservoirs2.register_self();
-
-    ReSTIRDirect::Reservoir rsv;
-    for (int i = 0; i < rp->pixel_num(); ++i) {
-        _reservoirs0[i] = rsv;
-        _reservoirs1[i] = rsv;
-        _reservoirs2[i] = rsv;
-    }
-    _reservoirs0.upload_immediately();
-    _reservoirs1.upload_immediately();
-    _reservoirs2.upload_immediately();
+    init_rsv(_reservoirs0);
+    init_rsv(_reservoirs1);
+    init_rsv(_reservoirs2);
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
