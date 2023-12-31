@@ -55,8 +55,8 @@ public:
 };
 
 void AliasTable::prepare() noexcept {
-    _table.reset_device_buffer_immediately(device());
-    _func.reset_device_buffer_immediately(device());
+    _table.reset_device_buffer_immediately(device(), "AliasTable::_table");
+    _func.reset_device_buffer_immediately(device(), "AliasTable::_func");
     _table.upload_immediately();
     _func.upload_immediately();
 
