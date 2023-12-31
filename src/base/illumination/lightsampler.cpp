@@ -77,17 +77,17 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
 pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcept {
     Uint type_id = 0u;
     Uint inst_id = 0u;
-    vector<uint> func;
-    func.reserve(_lights.type_num());
+    vector<uint> nums;
+    nums.reserve(_lights.type_num());
     for (int i = 0; i < _lights.type_num(); ++i) {
-        func.push_back(static_cast<uint>(_lights.instance_num(i)));
+        nums.push_back(static_cast<uint>(_lights.instance_num(i)));
     }
 
     Uint accum = 0u;
-    for (uint i = 0; i < func.size(); ++i) {
+    for (uint i = 0; i < nums.size(); ++i) {
         type_id = select(index >= accum, i, type_id);
         inst_id = select(index >= accum, index - accum, inst_id);
-        accum += func[i];
+        accum += nums[i];
     }
     switch (_lights.mode()) {
         case ocarina::EInstance:
