@@ -23,6 +23,17 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _surfaces0(surfaces0),
       _surfaces1(surfaces1) {}
 
+SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
+                                             const SampledWavelengths &swl, DIRSVSample *sample,
+                                             BSDFSample *bs) noexcept {
+    LightSampler *light_sampler = scene().light_sampler();
+    Spectrum &spectrum = *scene().spectrum();
+    SampledSpectrum f{swl.dimension()};
+    LightSample ls{swl.dimension()};
+
+    return f;
+}
+
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                              const DIRSVSample &sample, LightSample *output_ls) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
@@ -81,6 +92,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         sample->init();
+
     };
 
     $if(hit) {

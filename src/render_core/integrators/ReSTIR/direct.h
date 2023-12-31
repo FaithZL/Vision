@@ -95,6 +95,10 @@ public:
     /// evaluate Li from light
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
                                             const DIRSVSample &sample, LightSample *output_ls = nullptr) noexcept;
+    /// evaluate Li from bsdf
+    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
+                                            DIRSVSample *sample, BSDFSample *bs = nullptr) noexcept;
+
     template<typename... Args>
     [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {
         SampledSpectrum f = Li(OC_FORWARD(args)...);
