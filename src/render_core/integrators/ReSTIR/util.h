@@ -13,7 +13,7 @@
 
 namespace vision::ReSTIRDirect {
 struct RSVSample {
-    uint light_index{};
+    uint light_index{InvalidUI32};
     uint prim_id{};
     float2 uv{};
     float p_hat{};
@@ -100,11 +100,6 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         Bool ret = u * weight_sum < weight;
         sample = select(ret, v, sample);
         return ret;
-    }
-    Bool update(oc_float<p> u, oc_float<p> p_hat, oc_float<p> pdf, vision::DIRSVSample v) noexcept {
-        oc_float<p> weight = p_hat / pdf;
-        weight = ocarina::select(pdf == 0, 0.f, weight);
-        return update(u, v, weight, 1);
     }
     void truncation(oc_uint<p> limit) noexcept {
         M = ocarina::min(limit, M);

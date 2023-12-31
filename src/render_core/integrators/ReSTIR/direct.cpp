@@ -99,7 +99,6 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     comment("RIS start");
     DIReservoir ret;
     ret->init();
-    Float final_p_hat{0.f};
 
     auto sample_light = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
@@ -110,8 +109,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
         sample->set_pos(ls.p_light);
         Float weight = Reservoir::cal_weight(1.f / M_light, sample.p_hat, 1.f / ls.eval.pdf);
-        Bool replace = ret->update(sampler->next_1d(), sample, weight);
-        final_p_hat = ocarina::select(replace, sample.p_hat, final_p_hat);
+        ret->update(sampler->next_1d(), sample, weight);
     };
 
     $if(hit) {
@@ -130,7 +128,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             };
         }
     };
-    ret->update_W(final_p_hat);
+    ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
     comment("RIS end");
     return ret;
@@ -148,6 +146,7 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     it.wo = normalize(c_pos - it.pos);
 
     DIReservoir ret;
+    ret->init();
     Uint sample_num = rsv_idx.count() + 1;
     Float cur_weight = Reservoir::cal_weight(1.f / sample_num,
                                              cur_rsv.sample.p_hat, cur_rsv.W);
@@ -160,9 +159,7 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
                                                       rsv.sample.p_hat, rsv.W);
         ret->update(sampler->next_1d(), rsv.sample, neighbor_weight, rsv.M);
     });
-    // todo optimize p_hat
-    Float p_hat = compute_p_hat(it, nullptr, swl, ret.sample);
-    ret->update_W(p_hat);
+    ret->update_W(ret.sample.p_hat);
     return ret;
 }
 
@@ -179,6 +176,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     it.wo = normalize(c_pos - it.pos);
 
     DIReservoir ret;
+    ret->init();
     Float cur_weight = Reservoir::cal_weight(MIS_weight(cur_rsv.M, other_rsv.M),
                                              cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
@@ -187,10 +185,8 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     other_sample.p_hat = compute_p_hat(it, nullptr, swl, other_rsv.sample);
     Float other_weight = Reservoir::cal_weight(MIS_weight(other_rsv.M, cur_rsv.M),
                                                other_sample.p_hat, other_rsv.W);
-    Bool replace = ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
-    // todo optimize p_hat
-    Float p_hat = ocarina::select(replace, other_sample.p_hat, cur_rsv.sample.p_hat);
-    ret->update_W(p_hat);
+    ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
+    ret->update_W(ret.sample.p_hat);
     return ret;
 }
 
@@ -380,6 +376,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
 
 void ReSTIRDirectIllumination::prepare() noexcept {
     Pipeline *rp = pipeline();
+
     _reservoirs0.set_resource_array(rp->resource_array());
     _reservoirs0.reset_all(device(), rp->pixel_num());
     _reservoirs0.register_self();
@@ -391,6 +388,16 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     _reservoirs2.set_resource_array(rp->resource_array());
     _reservoirs2.reset_all(device(), rp->pixel_num());
     _reservoirs2.register_self();
+
+    ReSTIRDirect::Reservoir rsv;
+    for (int i = 0; i < rp->pixel_num(); ++i) {
+        _reservoirs0[i] = rsv;
+        _reservoirs1[i] = rsv;
+        _reservoirs2[i] = rsv;
+    }
+    _reservoirs0.upload_immediately();
+    _reservoirs1.upload_immediately();
+    _reservoirs2.upload_immediately();
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
