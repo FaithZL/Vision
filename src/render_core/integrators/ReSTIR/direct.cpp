@@ -78,6 +78,11 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         ret->update(sampler->next_1d(), sample, weight);
     };
 
+    auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
+        DIRSVSample sample;
+        sample->init();
+    };
+
     $if(hit) {
         if (_integrator->separate()) {
             MaterialEvaluator bsdf(it, swl);
@@ -88,9 +93,16 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             $for(i, M_light) {
                 sample_light(addressof(bsdf));
             };
+            $for(i, M_bsdf) {
+                sample_bsdf(addressof(bsdf));
+            };
+
         } else {
             $for(i, M_light) {
                 sample_light(nullptr);
+            };
+            $for(i, M_bsdf) {
+                sample_bsdf(nullptr);
             };
         }
     };
