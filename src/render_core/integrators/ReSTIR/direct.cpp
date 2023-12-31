@@ -29,7 +29,25 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
-    LightSample ls{swl.dimension()};
+    Sampler *sampler = scene().sampler();
+
+    if (!bsdf) {
+        outline([&] {
+            scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+                MaterialEvaluator bsdf = material->create_evaluator(it, swl);
+                swl.check_dispersive(spectrum, bsdf);
+                *bs = bsdf.sample(it.wo, sampler);
+            });
+        },
+                "ReSTIRDirectIllumination::Li from bsdf");
+    } else {
+        outline([&] {
+            *bs = bsdf->sample(it.wo, sampler);
+        },
+                "ReSTIRDirectIllumination::Li from bsdf");
+    }
+    OCRay ray = it.spawn_ray(bs->wi);
+    
 
     return f;
 }
@@ -54,13 +72,13 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             });
             f = eval.f * ls.eval.L;
         },
-                "ReSTIRDirectIllumination::sample_Li from light");
+                "ReSTIRDirectIllumination::Li from light");
     } else {
         outline([&] {
             eval = bsdf->evaluate(it.wo, wi);
             f = eval.f * ls.eval.L;
         },
-                "ReSTIRDirectIllumination::sample_Li from light");
+                "ReSTIRDirectIllumination::Li from light");
     }
     if (output_ls) {
         *output_ls = ls;
@@ -92,7 +110,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         sample->init();
-
+        BSDFSample bs{swl.dimension()};
+        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs);
     };
 
     $if(hit) {
