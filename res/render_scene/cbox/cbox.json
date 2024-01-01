@@ -885,9 +885,9 @@
 //												4
 //											]
 //										},
-//										"width" : 0.2,
+//										"width" : 1,
 //										"two_sided" : false,
-//										"scale" : 0.3,
+//										"scale" : 1,
 //										"o2w" : {
 //											"type" : "matrix4x4",
 //											"param" : {
@@ -911,8 +911,8 @@
 //														0.0
 //													],
 //													[
-//														0.4999999888241291,
-//														1.7800000190734863,
+//														-0.004999999888241291,
+//														1.9800000190734863,
 //														-0.029999999329447746,
 //														1.0
 //													]
@@ -1028,10 +1028,10 @@
 		}
 	},
 	"integrator" : {
-				"type" : "rt",
-//		"type" : "pt",
+//				"type" : "rt",
+		"type" : "pt",
 		"param" : {
-			"mis_mode": 2,
+			"mis_mode": 0,
 //			"separate": true,
 			"direct": {
 				"spatial": {
@@ -1051,7 +1051,7 @@
 				},
 				//								"mis": true,
 				"M_light": 10,
-				"M_bsdf": 1,
+				"M_bsdf": 0,
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
@@ -1088,7 +1088,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-										"accumulation": 0,
+//										"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
@@ -1121,6 +1121,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "restir-bsdf.exr"
+		"fn" : "pt-2light.exr"
 	}
 }
