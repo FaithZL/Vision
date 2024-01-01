@@ -124,7 +124,8 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
 
 LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
                                            const Float &pdf_wi,
-                                           const SampledWavelengths &swl) const noexcept {
+                                           const SampledWavelengths &swl,
+                                           Float *light_pdf_point) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
     Uint light_idx = extract_light_index(it);
     dispatch_light(it.light_id(), [&](const Light *light) {
