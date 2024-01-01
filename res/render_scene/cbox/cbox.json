@@ -1031,7 +1031,7 @@
 				"type" : "rt",
 //		"type" : "pt",
 		"param" : {
-//			"mis_mode": 0,
+			"mis_mode": 2,
 //			"separate": true,
 			"direct": {
 				"spatial": {
@@ -1051,7 +1051,7 @@
 				},
 				//								"mis": true,
 				"M_light": 0,
-				"M_bsdf": 10,
+				"M_bsdf": 1,
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
@@ -1096,8 +1096,8 @@
 					"fb_state" : 0,
 					"tone_mapper" : {
 						//												"type": "reinhard",
-//																		"type": "linear",
-						"type": "aces",
+																		"type": "linear",
+//						"type": "aces",
 						//						"type" : "exposure",
 						"param" : {
 							"exposure" : 1.0
@@ -1121,6 +1121,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "mis-mode0-pt.exr"
+		"fn" : "restir-bsdf.exr"
 	}
 }
