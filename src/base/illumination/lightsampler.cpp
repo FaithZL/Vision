@@ -48,7 +48,7 @@ void LightSampler::prepare() noexcept {
     _lights.prepare(rp->resource_array(), rp->device());
 }
 
-Uint LightSampler::light_index(const vision::Interaction &it) const noexcept {
+Uint LightSampler::extract_light_index(const vision::Interaction &it) const noexcept {
     return combine_to_light_index(it.light_type_id(), it.light_inst_id());
 }
 
@@ -108,6 +108,7 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
 LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
                                         const SampledWavelengths &swl) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
+    Uint light_idx = extract_light_index(it);
     dispatch_light(it.light_id(), [&](const Light *light) {
         if (!light->match(LightType::Area)) {
             return;
@@ -115,7 +116,7 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_wi(p_ref, p_light, swl);
-        Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
+        Float pmf = PMF(p_ref, light_idx);
         ret.pdf *= pmf;
     });
     return ret;
@@ -125,7 +126,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
                                            const Float &pdf_wi,
                                            const SampledWavelengths &swl) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
-    Uint light_index = combine_to_light_index(it.light_type_id(), it.light_inst_id());
+    Uint light_idx = extract_light_index(it);
     dispatch_light(it.light_id(), [&](const Light *light) {
         if (!light->match(LightType::Area)) {
             return;
@@ -133,7 +134,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
-        Float pmf = PMF(p_ref, combine_to_light_index(it.light_type_id(), it.light_inst_id()));
+        Float pmf = PMF(p_ref, light_idx);
         ret.pdf *= pmf;
     });
     return ret;

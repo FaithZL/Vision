@@ -64,7 +64,7 @@ public:
                                              const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
-    [[nodiscard]] Uint light_index(const Interaction &it) const noexcept;
+    [[nodiscard]] Uint extract_light_index(const Interaction &it) const noexcept;
     [[nodiscard]] LightSample sample_wi(const SampledLight &sampled_light,
                                         const LightSampleContext &lsc,
                                         const Float2 &u, const SampledWavelengths &swl) const noexcept;
