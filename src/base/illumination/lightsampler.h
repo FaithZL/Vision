@@ -59,8 +59,7 @@ public:
                                             const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightEval evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
                                                const Float &pdf_wi,
-                                               const SampledWavelengths &swl,
-                                               LightSurfacePoint *lsp) const noexcept;
+                                               const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightEval evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
                                              const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
