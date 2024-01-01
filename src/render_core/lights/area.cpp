@@ -130,7 +130,7 @@ public:
         Uint prim_id = _warper->sample_discrete(u.x, nullptr, addressof(u.x));
         LightSurfacePoint lsp;
         lsp.prim_id = prim_id;
-        lsp.uv = square_to_triangle(u);
+        lsp.bary = square_to_triangle(u);
         return lsp;
     }
 
@@ -148,7 +148,7 @@ public:
         LightSample ret{swl.dimension()};
         Float pmf = _warper->PMF(lsp.prim_id);
         auto rp = scene().pipeline();
-        LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, lsp.prim_id, lsp.uv);
+        LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, lsp.prim_id, lsp.bary);
         ret.eval = _evaluate_point(p_ref, p_light, swl);
         ret.eval.pdf *= pmf;
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);

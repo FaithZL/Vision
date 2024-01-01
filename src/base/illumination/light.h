@@ -58,7 +58,7 @@ namespace vision {
 struct LightSurfacePoint {
     Uint light_index{InvalidUI32};
     Uint prim_id;
-    Float2 uv;
+    Float2 bary;
 };
 
 class Light : public Node, public Serializable<float> {
@@ -135,7 +135,7 @@ public:
 
     [[nodiscard]] virtual LightSurfacePoint sample_only(Float2 u) const noexcept {
         LightSurfacePoint ret;
-        ret.uv = u;
+        ret.bary = u;
         ret.prim_id = 0;
         return ret;
     }

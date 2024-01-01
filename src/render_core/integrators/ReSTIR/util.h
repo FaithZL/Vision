@@ -15,7 +15,7 @@ namespace vision::ReSTIRDirect {
 struct RSVSample {
     uint light_index{InvalidUI32};
     uint prim_id{};
-    float2 uv{};
+    float2 bary{};
     float p_hat{};
     array<float, 3> pos{};
     [[nodiscard]] auto p_light() const noexcept {
@@ -30,7 +30,7 @@ struct RSVSample {
 }// namespace vision::ReSTIRDirect
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, uv, p_hat, pos) {
+OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, bary, p_hat, pos) {
     void init() noexcept {
         light_index = InvalidUI32;
     }
@@ -41,13 +41,13 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, uv, p_hat, pos) 
         return make_float3(pos[0], pos[1], pos[2]);
     }
     void set_lsp(const vision::LightSurfacePoint &lsp) noexcept {
-        uv = lsp.uv;
+        bary = lsp.bary;
         light_index = lsp.light_index;
         prim_id = lsp.prim_id;
     }
     [[nodiscard]] vision::LightSurfacePoint lsp() const noexcept {
         vision::LightSurfacePoint lsp;
-        lsp.uv = uv;
+        lsp.bary = bary;
         lsp.light_index = light_index;
         lsp.prim_id = prim_id;
         return lsp;
