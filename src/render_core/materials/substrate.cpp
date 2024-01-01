@@ -49,7 +49,7 @@ public:
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-        return lerp(fr, PDF_diffuse(wo, wi), PDF_specular(wo, wo));
+        return lerp(fr, PDF_diffuse(wo, wi), PDF_specular(wo, wi));
     }
 
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
