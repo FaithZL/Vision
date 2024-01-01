@@ -25,7 +25,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
-                                             BSDFSample *bs) noexcept {
+                                             BSDFSample *bs, Float *light_pdf) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const Geometry &geometry = pipeline()->geometry();
@@ -69,7 +69,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
 }
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                             const DIRSVSample &sample, LightSample *output_ls) noexcept {
+                                             const DIRSVSample &sample, LightSample *output_ls, Float *bsdf_pdf) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
