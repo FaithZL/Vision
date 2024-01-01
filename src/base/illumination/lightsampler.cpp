@@ -133,10 +133,12 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
             return;
         }
         LightEvalContext p_light{it};
-        p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
-        Float pmf = PMF(p_ref, light_idx);
-        ret.pdf *= pmf;
+        if (light_pdf_point) {
+            Float prim_pmf = light->PMF(it.prim_id);
+            Float light_pmf = PMF(p_ref, light_idx);
+            *light_pdf_point = p_light.PDF_pos * prim_pmf * light_pmf;
+        }
     });
     return ret;
 }
