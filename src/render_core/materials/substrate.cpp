@@ -49,30 +49,7 @@ public:
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-        return (1.f - fr) * PDF_diffuse(wo, wi) + fr * PDF_specular(wo, wi);
-    }
-
-    [[nodiscard]] BSDFSample sample(Float3 wo, Sampler *sampler,
-                                    SP<Fresnel> fresnel) const noexcept override {
-        BSDFSample ret{swl().dimension()};
-        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-        Float2 u = sampler->next_2d();
-        $if(u.x < fr) {
-            u.x = remapping(u.x, 0.f, fr);
-            Float3 wh = _microfacet->sample_wh(wo, u);
-            ret.wi = reflect(wo, wh);
-            ret.eval.f = f_specular(wo, ret.wi);
-            ret.eval.pdf = PDF_specular(wo, ret.wi);
-            ret.eval.pdf = select(safe(wo, ret.wi), ret.eval.pdf, 0.f) * fr;
-        }
-        $else {
-            u.x = remapping(u.x, fr, 1.f);
-            ret.wi = square_to_cosine_hemisphere(u);
-            ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
-            ret.eval.f = f_diffuse(wo, ret.wi);
-            ret.eval.pdf = PDF_diffuse(wo, ret.wi) * (1 - fr);
-        };
-        return ret;
+        return lerp(fr, PDF_diffuse(wo, wi), PDF_specular(wo, wo));
     }
 
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
@@ -82,14 +59,13 @@ public:
             u.x = remapping(u.x, 0.f, fr);
             Float3 wh = _microfacet->sample_wh(wo, u);
             ret.wi = reflect(wo, wh);
-            ret.pdf = fr;
         }
         $else {
             u.x = remapping(u.x, fr, 1.f);
             ret.wi = square_to_cosine_hemisphere(u);
             ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
-            ret.pdf = 1 - fr;
         };
+        ret.pdf = 1.f;
         return ret;
     }
 };
