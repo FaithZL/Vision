@@ -48,6 +48,10 @@ void LightSampler::prepare() noexcept {
     _lights.prepare(rp->resource_array(), rp->device());
 }
 
+Uint LightSampler::light_index(const vision::Interaction &it) const noexcept {
+    return combine_to_light_index(it.light_type_id(), it.light_inst_id());
+}
+
 Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
     vector<uint> func;
     Uint ret = 0u;
@@ -219,7 +223,7 @@ LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const Li
 }
 
 LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
-                                      const SampledWavelengths &swl) const noexcept {
+                                         const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
     Float pmf = PMF(p_ref, _env_light->index());

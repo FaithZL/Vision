@@ -64,13 +64,14 @@ public:
                                              const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
+    [[nodiscard]] Uint light_index(const Interaction &it) const noexcept;
     [[nodiscard]] LightSample sample_wi(const SampledLight &sampled_light,
-                                                const LightSampleContext &lsc,
-                                                const Float2 &u, const SampledWavelengths &swl) const noexcept;
+                                        const LightSampleContext &lsc,
+                                        const Float2 &u, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
-                                                const SampledWavelengths &swl) const noexcept;
+                                        const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
-                                                     const SampledWavelengths &swl) const noexcept;
+                                             const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;

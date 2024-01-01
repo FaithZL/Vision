@@ -55,8 +55,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
         Interaction next_it = geometry.compute_surface_interaction(hit, ray);
         $if(next_it.has_emission()) {
             le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf, swl);
-            lsp.light_index = light_sampler->combine_to_light_index(next_it.light_type_id(),
-                                                                        next_it.light_inst_id());
+            lsp.light_index = light_sampler->light_index(next_it);
             lsp.prim_id = hit.prim_id;
             lsp.bary = hit.bary;
             (*sample)->set_lsp(lsp);
