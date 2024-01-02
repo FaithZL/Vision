@@ -77,9 +77,11 @@ public:
     oc_float<p> canonical_weight{};
     RSVSample sample{};
     template<EPort p_ = D>
-    [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> MIS_weight, oc_float<p_> p_hat,
+    [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
                                                  oc_float<p_> W) noexcept {
-        return MIS_weight * p_hat * W;
+        oc_float<p_> ret = mis_weight * p_hat * W;
+        ret = ocarina::select(isnan(ret), 0.f, ret);
+        return ret;
     }
 };
 }// namespace ReSTIRDirect
