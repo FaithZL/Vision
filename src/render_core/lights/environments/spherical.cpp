@@ -115,7 +115,7 @@ public:
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
         Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
         Float3 pos = p_ref.pos + world_dir * scene().world_diameter();
-        return LightEvalContext{pos};
+        return LightEvalContext{pos, -world_dir};
     }
 
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,

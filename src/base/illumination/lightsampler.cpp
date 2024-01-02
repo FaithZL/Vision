@@ -53,7 +53,7 @@ Uint LightSampler::extract_light_index(const vision::Interaction &it) const noex
 }
 
 Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
-    vector<uint> func;
+    vector<uint> nums;
     Uint ret = 0u;
     switch (_lights.mode()) {
         case ocarina::EInstance: {
@@ -61,11 +61,11 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
             break;
         }
         case ocarina::EType: {
-            func.reserve(_lights.type_num());
+            nums.reserve(_lights.type_num());
             for (int i = 0; i < _lights.type_num(); ++i) {
-                func.push_back(static_cast<uint>(_lights.instance_num(i)));
+                nums.push_back(static_cast<uint>(_lights.instance_num(i)));
             }
-            Array<uint> arr{func};
+            Array<uint> arr{nums};
             $for(i, type_id) {
                 ret += arr[i];
             };
@@ -226,11 +226,12 @@ LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const Li
     return ls;
 }
 
-Float LightSampler::PDF_point(const LightSurfacePoint &lsp, const Float &pdf_wi) const noexcept {
+Float LightSampler::PDF_point(const LightSampleContext &lsc,const LightSurfacePoint &lsp,
+                              const Float &pdf_wi) const noexcept {
     auto [type_id, inst_id] = extract_light_id(lsp.light_index);
     Float ret = 0.f;
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        // todo
+        ret = light->PDF_point(lsc, lsp, pdf_wi);
     });
     return ret;
 }

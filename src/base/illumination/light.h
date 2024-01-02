@@ -119,6 +119,11 @@ public:
         Float ret = vision::PDF_point(pdf_wi, p_light.ng, p_ref.pos - p_light.pos);
         return select(ocarina::isinf(ret), 0.f, ret);
     }
+    [[nodiscard]] Float PDF_point(const LightSampleContext &p_ref,
+                                  LightSurfacePoint lsp,
+                                  const Float &pdf_wi) const noexcept {
+        return PDF_point(p_ref, compute_light_eval_context(p_ref, lsp), pdf_wi);
+    }
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                                 const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] LightType type() const noexcept { return _type; }
@@ -192,7 +197,7 @@ public:
     }
     [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
                                                               LightSurfacePoint lsp) const noexcept override {
-        return LightEvalContext{position()};
+        return LightEvalContext{position(), normalize(p_ref.pos - position())};
     }
 };
 
