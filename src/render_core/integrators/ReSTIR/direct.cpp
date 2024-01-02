@@ -132,8 +132,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         Bool is_delta_light = ls.eval.pdf < 0.f;
         Float light_pdf = ocarina::select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
         Float mis_weight = ocarina::select(is_delta_light, 1.f / M_light, light_pdf / (M_light * light_pdf + M_bsdf * bsdf_light_point));
-        Float weight = Reservoir::cal_weight(mis_weight,
-                                             sample.p_hat, 1.f / light_pdf);
+        Float weight = Reservoir::safe_weight(mis_weight,
+                                              sample.p_hat, 1.f / light_pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
