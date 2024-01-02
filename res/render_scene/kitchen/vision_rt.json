@@ -13449,14 +13449,14 @@
 //            "separate" : true,
             "direct": {
                 "spatial": {
-//                                        					"open": false,
+                                        					"open": false,
                     "theta": 5,
                     "depth": 0.3,
                     "radius": 30,
                     "sample_num": 1
                 },
                 "temporal": {
-//                                        					"open": false,
+                                        					"open": false,
                     "theta": 5,
                     "depth": 0.1,
                     "radius": 0,
@@ -13464,7 +13464,8 @@
                     "history_limit": 20
                 },
 //                				"mis": true,
-                "M": 10
+                "M_light": 10,
+                "M_bsdf": 1
             },
             "min_depth" : 5,
             "max_depth" : 16,
@@ -13500,7 +13501,7 @@
             "film": {
                 "type": "rgb",
                 "param": {
-                    "accumulation": 0,
+//                    "accumulation": 0,
                     "resolution": [
                         1440,
                         968
