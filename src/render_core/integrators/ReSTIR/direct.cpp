@@ -101,6 +101,9 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
         },
                 "ReSTIRDirectIllumination::Li from light");
     }
+    if (bsdf_pdf_point) {
+        *bsdf_pdf_point = light_sampler->PDF_point(it, sample->lsp(), eval.pdf);
+    }
     if (output_ls) {
         *output_ls = ls;
     }
@@ -123,7 +126,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         LightSurfacePoint lsp = light_sampler->sample_only(it, sampler);
         sample->set_lsp(lsp);
         LightSample ls{swl.dimension()};
-        sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls));
+        Float bsdf_light_point = 0.f;
+        sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls), &bsdf_light_point);
         sample->set_pos(ls.p_light);
         Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / ls.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
@@ -133,7 +137,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         DIRSVSample sample;
         sample->init();
         BSDFSample bs{swl.dimension()};
-        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs);
+        Float light_pdf_point = 0.f;
+        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point);
         sample.p_hat = p_hat;
         Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / bs.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
