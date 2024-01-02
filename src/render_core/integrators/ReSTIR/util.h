@@ -76,11 +76,18 @@ public:
     oc_float<p> W{};
     oc_float<p> canonical_weight{};
     RSVSample sample{};
+
     template<EPort p_ = D>
     [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
                                                  oc_float<p_> W) noexcept {
-        oc_float<p_> ret = mis_weight * p_hat * W;
-        ret = ocarina::select(isnan(ret), 0.f, ret);
+        return mis_weight * p_hat * W;
+    }
+
+    template<EPort p_ = D>
+    [[nodiscard]] static auto safe_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                          oc_float<p_> W) noexcept {
+        oc_float<p_> ret = cal_weight(mis_weight, p_hat, W);
+        ret = ocarina::select(ocarina::isnan(ret), 0.f, ret);
         return ret;
     }
 };
