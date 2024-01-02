@@ -58,7 +58,8 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
              * The PDF of the LightEval is the PDF of the reflection function
              * from the solid Angle space to the area space
              */
-            le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf, swl);
+            le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf,
+                                                   swl, light_pdf);
             lsp.light_index = light_sampler->extract_light_index(next_it);
             lsp.prim_id = hit.prim_id;
             lsp.bary = hit.bary;

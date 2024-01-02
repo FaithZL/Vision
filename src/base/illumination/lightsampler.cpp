@@ -215,7 +215,7 @@ LightSurfacePoint LightSampler::sample_only(const LightSampleContext &lsc, Sampl
 }
 
 LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
-                                         const SampledWavelengths &swl) const noexcept {
+                                         const SampledWavelengths &swl, Float *bsdf_pdf_point) const noexcept {
     auto [type_id, inst_id] = extract_light_id(lsp.light_index);
     Float pmf = PMF(lsc, lsp.light_index);
     LightSample ls{swl.dimension()};
