@@ -1050,8 +1050,8 @@
 					"history_limit": 10
 				},
 				//								"mis": true,
-				"M_light": 1,
-				"M_bsdf": 10,
+				"M_light": 10,
+				"M_bsdf": 1,
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
