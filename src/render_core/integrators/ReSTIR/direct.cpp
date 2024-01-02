@@ -292,9 +292,9 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
+        camera->load_data();
         sampler->start(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
-        camera->load_data();
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
@@ -409,6 +409,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     Sampler *sampler = scene().sampler();
+    LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
@@ -416,7 +417,8 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         camera->load_data();
         sampler->start(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler);
-        camera->load_data();
+        SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+        RayState rs = camera->generate_ray(ss);
         sampler->start(pixel, frame_index, 1);
         OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
         DIReservoir temporal_rsv = passthrough_reservoir().read(dispatch_id());
@@ -425,8 +427,13 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         Float3 L = make_float3(0.f);
         $if(hit->is_hit()) {
             L = shading(st_rsv, hit, swl, frame_index);
-        } $else {
-
+        }
+        $else{
+            LightSampleContext p_ref;
+            p_ref.pos = rs.origin();
+            p_ref.ng = rs.direction();
+            LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
+            L = spectrum.linear_srgb(eval.L, swl);
         };
         film->add_sample(pixel, L, frame_index);
         cur_reservoir().write(dispatch_id(), st_rsv);
