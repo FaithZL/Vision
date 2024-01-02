@@ -293,69 +293,69 @@
 					}
 				}
 			}
+		},
+		{
+			"type" : "quad",
+			"name" : "shape_7",
+			"param" : {
+				"width" : 1,
+				"height" : 1,
+				"material" : "Light",
+				"transform" : {
+					"type" : "matrix4x4",
+					"param" : {
+						"matrix4x4" : [
+							[
+								0.4699999988079071,
+								-4.108870399477382e-08,
+								-4.108870399477382e-08,
+								0.0
+							],
+							[
+								-1.56137076601226e-08,
+								-0.1785999983549118,
+								1.3649937003794234e-15,
+								0.0
+							],
+							[
+								-3.3220654671595184e-08,
+								0.0,
+								-0.3799999952316284,
+								0.0
+							],
+							[
+								-0.004999999888241291,
+								1.9800000190734863,
+								-0.029999999329447746,
+								1.0
+							]
+						]
+					}
+				},
+				"emission" : {
+					"type" : "area",
+					"param" : {
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								17,
+								12,
+								4
+							]
+						},
+						//						"color" : {
+						//							"channels" : "xyz",
+						//							"node" : {
+						//								"fn" : "Painting3.jpg",
+						//								"color_space" : "srgb"
+						//							}
+						//						},
+						"two_sided" : false,
+						"scale" : 1
+					}
+				}
+			}
 		}
-//		{
-//			"type" : "quad",
-//			"name" : "shape_7",
-//			"param" : {
-//				"width" : 1,
-//				"height" : 1,
-//				"material" : "Light",
-//				"transform" : {
-//					"type" : "matrix4x4",
-//					"param" : {
-//						"matrix4x4" : [
-//							[
-//								0.4699999988079071,
-//								-4.108870399477382e-08,
-//								-4.108870399477382e-08,
-//								0.0
-//							],
-//							[
-//								-1.56137076601226e-08,
-//								-0.1785999983549118,
-//								1.3649937003794234e-15,
-//								0.0
-//							],
-//							[
-//								-3.3220654671595184e-08,
-//								0.0,
-//								-0.3799999952316284,
-//								0.0
-//							],
-//							[
-//								-0.004999999888241291,
-//								1.9800000190734863,
-//								-0.029999999329447746,
-//								1.0
-//							]
-//						]
-//					}
-//				},
-//				"emission" : {
-//					"type" : "area",
-//					"param" : {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [
-//								17,
-//								12,
-//								4
-//							]
-//						},
-//						//						"color" : {
-//						//							"channels" : "xyz",
-//						//							"node" : {
-//						//								"fn" : "Painting3.jpg",
-//						//								"color_space" : "srgb"
-//						//							}
-//						//						},
-//						"two_sided" : false,
-//						"scale" : 1
-//					}
-//				}
-//			}
-//		}
 		//		{
 		//			"type" : "quad",
 		//			"name" : "shape_7",
@@ -840,7 +840,7 @@
 										},
 										"scale" : 0.05
 									}
-								}
+								},
 //								{
 //									"type" : "spot",
 //									"param" : {
@@ -863,17 +863,17 @@
 				//						"scale" : 3
 				//					}
 				//				},
-//												{
-//													"type" : "point",
-//													"param" : {
-//														"color" : {
-//															"channels" : "xyz",
-//															"node" : [1, 1, 1]
-//														},
-//														"position" : [-0.5, 1.8, 0],
-//														"scale" : 0.2
-//													}
-//												},
+												{
+													"type" : "point",
+													"param" : {
+														"color" : {
+															"channels" : "xyz",
+															"node" : [1, 1, 1]
+														},
+														"position" : [-0.5, 1.8, 0],
+														"scale" : 0.2
+													}
+												}
 //								{
 //									"type": "area",
 //									"param": {
@@ -1035,7 +1035,7 @@
 //			"separate": true,
 			"direct": {
 				"spatial": {
-					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.3,
 					"radius": 30,
@@ -1051,7 +1051,7 @@
 				},
 				//								"mis": true,
 				"M_light": 10,
-				"M_bsdf": 0,
+				"M_bsdf": 1,
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
@@ -1088,7 +1088,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-//										"accumulation": 0,
+										"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024
@@ -1121,6 +1121,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "rt-2light.exr"
+		"fn" : "rt-env.exr"
 	}
 }

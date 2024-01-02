@@ -72,10 +72,13 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     $else {
         if (light_sampler->env_light()) {
             LightSampleContext p_ref{it};
-            le = light_sampler->evaluate_miss_point(p_ref, bs->wi, bs->eval.pdf,
+            Float3 wi = bs->wi * scene().world_diameter();
+            le = light_sampler->evaluate_miss_point(p_ref, wi, bs->eval.pdf,
                                                     swl, light_pdf_point);
             lsp.light_index = light_sampler->env_index();
             lsp.bary = light_sampler->env_light()->convert_to_bary(bs->wi);
+            (*sample)->set_lsp(lsp);
+            (*sample)->set_pos(it.pos + wi);
             f = bs->eval.f * le.L;
         }
     };
