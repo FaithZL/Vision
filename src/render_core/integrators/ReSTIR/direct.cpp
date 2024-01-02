@@ -25,7 +25,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
-                                             BSDFSample *bs, Float *light_pdf) noexcept {
+                                             BSDFSample *bs, Float *light_pdf_point) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const Geometry &geometry = pipeline()->geometry();
@@ -59,7 +59,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
              * from the solid Angle space to the area space
              */
             le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf,
-                                                   swl, light_pdf);
+                                                   swl, light_pdf_point);
             lsp.light_index = light_sampler->extract_light_index(next_it);
             lsp.prim_id = hit.prim_id;
             lsp.bary = hit.bary;
@@ -74,13 +74,13 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
 }
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                             const DIRSVSample &sample, LightSample *output_ls, Float *bsdf_pdf) noexcept {
+                                             const DIRSVSample &sample, LightSample *output_ls, Float *bsdf_pdf_point) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
     $if(sample->valid()) {
-        ls = light_sampler->evaluate_point(it, sample->lsp(), swl);
+        ls = light_sampler->evaluate_point(it, sample->lsp(), swl, bsdf, bsdf_pdf_point);
     };
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension()};
