@@ -68,6 +68,10 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             bs->eval.pdf = le.pdf;
             f = bs->eval.f * le.L;
         };
+    } $else {
+        if (light_sampler->env_light()) {
+
+        }
     };
 
     return f;

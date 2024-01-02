@@ -68,7 +68,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
             if (light_sampler->env_light()) {
                 LightSampleContext p_ref;
                 p_ref.pos = rs.origin();
-                p_ref.ng = rs.direction();
+                p_ref.ng = prev_surface_ng;
                 SampledSpectrum tr = {swl.dimension(), 1.f};
                 if (scene().has_medium()) {
                     rs.ray.dir_max.w = scene().world_diameter();
