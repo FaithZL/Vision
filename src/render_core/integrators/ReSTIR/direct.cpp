@@ -129,7 +129,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         Float bsdf_light_point = 0.f;
         sample.p_hat = compute_p_hat(it, bsdf, swl, sample, std::addressof(ls), &bsdf_light_point);
         sample->set_pos(ls.p_light);
-        Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / ls.eval.pdf);
+        Float weight = Reservoir::cal_weight(ls.eval.pdf / (M_light * ls.eval.pdf + M_bsdf * bsdf_light_point),
+                                             sample.p_hat, 1.f / ls.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
@@ -140,7 +141,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         Float light_pdf_point = 0.f;
         Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point);
         sample.p_hat = p_hat;
-        Float weight = Reservoir::cal_weight(1.f / (M_light + M_bsdf), sample.p_hat, 1.f / bs.eval.pdf);
+        Float weight = Reservoir::cal_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
+                                             sample.p_hat, 1.f / bs.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
