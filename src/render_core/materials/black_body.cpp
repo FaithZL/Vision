@@ -23,6 +23,7 @@ public:
         BSDFSample ret{_swl->dimension()};
         ret.eval.pdf = 1.f;
         /// Avoid sample discarding due to hemispherical check
+        ret.eval.flags = BxDFFlag::DiffRefl;
         ret.wi = wo;
         return ret;
     }
