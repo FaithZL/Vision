@@ -21,6 +21,9 @@ public:
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{_swl->dimension()};
+        ret.eval.pdf = 1.f;
+        /// Avoid sample discarding due to hemispherical check
+        ret.wi = wo;
         return ret;
     }
     [[nodiscard]] SampledSpectrum albedo() const noexcept override {
