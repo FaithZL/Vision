@@ -113,9 +113,9 @@ public:
                                           const LightEvalContext &p_light) const noexcept {
         return PDF_wi(p_ref, p_light);
     }
-    [[nodiscard]] virtual Float PDF_point(const LightSampleContext &p_ref,
-                                          const LightEvalContext &p_light,
-                                          const Float &pdf_wi) const noexcept {
+    [[nodiscard]] Float PDF_point(const LightSampleContext &p_ref,
+                                  const LightEvalContext &p_light,
+                                  const Float &pdf_wi) const noexcept {
         Float ret = vision::PDF_point(pdf_wi, p_light.ng, p_ref.pos - p_light.pos);
         return select(ocarina::isinf(ret), 0.f, ret);
     }
@@ -132,6 +132,8 @@ public:
 
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                                      const SampledWavelengths &swl) const noexcept = 0;
+
+    //    [[nodiscard]] virtual Float
 
     [[nodiscard]] virtual LightSurfacePoint sample_only(Float2 u) const noexcept {
         LightSurfacePoint ret;

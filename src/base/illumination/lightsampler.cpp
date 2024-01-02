@@ -215,7 +215,7 @@ LightSurfacePoint LightSampler::sample_only(const LightSampleContext &lsc, Sampl
 }
 
 LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
-                                         const SampledWavelengths &swl, MaterialEvaluator *bsdf, Float *bsdf_pdf_point) const noexcept {
+                                         const SampledWavelengths &swl) const noexcept {
     auto [type_id, inst_id] = extract_light_id(lsp.light_index);
     Float pmf = PMF(lsc, lsp.light_index);
     LightSample ls{swl.dimension()};
@@ -224,6 +224,15 @@ LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const Li
     });
     ls.eval.pdf *= pmf;
     return ls;
+}
+
+Float LightSampler::PDF_point(const LightSurfacePoint &lsp, const Float &pdf_wi) const noexcept {
+    auto [type_id, inst_id] = extract_light_id(lsp.light_index);
+    Float ret = 0.f;
+    dispatch_light(type_id, inst_id, [&](const Light *light) {
+        // todo
+    });
+    return ret;
 }
 
 LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,

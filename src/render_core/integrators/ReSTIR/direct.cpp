@@ -80,7 +80,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
     $if(sample->valid()) {
-        ls = light_sampler->evaluate_point(it, sample->lsp(), swl, bsdf, bsdf_pdf_point);
+        ls = light_sampler->evaluate_point(it, sample->lsp(), swl);
     };
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension()};
