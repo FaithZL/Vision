@@ -44,7 +44,7 @@ public:
     [[nodiscard]] float env_prob() const noexcept {
         return (!_env_light) ? 0 : (_lights.empty() ? 1 : _env_prob);
     }
-    [[nodiscard]] const Light *env_light() const noexcept { return _env_light.get(); }
+    [[nodiscard]] const Environment *env_light() const noexcept { return _env_light.get(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
     [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }
@@ -63,6 +63,10 @@ public:
                                                Float *light_pdf_point = nullptr) const noexcept;
     [[nodiscard]] LightEval evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
                                              const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] LightEval evaluate_miss_point(const LightSampleContext &p_ref, const Float3 &wi,
+                                                const Float &pdf_wi,
+                                                const SampledWavelengths &swl,
+                                                Float *light_pdf_point = nullptr) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] Uint extract_light_index(const Interaction &it) const noexcept;

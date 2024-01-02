@@ -104,6 +104,11 @@ public:
         return evaluate(p_ref, lsp.bary, pdf_map, swl);
     }
 
+    [[nodiscard]] Float PDF_point(const LightSampleContext &p_ref, const LightEvalContext &p_light,
+                                  const Float &pdf_wi) const noexcept override {
+        return pdf_wi;
+    }
+
     [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
                                                               LightSurfacePoint lsp) const noexcept override {
         Float pdf_map = _warper->PDF(lsp.bary);

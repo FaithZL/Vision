@@ -428,7 +428,7 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     Reservoir rsv;
     vector<Reservoir> vec{rp->pixel_num(), rsv};
 
-    auto init_buffer = [&](RegistrableBuffer<Reservoir> &reservoirs, const string desc = "") {
+    auto init_buffer = [&](RegistrableBuffer<Reservoir> &reservoirs, const string &desc) {
         reservoirs.set_resource_array(rp->resource_array());
         reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num(), desc);
         reservoirs.register_self();

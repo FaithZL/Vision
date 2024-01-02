@@ -105,44 +105,6 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
     return {type_id, inst_id};
 }
 
-LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
-                                        const SampledWavelengths &swl) const noexcept {
-    LightEval ret = LightEval{swl.dimension()};
-    Uint light_idx = extract_light_index(it);
-    dispatch_light(it.light_id(), [&](const Light *light) {
-        if (!light->match(LightType::Area)) {
-            return;
-        }
-        LightEvalContext p_light{it};
-        p_light.PDF_pos *= light->PMF(it.prim_id);
-        ret = light->evaluate_wi(p_ref, p_light, swl);
-        Float pmf = PMF(p_ref, light_idx);
-        ret.pdf *= pmf;
-    });
-    return ret;
-}
-
-LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
-                                           const Float &pdf_wi,
-                                           const SampledWavelengths &swl,
-                                           Float *light_pdf_point) const noexcept {
-    LightEval ret = LightEval{swl.dimension()};
-    Uint light_idx = extract_light_index(it);
-    dispatch_light(it.light_id(), [&](const Light *light) {
-        if (!light->match(LightType::Area)) {
-            return;
-        }
-        LightEvalContext p_light{it};
-        ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
-        if (light_pdf_point) {
-            Float prim_pmf = light->PMF(it.prim_id);
-            Float light_pmf = PMF(p_ref, light_idx);
-            *light_pdf_point = p_light.PDF_pos * prim_pmf * light_pmf;
-        }
-    });
-    return ret;
-}
-
 Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const noexcept {
     if (_env_separate) {
         if (env_prob() == 1) {
@@ -226,12 +188,50 @@ LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const Li
     return ls;
 }
 
-Float LightSampler::PDF_point(const LightSampleContext &lsc,const LightSurfacePoint &lsp,
+Float LightSampler::PDF_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                               const Float &pdf_wi) const noexcept {
     auto [type_id, inst_id] = extract_light_id(lsp.light_index);
     Float ret = 0.f;
     dispatch_light(type_id, inst_id, [&](const Light *light) {
         ret = light->PDF_point(lsc, lsp, pdf_wi);
+    });
+    return ret;
+}
+
+LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
+                                        const SampledWavelengths &swl) const noexcept {
+    LightEval ret = LightEval{swl.dimension()};
+    Uint light_idx = extract_light_index(it);
+    dispatch_light(it.light_id(), [&](const Light *light) {
+        if (!light->match(LightType::Area)) {
+            return;
+        }
+        LightEvalContext p_light{it};
+        p_light.PDF_pos *= light->PMF(it.prim_id);
+        ret = light->evaluate_wi(p_ref, p_light, swl);
+        Float pmf = PMF(p_ref, light_idx);
+        ret.pdf *= pmf;
+    });
+    return ret;
+}
+
+LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
+                                           const Float &pdf_wi,
+                                           const SampledWavelengths &swl,
+                                           Float *light_pdf_point) const noexcept {
+    LightEval ret = LightEval{swl.dimension()};
+    Uint light_idx = extract_light_index(it);
+    dispatch_light(it.light_id(), [&](const Light *light) {
+        if (!light->match(LightType::Area)) {
+            return;
+        }
+        LightEvalContext p_light{it};
+        ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
+        if (light_pdf_point) {
+            Float prim_pmf = light->PMF(it.prim_id);
+            Float light_pmf = PMF(p_ref, light_idx);
+            *light_pdf_point = p_light.PDF_pos * prim_pmf * light_pmf;
+        }
     });
     return ret;
 }
@@ -242,6 +242,16 @@ LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
     Float pmf = PMF(p_ref, _env_light->index());
     ret.pdf *= pmf;
+    return ret;
+}
+
+LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, const Float3 &wi,
+                                            const Float &pdf_wi, const SampledWavelengths &swl,
+                                            Float *light_pdf_point) const noexcept {
+    LightEvalContext p_light{p_ref.pos + wi};
+    LightEval ret = env_light()->evaluate_point(p_ref, p_light, pdf_wi, swl);
+    Float light_pmf = PMF(p_ref, _env_light->index());
+
     return ret;
 }
 
