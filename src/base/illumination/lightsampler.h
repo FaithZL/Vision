@@ -45,6 +45,7 @@ public:
         return (!_env_light) ? 0 : (_lights.empty() ? 1 : _env_prob);
     }
     [[nodiscard]] const Environment *env_light() const noexcept { return _env_light.get(); }
+    [[nodiscard]] uint env_index() const noexcept { return env_light()->index(); }
     void tidy_up() noexcept;
     [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return _lights; }
     [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return _lights; }

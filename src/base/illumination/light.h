@@ -204,6 +204,9 @@ public:
 class Environment : public Light {
 public:
     using Light::Light;
+    [[nodiscard]] virtual Float2 convert_to_bary(const Float3 &world_dir) const noexcept {
+        return make_float2(0.f);
+    }
 };
 
 }// namespace vision

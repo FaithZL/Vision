@@ -26,7 +26,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
 
 Uint LightSampler::correct_index(Uint index) const noexcept {
     if (env_light() && _env_separate) {
-        return ocarina::select(index < _env_light->index(), index, index + 1u);
+        return ocarina::select(index < env_index(), index, index + 1u);
     }
     return index;
 }
@@ -113,7 +113,7 @@ Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const 
             return _PMF(lsc, index);
         }
         Float ret = 0;
-        $if(index == _env_light->index()) {
+        $if(index == env_index()) {
             ret = env_prob();
         }
         $else {
@@ -133,7 +133,7 @@ SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) 
         }
         SampledLight sampled_light;
         $if(u < env_prob()) {
-            sampled_light = SampledLight{_env_light->index(), env_prob()};
+            sampled_light = SampledLight{env_index(), env_prob()};
         }
         $else {
             u = remapping(u, env_prob(), 1);
@@ -240,7 +240,7 @@ LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3
                                          const SampledWavelengths &swl) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
-    Float pmf = PMF(p_ref, _env_light->index());
+    Float pmf = PMF(p_ref, env_index());
     ret.pdf *= pmf;
     return ret;
 }
@@ -249,9 +249,12 @@ LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, con
                                             const Float &pdf_wi, const SampledWavelengths &swl,
                                             Float *light_pdf_point) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
-    LightEval ret = env_light()->evaluate_point(p_ref, p_light, pdf_wi, swl);
-    Float light_pmf = PMF(p_ref, _env_light->index());
-
+    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
+    Float light_pmf = PMF(p_ref, env_index());
+    if (light_pdf_point) {
+        *light_pdf_point = ret.pdf * light_pmf;
+    }
+    ret.pdf = pdf_wi;
     return ret;
 }
 

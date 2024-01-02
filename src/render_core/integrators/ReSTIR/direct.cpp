@@ -68,9 +68,15 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             bs->eval.pdf = le.pdf;
             f = bs->eval.f * le.L;
         };
-    } $else {
+    }
+    $else {
         if (light_sampler->env_light()) {
-
+            LightSampleContext p_ref{it};
+            le = light_sampler->evaluate_miss_point(p_ref, bs->wi, bs->eval.pdf,
+                                                    swl, light_pdf_point);
+            lsp.light_index = light_sampler->env_index();
+            lsp.bary = light_sampler->env_light()->convert_to_bary(bs->wi);
+            f = bs->eval.f * le.L;
         }
     };
 
@@ -135,7 +141,8 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         sample->set_pos(ls.p_light);
         Bool is_delta_light = ls.eval.pdf < 0.f;
         Float light_pdf = ocarina::select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
-        Float mis_weight = ocarina::select(is_delta_light, 1.f / M_light, light_pdf / (M_light * light_pdf + M_bsdf * bsdf_light_point));
+        Float mis_weight = ocarina::select(is_delta_light, 1.f / M_light,
+                                           light_pdf / (M_light * light_pdf + M_bsdf * bsdf_light_point));
         Float weight = Reservoir::safe_weight(mis_weight,
                                               sample.p_hat, 1.f / light_pdf);
         ret->update(sampler->next_1d(), sample, weight);

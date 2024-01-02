@@ -51,6 +51,12 @@ public:
         return _color.eval_illumination_spectrum(uv, swl).sample * scale();
     }
 
+    [[nodiscard]] Float2 convert_to_bary(const Float3 &world_dir) const noexcept override {
+//        Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
+        Float3 local_dir = normalize(transform_vector(*_w2o, world_dir));
+        return UV(local_dir);
+    }
+
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
         OC_ERROR("Spherical Le can not be called");
