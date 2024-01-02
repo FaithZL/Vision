@@ -423,8 +423,10 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
-        $if(!hit->is_miss()) {
+        $if(hit->is_hit()) {
             L = shading(st_rsv, hit, swl, frame_index);
+        } $else {
+
         };
         film->add_sample(pixel, L, frame_index);
         cur_reservoir().write(dispatch_id(), st_rsv);
