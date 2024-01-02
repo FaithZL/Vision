@@ -863,17 +863,17 @@
 				//						"scale" : 3
 				//					}
 				//				},
-				//								{
-				//									"type" : "point",
-				//									"param" : {
-				//										"color" : {
-				//											"channels" : "xyz",
-				//											"node" : [1, 1, 1]
-				//										},
-				//										"position" : [-0.5, 1.8, 0],
-				//										"scale" : 0.2
-				//									}
-				//								},
+												{
+													"type" : "point",
+													"param" : {
+														"color" : {
+															"channels" : "xyz",
+															"node" : [1, 1, 1]
+														},
+														"position" : [-0.5, 1.8, 0],
+														"scale" : 0.2
+													}
+												},
 								{
 									"type": "area",
 									"param": {
@@ -1050,8 +1050,8 @@
 					"history_limit": 10
 				},
 				//								"mis": true,
-				"M_light": 10,
-				"M_bsdf": 1,
+				"M_light": 1,
+				"M_bsdf": 10,
 				"correct_mode" : 0
 			},
 			"min_depth" : 0,
@@ -1121,6 +1121,6 @@
 	"output" : {
 		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "pt-2light.exr"
+		"fn" : "rest-2light.exr"
 	}
 }
