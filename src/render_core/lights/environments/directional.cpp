@@ -58,6 +58,12 @@ public:
         return ret;
     }
 
+    [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
+                                                              vision::LightSurfacePoint lsp) const noexcept override {
+        Float3 p_light = p_ref.pos + w_light() * *_world_radius;
+        return LightEvalContext(p_light, *_direction);
+    }
+
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {

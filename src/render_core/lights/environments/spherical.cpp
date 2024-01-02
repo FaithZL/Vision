@@ -104,6 +104,20 @@ public:
         return evaluate(p_ref, lsp.bary, pdf_map, swl);
     }
 
+    [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
+                                                              LightSurfacePoint lsp) const noexcept override {
+        Float pdf_map = _warper->PDF(lsp.bary);
+        Float2 uv = lsp.bary;
+        Float theta = uv[1] * Pi;
+        Float phi = uv[0] * _2Pi;
+        Float sin_theta = sin(theta);
+        Float cos_theta = cos(theta);
+        Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
+        Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
+        Float3 pos = p_ref.pos + world_dir * scene().world_diameter();
+        return LightEvalContext{pos};
+    }
+
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         Float pdf_map;

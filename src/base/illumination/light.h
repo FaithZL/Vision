@@ -133,7 +133,8 @@ public:
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                                      const SampledWavelengths &swl) const noexcept = 0;
 
-    //    [[nodiscard]] virtual Float
+    [[nodiscard]] virtual LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
+                                                                      LightSurfacePoint lsp) const noexcept = 0;
 
     [[nodiscard]] virtual LightSurfacePoint sample_only(Float2 u) const noexcept {
         LightSurfacePoint ret;
@@ -188,6 +189,10 @@ public:
         ls.eval = _evaluate_point(p_ref, lec, swl);
         ls.p_light = position();
         return ls;
+    }
+    [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
+                                                              LightSurfacePoint lsp) const noexcept override {
+        return LightEvalContext{position()};
     }
 };
 
