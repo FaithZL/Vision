@@ -8,6 +8,7 @@
 #include "base/serial_object.h"
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
+#include "core/thread_pool.h"
 
 namespace vision {
 
@@ -43,11 +44,13 @@ private:
      * generate initial candidates
      * check visibility
      */
-    Shader<void(uint)> _shader0;
+    Kernel<void(uint)> _kernel0;
+    std::shared_future<Shader<void(uint)>> _shader0;
     /**
      * spatial temporal reuse and shading
      */
-    Shader<void(uint)> _shader1;
+    Kernel<void(uint)> _kernel1;
+    std::shared_future<Shader<void(uint)>> _shader1;
 
 public:
     ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,

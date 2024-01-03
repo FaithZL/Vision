@@ -289,7 +289,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = rp->spectrum();
 
-    Kernel kernel = [&](Uint frame_index) {
+    _kernel0 = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
@@ -322,8 +322,10 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         passthrough_reservoir().write(dispatch_id(), rsv);
         cur_surface().write(dispatch_id(), cur_surf);
     };
-    _shader0 = device().compile(kernel, "generate initial candidates and "
-                                        "check visibility");
+    _shader0 = async([&] {
+        return device().compile(_kernel0, "generate initial candidates and "
+                                          "check visibility");
+    });
 }
 
 DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
@@ -411,7 +413,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    Kernel kernel = [&](Uint frame_index) {
+    _kernel1 = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
@@ -440,7 +442,9 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         film->add_sample(pixel, L, frame_index);
         cur_reservoir().write(dispatch_id(), st_rsv);
     };
-    _shader1 = device().compile(kernel, "spatial temporal reuse and shading");
+    _shader1 = async([&] {
+        return device().compile(_kernel1, "spatial temporal reuse and shading");
+    });
 }
 
 void ReSTIRDirectIllumination::prepare() noexcept {
@@ -464,8 +468,8 @@ void ReSTIRDirectIllumination::prepare() noexcept {
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    ret << _shader0(frame_index).dispatch(rp->resolution());
-    ret << _shader1(frame_index).dispatch(rp->resolution());
+    ret << _shader0.get()(frame_index).dispatch(rp->resolution());
+    ret << _shader1.get()(frame_index).dispatch(rp->resolution());
     return ret;
 }
 
