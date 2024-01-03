@@ -3835,7 +3835,8 @@
                     "history_limit": 10
                 },
                 //				"mis": true,
-                "M": 10
+                "M_light": 10,
+                "M_bsdf": 1
             },
             "min_depth" : 5,
             "max_depth" : 16,
@@ -3932,6 +3933,6 @@
     },
     "output": {
         "spp": 0,
-        "fn": "classroom-hero-512spp.png"
+        "fn": "rt.exr"
     }
 }
