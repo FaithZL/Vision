@@ -428,12 +428,14 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         $if(hit->is_hit()) {
             L = shading(st_rsv, hit, swl, frame_index);
         }
-        $else{
-            LightSampleContext p_ref;
-            p_ref.pos = rs.origin();
-            p_ref.ng = rs.direction();
-            LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
-            L = spectrum.linear_srgb(eval.L, swl);
+        $else {
+            if (light_sampler->env_light()) {
+                LightSampleContext p_ref;
+                p_ref.pos = rs.origin();
+                p_ref.ng = rs.direction();
+                LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
+                L = spectrum.linear_srgb(eval.L, swl);
+            }
         };
         film->add_sample(pixel, L, frame_index);
         cur_reservoir().write(dispatch_id(), st_rsv);
