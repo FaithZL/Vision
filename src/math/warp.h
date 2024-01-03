@@ -187,7 +187,7 @@ template<EPort p = EPort::D>
                                             const oc_float<p> &f_PDF,
                                             const oc_int<p> &ng,
                                             const oc_float<p> &g_PDF) {
-    return balance_heuristic<p>(ng, f_PDF, ng, g_PDF);
+    return balance_heuristic<p>(nf, f_PDF, ng, g_PDF);
 }
 VS_MAKE_CALLABLE(MIS_weight_n)
 
