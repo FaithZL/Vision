@@ -24,7 +24,7 @@ protected:
     Device *_device{};
     Scene _scene{};
     Geometry _geometry{this};
-    ResourceArray _resource_array{};
+    BindlessArray _resource_array{};
     mutable Stream _stream;
     bool _show_fps{true};
     RegistrableManaged<float4> _final_picture;
@@ -89,8 +89,8 @@ public:
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
-    [[nodiscard]] ResourceArray &resource_array() noexcept { return _resource_array; }
-    [[nodiscard]] const ResourceArray &resource_array() const noexcept { return _resource_array; }
+    [[nodiscard]] BindlessArray &resource_array() noexcept { return _resource_array; }
+    [[nodiscard]] const BindlessArray &resource_array() const noexcept { return _resource_array; }
     void upload_resource_array() noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
@@ -110,19 +110,19 @@ public:
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] ResourceArrayTexture tex(Index &&index) const noexcept {
+    [[nodiscard]] BindlessArrayTexture tex(Index &&index) const noexcept {
         return _resource_array.tex(OC_FORWARD(index));
     }
 
     template<typename T, typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] ResourceArrayBuffer<T> buffer(Index &&index) const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<T> buffer(Index &&index) const noexcept {
         return _resource_array.buffer<T>(OC_FORWARD(index));
     }
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] ResourceArrayByteBuffer byte_buffer(Index &&index) const noexcept {
+    [[nodiscard]] BindlessArrayByteBuffer byte_buffer(Index &&index) const noexcept {
         return _resource_array.byte_buffer(OC_FORWARD(index));
     }
 };

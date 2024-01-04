@@ -36,7 +36,7 @@ public:
     }
     [[nodiscard]] Device &device() noexcept { return *_device; }
     void set_device(Device *val) noexcept { _device = val; }
-    [[nodiscard]] ResourceArray &resource_array();
+    [[nodiscard]] BindlessArray &resource_array();
     void set_scene_path(const fs::path &sp) noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;
     [[nodiscard]] fs::path scene_cache_path() const noexcept;

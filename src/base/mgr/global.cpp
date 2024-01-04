@@ -26,7 +26,7 @@ void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
 
 Pipeline *Global::pipeline() { OC_ASSERT(_pipeline); return _pipeline; }
 
-ResourceArray &Global::resource_array() {
+BindlessArray &Global::resource_array() {
     return pipeline()->resource_array();
 }
 
