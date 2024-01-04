@@ -46,15 +46,17 @@ public:
     float dot_threshold{};
     float depth_threshold{};
     bool open{};
+    bool mis{};
 
 public:
     TemporalResamplingParam() = default;
-    TemporalResamplingParam(const ParameterSet &ps)
+    explicit TemporalResamplingParam(const ParameterSet &ps)
         : limit(ps["history_limit"].as_uint(5)),
           sampling_radius(ps["radius"].as_float(4)),
           dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
           depth_threshold(ps["depth"].as_float(0.5)),
-          open{ps["open"].as_bool(true)} {}
+          open{ps["open"].as_bool(true)},
+          mis{ps["mis"].as_bool(true)} {}
 };
 
 }// namespace vision
