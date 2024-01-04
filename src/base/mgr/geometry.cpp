@@ -113,9 +113,9 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     Var p0 = o2w.apply_point(v0->position());
     Var p1 = o2w.apply_point(v1->position());
     Var p2 = o2w.apply_point(v2->position());
-    Float3 pos = hit->lerp(p0, p1, p2);
+    Float3 pos = hit->triangle_lerp(p0, p1, p2);
     it.pos = pos;
-    it.lightmap_uv = hit->lerp(v0->lightmap_uv(), v1->lightmap_uv(), v2->lightmap_uv());
+    it.lightmap_uv = hit->triangle_lerp(v0->lightmap_uv(), v1->lightmap_uv(), v2->lightmap_uv());
 
     Frame<Float3> frame;
 
@@ -147,7 +147,7 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     if (is_complete) {
         comment("compute shading uvn");
         Float3 dn_du, dn_dv;
-        Float3 normal = hit->lerp(v0->normal(), v1->normal(), v2->normal());
+        Float3 normal = hit->triangle_lerp(v0->normal(), v1->normal(), v2->normal());
         it.shading.set_frame(frame);
 
         $if(!is_zero(normal)) {
@@ -177,7 +177,7 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
         it.shading.dn_du = dn_du;
         it.shading.dn_dv = dn_dv;
     }
-    Float2 uv = hit->lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
+    Float2 uv = hit->triangle_lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
     it.uv = uv;
     it.ng = frame.z;
     return it;
