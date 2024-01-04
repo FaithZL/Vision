@@ -234,6 +234,16 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     Float3 wo = normalize(c_pos - it.pos);
     Float3 prev_wo = normalize(prev_c_pos - it.pos);
 
+    it.wo = prev_wo;
+    Float pdf_cur_x_at_prev_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
+    Float pdf_prev_x_at_prev_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
+    it.wo = wo;
+    Float pdf_cur_x_at_cur_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
+    Float pdf_prev_x_at_cur_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
+
+    Float mis_cur = MIS_weight_n(cur_rsv.M, pdf_cur_x_at_cur_domain, other_rsv.M, pdf_cur_x_at_prev_domain);
+    Float mis_prev = MIS_weight_n(other_rsv.M, pdf_prev_x_at_prev_domain, cur_rsv.M, pdf_prev_x_at_cur_domain);
+
     DIReservoir ret;
     ret->init();
     Float cur_weight = Reservoir::cal_weight(MIS_weight(cur_rsv.M, other_rsv.M),
