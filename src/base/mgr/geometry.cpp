@@ -12,10 +12,10 @@
 namespace vision {
 
 Geometry::Geometry(Pipeline *rp)
-    : rp(rp), _vertices(rp->resource_array()),
-      _triangles(rp->resource_array()),
-      _instances(rp->resource_array()),
-      _mesh_handles(rp->resource_array()),
+    : rp(rp), _vertices(rp->bindless_array()),
+      _triangles(rp->bindless_array()),
+      _instances(rp->bindless_array()),
+      _mesh_handles(rp->bindless_array()),
       accel(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {

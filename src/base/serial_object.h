@@ -20,7 +20,7 @@ using namespace ocarina;
  */
 class SerialObject : public Serializable<float> {
 protected:
-    RegistrableManaged<float> _datas{Global::instance().resource_array()};
+    RegistrableManaged<float> _datas{Global::instance().bindless_array()};
 
 protected:
     SerialObject() = default;

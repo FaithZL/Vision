@@ -41,7 +41,7 @@ void VisionRendererImpl::compile() {
         return;
     }
     _pipeline->scene().prepare();
-    _pipeline->upload_resource_array();
+    _pipeline->upload_bindless_array();
     auto &geometry = _pipeline->geometry();
     auto camera = _pipeline->scene().camera();
     auto film = camera->radiance_film();
@@ -196,7 +196,7 @@ void VisionRendererImpl::build_accel() {
     Accel &accel = geom.accel;
     auto impl = accel.impl();
     _pipeline->prepare_geometry();
-    _pipeline->upload_resource_array();
+    _pipeline->upload_bindless_array();
     _prepared = true;
     OC_INFO("build accel");
 }
@@ -214,7 +214,7 @@ void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
     auto film = camera->radiance_film();
     camera->set_resolution(make_uint2(width, height));
     _pipeline->scene().prepare();
-    _pipeline->upload_resource_array();
+    _pipeline->upload_bindless_array();
 }
 
 }// namespace vision::sdk

@@ -17,7 +17,7 @@ public:
         _scene.prepare();
         image_pool().prepare();
         prepare_geometry();
-        upload_resource_array();
+        upload_bindless_array();
         compile();
         preprocess();
     }

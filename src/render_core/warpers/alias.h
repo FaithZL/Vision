@@ -28,12 +28,12 @@ private:
     friend class AliasTable2D;
 
 public:
-    explicit AliasTable(BindlessArray &resource_array)
-        : _table(resource_array), _func(resource_array) {}
+    explicit AliasTable(BindlessArray &bindless_array)
+        : _table(bindless_array), _func(bindless_array) {}
     explicit AliasTable(const WarperDesc &desc)
         : Warper(desc),
-          _table(pipeline()->resource_array()),
-          _func(pipeline()->resource_array()) {}
+          _table(pipeline()->bindless_array()),
+          _func(pipeline()->bindless_array()) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     OC_SERIALIZABLE_FUNC(Warper, _table, _func)
     void prepare() noexcept override;

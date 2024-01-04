@@ -42,7 +42,7 @@ template<typename T, size_t N>
 }// namespace detail
 
 SPD::SPD(Pipeline *rp)
-    : _rp(rp), _func(rp->resource_array()) {}
+    : _rp(rp), _func(rp->bindless_array()) {}
 
 SPD::SPD(vector<float> func, Pipeline *rp)
     : SPD(rp) {

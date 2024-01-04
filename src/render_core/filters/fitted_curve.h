@@ -19,7 +19,7 @@ public:
 
 private:
     SP<Warper2D> _warper{};
-    RegistrableManaged<float> _lut{pipeline()->resource_array()};
+    RegistrableManaged<float> _lut{pipeline()->bindless_array()};
 
 public:
     FilterSampler()

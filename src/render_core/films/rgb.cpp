@@ -18,8 +18,8 @@ private:
 public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
-          _radiance(pipeline()->resource_array()),
-          _frame(pipeline()->resource_array()),
+          _radiance(pipeline()->bindless_array()),
+          _frame(pipeline()->bindless_array()),
           _gamma(desc["gamma"].as_bool(true)) {}
 
     OC_SERIALIZABLE_FUNC(Film, _radiance, _frame)

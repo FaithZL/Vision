@@ -16,9 +16,9 @@ private:
 public:
     explicit AliasTable2D(const WarperDesc &desc)
         : Warper2D(desc),
-          _marginal(pipeline()->resource_array()),
-          _conditional_v_tables(pipeline()->resource_array()),
-          _conditional_v_weights(pipeline()->resource_array()) {
+          _marginal(pipeline()->bindless_array()),
+          _conditional_v_tables(pipeline()->bindless_array()),
+          _conditional_v_weights(pipeline()->bindless_array()) {
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     OC_SERIALIZABLE_FUNC(Warper2D, _marginal, _conditional_v_tables, _conditional_v_weights)
@@ -31,7 +31,7 @@ public:
             vector<float> func_v;
             func_v.insert(func_v.end(), iter, iter + res.x);
             iter += res.x;
-            AliasTable alias_table(pipeline()->resource_array());
+            AliasTable alias_table(pipeline()->bindless_array());
             alias_table.build(ocarina::move(func_v));
             conditional_v.push_back(ocarina::move(alias_table));
         }

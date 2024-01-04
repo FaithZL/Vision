@@ -26,8 +26,8 @@ void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
 
 Pipeline *Global::pipeline() { OC_ASSERT(_pipeline); return _pipeline; }
 
-BindlessArray &Global::resource_array() {
-    return pipeline()->resource_array();
+BindlessArray &Global::bindless_array() {
+    return pipeline()->bindless_array();
 }
 
 void Global::set_scene_path(const fs::path &sp) noexcept {

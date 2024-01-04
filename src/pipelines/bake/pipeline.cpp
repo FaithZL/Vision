@@ -31,11 +31,11 @@ void BakePipeline::prepare() noexcept {
     preprocess();
     prepare_geometry();
     compile();
-    upload_resource_array();
-    _lightmap_base_index = pipeline()->resource_array().texture_num();
+    upload_bindless_array();
+    _lightmap_base_index = pipeline()->bindless_array().texture_num();
     bake_all();
     update_geometry();
-    upload_resource_array();
+    upload_bindless_array();
 }
 
 void BakePipeline::preprocess() noexcept {
@@ -88,7 +88,7 @@ void BakePipeline::compile_displayer() noexcept {
         Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
 
         $if(it.has_lightmap()) {
-            Float4 t = resource_array().tex(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
+            Float4 t = bindless_array().tex(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
             L = t.xyz() / t.w;
             $if(has_invalid(L)) {
                 L = make_float3(0.f);

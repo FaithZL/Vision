@@ -14,7 +14,7 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
       _device(&Global::instance().device()),
       _geometry(this),
       _stream(device().create_stream()),
-      _resource_array(device().create_resource_array()) {
+      _bindless_array(device().create_bindless_array()) {
     Env::printer().init(device());
     Env::debugger().init(device());
     Env::set_code_obfuscation(desc["obfuscation"].as_bool(false));
@@ -49,17 +49,17 @@ void Pipeline::clear_geometry() noexcept {
     MeshRegistry::instance().clear();
 }
 
-void Pipeline::upload_resource_array() noexcept {
-    _stream << _resource_array.update_slotSOA() << synchronize() << commit();
-    _stream << _resource_array.upload_handles() << synchronize() << commit();
+void Pipeline::upload_bindless_array() noexcept {
+    _stream << _bindless_array.update_slotSOA() << synchronize() << commit();
+    _stream << _bindless_array.upload_handles() << synchronize() << commit();
 }
 
 void Pipeline::deregister_buffer(handle_ty index) noexcept {
-    _resource_array->remove_buffer(index);
+    _bindless_array->remove_buffer(index);
 }
 
 void Pipeline::deregister_texture(handle_ty index) noexcept {
-    _resource_array->remove_texture(index);
+    _bindless_array->remove_texture(index);
 }
 
 void Pipeline::before_render() noexcept {

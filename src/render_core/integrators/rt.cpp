@@ -29,7 +29,7 @@ public:
         _direct.prepare();
         Pipeline *rp = pipeline();
         auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
-            buffer.set_resource_array(rp->resource_array());
+            buffer.set_bindless_array(rp->bindless_array());
             buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
             buffer.register_self();
         };

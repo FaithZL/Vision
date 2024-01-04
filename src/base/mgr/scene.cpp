@@ -191,7 +191,7 @@ void Scene::prepare_materials() {
         material->prepare();
     });
     auto rp = pipeline();
-    materials().prepare(rp->resource_array(), rp->device());
+    materials().prepare(rp->bindless_array(), rp->device());
 }
 
 void Scene::upload_data() noexcept {

@@ -24,7 +24,7 @@ protected:
     Device *_device{};
     Scene _scene{};
     Geometry _geometry{this};
-    BindlessArray _resource_array{};
+    BindlessArray _bindless_array{};
     mutable Stream _stream;
     bool _show_fps{true};
     RegistrableManaged<float4> _final_picture;
@@ -73,25 +73,25 @@ public:
     template<typename T>
     requires is_buffer_or_view_v<T>
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
-        return _resource_array.emplace(OC_FORWARD(buffer));
+        return _bindless_array.emplace(OC_FORWARD(buffer));
     }
     handle_ty register_texture(const Texture &texture) noexcept {
-        return _resource_array.emplace(texture);
+        return _bindless_array.emplace(texture);
     }
     template<typename T>
     requires is_buffer_or_view_v<T>
     void set_buffer(handle_ty index, T &&buffer) noexcept {
-        _resource_array.set_buffer(index, OC_FORWARD(buffer));
+        _bindless_array.set_buffer(index, OC_FORWARD(buffer));
     }
     void set_texture(handle_ty index, const Texture &texture) noexcept {
-        _resource_array.set_texture(index, texture);
+        _bindless_array.set_texture(index, texture);
     }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
-    [[nodiscard]] BindlessArray &resource_array() noexcept { return _resource_array; }
-    [[nodiscard]] const BindlessArray &resource_array() const noexcept { return _resource_array; }
-    void upload_resource_array() noexcept;
+    [[nodiscard]] BindlessArray &bindless_array() noexcept { return _bindless_array; }
+    [[nodiscard]] const BindlessArray &bindless_array() const noexcept { return _bindless_array; }
+    void upload_bindless_array() noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {
@@ -111,19 +111,19 @@ public:
     template<typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayTexture tex(Index &&index) const noexcept {
-        return _resource_array.tex(OC_FORWARD(index));
+        return _bindless_array.tex(OC_FORWARD(index));
     }
 
     template<typename T, typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayBuffer<T> buffer(Index &&index) const noexcept {
-        return _resource_array.buffer<T>(OC_FORWARD(index));
+        return _bindless_array.buffer<T>(OC_FORWARD(index));
     }
 
     template<typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayByteBuffer byte_buffer(Index &&index) const noexcept {
-        return _resource_array.byte_buffer(OC_FORWARD(index));
+        return _bindless_array.byte_buffer(OC_FORWARD(index));
     }
 };
 

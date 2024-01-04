@@ -45,7 +45,7 @@ void LightSampler::prepare() noexcept {
         light->prepare();
     });
     auto rp = pipeline();
-    _lights.prepare(rp->resource_array(), rp->device());
+    _lights.prepare(rp->bindless_array(), rp->device());
 }
 
 Uint LightSampler::extract_light_index(const vision::Interaction &it) const noexcept {
