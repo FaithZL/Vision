@@ -35,7 +35,6 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
     std::for_each(instances.begin(), instances.end(), [&](const ShapeInstance &instance) {
         _instances.push_back(instance.handle());
     });
-
 }
 
 void Geometry::build_accel() {
@@ -110,76 +109,79 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     it.set_material(inst.mat_id);
     it.set_medium(inst.inside_medium, inst.outside_medium);
     comment("compute pos");
-    Var p0 = o2w.apply_point(v0->position());
-    Var p1 = o2w.apply_point(v1->position());
-    Var p2 = o2w.apply_point(v2->position());
-    Float3 pos = hit->triangle_lerp(p0, p1, p2);
-    it.pos = pos;
-    it.lightmap_uv = hit->triangle_lerp(v0->lightmap_uv(), v1->lightmap_uv(), v2->lightmap_uv());
+    outline([&] {
+        Var p0 = o2w.apply_point(v0->position());
+        Var p1 = o2w.apply_point(v1->position());
+        Var p2 = o2w.apply_point(v2->position());
+        Float3 pos = hit->triangle_lerp(p0, p1, p2);
+        it.pos = pos;
+        it.lightmap_uv = hit->triangle_lerp(v0->lightmap_uv(), v1->lightmap_uv(), v2->lightmap_uv());
 
-    Frame<Float3> frame;
+        Frame<Float3> frame;
 
-    comment("compute geometry uvn");
-    Float3 dp02 = p0 - p2;
-    Float3 dp12 = p1 - p2;
-    Float3 ng_un = cross(dp02, dp12);
-    it.prim_area = 0.5f * length(ng_un);
-    Float2 duv02 = v0->tex_coord() - v2->tex_coord();
-    Float2 duv12 = v1->tex_coord() - v2->tex_coord();
-    Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
-    Bool degenerate_uv = abs(det) < float(1e-8);
-    if (is_complete) {
-        Float3 dp_du, dp_dv;
-        $if(!degenerate_uv) {
-            Float inv_det = 1 / det;
-            dp_du = (duv12[1] * dp02 - duv02[1] * dp12) * inv_det;
-            dp_dv = (-duv12[0] * dp02 + duv02[0] * dp12) * inv_det;
-        }
-        $else {
-            dp_du = normalize(p1 - p0);
-            dp_dv = normalize(p2 - p0);
-        };
-        frame.set(dp_du, dp_dv, normalize(ng_un));
-    } else {
-        frame.set(dp02, dp12, normalize(ng_un));
-    }
-
-    if (is_complete) {
-        comment("compute shading uvn");
-        Float3 dn_du, dn_dv;
-        Float3 normal = hit->triangle_lerp(v0->normal(), v1->normal(), v2->normal());
-        it.shading.set_frame(frame);
-
-        $if(!is_zero(normal)) {
-            Float3 ns = normalize(o2w.apply_normal(normal));
-            it.shading.update(ns);
-        };
-
-        Float3 dn1 = v0->normal() - v2->normal();
-        Float3 dn2 = v1->normal() - v2->normal();
-        Float3 dn = cross(v2->normal() - v0->normal(),
-                          v1->normal() - v0->normal());
-
-        $if(degenerate_uv) {
-            $if(length_squared(dn)) {
-                dn_du = make_float3(0.f);
-                dn_dv = make_float3(0.f);
+        comment("compute geometry uvn");
+        Float3 dp02 = p0 - p2;
+        Float3 dp12 = p1 - p2;
+        Float3 ng_un = cross(dp02, dp12);
+        it.prim_area = 0.5f * length(ng_un);
+        Float2 duv02 = v0->tex_coord() - v2->tex_coord();
+        Float2 duv12 = v1->tex_coord() - v2->tex_coord();
+        Float det = duv02[0] * duv12[1] - duv02[1] * duv12[0];
+        Bool degenerate_uv = abs(det) < float(1e-8);
+        if (is_complete) {
+            Float3 dp_du, dp_dv;
+            $if(!degenerate_uv) {
+                Float inv_det = 1 / det;
+                dp_du = (duv12[1] * dp02 - duv02[1] * dp12) * inv_det;
+                dp_dv = (-duv12[0] * dp02 + duv02[0] * dp12) * inv_det;
             }
             $else {
-                coordinate_system(dn, dn_du, dn_dv);
+                dp_du = normalize(p1 - p0);
+                dp_dv = normalize(p2 - p0);
             };
+            frame.set(dp_du, dp_dv, normalize(ng_un));
+        } else {
+            frame.set(dp02, dp12, normalize(ng_un));
         }
-        $else {
-            Float inv_det = 1 / det;
-            dn_du = (duv12[1] * dn1 - duv02[1] * dn2) * inv_det;
-            dn_dv = (-duv12[0] * dn1 + duv02[0] * dn2) * inv_det;
-        };
-        it.shading.dn_du = dn_du;
-        it.shading.dn_dv = dn_dv;
-    }
-    Float2 uv = hit->triangle_lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
-    it.uv = uv;
-    it.ng = frame.z;
+
+        if (is_complete) {
+            comment("compute shading uvn");
+            Float3 dn_du, dn_dv;
+            Float3 normal = hit->triangle_lerp(v0->normal(), v1->normal(), v2->normal());
+            it.shading.set_frame(frame);
+
+            $if(!is_zero(normal)) {
+                Float3 ns = normalize(o2w.apply_normal(normal));
+                it.shading.update(ns);
+            };
+
+            Float3 dn1 = v0->normal() - v2->normal();
+            Float3 dn2 = v1->normal() - v2->normal();
+            Float3 dn = cross(v2->normal() - v0->normal(),
+                              v1->normal() - v0->normal());
+
+            $if(degenerate_uv) {
+                $if(length_squared(dn)) {
+                    dn_du = make_float3(0.f);
+                    dn_dv = make_float3(0.f);
+                }
+                $else {
+                    coordinate_system(dn, dn_du, dn_dv);
+                };
+            }
+            $else {
+                Float inv_det = 1 / det;
+                dn_du = (duv12[1] * dn1 - duv02[1] * dn2) * inv_det;
+                dn_dv = (-duv12[0] * dn1 + duv02[0] * dn2) * inv_det;
+            };
+            it.shading.dn_du = dn_du;
+            it.shading.dn_dv = dn_dv;
+        }
+        Float2 uv = hit->triangle_lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
+        it.uv = uv;
+        it.ng = frame.z;
+    },
+            "Geometry::compute_surface_interaction");
     return it;
 }
 
