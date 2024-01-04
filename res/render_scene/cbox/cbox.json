@@ -548,7 +548,7 @@
 			}
 		},
 		{
-			"type" : "substrate",
+			"type" : "mirror",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {
@@ -569,7 +569,7 @@
 				],
 				"remapping_roughness": true,
 				"roughness":
-				0.09
+				0.06
 				//				"color" : {
 				//					"channels" : "xyz",
 				//					"node" : {
@@ -1035,7 +1035,7 @@
 //			"separate": true,
 			"direct": {
 				"spatial": {
-//					"open": false,
+					"open": false,
 					"theta": 5,
 					"depth": 0.3,
 					"radius": 30,
