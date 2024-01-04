@@ -117,9 +117,11 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         W = ocarina::select(occluded, 0.f, W);
         weight_sum = ocarina::select(occluded, 0.f, weight_sum);
     }
-    void update_W(oc_float<p> p_hat) noexcept {
-        oc_float<p> denominator = p_hat;
-        W = ocarina::select(denominator == 0.f, 0.f, weight_sum / denominator);
+    [[nodiscard]] oc_float<p> cal_W(const oc_float<p> &p_hat) const noexcept {
+        return ocarina::select(p_hat == 0.f, 0.f, weight_sum / p_hat);
+    }
+    void update_W(const oc_float<p> &p_hat) noexcept {
+        W = cal_W(p_hat)
     }
 };
 
