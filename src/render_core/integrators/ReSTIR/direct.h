@@ -44,12 +44,10 @@ private:
      * generate initial candidates
      * check visibility
      */
-    Kernel<void(uint)> _kernel0;
     std::shared_future<Shader<void(uint)>> _shader0;
     /**
      * spatial temporal reuse and shading
      */
-    Kernel<void(uint)> _kernel1;
     std::shared_future<Shader<void(uint)>> _shader1;
 
 public:

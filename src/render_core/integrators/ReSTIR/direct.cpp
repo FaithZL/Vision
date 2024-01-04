@@ -289,7 +289,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = rp->spectrum();
 
-    _kernel0 = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
@@ -322,8 +322,8 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         passthrough_reservoir().write(dispatch_id(), rsv);
         cur_surface().write(dispatch_id(), cur_surf);
     };
-    _shader0 = async([&] {
-        return device().compile(_kernel0, "generate initial candidates and "
+    _shader0 = async([&, kernel = ocarina::move(kernel)] {
+        return device().compile(kernel, "generate initial candidates and "
                                           "check visibility");
     });
 }
@@ -413,7 +413,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    _kernel1 = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
@@ -442,8 +442,8 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         film->add_sample(pixel, L, frame_index);
         cur_reservoir().write(dispatch_id(), st_rsv);
     };
-    _shader1 = async([&] {
-        return device().compile(_kernel1, "spatial temporal reuse and shading");
+    _shader1 = async([&, kernel = ocarina::move(kernel)] {
+        return device().compile(kernel, "spatial temporal reuse and shading");
     });
 }
 
