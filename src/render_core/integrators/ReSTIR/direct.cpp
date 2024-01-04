@@ -246,14 +246,13 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
 
     DIReservoir ret;
     ret->init();
-    Float cur_weight = Reservoir::cal_weight(MIS_weight(cur_rsv.M, other_rsv.M),
+    Float cur_weight = Reservoir::safe_weight(mis_cur,
                                              cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
 
     auto other_sample = other_rsv.sample;
-    it.wo = wo;
-    other_sample.p_hat = compute_p_hat(it, nullptr, swl, other_rsv.sample);
-    Float other_weight = Reservoir::cal_weight(MIS_weight(other_rsv.M, cur_rsv.M),
+    other_sample.p_hat = pdf_prev_x_at_prev_domain;
+    Float other_weight = Reservoir::safe_weight(mis_prev,
                                                other_sample.p_hat, other_rsv.W);
     ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
     ret->update_W(ret.sample.p_hat);
