@@ -227,11 +227,12 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
                                                        SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
+    Float3 prev_c_pos = camera->prev_device_position();
     const Geometry &geom = pipeline()->geometry();
     Sampler *sampler = scene().sampler();
-
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
-    it.wo = normalize(c_pos - it.pos);
+    Float3 wo = normalize(c_pos - it.pos);
+    Float3 prev_wo = normalize(prev_c_pos - it.pos);
 
     DIReservoir ret;
     ret->init();
@@ -240,6 +241,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
 
     auto other_sample = other_rsv.sample;
+    it.wo = wo;
     other_sample.p_hat = compute_p_hat(it, nullptr, swl, other_rsv.sample);
     Float other_weight = Reservoir::cal_weight(MIS_weight(other_rsv.M, cur_rsv.M),
                                                other_sample.p_hat, other_rsv.W);
