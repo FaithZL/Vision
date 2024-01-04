@@ -121,7 +121,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, s
         return ocarina::select(p_hat == 0.f, 0.f, weight_sum / p_hat);
     }
     void update_W(const oc_float<p> &p_hat) noexcept {
-        W = cal_W(p_hat)
+        W = cal_W(p_hat);
     }
 };
 

@@ -255,7 +255,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     other_sample.p_hat = p_hat_prev_x_at_prev_domain;
     Float other_weight = Reservoir::safe_weight(mis_prev,
                                                other_sample.p_hat, other_rsv.W);
-    
+
     ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
     ret->update_W(ret.sample.p_hat);
     return ret;
