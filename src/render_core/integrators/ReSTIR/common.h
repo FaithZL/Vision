@@ -56,7 +56,7 @@ public:
           dot_threshold(cosf(radians(ps["theta"].as_float(5)))),
           depth_threshold(ps["depth"].as_float(0.5)),
           open{ps["open"].as_bool(true)},
-          mis{ps["mis"].as_bool(true)} {}
+          mis{ps["mis"].as_bool(false)} {}
 };
 
 }// namespace vision

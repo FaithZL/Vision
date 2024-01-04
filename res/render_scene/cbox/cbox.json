@@ -1043,7 +1043,7 @@
 				},
 				"temporal": {
 //					"open": false,
-					"mis": false,
+//					"mis": true,
 					"theta": 2,
 					"depth": 1,
 					"radius": 0,
