@@ -16,8 +16,6 @@ public:
     constexpr static float z_far = 1000.f;
     constexpr static float pitch_max = 80.f;
 
-    [[nodiscard]] Float3 device_position() const noexcept;
-
 protected:
     float3 _position;
     float _yaw{};
@@ -25,18 +23,17 @@ protected:
     float _velocity{5.f};
     float _sensitivity{1.f};
     float _fov_y{20.f};
+    float4x4 _raster_to_screen{};
+    float4x4 _camera_to_screen{};
     Serial<float> _tan_fov_y_over2{};
     Serial<float4x4> _c2w;
     Serial<float4x4> _prev_w2c;
-    float4x4 _raster_to_screen{};
-    float4x4 _camera_to_screen{};
     Serial<float4x4> _raster_to_camera{};
     Serial<float4x4> _prev_c2r{};
+    /// previous position in world space
+    Serial<float3> _prev_pos;
 
 protected:
-    [[nodiscard]] Float3 device_forward() const noexcept;
-    [[nodiscard]] Float3 device_up() const noexcept;
-    [[nodiscard]] Float3 device_right() const noexcept;
     void _update_raster() noexcept;
     void _update_resolution(uint2 res) noexcept;
     [[nodiscard]] virtual OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
@@ -44,7 +41,7 @@ protected:
 public:
     explicit Camera(const SensorDesc &desc);
     OC_SERIALIZABLE_FUNC(Sensor, _tan_fov_y_over2, _c2w, _prev_w2c,
-                         _raster_to_camera, _prev_c2r)
+                         _raster_to_camera, _prev_c2r, _prev_pos)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_mat(float4x4 m) noexcept;
@@ -59,7 +56,10 @@ public:
     OC_MAKE_MEMBER_GETTER(yaw, )
     OC_MAKE_MEMBER_GETTER(velocity, )
     OC_MAKE_MEMBER_GETTER(pitch, )
-
+    [[nodiscard]] Float3 device_position() const noexcept;
+    [[nodiscard]] Float3 device_forward() const noexcept;
+    [[nodiscard]] Float3 device_up() const noexcept;
+    [[nodiscard]] Float3 device_right() const noexcept;
     void move(float3 delta) noexcept { _position += delta; }
     virtual void update_focal_distance(float val) noexcept {}
     [[nodiscard]] virtual float focal_distance() const noexcept { return 0; }

@@ -73,6 +73,7 @@ void Camera::after_render() noexcept {
 void Camera::store_prev_data() noexcept {
     _prev_c2r = inverse(_raster_to_camera.hv());
     _prev_w2c = inverse(_c2w.hv());
+    _prev_pos = position();
 }
 
 Float3 Camera::prev_raster_coord(Float3 pos) {
