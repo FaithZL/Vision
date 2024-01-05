@@ -100,13 +100,22 @@ public:
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
 
     /// for dsl
-    [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
-    [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
-
-    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept;
-    [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
-                                                              const Uint &prim_id,
-                                                              const Float2 &bary) const noexcept;
+    template<typename... Args>
+    [[nodiscard]] OCHit trace_closest(Args &&...args) const noexcept {
+        return geometry().trace_closest(OC_FORWARD(args)...);
+    }
+    template<typename... Args>
+    [[nodiscard]] Bool trace_any(Args &&...args) const noexcept {
+        return geometry().trace_any(OC_FORWARD(args)...);
+    }
+    template<typename... Args>
+    [[nodiscard]] Interaction compute_surface_interaction(Args &&...args) const noexcept {
+        return geometry().compute_surface_interaction(OC_FORWARD(args)...);
+    }
+    template<typename... Args>
+    [[nodiscard]] LightEvalContext compute_light_eval_context(Args &&...args) const noexcept {
+        return geometry().compute_light_eval_context(OC_FORWARD(args)...);
+    }
 
     template<typename Index>
     requires is_integral_expr_v<Index>

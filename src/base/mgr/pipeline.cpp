@@ -96,19 +96,5 @@ float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
     return _final_picture.data();
 }
 
-OCHit Pipeline::trace_closest(const OCRay &ray) const noexcept {
-    return geometry().accel.trace_closest(ray);
-}
 
-Bool Pipeline::trace_any(const OCRay &ray) const noexcept {
-    return geometry().accel.trace_any(ray);
-}
-
-Interaction Pipeline::compute_surface_interaction(const OCHit &hit, OCRay &ray) const noexcept {
-    return geometry().compute_surface_interaction(hit, ray);
-}
-
-LightEvalContext Pipeline::compute_light_eval_context(const Uint &inst_id, const Uint &prim_id, const Float2 &bary) const noexcept {
-    return geometry().compute_light_eval_context(inst_id, prim_id, bary);
-}
 }// namespace vision
