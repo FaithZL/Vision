@@ -58,7 +58,7 @@ public:
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, const Float3 &view_pos) const noexcept {
         auto ret = compute_surface_interaction(hit, true);
-        ret.wo = normalize(view_pos - ret.pos);
+        ret.update_wo(view_pos);
         return ret;
     }
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, OCRay &ray, bool is_complete = true) const noexcept {

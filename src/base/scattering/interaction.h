@@ -126,6 +126,7 @@ public:
     Interaction(Float3 pos, Float3 wo);
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
+    void update_wo(const Float3 &view_pos) noexcept { wo = normalize(view_pos - pos); }
     void set_medium(const Uint &inside, const Uint &outside);
     void set_material(const Uint &mat) noexcept { _mat_id = mat; }
     void set_light(const Uint &light) noexcept { _light_id = light; }
