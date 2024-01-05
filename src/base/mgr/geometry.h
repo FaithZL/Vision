@@ -45,6 +45,11 @@ public:
     [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
     [[nodiscard]] Bool occluded(const Interaction &it, const Float3 &pos, RayState *rs = nullptr) const noexcept;
+    template<typename ...Args>
+    [[nodiscard]] auto visibility(Args &&...args) const noexcept {
+        Bool occ = occluded(OC_FORWARD(args)...);
+        return cast<int>(!occ);
+    }
     [[nodiscard]] SampledSpectrum Tr(Scene &scene, const SampledWavelengths &swl, const RayState &ray_state) const noexcept;
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
