@@ -109,6 +109,10 @@ public:
         return geometry().trace_any(OC_FORWARD(args)...);
     }
     template<typename... Args>
+    [[nodiscard]] auto visibility(Args &&...args) const noexcept {
+        return geometry().visibility(OC_FORWARD(args)...);
+    }
+    template<typename... Args>
     [[nodiscard]] Interaction compute_surface_interaction(Args &&...args) const noexcept {
         return geometry().compute_surface_interaction(OC_FORWARD(args)...);
     }

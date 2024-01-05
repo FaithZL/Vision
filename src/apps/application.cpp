@@ -162,7 +162,7 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
             left_key_press = bool(action);
             switch (action) {
                 case 1: Env::debugger().set_lower(make_uint2(pos)); break;
-                case 0: Env::debugger().set_upper(make_uint2(pos)); break;
+//                case 0: Env::debugger().set_upper(make_uint2(pos)); break;
                 default:break;
             }
             break;

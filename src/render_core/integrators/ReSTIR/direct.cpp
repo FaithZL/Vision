@@ -198,9 +198,8 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     Sampler *sampler = scene().sampler();
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
-    const Geometry &geom = pipeline()->geometry();
     OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
-    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
+    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, true);
     it.wo = normalize(c_pos - it.pos);
 
     DIReservoir ret;
@@ -217,6 +216,16 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
                                                       rsv.sample.p_hat, rsv.W);
         ret->update(sampler->next_1d(), rsv.sample, neighbor_weight, rsv.M);
     });
+
+    /// used for debias or reweight MIS
+    auto postprocess = [&] {
+
+    };
+
+    if (_debias) {
+        postprocess();
+    }
+
     ret->update_W(ret.sample.p_hat);
     return ret;
 }
@@ -237,8 +246,8 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     Float p_hat_cur_x_at_prev_domain;
     Float p_hat_prev_x_at_prev_domain;
 
-    Float p_hat_cur_x_at_cur_domain ;
-    Float p_hat_prev_x_at_cur_domain ;
+    Float p_hat_cur_x_at_cur_domain;
+    Float p_hat_prev_x_at_cur_domain;
 
     Float mis_cur;
     Float mis_prev;
@@ -266,13 +275,13 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     DIReservoir ret;
     ret->init();
     Float cur_weight = Reservoir::safe_weight(mis_cur,
-                                             cur_rsv.sample.p_hat, cur_rsv.W);
+                                              cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
 
     auto other_sample = other_rsv.sample;
     other_sample.p_hat = p_hat_prev_x_at_prev_domain;
     Float other_weight = Reservoir::safe_weight(mis_prev,
-                                               other_sample.p_hat, other_rsv.W);
+                                                other_sample.p_hat, other_rsv.W);
 
     ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
     ret->update_W(ret.sample.p_hat);
@@ -355,7 +364,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     };
     _shader0 = async([&, kernel = ocarina::move(kernel)] {
         return device().compile(kernel, "generate initial candidates and "
-                                          "check visibility");
+                                        "check visibility");
     });
 }
 
