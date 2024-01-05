@@ -193,12 +193,12 @@ void VisionRendererImpl::build_accel() {
     _pipeline->scene().tidy_up();
     _pipeline->scene().fill_instances();
     Geometry &geom = _pipeline->geometry();
-    Accel &accel = geom.accel;
+    Accel &accel = geom.accel();
     auto impl = accel.impl();
     _pipeline->prepare_geometry();
     _pipeline->upload_bindless_array();
     _prepared = true;
-    OC_INFO("build accel");
+    OC_INFO("build _accel");
 }
 
 void VisionRendererImpl::update_camera(vision::sdk::Camera c) {

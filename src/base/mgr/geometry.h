@@ -20,13 +20,15 @@ private:
     RegistrableManaged<Triangle> _triangles;
     RegistrableManaged<InstanceHandle> _instances;
     RegistrableManaged<Mesh::Handle> _mesh_handles;
+    ocarina::Accel _accel;
 
 public:
-    ocarina::Accel accel;
     Pipeline *rp{};
 
 public:
     explicit Geometry(Pipeline *rp = nullptr);
+
+    OC_MAKE_MEMBER_GETTER(accel, &)
 
     /**
      * update shape attribute

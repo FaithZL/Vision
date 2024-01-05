@@ -16,7 +16,7 @@ Geometry::Geometry(Pipeline *rp)
       _triangles(rp->bindless_array()),
       _instances(rp->bindless_array()),
       _mesh_handles(rp->bindless_array()),
-      accel(rp->device().create_accel()) {}
+      _accel(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {
     _vertices.host_buffer().clear();
@@ -57,11 +57,11 @@ void Geometry::build_accel() {
             mesh = rp->device().create_mesh(verts, tris);
         }
         stream << mesh.build_bvh();
-        accel.add_instance(ocarina::move(mesh), inst.o2w);
+        _accel.add_instance(ocarina::move(mesh), inst.o2w);
     }
 
-    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel.vertex_num(), accel.triangle_num());
-    stream << accel.build_bvh();
+    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", _accel.vertex_num(), _accel.triangle_num());
+    stream << _accel.build_bvh();
     stream << synchronize();
     stream << commit();
 }
@@ -93,7 +93,7 @@ void Geometry::clear() noexcept {
     _triangles.clear_all();
     _instances.clear_all();
     _mesh_handles.clear_all();
-    accel.clear();
+    _accel.clear();
 }
 
 Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
@@ -186,10 +186,10 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
 }
 
 OCHit Geometry::trace_closest(const OCRay &ray) const noexcept {
-    return accel.trace_closest(ray);
+    return _accel.trace_closest(ray);
 }
 Bool Geometry::trace_any(const OCRay &ray) const noexcept {
-    return accel.trace_any(ray);
+    return _accel.trace_any(ray);
 }
 
 Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) const noexcept {
