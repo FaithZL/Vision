@@ -56,6 +56,11 @@ public:
                                                               const Float2 &bary) const noexcept;
     [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
+    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, const Float3 &view_pos) const noexcept {
+        auto ret = compute_surface_interaction(hit, true);
+        ret.wo = normalize(view_pos - ret.pos);
+        return ret;
+    }
     [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, OCRay &ray, bool is_complete = true) const noexcept {
         auto ret = compute_surface_interaction(hit, is_complete);
         ret.wo = normalize(-ray->direction());
