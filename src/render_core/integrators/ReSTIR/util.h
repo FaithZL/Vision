@@ -74,7 +74,6 @@ public:
     oc_float<p> weight_sum{};
     oc_uint<p> M{};
     oc_float<p> W{};
-    oc_float<p> canonical_weight{};
     RSVSample sample{};
 
     template<EPort p_ = D>
@@ -95,7 +94,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, canonical_weight, sample) {
+OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
     static constexpr EPort p = D;
     void init() noexcept {
         sample->init();
