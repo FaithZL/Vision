@@ -199,8 +199,7 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
-    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, true);
-    it.wo = normalize(c_pos - it.pos);
+    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
     ret->init();
@@ -239,9 +238,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     Float3 prev_c_pos = camera->prev_device_position();
     const Geometry &geom = pipeline()->geometry();
     Sampler *sampler = scene().sampler();
-    Interaction it = geom.compute_surface_interaction(cur_surf.hit, true);
-    Float3 wo = normalize(c_pos - it.pos);
-    Float3 prev_wo = normalize(prev_c_pos - it.pos);
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, c_pos);
 
     Float p_hat_cur_x_at_prev_domain;
     Float p_hat_prev_x_at_prev_domain;
@@ -253,23 +250,23 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     Float mis_prev;
 
     if (_temporal.mis) {
-        it.wo = prev_wo;
+        it.update_wo(prev_c_pos);
         p_hat_cur_x_at_prev_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
         p_hat_prev_x_at_prev_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
-        it.wo = wo;
+        it.update_wo(c_pos);
         p_hat_cur_x_at_cur_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
         p_hat_prev_x_at_cur_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
         mis_cur = MIS_weight_n(cur_rsv.M, p_hat_cur_x_at_cur_domain, other_rsv.M, p_hat_cur_x_at_prev_domain);
         mis_prev = MIS_weight_n(other_rsv.M, p_hat_prev_x_at_prev_domain, cur_rsv.M, p_hat_prev_x_at_cur_domain);
     } else {
-        it.wo = prev_wo;
+        it.update_wo(prev_c_pos);
         p_hat_prev_x_at_prev_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
         mis_cur = MIS_weight(cur_rsv.M, other_rsv.M);
         mis_prev = MIS_weight(other_rsv.M, cur_rsv.M);
-        it.wo = wo;
+        it.update_wo(c_pos);
     }
 
     DIReservoir ret;
@@ -404,8 +401,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
     Float3 c_pos = camera->device_position();
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum Le = {swl.dimension(), 0.f};
-    Interaction it = geometry.compute_surface_interaction(hit, true);
-    it.wo = normalize(c_pos - it.pos);
+    Interaction it = geometry.compute_surface_interaction(hit, c_pos);
 
     $if(it.has_emission()) {
         light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
