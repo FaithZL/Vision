@@ -206,14 +206,14 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     Uint sample_num = rsv_idx.count() + 1;
     Float cur_weight = Reservoir::cal_weight(1.f / sample_num,
                                              cur_rsv.sample.p_hat, cur_rsv.W);
-    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
+    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
 
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir rsv = passthrough_reservoir().read(idx);
         rsv.sample.p_hat = compute_p_hat(it, nullptr, swl, rsv.sample);
         Float neighbor_weight = Reservoir::cal_weight(1.f / sample_num,
                                                       rsv.sample.p_hat, rsv.W);
-        ret->update(sampler->next_1d(), rsv.sample, neighbor_weight, rsv.M);
+        ret->update(sampler->next_1d(), rsv.sample, neighbor_weight, rsv.C);
     });
 
     /// used for debias or reweight MIS
@@ -258,14 +258,14 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
         p_hat_cur_x_at_cur_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
         p_hat_prev_x_at_cur_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
-        mis_cur = MIS_weight_n(cur_rsv.M, p_hat_cur_x_at_cur_domain, other_rsv.M, p_hat_cur_x_at_prev_domain);
-        mis_prev = MIS_weight_n(other_rsv.M, p_hat_prev_x_at_prev_domain, cur_rsv.M, p_hat_prev_x_at_cur_domain);
+        mis_cur = MIS_weight_n(cur_rsv.C, p_hat_cur_x_at_cur_domain, other_rsv.C, p_hat_cur_x_at_prev_domain);
+        mis_prev = MIS_weight_n(other_rsv.C, p_hat_prev_x_at_prev_domain, cur_rsv.C, p_hat_prev_x_at_cur_domain);
     } else {
         it.update_wo(prev_c_pos);
         p_hat_prev_x_at_prev_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
-        mis_cur = MIS_weight(cur_rsv.M, other_rsv.M);
-        mis_prev = MIS_weight(other_rsv.M, cur_rsv.M);
+        mis_cur = MIS_weight(cur_rsv.C, other_rsv.C);
+        mis_prev = MIS_weight(other_rsv.C, cur_rsv.C);
         it.update_wo(c_pos);
     }
 
@@ -273,14 +273,14 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     ret->init();
     Float cur_weight = Reservoir::safe_weight(mis_cur,
                                               cur_rsv.sample.p_hat, cur_rsv.W);
-    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.M);
+    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
 
     auto other_sample = other_rsv.sample;
     other_sample.p_hat = p_hat_prev_x_at_prev_domain;
     Float other_weight = Reservoir::safe_weight(mis_prev,
                                                 other_sample.p_hat, other_rsv.W);
 
-    ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.M);
+    ret->update(sampler->next_1d(), other_sample, other_weight, other_rsv.C);
     ret->update_W(ret.sample.p_hat);
     return ret;
 }
@@ -305,7 +305,7 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     }
     Sampler *sampler = scene().sampler();
     Float2 prev_p_film = ss.p_film - motion_vec;
-    Float limit = rsv.M * _temporal.limit;
+    Float limit = rsv.C * _temporal.limit;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
