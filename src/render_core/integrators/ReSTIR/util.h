@@ -72,7 +72,7 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_uint<p> M{};
+    oc_float<p> M{};
     oc_float<p> W{};
     RSVSample sample{};
 
@@ -102,14 +102,14 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, M, W, sample) {
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
     }
-    Bool update(oc_float<p> u, vision::DIRSVSample v, oc_float<p> weight, oc_uint<p> sample_M = 1u) noexcept {
+    Bool update(oc_float<p> u, vision::DIRSVSample v, oc_float<p> weight, oc_float<p> sample_M = 1.f) noexcept {
         weight_sum += weight;
         M += sample_M;
         Bool ret = u * weight_sum < weight;
         sample = select(ret, v, sample);
         return ret;
     }
-    void truncation(oc_uint<p> limit) noexcept {
+    void truncation(oc_float<p> limit) noexcept {
         M = ocarina::min(limit, M);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
