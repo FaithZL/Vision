@@ -48,13 +48,12 @@ OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
 namespace vision::ReSTIRIndirect {
 struct RSVSample {
     SurfacePoint sample_point;
-    float p_hat{};
-    float pdf{};
-    float2 u{};
-    vector<float> L;
+    SurfacePoint visible_point;
+    array<float, 3> u{};
+    array<float, 3> Lo;
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, p_hat, pdf, u, L){};
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, visible_point, u, Lo){};
 
 namespace vision::ReSTIRIndirect {
 using IIRSVSample = Var<RSVSample>;
@@ -65,28 +64,10 @@ struct Reservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
-    oc_float<p> M{};
+    oc_float<p> C{};
     oc_float<p> W{};
-    oc_uint<p> sample_num{};
     RSVSample sample{};
 
 public:
-    bool update(oc_float<p> u, oc_float<p> weight, RSVSample v) {
-        weight_sum += weight;
-        M += 1;
-        sample_num += 1;
-        bool ret = u < (weight / weight_sum);
-        sample = ocarina::select(ret, v, sample);
-        return ret;
-    }
-
-    void normalize() noexcept {
-        weight_sum /= M;
-        M = 1.f;
-    }
-    bool update(oc_float<p> u, RSVSample v) {
-        oc_float<p> weight = ocarina::select(v.pdf == 0, 0.f, v.p_hat / v.pdf);
-        return update(u, weight, v);
-    }
 };
 }// namespace vision::ReSTIRIndirect
