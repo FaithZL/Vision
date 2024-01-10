@@ -1006,6 +1006,7 @@
 		}
 	},
 	"render_setting" : {
+		"min_world_radius": 10,
 		"polymorphic_mode" : 1
 	},
 	"denoiser" : {
@@ -1090,7 +1091,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-//										"accumulation": 0,
+					"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024

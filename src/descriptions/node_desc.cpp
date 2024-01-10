@@ -307,6 +307,7 @@ void OutputDesc::init(const ParameterSet &ps) noexcept {
 void RenderSettingDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     polymorphic_mode = static_cast<PolymorphicMode>(ps["polymorphic_mode"].as_uint(0));
+    min_world_radius = ps["min_world_radius"].as_float(10);
 }
 
 }// namespace vision
