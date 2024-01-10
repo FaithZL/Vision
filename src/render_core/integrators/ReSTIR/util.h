@@ -31,9 +31,6 @@ struct RSVSample {
 
 // clang-format off
 OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, bary, p_hat, pos) {
-    void init() noexcept {
-        light_index = InvalidUI32;
-    }
     [[nodiscard]] Bool valid() const noexcept {
         return light_index != InvalidUI32;
     }
@@ -96,9 +93,6 @@ public:
 
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
-    void init() noexcept {
-        sample->init();
-    }
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
     }

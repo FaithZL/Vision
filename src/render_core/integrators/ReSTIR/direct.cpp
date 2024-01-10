@@ -129,11 +129,9 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
     DIReservoir ret;
-    ret->init();
 
     auto sample_light = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
-        sample->init();
         //todo merge sample and evaluate
         LightSurfacePoint lsp = light_sampler->sample_only(it, sampler);
         sample->set_lsp(lsp);
@@ -152,7 +150,6 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
-        sample->init();
         BSDFSample bs{swl.dimension()};
         Float light_pdf_point = 0.f;
         Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point);
@@ -201,7 +198,6 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
-    ret->init();
     Uint sample_num = rsv_idx.count() + 1;
     Float cur_weight = Reservoir::cal_weight(1.f / sample_num,
                                              cur_rsv.sample.p_hat, cur_rsv.W);
@@ -260,7 +256,6 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     }
 
     DIReservoir ret;
-    ret->init();
     Float cur_weight = Reservoir::safe_weight(mis_cur,
                                               cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
