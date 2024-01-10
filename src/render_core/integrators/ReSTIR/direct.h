@@ -128,7 +128,7 @@ public:
                                               const DIReservoir &other_rsv, const Interaction &other_it, Uint M,
                                               const SampledWavelengths &swl,
                                               DIReservoir &output_rsv) const noexcept;
-    void canonical_pairwise_MIS(Float canonical_weight, const SampledWavelengths &swl,
+    void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight, const SampledWavelengths &swl,
                                 DIReservoir &output_rsv) const noexcept;
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
                                               SampledWavelengths &swl,
