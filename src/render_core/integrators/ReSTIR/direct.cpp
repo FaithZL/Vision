@@ -213,6 +213,9 @@ Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonic
 void ReSTIRDirectIllumination::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
                                                       const SampledWavelengths &swl,
                                                       DIReservoir &output_rsv) const noexcept {
+    Sampler *sampler = scene().sampler();
+    Float weight = Reservoir::safe_weight(canonical_weight, canonical_rsv.sample.p_hat, canonical_rsv.W);
+    output_rsv->update(sampler->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
 }
 
 DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
