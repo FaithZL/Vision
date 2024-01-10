@@ -114,19 +114,22 @@ public:
      *  1 is canonical technique
      *
      *                    pi(x)
-     * mi(x) = ---------------------------    i != 1
+     * mi(x) = ---------------------------    i != 1    neighbor technique
      *           p1(x) + (M - 1) * pi(x)
      *
      *            1         M              p1(x)
-     * m1(x) = -------  * sigma ----------------------------------
+     * m1(x) = -------  * sigma ----------------------------------    canonical technique
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      *
      * @return The weight of the return value is added to the canonical sample
      */
-    [[nodiscard]] Float pairwise_MIS(const DIReservoir &canonical_rsv, const OCSurfaceData &canonical_surf,
-                                     const DIReservoir &other_rsv, const OCSurfaceData &other_surf, Uint M,
-                                     DIReservoir &output_rsv) const noexcept;
+    [[nodiscard]] Float neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
+                                              const DIReservoir &other_rsv, const Interaction &other_it, Uint M,
+                                              const SampledWavelengths &swl,
+                                              DIReservoir &output_rsv) const noexcept;
+    void canonical_pairwise_MIS(Float canonical_weight, const SampledWavelengths &swl,
+                                DIReservoir &output_rsv) const noexcept;
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
                                               SampledWavelengths &swl,
                                               const Container<uint> &rsv_idx) const noexcept;
