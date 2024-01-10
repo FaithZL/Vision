@@ -25,8 +25,9 @@ private:
     const IlluminationIntegrator *_integrator{};
     uint M_light{};
     uint M_bsdf{};
-    CorrectMode _correct_mode;
     bool _debias{false};
+    bool _pairwise{false};
+    bool _reweight{false};
 
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;

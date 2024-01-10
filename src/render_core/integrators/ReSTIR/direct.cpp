@@ -17,7 +17,6 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       M_bsdf(desc["M_bsdf"].as_uint(1)),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),
-      _correct_mode(static_cast<CorrectMode>(desc["correct_mode"].as_int(0))),
       _debias(desc["debias"].as_bool(false)),
       _motion_vectors(motion_vec),
       _surfaces0(surfaces0),
@@ -215,15 +214,6 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
                                                       rsv.sample.p_hat, rsv.W);
         ret->update(sampler->next_1d(), rsv.sample, neighbor_weight, rsv.C);
     });
-
-    /// used for debias or reweight MIS
-    auto postprocess = [&] {
-
-    };
-
-    if (_debias) {
-        postprocess();
-    }
 
     ret->update_W(ret.sample.p_hat);
     return ret;
