@@ -114,12 +114,12 @@ public:
      *  1 is canonical technique
      *
      *                    pi(x)
-     * mi(x) = ---------------------------    i ≠ 1
+     * mi(x) = ---------------------------    i != 1
      *           p1(x) + (M - 1) * pi(x)
      *
-     *            1        M              p1(x)
-     * m1(x) = -------  *  ∑ ----------------------------------
-     *          M - 1     i=2     p1(x) + (M - 1) * pi(x)
+     *            1         M              p1(x)
+     * m1(x) = -------  * sigma ----------------------------------
+     *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      *
      * @return The weight of the return value is added to the canonical sample
