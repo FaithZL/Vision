@@ -188,6 +188,13 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
     return ret;
 }
 
+Float ReSTIRDirectIllumination::pairwise_MIS(const DIReservoir &canonical_rsv, const OCSurfaceData &canonical_surf,
+                                             const DIReservoir &other_rsv, const OCSurfaceData &other_surf,
+                                             Uint M, DIReservoir &output_rsv) const noexcept {
+    Float ret = 0.f;
+    return ret;
+}
+
 DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
                                                       SampledWavelengths &swl,
                                                       const Container<uint> &rsv_idx) const noexcept {
