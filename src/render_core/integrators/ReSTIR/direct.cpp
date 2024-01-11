@@ -290,29 +290,29 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     const Geometry &geom = pipeline()->geometry();
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, c_pos);
 
-    Float p_hat_cur_x_at_prev_domain;
-    Float p_hat_prev_x_at_prev_domain;
+    Float p_hat_c_at_n;
+    Float p_hat_n_at_n;
 
-    Float p_hat_cur_x_at_cur_domain;
-    Float p_hat_prev_x_at_cur_domain;
+    Float p_hat_c_at_c;
+    Float p_hat_n_at_c;
 
     Float mis_cur;
     Float mis_prev;
 
     if (_temporal.mis) {
         it.update_wo(prev_c_pos);
-        p_hat_cur_x_at_prev_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
-        p_hat_prev_x_at_prev_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
+        p_hat_c_at_n = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
+        p_hat_n_at_n = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
         it.update_wo(c_pos);
-        p_hat_cur_x_at_cur_domain = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
-        p_hat_prev_x_at_cur_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
+        p_hat_c_at_c = compute_p_hat(it, nullptr, swl, cur_rsv.sample);
+        p_hat_n_at_c = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
-        mis_cur = MIS_weight_n(cur_rsv.C, p_hat_cur_x_at_cur_domain, other_rsv.C, p_hat_cur_x_at_prev_domain);
-        mis_prev = MIS_weight_n(other_rsv.C, p_hat_prev_x_at_prev_domain, cur_rsv.C, p_hat_prev_x_at_cur_domain);
+        mis_cur = MIS_weight_n(cur_rsv.C, p_hat_c_at_c, other_rsv.C, p_hat_c_at_n);
+        mis_prev = MIS_weight_n(other_rsv.C, p_hat_n_at_n, cur_rsv.C, p_hat_n_at_c);
     } else {
         it.update_wo(prev_c_pos);
-        p_hat_prev_x_at_prev_domain = compute_p_hat(it, nullptr, swl, other_rsv.sample);
+        p_hat_n_at_n = compute_p_hat(it, nullptr, swl, other_rsv.sample);
 
         mis_cur = MIS_weight(cur_rsv.C, other_rsv.C);
         mis_prev = MIS_weight(other_rsv.C, cur_rsv.C);
@@ -325,7 +325,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
 
     auto other_sample = other_rsv.sample;
-    other_sample.p_hat = p_hat_prev_x_at_prev_domain;
+    other_sample.p_hat = p_hat_n_at_n;
     Float other_weight = Reservoir::safe_weight(mis_prev,
                                                 other_sample.p_hat, other_rsv.W);
 
