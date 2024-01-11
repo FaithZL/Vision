@@ -51,6 +51,9 @@ private:
      */
     std::shared_future<Shader<void(uint)>> _shader1;
 
+protected:
+    [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
+
 public:
     ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
                              RegistrableBuffer<float2> &motion_vec,
@@ -121,7 +124,11 @@ public:
      * m1(x) = -------  * sigma ----------------------------------    canonical technique
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
-     *
+     */
+    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
+                                 const Container<uint> &rsv_idx, const SampledWavelengths &swl) const noexcept;
+
+    /**
      * @return The weight of the return value is added to the canonical sample
      */
     [[nodiscard]] Float neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
@@ -130,6 +137,10 @@ public:
                                               DIReservoir &output_rsv) const noexcept;
     void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight, const SampledWavelengths &swl,
                                 DIReservoir &output_rsv) const noexcept;
+
+    [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
+                                               const Container<uint> &rsv_idx, const SampledWavelengths &swl) const noexcept;
+
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
                                               SampledWavelengths &swl,
                                               const Container<uint> &rsv_idx) const noexcept;
