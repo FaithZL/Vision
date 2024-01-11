@@ -235,6 +235,7 @@ DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canoni
         Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, c_pos);
         canonical_weight += neighbor_pairwise_MIS(canonical_rsv, canonical_it, neighbor_rsv, neighbor_it, M, swl, &ret);
     });
+    canonical_weight = ocarina::select(canonical_weight == 0.f, 1.f, canonical_weight);
     canonical_pairwise_MIS(canonical_rsv, canonical_weight, swl, &ret);
 
     ret->update_W(ret.sample.p_hat);
