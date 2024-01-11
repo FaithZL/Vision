@@ -67,7 +67,9 @@ public:
     oc_float<p> C{};
     oc_float<p> W{};
     RSVSample sample{};
-
-public:
 };
 }// namespace vision::ReSTIRIndirect
+
+namespace vision::ReSTIRIndirect {
+using IIReservoir = ocarina::Var<Reservoir>;
+}

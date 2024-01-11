@@ -32,9 +32,8 @@ private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
-    mutable RegistrableBuffer<Reservoir> _reservoirs0;
-    mutable RegistrableBuffer<Reservoir> _reservoirs1;
-    mutable RegistrableBuffer<Reservoir> _reservoirs2;
+    mutable RegistrableBuffer<Reservoir> _reservoirs;
+
     RegistrableBuffer<SurfaceData> &_surfaces0;
     RegistrableBuffer<SurfaceData> &_surfaces1;
     RegistrableBuffer<float2> &_motion_vectors;
@@ -77,7 +76,7 @@ public:
                                    _temporal.dot_threshold,
                                    _temporal.depth_threshold);
     }
-    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
+    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());

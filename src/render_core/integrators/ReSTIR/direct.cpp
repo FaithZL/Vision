@@ -537,18 +537,13 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     using ReSTIRDirect::Reservoir;
     Pipeline *rp = pipeline();
     Reservoir rsv;
-    vector<Reservoir> vec{rp->pixel_num(), rsv};
-
-    auto init_buffer = [&](RegistrableBuffer<Reservoir> &reservoirs, const string &desc) {
-        reservoirs.set_bindless_array(rp->bindless_array());
-        reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num(), desc);
-        reservoirs.register_self();
-        reservoirs.upload_immediately(vec.data());
-    };
-
-    init_buffer(_reservoirs0, "ReSTIRDirectIllumination::_reservoirs0");
-    init_buffer(_reservoirs1, "ReSTIRDirectIllumination::_reservoirs1");
-    init_buffer(_reservoirs2, "ReSTIRDirectIllumination::_reservoirs2");
+    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() *3 , "ReSTIRDirectIllumination::_reservoirs x 3");
+    _reservoirs.set_bindless_array(rp->bindless_array());
+    _reservoirs.register_self(0, rp->pixel_num());
+    _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
+    _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
+    vector<Reservoir> host{rp->pixel_num() * 3, rsv};
+    _reservoirs.upload_immediately(host.data());
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
