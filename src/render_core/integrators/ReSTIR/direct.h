@@ -79,19 +79,19 @@ public:
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoir() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoir() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>(2 + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoir() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surface() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surface() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
