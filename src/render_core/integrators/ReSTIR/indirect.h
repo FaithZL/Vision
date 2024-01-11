@@ -20,13 +20,11 @@ private:
     TemporalResamplingParam _temporal;
 
     RegistrableBuffer<SurfaceData> &_surfaces;
-    RegistrableBuffer<SurfaceData> &_prev_surfaces;
     RegistrableBuffer<float2> &_motion_vectors;
 
 public:
     ReSTIRIndirectIllumination(const ParameterSet &desc, RegistrableBuffer<float2> &motion_vec,
-                               RegistrableBuffer<SurfaceData> &surfaces,
-                               RegistrableBuffer<SurfaceData> &prev_surfaces);
+                               RegistrableBuffer<SurfaceData> &surfaces);
 
     void prepare() noexcept;
 };

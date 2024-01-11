@@ -34,8 +34,8 @@ private:
 
     mutable RegistrableBuffer<Reservoir> _reservoirs;
 
-    RegistrableBuffer<SurfaceData> &_surfaces0;
-    RegistrableBuffer<SurfaceData> &_surfaces1;
+    RegistrableBuffer<SurfaceData> &_surfaces;
+
     RegistrableBuffer<float2> &_motion_vectors;
 
     optional<Uint> _frame_index;
@@ -56,8 +56,7 @@ protected:
 public:
     ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
                              RegistrableBuffer<float2> &motion_vec,
-                             RegistrableBuffer<SurfaceData> &surfaces0,
-                             RegistrableBuffer<SurfaceData> &surfaces1);
+                             RegistrableBuffer<SurfaceData> &surfaces);
 
     void prepare() noexcept;
     void compile() noexcept {
@@ -77,7 +76,7 @@ public:
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());
     }

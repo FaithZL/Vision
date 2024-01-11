@@ -8,11 +8,9 @@ namespace vision {
 
 ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(const vision::ParameterSet &desc,
                                                        RegistrableBuffer<float2> &motion_vec,
-                                                       RegistrableBuffer<SurfaceData> &surfaces,
-                                                       RegistrableBuffer<SurfaceData> &prev_surfaces)
+                                                       RegistrableBuffer<SurfaceData> &surfaces)
     : _motion_vectors(motion_vec),
-      _surfaces(surfaces),
-      _prev_surfaces(prev_surfaces) {
+      _surfaces(surfaces) {
 }
 
 }// namespace vision

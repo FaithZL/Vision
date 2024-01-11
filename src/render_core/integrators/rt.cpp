@@ -16,14 +16,14 @@ private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
     RegistrableBuffer<float2> _motion_vectors;
-    RegistrableBuffer<SurfaceData> _surfaces0;
+    RegistrableBuffer<SurfaceData> _surfaces;
     RegistrableBuffer<SurfaceData> _surfaces1;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(this, desc["direct"], _motion_vectors, _surfaces0, _surfaces1),
-          _indirect(desc["indirect"], _motion_vectors, _surfaces0, _surfaces1) {}
+          _direct(this, desc["direct"], _motion_vectors, _surfaces),
+          _indirect(desc["indirect"], _motion_vectors, _surfaces) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _direct.prepare();
@@ -34,7 +34,7 @@ public:
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
-        init_buffer(_surfaces0, "RealTimeIntegrator::_surfaces0");
+        init_buffer(_surfaces, "RealTimeIntegrator::_surfaces");
         init_buffer(_surfaces1, "RealTimeIntegrator::_surfaces1");
     }
 
