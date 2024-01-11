@@ -208,6 +208,7 @@ Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonic
     (*output_rsv)->update(sampler->next_1d(), other_rsv.sample, weight, other_rsv.C);
 
     Float canonical_weight = MIS_weight_n(1, p_hat_c_at_c, num, p_hat_c_at_n) / num;
+    canonical_weight = zero_if_nan(canonical_weight);
 
     return canonical_weight;
 }
