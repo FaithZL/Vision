@@ -207,7 +207,7 @@ Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonic
     Float weight = Reservoir::safe_weight(mi, other_rsv.sample.p_hat, other_rsv.W);
     (*output_rsv)->update(sampler->next_1d(), other_rsv.sample, weight, other_rsv.C);
 
-    Float canonical_weight = MIS_weight_n(1, p_hat_c_at_c, num, p_hat_c_at_n);
+    Float canonical_weight = MIS_weight_n(1, p_hat_c_at_c, num, p_hat_c_at_n) / num;
 
     return canonical_weight;
 }
@@ -270,17 +270,16 @@ DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canoni
 DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
                                                       SampledWavelengths &swl,
                                                       const Container<uint> &rsv_idx) const noexcept {
-    Camera *camera = scene().camera().get();
-    Float3 c_pos = camera->device_position();
-    OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
-    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
-
     DIReservoir ret;
 
     if (_pairwise) {
         ret = pairwise_combine(cur_rsv, rsv_idx, swl);
     } else {
         ret = constant_combine(cur_rsv, rsv_idx, swl);
+    }
+
+    if (_reweight) {
+
     }
 
     return ret;
