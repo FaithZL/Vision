@@ -219,11 +219,14 @@ void ReSTIRDirectIllumination::canonical_pairwise_MIS(const DIReservoir &canonic
     output_rsv->update(sampler()->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
 }
 
-DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
-                                                       const Container<ocarina::uint> &rsv_idx, const SampledWavelengths &swl) const noexcept {
-    DIReservoir ret;
+DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canonical_rsv, const Container<ocarina::uint> &rsv_idx,
+                                                       const SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
+    OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
+    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
+
+    DIReservoir ret;
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir neighbor_rsv = passthrough_reservoir().read(idx);
         OCSurfaceData surf = cur_surface().read(idx);
@@ -233,8 +236,13 @@ DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canoni
     return ret;
 }
 
-DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
-                                                       const Container<ocarina::uint> &rsv_idx, const SampledWavelengths &swl) const noexcept {
+DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canonical_rsv, const Container<ocarina::uint> &rsv_idx,
+                                                       const SampledWavelengths &swl) const noexcept {
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
+    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
+
     DIReservoir ret;
     Uint sample_num = rsv_idx.count() + 1;
     Float cur_weight = Reservoir::cal_weight(1.f / sample_num,
@@ -264,9 +272,9 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     DIReservoir ret;
 
     if (_pairwise) {
-
+        ret = pairwise_combine(cur_rsv, rsv_idx, swl);
     } else {
-        ret = constant_combine(cur_rsv, it, rsv_idx, swl);
+        ret = constant_combine(cur_rsv, rsv_idx, swl);
     }
 
     return ret;

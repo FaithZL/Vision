@@ -125,8 +125,8 @@ public:
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      */
-    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
-                                 const Container<uint> &rsv_idx, const SampledWavelengths &swl) const noexcept;
+    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
+                                 const SampledWavelengths &swl) const noexcept;
 
     /**
      * @return The weight of the return value is added to the canonical sample
@@ -138,8 +138,8 @@ public:
     void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight, const SampledWavelengths &swl,
                                 DIReservoir &output_rsv) const noexcept;
 
-    [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
-                                               const Container<uint> &rsv_idx, const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
+                                               const SampledWavelengths &swl) const noexcept;
 
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
                                               SampledWavelengths &swl,
