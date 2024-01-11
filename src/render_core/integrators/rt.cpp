@@ -17,7 +17,6 @@ private:
     ReSTIRIndirectIllumination _indirect;
     RegistrableBuffer<float2> _motion_vectors;
     RegistrableBuffer<SurfaceData> _surfaces;
-    RegistrableBuffer<SurfaceData> _surfaces1;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
@@ -34,8 +33,11 @@ public:
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
-        init_buffer(_surfaces, "RealTimeIntegrator::_surfaces");
-        init_buffer(_surfaces1, "RealTimeIntegrator::_surfaces1");
+
+        _surfaces.set_bindless_array(rp->bindless_array());
+        _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
+        _surfaces.register_self(0, rp->pixel_num());
+        _surfaces.register_view(rp->pixel_num(), rp->pixel_num());
     }
 
     void compile() noexcept override {
