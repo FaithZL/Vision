@@ -1053,7 +1053,8 @@
 				},
 				//								"mis": true,
 				"correct_mode" : 0,
-				"debias": true,
+//				"debias": true,
+//				"pairwise": true,
 				"M_light": 10,
 				"M_bsdf": 1
 			},

@@ -192,7 +192,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
 
 Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
                                                       const DIReservoir &other_rsv, const Interaction &other_it,
-                                                      Uint M, const SampledWavelengths &swl, DIReservoir &output_rsv) const noexcept {
+                                                      Uint M, const SampledWavelengths &swl, DIReservoir *output_rsv) const noexcept {
     Sampler *sampler = scene().sampler();
 
     Float p_hat_c_at_c = compute_p_hat(canonical_it, nullptr, swl, canonical_rsv.sample);
@@ -205,7 +205,7 @@ Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonic
     Float mi = MIS_weight_n(1, p_hat_n_at_n, num, p_hat_n_at_c);
 
     Float weight = Reservoir::safe_weight(mi, other_rsv.sample.p_hat, other_rsv.W);
-    output_rsv->update(sampler->next_1d(), other_rsv.sample, weight, other_rsv.C);
+    (*output_rsv)->update(sampler->next_1d(), other_rsv.sample, weight, other_rsv.C);
 
     Float canonical_weight = MIS_weight_n(1, p_hat_c_at_c, num, p_hat_c_at_n);
 
@@ -214,9 +214,9 @@ Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonic
 
 void ReSTIRDirectIllumination::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
                                                       const SampledWavelengths &swl,
-                                                      DIReservoir &output_rsv) const noexcept {
+                                                      DIReservoir *output_rsv) const noexcept {
     Float weight = Reservoir::safe_weight(canonical_weight, canonical_rsv.sample.p_hat, canonical_rsv.W);
-    output_rsv->update(sampler()->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
+    (*output_rsv)->update(sampler()->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
 }
 
 DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canonical_rsv, const Container<ocarina::uint> &rsv_idx,
@@ -227,12 +227,17 @@ DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canoni
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
+    Float canonical_weight = 0.f;
+    Uint M = rsv_idx.count() + 1;
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir neighbor_rsv = passthrough_reservoir().read(idx);
         OCSurfaceData surf = cur_surface().read(idx);
         Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, c_pos);
+        canonical_weight += neighbor_pairwise_MIS(canonical_rsv, canonical_it, neighbor_rsv, neighbor_it, M, swl, &ret);
     });
+    canonical_pairwise_MIS(canonical_rsv, canonical_weight, swl, &ret);
 
+    ret->update_W(ret.sample.p_hat);
     return ret;
 }
 

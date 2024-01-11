@@ -134,9 +134,9 @@ public:
     [[nodiscard]] Float neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
                                               const DIReservoir &other_rsv, const Interaction &other_it, Uint M,
                                               const SampledWavelengths &swl,
-                                              DIReservoir &output_rsv) const noexcept;
+                                              DIReservoir *output_rsv) const noexcept;
     void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight, const SampledWavelengths &swl,
-                                DIReservoir &output_rsv) const noexcept;
+                                DIReservoir *output_rsv) const noexcept;
 
     [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
                                                const SampledWavelengths &swl) const noexcept;
