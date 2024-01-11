@@ -27,6 +27,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     load_shapes(scene_desc.shape_descs);
     _integrator = load<Integrator>(scene_desc.integrator_desc);
     _sampler = load<Sampler>(scene_desc.sampler_desc);
+    _min_radius = scene_desc.render_setting.min_world_radius;
 }
 
 void Scene::tidy_up() noexcept {

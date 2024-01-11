@@ -13,12 +13,6 @@ namespace vision {
 
 using namespace ocarina;
 
-enum CorrectMode {
-    Off,
-    Basic,
-    Pairwise
-};
-
 struct SpatialResamplingParam {
 public:
     float dot_threshold{};

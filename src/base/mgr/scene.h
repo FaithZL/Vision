@@ -43,6 +43,7 @@ private:
     SP<Spectrum> _spectrum{nullptr};
     Wrap<Medium> _global_medium{};
     SP<Material> _black_body{};
+    float _min_radius{};
     friend class Pipeline;
 
 public:
@@ -101,7 +102,7 @@ public:
     }
     void prepare_materials();
     [[nodiscard]] float3 world_center() const noexcept { return _aabb.center(); }
-    [[nodiscard]] float world_radius() const noexcept { return _aabb.radius(); }
+    [[nodiscard]] float world_radius() const noexcept { return ocarina::max(_aabb.radius(), _min_radius); }
     [[nodiscard]] float world_diameter() const noexcept { return world_radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return &_instances[id]; }

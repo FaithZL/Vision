@@ -32,7 +32,6 @@ public:
     MediumsDesc mediums_desc;
     DenoiserDesc denoiser_desc;
     RenderSettingDesc render_setting;
-    ParameterSet ext_param;
 
 public:
     SceneDesc() = default;

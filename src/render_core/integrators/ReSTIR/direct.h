@@ -25,8 +25,9 @@ private:
     const IlluminationIntegrator *_integrator{};
     uint M_light{};
     uint M_bsdf{};
-    CorrectMode _correct_mode;
     bool _debias{false};
+    bool _pairwise{false};
+    bool _reweight{false};
 
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
@@ -49,6 +50,9 @@ private:
      * spatial temporal reuse and shading
      */
     std::shared_future<Shader<void(uint)>> _shader1;
+
+protected:
+    [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
     ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
@@ -76,19 +80,19 @@ public:
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoir() const noexcept {
-        return pipeline()->buffer<Reservoir>((_frame_index.value() % 2) + reservoir_base());
+        return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoir() const noexcept {
         return pipeline()->buffer<Reservoir>(2 + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoir() const noexcept {
-        return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) % 2) + reservoir_base());
+        return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surface() const noexcept {
-        return pipeline()->buffer<SurfaceData>((_frame_index.value() % 2) + surface_base());
+        return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surface() const noexcept {
-        return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) % 2) + surface_base());
+        return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;
@@ -106,6 +110,37 @@ public:
         Float p_hat = luminance(f.vec3());
         return p_hat;
     }
+
+    /**
+     * reference from https://intro-to-restir.cwyman.org/presentations/2023ReSTIR_Course_Notes.pdf equation 7.3
+     *
+     *  1 is canonical technique
+     *
+     *                    pi(x)
+     * mi(x) = ---------------------------    i != 1    neighbor technique
+     *           p1(x) + (M - 1) * pi(x)
+     *
+     *            1         M              p1(x)
+     * m1(x) = -------  * sigma ----------------------------------    canonical technique
+     *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
+     *
+     */
+    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
+                                 const SampledWavelengths &swl) const noexcept;
+
+    /**
+     * @return The weight of the return value is added to the canonical sample
+     */
+    [[nodiscard]] Float neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
+                                              const DIReservoir &other_rsv, const Interaction &other_it, Uint M,
+                                              const SampledWavelengths &swl,
+                                              DIReservoir *output_rsv) const noexcept;
+    void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight, const SampledWavelengths &swl,
+                                DIReservoir *output_rsv) const noexcept;
+
+    [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
+                                               const SampledWavelengths &swl) const noexcept;
+
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
                                               SampledWavelengths &swl,
                                               const Container<uint> &rsv_idx) const noexcept;
