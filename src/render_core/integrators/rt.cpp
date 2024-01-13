@@ -17,12 +17,13 @@ private:
     ReSTIRIndirectIllumination _indirect;
     RegistrableBuffer<float2> _motion_vectors{pipeline()->bindless_array()};
     RegistrableBuffer<SurfaceData> _surfaces{pipeline()->bindless_array()};
+    RegistrableBuffer<Ray> _rays{pipeline()->bindless_array()};
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(this, desc["direct"], _motion_vectors, _surfaces),
-          _indirect(desc["indirect"], _motion_vectors, _surfaces) {}
+          _direct(this, desc["direct"], _motion_vectors, _surfaces, _rays),
+          _indirect(desc["indirect"], _motion_vectors, _surfaces, _rays) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _direct.prepare();
@@ -33,6 +34,7 @@ public:
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
+        init_buffer(_rays, "RealTimeIntegrator::_rays");
 
         _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
         _surfaces.register_self(0, rp->pixel_num());

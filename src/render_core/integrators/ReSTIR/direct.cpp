@@ -9,7 +9,8 @@ namespace vision {
 
 ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
                                                    RegistrableBuffer<float2> &motion_vec,
-                                                   RegistrableBuffer<SurfaceData> &surfaces)
+                                                   RegistrableBuffer<SurfaceData> &surfaces,
+                                                   RegistrableBuffer<Ray> &rays)
     : _integrator(integrator),
       M_light(desc["M_light"].as_uint(10)),
       M_bsdf(desc["M_bsdf"].as_uint(1)),
@@ -19,7 +20,8 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _reweight(desc["reweight"].as_bool(false)),
       _pairwise(desc["pairwise"].as_bool(false)),
       _motion_vectors(motion_vec),
-      _surfaces(surfaces) {}
+      _surfaces(surfaces),
+      _rays(rays) {}
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,

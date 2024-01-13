@@ -35,6 +35,7 @@ private:
     mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
     RegistrableBuffer<SurfaceData> &_surfaces;
     RegistrableBuffer<float2> &_motion_vectors;
+    RegistrableBuffer<Ray> &_rays;
 
     optional<Uint> _frame_index;
 
@@ -54,7 +55,8 @@ protected:
 public:
     ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
                              RegistrableBuffer<float2> &motion_vec,
-                             RegistrableBuffer<SurfaceData> &surfaces);
+                             RegistrableBuffer<SurfaceData> &surfaces,
+                             RegistrableBuffer<Ray> &rays);
 
     void prepare() noexcept;
     void compile() noexcept {

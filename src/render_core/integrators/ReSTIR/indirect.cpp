@@ -9,9 +9,11 @@ namespace vision {
 
 ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(const vision::ParameterSet &desc,
                                                        RegistrableBuffer<float2> &motion_vec,
-                                                       RegistrableBuffer<SurfaceData> &surfaces)
+                                                       RegistrableBuffer<SurfaceData> &surfaces,
+                                                       RegistrableBuffer<Ray> &rays)
     : _motion_vectors(motion_vec),
-      _surfaces(surfaces) {
+      _surfaces(surfaces),
+      _rays(rays){
 }
 
 void ReSTIRIndirectIllumination::prepare() noexcept {
