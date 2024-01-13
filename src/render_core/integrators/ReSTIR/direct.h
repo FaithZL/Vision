@@ -32,10 +32,8 @@ private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
-    mutable RegistrableBuffer<Reservoir> _reservoirs;
-
+    mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
     RegistrableBuffer<SurfaceData> &_surfaces;
-
     RegistrableBuffer<float2> &_motion_vectors;
 
     optional<Uint> _frame_index;

@@ -15,8 +15,8 @@ class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
-    RegistrableBuffer<float2> _motion_vectors;
-    RegistrableBuffer<SurfaceData> _surfaces;
+    RegistrableBuffer<float2> _motion_vectors{pipeline()->bindless_array()};
+    RegistrableBuffer<SurfaceData> _surfaces{pipeline()->bindless_array()};
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
@@ -26,15 +26,14 @@ public:
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _direct.prepare();
+        _indirect.prepare();
         Pipeline *rp = pipeline();
         auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
-            buffer.set_bindless_array(rp->bindless_array());
             buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
 
-        _surfaces.set_bindless_array(rp->bindless_array());
         _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
         _surfaces.register_self(0, rp->pixel_num());
         _surfaces.register_view(rp->pixel_num(), rp->pixel_num());

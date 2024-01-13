@@ -3,6 +3,7 @@
 //
 
 #include "indirect.h"
+#include "base/integrator.h"
 
 namespace vision {
 
@@ -11,6 +12,25 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(const vision::ParameterSe
                                                        RegistrableBuffer<SurfaceData> &surfaces)
     : _motion_vectors(motion_vec),
       _surfaces(surfaces) {
+}
+
+void ReSTIRIndirectIllumination::prepare() noexcept {
+    using ReSTIRIndirect::Reservoir;
+    Pipeline *rp = pipeline();
+
+    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 2,
+                                                            "ReSTIRIndirectIllumination::_reservoirs x 2");
+    _reservoirs.register_self(0, rp->pixel_num());
+    _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
+    vector<Reservoir> host{rp->pixel_num() * 2, Reservoir{}};
+    _reservoirs.upload_immediately(host.data());
+
+    using ReSTIRIndirect::RSVSample;
+    _init_samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
+                                                                              "ReSTIRIndirectIllumination::_init_samples");
+    _init_samples.register_self();
+    vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
+    _init_samples.upload_immediately(vec.data());
 }
 
 }// namespace vision

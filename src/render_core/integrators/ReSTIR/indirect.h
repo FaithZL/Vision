@@ -7,6 +7,7 @@
 #include "common.h"
 #include "base/serial_object.h"
 #include "base/mgr/global.h"
+#include "base/mgr/pipeline.h"
 #include "indirect_util.h"
 
 namespace vision {
@@ -19,6 +20,8 @@ private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
+    RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
+    RegistrableBuffer<ReSTIRIndirect::RSVSample> _init_samples{pipeline()->bindless_array()};
     RegistrableBuffer<SurfaceData> &_surfaces;
     RegistrableBuffer<float2> &_motion_vectors;
 

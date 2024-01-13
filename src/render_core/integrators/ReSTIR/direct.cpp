@@ -4,7 +4,6 @@
 
 #include "direct.h"
 #include "base/integrator.h"
-#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -278,7 +277,6 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     }
 
     if (_reweight) {
-
     }
 
     return ret;
@@ -534,13 +532,12 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
 void ReSTIRDirectIllumination::prepare() noexcept {
     using ReSTIRDirect::Reservoir;
     Pipeline *rp = pipeline();
-    Reservoir rsv;
-    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() *3 , "ReSTIRDirectIllumination::_reservoirs x 3");
-    _reservoirs.set_bindless_array(rp->bindless_array());
+    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
+                                                            "ReSTIRDirectIllumination::_reservoirs x 3");
     _reservoirs.register_self(0, rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
-    vector<Reservoir> host{rp->pixel_num() * 3, rsv};
+    vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
     _reservoirs.upload_immediately(host.data());
 }
 
