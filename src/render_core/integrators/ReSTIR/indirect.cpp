@@ -12,7 +12,16 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {
-
+    Camera *camera = scene().camera().get();
+    Film *film = camera->radiance_film();
+    LightSampler *light_sampler = scene().light_sampler();
+    Spectrum &spectrum = pipeline()->spectrum();
+    Kernel kernel = [&](Uint frame_index) {
+        _frame_index.emplace(frame_index);
+        Uint2 pixel = dispatch_idx().xy();
+        camera->load_data();
+        sampler()->start(pixel, frame_index, 3);
+    };
 }
 
 void ReSTIRIndirectIllumination::compile_shader1() noexcept {
