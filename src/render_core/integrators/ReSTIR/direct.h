@@ -22,7 +22,7 @@ class RayTracingIntegrator;
  */
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
-    const RayTracingIntegrator *_integrator{};
+    RayTracingIntegrator *_integrator{};
     uint M_light{};
     uint M_bsdf{};
     bool _debias{false};
@@ -33,10 +33,6 @@ private:
     TemporalResamplingParam _temporal;
 
     mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
-    RegistrableBuffer<SurfaceData> &_surfaces;
-    RegistrableBuffer<float2> &_motion_vectors;
-    RegistrableBuffer<Ray> &_rays;
-
     optional<Uint> _frame_index;
 
     /**
@@ -53,10 +49,7 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc,
-                             RegistrableBuffer<float2> &motion_vec,
-                             RegistrableBuffer<SurfaceData> &surfaces,
-                             RegistrableBuffer<Ray> &rays);
+    ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
 
     void prepare() noexcept;
     void compile() noexcept {
@@ -76,7 +69,7 @@ public:
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());
     }
