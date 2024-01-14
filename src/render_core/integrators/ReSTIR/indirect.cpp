@@ -11,8 +11,20 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
                                                        const vision::ParameterSet &desc) {
 }
 
+void ReSTIRIndirectIllumination::compile_shader0() noexcept {
+
+}
+
+void ReSTIRIndirectIllumination::compile_shader1() noexcept {
+
+}
+
 CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
-    return {};
+    CommandList ret;
+    const Pipeline *rp = pipeline();
+    ret << _shader0.get()(frame_index).dispatch(rp->resolution());
+    ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+    return ret;
 }
 
 void ReSTIRIndirectIllumination::prepare() noexcept {

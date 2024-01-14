@@ -41,10 +41,11 @@ private:
     /**
      * generate initial candidates
      * check visibility
+     * temporal reuse
      */
     std::shared_future<Shader<void(uint)>> _shader0;
     /**
-     * spatial temporal reuse and shading
+     * spatial reuse and shading
      */
     std::shared_future<Shader<void(uint)>> _shader1;
 
