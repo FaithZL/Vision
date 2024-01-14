@@ -24,14 +24,9 @@ private:
 
     RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
     RegistrableBuffer<ReSTIRIndirect::RSVSample> _init_samples{pipeline()->bindless_array()};
-    RegistrableBuffer<SurfaceData> &_surfaces;
-    RegistrableBuffer<float2> &_motion_vectors;
-    RegistrableBuffer<Ray> &_rays;
 
 public:
-    ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc, RegistrableBuffer<float2> &motion_vec,
-                               RegistrableBuffer<SurfaceData> &surfaces,
-                               RegistrableBuffer<Ray> &rays);
+    ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
 
     void prepare() noexcept;
 };

@@ -20,7 +20,7 @@ public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : RayTracingIntegrator(desc),
           _direct(this, desc["direct"], _motion_vectors, _surfaces, _rays),
-          _indirect(this, desc["indirect"], _motion_vectors, _surfaces, _rays) {}
+          _indirect(this, desc["indirect"]) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _direct.prepare();
