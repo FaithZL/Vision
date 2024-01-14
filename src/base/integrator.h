@@ -77,7 +77,7 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
-    OC_MAKE_MEMBER_GETTER(separate,)
+    OC_MAKE_MEMBER_GETTER(separate, )
 
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept override;
 
@@ -104,6 +104,21 @@ public:
         };
         return Ld;
     }
+};
+
+class RayTracingIntegrator : public IlluminationIntegrator {
+protected:
+    RegistrableBuffer<float2> _motion_vectors{};
+    RegistrableBuffer<SurfaceData> _surfaces{};
+    RegistrableBuffer<Ray> _rays{};
+    RegistrableBuffer<Hit> _hits{};
+
+public:
+    explicit RayTracingIntegrator(const IntegratorDesc &desc);
+    OC_MAKE_MEMBER_GETTER(motion_vectors, &)
+    OC_MAKE_MEMBER_GETTER(surfaces, &)
+    OC_MAKE_MEMBER_GETTER(rays, &)
+    OC_MAKE_MEMBER_GETTER(hits, &)
 };
 
 }// namespace vision
