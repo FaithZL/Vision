@@ -29,6 +29,7 @@ public:
     ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
 
     void prepare() noexcept;
+    [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 
 }// namespace vision

@@ -8,7 +8,11 @@
 namespace vision {
 
 ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *integrator,
-                                                       const vision::ParameterSet &desc){
+                                                       const vision::ParameterSet &desc) {
+}
+
+CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
+    return {};
 }
 
 void ReSTIRIndirectIllumination::prepare() noexcept {
@@ -24,7 +28,7 @@ void ReSTIRIndirectIllumination::prepare() noexcept {
 
     using ReSTIRIndirect::RSVSample;
     _init_samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
-                                                                              "ReSTIRIndirectIllumination::_init_samples");
+                                                              "ReSTIRIndirectIllumination::_init_samples");
     _init_samples.register_self();
     vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
     _init_samples.upload_immediately(vec.data());

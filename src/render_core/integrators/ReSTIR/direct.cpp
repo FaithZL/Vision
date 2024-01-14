@@ -15,11 +15,11 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(RayTracingIntegrator *integra
       _temporal(desc["temporal"]),
       _debias(desc["debias"].as_bool(false)),
       _reweight(desc["reweight"].as_bool(false)),
-      _pairwise(desc["pairwise"].as_bool(false)){}
+      _pairwise(desc["pairwise"].as_bool(false)) {}
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
-                                             BSDFSample *bs, Float *light_pdf_point) noexcept {
+                                             BSDFSample *bs, Float *light_pdf_point, RayHit *ray_hit) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const Geometry &geometry = pipeline()->geometry();
@@ -43,6 +43,10 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     }
     OCRay ray = it.spawn_ray(bs->wi);
     OCHit hit = geometry.trace_closest(ray);
+
+    ray_hit->first = ray;
+    ray_hit->second = hit;
+
     LightEval le{swl.dimension()};
     LightSurfacePoint lsp;
     $if(hit->is_hit()) {
@@ -143,11 +147,13 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         ret->update(sampler->next_1d(), sample, weight);
     };
 
+    RayHit ray_hit;
+
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         BSDFSample bs{swl.dimension()};
         Float light_pdf_point = 0.f;
-        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point);
+        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point, &ray_hit);
         sample.p_hat = p_hat;
         Float weight = Reservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
                                               sample.p_hat, 1.f / bs.eval.pdf);

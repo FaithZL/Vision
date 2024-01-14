@@ -21,6 +21,9 @@ class RayTracingIntegrator;
  * spatial reuse and iterate
  */
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
+public:
+    using RayHit = ocarina::pair<OCRay, OCHit>;
+
 private:
     RayTracingIntegrator *_integrator{};
     uint M_light{};
@@ -93,7 +96,7 @@ public:
                                             const DIRSVSample &sample, LightSample *output_ls = nullptr, Float *bsdf_pdf_point = nullptr) noexcept;
     /// evaluate Li from bsdf
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point = nullptr) noexcept;
+                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, RayHit *ray_hit) noexcept;
 
     template<typename... Args>
     [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {
