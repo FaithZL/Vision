@@ -7,7 +7,8 @@
 
 namespace vision {
 
-ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(const vision::ParameterSet &desc,
+ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *integrator,
+                                                       const vision::ParameterSet &desc,
                                                        RegistrableBuffer<float2> &motion_vec,
                                                        RegistrableBuffer<SurfaceData> &surfaces,
                                                        RegistrableBuffer<Ray> &rays)

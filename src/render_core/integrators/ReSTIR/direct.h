@@ -12,7 +12,7 @@
 
 namespace vision {
 
-class IlluminationIntegrator;
+class RayTracingIntegrator;
 
 /**
  * generate initial candidates
@@ -22,7 +22,7 @@ class IlluminationIntegrator;
  */
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
-    const IlluminationIntegrator *_integrator{};
+    const RayTracingIntegrator *_integrator{};
     uint M_light{};
     uint M_bsdf{};
     bool _debias{false};
@@ -53,7 +53,7 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
+    ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc,
                              RegistrableBuffer<float2> &motion_vec,
                              RegistrableBuffer<SurfaceData> &surfaces,
                              RegistrableBuffer<Ray> &rays);

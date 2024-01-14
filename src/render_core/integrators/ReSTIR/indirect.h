@@ -12,6 +12,8 @@
 
 namespace vision {
 
+class RayTracingIntegrator;
+
 class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:
     uint M{};
@@ -27,7 +29,7 @@ private:
     RegistrableBuffer<Ray> &_rays;
 
 public:
-    ReSTIRIndirectIllumination(const ParameterSet &desc, RegistrableBuffer<float2> &motion_vec,
+    ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc, RegistrableBuffer<float2> &motion_vec,
                                RegistrableBuffer<SurfaceData> &surfaces,
                                RegistrableBuffer<Ray> &rays);
 
