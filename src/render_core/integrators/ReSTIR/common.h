@@ -8,6 +8,7 @@
 #include "dsl/dsl.h"
 #include "descriptions/parameter_set.h"
 #include "math/base.h"
+#include "base/scattering/interaction.h"
 
 namespace vision {
 
