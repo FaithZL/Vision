@@ -48,6 +48,7 @@ public:
         compile_shader0();
         compile_shader1();
     }
+    void init_sample() noexcept;
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 

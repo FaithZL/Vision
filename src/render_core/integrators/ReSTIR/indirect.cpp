@@ -11,6 +11,10 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
                                                        const vision::ParameterSet &desc) {
 }
 
+void ReSTIRIndirectIllumination::init_sample() noexcept {
+
+}
+
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
