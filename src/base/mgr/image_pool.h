@@ -42,6 +42,7 @@ public:
 class ImagePool {
 private:
     map<uint64_t, ImageWrapper> _images;
+    map<uint64_t, RegistrableTexture> _textures;
     ImagePool() = default;
     static ImagePool *s_image_pool;
     ImagePool(const ImagePool &) = delete;
@@ -54,8 +55,6 @@ public:
     static ImagePool &instance();
     static void destroy_instance();
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
-    [[nodiscard]] ImageWrapper &obtain_image(const fs::path &fn, ColorSpace cs,
-                                             float3 scale = make_float3(1.f), bool need_device = false) noexcept;
     void prepare() noexcept;
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
