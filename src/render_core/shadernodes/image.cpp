@@ -19,10 +19,8 @@ public:
         : ShaderNode(desc),
           _texture(Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
         _tex_id = _texture.index();
-
-        int i = 0;
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, _texture)
+    OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
 
