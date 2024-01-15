@@ -9,27 +9,6 @@
 
 namespace vision {
 using namespace ocarina;
-ImageWrapper ImageWrapper::create(const ShaderNodeDesc &desc, Pipeline *rp) {
-    ImageIO image_io;
-    if (desc.sub_type == "constant") {
-        image_io = ImageIO::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));
-    } else {
-        string color_space = desc["color_space"].as_string();
-        if (color_space.empty()) {
-            string fn = desc.file_name();
-            color_space = (fn.ends_with(".exr") || fn.ends_with(".hdr")) ? "linear" : "srgb";
-        }
-        ColorSpace cs = color_space == "linear" ? LINEAR : SRGB;
-        fs::path fpath = desc.file_name();
-        if (!fpath.is_absolute()) {
-            fpath = Global::instance().scene_path() / fpath;
-        }
-        image_io = ImageIO::load(fpath, cs);
-    }
-    auto texture = rp->device().create_texture(image_io.resolution(), image_io.pixel_storage());
-    uint id = rp->register_texture(texture);
-    return {ocarina::move(image_io), ocarina::move(texture), id};
-}
 
 RegistrableTexture ImagePool::load_texture(const ShaderNodeDesc &desc) noexcept {
     ImageIO image_io;
@@ -55,43 +34,6 @@ RegistrableTexture ImagePool::load_texture(const ShaderNodeDesc &desc) noexcept 
     return ret;
 }
 
-ImageWrapper ImageWrapper::create(const fs::path &fn, ocarina::ColorSpace &cs, ocarina::float3 scale, bool need_device) {
-    ImageIO image_io = ImageIO::load(fn, cs, scale);
-    if (need_device) {
-        auto texture = Global::instance().pipeline()->device().create_texture(image_io.resolution(), image_io.pixel_storage());
-        uint id = Global::instance().pipeline()->register_texture(texture);
-        return {ocarina::move(image_io), ocarina::move(texture), id};
-    }
-    return {ocarina::move(image_io)};
-}
-
-TextureDownloadCommand *ImageWrapper::download() noexcept {
-    return _texture.download(_image_io.pixel_ptr());
-}
-
-TextureUploadCommand *ImageWrapper::upload() const noexcept {
-    return _texture.upload(_image_io.pixel_ptr());
-}
-
-void ImageWrapper::upload_immediately() const noexcept {
-    _texture.upload_immediately(_image_io.pixel_ptr());
-}
-
-void ImageWrapper::download_immediately() noexcept {
-    _texture.download_immediately(_image_io.pixel_ptr());
-}
-
-ImageWrapper &ImagePool::obtain_image(const ShaderNodeDesc &desc) noexcept {
-    uint64_t hash = desc.hash();
-    if (!is_contain(hash)) {
-        _images.insert(make_pair(hash, ImageWrapper::create(desc, pipeline())));
-    } else {
-        auto scene_path = Global::instance().scene_path();
-        OC_INFO_FORMAT("image load: find {} from image pool", (scene_path / desc.file_name()).string().c_str());
-    }
-    return _images[hash];
-}
-
 RegistrableTexture &ImagePool::obtain_texture(const ShaderNodeDesc &desc) noexcept {
     uint64_t hash = desc.hash();
     if (!is_contain(hash)) {
@@ -104,10 +46,6 @@ RegistrableTexture &ImagePool::obtain_texture(const ShaderNodeDesc &desc) noexce
 }
 
 void ImagePool::prepare() noexcept {
-    for (auto &iter : _images) {
-        pipeline()->stream() << iter.second.upload();
-    }
-
     for (auto &iter : _textures) {
         pipeline()->stream() << iter.second.upload();
     }

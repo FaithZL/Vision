@@ -94,9 +94,6 @@ public:
     void upload_bindless_array() noexcept;
     [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
-    [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept {
-        return image_pool().obtain_image(desc);
-    }
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
 
     /// for dsl

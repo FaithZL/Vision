@@ -10,38 +10,9 @@
 
 namespace vision {
 using namespace ocarina;
-
 class Pipeline;
-
-class ImageWrapper {
-private:
-    ImageIO _image_io;
-    Texture _texture;
-    uint _id{InvalidUI32};
-
-public:
-    ImageWrapper() = default;
-    ImageWrapper(ImageIO image_io)
-        : _image_io(ocarina::move(image_io)) {}
-    ImageWrapper(ImageIO image_io, Texture image, uint id)
-        : _image_io(ocarina::move(image_io)), _texture(ocarina::move(image)), _id(id) {}
-    [[nodiscard]] Texture &texture() noexcept { return _texture; }
-    [[nodiscard]] const Texture &texture() const noexcept { return _texture; }
-    [[nodiscard]] uint channel_num() const noexcept { return _texture.channel_num(); }
-    [[nodiscard]] const ImageIO &image() const noexcept { return _image_io; }
-    [[nodiscard]] ImageIO &image() noexcept { return _image_io; }
-    [[nodiscard]] uint id() const noexcept { return _id; }
-    [[nodiscard]] static ImageWrapper create(const ShaderNodeDesc &desc, Pipeline *rp);
-    [[nodiscard]] static ImageWrapper create(const fs::path &fn, ColorSpace &cs, float3 scale, bool need_device = false);
-    [[nodiscard]] TextureUploadCommand *upload() const noexcept;
-    [[nodiscard]] TextureDownloadCommand *download() noexcept;
-    void upload_immediately() const noexcept;
-    void download_immediately() noexcept;
-};
-
 class ImagePool {
 private:
-    map<uint64_t, ImageWrapper> _images;
     map<uint64_t, RegistrableTexture> _textures;
     ImagePool() = default;
     static ImagePool *s_image_pool;
@@ -54,11 +25,10 @@ private:
 public:
     static ImagePool &instance();
     static void destroy_instance();
-    [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
     [[nodiscard]] RegistrableTexture load_texture(const ShaderNodeDesc &desc) noexcept;
     [[nodiscard]] RegistrableTexture &obtain_texture(const ShaderNodeDesc &desc) noexcept;
     void prepare() noexcept;
-    [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
+    [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _textures.contains(hash); }
 };
 
 }// namespace vision
