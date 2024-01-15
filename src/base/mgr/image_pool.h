@@ -55,6 +55,8 @@ public:
     static ImagePool &instance();
     static void destroy_instance();
     [[nodiscard]] ImageWrapper &obtain_image(const ShaderNodeDesc &desc) noexcept;
+    [[nodiscard]] RegistrableTexture load_texture(const ShaderNodeDesc &desc) noexcept;
+    [[nodiscard]] RegistrableTexture &obtain_texture(const ShaderNodeDesc &desc) noexcept;
     void prepare() noexcept;
     [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _images.contains(hash); }
 };
