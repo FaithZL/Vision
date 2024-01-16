@@ -1,0 +1,3979 @@
+{
+    "shapes": [
+//        {
+//            "type": "model",
+//            "name": "shape_0",
+//            "param" : {
+//                "fn": "models/Prism.obj",
+//                "material": "Glass",
+//                "name" : "prism",
+//                "transform": {
+//                    "type" : "trs",
+//                    "param": {
+//                        "t": [ -0.7776312828063965,
+//                            1.4423744678497314,
+//                            -0.07520569860935211],
+//                        "r" : [1,0,0,0],
+//                        "s" : [1,1,1]
+//                    }
+//                }
+//            }
+//        },
+        {
+            "type": "model",
+            "name": "shape_0",
+            "param": {
+                "fn": "models/Mesh036.obj",
+                "smooth": false,
+                "material": "Walls",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_1",
+            "param": {
+                "fn": "models/Mesh048.obj",
+                "smooth": false,
+                "material": "FluorescentTube",
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": false,
+                        "scale": 1.3
+                    }
+                },
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+//        {
+//            "type": "model",
+//            "name": "shape_2",
+//            "param": {
+//                "fn": "models/Mesh062.obj",
+//                "smooth": false,
+//                "material": "CeilingLight",
+////                "emission": {
+////                    "type": "area",
+////                    "param": {
+////                        "color": [
+////                            12,
+////                            12,
+////                            12
+////                        ],
+////                        "two_sided": false,
+////                        "scale": 1.3
+////                    }
+////                },
+//                "transform": {
+//                    "type": "matrix4x4",
+//                    "param": {
+//                        "matrix4x4": [
+//                            [
+//                                1.0,
+//                                0.0,
+//                                0.0,
+//                                0.0
+//                            ],
+//                            [
+//                                0.0,
+//                                1.0,
+//                                0.0,
+//                                0.0
+//                            ],
+//                            [
+//                                0.0,
+//                                0.0,
+//                                1.0,
+//                                0.0
+//                            ],
+//                            [
+//                                0.0,
+//                                0.0,
+//                                0.0,
+//                                1.0
+//                            ]
+//                        ]
+//                    }
+//                }
+//            }
+//        },
+        {
+            "type": "model",
+            "name": "shape_3",
+            "param": {
+                "fn": "models/Mesh038.obj",
+                "smooth": false,
+                "material": "FluorescentTube",
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": false,
+                        "scale": 1.3
+                    }
+                },
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_4",
+            "param": {
+                "fn": "models/Mesh054.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_5",
+            "param": {
+                "fn": "models/Mesh077.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_6",
+            "param": {
+                "fn": "models/Mesh052.obj",
+                "smooth": true,
+                "material": "BlackPlastic",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_7",
+            "param": {
+                "fn": "models/Mesh061.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_8",
+            "param": {
+                "fn": "models/Mesh031.obj",
+                "smooth": false,
+                "material": "Projector",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_9",
+            "param": {
+                "fn": "models/Mesh030.obj",
+                "smooth": true,
+                "material": "Projector",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_10",
+            "param": {
+                "fn": "models/Mesh057.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_11",
+            "param": {
+                "fn": "models/Mesh023.obj",
+                "smooth": false,
+                "material": "Walls",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_12",
+            "param": {
+                "fn": "models/Mesh027.obj",
+                "smooth": false,
+                "material": "Walls",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_13",
+            "param": {
+                "fn": "models/Mesh047.obj",
+                "smooth": true,
+                "material": "Bin2",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_14",
+            "param": {
+                "fn": "models/Mesh049.obj",
+                "smooth": false,
+                "material": "Boxes1",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                -0.07342231273651123,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_15",
+            "param": {
+                "fn": "models/Mesh022.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_16",
+            "param": {
+                "fn": "models/Mesh029.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_17",
+            "param": {
+                "fn": "models/Mesh033.obj",
+                "smooth": false,
+                "material": "Whiteboard",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_18",
+            "param": {
+                "fn": "models/Mesh040.obj",
+                "smooth": false,
+                "material": "Walls",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_19",
+            "param": {
+                "fn": "models/Mesh028.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_20",
+            "param": {
+                "fn": "models/Mesh076.obj",
+                "smooth": true,
+                "material": "ProjectorScreen",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_21",
+            "param": {
+                "fn": "models/Mesh050.obj",
+                "smooth": false,
+                "material": "ScreenEnds",
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": false,
+                        "scale": 1.3
+                    }
+                },
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_22",
+            "param": {
+                "fn": "models/Mesh055.obj",
+                "smooth": false,
+                "material": "FlagBase",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_23",
+            "param": {
+                "fn": "models/Mesh053.obj",
+                "smooth": false,
+                "material": "FoamEraser",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_24",
+            "param": {
+                "fn": "models/Mesh058.obj",
+                "smooth": false,
+                "material": "ChalkHolder",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_25",
+            "param": {
+                "fn": "models/Mesh060.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_26",
+            "param": {
+                "fn": "models/Mesh063.obj",
+                "smooth": true,
+                "material": "ChairStainless",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_27",
+            "param": {
+                "fn": "models/Mesh064.obj",
+                "smooth": true,
+                "material": "ChairFrame",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_28",
+            "param": {
+                "fn": "models/Mesh037.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_29",
+            "param": {
+                "fn": "models/Mesh067.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_30",
+            "param": {
+                "fn": "models/Mesh073.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_31",
+            "param": {
+                "fn": "models/Mesh024.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_32",
+            "param": {
+                "fn": "models/Mesh041.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_33",
+            "param": {
+                "fn": "models/Mesh026.obj",
+                "smooth": true,
+                "material": "Rubber",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_34",
+            "param": {
+                "fn": "models/Mesh069.obj",
+                "smooth": true,
+                "material": "ChairWood",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_35",
+            "param": {
+                "fn": "models/Mesh035.obj",
+                "smooth": false,
+                "material": "Floor",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                11.651670455932617,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                11.651670455932617,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                11.651670455932617,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_36",
+            "param": {
+                "fn": "models/Mesh043.obj",
+                "smooth": false,
+                "material": "WoodFrame",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_37",
+            "param": {
+                "fn": "models/Mesh072.obj",
+                "smooth": false,
+                "material": "Whiteboard2",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_38",
+            "param": {
+                "fn": "models/Mesh045.obj",
+                "smooth": true,
+                "material": "StickyNote1",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_39",
+            "param": {
+                "fn": "models/Mesh044.obj",
+                "smooth": true,
+                "material": "StickyNote2",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_40",
+            "param": {
+                "fn": "models/Mesh074.obj",
+                "smooth": true,
+                "material": "RedPencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_41",
+            "param": {
+                "fn": "models/Mesh070.obj",
+                "smooth": true,
+                "material": "BluePencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_42",
+            "param": {
+                "fn": "models/Mesh078.obj",
+                "smooth": true,
+                "material": "GreenPencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_43",
+            "param": {
+                "fn": "models/Mesh021.obj",
+                "smooth": false,
+                "material": "Whiteboard3",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_44",
+            "param": {
+                "fn": "models/Mesh018.obj",
+                "smooth": false,
+                "material": "WhiteboardFrame",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_45",
+            "param": {
+                "fn": "models/Mesh017.obj",
+                "smooth": false,
+                "material": "Lectern",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_46",
+            "param": {
+                "fn": "models/Mesh066.obj",
+                "smooth": false,
+                "material": "Lectern",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_47",
+            "param": {
+                "fn": "models/Mesh056.obj",
+                "smooth": false,
+                "material": "Lectern",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_48",
+            "param": {
+                "fn": "models/Mesh016.obj",
+                "smooth": false,
+                "material": "Lectern",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_49",
+            "param": {
+                "fn": "models/Mesh015.obj",
+                "smooth": false,
+                "material": "Lectern",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_50",
+            "param": {
+                "fn": "models/Mesh014.obj",
+                "smooth": false,
+                "material": "Hallway",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_51",
+            "param": {
+                "fn": "models/Mesh025.obj",
+                "smooth": false,
+                "material": "WoodFrame",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_52",
+            "param": {
+                "fn": "models/Mesh046.obj",
+                "smooth": false,
+                "material": "Whiteboard2",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_53",
+            "param": {
+                "fn": "models/Mesh012.obj",
+                "smooth": true,
+                "material": "BluePencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_54",
+            "param": {
+                "fn": "models/Mesh011.obj",
+                "smooth": true,
+                "material": "GreenPencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_55",
+            "param": {
+                "fn": "models/Mesh010.obj",
+                "smooth": true,
+                "material": "GreenPencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_56",
+            "param": {
+                "fn": "models/Mesh009.obj",
+                "smooth": true,
+                "material": "GreenPencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_57",
+            "param": {
+                "fn": "models/Mesh008.obj",
+                "smooth": true,
+                "material": "BluePencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_58",
+            "param": {
+                "fn": "models/Mesh059.obj",
+                "smooth": true,
+                "material": "RedPencil",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_59",
+            "param": {
+                "fn": "models/Mesh065.obj",
+                "smooth": true,
+                "material": "Bookshelf",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_60",
+            "param": {
+                "fn": "models/Mesh032.obj",
+                "smooth": true,
+                "material": "StickyNote3",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_61",
+            "param": {
+                "fn": "models/Mesh007.obj",
+                "smooth": true,
+                "material": "StickyNote4",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_62",
+            "param": {
+                "fn": "models/Mesh075.obj",
+                "smooth": true,
+                "material": "StickyNote5",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_63",
+            "param": {
+                "fn": "models/Mesh071.obj",
+                "smooth": true,
+                "material": "StickyNote6",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_64",
+            "param": {
+                "fn": "models/Mesh039.obj",
+                "smooth": true,
+                "material": "StickyNote7",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_65",
+            "param": {
+                "fn": "models/Mesh006.obj",
+                "smooth": true,
+                "material": "StickyNote8",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_66",
+            "param": {
+                "fn": "models/Mesh051.obj",
+                "smooth": false,
+                "material": "Black",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_67",
+            "param": {
+                "fn": "models/Mesh013.obj",
+                "smooth": true,
+                "material": "FlagRed",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_68",
+            "param": {
+                "fn": "models/Mesh005.obj",
+                "smooth": true,
+                "material": "FlagWhite",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_69",
+            "param": {
+                "fn": "models/Mesh042.obj",
+                "smooth": false,
+                "material": "Walls",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_70",
+            "param": {
+                "fn": "models/Mesh003.obj",
+                "smooth": false,
+                "material": "Speakers",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_71",
+            "param": {
+                "fn": "models/Mesh020.obj",
+                "smooth": false,
+                "material": "FluorescentTube",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_72",
+            "param": {
+                "fn": "models/Mesh002.obj",
+                "smooth": false,
+                "material": "CeilingLight",
+//                "emission": {
+//                    "type": "area",
+//                    "param": {
+//                        "color": [
+//                            12,
+//                            12,
+//                            12
+//                        ],
+//                        "two_sided": false,
+//                        "scale": 1.3
+//                    }
+//                },
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_73",
+            "param": {
+                "fn": "models/Mesh019.obj",
+                "smooth": false,
+                "material": "Wall",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_74",
+            "param": {
+                "fn": "models/Mesh068.obj",
+                "smooth": false,
+                "material": "WindowFrame",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_75",
+            "param": {
+                "fn": "models/Mesh001.obj",
+                "smooth": true,
+                "material": "Bin1",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_76",
+            "param": {
+                "fn": "models/Mesh004.obj",
+                "smooth": false,
+                "material": "Boxes1",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                -0.07342231273651123,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_77",
+            "param": {
+                "fn": "models/Mesh034.obj",
+                "smooth": false,
+                "material": "Boxes2",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                -0.07342231273651123,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "name": "shape_78",
+            "param": {
+                "fn": "models/Mesh000.obj",
+                "smooth": false,
+                "material": "Boxes1",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                -0.07342231273651123,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "materials": [
+        {
+            "type": "matte",
+            "name": "Walls",
+            "param": {
+                "color": [
+                    0.6540709733963013,
+                    0.6740800142288208,
+                    0.800000011920929
+                ]
+            }
+        },
+        {
+            "type": "glass",
+            "name": "Glass",
+            "param": {
+                "material_name" : "BK7",
+                "color": [
+                    1,
+                    1,
+                    1
+                ],
+                "roughness": [0.001,0.001]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Lectern",
+            "param": {
+                "color": {
+                    "fn": "textures/wood1.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "matte",
+            "name": "FlagRed",
+            "param": {
+                "color": [
+                    0.800000011920929,
+                    0.008213999681174755,
+                    0.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "FlagWhite",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "FlagBase",
+            "param": {
+                "color": [
+                    0.7796609997749329,
+                    0.6531620025634766,
+                    0.3491879999637604
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "ChalkHolder",
+            "param": {
+                "color": [
+                    0.800000011920929,
+                    0.6449009776115417,
+                    0.4121190011501312
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "ProjectorScreen",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote1",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Whiteboard",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote7",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote8",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Bin2",
+            "param": {
+                "color": [
+                    0.800000011920929,
+                    0.7175089716911316,
+                    0.19045600295066833
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Boxes2",
+            "param": {
+                "color": [
+                    0.800000011920929,
+                    0.7916420102119446,
+                    0.38839900493621826
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Boxes1",
+            "param": {
+                "color": [
+                    0.6399999856948853,
+                    0.47218799591064453,
+                    0.3192330002784729
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote4",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Whiteboard2",
+            "param": {
+                "color": [
+                    0.79311,
+                    0.79311,
+                    0.79311
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "BluePencil",
+            "param": {
+                "color": [
+                    0.0,
+                    0.030764000490307808,
+                    0.800000011920929
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "GreenPencil",
+            "param": {
+                "color": [
+                    0.14567600190639496,
+                    0.6399999856948853,
+                    0.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "RedPencil",
+            "param": {
+                "color": [
+                    0.6266509890556335,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Bookshelf",
+            "param": {
+                "color": [
+                    0.4913010001182556,
+                    0.3051770031452179,
+                    0.800000011920929
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Hallway",
+            "param": {
+                "color": [
+                    0.784314,
+                    0.784314,
+                    0.784314
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "CeilingLight",
+            "param": {
+                "color": [
+                    0.647814,
+                    0.647814,
+                    0.647814
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Black",
+            "param": {
+                "color": [
+                    0.00631,
+                    0.00631,
+                    0.00631
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "BlackPlastic",
+            "param": {
+                "color": [
+                    0.00631,
+                    0.00631,
+                    0.00631
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Projector",
+            "param": {
+                "color": [
+                    0.00631,
+                    0.00631,
+                    0.00631
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "ScreenEnds",
+            "param": {
+                "color": [
+                    0.028991,
+                    0.028991,
+                    0.028991
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "FoamEraser",
+            "param": {
+                "color": [
+                    0.684615,
+                    0.684615,
+                    0.684615
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "Whiteboard3",
+            "param": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.05,
+                    0.05
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "ChairWood",
+            "param": {
+                "color": {
+                    "fn": "textures/wood2.jpg",
+                    "color_space": "srgb"
+                },
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.05,
+                    0.05
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "metal",
+            "name": "ChairFrame",
+            "param": {
+                "material_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "metal",
+            "name": "ChairStainless",
+            "param": {
+                "material_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Floor",
+            "param": {
+                "color": [
+                    0.6592240333557129,
+                    0.5924380421638489,
+                    0.517401397228241
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "WoodFrame",
+            "param": {
+                "color": {
+                    "fn": "textures/blackboard.jpg",
+                    "color_space": "srgb"
+                }
+            }
+        },
+        {
+            "type": "matte",
+            "name": "WhiteboardFrame",
+            "param": {
+                "color": [
+                    0.056173,
+                    0.056173,
+                    0.056173
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote3",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote5",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote6",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Speakers",
+            "param": {
+                "color": [
+                    0.03598,
+                    0.03598,
+                    0.03598
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Wall",
+            "param": {
+                "color": [
+                    0.4508373439311981,
+                    0.4536627233028412,
+                    0.49960458278656006
+                ]
+            }
+        },
+        {
+            "type": "metal",
+            "name": "WindowFrame",
+            "param": {
+                "material_name": "Al",
+                "eta": [
+                    0,
+                    0,
+                    0
+                ],
+                "k": [
+                    0,
+                    0,
+                    0
+                ],
+                "roughness": [
+                    0.1,
+                    0.1
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Bin1",
+            "param": {
+                "color": [
+                    0.32712534070014954,
+                    0.5785964727401733,
+                    0.2805613875389099
+                ]
+            }
+        },
+        {
+            "type": "matte",
+            "name": "Rubber",
+            "param": {
+                "color": [
+                    0.6870308518409729,
+                    0.7154654264450073,
+                    0.5604991912841797
+                ]
+            }
+        },
+        {
+            "type": "substrate",
+            "name": "FluorescentTube",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ],
+                "ior": 1.5,
+                "specular": [
+                    0.04,
+                    0.04,
+                    0.04
+                ],
+                "roughness": [
+                    0.01,
+                    0.01
+                ],
+                "remapping_roughness": false
+            }
+        },
+        {
+            "type": "matte",
+            "name": "StickyNote2",
+            "param": {
+                "color": [
+                    0.612066,
+                    0.612066,
+                    0.612066
+                ]
+            }
+        }
+    ],
+    "sampler": {
+        "type": "independent",
+        "name": "sampler0",
+        "param": {
+            "spp": 1
+        }
+    },
+    "warper": {
+        "type": "alias_table"
+    },
+    "mediums" : {
+        "global" : "fog",
+//        "process" : true,
+        "list": [
+            {
+                "type" : "homogeneous",
+                "name" : "fog",
+                "param" : {
+                    "g" : 0,
+                    "scale" : 0.0231,
+                    "sigma_s" : [1, 1, 1],
+                    "sigma_a" : [0, 0, 0]
+                }
+            }
+        ]
+    },
+    "integrator" : {
+//        "type" : "rt",
+        		"type" : "pt",
+        "param" : {
+            "mis_mode": 2,
+            "direct": {
+                "spatial": {
+                    					"open": false,
+                    "theta": 5,
+                    "depth": 0.3,
+                    "radius": 29,
+                    "sample_num": 1
+                },
+                "temporal": {
+                    					"open": false,
+                    "theta": 2,
+                    "depth": 0.5,
+                    "radius": 0,
+                    "motion_vec": 0.15,
+                    "history_limit": 10
+                },
+                //				"mis": true,
+                "M_light": 0,
+                "M_bsdf": 1
+            },
+            "min_depth" : 5,
+            "max_depth" : 1,
+            "rr_threshold" : 1
+        }
+    },
+    "camera": {
+        "type": "thin_lens",
+        "param": {
+            "fov_y": 35.98,
+            "name": "view1",
+            "velocity": 5,
+            //            "medium": "fog",
+            "transform": {
+                "type": "look_at",
+                "param": {
+                    "position": [
+                        -1.690487027168274,
+                        1.2715795040130615,
+                        5.886528015136719
+                    ],
+                    "up": [
+                        0.0,
+                        1.0,
+                        0.0
+                    ],
+                    "target_pos": [
+                        -0.7776312828063965,
+                        1.4423744678497314,
+                        -0.07520569860935211
+                    ]
+                }
+            },
+            "film": {
+                "type": "rgb",
+                "param": {
+//                    "accumulation": 0,
+                    "resolution": [
+                        1920,
+                        1080
+                    ],
+                    //                    "gamma": false,
+                    "fb_state": 0
+                }
+            },
+            "filter": {
+                "type": "box",
+                "name": "boxFilter",
+                "param": {
+                    "radius": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            }
+        }
+    },
+    "light_sampler": {
+        "type": "uniform",
+        "param": {
+            "lights": [
+//                {
+//                    "type" : "spherical",
+//                    "param": {
+//                        "color": {
+//                            "fn" : "textures/spaichingen_hill_2k.exr",
+//                            "color_space": "linear"
+//                        },
+//                        "o2w" : {
+//                            "type":"yaw_pitch",
+//                            "param": {
+//                                "yaw" :-30
+//                            }
+//                        },
+//                        "scale" : 0.3
+//                    }
+//                }
+            ]
+        }
+    },
+    "spectrum" : {
+        "type" : "srgb",
+        "param" : {
+            "dimension": 3
+        }
+    },
+
+    "pipeline": {
+//        "type": "customized"
+        "param": {
+            //			"obfuscation" : false,
+//            			"valid_check" : true
+        }
+    },
+
+    "render_setting": {
+        "polymorphic_mode": 1
+    },
+    "output": {
+        "spp": 512,
+        "fn": "pt2.exr"
+    }
+}
