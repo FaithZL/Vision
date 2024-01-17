@@ -44,7 +44,7 @@
             "type": "model",
             "name": "shape_3",
             "param": {
-                "fn": "mesh/Mesh039.obj",
+                "fn": "mesh/Mesh.obj",
                 "smooth": false,
                 "material": "Light",
                 "emission": {
@@ -84,7 +84,7 @@
                             [
                                 0.0,
                                 -0.95,
-                                -1.0,
+                                1.0,
                                 1.0
                             ]
                         ]
@@ -1142,13 +1142,13 @@
 	"output" : {
 		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "pt-0.exr"
+		"fn" : "pt-1.exr"
 	},
 	"integrator" : {
 //				"type" : "rt",
 		"type" : "pt",
 		"param" : {
-			"mis_mode": 0,
+			"mis_mode": 1,
 //			"separate": true,
 			"direct": {
 				"spatial": {
