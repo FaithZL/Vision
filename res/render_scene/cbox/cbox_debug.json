@@ -1144,7 +1144,7 @@
 	"output" : {
 		"spp" : 256,
 		"save_exit" : false,
-		"fn" : "pt-1.exr"
+		"fn" : "pt-1-.exr"
 	},
 	"integrator" : {
 //				"type" : "rt",
