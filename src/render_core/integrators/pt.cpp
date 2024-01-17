@@ -14,6 +14,24 @@ public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc) {}
 
+    template<typename SF, typename SS>
+    static SampledSpectrum direct_lighting_(const Interaction &it, const SF &sf, LightSample ls,
+                                           Bool occluded, Sampler *sampler,
+                                           const SampledWavelengths &swl, SS &ss, bool mis = true) {
+        Float3 wi = normalize(ls.p_light - it.pos);
+        ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
+        ss = sf.sample(it.wo, sampler);
+        Bool is_delta_light = ls.eval.pdf < 0;
+        Float weight = mis ? (select(is_delta_light, 1.f, vision::MIS_weight<D>(ls.eval.pdf, scatter_eval.pdf))) : 1.f;
+        ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
+        SampledSpectrum Ld = {swl.dimension(), 0.f};
+        $if(!occluded && scatter_eval.valid() && ls.valid()) {
+            Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
+        };
+//        $info_if(Ld.max() > 5000, "{} {}      {} {} {}     {} ", dispatch_idx().xy(), Ld.vec3(), vision::MIS_weight<D>(ls.eval.pdf, scatter_eval.pdf));
+        return Ld;
+    }
+
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept override{
         Pipeline *rp = pipeline();
         Sampler *sampler = scene().sampler();
@@ -48,14 +66,16 @@ public:
         auto direct_light_mis = [this]<typename... Args>(Args &&...args) -> SampledSpectrum {
             switch (_mis_mode) {
                 case MISMode::EBSDF: {
-                    return direct_lighting(OC_FORWARD(args)...) * 0.f;
+                    return direct_lighting_(OC_FORWARD(args)...) * 0.f;
                 }
                 case MISMode::ELight: {
-                    return direct_lighting(OC_FORWARD(args)..., false);
+                    auto Ld = direct_lighting_(OC_FORWARD(args)..., false);
+//                    $info_if(Ld.max() > 5000, "{} {}      {} {} {}      ", dispatch_idx().xy(), Ld.vec3());
+                    return Ld;
                 }
                 default: break;
             }
-            return direct_lighting(OC_FORWARD(args)...);
+            return direct_lighting_(OC_FORWARD(args)...);
         };
         Float3 primary_dir = rs.direction();
         auto mis_bsdf = [&](Uint &bounces, bool inner) {
@@ -169,6 +189,7 @@ public:
             } else {
                 sample_surface();
             }
+//            $info_if(Ld.max() > 50000 , "{} {}      {} {} {}    {} {} {}     {} {} {}     {}     ", dispatch_idx().xy(), Ld.vec3(), light_sample.p_light- it.pos,throughput.vec3(), it.has_emission().cast<int>());
             value += throughput * Ld * tr;
             eta_scale *= sqr(bsdf_sample.eta);
             Float lum = throughput.max();
