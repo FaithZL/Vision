@@ -170,18 +170,18 @@
                 "fn": "models/Mesh038.obj",
                 "smooth": false,
                 "material": "FluorescentTube",
-                // "emission": {
-                //     "type": "area",
-                //     "param": {
-                //         "color": [
-                //             12,
-                //             12,
-                //             12
-                //         ],
-                //         "two_sided": false,
-                //         "scale": 1.3
-                //     }
-                // },
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": false,
+                        "scale": 1.3
+                    }
+                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -1793,18 +1793,18 @@
             "param": {
                 "fn": "models/Mesh021.obj",
                 "smooth": false,
-               "emission": {
-                   "type": "area",
-                   "param": {
-                       "color": [
-                           12,
-                           12,
-                           12
-                       ],
-                       "two_sided": false,
-                       "scale": 0.3
-                   }
-               },
+            //    "emission": {
+            //        "type": "area",
+            //        "param": {
+            //            "color": [
+            //                12,
+            //                12,
+            //                12
+            //            ],
+            //            "two_sided": false,
+            //            "scale": 0.3
+            //        }
+            //    },
                 "material": "Whiteboard3",
                 "transform": {
                     "type": "matrix4x4",
@@ -3866,7 +3866,7 @@
 //        "type" : "rt",
         		"type" : "pt",
         "param" : {
-            "mis_mode": 0,
+            "mis_mode": 1,
             "direct": {
                 "spatial": {
                     					"open": false,
@@ -3995,6 +3995,6 @@
     },
     "output": {
         "spp": 512,
-        "fn": "pt.exr"
+        "fn": "pt1.exr"
     }
 }
