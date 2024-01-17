@@ -209,9 +209,9 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_wi(p_ref, p_light, swl);
-        Float pmf = PMF(p_ref, light_idx);
-        ret.pdf *= pmf;
     });
+    Float pmf = PMF(p_ref, light_idx);
+    ret.pdf *= pmf;
     return ret;
 }
 
