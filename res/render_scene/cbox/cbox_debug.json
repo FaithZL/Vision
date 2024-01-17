@@ -46,7 +46,7 @@
             "param": {
                 "fn": "mesh/Mesh038.obj",
                 "smooth": false,
-                "material": "Floor",
+                "material": "Light",
                 "emission": {
                     "type": "area",
                     "param": {
@@ -56,7 +56,7 @@
                             12
                         ],
                         "two_sided": false,
-                        "scale": 1.3
+                        "scale": 0.3
                     }
                 },
                 "transform": {
@@ -383,29 +383,29 @@
 							]
 						]
 					}
-				},
-				"emission" : {
-					"type" : "area",
-					"param" : {
-						"color" : {
-							"channels" : "xyz",
-							"node" : [
-								17,
-								12,
-								4
-							]
-						},
-						//						"color" : {
-						//							"channels" : "xyz",
-						//							"node" : {
-						//								"fn" : "Painting3.jpg",
-						//								"color_space" : "srgb"
-						//							}
-						//						},
-						"two_sided" : false,
-						"scale" : 1
-					}
 				}
+				// "emission" : {
+				// 	"type" : "area",
+				// 	"param" : {
+				// 		"color" : {
+				// 			"channels" : "xyz",
+				// 			"node" : [
+				// 				17,
+				// 				12,
+				// 				4
+				// 			]
+				// 		},
+				// 		//						"color" : {
+				// 		//							"channels" : "xyz",
+				// 		//							"node" : {
+				// 		//								"fn" : "Painting3.jpg",
+				// 		//								"color_space" : "srgb"
+				// 		//							}
+				// 		//						},
+				// 		"two_sided" : false,
+				// 		"scale" : 1
+				// 	}
+				// }
 			}
 		}
 		//		{
@@ -1084,7 +1084,7 @@
 //				"type" : "rt",
 		"type" : "pt",
 		"param" : {
-			"mis_mode": 2,
+			"mis_mode": 1,
 //			"separate": true,
 			"direct": {
 				"spatial": {
@@ -1175,8 +1175,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 512,
+		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "pt2.exr"
+		"fn" : "pt1-.exr"
 	}
 }
