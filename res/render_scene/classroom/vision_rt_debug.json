@@ -3864,13 +3864,13 @@
     },
     "output": {
         "spp": 512,
-        "fn": "pt-2.exr"
+        "fn": "pt-1.exr"
     },
     "integrator" : {
 //        "type" : "rt",
         		"type" : "pt",
         "param" : {
-            "mis_mode": 2,
+            "mis_mode": 1,
             "direct": {
                 "spatial": {
                     					"open": false,
