@@ -3340,7 +3340,7 @@
                             "color_space": "linear"
                         },
                         "o2w" : {
-                            "type":"yaw_pitch",
+                            "type":"Euler",
                             "param": {
                                 "yaw" :-30
                             }

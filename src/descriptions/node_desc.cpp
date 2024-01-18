@@ -39,7 +39,7 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
         float3 up = param["up"].as_float3(make_float3(0, 1, 0));
         float3 target_pos = param["target_pos"].as_float3(make_float3(0, 0, 1));
         mat = look_at<H>(position, target_pos, up);
-    } else if (sub_type == "yaw_pitch") {
+    } else if (sub_type == "Euler") {
         float4x4 yaw_t = rotation_y<H>(param["yaw"].as_float(0.f), false);
         float4x4 roll_t = rotation_z<H>(param["roll"].as_float(0.f), false);
         float4x4 pitch_t = rotation_x<H>(param["pitch"].as_float(0.f), false);

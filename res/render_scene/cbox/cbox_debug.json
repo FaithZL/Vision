@@ -328,7 +328,7 @@
 //																                "material" : "mix",
 //												                                "material" : "Glass",
 				"transform" : {
-					"type" : "yaw_pitch",
+					"type" : "Euler",
 					"param" : {
 						"yaw" : 0,
 						"pitch" :0,
@@ -924,7 +924,7 @@
 //											"color_space": "linear"
 //										},
 //										"o2w" : {
-//											"type":"yaw_pitch",
+//											"type":"Euler",
 //											"param": {
 //												"yaw" :-30
 //											}
