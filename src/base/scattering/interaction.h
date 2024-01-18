@@ -114,6 +114,12 @@ public:
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
 };
 
+template<typename Pos, typename Normal, typename W>
+inline auto offset_ray_origin(Pos &&p_in, Normal n_in, W w) noexcept {
+    n_in = ocarina::select(ocarina::dot(w, n_in) > 0, n_in, -n_in);
+    return offset_ray_origin(OC_FORWARD(p_in), n_in);
+}
+
 struct Interaction {
 private:
     static float s_ray_offset_factor;
@@ -121,6 +127,11 @@ private:
 public:
     [[nodiscard]] static float ray_offset_factor() noexcept;
     static void set_ray_offset_factor(float value) noexcept;
+    template<typename Pos, typename Normal>
+    static auto custom_offset_ray_origin(Pos &&p_in, Normal &&n_in) noexcept {
+        float factor = ray_offset_factor();
+        return offset_ray_origin(OC_FORWARD(p_in), OC_FORWARD(n_in) * factor);
+    }
 
 public:
     Float3 pos;
@@ -218,7 +229,7 @@ struct SpacePoint {
 
     [[nodiscard]] Float3 robust_pos(const Float3 &dir) const noexcept {
         Float factor = select(dot(ng, dir) > 0, 1.f, -1.f);
-        return offset_ray_origin(pos, ng * factor);
+        return Interaction::custom_offset_ray_origin(pos, ng * factor);
     }
 
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {

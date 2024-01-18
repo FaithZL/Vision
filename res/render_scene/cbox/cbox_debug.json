@@ -317,7 +317,7 @@
                             12,
                             12
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 0.6
                     }
                 },
