@@ -62,7 +62,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             lsp.prim_id = hit.prim_id;
             lsp.bary = hit.bary;
             (*sample)->set_lsp(lsp);
-            (*sample)->set_pos(next_it.robust_position());
+            (*sample)->set_pos(next_it.robust_position(it.pos - next_it.pos));
             bs->eval.pdf = le.pdf;
             f = bs->eval.f * le.L;
         };

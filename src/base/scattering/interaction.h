@@ -133,6 +133,13 @@ public:
         return offset_ray_origin(OC_FORWARD(p_in), OC_FORWARD(n_in) * factor);
     }
 
+    template<typename Pos, typename Normal, typename W>
+    static auto custom_offset_ray_origin(Pos &&p_in, Normal &&n_in, W w) noexcept {
+        float factor = ray_offset_factor();
+        return offset_ray_origin(OC_FORWARD(p_in), OC_FORWARD(n_in) * factor, w);
+    }
+
+
 public:
     Float3 pos;
     Float3 wo;
@@ -184,6 +191,7 @@ public:
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept;
     [[nodiscard]] Float3 robust_position() const noexcept;
+    [[nodiscard]] Float3 robust_position(const Float3 &w) const noexcept;
 };
 
 template<typename T>
