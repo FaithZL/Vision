@@ -191,7 +191,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         rs = it.spawn_ray_state(bsdf_sample.wi);
     };
 
-    if (only_direct) {
+    if (only_direct && _mis_mode == MISMode::EBoth) {
         /// Supplement only direct light BSDF sampling
         $for(&bounce, 1u) {
             mis_bsdf(bounce, false);
