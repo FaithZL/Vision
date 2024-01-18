@@ -3864,11 +3864,11 @@
     },
     "output": {
         "spp": 512,
-        "fn": "pt-1.exr"
+        "fn": "rt-1.exr"
     },
     "integrator" : {
-//        "type" : "rt",
-        		"type" : "pt",
+       "type" : "rt",
+        		// "type" : "pt",
         "param" : {
             "mis_mode": 1,
             "direct": {
@@ -3995,7 +3995,7 @@
     },
 
     "render_setting": {
-        "ray_offset_factor" :1.1,
+        "ray_offset_factor" :1.5,
         "polymorphic_mode": 1
     }
 }

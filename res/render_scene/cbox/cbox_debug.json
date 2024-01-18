@@ -40,58 +40,58 @@
 				}
 			}
 		},
-		// {
-        //     "type": "model",
-        //     "name": "shape_3",
-        //     "param": {
-        //         "fn": "mesh/Mesh.obj",
-        //         "smooth": false,
-        //         "material": "Light",
-        //         "emission": {
-        //             "type": "area",
-        //             "param": {
-        //                 "color": [
-        //                     12,
-        //                     12,
-        //                     12
-        //                 ],
-        //                 "two_sided": true,
-        //                 "scale": 0.5
-        //             }
-        //         },
-        //         "transform": {
-        //             "type": "matrix4x4",
-        //             "param": {
-        //                 "matrix4x4": [
-        //                     [
-        //                         1.0,
-        //                         0.0,
-        //                         0.0,
-        //                         0.0
-        //                     ],
-        //                     [
-        //                         0.0,
-        //                         1.0,
-        //                         0.0,
-        //                         0.0
-        //                     ],
-        //                     [
-        //                         0.0,
-        //                         0.0,
-        //                         1.0,
-        //                         0.0
-        //                     ],
-        //                     [
-        //                         0.0,
-        //                         -1.05,
-        //                         1.0,
-        //                         1.0
-        //                     ]
-        //                 ]
-        //             }
-        //         }
-        //     }
-        // },
+		{
+            "type": "model",
+            "name": "shape_3",
+            "param": {
+                "fn": "mesh/Mesh038.obj",
+                "smooth": false,
+                "material": "Light",
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": true,
+                        "scale": 0.5
+                    }
+                },
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                -1.05,
+                                1.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
 		{
 			"type" : "quad",
 			"name" : "shape_1",
@@ -1098,7 +1098,7 @@
 	},
 	"render_setting" : {
 		"min_world_radius": 10,
-		"ray_offset_factor" :1.1,
+		"ray_offset_factor" :1.3,
 		"polymorphic_mode" : 1
 	},
 	"denoiser" : {
