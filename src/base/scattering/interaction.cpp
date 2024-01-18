@@ -91,6 +91,10 @@ RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
+Float3 Interaction::robust_position() const noexcept {
+    return custom_offset_ray_origin(pos, ng);
+}
+
 OCRay Interaction::spawn_ray_to(const Float3 &p) const noexcept {
     return vision::spawn_ray_to(pos, ng, p);
 }

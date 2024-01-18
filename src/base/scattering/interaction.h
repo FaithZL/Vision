@@ -183,6 +183,7 @@ public:
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
     [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept;
+    [[nodiscard]] Float3 robust_position() const noexcept;
 };
 
 template<typename T>
