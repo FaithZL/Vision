@@ -31,6 +31,16 @@ PhaseSample HenyeyGreenstein::sample(Float3 wo, Sampler *sampler) const noexcept
     return phase_sample;
 }
 
+float Interaction::s_ray_offset_factor = 1.f;
+
+float Interaction::ray_offset_factor() noexcept {
+    return s_ray_offset_factor;
+}
+
+void Interaction::set_ray_offset_factor(float value) noexcept {
+    s_ray_offset_factor = value;
+}
+
 Interaction::Interaction() {}
 
 Interaction::Interaction(Float3 pos, Float3 wo)

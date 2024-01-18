@@ -115,6 +115,13 @@ public:
 };
 
 struct Interaction {
+private:
+    static float s_ray_offset_factor;
+
+public:
+    [[nodiscard]] static float ray_offset_factor() noexcept;
+    static void set_ray_offset_factor(float value) noexcept;
+
 public:
     Float3 pos;
     Float3 wo;

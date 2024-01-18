@@ -309,6 +309,7 @@ void RenderSettingDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     polymorphic_mode = static_cast<PolymorphicMode>(ps["polymorphic_mode"].as_uint(0));
     min_world_radius = ps["min_world_radius"].as_float(10);
+    ray_offset_factor = ps["ray_offset_factor"].as_float(1.f);
 }
 
 }// namespace vision
