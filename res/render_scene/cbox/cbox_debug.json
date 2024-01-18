@@ -40,58 +40,58 @@
 				}
 			}
 		},
-		{
-            "type": "model",
-            "name": "shape_3",
-            "param": {
-                "fn": "mesh/Mesh.obj",
-                "smooth": false,
-                "material": "Light",
-                "emission": {
-                    "type": "area",
-                    "param": {
-                        "color": [
-                            12,
-                            12,
-                            12
-                        ],
-                        "two_sided": true,
-                        "scale": 0.3
-                    }
-                },
-                "transform": {
-                    "type": "matrix4x4",
-                    "param": {
-                        "matrix4x4": [
-                            [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            [
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0
-                            ],
-                            [
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0
-                            ],
-                            [
-                                0.0,
-                                -1.05,
-                                1.0,
-                                1.0
-                            ]
-                        ]
-                    }
-                }
-            }
-        },
+		// {
+        //     "type": "model",
+        //     "name": "shape_3",
+        //     "param": {
+        //         "fn": "mesh/Mesh.obj",
+        //         "smooth": false,
+        //         "material": "Light",
+        //         "emission": {
+        //             "type": "area",
+        //             "param": {
+        //                 "color": [
+        //                     12,
+        //                     12,
+        //                     12
+        //                 ],
+        //                 "two_sided": true,
+        //                 "scale": 0.5
+        //             }
+        //         },
+        //         "transform": {
+        //             "type": "matrix4x4",
+        //             "param": {
+        //                 "matrix4x4": [
+        //                     [
+        //                         1.0,
+        //                         0.0,
+        //                         0.0,
+        //                         0.0
+        //                     ],
+        //                     [
+        //                         0.0,
+        //                         1.0,
+        //                         0.0,
+        //                         0.0
+        //                     ],
+        //                     [
+        //                         0.0,
+        //                         0.0,
+        //                         1.0,
+        //                         0.0
+        //                     ],
+        //                     [
+        //                         0.0,
+        //                         -1.05,
+        //                         1.0,
+        //                         1.0
+        //                     ]
+        //                 ]
+        //             }
+        //         }
+        //     }
+        // },
 		{
 			"type" : "quad",
 			"name" : "shape_1",
@@ -299,67 +299,45 @@
 				}
 			}
 		},
-// 		{
-// 			"type" : "cube",
-// 			"name" : "shape_5",
-// 			"param" : {
-// 				"width" : 0.03,
-// 				"y" : 0.03,
-// 				"x" : 0.03,
-// 				"z" : 3.9,
-// 				"height" : 3.9,
-// 				"material": "Light",
-//                 "emission": {
-//                     "type": "area",
-//                     "param": {
-//                         "color": [
-//                             12,
-//                             12,
-//                             12
-//                         ],
-//                         "two_sided": true,
-//                         "scale": 0.3
-//                     }
-//                 },
-// //								"material" : "substrate",
-// //								"material" : "Mirror",
-// //								"material" : "Ag",
-// //												                "material" : "disney",
-// //																                "material" : "mix",
-// //												                                "material" : "Glass",
-// 				"transform" : {
-// 					"type" : "matrix4x4",
-// 					"param" : {
-// 						"matrix4x4" : [
-// 							[
-//                                 1.0,
-//                                 0.0,
-//                                 0.0,
-//                                 0.0
-//                             ],
-//                             [
-//                                 0.0,
-//                                 1.0,
-//                                 0.0,
-//                                 0.0
-//                             ],
-//                             [
-//                                 0.0,
-//                                 0.0,
-//                                 1.0,
-//                                 0.0
-//                             ],
-//                             [
-//                                 0.0,
-//                                 1.95,
-//                                 0.0,
-//                                 1.0
-//                             ]
-// 						]
-// 					}
-// 				}
-// 			}
-// 		},
+		{
+			"type" : "quad",
+			"name" : "shape_5",
+			"param" : {
+				"width" : 0.03,
+				"y" : 0.03,
+				"x" : 0.03,
+				"z" : 1.5,
+				"height" : 1.5,
+				"material": "Light",
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": [
+                            12,
+                            12,
+                            12
+                        ],
+                        "two_sided": true,
+                        "scale": 0.6
+                    }
+                },
+//								"material" : "substrate",
+//								"material" : "Mirror",
+//								"material" : "Ag",
+//												                "material" : "disney",
+//																                "material" : "mix",
+//												                                "material" : "Glass",
+				"transform" : {
+					"type" : "yaw_pitch",
+					"param" : {
+						"yaw" : 0,
+						"pitch" :0,
+						"roll":40,
+						"position" :[-0.3,1.87,0]
+					}
+				}
+			}
+		},
 		{
 			"type" : "cube",
 			"name" : "shape_6",
