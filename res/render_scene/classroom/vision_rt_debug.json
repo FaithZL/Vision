@@ -111,58 +111,46 @@
                 }
             }
         },
-//        {
-//            "type": "model",
-//            "name": "shape_2",
-//            "param": {
-//                "fn": "models/Mesh062.obj",
-//                "smooth": false,
-//                "material": "CeilingLight",
-////                "emission": {
-////                    "type": "area",
-////                    "param": {
-////                        "color": [
-////                            12,
-////                            12,
-////                            12
-////                        ],
-////                        "two_sided": false,
-////                        "scale": 1.3
-////                    }
-////                },
-//                "transform": {
-//                    "type": "matrix4x4",
-//                    "param": {
-//                        "matrix4x4": [
-//                            [
-//                                1.0,
-//                                0.0,
-//                                0.0,
-//                                0.0
-//                            ],
-//                            [
-//                                0.0,
-//                                1.0,
-//                                0.0,
-//                                0.0
-//                            ],
-//                            [
-//                                0.0,
-//                                0.0,
-//                                1.0,
-//                                0.0
-//                            ],
-//                            [
-//                                0.0,
-//                                0.0,
-//                                0.0,
-//                                1.0
-//                            ]
-//                        ]
-//                    }
-//                }
-//            }
-//        },
+       {
+           "type": "model",
+           "name": "shape_2",
+           "param": {
+               "fn": "models/Mesh062.obj",
+               "smooth": false,
+               "material": "CeilingLight",
+               "transform": {
+                   "type": "matrix4x4",
+                   "param": {
+                       "matrix4x4": [
+                           [
+                               1.0,
+                               0.0,
+                               0.0,
+                               0.0
+                           ],
+                           [
+                               0.0,
+                               1.0,
+                               0.0,
+                               0.0
+                           ],
+                           [
+                               0.0,
+                               0.0,
+                               1.0,
+                               0.0
+                           ],
+                           [
+                               0.0,
+                               0.0,
+                               0.0,
+                               1.0
+                           ]
+                       ]
+                   }
+               }
+           }
+       },
         {
             "type": "model",
             "name": "shape_3",
@@ -170,18 +158,18 @@
                 "fn": "models/Mesh038.obj",
                 "smooth": false,
                 "material": "FluorescentTube",
-                "emission": {
-                    "type": "area",
-                    "param": {
-                        "color": [
-                            12,
-                            12,
-                            12
-                        ],
-                        "two_sided": false,
-                        "scale": 0.9
-                    }
-                },
+                // "emission": {
+                //     "type": "area",
+                //     "param": {
+                //         "color": [
+                //             12,
+                //             12,
+                //             12
+                //         ],
+                //         "two_sided": false,
+                //         "scale": 0.9
+                //     }
+                // },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -1793,18 +1781,6 @@
             "param": {
                 "fn": "models/Mesh021.obj",
                 "smooth": false,
-            //    "emission": {
-            //        "type": "area",
-            //        "param": {
-            //            "color": [
-            //                12,
-            //                12,
-            //                12
-            //            ],
-            //            "two_sided": false,
-            //            "scale": 0.3
-            //        }
-            //    },
                 "material": "Whiteboard3",
                 "transform": {
                     "type": "matrix4x4",
@@ -2966,18 +2942,6 @@
                 "fn": "models/Mesh002.obj",
                 "smooth": false,
                 "material": "CeilingLight",
-//                "emission": {
-//                    "type": "area",
-//                    "param": {
-//                        "color": [
-//                            12,
-//                            12,
-//                            12
-//                        ],
-//                        "two_sided": false,
-//                        "scale": 1.3
-//                    }
-//                },
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3863,24 +3827,28 @@
         ]
     },
     "output": {
-        "spp": 512,
+        "spp": 0,
         "fn": "rt-1.exr"
+    },
+    "render_setting": {
+        "ray_offset_factor" :1.5,
+        "polymorphic_mode": 1
     },
     "integrator" : {
        "type" : "rt",
-        		// "type" : "pt",
+//        		 "type" : "pt",
         "param" : {
-            "mis_mode": 1,
+            "mis_mode": 0,
             "direct": {
                 "spatial": {
-                    					"open": false,
+//                    					"open": false,
                     "theta": 5,
                     "depth": 0.3,
                     "radius": 29,
                     "sample_num": 1
                 },
                 "temporal": {
-                    					"open": false,
+//                    					"open": false,
                     "theta": 2,
                     "depth": 0.5,
                     "radius": 0,
@@ -3888,8 +3856,8 @@
                     "history_limit": 10
                 },
                 //				"mis": true,
-                "M_light": 0,
-                "M_bsdf": 1
+                "M_light": 10,
+                "M_bsdf": 0
             },
             "min_depth" : 5,
             "max_depth" : 1,
@@ -3926,7 +3894,7 @@
             "film": {
                 "type": "rgb",
                 "param": {
-//                    "accumulation": 0,
+                    "accumulation": 0,
                     "resolution": [
                         1280,
                         720
@@ -3960,22 +3928,22 @@
         "type": "uniform",
         "param": {
             "lights": [
-            //    {
-            //        "type" : "spherical",
-            //        "param": {
-            //            "color": {
-            //                "fn" : "textures/spaichingen_hill_2k.exr",
-            //                "color_space": "linear"
-            //            },
-            //            "o2w" : {
-            //                "type":"Euler",
-            //                "param": {
-            //                    "yaw" :-30
-            //                }
-            //            },
-            //            "scale" : 0.4
-            //        }
-            //    }
+               {
+                   "type" : "spherical",
+                   "param": {
+                       "color": {
+                           "fn" : "textures/spaichingen_hill_2k.exr",
+                           "color_space": "linear"
+                       },
+                       "o2w" : {
+                           "type":"Euler",
+                           "param": {
+                               "yaw" :-30
+                           }
+                       },
+                       "scale" : 0.4
+                   }
+               }
             ]
         }
     },
@@ -3992,10 +3960,5 @@
             //			"obfuscation" : false,
 //           			"valid_check" : true
         }
-    },
-
-    "render_setting": {
-        "ray_offset_factor" :1.5,
-        "polymorphic_mode": 1
     }
 }
