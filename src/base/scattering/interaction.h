@@ -171,10 +171,40 @@ public:
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir, const Float &t) const noexcept;
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
-    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
-        return vision::spawn_ray_to(pos, ng, p);
-    }
+    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept;
 };
+
+template<typename T>
+[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(pos, normal);
+    return make_ray(org, dir);
+}
+
+template<typename T, typename U>
+[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir, U t_max) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(pos, normal);
+    return make_ray(org, dir, t_max);
+}
+
+template<typename T>
+[[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target) {
+    T dir = p_target - p_start;
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(p_start, n_start);
+    return make_ray(org, dir, 1 - ShadowEpsilon);
+}
+
+template<typename T>
+[[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target, T n_target) {
+    T dir = p_target - p_start;
+    n_target *= select(dot(n_target, -dir) > 0, 1.f, -1.f);
+    p_target = offset_ray_origin(p_target, n_target);
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(p_start, n_start);
+    return make_ray(org, dir, 1 - ShadowEpsilon);
+}
 
 struct SpacePoint {
     Float3 pos;

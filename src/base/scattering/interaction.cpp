@@ -90,6 +90,10 @@ RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
+OCRay Interaction::spawn_ray_to(const Float3 &p) const noexcept {
+    return vision::spawn_ray_to(pos, ng, p);
+}
+
 void Interaction::set_medium(const Uint &inside, const Uint &outside) {
     mi.inside = inside;
     mi.outside = outside;
