@@ -303,7 +303,7 @@
 			"type" : "quad",
 			"name" : "shape_5",
 			"param" : {
-				"width" : 0.03,
+				"width" : 0.05,
 				"y" : 0.03,
 				"x" : 0.03,
 				"z" : 1.5,
@@ -317,7 +317,7 @@
                             12,
                             12
                         ],
-                        "two_sided": true,
+                        "two_sided": false,
                         "scale": 0.6
                     }
                 },
@@ -333,7 +333,7 @@
 						"yaw" : 0,
 						"pitch" :0,
 						"roll":40,
-						"position" :[-0.3,1.87,0]
+						"position" :[0.3,1.87,0]
 					}
 				}
 			}
@@ -1120,9 +1120,9 @@
 		}
 	},
 	"output" : {
-		"spp" : 256,
+		"spp" : 0,
 		"save_exit" : false,
-		"fn" : "pt-1-.exr"
+		"fn" : "pt-1.exr"
 	},
 	"integrator" : {
 //				"type" : "rt",
@@ -1155,7 +1155,7 @@
 				"M_bsdf": 1
 			},
 			"min_depth" : 0,
-			"max_depth" : 16,
+			"max_depth" : 1,
 			"rr_threshold" : 1
 		}
 	},
