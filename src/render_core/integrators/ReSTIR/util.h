@@ -91,6 +91,7 @@ public:
 
 }// namespace vision
 
+// clang-format off
 OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
@@ -117,6 +118,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, C, W, sample) {
         W = cal_W(p_hat);
     }
 };
+// clang-format on
 
 namespace vision {
 using namespace ReSTIRDirect;

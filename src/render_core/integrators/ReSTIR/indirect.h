@@ -23,6 +23,8 @@ private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
+    RayTracingIntegrator *_integrator{};
+
     RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
     RegistrableBuffer<ReSTIRIndirect::RSVSample> _init_samples{pipeline()->bindless_array()};
     optional<Uint> _frame_index;
@@ -49,6 +51,13 @@ public:
         compile_shader1();
     }
     void init_sample() noexcept;
+    [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
+        return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
+    }
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
+        return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
+    }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 

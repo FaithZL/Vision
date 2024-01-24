@@ -53,7 +53,12 @@ struct RSVSample {
     array<float, 3> Lo{};
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, visible_point, u, Lo){};
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, visible_point, u, Lo){
+    static constexpr EPort p = D;
+    [[nodiscard]] Bool valid() const noexcept {
+        return Lo[0] != 0 || Lo[1] != 0 || Lo[2] != 0;
+    }
+};
 
 namespace vision::ReSTIRIndirect {
 using IIRSVSample = Var<RSVSample>;
@@ -67,8 +72,31 @@ public:
     oc_float<p> C{};
     oc_float<p> W{};
     RSVSample sample{};
+
+    template<EPort p_ = D>
+    [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                                 oc_float<p_> W) noexcept {
+        return mis_weight * p_hat * W;
+    }
+
+    template<EPort p_ = D>
+    [[nodiscard]] static auto safe_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                          oc_float<p_> W) noexcept {
+        oc_float<p_> ret = cal_weight(mis_weight, p_hat, W);
+        ret = ocarina::select(ocarina::isnan(ret), 0.f, ret);
+        return ret;
+    }
 };
 }// namespace vision::ReSTIRIndirect
+
+// clang-format off
+OC_STRUCT(vision::ReSTIRIndirect::Reservoir, weight_sum, C, W, sample) {
+    static constexpr EPort p = D;
+    [[nodiscard]] Bool valid() const noexcept {
+        return sample->valid();
+    }
+};
+// clang-format on
 
 namespace vision::ReSTIRIndirect {
 using IIReservoir = ocarina::Var<Reservoir>;

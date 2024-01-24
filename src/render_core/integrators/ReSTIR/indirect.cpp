@@ -8,7 +8,8 @@
 namespace vision {
 
 ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *integrator,
-                                                       const vision::ParameterSet &desc) {
+                                                       const vision::ParameterSet &desc)
+    :_integrator(integrator) {
 }
 
 void ReSTIRIndirectIllumination::init_sample() noexcept {
@@ -25,6 +26,7 @@ void ReSTIRIndirectIllumination::compile_shader0() noexcept {
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->start(pixel, frame_index, 3);
+
     };
 }
 
