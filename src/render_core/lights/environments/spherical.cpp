@@ -36,7 +36,7 @@ public:
         _w2o = inverse(o2w * rx);
     }
 
-    OC_SERIALIZABLE_FUNC(Light, _w2o, *_warper)
+    OC_SERIALIZABLE_FUNC(Environment, _w2o, *_warper)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;
