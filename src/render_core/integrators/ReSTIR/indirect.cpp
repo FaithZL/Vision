@@ -22,6 +22,10 @@ void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavel
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, *_frame_index, 3);
     OCRayHit ray_hit = _integrator->ray_hits().read(dispatch_id());
+    Interaction sp_it;
+    RayState ray_state{ray_hit.ray, 1.f, InvalidUI32};
+    Float3 L = _integrator->Li(ray_state, ray_hit.pdf, &sp_it);
+    
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {
