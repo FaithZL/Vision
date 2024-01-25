@@ -41,16 +41,19 @@ public:
 
     void compile() noexcept override {
         _direct.compile();
+        _indirect.compile();
     }
 
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
-        stream << _direct.estimate(_frame_index++);
+        stream << _direct.estimate(_frame_index);
+        stream << _indirect.estimate(_frame_index);
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();
+        _frame_index += 1;
     }
 };
 

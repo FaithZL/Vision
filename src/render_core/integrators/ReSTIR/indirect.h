@@ -17,9 +17,6 @@ class RayTracingIntegrator;
 
 class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:
-    uint M{};
-    bool _mis{};
-
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
@@ -52,11 +49,18 @@ public:
     }
     void init_sample() noexcept;
     [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
+    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
+    }
+    [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> prev_reservoirs() const noexcept {
+        return pipeline()->buffer<ReSTIRIndirect::Reservoir>((_frame_index.value() & 1) + reservoir_base());
+    }
+    [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> cur_reservoirs() const noexcept {
+        return pipeline()->buffer<ReSTIRIndirect::Reservoir>(((_frame_index.value() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };

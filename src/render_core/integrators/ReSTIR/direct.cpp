@@ -413,7 +413,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         cur_surfaces().write(dispatch_id(), cur_surf);
     };
     _shader0 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "generate initial candidates and "
+        return device().compile(kernel, "direct generate initial candidates and "
                                         "check visibility");
     });
 }
@@ -529,7 +529,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         cur_reservoirs().write(dispatch_id(), st_rsv);
     };
     _shader1 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "spatial temporal reuse and shading");
+        return device().compile(kernel, "direct spatial temporal reuse and shading");
     });
 }
 

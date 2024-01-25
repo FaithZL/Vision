@@ -9,29 +9,59 @@ namespace vision {
 
 ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *integrator,
                                                        const vision::ParameterSet &desc)
-    :_integrator(integrator) {
+    : _integrator(integrator),
+      _spatial(desc["spatial"]),
+      _temporal(desc["temporal"]) {
 }
 
 void ReSTIRIndirectIllumination::init_sample() noexcept {
-
-}
-
-void ReSTIRIndirectIllumination::compile_shader0() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
+    OCHit sp_hit = _integrator->hits().read(dispatch_id());
+    $if(sp_hit->is_miss()) {
+        $return();
+    };
+    OCRay ray = _integrator->rays().read(dispatch_id());
+    camera->load_data();
+    Uint2 pixel = dispatch_idx().xy();
+    sampler()->start(pixel, *_frame_index, 4);
+    Interaction sp_it = pipeline()->compute_surface_interaction(sp_hit, ray);
+
+}
+
+void ReSTIRIndirectIllumination::compile_shader0() noexcept {
+
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
-        Uint2 pixel = dispatch_idx().xy();
-        camera->load_data();
-        sampler()->start(pixel, frame_index, 3);
-
+        OCSurfaceData surf = cur_surfaces().read(dispatch_id());
+        $if(surf.hit->is_miss()) {
+            $return();
+        };
+        init_sample();
     };
+    _shader0 = async([&, kernel = ocarina::move(kernel)] {
+        return device().compile(kernel, "indirect initial samples and temporal reuse");
+    });
 }
 
 void ReSTIRIndirectIllumination::compile_shader1() noexcept {
+    Camera *camera = scene().camera().get();
+    Film *film = camera->radiance_film();
+    LightSampler *light_sampler = scene().light_sampler();
+    Spectrum &spectrum = pipeline()->spectrum();
 
+    Kernel kernel = [&](Uint frame_index) {
+        _frame_index.emplace(frame_index);
+        OCSurfaceData surf = cur_surfaces().read(dispatch_id());
+        $if(surf.hit->is_miss()) {
+            $return();
+        };
+    };
+    _shader1 = async([&, kernel = ocarina::move(kernel)] {
+        return device().compile(kernel, "indirect spatial reuse and shading");
+    });
 }
 
 CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
