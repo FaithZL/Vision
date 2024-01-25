@@ -24,7 +24,7 @@ public:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64_list(_value.hv());
     }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return *_value;
     }

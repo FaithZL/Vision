@@ -56,7 +56,7 @@ public:
         return ret;
     }
     [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
-    [[nodiscard]] Array<float> eval(const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] DynamicArray<float> eval(const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] static SPD create_cie_x(Pipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_y(Pipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_z(Pipeline *rp) noexcept;

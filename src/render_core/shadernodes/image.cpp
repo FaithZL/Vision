@@ -24,7 +24,7 @@ public:
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
 
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return pipeline()->tex(*_tex_id).sample(_texture.host_tex().channel_num(), ctx.uv);
     }

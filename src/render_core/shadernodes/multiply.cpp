@@ -59,7 +59,7 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return _lhs.average() * _rhs.average();
     }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return _lhs.evaluate(ctx, swl) * _rhs.evaluate(ctx, swl);
     }

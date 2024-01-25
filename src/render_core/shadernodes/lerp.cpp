@@ -29,7 +29,7 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return ocarina::lerp(_t.average(), A.average(), B.average());
     }
-    [[nodiscard]] Array<float> evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return ocarina::lerp(_t.evaluate(ctx, swl),A.evaluate(ctx, swl),B.evaluate(ctx, swl));
     }

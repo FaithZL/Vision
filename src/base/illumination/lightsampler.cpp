@@ -65,7 +65,7 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
             for (int i = 0; i < _lights.type_num(); ++i) {
                 nums.push_back(static_cast<uint>(_lights.instance_num(i)));
             }
-            Array<uint> arr{nums};
+            DynamicArray<uint> arr{nums};
             $for(i, type_id) {
                 ret += arr[i];
             };

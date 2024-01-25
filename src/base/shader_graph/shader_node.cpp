@@ -34,7 +34,7 @@ uint64_t Slot::_compute_type_hash() const noexcept {
     return hash64(_channel_mask, _dim, _node->type_hash());
 }
 
-Array<float> Slot::evaluate(const AttrEvalContext &ctx,
+DynamicArray<float> Slot::evaluate(const AttrEvalContext &ctx,
                             const SampledWavelengths &swl) const noexcept {
     switch (_dim) {
         case 1: {

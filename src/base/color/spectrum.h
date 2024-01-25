@@ -18,8 +18,8 @@ class MaterialEvaluator;
 
 class SampledWavelengths {
 private:
-    Array<float> _lambdas;
-    mutable Array<float> _pdfs;
+    DynamicArray<float> _lambdas;
+    mutable DynamicArray<float> _pdfs;
 
 public:
     explicit SampledWavelengths(uint dim) noexcept : _lambdas{dim}, _pdfs{dim} {}
@@ -49,10 +49,10 @@ public:
 
 class SampledSpectrum {
 private:
-    Array<float> _values;
+    DynamicArray<float> _values;
 
 public:
-    explicit SampledSpectrum(const Array<float> &value) noexcept
+    explicit SampledSpectrum(const DynamicArray<float> &value) noexcept
         : _values(value) {}
     SampledSpectrum(uint n, const Float &value) noexcept
         : _values(n) {
@@ -76,8 +76,8 @@ public:
     [[nodiscard]] uint dimension() const noexcept {
         return static_cast<uint>(_values.size());
     }
-    [[nodiscard]] Array<float> &values() noexcept { return _values; }
-    [[nodiscard]] const Array<float> &values() const noexcept { return _values; }
+    [[nodiscard]] DynamicArray<float> &values() noexcept { return _values; }
+    [[nodiscard]] const DynamicArray<float> &values() const noexcept { return _values; }
     [[nodiscard]] Float &operator[](const Uint &i) noexcept {
         return dimension() == 1u ? _values[0u] : _values[i];
     }
@@ -88,7 +88,7 @@ public:
         _values = value;
         return *this;
     }
-    SampledSpectrum &operator=(const Array<float> &value) noexcept {
+    SampledSpectrum &operator=(const DynamicArray<float> &value) noexcept {
         _values = value;
         return *this;
     }
@@ -148,7 +148,7 @@ public:
     [[nodiscard]] SampledSpectrum operator op(const Float &rhs) const noexcept {                                     \
         return SampledSpectrum(values() op rhs);                                                                     \
     }                                                                                                                \
-    [[nodiscard]] SampledSpectrum operator op(const Array<float> &rhs) const noexcept {                              \
+    [[nodiscard]] SampledSpectrum operator op(const DynamicArray<float> &rhs) const noexcept {                              \
         return SampledSpectrum(values() op rhs);                                                                     \
     }                                                                                                                \
     [[nodiscard]] SampledSpectrum operator op(const SampledSpectrum &rhs) const noexcept {                           \
@@ -159,14 +159,14 @@ public:
     [[nodiscard]] friend SampledSpectrum operator op(const Float &lhs, const SampledSpectrum &rhs) noexcept {        \
         return SampledSpectrum(lhs op rhs.values());                                                                 \
     }                                                                                                                \
-    [[nodiscard]] friend SampledSpectrum operator op(const Array<float> &lhs, const SampledSpectrum &rhs) noexcept { \
+    [[nodiscard]] friend SampledSpectrum operator op(const DynamicArray<float> &lhs, const SampledSpectrum &rhs) noexcept { \
         return SampledSpectrum(lhs op rhs.values());                                                                 \
     }                                                                                                                \
     SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                                     \
         _values op## = rhs;                                                                                          \
         return *this;                                                                                                \
     }                                                                                                                \
-    SampledSpectrum &operator op##=(const Array<float> &rhs) noexcept {                                              \
+    SampledSpectrum &operator op##=(const DynamicArray<float> &rhs) noexcept {                                              \
         _values op## = rhs;                                                                                          \
         return *this;                                                                                                \
     }                                                                                                                \
