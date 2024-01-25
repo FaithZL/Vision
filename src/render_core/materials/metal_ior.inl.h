@@ -4,7 +4,7 @@
 
 #pragma once
 
-std::array Ag{
+ocarina::array Ag{
     make_float2(0.1937697969f, 1.542775784f),
     make_float2(0.1863794945f, 1.611995116f),
     make_float2(0.1919493526f, 1.641277522f),
@@ -102,7 +102,7 @@ std::array Ag{
     make_float2(0.1458370844f, 5.526618752f),
 };
 
-std::array Al{
+ocarina::array Al{
     make_float2(0.3970816731f, 4.372694111f),
     make_float2(0.4077589264f, 4.433990231f),
     make_float2(0.418897724f, 4.492555044f),
@@ -200,7 +200,7 @@ std::array Al{
     make_float2(2.720695662f, 8.297934788f),
 };
 
-std::array Au{
+ocarina::array Au{
     make_float2(1.726248938f, 1.85351432f),
     make_float2(1.715366257f, 1.863314429f),
     make_float2(1.706064787f, 1.882606367f),
@@ -298,7 +298,7 @@ std::array Au{
     make_float2(0.1892216027f, 5.419107323f),
 };
 
-std::array Cu{
+ocarina::array Cu{
     make_float2(1.280194277f, 1.933855609f),
     make_float2(1.268689452f, 1.951404436f),
     make_float2(1.249454471f, 1.972017413f),
@@ -396,7 +396,7 @@ std::array Cu{
     make_float2(0.2624130423f, 5.287222134f),
 };
 
-std::array CuZn{
+ocarina::array CuZn{
     make_float2(1.503f, 1.815f),
     make_float2(1.5f, 1.8165f),
     make_float2(1.497f, 1.818f),
@@ -494,7 +494,7 @@ std::array CuZn{
     make_float2(0.483f, 5.115f),
 };
 
-std::array Fe{
+ocarina::array Fe{
     make_float2(1.968571429f, 2.384285714f),
     make_float2(2.000714286f, 2.412857143f),
     make_float2(2.035384615f, 2.440769231f),
@@ -592,7 +592,7 @@ std::array Fe{
     make_float2(2.942535211f, 3.411549296f),
 };
 
-std::array Ti{
+ocarina::array Ti{
     make_float2(1.854285714f, 2.882857143f),
     make_float2(1.882857143f, 2.893571429f),
     make_float2(1.913846154f, 2.904615385f),
@@ -690,7 +690,7 @@ std::array Ti{
     make_float2(3.220140845f, 4.003661972f),
 };
 
-std::array V{
+ocarina::array V{
     make_float2(2.582857143f, 3.365714286f),
     make_float2(2.643571429f, 3.387142857f),
     make_float2(2.709230769f, 3.407692308f),
@@ -788,7 +788,7 @@ std::array V{
     make_float2(3.154929577f, 3.261408451f),
 };
 
-std::array VN{
+ocarina::array VN{
     make_float2(2.175093063f, 1.59177665f),
     make_float2(2.170862944f, 1.601928934f),
     make_float2(2.166632826f, 1.612081218f),
@@ -886,7 +886,7 @@ std::array VN{
     make_float2(2.733784176f, 2.926087588f),
 };
 
-std::array Li{
+ocarina::array Li{
     make_float2(0.3093694896f, 1.551618053f),
     make_float2(0.303494375f, 1.580608125f),
     make_float2(0.2954704779f, 1.607933493f),

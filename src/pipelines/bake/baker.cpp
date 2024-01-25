@@ -28,7 +28,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
     Float3 norm;
     Float3 position;
 
-    auto get_verts = [&](const Uint &triangle_id) -> std::array<Var<Vertex>, 3> {
+    auto get_verts = [&](const Uint &triangle_id) -> ocarina::array<Var<Vertex>, 3> {
         Var tri = triangles.read(triangle_id);
         Var v0 = vertices.read(tri.i);
         Var v1 = vertices.read(tri.j);

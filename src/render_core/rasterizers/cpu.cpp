@@ -10,7 +10,7 @@ class CPURasterizer : public Rasterizer {
 private:
     uint4 *_pixels{};
     uint2 _res{};
-    static constexpr std::array<float2, 10> _color{make_float2(0.5, 0),
+    static constexpr ocarina::array<float2, 10> _color{make_float2(0.5, 0),
                                                    make_float2(0, 1),
                                                    make_float2(0, 0.5),
                                                    make_float2(0.3, 1),
@@ -51,7 +51,7 @@ public:
             px2 = p2.x;
             py2 = p2.y;
 
-            int sign = py2 >= py1 ? 1 : -1;//Ð±ÂÊ[-1,1]
+            int sign = py2 >= py1 ? 1 : -1;//Ð±ï¿½ï¿½[-1,1]
             int k = sign * dy * 2;
             int e = -dx * sign;
 
@@ -73,7 +73,7 @@ public:
             px2 = p2.x;
             py2 = p2.y;
 
-            int sign = px2 > px1 ? 1 : -1;//Ð±ÂÊ[-1,1]
+            int sign = px2 > px1 ? 1 : -1;//Ð±ï¿½ï¿½[-1,1]
             int k = sign * dx * 2;
             int e = -dy * sign;
 
