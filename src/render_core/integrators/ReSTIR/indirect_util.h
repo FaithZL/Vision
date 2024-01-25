@@ -31,11 +31,11 @@ struct SurfacePoint {
 // clang-format off
 OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
     void set_position(Float3 p) noexcept {
-        pos.assignment(p);
+        pos.set(p);
     }
     [[nodiscard]] auto position() const noexcept { return pos.as_vec(); }
     void set_normal(Float3 n) noexcept {
-        ng.assignment(n);
+        ng.set(n);
     }
     [[nodiscard]] auto normal() const noexcept { return ng.as_vec(); }
     void set(const vision::Interaction &it) noexcept {
