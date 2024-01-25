@@ -30,6 +30,19 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 // clang-format on
 
 namespace vision {
+using namespace ocarina;
+struct RayHit {
+    ocarina::Ray ray{};
+    ocarina::Hit hit{};
+    float pdf{};
+};
+}// namespace vision
+
+// clang-format off
+OC_STRUCT(vision::RayHit, ray, hit, pdf) {};
+// clang-format on
+
+namespace vision {
 
 using namespace ocarina;
 
@@ -138,7 +151,6 @@ public:
         float factor = ray_offset_factor();
         return offset_ray_origin(OC_FORWARD(p_in), OC_FORWARD(n_in) * factor, w);
     }
-
 
 public:
     Float3 pos;

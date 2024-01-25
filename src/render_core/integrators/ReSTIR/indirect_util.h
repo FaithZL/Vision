@@ -56,7 +56,7 @@ struct RSVSample {
 OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, visible_point, u, Lo){
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
-        return Lo[0] != 0 || Lo[1] != 0 || Lo[2] != 0;
+        return ocarina::any(u.as_vec3() != ocarina::make_float3(0.f));
     }
 };
 

@@ -14,32 +14,33 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
       _temporal(desc["temporal"]) {
 }
 
-void ReSTIRIndirectIllumination::init_sample() noexcept {
+void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavelengths &swl) noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = pipeline()->spectrum();
-    OCHit sp_hit = _integrator->hits().read(dispatch_id());
-    $if(sp_hit->is_miss()) {
-        $return();
-    };
+
     OCRay ray = _integrator->rays().read(dispatch_id());
-    camera->load_data();
+
     Uint2 pixel = dispatch_idx().xy();
-    sampler()->start(pixel, *_frame_index, 4);
-    Interaction sp_it = pipeline()->compute_surface_interaction(sp_hit, ray);
+    sampler()->start(pixel, *_frame_index, 3);
 
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {
-
+    Spectrum &spectrum = pipeline()->spectrum();
+    Camera *camera = scene().camera().get();
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             $return();
         };
-        init_sample();
+        camera->load_data();
+        Uint2 pixel = dispatch_idx().xy();
+        sampler()->start(pixel, frame_index, 0);
+        SampledWavelengths swl = spectrum.sample_wavelength(sampler());
+        Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
+        init_sample(it, swl);
     };
     _shader0 = async([&, kernel = ocarina::move(kernel)] {
         return device().compile(kernel, "indirect initial samples and temporal reuse");

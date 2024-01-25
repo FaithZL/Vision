@@ -47,7 +47,7 @@ public:
         compile_shader0();
         compile_shader1();
     }
-    void init_sample() noexcept;
+    void init_sample(const Interaction &it, SampledWavelengths &swl) noexcept;
     [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
