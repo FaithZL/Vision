@@ -19,11 +19,9 @@ void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavel
     Film *film = camera->radiance_film();
     LightSampler *light_sampler = scene().light_sampler();
 
-    OCRay ray = _integrator->rays().read(dispatch_id());
-
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, *_frame_index, 3);
-
+    OCRayHit ray_hit = _integrator->ray_hits().read(dispatch_id());
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {

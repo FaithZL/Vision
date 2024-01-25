@@ -19,7 +19,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(RayTracingIntegrator *integra
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
-                                             BSDFSample *bs, Float *light_pdf_point, RayHit *ray_hit) noexcept {
+                                             BSDFSample *bs, Float *light_pdf_point, OCRayHit *ray_hit) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const Geometry &geometry = pipeline()->geometry();
@@ -43,9 +43,10 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     }
     OCRay ray = it.spawn_ray(bs->wi);
     OCHit hit = geometry.trace_closest(ray);
-
-    ray_hit->first = ray;
-    ray_hit->second = hit;
+    Float pdf = bs->eval.pdf;
+    ray_hit->ray = ray;
+    ray_hit->hit = hit;
+    ray_hit->pdf = pdf;
 
     LightEval le{swl.dimension()};
     LightSurfacePoint lsp;
@@ -147,7 +148,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         ret->update(sampler->next_1d(), sample, weight);
     };
 
-    RayHit ray_hit;
+    OCRayHit ray_hit;
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
@@ -183,8 +184,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             };
         }
     };
-    _integrator->rays().write(dispatch_id(), ray_hit.first);
-    _integrator->hits().write(dispatch_id(), ray_hit.second);
+    _integrator->ray_hits().write(dispatch_id(), ray_hit);
     ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
     comment("RIS end");
@@ -465,15 +465,13 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
     }
     $else {
         Interaction next_it;
-        OCRay ray;
-        OCHit hit;
         BSDFSample bs{swl.dimension()};
         scene().materials().dispatch(it.material_id(), [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, swl);
             bs = bsdf.sample(it.wo, sampler());
         });
-        ray = it.spawn_ray(bs.wi);
-        hit = geometry.trace_closest(ray);
+        OCRay ray = it.spawn_ray(bs.wi);
+        OCHit hit = geometry.trace_closest(ray);
         $if(hit->is_hit()) {
             next_it = geometry.compute_surface_interaction(hit, ray, true);
             $if(next_it.has_emission()) {

@@ -110,15 +110,13 @@ class RayTracingIntegrator : public IlluminationIntegrator {
 protected:
     RegistrableBuffer<float2> _motion_vectors{};
     RegistrableBuffer<SurfaceData> _surfaces{};
-    RegistrableBuffer<Ray> _rays{};
-    RegistrableBuffer<Hit> _hits{};
+    RegistrableBuffer<RayHit> _ray_hits{};
 
 public:
     explicit RayTracingIntegrator(const IntegratorDesc &desc);
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
-    OC_MAKE_MEMBER_GETTER(rays, &)
-    OC_MAKE_MEMBER_GETTER(hits, &)
+    OC_MAKE_MEMBER_GETTER(ray_hits, &)
 };
 
 }// namespace vision

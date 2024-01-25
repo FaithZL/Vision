@@ -46,6 +46,8 @@ namespace vision {
 
 using namespace ocarina;
 
+using OCRayHit = Var<RayHit>;
+
 template<typename T>
 requires is_vector3_expr_v<T>
 struct PartialDerivative : Frame<T, false> {
