@@ -106,17 +106,26 @@ public:
     }
 };
 
-class RayTracingIntegrator : public IlluminationIntegrator {
+class BufferMgr {
 protected:
     RegistrableBuffer<float2> _motion_vectors{};
     RegistrableBuffer<SurfaceData> _surfaces{};
     RegistrableBuffer<RayHit> _ray_hits{};
+    RegistrableBuffer<float4> _direct_light;
+    RegistrableBuffer<float4> _indirect_light;
 
 public:
-    explicit RayTracingIntegrator(const IntegratorDesc &desc);
+    BufferMgr();
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(ray_hits, &)
+    OC_MAKE_MEMBER_GETTER(direct_light, &)
+    OC_MAKE_MEMBER_GETTER(indirect_light, &)
+};
+
+class RayTracingIntegrator : public BufferMgr, public IlluminationIntegrator {
+public:
+    using IlluminationIntegrator::IlluminationIntegrator;
 };
 
 }// namespace vision

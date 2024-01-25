@@ -201,10 +201,11 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     return spectrum().linear_srgb(value, swl);
 }
 
-RayTracingIntegrator::RayTracingIntegrator(const IntegratorDesc &desc)
-    : IlluminationIntegrator(desc),
-      _motion_vectors{pipeline()->bindless_array()},
-      _surfaces{pipeline()->bindless_array()},
-      _ray_hits{pipeline()->bindless_array()} {}
+BufferMgr::BufferMgr()
+    : _motion_vectors{Global::instance().pipeline()->bindless_array()},
+      _direct_light{Global::instance().pipeline()->bindless_array()},
+      _indirect_light{Global::instance().pipeline()->bindless_array()},
+      _surfaces{Global::instance().pipeline()->bindless_array()},
+      _ray_hits{Global::instance().pipeline()->bindless_array()} {}
 
 }// namespace vision

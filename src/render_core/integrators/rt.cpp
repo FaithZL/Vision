@@ -32,6 +32,8 @@ public:
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
         init_buffer(_ray_hits, "RealTimeIntegrator::_ray_hits");
+        init_buffer(_direct_light, "RealTimeIntegrator::_direct_light");
+        init_buffer(_indirect_light, "RealTimeIntegrator::_indirect_light");
 
         _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
         _surfaces.register_self(0, rp->pixel_num());
