@@ -14,6 +14,7 @@
 namespace vision {
 
 class RayTracingIntegrator;
+using namespace vision::ReSTIRIndirect;
 
 class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:

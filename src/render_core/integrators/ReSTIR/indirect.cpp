@@ -25,7 +25,9 @@ void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavel
     Interaction sp_it;
     RayState ray_state{ray_hit.ray, 1.f, InvalidUI32};
     Float3 L = _integrator->Li(ray_state, ray_hit.pdf, &sp_it);
-    
+    IIRSVSample sample;
+    sample.vp->set(it);
+    sample.sp->set(sp_it);
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {

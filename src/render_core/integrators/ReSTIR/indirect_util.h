@@ -31,29 +31,29 @@ struct SurfacePoint {
 // clang-format off
 OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
     void set_position(Float3 p) noexcept {
-        pos[0] = p[0];
-        pos[1] = p[1];
-        pos[2] = p[2];
+        pos.assignment(p);
     }
-    [[nodiscard]] auto position() const noexcept { return make_float3(pos[0], pos[1], pos[2]); }
+    [[nodiscard]] auto position() const noexcept { return pos.as_vec(); }
     void set_normal(Float3 n) noexcept {
-        ng[0] = n[0];
-        ng[1] = n[1];
-        ng[2] = n[2];
+        ng.assignment(n);
     }
-    [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
+    [[nodiscard]] auto normal() const noexcept { return ng.as_vec(); }
+    void set(const vision::Interaction &it) noexcept {
+        set_position(it.pos);
+        set_normal(it.ng);
+    }
 };
 // clang-format on
 
 namespace vision::ReSTIRIndirect {
 struct RSVSample {
-    SurfacePoint sample_point{};
-    SurfacePoint visible_point{};
+    SurfacePoint sp{};
+    SurfacePoint vp{};
     array<float, 3> u{};
     array<float, 3> Lo{};
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, visible_point, u, Lo){
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo){
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return ocarina::any(u.as_vec3() != ocarina::make_float3(0.f));
