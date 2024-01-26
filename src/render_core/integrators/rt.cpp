@@ -36,7 +36,7 @@ public:
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
-        init_buffer(_hit_contexts, "RealTimeIntegrator::_ray_hits");
+        init_buffer(_hit_contexts, "RealTimeIntegrator::_hit_contexts");
         init_buffer(_direct_light, "RealTimeIntegrator::_direct_light");
         init_buffer(_indirect_light, "RealTimeIntegrator::_indirect_light");
 

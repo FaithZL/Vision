@@ -48,7 +48,9 @@ public:
         compile_shader0();
         compile_shader1();
     }
-    void init_sample(const Interaction &it, SampledWavelengths &swl) noexcept;
+    void init_sample(const Interaction &it, const SensorSample &ss, SampledWavelengths &swl) noexcept;
+    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf, const Float2 &motion_vec,
+                                             const SensorSample &ss, SampledWavelengths &swl) const noexcept;
     [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {

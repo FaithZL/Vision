@@ -15,7 +15,23 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
       _open(desc["open"].as_bool(true)) {
 }
 
-void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavelengths &swl) noexcept {
+IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
+                                                       const Float2 &motion_vec, const SensorSample &ss,
+                                                       vision::SampledWavelengths &swl) const noexcept {
+    if (!_temporal.open) {
+        return rsv;
+    }
+    Float2 prev_p_film = ss.p_film - motion_vec;
+    Float limit = rsv.C * _temporal.limit;
+    int2 res = make_int2(pipeline()->resolution());
+    $if(in_screen(make_int2(prev_p_film), res)) {
+        Uint index = dispatch_id(make_uint2(prev_p_film));
+    };
+    return rsv;
+}
+
+void ReSTIRIndirectIllumination::init_sample(const Interaction &it, const SensorSample &ss,
+                                             SampledWavelengths &swl) noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     LightSampler *light_sampler = scene().light_sampler();
@@ -30,6 +46,7 @@ void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavel
     _integrator->indirect_light().write(dispatch_id(), L * hit_context->throughput());
     sample.vp->set(it);
     sample.sp->set(sp_it);
+    _init_samples.write(dispatch_id(), sample);
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {
@@ -46,8 +63,9 @@ void ReSTIRIndirectIllumination::compile_shader0() noexcept {
         Uint2 pixel = dispatch_idx().xy();
         sampler()->start(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler());
+        SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
-        init_sample(it, swl);
+        init_sample(it, ss, swl);
     };
     _shader0 = async([&, kernel = ocarina::move(kernel)] {
         return device().compile(kernel, "indirect initial samples and temporal reuse");
