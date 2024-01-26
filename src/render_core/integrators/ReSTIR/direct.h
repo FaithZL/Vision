@@ -28,6 +28,7 @@ private:
     bool _debias{false};
     bool _pairwise{false};
     bool _reweight{false};
+    bool _open{true};
 
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;

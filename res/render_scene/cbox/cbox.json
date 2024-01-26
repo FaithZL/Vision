@@ -1055,6 +1055,7 @@
 //				"debias": true,
 				"pairwise": true,
 				"M_light": 10,
+//				"open": false,
 				"M_bsdf": 1
 			},
 			"indirect": {
@@ -1074,6 +1075,7 @@
 					"history_limit": 10
 				},
 				"correct_mode" : 0,
+//				"open": false,
 				"pairwise": true
 			},
 			"min_depth" : 0,

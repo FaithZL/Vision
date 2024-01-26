@@ -15,7 +15,8 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(RayTracingIntegrator *integra
       _temporal(desc["temporal"]),
       _debias(desc["debias"].as_bool(false)),
       _reweight(desc["reweight"].as_bool(false)),
-      _pairwise(desc["pairwise"].as_bool(false)) {}
+      _pairwise(desc["pairwise"].as_bool(false)),
+      _open(desc["open"].as_bool(true)) {}
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
@@ -547,8 +548,10 @@ void ReSTIRDirectIllumination::prepare() noexcept {
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    ret << _shader0.get()(frame_index).dispatch(rp->resolution());
-    ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+    if (_open) {
+        ret << _shader0.get()(frame_index).dispatch(rp->resolution());
+        ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+    }
     return ret;
 }
 

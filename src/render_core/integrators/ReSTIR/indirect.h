@@ -20,7 +20,7 @@ class ReSTIRIndirectIllumination : public SerialObject, public Ctx {
 private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
-
+    bool _open{true};
     RayTracingIntegrator *_integrator{};
 
     RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
