@@ -101,7 +101,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, C, W, sample) {
         weight_sum += weight;
         C += new_C;
         Bool ret = u * weight_sum < weight;
-        sample = select(ret, v, sample);
+        sample = ocarina::select(ret, v, sample);
         return ret;
     }
     void truncation(oc_float<p> limit) noexcept {

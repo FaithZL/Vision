@@ -25,7 +25,7 @@ struct SurfacePoint {
         ng[2] = n[2];
     }
     [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
-    [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f);}
+    [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f); }
 };
 }// namespace vision::ReSTIRIndirect
 
@@ -55,15 +55,15 @@ struct RSVSample {
     array<float, 3> Lo{};
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo){
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return vp->valid();
     }
 };
 
-namespace vision::ReSTIRIndirect {
-using IIRSVSample = Var<RSVSample>;
+namespace vision {
+using IIRSVSample = Var<ReSTIRIndirect::RSVSample>;
 }
 
 namespace vision::ReSTIRIndirect {
@@ -96,6 +96,26 @@ OC_STRUCT(vision::ReSTIRIndirect::Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
+    }
+    Bool update(oc_float<p> u, vision::IIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
+        weight_sum += weight;
+        C += new_C;
+        Bool ret = u * weight_sum < weight;
+        sample = ocarina::select(ret, v, sample);
+        return ret;
+    }
+    void truncation(oc_float<p> limit) noexcept {
+        C = ocarina::min(limit, C);
+    }
+    void process_occluded(oc_bool<p> occluded) noexcept {
+        W = ocarina::select(occluded, 0.f, W);
+        weight_sum = ocarina::select(occluded, 0.f, weight_sum);
+    }
+    [[nodiscard]] oc_float<p> cal_W(const oc_float<p> &p_hat) const noexcept {
+        return ocarina::select(p_hat == 0.f, 0.f, weight_sum / p_hat);
+    }
+    void update_W(const oc_float<p> &p_hat) noexcept {
+        W = cal_W(p_hat);
     }
 };
 // clang-format on
