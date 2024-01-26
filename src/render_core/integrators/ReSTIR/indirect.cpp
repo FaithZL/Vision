@@ -38,6 +38,7 @@ void ReSTIRIndirectIllumination::compile_shader0() noexcept {
         _frame_index.emplace(frame_index);
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
+            _integrator->indirect_light().write(dispatch_id(), make_float3(0.f));
             $return();
         };
         camera->load_data();

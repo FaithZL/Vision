@@ -35,7 +35,7 @@ struct HitContext {
     ocarina::Ray next_ray{};
     ocarina::Hit next_hit{};
     array<float, 3> bsdf{};
-    float pdf{};
+    float pdf{-1};
 };
 }// namespace vision
 
@@ -43,6 +43,9 @@ struct HitContext {
 OC_STRUCT(vision::HitContext, next_ray, next_hit,bsdf, pdf) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
+    }
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdf > 0.f;
     }
 };
 // clang-format on
