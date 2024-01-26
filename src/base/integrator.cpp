@@ -17,7 +17,8 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
-Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
+Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth,
+                                  bool only_direct, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
@@ -26,8 +27,6 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum throughput = {swl.dimension(), 1.f};
     const Geometry &geometry = rp->geometry();
-
-    bool only_direct = _max_depth.hv() < 2;
 
     OCHit hit;
     Interaction it;
@@ -127,7 +126,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     };
 
     Float eta_scale = 1.f;
-    $for(&bounces, 0, *_max_depth) {
+    $for(&bounces, 0, max_depth) {
         mis_bsdf(bounces, true);
 
         comment("estimate direct lighting");
@@ -199,6 +198,10 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     }
 
     return spectrum().linear_srgb(value, swl);
+}
+
+Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
+    return Li(rs, scatter_pdf, *_max_depth, _max_depth.hv() < 2,first_it);
 }
 
 BufferMgr::BufferMgr()

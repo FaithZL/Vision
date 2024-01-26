@@ -42,6 +42,11 @@ public:
         : Node(desc) {}
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept = 0;
+    virtual Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth,
+                      bool only_direct, Interaction *it) const noexcept {
+        OC_ERROR_FORMAT("{} Li error", typeid(*this).name());
+        return make_float3(0.f);
+    }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
     void increase_frame_index() const noexcept { _frame_index++; }
@@ -80,6 +85,8 @@ public:
     OC_MAKE_MEMBER_GETTER(separate, )
 
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept override;
+    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth,
+                            bool only_direct, Interaction *first_it) const noexcept override;
 
     void prepare() noexcept override {
         encode_data();
