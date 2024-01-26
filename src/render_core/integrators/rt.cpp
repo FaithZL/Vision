@@ -15,6 +15,7 @@ class RealTimeIntegrator : public RayTracingIntegrator {
 private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
+    std::shared_future<Shader<void(uint)>> _combine;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
@@ -28,6 +29,8 @@ public:
         Pipeline *rp = pipeline();
         auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
             buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
+            vector<T> vec{rp->pixel_num(), T{}};
+            buffer.upload_immediately(vec.data());
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
@@ -43,6 +46,18 @@ public:
     void compile() noexcept override {
         _direct.compile();
         _indirect.compile();
+
+        Camera *camera = scene().camera().get();
+        Kernel kernel = [&](Uint frame_index) {
+            camera->load_data();
+            Float3 direct = direct_light().read(dispatch_id());
+            Float3 indirect = indirect_light().read(dispatch_id());
+            Float3 L = direct + indirect;
+            camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
+        };
+        _combine = async([&, kernel = ocarina::move(kernel)] {
+            return device().compile(kernel, "combine");
+        });
     }
 
     void render() const noexcept override {
@@ -51,6 +66,7 @@ public:
         stream << Env::debugger().upload();
         stream << _direct.estimate(_frame_index);
         stream << _indirect.estimate(_frame_index);
+        stream << _combine.get()(_frame_index).dispatch(pipeline()->resolution());
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

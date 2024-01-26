@@ -523,7 +523,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
                 L = spectrum.linear_srgb(eval.L, swl);
             }
         };
-        film->add_sample(pixel, L, frame_index);
+        _integrator->direct_light().write(dispatch_id(), L);
         cur_reservoirs().write(dispatch_id(), st_rsv);
     };
     _shader1 = async([&, kernel = ocarina::move(kernel)] {

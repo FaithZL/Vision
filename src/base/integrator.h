@@ -111,8 +111,8 @@ protected:
     RegistrableBuffer<float2> _motion_vectors{};
     RegistrableBuffer<SurfaceData> _surfaces{};
     RegistrableBuffer<RayHit> _ray_hits{};
-    RegistrableBuffer<float4> _direct_light;
-    RegistrableBuffer<float4> _indirect_light;
+    RegistrableBuffer<float3> _direct_light;
+    RegistrableBuffer<float3> _indirect_light;
 
 public:
     BufferMgr();
