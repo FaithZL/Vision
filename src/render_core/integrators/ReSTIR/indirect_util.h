@@ -25,6 +25,7 @@ struct SurfacePoint {
         ng[2] = n[2];
     }
     [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
+    [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f);}
 };
 }// namespace vision::ReSTIRIndirect
 
@@ -42,6 +43,7 @@ OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
         set_position(it.pos);
         set_normal(it.ng);
     }
+    [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f);}
 };
 // clang-format on
 
@@ -56,7 +58,7 @@ struct RSVSample {
 OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo){
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
-        return ocarina::any(u.as_vec3() != ocarina::make_float3(0.f));
+        return vp->valid();
     }
 };
 
