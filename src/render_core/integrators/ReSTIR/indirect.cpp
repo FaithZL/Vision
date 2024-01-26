@@ -15,6 +15,19 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
       _open(desc["open"].as_bool(true)) {
 }
 
+IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv,OCSurfaceData cur_surf,
+                                                         const IIReservoir &other_rsv,
+                                                         vision::SampledWavelengths &swl) const noexcept {
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    Float3 prev_c_pos = camera->prev_device_position();
+
+    
+    IIReservoir ret;
+
+    return ret;
+}
+
 IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                        const Float2 &motion_vec, const SensorSample &ss,
                                                        vision::SampledWavelengths &swl) const noexcept {
@@ -26,6 +39,12 @@ IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OC
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
+        IIReservoir prev_rsv = prev_reservoirs().read(index);
+        prev_rsv->truncation(limit);
+        OCSurfaceData another_surf = prev_surfaces().read(index);
+        $if(is_temporal_valid(cur_surf, another_surf)) {
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, swl);
+        };
     };
     return rsv;
 }
@@ -46,7 +65,9 @@ void ReSTIRIndirectIllumination::init_sample(const Interaction &it, const Sensor
     _integrator->indirect_light().write(dispatch_id(), L * hit_context->throughput());
     sample.vp->set(it);
     sample.sp->set(sp_it);
+    sample.Lo.set(L);
     _init_samples.write(dispatch_id(), sample);
+
 }
 
 void ReSTIRIndirectIllumination::compile_shader0() noexcept {

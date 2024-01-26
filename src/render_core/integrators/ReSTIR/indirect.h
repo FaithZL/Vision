@@ -49,8 +49,22 @@ public:
         compile_shader1();
     }
     void init_sample(const Interaction &it, const SensorSample &ss, SampledWavelengths &swl) noexcept;
+    [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
+                                               const IIReservoir &other_rsv, SampledWavelengths &swl) const noexcept;
     [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf, const Float2 &motion_vec,
                                              const SensorSample &ss, SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
+                                   const OCSurfaceData &another_surface) const noexcept {
+        return vision::is_neighbor(cur_surface, another_surface,
+                                   _spatial.dot_threshold,
+                                   _spatial.depth_threshold);
+    }
+    [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
+                                         const OCSurfaceData &prev_surface) const noexcept {
+        return vision::is_neighbor(cur_surface, prev_surface,
+                                   _temporal.dot_threshold,
+                                   _temporal.depth_threshold);
+    }
     [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
