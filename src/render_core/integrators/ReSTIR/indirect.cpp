@@ -21,11 +21,12 @@ void ReSTIRIndirectIllumination::init_sample(const Interaction &it, SampledWavel
 
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, *_frame_index, 3);
-    OCRayHit ray_hit = _integrator->ray_hits().read(dispatch_id());
+    OCHitContext hit_context = _integrator->hit_contexts().read(dispatch_id());
     Interaction sp_it;
-    RayState ray_state{ray_hit.ray, 1.f, InvalidUI32};
-    Float3 L = _integrator->Li(ray_state, ray_hit.pdf, &sp_it);
+    RayState ray_state{hit_context.next_ray, 1.f, InvalidUI32};
+    Float3 L = _integrator->Li(ray_state, hit_context.pdf, &sp_it);
     IIRSVSample sample;
+    _integrator->indirect_light().write(dispatch_id(), L * hit_context->throughput());
     sample.vp->set(it);
     sample.sp->set(sp_it);
 }

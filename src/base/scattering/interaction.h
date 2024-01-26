@@ -31,22 +31,27 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using namespace ocarina;
-struct RayHit {
-    ocarina::Ray ray{};
-    ocarina::Hit hit{};
+struct HitContext {
+    ocarina::Ray next_ray{};
+    ocarina::Hit next_hit{};
+    array<float, 3> bsdf{};
     float pdf{};
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::RayHit, ray, hit, pdf) {};
+OC_STRUCT(vision::HitContext, next_ray, next_hit,bsdf, pdf) {
+    [[nodiscard]] Float3 throughput() const noexcept {
+        return bsdf.as_vec3() / pdf;
+    }
+};
 // clang-format on
 
 namespace vision {
 
 using namespace ocarina;
 
-using OCRayHit = Var<RayHit>;
+using OCHitContext = Var<HitContext>;
 
 template<typename T>
 requires is_vector3_expr_v<T>

@@ -110,7 +110,7 @@ class BufferMgr {
 protected:
     RegistrableBuffer<float2> _motion_vectors{};
     RegistrableBuffer<SurfaceData> _surfaces{};
-    RegistrableBuffer<RayHit> _ray_hits{};
+    RegistrableBuffer<HitContext> _hit_contexts{};
     RegistrableBuffer<float3> _direct_light;
     RegistrableBuffer<float3> _indirect_light;
 
@@ -118,7 +118,7 @@ public:
     BufferMgr();
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
-    OC_MAKE_MEMBER_GETTER(ray_hits, &)
+    OC_MAKE_MEMBER_GETTER(hit_contexts, &)
     OC_MAKE_MEMBER_GETTER(direct_light, &)
     OC_MAKE_MEMBER_GETTER(indirect_light, &)
 };

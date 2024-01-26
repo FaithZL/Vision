@@ -1077,7 +1077,7 @@
 				"pairwise": true
 			},
 			"min_depth" : 0,
-			"max_depth" : 1,
+			"max_depth" : 16,
 			"rr_threshold" : 1
 		}
 	},
@@ -1110,7 +1110,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-					"accumulation": 0,
+//					"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024

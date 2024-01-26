@@ -21,7 +21,9 @@ public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : RayTracingIntegrator(desc),
           _direct(this, desc["direct"]),
-          _indirect(this, desc["indirect"]) {}
+          _indirect(this, desc["indirect"]) {
+        _max_depth = _max_depth.hv() - 1;
+    }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _direct.prepare();
@@ -34,7 +36,7 @@ public:
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
-        init_buffer(_ray_hits, "RealTimeIntegrator::_ray_hits");
+        init_buffer(_hit_contexts, "RealTimeIntegrator::_ray_hits");
         init_buffer(_direct_light, "RealTimeIntegrator::_direct_light");
         init_buffer(_indirect_light, "RealTimeIntegrator::_indirect_light");
 
