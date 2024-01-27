@@ -13467,6 +13467,26 @@
                 "M_light": 10,
                 "M_bsdf": 1
             },
+            "indirect": {
+                "spatial": {
+                    //					"open": false,
+                    "theta": 5,
+                    "depth": 0.3,
+                    "radius": 30,
+                    "sample_num": 1
+                },
+                "temporal": {
+                    //					"open": false,
+                    //					"mis": true,
+                    "theta": 2,
+                    "depth": 1,
+                    "radius": 0,
+                    "history_limit": 10
+                },
+                "correct_mode" : 0,
+                "open": false,
+                "pairwise": true
+            },
             "min_depth" : 5,
             "max_depth" : 16,
             "rr_threshold" : 1
