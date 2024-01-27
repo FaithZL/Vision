@@ -26,28 +26,24 @@ Float ReSTIRIndirectIllumination::Jacobian_det(Float3 cur_pos, Float3 neighbor_p
     return (cos_phi_n * cur_dist2) / (cos_phi_c * neighbor_dist2);
 }
 
-IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv,OCSurfaceData cur_surf,
+IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv,
                                                          vision::SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     Float3 prev_c_pos = camera->prev_device_position();
 
-
     IIReservoir ret;
 
     return ret;
 }
 
-IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIRSVSample sample, const OCSurfaceData &cur_surf,
+IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                        const Float2 &motion_vec, const SensorSample &ss,
                                                        vision::SampledWavelengths &swl) const noexcept {
-    IIReservoir rsv;
     if (!_temporal.open) {
         return rsv;
     }
-    
-//    rsv->update(0.5f, sample);
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * _temporal.limit;
     int2 res = make_int2(pipeline()->resolution());
@@ -64,14 +60,14 @@ IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIRSVSample sample, const
 }
 
 IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const SensorSample &ss,
-                                             SampledWavelengths &swl) noexcept {
+                                                    const OCHitContext &hit_context,
+                                                    SampledWavelengths &swl) noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     LightSampler *light_sampler = scene().light_sampler();
 
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, *_frame_index, 3);
-    OCHitContext hit_context = _integrator->hit_contexts().read(dispatch_id());
     Interaction sp_it;
     RayState ray_state{hit_context.next_ray, 1.f, InvalidUI32};
     Float3 L = _integrator->Li(ray_state, hit_context.pdf, &sp_it);
@@ -99,7 +95,12 @@ void ReSTIRIndirectIllumination::compile_shader0() noexcept {
         SampledWavelengths swl = spectrum.sample_wavelength(sampler());
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
-        IIRSVSample sample = init_sample(it, ss, swl);
+        OCHitContext hit_context = _integrator->hit_contexts().read(dispatch_id());
+        IIRSVSample sample = init_sample(it, ss, hit_context, swl);
+        IIReservoir rsv;
+        Float weight = Reservoir::cal_weight(1, ocarina::luminance(sample.Lo.as_vec()), 1.f/hit_context.pdf);
+        rsv->update(0.5f, sample, weight);
+
     };
     _shader0 = async([&, kernel = ocarina::move(kernel)] {
         return device().compile(kernel, "indirect initial samples and temporal reuse");

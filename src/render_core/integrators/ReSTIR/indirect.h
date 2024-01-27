@@ -49,10 +49,12 @@ public:
         compile_shader1();
     }
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
-    [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss, SampledWavelengths &swl) noexcept;
+    [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
+                                          const OCHitContext &hit_context,
+                                          SampledWavelengths &swl) noexcept;
     [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                const IIReservoir &other_rsv, SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] IIReservoir temporal_reuse(IIRSVSample sample, const OCSurfaceData &cur_surf, const Float2 &motion_vec,
+    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf, const Float2 &motion_vec,
                                              const SensorSample &ss, SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
