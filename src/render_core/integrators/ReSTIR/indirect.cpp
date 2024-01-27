@@ -79,7 +79,18 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
     return sample;
 }
 
-void ReSTIRIndirectIllumination::compile_shader0() noexcept {
+void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
+    Spectrum &spectrum = pipeline()->spectrum();
+    Camera *camera = scene().camera().get();
+
+    Kernel kernel = [&](Uint frame_index) {
+
+    };
+
+
+}
+
+void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera *camera = scene().camera().get();
     Kernel kernel = [&](Uint frame_index) {
@@ -102,12 +113,10 @@ void ReSTIRIndirectIllumination::compile_shader0() noexcept {
         rsv->update(0.5f, sample, weight);
 
     };
-    _shader0 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "indirect initial samples and temporal reuse");
-    });
+    _temporal_reuse = device().async_compile(ocarina::move(kernel), "indirect initial samples and temporal reuse");
 }
 
-void ReSTIRIndirectIllumination::compile_shader1() noexcept {
+void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
     LightSampler *light_sampler = scene().light_sampler();
@@ -120,17 +129,15 @@ void ReSTIRIndirectIllumination::compile_shader1() noexcept {
             $return();
         };
     };
-    _shader1 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "indirect spatial reuse and shading");
-    });
+    _spatial_shading = device().async_compile(ocarina::move(kernel), "indirect spatial reuse and shading");
 }
 
 CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     if (_open) {
-        ret << _shader0.get()(frame_index).dispatch(rp->resolution());
-        ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+        ret << _temporal_reuse.get()(frame_index).dispatch(rp->resolution());
+        ret << _spatial_shading.get()(frame_index).dispatch(rp->resolution());
     }
     return ret;
 }
@@ -147,11 +154,11 @@ void ReSTIRIndirectIllumination::prepare() noexcept {
     _reservoirs.upload_immediately(host.data());
 
     using ReSTIRIndirect::RSVSample;
-    _init_samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
-                                                              "ReSTIRIndirectIllumination::_init_samples");
-    _init_samples.register_self();
+    _samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
+                                                              "ReSTIRIndirectIllumination::_samples");
+    _samples.register_self();
     vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
-    _init_samples.upload_immediately(vec.data());
+    _samples.upload_immediately(vec.data());
 }
 
 }// namespace vision

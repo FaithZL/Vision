@@ -24,17 +24,22 @@ private:
     RayTracingIntegrator *_integrator{};
 
     RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
-    RegistrableBuffer<ReSTIRIndirect::RSVSample> _init_samples{pipeline()->bindless_array()};
+    RegistrableBuffer<ReSTIRIndirect::RSVSample> _samples{pipeline()->bindless_array()};
     optional<Uint> _frame_index;
 
+
+    /**
+     * initial sample
+     */
+    std::shared_future<Shader<void(uint)>> _initial_samples;
     /**
      * initial samples and temporal reuse
      */
-    std::shared_future<Shader<void(uint)>> _shader0;
+    std::shared_future<Shader<void(uint)>> _temporal_reuse;
     /**
      * spatial reuse and shading
      */
-    std::shared_future<Shader<void(uint)>> _shader1;
+    std::shared_future<Shader<void(uint)>> _spatial_shading;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
@@ -42,11 +47,12 @@ protected:
 public:
     ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
     void prepare() noexcept;
-    void compile_shader0() noexcept;
-    void compile_shader1() noexcept;
+    void compile_initial_samples() noexcept;
+    void compile_temporal_reuse() noexcept;
+    void compile_spatial_shading() noexcept;
     void compile() noexcept {
-        compile_shader0();
-        compile_shader1();
+        compile_temporal_reuse();
+        compile_spatial_shading();
     }
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
