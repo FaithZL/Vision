@@ -55,10 +55,14 @@ struct RSVSample {
     array<float, 3> Lo{};
 };
 }// namespace vision::ReSTIRIndirect
+
 OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return vp->valid();
+    }
+    [[nodiscard]] Float p_hat() const noexcept {
+        return ocarina::luminance(Lo.as_vec());
     }
 };
 

@@ -78,7 +78,19 @@ IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_
     Float3 prev_c_pos = camera->prev_device_position();
 
     IIReservoir ret;
+    Float mis_cur = MIS_weight(cur_rsv.C, other_rsv.C);
+    Float mis_prev = MIS_weight(other_rsv.C, cur_rsv.C);
 
+    Float cur_weight = Reservoir::safe_weight(mis_cur,
+                                              cur_rsv.sample->p_hat(), cur_rsv.W);
+    ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
+
+    Float other_weight = Reservoir::safe_weight(mis_prev,
+                                                other_rsv.sample->p_hat(), other_rsv.W);
+    ret->update(sampler()->next_1d(), other_rsv.sample, other_weight, other_rsv.C);
+
+    ret->update_W(ret.sample->p_hat());
+    
     return ret;
 }
 
