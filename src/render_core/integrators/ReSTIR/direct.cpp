@@ -414,10 +414,8 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         passthrough_reservoirs().write(dispatch_id(), rsv);
         cur_surfaces().write(dispatch_id(), cur_surf);
     };
-    _shader0 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "direct generate initial candidates and "
-                                        "check visibility");
-    });
+    _shader0 = device().async_compile(ocarina::move(kernel), "direct generate initial candidates and "
+                                                             "check visibility");
 }
 
 DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
@@ -528,9 +526,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         _integrator->direct_light().write(dispatch_id(), L);
         cur_reservoirs().write(dispatch_id(), st_rsv);
     };
-    _shader1 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "direct spatial temporal reuse and shading");
-    });
+    _shader1 = device().async_compile(ocarina::move(kernel), "direct spatial temporal reuse and shading");
 }
 
 void ReSTIRDirectIllumination::prepare() noexcept {

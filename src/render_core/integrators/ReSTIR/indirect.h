@@ -51,6 +51,7 @@ public:
     void compile_temporal_reuse() noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
+        compile_initial_samples();
         compile_temporal_reuse();
         compile_spatial_shading();
     }
