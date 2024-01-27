@@ -39,7 +39,6 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
     RayState ray_state{hit_context.next_ray, 1.f, InvalidUI32};
     Float3 L = _integrator->Li(ray_state, hit_context.pdf, &sp_it);
     IIRSVSample sample;
-    _integrator->indirect_light().write(dispatch_id(), L * hit_context->throughput());
     sample.vp->set(it);
     sample.sp->set(sp_it);
     sample.Lo.set(L);
@@ -118,6 +117,21 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         Uint2 pixel = dispatch_idx().xy();
         sampler()->start(pixel, frame_index, 0);
         SampledWavelengths swl = spectrum.sample_wavelength(sampler());
+        SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
+        sampler()->start(pixel, frame_index, 4);
+        IIRSVSample sample = _samples.read(dispatch_id());
+        OCHitContext hit_context = _integrator->hit_contexts().read(dispatch_id());
+        IIReservoir rsv;
+        Float3 Lo = sample.Lo.as_vec();
+        Float p_hat = ocarina::luminance(Lo);
+        Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_context.pdf);
+        Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
+        rsv->update(0.5f, sample, weight);
+        rsv->update_W(p_hat);
+        rsv = temporal_reuse(rsv, surf, motion_vec, ss, swl);
+        Lo = rsv.sample.Lo.as_vec3();
+        Float3 L = Lo * hit_context.bsdf.as_vec3();
+        _integrator->indirect_light().write(dispatch_id(), L * rsv.W);
     };
     _temporal_reuse = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
