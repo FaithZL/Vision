@@ -44,6 +44,9 @@ OC_STRUCT(vision::HitContext, next_ray, next_hit,bsdf, pdf) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
     }
+    [[nodiscard]] Float3 safe_throughput() const noexcept {
+        return ocarina::zero_if_nan_inf(throughput());
+    }
     [[nodiscard]] Bool valid() const noexcept {
         return pdf > 0.f;
     }
