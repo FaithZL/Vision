@@ -143,6 +143,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv = temporal_reuse(rsv, surf, motion_vec, ss, swl);
         Lo = rsv.sample.Lo.as_vec3();
         Float3 L = Lo * hit_context.bsdf.as_vec3();
+        cur_reservoirs().write(dispatch_id(), rsv);
         _integrator->indirect_light().write(dispatch_id(), L * rsv.W);
     };
     _temporal_reuse = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");

@@ -27,7 +27,6 @@ private:
     RegistrableBuffer<ReSTIRIndirect::RSVSample> _samples{pipeline()->bindless_array()};
     optional<Uint> _frame_index;
 
-
     /**
      * initial sample
      */
@@ -46,6 +45,8 @@ protected:
 
 public:
     ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
+    OC_MAKE_MEMBER_GETTER(open, )
+    [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;

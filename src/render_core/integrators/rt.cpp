@@ -52,14 +52,12 @@ public:
         Camera *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index) {
             camera->load_data();
-            Float3 direct = direct_light().read(dispatch_id());
-            Float3 indirect = indirect_light().read(dispatch_id());
+            Float3 direct = direct_light().read(dispatch_id()) * _direct.factor();
+            Float3 indirect = indirect_light().read(dispatch_id()) * _indirect.factor();
             Float3 L = direct + indirect;
             camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };
-        _combine = async([&, kernel = ocarina::move(kernel)] {
-            return device().compile(kernel, "combine");
-        });
+        _combine = device().async_compile(ocarina::move(kernel), "combine");
     }
 
     void render() const noexcept override {

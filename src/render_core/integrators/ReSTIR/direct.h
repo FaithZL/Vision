@@ -52,7 +52,8 @@ protected:
 
 public:
     ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
-
+    OC_MAKE_MEMBER_GETTER(open, )
+    [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();
