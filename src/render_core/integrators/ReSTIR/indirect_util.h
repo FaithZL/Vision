@@ -61,8 +61,8 @@ OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
     [[nodiscard]] Bool valid() const noexcept {
         return vp->valid();
     }
-    [[nodiscard]] Float p_hat() const noexcept {
-        return ocarina::luminance(Lo.as_vec());
+    [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
+        return ocarina::luminance(Lo.as_vec() * bsdf);
     }
 };
 

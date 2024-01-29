@@ -760,7 +760,7 @@
 						1
 					]
 				},
-				"roughness" : 0.01
+				"roughness" : 0.001
 			}
 		},
 		{
@@ -1079,7 +1079,7 @@
 				"pairwise": true
 			},
 			"min_depth" : 0,
-			"max_depth" : 16,
+			"max_depth" : 2,
 			"rr_threshold" : 1
 		}
 	},
@@ -1143,8 +1143,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
-		"save_exit" : false,
+		"spp" : 10,
+//		"save_exit" : true,
 		"fn" : "rt-env.exr"
 	}
 }

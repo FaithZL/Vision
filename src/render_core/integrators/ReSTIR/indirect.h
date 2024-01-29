@@ -61,9 +61,12 @@ public:
                                           const OCHitContext &hit_context,
                                           SampledWavelengths &swl) noexcept;
     [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
-                                               const IIReservoir &other_rsv, SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf, const Float2 &motion_vec,
-                                             const SensorSample &ss, SampledWavelengths &swl) const noexcept;
+                                               const IIReservoir &other_rsv,const OCHitContext &hit_context,
+                                               SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
+                                             const Float2 &motion_vec,const SensorSample &ss,
+                                             const OCHitContext &hit_ctx,
+                                             SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,

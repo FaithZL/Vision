@@ -72,6 +72,7 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
 
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv,
+                                                         const OCHitContext &hit_context,
                                                          vision::SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
@@ -82,24 +83,28 @@ IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_
     Float mis_prev = MIS_weight(other_rsv.C, cur_rsv.C);
 
     Float cur_weight = Reservoir::safe_weight(mis_cur,
-                                              cur_rsv.sample->p_hat(), cur_rsv.W);
+                                              cur_rsv.sample->p_hat(hit_context.bsdf.as_vec3()), cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
 
     Float other_weight = Reservoir::safe_weight(mis_prev,
-                                                other_rsv.sample->p_hat(), other_rsv.W);
+                                                other_rsv.sample->p_hat(hit_context.bsdf.as_vec3()), other_rsv.W);
     ret->update(sampler()->next_1d(), other_rsv.sample, other_weight, other_rsv.C);
 
-    ret->update_W(ret.sample->p_hat());
+    Float p_hat = ret.sample->p_hat(hit_context.bsdf.as_vec3());
+    ret->update_W(p_hat);
 
-//    $condition_info("{}       {}    {}   ws --------", cur_rsv.weight_sum, other_rsv.weight_sum, _frame_index.value());
-//    $condition_info("{}       {}     w --------", rcp(cur_rsv.W), rcp(other_rsv.W));
-//    $condition_info("{}       {}     p_hat \n ", cur_rsv.sample->p_hat(), other_rsv.sample->p_hat());
+    //    $condition_info("{} {} {}          {} {} {}           ", cur_rsv.sample.Lo.as_vec3(), other_rsv.sample.Lo.as_vec3());
+
+//        $condition_info("{}       {}    {}   ws \n--------", cur_weight, other_weight, _frame_index.value());
+//        $condition_info("{}       {}      {}   -", rcp(cur_rsv.W), rcp(other_rsv.W), rcp(ret.W));
+//        $condition_info("{}       {}     {} \n ", cur_weight, other_weight, p_hat);
 
     return ret;
 }
 
 IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                        const Float2 &motion_vec, const SensorSample &ss,
+                                                       const OCHitContext &hit_context,
                                                        vision::SampledWavelengths &swl) const noexcept {
     if (!_temporal.open) {
         return rsv;
@@ -113,7 +118,7 @@ IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OC
         prev_rsv->truncation(limit);
         OCSurfaceData another_surf = prev_surfaces().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_temporal(rsv, cur_surf, prev_rsv, swl);
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, hit_context, swl);
         };
     };
     return rsv;
@@ -139,12 +144,12 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         OCHitContext hit_context = _integrator->hit_contexts().read(dispatch_id());
         IIReservoir rsv;
         Float3 Lo = sample.Lo.as_vec();
-        Float p_hat = ocarina::luminance(Lo);
+        Float p_hat = ocarina::luminance(Lo * hit_context.bsdf.as_vec3());
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_context.pdf);
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
         Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
-        rsv = temporal_reuse(rsv, surf, motion_vec, ss, swl);
+        rsv = temporal_reuse(rsv, surf, motion_vec, ss, hit_context, swl);
         Lo = rsv.sample.Lo.as_vec3();
         Float3 L = Lo * hit_context.bsdf.as_vec3();
         cur_reservoirs().write(dispatch_id(), rsv);
