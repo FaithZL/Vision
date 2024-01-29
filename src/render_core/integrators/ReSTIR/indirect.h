@@ -34,7 +34,7 @@ private:
     /**
      * initial samples and temporal reuse
      */
-    std::shared_future<Shader<void(uint)>> _temporal_reuse;
+    std::shared_future<Shader<void(uint)>> _temporal_pass;
     /**
      * spatial reuse and shading
      */

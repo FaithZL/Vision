@@ -63,6 +63,8 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
+//        Env::debugger().set_lower(make_uint2(803, 773));
+//        Env::debugger().set_upper(make_uint2(803, 773));
         stream << Env::debugger().upload();
         stream << _direct.estimate(_frame_index);
         stream << _indirect.estimate(_frame_index);

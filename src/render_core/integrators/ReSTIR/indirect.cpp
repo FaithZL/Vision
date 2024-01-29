@@ -90,7 +90,11 @@ IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_
     ret->update(sampler()->next_1d(), other_rsv.sample, other_weight, other_rsv.C);
 
     ret->update_W(ret.sample->p_hat());
-    
+
+//    $condition_info("{}       {}    {}   ws --------", cur_rsv.weight_sum, other_rsv.weight_sum, _frame_index.value());
+//    $condition_info("{}       {}     w --------", rcp(cur_rsv.W), rcp(other_rsv.W));
+//    $condition_info("{}       {}     p_hat \n ", cur_rsv.sample->p_hat(), other_rsv.sample->p_hat());
+
     return ret;
 }
 
@@ -137,16 +141,16 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         Float3 Lo = sample.Lo.as_vec();
         Float p_hat = ocarina::luminance(Lo);
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_context.pdf);
-        Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
+        Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
         rsv = temporal_reuse(rsv, surf, motion_vec, ss, swl);
         Lo = rsv.sample.Lo.as_vec3();
         Float3 L = Lo * hit_context.bsdf.as_vec3();
         cur_reservoirs().write(dispatch_id(), rsv);
         _integrator->indirect_light().write(dispatch_id(), L * rsv.W);
     };
-    _temporal_reuse = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
+    _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
 
 void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
@@ -170,7 +174,7 @@ CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcep
     const Pipeline *rp = pipeline();
     if (_open) {
         ret << _initial_samples.get()(frame_index).dispatch(rp->resolution());
-        ret << _temporal_reuse.get()(frame_index).dispatch(rp->resolution());
+        ret << _temporal_pass.get()(frame_index).dispatch(rp->resolution());
         ret << _spatial_shading.get()(frame_index).dispatch(rp->resolution());
     }
     return ret;
