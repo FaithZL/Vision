@@ -132,10 +132,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv->update_W(p_hat);
         Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
         rsv = temporal_reuse(rsv, surf, motion_vec, ss, hit_context, swl);
-        Lo = rsv.sample.Lo.as_vec3();
-        Float3 L = Lo * hit_context.bsdf.as_vec3();
         cur_reservoirs().write(dispatch_id(), rsv);
-        _integrator->indirect_light().write(dispatch_id(), L * rsv.W);
     };
     _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
@@ -152,6 +149,12 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         $if(surf.hit->is_miss()) {
             $return();
         };
+        IIReservoir rsv = cur_reservoirs().read(dispatch_id());
+        Float3 Lo = rsv.sample.Lo.as_vec3();
+        OCHitContext hit_context = _integrator->hit_contexts().read(dispatch_id());
+        Float3 L = Lo * hit_context.bsdf.as_vec3();
+        cur_reservoirs().write(dispatch_id(), rsv);
+        _integrator->indirect_light().write(dispatch_id(), L * rsv.W);
     };
     _spatial_shading = device().async_compile(ocarina::move(kernel), "indirect spatial reuse and shading");
 }
