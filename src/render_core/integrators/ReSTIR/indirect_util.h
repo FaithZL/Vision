@@ -109,14 +109,16 @@ OC_STRUCT(vision::ReSTIRIndirect::Reservoir, weight_sum, C, W, sample) {
         return ret;
     }
     void truncation(oc_float<p> limit) noexcept {
+        oc_float<p> factor = limit / C;
         C = ocarina::min(limit, C);
+        weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
     }
     void process_occluded(oc_bool<p> occluded) noexcept {
         W = ocarina::select(occluded, 0.f, W);
         weight_sum = ocarina::select(occluded, 0.f, weight_sum);
     }
     [[nodiscard]] oc_float<p> cal_W(const oc_float<p> &p_hat) const noexcept {
-        return ocarina::select(p_hat == 0.f, 0.f, weight_sum / p_hat);
+        return ocarina::select(p_hat == 0.f, 0.f, weight_sum / (p_hat * C));
     }
     void update_W(const oc_float<p> &p_hat) noexcept {
         W = cal_W(p_hat);

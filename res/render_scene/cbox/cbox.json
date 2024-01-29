@@ -207,9 +207,9 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				// "material" : "ShortBox",
+				 "material" : "ShortBox",
 								// "material" : "substrate",
-								"material" : "Mirror",
+//								"material" : "Mirror",
 //								"material" : "Ag",
 //												                "material" : "disney",
 //																                "material" : "mix",
@@ -1072,14 +1072,14 @@
 					"theta": 2,
 					"depth": 1,
 					"radius": 0,
-					"history_limit": 1
+					"history_limit": 10
 				},
 				"correct_mode" : 0,
 //				"open": false,
 				"pairwise": true
 			},
 			"min_depth" : 0,
-			"max_depth" : 2,
+			"max_depth" : 16,
 			"rr_threshold" : 1
 		}
 	},
@@ -1135,8 +1135,8 @@
 				"name" : "boxFilter",
 				"param" : {
 					"radius" : [
-						0.0,
-						0.0
+						0.5,
+						0.5
 					]
 				}
 			}
