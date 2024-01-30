@@ -17,15 +17,14 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
-Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth,
+Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                                   bool only_direct, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
 
     SampledWavelengths swl = spectrum().sample_wavelength(sampler);
-    SampledSpectrum value = {swl.dimension(), 0.f};
-    SampledSpectrum throughput = {swl.dimension(), 1.f};
+    SampledSpectrum value = spectrum().zero();
     const Geometry &geometry = rp->geometry();
 
     OCHit hit;
@@ -201,7 +200,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
 }
 
 Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
-    return Li(rs, scatter_pdf, *_max_depth, _max_depth.hv() < 2,first_it);
+    return Li(rs, scatter_pdf, *_max_depth, spectrum().one(), _max_depth.hv() < 2, first_it);
 }
 
 BufferMgr::BufferMgr()
