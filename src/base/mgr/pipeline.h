@@ -77,7 +77,7 @@ public:
     template<typename T>
     [[nodiscard]] CommandList reset_buffer(Buffer<T> &buffer, T elm) const noexcept {
         CommandList ret;
-        Shader<void(Buffer<T>, T)> *shader = new_with_allocator<Shader<void(Buffer<T>, T)>>(ocarina::move(obtain_reset_shader<T>()));
+        auto shader = new_with_allocator<Shader<void(Buffer<T>, T)>>(ocarina::move(obtain_reset_shader<T>()));
         ret << (*shader)(buffer, elm).dispatch(buffer.size());
         ret << [=] {
             async([=]{
