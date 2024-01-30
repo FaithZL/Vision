@@ -199,8 +199,9 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     return spectrum().linear_srgb(value, swl);
 }
 
-Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
-    return Li(rs, scatter_pdf, *_max_depth, spectrum().one(), _max_depth.hv() < 2, first_it);
+Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
+                                  SampledSpectrum throughput, Interaction *first_it) const noexcept {
+    return Li(rs, scatter_pdf, *_max_depth, throughput, _max_depth.hv() < 2, first_it);
 }
 
 BufferMgr::BufferMgr()

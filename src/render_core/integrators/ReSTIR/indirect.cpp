@@ -37,7 +37,7 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
     sampler()->start(pixel, *_frame_index, 3);
     Interaction sp_it;
     RayState ray_state{hit_context.next_ray, 1.f, InvalidUI32};
-    Float3 L = _integrator->Li(ray_state, hit_context.pdf, &sp_it);
+    Float3 L = _integrator->Li(ray_state, hit_context.pdf, scene().spectrum()->one(), &sp_it);
     IIRSVSample sample;
     sample.vp->set(it);
     sample.sp->set(sp_it);

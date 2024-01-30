@@ -13,7 +13,7 @@ class PathTracingIntegrator : public IlluminationIntegrator {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc) {}
-    
+
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
         Camera *camera = scene().camera().get();
@@ -25,7 +25,7 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
-            Float3 L = Li(rs, scatter_pdf, nullptr) * ss.filter_weight;
+            Float3 L = Li(rs, scatter_pdf, spectrum().one(), nullptr) * ss.filter_weight;
             camera->radiance_film()->add_sample(pixel, L, frame_index);
         };
         _shader = device().compile(kernel, "path tracing integrator");

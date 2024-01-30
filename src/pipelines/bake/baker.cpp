@@ -16,8 +16,8 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
 }
 
 tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Triangle> &triangles,
-                                                       const BufferVar<Vertex> &vertices,
-                                                       const BufferVar<uint4> &pixels) noexcept {
+                                                              const BufferVar<Vertex> &vertices,
+                                                              const BufferVar<uint4> &pixels) noexcept {
     Sampler *sampler = scene().sampler();
     Filter *filter = scene().camera()->filter();
     Uint4 pixel_data = pixels.read(dispatch_id());
@@ -45,7 +45,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
         Float2 p0 = v0->lightmap_uv();
         Float2 p1 = v1->lightmap_uv();
         Float2 p2 = v2->lightmap_uv();
-        auto ss = sampler->sensor_sample(make_uint2(x,y), filter);
+        auto ss = sampler->sensor_sample(make_uint2(x, y), filter);
 
         Float2 coord = ss.p_film;
         weight = ss.filter_weight;
@@ -69,7 +69,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
             norm = normalize(triangle_lerp(bary, n0, n1, n2));
         };
     };
-    return {position, norm, valid,weight};
+    return {position, norm, valid, weight};
 }
 
 void Baker::_compile_bake() noexcept {
@@ -88,7 +88,7 @@ void Baker::_compile_bake() noexcept {
         Interaction it;
         DynamicArray<float> scattering_pdf{pipeline()->spectrum().dimension()};
         scattering_pdf = scatter_pdf;
-        Float3 L = integrator->Li(rs, scatter_pdf, &it) * weight;
+        Float3 L = integrator->Li(rs, scatter_pdf, scene().spectrum()->one(), &it) * weight;
         Float4 result = make_float4(L, 1.f);
         result.w = select(dot(rs.direction(), it.ng) > 0, 0.f, 1.f);
         Float4 accum_prev = radiance.read(dispatch_id());
