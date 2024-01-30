@@ -66,6 +66,27 @@ public:
     [[nodiscard]] uint pixel_num() const noexcept { return resolution().x * resolution().y; }
     /// virtual function end
 
+    template<typename T>
+    [[nodiscard]] auto obtain_reset_shader(const string desc = "") const noexcept {
+        Kernel kernel = [](BufferVar<T> buffer_var, Var<T> value) {
+            buffer_var.write(dispatch_id(), value);
+        };
+        return device().compile(kernel, desc);
+    }
+
+    template<typename T>
+    [[nodiscard]] CommandList reset_buffer(Buffer<T> &buffer, T elm) const noexcept {
+        CommandList ret;
+        Shader<void(Buffer<T>, T)> *shader = new_with_allocator<Shader<void(Buffer<T>, T)>>(ocarina::move(obtain_reset_shader<T>()));
+        ret << (*shader)(buffer, elm).dispatch(buffer.size());
+        ret << [=] {
+            async([=]{
+                delete_with_allocator(shader);
+            });
+        };
+        return ret;
+    }
+
     [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     static void flip_debugger() noexcept { Env::debugger().filp_enabled(); }
