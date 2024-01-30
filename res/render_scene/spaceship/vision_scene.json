@@ -4006,7 +4006,7 @@
                             1
                         ],
                         "o2w": {
-                            "type": "yaw_pitch",
+                            "type": "Euler",
                             "param": {
                                 "yaw": 0
                             }

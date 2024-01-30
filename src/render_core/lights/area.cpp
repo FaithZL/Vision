@@ -109,7 +109,7 @@ public:
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
         Float ret = vision::PDF_wi(p_light.PDF_pos, p_light.ng, p_ref.pos - p_light.pos);
-        return select(ocarina::isinf(ret), 0.f, ret);
+        return select(ocarina::isinf(ret) || ocarina::isnan(ret), 0.f, ret);
     }
 
     [[nodiscard]] LightEvalContext sample_surface(Float2 u) const noexcept {

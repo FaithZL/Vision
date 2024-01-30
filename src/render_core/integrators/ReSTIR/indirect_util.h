@@ -25,38 +25,49 @@ struct SurfacePoint {
         ng[2] = n[2];
     }
     [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
+    [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f); }
 };
 }// namespace vision::ReSTIRIndirect
 
 // clang-format off
 OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
     void set_position(Float3 p) noexcept {
-        pos[0] = p[0];
-        pos[1] = p[1];
-        pos[2] = p[2];
+        pos.set(p);
     }
-    [[nodiscard]] auto position() const noexcept { return make_float3(pos[0], pos[1], pos[2]); }
+    [[nodiscard]] auto position() const noexcept { return pos.as_vec(); }
     void set_normal(Float3 n) noexcept {
-        ng[0] = n[0];
-        ng[1] = n[1];
-        ng[2] = n[2];
+        ng.set(n);
     }
-    [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
+    [[nodiscard]] auto normal() const noexcept { return ng.as_vec(); }
+    void set(const vision::Interaction &it) noexcept {
+        set_position(it.pos);
+        set_normal(it.ng);
+    }
+    [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f);}
 };
 // clang-format on
 
 namespace vision::ReSTIRIndirect {
 struct RSVSample {
-    SurfacePoint sample_point;
-    SurfacePoint visible_point;
+    SurfacePoint sp{};
+    SurfacePoint vp{};
     array<float, 3> u{};
-    array<float, 3> Lo;
+    array<float, 3> Lo{};
 };
 }// namespace vision::ReSTIRIndirect
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sample_point, visible_point, u, Lo){};
 
-namespace vision::ReSTIRIndirect {
-using IIRSVSample = Var<RSVSample>;
+OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
+    static constexpr EPort p = D;
+    [[nodiscard]] Bool valid() const noexcept {
+        return vp->valid();
+    }
+    [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
+        return ocarina::luminance(Lo.as_vec() * bsdf);
+    }
+};
+
+namespace vision {
+using IIRSVSample = Var<ReSTIRIndirect::RSVSample>;
 }
 
 namespace vision::ReSTIRIndirect {
@@ -68,6 +79,53 @@ public:
     oc_float<p> W{};
     RSVSample sample{};
 
-public:
+    template<EPort p_ = D>
+    [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                                 oc_float<p_> W) noexcept {
+        return mis_weight * p_hat * W;
+    }
+
+    template<EPort p_ = D>
+    [[nodiscard]] static auto safe_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
+                                          oc_float<p_> W) noexcept {
+        oc_float<p_> ret = cal_weight(mis_weight, p_hat, W);
+        ret = ocarina::select(ocarina::isnan(ret), 0.f, ret);
+        return ret;
+    }
 };
 }// namespace vision::ReSTIRIndirect
+
+// clang-format off
+OC_STRUCT(vision::ReSTIRIndirect::Reservoir, weight_sum, C, W, sample) {
+    static constexpr EPort p = D;
+    [[nodiscard]] Bool valid() const noexcept {
+        return sample->valid();
+    }
+    Bool update(oc_float<p> u, vision::IIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
+        weight_sum += weight;
+        C += new_C;
+        Bool ret = u * weight_sum < weight;
+        sample = ocarina::select(ret, v, sample);
+        return ret;
+    }
+    void truncation(oc_float<p> limit) noexcept {
+        oc_float<p> factor = limit / C;
+        C = ocarina::min(limit, C);
+        weight_sum = ocarina::select(factor < 1.f, weight_sum * factor, weight_sum);
+    }
+    void process_occluded(oc_bool<p> occluded) noexcept {
+        W = ocarina::select(occluded, 0.f, W);
+        weight_sum = ocarina::select(occluded, 0.f, weight_sum);
+    }
+    [[nodiscard]] oc_float<p> cal_W(const oc_float<p> &p_hat) const noexcept {
+        return ocarina::select(p_hat == 0.f, 0.f, weight_sum / (p_hat * C));
+    }
+    void update_W(const oc_float<p> &p_hat) noexcept {
+        W = cal_W(p_hat);
+    }
+};
+// clang-format on
+
+namespace vision::ReSTIRIndirect {
+using IIReservoir = ocarina::Var<Reservoir>;
+}

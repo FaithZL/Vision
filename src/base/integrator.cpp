@@ -17,17 +17,15 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
-Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept {
+Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
+                                  bool only_direct, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
 
     SampledWavelengths swl = spectrum().sample_wavelength(sampler);
-    SampledSpectrum value = {swl.dimension(), 0.f};
-    SampledSpectrum throughput = {swl.dimension(), 1.f};
+    SampledSpectrum value = spectrum().zero();
     const Geometry &geometry = rp->geometry();
-
-    bool only_direct = _max_depth.hv() < 2;
 
     OCHit hit;
     Interaction it;
@@ -127,7 +125,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
     };
 
     Float eta_scale = 1.f;
-    $for(&bounces, 0, *_max_depth) {
+    $for(&bounces, 0, max_depth) {
         mis_bsdf(bounces, true);
 
         comment("estimate direct lighting");
@@ -191,7 +189,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
         rs = it.spawn_ray_state(bsdf_sample.wi);
     };
 
-    if (only_direct) {
+    if (only_direct && _mis_mode == MISMode::EBoth) {
         /// Supplement only direct light BSDF sampling
         $for(&bounce, 1u) {
             mis_bsdf(bounce, false);
@@ -200,5 +198,17 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf, Intera
 
     return spectrum().linear_srgb(value, swl);
 }
+
+Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
+                                  SampledSpectrum throughput, Interaction *first_it) const noexcept {
+    return Li(rs, scatter_pdf, *_max_depth, throughput, _max_depth.hv() < 2, first_it);
+}
+
+BufferMgr::BufferMgr()
+    : _motion_vectors{Global::instance().pipeline()->bindless_array()},
+      _direct_light{Global::instance().pipeline()->bindless_array()},
+      _indirect_light{Global::instance().pipeline()->bindless_array()},
+      _surfaces{Global::instance().pipeline()->bindless_array()},
+      _hit_contexts{Global::instance().pipeline()->bindless_array()} {}
 
 }// namespace vision

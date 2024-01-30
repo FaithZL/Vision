@@ -899,7 +899,7 @@
 				}
 			},
 //			"transform" : {
-//				"type" : "yaw_pitch",
+//				"type" : "Euler",
 //				"param" : {
 //					"position" : [
 //						-0.08940657, 1.068205, -0.019081552
@@ -1035,7 +1035,7 @@
 //							"color_space": "linear"
 //						},
 //						"o2w" : {
-//							"type":"yaw_pitch",
+//							"type":"Euler",
 //							"param": {
 //								"yaw" :-30
 //							}

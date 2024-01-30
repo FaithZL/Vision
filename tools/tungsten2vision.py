@@ -289,7 +289,7 @@ def convert_envmap(shape_input, shape_output):
         "param" : {
             "texture" : [1,1,1],
             "o2w" : {
-                "type":"yaw_pitch",
+                "type":"Euler",
                 "param": {
                     "yaw" : 0
                 }

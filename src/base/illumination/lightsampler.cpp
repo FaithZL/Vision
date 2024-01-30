@@ -65,7 +65,7 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
             for (int i = 0; i < _lights.type_num(); ++i) {
                 nums.push_back(static_cast<uint>(_lights.instance_num(i)));
             }
-            Array<uint> arr{nums};
+            DynamicArray<uint> arr{nums};
             $for(i, type_id) {
                 ret += arr[i];
             };
@@ -209,9 +209,9 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
         ret = light->evaluate_wi(p_ref, p_light, swl);
-        Float pmf = PMF(p_ref, light_idx);
-        ret.pdf *= pmf;
     });
+    Float pmf = PMF(p_ref, light_idx);
+    ret.pdf *= pmf;
     return ret;
 }
 

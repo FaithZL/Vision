@@ -242,11 +242,11 @@ template<EPort p = EPort::D>
     return ret;
 }
 
-[[nodiscard]] inline Array<float> PDF_wi_transmission(const Float &PDF_wh, const Float3 &wo, const Float3 &wh,
-                                                      const Float3 &wi, const Array<float> &etas) {
-    Array<float> denom = sqr(dot(wi, wh) * etas + dot(wo, wh));
-    Array<float> dwh_dwi = abs_dot(wi, wh) / denom;
-    Array<float> ret = PDF_wh * dwh_dwi;
+[[nodiscard]] inline DynamicArray<float> PDF_wi_transmission(const Float &PDF_wh, const Float3 &wo, const Float3 &wh,
+                                                      const Float3 &wi, const DynamicArray<float> &etas) {
+    DynamicArray<float> denom = sqr(dot(wi, wh) * etas + dot(wo, wh));
+    DynamicArray<float> dwh_dwi = abs_dot(wi, wh) / denom;
+    DynamicArray<float> ret = PDF_wh * dwh_dwi;
     return ret;
 }
 
@@ -340,13 +340,13 @@ public:
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] virtual Array<float> PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
-                                                           const Float3 &wi, const Array<float> &etas) const noexcept {
+    [[nodiscard]] virtual DynamicArray<float> PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
+                                                           const Float3 &wi, const DynamicArray<float> &etas) const noexcept {
         return microfacet::PDF_wi_transmission(pdf_wh, wo, wh, wi, etas);
     }
 
-    [[nodiscard]] virtual Array<float> PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
-                                                           const Float3 &wi, const Array<float> &etas) const noexcept {
+    [[nodiscard]] virtual DynamicArray<float> PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
+                                                           const Float3 &wi, const DynamicArray<float> &etas) const noexcept {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, etas);
     }
 

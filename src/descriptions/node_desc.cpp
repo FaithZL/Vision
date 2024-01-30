@@ -39,11 +39,12 @@ void TransformDesc::init(const ParameterSet &ps) noexcept {
         float3 up = param["up"].as_float3(make_float3(0, 1, 0));
         float3 target_pos = param["target_pos"].as_float3(make_float3(0, 0, 1));
         mat = look_at<H>(position, target_pos, up);
-    } else if (sub_type == "yaw_pitch") {
+    } else if (sub_type == "Euler") {
         float4x4 yaw_t = rotation_y<H>(param["yaw"].as_float(0.f), false);
+        float4x4 roll_t = rotation_z<H>(param["roll"].as_float(0.f), false);
         float4x4 pitch_t = rotation_x<H>(param["pitch"].as_float(0.f), false);
         float4x4 tt = translation(param["position"].as_float3(make_float3(0.f)));
-        mat = tt * pitch_t * yaw_t;
+        mat = tt * pitch_t * roll_t * yaw_t;
     } else if (sub_type == "trs") {
         float3 t = param["t"].as_float3(make_float3(0.f));
         float4 r = param["r"].as_float4(make_float4(1, 0, 0, 0));
@@ -308,6 +309,7 @@ void RenderSettingDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     polymorphic_mode = static_cast<PolymorphicMode>(ps["polymorphic_mode"].as_uint(0));
     min_world_radius = ps["min_world_radius"].as_float(10);
+    ray_offset_factor = ps["ray_offset_factor"].as_float(1.f);
 }
 
 }// namespace vision

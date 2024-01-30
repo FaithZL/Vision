@@ -77,38 +77,6 @@ requires is_vector3_expr_v<T>
     return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
 }
 
-template<typename T>
-[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir) {
-    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
-    T org = offset_ray_origin(pos, normal);
-    return make_ray(org, dir);
-}
-
-template<typename T, typename U>
-[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir, U t_max) {
-    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
-    T org = offset_ray_origin(pos, normal);
-    return make_ray(org, dir, t_max);
-}
-
-template<typename T>
-[[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target) {
-    T dir = p_target - p_start;
-    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
-    T org = offset_ray_origin(p_start, n_start);
-    return make_ray(org, dir, 1 - ShadowEpsilon);
-}
-
-template<typename T>
-[[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target, T n_target) {
-    T dir = p_target - p_start;
-    n_target *= select(dot(n_target, -dir) > 0, 1.f, -1.f);
-    p_target = offset_ray_origin(p_target, n_target);
-    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
-    T org = offset_ray_origin(p_start, n_start);
-    return make_ray(org, dir, 1 - ShadowEpsilon);
-}
-
 template<EPort p = D>
 [[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> sin_theta, oc_float<p> cos_theta,
                                                oc_float<p> sin_phi, oc_float<p> cos_phi) {

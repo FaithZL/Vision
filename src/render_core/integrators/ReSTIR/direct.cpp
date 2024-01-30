@@ -4,14 +4,10 @@
 
 #include "direct.h"
 #include "base/integrator.h"
-#include "base/mgr/pipeline.h"
 
 namespace vision {
 
-ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
-                                                   RegistrableBuffer<float2> &motion_vec,
-                                                   RegistrableBuffer<SurfaceData> &surfaces0,
-                                                   RegistrableBuffer<SurfaceData> &surfaces1)
+ReSTIRDirectIllumination::ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc)
     : _integrator(integrator),
       M_light(desc["M_light"].as_uint(10)),
       M_bsdf(desc["M_bsdf"].as_uint(1)),
@@ -20,13 +16,11 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _debias(desc["debias"].as_bool(false)),
       _reweight(desc["reweight"].as_bool(false)),
       _pairwise(desc["pairwise"].as_bool(false)),
-      _motion_vectors(motion_vec),
-      _surfaces0(surfaces0),
-      _surfaces1(surfaces1) {}
+      _open(desc["open"].as_bool(true)) {}
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
-                                             BSDFSample *bs, Float *light_pdf_point) noexcept {
+                                             BSDFSample *bs, Float *light_pdf_point, OCHitContext *hit_context) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const Geometry &geometry = pipeline()->geometry();
@@ -50,6 +44,12 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     }
     OCRay ray = it.spawn_ray(bs->wi);
     OCHit hit = geometry.trace_closest(ray);
+    Float pdf = bs->eval.pdf;
+    hit_context->next_ray = ray;
+    hit_context->next_hit = hit;
+    hit_context->bsdf.set(bs->eval.f.vec3());
+    hit_context->pdf = pdf;
+
     LightEval le{swl.dimension()};
     LightSurfacePoint lsp;
     $if(hit->is_hit()) {
@@ -65,7 +65,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             lsp.prim_id = hit.prim_id;
             lsp.bary = hit.bary;
             (*sample)->set_lsp(lsp);
-            (*sample)->set_pos(next_it.pos);
+            (*sample)->set_pos(next_it.robust_position(it.pos - next_it.pos));
             bs->eval.pdf = le.pdf;
             f = bs->eval.f * le.L;
         };
@@ -150,11 +150,13 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         ret->update(sampler->next_1d(), sample, weight);
     };
 
+    OCHitContext hit_context;
+
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         BSDFSample bs{swl.dimension()};
         Float light_pdf_point = 0.f;
-        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point);
+        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point, &hit_context);
         sample.p_hat = p_hat;
         Float weight = Reservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
                                               sample.p_hat, 1.f / bs.eval.pdf);
@@ -184,6 +186,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             };
         }
     };
+    _integrator->hit_contexts().write(dispatch_id(), hit_context);
     ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
     comment("RIS end");
@@ -224,15 +227,15 @@ DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canoni
                                                        const SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
-    OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
+    OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
     Float canonical_weight = 0.f;
     Uint M = rsv_idx.count() + 1;
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir neighbor_rsv = passthrough_reservoir().read(idx);
-        OCSurfaceData surf = cur_surface().read(idx);
+        DIReservoir neighbor_rsv = passthrough_reservoirs().read(idx);
+        OCSurfaceData surf = cur_surfaces().read(idx);
         Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, c_pos);
         canonical_weight += neighbor_pairwise_MIS(canonical_rsv, canonical_it, neighbor_rsv, neighbor_it, M, swl, &ret);
     });
@@ -247,7 +250,7 @@ DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canoni
                                                        const SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
-    OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
+    OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
@@ -257,7 +260,7 @@ DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canoni
     ret->update(0.5f, canonical_rsv.sample, cur_weight, canonical_rsv.C);
 
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir rsv = passthrough_reservoir().read(idx);
+        DIReservoir rsv = passthrough_reservoirs().read(idx);
         rsv.sample.p_hat = compute_p_hat(canonical_it, nullptr, swl, rsv.sample);
         Float neighbor_weight = Reservoir::cal_weight(1.f / sample_num,
                                                       rsv.sample.p_hat, rsv.W);
@@ -280,7 +283,6 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     }
 
     if (_reweight) {
-
     }
 
     return ret;
@@ -363,9 +365,9 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
-        DIReservoir prev_rsv = prev_reservoir().read(index);
+        DIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
-        OCSurfaceData another_surf = prev_surface().read(index);
+        OCSurfaceData another_surf = prev_surfaces().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv, swl);
         };
@@ -402,20 +404,18 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         DIReservoir rsv = RIS(hit->is_hit(), it, swl, frame_index);
         Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
 
-        _motion_vectors.write(dispatch_id(), motion_vec);
+        _integrator->motion_vectors().write(dispatch_id(), motion_vec);
 
         $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv->process_occluded(occluded);
         };
         rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, swl, frame_index);
-        passthrough_reservoir().write(dispatch_id(), rsv);
-        cur_surface().write(dispatch_id(), cur_surf);
+        passthrough_reservoirs().write(dispatch_id(), rsv);
+        cur_surfaces().write(dispatch_id(), cur_surf);
     };
-    _shader0 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "generate initial candidates and "
-                                        "check visibility");
-    });
+    _shader0 = device().async_compile(ocarina::move(kernel), "direct generate initial candidates and "
+                                                             "check visibility");
 }
 
 DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
@@ -432,7 +432,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
         Int2 another_pixel = pixel + offset_i;
         another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
         Uint index = dispatch_id(another_pixel);
-        OCSurfaceData other_surf = cur_surface().read(index);
+        OCSurfaceData other_surf = cur_surfaces().read(index);
         $if(is_neighbor(cur_surf, other_surf)) {
             rsv_idx.push_back(index);
         };
@@ -465,15 +465,13 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
     }
     $else {
         Interaction next_it;
-        OCRay ray;
-        OCHit hit;
         BSDFSample bs{swl.dimension()};
         scene().materials().dispatch(it.material_id(), [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, swl);
             bs = bsdf.sample(it.wo, sampler());
         });
-        ray = it.spawn_ray(bs.wi);
-        hit = geometry.trace_closest(ray);
+        OCRay ray = it.spawn_ray(bs.wi);
+        OCHit hit = geometry.trace_closest(ray);
         $if(hit->is_hit()) {
             next_it = geometry.compute_surface_interaction(hit, ray, true);
             $if(next_it.has_emission()) {
@@ -508,8 +506,8 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         sampler()->start(pixel, frame_index, 1);
-        OCSurfaceData cur_surf = cur_surface().read(dispatch_id());
-        DIReservoir temporal_rsv = passthrough_reservoir().read(dispatch_id());
+        OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
+        DIReservoir temporal_rsv = passthrough_reservoirs().read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), swl, frame_index);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
@@ -525,37 +523,31 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
                 L = spectrum.linear_srgb(eval.L, swl);
             }
         };
-        film->add_sample(pixel, L, frame_index);
-        cur_reservoir().write(dispatch_id(), st_rsv);
+        _integrator->direct_light().write(dispatch_id(), L);
+        cur_reservoirs().write(dispatch_id(), st_rsv);
     };
-    _shader1 = async([&, kernel = ocarina::move(kernel)] {
-        return device().compile(kernel, "spatial temporal reuse and shading");
-    });
+    _shader1 = device().async_compile(ocarina::move(kernel), "direct spatial temporal reuse and shading");
 }
 
 void ReSTIRDirectIllumination::prepare() noexcept {
     using ReSTIRDirect::Reservoir;
     Pipeline *rp = pipeline();
-    Reservoir rsv;
-    vector<Reservoir> vec{rp->pixel_num(), rsv};
-
-    auto init_buffer = [&](RegistrableBuffer<Reservoir> &reservoirs, const string &desc) {
-        reservoirs.set_bindless_array(rp->bindless_array());
-        reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num(), desc);
-        reservoirs.register_self();
-        reservoirs.upload_immediately(vec.data());
-    };
-
-    init_buffer(_reservoirs0, "ReSTIRDirectIllumination::_reservoirs0");
-    init_buffer(_reservoirs1, "ReSTIRDirectIllumination::_reservoirs1");
-    init_buffer(_reservoirs2, "ReSTIRDirectIllumination::_reservoirs2");
+    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
+                                                            "ReSTIRDirectIllumination::_reservoirs x 3");
+    _reservoirs.register_self(0, rp->pixel_num());
+    _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
+    _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
+    vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
+    _reservoirs.upload_immediately(host.data());
 }
 
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     ret << _shader0.get()(frame_index).dispatch(rp->resolution());
-    ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+    if (_open) {
+        ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+    }
     return ret;
 }
 

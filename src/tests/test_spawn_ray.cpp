@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 
 
     Kernel kernel = [&]() {
-        Array<float> arr = Array<float>::create(10.f, 9.f);
+        DynamicArray<float> arr = DynamicArray<float>::create(10.f, 9.f);
 //        arr[0] = 9.6f;
         arr = arr.map([&](Float a) {
             return a * 2;

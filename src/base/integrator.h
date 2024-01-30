@@ -41,7 +41,15 @@ public:
     explicit Integrator(const IntegratorDesc &desc)
         : Node(desc) {}
     virtual void compile() noexcept = 0;
-    virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept = 0;
+    virtual Float3 Li(RayState rs, Float scatter_pdf, Interaction *it) const noexcept {
+        return Li(rs, scatter_pdf, spectrum().one(), it);
+    }
+    virtual Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, Interaction *it) const noexcept = 0;
+    virtual Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
+                      bool only_direct, Interaction *it) const noexcept {
+        OC_ERROR_FORMAT("{} Li error", typeid(*this).name());
+        return make_float3(0.f);
+    }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
     void increase_frame_index() const noexcept { _frame_index++; }
@@ -77,9 +85,11 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
-    OC_MAKE_MEMBER_GETTER(separate,)
+    OC_MAKE_MEMBER_GETTER(separate, )
 
-    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, Interaction *first_it) const noexcept override;
+    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, Interaction *first_it) const noexcept override;
+    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
+                            bool only_direct, Interaction *first_it) const noexcept override;
 
     void prepare() noexcept override {
         encode_data();
@@ -104,6 +114,28 @@ public:
         };
         return Ld;
     }
+};
+
+class BufferMgr {
+protected:
+    RegistrableBuffer<float2> _motion_vectors{};
+    RegistrableBuffer<SurfaceData> _surfaces{};
+    RegistrableBuffer<HitContext> _hit_contexts{};
+    RegistrableBuffer<float3> _direct_light;
+    RegistrableBuffer<float3> _indirect_light;
+
+public:
+    BufferMgr();
+    OC_MAKE_MEMBER_GETTER(motion_vectors, &)
+    OC_MAKE_MEMBER_GETTER(surfaces, &)
+    OC_MAKE_MEMBER_GETTER(hit_contexts, &)
+    OC_MAKE_MEMBER_GETTER(direct_light, &)
+    OC_MAKE_MEMBER_GETTER(indirect_light, &)
+};
+
+class RayTracingIntegrator : public BufferMgr, public IlluminationIntegrator {
+public:
+    using IlluminationIntegrator::IlluminationIntegrator;
 };
 
 }// namespace vision

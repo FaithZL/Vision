@@ -12,7 +12,7 @@
 
 namespace vision {
 
-class IlluminationIntegrator;
+class RayTracingIntegrator;
 
 /**
  * generate initial candidates
@@ -22,32 +22,28 @@ class IlluminationIntegrator;
  */
 class ReSTIRDirectIllumination : public SerialObject, public Ctx {
 private:
-    const IlluminationIntegrator *_integrator{};
+    RayTracingIntegrator *_integrator{};
     uint M_light{};
     uint M_bsdf{};
     bool _debias{false};
     bool _pairwise{false};
     bool _reweight{false};
+    bool _open{true};
 
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
 
-    mutable RegistrableBuffer<Reservoir> _reservoirs0;
-    mutable RegistrableBuffer<Reservoir> _reservoirs1;
-    mutable RegistrableBuffer<Reservoir> _reservoirs2;
-    RegistrableBuffer<SurfaceData> &_surfaces0;
-    RegistrableBuffer<SurfaceData> &_surfaces1;
-    RegistrableBuffer<float2> &_motion_vectors;
-
+    mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
     optional<Uint> _frame_index;
 
     /**
      * generate initial candidates
      * check visibility
+     * temporal reuse
      */
     std::shared_future<Shader<void(uint)>> _shader0;
     /**
-     * spatial temporal reuse and shading
+     * spatial reuse and shading
      */
     std::shared_future<Shader<void(uint)>> _shader1;
 
@@ -55,11 +51,9 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc,
-                             RegistrableBuffer<float2> &motion_vec,
-                             RegistrableBuffer<SurfaceData> &surfaces0,
-                             RegistrableBuffer<SurfaceData> &surfaces1);
-
+    ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
+    OC_MAKE_MEMBER_GETTER(open, )
+    [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     void compile() noexcept {
         compile_shader0();
@@ -77,21 +71,21 @@ public:
                                    _temporal.dot_threshold,
                                    _temporal.depth_threshold);
     }
-    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs0.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return _surfaces0.index().hv(); }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoir() const noexcept {
+    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
+    [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoir() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>(2 + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoir() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surface() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surface() const noexcept {
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
@@ -102,7 +96,7 @@ public:
                                             const DIRSVSample &sample, LightSample *output_ls = nullptr, Float *bsdf_pdf_point = nullptr) noexcept;
     /// evaluate Li from bsdf
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point = nullptr) noexcept;
+                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, OCHitContext *hit_context) noexcept;
 
     template<typename... Args>
     [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {

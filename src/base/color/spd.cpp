@@ -81,8 +81,8 @@ Float SPD::eval(const Float &lambda) const noexcept {
     return lerp(fract(t), l, r);
 }
 
-Array<float> SPD::eval(const SampledWavelengths &swl) const noexcept {
-    Array<float> values{swl.dimension()};
+DynamicArray<float> SPD::eval(const SampledWavelengths &swl) const noexcept {
+    DynamicArray<float> values{swl.dimension()};
     for (int i = 0; i < swl.dimension(); ++i) {
         values[i] = eval(swl.lambda(i));
     }

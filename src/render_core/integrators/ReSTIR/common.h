@@ -8,6 +8,7 @@
 #include "dsl/dsl.h"
 #include "descriptions/parameter_set.h"
 #include "math/base.h"
+#include "base/scattering/interaction.h"
 
 namespace vision {
 
@@ -54,26 +55,6 @@ public:
 };
 
 }// namespace vision
-
-namespace vision {
-using namespace ocarina;
-struct SurfaceData {
-    Hit hit{};
-    float4 normal_t{};
-    uint mat_id{};
-};
-}// namespace vision
-// clang-format off
-OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
-    void set_normal(const Float3 &n) {
-        normal_t = make_float4(n, normal_t.w);
-    }
-    [[nodiscard]] Float3 normal() const noexcept { return normal_t.xyz();}
-    void set_t_max(const Float &t) { normal_t.w = t; }
-    [[nodiscard]] Bool valid() const { return t_max() > 0.f; }
-    [[nodiscard]] Float t_max() const noexcept { return normal_t.w;}
-};
-// clang-format on
 
 namespace vision {
 using OCSurfaceData = Var<SurfaceData>;

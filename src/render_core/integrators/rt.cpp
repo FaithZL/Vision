@@ -11,45 +11,68 @@
 
 namespace vision {
 
-class RealTimeIntegrator : public IlluminationIntegrator {
+class RealTimeIntegrator : public RayTracingIntegrator {
 private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
-    RegistrableBuffer<float2> _motion_vectors;
-    RegistrableBuffer<SurfaceData> _surfaces0;
-    RegistrableBuffer<SurfaceData> _surfaces1;
+    std::shared_future<Shader<void(uint)>> _combine;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
-        : IlluminationIntegrator(desc),
-          _direct(this, desc["direct"], _motion_vectors, _surfaces0, _surfaces1),
-          _indirect(desc["indirect"], _motion_vectors, _surfaces0, _surfaces1) {}
+        : RayTracingIntegrator(desc),
+          _direct(this, desc["direct"]),
+          _indirect(this, desc["indirect"]) {
+        _max_depth = _max_depth.hv() - 1;
+    }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _direct.prepare();
+        _indirect.prepare();
         Pipeline *rp = pipeline();
         auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
-            buffer.set_bindless_array(rp->bindless_array());
             buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
+            vector<T> vec{rp->pixel_num(), T{}};
+            buffer.upload_immediately(vec.data());
             buffer.register_self();
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
-        init_buffer(_surfaces0, "RealTimeIntegrator::_surfaces0");
-        init_buffer(_surfaces1, "RealTimeIntegrator::_surfaces1");
+        init_buffer(_hit_contexts, "RealTimeIntegrator::_hit_contexts");
+        init_buffer(_direct_light, "RealTimeIntegrator::_direct_light");
+        init_buffer(_indirect_light, "RealTimeIntegrator::_indirect_light");
+
+        _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
+        _surfaces.register_self(0, rp->pixel_num());
+        _surfaces.register_view(rp->pixel_num(), rp->pixel_num());
     }
 
     void compile() noexcept override {
         _direct.compile();
+        _indirect.compile();
+
+        Camera *camera = scene().camera().get();
+        Kernel kernel = [&](Uint frame_index) {
+            camera->load_data();
+            Float3 direct = direct_light().read(dispatch_id()) * _direct.factor();
+            Float3 indirect = indirect_light().read(dispatch_id()) * _indirect.factor();
+            Float3 L = direct + indirect;
+            camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
+        };
+        _combine = device().async_compile(ocarina::move(kernel), "combine");
     }
 
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
+        Env::debugger().set_lower(make_uint2(803, 773));
+        Env::debugger().set_upper(make_uint2(803, 773));
         stream << Env::debugger().upload();
-        stream << _direct.estimate(_frame_index++);
+        stream << _direct.estimate(_frame_index);
+        stream << _indirect.estimate(_frame_index);
+        stream << _combine.get()(_frame_index).dispatch(pipeline()->resolution());
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();
+        _frame_index += 1;
     }
 };
 

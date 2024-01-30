@@ -377,6 +377,7 @@ public:
 struct RenderSettingDesc : public NodeDesc {
     PolymorphicMode polymorphic_mode{};
     float min_world_radius{};
+    float ray_offset_factor{1.f};
     VISION_DESC_COMMON(RenderSetting)
     void init(const ParameterSet &ps) noexcept override;
 };

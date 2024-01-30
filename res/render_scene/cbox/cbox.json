@@ -207,8 +207,8 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material" : "ShortBox",
-//								"material" : "substrate",
+				 "material" : "ShortBox",
+								// "material" : "substrate",
 //								"material" : "Mirror",
 //								"material" : "Ag",
 //												                "material" : "disney",
@@ -760,7 +760,7 @@
 						1
 					]
 				},
-				"roughness" : [0.001, 0.001]
+				"roughness" : 0.001
 			}
 		},
 		{
@@ -833,7 +833,7 @@
 //											"color_space": "linear"
 //										},
 //										"o2w" : {
-//											"type":"yaw_pitch",
+//											"type":"Euler",
 //											"param": {
 //												"yaw" :-30
 //											}
@@ -1048,7 +1048,6 @@
 					"theta": 2,
 					"depth": 1,
 					"radius": 0,
-					"motion_vec": 0.15,
 					"history_limit": 10
 				},
 				//								"mis": true,
@@ -1056,10 +1055,31 @@
 //				"debias": true,
 				"pairwise": true,
 				"M_light": 10,
+//				"open": false,
 				"M_bsdf": 1
 			},
+			"indirect": {
+				"spatial": {
+					//					"open": false,
+					"theta": 5,
+					"depth": 0.3,
+					"radius": 30,
+					"sample_num": 1
+				},
+				"temporal": {
+//										"open": false,
+					//					"mis": true,
+					"theta": 2,
+					"depth": 1,
+					"radius": 0,
+					"history_limit": 10
+				},
+				"correct_mode" : 0,
+//				"open": false,
+				"pairwise": true
+			},
 			"min_depth" : 0,
-			"max_depth" : 1,
+			"max_depth" : 16,
 			"rr_threshold" : 1
 		}
 	},
@@ -1123,8 +1143,8 @@
 		}
 	},
 	"output" : {
-		"spp" : 0,
-		"save_exit" : false,
+//		"spp" : 10,
+//		"save_exit" : true,
 		"fn" : "rt-env.exr"
 	}
 }

@@ -640,7 +640,7 @@
 //                            "color_space": "linear"
 //                        },
 //                        "o2w" : {
-//                            "type": "yaw_pitch",
+//                            "type": "Euler",
 //                            "param": {
 //                                "yaw" : 90,
 //                                "pitch": 0

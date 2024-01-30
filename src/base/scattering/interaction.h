@@ -10,8 +10,54 @@
 #include "base/sample.h"
 
 namespace vision {
+using namespace ocarina;
+struct SurfaceData {
+    Hit hit{};
+    float4 normal_t{};
+    uint mat_id{};
+};
+}// namespace vision
+// clang-format off
+OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
+    void set_normal(const Float3 &n) {
+        normal_t = make_float4(n, normal_t.w);
+    }
+    [[nodiscard]] Float3 normal() const noexcept { return normal_t.xyz();}
+    void set_t_max(const Float &t) { normal_t.w = t; }
+    [[nodiscard]] Bool valid() const { return t_max() > 0.f; }
+    [[nodiscard]] Float t_max() const noexcept { return normal_t.w;}
+};
+// clang-format on
+
+namespace vision {
+using namespace ocarina;
+struct HitContext {
+    ocarina::Ray next_ray{};
+    ocarina::Hit next_hit{};
+    array<float, 3> bsdf{};
+    float pdf{-1};
+};
+}// namespace vision
+
+// clang-format off
+OC_STRUCT(vision::HitContext, next_ray, next_hit,bsdf, pdf) {
+    [[nodiscard]] Float3 throughput() const noexcept {
+        return bsdf.as_vec3() / pdf;
+    }
+    [[nodiscard]] Float3 safe_throughput() const noexcept {
+        return ocarina::zero_if_nan_inf(throughput());
+    }
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdf > 0.f;
+    }
+};
+// clang-format on
+
+namespace vision {
 
 using namespace ocarina;
+
+using OCHitContext = Var<HitContext>;
 
 template<typename T>
 requires is_vector3_expr_v<T>
@@ -94,7 +140,31 @@ public:
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != _g; }
 };
 
+template<typename Pos, typename Normal, typename W>
+inline auto offset_ray_origin(Pos &&p_in, Normal n_in, W w) noexcept {
+    n_in = ocarina::select(ocarina::dot(w, n_in) > 0, n_in, -n_in);
+    return offset_ray_origin(OC_FORWARD(p_in), n_in);
+}
+
 struct Interaction {
+private:
+    static float s_ray_offset_factor;
+
+public:
+    [[nodiscard]] static float ray_offset_factor() noexcept;
+    static void set_ray_offset_factor(float value) noexcept;
+    template<typename Pos, typename Normal>
+    static auto custom_offset_ray_origin(Pos &&p_in, Normal &&n_in) noexcept {
+        float factor = ray_offset_factor();
+        return offset_ray_origin(OC_FORWARD(p_in), OC_FORWARD(n_in) * factor);
+    }
+
+    template<typename Pos, typename Normal, typename W>
+    static auto custom_offset_ray_origin(Pos &&p_in, Normal &&n_in, W w) noexcept {
+        float factor = ray_offset_factor();
+        return offset_ray_origin(OC_FORWARD(p_in), OC_FORWARD(n_in) * factor, w);
+    }
+
 public:
     Float3 pos;
     Float3 wo;
@@ -144,10 +214,42 @@ public:
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir, const Float &t) const noexcept;
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
-    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
-        return vision::spawn_ray_to(pos, ng, p);
-    }
+    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept;
+    [[nodiscard]] Float3 robust_position() const noexcept;
+    [[nodiscard]] Float3 robust_position(const Float3 &w) const noexcept;
 };
+
+template<typename T>
+[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(pos, normal);
+    return make_ray(org, dir);
+}
+
+template<typename T, typename U>
+[[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir, U t_max) {
+    normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(pos, normal);
+    return make_ray(org, dir, t_max);
+}
+
+template<typename T>
+[[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target) {
+    T dir = p_target - p_start;
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(p_start, n_start);
+    return make_ray(org, dir, 1 - ShadowEpsilon);
+}
+
+template<typename T>
+[[nodiscard]] ray_t<T> spawn_ray_to(T p_start, T n_start, T p_target, T n_target) {
+    T dir = p_target - p_start;
+    n_target *= select(dot(n_target, -dir) > 0, 1.f, -1.f);
+    p_target = offset_ray_origin(p_target, n_target);
+    n_start *= select(dot(n_start, dir) > 0, 1.f, -1.f);
+    T org = offset_ray_origin(p_start, n_start);
+    return make_ray(org, dir, 1 - ShadowEpsilon);
+}
 
 struct SpacePoint {
     Float3 pos;
@@ -161,7 +263,7 @@ struct SpacePoint {
 
     [[nodiscard]] Float3 robust_pos(const Float3 &dir) const noexcept {
         Float factor = select(dot(ng, dir) > 0, 1.f, -1.f);
-        return offset_ray_origin(pos, ng * factor);
+        return Interaction::custom_offset_ray_origin(pos, ng * factor);
     }
 
     [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {

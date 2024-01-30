@@ -31,6 +31,17 @@ PhaseSample HenyeyGreenstein::sample(Float3 wo, Sampler *sampler) const noexcept
     return phase_sample;
 }
 
+float Interaction::s_ray_offset_factor = 1.f;
+
+float Interaction::ray_offset_factor() noexcept {
+    float factor = s_ray_offset_factor;
+    return factor;
+}
+
+void Interaction::set_ray_offset_factor(float value) noexcept {
+    s_ray_offset_factor = value;
+}
+
 Interaction::Interaction() {}
 
 Interaction::Interaction(Float3 pos, Float3 wo)
@@ -78,6 +89,18 @@ RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
     OCRay ray = vision::spawn_ray_to(pos, ng, p);
     Uint medium = select(dot(ng, ray->direction()) > 0, mi.outside, mi.inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
+}
+
+Float3 Interaction::robust_position() const noexcept {
+    return custom_offset_ray_origin(pos, ng);
+}
+
+Float3 Interaction::robust_position(const Float3 &w) const noexcept {
+    return custom_offset_ray_origin(pos, ng, w);
+}
+
+OCRay Interaction::spawn_ray_to(const Float3 &p) const noexcept {
+    return vision::spawn_ray_to(pos, ng, p);
 }
 
 void Interaction::set_medium(const Uint &inside, const Uint &outside) {

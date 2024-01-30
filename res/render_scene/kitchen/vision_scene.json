@@ -13533,6 +13533,10 @@
     },
     "pipeline" : {
 //        "type": "customized"
+        "param": {
+            //			"obfuscation" : false,
+//            			"valid_check" : true
+        }
     },
     "render_setting": {
         "polymorphic_mode" : 1
