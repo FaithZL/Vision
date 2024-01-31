@@ -24,7 +24,10 @@ Global::~Global() {
 
 void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
 
-Pipeline *Global::pipeline() { OC_ASSERT(_pipeline); return _pipeline; }
+Pipeline *Global::pipeline() {
+    OC_ASSERT(_pipeline);
+    return _pipeline;
+}
 
 BindlessArray &Global::bindless_array() {
     return pipeline()->bindless_array();
@@ -59,6 +62,10 @@ Device &Ctx::device() noexcept {
 
 Scene &Ctx::scene() noexcept {
     return pipeline()->scene();
+}
+
+Spectrum &Ctx::spectrum() noexcept {
+    return *scene().spectrum();
 }
 
 Stream &Ctx::stream() noexcept {

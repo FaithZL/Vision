@@ -57,6 +57,7 @@ public:
     [[nodiscard]] static Stream &stream() noexcept;
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
+    [[nodiscard]] static Spectrum &spectrum() noexcept;
 };
 
 }// namespace vision
