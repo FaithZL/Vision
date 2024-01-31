@@ -41,6 +41,10 @@ public:
     Uint medium{InvalidUI32};
 
 public:
+    static RayState create(const OCRay &ray, Float ior = 1.f,
+                           Uint medium = InvalidUI32) noexcept {
+        return {.ray = ray, .ior = ior, .medium = medium};
+    }
     [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI32; }
     [[nodiscard]] Float3 origin() const noexcept { return ray->origin(); }
     [[nodiscard]] Float3 direction() const noexcept { return ray->direction(); }

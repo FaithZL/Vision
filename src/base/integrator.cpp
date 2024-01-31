@@ -17,6 +17,29 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
+SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3 &normal,
+                                                      const Float &scatter_pdf, const Uint &bounces,
+                                                      const SampledWavelengths &swl) const noexcept {
+    LightSampler *light_sampler = scene().light_sampler();
+    SampledSpectrum ret = spectrum().zero();
+    const Geometry &geometry = pipeline()->geometry();
+    if (light_sampler->env_light()) {
+        LightSampleContext p_ref;
+        p_ref.pos = rs.origin();
+        p_ref.ng = normal;
+        SampledSpectrum tr = spectrum().one();
+        if (scene().has_medium()) {
+            rs.ray.dir_max.w = scene().world_diameter();
+            tr = geometry.Tr(scene(), swl, rs);
+        }
+        LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
+        Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
+        weight = correct_bsdf_weight(weight, bounces);
+        ret = eval.L * tr * weight;
+    }
+    return ret;
+}
+
 Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                                   bool only_direct, Interaction *first_it) const noexcept {
     Pipeline *rp = pipeline();
@@ -43,20 +66,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         }
 
         $if(hit->is_miss()) {
-            if (light_sampler->env_light()) {
-                LightSampleContext p_ref;
-                p_ref.pos = rs.origin();
-                p_ref.ng = prev_surface_ng;
-                SampledSpectrum tr = {swl.dimension(), 1.f};
-                if (scene().has_medium()) {
-                    rs.ray.dir_max.w = scene().world_diameter();
-                    tr = geometry.Tr(scene(), swl, rs);
-                }
-                LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
-                Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
-                weight = correct_bsdf_weight(weight, bounces);
-                value += eval.L * tr * throughput * weight;
-            }
+            value += evaluate_miss(rs, prev_surface_ng, scatter_pdf, bounces, swl) * throughput;
             $break;
         };
 

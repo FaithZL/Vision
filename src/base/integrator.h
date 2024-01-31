@@ -116,6 +116,10 @@ public:
         return direct_lighting(OC_FORWARD(args)...);
     };
 
+    [[nodiscard]] SampledSpectrum evaluate_miss(RayState &rs,const Float3 &normal,
+                                                const Float &scatter_pdf,const Uint &bounces,
+                                                const SampledWavelengths &swl) const noexcept;
+
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, Interaction *first_it) const noexcept override;
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                             bool only_direct, Interaction *first_it) const noexcept override;
