@@ -117,7 +117,7 @@ public:
     };
 
     [[nodiscard]] SampledSpectrum evaluate_miss(RayState &rs,const Float3 &normal,
-                                                const Float &scatter_pdf,const Uint &bounces,
+                                                const Float &scatter_pdf, const Uint &bounces,
                                                 const SampledWavelengths &swl) const noexcept;
 
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, Interaction *first_it) const noexcept override;
