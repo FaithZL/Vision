@@ -52,7 +52,6 @@ public:
     }
 
     [[nodiscard]] Float2 convert_to_bary(const Float3 &world_dir) const noexcept override {
-//        Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
         Float3 local_dir = normalize(transform_vector(*_w2o, world_dir));
         return UV(local_dir);
     }
