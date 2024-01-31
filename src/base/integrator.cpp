@@ -31,33 +31,6 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     Interaction it;
     Float3 prev_surface_ng = rs.direction();
 
-    auto correct_bsdf_weight = [this](Float weight, Uint bounce) {
-        switch (_mis_mode) {
-            case MISMode::EBSDF: {
-                weight = 1.f;
-                break;
-            }
-            case MISMode::ELight: {
-                weight = ocarina::select(bounce == 0, weight, 0.f);
-                break;
-            }
-            default: break;
-        }
-        return weight;
-    };
-
-    auto direct_light_mis = [this]<typename... Args>(Args &&...args) -> SampledSpectrum {
-        switch (_mis_mode) {
-            case MISMode::EBSDF: {
-                return direct_lighting(OC_FORWARD(args)...) * 0.f;
-            }
-            case MISMode::ELight: {
-                return direct_lighting(OC_FORWARD(args)..., false);
-            }
-            default: break;
-        }
-        return direct_lighting(OC_FORWARD(args)...);
-    };
     Float3 primary_dir = rs.direction();
     auto mis_bsdf = [&](Uint &bounces, bool inner) {
         hit = geometry.trace_closest(rs.ray);

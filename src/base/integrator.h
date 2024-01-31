@@ -87,6 +87,35 @@ public:
 
     OC_MAKE_MEMBER_GETTER(separate, )
 
+    [[nodiscard]] Float correct_bsdf_weight(Float weight, Uint bounce) const noexcept {
+        switch (_mis_mode) {
+            case MISMode::EBSDF: {
+                weight = 1.f;
+                break;
+            }
+            case MISMode::ELight: {
+                weight = ocarina::select(bounce == 0, weight, 0.f);
+                break;
+            }
+            default: break;
+        }
+        return weight;
+    };
+
+    template<typename... Args>
+    [[nodiscard]] SampledSpectrum direct_light_mis(Args &&...args) const noexcept {
+        switch (_mis_mode) {
+            case MISMode::EBSDF: {
+                return direct_lighting(OC_FORWARD(args)...) * 0.f;
+            }
+            case MISMode::ELight: {
+                return direct_lighting(OC_FORWARD(args)..., false);
+            }
+            default: break;
+        }
+        return direct_lighting(OC_FORWARD(args)...);
+    };
+
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, Interaction *first_it) const noexcept override;
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                             bool only_direct, Interaction *first_it) const noexcept override;
