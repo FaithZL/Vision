@@ -193,7 +193,7 @@ private:
 
 public:
     Interaction(bool has_medium);
-    Interaction(Float3 pos, Float3 wo,bool has_medium);
+    Interaction(Float3 pos, Float3 wo, bool has_medium);
     void init_volumetric_param(bool has_medium) noexcept;
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
@@ -222,9 +222,23 @@ public:
     [[nodiscard]] Float3 robust_position(const Float3 &w) const noexcept;
 };
 
-struct HitInteraction {
+struct HitContext {
+public:
     mutable optional<OCHit> hit{};
     mutable optional<Interaction> it{};
+
+public:
+    HitContext() = default;
+    HitContext(const Interaction &it) {
+        this->it.emplace(it);
+    }
+    HitContext(const OCHit &hit) {
+        this->hit.emplace(hit);
+    }
+    HitContext(const OCHit &hit, const Interaction &it) {
+        this->hit.emplace(hit);
+        this->it.emplace(it);
+    }
 };
 
 template<typename T>
