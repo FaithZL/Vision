@@ -219,6 +219,11 @@ public:
     [[nodiscard]] Float3 robust_position(const Float3 &w) const noexcept;
 };
 
+struct HitInteraction {
+    mutable optional<OCHit> hit{};
+    mutable optional<Interaction> it{};
+};
+
 template<typename T>
 [[nodiscard]] ray_t<T> spawn_ray(T pos, T normal, T dir) {
     normal *= select(dot(normal, dir) > 0, 1.f, -1.f);
