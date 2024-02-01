@@ -41,7 +41,7 @@ SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3
 }
 
 Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
-                                  bool only_direct, Interaction *first_it) const noexcept {
+                                  bool only_direct, const HitContext &hc) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
@@ -89,8 +89,8 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             $continue;
         };
 
-        if (first_it) {
-            $if(bounces == 0) { *first_it = it; };
+        if (hc.it) {
+            $if(bounces == 0) { *hc.it = it; };
         }
 
         comment("hit light");
@@ -183,8 +183,8 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
 }
 
 Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
-                                  SampledSpectrum throughput, Interaction *first_it) const noexcept {
-    return Li(rs, scatter_pdf, *_max_depth, throughput, _max_depth.hv() < 2, first_it);
+                                  SampledSpectrum throughput, const HitContext &hc) const noexcept {
+    return Li(rs, scatter_pdf, *_max_depth, throughput, _max_depth.hv() < 2, hc);
 }
 
 BufferMgr::BufferMgr()

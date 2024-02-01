@@ -224,20 +224,20 @@ public:
 
 struct HitContext {
 public:
-    mutable optional<OCHit> hit{};
-    mutable optional<Interaction> it{};
+    mutable OCHit *hit{};
+    mutable Interaction *it{};
 
 public:
     HitContext() = default;
-    HitContext(const Interaction &it) {
-        this->it.emplace(it);
+    HitContext(Interaction &it) {
+        this->it = &it;
     }
-    HitContext(const OCHit &hit) {
-        this->hit.emplace(hit);
+    HitContext(OCHit &hit) {
+        this->hit = &hit;
     }
-    HitContext(const OCHit &hit, const Interaction &it) {
-        this->hit.emplace(hit);
-        this->it.emplace(it);
+    HitContext(OCHit &hit, Interaction &it) {
+        this->hit = &hit;
+        this->it = &it;
     }
 };
 

@@ -26,7 +26,7 @@ public:
             camera()->load_data();
             Float scatter_pdf = 1e16f;
             RayState rs = camera()->generate_ray(ss);
-            Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), nullptr);
+            Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), {});
             output.write(dispatch_id(), make_float4(L, 1.f));
         };
         _shader = device().compile(kernel, "integrate pass");
