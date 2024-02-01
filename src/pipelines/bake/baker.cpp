@@ -74,10 +74,12 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
 
 void Baker::_compile_bake() noexcept {
     Sampler *sampler = scene().sampler();
+    Camera *camera = scene().camera().get();
     Integrator *integrator = scene().integrator();
     Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
+        camera->load_data();
         sampler->start(dispatch_idx().xy(), frame_index, 0);
         auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels);
         $if(!valid) {
