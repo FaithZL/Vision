@@ -89,4 +89,9 @@ SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept {
     return t.map([&any_nan](const Float &x) noexcept { return select(any_nan, 0.f, x); });
 }
 
+SampledSpectrum zero_if_any_nan_inf(const SampledSpectrum &t) noexcept {
+    Bool any_nan_inf = t.any([](const Float &value) { return ocarina::isnan(value) || ocarina::isinf(value); });
+    return t.map([&any_nan_inf](const Float &x) noexcept { return select(any_nan_inf, 0.f, x); });
+}
+
 }// namespace vision

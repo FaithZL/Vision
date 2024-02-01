@@ -68,6 +68,7 @@ public:
     ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags)
         : f(f), pdf(pdf), flags(flags) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdf; }
+    [[nodiscard]] SampledSpectrum safe_throughput() const noexcept { return zero_if_any_nan_inf(throughput()); }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
     void invalidation() noexcept { pdf = 0; }
 };
