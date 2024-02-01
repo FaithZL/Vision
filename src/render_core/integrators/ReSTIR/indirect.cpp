@@ -127,8 +127,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         IIRSVSample sample = _samples.read(dispatch_id());
         OCHitBSDF hit_bsdf = _integrator->hit_bsdfs().read(dispatch_id());
         IIReservoir rsv;
-        Float3 Lo = sample.Lo.as_vec();
-        Float p_hat = ocarina::luminance(Lo * hit_bsdf.bsdf.as_vec3());
+        Float p_hat = sample->p_hat(hit_bsdf.bsdf.as_vec3());
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);

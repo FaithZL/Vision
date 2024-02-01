@@ -13484,7 +13484,7 @@
                     "history_limit": 10
                 },
                 "correct_mode" : 0,
-                "open": false,
+//                "open": false,
                 "pairwise": true
             },
             "min_depth" : 5,
