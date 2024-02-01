@@ -40,6 +40,7 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
     Float3 L = make_float3(0.f);
     Float3 throughput = hit_bsdf->safe_throughput();
     L = _integrator->Li(ray_state, hit_bsdf.pdf, SampledSpectrum(throughput), sp_it) / throughput;
+    L = ocarina::zero_if_nan_inf(L);
     IIRSVSample sample;
     sample.vp->set(it);
     sample.sp->set(sp_it);
