@@ -143,7 +143,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         if (scene().has_medium()) {
             $if(it.has_phase()) {
                 PhaseSample ps{swl.dimension()};
-                Ld = direct_light_mis(it, it.phase, light_sample, occluded, sampler, swl, ps);
+                Ld = direct_light_mis(it, it.phase(), light_sample, occluded, sampler, swl, ps);
                 bsdf_sample.eval = ps.eval;
                 bsdf_sample.wi = ps.wi;
             }
