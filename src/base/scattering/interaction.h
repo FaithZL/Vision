@@ -188,12 +188,13 @@ private:
 
 private:
     // todo optimize volpt and pt
-    optional<MediumInterface> _mi{MediumInterface{}};
-    optional<HenyeyGreenstein> _phase{HenyeyGreenstein{}};
+    optional<MediumInterface> _mi{};
+    optional<HenyeyGreenstein> _phase{};
 
 public:
-    Interaction();
-    Interaction(Float3 pos, Float3 wo);
+    Interaction(bool has_medium = true);
+    Interaction(Float3 pos, Float3 wo,bool has_medium = true);
+    void init_volumetric_param(bool has_medium) noexcept;
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
     void update_wo(const Float3 &view_pos) noexcept { wo = normalize(view_pos - pos); }

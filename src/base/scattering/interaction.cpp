@@ -42,16 +42,28 @@ void Interaction::set_ray_offset_factor(float value) noexcept {
     s_ray_offset_factor = value;
 }
 
-Interaction::Interaction() {}
+Interaction::Interaction(bool has_medium) {
+    init_volumetric_param(has_medium);
+}
 
-Interaction::Interaction(Float3 pos, Float3 wo)
-    : pos(pos), wo(wo) {}
+Interaction::Interaction(Float3 pos, Float3 wo, bool has_medium)
+    : pos(pos), wo(wo) {
+    init_volumetric_param(has_medium);
+}
 
 void Interaction::init_phase(Float g, const SampledWavelengths &swl) {
-    if(!_phase) {
+    if (!_phase) {
         return;
     }
     (*_phase).init(g, swl);
+}
+
+void Interaction::init_volumetric_param(bool has_medium) noexcept {
+    if (!has_medium) {
+        return;
+    }
+    _phase.emplace(HenyeyGreenstein{});
+    _mi.emplace(MediumInterface{});
 }
 
 Bool Interaction::has_phase() {
@@ -120,7 +132,7 @@ OCRay Interaction::spawn_ray_to(const Float3 &p) const noexcept {
 }
 
 void Interaction::set_medium(const Uint &inside, const Uint &outside) {
-    if(!_mi) {
+    if (!_mi) {
         return;
     }
     (*_mi).inside = inside;
