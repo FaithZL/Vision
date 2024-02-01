@@ -159,7 +159,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         $if(!bsdf_sample.valid() || lum == 0.f) {
             $break;
         };
-        throughput *= bsdf_sample.eval.value();
+        throughput *= bsdf_sample.eval.throughput();
         $if(eta_scale * lum < *_rr_threshold && bounces >= *_min_depth) {
             Float q = min(0.95f, lum);
             Float rr = sampler->next_1d();

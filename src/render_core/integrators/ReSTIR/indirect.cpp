@@ -27,7 +27,7 @@ Float ReSTIRIndirectIllumination::Jacobian_det(Float3 cur_pos, Float3 neighbor_p
 }
 
 IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const SensorSample &ss,
-                                                    const OCHitContext &hit_context,
+                                                    OCHitContext &hit_context,
                                                     SampledWavelengths &swl) noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();

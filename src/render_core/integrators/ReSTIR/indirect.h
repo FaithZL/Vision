@@ -58,7 +58,7 @@ public:
     }
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
-                                          const OCHitContext &hit_context,
+                                          OCHitContext &hit_context,
                                           SampledWavelengths &swl) noexcept;
     [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                const IIReservoir &other_rsv,const OCHitContext &hit_context,
