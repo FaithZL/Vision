@@ -96,7 +96,7 @@ public:
                                             const DIRSVSample &sample, LightSample *output_ls = nullptr, Float *bsdf_pdf_point = nullptr) noexcept;
     /// evaluate Li from bsdf
     [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, OCHitContext *hit_context) noexcept;
+                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf) noexcept;
 
     template<typename... Args>
     [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {

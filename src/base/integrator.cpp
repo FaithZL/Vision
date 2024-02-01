@@ -192,6 +192,6 @@ BufferMgr::BufferMgr()
       _direct_light{Global::instance().pipeline()->bindless_array()},
       _indirect_light{Global::instance().pipeline()->bindless_array()},
       _surfaces{Global::instance().pipeline()->bindless_array()},
-      _hit_contexts{Global::instance().pipeline()->bindless_array()} {}
+      _hit_bsdfs{Global::instance().pipeline()->bindless_array()} {}
 
 }// namespace vision

@@ -31,7 +31,7 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using namespace ocarina;
-struct HitContext {
+struct HitBSDF {
     ocarina::Ray next_ray{};
     ocarina::Hit next_hit{};
     array<float, 3> bsdf{};
@@ -40,7 +40,7 @@ struct HitContext {
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::HitContext, next_ray, next_hit,bsdf, pdf) {
+OC_STRUCT(vision::HitBSDF, next_ray, next_hit,bsdf, pdf) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
     }
@@ -57,7 +57,7 @@ namespace vision {
 
 using namespace ocarina;
 
-using OCHitContext = Var<HitContext>;
+using OCHitBSDF = Var<HitBSDF>;
 
 template<typename T>
 requires is_vector3_expr_v<T>

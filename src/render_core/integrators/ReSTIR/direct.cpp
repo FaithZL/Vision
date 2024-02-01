@@ -20,7 +20,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(RayTracingIntegrator *integra
 
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const SampledWavelengths &swl, DIRSVSample *sample,
-                                             BSDFSample *bs, Float *light_pdf_point, OCHitContext *hit_context) noexcept {
+                                             BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf) noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const Geometry &geometry = pipeline()->geometry();
@@ -45,10 +45,10 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     OCRay ray = it.spawn_ray(bs->wi);
     OCHit hit = geometry.trace_closest(ray);
     Float pdf = bs->eval.pdf;
-    hit_context->next_ray = ray;
-    hit_context->next_hit = hit;
-    hit_context->bsdf.set(bs->eval.f.vec3());
-    hit_context->pdf = pdf;
+    hit_bsdf->next_ray = ray;
+    hit_bsdf->next_hit = hit;
+    hit_bsdf->bsdf.set(bs->eval.f.vec3());
+    hit_bsdf->pdf = pdf;
 
     LightEval le{swl.dimension()};
     LightSurfacePoint lsp;
@@ -150,13 +150,13 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
         ret->update(sampler->next_1d(), sample, weight);
     };
 
-    OCHitContext hit_context;
+    OCHitBSDF hit_bsdf;
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
         BSDFSample bs{swl.dimension()};
         Float light_pdf_point = 0.f;
-        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point, &hit_context);
+        Float p_hat = compute_p_hat(it, bsdf, swl, &sample, &bs, &light_pdf_point, &hit_bsdf);
         sample.p_hat = p_hat;
         Float weight = Reservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
                                               sample.p_hat, 1.f / bs.eval.pdf);
@@ -186,7 +186,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it, Sampl
             };
         }
     };
-    _integrator->hit_contexts().write(dispatch_id(), hit_context);
+    _integrator->hit_bsdfs().write(dispatch_id(), hit_bsdf);
     ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
     comment("RIS end");
