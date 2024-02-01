@@ -394,7 +394,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         OCSurfaceData cur_surf;
         cur_surf.hit = hit;
         cur_surf->set_t_max(0.f);
-        Interaction it;
+        Interaction it{false};
         $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
             cur_surf.mat_id = it.material_id();
@@ -464,7 +464,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
         });
     }
     $else {
-        Interaction next_it;
+        Interaction next_it{false};
         BSDFSample bs{swl.dimension()};
         scene().materials().dispatch(it.material_id(), [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, swl);

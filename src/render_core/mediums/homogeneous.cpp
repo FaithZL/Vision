@@ -29,13 +29,13 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl,
-                             Sampler *sampler) const noexcept override {
+                                     Sampler *sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max(), swl);
     }
 
     [[nodiscard]] SampledSpectrum sample(const OCRay &ray, Interaction &it,
-                                 const SampledWavelengths &swl,
-                                 Sampler *sampler) const noexcept override {
+                                         const SampledWavelengths &swl,
+                                         Sampler *sampler) const noexcept override {
         SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
         SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(_sigma_s, swl).sample;
         Uint channel = min(cast<uint>(sampler->next_1d() * swl.dimension()), swl.dimension() - 1);
@@ -43,7 +43,7 @@ public:
         Float t = min(dist / length(ray->direction()), ray->t_max());
         Bool sampled_medium = t < ray->t_max();
         $if(sampled_medium) {
-            it = Interaction(ray->at(t), -ray->direction());
+            it = Interaction(ray->at(t), -ray->direction(), true);
             it.init_phase(_g, swl);
             it.set_medium(_index, _index);
         };

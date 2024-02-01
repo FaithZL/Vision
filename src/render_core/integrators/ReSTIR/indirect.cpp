@@ -35,7 +35,7 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
 
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, *_frame_index, 3);
-    Interaction sp_it;
+    Interaction sp_it{false};
     RayState ray_state = RayState::create(hit_context.next_ray);
     Float3 L = make_float3(0.f);
     Float3 throughput = hit_context->safe_throughput();

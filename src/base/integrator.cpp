@@ -51,7 +51,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     const Geometry &geometry = rp->geometry();
 
     OCHit hit;
-    Interaction it;
+    Interaction it{scene().has_medium()};
     Float3 prev_surface_ng = rs.direction();
 
     Float3 primary_dir = rs.direction();

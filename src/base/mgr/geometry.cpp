@@ -97,7 +97,7 @@ void Geometry::clear() noexcept {
 }
 
 Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
-    Interaction it;
+    Interaction it{Global::instance().pipeline()->scene().has_medium()};
     it.prim_id = hit.prim_id;
     Var inst = _instances.read(hit.inst_id);
     Var mesh = _mesh_handles.read(inst.mesh_id);

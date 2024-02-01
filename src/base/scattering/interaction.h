@@ -192,8 +192,8 @@ private:
     optional<HenyeyGreenstein> _phase{};
 
 public:
-    Interaction(bool has_medium = true);
-    Interaction(Float3 pos, Float3 wo,bool has_medium = true);
+    Interaction(bool has_medium);
+    Interaction(Float3 pos, Float3 wo,bool has_medium);
     void init_volumetric_param(bool has_medium) noexcept;
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
