@@ -48,11 +48,11 @@ Interaction::Interaction(Float3 pos, Float3 wo)
     : pos(pos), wo(wo) {}
 
 void Interaction::init_phase(Float g, const SampledWavelengths &swl) {
-    _phase.init(g, swl);
+    (*_phase).init(g, swl);
 }
 
 Bool Interaction::has_phase() {
-    return _phase.valid();
+    return phase().valid();
 }
 
 Uint Interaction::material_inst_id() const noexcept {
@@ -81,13 +81,13 @@ OCRay Interaction::spawn_ray(const Float3 &dir, const Float &t) const noexcept {
 
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
     OCRay ray = vision::spawn_ray(pos, ng, dir);
-    Uint medium = select(dot(ng, dir) > 0, _mi.outside, _mi.inside);
+    Uint medium = select(dot(ng, dir) > 0, mi().outside, mi().inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
 RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
     OCRay ray = vision::spawn_ray_to(pos, ng, p);
-    Uint medium = select(dot(ng, ray->direction()) > 0, _mi.outside, _mi.inside);
+    Uint medium = select(dot(ng, ray->direction()) > 0, mi().outside, mi().inside);
     return {.ray = ray, .ior = 1.f, .medium = medium};
 }
 
@@ -104,8 +104,8 @@ OCRay Interaction::spawn_ray_to(const Float3 &p) const noexcept {
 }
 
 void Interaction::set_medium(const Uint &inside, const Uint &outside) {
-    _mi.inside = inside;
-    _mi.outside = outside;
+    (*_mi).inside = inside;
+    (*_mi).outside = outside;
 }
 
 }// namespace vision

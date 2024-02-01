@@ -188,8 +188,8 @@ private:
 
 private:
     // todo optimize volpt and pt
-    MediumInterface _mi;
-    HenyeyGreenstein _phase;
+    optional<MediumInterface> _mi{MediumInterface{}};
+    optional<HenyeyGreenstein> _phase{HenyeyGreenstein{}};
 
 public:
     Interaction();
@@ -200,8 +200,8 @@ public:
     void set_medium(const Uint &inside, const Uint &outside);
     void set_material(const Uint &mat) noexcept { _mat_id = mat; }
     void set_light(const Uint &light) noexcept { _light_id = light; }
-    [[nodiscard]] HenyeyGreenstein phase() const noexcept { return _phase; }
-    [[nodiscard]] MediumInterface mi() const noexcept { return _mi; }
+    [[nodiscard]] HenyeyGreenstein phase() const noexcept { return *_phase; }
+    [[nodiscard]] MediumInterface mi() const noexcept { return *_mi; }
     [[nodiscard]] Bool has_emission() const noexcept { return _light_id != InvalidUI32; }
     [[nodiscard]] Bool has_material() const noexcept { return _mat_id != InvalidUI32; }
     [[nodiscard]] Bool has_lightmap() const noexcept { return lightmap_id != InvalidUI32; }
