@@ -50,6 +50,8 @@ public:
     void prepare() noexcept;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
+    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample,
+                                            SampledWavelengths &swl) const noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();
@@ -61,11 +63,10 @@ public:
                                           OCHitBSDF &hit_bsdf,
                                           SampledWavelengths &swl) noexcept;
     [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
-                                               const IIReservoir &other_rsv,const OCHitBSDF &hit_bsdf,
+                                               const IIReservoir &other_rsv,
                                                SampledWavelengths &swl) const noexcept;
     [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,const SensorSample &ss,
-                                             const OCHitBSDF &hit_ctx,
                                              SampledWavelengths &swl) const noexcept;
     [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                  SampledWavelengths &swl) const noexcept;

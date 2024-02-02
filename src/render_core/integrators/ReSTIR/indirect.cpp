@@ -73,15 +73,25 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
     _initial_samples = device().async_compile(ocarina::move(kernel), "indirect initial samples");
 }
 
+ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
+                                                  SampledWavelengths &swl) const noexcept {
+    ScatterEval ret{swl.dimension()};
+    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+        MaterialEvaluator bsdf = material->create_evaluator(it, swl);
+        Float3 wi = normalize(sample.sp->position() - it.pos);
+        ret = bsdf.evaluate(it.wo, wi);
+    });
+    return ret;
+}
+
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv,
-                                                         const OCHitBSDF &hit_bsdf,
-                                                         vision::SampledWavelengths &swl) const noexcept {
+                                                         SampledWavelengths &swl) const noexcept {
 
     IIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
 
-    Float p_hat = ret.sample->p_hat(hit_bsdf.bsdf.as_vec3());
+    Float p_hat = ret.sample->p_hat(make_float3(1.f));
     ret->update_W(p_hat);
 
     return ret;
@@ -89,7 +99,6 @@ IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_
 
 IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                        const Float2 &motion_vec, const SensorSample &ss,
-                                                       const OCHitBSDF &hit_bsdf,
                                                        vision::SampledWavelengths &swl) const noexcept {
     if (!_temporal.open) {
         return rsv;
@@ -103,7 +112,7 @@ IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OC
         prev_rsv->truncation(limit);
         OCSurfaceData another_surf = prev_surfaces().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
-            rsv = combine_temporal(rsv, cur_surf, prev_rsv, hit_bsdf, swl);
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, swl);
         };
     };
     return rsv;
@@ -133,7 +142,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
         Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
-        rsv = temporal_reuse(rsv, surf, motion_vec, ss, hit_bsdf, swl);
+        rsv = temporal_reuse(rsv, surf, motion_vec, ss, swl);
         cur_reservoirs().write(dispatch_id(), rsv);
     };
     _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
@@ -143,12 +152,7 @@ Float3 ReSTIRIndirectIllumination::shading(ReSTIRIndirect::IIReservoir rsv, cons
                                            SampledWavelengths &swl) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
-    ScatterEval scatter_eval{swl.dimension()};
-    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-        MaterialEvaluator bsdf = material->create_evaluator(it, swl);
-        Float3 wi = normalize(rsv.sample.sp->position() - it.pos);
-        scatter_eval = bsdf.evaluate(it.wo, wi);
-    });
+    ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, swl);
     return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W;
 }
 
