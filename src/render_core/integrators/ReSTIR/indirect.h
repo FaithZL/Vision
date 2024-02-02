@@ -67,6 +67,9 @@ public:
                                              const Float2 &motion_vec,const SensorSample &ss,
                                              const OCHitBSDF &hit_ctx,
                                              SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf,
+                                 SampledWavelengths &swl) const noexcept;
+
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,

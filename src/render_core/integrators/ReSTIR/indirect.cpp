@@ -139,6 +139,19 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
     _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
 
+Float3 ReSTIRIndirectIllumination::shading(ReSTIRIndirect::IIReservoir rsv, const OCSurfaceData &cur_surf,
+                                           SampledWavelengths &swl) const noexcept {
+    Camera *camera = scene().camera().get();
+    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
+    ScatterEval scatter_eval{swl.dimension()};
+    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+        MaterialEvaluator bsdf = material->create_evaluator(it, swl);
+        Float3 wi = normalize(rsv.sample.sp->position() - it.pos);
+        scatter_eval = bsdf.evaluate(it.wo, wi);
+    });
+    return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W;
+}
+
 void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->radiance_film();
@@ -147,16 +160,17 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
 
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
+        camera->load_data();
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             $return();
         };
         IIReservoir rsv = cur_reservoirs().read(dispatch_id());
         Float3 Lo = rsv.sample.Lo.as_vec3();
-        OCHitBSDF hit_bsdf = _integrator->hit_bsdfs().read(dispatch_id());
-        Float3 L = Lo * hit_bsdf.bsdf.as_vec3();
+        SampledWavelengths swl = spectrum.sample_wavelength(sampler());
+        Float3 L = shading(rsv, surf, swl);
+        _integrator->indirect_light().write(dispatch_id(), L);
         cur_reservoirs().write(dispatch_id(), rsv);
-        _integrator->indirect_light().write(dispatch_id(), L * rsv.W);
     };
     _spatial_shading = device().async_compile(ocarina::move(kernel), "indirect spatial reuse and shading");
 }
