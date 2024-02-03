@@ -80,6 +80,8 @@ void Baker::_compile_bake() noexcept {
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
         camera->load_data();
+        RenderEnv render_env;
+        render_env.initial(sampler, frame_index, spectrum());
         sampler->start(dispatch_idx().xy(), frame_index, 0);
         auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels);
         $if(!valid) {
@@ -88,7 +90,7 @@ void Baker::_compile_bake() noexcept {
         Float scatter_pdf;
         RayState rs = generate_ray(position, norm, &scatter_pdf);
         Interaction it{false};
-        Float3 L = integrator->Li(rs, scatter_pdf, scene().spectrum()->one(), it) * weight;
+        Float3 L = integrator->Li(rs, scatter_pdf, scene().spectrum()->one(), it,render_env) * weight;
         Float4 result = make_float4(L, 1.f);
         result.w = select(dot(rs.direction(), it.ng) > 0, 0.f, 1.f);
         Float4 accum_prev = radiance.read(dispatch_id());

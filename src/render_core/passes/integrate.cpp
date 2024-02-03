@@ -9,7 +9,7 @@
 
 namespace vision {
 
-class IntegratePass : public RenderPass {
+class IntegratePass : public RenderPass, public RenderEnv {
 private:
     Shader<void(uint, Buffer<float4>)> _shader;
 
@@ -21,12 +21,13 @@ public:
     void compile() noexcept override {
         Kernel kernel = [&](Uint frame_index, BufferVar<float4> output) {
             Uint2 pixel = dispatch_idx().xy();
+            initial(sampler(), frame_index, spectrum());
             sampler()->start(pixel, frame_index, 0);
             SensorSample ss = sampler()->sensor_sample(pixel, camera()->filter());
             camera()->load_data();
             Float scatter_pdf = 1e16f;
             RayState rs = camera()->generate_ray(ss);
-            Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), {});
+            Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), {}, *this);
             output.write(dispatch_id(), make_float4(L, 1.f));
         };
         _shader = device().compile(kernel, "integrate pass");

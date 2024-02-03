@@ -25,7 +25,7 @@ public:
     OC_SERIALIZABLE_FUNC(Integrator, _distance, _cos_sample, _sample_num)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, SampledSpectrum throughput,
-                            const HitContext &hc) const noexcept override {
+                            const HitContext &hc, const RenderEnv &render_env) const noexcept override {
         Float3 L = make_float3(0.f);
         Pipeline *rp = pipeline();
         Sampler *sampler = scene().sampler();

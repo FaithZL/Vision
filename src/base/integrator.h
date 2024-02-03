@@ -19,6 +19,8 @@ class Pipeline;
 
 class Sampler;
 
+class RenderEnv;
+
 //"integrator": {
 //    "type": "pt",
 //    "param": {
@@ -41,12 +43,13 @@ public:
     explicit Integrator(const IntegratorDesc &desc)
         : Node(desc) {}
     virtual void compile() noexcept = 0;
-    virtual Float3 Li(RayState rs, Float scatter_pdf, const HitContext &hc) const noexcept {
-        return Li(rs, scatter_pdf, spectrum().one(), hc);
+    virtual Float3 Li(RayState rs, Float scatter_pdf, const HitContext &hc, const RenderEnv &render_env) const noexcept {
+        return Li(rs, scatter_pdf, spectrum().one(), hc, render_env);
     }
-    virtual Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, const HitContext &hc) const noexcept = 0;
+    virtual Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput,
+                      const HitContext &hc, const RenderEnv &render_env) const noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
-                      bool only_direct, const HitContext &hc) const noexcept {
+                      bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept {
         OC_ERROR_FORMAT("{} Li error", typeid(*this).name());
         return make_float3(0.f);
     }
@@ -141,9 +144,9 @@ public:
                                                 const Float &scatter_pdf, const Uint &bounces,
                                                 const SampledWavelengths &swl) const noexcept;
 
-    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, const HitContext &hc) const noexcept override;
+    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
-                            bool only_direct, const HitContext &hc) const noexcept override;
+                            bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
 
     void prepare() noexcept override {
         encode_data();
