@@ -35,6 +35,7 @@ private:
 
     mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
     optional<Uint> _frame_index;
+    optional<SampledWavelengths> _swl;
 
     /**
      * generate initial candidates

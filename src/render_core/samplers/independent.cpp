@@ -20,6 +20,9 @@ public:
     void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
         _state.emplace(tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim)));
     }
+    [[nodiscard]] bool is_valid() const noexcept override {
+        return _state && _state->is_valid();
+    }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] Float next_1d() noexcept override {
         Float ret = lcg<D>(*_state);
