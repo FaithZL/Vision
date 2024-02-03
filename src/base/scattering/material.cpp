@@ -8,9 +8,8 @@
 
 namespace vision {
 
-ScatterEval MaterialEvaluator::evaluate_local(ocarina::Float3 wo, ocarina::Float3 wi,
-                                              Mode mode,
-                                              ocarina::Uint flag) const noexcept {
+ScatterEval MaterialEvaluator::evaluate_local(Float3 wo, Float3 wi,
+                                              MaterialEvalMode mode, Uint flag) const noexcept {
     ScatterEval ret{swl->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->evaluate_local(wo, wi, flag);
@@ -18,7 +17,8 @@ ScatterEval MaterialEvaluator::evaluate_local(ocarina::Float3 wo, ocarina::Float
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample_local(ocarina::Float3 wo, ocarina::Uint flag, vision::Sampler *sampler) const noexcept {
+BSDFSample MaterialEvaluator::sample_local(Float3 wo, Uint flag,
+                                           Sampler *sampler) const noexcept {
     BSDFSample ret{swl->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->sample_local(wo, flag, sampler);
@@ -54,7 +54,8 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     return ret;
 }
 
-ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi, Mode mode,
+ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi,
+                                        MaterialEvalMode mode,
                                         const Uint &flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);

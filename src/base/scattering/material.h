@@ -12,6 +12,12 @@
 
 namespace vision {
 
+enum MaterialEvalMode {
+    All,
+    BSDF,
+    PDF
+};
+
 struct BxDFSet : public ocarina::Hashable {
 public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
@@ -38,11 +44,6 @@ public:
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
 public:
     using Super = PolyEvaluator<BxDFSet>;
-    enum Mode {
-        All,
-        BSDF,
-        PDF
-    };
 
 protected:
     PartialDerivative<Float3> shading_frame;
@@ -50,7 +51,7 @@ protected:
     const SampledWavelengths *swl{};
 
 protected:
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Mode mode, Uint flag) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept;
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept;
 
 public:
@@ -61,7 +62,7 @@ public:
     void mollify() noexcept;
     [[nodiscard]] SampledSpectrum albedo() const noexcept;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
-    [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi, Mode mode = All, const Uint &flag = BxDFFlag::All) const noexcept;
+    [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi, MaterialEvalMode mode = All, const Uint &flag = BxDFFlag::All) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler *sampler, const Uint &flag = BxDFFlag::All) const noexcept;
 };
 
