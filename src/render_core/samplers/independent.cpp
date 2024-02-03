@@ -21,11 +21,10 @@ public:
     }
     void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
         Uint state = tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim));
-        if (is_valid()) {
-            _state = state;
-        } else {
-            _state.emplace(state);
+        if (!is_valid()) {
+            load_data();
         }
+        _state = state;
     }
     [[nodiscard]] bool is_valid() const noexcept override {
         return _state && _state->is_valid();
