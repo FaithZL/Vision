@@ -3,6 +3,7 @@
 //
 
 #include "base/color/spectrum.h"
+#include "base/sampler.h"
 
 namespace vision {
 

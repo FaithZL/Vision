@@ -26,6 +26,14 @@ public:
         }
         _state = state;
     }
+    void temporary(const ocarina::function<void (Sampler *)> &func) noexcept override {
+        if (!is_valid()) {
+            load_data();
+        }
+        Uint temp_state = *_state;
+        func(this);
+        *_state = temp_state;
+    }
     [[nodiscard]] bool is_valid() const noexcept override {
         return _state && _state->is_valid();
     }

@@ -165,6 +165,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
     Kernel kernel = [&](Uint frame_index) {
         _frame_index.emplace(frame_index);
         camera->load_data();
+        sampler()->load_data();
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             $return();
