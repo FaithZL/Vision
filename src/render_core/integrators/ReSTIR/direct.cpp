@@ -380,7 +380,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);
-        init(sampler(), frame_index, spectrum);
+        initial(sampler(), frame_index, spectrum);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
@@ -491,11 +491,11 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index) {
-        init(sampler(), frame_index, spectrum);
+        initial(sampler(), frame_index, spectrum);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);
-        SampledWavelengths swl = spectrum.sample_wavelength(sampler());
+        const SampledWavelengths &swl = sampled_wavelengths();
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         sampler()->start(pixel, frame_index, 1);

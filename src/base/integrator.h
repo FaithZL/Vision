@@ -77,7 +77,7 @@ public:
     }
     [[nodiscard]] Uint &frame_index() const noexcept { return *_frame_index; }
     [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *_swl; }
-    void init(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
+    void initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
 };
 
 enum MISMode {

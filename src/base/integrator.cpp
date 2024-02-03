@@ -18,12 +18,12 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
-void RenderEnv::init(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
+void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     _frame_index.emplace(frame_index);
     SampledWavelengths wavelengths{spectrum.dimension()};
     sampler->temporary([&](Sampler *) {
-        sampler->start(pixel, frame_index, 0);
+        sampler->start(pixel, frame_index, -1);
         wavelengths = spectrum.sample_wavelength(sampler);
     });
     _swl.emplace(wavelengths);

@@ -91,10 +91,12 @@ public:
 
     /// evaluate Li from light
     [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                            const DIRSVSample &sample, LightSample *output_ls = nullptr, Float *bsdf_pdf_point = nullptr)const noexcept ;
+                                     const DIRSVSample &sample, LightSample *output_ls = nullptr,
+                                     Float *bsdf_pdf_point = nullptr) const noexcept;
     /// evaluate Li from bsdf
     [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf)const noexcept;
+                                     DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point,
+                                     OCHitBSDF *hit_bsdf) const noexcept;
 
     template<typename... Args>
     [[nodiscard]] Float compute_p_hat(Args &&...args) const noexcept {
@@ -117,7 +119,7 @@ public:
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      */
-    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx) const noexcept;
+    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept;
 
     /**
      * @return The weight of the return value is added to the canonical sample
