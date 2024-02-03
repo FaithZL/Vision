@@ -21,6 +21,7 @@ protected:
 public:
     explicit Sampler(const SamplerDesc &desc)
         : Node(desc), _spp(desc["spp"].as_uint(1u)) {}
+    virtual void load_data() noexcept = 0;
     [[nodiscard]] virtual Float next_1d() noexcept = 0;
     virtual bool is_valid() const noexcept = 0;
     [[nodiscard]] virtual uint sample_per_pixel() const noexcept { return _spp; }
