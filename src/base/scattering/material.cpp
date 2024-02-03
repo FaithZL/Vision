@@ -52,19 +52,19 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     return ret;
 }
 
-ScatterEval MaterialEvaluator::evaluate(ocarina::Float3 world_wo, ocarina::Float3 world_wi) const noexcept {
+ScatterEval MaterialEvaluator::evaluate(ocarina::Float3 world_wo, ocarina::Float3 world_wi, const Uint &flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
-    ScatterEval ret = evaluate_local(wo, wi, BxDFFlag::All);
+    ScatterEval ret = evaluate_local(wo, wi, flag);
     Bool discard = same_hemisphere(world_wo, world_wi, ng) == BxDFFlag::is_transmission(ret.flags);
     ret.pdf = select(discard, 0.f, ret.pdf);
     ret.f *= abs_cos_theta(wi);
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler *sampler) const noexcept {
+BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler *sampler, const Uint &flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
-    BSDFSample ret = sample_local(wo, BxDFFlag::All, sampler);
+    BSDFSample ret = sample_local(wo, flag, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame.to_world(ret.wi);
     Bool discard = same_hemisphere(world_wo, ret.wi, ng) == BxDFFlag::is_transmission(ret.eval.flags);

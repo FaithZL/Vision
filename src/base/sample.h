@@ -64,7 +64,7 @@ public:
     Float pdf{};
 
 public:
-    explicit ScatterEval(uint dim) : f(dim), pdf(dim){};
+    explicit ScatterEval(uint dim) : f(dim), pdf(0.f){};
     ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags)
         : f(f), pdf(pdf), flags(flags) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdf; }
