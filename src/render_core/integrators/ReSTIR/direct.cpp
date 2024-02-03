@@ -382,7 +382,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Spectrum &spectrum = rp->spectrum();
 
     Kernel kernel = [&](Uint frame_index) {
-        _frame_index.emplace(frame_index);
+        emplace_frame_index(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);
@@ -498,7 +498,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index) {
-        _frame_index.emplace(frame_index);
+        emplace_frame_index(frame_index);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);

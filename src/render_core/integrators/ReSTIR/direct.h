@@ -20,7 +20,7 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDirectIllumination : public SerialObject, public Ctx {
+class ReSTIRDirectIllumination : public SerialObject, public Ctx, public RenderEnv {
 private:
     RayTracingIntegrator *_integrator{};
     uint M_light{};
@@ -34,8 +34,6 @@ private:
     TemporalResamplingParam _temporal;
 
     mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
-    optional<Uint> _frame_index;
-    optional<SampledWavelengths> _swl;
 
     /**
      * generate initial candidates
@@ -75,19 +73,19 @@ public:
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
-        return pipeline()->buffer<Reservoir>((_frame_index.value() & 1) + reservoir_base());
+        return pipeline()->buffer<Reservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>(2 + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoirs() const noexcept {
-        return pipeline()->buffer<Reservoir>(((_frame_index.value() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer<Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>((frame_index() & 1) + surface_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>(((frame_index() + 1) & 1) + surface_base());
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
                                   const Uint &frame_index) const noexcept;

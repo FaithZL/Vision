@@ -60,17 +60,23 @@ public:
 };
 
 struct RenderEnv {
-protected:
-    optional<Uint> _frame_index{};
-    optional<SampledWavelengths> _swl{};
+private:
+    mutable optional<Uint> _frame_index{};
+    mutable optional<SampledWavelengths> _swl{};
 
 public:
     void reset() noexcept {
         _frame_index.reset();
         _swl.reset();
     }
-    [[nodiscard]] Uint &frame_index() noexcept { return *_frame_index; }
-    [[nodiscard]] SampledWavelengths &swl() noexcept { return *_swl; }
+    void emplace_frame_index(const Uint &val) const noexcept {
+        _frame_index.emplace(val);
+    }
+    void emplace_swl(const SampledWavelengths &val) const noexcept {
+        _swl.emplace(val);
+    }
+    [[nodiscard]] Uint &frame_index() const noexcept { return *_frame_index; }
+    [[nodiscard]] SampledWavelengths &swl() const noexcept { return *_swl; }
     void init(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
 };
 

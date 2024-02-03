@@ -13,7 +13,6 @@ using namespace ocarina;
 
 static constexpr float3 rgb_spectrum_peak_wavelengths = make_float3(602.785f, 539.285f, 445.772f);
 
-class Spectrum;
 class MaterialEvaluator;
 
 class SampledWavelengths {
