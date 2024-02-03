@@ -65,7 +65,7 @@ public:
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
         stream << _direct.estimate(_host_frame_index);
-        stream << _indirect.estimate(_host_frame_index);
+//        stream << _indirect.estimate(_host_frame_index);
         stream << _combine.get()(_host_frame_index).dispatch(pipeline()->resolution());
         stream << synchronize();
         stream << commit();

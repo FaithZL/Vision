@@ -87,18 +87,17 @@ public:
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
         return pipeline()->buffer<SurfaceData>(((frame_index() + 1) & 1) + surface_base());
     }
-    [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it, SampledWavelengths &swl,
-                                  const Uint &frame_index) const noexcept;
+    [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it) const noexcept;
 
     /// evaluate Li from light
-    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                            const DIRSVSample &sample, LightSample *output_ls = nullptr, Float *bsdf_pdf_point = nullptr) noexcept;
+    [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
+                                            const DIRSVSample &sample, LightSample *output_ls = nullptr, Float *bsdf_pdf_point = nullptr)const noexcept ;
     /// evaluate Li from bsdf
-    [[nodiscard]] static SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf, const SampledWavelengths &swl,
-                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf) noexcept;
+    [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
+                                            DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf)const noexcept;
 
     template<typename... Args>
-    [[nodiscard]] static Float compute_p_hat(Args &&...args) noexcept {
+    [[nodiscard]] Float compute_p_hat(Args &&...args) const noexcept {
         SampledSpectrum f = Li(OC_FORWARD(args)...);
         Float p_hat = luminance(f.vec3());
         return p_hat;
@@ -118,44 +117,35 @@ public:
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      */
-    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
-                                 const SampledWavelengths &swl) const noexcept;
+    DIReservoir pairwise_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx) const noexcept;
 
     /**
      * @return The weight of the return value is added to the canonical sample
      */
     [[nodiscard]] Float neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
                                               const DIReservoir &other_rsv, const Interaction &other_it, Uint M,
-                                              const SampledWavelengths &swl,
                                               DIReservoir *output_rsv) const noexcept;
-    void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight, const SampledWavelengths &swl,
+    void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
                                 DIReservoir *output_rsv) const noexcept;
 
-    [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv,const Container<uint> &rsv_idx,
-                                               const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] DIReservoir constant_combine(const DIReservoir &canonical_rsv,
+                                               const Container<uint> &rsv_idx) const noexcept;
 
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
-                                              SampledWavelengths &swl,
                                               const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_temporal(const DIReservoir &cur_rsv,
                                                OCSurfaceData cur_surf,
-                                               const DIReservoir &other_rsv,
-                                               SampledWavelengths &swl) const noexcept;
+                                               const DIReservoir &other_rsv) const noexcept;
     [[nodiscard]] Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
                                             const Bool &is_hit) const noexcept;
     [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
                                             const OCSurfaceData &cur_surf,
-                                            const Int2 &pixel,
-                                            SampledWavelengths &swl,
-                                            const Uint &frame_index) const noexcept;
+                                            const Int2 &pixel) const noexcept;
     [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
                                              const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,
-                                             const SensorSample &ss,
-                                             SampledWavelengths &swl,
-                                             const Uint &frame_index) const noexcept;
-    [[nodiscard]] Float3 shading(DIReservoir rsv, const OCHit &hit,
-                                 SampledWavelengths &swl, const Uint &frame_index) const noexcept;
+                                             const SensorSample &ss) const noexcept;
+    [[nodiscard]] Float3 shading(DIReservoir rsv, const OCHit &hit) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;

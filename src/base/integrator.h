@@ -72,11 +72,11 @@ public:
     void emplace_frame_index(const Uint &val) const noexcept {
         _frame_index.emplace(val);
     }
-    void emplace_swl(const SampledWavelengths &val) const noexcept {
+    void emplace_sampled_wavelengths(const SampledWavelengths &val) const noexcept {
         _swl.emplace(val);
     }
     [[nodiscard]] Uint &frame_index() const noexcept { return *_frame_index; }
-    [[nodiscard]] SampledWavelengths &swl() const noexcept { return *_swl; }
+    [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *_swl; }
     void init(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
 };
 
