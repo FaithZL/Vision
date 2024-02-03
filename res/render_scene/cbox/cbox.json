@@ -1016,13 +1016,13 @@
 		}
 	},
 	"spectrum" : {
-		//		"type" : "hero",
+//				"type" : "hero",
 		"param" : {
-			"dimension" : 4
+			"dimension" : 3
 		}
 	},
 	"pipeline": {
-		//		"type": "customized",
+//				"type": "customized",
 		"param": {
 //			"obfuscation" : false,
 //			"valid_check" : true

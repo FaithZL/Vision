@@ -58,7 +58,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     Sampler *sampler = scene().sampler();
     LightSampler *light_sampler = scene().light_sampler();
 
-    SampledWavelengths swl = spectrum().sample_wavelength(sampler);
+    const SampledWavelengths &swl = render_env.sampled_wavelengths();
     SampledSpectrum value = spectrum().zero();
     const Geometry &geometry = rp->geometry();
 

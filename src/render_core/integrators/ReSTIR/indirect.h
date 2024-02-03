@@ -25,7 +25,6 @@ private:
 
     RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
     RegistrableBuffer<ReSTIRIndirect::RSVSample> _samples{pipeline()->bindless_array()};
-    optional<Uint> _frame_index;
 
     /**
      * initial sample
@@ -50,8 +49,7 @@ public:
     void prepare() noexcept;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
-    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample,
-                                            SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample) const noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();
@@ -60,16 +58,12 @@ public:
     }
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
-                                          OCHitBSDF &hit_bsdf,
-                                          SampledWavelengths &swl) noexcept;
+                                          OCHitBSDF &hit_bsdf) noexcept;
     [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
-                                               const IIReservoir &other_rsv,
-                                               SampledWavelengths &swl) const noexcept;
+                                               const IIReservoir &other_rsv) const noexcept;
     [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
-                                             const Float2 &motion_vec,const SensorSample &ss,
-                                             SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf,
-                                 SampledWavelengths &swl) const noexcept;
+                                             const Float2 &motion_vec,const SensorSample &ss) const noexcept;
+    [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept;
 
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
@@ -86,16 +80,16 @@ public:
     [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>((_frame_index.value() & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>((frame_index() & 1) + surface_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>(((_frame_index.value() + 1) & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>(((frame_index() + 1) & 1) + surface_base());
     }
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> prev_reservoirs() const noexcept {
-        return pipeline()->buffer<ReSTIRIndirect::Reservoir>((_frame_index.value() & 1) + reservoir_base());
+        return pipeline()->buffer<ReSTIRIndirect::Reservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> cur_reservoirs() const noexcept {
-        return pipeline()->buffer<ReSTIRIndirect::Reservoir>(((_frame_index.value() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer<ReSTIRIndirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
