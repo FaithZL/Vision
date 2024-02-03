@@ -59,6 +59,21 @@ public:
     virtual void render() const noexcept {}
 };
 
+struct RenderEnv {
+protected:
+    optional<Uint> _frame_index{};
+    optional<SampledWavelengths> _swl{};
+
+public:
+    void reset() noexcept {
+        _frame_index.reset();
+        _swl.reset();
+    }
+    [[nodiscard]] Uint &frame_index() noexcept { return *_frame_index; }
+    [[nodiscard]] SampledWavelengths &swl() noexcept { return *_swl; }
+    void init(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
+};
+
 enum MISMode {
     EBoth = 0,
     ELight,
@@ -146,18 +161,6 @@ public:
             Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
         };
         return Ld;
-    }
-};
-
-struct RenderEnv {
-protected:
-    optional<Uint> _frame_index{};
-    optional<SampledWavelengths> _swl{};
-
-public:
-    void reset() noexcept {
-        _frame_index.reset();
-        _swl.reset();
     }
 };
 

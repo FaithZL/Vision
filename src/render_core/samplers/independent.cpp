@@ -21,15 +21,11 @@ public:
     }
     void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
         Uint state = tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim));
-        if (!is_valid()) {
-            load_data();
-        }
+        try_load_data();
         _state = state;
     }
     void temporary(const ocarina::function<void (Sampler *)> &func) noexcept override {
-        if (!is_valid()) {
-            load_data();
-        }
+        try_load_data();
         Uint temp_state = *_state;
         func(this);
         *_state = temp_state;

@@ -6,6 +6,7 @@
 #include "base/mgr/pipeline.h"
 #include "math/warp.h"
 #include "base/color/spectrum.h"
+#include "base/sampler.h"
 
 namespace vision {
 
@@ -15,6 +16,17 @@ void Integrator::invalidation() const noexcept {
         _host_frame_index = 0u;
         _render_time = 0;
     }
+}
+
+void RenderEnv::init(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
+    Uint2 pixel = dispatch_idx().xy();
+    _frame_index.emplace(frame_index);
+    SampledWavelengths wavelengths{spectrum.dimension()};
+    sampler->temporary([&](Sampler *) {
+        sampler->start(pixel, frame_index, 0);
+        wavelengths = spectrum.sample_wavelength(sampler);
+    });
+    _swl.emplace(wavelengths);
 }
 
 SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3 &normal,
