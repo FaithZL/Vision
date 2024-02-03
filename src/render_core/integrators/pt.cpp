@@ -35,7 +35,7 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
-        stream << _shader(_frame_index++).dispatch(rp->resolution());
+        stream << _shader(_host_frame_index++).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

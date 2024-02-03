@@ -12,7 +12,7 @@ namespace vision {
 void Integrator::invalidation() const noexcept {
     Film *film = scene().radiance_film();
     if (film->enable_accumulation()) {
-        _frame_index = 0u;
+        _host_frame_index = 0u;
         _render_time = 0;
     }
 }

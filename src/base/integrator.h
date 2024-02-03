@@ -33,7 +33,7 @@ public:
     using signature = void(uint);
 
 protected:
-    mutable uint _frame_index{};
+    mutable uint _host_frame_index{};
     mutable double _render_time{};
     ocarina::Shader<signature> _shader;
 
@@ -50,10 +50,10 @@ public:
         OC_ERROR_FORMAT("{} Li error", typeid(*this).name());
         return make_float3(0.f);
     }
-    [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
+    [[nodiscard]] uint host_frame_index() const noexcept { return _host_frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
-    void increase_frame_index() const noexcept { _frame_index++; }
-    void reset_frame_index() const noexcept { _frame_index = 0; }
+    void increase_frame_index() const noexcept { _host_frame_index++; }
+    void reset_frame_index() const noexcept { _host_frame_index = 0; }
     void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
     virtual void invalidation() const noexcept;
     virtual void render() const noexcept {}
@@ -146,6 +146,18 @@ public:
             Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
         };
         return Ld;
+    }
+};
+
+struct RenderEnv {
+protected:
+    optional<Uint> _frame_index{};
+    optional<SampledWavelengths> _swl{};
+
+public:
+    void reset() noexcept {
+        _frame_index.reset();
+        _swl.reset();
     }
 };
 

@@ -87,7 +87,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->frame_index(); }
+    [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->host_frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     static void flip_debugger() noexcept { Env::debugger().filp_enabled(); }
     void filp_show_fps() noexcept { _show_fps = !_show_fps; }
