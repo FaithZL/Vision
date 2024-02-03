@@ -8,7 +8,9 @@
 
 namespace vision {
 
-ScatterEval MaterialEvaluator::evaluate_local(ocarina::Float3 wo, ocarina::Float3 wi, ocarina::Uint flag) const noexcept {
+ScatterEval MaterialEvaluator::evaluate_local(ocarina::Float3 wo, ocarina::Float3 wi,
+                                              Mode mode,
+                                              ocarina::Uint flag) const noexcept {
     ScatterEval ret{swl->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->evaluate_local(wo, wi, flag);
@@ -52,10 +54,11 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     return ret;
 }
 
-ScatterEval MaterialEvaluator::evaluate(ocarina::Float3 world_wo, ocarina::Float3 world_wi, const Uint &flag) const noexcept {
+ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi, Mode mode,
+                                        const Uint &flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     Float3 wi = shading_frame.to_local(world_wi);
-    ScatterEval ret = evaluate_local(wo, wi, flag);
+    ScatterEval ret = evaluate_local(wo, wi, mode, flag);
     Bool discard = same_hemisphere(world_wo, world_wi, ng) == BxDFFlag::is_transmission(ret.flags);
     ret.pdf = select(discard, 0.f, ret.pdf);
     ret.f *= abs_cos_theta(wi);
