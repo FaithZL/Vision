@@ -65,10 +65,10 @@ public:
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return _flags; }
-    [[nodiscard]] static bool match_f(MaterialEvalMode mode) noexcept {
+    [[nodiscard]] static bool match_F(MaterialEvalMode mode) noexcept {
         return static_cast<bool>(mode & MaterialEvalMode::F);
     }
-    [[nodiscard]] static bool match_pdf(MaterialEvalMode mode) noexcept {
+    [[nodiscard]] static bool match_PDF(MaterialEvalMode mode) noexcept {
         return static_cast<bool>(mode & MaterialEvalMode::PDF);
     }
     [[nodiscard]] Bool match_flag(const Uint &bxdf_flag) const noexcept {

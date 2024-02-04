@@ -483,37 +483,37 @@ public:
             fresnel->correct_eta(cos_theta_o);
             $if(same_hemisphere(wo, wi)) {
                 if (_diffuse_index != InvalidUI32) {
-                    if (BxDF::match_f(mode)) {
+                    if (BxDF::match_F(mode)) {
                         f = f_diffuse(wo, wi, fresnel);
                     }
                     ret.flags = BxDFFlag::DiffRefl;
-                    if (BxDF::match_pdf(mode)) {
+                    if (BxDF::match_PDF(mode)) {
                         pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
                     }
                 }
-                if (BxDF::match_f(mode)) {
+                if (BxDF::match_F(mode)) {
                     f += _spec_refl->f(wo, wi, fresnel);
                 }
-                if (BxDF::match_pdf(mode)) {
+                if (BxDF::match_PDF(mode)) {
                     pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
                 }
                 ret.flags = BxDFFlag::GlossyRefl;
                 if (_clearcoat.has_value()) {
-                    if (BxDF::match_f(mode)) {
+                    if (BxDF::match_F(mode)) {
                         f += _clearcoat->f(wo, wi, fresnel);
                     }
-                    if (BxDF::match_pdf(mode)) {
+                    if (BxDF::match_PDF(mode)) {
                         pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
                     }
                 }
             }
             $else {
                 if (_spec_trans.has_value()) {
-                    if (BxDF::match_f(mode)) {
+                    if (BxDF::match_F(mode)) {
                         f = _spec_trans->f(wo, wi, fresnel);
                     }
                     ret.flags = BxDFFlag::GlossyTrans;
-                    if (BxDF::match_pdf(mode)) {
+                    if (BxDF::match_PDF(mode)) {
                         pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
                     }
                 }
