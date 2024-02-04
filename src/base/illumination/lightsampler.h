@@ -57,17 +57,17 @@ public:
     [[nodiscard]] Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept;
     [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, Float u) const noexcept;
     [[nodiscard]] LightEval evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
-                                            const SampledWavelengths &swl) const noexcept;
+                                            const SampledWavelengths &swl, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] LightEval evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
                                                const Float &pdf_wi,
                                                const SampledWavelengths &swl,
-                                               Float *light_pdf_point = nullptr) const noexcept;
+                                               Float *light_pdf_point = nullptr, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] LightEval evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
-                                             const SampledWavelengths &swl) const noexcept;
+                                             const SampledWavelengths &swl, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] LightEval evaluate_miss_point(const LightSampleContext &p_ref, const Float3 &wi,
                                                 const Float &pdf_wi,
                                                 const SampledWavelengths &swl,
-                                                Float *light_pdf_point = nullptr) const noexcept;
+                                                Float *light_pdf_point = nullptr, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] pair<Uint, Uint> extract_light_id(const Uint &index) const noexcept;
     [[nodiscard]] Uint combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept;
     [[nodiscard]] Uint extract_light_index(const Interaction &it) const noexcept;
@@ -77,7 +77,7 @@ public:
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &lsc, Sampler *sampler,
                                         const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
-                                             const SampledWavelengths &swl) const noexcept;
+                                             const SampledWavelengths &swl, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] Float PDF_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                   const Float &pdf_wi) const noexcept;
     [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
