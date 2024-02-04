@@ -69,14 +69,21 @@ public:
 
     [[nodiscard]] LightEval evaluate_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light,
                                         const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
+        LightEval ret{swl.dimension()};
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
         Float3 local_dir = transform_vector(*_w2o, world_dir);
         Float theta = spherical_theta(local_dir);
         Float phi = spherical_phi(local_dir);
         Float sin_theta = sin(theta);
         Float2 uv = make_float2(phi * Inv2Pi, theta * InvPi);
-        Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
-        return {L(local_dir, swl), select(sin_theta == 0, 0.f, pdf)};
+        if (match_L(mode)) {
+            ret.L = L(local_dir, swl);
+        }
+        if (match_PDF(mode)) {
+            Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
+            ret.pdf = select(sin_theta == 0, 0.f, pdf);
+        }
+        return ret;
     }
 
     [[nodiscard]] LightSample evaluate(const LightSampleContext &p_ref, Float2 uv, Float pdf_map,
@@ -88,9 +95,14 @@ public:
         Float cos_theta = cos(theta);
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
         Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
-        Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
-        pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
-        ret.eval = LightEval(L(local_dir, swl), pdf_dir);
+        if (match_PDF(mode)) {
+            Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
+            pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
+            ret.eval.pdf = pdf_dir;
+        }
+        if (match_L(mode)) {
+            ret.eval.L = L(local_dir, swl);
+        }
         Float3 pos = p_ref.pos + world_dir * scene().world_diameter();
         ret.p_light = pos;
         return ret;
@@ -105,7 +117,10 @@ public:
 
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                              const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
-        Float pdf_map = _warper->PDF(lsp.bary);
+        Float pdf_map = 0.f;
+        if (match_PDF(mode)) {
+            pdf_map = _warper->PDF(lsp.bary);
+        }
         return evaluate(p_ref, lsp.bary, pdf_map, swl, mode);
     }
 

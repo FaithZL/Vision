@@ -825,22 +825,22 @@
 //						"env_separate": true,
 			"env_prob": 0.1,
 			"lights" : [
-//								{
-//									"type" : "spherical",
-//									"param": {
-//										"color": {
-//											"fn" : "textures/spruit_sunrise_2k.hdr",
-//											"color_space": "linear"
-//										},
-//										"o2w" : {
-//											"type":"Euler",
-//											"param": {
-//												"yaw" :-30
-//											}
-//										},
-//										"scale" : 0.5
-//									}
-//								}
+								{
+									"type" : "spherical",
+									"param": {
+										"color": {
+											"fn" : "textures/spruit_sunrise_2k.hdr",
+											"color_space": "linear"
+										},
+										"o2w" : {
+											"type":"Euler",
+											"param": {
+												"yaw" :-30
+											}
+										},
+										"scale" : 0.5
+									}
+								}
 //								{
 //									"type" : "spot",
 //									"param" : {
