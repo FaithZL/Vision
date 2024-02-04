@@ -15,7 +15,11 @@ Float BxDF::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
 }
 
 ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
-    return {f(wo, wi, fresnel), PDF(wo, wi, fresnel), flags()};
+    ScatterEval ret{swl().dimension()};
+    ret.f = f(wo, wi, fresnel);
+    ret.pdf = PDF(wo, wi, fresnel);
+    ret.flags = flags();
+    return ret;
 }
 
 Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
