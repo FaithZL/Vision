@@ -87,7 +87,8 @@ protected:
 
     [[nodiscard]] virtual LightEval _evaluate_point(const LightSampleContext &p_ref,
                                                     const LightEvalContext &p_light,
-                                                    const SampledWavelengths &swl) const noexcept {
+                                                    const SampledWavelengths &swl,
+                                                    LightEvalMode mode) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light)};
     }
 
@@ -139,12 +140,13 @@ public:
     [[nodiscard]] bool is(LightType t) const noexcept { return t == _type; }
     [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
                                                 const LightEvalContext &p_light,
-                                                const SampledWavelengths &swl) const noexcept {
+                                                const SampledWavelengths &swl,
+                                                LightEvalMode mode) const noexcept {
         return {Le(p_ref, p_light, swl), PDF_wi(p_ref, p_light)};
     }
 
     [[nodiscard]] virtual LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
-                                                     const SampledWavelengths &swl) const noexcept = 0;
+                                                     const SampledWavelengths &swl,LightEvalMode mode) const noexcept = 0;
 
     [[nodiscard]] virtual LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
                                                                       LightSurfacePoint lsp) const noexcept = 0;
@@ -159,7 +161,8 @@ public:
     [[nodiscard]] LightEval evaluate_point(const LightSampleContext &p_ref,
                                            const LightEvalContext &p_light,
                                            const Float &pdf_wi,
-                                           const SampledWavelengths &swl) const noexcept {
+                                           const SampledWavelengths &swl,
+                                           LightEvalMode mode) const noexcept {
         return {Li(p_ref, p_light, swl), PDF_point(p_ref, p_light, pdf_wi)};
     }
 };
@@ -196,10 +199,10 @@ public:
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override;
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
-                                             const SampledWavelengths &swl) const noexcept override {
+                                             const SampledWavelengths &swl,LightEvalMode mode) const noexcept override {
         LightSample ls{swl.dimension()};
         LightEvalContext lec{position()};
-        ls.eval = _evaluate_point(p_ref, lec, swl);
+        ls.eval = _evaluate_point(p_ref, lec, swl, mode);
         ls.p_light = position();
         return ls;
     }

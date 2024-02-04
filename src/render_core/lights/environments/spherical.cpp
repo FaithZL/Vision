@@ -68,7 +68,7 @@ public:
     }
 
     [[nodiscard]] LightEval evaluate_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light,
-                                        const SampledWavelengths &swl) const noexcept override {
+                                        const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
         Float3 local_dir = transform_vector(*_w2o, world_dir);
         Float theta = spherical_theta(local_dir);
@@ -104,7 +104,7 @@ public:
     }
 
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
-                                             const SampledWavelengths &swl) const noexcept override {
+                                             const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         Float pdf_map = _warper->PDF(lsp.bary);
         return evaluate(p_ref, lsp.bary, pdf_map, swl);
     }

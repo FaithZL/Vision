@@ -182,7 +182,7 @@ LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const Li
     Float pmf = PMF(lsc, lsp.light_index);
     LightSample ls{swl.dimension()};
     dispatch_light(type_id, inst_id, [&](const Light *light) {
-        ls = light->evaluate_point(lsc, lsp, swl);
+        ls = light->evaluate_point(lsc, lsp, swl, mode);
     });
     ls.eval.pdf *= pmf;
     return ls;
@@ -208,7 +208,7 @@ LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const I
         }
         LightEvalContext p_light{it};
         p_light.PDF_pos *= light->PMF(it.prim_id);
-        ret = light->evaluate_wi(p_ref, p_light, swl);
+        ret = light->evaluate_wi(p_ref, p_light, swl, mode);
     });
     Float pmf = PMF(p_ref, light_idx);
     ret.pdf *= pmf;
@@ -226,7 +226,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
             return;
         }
         LightEvalContext p_light{it};
-        ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl);
+        ret = light->evaluate_point(p_ref, p_light, pdf_wi, swl, mode);
         if (light_pdf_point) {
             Float prim_pmf = light->PMF(it.prim_id);
             Float light_pmf = PMF(p_ref, light_idx);
@@ -239,7 +239,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
 LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
                                          const SampledWavelengths &swl, LightEvalMode mode) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
-    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
+    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl, mode);
     Float pmf = PMF(p_ref, env_index());
     ret.pdf *= pmf;
     return ret;
@@ -249,7 +249,7 @@ LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, con
                                             const Float &pdf_wi, const SampledWavelengths &swl,
                                             Float *light_pdf_point, LightEvalMode mode) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
-    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl);
+    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl, mode);
     Float light_pmf = PMF(p_ref, env_index());
     if (light_pdf_point) {
         *light_pdf_point = ret.pdf * light_pmf;

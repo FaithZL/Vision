@@ -26,7 +26,7 @@ LightSample IPointLight::sample_wi(const LightSampleContext &p_ref, Float2 u,
     LightEvalContext p_light;
     p_light.ng = direction(p_ref);
     p_light.pos = position();
-    ret.eval = evaluate_wi(p_ref, p_light, swl);
+    ret.eval = evaluate_wi(p_ref, p_light, swl, LightEvalMode::All);
     ret.p_light = p_light.pos;
     return ret;
 }

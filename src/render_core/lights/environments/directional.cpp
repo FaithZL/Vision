@@ -46,15 +46,15 @@ public:
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
         ret.p_light = p_ref.pos + w_light() * *_world_radius;
-        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *_direction), swl);
+        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *_direction), swl, LightEvalMode::All);
         return ret;
     }
 
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
-                                             const SampledWavelengths &swl) const noexcept override {
+                                             const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         LightSample ret{swl.dimension()};
         ret.p_light = p_ref.pos + w_light() * *_world_radius;
-        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *_direction), swl);
+        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *_direction), swl, mode);
         return ret;
     }
 
