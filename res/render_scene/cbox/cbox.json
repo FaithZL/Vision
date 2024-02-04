@@ -293,69 +293,69 @@
 					}
 				}
 			}
+		},
+		{
+			"type" : "quad",
+			"name" : "shape_7",
+			"param" : {
+				"width" : 1,
+				"height" : 1,
+				"material" : "Light",
+				"transform" : {
+					"type" : "matrix4x4",
+					"param" : {
+						"matrix4x4" : [
+							[
+								0.4699999988079071,
+								-4.108870399477382e-08,
+								-4.108870399477382e-08,
+								0.0
+							],
+							[
+								-1.56137076601226e-08,
+								-0.1785999983549118,
+								1.3649937003794234e-15,
+								0.0
+							],
+							[
+								-3.3220654671595184e-08,
+								0.0,
+								-0.3799999952316284,
+								0.0
+							],
+							[
+								-0.004999999888241291,
+								1.9800000190734863,
+								-0.029999999329447746,
+								1.0
+							]
+						]
+					}
+				},
+				"emission" : {
+					"type" : "area",
+					"param" : {
+						"color" : {
+							"channels" : "xyz",
+							"node" : [
+								17,
+								12,
+								4
+							]
+						},
+						//						"color" : {
+						//							"channels" : "xyz",
+						//							"node" : {
+						//								"fn" : "Painting3.jpg",
+						//								"color_space" : "srgb"
+						//							}
+						//						},
+						"two_sided" : false,
+						"scale" : 1
+					}
+				}
+			}
 		}
-//		{
-//			"type" : "quad",
-//			"name" : "shape_7",
-//			"param" : {
-//				"width" : 1,
-//				"height" : 1,
-//				"material" : "Light",
-//				"transform" : {
-//					"type" : "matrix4x4",
-//					"param" : {
-//						"matrix4x4" : [
-//							[
-//								0.4699999988079071,
-//								-4.108870399477382e-08,
-//								-4.108870399477382e-08,
-//								0.0
-//							],
-//							[
-//								-1.56137076601226e-08,
-//								-0.1785999983549118,
-//								1.3649937003794234e-15,
-//								0.0
-//							],
-//							[
-//								-3.3220654671595184e-08,
-//								0.0,
-//								-0.3799999952316284,
-//								0.0
-//							],
-//							[
-//								-0.004999999888241291,
-//								1.9800000190734863,
-//								-0.029999999329447746,
-//								1.0
-//							]
-//						]
-//					}
-//				},
-//				"emission" : {
-//					"type" : "area",
-//					"param" : {
-//						"color" : {
-//							"channels" : "xyz",
-//							"node" : [
-//								17,
-//								12,
-//								4
-//							]
-//						},
-//						//						"color" : {
-//						//							"channels" : "xyz",
-//						//							"node" : {
-//						//								"fn" : "Painting3.jpg",
-//						//								"color_space" : "srgb"
-//						//							}
-//						//						},
-//						"two_sided" : false,
-//						"scale" : 1
-//					}
-//				}
-//			}
-//		}
 		//		{
 		//			"type" : "quad",
 		//			"name" : "shape_7",
@@ -1031,7 +1031,7 @@
 	"output" : {
 		//		"spp" : 128,
 		//		"save_exit" : true,
-		"fn" : "rt-2.exr"
+		"fn" : "rt-1.exr"
 	},
 	"integrator" : {
 				"type" : "rt",
@@ -1041,14 +1041,14 @@
 //			"separate": true,
 			"direct": {
 				"spatial": {
-					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.3,
 					"radius": 30,
 					"sample_num": 1
 				},
 				"temporal": {
-					"open": false,
+//					"open": false,
 //					"mis": true,
 					"theta": 2,
 					"depth": 1,
@@ -1072,7 +1072,7 @@
 					"sample_num": 1
 				},
 				"temporal": {
-										"open": false,
+//										"open": false,
 					//					"mis": true,
 					"theta": 2,
 					"depth": 1,
@@ -1117,7 +1117,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
-//					"accumulation": 0,
+					"accumulation": 0,
 					"resolution" : [
 						1024,
 						1024

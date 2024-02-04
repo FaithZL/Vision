@@ -28,29 +28,19 @@ Float ReSTIRIndirectIllumination::Jacobian_det(Float3 cur_pos, Float3 neighbor_p
 
 IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const SensorSample &ss,
                                                     OCHitBSDF &hit_bsdf) noexcept {
-    Camera *camera = scene().camera().get();
-    Film *film = camera->radiance_film();
-    LightSampler *light_sampler = scene().light_sampler();
-
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, frame_index(), 3);
     Interaction sp_it{false};
     RayState ray_state = RayState::create(hit_bsdf.next_ray);
-    Float3 L = make_float3(0.f);
     Float3 throughput = hit_bsdf->safe_throughput();
-    L = _integrator->Li(ray_state, hit_bsdf.pdf, SampledSpectrum(throughput), sp_it, *this) / throughput;
-    L = ocarina::zero_if_nan_inf(L);
     IIRSVSample sample;
     sample.vp->set(it);
     $if(hit_bsdf.next_hit->is_hit()) {
+        Float3 L = _integrator->Li(ray_state, hit_bsdf.pdf, SampledSpectrum(throughput), sp_it, *this) / throughput;
+        L = ocarina::zero_if_nan_inf(L);
         sample.sp->set(sp_it);
-    } $else {
-        Float3 position = it.pos + ray_state.direction() * scene().world_diameter();
-        sample.sp.pos.set(position);
-        Float3 normal = normalize(-ray_state.direction());
-        sample.sp.ng.set(normal);
+        sample.Lo.set(L);
     };
-    sample.Lo.set(L);
     return sample;
 }
 
