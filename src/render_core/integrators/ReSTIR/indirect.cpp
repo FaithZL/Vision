@@ -87,11 +87,14 @@ ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const I
 
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv) const noexcept {
+    Camera *camera = scene().camera().get();
 
     IIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
 
-    Float p_hat = ret.sample->p_hat(make_float3(1.f));
+    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
+    ScatterEval scatter_eval = eval_bsdf(it, ret.sample, MaterialEvalMode::F);
+    Float p_hat = ret.sample->p_hat(scatter_eval.f.vec3());
     ret->update_W(p_hat);
 
     return ret;
