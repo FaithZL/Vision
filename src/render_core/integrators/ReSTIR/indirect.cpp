@@ -73,13 +73,16 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
 
 ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
                                                   MaterialEvalMode mode) const noexcept {
-    ScatterEval ret{spectrum().dimension()};
-    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-        MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
-        Float3 wi = normalize(sample.sp->position() - it.pos);
-        ret = bsdf.evaluate(it.wo, wi, mode);
-    });
-    return ret;
+    return outline([&] {
+        ScatterEval ret{spectrum().dimension()};
+        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+            MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
+            Float3 wi = normalize(sample.sp->position() - it.pos);
+            ret = bsdf.evaluate(it.wo, wi, mode);
+        });
+        return ret;
+    },
+                   "ReSTIRIndirectIllumination::eval_bsdf");
 }
 
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
