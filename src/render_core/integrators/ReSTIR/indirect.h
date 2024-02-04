@@ -49,7 +49,7 @@ public:
     void prepare() noexcept;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
-    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample) const noexcept;
+    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();

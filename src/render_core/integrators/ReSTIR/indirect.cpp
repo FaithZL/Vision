@@ -71,12 +71,13 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
     _initial_samples = device().async_compile(ocarina::move(kernel), "indirect initial samples");
 }
 
-ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample) const noexcept {
+ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
+                                                  MaterialEvalMode mode) const noexcept {
     ScatterEval ret{spectrum().dimension()};
     scene().materials().dispatch(it.material_id(), [&](const Material *material) {
         MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
         Float3 wi = normalize(sample.sp->position() - it.pos);
-        ret = bsdf.evaluate(it.wo, wi);
+        ret = bsdf.evaluate(it.wo, wi, mode);
     });
     return ret;
 }
@@ -145,7 +146,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
 Float3 ReSTIRIndirectIllumination::shading(ReSTIRIndirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
-    ScatterEval scatter_eval = eval_bsdf(it, rsv.sample);
+    ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, MaterialEvalMode::F);
     return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W;
 }
 
