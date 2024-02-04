@@ -14,7 +14,7 @@ Float BxDF::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
     return cosine_hemisphere_PDF(abs_cos_theta(wi));
 }
 
-ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     return {f(wo, wi, fresnel), PDF(wo, wi, fresnel), flags()};
 }
 
@@ -22,7 +22,7 @@ Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
     return same_hemisphere(wo, wi);
 }
 
-ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl().dimension()};
     Bool s = safe(wo, wi);
     ret.f = select(s, f(wo, wi, fresnel), 0.f);
@@ -41,7 +41,7 @@ BSDFSample BxDF::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const 
     BSDFSample ret{swl().dimension()};
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
-    ret.eval = evaluate(wo, wi, fresnel);
+    ret.eval = evaluate(wo, wi, fresnel, MaterialEvalMode::All);
     ret.eval.pdf *= pdf;
     return ret;
 }
@@ -69,7 +69,7 @@ SampledDirection MicrofacetReflection::sample_wi(Float3 wo, Float2 u, SP<Fresnel
 BSDFSample MicrofacetReflection::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
-    ret.eval = safe_evaluate(wo, wi, fresnel);
+    ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
     ret.wi = wi;
     return ret;
 }
@@ -104,7 +104,7 @@ SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresn
 BSDFSample MicrofacetTransmission::sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
-    ret.eval = safe_evaluate(wo, wi, fresnel);
+    ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
     ret.eval.pdf = select(valid, ret.eval.pdf, 0.f);
     ret.wi = wi;
     ret.eta = fresnel->eta()[0];

@@ -203,7 +203,7 @@ public:
         Float2 u = sampler->next_2d();
         auto [wi, pdf] = sample_wi(wo, u, fresnel);
         BSDFSample ret{swl().dimension()};
-        ret.eval = safe_evaluate(wo, wi, nullptr);
+        ret.eval = safe_evaluate(wo, wi, nullptr, MaterialEvalMode::All);
         ret.wi = wi;
         return ret;
     }

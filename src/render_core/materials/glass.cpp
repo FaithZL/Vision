@@ -121,10 +121,10 @@ public:
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         $if(same_hemisphere(wo, wi)) {
-            ret = _refl.evaluate(wo, wi, fresnel);
+            ret = _refl.evaluate(wo, wi, fresnel, mode);
         }
         $else {
-            ret = _trans.evaluate(wo, wi, fresnel);
+            ret = _trans.evaluate(wo, wi, fresnel, mode);
         };
         return ret;
     }

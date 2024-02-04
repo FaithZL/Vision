@@ -12,12 +12,6 @@
 
 namespace vision {
 
-enum MaterialEvalMode {
-    All,
-    BSDF,
-    PDF
-};
-
 struct BxDFSet : public ocarina::Hashable {
 public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;

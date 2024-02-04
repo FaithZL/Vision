@@ -15,6 +15,12 @@
 namespace vision {
 using namespace ocarina;
 
+enum MaterialEvalMode {
+    BSDF = 1 << 0,
+    PDF = 1 << 1,
+    All = BSDF | PDF
+};
+
 [[nodiscard]] inline SampledSpectrum fresnel_complex(Float cos_theta_i, const SampledSpectrum &eta,
                                                      const SampledSpectrum &k) noexcept {
     SampledSpectrum ret{eta.dimension()};
@@ -45,8 +51,10 @@ public:
     [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] virtual ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
+                                       MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
+                                            MaterialEvalMode mode) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return _flags; }
