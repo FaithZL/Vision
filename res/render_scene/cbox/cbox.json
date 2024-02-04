@@ -1145,6 +1145,6 @@
 	"output" : {
 //		"spp" : 128,
 //		"save_exit" : true,
-		"fn" : "pt-env.exr"
+		"fn" : "rt-new.exr"
 	}
 }

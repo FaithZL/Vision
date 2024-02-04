@@ -452,7 +452,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
             if (!light->match(LightType::Area)) { return; }
             LightSampleContext p_ref;
             p_ref.pos = camera->device_position();
-            LightEval le = light->evaluate_wi(p_ref, it, swl, LightEvalMode::All);
+            LightEval le = light->evaluate_wi(p_ref, it, swl, LightEvalMode::L);
             Le = le.L;
         });
     }
@@ -471,7 +471,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
                 LightSampleContext p_ref;
                 p_ref.pos = ray->origin();
                 p_ref.ng = it.ng;
-                LightEval eval = light_sampler->evaluate_hit_wi(p_ref, next_it, swl);
+                LightEval eval = light_sampler->evaluate_hit_wi(p_ref, next_it, swl, LightEvalMode::L);
                 value = eval.L * bs.eval.f / bs.eval.pdf;
             };
         };
@@ -512,7 +512,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
                 LightSampleContext p_ref;
                 p_ref.pos = rs.origin();
                 p_ref.ng = rs.direction();
-                LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl);
+                LightEval eval = light_sampler->evaluate_miss_wi(p_ref, rs.direction(), swl, LightEvalMode::L);
                 L = spectrum.linear_srgb(eval.L, swl);
             }
         };
