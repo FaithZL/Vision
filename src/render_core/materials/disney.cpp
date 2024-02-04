@@ -474,8 +474,8 @@ public:
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
         [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
-        ScatterEval ret{_spec_refl->swl().dimension()};
-        outline([&] {
+        return outline([&] {
+            ScatterEval ret{_spec_refl->swl().dimension()};
             SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
             Float pdf = 0.f;
             auto fresnel = _fresnel->clone();
@@ -505,9 +505,9 @@ public:
             };
             ret.f = f;
             ret.pdf = pdf;
+            return ret;
         },
-                "PrincipledBxDFSet::evaluate_local");
-        return ret;
+                       "PrincipledBxDFSet::evaluate_local");
     }
 
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
