@@ -42,7 +42,14 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
     L = ocarina::zero_if_nan_inf(L);
     IIRSVSample sample;
     sample.vp->set(it);
-    sample.sp->set(sp_it);
+    $if(hit_bsdf.next_hit->is_hit()) {
+        sample.sp->set(sp_it);
+    } $else {
+        Float3 position = it.pos + ray_state.direction() * scene().world_diameter();
+        sample.sp.pos.set(position);
+        Float3 normal = normalize(-ray_state.direction());
+        sample.sp.ng.set(normal);
+    };
     sample.Lo.set(L);
     return sample;
 }
