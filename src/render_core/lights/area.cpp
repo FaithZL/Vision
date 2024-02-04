@@ -152,10 +152,12 @@ public:
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                              const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         LightSample ret{swl.dimension()};
-        Float pmf = _warper->PMF(lsp.prim_id);
         LightEvalContext p_light = compute_light_eval_context(p_ref, lsp);
         ret.eval = _evaluate_point(p_ref, p_light, swl, mode);
-        ret.eval.pdf *= pmf;
+        if (match_PDF(mode)) {
+            Float pmf = _warper->PMF(lsp.prim_id);
+            ret.eval.pdf *= pmf;
+        }
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
         return ret;
     }
