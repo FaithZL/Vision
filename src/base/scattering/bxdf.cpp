@@ -16,8 +16,12 @@ Float BxDF::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
 
 ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl().dimension()};
-    ret.f = f(wo, wi, fresnel);
-    ret.pdf = PDF(wo, wi, fresnel);
+    if (BxDF::match_f(mode)) {
+        ret.f = f(wo, wi, fresnel);
+    }
+    if (BxDF::match_pdf(mode)) {
+        ret.pdf = PDF(wo, wi, fresnel);
+    }
     ret.flags = flags();
     return ret;
 }
@@ -29,8 +33,12 @@ Bool BxDF::safe(Float3 wo, Float3 wi) const noexcept {
 ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl().dimension()};
     Bool s = safe(wo, wi);
-    ret.f = select(s, f(wo, wi, fresnel), 0.f);
-    ret.pdf = select(s, PDF(wo, wi, fresnel), 0.f);
+    if (BxDF::match_f(mode)) {
+        ret.f = select(s, f(wo, wi, fresnel), 0.f);
+    }
+    if (BxDF::match_pdf(mode)) {
+        ret.pdf = select(s, PDF(wo, wi, fresnel), 0.f);
+    }
     ret.flags = flags();
     return ret;
 }
