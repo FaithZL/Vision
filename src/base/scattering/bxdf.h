@@ -13,13 +13,20 @@
 #include "base/color/spectrum.h"
 
 namespace vision {
-using namespace ocarina;
-
 enum MaterialEvalMode {
-    BSDF = 1 << 0,
+    F = 1 << 0,
     PDF = 1 << 1,
-    All = BSDF | PDF
+    All = F | PDF
 };
+}
+
+VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, |)
+VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, &)
+VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, <<)
+VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, >>)
+
+namespace vision {
+using namespace ocarina;
 
 [[nodiscard]] inline SampledSpectrum fresnel_complex(Float cos_theta_i, const SampledSpectrum &eta,
                                                      const SampledSpectrum &k) noexcept {
@@ -58,6 +65,12 @@ public:
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return _flags; }
+    [[nodiscard]] static bool match_f(MaterialEvalMode mode) noexcept {
+        return (mode | MaterialEvalMode::F) == MaterialEvalMode::F;
+    }
+    [[nodiscard]] static bool match_pdf(MaterialEvalMode mode) noexcept {
+        return (mode | MaterialEvalMode::PDF) == MaterialEvalMode::PDF;
+    }
     [[nodiscard]] Bool match_flag(const Uint &bxdf_flag) const noexcept {
         return ((_flags & bxdf_flag) == _flags);
     }

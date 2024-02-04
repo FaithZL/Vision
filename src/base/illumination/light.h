@@ -41,15 +41,11 @@ enum class LightType {
 };
 }// namespace vision
 
-#define VS_MAKE_LIGHT_TYPE_OP(op)                                                                          \
-    inline auto operator op(vision::LightType lhs, vision::LightType rhs) {                                \
-        return static_cast<vision::LightType>(ocarina::to_underlying(lhs) op ocarina::to_underlying(rhs)); \
-    }
 
-VS_MAKE_LIGHT_TYPE_OP(|)
-VS_MAKE_LIGHT_TYPE_OP(&)
-VS_MAKE_LIGHT_TYPE_OP(<<)
-VS_MAKE_LIGHT_TYPE_OP(>>)
+VS_MAKE_ENUM_BIT_OP(vision::LightType, |)
+VS_MAKE_ENUM_BIT_OP(vision::LightType, &)
+VS_MAKE_ENUM_BIT_OP(vision::LightType, <<)
+VS_MAKE_ENUM_BIT_OP(vision::LightType, >>)
 
 #undef VS_MAKE_LIGHT_TYPE_OP
 
@@ -114,8 +110,8 @@ public:
         return PDF_wi(p_ref, p_light);
     }
     [[nodiscard]] virtual Float PDF_point(const LightSampleContext &p_ref,
-                                  const LightEvalContext &p_light,
-                                  const Float &pdf_wi) const noexcept {
+                                          const LightEvalContext &p_light,
+                                          const Float &pdf_wi) const noexcept {
         Float ret = vision::PDF_point(pdf_wi, p_light.ng, p_ref.pos - p_light.pos);
         return select(ocarina::isinf(ret), 0.f, ret);
     }
