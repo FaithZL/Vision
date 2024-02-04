@@ -40,10 +40,10 @@ public:
         }
         return {};
     }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi,
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
                                              Uint flag) const noexcept override {
-        ScatterEval eval0 = _b0->evaluate_local(wo, wi, flag);
-        ScatterEval eval1 = _b1->evaluate_local(wo, wi, flag);
+        ScatterEval eval0 = _b0->evaluate_local(wo, wi, mode, flag);
+        ScatterEval eval1 = _b1->evaluate_local(wo, wi, mode, flag);
         ScatterEval ret{eval0.f.dimension()};
         ret.f = eval0.f * _scale + eval1.f * (1 - _scale);
         ret.pdf = eval0.pdf * _scale + eval1.pdf * (1 - _scale);
@@ -67,7 +67,7 @@ public:
     BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{_b0->albedo().dimension()};
         SampledDirection sd = sample_wi(wo, flag, sampler);
-        ret.eval = evaluate_local(wo, sd.wi, flag);
+        ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
         ret.wi = sd.wi;
         ret.eval.pdf = select(sd.valid(), ret.eval.pdf * sd.pdf, 0.f);
         return ret;

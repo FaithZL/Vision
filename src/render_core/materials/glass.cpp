@@ -114,7 +114,7 @@ public:
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         return _dispersive;
     }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi,
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
                                              Uint flag) const noexcept override {
         ScatterEval ret{_refl.swl().dimension()};
         auto fresnel = _fresnel->clone();

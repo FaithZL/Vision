@@ -85,7 +85,8 @@ public:
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
         [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
+                                             Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone());
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {

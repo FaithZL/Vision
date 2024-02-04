@@ -12,7 +12,7 @@ ScatterEval MaterialEvaluator::evaluate_local(Float3 wo, Float3 wi,
                                               MaterialEvalMode mode, Uint flag) const noexcept {
     ScatterEval ret{swl->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->evaluate_local(wo, wi, flag);
+        ret = lobe_set->evaluate_local(wo, wi, mode, flag);
     });
     return ret;
 }

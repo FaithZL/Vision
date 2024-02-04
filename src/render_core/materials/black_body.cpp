@@ -13,7 +13,8 @@ private:
 
 public:
     explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : _swl(&swl) {}
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi,
+                                             MaterialEvalMode mode, Uint flag) const noexcept override {
         ScatterEval ret{_swl->dimension()};
         ret.f = {_swl->dimension(), 0.f};
         ret.pdf = 1.f;

@@ -473,7 +473,7 @@ public:
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
         [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         ScatterEval ret{_spec_refl->swl().dimension()};
         outline([&] {
             SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
@@ -562,7 +562,7 @@ public:
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
         BSDFSample ret{_spec_refl->swl().dimension()};
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
-        ret.eval = evaluate_local(wo, sampled_direction.wi, flag);
+        ret.eval = evaluate_local(wo, sampled_direction.wi, MaterialEvalMode::All, flag);
         ret.wi = sampled_direction.wi;
         ret.eval.pdf = select(sampled_direction.valid(), ret.eval.pdf * sampled_direction.pdf, 0.f);
         return ret;

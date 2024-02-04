@@ -21,7 +21,7 @@ enum MaterialEvalMode {
 struct BxDFSet : public ocarina::Hashable {
 public:
     [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, Uint flag) const noexcept = 0;
+    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
         OC_ASSERT(false);
