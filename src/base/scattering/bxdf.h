@@ -66,10 +66,10 @@ public:
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return _flags; }
     [[nodiscard]] static bool match_f(MaterialEvalMode mode) noexcept {
-        return (mode | MaterialEvalMode::F) == MaterialEvalMode::F;
+        return static_cast<bool>(mode & MaterialEvalMode::F);
     }
     [[nodiscard]] static bool match_pdf(MaterialEvalMode mode) noexcept {
-        return (mode | MaterialEvalMode::PDF) == MaterialEvalMode::PDF;
+        return static_cast<bool>(mode & MaterialEvalMode::PDF);
     }
     [[nodiscard]] Bool match_flag(const Uint &bxdf_flag) const noexcept {
         return ((_flags & bxdf_flag) == _flags);
