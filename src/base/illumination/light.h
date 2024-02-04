@@ -32,6 +32,19 @@ OC_STRUCT(vision::LightBound, _axis, theta_o, theta_e){
 // clang-format on
 
 namespace vision {
+enum class LightEvalMode {
+    L = 1 << 0,
+    PDF = 1 << 1,
+    All = L | PDF
+};
+}// namespace vision
+
+VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, |)
+VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, &)
+VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, <<)
+VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, >>)
+
+namespace vision {
 // LightType Definition
 enum class LightType {
     Area = 1 << 0,
@@ -40,7 +53,6 @@ enum class LightType {
     Infinite = 1 << 3
 };
 }// namespace vision
-
 
 VS_MAKE_ENUM_BIT_OP(vision::LightType, |)
 VS_MAKE_ENUM_BIT_OP(vision::LightType, &)
