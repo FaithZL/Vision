@@ -146,6 +146,35 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
     _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
 
+IIReservoir ReSTIRIndirectIllumination::combine_spatial(IIReservoir cur_rsv,
+                                                        const Container<uint> &rsv_idx) const noexcept {
+    return cur_rsv;
+}
+
+IIReservoir ReSTIRIndirectIllumination::spatial_reuse(IIReservoir rsv,const OCSurfaceData &cur_surf,
+                                                      const Int2 &pixel) const noexcept {
+    if (!_spatial.open) {
+        return rsv;
+    }
+    int2 res = make_int2(pipeline()->resolution());
+    Container<uint> rsv_idx{_spatial.sample_num};
+    $for(i, _spatial.sample_num) {
+        Float2 offset = square_to_disk(sampler()->next_2d()) * _spatial.sampling_radius;
+        Int2 offset_i = make_int2(ocarina::round(offset));
+        Int2 another_pixel = pixel + offset_i;
+        another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
+        Uint index = dispatch_id(another_pixel);
+        OCSurfaceData other_surf = cur_surfaces().read(index);
+        $if(is_neighbor(cur_surf, other_surf)) {
+            rsv_idx.push_back(index);
+        };
+    };
+    $if(cur_surf.hit->is_hit()) {
+        rsv = combine_spatial(rsv, rsv_idx);
+    };
+    return rsv;
+}
+
 Float3 ReSTIRIndirectIllumination::shading(ReSTIRIndirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
@@ -168,6 +197,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
             $return();
         };
         IIReservoir rsv = cur_reservoirs().read(dispatch_id());
+        rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()));
         Float3 Lo = rsv.sample.Lo.as_vec3();
         Float3 L = shading(rsv, surf);
         _integrator->indirect_light().write(dispatch_id(), L);

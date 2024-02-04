@@ -63,6 +63,9 @@ public:
                                                const IIReservoir &other_rsv) const noexcept;
     [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,const SensorSample &ss) const noexcept;
+    [[nodiscard]] IIReservoir combine_spatial(IIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
+    [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const OCSurfaceData  &cur_surf,
+                                            const Int2 &pixel) const noexcept;
     [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept;
 
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
