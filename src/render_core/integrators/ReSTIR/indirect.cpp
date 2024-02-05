@@ -129,8 +129,11 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         };
         camera->load_data();
         Uint2 pixel = dispatch_idx().xy();
-        sampler()->start(pixel, frame_index, 0);
-        SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
+        SensorSample ss;
+        sampler()->temporary([&](Sampler *sampler) {
+            sampler->start(pixel, frame_index, 0);
+            ss = sampler->sensor_sample(pixel, camera->filter());
+        });
         sampler()->start(pixel, frame_index, 4);
         IIRSVSample sample = _samples.read(dispatch_id());
         OCHitBSDF hit_bsdf = _integrator->hit_bsdfs().read(dispatch_id());
@@ -151,7 +154,7 @@ IIReservoir ReSTIRIndirectIllumination::combine_spatial(IIReservoir cur_rsv,
     return cur_rsv;
 }
 
-IIReservoir ReSTIRIndirectIllumination::spatial_reuse(IIReservoir rsv,const OCSurfaceData &cur_surf,
+IIReservoir ReSTIRIndirectIllumination::spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                       const Int2 &pixel) const noexcept {
     if (!_spatial.open) {
         return rsv;
