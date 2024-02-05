@@ -141,7 +141,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv->update_W(p_hat);
         Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
         rsv = temporal_reuse(rsv, surf, motion_vec, ss);
-        cur_reservoirs().write(dispatch_id(), rsv);
+        passthrough_reservoirs().write(dispatch_id(), rsv);
     };
     _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
@@ -196,7 +196,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         $if(surf.hit->is_miss()) {
             $return();
         };
-        IIReservoir rsv = cur_reservoirs().read(dispatch_id());
+        IIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
         rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()));
         Float3 Lo = rsv.sample.Lo.as_vec3();
         Float3 L = shading(rsv, surf);
@@ -221,11 +221,12 @@ void ReSTIRIndirectIllumination::prepare() noexcept {
     using ReSTIRIndirect::Reservoir;
     Pipeline *rp = pipeline();
 
-    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 2,
-                                                            "ReSTIRIndirectIllumination::_reservoirs x 2");
+    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
+                                                            "ReSTIRIndirectIllumination::_reservoirs x 3");
     _reservoirs.register_self(0, rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
-    vector<Reservoir> host{rp->pixel_num() * 2, Reservoir{}};
+    _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
+    vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
     _reservoirs.upload_immediately(host.data());
 
     using ReSTIRIndirect::RSVSample;

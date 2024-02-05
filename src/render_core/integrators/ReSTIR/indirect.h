@@ -94,6 +94,9 @@ public:
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> cur_reservoirs() const noexcept {
         return pipeline()->buffer<ReSTIRIndirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
+    [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> passthrough_reservoirs() const noexcept {
+        return pipeline()->buffer<ReSTIRIndirect::Reservoir>(2 + reservoir_base());
+    }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 
