@@ -82,6 +82,11 @@ ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const I
                    "ReSTIRIndirectIllumination::eval_bsdf");
 }
 
+Float ReSTIRIndirectIllumination::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
+    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
+    return sample->p_hat(bsdf);
+}
+
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
@@ -149,8 +154,30 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
     _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
 }
 
+IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
+    Camera *camera = scene().camera().get();
+    Float3 c_pos = camera->device_position();
+    OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
+    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
+
+    IIReservoir ret = canonical_rsv;
+    Uint sample_num = rsv_idx.count() + 1;
+
+    rsv_idx.for_each([&](const Uint &idx) {
+        IIReservoir rsv = passthrough_reservoirs().read(idx);
+        OCSurfaceData neighbor_surf = cur_surfaces().read(idx);
+        Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
+
+    });
+
+    return ret;
+}
+
 IIReservoir ReSTIRIndirectIllumination::combine_spatial(IIReservoir cur_rsv,
                                                         const Container<uint> &rsv_idx) const noexcept {
+
+    cur_rsv = constant_combine(cur_rsv, rsv_idx);
+
     return cur_rsv;
 }
 

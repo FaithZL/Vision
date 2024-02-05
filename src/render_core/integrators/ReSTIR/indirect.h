@@ -50,6 +50,7 @@ public:
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
     [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] Float compute_p_hat(const Interaction &it, const IIRSVSample &sample) const noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();
@@ -63,6 +64,9 @@ public:
                                                const IIReservoir &other_rsv) const noexcept;
     [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,const SensorSample &ss) const noexcept;
+
+    [[nodiscard]] IIReservoir constant_combine(const IIReservoir &canonical_rsv,
+                                               const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] IIReservoir combine_spatial(IIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const OCSurfaceData  &cur_surf,
                                             const Int2 &pixel) const noexcept;
