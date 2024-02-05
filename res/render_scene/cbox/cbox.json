@@ -1065,14 +1065,14 @@
 			},
 			"indirect": {
 				"spatial": {
-					//					"open": false,
+//					"open": false,
 					"theta": 5,
 					"depth": 0.3,
 					"radius": 30,
 					"sample_num": 1
 				},
 				"temporal": {
-//										"open": false,
+//					"open": false,
 					//					"mis": true,
 					"theta": 2,
 					"depth": 1,

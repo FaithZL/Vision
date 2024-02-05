@@ -167,8 +167,15 @@ IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &cano
         IIReservoir rsv = passthrough_reservoirs().read(idx);
         OCSurfaceData neighbor_surf = cur_surfaces().read(idx);
         Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
-
+        Float p_hat = compute_p_hat(canonical_it, rsv.sample);
+//        p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
+        Float v = pipeline()->visibility(canonical_it, rsv.sample.sp->position());
+        Float weight = Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
+        ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);
     });
+
+    Float p_hat = compute_p_hat(canonical_it, ret.sample);
+    ret->update_W(p_hat);
 
     return ret;
 }
@@ -219,9 +226,10 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
 
     Kernel kernel = [&](Uint frame_index) {
+        sampler()->try_load_data();
+        sampler()->start(dispatch_idx().xy(), frame_index, 5);
         initial(sampler(), frame_index, spectrum);
         camera->load_data();
-        sampler()->load_data();
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             $return();
