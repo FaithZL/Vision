@@ -1068,7 +1068,7 @@
 //					"open": false,
 					"theta": 5,
 					"depth": 0.3,
-					"radius": 30,
+					"radius": 20,
 					"sample_num": 1
 				},
 				"temporal": {

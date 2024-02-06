@@ -165,13 +165,15 @@ IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &cano
 
     rsv_idx.for_each([&](const Uint &idx) {
         IIReservoir rsv = passthrough_reservoirs().read(idx);
-        OCSurfaceData neighbor_surf = cur_surfaces().read(idx);
-        Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
-        Float p_hat = compute_p_hat(canonical_it, rsv.sample);
-//        p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
-        Float v = pipeline()->visibility(canonical_it, rsv.sample.sp->position());
-        Float weight = Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
-        ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);
+        $if(luminance(rsv.sample.Lo.as_vec3()) > 0) {
+            OCSurfaceData neighbor_surf = cur_surfaces().read(idx);
+            Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
+            Float p_hat = compute_p_hat(canonical_it, rsv.sample);
+//                    p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
+            Float v = pipeline()->visibility(canonical_it, rsv.sample.sp->position());
+            Float weight = Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
+            ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);
+        };
     });
 
     Float p_hat = compute_p_hat(canonical_it, ret.sample);
