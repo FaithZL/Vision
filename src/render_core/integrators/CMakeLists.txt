@@ -10,7 +10,10 @@ function(vision_add_rt_plugin name)
     set(lib_name vision-${PLUGIN_CATEGORY}-${name})
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
-    target_link_libraries(${lib_name} PRIVATE vision-base vision-math vision-integrator-ReSTIR)
+    target_link_libraries(${lib_name} PRIVATE vision-base
+            vision-math
+            vision-integrator-ReSTIR
+            vision-integrator-surfel)
     target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
