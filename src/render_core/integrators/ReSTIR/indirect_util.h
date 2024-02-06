@@ -64,6 +64,9 @@ OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
     [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
         return ocarina::luminance(Lo.as_vec() * bsdf);
     }
+    [[nodiscard]] Float p_hat(const Float &cos_theta) const noexcept {
+        return ocarina::luminance(Lo.as_vec() * cos_theta);
+    }
 };
 
 namespace vision {

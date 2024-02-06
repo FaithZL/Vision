@@ -86,8 +86,8 @@ ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const I
 }
 
 Float ReSTIRIndirectIllumination::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
-    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
-    return sample->p_hat(bsdf);
+//    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
+    return sample->p_hat(abs_dot(it.ng, normalize(sample.sp->position() - it.pos)));
 }
 
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
@@ -142,7 +142,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         IIRSVSample sample = _samples.read(dispatch_id());
         OCHitBSDF hit_bsdf = _integrator->hit_bsdfs().read(dispatch_id());
         IIReservoir rsv;
-        Float p_hat = sample->p_hat(hit_bsdf.bsdf.as_vec3());
+        Float p_hat = sample->p_hat(hit_bsdf.cos_theta);
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
