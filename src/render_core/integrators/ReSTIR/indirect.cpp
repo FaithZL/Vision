@@ -17,13 +17,16 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *int
 
 Float ReSTIRIndirectIllumination::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
                                                Var<SurfacePoint> sample_point) const noexcept {
+    Float ret;
     Float3 cur_vec = cur_pos - sample_point->position();
     Float3 neighbor_vec = neighbor_pos - sample_point->position();
     Float cos_phi_c = abs_dot(normalize(cur_vec), sample_point->normal());
     Float cos_phi_n = abs_dot(normalize(neighbor_vec), sample_point->normal());
     Float cur_dist2 = length_squared(cur_vec);
     Float neighbor_dist2 = length_squared(neighbor_vec);
-    return (cos_phi_n * cur_dist2) / (cos_phi_c * neighbor_dist2);
+    ret = (cos_phi_n * cur_dist2) / (cos_phi_c * neighbor_dist2);
+    ret = ocarina::select(sample_point.is_valid(), ret, 1.f);
+    return ret;
 }
 
 IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const SensorSample &ss,
@@ -169,7 +172,7 @@ IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &cano
             OCSurfaceData neighbor_surf = cur_surfaces().read(idx);
             Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
             Float p_hat = compute_p_hat(canonical_it, rsv.sample);
-//                    p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
+//            p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
             Float v = pipeline()->visibility(canonical_it, rsv.sample.sp->position());
             Float weight = Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
             ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);
