@@ -35,12 +35,13 @@ struct HitBSDF {
     ocarina::Ray next_ray{};
     ocarina::Hit next_hit{};
     array<float, 3> bsdf{};
+    float cos_theta{};
     float pdf{-1};
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::HitBSDF, next_ray, next_hit,bsdf, pdf) {
+OC_STRUCT(vision::HitBSDF, next_ray, next_hit,bsdf, cos_theta, pdf) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
     }

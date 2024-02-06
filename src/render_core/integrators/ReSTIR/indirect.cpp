@@ -93,15 +93,11 @@ Float ReSTIRIndirectIllumination::compute_p_hat(const vision::Interaction &it, c
 IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
-
     IIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
-
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
-    ScatterEval scatter_eval = eval_bsdf(it, ret.sample, MaterialEvalMode::F);
-    Float p_hat = ret.sample->p_hat(scatter_eval.f.vec3());
+    Float p_hat = compute_p_hat(it, ret.sample);
     ret->update_W(p_hat);
-
     return ret;
 }
 
@@ -172,7 +168,7 @@ IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &cano
             OCSurfaceData neighbor_surf = cur_surfaces().read(idx);
             Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
             Float p_hat = compute_p_hat(canonical_it, rsv.sample);
-//            p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
+            //            p_hat = p_hat / Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
             Float v = pipeline()->visibility(canonical_it, rsv.sample.sp->position());
             Float weight = Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
             ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);

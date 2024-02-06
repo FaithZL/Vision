@@ -48,6 +48,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     hit_bsdf->next_ray = ray;
     hit_bsdf->next_hit = hit;
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
+    hit_bsdf->cos_theta = abs_dot(it.ng, bs->wi);
     hit_bsdf->pdf = pdf;
 
     LightEval le{swl.dimension()};
