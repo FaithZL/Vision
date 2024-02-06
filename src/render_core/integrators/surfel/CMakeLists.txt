@@ -2,7 +2,7 @@ file(GLOB_RECURSE SOURCE_FILES *.c*)
 file(GLOB_RECURSE HEADER_FILES *.h*)
 
 add_library(vision-integrator-surfel SHARED ${SOURCE_FILES})
-target_link_libraries(vision-integrator-ReSTIR PUBLIC
+target_link_libraries(vision-integrator-surfel PUBLIC
         vision-base vision-math)
 
 set_target_properties(vision-integrator-surfel PROPERTIES
