@@ -16,6 +16,7 @@ Geometry::Geometry(Pipeline *rp)
       _triangles(rp->bindless_array()),
       _instances(rp->bindless_array()),
       _mesh_handles(rp->bindless_array()),
+      _transforms(rp->bindless_array()),
       _accel(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {
@@ -67,15 +68,16 @@ void Geometry::build_accel() {
 }
 
 void Geometry::reset_device_buffer() {
-    _vertices.reset_device_buffer_immediately(rp->device(), "Geometry vertices");
-    _triangles.reset_device_buffer_immediately(rp->device(), "Geometry triangles");
-    _instances.reset_device_buffer_immediately(rp->device(), "Geometry instances");
-    _mesh_handles.reset_device_buffer_immediately(rp->device(), "Geometry mesh handles");
 
-    _vertices.register_self();
-    _triangles.register_self();
-    _instances.register_self();
-    _mesh_handles.register_self();
+    auto init_buffer = [&](auto &buffer, const string &desc) {
+        buffer.reset_device_buffer_immediately(rp->device(), desc);
+        buffer.register_self();
+    };
+
+    init_buffer(_vertices, "Geometry::_vertices");
+    init_buffer(_triangles, "Geometry::_triangles");
+    init_buffer(_instances, "Geometry::_instances");
+    init_buffer(_mesh_handles, "Geometry::_mesh_handles");
 }
 
 void Geometry::upload() const {

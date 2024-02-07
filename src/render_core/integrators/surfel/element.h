@@ -15,11 +15,12 @@ struct Element {
     float radius{};
     uint transform_id{};
     array<float, 3> irr{};
+    float depth{};
 };
 }// namespace vision::surfel
 
 // clang-format off
-OC_STRUCT(vision::surfel::Element, pos, ng, radius, transform_id, irr) {
+OC_STRUCT(vision::surfel::Element, pos, ng, radius, transform_id, irr, depth) {
     [[nodiscard]] auto normal() const noexcept {
         return ng.as_vec();
     }

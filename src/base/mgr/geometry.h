@@ -18,6 +18,7 @@ struct Geometry {
 private:
     RegistrableManaged<Vertex> _vertices;
     RegistrableManaged<Triangle> _triangles;
+    RegistrableManaged<float4x4> _transforms;
     RegistrableManaged<InstanceHandle> _instances;
     RegistrableManaged<Mesh::Handle> _mesh_handles;
     ocarina::Accel _accel;
