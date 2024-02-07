@@ -20,6 +20,7 @@ Geometry::Geometry(Pipeline *rp)
       _accel(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {
+    
     _vertices.host_buffer().clear();
     _triangles.host_buffer().clear();
     _instances.host_buffer().clear();
@@ -35,6 +36,7 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
 
     std::for_each(instances.begin(), instances.end(), [&](const ShapeInstance &instance) {
         _instances.push_back(instance.handle());
+        _transforms.push_back(instance.o2w());
     });
 }
 
@@ -68,16 +70,15 @@ void Geometry::build_accel() {
 }
 
 void Geometry::reset_device_buffer() {
-
     auto init_buffer = [&](auto &buffer, const string &desc) {
         buffer.reset_device_buffer_immediately(rp->device(), desc);
         buffer.register_self();
     };
-
     init_buffer(_vertices, "Geometry::_vertices");
     init_buffer(_triangles, "Geometry::_triangles");
     init_buffer(_instances, "Geometry::_instances");
     init_buffer(_mesh_handles, "Geometry::_mesh_handles");
+    init_buffer(_transforms, "Geometry::_transforms");
 }
 
 void Geometry::upload() const {
@@ -86,6 +87,7 @@ void Geometry::upload() const {
            << _triangles.upload()
            << _mesh_handles.upload()
            << _instances.upload()
+           << _transforms.upload()
            << synchronize();
     stream << commit();
 }
@@ -95,6 +97,7 @@ void Geometry::clear() noexcept {
     _triangles.clear_all();
     _instances.clear_all();
     _mesh_handles.clear_all();
+    _transforms.clear_all();
     _accel.clear();
 }
 
