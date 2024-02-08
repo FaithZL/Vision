@@ -21,3 +21,4 @@ endfunction()
 
 vision_add_oidn_plugin(oidn CATEGORY denoiser SOURCES oidn.cpp)
 vision_add_plugin(optix CATEGORY denoiser SOURCES optix.cpp)
+add_subdirectory(SVGF)
