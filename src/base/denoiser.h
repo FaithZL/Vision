@@ -9,6 +9,15 @@
 
 namespace vision {
 
+struct DenoiseInput {
+    uint2 resolution{};
+    Managed<float4> *output;
+    Managed<float4> *color;
+    Managed<float4> *position;
+    Managed<float4> *normal;
+    Managed<float4> *albedo;
+};
+
 class Denoiser : public Node {
 public:
     enum Mode {
