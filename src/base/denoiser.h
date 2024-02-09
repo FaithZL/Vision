@@ -11,11 +11,11 @@ namespace vision {
 
 struct DenoiseInput {
     uint2 resolution{};
-    Managed<float4> *output;
-    Managed<float4> *color;
-    Managed<float4> *position;
-    Managed<float4> *normal;
-    Managed<float4> *albedo;
+    Managed<float4> *output{};
+    Managed<float4> *color{};
+    Managed<float4> *position{};
+    Managed<float4> *normal{};
+    Managed<float4> *albedo{};
 };
 
 class Denoiser : public Node {
@@ -46,6 +46,7 @@ public:
                        float4 *normal, float4 *albedo) noexcept = 0;
     virtual void apply(uint2 res, RegistrableManaged<float4> *output, RegistrableManaged<float4> *color,
                        RegistrableManaged<float4> *normal, RegistrableManaged<float4> *albedo) noexcept = 0;
+    virtual void apply(DenoiseInput &input) noexcept = 0;
     [[nodiscard]] Backend backend() const noexcept { return _backend; }
 };
 
