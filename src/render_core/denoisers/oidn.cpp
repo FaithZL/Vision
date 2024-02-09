@@ -48,12 +48,12 @@ public:
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void apply(vision::DenoiseInput &input) noexcept override {
-
+        apply(input.resolution, input.output, input.color, input.normal, input.albedo);
     }
     void apply(ocarina::uint2 res, Managed<ocarina::float4> *output,
                Managed<ocarina::float4> *color,
                Managed<ocarina::float4> *normal,
-               Managed<ocarina::float4> *albedo) noexcept override {
+               Managed<ocarina::float4> *albedo) noexcept {
         float4 *output_ptr = nullptr;
         float4 *color_ptr = nullptr;
         float4 *normal_ptr = nullptr;
@@ -107,7 +107,7 @@ public:
     }
 
     void apply(uint2 res, float4 *output, float4 *color,
-               float4 *normal, float4 *albedo) noexcept override {
+               float4 *normal, float4 *albedo) noexcept {
         TIMER(oidn_denoise)
         oidn::FilterRef filter = create_filter();
         filter.setImage("output", output, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));

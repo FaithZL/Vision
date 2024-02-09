@@ -15,15 +15,8 @@ public:
         : Denoiser(desc) {
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
-    void apply(uint2 res, Managed<float4> *output,
-               Managed<float4> *color,
-               Managed<float4> *normal,
-               Managed<float4> *albedo) noexcept override {
-    }
     void apply(vision::DenoiseInput &input) noexcept override {
 
-    }
-    void apply(uint2 res, float4 *output, float4 *color, float4 *normal, float4 *albedo) noexcept override {
     }
 };
 

@@ -87,7 +87,11 @@ float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
     RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
     bool gamma = !(desc.fn.ends_with("exr") || desc.fn.ends_with("hdr"));
     if (desc.denoise) {
-        _postprocessor.denoise(resolution(), &_final_picture, &original, nullptr, nullptr);
+        DenoiseInput input;
+        input.resolution = resolution();
+        input.output = &_final_picture;
+        input.color = &original;
+        _postprocessor.denoise(input);
         _postprocessor.tone_mapping(_final_picture, _final_picture,gamma);
     } else {
         _postprocessor.tone_mapping(original, _final_picture,gamma);
