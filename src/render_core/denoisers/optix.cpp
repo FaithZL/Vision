@@ -16,10 +16,10 @@ public:
                float4 *normal, float4 *albedo) noexcept override {
     }
 
-    void apply(uint2 res, RegistrableManaged<float4> *output,
-               RegistrableManaged<float4> *color,
-               RegistrableManaged<float4> *normal,
-               RegistrableManaged<float4> *albedo) noexcept override {
+    void apply(uint2 res, Managed<float4> *output,
+               Managed<float4> *color,
+               Managed<float4> *normal,
+               Managed<float4> *albedo) noexcept override {
 
     }
     void apply(vision::DenoiseInput &input) noexcept override {

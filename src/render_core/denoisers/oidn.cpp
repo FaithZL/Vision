@@ -50,10 +50,10 @@ public:
     void apply(vision::DenoiseInput &input) noexcept override {
 
     }
-    void apply(ocarina::uint2 res, RegistrableManaged<ocarina::float4> *output,
-               RegistrableManaged<ocarina::float4> *color,
-               RegistrableManaged<ocarina::float4> *normal,
-               RegistrableManaged<ocarina::float4> *albedo) noexcept override {
+    void apply(ocarina::uint2 res, Managed<ocarina::float4> *output,
+               Managed<ocarina::float4> *color,
+               Managed<ocarina::float4> *normal,
+               Managed<ocarina::float4> *albedo) noexcept override {
         float4 *output_ptr = nullptr;
         float4 *color_ptr = nullptr;
         float4 *normal_ptr = nullptr;
