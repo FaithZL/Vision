@@ -975,6 +975,7 @@
 	},
 	"output" : {
 		"spp" : 0,
+		"denoise": true,
 		"save_exit" : false,
 		"fn" : "hero1-CPU.png"
 	}

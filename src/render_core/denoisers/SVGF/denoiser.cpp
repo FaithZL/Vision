@@ -5,6 +5,7 @@
 #include "core/basic_types.h"
 #include "dsl/dsl.h"
 #include "base/denoiser.h"
+#include "atrous.h"
 
 namespace vision {
 using namespace ocarina;

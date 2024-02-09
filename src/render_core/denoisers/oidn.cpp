@@ -9,7 +9,7 @@ namespace vision {
 
 using namespace ocarina;
 
-class OidnDenoiser : public Denoiser {
+class OIDN : public Denoiser {
 private:
     oidn::DeviceRef _device{};
 
@@ -41,7 +41,7 @@ private:
     }
 
 public:
-    explicit OidnDenoiser(const DenoiserDesc &desc)
+    explicit OIDN(const DenoiserDesc &desc)
         : Denoiser(desc),
           _device{create_device()} {
         _device.commit();
@@ -131,4 +131,4 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::OidnDenoiser)
+VS_MAKE_CLASS_CREATOR(vision::OIDN)
