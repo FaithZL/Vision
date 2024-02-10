@@ -5,6 +5,7 @@
 #pragma once
 
 #include "base/node.h"
+#include "rhi/context.h"
 #include "base/shader_graph/shader_node.h"
 
 namespace vision {

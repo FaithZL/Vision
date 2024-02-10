@@ -68,7 +68,7 @@ public:
     void set_value(Args &&...args) noexcept {
         _parameter.set_value(OC_FORWARD(args)...);
     }
-    template<typename ...Args>
+    template<typename... Args>
     [[nodiscard]] bool contains(Args &&...args) const noexcept {
         return _parameter.contains(OC_FORWARD(args)...);
     }
@@ -236,7 +236,16 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct FilterDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(Filter)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct DenoiserDesc : public NodeDesc {
+public:
+    FilterDesc filter_desc;
+
 public:
     VISION_DESC_COMMON(Denoiser)
     void init(const ParameterSet &ps) noexcept override;
@@ -268,12 +277,6 @@ public:
 struct SamplerDesc : public NodeDesc {
 public:
     VISION_DESC_COMMON(Sampler)
-    void init(const ParameterSet &ps) noexcept override;
-};
-
-struct FilterDesc : public NodeDesc {
-public:
-    VISION_DESC_COMMON(Filter)
     void init(const ParameterSet &ps) noexcept override;
 };
 
