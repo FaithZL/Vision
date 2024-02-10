@@ -18,11 +18,12 @@ private:
 public:
     explicit SVGF(const DenoiserDesc &desc)
         : Denoiser(desc),
-          _atrous(desc.filter_desc),N(desc["N"].as_uint(3)) {
-        _atrous.prepare();
-    }
+          _atrous(desc.filter_desc),N(desc["N"].as_uint(3)) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
-
+    void prepare() noexcept override {
+        _atrous.prepare();
+        _atrous.compile();
+    }
     [[nodiscard]] CommandList dispatch(vision::DenoiseInput &input) noexcept override {
         CommandList ret;
         for (int i = 0; i < N; ++i) {
