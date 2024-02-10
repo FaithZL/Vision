@@ -20,6 +20,10 @@ vector<float> Filter::discretize(ocarina::uint width) const noexcept {
         float fy = mapping(y);
         ret[i] = evaluate(make_float2(fx, fy));
     }
+    float sum = std::accumulate(ret.begin(), ret.end(), 0.f);
+    for (int i = 0; i < size; ++i) {
+        ret[i] /= sum;
+    }
     return ret;
 }
 
