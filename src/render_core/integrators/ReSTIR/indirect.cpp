@@ -128,7 +128,6 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         initial(sampler(), frame_index, spectrum);
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
-            _integrator->radiance1().write(dispatch_id(), make_float3(0.f));
             $return();
         };
         camera->load_data();
