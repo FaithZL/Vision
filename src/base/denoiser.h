@@ -6,12 +6,14 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
+#include "scattering/interaction.h"
 
 namespace vision {
 
 struct DenoiseInput {
     uint2 resolution{};
     Managed<float4> *output{};
+    Managed<PixelData> *pixel_data{};
     Managed<float4> *color{};
     Managed<float4> *position{};
     Managed<float4> *normal{};
