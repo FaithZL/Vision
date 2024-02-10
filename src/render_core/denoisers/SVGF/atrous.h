@@ -9,6 +9,7 @@
 #include "base/sensor/filter.h"
 #include "base/denoiser.h"
 #include "base/mgr/global.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 using namespace ocarina;
@@ -35,11 +36,17 @@ public:
         Kernel kernel = [&](BufferVar<float4> output, BufferVar<float4> rt, BufferVar<float4> pos,
                             BufferVar<float4> normal, BufferVar<float> convolution, Uint step_width) {
 
+
         };
         _shader = device().compile(kernel, "SVGF-atrous");
     }
 
-    void apply(vision::DenoiseInput &input) noexcept {
+    [[nodiscard]] CommandList dispatch(vision::DenoiseInput &input, uint step_width) noexcept {
+        CommandList ret;
+        ret << _shader(input.output->device_buffer(), input.color->device_buffer(), input.position->device_buffer(),
+                       input.normal->device_buffer(), _table, step_width)
+                   .dispatch(pipeline()->resolution());
+        return ret;
     }
 };
 

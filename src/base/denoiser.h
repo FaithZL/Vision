@@ -42,7 +42,16 @@ public:
         : Node(desc),
           _mode(RT),
           _backend(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
-    virtual void apply(DenoiseInput &input) noexcept = 0;
+    /// for offline denoise
+    virtual void apply(DenoiseInput &input) noexcept {
+        OC_ERROR_FORMAT("denoiser {} error apply", typeid(*this).name());
+    }
+
+    /// for real time denoise
+    virtual CommandList dispatch(DenoiseInput &input) noexcept {
+        OC_ERROR_FORMAT("denoiser {} error dispatch", typeid(*this).name());
+        return {};
+    }
     [[nodiscard]] Backend backend() const noexcept { return _backend; }
 };
 

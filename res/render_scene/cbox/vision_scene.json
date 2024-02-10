@@ -967,6 +967,7 @@
 	"denoiser" : {
 		"type" : "svgf",
 		"param" : {
+			"N" : 2,
 			"filter" : {
 				"type" : "gaussian",
 				"param": {
