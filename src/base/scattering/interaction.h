@@ -38,7 +38,7 @@ struct PixelData {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelData, color, pos, ng) {
+OC_STRUCT(vision::PixelData, radiance, pos, ng) {
     [[nodiscard]] Float3 normal() const noexcept {
         return ng.as_vec3();
     }
