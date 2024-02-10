@@ -6,14 +6,19 @@
 #include "dsl/dsl.h"
 #include "base/denoiser.h"
 #include "atrous.h"
+#include "temporal.h"
 
 namespace vision {
 using namespace ocarina;
 class SVGF : public Denoiser {
+private:
+    AtrousFilter _atrous;
 
 public:
     explicit SVGF(const DenoiserDesc &desc)
-        : Denoiser(desc) {
+        : Denoiser(desc),
+          _atrous(desc.filter_desc) {
+        _atrous.prepare();
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void apply(vision::DenoiseInput &input) noexcept override {

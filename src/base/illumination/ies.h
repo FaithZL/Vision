@@ -16,8 +16,8 @@ protected:
     /**
      * The brightness distribution is stored in spherical coordinates.
      * The horizontal angles correspond to theta in the regular notation
-     * and always span the full range from 0бу to 360бу.
-     * The vertical angles correspond to phi and always start at 0бу.
+     * and always span the full range from 0 to 360.
+     * The vertical angles correspond to phi and always start at 0.
      */
     vector<float> _v_angles, _h_angles;
 

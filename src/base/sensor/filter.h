@@ -40,6 +40,12 @@ public:
     OC_SERIALIZABLE_FUNC(Serializable<float>, _radius)
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
+    /**
+     * discretize array
+     * @param width
+     * @return
+     */
+    [[nodiscard]] vector<float> discretize(uint width) const noexcept;
     template<EPort p = D>
     [[nodiscard]] auto radius() const noexcept {
         if constexpr (p == D) {

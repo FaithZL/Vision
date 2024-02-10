@@ -965,8 +965,14 @@
 		"polymorphic_mode" : 1
 	},
 	"denoiser" : {
-		"type" : "oidn",
+		"type" : "svgf",
 		"param" : {
+			"filter" : {
+				"type" : "gaussian",
+				"param": {
+					"radius": [2,2]
+				}
+			},
 			"backend": "GPU"
 		}
 	},

@@ -14,10 +14,6 @@ class Light;
 class ShaderNode;
 
 class NodeMgr {
-public:
-    using Container = std::list<Node::Wrapper>;
-    using Iterator = Container::iterator;
-
 private:
     NodeMgr() = default;
     NodeMgr(const NodeMgr &) = delete;
