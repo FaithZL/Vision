@@ -40,8 +40,8 @@ public:
         };
         init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
         init_buffer(_hit_bsdfs, "RealTimeIntegrator::_hit_bsdfs");
-        init_buffer(_direct_light, "RealTimeIntegrator::_direct_light");
-        init_buffer(_indirect_light, "RealTimeIntegrator::_indirect_light");
+        init_buffer(_radiance0, "RealTimeIntegrator::_radiance0");
+        init_buffer(_radiance1, "RealTimeIntegrator::_radiance1");
 
         _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
         _surfaces.register_self(0, rp->pixel_num());
@@ -55,8 +55,8 @@ public:
         Camera *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index) {
             camera->load_data();
-            Float3 direct = direct_light().read(dispatch_id()) * _direct.factor();
-            Float3 indirect = indirect_light().read(dispatch_id()) * _indirect.factor();
+            Float3 direct = radiance0().read(dispatch_id()) * _direct.factor();
+            Float3 indirect = radiance1().read(dispatch_id()) * _indirect.factor();
             Float3 L = direct + indirect;
             camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };

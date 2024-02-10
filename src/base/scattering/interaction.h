@@ -32,13 +32,13 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 namespace vision {
 using namespace ocarina;
 struct PixelData {
-    array<float, 3> radiance;
+    array<float, 3> albedo;
     array<float, 3> pos;
     array<float, 3> ng;
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelData, radiance, pos, ng) {
+OC_STRUCT(vision::PixelData, albedo, pos, ng) {
     [[nodiscard]] Float3 normal() const noexcept {
         return ng.as_vec3();
     }
@@ -47,7 +47,9 @@ OC_STRUCT(vision::PixelData, radiance, pos, ng) {
     }
 };
 // clang-format on
-
+namespace vision {
+using OCPixelData = ocarina::Var<PixelData>;
+}
 
 namespace vision {
 using namespace ocarina;
