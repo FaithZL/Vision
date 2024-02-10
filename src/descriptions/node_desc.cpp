@@ -103,6 +103,7 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
     set_parameter(ps.value("param"));
+    denoiser_desc.init(_parameter.value("denoiser"));
 }
 
 namespace detail {

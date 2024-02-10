@@ -1034,7 +1034,7 @@
 		"fn" : "rt-1.exr"
 	},
 	"integrator" : {
-				"type" : "rt",
+		"type" : "rt",
 //		"type" : "pt",
 		"param" : {
 			"mis_mode": 0,
@@ -1082,6 +1082,18 @@
 				"correct_mode" : 0,
 //				"open": false,
 				"pairwise": true
+			},
+			"denoiser" : {
+				"type" : "svgf",
+				"param" : {
+					"N": 3,
+					"filter": {
+						"type": "gaussian",
+						"param" : {
+							"radius": [2.5,2.5]
+						}
+					}
+				}
 			},
 			"min_depth" : 0,
 			"max_depth" : 16,

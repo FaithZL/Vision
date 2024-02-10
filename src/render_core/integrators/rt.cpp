@@ -16,12 +16,14 @@ private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
     std::shared_future<Shader<void(uint)>> _combine;
+    SP<Denoiser> _denoiser;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : RayTracingIntegrator(desc),
           _direct(this, desc["direct"]),
-          _indirect(this, desc["indirect"]) {
+          _indirect(this, desc["indirect"]),
+          _denoiser(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
         _max_depth = _max_depth.hv() - 1;
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
