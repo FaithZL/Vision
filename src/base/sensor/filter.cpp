@@ -21,9 +21,9 @@ vector<float> Filter::discretize(ocarina::uint width) const noexcept {
         ret[i] = evaluate(make_float2(fx, fy));
     }
     float sum = std::accumulate(ret.begin(), ret.end(), 0.f);
-    for (int i = 0; i < size; ++i) {
-        ret[i] /= sum;
-    }
+    std::transform(ret.begin(), ret.end(), ret.begin(), [&](float x) {
+        return x / sum;
+    });
     return ret;
 }
 
