@@ -5,8 +5,9 @@
 #include "core/basic_types.h"
 #include "dsl/dsl.h"
 #include "base/denoiser.h"
+#include "reproject.h"
+#include "filter_moment.h"
 #include "atrous.h"
-#include "temporal.h"
 
 namespace vision {
 using namespace ocarina;
