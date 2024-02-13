@@ -143,6 +143,8 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         BSDFSample bsdf_sample{swl.dimension()};
         SampledSpectrum Ld = {swl.dimension(), 0.f};
 
+        Float3 albedo = make_float3(0.f);
+
         auto sample_surface = [&]() {
             if (_separate) {
                 MaterialEvaluator evaluator(it, swl);
@@ -159,6 +161,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
                 swl.check_dispersive(spectrum(), evaluator);
                 Ld = direct_light_mis(it, evaluator, light_sample, occluded,
                                       sampler, swl, bsdf_sample);
+                albedo = spectrum().linear_srgb(evaluator.albedo(), swl);
             });
         };
 
@@ -175,6 +178,15 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         } else {
             sample_surface();
         }
+
+        if (hc.pixel_data) {
+            $if(bounces == 0) {
+                hc.pixel_data->albedo.set(albedo);
+                hc.pixel_data->ng.set(it.ng);
+                hc.pixel_data->linear_depth = rs.t_max();
+            };
+        }
+
         value += throughput * Ld * tr;
         eta_scale *= sqr(bsdf_sample.eta);
         Float lum = throughput.max();

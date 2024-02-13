@@ -36,7 +36,7 @@ struct PixelData {
     array<float, 3> emission{};
     array<float, 3> ng{};
     float2 motion_vec{};
-    float linear_depth{};
+    float linear_depth{-1};
 };
 }// namespace vision
 // clang-format off
