@@ -17,7 +17,8 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
 
 tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Triangle> &triangles,
                                                               const BufferVar<Vertex> &vertices,
-                                                              const BufferVar<uint4> &pixels) noexcept {
+                                                              const BufferVar<uint4> &pixels,
+                                                              Float2 *p_film) noexcept {
     Sampler *sampler = scene().sampler();
     Filter *filter = scene().camera()->filter();
     Uint4 pixel_data = pixels.read(dispatch_id());
@@ -48,6 +49,9 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
         auto ss = sampler->sensor_sample(make_uint2(x, y), filter);
 
         Float2 coord = ss.p_film;
+        if (p_film) {
+            *p_film = ss.p_film;
+        }
         weight = ss.filter_weight;
         $if(!in_triangle<D>(coord, p0, p1, p2)) {
             coord = make_float2(x + 0.5f, y + 0.5f);
@@ -83,14 +87,15 @@ void Baker::_compile_bake() noexcept {
         RenderEnv render_env;
         render_env.initial(sampler, frame_index, spectrum());
         sampler->start(dispatch_idx().xy(), frame_index, 0);
-        auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels);
+        Float2 p_film = make_float2(dispatch_idx().xy()) + 0.5f;
+        auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels, &p_film);
         $if(!valid) {
             $return();
         };
         Float scatter_pdf;
         RayState rs = generate_ray(position, norm, &scatter_pdf);
         Interaction it{false};
-        Float3 L = integrator->Li(rs, scatter_pdf, scene().spectrum()->one(), it,render_env) * weight;
+        Float3 L = integrator->Li(rs, scatter_pdf, scene().spectrum()->one(), it, render_env) * weight;
         Float4 result = make_float4(L, 1.f);
         result.w = select(dot(rs.direction(), it.ng) > 0, 0.f, 1.f);
         Float4 accum_prev = radiance.read(dispatch_id());

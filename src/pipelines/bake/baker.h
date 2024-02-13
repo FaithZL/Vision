@@ -31,7 +31,8 @@ private:
     /// device function
     [[nodiscard]] tuple<Float3, Float3, Bool, Float> fetch_geometry_data(const BufferVar<Triangle> &triangles,
                                                                          const BufferVar<Vertex> &vertices,
-                                                                         const BufferVar<uint4> &pixels) noexcept;
+                                                                         const BufferVar<uint4> &pixels,
+                                                                         Float2 *p_film) noexcept;
     /// device function
     [[nodiscard]] RayState generate_ray(const Float3 &position,
                                         const Float3 &normal, Float *pdf) const noexcept;
