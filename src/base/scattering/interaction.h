@@ -31,6 +31,24 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using namespace ocarina;
+struct PixelData {
+    array<float, 3> albedo{};
+    array<float, 3> emission{};
+    array<float, 3> ng{};
+    float2 motion_vec{};
+    float linear_depth{};
+};
+}// namespace vision
+// clang-format off
+OC_STRUCT(vision::PixelData, albedo,emission,
+                    ng,motion_vec,linear_depth) {};
+// clang-format on
+namespace vision {
+using OCPixelData = ocarina::Var<PixelData>;
+}
+
+namespace vision {
+using namespace ocarina;
 struct HitBSDF {
     ocarina::Ray next_ray{};
     ocarina::Hit next_hit{};
@@ -227,15 +245,16 @@ struct HitContext {
 public:
     mutable OCHit *hit{};
     mutable Interaction *it{};
+    mutable OCPixelData *pixel_data{};
 
 public:
     HitContext() = default;
-    HitContext(Interaction &it) {
-        this->it = &it;
-    }
-    HitContext(OCHit &hit) {
-        this->hit = &hit;
-    }
+    HitContext(Interaction &it)
+        : it(&it) {}
+    HitContext(OCHit &hit)
+        : hit(&hit) {}
+    HitContext(OCPixelData &p)
+        : pixel_data(&p) {}
     HitContext(OCHit &hit, Interaction &it) {
         this->hit = &hit;
         this->it = &it;
