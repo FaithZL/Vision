@@ -340,16 +340,6 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     return ret;
 }
 
-Float2 ReSTIRDirectIllumination::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) const noexcept {
-    Camera *camera = scene().camera().get();
-    Float2 ret = make_float2(0.f);
-    $if(is_hit) {
-        Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
-        ret = p_film - raster_coord;
-    };
-    return ret;
-}
-
 DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
                                                      const Float2 &motion_vec,
                                                      const SensorSample &ss) const noexcept {
@@ -397,8 +387,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
             cur_surf->set_normal(it.shading.normal());
         };
         DIReservoir rsv = RIS(hit->is_hit(), it);
-        Float2 motion_vec = compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
-
+        Float2 motion_vec = _integrator->compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
         _integrator->motion_vectors().write(dispatch_id(), motion_vec);
 
         $if(hit->is_hit()) {

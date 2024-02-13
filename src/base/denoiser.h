@@ -10,11 +10,11 @@
 namespace vision {
 using namespace ocarina;
 struct PixelData {
-    array<float, 3> albedo;
-    array<float, 3> emission;
-    array<float, 3> ng;
-    float2 motion_vec;
-    float linear_depth;
+    array<float, 3> albedo{};
+    array<float, 3> emission{};
+    array<float, 3> ng{};
+    float2 motion_vec{};
+    float linear_depth{};
 };
 }// namespace vision
 // clang-format off
