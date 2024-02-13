@@ -12,14 +12,13 @@ using namespace ocarina;
 struct PixelData {
     array<float, 3> albedo;
     array<float, 3> emission;
-    float normal_gradient;
     array<float, 3> ng;
     float2 motion_vec;
     float linear_depth;
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelData, albedo,emission, normal_gradient,
+OC_STRUCT(vision::PixelData, albedo,emission,
                     ng,motion_vec,linear_depth) {};
 // clang-format on
 namespace vision {
