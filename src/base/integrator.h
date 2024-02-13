@@ -8,6 +8,7 @@
 #include "serial_object.h"
 #include "rhi/common.h"
 #include "base/scattering/interaction.h"
+#include "base/denoiser.h"
 #include "base/illumination/lightsampler.h"
 #include "base/scattering/material.h"
 #include "sampler.h"

@@ -31,25 +31,6 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using namespace ocarina;
-struct PixelData {
-    array<float, 3> albedo;
-    array<float, 3> emission;
-    float normal_gradient;
-    array<float, 3> ng;
-    float2 motion_vec;
-    float linear_depth;
-};
-}// namespace vision
-// clang-format off
-OC_STRUCT(vision::PixelData, albedo,emission, normal_gradient,
-                    ng,motion_vec,linear_depth) {};
-// clang-format on
-namespace vision {
-using OCPixelData = ocarina::Var<PixelData>;
-}
-
-namespace vision {
-using namespace ocarina;
 struct HitBSDF {
     ocarina::Ray next_ray{};
     ocarina::Hit next_hit{};
