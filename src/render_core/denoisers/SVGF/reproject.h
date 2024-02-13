@@ -3,3 +3,14 @@
 //
 
 #pragma once
+
+#include "core/basic_types.h"
+#include "dsl/dsl.h"
+
+namespace vision {
+
+class Reproject {
+
+};
+
+}

@@ -13,6 +13,7 @@ namespace vision {
 using namespace ocarina;
 class SVGF : public Denoiser {
 private:
+    Reproject _reproject;
     AtrousFilter _atrous;
     uint N;
 

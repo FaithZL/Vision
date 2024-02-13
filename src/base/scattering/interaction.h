@@ -33,19 +33,16 @@ namespace vision {
 using namespace ocarina;
 struct PixelData {
     array<float, 3> albedo;
-    array<float, 3> pos;
+    array<float, 3> emission;
+    float normal_gradient;
     array<float, 3> ng;
+    float2 motion_vec;
+    float linear_depth;
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelData, albedo, pos, ng) {
-    [[nodiscard]] Float3 normal() const noexcept {
-        return ng.as_vec3();
-    }
-    [[nodiscard]] Float3 position() const noexcept {
-        return pos.as_vec3();
-    }
-};
+OC_STRUCT(vision::PixelData, albedo,emission, normal_gradient,
+                    ng,motion_vec,linear_depth) {};
 // clang-format on
 namespace vision {
 using OCPixelData = ocarina::Var<PixelData>;
