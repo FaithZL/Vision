@@ -117,6 +117,11 @@ public:
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
 
+    template<typename ...Args>
+    void denoise(Args &&...args) const noexcept {
+        _postprocessor.denoise(OC_FORWARD(args)...);
+    }
+
     /// for dsl
     template<typename... Args>
     [[nodiscard]] OCHit trace_closest(Args &&...args) const noexcept {

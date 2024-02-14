@@ -12,8 +12,14 @@ namespace vision {
 
 struct DenoiseInput {
     uint2 resolution{};
+
+    // real time denoise
+    Buffer<PixelData> *pixel_data{};
+    Buffer<float4> *radiance{};
+    Buffer<float4> *gpu_output{};
+
+    // offline denoise
     Managed<float4> *output{};
-    Managed<PixelData> *pixel_data{};
     Managed<float4> *color{};
     Managed<float4> *position{};
     Managed<float4> *normal{};
