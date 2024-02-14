@@ -23,11 +23,12 @@ public:
             buffer.upload_immediately(vec.data());
             buffer.register_self();
         };
-        init_buffer(_pixel_data, "RealTimeIntegrator::_pixel_data");
+        init_buffer(_pixel_data, "PathTracingIntegrator::_pixel_data");
     }
 
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
+        _denoiser->compile();
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
@@ -42,7 +43,7 @@ public:
             RayState rs = camera->generate_ray(ss);
             OCPixelData pixel_data;
             Env::instance().set("p_film", ss.p_film);
-            Float3 L = Li(rs, scatter_pdf, spectrum().one(), {pixel_data},render_env) * ss.filter_weight;
+            Float3 L = Li(rs, scatter_pdf, spectrum().one(), {pixel_data}, render_env) * ss.filter_weight;
             camera->radiance_film()->add_sample(pixel, L, frame_index);
         };
         _shader = device().compile(kernel, "path tracing integrator");

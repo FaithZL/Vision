@@ -152,6 +152,7 @@ public:
         datas().reset_device_buffer_immediately(device());
         datas().register_self();
         datas().upload_immediately();
+        _denoiser->prepare();
     }
 
     template<typename SF, typename SS>
