@@ -98,15 +98,10 @@ protected:
     MISMode _mis_mode{};
     /// Material computation is separated from access memory
     bool _separate{false};
+    SP<Denoiser> _denoiser{};
 
 public:
-    explicit IlluminationIntegrator(const IntegratorDesc &desc)
-        : Integrator(desc),
-          _max_depth(desc["max_depth"].as_uint(16)),
-          _min_depth(desc["min_depth"].as_uint(5)),
-          _rr_threshold(desc["rr_threshold"].as_float(1.f)),
-          _mis_mode(MISMode(desc["mis_mode"].as_int(0))),
-          _separate(desc["separate"].as_bool(false)) {}
+    explicit IlluminationIntegrator(const IntegratorDesc &desc);
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 

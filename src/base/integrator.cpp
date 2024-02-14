@@ -29,6 +29,15 @@ void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const Spectru
     _swl.emplace(wavelengths);
 }
 
+IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &desc)
+    : Integrator(desc),
+      _max_depth(desc["max_depth"].as_uint(16)),
+      _min_depth(desc["min_depth"].as_uint(5)),
+      _rr_threshold(desc["rr_threshold"].as_float(1.f)),
+      _mis_mode(MISMode(desc["mis_mode"].as_int(0))),
+      _separate(desc["separate"].as_bool(false)),
+      _denoiser(scene().load<Denoiser>(desc.denoiser_desc)) {}
+
 Float2 IlluminationIntegrator::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Camera *camera = scene().camera().get();
     Float2 ret = make_float2(0.f);
