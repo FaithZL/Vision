@@ -831,7 +831,20 @@
 		"param" : {
 			"min_depth" : 0,
 			"max_depth" : 16,
-			"rr_threshold" : 1
+			"rr_threshold" : 1,
+			"denoiser" : {
+				"type" : "svgf",
+				"param" : {
+					"N" : 2,
+					"filter" : {
+						"type" : "gaussian",
+						"param": {
+							"radius": [2,2]
+						}
+					},
+					"backend": "GPU"
+				}
+			}
 		}
 	},
 	"spectrum" : {
