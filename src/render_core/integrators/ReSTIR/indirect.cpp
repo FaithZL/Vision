@@ -236,7 +236,6 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         };
         IIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
         rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()));
-        Float3 Lo = rsv.sample.Lo.as_vec3();
         Float3 L = shading(rsv, surf);
         _integrator->radiance1().write(dispatch_id(), L);
         cur_reservoirs().write(dispatch_id(), rsv);

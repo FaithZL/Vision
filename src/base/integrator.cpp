@@ -125,6 +125,11 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
             weight = correct_bsdf_weight(weight, bounces);
             value += eval.L * throughput * weight * tr;
+            if (hc.pixel_data) {
+                $if(bounces == 0) {
+                    hc.pixel_data->emission.set(spectrum().linear_srgb(eval.L, swl));
+                };
+            }
         };
         prev_surface_ng = it.ng;
     };
