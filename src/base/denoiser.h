@@ -50,6 +50,9 @@ public:
         : Node(desc),
           _mode(RT),
           _backend(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
+
+    virtual void compile() noexcept {}
+
     /// for offline denoise
     virtual void apply(DenoiseInput &input) noexcept {
         OC_ERROR_FORMAT("denoiser {} error apply", typeid(*this).name());
