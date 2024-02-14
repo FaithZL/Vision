@@ -3,7 +3,21 @@
 //
 
 #include "reproject.h"
+#include "svgf.h"
 
 namespace vision {
-
+using namespace ocarina;
+template<EPort p = D>
+[[nodiscard]] oc_float3<p> demodulate_impl(const oc_float3<p> &c,
+                                           const oc_float3<p> &albedo) {
+    return c / ocarina::max(albedo, make_float3(0.001f, 0.001f, 0.001f));
 }
+VS_MAKE_CALLABLE(demodulate)
+
+void Reproject::prepare() noexcept {
+}
+
+void Reproject::compile() noexcept {
+}
+
+}// namespace vision

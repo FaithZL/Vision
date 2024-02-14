@@ -19,14 +19,8 @@ private:
 public:
     explicit Reproject(SVGF *svgf)
         : _svgf(svgf) {}
-
-    void prepare() noexcept {
-
-    }
-
-    void compile() noexcept {
-
-    }
+    void prepare() noexcept;
+    void compile() noexcept;
 };
 
 }// namespace vision
