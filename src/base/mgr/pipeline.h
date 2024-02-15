@@ -80,14 +80,14 @@ public:
         auto shader = new_with_allocator<Shader<void(Buffer<T>, T)>>(ocarina::move(obtain_reset_shader<T>()));
         ret << (*shader)(buffer, elm).dispatch(buffer.size());
         ret << [=] {
-            async([=]{
+            async([=] {
                 delete_with_allocator(shader);
             });
         };
         return ret;
     }
 
-    [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->host_frame_index(); }
+    [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     static void flip_debugger() noexcept { Env::debugger().filp_enabled(); }
     void filp_show_fps() noexcept { _show_fps = !_show_fps; }
@@ -117,7 +117,7 @@ public:
     [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
     [[nodiscard]] Stream &stream() const noexcept { return _stream; }
 
-    template<typename ...Args>
+    template<typename... Args>
     void denoise(Args &&...args) const noexcept {
         _postprocessor.denoise(OC_FORWARD(args)...);
     }

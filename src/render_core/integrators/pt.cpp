@@ -9,14 +9,10 @@
 
 namespace vision {
 using namespace ocarina;
-class PathTracingIntegrator : public RayTracingIntegrator {
+class PathTracingIntegrator : public IlluminationIntegrator {
 public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
-        : RayTracingIntegrator(desc) {}
-
-    void prepare() noexcept override {
-        RayTracingIntegrator::prepare();
-    }
+        : IlluminationIntegrator(desc) {}
 
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
@@ -45,7 +41,7 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
-        stream << _shader(_host_frame_index).dispatch(rp->resolution());
+        stream << _shader(_frame_index).dispatch(rp->resolution());
         stream << denoise();
         stream << synchronize();
         stream << commit();

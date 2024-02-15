@@ -36,7 +36,7 @@ public:
     using signature = void(uint);
 
 protected:
-    mutable uint _host_frame_index{};
+    mutable uint _frame_index{};
     mutable double _render_time{};
     ocarina::Shader<signature> _shader;
 
@@ -55,10 +55,10 @@ public:
         return make_float3(0.f);
     }
     [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
-    [[nodiscard]] uint host_frame_index() const noexcept { return _host_frame_index; }
+    [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
-    void increase_frame_index() const noexcept { _host_frame_index++; }
-    void reset_frame_index() const noexcept { _host_frame_index = 0; }
+    void increase_frame_index() const noexcept { _frame_index++; }
+    void reset_frame_index() const noexcept { _frame_index = 0; }
     void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
     virtual void invalidation() const noexcept;
     virtual void render() const noexcept {}

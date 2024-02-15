@@ -13,7 +13,7 @@ namespace vision {
 void Integrator::invalidation() const noexcept {
     Film *film = scene().radiance_film();
     if (film->enable_accumulation()) {
-        _host_frame_index = 0u;
+        _frame_index = 0u;
         _render_time = 0;
     }
 }
@@ -64,7 +64,7 @@ CommandList IlluminationIntegrator::denoise() const noexcept {
         return ret;
     }
     vision::DenoiseInput input;
-    input.frame_index = _host_frame_index;
+    input.frame_index = _frame_index;
     input.resolution = pipeline()->resolution();
     input.pixel_data = &_pixel_data;
     input.radiance = &(scene().camera()->radiance_film()->original_buffer());
