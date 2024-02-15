@@ -19,7 +19,7 @@ void Reproject::prepare() noexcept {
 
 void Reproject::compile() noexcept {
     Kernel kernel = [&](BufferVar<PixelData> pixel_data, BufferVar<float4> radiance) {
-        
+
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }

@@ -32,8 +32,7 @@ using SVGFDataVar = Var<SVGFData>;
 class SVGF : public Denoiser {
 public:
     Buffer<float4> prev_depth_normal;
-    Buffer<SVGFData> _prev_data;
-    Buffer<SVGFData> _cur_data;
+    RegistrableBuffer<SVGFData> svgf_data;
 
 private:
     Reproject _reproject{this};
@@ -44,10 +43,12 @@ private:
 public:
     explicit SVGF(const DenoiserDesc &desc)
         : Denoiser(desc),
+          svgf_data(pipeline()->bindless_array()),
           _atrous(desc.filter_desc, this),
           N(desc["N"].as_uint(3)) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare_buffers();
+    [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }
     void prepare() noexcept override;
     void compile() noexcept override;
     [[nodiscard]] CommandList dispatch(vision::DenoiseInput &input) noexcept override;

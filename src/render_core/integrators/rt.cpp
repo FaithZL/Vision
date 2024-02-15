@@ -73,7 +73,7 @@ public:
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();
-        _host_frame_index += 1;
+        increase_frame_index();
     }
 };
 

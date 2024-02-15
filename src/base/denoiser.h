@@ -12,6 +12,7 @@ namespace vision {
 
 struct DenoiseInput {
     uint2 resolution{};
+    uint frame_index{};
 
     // real time denoise
     Buffer<PixelData> *pixel_data{};
