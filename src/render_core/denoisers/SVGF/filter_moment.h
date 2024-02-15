@@ -7,6 +7,7 @@
 #include "core/basic_types.h"
 #include "dsl/dsl.h"
 #include "base/mgr/global.h"
+#include "base/denoiser.h"
 
 namespace vision {
 
@@ -19,14 +20,9 @@ private:
 public:
     explicit FilterMoment(SVGF *svgf)
         : _svgf(svgf) {}
-
-    void prepare() noexcept {
-
-    }
-
-    void compile() noexcept {
-
-    }
+    void prepare() noexcept;
+    void compile() noexcept;
+    [[nodiscard]] CommandList dispatch(DenoiseInput &input) noexcept;
 };
 
 }// namespace vision

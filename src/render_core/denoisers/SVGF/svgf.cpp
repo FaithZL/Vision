@@ -14,8 +14,8 @@ void SVGF::prepare_buffers() {
         buffer.upload_immediately(vec.data());
     };
     init_buffer(prev_depth_normal, "SVGF::prev_depth_normal");
-    init_buffer(prev_filtered_lighting, "SVGF::prev_filtered_lighting");
-    init_buffer(prev_moment, "SVGF::prev_moment");
+    init_buffer(_cur_data, "SVGF::_cur_data");
+    init_buffer(_prev_data, "SVGF::_prev_data");
 }
 
 void SVGF::prepare() noexcept {
@@ -33,8 +33,10 @@ void SVGF::compile() noexcept {
 
 CommandList SVGF::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
+    ret << _reproject.dispatch(input);
+    ret << _filter_moment.dispatch(input);
     for (int i = 0; i < N; ++i) {
-        uint step_width = pow(2, i);
+        uint step_width = 1 << i;
         ret = _atrous.dispatch(input, step_width);
     }
     return ret;

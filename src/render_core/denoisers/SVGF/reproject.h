@@ -7,6 +7,7 @@
 #include "core/basic_types.h"
 #include "dsl/dsl.h"
 #include "base/mgr/global.h"
+#include "base/denoiser.h"
 
 namespace vision {
 
@@ -15,12 +16,14 @@ class SVGF;
 class Reproject : public Ctx {
 private:
     SVGF *_svgf{nullptr};
+    using signature = void(Buffer<PixelData>);
 
 public:
     explicit Reproject(SVGF *svgf)
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
+    [[nodiscard]] CommandList dispatch(DenoiseInput &input) noexcept;
 };
 
 }// namespace vision

@@ -18,6 +18,12 @@ void Reproject::prepare() noexcept {
 }
 
 void Reproject::compile() noexcept {
+
+}
+
+CommandList Reproject::dispatch(vision::DenoiseInput &input) noexcept {
+    CommandList ret;
+    return ret;
 }
 
 }// namespace vision

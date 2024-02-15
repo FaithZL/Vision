@@ -11,11 +11,29 @@
 
 namespace vision {
 using namespace ocarina;
+struct SVGFData {
+    array<float, 3> illumination{};
+    float variance{};
+    float history{};
+    float2 moments{};
+};
+}// namespace vision
+// clang-format off
+OC_STRUCT(vision::SVGFData, illumination, variance, history, moments) {
+
+};
+// clang-format on
+
+namespace vision {
+using namespace ocarina;
+
+using SVGFDataVar = Var<SVGFData>;
+
 class SVGF : public Denoiser {
 public:
     Buffer<float4> prev_depth_normal;
-    Buffer<float4> prev_filtered_lighting;
-    Buffer<float2> prev_moment;
+    Buffer<SVGFData> _prev_data;
+    Buffer<SVGFData> _cur_data;
 
 private:
     Reproject _reproject{this};
