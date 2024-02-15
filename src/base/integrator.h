@@ -54,6 +54,7 @@ public:
         OC_ERROR_FORMAT("{} Li error", typeid(*this).name());
         return make_float3(0.f);
     }
+    [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
     [[nodiscard]] uint host_frame_index() const noexcept { return _host_frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
     void increase_frame_index() const noexcept { _host_frame_index++; }
@@ -108,6 +109,8 @@ public:
 
     OC_MAKE_MEMBER_GETTER(separate, )
     OC_MAKE_MEMBER_GETTER(pixel_data, &)
+
+    [[nodiscard]] bool has_denoiser() const noexcept override { return bool(_denoiser); }
 
     [[nodiscard]] Float correct_bsdf_weight(Float weight, Uint bounce) const noexcept {
         switch (_mis_mode) {
