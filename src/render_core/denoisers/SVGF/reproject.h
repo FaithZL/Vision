@@ -16,7 +16,7 @@ class SVGF;
 class Reproject : public Ctx {
 private:
     SVGF *_svgf{nullptr};
-    using signature = void(Buffer<PixelData>, Buffer<float4>);
+    using signature = void(Buffer<PixelData>, Buffer<float4>, uint, uint);
     Shader<signature> _shader;
 
 public:
