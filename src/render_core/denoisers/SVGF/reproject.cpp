@@ -18,8 +18,14 @@ void Reproject::prepare() noexcept {
 }
 
 void Reproject::compile() noexcept {
-    Kernel kernel = [&](BufferVar<PixelData> pixel_data, BufferVar<float4> radiance,
+    Kernel kernel = [&](BufferVar<PixelData> pixel_buffer, BufferVar<float4> radiance_buffer,
                         Uint cur_index, Uint prev_index) {
+        OCPixelData pixel_data = pixel_buffer.read(dispatch_id());
+        Float4 radiance = radiance_buffer.read(dispatch_id());
+        Float3 illumination = demodulate(radiance.xyz() - pixel_data.emission.as_vec(), pixel_data.albedo.as_vec());
+//        $condition_info("{} {} {}   {}   {}   {}  --------------", radiance.xyz(), pixel_data.emission.as_vec());
+//      radiance_buffer.write(dispatch_id(), make_float4(illumination, 1.f));
+
         BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer<SVGFData>(cur_index);
         BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer<SVGFData>(prev_index);
     };
@@ -30,7 +36,7 @@ CommandList Reproject::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
     uint cur_index = ((input.frame_index + 1) & 1) + _svgf->svgf_data_base();
     uint prev_index = ((input.frame_index) & 1) + _svgf->svgf_data_base();
-    ret << _shader(*input.pixel_data, *input.radiance, cur_index, prev_index).dispatch(input.resolution);
+    ret << _shader(*input.pixel_buffer, *input.radiance, cur_index, prev_index).dispatch(input.resolution);
     return ret;
 }
 

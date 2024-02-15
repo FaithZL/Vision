@@ -97,7 +97,7 @@ protected:
     Serial<uint> _min_depth{};
     Serial<float> _rr_threshold{};
     MISMode _mis_mode{};
-    mutable RegistrableBuffer<PixelData> _pixel_data{};
+    mutable RegistrableBuffer<PixelData> _pixel_buffer{};
     /// Material computation is separated from access memory
     bool _separate{false};
     SP<Denoiser> _denoiser{};
@@ -108,7 +108,7 @@ public:
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
     OC_MAKE_MEMBER_GETTER(separate, )
-    OC_MAKE_MEMBER_GETTER(pixel_data, &)
+    OC_MAKE_MEMBER_GETTER(pixel_buffer, &)
 
     [[nodiscard]] bool has_denoiser() const noexcept override { return bool(_denoiser); }
 

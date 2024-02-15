@@ -794,6 +794,7 @@
 			"film" : {
 				"type" : "rgb",
 				"param" : {
+//					"accumulation" : false,
 					"resolution" : [
 						1024,
 						1024

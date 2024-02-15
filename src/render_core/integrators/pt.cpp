@@ -32,6 +32,8 @@ public:
             OCPixelData pixel_data;
             Env::instance().set("p_film", ss.p_film);
             Float3 L = Li(rs, scatter_pdf, spectrum().one(), {pixel_data}, render_env) * ss.filter_weight;
+            $condition_info("{} {} {}        L", L);
+            _pixel_buffer.write(dispatch_id(), pixel_data);
             camera->radiance_film()->add_sample(pixel, L, frame_index);
         };
         _shader = device().compile(kernel, "path tracing integrator");

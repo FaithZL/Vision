@@ -36,7 +36,7 @@ IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &des
       _rr_threshold(desc["rr_threshold"].as_float(1.f)),
       _mis_mode(MISMode(desc["mis_mode"].as_int(0))),
       _separate(desc["separate"].as_bool(false)),
-      _pixel_data{Global::instance().pipeline()->bindless_array()},
+      _pixel_buffer{Global::instance().pipeline()->bindless_array()},
       _denoiser(scene().load<Denoiser>(desc.denoiser_desc)) {}
 
 void IlluminationIntegrator::prepare() noexcept {
@@ -55,7 +55,7 @@ void IlluminationIntegrator::prepare() noexcept {
         buffer.upload_immediately(vec.data());
         buffer.register_self();
     };
-    init_buffer(_pixel_data, "IlluminationIntegrator::_pixel_data");
+    init_buffer(_pixel_buffer, "IlluminationIntegrator::_pixel_buffer");
 }
 
 CommandList IlluminationIntegrator::denoise() const noexcept {
@@ -66,7 +66,7 @@ CommandList IlluminationIntegrator::denoise() const noexcept {
     vision::DenoiseInput input;
     input.frame_index = _frame_index;
     input.resolution = pipeline()->resolution();
-    input.pixel_data = &_pixel_data;
+    input.pixel_buffer = &_pixel_buffer;
     input.radiance = &(scene().camera()->radiance_film()->original_buffer());
     input.gpu_output = &(scene().camera()->radiance_film()->denoised_buffer());
     ret << _denoiser->dispatch(input);
