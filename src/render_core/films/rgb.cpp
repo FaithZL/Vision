@@ -12,6 +12,7 @@ using namespace ocarina;
 class RGBFilm : public Film {
 private:
     RegistrableManaged<float4> _radiance;
+    RegistrableManaged<float4> _denoised;
     RegistrableManaged<float4> _frame;
     bool _gamma{true};
 
@@ -19,10 +20,11 @@ public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
           _radiance(pipeline()->bindless_array()),
+          _denoised(pipeline()->bindless_array()),
           _frame(pipeline()->bindless_array()),
           _gamma(desc["gamma"].as_bool(true)) {}
 
-    OC_SERIALIZABLE_FUNC(Film, _radiance, _frame)
+    OC_SERIALIZABLE_FUNC(Film, _radiance, _denoised, _frame)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         auto prepare = [&](RegistrableManaged<float4> &managed, const string &desc = "") noexcept {
@@ -31,6 +33,7 @@ public:
             managed.register_self();
         };
         prepare(_radiance, "RGBFilm::_radiance");
+        prepare(_denoised, "RGBFilm::_denoised");
         prepare(_frame, "RGBFilm::_frame");
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
@@ -53,6 +56,8 @@ public:
     [[nodiscard]] RegistrableManaged<float4> &tone_mapped_buffer() noexcept override { return _frame; }
     [[nodiscard]] const RegistrableManaged<float4> &original_buffer() const noexcept override { return _radiance; }
     [[nodiscard]] RegistrableManaged<float4> &original_buffer() noexcept override { return _radiance; }
+    [[nodiscard]] const RegistrableManaged<float4> &denoised_buffer() const noexcept override { return _denoised; }
+    [[nodiscard]] RegistrableManaged<float4> &denoised_buffer() noexcept override { return _denoised; }
 };
 
 }// namespace vision
