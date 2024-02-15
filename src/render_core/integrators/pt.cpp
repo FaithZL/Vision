@@ -16,14 +16,6 @@ public:
 
     void prepare() noexcept override {
         RayTracingIntegrator::prepare();
-        Pipeline *rp = pipeline();
-        auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
-            buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
-            vector<T> vec{rp->pixel_num(), T{}};
-            buffer.upload_immediately(vec.data());
-            buffer.register_self();
-        };
-        init_buffer(_pixel_data, "PathTracingIntegrator::_pixel_data");
     }
 
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }

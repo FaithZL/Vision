@@ -36,7 +36,36 @@ IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &des
       _rr_threshold(desc["rr_threshold"].as_float(1.f)),
       _mis_mode(MISMode(desc["mis_mode"].as_int(0))),
       _separate(desc["separate"].as_bool(false)),
+      _pixel_data{Global::instance().pipeline()->bindless_array()},
       _denoiser(scene().load<Denoiser>(desc.denoiser_desc)) {}
+
+void IlluminationIntegrator::prepare() noexcept {
+    encode_data();
+    datas().reset_device_buffer_immediately(device());
+    datas().register_self();
+    datas().upload_immediately();
+    _denoiser->prepare();
+    Pipeline *rp = pipeline();
+    if (!_denoiser) {
+        return;
+    }
+    auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
+        buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
+        vector<T> vec{rp->pixel_num(), T{}};
+        buffer.upload_immediately(vec.data());
+        buffer.register_self();
+    };
+    init_buffer(_pixel_data, "IlluminationIntegrator::_pixel_data");
+}
+
+CommandList IlluminationIntegrator::denoise(vision::DenoiseInput &input) noexcept {
+    CommandList ret;
+    if (!_denoiser) {
+        return ret;
+    }
+    ret << _denoiser->dispatch(input);
+    return ret;
+}
 
 Float2 IlluminationIntegrator::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Camera *camera = scene().camera().get();
@@ -242,7 +271,6 @@ BufferMgr::BufferMgr()
     : _motion_vectors{Global::instance().pipeline()->bindless_array()},
       _radiance0{Global::instance().pipeline()->bindless_array()},
       _radiance1{Global::instance().pipeline()->bindless_array()},
-      _pixel_data{Global::instance().pipeline()->bindless_array()},
       _surfaces{Global::instance().pipeline()->bindless_array()},
       _hit_bsdfs{Global::instance().pipeline()->bindless_array()} {}
 

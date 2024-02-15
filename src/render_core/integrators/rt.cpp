@@ -42,7 +42,6 @@ public:
         init_buffer(_hit_bsdfs, "RealTimeIntegrator::_hit_bsdfs");
         init_buffer(_radiance0, "RealTimeIntegrator::_radiance0");
         init_buffer(_radiance1, "RealTimeIntegrator::_radiance1");
-        init_buffer(_pixel_data, "RealTimeIntegrator::_pixel_data");
 
         _surfaces.super() = device().create_buffer<SurfaceData>(rp->pixel_num() * 2, "RealTimeIntegrator::_surfaces x 2");
         _surfaces.register_self(0, rp->pixel_num());

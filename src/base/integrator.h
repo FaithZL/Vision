@@ -96,6 +96,7 @@ protected:
     Serial<uint> _min_depth{};
     Serial<float> _rr_threshold{};
     MISMode _mis_mode{};
+    RegistrableBuffer<PixelData> _pixel_data{};
     /// Material computation is separated from access memory
     bool _separate{false};
     SP<Denoiser> _denoiser{};
@@ -106,6 +107,7 @@ public:
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
     OC_MAKE_MEMBER_GETTER(separate, )
+    OC_MAKE_MEMBER_GETTER(pixel_data, &)
 
     [[nodiscard]] Float correct_bsdf_weight(Float weight, Uint bounce) const noexcept {
         switch (_mis_mode) {
@@ -147,13 +149,9 @@ public:
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                             bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
 
-    void prepare() noexcept override {
-        encode_data();
-        datas().reset_device_buffer_immediately(device());
-        datas().register_self();
-        datas().upload_immediately();
-        _denoiser->prepare();
-    }
+    void prepare() noexcept override;
+
+    [[nodiscard]] CommandList denoise(DenoiseInput &input) noexcept;
 
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(const Interaction &it, const SF &sf, LightSample ls,
@@ -178,7 +176,6 @@ protected:
     RegistrableBuffer<float2> _motion_vectors{};
     RegistrableBuffer<SurfaceData> _surfaces{};
     RegistrableBuffer<HitBSDF> _hit_bsdfs{};
-    RegistrableBuffer<PixelData> _pixel_data{};
     RegistrableBuffer<float3> _radiance0;
     RegistrableBuffer<float3> _radiance1;
 
@@ -189,7 +186,6 @@ public:
     OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
     OC_MAKE_MEMBER_GETTER(radiance0, &)
     OC_MAKE_MEMBER_GETTER(radiance1, &)
-    OC_MAKE_MEMBER_GETTER(pixel_data, &)
 };
 
 class RayTracingIntegrator : public BufferMgr, public IlluminationIntegrator {
