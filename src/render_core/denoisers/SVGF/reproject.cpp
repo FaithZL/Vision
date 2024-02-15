@@ -23,8 +23,6 @@ void Reproject::compile() noexcept {
         OCPixelData pixel_data = pixel_buffer.read(dispatch_id());
         Float4 radiance = radiance_buffer.read(dispatch_id());
         Float3 illumination = demodulate(radiance.xyz() - pixel_data.emission.as_vec(), pixel_data.albedo.as_vec());
-//        $condition_info("{} {} {}   {}   {}   {}  --------------", radiance.xyz(), pixel_data.emission.as_vec());
-//      radiance_buffer.write(dispatch_id(), make_float4(illumination, 1.f));
 
         BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer<SVGFData>(cur_index);
         BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer<SVGFData>(prev_index);

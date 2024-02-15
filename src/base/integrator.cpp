@@ -264,7 +264,6 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             mis_bsdf(bounce, false);
         };
     }
-
     return spectrum().linear_srgb(value, swl);
 }
 

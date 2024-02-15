@@ -812,13 +812,13 @@
 				}
 			},
 			"filter" : {
-//				"type" : "box",
-				"type" : "mitchell",
+				"type" : "box",
+//				"type" : "mitchell",
 				"name" : "boxFilter",
 				"param" : {
 					"radius" : [
-						2,
-						2
+						0.5,
+						0.5
 					]
 				}
 			}
@@ -979,7 +979,7 @@
 		"polymorphic_mode" : 1
 	},
 	"denoiser" : {
-		"type" : "svgf",
+		"type" : "oidn",
 		"param" : {
 			"N" : 2,
 			"filter" : {
