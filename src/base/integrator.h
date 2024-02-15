@@ -97,7 +97,7 @@ protected:
     Serial<uint> _min_depth{};
     Serial<float> _rr_threshold{};
     MISMode _mis_mode{};
-    RegistrableBuffer<PixelData> _pixel_data{};
+    mutable RegistrableBuffer<PixelData> _pixel_data{};
     /// Material computation is separated from access memory
     bool _separate{false};
     SP<Denoiser> _denoiser{};
@@ -154,7 +154,7 @@ public:
 
     void prepare() noexcept override;
 
-    [[nodiscard]] CommandList denoise() noexcept;
+    [[nodiscard]] CommandList denoise() const noexcept;
 
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(const Interaction &it, const SF &sf, LightSample ls,

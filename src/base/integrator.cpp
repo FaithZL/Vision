@@ -58,7 +58,7 @@ void IlluminationIntegrator::prepare() noexcept {
     init_buffer(_pixel_data, "IlluminationIntegrator::_pixel_data");
 }
 
-CommandList IlluminationIntegrator::denoise() noexcept {
+CommandList IlluminationIntegrator::denoise() const noexcept {
     CommandList ret;
     if (!_denoiser) {
         return ret;

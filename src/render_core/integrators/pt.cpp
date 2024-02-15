@@ -46,6 +46,7 @@ public:
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
         stream << _shader(_host_frame_index++).dispatch(rp->resolution());
+        stream << denoise();
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();
