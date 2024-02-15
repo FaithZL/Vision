@@ -37,7 +37,7 @@ CommandList SVGF::dispatch(vision::DenoiseInput &input) noexcept {
     ret << _filter_moment.dispatch(input);
     for (int i = 0; i < N; ++i) {
         uint step_width = 1 << i;
-        ret = _atrous.dispatch(input, step_width);
+        ret << _atrous.dispatch(input, step_width);
     }
     return ret;
 }

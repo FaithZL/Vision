@@ -64,6 +64,7 @@ CommandList IlluminationIntegrator::denoise() const noexcept {
         return ret;
     }
     vision::DenoiseInput input;
+    input.resolution = pipeline()->resolution();
     input.pixel_data = &_pixel_data;
     input.radiance = &(scene().camera()->radiance_film()->original_buffer());
     input.gpu_output = &(scene().camera()->radiance_film()->denoised_buffer());

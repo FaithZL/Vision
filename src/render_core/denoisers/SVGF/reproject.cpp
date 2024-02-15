@@ -18,11 +18,15 @@ void Reproject::prepare() noexcept {
 }
 
 void Reproject::compile() noexcept {
-
+    Kernel kernel = [&](BufferVar<PixelData> pixel_data, BufferVar<float4> radiance) {
+        
+    };
+    _shader = device().compile(kernel, "SVGF-reproject");
 }
 
 CommandList Reproject::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
+    ret << _shader(*input.pixel_data, *input.radiance).dispatch(input.resolution);
     return ret;
 }
 
