@@ -21,6 +21,14 @@ void SVGF::prepare_buffers() {
     svgf_data.register_self(rp->pixel_num(), rp->pixel_num());
 }
 
+uint SVGF::cur_svgf_index(ocarina::uint frame_index) const noexcept {
+    return ((frame_index + 1) & 1) + svgf_data_base();
+}
+
+uint SVGF::prev_svgf_index(ocarina::uint frame_index) const noexcept {
+    return ((frame_index) & 1) + svgf_data_base();
+}
+
 void SVGF::prepare() noexcept {
     prepare_buffers();
     _compute_gbuffer.prepare();

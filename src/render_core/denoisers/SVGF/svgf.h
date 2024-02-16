@@ -71,6 +71,8 @@ public:
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare_buffers();
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }
+    [[nodiscard]] uint cur_svgf_index(uint frame_index) const noexcept;
+    [[nodiscard]] uint prev_svgf_index(uint frame_index) const noexcept;
     void prepare() noexcept override;
     void compile() noexcept override;
     [[nodiscard]] CommandList dispatch(vision::DenoiseInput &input) noexcept override;

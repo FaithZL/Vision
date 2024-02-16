@@ -40,8 +40,8 @@ void Reproject::compile() noexcept {
 
 CommandList Reproject::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
-    uint cur_index = ((input.frame_index + 1) & 1) + _svgf->svgf_data_base();
-    uint prev_index = ((input.frame_index) & 1) + _svgf->svgf_data_base();
+    uint cur_index = _svgf->cur_svgf_index(input.frame_index);
+    uint prev_index = _svgf->prev_svgf_index(input.frame_index);
     ret << _shader(*input.pixel_buffer, *input.radiance, cur_index, prev_index).dispatch(input.resolution);
     return ret;
 }

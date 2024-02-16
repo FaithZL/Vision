@@ -36,13 +36,14 @@ struct PixelData {
     array<float, 3> emission{};
     array<float, 3> ng{};
     float normal_fwidth{};
+    float depth_gradient{};
     float2 motion_vec{};
     float linear_depth{-1};
 };
 }// namespace vision
 // clang-format off
 OC_STRUCT(vision::PixelData, albedo,emission, ng,
-            normal_fwidth, motion_vec,linear_depth) {};
+            normal_fwidth,depth_gradient, motion_vec,linear_depth) {};
 // clang-format on
 namespace vision {
 using OCPixelData = ocarina::Var<PixelData>;
