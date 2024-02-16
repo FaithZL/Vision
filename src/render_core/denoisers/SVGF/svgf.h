@@ -5,6 +5,7 @@
 #include "core/basic_types.h"
 #include "dsl/dsl.h"
 #include "base/denoiser.h"
+#include "compute_gbuffer.h"
 #include "reproject.h"
 #include "filter_moment.h"
 #include "atrous.h"
@@ -36,6 +37,7 @@ public:
     Buffer<float> history;
 
 private:
+    ComputeGBuffer _compute_gbuffer{this};
     Reproject _reproject{this};
     FilterMoment _filter_moment{this};
     AtrousFilter _atrous;

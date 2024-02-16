@@ -23,12 +23,14 @@ void SVGF::prepare_buffers() {
 
 void SVGF::prepare() noexcept {
     prepare_buffers();
+    _compute_gbuffer.prepare();
     _reproject.prepare();
     _filter_moment.prepare();
     _atrous.prepare();
 }
 
 void SVGF::compile() noexcept {
+    _compute_gbuffer.compile();
     _reproject.compile();
     _filter_moment.compile();
     _atrous.compile();
@@ -36,6 +38,7 @@ void SVGF::compile() noexcept {
 
 CommandList SVGF::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
+    ret << _compute_gbuffer.dispatch(input);
     ret << _reproject.dispatch(input);
     ret << _filter_moment.dispatch(input);
     for (int i = 0; i < N; ++i) {

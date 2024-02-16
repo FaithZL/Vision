@@ -26,6 +26,14 @@ void Reproject::compile() noexcept {
 
         BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer<SVGFData>(cur_index);
         BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer<SVGFData>(prev_index);
+
+        Float history = 0.f;
+        Float3 prev_illumination = make_float3(0.f);
+        Float2 prev_moments = make_float2(0.f);
+
+        Bool valid = false;
+
+
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
