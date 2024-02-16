@@ -19,6 +19,7 @@ void ComputeGBuffer::compile() noexcept {
 
 CommandList ComputeGBuffer::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
+    ret << _shader(input.frame_index, *input.pixel_buffer).dispatch(pipeline()->resolution());
     return ret;
 }
 
