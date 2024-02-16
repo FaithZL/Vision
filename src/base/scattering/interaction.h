@@ -31,6 +31,18 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using namespace ocarina;
+struct ColorData {
+    array<float, 3> albedo{};
+    array<float, 3> emission{};
+    array<float, 3> radiance{};
+};
+}// namespace vision
+// clang-format off
+OC_STRUCT(vision::ColorData, albedo,emission, radiance) {};
+// clang-format on
+
+namespace vision {
+using namespace ocarina;
 struct PixelData {
     array<float, 3> albedo{};
     array<float, 3> emission{};
@@ -47,7 +59,8 @@ OC_STRUCT(vision::PixelData, albedo,emission, ng,
 // clang-format on
 namespace vision {
 using OCPixelData = ocarina::Var<PixelData>;
-}
+using OCColorData = ocarina::Var<ColorData>;
+}// namespace vision
 
 namespace vision {
 using namespace ocarina;

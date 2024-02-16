@@ -29,7 +29,7 @@ Bool Reproject::load_prev_data(const OCPixelData &pixel_data, Float *history,
     Float depth_gradient = pixel_data.depth_gradient;
 
 
-    
+
 
     return ret;
 }
