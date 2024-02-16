@@ -17,6 +17,23 @@ VS_MAKE_CALLABLE(demodulate)
 void Reproject::prepare() noexcept {
 }
 
+Bool Reproject::load_prev_data(const OCPixelData &pixel_data, Float *history,
+                               Float3 *prev_illumination, Float2 *prev_moments) const noexcept {
+    Bool ret = true;
+    Float2 motion_vec = pixel_data.motion_vec;
+    Uint2 pos = dispatch_idx().xy();
+    Uint2 prev_pos = make_uint2(make_float2(pos) - motion_vec);
+
+    Float3 normal = pixel_data.ng.as_vec();
+    Float depth = pixel_data.linear_depth;
+    Float depth_gradient = pixel_data.depth_gradient;
+
+
+    
+
+    return ret;
+}
+
 void Reproject::compile() noexcept {
     Kernel kernel = [&](BufferVar<PixelData> pixel_buffer, BufferVar<float4> radiance_buffer,
                         Uint cur_index, Uint prev_index) {
@@ -31,7 +48,8 @@ void Reproject::compile() noexcept {
         Float3 prev_illumination = make_float3(0.f);
         Float2 prev_moments = make_float2(0.f);
 
-        Bool valid = false;
+        Bool valid = load_prev_data(pixel_data, &history, &prev_illumination, &prev_moments);
+
 
 
     };
