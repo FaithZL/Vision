@@ -9,11 +9,13 @@ namespace vision {
 void SVGF::prepare_buffers() {
     Pipeline *rp = pipeline();
     auto init_buffer = [&]<typename T>(Buffer<T> &buffer, uint num, const string &desc = "") {
-        buffer = device().create_buffer<T>(rp->pixel_num(), desc);
-        vector<T> vec{rp->pixel_num(), T{}};
+        buffer = device().create_buffer<T>(num, desc);
+        vector<T> vec;
+        vec.assign(num, T{});
         buffer.upload_immediately(vec.data());
     };
-    init_buffer(prev_depth_normal, rp->pixel_num(), "SVGF::prev_depth_normal");
+    init_buffer(prev_normal_depth, rp->pixel_num(), "SVGF::prev_normal_depth");
+    init_buffer(history, rp->pixel_num(), "SVGF::history");
     init_buffer(svgf_data, rp->pixel_num() * 2, "SVGF::svgf_data x 2");
     svgf_data.register_self(0, rp->pixel_num());
     svgf_data.register_self(rp->pixel_num(), rp->pixel_num());

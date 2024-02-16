@@ -31,8 +31,9 @@ using SVGFDataVar = Var<SVGFData>;
 
 class SVGF : public Denoiser {
 public:
-    Buffer<float4> prev_depth_normal;
+    Buffer<float4> prev_normal_depth;
     RegistrableBuffer<SVGFData> svgf_data;
+    Buffer<float> history;
 
 private:
     Reproject _reproject{this};
