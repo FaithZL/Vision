@@ -43,7 +43,7 @@ public:
     [[nodiscard]] static decltype(auto) node_mgr() {
         return NodeMgr::instance();
     }
-    [[nodiscard]] static decltype(auto) context() {
+    [[nodiscard]] static decltype(auto) file_manager() {
         return FileManager::instance();
     }
 };

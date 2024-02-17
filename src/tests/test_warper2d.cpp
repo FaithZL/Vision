@@ -14,11 +14,11 @@ using namespace ocarina;
 
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
-    FileManager context(path.parent_path());
-    Device device = context.create_device("cuda");
+    FileManager file_manager(path.parent_path());
+    Device device = file_manager.create_device("cuda");
     device.init_rtx();
     Stream stream = device.create_stream();
-    context.clear_cache();
+    file_manager.clear_cache();
 
     auto path1 = R"(E:/work/compile/vision/res/spruit_sunrise_2k.hdr)";
 
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     WarperDesc desc = WarperDesc("Warper");
     desc.sub_type = "alias";
 
-    const DynamicModule *module = context.obtain_module(desc.plugin_name());
+    const DynamicModule *module = file_manager.obtain_module(desc.plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
     auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
     auto node = Node::Wrapper(creator(desc), deleter);

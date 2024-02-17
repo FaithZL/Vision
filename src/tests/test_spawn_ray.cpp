@@ -46,11 +46,11 @@ auto get_cube(float x = 1, float y = 1, float z = 1) {
 
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
-    FileManager context(path.parent_path());
-    Device device = context.create_device("cuda");
+    FileManager file_manager(path.parent_path());
+    Device device = file_manager.create_device("cuda");
     device.init_rtx();
     Stream stream = device.create_stream();
-//    context.clear_cache();
+//    file_manager.clear_cache();
     float3 vec = make_float3(2);
     float4x4 mat = scale(2);
     Transform tsf = Transform(mat);
