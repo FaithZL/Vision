@@ -219,6 +219,13 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct GBufferDesc : public NodeDesc {
+
+public:
+    VISION_DESC_COMMON(GBuffer)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct PipelineDesc : public NodeDesc {
 public:
     mutable Device *device{nullptr};

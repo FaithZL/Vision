@@ -6,7 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
-#include "scattering/interaction.h"
+#include "gbuffer.h"
 
 namespace vision {
 
