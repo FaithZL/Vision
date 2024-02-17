@@ -35,23 +35,23 @@ void ComputeGBuffer::compile_compute_grad() noexcept {
             OCPixelGeometry neighbor_data = pixel_buffer.read(index);
             $if(center.x > pixel.x) {
                 x_sample_num += 1;
-                normal_dx += center_data.ng.as_vec() - neighbor_data.ng.as_vec();
+                normal_dx += center_data.normal.as_vec() - neighbor_data.normal.as_vec();
                 depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.x > center.x) {
                 x_sample_num += 1;
-                normal_dx += neighbor_data.ng.as_vec() - center_data.ng.as_vec();
+                normal_dx += neighbor_data.normal.as_vec() - center_data.normal.as_vec();
                 depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
             };
 
             $if(center.y > pixel.y) {
                 y_sample_num += 1;
-                normal_dy += center_data.ng.as_vec() - neighbor_data.ng.as_vec();
+                normal_dy += center_data.normal.as_vec() - neighbor_data.normal.as_vec();
                 depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.y > center.y) {
                 y_sample_num += 1;
-                normal_dy += neighbor_data.ng.as_vec() - center_data.ng.as_vec();
+                normal_dy += neighbor_data.normal.as_vec() - center_data.normal.as_vec();
                 depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
             };
         });

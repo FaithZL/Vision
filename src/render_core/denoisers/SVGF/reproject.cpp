@@ -24,7 +24,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, Float *history,
     Uint2 pos = dispatch_idx().xy();
     Uint2 prev_pos = make_uint2(make_float2(pos) - motion_vec);
 
-    Float3 normal = geom_data.ng.as_vec();
+    Float3 normal = geom_data.normal.as_vec();
     Float depth = geom_data.linear_depth;
     Float depth_gradient = geom_data.depth_gradient;
 

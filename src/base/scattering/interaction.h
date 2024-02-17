@@ -43,7 +43,7 @@ OC_STRUCT(vision::PixelColor, albedo,emission) {};
 namespace vision {
 using namespace ocarina;
 struct PixelGeometry {
-    array<float, 3> ng{};
+    array<float, 3> normal{};
     float normal_fwidth{};
     float depth_gradient{};
     float2 motion_vec{};
@@ -51,7 +51,7 @@ struct PixelGeometry {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelGeometry, ng,
+OC_STRUCT(vision::PixelGeometry, normal,
             normal_fwidth,depth_gradient, motion_vec,linear_depth) {};
 // clang-format on
 namespace vision {
