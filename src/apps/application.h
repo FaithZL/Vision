@@ -9,7 +9,7 @@
 #include "descriptions/scene_desc.h"
 #include "core/stl.h"
 #include "base/mgr/pipeline.h"
-#include "rhi/context.h"
+#include "util/context.h"
 #include "util/image_io.h"
 #include "core/logging.h"
 #include "base/denoiser.h"
