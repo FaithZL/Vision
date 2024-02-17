@@ -65,7 +65,7 @@ public:
 public:
     App(int argc, char *argv[])
         : cli_parser(make_unique<CLIParser>(argc, argv)),
-          device(Context::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())) {
+          device(FileManager::instance().init(fs::path(argv[0]).parent_path()).create_device(cli_parser->backend())) {
         init(argc);
     }
     void init(int argc = 0);

@@ -13,7 +13,7 @@ using namespace ocarina;
 
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
-    Context context(path.parent_path());
+    FileManager context(path.parent_path());
     Device device = context.create_device("cuda");
     device.init_rtx();
     Stream stream = device.create_stream();

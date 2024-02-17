@@ -44,7 +44,7 @@ public:
         return NodeMgr::instance();
     }
     [[nodiscard]] static decltype(auto) context() {
-        return Context::instance();
+        return FileManager::instance();
     }
 };
 

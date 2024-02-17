@@ -107,8 +107,8 @@ void VisionRendererImpl::invalidation() {
 
 void VisionRendererImpl::init_pipeline(const char *rpath) {
     PipelineDesc desc;
-    Context::instance().init(rpath);
-    _device = make_unique<Device>(Context::instance().create_device("cuda"));
+    FileManager::instance().init(rpath);
+    _device = make_unique<Device>(FileManager::instance().create_device("cuda"));
     _device->init_rtx();
     Global::instance().set_device(_device.get());
     desc.device = _device.get();

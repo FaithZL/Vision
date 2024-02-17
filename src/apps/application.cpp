@@ -26,7 +26,7 @@ void App::init(int argc) {
     params.init(cli_parser.get());
     device.init_rtx();
     if (params.clear_cache) {
-        Context::instance().clear_cache();
+        FileManager::instance().clear_cache();
     }
     if (cli_parser) {
         cli_parser->try_print_help_and_exit();
@@ -43,7 +43,7 @@ void App::init_pipeline() {
 void App::prepare() {
     init_pipeline();
     pipeline().prepare();
-    window = Context::instance().create_window("LajiRender", pipeline().resolution(), "gl");
+    window = FileManager::instance().create_window("LajiRender", pipeline().resolution(), "gl");
     register_event();
 }
 

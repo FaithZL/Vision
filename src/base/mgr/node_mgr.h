@@ -27,7 +27,7 @@ public:
     static void destroy_instance() noexcept;
     template<typename T, typename desc_ty>
     [[nodiscard]] SP<T> load(const desc_ty &desc) {
-        const DynamicModule *module = Context::instance().obtain_module(desc.plugin_name());
+        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
         auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
         auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
         SP<T> ret = SP<T>(dynamic_cast<T *>(creator(desc)), deleter);
