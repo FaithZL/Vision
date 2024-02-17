@@ -38,17 +38,17 @@ void Reproject::compile() noexcept {
     Kernel kernel = [&](BufferVar<PixelGeometry> pixel_buffer, BufferVar<float4> radiance_buffer,
                         Uint cur_index, Uint prev_index) {
         OCPixelGeometry geom_data = pixel_buffer.read(dispatch_id());
-        Float4 radiance = radiance_buffer.read(dispatch_id());
-        Float3 illumination = demodulate(radiance.xyz() - geom_data.emission.as_vec(), geom_data.albedo.as_vec());
-
-        BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer<SVGFData>(cur_index);
-        BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer<SVGFData>(prev_index);
-
-        Float history = 0.f;
-        Float3 prev_illumination = make_float3(0.f);
-        Float2 prev_moments = make_float2(0.f);
-
-        Bool valid = load_prev_data(geom_data, &history, &prev_illumination, &prev_moments);
+//        Float4 radiance = radiance_buffer.read(dispatch_id());
+//        Float3 illumination = demodulate(radiance.xyz() - geom_data.emission.as_vec(), geom_data.albedo.as_vec());
+//
+//        BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer<SVGFData>(cur_index);
+//        BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer<SVGFData>(prev_index);
+//
+//        Float history = 0.f;
+//        Float3 prev_illumination = make_float3(0.f);
+//        Float2 prev_moments = make_float2(0.f);
+//
+//        Bool valid = load_prev_data(geom_data, &history, &prev_illumination, &prev_moments);
 
 
 
