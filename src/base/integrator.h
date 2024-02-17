@@ -97,7 +97,7 @@ protected:
     Serial<uint> _min_depth{};
     Serial<float> _rr_threshold{};
     MISMode _mis_mode{};
-    mutable RegistrableBuffer<PixelData> _pixel_buffer{};
+    mutable RegistrableBuffer<PixelGeometry> _pixel_buffer{};
     /// Material computation is separated from access memory
     bool _separate{false};
     SP<Denoiser> _denoiser{};

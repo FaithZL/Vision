@@ -11,7 +11,7 @@ void ComputeGBuffer::prepare() noexcept {
 }
 
 void ComputeGBuffer::compile() noexcept {
-    Kernel kernel = [&](Uint frame_index, BufferVar<PixelData> pixel_buffer) {
+    Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> pixel_buffer) {
         Int2 radius = make_int2(1);
         Uint x_sample_num = 0u;
         Uint y_sample_num = 0u;
@@ -22,10 +22,10 @@ void ComputeGBuffer::compile() noexcept {
         Float depth_dy = 0.f;
 
         Uint2 center = dispatch_idx().xy();
-        OCPixelData center_data = pixel_buffer.read(dispatch_id());
+        OCPixelGeometry center_data = pixel_buffer.read(dispatch_id());
         for_each_neighbor(radius, [&](const Int2 &pixel) {
             Uint index = dispatch_id(pixel);
-            OCPixelData neighbor_data = pixel_buffer.read(index);
+            OCPixelGeometry neighbor_data = pixel_buffer.read(index);
             $if(center.x > pixel.x) {
                 x_sample_num += 1;
                 normal_dx += center_data.ng.as_vec() - neighbor_data.ng.as_vec();

@@ -29,10 +29,7 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
-            OCPixelData pixel_data;
-            Env::instance().set("p_film", ss.p_film);
-            Float3 L = Li(rs, scatter_pdf, spectrum().one(), {pixel_data}, render_env) * ss.filter_weight;
-            _pixel_buffer.write(dispatch_id(), pixel_data);
+            Float3 L = Li(rs, scatter_pdf, spectrum().one(), {}, render_env) * ss.filter_weight;
             camera->radiance_film()->add_sample(pixel, L, frame_index);
         };
         _shader = device().compile(kernel, "path tracing integrator");
@@ -43,7 +40,7 @@ public:
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
         stream << _shader(_frame_index).dispatch(rp->resolution());
-        stream << denoise();
+//        stream << denoise();
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

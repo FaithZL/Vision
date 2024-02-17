@@ -16,7 +16,7 @@ class SVGF;
 class Reproject : public Ctx {
 private:
     SVGF *_svgf{nullptr};
-    using signature = void(Buffer<PixelData>, Buffer<float4>, uint, uint);
+    using signature = void(Buffer<PixelGeometry>, Buffer<float4>, uint, uint);
     Shader<signature> _shader;
 
 public:
@@ -25,7 +25,7 @@ public:
     void prepare() noexcept;
     [[nodiscard]] Bool is_neighbor(Int2 coord, Float depth, Float prev_depth, Float depth_fwidth, Float3 normal,
                                    Float3 prev_normal, Float normal_fwidth) const noexcept;
-    [[nodiscard]] Bool load_prev_data(const OCPixelData &pixel_data, Float *history,
+    [[nodiscard]] Bool load_prev_data(const OCPixelGeometry &geom_data, Float *history,
                                       Float3 *prev_illumination,
                                       Float2 *prev_moments) const noexcept;
     void compile() noexcept;

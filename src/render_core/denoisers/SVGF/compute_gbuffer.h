@@ -18,7 +18,7 @@ class SVGF;
 class ComputeGBuffer : public Ctx {
 private:
     SVGF *_svgf{nullptr};
-    Shader<void(uint, Buffer<PixelData>)> _shader;
+    Shader<void(uint, Buffer<PixelGeometry>)> _shader;
 
 public:
     explicit ComputeGBuffer(SVGF *svgf)

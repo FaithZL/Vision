@@ -31,21 +31,18 @@ OC_STRUCT(vision::SurfaceData, hit, normal_t, mat_id) {
 
 namespace vision {
 using namespace ocarina;
-struct ColorData {
+struct PixelColor {
     array<float, 3> albedo{};
     array<float, 3> emission{};
-    array<float, 3> radiance{};
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::ColorData, albedo,emission, radiance) {};
+OC_STRUCT(vision::PixelColor, albedo,emission) {};
 // clang-format on
 
 namespace vision {
 using namespace ocarina;
-struct PixelData {
-    array<float, 3> albedo{};
-    array<float, 3> emission{};
+struct PixelGeometry {
     array<float, 3> ng{};
     float normal_fwidth{};
     float depth_gradient{};
@@ -54,12 +51,12 @@ struct PixelData {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelData, albedo,emission, ng,
+OC_STRUCT(vision::PixelGeometry, ng,
             normal_fwidth,depth_gradient, motion_vec,linear_depth) {};
 // clang-format on
 namespace vision {
-using OCPixelData = ocarina::Var<PixelData>;
-using OCColorData = ocarina::Var<ColorData>;
+using OCPixelGeometry = ocarina::Var<PixelGeometry>;
+using OCPixelColor = ocarina::Var<PixelColor>;
 }// namespace vision
 
 namespace vision {
@@ -260,7 +257,6 @@ struct HitContext {
 public:
     mutable OCHit *hit{};
     mutable Interaction *it{};
-    mutable OCPixelData *pixel_data{};
 
 public:
     HitContext() = default;
@@ -268,8 +264,6 @@ public:
         : it(&it) {}
     HitContext(OCHit &hit)
         : hit(&hit) {}
-    HitContext(OCPixelData &p)
-        : pixel_data(&p) {}
     HitContext(OCHit &hit, Interaction &it) {
         this->hit = &hit;
         this->it = &it;

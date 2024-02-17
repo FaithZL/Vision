@@ -169,11 +169,6 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
             weight = correct_bsdf_weight(weight, bounces);
             value += eval.L * throughput * weight * tr;
-            if (hc.pixel_data) {
-                $if(bounces == 0) {
-                    hc.pixel_data->emission.set(spectrum().linear_srgb(eval.L, swl));
-                };
-            }
         };
         prev_surface_ng = it.ng;
     };
@@ -226,17 +221,6 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             };
         } else {
             sample_surface();
-        }
-
-        if (hc.pixel_data) {
-            $if(bounces == 0) {
-                hc.pixel_data->albedo.set(albedo);
-                hc.pixel_data->ng.set(it.ng);
-                hc.pixel_data->linear_depth = rs.t_max();
-                Env::instance().execute_if<Float2>("p_film", [&](Float2 &p_film) {
-                    hc.pixel_data->motion_vec = compute_motion_vec(p_film, it.pos, true);
-                });
-            };
         }
 
         value += throughput * Ld * tr;
