@@ -10,7 +10,14 @@ namespace vision {
 void ComputeGBuffer::prepare() noexcept {
 }
 
-void ComputeGBuffer::compile() noexcept {
+void ComputeGBuffer::compile_compute_geom() noexcept {
+    Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> pixel_buffer) {
+
+    };
+    _compute_geometry = device().compile(kernel, "SVGF_compute_geometry");
+}
+
+void ComputeGBuffer::compile_compute_grad() noexcept {
     Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> pixel_buffer) {
         Int2 radius = make_int2(1);
         Uint x_sample_num = 0u;
@@ -58,13 +65,21 @@ void ComputeGBuffer::compile() noexcept {
         center_data.depth_gradient = abs(depth_dx) + abs(depth_dy);
         pixel_buffer.write(dispatch_id(), center_data);
     };
-    _shader = device().compile(kernel, "SVGF-ComputeGBuffer");
+    _compute_gradiant = device().compile(kernel, "SVGF_compute_gradiant");
+}
+
+void ComputeGBuffer::compile() noexcept {
+    compile_compute_geom();
+    compile_compute_grad();
 }
 
 CommandList ComputeGBuffer::dispatch(vision::DenoiseInput &input) noexcept {
     CommandList ret;
-    ret << _shader(input.frame_index,
-                   *input.pixel_buffer)
+    ret << _compute_geometry(input.frame_index,
+                             *input.gbuffer)
+               .dispatch(pipeline()->resolution());
+    ret << _compute_gradiant(input.frame_index,
+                             *input.gbuffer)
                .dispatch(pipeline()->resolution());
     return ret;
 }

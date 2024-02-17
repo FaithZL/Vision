@@ -15,7 +15,7 @@ struct DenoiseInput {
     uint frame_index{};
 
     // real time denoise
-    Buffer<PixelGeometry> *pixel_buffer{};
+    Buffer<PixelGeometry> *gbuffer{};
     Buffer<float4> *radiance{};
     Buffer<float4> *gpu_output{};
 
