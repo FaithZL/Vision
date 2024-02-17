@@ -13,7 +13,7 @@ namespace vision {
 
 class SVGF;
 
-class FilterMoment : public Ctx {
+class FilterMoment : public Context {
 private:
     SVGF *_svgf{nullptr};
 

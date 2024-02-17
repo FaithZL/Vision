@@ -12,7 +12,7 @@
 namespace vision {
 using namespace ocarina;
 
-class DilateFilter : public Ctx {
+class DilateFilter : public Context {
 private:
     int _padding{};
     using signature = void(Buffer<uint4>, Buffer<float4>, Buffer<float4>);

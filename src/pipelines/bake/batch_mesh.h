@@ -10,7 +10,7 @@
 
 namespace vision {
 
-struct BatchMesh : public Ctx {
+struct BatchMesh : public Context {
 private:
     Buffer<Triangle> _triangles;
     Buffer<Vertex> _vertices;

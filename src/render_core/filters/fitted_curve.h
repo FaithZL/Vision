@@ -13,7 +13,7 @@
 
 namespace vision {
 using namespace ocarina;
-class FilterSampler : public Ctx {
+class FilterSampler : public Context {
 public:
     static constexpr int table_size = 20;
 

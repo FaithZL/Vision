@@ -52,23 +52,23 @@ void Global::destroy_instance() {
     }
 }
 
-Pipeline *Ctx::pipeline() noexcept {
+Pipeline *Context::pipeline() noexcept {
     return Global::instance().pipeline();
 }
 
-Device &Ctx::device() noexcept {
+Device &Context::device() noexcept {
     return pipeline()->device();
 }
 
-Scene &Ctx::scene() noexcept {
+Scene &Context::scene() noexcept {
     return pipeline()->scene();
 }
 
-Spectrum &Ctx::spectrum() noexcept {
+Spectrum &Context::spectrum() noexcept {
     return *scene().spectrum();
 }
 
-Stream &Ctx::stream() noexcept {
+Stream &Context::stream() noexcept {
     return pipeline()->stream();
 }
 

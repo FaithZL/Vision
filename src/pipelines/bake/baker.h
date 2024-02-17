@@ -12,7 +12,7 @@
 
 namespace vision {
 
-class Baker : public Ctx {
+class Baker : public Context {
 private:
     BakerStats &_baker_stats;
     Buffer<float4> _radiance;

@@ -16,7 +16,7 @@ namespace vision {
 class RayTracingIntegrator;
 using namespace vision::ReSTIRIndirect;
 
-class ReSTIRIndirectIllumination : public SerialObject, public Ctx, public RenderEnv {
+class ReSTIRIndirectIllumination : public SerialObject, public Context, public RenderEnv {
 private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;

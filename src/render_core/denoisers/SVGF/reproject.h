@@ -13,7 +13,7 @@ namespace vision {
 
 class SVGF;
 
-class Reproject : public Ctx {
+class Reproject : public Context {
 private:
     SVGF *_svgf{nullptr};
     using signature = void(Buffer<PixelGeometry>, Buffer<float4>, uint, uint);

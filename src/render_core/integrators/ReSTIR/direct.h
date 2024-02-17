@@ -20,7 +20,7 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDirectIllumination : public SerialObject, public Ctx, public RenderEnv {
+class ReSTIRDirectIllumination : public SerialObject, public Context, public RenderEnv {
 private:
     RayTracingIntegrator *_integrator{};
     uint M_light{};

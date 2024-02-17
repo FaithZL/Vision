@@ -15,7 +15,7 @@ namespace vision {
 
 class SVGF;
 
-class ComputeGBuffer : public Ctx {
+class ComputeGBuffer : public Context {
 private:
     SVGF *_svgf{nullptr};
     Shader<void(uint, Buffer<PixelGeometry>)> _compute_geometry;

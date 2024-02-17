@@ -48,9 +48,9 @@ public:
     }
 };
 
-class Ctx {
+class Context {
 protected:
-    Ctx() = default;
+    Context() = default;
 
 public:
     [[nodiscard]] static Device &device() noexcept;

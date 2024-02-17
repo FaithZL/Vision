@@ -16,7 +16,7 @@ using namespace ocarina;
 
 class SVGF;
 
-class AtrousFilter : public Ctx {
+class AtrousFilter : public Context {
 private:
     SP<Filter> _filter;
     SVGF *_svgf{nullptr};

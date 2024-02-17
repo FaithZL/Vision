@@ -38,7 +38,7 @@ struct MergedMesh {
     vector<Triangle> triangles;
 };
 
-struct BakedShape : public Ctx {
+struct BakedShape : public Context {
 private:
     ShapeInstance *_shape{};
     Texture _lightmap_tex;
