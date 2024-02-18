@@ -175,13 +175,13 @@ public:
 
 class BufferMgr {
 protected:
-    RegistrableBuffer<float3> _radiance0;
-    RegistrableBuffer<float3> _radiance1;
+    RegistrableBuffer<float3> _bufferA;
+    RegistrableBuffer<float3> _bufferB;
 
 public:
     BufferMgr();
-    OC_MAKE_MEMBER_GETTER(radiance0, &)
-    OC_MAKE_MEMBER_GETTER(radiance1, &)
+    OC_MAKE_MEMBER_GETTER(bufferA, &)
+    OC_MAKE_MEMBER_GETTER(bufferB, &)
 };
 
 class RayTracingIntegrator : public BufferMgr, public IlluminationIntegrator {

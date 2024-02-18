@@ -248,7 +248,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
 }
 
 BufferMgr::BufferMgr()
-    : _radiance0{Global::instance().pipeline()->bindless_array()},
-      _radiance1{Global::instance().pipeline()->bindless_array()} {}
+    : _bufferA{Global::instance().pipeline()->bindless_array()},
+      _bufferB{Global::instance().pipeline()->bindless_array()} {}
 
 }// namespace vision

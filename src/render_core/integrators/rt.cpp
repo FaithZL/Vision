@@ -38,8 +38,8 @@ public:
             buffer.upload_immediately(vec.data());
             buffer.register_self();
         };
-        init_buffer(_radiance0, "RealTimeIntegrator::_radiance0");
-        init_buffer(_radiance1, "RealTimeIntegrator::_radiance1");
+        init_buffer(_bufferA, "RealTimeIntegrator::_bufferA");
+        init_buffer(_bufferB, "RealTimeIntegrator::_bufferB");
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_motion_vectors();
@@ -52,8 +52,8 @@ public:
         Camera *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index) {
             camera->load_data();
-            Float3 direct = radiance0().read(dispatch_id()) * _direct.factor();
-            Float3 indirect = radiance1().read(dispatch_id()) * _indirect.factor();
+            Float3 direct = bufferA().read(dispatch_id()) * _direct.factor();
+            Float3 indirect = bufferB().read(dispatch_id()) * _indirect.factor();
             Float3 L = direct + indirect;
             camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };

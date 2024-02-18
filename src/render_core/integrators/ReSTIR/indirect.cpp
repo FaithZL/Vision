@@ -55,7 +55,7 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
         initial(sampler(), frame_index, spectrum);
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
-            _integrator->radiance1().write(dispatch_id(), make_float3(0.f));
+            _integrator->bufferB().write(dispatch_id(), make_float3(0.f));
             $return();
         };
         camera->load_data();
@@ -237,7 +237,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         IIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
         rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()));
         Float3 L = shading(rsv, surf);
-        _integrator->radiance1().write(dispatch_id(), L);
+        _integrator->bufferB().write(dispatch_id(), L);
         cur_reservoirs().write(dispatch_id(), rsv);
     };
     _spatial_shading = device().async_compile(ocarina::move(kernel), "indirect spatial reuse and shading");
