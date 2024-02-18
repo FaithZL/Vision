@@ -55,6 +55,15 @@ protected:
 public:
     using Desc = FrameBufferDesc;
 
+protected:
+    [[nodiscard]] uint prev_index(uint frame_index) const noexcept {
+        return frame_index & 1;
+    }
+
+    [[nodiscard]] uint cur_index(uint frame_index) const noexcept {
+        return (frame_index + 1) & 1;
+    }
+
 public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
     void prepare() noexcept override;
@@ -74,6 +83,7 @@ public:
             buffer.register_view(pixel_num() * i, pixel_num());
         }
     }
+
     void prepare_surface_buffer() noexcept;
     void prepare_GBuffer() noexcept;
     virtual void compile() noexcept = 0;
