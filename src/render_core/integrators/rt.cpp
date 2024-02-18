@@ -39,7 +39,6 @@ public:
             buffer.upload_immediately(vec.data());
             buffer.register_self();
         };
-        init_buffer(_motion_vectors, "RealTimeIntegrator::_motion_vectors");
         init_buffer(_hit_bsdfs, "RealTimeIntegrator::_hit_bsdfs");
         init_buffer(_radiance0, "RealTimeIntegrator::_radiance0");
         init_buffer(_radiance1, "RealTimeIntegrator::_radiance1");

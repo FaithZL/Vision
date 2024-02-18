@@ -388,7 +388,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
         };
         DIReservoir rsv = RIS(hit->is_hit(), it);
         Float2 motion_vec = IlluminationIntegrator::compute_motion_vec(ss.p_film, it.pos, hit->is_hit());
-        _integrator->motion_vectors().write(dispatch_id(), motion_vec);
+        frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
 
         $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());

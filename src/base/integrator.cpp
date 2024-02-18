@@ -248,8 +248,7 @@ Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
 }
 
 BufferMgr::BufferMgr()
-    : _motion_vectors{Global::instance().pipeline()->bindless_array()},
-      _radiance0{Global::instance().pipeline()->bindless_array()},
+    : _radiance0{Global::instance().pipeline()->bindless_array()},
       _radiance1{Global::instance().pipeline()->bindless_array()},
       _surfaces{Global::instance().pipeline()->bindless_array()},
       _hit_bsdfs{Global::instance().pipeline()->bindless_array()} {}

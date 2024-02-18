@@ -175,7 +175,6 @@ public:
 
 class BufferMgr {
 protected:
-    RegistrableBuffer<float2> _motion_vectors{};
     RegistrableBuffer<SurfaceData> _surfaces{};
     RegistrableBuffer<HitBSDF> _hit_bsdfs{};
     RegistrableBuffer<float3> _radiance0;
@@ -183,7 +182,6 @@ protected:
 
 public:
     BufferMgr();
-    OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
     OC_MAKE_MEMBER_GETTER(radiance0, &)

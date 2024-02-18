@@ -145,7 +145,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
-        Float2 motion_vec = _integrator->motion_vectors().read(dispatch_id());
+        Float2 motion_vec = frame_buffer().motion_vectors().read(dispatch_id());
         rsv = temporal_reuse(rsv, surf, motion_vec, ss);
         passthrough_reservoirs().write(dispatch_id(), rsv);
     };
