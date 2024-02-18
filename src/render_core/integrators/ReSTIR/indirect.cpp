@@ -7,7 +7,7 @@
 
 namespace vision {
 
-ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(RayTracingIntegrator *integrator,
+ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(IlluminationIntegrator *integrator,
                                                        const vision::ParameterSet &desc)
     : _integrator(integrator),
       _spatial(desc["spatial"]),

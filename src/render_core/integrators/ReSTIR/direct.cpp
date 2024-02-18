@@ -7,7 +7,7 @@
 
 namespace vision {
 
-ReSTIRDirectIllumination::ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc)
+ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc)
     : _integrator(integrator),
       M_light(desc["M_light"].as_uint(10)),
       M_bsdf(desc["M_bsdf"].as_uint(1)),

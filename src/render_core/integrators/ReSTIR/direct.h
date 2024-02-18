@@ -22,7 +22,7 @@ class RayTracingIntegrator;
  */
 class ReSTIRDirectIllumination : public SerialObject, public Context, public RenderEnv {
 private:
-    RayTracingIntegrator *_integrator{};
+    IlluminationIntegrator *_integrator{};
     uint M_light{};
     uint M_bsdf{};
     bool _debias{false};
@@ -50,7 +50,7 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRDirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
+    ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc);
     OC_MAKE_MEMBER_GETTER(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;

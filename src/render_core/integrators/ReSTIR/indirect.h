@@ -21,7 +21,7 @@ private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
     bool _open{true};
-    RayTracingIntegrator *_integrator{};
+    IlluminationIntegrator *_integrator{};
 
     RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
     RegistrableBuffer<ReSTIRIndirect::RSVSample> _samples{pipeline()->bindless_array()};
@@ -43,7 +43,7 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRIndirectIllumination(RayTracingIntegrator *integrator, const ParameterSet &desc);
+    ReSTIRIndirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc);
     OC_MAKE_MEMBER_GETTER(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
