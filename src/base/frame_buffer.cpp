@@ -8,6 +8,8 @@
 namespace vision {
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
     : Node(desc), GBuffer(pipeline()->bindless_array()),
+      _motion_vectors(pipeline()->bindless_array()),
+      _surface_buffer(pipeline()->bindless_array()),
       _color_buffer(pipeline()->bindless_array()) {}
 
 uint FrameBuffer::pixel_num() const noexcept {
