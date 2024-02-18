@@ -48,6 +48,8 @@ protected:
     /// save two frames of data , use for ReSTIR
     RegistrableBuffer<SurfaceData> _surface_buffer;
 
+    RegistrableBuffer<float2> _motion_vector;
+
     RegistrableBuffer<PixelColor> _color_buffer;
 
 public:
@@ -56,6 +58,24 @@ public:
 public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
     void prepare() noexcept override;
+    [[nodiscard]] uint pixel_num() const noexcept;
+    [[nodiscard]] uint2 resolution() const noexcept;
+    [[nodiscard]] uint GBuffer_base() const noexcept { return GBuffer.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return _surface_buffer.index().hv(); }
+    template<typename T>
+    void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
+        uint element_num = count * pixel_num();
+        buffer.super() = device().create_buffer<T>(element_num, desc);
+        vector<T> vec{};
+        vec.assign(element_num, T{});
+        buffer.upload_immediately(vec.data());
+        buffer.register_self();
+        for (int i = 1; i < count; ++i) {
+            buffer.register_view(pixel_num() * i, pixel_num());
+        }
+    }
+    void prepare_surface_buffer() noexcept;
+    void prepare_GBuffer() noexcept;
     virtual void compile() noexcept = 0;
 };
 

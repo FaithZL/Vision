@@ -18,7 +18,7 @@ void SVGF::prepare_buffers() {
     init_buffer(history, rp->pixel_num(), "SVGF::history");
     init_buffer(svgf_data, rp->pixel_num() * 2, "SVGF::svgf_data x 2");
     svgf_data.register_self(0, rp->pixel_num());
-    svgf_data.register_self(rp->pixel_num(), rp->pixel_num());
+    svgf_data.register_view(rp->pixel_num(), rp->pixel_num());
 }
 
 uint SVGF::cur_svgf_index(ocarina::uint frame_index) const noexcept {
