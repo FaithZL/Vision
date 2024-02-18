@@ -13,6 +13,9 @@ public:
         : FrameBuffer(desc) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 
+    void compile() noexcept override {
+
+    }
 };
 
 }// namespace vision

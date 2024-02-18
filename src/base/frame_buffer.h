@@ -50,7 +50,7 @@ public:
 public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
     void prepare() noexcept override;
-    void compile() noexcept;
+    virtual void compile() noexcept = 0;
 };
 
 }// namespace vision
