@@ -48,6 +48,8 @@ public:
     }
 };
 
+class FrameBuffer;
+
 class Context {
 protected:
     Context() = default;
@@ -57,6 +59,7 @@ public:
     [[nodiscard]] static Stream &stream() noexcept;
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
+    [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
     [[nodiscard]] static Spectrum &spectrum() noexcept;
 };
 
