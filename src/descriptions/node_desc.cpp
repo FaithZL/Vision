@@ -220,7 +220,7 @@ void PassDesc::init(const vision::ParameterSet &ps) noexcept {
     set_parameter(param);
 }
 
-void GBufferDesc::init(const vision::ParameterSet &ps) noexcept {
+void FrameBufferDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);

@@ -39,17 +39,18 @@ using OCPixelColor = ocarina::Var<PixelColor>;
 
 namespace vision {
 
-class GBuffer : public Node {
+class FrameBuffer : public Node {
 protected:
-    RegistrableBuffer<PixelGeometry> _gbuffer0;
-    RegistrableBuffer<PixelGeometry> _gbuffer1;
+    RegistrableBuffer<PixelGeometry> _gbuffer;
     RegistrableBuffer<PixelColor> _color_buffer;
 
 public:
-    using Desc = GBufferDesc;
+    using Desc = FrameBufferDesc;
 
 public:
-    explicit GBuffer(const GBufferDesc &desc);
+    explicit FrameBuffer(const FrameBufferDesc &desc);
+    void prepare() noexcept override;
+    void compile() noexcept;
 };
 
 }// namespace vision

@@ -219,10 +219,10 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct GBufferDesc : public NodeDesc {
+struct FrameBufferDesc : public NodeDesc {
 
 public:
-    VISION_DESC_COMMON(GBuffer)
+    VISION_DESC_COMMON(FrameBuffer)
     void init(const ParameterSet &ps) noexcept override;
 };
 

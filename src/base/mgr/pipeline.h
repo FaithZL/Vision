@@ -10,7 +10,7 @@
 #include "rhi/window.h"
 #include "util/image_io.h"
 #include "image_pool.h"
-#include "base/gbuffer.h"
+#include "base/frame_buffer.h"
 #include "postprocessor.h"
 
 namespace vision {

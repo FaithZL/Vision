@@ -16,6 +16,7 @@ add_subdirectory(denoisers)
 add_subdirectory(uvunwrappers)
 add_subdirectory(rasterizers)
 add_subdirectory(passes)
+add_subdirectory(framebuffers)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -30,6 +31,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-light
         vision-film
         vision-rasterizer
+        vision-framebuffer
         vision-shadernode
         vision-integrator
         vision-warper

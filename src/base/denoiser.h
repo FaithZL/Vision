@@ -6,7 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
-#include "gbuffer.h"
+#include "frame_buffer.h"
 
 namespace vision {
 
