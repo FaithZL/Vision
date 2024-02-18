@@ -19,11 +19,13 @@ public:
     void prepare() noexcept override {
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_bufferA();
+        frame_buffer().prepare_bufferB();
         frame_buffer().prepare_motion_vectors();
     }
 
     void compile() noexcept override {
         _denoiser->compile();
+        frame_buffer().compile();
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
@@ -47,8 +49,12 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
+        stream << frame_buffer().compute_GBuffer(_frame_index,
+                                                 frame_buffer().gbuffer(),
+                                                 frame_buffer().bufferA(),
+                                                 frame_buffer().bufferB());
         stream << _shader(_frame_index).dispatch(rp->resolution());
-//        stream << denoise();
+        //        stream << denoise();
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();
