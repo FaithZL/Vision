@@ -9,7 +9,7 @@ namespace vision {
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
     : Node(desc), GBuffer(pipeline()->bindless_array()),
       _motion_vectors(pipeline()->bindless_array()),
-      _surface_buffer(pipeline()->bindless_array()),
+      _surfaces(pipeline()->bindless_array()),
       _color_buffer(pipeline()->bindless_array()) {}
 
 uint FrameBuffer::pixel_num() const noexcept {
@@ -28,7 +28,15 @@ void FrameBuffer::prepare() noexcept {
 }
 
 void FrameBuffer::prepare_surface_buffer() noexcept {
-    init_buffer(_surface_buffer, "FrameBuffer::_surface_buffer", 2);
+    init_buffer(_surfaces, "FrameBuffer::_surfaces", 2);
+}
+
+BindlessArrayBuffer<SurfaceData> FrameBuffer::prev_surfaces(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer<SurfaceData>(prev_surfaces_index(frame_index));
+}
+
+BindlessArrayBuffer<SurfaceData> FrameBuffer::cur_surfaces(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer<SurfaceData>(cur_surfaces_index(frame_index));
 }
 
 }// namespace vision

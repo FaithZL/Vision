@@ -49,7 +49,7 @@ protected:
     RegistrableBuffer<PixelGeometry> GBuffer;
 
     /// save two frames of data , use for ReSTIR
-    RegistrableBuffer<SurfaceData> _surface_buffer;
+    RegistrableBuffer<SurfaceData> _surfaces;
 
     RegistrableBuffer<float2> _motion_vectors;
 
@@ -64,12 +64,15 @@ public:
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint GBuffer_base() const noexcept { return GBuffer.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return _surface_buffer.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
     [[nodiscard]] uint prev_GBuffer_index(uint frame_index) const noexcept { return prev_index(frame_index) + GBuffer_base(); }
     [[nodiscard]] uint cur_GBuffer_index(uint frame_index) const noexcept { return cur_index(frame_index) + GBuffer_base(); }
-    [[nodiscard]] uint cur_surface_index(uint frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
-    [[nodiscard]] uint prev_surface_index(uint frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
+    [[nodiscard]] uint cur_surfaces_index(uint frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
+    [[nodiscard]] uint prev_surfaces_index(uint frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces(uint frame_index) const noexcept;
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces(uint frame_index) const noexcept;
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
+    OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(color_buffer, &)
     void prepare_surface_buffer() noexcept;
     virtual void compile() noexcept = 0;
