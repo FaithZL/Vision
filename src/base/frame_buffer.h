@@ -38,7 +38,7 @@ requires is_integral_expr_v<T>
 class FrameBuffer : public Node {
 protected:
     /// save two frames of data
-    RegistrableBuffer<PixelGeometry> GBuffer{};
+    RegistrableBuffer<PixelGeometry> _gbuffer{};
 
     /// save two frames of data , use for ReSTIR
     RegistrableBuffer<SurfaceData> _surfaces{};
@@ -57,7 +57,7 @@ public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
-    [[nodiscard]] uint GBuffer_base() const noexcept { return GBuffer.index().hv(); }
+    [[nodiscard]] uint GBuffer_base() const noexcept { return _gbuffer.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
     template<typename T>
     requires is_integral_expr_v<T>
@@ -72,25 +72,20 @@ public:
     requires is_integral_expr_v<T>
     [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
 
-    OC_MAKE_MEMBER_GETTER(motion_vectors, &)
-    OC_MAKE_MEMBER_GETTER(surfaces, &)
-    OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
-    OC_MAKE_MEMBER_GETTER(bufferA, &)
-    OC_MAKE_MEMBER_GETTER(bufferB, &)
-
-#define VS_MAKE_PREPARE(buffer_name, count)                            \
-    void prepare##buffer_name() noexcept {                             \
-        init_buffer(buffer_name, "FrameBuffer::" #buffer_name, count); \
+#define VS_MAKE_ATTR_FUNC(buffer_name, count)                              \
+    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
+    void prepare_##buffer_name() noexcept {                                \
+        init_buffer(_##buffer_name, "FrameBuffer::_" #buffer_name, count); \
     }
 
-    VS_MAKE_PREPARE(_surfaces, 2)
-    VS_MAKE_PREPARE(GBuffer, 2)
-    VS_MAKE_PREPARE(_hit_bsdfs, 1)
-    VS_MAKE_PREPARE(_motion_vectors, 1)
-    VS_MAKE_PREPARE(_bufferA, 1)
-    VS_MAKE_PREPARE(_bufferB, 1)
+    VS_MAKE_ATTR_FUNC(surfaces, 2)
+    VS_MAKE_ATTR_FUNC(gbuffer, 2)
+    VS_MAKE_ATTR_FUNC(hit_bsdfs, 1)
+    VS_MAKE_ATTR_FUNC(motion_vectors, 1)
+    VS_MAKE_ATTR_FUNC(bufferA, 1)
+    VS_MAKE_ATTR_FUNC(bufferB, 1)
 
-#undef VS_MAKE_PREPARE
+#undef VS_MAKE_ATTR_FUNC
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
 
