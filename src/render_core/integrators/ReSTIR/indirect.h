@@ -84,13 +84,12 @@ public:
                                    _temporal.dot_threshold,
                                    _temporal.depth_threshold);
     }
-    [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>((frame_index() & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>(((frame_index() + 1) & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<ReSTIRIndirect::Reservoir>((frame_index() & 1) + reservoir_base());

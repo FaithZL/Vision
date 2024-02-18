@@ -40,8 +40,12 @@ using OCPixelColor = ocarina::Var<PixelColor>;
 namespace vision {
 
 /// use for pingpong
-[[nodiscard]] inline uint prev_index(uint frame_index) noexcept { return frame_index & 1; }
-[[nodiscard]] inline uint cur_index(uint frame_index) noexcept { return (frame_index + 1) & 1; }
+template<typename T>
+requires is_integral_expr_v<T>
+[[nodiscard]] inline T prev_index(const T &frame_index) noexcept { return frame_index & 1; }
+template<typename T>
+requires is_integral_expr_v<T>
+[[nodiscard]] inline T cur_index(const T &frame_index) noexcept { return (frame_index + 1) & 1; }
 
 class FrameBuffer : public Node {
 protected:
@@ -65,12 +69,19 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint GBuffer_base() const noexcept { return GBuffer.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
-    [[nodiscard]] uint prev_GBuffer_index(uint frame_index) const noexcept { return prev_index(frame_index) + GBuffer_base(); }
-    [[nodiscard]] uint cur_GBuffer_index(uint frame_index) const noexcept { return cur_index(frame_index) + GBuffer_base(); }
-    [[nodiscard]] uint cur_surfaces_index(uint frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
-    [[nodiscard]] uint prev_surfaces_index(uint frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces(uint frame_index) const noexcept;
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces(uint frame_index) const noexcept;
+    template<typename T>
+    requires is_integral_expr_v<T>
+    [[nodiscard]] T prev_GBuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + GBuffer_base(); }
+    template<typename T>
+    requires is_integral_expr_v<T>
+    [[nodiscard]] T cur_GBuffer_index(const T &frame_index) const noexcept { return cur_index(frame_index) + GBuffer_base(); }
+    template<typename T>
+    requires is_integral_expr_v<T>
+    [[nodiscard]] T cur_surfaces_index(const T &frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
+    template<typename T>
+    requires is_integral_expr_v<T>
+    [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
+
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(color_buffer, &)

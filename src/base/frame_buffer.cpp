@@ -31,12 +31,6 @@ void FrameBuffer::prepare_surface_buffer() noexcept {
     init_buffer(_surfaces, "FrameBuffer::_surfaces", 2);
 }
 
-BindlessArrayBuffer<SurfaceData> FrameBuffer::prev_surfaces(ocarina::uint frame_index) const noexcept {
-    return pipeline()->buffer<SurfaceData>(prev_surfaces_index(frame_index));
-}
 
-BindlessArrayBuffer<SurfaceData> FrameBuffer::cur_surfaces(ocarina::uint frame_index) const noexcept {
-    return pipeline()->buffer<SurfaceData>(cur_surfaces_index(frame_index));
-}
 
 }// namespace vision

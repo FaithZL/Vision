@@ -71,7 +71,6 @@ public:
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return _integrator->surfaces().index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
         return pipeline()->buffer<Reservoir>((frame_index() & 1) + reservoir_base());
     }
@@ -82,10 +81,10 @@ public:
         return pipeline()->buffer<Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>((frame_index() & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>(((frame_index() + 1) & 1) + surface_base());
+        return pipeline()->buffer<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it) const noexcept;
 
