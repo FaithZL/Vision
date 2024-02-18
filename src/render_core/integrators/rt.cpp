@@ -47,8 +47,8 @@ public:
         Camera *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index) {
             camera->load_data();
-            Float3 direct = frame_buffer().bufferA().read(dispatch_id()) * _direct.factor();
-            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()) * _indirect.factor();
+            Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz() * _direct.factor();
+            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()).xyz() * _indirect.factor();
             Float3 L = direct + indirect;
             camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };

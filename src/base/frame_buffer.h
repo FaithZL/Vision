@@ -47,8 +47,10 @@ protected:
 
     RegistrableBuffer<float2> _motion_vectors{};
 
-    RegistrableBuffer<float3> _bufferA;
-    RegistrableBuffer<float3> _bufferB;
+    RegistrableBuffer<float4> _bufferA;
+    RegistrableBuffer<float4> _bufferB;
+    RegistrableBuffer<float4> _bufferC;
+    RegistrableBuffer<float4> _bufferD;
 
 public:
     using Desc = FrameBufferDesc;
@@ -84,11 +86,14 @@ public:
     VS_MAKE_ATTR_FUNC(motion_vectors, 1)
     VS_MAKE_ATTR_FUNC(bufferA, 1)
     VS_MAKE_ATTR_FUNC(bufferB, 1)
+    VS_MAKE_ATTR_FUNC(bufferC, 1)
+    VS_MAKE_ATTR_FUNC(bufferD, 1)
 
 #undef VS_MAKE_ATTR_FUNC
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
-
+    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, Buffer<PixelGeometry> &gbuffer,
+                                                      Buffer<float4> &albedo, Buffer<float4> &emission) const noexcept = 0;
     virtual void compile() noexcept = 0;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {

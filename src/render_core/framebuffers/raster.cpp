@@ -13,7 +13,11 @@ public:
         : FrameBuffer(desc) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void compile() noexcept override {
-
+    }
+    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, Buffer<PixelGeometry> &gbuffer,
+                                              Buffer<float4> &albedo,
+                                              Buffer<float4> &emission) const noexcept override {
+        return {};
     }
 };
 
