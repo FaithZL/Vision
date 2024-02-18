@@ -51,7 +51,7 @@ protected:
     /// save two frames of data , use for ReSTIR
     RegistrableBuffer<SurfaceData> _surface_buffer;
 
-    RegistrableBuffer<float2> _motion_vec;
+    RegistrableBuffer<float2> _motion_vectors;
 
     RegistrableBuffer<PixelColor> _color_buffer;
 
@@ -69,7 +69,8 @@ public:
     [[nodiscard]] uint cur_GBuffer_index(uint frame_index) const noexcept { return cur_index(frame_index) + GBuffer_base(); }
     [[nodiscard]] uint cur_surface_index(uint frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
     [[nodiscard]] uint prev_surface_index(uint frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
-    OC_MAKE_MEMBER_GETTER(motion_vec, &)
+    OC_MAKE_MEMBER_GETTER(motion_vectors, &)
+    OC_MAKE_MEMBER_GETTER(color_buffer, &)
     void prepare_surface_buffer() noexcept;
     virtual void compile() noexcept = 0;
     template<typename T>

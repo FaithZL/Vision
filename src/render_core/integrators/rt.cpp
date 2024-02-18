@@ -31,6 +31,7 @@ public:
         _direct.prepare();
         _indirect.prepare();
         _denoiser->prepare();
+        pipeline()->frame_buffer()->prepare();
         Pipeline *rp = pipeline();
         auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
             buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);

@@ -24,6 +24,10 @@ Spectrum &Node::spectrum() noexcept {
     return *scene().spectrum();
 }
 
+FrameBuffer &Node::frame_buffer() noexcept {
+    return *pipeline()->frame_buffer();
+}
+
 Device &Node::device() noexcept {
     return pipeline()->device();
 }

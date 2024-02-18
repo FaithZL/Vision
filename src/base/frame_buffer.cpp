@@ -20,7 +20,7 @@ uint2 FrameBuffer::resolution() const noexcept {
 
 void FrameBuffer::prepare() noexcept {
     init_buffer(GBuffer, "FrameBuffer::GBuffer", 2);
-    init_buffer(_motion_vec, "FrameBuffer::_motion_vec");
+    init_buffer(_motion_vectors, "FrameBuffer::_motion_vectors");
     init_buffer(_color_buffer, "FrameBuffer::_color_buffer");
     prepare_surface_buffer();
 }
