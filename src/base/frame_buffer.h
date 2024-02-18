@@ -52,7 +52,6 @@ public:
 
 public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
-    void prepare() noexcept override;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint GBuffer_base() const noexcept { return GBuffer.index().hv(); }
@@ -73,8 +72,21 @@ public:
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
-    void prepare_surfaces() noexcept;
-    void prepare_hit_bsdfs() noexcept;
+
+#define VS_MAKE_PREPARE(buffer_name, count)                            \
+    void prepare##buffer_name() noexcept {                             \
+        init_buffer(buffer_name, "FrameBuffer::" #buffer_name, count); \
+    }
+
+    VS_MAKE_PREPARE(_surfaces, 2)
+    VS_MAKE_PREPARE(GBuffer, 2)
+    VS_MAKE_PREPARE(_hit_bsdfs, 1)
+    VS_MAKE_PREPARE(_motion_vectors, 1)
+
+#undef VS_MAKE_PREPARE
+
+    [[nodiscard]] BindlessArray &bindless_array() noexcept;
+
     virtual void compile() noexcept = 0;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
@@ -83,6 +95,7 @@ public:
         vector<T> vec{};
         vec.assign(element_num, T{});
         buffer.upload_immediately(vec.data());
+        buffer.set_bindless_array(bindless_array());
         buffer.register_self();
         for (int i = 1; i < count; ++i) {
             buffer.register_view(pixel_num() * i, pixel_num());
