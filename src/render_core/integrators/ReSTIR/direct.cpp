@@ -187,7 +187,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it) const
             };
         }
     };
-    _integrator->hit_bsdfs().write(dispatch_id(), hit_bsdf);
+    frame_buffer().hit_bsdfs().write(dispatch_id(), hit_bsdf);
     ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
     comment("RIS end");

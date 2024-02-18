@@ -63,7 +63,7 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
         sampler()->start(pixel, frame_index, 0);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
-        OCHitBSDF hit_bsdf = _integrator->hit_bsdfs().read(dispatch_id());
+        OCHitBSDF hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         IIRSVSample sample = init_sample(it, ss, hit_bsdf);
         _samples.write(dispatch_id(), sample);
     };
@@ -86,7 +86,7 @@ ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const I
 }
 
 Float ReSTIRIndirectIllumination::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
-//    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
+    //    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
     return sample->p_hat(abs_dot(it.ng, normalize(sample.sp->position() - it.pos)));
 }
 
@@ -139,7 +139,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         });
         sampler()->start(pixel, frame_index, 4);
         IIRSVSample sample = _samples.read(dispatch_id());
-        OCHitBSDF hit_bsdf = _integrator->hit_bsdfs().read(dispatch_id());
+        OCHitBSDF hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         IIReservoir rsv;
         Float p_hat = sample->p_hat(hit_bsdf.cos_theta);
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);

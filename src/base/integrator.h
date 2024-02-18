@@ -175,13 +175,11 @@ public:
 
 class BufferMgr {
 protected:
-    RegistrableBuffer<HitBSDF> _hit_bsdfs{};
     RegistrableBuffer<float3> _radiance0;
     RegistrableBuffer<float3> _radiance1;
 
 public:
     BufferMgr();
-    OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
     OC_MAKE_MEMBER_GETTER(radiance0, &)
     OC_MAKE_MEMBER_GETTER(radiance1, &)
 };

@@ -10,17 +10,6 @@
 
 namespace vision {
 using namespace ocarina;
-struct PixelColor {
-    array<float, 3> albedo{};
-    array<float, 3> emission{};
-};
-}// namespace vision
-// clang-format off
-OC_STRUCT(vision::PixelColor, albedo,emission) {};
-// clang-format on
-
-namespace vision {
-using namespace ocarina;
 struct PixelGeometry {
     array<float, 3> normal{};
     float normal_fwidth{};
@@ -34,7 +23,6 @@ OC_STRUCT(vision::PixelGeometry, normal,
 // clang-format on
 namespace vision {
 using OCPixelGeometry = ocarina::Var<PixelGeometry>;
-using OCPixelColor = ocarina::Var<PixelColor>;
 }// namespace vision
 
 namespace vision {
@@ -50,14 +38,14 @@ requires is_integral_expr_v<T>
 class FrameBuffer : public Node {
 protected:
     /// save two frames of data
-    RegistrableBuffer<PixelGeometry> GBuffer;
+    RegistrableBuffer<PixelGeometry> GBuffer{};
 
     /// save two frames of data , use for ReSTIR
-    RegistrableBuffer<SurfaceData> _surfaces;
+    RegistrableBuffer<SurfaceData> _surfaces{};
 
-    RegistrableBuffer<float2> _motion_vectors;
+    RegistrableBuffer<HitBSDF> _hit_bsdfs{};
 
-    RegistrableBuffer<PixelColor> _color_buffer;
+    RegistrableBuffer<float2> _motion_vectors{};
 
 public:
     using Desc = FrameBufferDesc;
@@ -84,7 +72,7 @@ public:
 
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
-    OC_MAKE_MEMBER_GETTER(color_buffer, &)
+    OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
     void prepare_surface_buffer() noexcept;
     virtual void compile() noexcept = 0;
     template<typename T>
