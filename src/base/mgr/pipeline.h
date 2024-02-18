@@ -30,6 +30,7 @@ protected:
     bool _show_fps{true};
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
+    SP<FrameBuffer> _frame_buffer{nullptr};
 
 protected:
     [[nodiscard]] Integrator *integrator() noexcept { return scene().integrator(); }
@@ -44,6 +45,8 @@ public:
     [[nodiscard]] Device &device() noexcept { return *_device; }
     [[nodiscard]] Scene &scene() noexcept { return _scene; }
     [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
+    [[nodiscard]] auto frame_buffer() const noexcept { return _frame_buffer.get(); }
+    [[nodiscard]] auto frame_buffer() noexcept { return _frame_buffer.get(); }
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;

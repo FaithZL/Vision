@@ -15,10 +15,12 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
       _geometry(this),
       _stream(device().create_stream()),
       _bindless_array(device().create_bindless_array()) {
+    Global::instance().set_pipeline(this);
     Env::printer().init(device());
     Env::debugger().init(device());
     Env::set_code_obfuscation(desc["obfuscation"].as_bool(false));
     Env::set_valid_check(desc["valid_check"].as_bool(false));
+    _frame_buffer = NodeMgr::instance().load<FrameBuffer>(desc.frame_buffer_desc);
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
@@ -63,7 +65,6 @@ void Pipeline::deregister_texture(handle_ty index) noexcept {
 }
 
 void Pipeline::before_render() noexcept {
-
 }
 
 void Pipeline::after_render() noexcept {
@@ -92,13 +93,12 @@ float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
         input.output = &_final_picture;
         input.color = &original;
         _postprocessor.denoise(input);
-        _postprocessor.tone_mapping(_final_picture, _final_picture,gamma);
+        _postprocessor.tone_mapping(_final_picture, _final_picture, gamma);
     } else {
-        _postprocessor.tone_mapping(original, _final_picture,gamma);
+        _postprocessor.tone_mapping(original, _final_picture, gamma);
     }
     _final_picture.download_immediately();
     return _final_picture.data();
 }
-
 
 }// namespace vision

@@ -6,6 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
+#include "scattering/interaction.h"
 
 namespace vision {
 using namespace ocarina;
@@ -41,7 +42,12 @@ namespace vision {
 
 class FrameBuffer : public Node {
 protected:
-    RegistrableBuffer<PixelGeometry> _gbuffer;
+    /// save two frames of data
+    RegistrableBuffer<PixelGeometry> GBuffer;
+
+    /// save two frames of data , use for ReSTIR
+    RegistrableBuffer<SurfaceData> _surface_buffer;
+
     RegistrableBuffer<PixelColor> _color_buffer;
 
 public:

@@ -222,6 +222,7 @@ void PassDesc::init(const vision::ParameterSet &ps) noexcept {
 
 void FrameBufferDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("rt");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
 }
@@ -233,6 +234,7 @@ void PipelineDesc::init(const vision::ParameterSet &ps) noexcept {
     set_parameter(param);
     rasterizer_desc.init(param.value("rasterizer", DataWrap::object()));
     unwrapper_desc.init(param.value("uv_unwrapper", DataWrap::object()));
+    frame_buffer_desc.init(param.value("frame_buffer", DataWrap::object()));
 }
 
 void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {

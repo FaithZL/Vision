@@ -16,7 +16,6 @@ public:
     [[nodiscard]] SP<Pipeline> read_file(const fs::path &fn) override {
         auto scene_desc = SceneDesc::from_json(fn);
         SP<Pipeline> ret = Global::node_mgr().load<Pipeline>(scene_desc.pipeline_desc);
-        Global::instance().set_pipeline(ret.get());
         ret->init_scene(scene_desc);
         ret->init_postprocessor(scene_desc.denoiser_desc);
         ret->output_desc = scene_desc.output_desc;

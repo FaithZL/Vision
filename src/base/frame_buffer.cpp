@@ -7,7 +7,7 @@
 
 namespace vision {
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
-    : Node(desc), _gbuffer(pipeline()->bindless_array()),
+    : Node(desc), GBuffer(pipeline()->bindless_array()),
       _color_buffer(pipeline()->bindless_array()) {}
 
 void FrameBuffer::prepare() noexcept {

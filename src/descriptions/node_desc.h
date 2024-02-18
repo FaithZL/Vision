@@ -230,6 +230,7 @@ struct PipelineDesc : public NodeDesc {
 public:
     mutable Device *device{nullptr};
     UVUnwrapperDesc unwrapper_desc;
+    FrameBufferDesc frame_buffer_desc;
     RasterizerDesc rasterizer_desc;
 
 public:
