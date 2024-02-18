@@ -11,7 +11,7 @@
 
 namespace vision {
 
-class RealTimeIntegrator : public RayTracingIntegrator {
+class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIRDirectIllumination _direct;
     ReSTIRIndirectIllumination _indirect;
@@ -20,7 +20,7 @@ private:
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
-        : RayTracingIntegrator(desc),
+        : IlluminationIntegrator(desc),
           _direct(this, desc["direct"]),
           _indirect(this, desc["indirect"]),
           _denoiser(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
@@ -32,14 +32,9 @@ public:
         _indirect.prepare();
         _denoiser->prepare();
         Pipeline *rp = pipeline();
-        auto init_buffer = [&]<typename T>(RegistrableBuffer<T> &buffer, const string &desc = "") {
-            buffer.super() = device().create_buffer<T>(rp->pixel_num(), desc);
-            vector<T> vec{rp->pixel_num(), T{}};
-            buffer.upload_immediately(vec.data());
-            buffer.register_self();
-        };
-        init_buffer(_bufferA, "RealTimeIntegrator::_bufferA");
-        init_buffer(_bufferB, "RealTimeIntegrator::_bufferB");
+
+        frame_buffer().prepare_bufferA();
+        frame_buffer().prepare_bufferB();
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_motion_vectors();
@@ -52,8 +47,8 @@ public:
         Camera *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index) {
             camera->load_data();
-            Float3 direct = bufferA().read(dispatch_id()) * _direct.factor();
-            Float3 indirect = bufferB().read(dispatch_id()) * _indirect.factor();
+            Float3 direct = frame_buffer().bufferA().read(dispatch_id()) * _direct.factor();
+            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()) * _indirect.factor();
             Float3 L = direct + indirect;
             camera->radiance_film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };

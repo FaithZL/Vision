@@ -47,6 +47,9 @@ protected:
 
     RegistrableBuffer<float2> _motion_vectors{};
 
+    RegistrableBuffer<float3> _bufferA;
+    RegistrableBuffer<float3> _bufferB;
+
 public:
     using Desc = FrameBufferDesc;
 
@@ -72,6 +75,8 @@ public:
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
+    OC_MAKE_MEMBER_GETTER(bufferA, &)
+    OC_MAKE_MEMBER_GETTER(bufferB, &)
 
 #define VS_MAKE_PREPARE(buffer_name, count)                            \
     void prepare##buffer_name() noexcept {                             \
@@ -82,6 +87,8 @@ public:
     VS_MAKE_PREPARE(GBuffer, 2)
     VS_MAKE_PREPARE(_hit_bsdfs, 1)
     VS_MAKE_PREPARE(_motion_vectors, 1)
+    VS_MAKE_PREPARE(_bufferA, 1)
+    VS_MAKE_PREPARE(_bufferB, 1)
 
 #undef VS_MAKE_PREPARE
 

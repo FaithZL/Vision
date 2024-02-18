@@ -173,20 +173,4 @@ public:
     }
 };
 
-class BufferMgr {
-protected:
-    RegistrableBuffer<float3> _bufferA;
-    RegistrableBuffer<float3> _bufferB;
-
-public:
-    BufferMgr();
-    OC_MAKE_MEMBER_GETTER(bufferA, &)
-    OC_MAKE_MEMBER_GETTER(bufferB, &)
-};
-
-class RayTracingIntegrator : public BufferMgr, public IlluminationIntegrator {
-public:
-    using IlluminationIntegrator::IlluminationIntegrator;
-};
-
 }// namespace vision

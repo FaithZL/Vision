@@ -505,7 +505,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
                 L = spectrum.linear_srgb(eval.L, swl);
             }
         };
-        _integrator->bufferA().write(dispatch_id(), L);
+        frame_buffer().bufferA().write(dispatch_id(), L);
         cur_reservoirs().write(dispatch_id(), st_rsv);
     };
     _shader1 = device().async_compile(ocarina::move(kernel), "direct spatial reuse and shading");
