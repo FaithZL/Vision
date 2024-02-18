@@ -23,13 +23,15 @@ uint2 FrameBuffer::resolution() const noexcept {
 void FrameBuffer::prepare() noexcept {
     init_buffer(GBuffer, "FrameBuffer::GBuffer", 2);
     init_buffer(_motion_vectors, "FrameBuffer::_motion_vectors");
-    prepare_surface_buffer();
 }
 
-void FrameBuffer::prepare_surface_buffer() noexcept {
+void FrameBuffer::prepare_surfaces() noexcept {
     init_buffer(_surfaces, "FrameBuffer::_surfaces", 2);
 }
 
+void FrameBuffer::prepare_hit_bsdfs() noexcept {
+    init_buffer(_hit_bsdfs, "FrameBuffer::_hit_bsdfs", 1);
+}
 
 
 }// namespace vision

@@ -73,7 +73,8 @@ public:
     OC_MAKE_MEMBER_GETTER(motion_vectors, &)
     OC_MAKE_MEMBER_GETTER(surfaces, &)
     OC_MAKE_MEMBER_GETTER(hit_bsdfs, &)
-    void prepare_surface_buffer() noexcept;
+    void prepare_surfaces() noexcept;
+    void prepare_hit_bsdfs() noexcept;
     virtual void compile() noexcept = 0;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
