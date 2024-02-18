@@ -15,6 +15,13 @@ public:
         : IlluminationIntegrator(desc) {}
 
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+
+    void prepare() noexcept override {
+        frame_buffer().prepare_gbuffer();
+        frame_buffer().prepare_bufferA();
+        frame_buffer().prepare_motion_vectors();
+    }
+
     void compile() noexcept override {
         _denoiser->compile();
         Camera *camera = scene().camera().get();

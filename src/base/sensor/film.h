@@ -53,7 +53,5 @@ public:
     [[nodiscard]] virtual RegistrableManaged<float4> &tone_mapped_buffer() noexcept = 0;
     [[nodiscard]] virtual const RegistrableManaged<float4> &original_buffer() const noexcept = 0;
     [[nodiscard]] virtual RegistrableManaged<float4> &original_buffer() noexcept = 0;
-    [[nodiscard]] virtual const RegistrableManaged<float4> &denoised_buffer() const noexcept = 0;
-    [[nodiscard]] virtual RegistrableManaged<float4> &denoised_buffer() noexcept = 0;
 };
 }// namespace vision
