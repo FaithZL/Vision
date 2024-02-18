@@ -20,9 +20,8 @@ void Reproject::prepare() noexcept {
 Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, Float *history,
                                Float3 *prev_illumination, Float2 *prev_moments) const noexcept {
     Bool ret = true;
-    Float2 motion_vec = geom_data.motion_vec;
     Uint2 pos = dispatch_idx().xy();
-    Uint2 prev_pos = make_uint2(make_float2(pos) - motion_vec);
+//    Uint2 prev_pos = make_uint2(make_float2(pos) - motion_vec);
 
     Float3 normal = geom_data.normal.as_vec();
     Float depth = geom_data.linear_depth;
