@@ -17,6 +17,8 @@ public:
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 
     void prepare() noexcept override {
+        IlluminationIntegrator::prepare();
+        _denoiser->prepare();
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_bufferA();
         frame_buffer().prepare_bufferB();

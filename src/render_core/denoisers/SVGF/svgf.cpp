@@ -22,11 +22,11 @@ void SVGF::prepare_buffers() {
 }
 
 uint SVGF::cur_svgf_index(ocarina::uint frame_index) const noexcept {
-    return ((frame_index + 1) & 1) + svgf_data_base();
+    return cur_index(frame_index) + svgf_data_base();
 }
 
 uint SVGF::prev_svgf_index(ocarina::uint frame_index) const noexcept {
-    return ((frame_index) & 1) + svgf_data_base();
+    return prev_index(frame_index) + svgf_data_base();
 }
 
 void SVGF::prepare() noexcept {

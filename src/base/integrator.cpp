@@ -43,11 +43,6 @@ void IlluminationIntegrator::prepare() noexcept {
     datas().reset_device_buffer_immediately(device());
     datas().register_self();
     datas().upload_immediately();
-    _denoiser->prepare();
-    Pipeline *rp = pipeline();
-    if (!_denoiser) {
-        return;
-    }
 }
 
 CommandList IlluminationIntegrator::denoise() const noexcept {
