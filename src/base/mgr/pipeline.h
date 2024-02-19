@@ -148,6 +148,11 @@ public:
         return geometry().compute_light_eval_context(OC_FORWARD(args)...);
     }
 
+    template<typename T>
+    [[nodiscard]] BufferView<T> buffer_view(uint index) const noexcept {
+        return _bindless_array.buffer_view<T>(index);
+    }
+
     template<typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayTexture tex_var(Index &&index) const noexcept {
