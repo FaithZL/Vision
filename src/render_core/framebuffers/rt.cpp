@@ -22,8 +22,11 @@ public:
     void compile() noexcept override {
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
+        LightSampler *light_sampler = scene().light_sampler();
         Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer,
                             BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer) {
+            RenderEnv render_env;
+            render_env.initial(sampler, frame_index, spectrum());
             Uint2 pixel = dispatch_idx().xy();
             sampler->start(pixel, frame_index, 0);
             camera->load_data();
@@ -37,8 +40,15 @@ public:
             $if(hit->is_hit()) {
                 Interaction it = pipeline()->compute_surface_interaction(hit, rs.ray, true);
                 geom.normal.set(it.ng);
+                $if(it.has_material()) {
+                    scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+                        MaterialEvaluator bsdf = material->create_evaluator(it, render_env.sampled_wavelengths());
+                        albedo = spectrum().linear_srgb(bsdf.albedo(), render_env.sampled_wavelengths());
+                    });
+                };
             };
             gbuffer.write(dispatch_id(), geom);
+            albedo_buffer.write(dispatch_id(), make_float4(albedo, 1.f));
         };
         _shader = device().compile(kernel, "rt_GBuffer");
     }
