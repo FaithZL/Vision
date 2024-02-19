@@ -162,8 +162,8 @@ public:
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] BindlessArrayByteBuffer byte_buffer(Index &&index) const noexcept {
-        return _bindless_array.byte_buffer(OC_FORWARD(index));
+    [[nodiscard]] BindlessArrayByteBuffer byte_buffer_var(Index &&index) const noexcept {
+        return _bindless_array.byte_buffer_var(OC_FORWARD(index));
     }
 };
 
