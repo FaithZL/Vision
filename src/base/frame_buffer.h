@@ -35,6 +35,25 @@ template<typename T>
 requires is_integral_expr_v<T>
 [[nodiscard]] inline T cur_index(const T &frame_index) noexcept { return (frame_index + 1) & 1; }
 
+template<typename Func>
+void for_each_neighbor(const Int2 &radius, Func func) {
+    Int2 cur_pixel = make_int2(dispatch_idx().xy());
+    Int2 res = make_int2(dispatch_dim().xy());
+    Int x_start = cur_pixel.x - radius.x;
+    x_start = max(0, x_start);
+    Int x_end = cur_pixel.x + radius.x;
+    x_end = min(x_end, res.x - 1);
+    Int y_start = cur_pixel.y - radius.y;
+    y_start = max(0, y_start);
+    Int y_end = cur_pixel.y + radius.y;
+    y_end = min(y_end, res.y - 1);
+    $for(x, x_start, x_end + 1) {
+        $for(y, y_start, y_end + 1) {
+            func(make_int2(x, y));
+        };
+    };
+}
+
 class FrameBuffer : public Node {
 protected:
     /// save two frames of data

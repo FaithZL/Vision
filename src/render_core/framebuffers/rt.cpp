@@ -11,15 +11,18 @@ namespace vision {
 
 class RayTracingFrameBuffer : public FrameBuffer {
 private:
-    using signature = void(uint, Buffer<PixelGeometry>, Buffer<float4>, Buffer<float4>);
-    Shader<signature> _shader;
+    using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float4>, Buffer<float4>);
+    Shader<gbuffer_signature> _compute_geom;
+
+    using grad_signature = void(uint, Buffer<PixelGeometry>);
+    Shader<grad_signature> _compute_grad;
 
 public:
     explicit RayTracingFrameBuffer(const FrameBufferDesc &desc)
         : FrameBuffer(desc) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
 
-    void compile() noexcept override {
+    void compile_compute_geom() noexcept {
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         LightSampler *light_sampler = scene().light_sampler();
@@ -64,13 +67,70 @@ public:
             albedo_buffer.write(dispatch_id(), make_float4(albedo, 1.f));
             emission_buffer.write(dispatch_id(), make_float4(emission, 1.f));
         };
-        _shader = device().compile(kernel, "rt_GBuffer");
+        _compute_geom = device().compile(kernel, "rt_geom");
+    }
+
+    void compile_compute_grad() noexcept {
+        Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer) {
+            Int2 radius = make_int2(1);
+            Uint x_sample_num = 0u;
+            Uint y_sample_num = 0u;
+            Float3 normal_dx = make_float3(0.f);
+            Float3 normal_dy = make_float3(0.f);
+
+            Float depth_dx = 0.f;
+            Float depth_dy = 0.f;
+
+            Uint2 center = dispatch_idx().xy();
+            OCPixelGeometry center_data = gbuffer.read(dispatch_id());
+            for_each_neighbor(radius, [&](const Int2 &pixel) {
+                Uint index = dispatch_id(pixel);
+                OCPixelGeometry neighbor_data = gbuffer.read(index);
+                $if(center.x > pixel.x) {
+                    x_sample_num += 1;
+                    normal_dx += center_data.normal.as_vec() - neighbor_data.normal.as_vec();
+                    depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
+                }
+                $elif(pixel.x > center.x) {
+                    x_sample_num += 1;
+                    normal_dx += neighbor_data.normal.as_vec() - center_data.normal.as_vec();
+                    depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
+                };
+
+                $if(center.y > pixel.y) {
+                    y_sample_num += 1;
+                    normal_dy += center_data.normal.as_vec() - neighbor_data.normal.as_vec();
+                    depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
+                }
+                $elif(pixel.y > center.y) {
+                    y_sample_num += 1;
+                    normal_dy += neighbor_data.normal.as_vec() - center_data.normal.as_vec();
+                    depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
+                };
+            });
+            normal_dx /= cast<float>(x_sample_num);
+            normal_dy /= cast<float>(y_sample_num);
+            Float3 normal_fwidth = abs(normal_dx) + abs(normal_dy);
+            center_data.normal_fwidth = length(normal_fwidth);
+
+            depth_dx /= x_sample_num;
+            depth_dy /= y_sample_num;
+            center_data.depth_gradient = abs(depth_dx) + abs(depth_dy);
+            gbuffer.write(dispatch_id(), center_data);
+        };
+        _compute_grad = device().compile(kernel, "rt_gradient");
+    }
+
+    void compile() noexcept override {
+        compile_compute_geom();
+        compile_compute_grad();
     }
 
     [[nodiscard]] CommandList compute_GBuffer(uint frame_index, Buffer<PixelGeometry> &gbuffer,
                                               Buffer<float4> &albedo, Buffer<float4> &emission) const noexcept {
         CommandList ret;
-        ret << _shader(frame_index, gbuffer, albedo, emission).dispatch(resolution());
+        ret << _compute_geom(frame_index, gbuffer, albedo, emission).dispatch(resolution());
+        ret << _compute_grad(frame_index, gbuffer).dispatch(resolution());
         return ret;
     }
 };
