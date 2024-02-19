@@ -43,6 +43,9 @@ public:
             $if(hit->is_hit()) {
                 Interaction it = pipeline()->compute_surface_interaction(hit, rs.ray, true);
                 geom.normal.set(it.ng);
+                Float4x4 w2c = inverse(camera->device_c2w());
+                Float3 c_pos = transform_point(w2c, it.pos);
+                geom.linear_depth = c_pos.z;
                 $if(it.has_material()) {
                     scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                         MaterialEvaluator bsdf = material->create_evaluator(it, swl);

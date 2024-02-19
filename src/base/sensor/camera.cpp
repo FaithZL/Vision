@@ -119,6 +119,10 @@ float3 Camera::right() const noexcept {
     return _c2w.hv()[0].xyz();
 }
 
+Float4x4 Camera::device_c2w() const noexcept {
+    return *_c2w;
+}
+
 Float3 Camera::device_forward() const noexcept {
     return (*_c2w)[2].xyz();
 }
