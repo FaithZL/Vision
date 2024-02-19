@@ -76,8 +76,8 @@ Float SPD::eval(const Float &lambda) const noexcept {
     Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
     uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
     Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
-    Float l = _rp->buffer<float>(*_func.index()).read(i);
-    Float r = _rp->buffer<float>(*_func.index()).read(i + 1);
+    Float l = _rp->buffer_var<float>(*_func.index()).read(i);
+    Float r = _rp->buffer_var<float>(*_func.index()).read(i + 1);
     return lerp(fract(t), l, r);
 }
 

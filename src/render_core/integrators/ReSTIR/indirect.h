@@ -86,19 +86,19 @@ public:
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
+        return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
-        return pipeline()->buffer<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
+        return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> prev_reservoirs() const noexcept {
-        return pipeline()->buffer<ReSTIRIndirect::Reservoir>((frame_index() & 1) + reservoir_base());
+        return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> cur_reservoirs() const noexcept {
-        return pipeline()->buffer<ReSTIRIndirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> passthrough_reservoirs() const noexcept {
-        return pipeline()->buffer<ReSTIRIndirect::Reservoir>(2 + reservoir_base());
+        return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>(2 + reservoir_base());
     }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };

@@ -108,7 +108,7 @@ namespace detail {
     u = u * float(size);
     Uint idx = min(cast<uint>(u), uint(size - 1));
     u = min(u - idx, OneMinusEpsilon);
-    Var alias_entry = rp->buffer<AliasEntry>(entry_id).read(buffer_offset + idx);
+    Var alias_entry = rp->buffer_var<AliasEntry>(entry_id).read(buffer_offset + idx);
     idx = select(u < alias_entry.prob, idx, alias_entry.alias);
     if (u_remapped) {
         *u_remapped = select(u < alias_entry.prob,
