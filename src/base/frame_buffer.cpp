@@ -21,4 +21,12 @@ BindlessArray &FrameBuffer::bindless_array() noexcept {
     return pipeline()->bindless_array();
 }
 
+BufferView<PixelGeometry> FrameBuffer::prev_gbuffer(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer_view<PixelGeometry>(prev_gbuffer_index(frame_index));
+}
+
+BufferView<PixelGeometry> FrameBuffer::cur_gbuffer(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer_view<PixelGeometry>(cur_gbuffer_index(frame_index));
+}
+
 }// namespace vision

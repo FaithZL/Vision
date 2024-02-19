@@ -78,20 +78,23 @@ public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
-    [[nodiscard]] uint GBuffer_base() const noexcept { return _gbuffer.index().hv(); }
+    [[nodiscard]] uint gbuffer_base() const noexcept { return _gbuffer.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
     template<typename T>
     requires is_integral_expr_v<T>
-    [[nodiscard]] T prev_GBuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + GBuffer_base(); }
+    [[nodiscard]] T prev_gbuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + gbuffer_base(); }
     template<typename T>
     requires is_integral_expr_v<T>
-    [[nodiscard]] T cur_GBuffer_index(const T &frame_index) const noexcept { return cur_index(frame_index) + GBuffer_base(); }
+    [[nodiscard]] T cur_gbuffer_index(const T &frame_index) const noexcept { return cur_index(frame_index) + gbuffer_base(); }
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T cur_surfaces_index(const T &frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
+
+    [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
 #define VS_MAKE_ATTR_FUNC(buffer_name, count)                              \
     OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
