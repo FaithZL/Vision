@@ -30,6 +30,9 @@ public:
             Uint2 pixel = dispatch_idx().xy();
             sampler->start(pixel, frame_index, 0);
             camera->load_data();
+
+            const SampledWavelengths &swl = render_env.sampled_wavelengths();
+
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
             OCHit hit = pipeline()->trace_closest(rs.ray);
@@ -42,13 +45,21 @@ public:
                 geom.normal.set(it.ng);
                 $if(it.has_material()) {
                     scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-                        MaterialEvaluator bsdf = material->create_evaluator(it, render_env.sampled_wavelengths());
-                        albedo = spectrum().linear_srgb(bsdf.albedo(), render_env.sampled_wavelengths());
+                        MaterialEvaluator bsdf = material->create_evaluator(it, swl);
+                        albedo = spectrum().linear_srgb(bsdf.albedo(), swl);
                     });
+                };
+                $if(it.has_emission()) {
+                    LightSampleContext p_ref;
+                    p_ref.pos = rs.origin();
+                    p_ref.ng = rs.direction();
+                    LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
+                    emission = spectrum().linear_srgb(eval.L, swl);
                 };
             };
             gbuffer.write(dispatch_id(), geom);
             albedo_buffer.write(dispatch_id(), make_float4(albedo, 1.f));
+            emission_buffer.write(dispatch_id(), make_float4(emission, 1.f));
         };
         _shader = device().compile(kernel, "rt_GBuffer");
     }
