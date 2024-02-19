@@ -12,7 +12,7 @@ void FilterMoment::prepare() noexcept {
 void FilterMoment::compile() noexcept {
 }
 
-CommandList FilterMoment::dispatch(vision::DenoiseInput &input) noexcept {
+CommandList FilterMoment::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     return ret;
 }

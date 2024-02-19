@@ -55,11 +55,11 @@ void Reproject::compile() noexcept {
     _shader = device().compile(kernel, "SVGF-reproject");
 }
 
-CommandList Reproject::dispatch(vision::DenoiseInput &input) noexcept {
+CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     uint cur_index = _svgf->cur_svgf_index(input.frame_index);
     uint prev_index = _svgf->prev_svgf_index(input.frame_index);
-    ret << _shader(*input.gbuffer, *input.radiance, cur_index, prev_index).dispatch(input.resolution);
+//    ret << _shader(*input.gbuffer, *input.radiance, cur_index, prev_index).dispatch(input.resolution);
     return ret;
 }
 

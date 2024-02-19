@@ -11,7 +11,7 @@ public:
     explicit OptixDenoiser(const DenoiserDesc &desc)
         : Denoiser(desc){
     }
-    void apply(vision::DenoiseInput &input) noexcept override {
+    void apply(vision::OfflineDenoiseInput &input) noexcept override {
 
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }

@@ -47,7 +47,7 @@ public:
         _device.commit();
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
-    void apply(vision::DenoiseInput &input) noexcept override {
+    void apply(vision::OfflineDenoiseInput &input) noexcept override {
         apply(input.resolution, input.output, input.color, input.normal, input.albedo);
     }
     void apply(ocarina::uint2 res, Managed<ocarina::float4> *output,

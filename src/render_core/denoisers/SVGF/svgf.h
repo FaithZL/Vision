@@ -54,7 +54,7 @@ public:
     [[nodiscard]] uint prev_svgf_index(uint frame_index) const noexcept;
     void prepare() noexcept override;
     void compile() noexcept override;
-    [[nodiscard]] CommandList dispatch(vision::DenoiseInput &input) noexcept override;
+    [[nodiscard]] CommandList dispatch(vision::RealTimeDenoiseInput &input) noexcept override;
 };
 
 }// namespace vision

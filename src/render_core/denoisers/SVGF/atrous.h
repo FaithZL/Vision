@@ -27,7 +27,7 @@ public:
         : _filter(NodeMgr::instance().load<Filter>(desc)), _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
-    [[nodiscard]] CommandList dispatch(vision::DenoiseInput &input, uint step_width) noexcept;
+    [[nodiscard]] CommandList dispatch(vision::RealTimeDenoiseInput &input, uint step_width) noexcept;
 };
 
 }// namespace vision

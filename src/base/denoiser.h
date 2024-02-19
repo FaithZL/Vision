@@ -10,22 +10,27 @@
 
 namespace vision {
 
-struct DenoiseInput {
+struct OfflineDenoiseInput {
     uint2 resolution{};
     uint frame_index{};
 
-    // real time denoise
-    Buffer<PixelGeometry> *prev_gbuffer{};
-    Buffer<PixelGeometry> *gbuffer{};
-    Buffer<float4> *radiance{};
-    Buffer<float4> *gpu_output{};
-
-    // offline denoise
     Managed<float4> *output{};
     Managed<float4> *color{};
     Managed<float4> *position{};
     Managed<float4> *normal{};
     Managed<float4> *albedo{};
+};
+
+struct RealTimeDenoiseInput {
+    uint2 resolution{};
+    uint frame_index{};
+
+    BufferView<float4> output;
+    BufferView<float4> radiance;
+    BufferView<float4> albedo;
+    BufferView<float4> emission;
+    BufferView<PixelGeometry> gbuffer;
+    BufferView<PixelGeometry> prev_gbuffer;
 };
 
 class Denoiser : public Node {
@@ -56,12 +61,12 @@ public:
     virtual void compile() noexcept {}
 
     /// for offline denoise
-    virtual void apply(DenoiseInput &input) noexcept {
+    virtual void apply(OfflineDenoiseInput &input) noexcept {
         OC_ERROR_FORMAT("denoiser {} error apply", typeid(*this).name());
     }
 
     /// for real time denoise
-    virtual CommandList dispatch(DenoiseInput &input) noexcept {
+    virtual CommandList dispatch(RealTimeDenoiseInput &input) noexcept {
         OC_ERROR_FORMAT("denoiser {} error dispatch", typeid(*this).name());
         return {};
     }

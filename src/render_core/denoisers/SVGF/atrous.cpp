@@ -12,7 +12,7 @@ void AtrousFilter::prepare() noexcept {
 void AtrousFilter::compile() noexcept {
 }
 
-CommandList AtrousFilter::dispatch(vision::DenoiseInput &input, ocarina::uint step_width) noexcept {
+CommandList AtrousFilter::dispatch(vision::RealTimeDenoiseInput &input, ocarina::uint step_width) noexcept {
     CommandList ret;
     return ret;
 }

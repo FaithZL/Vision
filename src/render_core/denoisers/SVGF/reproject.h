@@ -29,7 +29,7 @@ public:
                                       Float3 *prev_illumination,
                                       Float2 *prev_moments) const noexcept;
     void compile() noexcept;
-    [[nodiscard]] CommandList dispatch(DenoiseInput &input) noexcept;
+    [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;
 };
 
 }// namespace vision

@@ -50,7 +50,7 @@ CommandList IlluminationIntegrator::denoise() const noexcept {
     if (!_denoiser) {
         return ret;
     }
-    vision::DenoiseInput input;
+    vision::RealTimeDenoiseInput input;
     input.frame_index = _frame_index;
     input.resolution = pipeline()->resolution();
     ret << _denoiser->dispatch(input);

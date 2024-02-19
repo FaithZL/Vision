@@ -42,7 +42,7 @@ void SVGF::compile() noexcept {
     _atrous.compile();
 }
 
-CommandList SVGF::dispatch(vision::DenoiseInput &input) noexcept {
+CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     ret << _reproject.dispatch(input);
     ret << _filter_moment.dispatch(input);

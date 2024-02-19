@@ -60,7 +60,7 @@ public:
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());
-        //        stream << denoise();
+                stream << denoise();
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

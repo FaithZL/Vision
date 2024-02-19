@@ -22,7 +22,7 @@ public:
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
-    [[nodiscard]] CommandList dispatch(DenoiseInput &input) noexcept;
+    [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;
 };
 
 }// namespace vision
