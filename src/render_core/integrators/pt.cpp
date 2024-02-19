@@ -20,8 +20,12 @@ public:
         IlluminationIntegrator::prepare();
         _denoiser->prepare();
         frame_buffer().prepare_gbuffer();
+        // radiance
         frame_buffer().prepare_bufferA();
+        // albedo
         frame_buffer().prepare_bufferB();
+        // emission
+        frame_buffer().prepare_bufferC();
         frame_buffer().prepare_motion_vectors();
     }
 
@@ -53,8 +57,8 @@ public:
         stream << Env::debugger().upload();
         stream << frame_buffer().compute_GBuffer(_frame_index,
                                                  frame_buffer().gbuffer(),
-                                                 frame_buffer().bufferA(),
-                                                 frame_buffer().bufferB());
+                                                 frame_buffer().bufferB(),
+                                                 frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());
         //        stream << denoise();
         stream << synchronize();
