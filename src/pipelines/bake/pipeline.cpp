@@ -88,7 +88,7 @@ void BakePipeline::compile_displayer() noexcept {
         Interaction it = geometry().compute_surface_interaction(hit, rs.ray);
 
         $if(it.has_lightmap()) {
-            Float4 t = bindless_array().tex(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
+            Float4 t = bindless_array().tex_var(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
             L = t.xyz() / t.w;
             $if(has_invalid(L)) {
                 L = make_float3(0.f);

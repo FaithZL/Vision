@@ -150,8 +150,8 @@ public:
 
     template<typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] BindlessArrayTexture tex(Index &&index) const noexcept {
-        return _bindless_array.tex(OC_FORWARD(index));
+    [[nodiscard]] BindlessArrayTexture tex_var(Index &&index) const noexcept {
+        return _bindless_array.tex_var(OC_FORWARD(index));
     }
 
     template<typename T, typename Index>
