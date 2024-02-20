@@ -153,7 +153,7 @@ public:
 
     void prepare() noexcept override;
 
-    [[nodiscard]] CommandList denoise() const noexcept;
+    [[nodiscard]] CommandList denoise(RealTimeDenoiseInput &input) const noexcept;
 
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(const Interaction &it, const SF &sf, LightSample ls,

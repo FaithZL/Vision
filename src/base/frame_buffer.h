@@ -114,8 +114,8 @@ public:
 #undef VS_MAKE_ATTR_FUNC
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
-    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, Buffer<PixelGeometry> &gbuffer,
-                                                      Buffer<float4> &albedo, Buffer<float4> &emission) const noexcept = 0;
+    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+                                                      BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
     virtual void compile() noexcept = 0;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {

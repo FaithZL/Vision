@@ -45,14 +45,11 @@ void IlluminationIntegrator::prepare() noexcept {
     datas().upload_immediately();
 }
 
-CommandList IlluminationIntegrator::denoise() const noexcept {
+CommandList IlluminationIntegrator::denoise(RealTimeDenoiseInput &input) const noexcept {
     CommandList ret;
     if (!_denoiser) {
         return ret;
     }
-    vision::RealTimeDenoiseInput input;
-    input.frame_index = _frame_index;
-    input.resolution = pipeline()->resolution();
     ret << _denoiser->dispatch(input);
     return ret;
 }

@@ -51,17 +51,29 @@ public:
         _shader = device().compile(kernel, "path tracing integrator");
     }
 
+    RealTimeDenoiseInput denoise_input() const noexcept {
+        RealTimeDenoiseInput ret;
+        ret.frame_index = _frame_index;
+        ret.resolution = pipeline()->resolution();
+        ret.gbuffer = frame_buffer().cur_gbuffer(_frame_index);
+        ret.prev_gbuffer = frame_buffer().prev_gbuffer(_frame_index);
+        ret.radiance = frame_buffer().bufferA();
+        ret.albedo = frame_buffer().bufferB();
+        ret.emission = frame_buffer().bufferC();
+        return ret;
+    }
+
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
         stream << frame_buffer().compute_GBuffer(_frame_index,
-                                                 frame_buffer().gbuffer(),
+                                                 frame_buffer().cur_gbuffer(_frame_index),
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());
-
-//        stream << denoise();
+        RealTimeDenoiseInput input = denoise_input();
+        stream << denoise(input);
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

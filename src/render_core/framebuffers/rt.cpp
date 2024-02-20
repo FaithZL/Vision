@@ -126,8 +126,8 @@ public:
         compile_compute_grad();
     }
 
-    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, Buffer<PixelGeometry> &gbuffer,
-                                              Buffer<float4> &albedo, Buffer<float4> &emission) const noexcept {
+    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+                                              BufferView<float4> albedo, BufferView<float4> emission) const noexcept {
         CommandList ret;
         ret << _compute_geom(frame_index, gbuffer, albedo, emission).dispatch(resolution());
         ret << _compute_grad(frame_index, gbuffer).dispatch(resolution());
