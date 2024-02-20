@@ -17,6 +17,12 @@ VS_MAKE_CALLABLE(demodulate)
 void Reproject::prepare() noexcept {
 }
 
+Bool Reproject::is_neighbor(Int2 coord, Float depth, Float prev_depth, Float depth_fwidth, Float3 normal,
+                            Float3 prev_normal, Float normal_fwidth) const noexcept {
+    Bool ret = true;
+    return ret;
+}
+
 Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, Float *history,
                                Float3 *prev_illumination, Float2 *prev_moments) const noexcept {
     Bool ret = true;
@@ -35,22 +41,23 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, Float *history,
 
 void Reproject::compile() noexcept {
     Kernel kernel = [&](BufferVar<PixelGeometry> pixel_buffer, BufferVar<float4> radiance_buffer,
+                        BufferVar<float4> albedo_buffer,
+                        BufferVar<float4> emission_buffer,
                         Uint cur_index, Uint prev_index) {
         OCPixelGeometry geom_data = pixel_buffer.read(dispatch_id());
-//        Float4 radiance = radiance_buffer.read(dispatch_id());
-//        Float3 illumination = demodulate(radiance.xyz() - geom_data.emission.as_vec(), geom_data.albedo.as_vec());
-//
-//        BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer<SVGFData>(cur_index);
-//        BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer<SVGFData>(prev_index);
-//
-//        Float history = 0.f;
-//        Float3 prev_illumination = make_float3(0.f);
-//        Float2 prev_moments = make_float2(0.f);
-//
-//        Bool valid = load_prev_data(geom_data, &history, &prev_illumination, &prev_moments);
+        Float3 emission = emission_buffer.read(dispatch_id()).xyz();
+        Float3 albedo = albedo_buffer.read(dispatch_id()).xyz();
+        Float3 radiance = radiance_buffer.read(dispatch_id()).xyz();
+        Float3 illumination = demodulate(radiance.xyz() - emission, albedo);
 
+        BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer_var<SVGFData>(cur_index);
+        BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer_var<SVGFData>(prev_index);
 
+        Float history = 0.f;
+        Float3 prev_illumination = make_float3(0.f);
+        Float2 prev_moments = make_float2(0.f);
 
+        Bool valid = load_prev_data(geom_data, &history, &prev_illumination, &prev_moments);
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
@@ -59,7 +66,10 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     uint cur_index = _svgf->cur_svgf_index(input.frame_index);
     uint prev_index = _svgf->prev_svgf_index(input.frame_index);
-//    ret << _shader(*input.gbuffer, *input.radiance, cur_index, prev_index).dispatch(input.resolution);
+    ret << _shader(input.gbuffer, input.radiance,
+                   input.albedo, input.emission,
+                   cur_index, prev_index)
+               .dispatch(input.resolution);
     return ret;
 }
 

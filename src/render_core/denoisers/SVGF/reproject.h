@@ -16,7 +16,7 @@ class SVGF;
 class Reproject : public Context {
 private:
     SVGF *_svgf{nullptr};
-    using signature = void(Buffer<PixelGeometry>, Buffer<float4>, uint, uint);
+    using signature = void(Buffer<PixelGeometry>, Buffer<float4>, Buffer<float4>, Buffer<float4>, uint, uint);
     Shader<signature> _shader;
 
 public:

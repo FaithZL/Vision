@@ -41,6 +41,7 @@ public:
             OCHit hit = pipeline()->trace_closest(rs.ray);
 
             OCPixelGeometry geom;
+            geom.p_film = ss.p_film;
             Float3 albedo;
             Float3 emission;
             $if(hit->is_hit()) {
