@@ -30,7 +30,7 @@ RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
 OCRay Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {
     Float3 p_film = make_float3(ss.p_film, 0.f);
     Float3 p_sensor = transform_point(*_raster_to_camera, p_film);
-    OCRay ray = make_ray(make_float3(0.f),normalize(p_sensor));
+    OCRay ray = make_ray(make_float3(0.f), normalize(p_sensor));
     return ray;
 }
 
@@ -76,7 +76,7 @@ void Camera::store_prev_data() noexcept {
     _prev_pos = position();
 }
 
-Float3 Camera::prev_raster_coord(Float3 pos) {
+Float3 Camera::prev_raster_coord(Float3 pos) const noexcept {
     pos = transform_point(*_prev_w2c, pos);
     pos /= pos.z;
     Float3 ret = transform_point(*_prev_c2r, pos);

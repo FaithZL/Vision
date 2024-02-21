@@ -70,6 +70,7 @@ public:
         stream << Env::debugger().upload();
         stream << frame_buffer().compute_GBuffer(_frame_index,
                                                  frame_buffer().cur_gbuffer(_frame_index),
+                                                 frame_buffer().motion_vectors(),
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());

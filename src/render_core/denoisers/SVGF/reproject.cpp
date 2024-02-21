@@ -23,7 +23,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, const Float2 &m
     Bool ret = true;
     Uint2 pos = dispatch_idx().xy();
 
-//    $condition_info("{} {}          motion_vec",motion_vec);
+    $condition_info("{} {}          motion_vec",motion_vec);
 
     return ret;
 }

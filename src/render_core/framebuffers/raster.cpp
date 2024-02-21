@@ -15,6 +15,7 @@ public:
     void compile() noexcept override {
     }
     [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+                                              BufferView<float2> motion_vectors,
                                               BufferView<float4> albedo,
                                               BufferView<float4> emission) const noexcept override {
         return {};

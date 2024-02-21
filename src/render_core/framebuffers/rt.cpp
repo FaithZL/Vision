@@ -11,7 +11,7 @@ namespace vision {
 
 class RayTracingFrameBuffer : public FrameBuffer {
 private:
-    using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float4>, Buffer<float4>);
+    using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float2>, Buffer<float4>, Buffer<float4>);
     Shader<gbuffer_signature> _compute_geom;
 
     using grad_signature = void(uint, Buffer<PixelGeometry>);
@@ -26,7 +26,7 @@ public:
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         LightSampler *light_sampler = scene().light_sampler();
-        Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer,
+        Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer, BufferVar<float2> motion_vectors,
                             BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer) {
             RenderEnv render_env;
             render_env.initial(sampler, frame_index, spectrum());
@@ -39,6 +39,8 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
             OCHit hit = pipeline()->trace_closest(rs.ray);
+
+            Float2 motion_vec = make_float2(0.f);
 
             OCPixelGeometry geom;
             geom.p_film = ss.p_film;
@@ -63,8 +65,10 @@ public:
                     LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
                     emission = spectrum().linear_srgb(eval.L, swl);
                 };
+                motion_vec = compute_motion_vec(camera, ss.p_film, it.pos, true);
             };
             gbuffer.write(dispatch_id(), geom);
+            motion_vectors.write(dispatch_id(), motion_vec);
             albedo_buffer.write(dispatch_id(), make_float4(albedo, 1.f));
             emission_buffer.write(dispatch_id(), make_float4(emission, 1.f));
         };
@@ -127,10 +131,10 @@ public:
         compile_compute_grad();
     }
 
-    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                               BufferView<float4> albedo, BufferView<float4> emission) const noexcept {
         CommandList ret;
-        ret << _compute_geom(frame_index, gbuffer, albedo, emission).dispatch(resolution());
+        ret << _compute_geom(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
         ret << _compute_grad(frame_index, gbuffer).dispatch(resolution());
         return ret;
     }

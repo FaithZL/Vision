@@ -49,7 +49,7 @@ public:
     virtual void after_render() noexcept;
     void store_prev_data() noexcept;
     void set_sensitivity(float v) noexcept { _sensitivity = v; }
-    [[nodiscard]] Float3 prev_raster_coord(Float3 pos);
+    [[nodiscard]] Float3 prev_raster_coord(Float3 pos) const noexcept;
     [[nodiscard]] Float3 prev_device_position() const noexcept { return *_prev_pos; }
     OC_MAKE_MEMBER_GETTER(sensitivity, )
     OC_MAKE_MEMBER_GETTER(position, )

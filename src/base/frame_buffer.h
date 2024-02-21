@@ -55,6 +55,8 @@ void for_each_neighbor(const Int2 &radius, Func func) {
     };
 }
 
+class Camera;
+
 class FrameBuffer : public Node {
 protected:
     /// save two frames of data
@@ -115,8 +117,10 @@ public:
 #undef VS_MAKE_ATTR_FUNC
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
-    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                                       BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
+    [[nodiscard]] static Float2 compute_motion_vec(const Camera *camera, const Float2 &p_film, const Float3 &cur_pos,
+                                                   const Bool &is_hit) noexcept;
     virtual void compile() noexcept = 0;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {

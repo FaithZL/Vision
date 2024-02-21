@@ -54,16 +54,6 @@ CommandList IlluminationIntegrator::denoise(RealTimeDenoiseInput &input) const n
     return ret;
 }
 
-Float2 IlluminationIntegrator::compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos, const Bool &is_hit) noexcept {
-    Camera *camera = scene().camera().get();
-    Float2 ret = make_float2(0.f);
-    $if(is_hit) {
-        Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
-        ret = p_film - raster_coord;
-    };
-    return ret;
-}
-
 SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3 &normal,
                                                       const Float &scatter_pdf, const Uint &bounces,
                                                       const SampledWavelengths &swl) const noexcept {

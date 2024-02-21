@@ -29,4 +29,14 @@ BufferView<PixelGeometry> FrameBuffer::cur_gbuffer(ocarina::uint frame_index) co
     return pipeline()->buffer_view<PixelGeometry>(cur_gbuffer_index(frame_index));
 }
 
+Float2 FrameBuffer::compute_motion_vec(const Camera *camera, const Float2 &p_film,
+                                       const Float3 &cur_pos, const Bool &is_hit) noexcept {
+    Float2 ret = make_float2(0.f);
+    $if(is_hit) {
+        Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
+        ret = p_film - raster_coord;
+    };
+    return ret;
+}
+
 }// namespace vision

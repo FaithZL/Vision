@@ -144,9 +144,6 @@ public:
                                                 const Float &scatter_pdf, const Uint &bounces,
                                                 const SampledWavelengths &swl) const noexcept;
 
-    [[nodiscard]] static Float2 compute_motion_vec(const Float2 &p_film, const Float3 &cur_pos,
-                                                   const Bool &is_hit) noexcept;
-
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                             bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
