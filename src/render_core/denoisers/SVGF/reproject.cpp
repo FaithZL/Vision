@@ -19,7 +19,7 @@ void Reproject::prepare() noexcept {
 
 Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeometry &prev) const noexcept {
     Uint2 resolution = dispatch_dim().xy();
-    Bool inside = all(prev.p_film > 0.f) && all(prev.p_film < make_float2(resolution));
+    Bool inside = in_screen(make_int2(prev.p_film), make_int2(resolution));
 
     Float z = cur.linear_depth;
     Float z_prev = prev.linear_depth;
