@@ -57,6 +57,7 @@ public:
         ret.resolution = pipeline()->resolution();
         ret.gbuffer = frame_buffer().cur_gbuffer(_frame_index);
         ret.prev_gbuffer = frame_buffer().prev_gbuffer(_frame_index);
+        ret.motion_vec = frame_buffer().motion_vectors();
         ret.radiance = frame_buffer().bufferA();
         ret.albedo = frame_buffer().bufferB();
         ret.emission = frame_buffer().bufferC();

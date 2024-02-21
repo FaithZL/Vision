@@ -29,6 +29,14 @@ uint SVGF::prev_svgf_index(ocarina::uint frame_index) const noexcept {
     return prev_index(frame_index) + svgf_data_base();
 }
 
+BufferView<SVGFData> SVGF::cur_svgf_buffer(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer_view<SVGFData>(cur_svgf_index(frame_index));
+}
+
+BufferView<SVGFData> SVGF::prev_svgf_buffer(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer_view<SVGFData>(prev_svgf_index(frame_index));
+}
+
 void SVGF::prepare() noexcept {
     prepare_buffers();
     _reproject.prepare();

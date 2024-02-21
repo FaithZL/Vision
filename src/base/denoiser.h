@@ -29,6 +29,7 @@ struct RealTimeDenoiseInput {
     BufferView<float4> radiance;
     BufferView<float4> albedo;
     BufferView<float4> emission;
+    BufferView<float2> motion_vec;
     BufferView<PixelGeometry> gbuffer;
     BufferView<PixelGeometry> prev_gbuffer;
 };

@@ -52,6 +52,8 @@ public:
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }
     [[nodiscard]] uint cur_svgf_index(uint frame_index) const noexcept;
     [[nodiscard]] uint prev_svgf_index(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<SVGFData> cur_svgf_buffer(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<SVGFData> prev_svgf_buffer(uint frame_index) const noexcept;
     void prepare() noexcept override;
     void compile() noexcept override;
     [[nodiscard]] CommandList dispatch(vision::RealTimeDenoiseInput &input) noexcept override;
