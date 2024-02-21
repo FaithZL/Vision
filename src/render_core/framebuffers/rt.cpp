@@ -132,7 +132,7 @@ public:
     }
 
     [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
-                                              BufferView<float4> albedo, BufferView<float4> emission) const noexcept {
+                                              BufferView<float4> albedo, BufferView<float4> emission) const noexcept override {
         CommandList ret;
         ret << _compute_geom(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
         ret << _compute_grad(frame_index, gbuffer).dispatch(resolution());
