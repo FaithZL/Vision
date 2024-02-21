@@ -17,13 +17,33 @@ VS_MAKE_CALLABLE(demodulate)
 void Reproject::prepare() noexcept {
 }
 
-Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, const Float2 &motion_vec,
-                               Float *history, Float3 *prev_illumination,
+Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeometry &prev) const noexcept {
+    Uint2 resolution = dispatch_dim().xy();
+    Bool inside = all(prev.p_film > 0.f) && all(prev.p_film < make_float2(resolution));
+
+    Float z = cur.linear_depth;
+    Float z_prev = prev.linear_depth;
+    Bool z_valid = (abs(z - z_prev) / (cur.depth_gradient + 1e-2f)) < 10;
+
+    Float3 normal = cur.normal.as_vec3();
+    Float3 normal_prev = prev.normal.as_vec3();
+    Bool normal_valid = (distance(normal, normal_prev) / (cur.normal_fwidth + 1e-2f)) < 16;
+
+    return inside && z_valid && normal_valid;
+}
+
+Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, const BufferVar<PixelGeometry> &gbuffer,
+                               const Float2 &motion_vec, Float *history, Float3 *prev_illumination,
                                Float2 *prev_moments) const noexcept {
     Bool ret = true;
     Uint2 pos = dispatch_idx().xy();
 
-    $condition_info("{} {}          motion_vec",motion_vec);
+    Uint2 prev_pixel = make_uint2(geom_data.p_film - motion_vec);
+    
+    OCPixelGeometry prev_geom = gbuffer.read(dispatch_id(prev_pixel));
+
+    ret = is_valid_reproject(geom_data, prev_geom);
+
 
     return ret;
 }
@@ -48,7 +68,7 @@ void Reproject::compile() noexcept {
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
 
-        Bool valid = load_prev_data(geom_data, motion_vec, &history, &prev_illumination, &prev_moments);
+        Bool valid = load_prev_data(geom_data, gbuffer, motion_vec, &history, &prev_illumination, &prev_moments);
 
         BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer_var<SVGFData>(cur_index);
         BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer_var<SVGFData>(prev_index);
