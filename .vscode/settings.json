@@ -89,6 +89,7 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "*.ih": "cpp"
+        "*.ih": "cpp",
+        "*.ipp": "cpp"
     }
 }
