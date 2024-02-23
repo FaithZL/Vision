@@ -10,6 +10,7 @@
 #include "base/denoiser.h"
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
+#include "data.h"
 
 namespace vision {
 using namespace ocarina;

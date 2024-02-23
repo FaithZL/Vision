@@ -8,21 +8,7 @@
 #include "reproject.h"
 #include "filter_moment.h"
 #include "atrous.h"
-
-namespace vision {
-using namespace ocarina;
-struct SVGFData {
-    array<float, 3> illumination{};
-    float variance{};
-    float history{};
-    float2 moments{};
-};
-}// namespace vision
-// clang-format off
-OC_STRUCT(vision::SVGFData, illumination, variance, history, moments) {
-
-};
-// clang-format on
+#include "data.h"
 
 namespace vision {
 using namespace ocarina;
