@@ -3,3 +3,7 @@
 //
 
 #include "element.h"
+
+namespace vision {
+
+}
