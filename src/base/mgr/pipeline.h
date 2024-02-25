@@ -71,7 +71,7 @@ public:
     /// virtual function end
 
     template<typename T>
-    [[nodiscard]] CommandList reset_buffer(BufferView<T> buffer, T elm, string desc = "") const noexcept {
+    [[nodiscard]] CommandList reset_buffer(BufferView<T> buffer, T elm = T{}, string desc = "clear_buffer") const noexcept {
         static Kernel kernel = [&](BufferVar<T> buffer_var, Var<T> value) {
             buffer_var.write(dispatch_id(), value);
         };
