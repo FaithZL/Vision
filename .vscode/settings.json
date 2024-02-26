@@ -90,6 +90,7 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "*.ih": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "ranges": "cpp"
     }
 }
