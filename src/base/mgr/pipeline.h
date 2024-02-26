@@ -160,6 +160,11 @@ public:
     [[nodiscard]] BindlessArrayByteBuffer byte_buffer_var(Index &&index) const noexcept {
         return _bindless_array.byte_buffer_var(OC_FORWARD(index));
     }
+
+    template<typename Elm>
+    [[nodiscard]] SOAView<Elm, BindlessArrayByteBuffer> soa_view() noexcept {
+        return _bindless_array.soa_view<Elm>();
+    }
 };
 
 }// namespace vision
