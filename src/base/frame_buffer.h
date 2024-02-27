@@ -11,7 +11,7 @@
 namespace vision {
 using namespace ocarina;
 struct PixelGeometry {
-    array<float, 3> normal{};
+    float3 normal{};
     float2 p_film{};
     float normal_fwidth{};
     float depth_gradient{};

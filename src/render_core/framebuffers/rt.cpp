@@ -48,7 +48,7 @@ public:
             Float3 emission;
             $if(hit->is_hit()) {
                 Interaction it = pipeline()->compute_surface_interaction(hit, rs.ray, true);
-                geom.normal.set(it.ng);
+                geom.normal = it.ng;
                 Float4x4 w2c = inverse(camera->device_c2w());
                 Float3 c_pos = transform_point(w2c, it.pos);
                 geom.linear_depth = c_pos.z;
@@ -93,23 +93,23 @@ public:
                 OCPixelGeometry neighbor_data = gbuffer.read(index);
                 $if(center.x > pixel.x) {
                     x_sample_num += 1;
-                    normal_dx += center_data.normal.as_vec() - neighbor_data.normal.as_vec();
+                    normal_dx += center_data.normal - neighbor_data.normal;
                     depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
                 }
                 $elif(pixel.x > center.x) {
                     x_sample_num += 1;
-                    normal_dx += neighbor_data.normal.as_vec() - center_data.normal.as_vec();
+                    normal_dx += neighbor_data.normal - center_data.normal;
                     depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
                 };
 
                 $if(center.y > pixel.y) {
                     y_sample_num += 1;
-                    normal_dy += center_data.normal.as_vec() - neighbor_data.normal.as_vec();
+                    normal_dy += center_data.normal - neighbor_data.normal;
                     depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
                 }
                 $elif(pixel.y > center.y) {
                     y_sample_num += 1;
-                    normal_dy += neighbor_data.normal.as_vec() - center_data.normal.as_vec();
+                    normal_dy += neighbor_data.normal - center_data.normal;
                     depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
                 };
             });

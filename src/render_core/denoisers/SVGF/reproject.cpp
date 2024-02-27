@@ -25,8 +25,8 @@ Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeom
     Float z_prev = prev.linear_depth;
     Bool z_valid = (abs(z - z_prev) / (cur.depth_gradient + 1e-2f)) < 10;
 
-    Float3 normal = cur.normal.as_vec3();
-    Float3 normal_prev = prev.normal.as_vec3();
+    Float3 normal = cur.normal;
+    Float3 normal_prev = prev.normal;
     Bool normal_valid = (distance(normal, normal_prev) / (cur.normal_fwidth + 1e-2f)) < 16;
 
     return inside && z_valid && normal_valid;
