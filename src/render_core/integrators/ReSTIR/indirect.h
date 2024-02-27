@@ -49,7 +49,7 @@ public:
     void prepare() noexcept;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
-    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it,const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it, const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;
     [[nodiscard]] Float compute_p_hat(const Interaction &it, const IIRSVSample &sample) const noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
@@ -63,12 +63,12 @@ public:
     [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                const IIReservoir &other_rsv) const noexcept;
     [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
-                                             const Float2 &motion_vec,const SensorSample &ss) const noexcept;
+                                             const Float2 &motion_vec, const SensorSample &ss) const noexcept;
 
     [[nodiscard]] IIReservoir constant_combine(const IIReservoir &canonical_rsv,
                                                const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] IIReservoir combine_spatial(IIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const OCSurfaceData  &cur_surf,
+    [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                             const Int2 &pixel) const noexcept;
     [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept;
 
@@ -85,19 +85,19 @@ public:
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
+    [[nodiscard]] auto prev_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
+    [[nodiscard]] auto cur_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
-    [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> prev_reservoirs() const noexcept {
+    [[nodiscard]] auto prev_reservoirs() const noexcept {
         return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>((frame_index() & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> cur_reservoirs() const noexcept {
+    [[nodiscard]] auto cur_reservoirs() const noexcept {
         return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<ReSTIRIndirect::Reservoir> passthrough_reservoirs() const noexcept {
+    [[nodiscard]] auto passthrough_reservoirs() const noexcept {
         return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>(2 + reservoir_base());
     }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;

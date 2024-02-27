@@ -161,9 +161,10 @@ public:
         return _bindless_array.byte_buffer_var(OC_FORWARD(index));
     }
 
-    template<typename Elm>
-    [[nodiscard]] SOAView<Elm, BindlessArrayByteBuffer> soa_view() noexcept {
-        return _bindless_array.soa_view<Elm>();
+    template<typename Elm,typename Index>
+    requires is_integral_expr_v<Index>
+    [[nodiscard]] SOAView<Elm, BindlessArrayByteBuffer> soa_view(Index &&index) noexcept {
+        return _bindless_array.soa_view<Elm>(OC_FORWARD(index));
     }
 };
 

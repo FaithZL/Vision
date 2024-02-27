@@ -71,19 +71,19 @@ public:
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> prev_reservoirs() const noexcept {
+    [[nodiscard]] auto prev_reservoirs() const noexcept {
         return pipeline()->buffer_var<Reservoir>((frame_index() & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> passthrough_reservoirs() const noexcept {
+    [[nodiscard]] auto passthrough_reservoirs() const noexcept {
         return pipeline()->buffer_var<Reservoir>(2 + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<Reservoir> cur_reservoirs() const noexcept {
+    [[nodiscard]] auto cur_reservoirs() const noexcept {
         return pipeline()->buffer_var<Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces() const noexcept {
+    [[nodiscard]] auto prev_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces() const noexcept {
+    [[nodiscard]] auto cur_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it) const noexcept;
