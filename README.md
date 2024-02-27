@@ -118,3 +118,5 @@ Part of the scene comes from https://benedikt-bitterli.me/resources/
 ![](gallery/cornell-box-fog-projector.png)
 ![](gallery/cbox-sss.png)
 ![](gallery/cbox-dragon.png)
+
+-s ..\..\res\render_scene\cbox\vision_scene.json
