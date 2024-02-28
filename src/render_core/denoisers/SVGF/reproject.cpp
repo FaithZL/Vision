@@ -56,6 +56,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, const BufferVar
 
 void Reproject::compile() noexcept {
     Kernel kernel = [&](BufferVar<PixelGeometry> gbuffer,
+                        BufferVar<PixelGeometry> prev_gbuffer,
                         BufferVar<float2> motion_vectors,
                         BufferVar<float4> radiance_buffer,
                         BufferVar<float4> albedo_buffer,
@@ -86,7 +87,7 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     uint cur_index = _svgf->cur_svgf_index(input.frame_index);
     uint prev_index = _svgf->prev_svgf_index(input.frame_index);
-    ret << _shader(input.gbuffer, input.motion_vec, input.radiance,
+    ret << _shader(input.gbuffer, input.prev_gbuffer, input.motion_vec, input.radiance,
                    input.albedo, input.emission,
                    cur_index, prev_index)
                .dispatch(input.resolution);
