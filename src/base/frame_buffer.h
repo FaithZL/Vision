@@ -37,8 +37,8 @@ requires is_integral_expr_v<T>
 [[nodiscard]] inline T cur_index(const T &frame_index) noexcept { return (frame_index + 1) & 1; }
 
 template<typename Func>
-void for_each_neighbor(const Int2 &radius, Func func) {
-    Int2 cur_pixel = make_int2(dispatch_idx().xy());
+void foreach_neighbor(const Uint2 &pixel, const Int2 &radius, Func func) {
+    Int2 cur_pixel = make_int2(pixel);
     Int2 res = make_int2(dispatch_dim().xy());
     Int x_start = cur_pixel.x - radius.x;
     x_start = max(0, x_start);

@@ -88,7 +88,7 @@ public:
 
             Uint2 center = dispatch_idx().xy();
             OCPixelGeometry center_data = gbuffer.read(dispatch_id());
-            for_each_neighbor(radius, [&](const Int2 &pixel) {
+            foreach_neighbor(dispatch_idx().xy(), radius, [&](const Int2 &pixel) {
                 Uint index = dispatch_id(pixel);
                 OCPixelGeometry neighbor_data = gbuffer.read(index);
                 $if(center.x > pixel.x) {

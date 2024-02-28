@@ -33,17 +33,23 @@ Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeom
 }
 
 Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, const BufferVar<PixelGeometry> &gbuffer,
-                               const Float2 &motion_vec, Float *history, Float3 *prev_illumination,
+                               const Float2 &motion_vec, Float *history, Float4 *prev_illumination,
                                Float2 *prev_moments) const noexcept {
     Bool ret = true;
     Uint2 pos = dispatch_idx().xy();
 
     Uint2 prev_pixel = make_uint2(geom_data.p_film - motion_vec);
-    
+
     OCPixelGeometry prev_geom = gbuffer.read(dispatch_id(prev_pixel));
 
-    ret = is_valid_reproject(geom_data, prev_geom);
+    *prev_illumination = make_float4(0);
+    *prev_moments = make_float2(0);
 
+    ret = is_valid_reproject(geom_data, prev_geom);
+    Bool valid = false;
+    foreach_neighbor(dispatch_idx().xy(), make_int2(1), [&](const Int2 &pixel) {
+
+    });
 
     return ret;
 }
@@ -63,7 +69,7 @@ void Reproject::compile() noexcept {
         Float3 illumination = demodulate(radiance.xyz() - emission, albedo);
 
         Float history = 0.f;
-        Float3 prev_illumination = make_float3(0.f);
+        Float4 prev_illumination = make_float4(0.f);
         Float2 prev_moments = make_float2(0.f);
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
