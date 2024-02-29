@@ -48,7 +48,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
     *prev_moments = make_float2(0);
 
     Bool valid = false;
-    array<Bool, 4> v = {};
+    array<Bool, 4> v = {false, false, false, false};
     constexpr array<int2, 4> offsets = {int2(0, 0), int2(1, 0),
                                         int2(0, 1), int2(1, 1)};
 
@@ -56,9 +56,10 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
         int2 ofs = offsets[i];
         Int2 loc = prev_pixel + ofs;
         Uint index = dispatch_id(loc);
-        OCPixelGeometry neighbor = prev_gbuffer.read(index);
-        v[i] = is_valid_reproject(cur_geom, neighbor);
-        valid = valid || v[i];
+        $if(in_screen(loc, make_int2(dispatch_dim().xy()))) {
+            v[i] = is_valid_reproject(cur_geom, prev_gbuffer.read(index));
+            valid = valid || v[i];
+        };
     }
 
     BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer_var<SVGFData>(cur_buffer_index);
@@ -76,49 +77,50 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
             int2 ofs = offsets[i];
             Int2 loc = prev_pixel + ofs;
             Uint index = dispatch_id(loc);
-            $if(v[i]) {
-                SVGFDataVar prev_svgf_data = prev_data.read(index);
-                Float weight = weights[i];
-                *prev_illumination += weight * prev_svgf_data.illumination;
-                *prev_moments += weight * prev_svgf_data.moments;
-                weight_sum += weight;
+            $if(v[i] && in_screen(loc, make_int2(dispatch_dim().xy()))) {
+//                SVGFDataVar prev_svgf_data = prev_data.read(index);
+//                Float weight = loc.x;
+$condition_info("{}    {}   --------------", i, weights[i]);
+//                *prev_illumination += weight * prev_svgf_data.illumination;
+//                *prev_moments += weight * prev_svgf_data.moments;
+//                weight_sum += weight;
             };
-
+//
             valid = (weight_sum >= 0.01f);
-            *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float4(0));
-            *prev_moments = ocarina::select(valid, *prev_moments / weight_sum, make_float2(0));
+//            *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float4(0));
+//            *prev_moments = ocarina::select(valid, *prev_moments / weight_sum, make_float2(0));
         }
     };
 
-    $if(!valid) {
-        Float valid_num = 0.f;
-        foreach_neighbor(make_uint2(prev_pixel), [&](const Int2 &neighbor_pixel) {
-            Uint index = dispatch_id(neighbor_pixel);
-            OCPixelGeometry neighbor_data = prev_gbuffer.read(index);
-
-            $if(is_valid_reproject(cur_geom, neighbor_data)) {
-                SVGFDataVar prev_svgf_data = prev_data.read(index);
-                *prev_illumination += prev_svgf_data.illumination;
-                *prev_moments += prev_svgf_data.moments;
-                valid_num += 1;
-            };
-        });
-
-        $if(valid_num > 0) {
-            valid = true;
-            *prev_illumination /= valid_num;
-            *prev_moments /= valid_num;
-        };
-    };
-
-    $if(valid) {
-        *history = history_buffer.read(prev_buffer_index);
-    }
-    $else {
-        *history = 0;
-        *prev_illumination = make_float4(0);
-        *prev_moments = make_float2(0);
-    };
+//    $if(!valid) {
+//        Float valid_num = 0.f;
+//        foreach_neighbor(make_uint2(prev_pixel), [&](const Int2 &neighbor_pixel) {
+//            Uint index = dispatch_id(neighbor_pixel);
+//            OCPixelGeometry neighbor_data = prev_gbuffer.read(index);
+//
+//            $if(is_valid_reproject(cur_geom, neighbor_data)) {
+//                SVGFDataVar prev_svgf_data = prev_data.read(index);
+//                *prev_illumination += prev_svgf_data.illumination;
+//                *prev_moments += prev_svgf_data.moments;
+//                valid_num += 1;
+//            };
+//        });
+//
+//        $if(valid_num > 0) {
+//            valid = true;
+//            *prev_illumination /= valid_num;
+//            *prev_moments /= valid_num;
+//        };
+//    };
+//
+//    $if(valid) {
+//        *history = history_buffer.read(prev_buffer_index);
+//    }
+//    $else {
+//        *history = 0;
+//        *prev_illumination = make_float4(0);
+//        *prev_moments = make_float2(0);
+//    };
 
     return valid;
 }
@@ -148,6 +150,8 @@ void Reproject::compile() noexcept {
         Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec, cur_index, prev_index,
                                     addressof(history), addressof(prev_illumination),
                                     addressof(prev_moments));
+
+        $condition_info("{} --------", valid.cast<int>());
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
