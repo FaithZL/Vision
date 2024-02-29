@@ -77,7 +77,6 @@ public:
 
     void compile_compute_grad() noexcept {
         Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer) {
-            Int2 radius = make_int2(1);
             Uint x_sample_num = 0u;
             Uint y_sample_num = 0u;
             Float3 normal_dx = make_float3(0.f);
@@ -88,7 +87,7 @@ public:
 
             Uint2 center = dispatch_idx().xy();
             OCPixelGeometry center_data = gbuffer.read(dispatch_id());
-            foreach_neighbor(dispatch_idx().xy(), radius, [&](const Int2 &pixel) {
+            foreach_neighbor(dispatch_idx().xy(), [&](const Int2 &pixel) {
                 Uint index = dispatch_id(pixel);
                 OCPixelGeometry neighbor_data = gbuffer.read(index);
                 $if(center.x > pixel.x) {

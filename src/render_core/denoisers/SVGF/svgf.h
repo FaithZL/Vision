@@ -17,7 +17,6 @@ using SVGFDataVar = Var<SVGFData>;
 
 class SVGF : public Denoiser {
 public:
-    Buffer<float4> prev_normal_depth;
     RegistrableBuffer<SVGFData> svgf_data;
     Buffer<float> history;
 

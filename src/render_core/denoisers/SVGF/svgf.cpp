@@ -14,7 +14,6 @@ void SVGF::prepare_buffers() {
         vec.assign(num, T{});
         buffer.upload_immediately(vec.data());
     };
-    init_buffer(prev_normal_depth, rp->pixel_num(), "SVGF::prev_normal_depth");
     init_buffer(history, rp->pixel_num(), "SVGF::history");
     init_buffer(svgf_data, rp->pixel_num() * 2, "SVGF::svgf_data x 2");
     svgf_data.register_self(0, rp->pixel_num());

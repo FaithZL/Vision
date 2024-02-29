@@ -10,7 +10,7 @@
 namespace vision {
 using namespace ocarina;
 struct SVGFData {
-    array<float, 3> illumination{};
+    float4 illumination{};
     float variance{};
     float history{};
     float2 moments{};

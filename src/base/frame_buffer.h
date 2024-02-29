@@ -36,8 +36,9 @@ template<typename T>
 requires is_integral_expr_v<T>
 [[nodiscard]] inline T cur_index(const T &frame_index) noexcept { return (frame_index + 1) & 1; }
 
-template<typename Func>
-void foreach_neighbor(const Uint2 &pixel, const Int2 &radius, Func func) {
+template<typename TPixel, typename Func>
+requires is_vector2_expr_v<TPixel>
+void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_int2(1)) {
     Int2 cur_pixel = make_int2(pixel);
     Int2 res = make_int2(dispatch_dim().xy());
     Int x_start = cur_pixel.x - radius.x;

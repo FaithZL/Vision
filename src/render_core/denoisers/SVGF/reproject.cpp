@@ -32,31 +32,101 @@ Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeom
     return inside && z_valid && normal_valid;
 }
 
-Bool Reproject::load_prev_data(const OCPixelGeometry &geom_data, const BufferVar<PixelGeometry> &gbuffer,
-                               const Float2 &motion_vec, Float *history, Float4 *prev_illumination,
+Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
+                               const BufferVar<float> &history_buffer,
+                               const Float2 &motion_vec, const Uint &cur_buffer_index, const Uint &prev_buffer_index,
+                               Float *history, Float4 *prev_illumination,
                                Float2 *prev_moments) const noexcept {
-    Bool ret = true;
     Uint2 pos = dispatch_idx().xy();
 
-    Uint2 prev_pixel = make_uint2(geom_data.p_film - motion_vec);
+    Int2 prev_pixel = make_int2(cur_geom.p_film - motion_vec);
+    Uint prev_pixel_index = dispatch_id(prev_pixel);
 
-    OCPixelGeometry prev_geom = gbuffer.read(dispatch_id(prev_pixel));
+    OCPixelGeometry prev_geom = prev_gbuffer.read(dispatch_id(prev_pixel));
 
     *prev_illumination = make_float4(0);
     *prev_moments = make_float2(0);
 
-    ret = is_valid_reproject(geom_data, prev_geom);
     Bool valid = false;
-    foreach_neighbor(dispatch_idx().xy(), make_int2(1), [&](const Int2 &pixel) {
+    array<Bool, 4> v = {};
+    constexpr array<int2, 4> offsets = {int2(0, 0), int2(1, 0),
+                                        int2(0, 1), int2(1, 1)};
 
-    });
+    for (int i = 0; i < 4; ++i) {
+        int2 ofs = offsets[i];
+        Int2 loc = prev_pixel + ofs;
+        Uint index = dispatch_id(loc);
+        OCPixelGeometry neighbor = prev_gbuffer.read(index);
+        v[i] = is_valid_reproject(cur_geom, neighbor);
+        valid = valid || v[i];
+    }
 
-    return ret;
+    BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer_var<SVGFData>(cur_buffer_index);
+    BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer_var<SVGFData>(prev_buffer_index);
+
+    $if(valid) {
+        Float weight_sum = 0;
+        Float x = fract(prev_geom.p_film.x);
+        Float y = fract(prev_geom.p_film.y);
+
+        // bilinear weights
+        array<Float, 4> weights = {(1 - x) * (1 - y), x * (1 - y), (1 - x) * y, x * y};
+
+        for (int i = 0; i < 4; ++i) {
+            int2 ofs = offsets[i];
+            Int2 loc = prev_pixel + ofs;
+            Uint index = dispatch_id(loc);
+            $if(v[i]) {
+                SVGFDataVar prev_svgf_data = prev_data.read(index);
+                Float weight = weights[i];
+                *prev_illumination += weight * prev_svgf_data.illumination;
+                *prev_moments += weight * prev_svgf_data.moments;
+                weight_sum += weight;
+            };
+
+            valid = (weight_sum >= 0.01f);
+            *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float4(0));
+            *prev_moments = ocarina::select(valid, *prev_moments / weight_sum, make_float2(0));
+        }
+    };
+
+    $if(!valid) {
+        Float valid_num = 0.f;
+        foreach_neighbor(make_uint2(prev_pixel), [&](const Int2 &neighbor_pixel) {
+            Uint index = dispatch_id(neighbor_pixel);
+            OCPixelGeometry neighbor_data = prev_gbuffer.read(index);
+
+            $if(is_valid_reproject(cur_geom, neighbor_data)) {
+                SVGFDataVar prev_svgf_data = prev_data.read(index);
+                *prev_illumination += prev_svgf_data.illumination;
+                *prev_moments += prev_svgf_data.moments;
+                valid_num += 1;
+            };
+        });
+
+        $if(valid_num > 0) {
+            valid = true;
+            *prev_illumination /= valid_num;
+            *prev_moments /= valid_num;
+        };
+    };
+
+    $if(valid) {
+        *history = history_buffer.read(prev_buffer_index);
+    }
+    $else {
+        *history = 0;
+        *prev_illumination = make_float4(0);
+        *prev_moments = make_float2(0);
+    };
+
+    return valid;
 }
 
 void Reproject::compile() noexcept {
     Kernel kernel = [&](BufferVar<PixelGeometry> gbuffer,
                         BufferVar<PixelGeometry> prev_gbuffer,
+                        BufferVar<float> history_buffer,
                         BufferVar<float2> motion_vectors,
                         BufferVar<float4> radiance_buffer,
                         BufferVar<float4> albedo_buffer,
@@ -75,10 +145,9 @@ void Reproject::compile() noexcept {
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
 
-        Bool valid = load_prev_data(geom_data, gbuffer, motion_vec, &history, &prev_illumination, &prev_moments);
-
-        BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer_var<SVGFData>(cur_index);
-        BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer_var<SVGFData>(prev_index);
+        Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec, cur_index, prev_index,
+                                    addressof(history), addressof(prev_illumination),
+                                    addressof(prev_moments));
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
@@ -87,7 +156,8 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     uint cur_index = _svgf->cur_svgf_index(input.frame_index);
     uint prev_index = _svgf->prev_svgf_index(input.frame_index);
-    ret << _shader(input.gbuffer, input.prev_gbuffer, input.motion_vec, input.radiance,
+    ret << _shader(input.gbuffer, input.prev_gbuffer, _svgf->history,
+                   input.motion_vec, input.radiance,
                    input.albedo, input.emission,
                    cur_index, prev_index)
                .dispatch(input.resolution);
