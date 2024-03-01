@@ -29,7 +29,7 @@ public:
     [[nodiscard]] Bool load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                       const BufferVar<float> &history_buffer,
                                       const Float2 &motion_vec, const Uint &cur_buffer_index, const Uint &prev_buffer_index,
-                                      Float *history, Float4 *prev_illumination,
+                                      Float *history, Float3 *prev_illumination,
                                       Float2 *prev_moments) const noexcept;
     void compile() noexcept;
     [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;

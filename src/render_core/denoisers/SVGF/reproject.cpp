@@ -35,7 +35,7 @@ Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeom
 Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                const BufferVar<float> &history_buffer,
                                const Float2 &motion_vec, const Uint &cur_buffer_index, const Uint &prev_buffer_index,
-                               Float *history, Float4 *prev_illumination,
+                               Float *history, Float3 *prev_illumination,
                                Float2 *prev_moments) const noexcept {
     Uint2 pos = dispatch_idx().xy();
 
@@ -45,7 +45,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 
     OCPixelGeometry prev_geom;
 
-    *prev_illumination = make_float4(0);
+    *prev_illumination = make_float3(0);
     *prev_moments = make_float2(0);
 
     Bool valid = false;
@@ -82,13 +82,13 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
             $if(v[i] && in_screen(loc, make_int2(dispatch_dim().xy()))) {
                 SVGFDataVar prev_svgf_data = prev_data.read(index);
                 Float weight = weights[i];
-                *prev_illumination += weight * prev_svgf_data.illumination;
+                *prev_illumination += weight * prev_svgf_data->illumination();
                 *prev_moments += weight * prev_svgf_data.moments;
                 weight_sum += weight;
             };
 
             valid = (weight_sum >= 0.01f);
-            *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float4(0));
+            *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float3(0));
             *prev_moments = ocarina::select(valid, *prev_moments / weight_sum, make_float2(0));
         }
     };
@@ -101,7 +101,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 
             $if(is_valid_reproject(cur_geom, neighbor_data)) {
                 SVGFDataVar prev_svgf_data = prev_data.read(index);
-                *prev_illumination += prev_svgf_data.illumination;
+                *prev_illumination += prev_svgf_data->illumination();
                 *prev_moments += prev_svgf_data.moments;
                 valid_num += 1;
             };
@@ -119,7 +119,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
     }
     $else {
         *history = 0;
-        *prev_illumination = make_float4(0);
+        *prev_illumination = make_float3(0);
         *prev_moments = make_float2(0);
     };
 
@@ -144,7 +144,7 @@ void Reproject::compile() noexcept {
         Float3 illumination = demodulate(radiance.xyz() - emission, albedo);
 
         Float history = 0.f;
-        Float4 prev_illumination = make_float4(0.f);
+        Float3 prev_illumination = make_float3(0.f);
         Float2 prev_moments = make_float2(0.f);
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
@@ -167,7 +167,14 @@ void Reproject::compile() noexcept {
         moments = lerp(make_float2(moments_alpha), prev_moments, moments);
 
         Float variance = max(0.f, moments.x - sqr(moments.y));
+        SVGFDataVar svgf_data;
 
+        BindlessArrayBuffer<SVGFData> cur_buffer = pipeline()->buffer_var<SVGFData>(cur_index);
+        svgf_data.illumi_v = make_float4(lerp(make_float3(alpha), prev_illumination.xyz(), illumination), variance);
+        svgf_data.moments = moments;
+        svgf_data.history = history;
+
+        cur_buffer.write(dispatch_id(), svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
