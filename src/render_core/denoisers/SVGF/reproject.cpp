@@ -134,7 +134,7 @@ void Reproject::compile() noexcept {
                         BufferVar<float4> radiance_buffer,
                         BufferVar<float4> albedo_buffer,
                         BufferVar<float4> emission_buffer,
-                        Float alpha, Float moment_alpha,
+                        Float alpha, Float moments_alpha,
                         Uint cur_index, Uint prev_index) {
         OCPixelGeometry geom_data = gbuffer.read(dispatch_id());
 
@@ -157,7 +157,17 @@ void Reproject::compile() noexcept {
 
         history_buffer.write(dispatch_id(), history);
 
-        $condition_info("{} --------", history);
+        alpha = ocarina::select(valid, ocarina::max(alpha, rcp(history)), 1.f);
+        moments_alpha = ocarina::select(valid, ocarina::max(moments_alpha, rcp(history)), 1.f);
+
+        Float2 moments;
+        moments.x = luminance(illumination);
+        moments.y = sqr(moments.x);
+
+        moments = lerp(make_float2(moments_alpha), prev_moments, moments);
+
+        Float variance = max(0.f, moments.x - sqr(moments.y));
+
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
@@ -169,7 +179,7 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     ret << _shader(input.gbuffer, input.prev_gbuffer, _svgf->history,
                    input.motion_vec, input.radiance,
                    input.albedo, input.emission,
-                   _svgf->alpha(), _svgf->moment_alpha(),
+                   _svgf->alpha(), _svgf->moments_alpha(),
                    cur_index, prev_index)
                .dispatch(input.resolution);
     return ret;

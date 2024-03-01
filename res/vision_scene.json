@@ -780,7 +780,7 @@
                 "param" : {
                     "N": 3,
                     "alpha": 0.05,
-                    "moment_alpha": 0.2,
+                    "moments_alpha": 0.2,
                     "filter": {
                         "type": "gaussian",
                         "param" : {
