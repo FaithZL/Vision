@@ -134,6 +134,7 @@ void Reproject::compile() noexcept {
                         BufferVar<float4> radiance_buffer,
                         BufferVar<float4> albedo_buffer,
                         BufferVar<float4> emission_buffer,
+                        Float alpha, Float moment_alpha,
                         Uint cur_index, Uint prev_index) {
         OCPixelGeometry geom_data = gbuffer.read(dispatch_id());
 
@@ -168,6 +169,7 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     ret << _shader(input.gbuffer, input.prev_gbuffer, _svgf->history,
                    input.motion_vec, input.radiance,
                    input.albedo, input.emission,
+                   _svgf->alpha(), _svgf->moment_alpha(),
                    cur_index, prev_index)
                .dispatch(input.resolution);
     return ret;
