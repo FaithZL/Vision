@@ -41,6 +41,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 
     Int2 prev_pixel = make_int2(cur_geom.p_film - motion_vec);
     Uint prev_pixel_index = dispatch_id(prev_pixel);
+    Bool inside = in_screen(prev_pixel, make_int2(dispatch_dim().xy()));
 
     OCPixelGeometry prev_geom;
 
@@ -113,7 +114,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
         };
     };
 
-    $if(valid) {
+    $if(valid && inside) {
         *history = history_buffer.read(prev_pixel_index);
     }
     $else {
@@ -151,7 +152,11 @@ void Reproject::compile() noexcept {
                                     addressof(history), addressof(prev_illumination),
                                     addressof(prev_moments));
 
-        $condition_info("{} --------", valid.cast<int>());
+        history = min(32.0f, ocarina::select(valid, history + 1.0f, 1.0f));
+
+        history_buffer.write(dispatch_id(), history);
+
+        $condition_info("{} --------", history);
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }

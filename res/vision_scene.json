@@ -788,9 +788,12 @@
             }
         }
     ],
-    "debug" : {
-        // "pixel" : [60, 79],
-        "MIS_mode" : 2
+    "pipeline": {
+        //				"type": "customized",
+        "param": {
+            //			"obfuscation" : false,
+//            			"valid_check" : true
+        }
     },
     "output" : {
         "fn" : "cornell-box-mg.png",
