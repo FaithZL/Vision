@@ -6,7 +6,7 @@
 #include "dsl/dsl.h"
 #include "base/denoiser.h"
 #include "reproject.h"
-#include "filter_moment.h"
+#include "filter_moments.h"
 #include "atrous.h"
 #include "data.h"
 
@@ -22,11 +22,16 @@ public:
 
 private:
     Reproject _reproject{this};
-    FilterMoment _filter_moment{this};
+    FilterMoments _filter_moments{this};
     AtrousFilter _atrous;
+
+private:
     uint N;
     float _alpha{0.05f};
     float _moments_alpha{0.2f};
+
+    float _sigma_rt{10.f};
+    float _sigma_normal{128.f};
 
 public:
     explicit SVGF(const DenoiserDesc &desc)
@@ -35,10 +40,14 @@ public:
           _atrous(desc.filter_desc, this),
           N(desc["N"].as_uint(3)),
           _alpha(desc["alpha"].as_float(0.05f)),
-          _moments_alpha(desc["moments_alpha"].as_float(0.2f)) {}
+          _moments_alpha(desc["moments_alpha"].as_float(0.2f)),
+          _sigma_rt(desc["sigma_rt"].as_float(10.f)),
+          _sigma_normal(desc["sigma_normal"].as_float(128.f)) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     OC_MAKE_MEMBER_GETTER(alpha, )
     OC_MAKE_MEMBER_GETTER(moments_alpha, )
+    OC_MAKE_MEMBER_GETTER(sigma_rt, )
+    OC_MAKE_MEMBER_GETTER(sigma_normal, )
     void prepare_buffers();
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }
     [[nodiscard]] uint cur_svgf_index(uint frame_index) const noexcept;

@@ -8,17 +8,21 @@
 #include "dsl/dsl.h"
 #include "base/mgr/global.h"
 #include "base/denoiser.h"
+#include "data.h"
 
 namespace vision {
 
 class SVGF;
 
-class FilterMoment : public Context {
+class FilterMoments : public Context {
 private:
     SVGF *_svgf{nullptr};
+    using signature = void(Buffer<SVGFData>, Buffer<PixelGeometry>,
+                           float, float);
+    Shader<signature> _shader;
 
 public:
-    explicit FilterMoment(SVGF *svgf)
+    explicit FilterMoments(SVGF *svgf)
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;

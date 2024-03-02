@@ -39,20 +39,20 @@ BufferView<SVGFData> SVGF::prev_svgf_buffer(ocarina::uint frame_index) const noe
 void SVGF::prepare() noexcept {
     prepare_buffers();
     _reproject.prepare();
-    _filter_moment.prepare();
+    _filter_moments.prepare();
     _atrous.prepare();
 }
 
 void SVGF::compile() noexcept {
     _reproject.compile();
-    _filter_moment.compile();
+    _filter_moments.compile();
     _atrous.compile();
 }
 
 CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     ret << _reproject.dispatch(input);
-    ret << _filter_moment.dispatch(input);
+    ret << _filter_moments.dispatch(input);
     for (int i = 0; i < N; ++i) {
         uint step_width = 1 << i;
         ret << _atrous.dispatch(input, step_width);

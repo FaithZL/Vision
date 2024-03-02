@@ -64,7 +64,6 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
         };
     }
 
-    BindlessArrayBuffer<SVGFData> cur_data = pipeline()->buffer_var<SVGFData>(cur_buffer_index);
     BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer_var<SVGFData>(prev_buffer_index);
 
     $if(valid) {
@@ -149,7 +148,8 @@ void Reproject::compile() noexcept {
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
 
-        Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec, cur_index, prev_index,
+        Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec,
+                                    cur_index, prev_index,
                                     addressof(history), addressof(prev_illumination),
                                     addressof(prev_moments));
 
