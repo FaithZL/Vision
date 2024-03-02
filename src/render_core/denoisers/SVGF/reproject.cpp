@@ -71,7 +71,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
         Float x = fract(prev_geom.p_film.x);
         Float y = fract(prev_geom.p_film.y);
 
-        // bilinear weights
+        /// bilinear weights
         array<Float, 4> weights = {(1 - x) * (1 - y), x * (1 - y), (1 - x) * y, x * y};
 
         for (int i = 0; i < 4; ++i) {
@@ -170,7 +170,8 @@ void Reproject::compile() noexcept {
         SVGFDataVar svgf_data;
 
         BindlessArrayBuffer<SVGFData> cur_buffer = pipeline()->buffer_var<SVGFData>(cur_index);
-        svgf_data.illumi_v = make_float4(lerp(make_float3(alpha), prev_illumination.xyz(), illumination), variance);
+        illumination = lerp(make_float3(alpha), prev_illumination.xyz(), illumination);
+        svgf_data.illumi_v = make_float4(illumination, variance);
         svgf_data.moments = moments;
         svgf_data.history = history;
 
