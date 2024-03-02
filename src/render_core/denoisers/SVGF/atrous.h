@@ -10,7 +10,7 @@
 #include "base/denoiser.h"
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
-#include "data.h"
+#include "utils.h"
 
 namespace vision {
 using namespace ocarina;
@@ -21,7 +21,6 @@ class AtrousFilter : public Context {
 private:
     SP<Filter> _filter;
     SVGF *_svgf{nullptr};
-
 
 public:
     explicit AtrousFilter(const Filter::Desc &desc, SVGF *svgf)

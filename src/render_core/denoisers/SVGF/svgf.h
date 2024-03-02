@@ -8,12 +8,11 @@
 #include "reproject.h"
 #include "filter_moments.h"
 #include "atrous.h"
-#include "data.h"
+#include "utils.h"
 
 namespace vision {
 using namespace ocarina;
 
-using SVGFDataVar = Var<SVGFData>;
 
 class SVGF : public Denoiser {
 public:

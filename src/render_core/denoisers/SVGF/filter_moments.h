@@ -8,7 +8,7 @@
 #include "dsl/dsl.h"
 #include "base/mgr/global.h"
 #include "base/denoiser.h"
-#include "data.h"
+#include "utils.h"
 
 namespace vision {
 
@@ -18,7 +18,7 @@ class FilterMoments : public Context {
 private:
     SVGF *_svgf{nullptr};
     using signature = void(Buffer<SVGFData>, Buffer<PixelGeometry>,
-                           float, float);
+                           Buffer<float>, float, float);
     Shader<signature> _shader;
 
 public:
