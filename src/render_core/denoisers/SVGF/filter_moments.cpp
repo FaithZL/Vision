@@ -27,15 +27,15 @@ void FilterMoments::compile() noexcept {
 
         SVGFDataVar cur_svgf_data = svgf_buffer.read(dispatch_id());
 
-        Float weight_sum_illumi = 0;
-        Float3 sum_illumi = make_float3(0.f);
-        Float2 sum_moments = make_float2(0.f);
-
         Float sigma_depth = max(cur_goem.depth_gradient, 1e-8f) * 3.f;
 
         Float cur_luminance = ocarina::luminance(cur_svgf_data->illumination());
         Int2 radius = make_int2(3);
         Int2 cur_pixel = make_int2(dispatch_idx().xy());
+
+        Float weight_sum_illumi = 0;
+        Float3 sum_illumi = make_float3(0.f);
+        Float2 sum_moments = make_float2(0.f);
 
         foreach_neighbor(
             cur_pixel, [&](const Int2 &pixel) {
@@ -52,9 +52,19 @@ void FilterMoments::compile() noexcept {
                                           cur_goem.normal, normal, sigma_normal,
                                           cur_luminance, luminance, sigma_rt);
 
-                
+                weight_sum_illumi += weight;
+                sum_illumi += illumination * weight;
+                sum_moments += moments * weight;
             },
             radius);
+
+        weight_sum_illumi = max(weight_sum_illumi, 1e-6f);
+        sum_illumi /= weight_sum_illumi;
+        sum_moments /= weight_sum_illumi;
+
+        Float variance = sum_moments.y - sqr(sum_moments.x);
+        variance *= 4.f / history;
+        cur_svgf_data.illumi_v = make_float4(sum_illumi, variance);
     };
     _shader = device().compile(kernel, "SVGF-filter_moments");
 }
