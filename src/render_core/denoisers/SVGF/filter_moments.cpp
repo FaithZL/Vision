@@ -47,9 +47,9 @@ void FilterMoments::compile() noexcept {
                 Float depth = geom.linear_depth;
                 Float3 normal = geom.normal;
 
-                Float weight = cal_weight(cur_goem.linear_depth, depth, sigma_depth,
-                                          cur_goem.normal, normal, sigma_normal,
-                                          cur_luminance, luminance, sigma_rt);
+                Float weight = SVGF::cal_weight(cur_goem.linear_depth, depth, sigma_depth,
+                                                cur_goem.normal, normal, sigma_normal,
+                                                cur_luminance, luminance, sigma_rt);
 
                 weight_sum_illumi += weight;
                 sum_illumi += illumination * weight;

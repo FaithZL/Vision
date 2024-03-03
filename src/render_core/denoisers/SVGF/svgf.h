@@ -56,6 +56,9 @@ public:
     void prepare() noexcept override;
     void compile() noexcept override;
     [[nodiscard]] CommandList dispatch(vision::RealTimeDenoiseInput &input) noexcept override;
+    [[nodiscard]] static Float cal_weight(const Float &cur_depth, const Float &neighbor_depth, const Float &sigma_depth,
+                                          const Float3 &cur_normal, const Float3 &neighbor_normal, const Float &sigma_normal,
+                                          const Float &cur_illumi, const Float &neighbor_illumi, const Float &sigma_illumi) noexcept;
 };
 
 }// namespace vision

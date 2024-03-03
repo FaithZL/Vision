@@ -22,6 +22,9 @@ private:
     SP<Filter> _filter;
     SVGF *_svgf{nullptr};
 
+    using signature = void(Buffer<SVGFData>, Buffer<PixelGeometry>, Buffer<float>, float, float, int);
+    Shader<signature> _shader;
+
 public:
     explicit AtrousFilter(const Filter::Desc &desc, SVGF *svgf)
         : _filter(NodeMgr::instance().load<Filter>(desc)), _svgf(svgf) {}
