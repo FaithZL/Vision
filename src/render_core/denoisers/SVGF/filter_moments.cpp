@@ -15,7 +15,6 @@ void FilterMoments::compile() noexcept {
                         BufferVar<float> history_buffer,
                         Float sigma_rt, Float sigma_normal) {
         Float history = history_buffer.read(dispatch_id());
-
         $if(history < 4) {
             $return();
         };
@@ -65,6 +64,7 @@ void FilterMoments::compile() noexcept {
         Float variance = sum_moments.y - sqr(sum_moments.x);
         variance *= 4.f / history;
         cur_svgf_data.illumi_v = make_float4(sum_illumi, variance);
+        svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-filter_moments");
 }
