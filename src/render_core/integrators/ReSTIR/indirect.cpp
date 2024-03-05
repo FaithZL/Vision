@@ -68,21 +68,23 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
         _samples.write(dispatch_id(), sample);
     };
 
-    _initial_samples = device().async_compile(ocarina::move(kernel), "indirect initial samples");
+    _initial_samples = device().async_compile(ocarina::move(kernel),
+                                              "ReSTIR indirect initial samples");
 }
 
 ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
                                                   MaterialEvalMode mode) const noexcept {
-    return outline([&] {
-        ScatterEval ret{spectrum().dimension()};
-        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-            MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
-            Float3 wi = normalize(sample.sp->position() - it.pos);
-            ret = bsdf.evaluate(it.wo, wi, mode);
-        });
-        return ret;
-    },
-                   "ReSTIRIndirectIllumination::eval_bsdf");
+    return outline(
+        [&] {
+            ScatterEval ret{spectrum().dimension()};
+            scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+                MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
+                Float3 wi = normalize(sample.sp->position() - it.pos);
+                ret = bsdf.evaluate(it.wo, wi, mode);
+            });
+            return ret;
+        },
+        "ReSTIRIndirectIllumination::eval_bsdf");
 }
 
 Float ReSTIRIndirectIllumination::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
@@ -149,7 +151,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv = temporal_reuse(rsv, surf, motion_vec, ss);
         passthrough_reservoirs().write(dispatch_id(), rsv);
     };
-    _temporal_pass = device().async_compile(ocarina::move(kernel), "indirect temporal reuse");
+    _temporal_pass = device().async_compile(ocarina::move(kernel), "ReSTIR indirect temporal reuse");
 }
 
 IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
@@ -240,7 +242,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);
     };
-    _spatial_shading = device().async_compile(ocarina::move(kernel), "indirect spatial reuse and shading");
+    _spatial_shading = device().async_compile(ocarina::move(kernel), "ReSTIR indirect spatial reuse and shading");
 }
 
 CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {

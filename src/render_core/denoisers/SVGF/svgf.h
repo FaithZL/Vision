@@ -21,7 +21,7 @@ public:
 private:
     Reproject _reproject{this};
     FilterMoments _filter_moments{this};
-    AtrousFilter _atrous;
+    AtrousFilter _atrous{this};
 
 private:
     uint N;
@@ -35,7 +35,6 @@ public:
     explicit SVGF(const DenoiserDesc &desc)
         : Denoiser(desc),
           svgf_data(pipeline()->bindless_array()),
-          _atrous(desc.filter_desc, this),
           N(desc["N"].as_uint(3)),
           _alpha(desc["alpha"].as_float(0.05f)),
           _moments_alpha(desc["moments_alpha"].as_float(0.2f)),

@@ -28,18 +28,34 @@ void AtrousFilter::compile() noexcept {
         return sum;
     };
 
-    Kernel kernel = [&](BufferVar<SVGFData> svgf_buffer, BufferVar<PixelGeometry> gbufer,
+    Kernel kernel = [&](BufferVar<SVGFData> svgf_buffer, BufferVar<PixelGeometry> gbuffer,
                         BufferVar<float> history_buffer, Float sigma_rt, Float sigma_normal,
                         Int step_size) {
         float eps_variance = 1e-10f;
-        constexpr array<float, 3> kernel_weights = {1.f, 2.f / 3, 1.f / 6};
+        Float3 kernel_weights = make_float3(1.f, 2.f / 3, 1.f / 6);
         SVGFDataVar cur_svgf_data = svgf_buffer.read(dispatch_id());
 
         Float3 cur_illumination = cur_svgf_data->illumination();
         Float cur_luminance = ocarina::luminance(cur_illumination);
         Float variance = compute_variance(svgf_buffer, make_int2(dispatch_idx()));
-        
+
         Float history = history_buffer.read(dispatch_id());
+
+        OCPixelGeometry cur_geom = gbuffer.read(dispatch_id());
+
+        Float depth = cur_geom.linear_depth;
+
+        $if(depth < 0.f) {
+            $return();
+        };
+
+        Float sigma_depth = max(cur_geom.depth_gradient, 1e-8f) * step_size;
+        Float sigma_illumi = sigma_rt * sqrt(max(0.f, eps_variance + variance));
+
+        Float weight_sum_illumi = 1.f;
+        Float4 sum_illumi_v = make_float4(0.f);
+
+        svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-atrous");
 }
