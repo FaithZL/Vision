@@ -18,7 +18,7 @@ private:
     SVGF *_svgf{nullptr};
     using signature = void(Buffer<PixelGeometry>, Buffer<PixelGeometry>, Buffer<float>,
                            Buffer<float2>, Buffer<float4>,
-                           Buffer<float4>, Buffer<float4>, float, float, uint, uint);
+                           Buffer<float4>, Buffer<float4>, float, float, uint, uint, uint);
     Shader<signature> _shader;
 
 public:

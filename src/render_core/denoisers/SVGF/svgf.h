@@ -13,7 +13,6 @@
 namespace vision {
 using namespace ocarina;
 
-
 class SVGF : public Denoiser {
 public:
     RegistrableBuffer<SVGFData> svgf_data;
@@ -28,7 +27,7 @@ private:
     uint N;
     float _alpha{0.05f};
     float _moments_alpha{0.2f};
-
+    uint _history_limit{32};
     float _sigma_rt{10.f};
     float _sigma_normal{128.f};
 
@@ -40,6 +39,7 @@ public:
           N(desc["N"].as_uint(3)),
           _alpha(desc["alpha"].as_float(0.05f)),
           _moments_alpha(desc["moments_alpha"].as_float(0.2f)),
+          _history_limit(desc["history_limit"].as_uint(32)),
           _sigma_rt(desc["sigma_rt"].as_float(10.f)),
           _sigma_normal(desc["sigma_normal"].as_float(128.f)) {}
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
@@ -47,6 +47,7 @@ public:
     OC_MAKE_MEMBER_GETTER(moments_alpha, )
     OC_MAKE_MEMBER_GETTER(sigma_rt, )
     OC_MAKE_MEMBER_GETTER(sigma_normal, )
+    OC_MAKE_MEMBER_GETTER(history_limit, )
     void prepare_buffers();
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }
     [[nodiscard]] uint cur_svgf_index(uint frame_index) const noexcept;

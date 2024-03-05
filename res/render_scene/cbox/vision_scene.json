@@ -839,6 +839,7 @@
 					"N" : 3,
 					"alpha" : 0.05,
 					"moments_alpha": 0.2,
+					"history_limit" : 32,
 					"sigma_rt": 10,
 					"sigma_normal" : 128,
 					"filter" : {

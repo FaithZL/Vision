@@ -38,6 +38,7 @@ void AtrousFilter::compile() noexcept {
         Float3 cur_illumination = cur_svgf_data->illumination();
         Float cur_luminance = ocarina::luminance(cur_illumination);
         Float variance = compute_variance(svgf_buffer, make_int2(dispatch_idx()));
+        
         Float history = history_buffer.read(dispatch_id());
     };
     _shader = device().compile(kernel, "SVGF-atrous");

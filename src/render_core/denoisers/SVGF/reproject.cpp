@@ -133,6 +133,7 @@ void Reproject::compile() noexcept {
                         BufferVar<float4> albedo_buffer,
                         BufferVar<float4> emission_buffer,
                         Float alpha, Float moments_alpha,
+                        Uint history_limit,
                         Uint cur_index, Uint prev_index) {
         OCPixelGeometry geom_data = gbuffer.read(dispatch_id());
 
@@ -152,7 +153,7 @@ void Reproject::compile() noexcept {
                                     addressof(history), addressof(prev_illumination),
                                     addressof(prev_moments));
 
-        history = min(32.0f, ocarina::select(valid, history + 1.0f, 1.0f));
+        history = min(cast<float>(history_limit), ocarina::select(valid, history + 1.0f, 1.0f));
 
         history_buffer.write(dispatch_id(), history);
 
@@ -187,6 +188,7 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
                    input.motion_vec, input.radiance,
                    input.albedo, input.emission,
                    _svgf->alpha(), _svgf->moments_alpha(),
+                   _svgf->history_limit(),
                    cur_index, prev_index)
                .dispatch(input.resolution);
     return ret;
