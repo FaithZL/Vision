@@ -85,11 +85,10 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
                 *prev_moments += weight * prev_svgf_data.moments;
                 weight_sum += weight;
             };
-
-            valid = (weight_sum >= 0.01f);
-            *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float3(0));
-            *prev_moments = ocarina::select(valid, *prev_moments / weight_sum, make_float2(0));
         }
+        valid = (weight_sum >= 0.01f);
+        *prev_illumination = ocarina::select(valid, *prev_illumination / weight_sum, make_float3(0));
+        *prev_moments = ocarina::select(valid, *prev_moments / weight_sum, make_float2(0));
     };
 
     $if(!valid) {
