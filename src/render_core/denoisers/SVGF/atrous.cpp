@@ -53,8 +53,25 @@ void AtrousFilter::compile() noexcept {
         Float sigma_illumi = sigma_rt * sqrt(max(0.f, eps_variance + variance));
 
         Float weight_sum_illumi = 1.f;
-        Float4 sum_illumi_v = make_float4(0.f);
+        Float4 sum_illumi_v = cur_svgf_data.illumi_v;
 
+        Int2 radius = make_int2(2);
+        Int2 cur_pixel = make_int2(dispatch_idx().xy());
+        foreach_neighbor(
+            cur_pixel,
+            [&](const Int2 &neighbor) {
+                Int2 offset = cur_pixel - neighbor;
+                Bool center = all(offset == 0);
+                $if(center) {
+                    $continue;
+                };
+                offset *= step_size;
+                Int2 target_pixel = cur_pixel + offset;
+                Uint index = dispatch_id(target_pixel);
+                OCPixelGeometry neighbor_geom = gbuffer.read(index);
+                SVGFDataVar neighbor_svgf_data = svgf_buffer.read(index);
+            },
+            radius);
         svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-atrous");
