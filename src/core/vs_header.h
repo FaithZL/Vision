@@ -42,11 +42,6 @@
 
 #define CALLABLE_TYPE Callable
 
-#define VS_MAKE_ENUM_BIT_OP(type, op)                                                         \
-    inline auto operator op(type lhs, type rhs) {                                             \
-        return static_cast<type>(ocarina::to_underlying(lhs) op ocarina::to_underlying(rhs)); \
-    }
-
 //#define VS_MAKE_CALLABLE(func)                      \
 //    template<EPort p = EPort::D, typename... Args>  \
 //    [[nodiscard]] auto func(Args &&...args) {       \

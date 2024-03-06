@@ -39,10 +39,7 @@ enum class LightEvalMode {
 };
 }// namespace vision
 
-VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, |)
-VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, &)
-VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, <<)
-VS_MAKE_ENUM_BIT_OP(vision::LightEvalMode, >>)
+OC_MAKE_ENUM_BIT_OPS(vision::LightEvalMode, |, &, <<, >>)
 
 namespace vision {
 // LightType Definition
@@ -54,10 +51,7 @@ enum class LightType {
 };
 }// namespace vision
 
-VS_MAKE_ENUM_BIT_OP(vision::LightType, |)
-VS_MAKE_ENUM_BIT_OP(vision::LightType, &)
-VS_MAKE_ENUM_BIT_OP(vision::LightType, <<)
-VS_MAKE_ENUM_BIT_OP(vision::LightType, >>)
+OC_MAKE_ENUM_BIT_OPS(vision::LightType, |, &, <<, >>)
 
 #undef VS_MAKE_LIGHT_TYPE_OP
 

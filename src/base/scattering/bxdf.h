@@ -20,10 +20,7 @@ enum MaterialEvalMode {
 };
 }
 
-VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, |)
-VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, &)
-VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, <<)
-VS_MAKE_ENUM_BIT_OP(vision::MaterialEvalMode, >>)
+OC_MAKE_ENUM_BIT_OPS(vision::MaterialEvalMode, |, &, <<, >>)
 
 namespace vision {
 using namespace ocarina;
