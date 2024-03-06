@@ -20,16 +20,18 @@ requires ocarina::is_vector3_v<expr_value_t<T>>
 }
 
 template<EPort p = D>
-[[nodiscard]] tuple<oc_bool<p>, oc_float3<p>>
-refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta) noexcept {
+[[nodiscard]] oc_bool<p>
+refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta, oc_float3<p> *wt) noexcept {
     oc_float<p> cos_theta_i = dot(n, wi);
     oc_float<p> sin_theta_i_2 = max(0.f, 1 - sqr(cos_theta_i));
     oc_float<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
     oc_bool<p> valid = select(sin_theta_t_2 >= 1, false, true);
 
     oc_float<p> cos_theta_t = safe_sqrt(1 - sin_theta_t_2);
-    oc_float3<p> wt = -wi / eta + (cos_theta_i / eta - cos_theta_t) * n;
-    return {valid, wt};
+    if (wt) {
+        *wt = -wi / eta + (cos_theta_i / eta - cos_theta_t) * n;
+    }
+    return valid;
 }
 
 template<typename T>

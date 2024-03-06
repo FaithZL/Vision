@@ -109,7 +109,8 @@ Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) con
 
 SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = _microfacet->sample_wh(wo, u);
-    auto [valid, wi] = refract(wo, wh, fresnel->eta()[0]);
+    Float3 wi;
+    Bool valid = refract(wo, wh, fresnel->eta()[0], addressof(wi));
     return {wi, valid && dot(wh, wo) > 0};
 }
 
