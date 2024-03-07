@@ -65,13 +65,30 @@ void AtrousFilter::compile() noexcept {
                 $if(center) {
                     $continue;
                 };
-                offset *= step_size;
-                Int2 target_pixel = cur_pixel + offset;
+                Float kernel_weight = kernel_weights[abs(offset.x)] * kernel_weights[abs(offset.y)];
+                Int2 new_offset = offset * step_size;
+                Int2 target_pixel = cur_pixel + new_offset;
+                $if(!in_screen(target_pixel, make_int2(dispatch_dim().xy()))) {
+                    $continue;
+                };
                 Uint index = dispatch_id(target_pixel);
                 OCPixelGeometry neighbor_geom = gbuffer.read(index);
                 SVGFDataVar neighbor_svgf_data = svgf_buffer.read(index);
+                Float neighbor_luminance = ocarina::luminance(neighbor_svgf_data->illumination());
+
+                Float weight = SVGF::cal_weight(cur_geom.linear_depth, neighbor_geom.linear_depth,
+                                                sigma_depth * length(make_float2(offset)),
+                                                cur_geom.normal, neighbor_geom.normal, sigma_normal,
+                                                cur_luminance, neighbor_luminance, sigma_illumi);
+
+                Float illumi_weight = weight * kernel_weight;
+                weight_sum_illumi += illumi_weight;
+                sum_illumi_v += make_float4(make_float3(illumi_weight), sqr(illumi_weight)) * neighbor_luminance;
             },
             radius);
+        Float4 filtered_illumi_v = sum_illumi_v / make_float4(make_float3(weight_sum_illumi), sqr(weight_sum_illumi));
+        cur_svgf_data.illumi_v = filtered_illumi_v;
+        $condition_info("{} {} {} {} --------------",filtered_illumi_v);
         svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-atrous");
