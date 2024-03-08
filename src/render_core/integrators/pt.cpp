@@ -53,6 +53,7 @@ public:
 
     RealTimeDenoiseInput denoise_input() const noexcept {
         RealTimeDenoiseInput ret;
+        Camera *camera = scene().camera().get();
         ret.frame_index = _frame_index;
         ret.resolution = pipeline()->resolution();
         ret.gbuffer = frame_buffer().cur_gbuffer(_frame_index);
@@ -61,6 +62,7 @@ public:
         ret.radiance = frame_buffer().bufferA();
         ret.albedo = frame_buffer().bufferB();
         ret.emission = frame_buffer().bufferC();
+        ret.output = camera->radiance_film()->original_buffer();
         return ret;
     }
 
