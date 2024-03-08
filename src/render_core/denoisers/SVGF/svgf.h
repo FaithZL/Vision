@@ -8,6 +8,7 @@
 #include "reproject.h"
 #include "filter_moments.h"
 #include "atrous.h"
+#include "modulate.h"
 #include "utils.h"
 
 namespace vision {
@@ -22,6 +23,7 @@ private:
     Reproject _reproject{this};
     FilterMoments _filter_moments{this};
     AtrousFilter _atrous{this};
+    Modulate _modulate{this};
 
 private:
     uint N;

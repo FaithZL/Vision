@@ -29,7 +29,7 @@ void FilterMoments::compile() noexcept {
         Float sigma_depth = max(cur_goem.depth_gradient, 1e-8f) * 3.f;
 
         Float cur_luminance = ocarina::luminance(cur_svgf_data->illumination());
-        Int2 radius = make_int2(3);
+        Int2 radius = make_int2(0);
         Int2 cur_pixel = make_int2(dispatch_idx().xy());
 
         Float weight_sum_illumi = 0;
@@ -64,7 +64,7 @@ void FilterMoments::compile() noexcept {
         Float variance = sum_moments.y - sqr(sum_moments.x);
         variance *= 4.f / history;
         cur_svgf_data.illumi_v = make_float4(sum_illumi, variance);
-        svgf_buffer.write(dispatch_id(), cur_svgf_data);
+//        svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-filter_moments");
 }

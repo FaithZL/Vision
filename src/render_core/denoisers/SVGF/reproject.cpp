@@ -111,6 +111,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
             *prev_moments /= valid_num;
         };
     };
+    $condition_info("prev {} {} {}         ------------", *prev_illumination);
 
     $if(valid && inside) {
         *history = history_buffer.read(prev_pixel_index);
@@ -147,6 +148,8 @@ void Reproject::compile() noexcept {
         Float2 prev_moments = make_float2(0.f);
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
+
+        $condition_info("cur {} {} {}      ------------", illumination);
 
         Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec,
                                     cur_index, prev_index,

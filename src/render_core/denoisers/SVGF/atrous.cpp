@@ -88,8 +88,8 @@ void AtrousFilter::compile() noexcept {
             radius);
         Float4 filtered_illumi_v = sum_illumi_v / make_float4(make_float3(weight_sum_illumi), sqr(weight_sum_illumi));
         cur_svgf_data.illumi_v = filtered_illumi_v;
-        $condition_info("{} {} {} {} --------------",filtered_illumi_v);
-        svgf_buffer.write(dispatch_id(), cur_svgf_data);
+//        $condition_info("{} {} {} {} --------------",filtered_illumi_v);
+//        svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-atrous");
 }
