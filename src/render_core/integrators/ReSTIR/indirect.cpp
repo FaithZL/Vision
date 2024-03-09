@@ -223,7 +223,7 @@ Float3 ReSTIRIndirectIllumination::shading(ReSTIRIndirect::IIReservoir rsv, cons
 
 void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
     Camera *camera = scene().camera().get();
-    Film *film = camera->radiance_film();
+    Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
 

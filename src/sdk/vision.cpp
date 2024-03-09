@@ -44,7 +44,7 @@ void VisionRendererImpl::compile() {
     _pipeline->upload_bindless_array();
     auto &geometry = _pipeline->geometry();
     auto camera = _pipeline->scene().camera();
-    auto film = camera->radiance_film();
+    auto film = camera->film();
     auto sampler = _pipeline->scene().sampler();
     Buffer<float4> &buffer = film->original_buffer().device_buffer();
     Kernel kernel = [&](Uint frame_index) {
@@ -82,7 +82,7 @@ void VisionRendererImpl::compile() {
 void VisionRendererImpl::render() {
     Stream &stream = _pipeline->stream();
     auto camera = _pipeline->scene().camera();
-    auto film = camera->radiance_film();
+    auto film = camera->film();
     uint2 res = film->resolution();
     if (!_shader.has_function()) {
         return;
@@ -132,7 +132,7 @@ void VisionRendererImpl::init_scene() {
 void VisionRendererImpl::download_radiance(void *data) {
     Stream &stream = _pipeline->stream();
     auto camera = _pipeline->scene().camera();
-    auto &buffer = camera->radiance_film()->original_buffer();
+    auto &buffer = camera->film()->original_buffer();
     buffer.device_buffer().download_immediately(data);
 }
 
@@ -211,7 +211,7 @@ void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
 
 void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
     auto camera = _pipeline->scene().camera();
-    auto film = camera->radiance_film();
+    auto film = camera->film();
     camera->set_resolution(make_uint2(width, height));
     _pipeline->scene().prepare();
     _pipeline->upload_bindless_array();

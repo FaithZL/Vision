@@ -476,7 +476,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
 
 void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Camera *camera = scene().camera().get();
-    Film *film = camera->radiance_film();
+    Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index) {

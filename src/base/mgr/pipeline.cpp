@@ -24,11 +24,11 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
-    return scene().radiance_film()->tone_mapped_buffer().device_buffer();
+    return scene().film()->tone_mapped_buffer().device_buffer();
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {
-    auto film = _scene.camera()->radiance_film();
+    auto film = _scene.camera()->film();
     film->set_resolution(res);
     film->prepare();
 }
@@ -85,7 +85,7 @@ void Pipeline::display(double dt) noexcept {
 }
 
 float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
-    RegistrableManaged<float4> &original = _scene.radiance_film()->original_buffer();
+    RegistrableManaged<float4> &original = _scene.film()->original_buffer();
     bool gamma = !(desc.fn.ends_with("exr") || desc.fn.ends_with("hdr"));
     if (desc.denoise) {
         OfflineDenoiseInput input;

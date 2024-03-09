@@ -16,7 +16,7 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
     _scene.init(scene_desc);
     init_postprocessor(scene_desc.denoiser_desc);
-    _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
+    _postprocessor.set_tone_mapper(_scene.camera()->film()->tone_mapper());
 }
 
 void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
@@ -81,7 +81,7 @@ void BakePipeline::compile_displayer() noexcept {
 
         Var hit = geometry().trace_closest(rs.ray);
         $if(hit->is_miss()) {
-            camera->radiance_film()->add_sample(pixel, L, frame_index);
+            camera->film()->add_sample(pixel, L, frame_index);
             $return();
         };
 
@@ -94,7 +94,7 @@ void BakePipeline::compile_displayer() noexcept {
                 L = make_float3(0.f);
             };
         };
-        camera->radiance_film()->add_sample(pixel, L, frame_index);
+        camera->film()->add_sample(pixel, L, frame_index);
     };
     _display_shader = device().compile(kernel, "display");
 }

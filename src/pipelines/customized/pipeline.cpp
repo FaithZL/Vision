@@ -22,7 +22,7 @@ public:
 
     void init_postprocessor(const DenoiserDesc &desc) override {
         _postprocessor.set_denoiser(_scene.load<Denoiser>(desc));
-        _postprocessor.set_tone_mapper(_scene.camera()->radiance_film()->tone_mapper());
+        _postprocessor.set_tone_mapper(_scene.camera()->film()->tone_mapper());
     }
 
     void prepare_render_graph() noexcept override {

@@ -10,7 +10,7 @@ namespace vision {
 Camera::Camera(const SensorDesc &desc)
     : Sensor(desc) {
     init(desc);
-    _update_resolution(_radiance_film->resolution());
+    _update_resolution(_film->resolution());
 }
 
 void Camera::init(const SensorDesc &desc) noexcept {
@@ -40,7 +40,7 @@ void Camera::set_resolution(ocarina::uint2 res) noexcept {
 }
 
 void Camera::_update_resolution(uint2 res) noexcept {
-    Box2f scrn = radiance_film()->screen_window();
+    Box2f scrn = film()->screen_window();
     float2 span = scrn.span();
     float4x4 screen_to_raster = transform::scale(res.x, res.y, 1u) *
                                 transform::scale(1 / span.x, 1 / -span.y, 1.f) *

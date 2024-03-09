@@ -46,7 +46,7 @@ public:
             RayState rs = camera->generate_ray(ss);
             Float3 L = Li(rs, scatter_pdf, spectrum().one(), {}, render_env) * ss.filter_weight;
             frame_buffer().bufferA().write(dispatch_id(), make_float4(L, 1.f));
-            camera->radiance_film()->add_sample(pixel, L, frame_index);
+            camera->film()->add_sample(pixel, L, frame_index);
         };
         _shader = device().compile(kernel, "path tracing integrator");
     }
@@ -62,7 +62,7 @@ public:
         ret.radiance = frame_buffer().bufferA();
         ret.albedo = frame_buffer().bufferB();
         ret.emission = frame_buffer().bufferC();
-        ret.output = camera->radiance_film()->original_buffer();
+        ret.output = camera->film()->original_buffer();
         return ret;
     }
 

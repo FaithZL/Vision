@@ -110,7 +110,7 @@ public:
                 $break;
             };
 
-            camera->radiance_film()->add_sample(pixel, L, frame_index);
+            camera->film()->add_sample(pixel, L, frame_index);
         };
         _shader = rp->device().compile(kernel);
     }

@@ -11,7 +11,7 @@ using namespace ocarina;
 Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
       _filter(scene().load<Filter>(desc.filter_desc)),
-      _radiance_film(scene().load<Film>(desc.film_desc)),
+      _film(scene().load<Film>(desc.film_desc)),
       _medium_id(desc.medium.id) {
     if (!scene().has_medium()) {
         return ;
@@ -33,7 +33,7 @@ Sensor::Sensor(const SensorDesc &desc)
 
 void Sensor::prepare() noexcept {
     _filter->prepare();
-    _radiance_film->prepare();
+    _film->prepare();
 }
 
 }// namespace vision

@@ -62,8 +62,8 @@ public:
     OC_MAKE_MEMBER_GETTER(instances, &)
     [[nodiscard]] const auto &material_registry() const noexcept { return *_material_registry; }
     [[nodiscard]] auto &material_registry() noexcept { return *_material_registry; }
-    [[nodiscard]] auto radiance_film() noexcept { return camera()->radiance_film(); }
-    [[nodiscard]] auto radiance_film() const noexcept { return camera()->radiance_film(); }
+    [[nodiscard]] auto film() noexcept { return camera()->film(); }
+    [[nodiscard]] auto film() const noexcept { return camera()->film(); }
     [[nodiscard]] const auto &materials() const noexcept { return material_registry().materials(); }
     [[nodiscard]] auto &materials() noexcept { return material_registry().materials(); }
     [[nodiscard]] const auto &mediums() const noexcept { return _mediums; }
