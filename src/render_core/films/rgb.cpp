@@ -35,7 +35,7 @@ public:
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
-        Uint index = pixel_index(pixel);
+        Uint index = dispatch_id(pixel);
         val = Env::instance().zero_if_nan_inf(val);
         if (_accumulation.hv()) {
             Float4 accum_prev = _radiance.read(index);

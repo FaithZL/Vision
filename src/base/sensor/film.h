@@ -39,7 +39,6 @@ public:
     OC_SERIALIZABLE_FUNC(Serializable<float>, _accumulation, *_tone_mapper)
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] Box2f screen_window() const noexcept { return _screen_window; }
-    [[nodiscard]] Uint pixel_index(Uint2 pixel) const noexcept { return pixel.y * _resolution.x + pixel.x; }
     [[nodiscard]] bool enable_accumulation() const noexcept { return _accumulation.hv(); }
     void set_resolution(uint2 res) noexcept { _resolution = res; }
     [[nodiscard]] auto tone_mapper() const noexcept { return _tone_mapper; }
