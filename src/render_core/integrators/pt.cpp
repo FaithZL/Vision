@@ -76,9 +76,9 @@ public:
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());
-        stream << film()->accumulate(_frame_index)
-               << film()->tone_mapping()
-               << film()->gamma_correct();
+        stream << film()->accumulate(_frame_index);
+        stream << film()->tone_mapping();
+        stream << film()->gamma_correct();
 
         RealTimeDenoiseInput input = denoise_input();
         stream << denoise(input);

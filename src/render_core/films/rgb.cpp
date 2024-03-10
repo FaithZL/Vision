@@ -111,7 +111,7 @@ public:
     }
     [[nodiscard]] CommandList gamma_correct() const noexcept override {
         CommandList ret;
-        ret << _gamma_correct(_accumulation_buffer.device_buffer(),
+        ret << _gamma_correct(_output_buffer.device_buffer(),
                               _output_buffer.device_buffer())
                    .dispatch(resolution());
         return ret;
