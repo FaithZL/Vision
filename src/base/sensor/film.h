@@ -54,6 +54,8 @@ public:
     [[nodiscard]] virtual CommandList gamma_correct() const noexcept = 0;
     [[nodiscard]] virtual const RegistrableManaged<float4> &output_buffer() const noexcept = 0;
     [[nodiscard]] virtual RegistrableManaged<float4> &output_buffer() noexcept = 0;
+    [[nodiscard]] virtual const RegistrableManaged<float4> &accumulation_buffer() const noexcept = 0;
+    [[nodiscard]] virtual RegistrableManaged<float4> &accumulation_buffer() noexcept = 0;
     [[nodiscard]] virtual const RegistrableManaged<float4> &rt_buffer() const noexcept = 0;
     [[nodiscard]] virtual RegistrableManaged<float4> &rt_buffer() noexcept = 0;
 };
