@@ -69,11 +69,13 @@ public:
     }
     void prepare() noexcept override {
         auto prepare = [&](RegistrableManaged<float4> &managed, const string &desc = "") noexcept {
+            managed.set_bindless_array(pipeline()->bindless_array());
             managed.reset_all(device(), pixel_num(), desc);
             managed.reset_immediately();
             managed.register_self();
         };
         prepare(_rt_buffer, "RGBFilm::_rt_buffer");
+        prepare(_accumulation_buffer, "RGBFilm::_accumulation_buffer");
         prepare(_output_buffer, "RGBFilm::_output_buffer");
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
@@ -92,14 +94,27 @@ public:
         val.w = 1.f;
         _output_buffer.write(index, val);
     }
-    [[nodiscard]] CommandList accumulate() const noexcept override {
-        return {};
-    }
-    [[nodiscard]] CommandList gamma_correct() const noexcept override {
-        return {};
+    [[nodiscard]] CommandList accumulate(uint frame_index) const noexcept override {
+        CommandList ret;
+        ret << _accumulate(_rt_buffer.device_buffer(),
+                           _accumulation_buffer.device_buffer(),
+                           frame_index)
+                   .dispatch(resolution());
+        return ret;
     }
     [[nodiscard]] CommandList tone_mapping() const noexcept override {
-        return {};
+        CommandList ret;
+        ret << _tone_mapping(_accumulation_buffer.device_buffer(),
+                             _output_buffer.device_buffer())
+                   .dispatch(resolution());
+        return ret;
+    }
+    [[nodiscard]] CommandList gamma_correct() const noexcept override {
+        CommandList ret;
+        ret << _gamma_correct(_accumulation_buffer.device_buffer(),
+                              _output_buffer.device_buffer())
+                   .dispatch(resolution());
+        return ret;
     }
     [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return _output_buffer; }
     [[nodiscard]] RegistrableManaged<float4> &output_buffer() noexcept override { return _output_buffer; }

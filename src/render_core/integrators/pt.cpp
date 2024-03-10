@@ -20,8 +20,6 @@ public:
         IlluminationIntegrator::prepare();
         _denoiser->prepare();
         frame_buffer().prepare_gbuffer();
-        // radiance
-        frame_buffer().prepare_bufferA();
         // albedo
         frame_buffer().prepare_bufferB();
         // emission
@@ -29,8 +27,12 @@ public:
         frame_buffer().prepare_motion_vectors();
     }
 
+    [[nodiscard]] Film *film() noexcept { return scene().film(); }
+    [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
+
     void compile() noexcept override {
         _denoiser->compile();
+        film()->compile();
         frame_buffer().compile();
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
@@ -45,8 +47,7 @@ public:
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
             Float3 L = Li(rs, scatter_pdf, spectrum().one(), {}, render_env) * ss.filter_weight;
-            frame_buffer().bufferA().write(dispatch_id(), make_float4(L, 1.f));
-            camera->film()->add_sample(pixel, L, frame_index);
+            film()->rt_buffer().write(dispatch_id(), make_float4(L, 1.f));
         };
         _shader = device().compile(kernel, "path tracing integrator");
     }
@@ -59,7 +60,7 @@ public:
         ret.gbuffer = frame_buffer().cur_gbuffer(_frame_index);
         ret.prev_gbuffer = frame_buffer().prev_gbuffer(_frame_index);
         ret.motion_vec = frame_buffer().motion_vectors();
-        ret.radiance = frame_buffer().bufferA();
+        ret.radiance = film()->rt_buffer();
         ret.albedo = frame_buffer().bufferB();
         ret.emission = frame_buffer().bufferC();
         return ret;
@@ -75,6 +76,10 @@ public:
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());
+        stream << film()->accumulate(_frame_index)
+               << film()->tone_mapping()
+               << film()->gamma_correct();
+
         RealTimeDenoiseInput input = denoise_input();
         stream << denoise(input);
         stream << synchronize();
