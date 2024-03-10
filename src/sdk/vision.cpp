@@ -46,7 +46,7 @@ void VisionRendererImpl::compile() {
     auto camera = _pipeline->scene().camera();
     auto film = camera->film();
     auto sampler = _pipeline->scene().sampler();
-    Buffer<float4> &buffer = film->original_buffer().device_buffer();
+    Buffer<float4> &buffer = film->rt_buffer().device_buffer();
     Kernel kernel = [&](Uint frame_index) {
         Uint2 pixel = dispatch_idx().xy();
         sampler->start(pixel, 0, 0);
@@ -132,7 +132,7 @@ void VisionRendererImpl::init_scene() {
 void VisionRendererImpl::download_radiance(void *data) {
     Stream &stream = _pipeline->stream();
     auto camera = _pipeline->scene().camera();
-    auto &buffer = camera->film()->original_buffer();
+    auto &buffer = camera->film()->rt_buffer();
     buffer.device_buffer().download_immediately(data);
 }
 

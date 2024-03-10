@@ -48,9 +48,11 @@ public:
     virtual void add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
         add_sample(pixel, make_float4(val, 1.f), frame_index);
     }
-    [[nodiscard]] virtual const RegistrableManaged<float4> &tone_mapped_buffer() const noexcept = 0;
-    [[nodiscard]] virtual RegistrableManaged<float4> &tone_mapped_buffer() noexcept = 0;
-    [[nodiscard]] virtual const RegistrableManaged<float4> &original_buffer() const noexcept = 0;
-    [[nodiscard]] virtual RegistrableManaged<float4> &original_buffer() noexcept = 0;
+    [[nodiscard]] virtual CommandList tone_mapping() const noexcept = 0;
+    [[nodiscard]] virtual CommandList gamma_correct() const noexcept = 0;
+    [[nodiscard]] virtual const RegistrableManaged<float4> &output_buffer() const noexcept = 0;
+    [[nodiscard]] virtual RegistrableManaged<float4> &output_buffer() noexcept = 0;
+    [[nodiscard]] virtual const RegistrableManaged<float4> &rt_buffer() const noexcept = 0;
+    [[nodiscard]] virtual RegistrableManaged<float4> &rt_buffer() noexcept = 0;
 };
 }// namespace vision
