@@ -169,7 +169,7 @@ void Reproject::compile() noexcept {
 
         moments = lerp(make_float2(moments_alpha), prev_moments, moments);
 
-        Float variance = max(0.f, moments.x - sqr(moments.y));
+        Float variance = max(0.f, moments.y - sqr(moments.x));
         SVGFDataVar svgf_data;
 
         BindlessArrayBuffer<SVGFData> cur_buffer = pipeline()->buffer_var<SVGFData>(cur_index);
