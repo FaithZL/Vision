@@ -13,6 +13,7 @@ class RGBFilm : public Film {
 private:
     RegistrableManaged<float4> _rt_buffer;
     RegistrableManaged<float4> _output_buffer;
+    Shader<void(Buffer<float4>)> _accumulate;
     bool _gamma{true};
 
 public:
@@ -24,6 +25,10 @@ public:
 
     OC_SERIALIZABLE_FUNC(Film, _rt_buffer, _output_buffer)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+
+    void compile() noexcept override {
+
+    }
     void prepare() noexcept override {
         auto prepare = [&](RegistrableManaged<float4> &managed, const string &desc = "") noexcept {
             managed.reset_all(device(), pixel_num(), desc);
@@ -48,6 +53,9 @@ public:
         }
         val.w = 1.f;
         _output_buffer.write(index, val);
+    }
+    [[nodiscard]] CommandList accumulate() const noexcept override {
+        return {};
     }
     [[nodiscard]] CommandList gamma_correct() const noexcept override {
         return {};

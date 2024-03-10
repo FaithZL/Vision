@@ -37,6 +37,7 @@ protected:
 public:
     explicit Film(const FilmDesc &desc);
     OC_SERIALIZABLE_FUNC(Serializable<float>, _accumulation, *_tone_mapper)
+    virtual void compile() noexcept = 0;
     [[nodiscard]] uint pixel_num() const noexcept { return _resolution.x * _resolution.y; }
     [[nodiscard]] Box2f screen_window() const noexcept { return _screen_window; }
     [[nodiscard]] bool enable_accumulation() const noexcept { return _accumulation.hv(); }
@@ -48,6 +49,7 @@ public:
     virtual void add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
         add_sample(pixel, make_float4(val, 1.f), frame_index);
     }
+    [[nodiscard]] virtual CommandList accumulate() const noexcept = 0;
     [[nodiscard]] virtual CommandList tone_mapping() const noexcept = 0;
     [[nodiscard]] virtual CommandList gamma_correct() const noexcept = 0;
     [[nodiscard]] virtual const RegistrableManaged<float4> &output_buffer() const noexcept = 0;
