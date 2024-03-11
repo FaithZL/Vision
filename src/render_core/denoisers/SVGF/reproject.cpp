@@ -39,7 +39,8 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
                                Float2 *prev_moments) const noexcept {
     Uint2 pos = dispatch_idx().xy();
 
-    Int2 prev_pixel = make_int2(cur_geom.p_film - motion_vec);
+    Float2 prev_p_film = cur_geom.p_film - motion_vec;
+    Int2 prev_pixel = make_int2(prev_p_film - 0.5f);
     Uint prev_pixel_index = dispatch_id(prev_pixel);
     Bool inside = in_screen(prev_pixel, make_int2(dispatch_dim().xy()));
 
@@ -68,8 +69,8 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 
     $if(valid) {
         Float weight_sum = 0;
-        Float x = fract(prev_geom.p_film.x);
-        Float y = fract(prev_geom.p_film.y);
+        Float x = fract(prev_p_film.x);
+        Float y = fract(prev_p_film.y);
 
         /// bilinear weights
         array<Float, 4> weights = {(1 - x) * (1 - y), x * (1 - y), (1 - x) * y, x * y};
@@ -111,7 +112,6 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
             *prev_moments /= valid_num;
         };
     };
-    $condition_info("prev {} {} {}         ------------", *prev_illumination);
 
     $if(valid && inside) {
         *history = history_buffer.read(prev_pixel_index);
@@ -148,8 +148,6 @@ void Reproject::compile() noexcept {
         Float2 prev_moments = make_float2(0.f);
 
         Float2 motion_vec = motion_vectors.read(dispatch_id());
-
-        $condition_info("cur {} {} {}      ------------", illumination);
 
         Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec,
                                     cur_index, prev_index,

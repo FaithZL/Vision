@@ -70,7 +70,7 @@ CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
         uint step_width = 1 << i;
         ret << _atrous.dispatch(input, step_width);
     }
-////    ret << _modulate.dispatch(input);
+//    ret << _modulate.dispatch(input);
     return ret;
 }
 
