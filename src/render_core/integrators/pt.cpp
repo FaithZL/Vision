@@ -63,6 +63,7 @@ public:
         ret.radiance = film()->rt_buffer();
         ret.albedo = frame_buffer().bufferB();
         ret.emission = frame_buffer().bufferC();
+        ret.output = film()->output_buffer();
         return ret;
     }
 
