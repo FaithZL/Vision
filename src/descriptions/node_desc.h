@@ -252,9 +252,6 @@ public:
 
 struct DenoiserDesc : public NodeDesc {
 public:
-    FilterDesc filter_desc;
-
-public:
     VISION_DESC_COMMON(Denoiser)
     void init(const ParameterSet &ps) noexcept override;
 };

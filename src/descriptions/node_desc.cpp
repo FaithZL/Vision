@@ -241,8 +241,8 @@ void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("oidn");
     ParameterSet param = ps.value("param", DataWrap::object());
+    auto string = param.data().dump();
     set_parameter(param);
-    filter_desc.init(_parameter.value("filter"));
 }
 
 SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, ShaderNodeType type) const noexcept {
