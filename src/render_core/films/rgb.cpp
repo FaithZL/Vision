@@ -94,25 +94,28 @@ public:
         val.w = 1.f;
         _output_buffer.write(index, val);
     }
-    [[nodiscard]] CommandList accumulate(uint frame_index) const noexcept override {
+    [[nodiscard]] CommandList accumulate(BufferView<float4> input, BufferView<float4> output,
+                                         uint frame_index) const noexcept override {
         CommandList ret;
-        ret << _accumulate(_rt_buffer.device_buffer(),
-                           _accumulation_buffer.device_buffer(),
+        ret << _accumulate(input,
+                           output,
                            frame_index)
                    .dispatch(resolution());
         return ret;
     }
-    [[nodiscard]] CommandList tone_mapping() const noexcept override {
+    [[nodiscard]] CommandList tone_mapping(BufferView<float4> input,
+                                           BufferView<float4> output) const noexcept override {
         CommandList ret;
-        ret << _tone_mapping(_accumulation_buffer.device_buffer(),
-                             _output_buffer.device_buffer())
+        ret << _tone_mapping(input,
+                             output)
                    .dispatch(resolution());
         return ret;
     }
-    [[nodiscard]] CommandList gamma_correct() const noexcept override {
+    [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
+                                            BufferView<float4> output) const noexcept override {
         CommandList ret;
-        ret << _gamma_correct(_output_buffer.device_buffer(),
-                              _output_buffer.device_buffer())
+        ret << _gamma_correct(input,
+                              output)
                    .dispatch(resolution());
         return ret;
     }
