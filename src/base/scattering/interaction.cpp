@@ -89,16 +89,16 @@ Uint Interaction::light_type_id() const noexcept {
     return decode_id<D>(_light_id).second;
 }
 
-OCRay Interaction::spawn_ray(const Float3 &dir) const noexcept {
+RayVar Interaction::spawn_ray(const Float3 &dir) const noexcept {
     return vision::spawn_ray(pos, ng, dir);
 }
 
-OCRay Interaction::spawn_ray(const Float3 &dir, const Float &t) const noexcept {
+RayVar Interaction::spawn_ray(const Float3 &dir, const Float &t) const noexcept {
     return vision::spawn_ray(pos, ng, dir, t);
 }
 
 RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
-    OCRay ray = vision::spawn_ray(pos, ng, dir);
+    RayVar ray = vision::spawn_ray(pos, ng, dir);
     Uint medium;
     if (_mi) {
         medium = select(dot(ng, dir) > 0, mi().outside, mi().inside);
@@ -109,7 +109,7 @@ RayState Interaction::spawn_ray_state(const Float3 &dir) const noexcept {
 }
 
 RayState Interaction::spawn_ray_state_to(const Float3 &p) const noexcept {
-    OCRay ray = vision::spawn_ray_to(pos, ng, p);
+    RayVar ray = vision::spawn_ray_to(pos, ng, p);
     Uint medium;
     if (_mi) {
         medium = select(dot(ng, ray->direction()) > 0, mi().outside, mi().inside);
@@ -127,7 +127,7 @@ Float3 Interaction::robust_position(const Float3 &w) const noexcept {
     return custom_offset_ray_origin(pos, ng, w);
 }
 
-OCRay Interaction::spawn_ray_to(const Float3 &p) const noexcept {
+RayVar Interaction::spawn_ray_to(const Float3 &p) const noexcept {
     return vision::spawn_ray_to(pos, ng, p);
 }
 

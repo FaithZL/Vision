@@ -87,7 +87,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     SampledSpectrum value = spectrum().zero();
     const Geometry &geometry = rp->geometry();
 
-    OCHit hit;
+    HitVar hit;
     Interaction it{scene().has_medium()};
     Float3 prev_surface_ng = rs.direction();
 

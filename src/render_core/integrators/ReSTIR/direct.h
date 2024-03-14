@@ -144,7 +144,7 @@ public:
                                              const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,
                                              const SensorSample &ss) const noexcept;
-    [[nodiscard]] Float3 shading(DIReservoir rsv, const OCHit &hit) const noexcept;
+    [[nodiscard]] Float3 shading(DIReservoir rsv, const HitVar &hit) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;

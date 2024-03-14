@@ -214,27 +214,27 @@ public:
     [[nodiscard]] Uint light_type_id() const noexcept;
     [[nodiscard]] Uint light_id() const noexcept { return _light_id; }
     [[nodiscard]] Bool valid() const noexcept { return prim_id != InvalidUI32; }
-    [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept;
-    [[nodiscard]] OCRay spawn_ray(const Float3 &dir, const Float &t) const noexcept;
+    [[nodiscard]] RayVar spawn_ray(const Float3 &dir) const noexcept;
+    [[nodiscard]] RayVar spawn_ray(const Float3 &dir, const Float &t) const noexcept;
     [[nodiscard]] RayState spawn_ray_state(const Float3 &dir) const noexcept;
     [[nodiscard]] RayState spawn_ray_state_to(const Float3 &p) const noexcept;
-    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept;
+    [[nodiscard]] RayVar spawn_ray_to(const Float3 &p) const noexcept;
     [[nodiscard]] Float3 robust_position() const noexcept;
     [[nodiscard]] Float3 robust_position(const Float3 &w) const noexcept;
 };
 
 struct HitContext {
 public:
-    mutable OCHit *hit{};
+    mutable HitVar *hit{};
     mutable Interaction *it{};
 
 public:
     HitContext() = default;
     HitContext(Interaction &it)
         : it(&it) {}
-    HitContext(OCHit &hit)
+    HitContext(HitVar &hit)
         : hit(&hit) {}
-    HitContext(OCHit &hit, Interaction &it) {
+    HitContext(HitVar &hit, Interaction &it) {
         this->hit = &hit;
         this->it = &it;
     }
@@ -287,13 +287,13 @@ struct SpacePoint {
         return Interaction::custom_offset_ray_origin(pos, ng * factor);
     }
 
-    [[nodiscard]] OCRay spawn_ray(const Float3 &dir) const noexcept {
+    [[nodiscard]] RayVar spawn_ray(const Float3 &dir) const noexcept {
         return vision::spawn_ray(pos, ng, dir);
     }
-    [[nodiscard]] OCRay spawn_ray_to(const Float3 &p) const noexcept {
+    [[nodiscard]] RayVar spawn_ray_to(const Float3 &p) const noexcept {
         return vision::spawn_ray_to(pos, ng, p);
     }
-    [[nodiscard]] OCRay spawn_ray_to(const SpacePoint &lsc) const noexcept {
+    [[nodiscard]] RayVar spawn_ray_to(const SpacePoint &lsc) const noexcept {
         return vision::spawn_ray_to(pos, ng, lsc.pos, lsc.ng);
     }
 };

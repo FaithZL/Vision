@@ -11,7 +11,7 @@ RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
     *scatter_pdf = cosine_hemisphere_PDF(wi.z);
     Frame frame(normal);
-    OCRay ray = vision::spawn_ray(position, normal, frame.to_world(wi));
+    RayVar ray = vision::spawn_ray(position, normal, frame.to_world(wi));
     return {.ray = ray, .ior = 1.f, .medium = InvalidUI32};
 }
 

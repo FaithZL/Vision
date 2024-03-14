@@ -43,8 +43,8 @@ public:
     void clear() noexcept;
 
     // for dsl
-    [[nodiscard]] OCHit trace_closest(const OCRay &ray) const noexcept;
-    [[nodiscard]] Bool trace_any(const OCRay &ray) const noexcept;
+    [[nodiscard]] HitVar trace_closest(const RayVar &ray) const noexcept;
+    [[nodiscard]] Bool trace_any(const RayVar &ray) const noexcept;
     [[nodiscard]] Bool occluded(const Interaction &it, const Float3 &pos, RayState *rs = nullptr) const noexcept;
     template<typename ...Args>
     [[nodiscard]] auto visibility(Args &&...args) const noexcept {
@@ -56,13 +56,13 @@ public:
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
     [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
-    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept;
-    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, const Float3 &view_pos) const noexcept {
+    [[nodiscard]] Interaction compute_surface_interaction(const HitVar &hit, bool is_complete) const noexcept;
+    [[nodiscard]] Interaction compute_surface_interaction(const HitVar &hit, const Float3 &view_pos) const noexcept {
         auto ret = compute_surface_interaction(hit, true);
         ret.update_wo(view_pos);
         return ret;
     }
-    [[nodiscard]] Interaction compute_surface_interaction(const OCHit &hit, OCRay &ray, bool is_complete = true) const noexcept {
+    [[nodiscard]] Interaction compute_surface_interaction(const HitVar &hit, RayVar &ray, bool is_complete = true) const noexcept {
         auto ret = compute_surface_interaction(hit, is_complete);
         ret.wo = normalize(-ray->direction());
         ray.dir_max.w = length(ret.pos - ray->origin()) / length(ray->direction());

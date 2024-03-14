@@ -42,8 +42,8 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
         },
                 "ReSTIRDirectIllumination::Li from bsdf");
     }
-    OCRay ray = it.spawn_ray(bs->wi);
-    OCHit hit = geometry.trace_closest(ray);
+    RayVar ray = it.spawn_ray(bs->wi);
+    HitVar hit = geometry.trace_closest(ray);
     Float pdf = bs->eval.pdf;
     hit_bsdf->next_ray = ray;
     hit_bsdf->next_hit = hit;
@@ -425,7 +425,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
     return rsv;
 }
 
-Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &hit) const noexcept {
+Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     const Camera *camera = scene().camera().get();
@@ -452,8 +452,8 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const OCHit &h
             auto bsdf = material->create_evaluator(it, swl);
             bs = bsdf.sample(it.wo, sampler());
         });
-        OCRay ray = it.spawn_ray(bs.wi);
-        OCHit hit = geometry.trace_closest(ray);
+        RayVar ray = it.spawn_ray(bs.wi);
+        HitVar hit = geometry.trace_closest(ray);
         $if(hit->is_hit()) {
             next_it = geometry.compute_surface_interaction(hit, ray, true);
             $if(next_it.has_emission()) {

@@ -36,12 +36,12 @@ struct BxDFFlag {
 
 struct RayState {
 public:
-    OCRay ray;
+    RayVar ray;
     Float ior;
     Uint medium{InvalidUI32};
 
 public:
-    static RayState create(const OCRay &ray, Float ior = 1.f,
+    static RayState create(const RayVar &ray, Float ior = 1.f,
                            Uint medium = InvalidUI32) noexcept {
         return {.ray = ray, .ior = ior, .medium = medium};
     }

@@ -38,7 +38,7 @@ public:
 
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
-            OCHit hit = pipeline()->trace_closest(rs.ray);
+            HitVar hit = pipeline()->trace_closest(rs.ray);
 
             Float2 motion_vec = make_float2(0.f);
 

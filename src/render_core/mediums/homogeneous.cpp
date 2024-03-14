@@ -28,12 +28,12 @@ public:
         return exp(-sigma_t * min(RayTMax, t));
     }
 
-    [[nodiscard]] SampledSpectrum Tr(const OCRay &ray, const SampledWavelengths &swl,
+    [[nodiscard]] SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
                                      Sampler *sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max(), swl);
     }
 
-    [[nodiscard]] SampledSpectrum sample(const OCRay &ray, Interaction &it,
+    [[nodiscard]] SampledSpectrum sample(const RayVar &ray, Interaction &it,
                                          const SampledWavelengths &swl,
                                          Sampler *sampler) const noexcept override {
         SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;

@@ -21,16 +21,16 @@ void Camera::init(const SensorDesc &desc) noexcept {
 }
 
 RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
-    OCRay ray = generate_ray_in_camera_space(ss);
+    RayVar ray = generate_ray_in_camera_space(ss);
     Float4x4 c2w = *_c2w;
     ray = transform_ray(c2w, ray);
     return {.ray = ray, .ior = 1.f, .medium = *_medium_id};
 }
 
-OCRay Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {
+RayVar Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {
     Float3 p_film = make_float3(ss.p_film, 0.f);
     Float3 p_sensor = transform_point(*_raster_to_camera, p_film);
-    OCRay ray = make_ray(make_float3(0.f), normalize(p_sensor));
+    RayVar ray = make_ray(make_float3(0.f), normalize(p_sensor));
     return ray;
 }
 

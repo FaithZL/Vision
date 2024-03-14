@@ -101,7 +101,7 @@ void Geometry::clear() noexcept {
     _accel.clear();
 }
 
-Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_complete) const noexcept {
+Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_complete) const noexcept {
     Interaction it{Global::instance().pipeline()->scene().has_medium()};
     it.prim_id = hit.prim_id;
     Var inst = _instances.read(hit.inst_id);
@@ -190,15 +190,15 @@ Interaction Geometry::compute_surface_interaction(const OCHit &hit, bool is_comp
     return it;
 }
 
-OCHit Geometry::trace_closest(const OCRay &ray) const noexcept {
+HitVar Geometry::trace_closest(const RayVar &ray) const noexcept {
     return _accel.trace_closest(ray);
 }
-Bool Geometry::trace_any(const OCRay &ray) const noexcept {
+Bool Geometry::trace_any(const RayVar &ray) const noexcept {
     return _accel.trace_any(ray);
 }
 
 Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) const noexcept {
-    OCRay shadow_ray;
+    RayVar shadow_ray;
     if (rs) {
         *rs = it.spawn_ray_state_to(pos);
         shadow_ray = rs->ray;
@@ -231,7 +231,7 @@ array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
 LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
                                                       const Uint &prim_id,
                                                       const Float2 &bary) const noexcept {
-    OCHit hit;
+    HitVar hit;
     hit.inst_id = inst_id;
     hit.prim_id = prim_id;
     hit.bary = bary;

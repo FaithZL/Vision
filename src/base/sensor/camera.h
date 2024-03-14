@@ -36,7 +36,7 @@ protected:
 protected:
     void _update_raster() noexcept;
     void _update_resolution(uint2 res) noexcept;
-    [[nodiscard]] virtual OCRay generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
+    [[nodiscard]] virtual RayVar generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:
     explicit Camera(const SensorDesc &desc);
