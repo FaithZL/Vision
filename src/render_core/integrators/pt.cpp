@@ -77,6 +77,7 @@ public:
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
         stream << _shader(_frame_index).dispatch(rp->resolution());
+        RealTimeDenoiseInput input = denoise_input();
         if (film()->enable_accumulation()) {
             stream << film()->accumulate(film()->rt_buffer(), film()->accumulation_buffer(), _frame_index);
             stream << film()->tone_mapping(film()->accumulation_buffer(), film()->output_buffer());
@@ -84,9 +85,6 @@ public:
             stream << film()->tone_mapping(film()->rt_buffer(), film()->output_buffer());
         }
         stream << film()->gamma_correct(film()->output_buffer(), film()->output_buffer());
-
-        RealTimeDenoiseInput input = denoise_input();
-        //        stream << denoise(input);
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();
