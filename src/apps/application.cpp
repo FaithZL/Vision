@@ -43,7 +43,7 @@ void App::init_pipeline() {
 void App::prepare() {
     init_pipeline();
     pipeline().prepare();
-    window = FileManager::instance().create_window("LajiRender", pipeline().resolution(), "gl");
+    window = FileManager::instance().create_window("LajiRender", pipeline().resolution(), "imGui");
     register_event();
 }
 

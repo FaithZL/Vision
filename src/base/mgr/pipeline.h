@@ -7,7 +7,7 @@
 #include "rhi/common.h"
 #include "scene.h"
 #include "geometry.h"
-#include "rhi/window.h"
+#include "GUI/window.h"
 #include "util/image_io.h"
 #include "image_pool.h"
 #include "base/frame_buffer.h"
