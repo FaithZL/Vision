@@ -45,7 +45,7 @@ class App {
 public:
     UP<CLIParser> cli_parser{};
     Device device;
-    mutable Window::Wrapper window{nullptr, nullptr};
+    mutable WindowWrapper window{nullptr, nullptr};
     SP<Pipeline> rp{};
     vector<float4> _view_buffer;
     float2 last_cursor_pos = make_float2(0);

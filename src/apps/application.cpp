@@ -3,6 +3,7 @@
 //
 
 #include "application.h"
+#include "GUI/window.h"
 #include "core/basic_types.h"
 #include "ext/imgui/imgui.h"
 #include "base/mgr/global.h"
