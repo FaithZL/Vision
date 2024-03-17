@@ -17,6 +17,7 @@
 #include "base/color/spectrum.h"
 #include "material_registry.h"
 #include "mesh_registry.h"
+#include "UI/GUI.h"
 
 namespace vision {
 
@@ -26,7 +27,7 @@ using namespace ocarina;
     [[nodiscard]] auto member() const noexcept { return _##member.get(); } \
     [[nodiscard]] auto member() noexcept { return _##member.get(); }
 
-class Scene {
+class Scene : public GUI {
 private:
     Box3f _aabb;
     SP<Camera> _camera{nullptr};
@@ -52,6 +53,7 @@ public:
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
+    void render_UI(ocarina::Widgets *widgets) noexcept override;
     MAKE_GETTER(integrator)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)

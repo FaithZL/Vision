@@ -11,6 +11,7 @@
 #include "image_pool.h"
 #include "base/frame_buffer.h"
 #include "postprocessor.h"
+#include "UI/GUI.h"
 
 namespace vision {
 using namespace ocarina;
@@ -46,6 +47,7 @@ public:
     [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
     [[nodiscard]] auto frame_buffer() const noexcept { return _frame_buffer.get(); }
     [[nodiscard]] auto frame_buffer() noexcept { return _frame_buffer.get(); }
+    void render_UI(ocarina::Widgets *widgets) noexcept override;
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;

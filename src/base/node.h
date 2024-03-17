@@ -6,6 +6,7 @@
 
 #include <utility>
 #include "core/stl.h"
+#include "UI/GUI.h"
 #include "descriptions/node_desc.h"
 
 namespace ocarina {
@@ -20,7 +21,7 @@ class FrameBuffer;
 
 using namespace ocarina;
 
-class Node : public Hashable {
+class Node : public Hashable, public GUI {
 public:
     using Creator = Node *(const NodeDesc &);
     using Deleter = void(Node *);

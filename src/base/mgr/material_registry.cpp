@@ -34,6 +34,10 @@ void MaterialRegistry::push_back(SP<vision::Material> material) noexcept {
     _materials.push_back(ocarina::move(material));
 }
 
+void MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
+    
+}
+
 void MaterialRegistry::tidy_up() noexcept {
     _materials.for_each_instance([&](SP<Material> material, uint i) {
         material->set_index(i);
