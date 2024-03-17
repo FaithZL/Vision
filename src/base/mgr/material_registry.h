@@ -14,7 +14,7 @@ private:
     static MaterialRegistry *s_material_registry;
     MaterialRegistry() = default;
     MaterialRegistry(const MaterialRegistry &) = default;
-    MaterialRegistry(MaterialRegistry &&) = default;
+    MaterialRegistry(MaterialRegistry &&) noexcept = default;
     MaterialRegistry operator=(const MaterialRegistry &) = delete;
     MaterialRegistry operator=(MaterialRegistry &&) = delete;
 
