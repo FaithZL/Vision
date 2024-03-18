@@ -196,7 +196,7 @@ void App::update(double dt) noexcept {
 
 void App::check_and_save() noexcept {
     OutputDesc desc = rp->output_desc;
-    if (pipeline().frame_index() == desc.spp || need_save) {
+    if ((pipeline().frame_index() == desc.spp && desc.spp != 0) || need_save) {
         save_result();
     }
 }

@@ -4,16 +4,20 @@
 
 #include "filter.h"
 #include "GUI/widgets.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
 bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
-    return widgets->use_tree("filter", [&] {
+    bool dirty = false;
+    bool ret = widgets->use_tree("filter", [&] {
         widgets->text("type: %s", impl_type().data());
         float2 &r = _radius.hv();
-        widgets->slider_float2("radius:", &r, 0.01, 5);
+        dirty |= widgets->slider_float2("radius", &r, 0.01, 5);
         render_sub_UI(widgets);
     });
+    pipeline()->invalidate(dirty);
+    return ret;
 }
 
 vector<float> Filter::discretize(ocarina::uint width) const noexcept {
