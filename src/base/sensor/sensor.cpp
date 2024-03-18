@@ -4,6 +4,7 @@
 
 #include "sensor.h"
 #include "base/mgr/pipeline.h"
+#include "GUI/window.h"
 
 namespace vision {
 using namespace ocarina;
@@ -29,6 +30,14 @@ Sensor::Sensor(const SensorDesc &desc)
         _medium.object = *iter;
         _medium_id = _medium.object->index();
     }
+}
+
+bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
+    bool show = widgets->folding_header("Sensor");
+    if (show) {
+        _filter->render_UI(widgets);
+    }
+    return show;
 }
 
 void Sensor::prepare() noexcept {

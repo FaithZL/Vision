@@ -7,6 +7,7 @@
 #include "dsl/dsl.h"
 #include "base/node.h"
 #include "descriptions/node_desc.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 using namespace ocarina;
@@ -38,6 +39,7 @@ public:
         : Node(desc),
           _radius(desc["radius"].as_float2(make_float2(1.5f))) {}
     OC_SERIALIZABLE_FUNC(Serializable<float>, _radius)
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
     /**

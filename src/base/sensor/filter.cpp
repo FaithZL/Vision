@@ -6,6 +6,15 @@
 
 namespace vision {
 
+bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
+    bool show = widgets -> folding_header("filter data");
+    if (show) {
+        float2 r = _radius.hv();
+        widgets->text("radius: (%0.2f, %0.2f)", r.x, r.y);
+    }
+    return show;
+}
+
 vector<float> Filter::discretize(ocarina::uint width) const noexcept {
     auto mapping = [&](int i) {
         return -_radius.hv().x + (2 * _radius.hv().x) * (i + 0.5f) / width;
