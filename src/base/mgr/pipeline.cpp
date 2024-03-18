@@ -23,8 +23,8 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     _frame_buffer = NodeMgr::instance().load<FrameBuffer>(desc.frame_buffer_desc);
 }
 
-void Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
-    _scene.render_UI(widgets);
+bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
+    return _scene.render_UI(widgets);
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {

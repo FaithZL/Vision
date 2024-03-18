@@ -12,7 +12,7 @@ using namespace ocarina;
 
 class GUI {
 public:
-    virtual void render_UI(Widgets *widgets) noexcept {}
+    virtual bool render_UI(Widgets *widgets) noexcept { return true; }
     virtual ~GUI() {}
 };
 

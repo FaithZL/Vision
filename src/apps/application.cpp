@@ -173,6 +173,11 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
     }
 }
 
+bool App::render_UI(ocarina::Widgets *widgets) noexcept {
+    pipeline().render_UI(widgets);
+    return true;
+}
+
 void App::update(double dt) noexcept {
     pipeline().upload_data();
     if (invalidation) {
@@ -182,7 +187,7 @@ void App::update(double dt) noexcept {
         pipeline().invalidate();
     }
     pipeline().display(dt);
-    pipeline().render_UI(window->widgets());
+    render_UI(window->widgets());
     auto &view_buffer = pipeline().view_buffer();
     view_buffer.download_immediately(_view_buffer.data());
     window->set_background(_view_buffer.data());

@@ -53,7 +53,7 @@ public:
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
-    void render_UI(ocarina::Widgets *widgets) noexcept override;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     MAKE_GETTER(integrator)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)

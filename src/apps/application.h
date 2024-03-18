@@ -41,7 +41,7 @@ struct LaunchParams {
     }
 };
 using namespace ocarina;
-class App {
+class App : public GUI {
 public:
     UP<CLIParser> cli_parser{};
     Device device;
@@ -71,6 +71,7 @@ public:
     void init(int argc = 0);
     void prepare();
     void update(double dt) noexcept;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void init_pipeline();
     [[nodiscard]] Pipeline &pipeline() const { return *rp; }
     void check_and_save() noexcept;

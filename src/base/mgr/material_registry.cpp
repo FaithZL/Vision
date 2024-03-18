@@ -34,8 +34,8 @@ void MaterialRegistry::push_back(SP<vision::Material> material) noexcept {
     _materials.push_back(ocarina::move(material));
 }
 
-void MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
-    
+bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
+    return true;
 }
 
 void MaterialRegistry::tidy_up() noexcept {

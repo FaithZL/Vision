@@ -24,7 +24,7 @@ private:
 public:
     static MaterialRegistry &instance();
     static void destroy_instance();
-    void render_UI(ocarina::Widgets *widgets) noexcept override;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] SP<Material> register_(SP<Material> material) noexcept;
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
     void push_back(SP<Material> material) noexcept;
