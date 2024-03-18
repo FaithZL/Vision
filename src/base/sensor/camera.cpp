@@ -20,6 +20,10 @@ void Camera::init(const SensorDesc &desc) noexcept {
     update_mat(desc.transform_desc.mat);
 }
 
+bool Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    return false;
+}
+
 RayState Camera::generate_ray(const SensorSample &ss) const noexcept {
     RayVar ray = generate_ray_in_camera_space(ss);
     Float4x4 c2w = *_c2w;

@@ -15,9 +15,7 @@ namespace vision {
 class GUI {
 public:
     virtual bool render_UI(ocarina::Widgets *widgets) noexcept { return true; }
-    virtual bool render_UI(ocarina::Widgets *widgets, const std::function<bool()> &func) {
-        return true;
-    }
+    virtual bool render_sub_UI(ocarina::Widgets *widgets) noexcept { return true; }
     virtual ~GUI() = default;
 };
 

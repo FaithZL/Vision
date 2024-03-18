@@ -45,6 +45,7 @@ public:
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_mat(float4x4 m) noexcept;
+    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     virtual void before_render() noexcept {}
     virtual void after_render() noexcept;
     void store_prev_data() noexcept;
