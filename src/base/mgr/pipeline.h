@@ -85,6 +85,7 @@ public:
 
     [[nodiscard]] virtual uint frame_index() const noexcept { return integrator()->frame_index(); }
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
+    [[nodiscard]] double cur_render_time() const noexcept { return integrator()->cur_render_time(); }
     static void flip_debugger() noexcept { Env::debugger().filp_enabled(); }
     void filp_show_fps() noexcept { _show_fps = !_show_fps; }
     template<typename T>

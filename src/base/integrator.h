@@ -38,6 +38,7 @@ public:
 protected:
     mutable uint _frame_index{};
     mutable double _render_time{};
+    mutable double _cur_render_time{};
     ocarina::Shader<signature> _shader;
 
 public:
@@ -57,9 +58,13 @@ public:
     [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
     [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
     [[nodiscard]] double render_time() const noexcept { return _render_time; }
+    OC_MAKE_MEMBER_GETTER(cur_render_time, )
     void increase_frame_index() const noexcept { _frame_index++; }
     void reset_frame_index() const noexcept { _frame_index = 0; }
-    void accumulate_render_time(double ms) const noexcept { _render_time += ms; }
+    void accumulate_render_time(double ms) const noexcept {
+        _cur_render_time = ms;
+        _render_time += ms;
+    }
     virtual void invalidation() const noexcept;
     virtual void render() const noexcept {}
 };

@@ -24,6 +24,14 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
 }
 
 bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->use_window(
+        [&]() {
+            widgets->text("current frame: %.3f\naverage: %.3f\nframe index: %u",
+                          cur_render_time(),
+                          render_time() / frame_index(),
+                          frame_index());
+        },
+        "pipeline stats");
     return _scene.render_UI(widgets);
 }
 
@@ -82,9 +90,6 @@ void Pipeline::display(double dt) noexcept {
     after_render();
     double ms = clk.elapse_ms();
     integrator()->accumulate_render_time(ms);
-    if (_show_fps) {
-        printf("time consuming (current frame: %.3f, average: %.3f) frame index: %u    \r", ms, render_time() / frame_index(), frame_index());
-    }
     Env::printer().retrieve_immediately();
 }
 
