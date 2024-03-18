@@ -4,6 +4,7 @@
 
 #include "base/sensor/sensor.h"
 #include "base/mgr/pipeline.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 class ThinLensCamera : public Camera {
@@ -18,6 +19,12 @@ public:
           _lens_radius(desc["lens_radius"].as_float(0.f)) {
     }
     OC_SERIALIZABLE_FUNC(Camera, _focal_distance, _lens_radius)
+    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        bool dirty = Camera::render_sub_UI(widgets);
+        dirty |= widgets->slider_float("lens radius", &_lens_radius.hv(), 0, 0.2);
+        dirty |= widgets->slider_float("focal distance", &_focal_distance.hv(), 0, 100);
+        return dirty;
+    }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void update_focal_distance(float val) noexcept override {
         float new_val = _focal_distance.hv() + val;

@@ -24,9 +24,8 @@ void Camera::init(const SensorDesc &desc) noexcept {
 bool Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     bool dirty = false;
     dirty |= widgets->input_float3("position", &_position);
-    float old_fov_y = _fov_y;
-    dirty |= widgets->slider_float("fov y", &_fov_y, fov_min, fov_max);
-    update_fov_y(_fov_y - old_fov_y);
+    widgets->text("fov y: %.3f", _fov_y);
+    widgets->input_float("velocity", &_velocity, 0.5, 1);
     return dirty;
 }
 
