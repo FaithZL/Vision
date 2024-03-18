@@ -3,16 +3,17 @@
 //
 
 #include "filter.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 
 bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool show = widgets -> folding_header("filter data");
-    if (show) {
-        float2 r = _radius.hv();
+    return widgets->use_tree("filter", [&] {
+        widgets->text("type: %s", impl_type().data());
+        float2 &r = _radius.hv();
         widgets->text("radius: (%0.2f, %0.2f)", r.x, r.y);
-    }
-    return show;
+        render_sub_UI(widgets);
+    });
 }
 
 vector<float> Filter::discretize(ocarina::uint width) const noexcept {
