@@ -14,7 +14,6 @@ bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
         widgets->text("type: %s", impl_type().data());
         float2 &r = _radius.hv();
         dirty |= widgets->slider_float2("radius", &r, 0.01, 5);
-        render_sub_UI(widgets);
     });
     pipeline()->invalidate(dirty);
     return ret;
