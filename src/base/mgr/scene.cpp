@@ -7,6 +7,7 @@
 #include "pipeline.h"
 #include "base/scattering/interaction.h"
 #include "mesh_registry.h"
+#include "GUI/window.h"
 
 namespace vision {
 
@@ -32,15 +33,13 @@ void Scene::init(const SceneDesc &scene_desc) {
 }
 
 bool Scene::render_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->use_window(
-        [&] {
-            _camera->render_UI(widgets);
-            _integrator->render_UI(widgets);
-            _light_sampler->render_UI(widgets);
-            _material_registry->render_UI(widgets);
-            _sampler->render_UI(widgets);
-        },
-        "scene data");
+    widgets->use_window("scene data", [&] {
+        _camera->render_UI(widgets);
+        _integrator->render_UI(widgets);
+        _light_sampler->render_UI(widgets);
+        _material_registry->render_UI(widgets);
+        _sampler->render_UI(widgets);
+    });
     return true;
 }
 

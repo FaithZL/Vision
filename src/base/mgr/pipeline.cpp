@@ -6,6 +6,7 @@
 #include "base/sensor/sensor.h"
 #include "scene.h"
 #include "base/color/spectrum.h"
+#include "GUI/window.h"
 
 namespace vision {
 
@@ -24,14 +25,13 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
 }
 
 bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->use_window(
-        [&]() {
-            widgets->text("current frame: %.3f\naverage: %.3f\nframe index: %u",
-                          cur_render_time(),
-                          render_time() / frame_index(),
-                          frame_index());
-        },
-        "pipeline stats");
+    widgets->use_window("pipeline stats", [&]() {
+        widgets->text("pipeline type: %s", impl_type().data());
+        widgets->text("current frame: %.3f\naverage: %.3f\nframe index: %u",
+                      cur_render_time(),
+                      render_time() / frame_index(),
+                      frame_index());
+    });
     return _scene.render_UI(widgets);
 }
 

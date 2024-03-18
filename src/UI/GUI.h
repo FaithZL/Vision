@@ -4,15 +4,17 @@
 
 #pragma once
 
-#include "GUI/window.h"
+#include "GUI/decl.h"
+
+namespace ocarina {
+class Widgets;
+}
 
 namespace vision {
 
-using namespace ocarina;
-
 class GUI {
 public:
-    virtual bool render_UI(Widgets *widgets) noexcept { return true; }
+    virtual bool render_UI(ocarina::Widgets *widgets) noexcept { return true; }
     virtual ~GUI() {}
 };
 
