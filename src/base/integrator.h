@@ -114,6 +114,8 @@ public:
 
     OC_MAKE_MEMBER_GETTER(separate, )
 
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+
     [[nodiscard]] bool has_denoiser() const noexcept override { return bool(_denoiser); }
 
     [[nodiscard]] Float correct_bsdf_weight(Float weight, Uint bounce) const noexcept {

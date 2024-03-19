@@ -45,6 +45,16 @@ void IlluminationIntegrator::prepare() noexcept {
     datas().upload_immediately();
 }
 
+bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
+    bool open = widgets->use_tree("integrator", [&] {
+        widgets->text("type: %s", impl_type().data());
+        _changed |= widgets->input_uint_limit("max depth", &_max_depth.hv(), 0, 30, 1, 1);
+        _changed |= widgets->input_uint_limit("min depth", &_min_depth.hv(), 0, 20, 1, 1);
+        _changed |= widgets->drag_float("rr threshold", &_rr_threshold.hv(), 0.01, 0, 1);
+    });
+    return open;
+}
+
 CommandList IlluminationIntegrator::denoise(RealTimeDenoiseInput &input) const noexcept {
     CommandList ret;
     if (!_denoiser) {

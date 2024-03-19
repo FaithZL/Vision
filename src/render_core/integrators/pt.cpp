@@ -43,6 +43,7 @@ public:
             render_env.initial(sampler, frame_index, spectrum());
             sampler->start(pixel, frame_index, 0);
             camera->load_data();
+            load_data();
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
