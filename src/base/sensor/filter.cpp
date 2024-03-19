@@ -10,7 +10,7 @@ namespace vision {
 
 bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
     bool dirty = false;
-    bool ret = widgets->use_tree("filter", [&] {
+    bool ret = widgets->use_folding_header("filter", [&] {
         widgets->text("type: %s", impl_type().data());
         float2 &r = _radius.hv();
         dirty |= widgets->slider_float2("radius", &r, 0.01, 5);

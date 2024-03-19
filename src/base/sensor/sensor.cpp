@@ -34,10 +34,11 @@ Sensor::Sensor(const SensorDesc &desc)
 
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
     bool dirty = false;
-    bool open = widgets->use_tree("sensor data", [&]{
+    bool open = widgets->use_tree("sensor", [&]{
         widgets->text("type: %s", impl_type().data());
         dirty |= render_sub_UI(widgets);
         _filter->render_UI(widgets);
+        _film->tone_mapper()->render_UI(widgets);
     });
     pipeline()->invalidate(dirty);
     return open;
