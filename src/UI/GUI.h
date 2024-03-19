@@ -5,14 +5,15 @@
 #pragma once
 
 #include "GUI/decl.h"
+#include "core/element_trait.h"
 
 namespace ocarina {
 class Widgets;
 }
 
 #define VS_MAKE_RENDER_UI(obj) (obj)->render_UI(widgets);
-#define VS_MAKE_RESET_STATUS(obj) (obj)->reset_status();
-#define VS_MAKE_HAS_CHANGED(obj) ret |= (obj)->has_changed();
+#define VS_MAKE_RESET_STATUS(obj) vision::detail::reset_status(obj);
+#define VS_MAKE_HAS_CHANGED(obj) ret |= vision::detail::has_changed(obj);
 
 #define VS_MAKE_GUI_STATUS_FUNC(Super, ...)      \
     void reset_status() noexcept override {      \
@@ -35,6 +36,29 @@ class Widgets;
     }
 
 namespace vision {
+
+namespace detail {
+
+#define OC_MAKE_AUTO_MEMBER_FUNC(func)                 \
+    template<typename T>                               \
+    auto func(T &&obj) noexcept {                      \
+        if constexpr (requires {                       \
+                          obj->func();                 \
+                      }) {                             \
+            return obj->func();                        \
+        } else if constexpr (requires {                \
+                                 obj.func();           \
+                             }) {                      \
+            return obj.func();                         \
+        } else {                                       \
+            static_assert(ocarina::always_false_v<T>); \
+        }                                              \
+    }
+
+OC_MAKE_AUTO_MEMBER_FUNC(reset_status)
+OC_MAKE_AUTO_MEMBER_FUNC(has_changed)
+
+}// namespace detail
 
 class GUI {
 protected:
