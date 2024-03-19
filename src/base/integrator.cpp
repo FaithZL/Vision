@@ -45,6 +45,13 @@ void IlluminationIntegrator::prepare() noexcept {
     datas().upload_immediately();
 }
 
+void IlluminationIntegrator::update_device_data() noexcept {
+    if (has_changed()) {
+        update_data();
+        upload_immediately();
+    }
+}
+
 bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("integrator", [&] {
         widgets->text("type: %s", impl_type().data());

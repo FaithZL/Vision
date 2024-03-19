@@ -65,6 +65,7 @@ public:
         _cur_render_time = ms;
         _render_time += ms;
     }
+    virtual void update_device_data() noexcept {}
     virtual void invalidation() const noexcept;
     virtual void render() const noexcept {}
 };
@@ -156,6 +157,8 @@ public:
                             bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
 
     void prepare() noexcept override;
+
+    void update_device_data() noexcept override;
 
     [[nodiscard]] CommandList denoise(RealTimeDenoiseInput &input) const noexcept;
 
