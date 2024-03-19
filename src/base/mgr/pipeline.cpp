@@ -24,6 +24,10 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     _frame_buffer = NodeMgr::instance().load<FrameBuffer>(desc.frame_buffer_desc);
 }
 
+bool Pipeline::has_changed() noexcept {
+    return _changed || _scene.has_changed();
+}
+
 bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
     widgets->use_window("pipeline stats", [&]() {
         widgets->text("pipeline type: %s", impl_type().data());

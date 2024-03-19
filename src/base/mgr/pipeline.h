@@ -70,6 +70,7 @@ public:
     virtual void render(double dt) noexcept = 0;
     virtual void before_render() noexcept;
     virtual void after_render() noexcept;
+    bool has_changed() noexcept override;
     virtual void upload_data() noexcept { _scene.upload_data(); }
     [[nodiscard]] virtual float4 *final_picture(const OutputDesc &desc) noexcept;
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }

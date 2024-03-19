@@ -13,8 +13,23 @@ class Widgets;
 namespace vision {
 
 class GUI {
+protected:
+    bool _changed{false};
+
 public:
+    virtual void reset_status() noexcept { _changed = false; }
+    virtual bool has_changed() noexcept { return _changed; }
+
+    /**
+     * @param widgets
+     * @return Status of the widget switch
+     */
     virtual bool render_UI(ocarina::Widgets *widgets) noexcept { return true; }
+
+    /**
+     * @param widgets
+     * @return Whether any data has been updated
+     */
     virtual bool render_sub_UI(ocarina::Widgets *widgets) noexcept { return true; }
     virtual ~GUI() = default;
 };
