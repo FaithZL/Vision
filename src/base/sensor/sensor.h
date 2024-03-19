@@ -36,8 +36,8 @@ protected:
 public:
     explicit Sensor(const SensorDesc &desc);
     OC_SERIALIZABLE_FUNC(SerialObject, *_filter, *_film)
+    VS_MAKE_GUI_STATUS_FUNC(Node, _filter)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] bool has_changed() noexcept override;
     void prepare() noexcept override;
     [[nodiscard]] Filter *filter() noexcept { return _filter.get(); }
     [[nodiscard]] const Filter *filter() const noexcept { return _filter.get(); }

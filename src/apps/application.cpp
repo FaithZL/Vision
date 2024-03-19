@@ -180,13 +180,14 @@ bool App::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void App::update(double dt) noexcept {
     pipeline().upload_data();
-    if (invalidation) {
+    if (invalidation || pipeline().has_changed()) {
         auto camera = pipeline().scene().camera();
         //        OC_INFO(camera->to_string());
         invalidation = false;
         pipeline().invalidate();
     }
     pipeline().display(dt);
+    pipeline().reset_status();
     render_UI(window->widgets());
     auto &view_buffer = pipeline().view_buffer();
     view_buffer.download_immediately(_view_buffer.data());

@@ -20,10 +20,10 @@ public:
     }
     OC_SERIALIZABLE_FUNC(Camera, _focal_distance, _lens_radius)
     bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        bool dirty = Camera::render_sub_UI(widgets);
-        dirty |= widgets->input_float_limit("lens radius", &_lens_radius.hv(), 0, 0.5, 0.01, 0.01);
-        dirty |= widgets->input_float_limit("focal distance", &_focal_distance.hv(), 0, 100, 0.1, 0.5);
-        return dirty;
+        _changed = Camera::render_sub_UI(widgets);
+        _changed |= widgets->input_float_limit("lens radius", &_lens_radius.hv(), 0, 0.5, 0.01, 0.01);
+        _changed |= widgets->input_float_limit("focal distance", &_focal_distance.hv(), 0, 100, 0.1, 0.5);
+        return _changed;
     }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void update_focal_distance(float val) noexcept override {

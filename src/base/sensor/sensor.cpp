@@ -33,19 +33,13 @@ Sensor::Sensor(const SensorDesc &desc)
 }
 
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
-    reset_status();
     bool open = widgets->use_tree("sensor", [&] {
         widgets->text("type: %s", impl_type().data());
         _changed |= render_sub_UI(widgets);
         _filter->render_UI(widgets);
         _film->tone_mapper()->render_UI(widgets);
     });
-    pipeline()->invalidate(_changed);
     return open;
-}
-
-bool Sensor::has_changed() noexcept {
-    return _filter->has_changed() | _changed;
 }
 
 void Sensor::prepare() noexcept {

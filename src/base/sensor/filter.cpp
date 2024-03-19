@@ -9,14 +9,12 @@
 namespace vision {
 
 bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
-    reset_status();
     bool ret = widgets->use_folding_header("filter", [&] {
         widgets->text("type: %s", impl_type().data());
         float2 &r = _radius.hv();
         _changed |= widgets->slider_float2("radius", &r, 0.01, 5);
         render_sub_UI(widgets);
     });
-    pipeline()->invalidate(_changed);
     return ret;
 }
 

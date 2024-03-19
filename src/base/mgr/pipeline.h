@@ -59,11 +59,6 @@ public:
     virtual void preprocess() noexcept {}
     virtual void change_resolution(uint2 res) noexcept;
     virtual void invalidate() noexcept { integrator()->invalidation(); }
-    void invalidate(bool dirty) noexcept {
-        if (dirty) {
-            integrator()->invalidation();
-        }
-    }
     virtual void clear_geometry() noexcept;
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;

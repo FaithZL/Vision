@@ -10,6 +10,30 @@ namespace ocarina {
 class Widgets;
 }
 
+#define VS_MAKE_RENDER_UI(obj) (obj)->render_UI(widgets);
+#define VS_MAKE_RESET_STATUS(obj) (obj)->reset_status();
+#define VS_MAKE_HAS_CHANGED(obj) ret |= (obj)->has_changed();
+
+#define VS_MAKE_GUI_STATUS_FUNC(Super, ...)      \
+    void reset_status() noexcept override {      \
+        Super::reset_status();                   \
+        MAP(VS_MAKE_RESET_STATUS, ##__VA_ARGS__) \
+    }                                            \
+    bool has_changed() noexcept override {       \
+        bool ret = Super::_changed;              \
+        MAP(VS_MAKE_HAS_CHANGED, ##__VA_ARGS__)  \
+        return ret;                              \
+    }
+
+#define VS_MAKE_GUI_ALL_FUNC(Super, ...)                          \
+    VS_MAKE_GUI_STATUS_FUNC(Super, ##__VA_ARGS__)                 \
+    bool render_UI(ocarina::Widgets *widgets) noexcept override { \
+        widgets->use_window("scene data", [&] {                   \
+            MAP(VS_MAKE_RENDER_UI, ##__VA_ARGS__)                 \
+        });                                                       \
+        return true;                                              \
+    }
+
 namespace vision {
 
 class GUI {
