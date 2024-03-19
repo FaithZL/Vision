@@ -48,6 +48,19 @@ void LightSampler::prepare() noexcept {
     _lights.prepare(rp->bindless_array(), rp->device());
 }
 
+bool LightSampler::render_UI(ocarina::Widgets *widgets) noexcept {
+    bool open = widgets->use_tree("light sampler", [&] {
+        widgets->text("type: %s", impl_type().data());
+        widgets->use_tree("light list", [&]{
+            for_each([&] (SP<Light> light) {
+                light->render_UI(widgets);
+            });
+        });
+        render_sub_UI(widgets);
+    });
+    return open;
+}
+
 Uint LightSampler::extract_light_index(const vision::Interaction &it) const noexcept {
     return combine_to_light_index(it.light_type_id(), it.light_inst_id());
 }

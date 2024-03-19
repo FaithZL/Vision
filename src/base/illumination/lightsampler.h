@@ -39,6 +39,7 @@ protected:
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     template<typename... Args>
     void set_mode(Args &&...args) noexcept { _lights.set_mode(OC_FORWARD(args)...); }
     [[nodiscard]] float env_prob() const noexcept {

@@ -12,6 +12,14 @@ Light::Light(const LightDesc &desc, LightType light_type)
       _color(scene().create_slot(desc.color)),
       _scale(desc["scale"].as_float(1.f)) {}
 
+bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
+    string label = format("{} light: {}", impl_type().data(), _name.c_str());
+    bool open = widgets->use_folding_header(label, [&] {
+        render_sub_UI(widgets);
+    });
+    return open;
+}
+
 void IAreaLight::set_instance(const vision::ShapeInstance *inst) noexcept {
     _instance = inst;
 }
