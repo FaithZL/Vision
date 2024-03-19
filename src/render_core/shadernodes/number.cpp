@@ -3,6 +3,7 @@
 //
 
 #include "base/shader_graph/shader_node.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 class NumberInput : public ShaderNode {
@@ -13,6 +14,10 @@ public:
     explicit NumberInput(const ShaderNodeDesc &desc)
         : ShaderNode(desc), _value(desc["value"].as_vector<float>()) {}
     OC_SERIALIZABLE_FUNC(ShaderNode, _value)
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        widgets->color_edit("pure color", reinterpret_cast<float3 *>(_value.hv().data()));
+        return true;
+    }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }

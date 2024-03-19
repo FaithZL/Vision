@@ -15,6 +15,10 @@ Light::Light(const LightDesc &desc, LightType light_type)
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = format("{} light: {}", impl_type().data(), _name.c_str());
     bool open = widgets->use_folding_header(label, [&] {
+        _changed |= widgets->input_float_limit("scale", &_scale.hv(), 0, 100, 0.1, 2);
+        widgets->use_tree("color node", [&]{
+            _color->render_UI(widgets);
+        });
         render_sub_UI(widgets);
     });
     return open;
