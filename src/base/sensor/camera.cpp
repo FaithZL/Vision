@@ -25,7 +25,7 @@ bool Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     bool dirty = false;
     dirty |= widgets->input_float3("position", &_position);
     widgets->text("fov y: %.3f", _fov_y);
-    widgets->input_float("velocity", &_velocity, 0.5, 1);
+    widgets->input_float_limit("velocity", &_velocity, 0, 200, 1, 5);
     return dirty;
 }
 
