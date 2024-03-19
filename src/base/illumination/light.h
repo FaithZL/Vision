@@ -212,6 +212,7 @@ public:
 class IPointLight : public Light {
 public:
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
+    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
         // using -1 for delta light
@@ -221,6 +222,7 @@ public:
         return normalize(p_ref.pos - position());
     }
     [[nodiscard]] virtual Float3 position() const noexcept = 0;
+    [[nodiscard]] virtual float3 &host_position() noexcept = 0;
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override;
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,

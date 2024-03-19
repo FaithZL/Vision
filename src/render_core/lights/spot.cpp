@@ -37,6 +37,9 @@ public:
         return 2 * Pi * average() * (1 - .5f * (_angle.hv() * 2 + _falloff.hv()));
     }
     [[nodiscard]] Float3 position() const noexcept override { return *_position; }
+    [[nodiscard]] float3 &host_position() noexcept override {
+        return _position.hv();
+    }
     [[nodiscard]] Float falloff(Float cos_theta) const noexcept {
         Float falloff_start = max(0.f, *_angle - *_falloff);
         Float cos_angle = cos(*_angle);

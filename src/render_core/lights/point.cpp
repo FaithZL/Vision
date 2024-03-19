@@ -31,9 +31,12 @@ public:
         return 4 * Pi * average();
     }
     [[nodiscard]] Float3 position() const noexcept override { return *_position; }
+    [[nodiscard]] float3 &host_position() noexcept override {
+        return _position.hv();
+    }
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
-                             const LightEvalContext &p_light,
-                             const SampledWavelengths &swl) const noexcept override {
+                                     const LightEvalContext &p_light,
+                                     const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum value = _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
         return value / length_squared(p_ref.pos - position());
     }
