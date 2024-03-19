@@ -33,6 +33,11 @@ public:
           _direction(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
     OC_SERIALIZABLE_FUNC(IPointLight, _position, _direction, _angle, _falloff)
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        _changed |= widgets->input_float3("direction", &_direction.hv());
+        _changed |= widgets->input_float_limit("fall off", &_falloff.hv(), 0, _angle.hv());
+        return _changed;
+    }
     [[nodiscard]] float3 power() const noexcept override {
         return 2 * Pi * average() * (1 - .5f * (_angle.hv() * 2 + _falloff.hv()));
     }
