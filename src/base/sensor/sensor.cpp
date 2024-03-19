@@ -15,7 +15,7 @@ Sensor::Sensor(const SensorDesc &desc)
       _film(scene().load<Film>(desc.film_desc)),
       _medium_id(desc.medium.id) {
     if (!scene().has_medium()) {
-        return ;
+        return;
     }
     if (desc.contains("medium")) {
         _medium.name = desc["medium"].as_string();
@@ -33,15 +33,19 @@ Sensor::Sensor(const SensorDesc &desc)
 }
 
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool dirty = false;
-    bool open = widgets->use_tree("sensor", [&]{
+    reset_status();
+    bool open = widgets->use_tree("sensor", [&] {
         widgets->text("type: %s", impl_type().data());
-        dirty |= render_sub_UI(widgets);
+        _changed |= render_sub_UI(widgets);
         _filter->render_UI(widgets);
         _film->tone_mapper()->render_UI(widgets);
     });
-    pipeline()->invalidate(dirty);
+    pipeline()->invalidate(_changed);
     return open;
+}
+
+bool Sensor::has_changed() noexcept {
+    return _filter->has_changed() | _changed;
 }
 
 void Sensor::prepare() noexcept {

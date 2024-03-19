@@ -32,17 +32,6 @@ void Scene::init(const SceneDesc &scene_desc) {
     Interaction::set_ray_offset_factor(scene_desc.render_setting.ray_offset_factor);
 }
 
-bool Scene::render_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->use_window("scene data", [&] {
-        _camera->render_UI(widgets);
-        _integrator->render_UI(widgets);
-        _light_sampler->render_UI(widgets);
-        _material_registry->render_UI(widgets);
-        _sampler->render_UI(widgets);
-    });
-    return true;
-}
-
 void Scene::tidy_up() noexcept {
     _light_sampler->tidy_up();
     material_registry().tidy_up();

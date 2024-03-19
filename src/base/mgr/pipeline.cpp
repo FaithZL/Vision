@@ -24,6 +24,11 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     _frame_buffer = NodeMgr::instance().load<FrameBuffer>(desc.frame_buffer_desc);
 }
 
+void Pipeline::reset_status() noexcept {
+    GUI::reset_status();
+    _scene.reset_status();
+}
+
 bool Pipeline::has_changed() noexcept {
     return _changed || _scene.has_changed();
 }

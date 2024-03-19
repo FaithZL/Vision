@@ -23,6 +23,26 @@ namespace vision {
 
 using namespace ocarina;
 
+#define VS_MAKE_RENDER_UI(obj) (obj)->render_UI(widgets);
+#define VS_MAKE_RESET_STATUS(obj) (obj)->reset_status();
+#define VS_MAKE_HAS_CHANGED(obj) ret |= (obj)->has_changed();
+
+#define VS_MAKE_GUI_FUNC(...)                                     \
+    bool render_UI(ocarina::Widgets *widgets) noexcept override { \
+        widgets->use_window("scene data", [&] {                   \
+            MAP(VS_MAKE_RENDER_UI, ##__VA_ARGS__)                 \
+        });                                                       \
+        return true;                                              \
+    }                                                             \
+    void reset_status() noexcept override {                       \
+        MAP(VS_MAKE_RESET_STATUS, ##__VA_ARGS__)                  \
+    }                                                             \
+    bool has_changed() noexcept override {                        \
+        bool ret = false;                                         \
+        MAP(VS_MAKE_HAS_CHANGED, ##__VA_ARGS__)                   \
+        return ret;                                               \
+    }
+
 #define MAKE_GETTER(member)                                                \
     [[nodiscard]] auto member() const noexcept { return _##member.get(); } \
     [[nodiscard]] auto member() noexcept { return _##member.get(); }
@@ -53,7 +73,8 @@ public:
     void prepare() noexcept;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
-    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    VS_MAKE_GUI_FUNC(_camera, _integrator, _light_sampler,
+                     _material_registry, _sampler)
     MAKE_GETTER(integrator)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)

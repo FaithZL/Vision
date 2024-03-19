@@ -47,6 +47,9 @@ public:
     [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
     [[nodiscard]] auto frame_buffer() const noexcept { return _frame_buffer.get(); }
     [[nodiscard]] auto frame_buffer() noexcept { return _frame_buffer.get(); }
+
+    [[nodiscard]] bool has_changed() noexcept override;
+    void reset_status() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
     /// virtual function start
@@ -70,7 +73,6 @@ public:
     virtual void render(double dt) noexcept = 0;
     virtual void before_render() noexcept;
     virtual void after_render() noexcept;
-    bool has_changed() noexcept override;
     virtual void upload_data() noexcept { _scene.upload_data(); }
     [[nodiscard]] virtual float4 *final_picture(const OutputDesc &desc) noexcept;
     [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }

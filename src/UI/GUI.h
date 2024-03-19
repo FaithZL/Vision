@@ -18,7 +18,7 @@ protected:
 
 public:
     virtual void reset_status() noexcept { _changed = false; }
-    virtual bool has_changed() noexcept { return _changed; }
+    [[nodiscard]] virtual bool has_changed() noexcept { return _changed; }
 
     /**
      * @param widgets
