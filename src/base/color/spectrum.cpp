@@ -45,6 +45,13 @@ Uint SampledWavelengths::valid_dimension() const noexcept {
     return ret;
 }
 
+bool Spectrum::render_UI(ocarina::Widgets *widgets) noexcept {
+    string label = ocarina::format("{} spectrum", impl_type().data());
+    return widgets->use_folding_header(label, [&] {
+        render_sub_UI(widgets);
+    });
+}
+
 SampledSpectrum select(const SampledSpectrum &p, const SampledSpectrum &t, const SampledSpectrum &f) noexcept {
     uint n = std::max({p.dimension(), t.dimension(), f.dimension()});
     OC_ASSERT((p.dimension() == 1u || p.dimension() == n) &&

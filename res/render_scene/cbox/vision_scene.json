@@ -854,7 +854,7 @@
 		}
 	},
 	"spectrum" : {
-		"type" : "srgb",
+//		"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}

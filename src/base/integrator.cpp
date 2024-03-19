@@ -53,7 +53,7 @@ void IlluminationIntegrator::update_device_data() noexcept {
 }
 
 bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool open = widgets->use_tree("integrator", [&] {
+    bool open = widgets->use_folding_header("integrator", [&] {
         widgets->text("type: %s", impl_type().data());
         _changed |= widgets->input_uint_limit("max depth", &_max_depth.hv(), 0, 30, 1, 1);
         _changed |= widgets->input_uint_limit("min depth", &_min_depth.hv(), 0, 20, 1, 1);

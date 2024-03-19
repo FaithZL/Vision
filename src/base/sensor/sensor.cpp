@@ -33,7 +33,7 @@ Sensor::Sensor(const SensorDesc &desc)
 }
 
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool open = widgets->use_tree("sensor", [&] {
+    bool open = widgets->use_folding_header("sensor", [&] {
         widgets->text("type: %s", impl_type().data());
         _changed |= render_sub_UI(widgets);
         _filter->render_UI(widgets);

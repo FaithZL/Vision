@@ -54,7 +54,7 @@ public:
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, _camera, _integrator, _light_sampler,
-                         _material_registry, _sampler)
+                         _material_registry, _spectrum, _sampler)
     MAKE_GETTER(integrator)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)

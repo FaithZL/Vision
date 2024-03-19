@@ -237,6 +237,10 @@ public:
           _cie_z(SPD::create_cie_z(pipeline())) {
         _rgb_to_spectrum_table.init();
     }
+    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        _changed |= widgets->input_uint("dimension", &_dimension, 1, 1);
+        return _changed;
+    }
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
     void prepare() noexcept override {
         _illuminant_d65.prepare();
