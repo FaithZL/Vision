@@ -11,6 +11,7 @@
 #include "light.h"
 #include "math/warp.h"
 #include "base/scattering/interaction.h"
+#include "UI/polymorphic.h"
 
 namespace vision {
 using namespace ocarina;
@@ -27,7 +28,7 @@ public:
     using Desc = LightSamplerDesc;
 
 protected:
-    Polymorphic<SP<Light>> _lights;
+    PolymorphicGUI<SP<Light>> _lights;
     SP<Environment> _env_light{};
     bool _env_separate{false};
     float _env_prob{};
@@ -39,6 +40,7 @@ protected:
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
+    VS_MAKE_GUI_STATUS_FUNC(Node, _lights)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     template<typename... Args>
     void set_mode(Args &&...args) noexcept { _lights.set_mode(OC_FORWARD(args)...); }

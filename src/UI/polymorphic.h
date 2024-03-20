@@ -13,7 +13,7 @@ public:
 
 public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        for_each_representative([&](auto elm) {
+        Super::for_each_representative([&](auto elm) {
 
         });
         return true;
@@ -21,14 +21,14 @@ public:
 
     void reset_status() noexcept override {
         _changed = false;
-        for_each_instance([&](auto elm) {
+        Super::for_each_instance([&](auto elm) {
             UI::reset_status(elm);
         });
     }
 
     [[nodiscard]] bool has_changed() noexcept override {
         bool ret = _changed;
-        for_each_instance([&](auto elm) {
+        Super::for_each_instance([&](auto elm) {
             ret |= UI::has_changed(elm);
         });
         return ret;
