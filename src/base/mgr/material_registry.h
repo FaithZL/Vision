@@ -25,6 +25,7 @@ public:
     static MaterialRegistry &instance();
     static void destroy_instance();
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    VS_MAKE_GUI_STATUS_FUNC(GUI, _materials)
     [[nodiscard]] SP<Material> register_(SP<Material> material) noexcept;
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
     void push_back(SP<Material> material) noexcept;

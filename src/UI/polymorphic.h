@@ -6,6 +6,7 @@
 
 #include "GUI.h"
 #include "dsl/dsl.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 template<typename T>
@@ -15,9 +16,13 @@ public:
 
 public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        Super::for_each_representative([&](auto elm) {
-
-        });
+        widgets->use_tree(
+            "list",
+            [&] {
+                Super::for_each_instance([&](auto elm) {
+                    UI::render_UI(elm, widgets);
+                });
+            });
         return true;
     }
 

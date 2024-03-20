@@ -41,7 +41,7 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
-class Slot : public ocarina::Hashable {
+class Slot : public ocarina::Hashable, public GUI {
 private:
     SP<ShaderNode> _node{};
     uint _dim{4};
@@ -65,6 +65,33 @@ public:
 #endif
           _channel_mask(_calculate_mask(ocarina::move(channels))) {
         OC_ASSERT(_dim <= 4);
+    }
+
+    void reset_status() noexcept override {
+        if (_node) {
+            _node->reset_status();
+        }
+    }
+
+    bool has_changed() noexcept override {
+        if (_node) {
+            return _node->has_changed();
+        }
+        return false;
+    }
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        if (_node) {
+            return _node->render_UI(widgets);
+        }
+        return false;
+    }
+
+    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        if (_node) {
+            return _node->render_sub_UI(widgets);
+        }
+        return false;
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }

@@ -36,9 +36,9 @@ void MaterialRegistry::push_back(SP<vision::Material> material) noexcept {
 
 bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header("materials", [&] {
-
+        _materials.render_UI(widgets);
     });
-    return true;
+    return open;
 }
 
 void MaterialRegistry::tidy_up() noexcept {

@@ -83,6 +83,14 @@ Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     }
 }
 
+bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
+    string label = format("{} material: {}", impl_type().data(), _name.c_str());
+    bool open = widgets->use_tree(label, [&] {
+        render_sub_UI(widgets);
+    });
+    return open;
+}
+
 uint Material::element_num() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
         return size + slot->element_num();
