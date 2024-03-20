@@ -2,6 +2,8 @@
 // Created by Zero on 2024/3/20.
 //
 
+#pragma once
+
 #include "GUI.h"
 #include "dsl/dsl.h"
 

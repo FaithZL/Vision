@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/scattering/material.h"
-#include "dsl/polymorphic.h"
+#include "UI/polymorphic.h"
 
 namespace vision {
 using namespace ocarina;
@@ -19,7 +19,7 @@ private:
     MaterialRegistry operator=(MaterialRegistry &&) = delete;
 
 private:
-    Polymorphic<SP<Material>> _materials;
+    PolymorphicGUI<SP<Material>> _materials;
 
 public:
     static MaterialRegistry &instance();

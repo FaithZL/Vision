@@ -39,22 +39,6 @@ namespace vision {
 
 namespace UI {
 
-#define OC_MAKE_AUTO_MEMBER_FUNC(func)                          \
-    template<typename T, typename... Args>                      \
-    auto func(T &&obj, Args &&...args) noexcept {               \
-        if constexpr (requires {                                \
-                          obj->func(OC_FORWARD(args)...);       \
-                      }) {                                      \
-            return obj->func(OC_FORWARD(args)...);              \
-        } else if constexpr (requires {                         \
-                                 obj.func(OC_FORWARD(args)...); \
-                             }) {                               \
-            return obj.func(OC_FORWARD(args)...);               \
-        } else {                                                \
-            static_assert(ocarina::always_false_v<T>);          \
-        }                                                       \
-    }
-
 OC_MAKE_AUTO_MEMBER_FUNC(reset_status)
 OC_MAKE_AUTO_MEMBER_FUNC(has_changed)
 OC_MAKE_AUTO_MEMBER_FUNC(render_UI)
