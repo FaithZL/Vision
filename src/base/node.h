@@ -46,6 +46,9 @@ public:
     [[nodiscard]] virtual string to_string() noexcept { return "node"; }
     [[nodiscard]] virtual string_view impl_type() const noexcept = 0;
     [[nodiscard]] virtual string_view category() const noexcept = 0;
+    [[nodiscard]] string plugin_name() const noexcept {
+        return ocarina::format("vision-{}-{}", category().data(), impl_type().data());
+    }
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
     virtual ~Node() = default;
