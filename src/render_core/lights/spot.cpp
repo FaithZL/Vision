@@ -34,6 +34,7 @@ public:
     OC_SERIALIZABLE_FUNC(IPointLight, _position, _direction, _angle, _falloff)
     VS_MAKE_PLUGIN_NAME_FUNC
     bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        IPointLight::render_sub_UI(widgets);
         _changed |= widgets->input_float3("direction", &_direction.hv());
         _changed |= widgets->slider_float("angle", &_angle.hv(), radians(1.f), radians(89.f));
         _changed |= widgets->slider_float("fall off", &_falloff.hv(), 0.001, _angle.hv());
