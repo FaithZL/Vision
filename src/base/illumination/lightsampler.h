@@ -40,6 +40,7 @@ protected:
 public:
     explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
+    void update_device_data() noexcept;
     VS_MAKE_GUI_STATUS_FUNC(Node, _lights)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     template<typename... Args>

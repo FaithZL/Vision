@@ -48,6 +48,12 @@ void LightSampler::prepare() noexcept {
     _lights.prepare(rp->bindless_array(), rp->device());
 }
 
+void LightSampler::update_device_data() noexcept {
+    if (has_changed()) {
+        _lights.update();
+    }
+}
+
 bool LightSampler::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} light sampler", impl_type().data()),
