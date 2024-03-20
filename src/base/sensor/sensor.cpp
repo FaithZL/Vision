@@ -33,12 +33,14 @@ Sensor::Sensor(const SensorDesc &desc)
 }
 
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool open = widgets->use_folding_header("sensor", [&] {
-        widgets->text("type: %s", impl_type().data());
-        _changed |= render_sub_UI(widgets);
-        _filter->render_UI(widgets);
-        _film->tone_mapper()->render_UI(widgets);
-    });
+    bool open = widgets->use_folding_header(
+        ocarina::format("{} camera", impl_type().data()),
+        [&] {
+            widgets->text("type: %s", impl_type().data());
+            _changed |= render_sub_UI(widgets);
+            _filter->render_UI(widgets);
+            _film->tone_mapper()->render_UI(widgets);
+        });
     return open;
 }
 

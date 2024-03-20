@@ -49,15 +49,16 @@ void LightSampler::prepare() noexcept {
 }
 
 bool LightSampler::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool open = widgets->use_folding_header("light sampler", [&] {
-        widgets->text("type: %s", impl_type().data());
-        widgets->use_tree("light list", [&]{
-            for_each([&] (SP<Light> light) {
-                light->render_UI(widgets);
+    bool open = widgets->use_folding_header(
+        ocarina::format("{} light sampler", impl_type().data()),
+        [&] {
+            widgets->use_tree("light list", [&] {
+                for_each([&](SP<Light> light) {
+                    light->render_UI(widgets);
+                });
             });
+            render_sub_UI(widgets);
         });
-        render_sub_UI(widgets);
-    });
     return open;
 }
 
