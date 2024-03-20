@@ -36,7 +36,7 @@ public:
     bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         _changed |= widgets->input_float3("direction", &_direction.hv());
         _changed |= widgets->slider_float("angle", &_angle.hv(), radians(1.f), radians(89.f));
-        _changed |= widgets->slider_float("fall off", &_falloff.hv(), 0, _angle.hv());
+        _changed |= widgets->slider_float("fall off", &_falloff.hv(), 0.001, _angle.hv());
         return _changed;
     }
     [[nodiscard]] float3 power() const noexcept override {
