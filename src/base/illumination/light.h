@@ -70,6 +70,7 @@ public:
 protected:
     const LightType _type{LightType::Area};
     Serial<float> _scale{1.f};
+    Serial<uint> _switch{true};
     Slot _color{};
     uint _index{InvalidUI32};
 
@@ -103,7 +104,7 @@ protected:
 
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
-    OC_SERIALIZABLE_FUNC(Serializable<float>, _scale, *_color.node())
+    OC_SERIALIZABLE_FUNC(Serializable<float>, _scale, *_color.node(), _switch)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return _color.type_hash();
     }
@@ -112,7 +113,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
-    [[nodiscard]] Float scale() const noexcept { return *_scale; }
+    [[nodiscard]] Float scale() const noexcept { return *_scale * *_switch; }
     [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
