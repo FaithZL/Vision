@@ -11,9 +11,9 @@ namespace ocarina {
 class Widgets;
 }
 
-#define VS_MAKE_RENDER_UI(obj) (obj)->render_UI(widgets);
-#define VS_MAKE_RESET_STATUS(obj) vision::detail::reset_status(obj);
-#define VS_MAKE_HAS_CHANGED(obj) ret |= vision::detail::has_changed(obj);
+#define VS_MAKE_RENDER_UI(obj) vision::UI::render_UI(obj, widgets);
+#define VS_MAKE_RESET_STATUS(obj) vision::UI::reset_status(obj);
+#define VS_MAKE_HAS_CHANGED(obj) ret |= vision::UI::has_changed(obj);
 
 #define VS_MAKE_GUI_STATUS_FUNC(Super, ...)      \
     void reset_status() noexcept override {      \
@@ -37,28 +37,30 @@ class Widgets;
 
 namespace vision {
 
-namespace detail {
+namespace UI {
 
-#define OC_MAKE_AUTO_MEMBER_FUNC(func)                 \
-    template<typename T>                               \
-    auto func(T &&obj) noexcept {                      \
-        if constexpr (requires {                       \
-                          obj->func();                 \
-                      }) {                             \
-            return obj->func();                        \
-        } else if constexpr (requires {                \
-                                 obj.func();           \
-                             }) {                      \
-            return obj.func();                         \
-        } else {                                       \
-            static_assert(ocarina::always_false_v<T>); \
-        }                                              \
+#define OC_MAKE_AUTO_MEMBER_FUNC(func)                          \
+    template<typename T, typename... Args>                      \
+    auto func(T &&obj, Args &&...args) noexcept {               \
+        if constexpr (requires {                                \
+                          obj->func(OC_FORWARD(args)...);       \
+                      }) {                                      \
+            return obj->func(OC_FORWARD(args)...);              \
+        } else if constexpr (requires {                         \
+                                 obj.func(OC_FORWARD(args)...); \
+                             }) {                               \
+            return obj.func(OC_FORWARD(args)...);               \
+        } else {                                                \
+            static_assert(ocarina::always_false_v<T>);          \
+        }                                                       \
     }
 
 OC_MAKE_AUTO_MEMBER_FUNC(reset_status)
 OC_MAKE_AUTO_MEMBER_FUNC(has_changed)
+OC_MAKE_AUTO_MEMBER_FUNC(render_UI)
+OC_MAKE_AUTO_MEMBER_FUNC(render_sub_UI)
 
-}// namespace detail
+}// namespace UI
 
 class GUI {
 protected:
