@@ -45,7 +45,7 @@ public:
         : UVUnwrapper(desc),
           _atlas(nullptr) {
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     struct Guard {
         XAtlas *spreader{};
         explicit Guard(XAtlas *spreader) : spreader(spreader) { spreader->init_xatlas(); }

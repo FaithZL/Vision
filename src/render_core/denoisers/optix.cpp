@@ -14,7 +14,7 @@ public:
     void apply(vision::OfflineDenoiseInput &input) noexcept override {
 
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 
 }// namespace vision

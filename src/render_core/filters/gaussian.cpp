@@ -19,7 +19,7 @@ public:
           _sigma(desc["sigma"].as_float(1.f)),
           _exp_x(gaussian<H>(_radius.hv().x, 0, _sigma)),
           _exp_y(gaussian<H>(_radius.hv().y, 0, _sigma)) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
         float vx = gaussian<H>(p.x, 0, _sigma) - _exp_x;
         float vy = gaussian<H>(p.y, 0, _sigma) - _exp_y;

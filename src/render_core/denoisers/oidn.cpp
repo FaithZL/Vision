@@ -46,7 +46,7 @@ public:
           _device{create_device()} {
         _device.commit();
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void apply(vision::OfflineDenoiseInput &input) noexcept override {
         apply(input.resolution, input.output, input.color, input.normal, input.albedo);
     }

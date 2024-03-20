@@ -649,7 +649,7 @@ public:
                                               _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
                                               _spec_trans, _flatness, _diff_trans);
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 
 }// namespace vision

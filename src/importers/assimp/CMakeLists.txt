@@ -9,7 +9,7 @@ function(vision_add_assimp_importer_plugin name)
             vision-base
             vision-assimp_util
             vision-math)
-    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}")
+    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}"  VISION_CATEGORY="${PLUGIN_CATEGORY}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 

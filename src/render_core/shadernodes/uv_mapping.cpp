@@ -13,6 +13,6 @@ private:
 public:
     explicit UVMapping(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 }// namespace vision

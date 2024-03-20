@@ -25,7 +25,7 @@ public:
         _changed |= widgets->input_float_limit("focal distance", &_focal_distance.hv(), 0, 100, 0.1, 0.5);
         return _changed;
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void update_focal_distance(float val) noexcept override {
         float new_val = _focal_distance.hv() + val;
         if (new_val > 0.f) {

@@ -14,7 +14,7 @@ private:
 public:
     explicit GammaCorrectionPass(const PassDesc &desc)
         : RenderPass(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output) {
             Float4 pixel = input.read(dispatch_id());

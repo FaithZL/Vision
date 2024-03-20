@@ -33,7 +33,7 @@ public:
     [[nodiscard]] bool is_valid() const noexcept override {
         return _state && _state->is_valid();
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float next_1d() noexcept override {
         Float ret = lcg<D>(*_state);
         return ret;

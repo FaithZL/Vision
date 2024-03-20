@@ -29,7 +29,7 @@ public:
           _gamma(desc["gamma"].as_bool(true)) {}
 
     OC_SERIALIZABLE_FUNC(Film, _rt_buffer, _output_buffer)
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
 
     void compile_accumulation() noexcept {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output, Uint frame_index) {

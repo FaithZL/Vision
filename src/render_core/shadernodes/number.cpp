@@ -43,7 +43,7 @@ public:
         }
         return true;
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
     [[nodiscard]] uint dim() const noexcept override { return _value.element_num(); }

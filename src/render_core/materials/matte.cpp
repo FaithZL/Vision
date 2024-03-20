@@ -103,7 +103,7 @@ public:
             _sigma = scene().create_slot(desc.slot("sigma", 1.f, Number));
         }
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 }// namespace vision
 

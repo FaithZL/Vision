@@ -14,7 +14,7 @@ public:
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         return {make_float2(sample_tent(u.x, radius().x), sample_tent(u.y, radius().y)), 1.f};
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(float2 p) const noexcept override {
         return std::max(0.f, _radius.hv().x - std::abs(p.x)) *
                std::max(0.f, _radius.hv().y - std::abs(p.y));

@@ -26,7 +26,7 @@ public:
           _denoiser(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
         _max_depth = _max_depth.hv() - 1;
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         _direct.prepare();
         _indirect.prepare();

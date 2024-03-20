@@ -45,10 +45,15 @@ public:
     virtual void prepare() noexcept {}
     [[nodiscard]] virtual string to_string() noexcept { return "node"; }
     [[nodiscard]] virtual string_view impl_type() const noexcept = 0;
+    [[nodiscard]] virtual string_view category() const noexcept = 0;
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
     virtual ~Node() = default;
 };
+
+#define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
+    [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
 
 template<typename T>
 struct Wrap {

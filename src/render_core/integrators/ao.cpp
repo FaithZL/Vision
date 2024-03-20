@@ -23,7 +23,7 @@ public:
           _sample_num(desc["sample_num"].as_uint(32u)) {}
 
     OC_SERIALIZABLE_FUNC(Integrator, _distance, _cos_sample, _sample_num)
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, SampledSpectrum throughput,
                             const HitContext &hc, const RenderEnv &render_env) const noexcept override {
         Float3 L = make_float3(0.f);

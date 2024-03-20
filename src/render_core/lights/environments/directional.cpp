@@ -28,7 +28,7 @@ public:
         : Environment(desc, LightType::DeltaDirection | LightType::Infinite),
           _direction(desc["direction"].as_float3(make_float3(-1.f))) {}
     OC_SERIALIZABLE_FUNC(Environment, _direction, _world_radius, _world_center)
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         _world_radius = scene().world_radius();
         _world_center = scene().world_center();

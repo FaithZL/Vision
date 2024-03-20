@@ -22,7 +22,7 @@ public:
           _sigma_s(desc.sigma_s["value"].as_float3() * _scale),
           _sigma_t(_sigma_a + _sigma_s),
           _g(desc.g["value"].as_float()) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledSpectrum Tr(Float t, const SampledWavelengths &swl) const noexcept {
         SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
         return exp(-sigma_t * min(RayTMax, t));

@@ -241,7 +241,7 @@ public:
         _changed |= widgets->input_uint("dimension", &_dimension, 1, 1);
         return _changed;
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         _illuminant_d65.prepare();
         _rgb_to_spectrum_table.prepare();

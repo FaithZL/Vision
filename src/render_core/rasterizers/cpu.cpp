@@ -24,7 +24,7 @@ private:
 public:
     explicit CPURasterizer(const RasterizerDesc &desc)
         : Rasterizer(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {}
 
     void line_bresenham(float2 p1, float2 p2, uint4 val) noexcept {

@@ -43,7 +43,7 @@ public:
           _history_limit(desc["history_limit"].as_uint(32)),
           _sigma_rt(desc["sigma_rt"].as_float(10.f)),
           _sigma_normal(desc["sigma_normal"].as_float(128.f)) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     OC_MAKE_MEMBER_GETTER(alpha, )
     OC_MAKE_MEMBER_GETTER(moments_alpha, )
     OC_MAKE_MEMBER_GETTER(sigma_rt, )

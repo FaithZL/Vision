@@ -8,7 +8,7 @@ function(vision_add_model_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-main vision-assimp_util)
-    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}")
+    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}"  VISION_CATEGORY="${PLUGIN_CATEGORY}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 

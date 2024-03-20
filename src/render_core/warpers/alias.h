@@ -34,7 +34,7 @@ public:
         : Warper(desc),
           _table(pipeline()->bindless_array()),
           _func(pipeline()->bindless_array()) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     OC_SERIALIZABLE_FUNC(Warper, _table, _func)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;

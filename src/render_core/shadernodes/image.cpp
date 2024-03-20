@@ -21,7 +21,7 @@ public:
         _tex_id = _texture.index();
     }
     OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
 
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,

@@ -33,7 +33,7 @@ public:
     static void create_cache_directory_if_necessary() {
         FileManager::create_directory_if_necessary(Global::instance().scene_cache_path());
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override;
     void compile_displayer() noexcept;
     void init_postprocessor(const DenoiserDesc &desc) override;

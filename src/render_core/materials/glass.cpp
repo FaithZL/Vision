@@ -201,7 +201,7 @@ public:
         init_ior(desc);
         init_slot_cursor(&_color, 3);
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void init_ior(const MaterialDesc &desc) noexcept {
         auto name = desc["material_name"].as_string();
         SlotDesc eta_slot;

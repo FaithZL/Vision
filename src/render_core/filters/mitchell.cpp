@@ -17,7 +17,7 @@ public:
         : FittedCurveFilter(desc),
           _b(desc["b"].as_float(1.f / 3.f)),
           _c(desc["c"].as_float(1.f / 3.f)) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float mitchell_1d(float x) const {
         x = ocarina::abs(x);
         if (x <= 1)

@@ -43,7 +43,7 @@ public:
             init_geometry(desc);
         }
     }
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     OC_SERIALIZABLE_FUNC(IAreaLight, _two_sided, *_warper)
 
     void init_geometry(const LightDesc &desc) {

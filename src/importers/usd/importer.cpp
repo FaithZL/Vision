@@ -10,7 +10,7 @@ class USDImporter : public Importer {
 public:
     explicit USDImporter(const ImporterDesc &desc)
         : Importer(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SP<Pipeline> read_file(const fs::path &fn) override {
         return nullptr;
     }

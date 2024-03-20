@@ -10,7 +10,7 @@ class ACESToneMapper : public ToneMapper {
 public:
     explicit ACESToneMapper(const ToneMapperDesc &desc)
         : ToneMapper(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float4 apply(const ocarina::Float4 &x) const noexcept override {
         float a = 2.51f;
         float b = 0.03f;

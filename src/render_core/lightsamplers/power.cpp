@@ -20,7 +20,7 @@ protected:
 public:
     explicit PowerLightSampler(const LightSamplerDesc &desc)
         : LightSampler(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
         ret.light_index = _warper->sample_discrete(u, nullptr, nullptr);

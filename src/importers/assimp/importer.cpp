@@ -15,7 +15,7 @@ private:
 public:
     explicit AssimpImporter(const ImporterDesc &desc)
         : Importer(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] vector<SP<ShapeGroup>> parse_shapes() noexcept {
         vector<SP<ShapeGroup>> ret;
         vector<ShapeInstance> instances = _parser.parse_meshes(true, 0);

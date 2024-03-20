@@ -17,7 +17,7 @@ public:
         _spd.init(desc["value"].data());
     }
     OC_SERIALIZABLE_FUNC(ShaderNode, _spd)
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] vector<float> average() const noexcept override {
         float3 color = _spd.eval(rgb_spectrum_peak_wavelengths);
         return vector<float>{color.x, color.y, color.z};

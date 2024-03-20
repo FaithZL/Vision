@@ -28,7 +28,7 @@ public:
           _ior(scene().create_slot(desc.slot("ior", make_float3(1.5f)))),
           _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.1f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(false)) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 
 }// namespace vision

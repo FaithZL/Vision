@@ -14,7 +14,7 @@ private:
 public:
     explicit CustomizedRenderPipeline(const PipelineDesc &desc)
         : Pipeline(desc) {}
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; }
+    VS_MAKE_PLUGIN_NAME_FUNC
     void init_scene(const vision::SceneDesc &scene_desc) override {
         _scene.init(scene_desc);
         init_postprocessor(scene_desc.denoiser_desc);
