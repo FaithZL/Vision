@@ -21,14 +21,12 @@ void Camera::init(const SensorDesc &desc) noexcept {
     update_mat(desc.transform_desc.mat);
 }
 
-bool Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    bool dirty = false;
-    dirty |= widgets->input_float3("position", &_position);
+void Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    _changed |= widgets->input_float3("position", &_position);
     widgets->text("fov y: %.2f", _fov_y);
-    dirty |= widgets->input_float("yaw", &_yaw, 0.1, 5);
-    dirty |= widgets->input_float_limit("pitch", &_pitch, -pitch_max, pitch_max, 0.1, 5);
+    _changed |= widgets->input_float("yaw", &_yaw, 0.1, 5);
+    _changed |= widgets->input_float_limit("pitch", &_pitch, -pitch_max, pitch_max, 0.1, 5);
     widgets->input_float_limit("velocity", &_velocity, 0, 200, 1, 5);
-    return dirty;
 }
 
 RayState Camera::generate_ray(const SensorSample &ss) const noexcept {

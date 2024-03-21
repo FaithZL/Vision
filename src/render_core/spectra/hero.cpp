@@ -237,9 +237,8 @@ public:
           _cie_z(SPD::create_cie_z(pipeline())) {
         _rgb_to_spectrum_table.init();
     }
-    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         _changed |= widgets->input_uint("dimension", &_dimension, 1, 1);
-        return _changed;
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {

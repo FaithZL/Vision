@@ -87,11 +87,10 @@ public:
         return false;
     }
 
-    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         if (_node) {
-            return _node->render_sub_UI(widgets);
+            _node->render_sub_UI(widgets);
         }
-        return false;
     }
 
     [[nodiscard]] uint dim() const noexcept { return _dim; }

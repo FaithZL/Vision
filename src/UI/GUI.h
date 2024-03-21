@@ -64,7 +64,7 @@ public:
      * @param widgets
      * @return Whether any data has been updated
      */
-    virtual bool render_sub_UI(ocarina::Widgets *widgets) noexcept { return true; }
+    virtual void render_sub_UI(ocarina::Widgets *widgets) noexcept {}
     virtual ~GUI() = default;
 };
 

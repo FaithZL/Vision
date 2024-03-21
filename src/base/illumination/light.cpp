@@ -41,9 +41,8 @@ LightSample IPointLight::sample_wi(const LightSampleContext &p_ref, Float2 u,
     ret.p_light = p_light.pos;
     return ret;
 }
-bool IPointLight::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+void IPointLight::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     _changed |= widgets->input_float3("position", &host_position());
-    return _changed;
 }
 
 }// namespace vision

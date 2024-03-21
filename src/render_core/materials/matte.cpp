@@ -90,11 +90,10 @@ protected:
 public:
     VS_MAKE_GUI_STATUS_FUNC(Material, _color)
 
-    bool render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->text("color");
         widgets->same_line();
         vision::UI::render_UI(_color, widgets);
-        return false;
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
