@@ -88,20 +88,6 @@ protected:
     }
 
 public:
-
-    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        if (_color) {
-            widgets->text("color");
-            widgets->same_line();
-            _color.render_UI(widgets);
-        }
-        if (_sigma) {
-            widgets->text("sigma");
-            widgets->same_line();
-            _sigma.render_UI(widgets);
-        }
-    }
-
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
         if (_sigma) {

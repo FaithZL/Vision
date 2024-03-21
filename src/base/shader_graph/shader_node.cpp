@@ -4,6 +4,7 @@
 
 #include "shader_node.h"
 #include "base/mgr/pipeline.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 
@@ -24,6 +25,17 @@ uint Slot::_calculate_mask(string channels) noexcept {
         ret = (ret << 4) | dict[channel];
     }
     return ret;
+}
+
+bool Slot::render_UI(ocarina::Widgets *widgets) noexcept  {
+    if (_node) {
+        if (!_attr_name.empty()) {
+            widgets->text(_attr_name.c_str());
+            widgets->same_line();
+        }
+        return _node->render_UI(widgets);
+    }
+    return false;
 }
 
 uint64_t Slot::_compute_hash() const noexcept {

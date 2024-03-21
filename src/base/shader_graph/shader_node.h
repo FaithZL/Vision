@@ -82,12 +82,7 @@ public:
         return false;
     }
 
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        if (_node) {
-            return _node->render_UI(widgets);
-        }
-        return false;
-    }
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         if (_node) {

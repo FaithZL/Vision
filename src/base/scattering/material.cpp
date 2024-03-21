@@ -91,6 +91,12 @@ bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
+void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    for_each_slot([&](Slot &slot) {
+        slot.render_UI(widgets);
+    });
+}
+
 uint Material::element_num() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
         return size + slot->element_num();
