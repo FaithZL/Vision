@@ -29,7 +29,7 @@ SP<ShaderNode> NodeMgr::load_shader_node(const ShaderNodeDesc &desc) {
 }
 
 Slot NodeMgr::create_slot(const SlotDesc &desc) {
-    SP<ShaderNode >shader_node = load_shader_node(desc.node);
-    return Slot(shader_node, desc.channels);
+    SP<ShaderNode> shader_node = load_shader_node(desc.node);
+    return Slot(shader_node, desc.channels, desc.attr_name);
 }
 }// namespace vision
