@@ -39,7 +39,7 @@ bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
             widgets->text("type: %s", impl_type().data());
             render_sub_UI(widgets);
             _filter->render_UI(widgets);
-            _film->tone_mapper()->render_UI(widgets);
+            _film->render_UI(widgets);
         });
     return open;
 }

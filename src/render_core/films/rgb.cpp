@@ -31,6 +31,14 @@ public:
     OC_SERIALIZABLE_FUNC(Film, _rt_buffer, _output_buffer)
     VS_MAKE_PLUGIN_NAME_FUNC
 
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        _tone_mapper->render_UI(widgets);
+        _changed |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(_accumulation.hv())));
+        widgets->same_line();
+        _changed |= widgets->check_box("gamma", &_gamma);
+        return true;
+    }
+
     void compile_accumulation() noexcept {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output, Uint frame_index) {
             Float4 accum_prev = output.read(dispatch_id());
@@ -114,9 +122,11 @@ public:
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
                                             BufferView<float4> output) const noexcept override {
         CommandList ret;
-        ret << _gamma_correct(input,
-                              output)
-                   .dispatch(resolution());
+        if (_gamma) {
+            ret << _gamma_correct(input,
+                                  output)
+                       .dispatch(resolution());
+        }
         return ret;
     }
     [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return _output_buffer; }
