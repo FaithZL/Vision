@@ -10,6 +10,7 @@ class NumberInput : public ShaderNode {
 private:
     Serial<vector<float>> _value;
     Serial<float> _intensity{1.f};
+    bool _sync{true};
 
 public:
     explicit NumberInput(const ShaderNodeDesc &desc)
@@ -27,7 +28,15 @@ public:
         auto &values = _value.hv();
         switch (_type) {
             case ShaderNodeType::Number: {
-                _changed |= widgets->slider_floatN("", values.data(), values.size(), 0, 1);
+                _changed |= widgets->check_box("synchronize", &_sync);
+                if (_sync) {
+                    _changed |= widgets->slider_float("", values.data(), 0,1);
+                    for (int i = 1; i < values.size(); ++i) {
+                        values[i] = values[0];
+                    }
+                } else {
+                    _changed |= widgets->slider_floatN("", values.data(), values.size(), 0, 1);
+                }
                 break;
             }
             case ShaderNodeType::Albedo: {
