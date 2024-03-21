@@ -27,7 +27,7 @@ public:
         auto &values = _value.hv();
         switch (_type) {
             case ShaderNodeType::Number: {
-                _changed |= widgets->input_floatN("", values.data(), values.size());
+                _changed |= widgets->slider_floatN("", values.data(), values.size(), 0, 1);
                 break;
             }
             case ShaderNodeType::Albedo: {
