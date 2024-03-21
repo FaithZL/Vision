@@ -6,6 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
+#include "GUI/widgets.h"
 #include "frame_buffer.h"
 
 namespace vision {
@@ -60,6 +61,12 @@ public:
           _backend(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
 
     virtual void compile() noexcept {}
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        return widgets->use_folding_header(ocarina::format("{} denoiser", impl_type().data()), [&] {
+            render_sub_UI(widgets);
+        });
+    }
 
     /// for offline denoise
     virtual void apply(OfflineDenoiseInput &input) noexcept {

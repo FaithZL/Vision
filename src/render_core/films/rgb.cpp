@@ -33,10 +33,11 @@ public:
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         _tone_mapper->render_UI(widgets);
-        _changed |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(_accumulation.hv())));
-        widgets->same_line();
-        _changed |= widgets->check_box("gamma", &_gamma);
-        return true;
+        return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&]{
+            _changed |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(_accumulation.hv())));
+            widgets->same_line();
+            _changed |= widgets->check_box("gamma", &_gamma);
+        });
     }
 
     void compile_accumulation() noexcept {

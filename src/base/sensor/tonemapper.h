@@ -26,8 +26,9 @@ public:
     explicit ToneMapper(const ToneMapperDesc &desc)
         : Node(desc) {}
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        widgets->text("tone mapper: %s", impl_type().data());
-        return true;
+        return widgets->use_folding_header(ocarina::format("{} tone mapper", impl_type().data()),[&]{
+            render_sub_UI(widgets);
+        });
     }
     [[nodiscard]] virtual Float4 apply(const Float4 &input) const noexcept = 0;
 };

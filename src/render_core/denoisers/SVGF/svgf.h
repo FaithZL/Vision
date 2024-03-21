@@ -26,6 +26,7 @@ private:
     Modulate _modulate{this};
 
 private:
+    bool _switch{false};
     uint N;
     float _alpha{0.05f};
     float _moments_alpha{0.2f};
@@ -50,6 +51,7 @@ public:
     OC_MAKE_MEMBER_GETTER(sigma_normal, )
     OC_MAKE_MEMBER_GETTER(history_limit, )
     void prepare_buffers();
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }
     [[nodiscard]] uint cur_svgf_index(uint frame_index) const noexcept;
     [[nodiscard]] uint prev_svgf_index(uint frame_index) const noexcept;

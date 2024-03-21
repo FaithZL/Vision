@@ -113,6 +113,8 @@ public:
 
     OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
 
+    VS_MAKE_GUI_STATUS_FUNC(Integrator, _denoiser)
+
     OC_MAKE_MEMBER_GETTER(separate, )
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

@@ -20,6 +20,10 @@ void SVGF::prepare_buffers() {
     svgf_data.register_view(rp->pixel_num(), rp->pixel_num());
 }
 
+void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    _changed |= widgets -> check_box("turn on", addressof(_switch));
+}
+
 uint SVGF::cur_svgf_index(ocarina::uint frame_index) const noexcept {
     return cur_index(frame_index) + svgf_data_base();
 }
