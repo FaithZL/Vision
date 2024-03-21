@@ -5,6 +5,7 @@
 #include "mgr/pipeline.h"
 #include "node.h"
 #include "mgr/global.h"
+#include "GUI/widgets.h"
 
 namespace vision {
 
@@ -14,6 +15,11 @@ Pipeline *Node::pipeline() noexcept {
 
 Scene &Node::scene() noexcept {
     return pipeline()->scene();
+}
+
+bool Node::render_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->text_wrapped("%s-%s does not implement render_UI", category().data(), impl_type().data());
+    return true;
 }
 
 fs::path Node::scene_path() noexcept {

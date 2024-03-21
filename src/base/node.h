@@ -49,6 +49,7 @@ public:
     [[nodiscard]] string plugin_name() const noexcept {
         return ocarina::format("vision-{}-{}", category().data(), impl_type().data());
     }
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
     virtual ~Node() = default;
