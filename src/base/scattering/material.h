@@ -69,9 +69,9 @@ public:
     using Evaluator = MaterialEvaluator;
 
 protected:
+    uint _index{InvalidUI32};
     Slot _bump{};
     Slot _bump_scale{};
-    uint _index{InvalidUI32};
 
 protected:
     static constexpr uint stride = sizeof(Slot);
@@ -94,7 +94,6 @@ protected:
 public:
     explicit Material(const MaterialDesc &desc);
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    VS_MAKE_GUI_STATUS_FUNC(Node, _bump, _bump_scale)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
         uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
@@ -125,21 +124,36 @@ public:
         return ret;
     }
 
+    template<typename T, typename F>
+    auto reduce_slots(T &&initial, F &&func) noexcept {
+        T ret = OC_FORWARD(initial);
+        if (_bump) {
+            ret = OC_FORWARD(func)(ret, _bump);
+        }
+        if (_bump_scale) {
+            ret = OC_FORWARD(func)(ret, _bump_scale);
+        }
+        for (int i = 0; i < _slot_cursor.num; ++i) {
+            Slot &slot = get_slot(i);
+            if (slot) {
+                ret = OC_FORWARD(func)(ret, slot);
+            }
+        }
+        return ret;
+    }
+
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
         if (_bump) {
-            OC_FORWARD(func)
-            (_bump);
+            func(_bump);
         }
         if (_bump_scale) {
-            OC_FORWARD(func)
-            (_bump_scale);
+            func(_bump_scale);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             const Slot &slot = get_slot(i);
             if (slot) {
-                OC_FORWARD(func)
-                (slot);
+                func(slot);
             }
         }
     }
@@ -147,18 +161,15 @@ public:
     template<typename F>
     void for_each_slot(F &&func) noexcept {
         if (_bump) {
-            OC_FORWARD(func)
-            (_bump);
+            func(_bump);
         }
         if (_bump_scale) {
-            OC_FORWARD(func)
-            (_bump_scale);
+            func(_bump_scale);
         }
         for (int i = 0; i < _slot_cursor.num; ++i) {
             Slot &slot = get_slot(i);
             if (slot) {
-                OC_FORWARD(func)
-                (slot);
+                func(slot);
             }
         }
     }
@@ -168,6 +179,8 @@ public:
     void reset_device_value() const noexcept override;
     void encode(RegistrableManaged<float> &data) const noexcept override;
     void decode(const DataAccessor<float> *da) const noexcept override;
+    void reset_status() noexcept override;
+    bool has_changed() noexcept override;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;

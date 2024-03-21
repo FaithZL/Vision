@@ -88,7 +88,6 @@ protected:
     }
 
 public:
-    VS_MAKE_GUI_STATUS_FUNC(Material, _color)
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         if (_color) {

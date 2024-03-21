@@ -121,6 +121,18 @@ void Material::decode(const DataAccessor<float> *da) const noexcept {
     });
 }
 
+void Material::reset_status() noexcept {
+    for_each_slot([&](Slot &slot) {
+        slot.reset_status();
+    });
+}
+
+bool Material::has_changed() noexcept {
+    return reduce_slots(false, [&](bool b, Slot &slot) {
+        return b || slot->has_changed();
+    });
+}
+
 namespace detail {
 
 [[nodiscard]] Float3 clamp_ns(Float3 ns, Float3 ng, Float3 w) {
