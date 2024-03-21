@@ -24,6 +24,11 @@ public:
     virtual void load_data() noexcept = 0;
     [[nodiscard]] virtual Float next_1d() noexcept = 0;
     [[nodiscard]] virtual bool is_valid() const noexcept = 0;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        return widgets->use_folding_header(ocarina::format("{} sampler", impl_type().data()), [&] {
+            render_sub_UI(widgets);
+        });
+    }
     void try_load_data() noexcept {
         if (is_valid()) {
             return;
