@@ -34,6 +34,12 @@ void MaterialRegistry::push_back(SP<vision::Material> material) noexcept {
     _materials.push_back(ocarina::move(material));
 }
 
+void MaterialRegistry::upload_device_data() noexcept {
+    if (has_changed()) {
+        _materials.update();
+    }
+}
+
 bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header("materials", [&] {
         _materials.render_UI(widgets);

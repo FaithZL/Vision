@@ -29,6 +29,7 @@ public:
     [[nodiscard]] SP<Material> register_(SP<Material> material) noexcept;
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
     void push_back(SP<Material> material) noexcept;
+    void upload_device_data() noexcept;
     void remove_unused_materials() noexcept;
     void tidy_up() noexcept;
     OC_MAKE_MEMBER_GETTER(materials, &)
