@@ -84,7 +84,7 @@ Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
 }
 
 bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
-    string label = format("{} material: {}", impl_type().data(), _name.c_str());
+    string label = format("{} {} material: {}", _index, impl_type().data(), _name.c_str());
     bool open = widgets->use_tree(label, [&] {
         render_sub_UI(widgets);
     });
