@@ -217,6 +217,7 @@ public:
             eta_slot = desc.slot("", ior);
         }
         _ior = scene().create_slot(eta_slot);
+        _ior->set_name("ior");
     }
 
     void prepare() noexcept override {
