@@ -26,27 +26,23 @@ public:
     OC_SERIALIZABLE_FUNC(ShaderNode, _value, _intensity)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = _value.hv();
-        if (!_name.empty()) {
-            widgets->text(_name.c_str());
-            widgets->same_line();
-        }
         switch (_type) {
             case ShaderNodeType::Number: {
                 if (values.size() > 1) {
                     _changed |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &_sync);
                 }
                 if (_sync) {
-                    _changed |= widgets->input_float("", values.data(), 0.01, 0.2);
+                    _changed |= widgets->input_float(_name, values.data(), 0.01, 0.2);
                     for (int i = 1; i < values.size(); ++i) {
                         values[i] = values[0];
                     }
                 } else {
-                    _changed |= widgets->input_floatN("", values.data(), values.size());
+                    _changed |= widgets->input_floatN(_name, values.data(), values.size());
                 }
                 break;
             }
             case ShaderNodeType::Albedo: {
-                _changed |= widgets->colorN_edit("", values.data(), values.size());
+                _changed |= widgets->colorN_edit(_name, values.data(), values.size());
                 break;
             }
             case ShaderNodeType::Illumination: {
