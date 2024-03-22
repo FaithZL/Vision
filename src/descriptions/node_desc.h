@@ -180,7 +180,6 @@ public:
         return "";
     }
     string channels;
-    string attr_name;
     ShaderNodeDesc node;
     [[nodiscard]] uint dim() const noexcept { return channels.size(); }
     VISION_DESC_COMMON(Slot)
@@ -342,18 +341,18 @@ public:
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
                                 ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
+        node.name = key;
         SlotDesc slot_desc{node, type_dimension_v<T>};
         slot_desc.init(_parameter[key]);
-        slot_desc.attr_name = key;
         return slot_desc;
     }
 
     [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
                                 ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{data, type};
+        node.name = key;
         uint size = data.is_number() ? 1 : data.size();
         SlotDesc slot_desc{node, size};
-        slot_desc.attr_name = key;
         slot_desc.init(_parameter[key]);
         return slot_desc;
     }

@@ -26,6 +26,10 @@ public:
     OC_SERIALIZABLE_FUNC(ShaderNode, _value, _intensity)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = _value.hv();
+        if (!_name.empty()) {
+            widgets->text(_name.c_str());
+            widgets->same_line();
+        }
         switch (_type) {
             case ShaderNodeType::Number: {
                 _changed |= widgets->check_box("synchronize", &_sync);

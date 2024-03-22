@@ -44,7 +44,6 @@ public:
 class Slot : public ocarina::Hashable, public GUI {
 private:
     SP<ShaderNode> _node{};
-    string _attr_name{};
     uint _dim{4};
 #ifndef NDEBUG
     string _channels;
@@ -57,15 +56,14 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    explicit Slot(string name = "") : _attr_name(name) {}
-    explicit Slot(SP<ShaderNode> input, string channels, string name = "")
+    Slot() = default;
+    explicit Slot(SP<ShaderNode> input, string channels)
         : _node(input),
           _dim(channels.size()),
 #ifndef NDEBUG
           _channels(channels),
 #endif
-          _channel_mask(_calculate_mask(ocarina::move(channels))),
-          _attr_name(name) {
+          _channel_mask(_calculate_mask(ocarina::move(channels))) {
         OC_ASSERT(_dim <= 4);
     }
 
