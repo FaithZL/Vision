@@ -46,7 +46,8 @@ public:
                 break;
             }
             case ShaderNodeType::Illumination: {
-                _changed |= widgets->colorN_edit(ocarina::format("intensity:{}", _intensity.hv()), values.data(), values.size());
+                _changed |= widgets->colorN_edit(ocarina::format("intensity:{} {}", _intensity.hv(), _name.c_str()),
+                                                 values.data(), values.size());
                 break;
             }
             default:
