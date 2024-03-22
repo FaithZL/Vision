@@ -32,14 +32,16 @@ public:
         }
         switch (_type) {
             case ShaderNodeType::Number: {
-                _changed |= widgets->check_box("synchronize", &_sync);
+                if (values.size() > 1) {
+                    _changed |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &_sync);
+                }
                 if (_sync) {
-                    _changed |= widgets->slider_float("", values.data(), 0,1);
+                    _changed |= widgets->input_float("", values.data(), 0.01, 0.2);
                     for (int i = 1; i < values.size(); ++i) {
                         values[i] = values[0];
                     }
                 } else {
-                    _changed |= widgets->slider_floatN("", values.data(), values.size(), 0, 1);
+                    _changed |= widgets->input_floatN("", values.data(), values.size());
                 }
                 break;
             }
