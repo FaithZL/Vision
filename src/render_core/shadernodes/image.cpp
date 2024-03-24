@@ -6,6 +6,7 @@
 #include "rhi/common.h"
 #include "base/mgr/pipeline.h"
 #include "base/mgr/global.h"
+#include "GUI/window.h"
 
 namespace vision {
 using namespace ocarina;
@@ -22,6 +23,12 @@ public:
     }
     OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
     VS_MAKE_PLUGIN_NAME_FUNC
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        widgets->window()->interop(&_texture);
+        return true;
+    }
+
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
 
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
