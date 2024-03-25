@@ -25,6 +25,8 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        widgets->text(_name.c_str());
+        widgets->image(_texture.host_tex());
         return true;
     }
 
