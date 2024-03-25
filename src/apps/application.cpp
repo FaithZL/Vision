@@ -192,6 +192,7 @@ void App::update(double dt) noexcept {
     auto &view_buffer = pipeline().view_buffer();
     view_buffer.download_immediately(_view_buffer.data());
     window->set_background(_view_buffer.data());
+    window->set_background(view_buffer);
     check_and_save();
 }
 
