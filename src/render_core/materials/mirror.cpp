@@ -23,8 +23,8 @@ public:
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MirrorBxDFSet)
-    // clang-format on
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
+        // clang-format on
+        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone(), mode);
     }
@@ -53,9 +53,10 @@ protected:
 
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.0001f)))),
+        : Material(desc),
           _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
+        _color.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.0001f))));
         init_slot_cursor(&_color, 2);
     }
     VS_MAKE_PLUGIN_NAME_FUNC

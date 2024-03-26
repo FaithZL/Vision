@@ -74,8 +74,8 @@ protected:
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
+        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
         init_ior(desc);
         init_slot_cursor(&_eta, 3);
     }

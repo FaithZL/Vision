@@ -29,6 +29,9 @@ uint Slot::_calculate_mask(string channels) noexcept {
 
 bool Slot::render_UI(ocarina::Widgets *widgets) noexcept  {
     if (_node) {
+        if(!_attr_name.empty()) {
+            _node->set_name(_attr_name);
+        }
         return _node->render_UI(widgets);
     }
     return false;

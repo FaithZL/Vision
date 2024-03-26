@@ -195,9 +195,9 @@ protected:
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.01f)))),
           _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
+        _color.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
         init_ior(desc);
         init_slot_cursor(&_color, 3);
     }

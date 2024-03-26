@@ -78,8 +78,8 @@ BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler *sampler, const Ui
 
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     if (desc.has_attr("bump")) {
-        _bump = scene().create_slot(desc.slot("bump", 1.f, Number));
-        _bump_scale = scene().create_slot(desc.slot("bump_scale", 1.f, Number));
+        _bump.set(scene().create_slot(desc.slot("bump", 1.f, Number)));
+        _bump_scale.set(scene().create_slot(desc.slot("bump_scale", 1.f, Number)));
     }
 }
 

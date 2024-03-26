@@ -127,10 +127,11 @@ protected:
 
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
-        : Material(desc), _diff(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _spec(scene().create_slot(desc.slot("spec", make_float3(0.05f), Albedo))),
-          _roughness(scene().create_slot(desc.slot("roughness", make_float2(0.001f)))),
+        : Material(desc),
           _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
+        _diff.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        _spec.set(scene().create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
+        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.001f))));
         init_slot_cursor(&_diff, 3);
     }
     VS_MAKE_PLUGIN_NAME_FUNC

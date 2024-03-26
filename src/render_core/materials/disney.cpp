@@ -628,19 +628,20 @@ protected:
 
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
-        : Material(desc), _color(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo))),
-          _metallic(scene().create_slot(desc.slot("metallic", 0.f, Number))),
-          _eta(scene().create_slot(desc.slot("ior", 1.5f, Number))),
-          _roughness(scene().create_slot(desc.slot("roughness", 0.5f, Number))),
-          _spec_tint(scene().create_slot(desc.slot("spec_tint", 0.f, Number))),
-          _anisotropic(scene().create_slot(desc.slot("anisotropic", 0.f, Number))),
-          _sheen(scene().create_slot(desc.slot("sheen", 0.f, Number))),
-          _sheen_tint(scene().create_slot(desc.slot("sheen_tint", 0.f, Number))),
-          _clearcoat(scene().create_slot(desc.slot("clearcoat", 0.3f, Number))),
-          _clearcoat_alpha(scene().create_slot(desc.slot("clearcoat_alpha", 0.2f, Number))),
-          _spec_trans(scene().create_slot(desc.slot("spec_trans", 0.f, Number))),
-          _flatness(scene().create_slot(desc.slot("flatness", 0.f, Number))),
-          _diff_trans(scene().create_slot(desc.slot("diff_trans", 0.f, Number))) {
+        : Material(desc) {
+        _color.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        _metallic.set(scene().create_slot(desc.slot("metallic", 0.f, Number)));
+        _eta.set(scene().create_slot(desc.slot("ior", 1.5f, Number)));
+        _roughness.set(scene().create_slot(desc.slot("roughness", 0.5f, Number)));
+        _spec_tint.set(scene().create_slot(desc.slot("spec_tint", 0.f, Number)));
+        _anisotropic.set(scene().create_slot(desc.slot("anisotropic", 0.f, Number)));
+        _sheen.set(scene().create_slot(desc.slot("sheen", 0.f, Number)));
+        _sheen_tint.set(scene().create_slot(desc.slot("sheen_tint", 0.f, Number)));
+        _clearcoat.set(scene().create_slot(desc.slot("clearcoat", 0.3f, Number)));
+        _clearcoat_alpha.set(scene().create_slot(desc.slot("clearcoat_alpha", 0.2f, Number)));
+        _spec_trans.set(scene().create_slot(desc.slot("spec_trans", 0.f, Number)));
+        _flatness.set(scene().create_slot(desc.slot("flatness", 0.f, Number)));
+        _diff_trans.set(scene().create_slot(desc.slot("diff_trans", 0.f, Number)));
         init_slot_cursor(&_color, &_diff_trans);
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {

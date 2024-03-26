@@ -41,6 +41,8 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
+#define VS_MAKE_SLOT(attr_name) Slot _##attr_name{#attr_name};
+
 class Slot : public ocarina::Hashable, public GUI {
 private:
     SP<ShaderNode> _node{};
@@ -58,6 +60,13 @@ private:
 
 public:
     explicit Slot(const string &attr_name = "") : _attr_name(attr_name) {}
+    void set(const Slot &other) noexcept {
+        const string &old_name = _attr_name;
+        *this = other;
+        if (other._attr_name.empty()) {
+            _attr_name = old_name;
+        }
+    }
     explicit Slot(SP<ShaderNode> input, string channels)
         : _node(input),
           _dim(channels.size()),
