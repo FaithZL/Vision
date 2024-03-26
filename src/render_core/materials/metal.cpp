@@ -60,9 +60,9 @@ public:
 //    }
 class MetalMaterial : public Material {
 private:
-    Slot _eta;
-    Slot _k;
-    Slot _roughness{};
+    VS_MAKE_SLOT(eta);
+    VS_MAKE_SLOT(k);
+    VS_MAKE_SLOT(roughness);
     bool _remapping_roughness{false};
 
 protected:

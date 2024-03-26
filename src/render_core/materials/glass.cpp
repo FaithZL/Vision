@@ -181,9 +181,9 @@ public:
 //    }
 class GlassMaterial : public Material {
 private:
-    Slot _color{};
-    Slot _ior{};
-    Slot _roughness{};
+    VS_MAKE_SLOT(color);
+    VS_MAKE_SLOT(ior);
+    VS_MAKE_SLOT(roughness);
     bool _remapping_roughness{true};
 
 protected:

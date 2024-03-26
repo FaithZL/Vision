@@ -605,19 +605,19 @@ public:
 //    }
 class DisneyMaterial : public Material {
 private:
-    Slot _color{};
-    Slot _metallic{};
-    Slot _eta{};
-    Slot _roughness{};
-    Slot _spec_tint{};
-    Slot _anisotropic{};
-    Slot _sheen{};
-    Slot _sheen_tint{};
-    Slot _clearcoat{};
-    Slot _clearcoat_alpha{};
-    Slot _spec_trans{};
-    Slot _flatness{};
-    Slot _diff_trans{};
+    VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(metallic)
+    VS_MAKE_SLOT(eta)
+    VS_MAKE_SLOT(roughness)
+    VS_MAKE_SLOT(spec_tint)
+    VS_MAKE_SLOT(anisotropic)
+    VS_MAKE_SLOT(sheen)
+    VS_MAKE_SLOT(sheen_tint)
+    VS_MAKE_SLOT(clearcoat)
+    VS_MAKE_SLOT(clearcoat_alpha)
+    VS_MAKE_SLOT(spec_trans)
+    VS_MAKE_SLOT(flatness)
+    VS_MAKE_SLOT(diff_trans)
     bool _thin{false};
 
 protected:

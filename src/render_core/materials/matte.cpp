@@ -78,8 +78,8 @@ public:
 
 class MatteMaterial : public Material {
 private:
-    Slot _color{};
-    Slot _sigma{};
+    VS_MAKE_SLOT(color);
+    VS_MAKE_SLOT(sigma);
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,

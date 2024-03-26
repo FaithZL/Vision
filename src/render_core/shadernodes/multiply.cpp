@@ -33,8 +33,8 @@ namespace vision {
 //}
 class Multiply : public ShaderNode {
 private:
-    Slot _lhs;
-    Slot _rhs;
+    VS_MAKE_SLOT(lhs)
+    VS_MAKE_SLOT(rhs)
 
 public:
     explicit Multiply(const ShaderNodeDesc &desc)

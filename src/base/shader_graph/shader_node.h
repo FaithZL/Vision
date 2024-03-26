@@ -61,7 +61,7 @@ private:
 public:
     explicit Slot(const string &attr_name = "") : _attr_name(attr_name) {}
     void set(const Slot &other) noexcept {
-        const string &old_name = _attr_name;
+        string old_name = _attr_name;
         *this = other;
         if (other._attr_name.empty()) {
             _attr_name = old_name;

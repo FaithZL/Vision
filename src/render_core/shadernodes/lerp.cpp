@@ -7,31 +7,31 @@
 namespace vision {
 class Lerp : public ShaderNode {
 private:
-    Slot _t{};
-    Slot A{};
-    Slot B{};
+    VS_MAKE_SLOT(t)
+    VS_MAKE_SLOT(A)
+    VS_MAKE_SLOT(B)
 
 public:
     explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool is_uniform() const noexcept override {
-        return _t->is_uniform() && A->is_uniform() && B->is_uniform();
+        return _t->is_uniform() && _A->is_uniform() && _B->is_uniform();
     }
     [[nodiscard]] bool is_constant() const noexcept override {
-        return _t->is_constant() && A->is_constant() && B->is_constant();
+        return _t->is_constant() && _A->is_constant() && _B->is_constant();
     }
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_t.type_hash(), A.type_hash(), B.type_hash());
+        return hash64(_t.type_hash(), _A.type_hash(), _B.type_hash());
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(_t.hash(), A.hash(), B.hash());
+        return hash64(_t.hash(), _A.hash(), _B.hash());
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return ocarina::lerp(_t.average(), A.average(), B.average());
+        return ocarina::lerp(_t.average(), _A.average(), _B.average());
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return ocarina::lerp(_t.evaluate(ctx, swl),A.evaluate(ctx, swl),B.evaluate(ctx, swl));
+        return ocarina::lerp(_t.evaluate(ctx, swl),_A.evaluate(ctx, swl),_B.evaluate(ctx, swl));
     }
 };
 }// namespace vision

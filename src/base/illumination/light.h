@@ -71,7 +71,7 @@ protected:
     const LightType _type{LightType::Area};
     Serial<float> _scale{1.f};
     Serial<uint> _switch{true};
-    Slot _color{};
+    VS_MAKE_SLOT(color)
     uint _index{InvalidUI32};
 
 protected:

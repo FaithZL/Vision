@@ -9,9 +9,8 @@ namespace vision {
 
 Light::Light(const LightDesc &desc, LightType light_type)
     : Node(desc), _type(light_type),
-      _color(scene().create_slot(desc.color)),
       _scale(desc["scale"].as_float(1.f)) {
-    _color->set_name("color");
+    _color.set(scene().create_slot(desc.color));
 }
 
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
@@ -19,7 +18,7 @@ bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree(label, [&] {
         _changed |= widgets->input_float_limit("scale", &_scale.hv(), 0, 100, 0.1, 2);
         _changed |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(_switch.hv())));
-        _color->render_UI(widgets);
+        _color.render_UI(widgets);
         render_sub_UI(widgets);
     });
     return open;

@@ -78,7 +78,7 @@ class MixMaterial : public Material {
 private:
     SP<Material> _mat0{};
     SP<Material> _mat1{};
-    Slot _scale{};
+    VS_MAKE_SLOT(scale)
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
