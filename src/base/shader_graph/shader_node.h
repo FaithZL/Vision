@@ -49,6 +49,7 @@ private:
     string _channels;
 #endif
     uint _channel_mask{};
+    string _attr_name{};
 
 private:
     [[nodiscard]] static uint _calculate_mask(string channels) noexcept;
@@ -56,7 +57,7 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    Slot() = default;
+    explicit Slot(const string &attr_name = "") : _attr_name(attr_name) {}
     explicit Slot(SP<ShaderNode> input, string channels)
         : _node(input),
           _dim(channels.size()),
