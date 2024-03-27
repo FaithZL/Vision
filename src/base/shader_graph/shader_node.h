@@ -59,7 +59,7 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    explicit Slot(const string &attr_name = "") : _attr_name(attr_name) {}
+    explicit Slot(string attr_name = "") : _attr_name(std::move(attr_name)) {}
     void set(const Slot &other) noexcept {
         string old_name = _attr_name;
         *this = other;
@@ -68,7 +68,7 @@ public:
         }
     }
     explicit Slot(SP<ShaderNode> input, string channels)
-        : _node(input),
+        : _node(std::move(input)),
           _dim(channels.size()),
 #ifndef NDEBUG
           _channels(channels),
