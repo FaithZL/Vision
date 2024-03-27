@@ -24,8 +24,17 @@ public:
     OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
     VS_MAKE_PLUGIN_NAME_FUNC
 
+    void reload() noexcept {
+
+        
+    }
+
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->text(_name.c_str());
+        widgets->same_line();
+        widgets->button_click("reload", [&] {
+            reload();
+        });
         widgets->image(_texture.host_tex());
         return true;
     }
