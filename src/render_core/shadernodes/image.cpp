@@ -28,12 +28,13 @@ public:
 
     void reload(ocarina::Widgets *widgets) noexcept {
         fs::path path = _texture->host_tex().path();
-        Widgets::open_file_dialog(path);
-        _desc.set_value("fn", path.string());
-        _desc.reset_hash();
-        _texture = &Global::instance().pipeline()->image_pool().obtain_texture(_desc);
-        _tex_id = _texture->index();
-        _changed = true;
+        if (Widgets::open_file_dialog(path)) {
+            _desc.set_value("fn", path.string());
+            _desc.reset_hash();
+            _texture = &Global::instance().pipeline()->image_pool().obtain_texture(_desc);
+            _tex_id = _texture->index();
+            _changed = true;
+        }
     }
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
