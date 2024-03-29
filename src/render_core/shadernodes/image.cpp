@@ -32,6 +32,8 @@ public:
         _desc.set_value("fn", path.string());
         _desc.reset_hash();
         _texture = &Global::instance().pipeline()->image_pool().obtain_texture(_desc);
+        _tex_id = _texture->index();
+        _changed = true;
     }
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
@@ -48,6 +50,7 @@ public:
 
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
+        $condition_info("{} ------------", *_tex_id);
         return pipeline()->tex_var(*_tex_id).sample(_texture->host_tex().channel_num(), ctx.uv);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {

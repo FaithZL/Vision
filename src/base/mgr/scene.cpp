@@ -202,6 +202,7 @@ void Scene::upload_data() noexcept {
     _integrator->update_device_data();
     _light_sampler->update_device_data();
     _material_registry->upload_device_data();
+    pipeline()->upload_bindless_array();
 }
 
 }// namespace vision
