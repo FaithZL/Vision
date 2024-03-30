@@ -7,6 +7,7 @@
 #include "math/transform.h"
 
 using namespace ocarina;
+using namespace vision;
 
 int main() {
 
@@ -26,6 +27,12 @@ int main() {
     auto t2 = degrees(q2.theta());
 
     string ies = from_file(path);
+
+    float3 p = make_float3(1,1,1);
+
+    auto p1 = transform_vector<H>(m, p);
+    auto p2 = transform_vector<H>(make_float4x4(m2), p);
+
     vision::IESFile ies_file;
 
     ies_file.load(ies);
