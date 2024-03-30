@@ -87,6 +87,7 @@ public:
     [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler *sampler) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
+    void dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
         if constexpr (std::invocable<Func, SP<Light>>) {

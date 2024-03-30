@@ -255,7 +255,10 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
 LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
                                          const SampledWavelengths &swl, LightEvalMode mode) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
-    LightEval ret = env_light()->evaluate_wi(p_ref, p_light, swl, mode);
+    LightEval ret{swl.dimension()};
+    dispatch_environment([&](const Environment *env) {
+        ret = env->evaluate_wi(p_ref, p_light, swl, mode);
+    });
     Float pmf = PMF(p_ref, env_index());
     ret.pdf *= pmf;
     return ret;
@@ -272,6 +275,16 @@ LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, con
     }
     ret.pdf = pdf_wi;
     return ret;
+}
+
+void LightSampler::dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept {
+    uint type_index = _lights.type_index(env_light());
+    dispatch_light(type_index, 0, [&](const Light *light) {
+        auto env = dynamic_cast<const Environment *>(light);
+        if (env) {
+            func(env);
+        }
+    });
 }
 
 void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {

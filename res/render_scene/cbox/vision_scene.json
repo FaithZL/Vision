@@ -896,6 +896,22 @@
 										"scale" : 0.2
 									}
 								},
+				{
+					"type" : "spherical",
+					"param": {
+						"color": {
+							"fn" : "textures/spruit_sunrise_2k.hdr",
+							"color_space": "linear"
+						},
+						"o2w" : {
+							"type":"Euler",
+							"param": {
+								"yaw" :-30
+							}
+						},
+						"scale" : 1
+					}
+				},
 				//				{
 				//					"type" : "point",
 				//					"param" : {
