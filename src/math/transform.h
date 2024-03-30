@@ -138,6 +138,41 @@ template<EPort p = D>
     return ray;
 }
 
+inline void decompose(float4x4 m, float3 *T, quaternion *quat, float3 *s) noexcept {
+    T->x = m[3][0];
+    T->y = m[3][1];
+    T->z = m[3][2];
+    float4x4 M = m;
+
+    for (int i = 0; i < 3; ++i) {
+        M[i][3] = M[3][i] = 0.f;
+    }
+    M[3][3] = 1.f;
+
+    float norm = 1;
+    int count = 0;
+    float4x4 R = M;
+    do {
+        float4x4 Rnext;
+        float4x4 Rit = inverse(transpose(R));
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 4; ++j)
+                Rnext[i][j] = 0.5f * (R[i][j] + Rit[i][j]);
+
+        norm = 0;
+        for (int i = 0; i < 3; ++i) {
+            float n = std::abs(R[i][0] - Rnext[i][0]) +
+                      std::abs(R[i][1] - Rnext[i][1]) +
+                      std::abs(R[i][2] - Rnext[i][2]);
+            norm = std::max(norm, n);
+        }
+        R = Rnext;
+    } while (++count < 100 && norm > 0.0001f);
+    *quat = quaternion ::from_float4x4(R);
+    float4x4 S = inverse(R) * M;
+    *s = make_float3(S[0][0], S[1][1], S[2][2]);
+}
+
 [[nodiscard]] inline Box3f transform_box(float4x4 mat, const Box3f &b) noexcept {
     float3 minPoint = make_float3(mat[3][0], mat[3][1], mat[3][2]);
     float3 maxPoint = minPoint;

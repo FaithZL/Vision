@@ -8,31 +8,27 @@
 
 using namespace ocarina;
 using namespace vision;
-
 int main() {
 
     auto path = "E:\\work\\renderer\\Vision\\res\\ies\\6.ies";
 
-    auto m = vision::rotation_x<H>(80);
-    auto q = vision::quaternion::from_float3x3(make_float3x3(m));
 
+    auto T =  transform::translation(1.f,2.f,3.f);
+    auto R = transform::rotation<H>(make_float3(1,1,1), 45);
+    auto S = transform::scale(0.5f);
 
-    auto m2 = q.to_float3x3();
-    auto a = q.axis();
-    auto t = degrees(q.theta());
+    auto M = T * R * S;
 
-    auto q2 = vision::quaternion ::from_float3x3(m2);
+    float3 t;
+    quaternion r;
+    float3 s;
 
-    auto a2 = q2.axis();
-    auto t2 = degrees(q2.theta());
+    decompose(M, &t, &r, &s);
+
+    float3 axis = r.axis();
+    float deg = degrees(r.theta());
 
     string ies = from_file(path);
-
-    float3 p = make_float3(1,1,1);
-
-    auto p1 = transform_vector<H>(m, p);
-    auto p2 = transform_vector<H>(make_float4x4(m2), p);
-
     vision::IESFile ies_file;
 
     ies_file.load(ies);

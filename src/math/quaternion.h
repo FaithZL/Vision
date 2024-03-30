@@ -52,6 +52,11 @@ public:
         }
         return oc_quaternion<p>(v, w);
     }
+
+    static oc_quaternion<p> from_float4x4(oc_float4x4<p> m) {
+        return from_float3x3(make_float3x3(m));
+    }
+
     oc_float3x3<p> to_float3x3() const noexcept {
         oc_float<p> xx = v().x * v().x, yy = v().y * v().y, zz = v().z * v().z;
         oc_float<p> xy = v().x * v().y, xz = v().x * v().z, yz = v().y * v().z;
