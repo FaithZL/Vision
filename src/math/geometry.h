@@ -182,6 +182,11 @@ public:
     }
 };
 
+template<typename TMat>
+[[nodiscard]] auto trace(const TMat &m) noexcept {
+    return m[0][0] + m[1][1] + m[2][2];
+}
+
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] Frame<T> frame_from_xz(const T &x, const T &z) noexcept {
