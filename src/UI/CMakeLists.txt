@@ -3,6 +3,7 @@ file(GLOB_RECURSE SOURCE_FILES *.c*)
 
 add_library(vision-UI SHARED ${SOURCE_FILES})
 target_link_libraries(vision-UI PUBLIC
+        vision-math
         ocarina-include
         ocarina)
 

@@ -6,6 +6,7 @@
 
 #include "GUI/decl.h"
 #include "core/element_trait.h"
+#include "math/transform.h"
 
 namespace ocarina {
 class Widgets;
@@ -66,6 +67,24 @@ public:
      */
     virtual void render_sub_UI(ocarina::Widgets *widgets) noexcept {}
     virtual ~GUI() = default;
+};
+
+class TransformWidget : public GUI, public Serializable<> {
+private:
+    string _name;
+    Serial<float4x4> _transform;
+    float3 _t;
+    float4 _r;
+    float3 _s;
+
+public:
+    explicit TransformWidget(float4x4 m) : _transform(m) {
+        quaternion q;
+        decompose(_transform.hv(), addressof(_t), addressof(q), addressof(_s));
+        _r = make_float4(q.axis(), degrees(q.theta()));
+    }
+    OC_SERIALIZABLE_FUNC(Serializable<>,_transform)
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
 };
 
 }// namespace vision
