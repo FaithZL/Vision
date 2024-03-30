@@ -8,6 +8,7 @@
 #include "dsl/dsl.h"
 #include "core/concepts.h"
 #include "ocarina/src/math/box.h"
+#include "quaternion.h"
 
 namespace vision {
 using namespace ocarina;
