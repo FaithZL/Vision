@@ -32,7 +32,8 @@ public:
             _desc.set_value("fn", path.string());
             _desc.reset_hash();
             _texture = &Global::instance().pipeline()->image_pool().obtain_texture(_desc);
-            _tex_id = _texture->index();
+            _texture->upload_immediately();
+            _tex_id.hv() = _texture->index().hv();
             _changed = true;
         }
     }
