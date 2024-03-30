@@ -52,7 +52,6 @@ public:
 
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        $condition_info("{} ------------", *_tex_id);
         return pipeline()->tex_var(*_tex_id).sample(_texture->host_tex().channel_num(), ctx.uv);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {

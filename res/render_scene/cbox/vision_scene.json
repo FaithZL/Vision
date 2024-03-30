@@ -895,7 +895,7 @@
 										"position" : [-0.5, 1.8, 0],
 										"scale" : 0.2
 									}
-								}
+								},
 				//				{
 				//					"type" : "point",
 				//					"param" : {
@@ -907,76 +907,76 @@
 				//						"scale" : 0.5
 				//					}
 				//				},
-				//				{
-				//					"type" : "projector",
-				//					"param" : {
-				//						"angle" : 6,
-				//						"color" : {
-				//							"channels" : "xyz",
-				//							"node" : {
-				//								"fn" : "Painting3.jpg",
-				//								"color_space" : "srgb"
-				//							}
-				//						},
-				//						"ratio" : 1,
-				//						"o2w" : {
-				//							"type" : "look_at",
-				//							"param" : {
-				//								"position" : [
-				//									0,
-				//									1,
-				//									6.8
-				//								],
-				//								"up" : [
-				//									0,
-				//									1,
-				//									0
-				//								],
-				//								"target_pos" : [
-				//									0,
-				//									1,
-				//									0
-				//								]
-				//							}
-				//						},
-				//						"scale" : 300
-				//					}
-				//				},
-				//				{
-				//					"type" : "projector",
-				//					"param" : {
-				//						"angle" : 6,
-				//						"color" : {
-				//							"channels" : "xyz",
-				//							"node" : {
-				//								"fn" : "Painting3.jpg",
-				//								"color_space" : "srgb"
-				//							}
-				//						},
-				//						"ratio" : 1,
-				//						"o2w" : {
-				//							"type" : "look_at",
-				//							"param" : {
-				//								"position" : [
-				//									0,
-				//									1,
-				//									6.8
-				//								],
-				//								"up" : [
-				//									0,
-				//									1,
-				//									0
-				//								],
-				//								"target_pos" : [
-				//									0.9,
-				//									1,
-				//									0
-				//								]
-				//							}
-				//						},
-				//						"scale" : 300
-				//					}
-				//				}
+								{
+									"type" : "projector",
+									"param" : {
+										"angle" : 6,
+										"color" : {
+											"channels" : "xyz",
+											"node" : {
+												"fn" : "Painting3.jpg",
+												"color_space" : "srgb"
+											}
+										},
+										"ratio" : 1,
+										"o2w" : {
+											"type" : "look_at",
+											"param" : {
+												"position" : [
+													0,
+													1,
+													6.8
+												],
+												"up" : [
+													0,
+													1,
+													0
+												],
+												"target_pos" : [
+													0,
+													1,
+													0
+												]
+											}
+										},
+										"scale" : 300
+									}
+								}
+//								{
+//									"type" : "projector",
+//									"param" : {
+//										"angle" : 6,
+//										"color" : {
+//											"channels" : "xyz",
+//											"node" : {
+//												"fn" : "Painting3.jpg",
+//												"color_space" : "srgb"
+//											}
+//										},
+//										"ratio" : 1,
+//										"o2w" : {
+//											"type" : "look_at",
+//											"param" : {
+//												"position" : [
+//													0,
+//													1,
+//													6.8
+//												],
+//												"up" : [
+//													0,
+//													1,
+//													0
+//												],
+//												"target_pos" : [
+//													0.9,
+//													1,
+//													0
+//												]
+//											}
+//										},
+//										"scale" : 300
+//									}
+//								}
 			]
 		}
 	},
