@@ -58,13 +58,13 @@ public:
         oc_float<p> wx = v().x * w(), wy = v().y * w(), wz = v().z * w();
         oc_float3x3<p> m;
         m[0][0] = 1 - 2 * (yy + zz);
-        m[1][0] = 2 * (xy + wz);
-        m[2][0] = 2 * (xz - wy);
-        m[0][1] = 2 * (xy - wz);
+        m[0][1] = 2 * (xy + wz);
+        m[0][2] = 2 * (xz - wy);
+        m[1][0] = 2 * (xy - wz);
         m[1][1] = 1 - 2 * (xx + zz);
-        m[2][1] = 2 * (yz + wx);
-        m[0][2] = 2 * (xz + wy);
-        m[1][2] = 2 * (yz - wx);
+        m[1][2] = 2 * (yz + wx);
+        m[2][0] = 2 * (xz + wy);
+        m[2][1] = 2 * (yz - wx);
         m[2][2] = 1 - 2 * (xx + yy);
         return m;
     }
