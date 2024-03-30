@@ -18,9 +18,9 @@ private:
 public:
     oc_quaternion() = default;
     explicit oc_quaternion(oc_float4<p> val) : _vw(val) {}
+    explicit oc_quaternion(oc_float3<p> v, oc_float<p> w) : _vw(make_float4(v, w)) {}
 
     static oc_quaternion<p> &_from_float3x3_trace_gt0(oc_float3x3<p> m, oc_float<p> trace) {
-        oc_quaternion<p> ret;
         oc_float<p> s = sqrt(trace + 1.0f);
         oc_float<p> w = s * 0.5f;
         s = 0.5f / s;
@@ -28,8 +28,7 @@ public:
         v.x = (m[2][1] - m[1][2]) * s;
         v.y = (m[0][2] - m[2][0]) * s;
         v.z = (m[1][0] - m[0][1]) * s;
-        
-        return ret;
+        return oc_quaternion<p>(v, w);
     }
 
     static oc_quaternion<p> from_float3x3(oc_float3x3<p> m) {
