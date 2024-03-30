@@ -59,11 +59,11 @@ public:
             return oc_quaternion<p>(v, w);
         }
     }
-    oc_float3<p> to_float3x3() const noexcept {
+    oc_float3x3<p> to_float3x3() const noexcept {
         oc_float<p> xx = v().x * v().x, yy = v().y * v().y, zz = v().z * v().z;
         oc_float<p> xy = v().x * v().y, xz = v().x * v().z, yz = v().y * v().z;
         oc_float<p> wx = v().x * w(), wy = v().y * w(), wz = v().z * w();
-        oc_float3x3<p> m = make_float3(1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy),
+        oc_float3x3<p> m = make_float3x3(1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy),
                                        2 * (xy + wz), 1 - 2 * (xx + zz), 2 * (yz - wx),
                                        2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy));
         return m;
@@ -75,8 +75,17 @@ public:
     oc_float3<p> v() const noexcept {
         return _vw.xyz();
     }
-    oc_float3<p> w() const noexcept {
+    oc_float<p> w() const noexcept {
         return _vw.w;
+    }
+    oc_float<p> theta() const noexcept {
+        oc_float<p> half_theta = safe_acos(w());
+        return half_theta * 2.f;
+    }
+    oc_float3<p> axis() const noexcept {
+        oc_float<p> half_theta = safe_acos(w());
+        oc_float<p> s = sin(half_theta);
+        return v() / s;
     }
     friend oc_quaternion<p> operator+(const oc_quaternion<p> &q1, const oc_quaternion<p> &q2) {
         oc_quaternion<p> ret = q1;
