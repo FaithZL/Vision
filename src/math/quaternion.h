@@ -21,51 +21,51 @@ public:
     explicit oc_quaternion(oc_float3<p> v, oc_float<p> w) : _vw(make_float4(v, w)) {}
     static oc_quaternion<p> from_float3x3(oc_float3x3<p> m) {
         oc_quaternion<p> ret;
-        oc_float<p> t = trace(m);
-        if (t > 0.f) {
-            oc_float<p> s = sqrt(t + 1.0f);
-            oc_float<p> w = s * 0.5f;
+        float3 v;
+        float w;
+        float trace = m[0][0] + m[1][1] + m[2][2];
+        if (trace > 0.f) {
+            // 4w^2 = m[0][0] + m[1][1] + m[2][2] + m[3][3] (but m[3][3] == 1)
+            float s = std::sqrt(trace + 1.0f);
+            w = s / 2.0f;
             s = 0.5f / s;
-            oc_float3<p> v;
             v.x = (m[1][2] - m[2][1]) * s;
             v.y = (m[2][0] - m[0][2]) * s;
             v.z = (m[0][1] - m[1][0]) * s;
-            return oc_quaternion<p>(v, w);
         } else {
             const int nxt[3] = {1, 2, 0};
             float q[3];
             int i = 0;
-            if (m[1][1] > m[0][0]) {
-                i = 1;
-            }
-            if (m[2][2] > m[i][i]) {
-                i = 2;
-            }
+            if (m[1][1] > m[0][0]) i = 1;
+            if (m[2][2] > m[i][i]) i = 2;
             int j = nxt[i];
             int k = nxt[j];
             float s = std::sqrt((m[i][i] - (m[j][j] + m[k][k])) + 1.0f);
             q[i] = s * 0.5f;
-            if (s != 0.f) {
-                s = 0.5f / s;
-            }
-            float w;
-            float3 v;
+            if (s != 0.f) s = 0.5f / s;
             w = (m[j][k] - m[k][j]) * s;
             q[j] = (m[i][j] + m[j][i]) * s;
             q[k] = (m[i][k] + m[k][i]) * s;
             v.x = q[0];
             v.y = q[1];
             v.z = q[2];
-            return oc_quaternion<p>(v, w);
         }
+        return oc_quaternion<p>(v, w);
     }
     oc_float3x3<p> to_float3x3() const noexcept {
         oc_float<p> xx = v().x * v().x, yy = v().y * v().y, zz = v().z * v().z;
         oc_float<p> xy = v().x * v().y, xz = v().x * v().z, yz = v().y * v().z;
         oc_float<p> wx = v().x * w(), wy = v().y * w(), wz = v().z * w();
-        oc_float3x3<p> m = make_float3x3(1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy),
-                                       2 * (xy + wz), 1 - 2 * (xx + zz), 2 * (yz - wx),
-                                       2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy));
+        oc_float3x3<p> m;
+        m[0][0] = 1 - 2 * (yy + zz);
+        m[1][0] = 2 * (xy + wz);
+        m[2][0] = 2 * (xz - wy);
+        m[0][1] = 2 * (xy - wz);
+        m[1][1] = 1 - 2 * (xx + zz);
+        m[2][1] = 2 * (yz + wx);
+        m[0][2] = 2 * (xz + wy);
+        m[1][2] = 2 * (yz - wx);
+        m[2][2] = 1 - 2 * (xx + yy);
         return m;
     }
     oc_quaternion &operator+=(const oc_quaternion &q) {

@@ -12,7 +12,7 @@ int main() {
 
     auto path = "E:\\work\\renderer\\Vision\\res\\ies\\6.ies";
 
-    auto m = vision::rotation_y<H>(80);
+    auto m = vision::rotation_x<H>(80);
     auto q = vision::quaternion::from_float3x3(make_float3x3(m));
 
 
@@ -20,6 +20,10 @@ int main() {
     auto a = q.axis();
     auto t = degrees(q.theta());
 
+    auto q2 = vision::quaternion ::from_float3x3(m2);
+
+    auto a2 = q2.axis();
+    auto t2 = degrees(q2.theta());
 
     string ies = from_file(path);
     vision::IESFile ies_file;
