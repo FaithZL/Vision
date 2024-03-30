@@ -25,9 +25,9 @@ public:
         oc_float<p> w = s * 0.5f;
         s = 0.5f / s;
         oc_float3<p> v;
-        v.x = (m[2][1] - m[1][2]) * s;
-        v.y = (m[0][2] - m[2][0]) * s;
-        v.z = (m[1][0] - m[0][1]) * s;
+        v.x = (m[1][2] - m[2][1]) * s;
+        v.y = (m[2][0] - m[0][2]) * s;
+        v.z = (m[0][1] - m[1][0]) * s;
         return oc_quaternion<p>(v, w);
     }
 
