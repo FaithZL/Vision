@@ -21,7 +21,16 @@ void SVGF::prepare_buffers() {
 }
 
 void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    _changed |= widgets -> check_box("turn on", addressof(_switch));
+    _changed |= widgets->check_box("turn on", addressof(_switch));
+    _changed |= widgets->input_uint_limit("N", &N, 1, 5);
+    _changed |= widgets->input_float_limit("alpha", &_alpha, 0,
+                                           1, 0.01, 0.05);
+    _changed |= widgets->input_float_limit("moments_alpha", &_moments_alpha,
+                                           0, 1, 0.01, 0.05);
+    _changed |= widgets->input_uint_limit("history_limit", &_history_limit,
+                                          0, 100, 1, 5);
+    _changed |= widgets->input_float("sigma_rt", &_sigma_rt, 1, 3);
+    _changed |= widgets->input_float("sigma_normal", &_sigma_normal, 1, 3);
 }
 
 uint SVGF::cur_svgf_index(ocarina::uint frame_index) const noexcept {
@@ -74,7 +83,7 @@ CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
         uint step_width = 1 << i;
         ret << _atrous.dispatch(input, step_width);
     }
-//    ret << _modulate.dispatch(input);
+    //    ret << _modulate.dispatch(input);
     return ret;
 }
 
