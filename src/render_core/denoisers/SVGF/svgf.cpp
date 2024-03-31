@@ -77,13 +77,15 @@ void SVGF::compile() noexcept {
 
 CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
-    ret << _reproject.dispatch(input);
-    ret << _filter_moments.dispatch(input);
-    for (int i = 0; i < N; ++i) {
-        uint step_width = 1 << i;
-        ret << _atrous.dispatch(input, step_width);
+    if (_switch) {
+        ret << _reproject.dispatch(input);
+        ret << _filter_moments.dispatch(input);
+        for (int i = 0; i < N; ++i) {
+            uint step_width = 1 << i;
+            ret << _atrous.dispatch(input, step_width);
+        }
+        ret << _modulate.dispatch(input);
     }
-    //    ret << _modulate.dispatch(input);
     return ret;
 }
 

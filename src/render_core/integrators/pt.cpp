@@ -85,6 +85,7 @@ public:
         } else {
             stream << film()->tone_mapping(film()->rt_buffer(), film()->output_buffer());
         }
+        stream << denoise(input);
         stream << film()->gamma_correct(film()->output_buffer(), film()->output_buffer());
         stream << synchronize();
         stream << commit();
