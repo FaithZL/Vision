@@ -28,7 +28,7 @@ void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     _changed |= widgets->input_float_limit("moments_alpha", &_moments_alpha,
                                            0, 1, 0.01, 0.05);
     _changed |= widgets->input_uint_limit("history_limit", &_history_limit,
-                                          0, 100, 1, 5);
+                                          1, 100, 1, 5);
     _changed |= widgets->input_float("sigma_rt", &_sigma_rt, 1, 3);
     _changed |= widgets->input_float("sigma_normal", &_sigma_normal, 1, 3);
 }
