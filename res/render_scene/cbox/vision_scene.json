@@ -207,9 +207,9 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-//				                                "material" : "ShortBox",
+				                                "material" : "ShortBox",
 				//				"material" : "substrate",
-								"material" : "Mirror",
+//								"material" : "Mirror",
 //				"material" : "Metal",
 				//				                "material" : "disney",
 				//								                "material" : "mix",
@@ -254,11 +254,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-//				                "material": "TallBox",
+				                "material": "TallBox",
 				//                "material": "Mirror2",
 				//                "material": "Glass2",
 //								"material" : "Ag",
-				"material" : "Glass",
+//				"material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -549,19 +549,19 @@
 //				}
 			}
 		},
-		{
-			"type" : "matte",
-			"name" : "BackWall2",
-			"param" : {
-				"color" : {
-					"channels" : "xyz",
-					"node" : {
-						"fn" : "checker.jpg",
-						"color_space" : "srgb"
-					}
-				}
-			}
-		},
+//		{
+//			"type" : "matte",
+//			"name" : "BackWall2",
+//			"param" : {
+//				"color" : {
+//					"channels" : "xyz",
+//					"node" : {
+//						"fn" : "checker.jpg",
+//						"color_space" : "srgb"
+//					}
+//				}
+//			}
+//		},
 		{
 			"type" : "matte",
 			"name" : "ShortBox",
@@ -679,25 +679,25 @@
 				"roughness" : [0.001, 0.001]
 			}
 		},
-		{
-			"type" : "metal",
-			"name" : "Ag",
-			"param" : {
-				"material_name" : "Ag",
-				"bump": {
-					"channels" : "xyz",
-					"node" : {
-						"type" : "image",
-						"param" : {
-							"fn" : "textures/brickwall_normal.jpg",
-							"color_space" : "srgb"
-						}
-					}
-				},
-				"bump_scale" : 0.1,
-				"roughness" : 0.21
-			}
-		},
+//		{
+//			"type" : "metal",
+//			"name" : "Ag",
+//			"param" : {
+//				"material_name" : "Ag",
+//				"bump": {
+//					"channels" : "xyz",
+//					"node" : {
+//						"type" : "image",
+//						"param" : {
+//							"fn" : "textures/brickwall_normal.jpg",
+//							"color_space" : "srgb"
+//						}
+//					}
+//				},
+//				"bump_scale" : 0.1,
+//				"roughness" : 0.21
+//			}
+//		},
 		{
 			"type" : "mirror",
 			"name" : "Mirror",
@@ -862,102 +862,67 @@
 	"light_sampler" : {
 		"type" : "uniform",
 		"param" : {
-			"lights" : [
-				//				{
-				//					"type" : "spot",
-				//					"param" : {
-				//						"angle" : 20,
-				//						"falloff" : 2,
-				//						"direction" : [0.2, -1, 0],
-				//						"color" : [1, 1, 1],
-				//						"position" : [-0.5, 1.9, 0],
-				//						"scale" : 1
-				//					}
-				//				},
-								{
-									"type" : "spot",
-									"param" : {
-										"angle" : 20,
-										"falloff" : 2,
-										"direction" : [0.2, -1, 0],
-										"color" : [1, 1, 1],
-										"position" : [0.5, 1.9, 0],
-										"scale" : 3
-									}
-								},
-								{
-									"type" : "point",
-									"param" : {
-										"color" : {
-											"channels" : "xyz",
-											"node" : [1, 1, 1]
-										},
-										"position" : [-0.5, 1.8, 0],
-										"scale" : 0.2
-									}
-								},
-				{
-					"type" : "spherical",
-					"param": {
-						"color": {
-							"fn" : "textures/spruit_sunrise_2k.hdr",
-							"color_space": "linear"
-						},
-						"o2w" : {
-							"type":"Euler",
-							"param": {
-								"yaw" :-30
-							}
-						},
-						"scale" : 1
-					}
-				},
-				//				{
-				//					"type" : "point",
-				//					"param" : {
-				//						"color" : {
-				//							"channels" : "xyz",
-				//							"node" : [1, 1, 1]
-				//						},
-				//						"position" : [0.5, 1.8, 0],
-				//						"scale" : 0.5
-				//					}
-				//				},
-								{
-									"type" : "projector",
-									"param" : {
-										"angle" : 6,
-										"color" : {
-											"channels" : "xyz",
-											"node" : {
-												"fn" : "Painting3.jpg",
-												"color_space" : "srgb"
-											}
-										},
-										"ratio" : 1,
-										"o2w" : {
-											"type" : "look_at",
-											"param" : {
-												"position" : [
-													0,
-													1,
-													6.8
-												],
-												"up" : [
-													0,
-													1,
-													0
-												],
-												"target_pos" : [
-													0,
-													1,
-													0
-												]
-											}
-										},
-										"scale" : 300
-									}
-								}
+//			"lights" : [
+//				//				{
+//				//					"type" : "spot",
+//				//					"param" : {
+//				//						"angle" : 20,
+//				//						"falloff" : 2,
+//				//						"direction" : [0.2, -1, 0],
+//				//						"color" : [1, 1, 1],
+//				//						"position" : [-0.5, 1.9, 0],
+//				//						"scale" : 1
+//				//					}
+//				//				},
+//								{
+//									"type" : "spot",
+//									"param" : {
+//										"angle" : 20,
+//										"falloff" : 2,
+//										"direction" : [0.2, -1, 0],
+//										"color" : [1, 1, 1],
+//										"position" : [0.5, 1.9, 0],
+//										"scale" : 3
+//									}
+//								},
+//								{
+//									"type" : "point",
+//									"param" : {
+//										"color" : {
+//											"channels" : "xyz",
+//											"node" : [1, 1, 1]
+//										},
+//										"position" : [-0.5, 1.8, 0],
+//										"scale" : 0.2
+//									}
+//								},
+//				{
+//					"type" : "spherical",
+//					"param": {
+//						"color": {
+//							"fn" : "textures/spruit_sunrise_2k.hdr",
+//							"color_space": "linear"
+//						},
+//						"o2w" : {
+//							"type":"Euler",
+//							"param": {
+//								"yaw" :-30
+//							}
+//						},
+//						"scale" : 1
+//					}
+//				},
+//				//				{
+//				//					"type" : "point",
+//				//					"param" : {
+//				//						"color" : {
+//				//							"channels" : "xyz",
+//				//							"node" : [1, 1, 1]
+//				//						},
+//				//						"position" : [0.5, 1.8, 0],
+//				//						"scale" : 0.5
+//				//					}
+//				//				},
 //								{
 //									"type" : "projector",
 //									"param" : {
@@ -984,7 +949,7 @@
 //													0
 //												],
 //												"target_pos" : [
-//													0.9,
+//													0,
 //													1,
 //													0
 //												]
@@ -993,7 +958,42 @@
 //										"scale" : 300
 //									}
 //								}
-			]
+////								{
+////									"type" : "projector",
+////									"param" : {
+////										"angle" : 6,
+////										"color" : {
+////											"channels" : "xyz",
+////											"node" : {
+////												"fn" : "Painting3.jpg",
+////												"color_space" : "srgb"
+////											}
+////										},
+////										"ratio" : 1,
+////										"o2w" : {
+////											"type" : "look_at",
+////											"param" : {
+////												"position" : [
+////													0,
+////													1,
+////													6.8
+////												],
+////												"up" : [
+////													0,
+////													1,
+////													0
+////												],
+////												"target_pos" : [
+////													0.9,
+////													1,
+////													0
+////												]
+////											}
+////										},
+////										"scale" : 300
+////									}
+////								}
+//			]
 		}
 	},
 	"render_setting" : {
