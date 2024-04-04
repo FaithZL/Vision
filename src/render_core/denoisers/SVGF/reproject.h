@@ -40,9 +40,7 @@ class SVGF;
 class Reproject : public Context {
 private:
     SVGF *_svgf{nullptr};
-    using signature = void(Buffer<PixelGeometry>, Buffer<PixelGeometry>, Buffer<float>,
-                           Buffer<float2>, Buffer<float4>,
-                           Buffer<float4>, Buffer<float4>, float, float, uint, uint, uint);
+    using signature = void(ReprojectParam);
     Shader<signature> _shader;
 
 public:
@@ -50,6 +48,7 @@ public:
         : _svgf(svgf) {}
     void prepare() noexcept;
     [[nodiscard]] Bool is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeometry &prev) const noexcept;
+    [[nodiscard]] ReprojectParam construct_param(vision::RealTimeDenoiseInput &input) const noexcept;
     [[nodiscard]] Bool load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                       const BufferVar<float> &history_buffer,
                                       const Float2 &motion_vec, const Uint &cur_buffer_index, const Uint &prev_buffer_index,

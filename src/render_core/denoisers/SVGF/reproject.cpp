@@ -126,52 +126,43 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 }
 
 void Reproject::compile() noexcept {
-    Kernel kernel = [&](BufferVar<PixelGeometry> gbuffer,
-                        BufferVar<PixelGeometry> prev_gbuffer,
-                        BufferVar<float> history_buffer,
-                        BufferVar<float2> motion_vectors,
-                        BufferVar<float4> radiance_buffer,
-                        BufferVar<float4> albedo_buffer,
-                        BufferVar<float4> emission_buffer,
-                        Float alpha, Float moments_alpha,
-                        Uint history_limit,
-                        Uint cur_index, Uint prev_index) {
-        OCPixelGeometry geom_data = gbuffer.read(dispatch_id());
+    Kernel kernel = [&](Var<ReprojectParam> param) {
+        OCPixelGeometry geom_data = param.gbuffer.read(dispatch_id());
 
-        Float3 emission = emission_buffer.read(dispatch_id()).xyz();
-        Float3 albedo = albedo_buffer.read(dispatch_id()).xyz();
-        Float3 radiance = radiance_buffer.read(dispatch_id()).xyz();
+        Float3 emission = param.emission_buffer.read(dispatch_id()).xyz();
+        Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz();
+        Float3 radiance = param.radiance_buffer.read(dispatch_id()).xyz();
         Float3 illumination = demodulate(radiance.xyz() - emission, albedo);
 
         Float history = 0.f;
         Float3 prev_illumination = make_float3(0.f);
         Float2 prev_moments = make_float2(0.f);
 
-        Float2 motion_vec = motion_vectors.read(dispatch_id());
+        Float2 motion_vec = param.motion_vectors.read(dispatch_id());
 
-        Bool valid = load_prev_data(geom_data, prev_gbuffer, history_buffer, motion_vec,
-                                    cur_index, prev_index,
+        Bool valid = load_prev_data(geom_data, param.prev_gbuffer, param.history_buffer, motion_vec,
+                                    param.cur_index, param.prev_index,
                                     addressof(history), addressof(prev_illumination),
                                     addressof(prev_moments));
 
-        history = min(cast<float>(history_limit), ocarina::select(valid, history + 1.0f, 1.0f));
+        history = min(cast<float>(param.history_limit), ocarina::select(valid, history + 1.0f, 1.0f));
 
-        history_buffer.write(dispatch_id(), history);
+        param.history_buffer.write(dispatch_id(), history);
 
-        alpha = ocarina::select(valid, ocarina::max(alpha, rcp(history)), 1.f);
-        moments_alpha = ocarina::select(valid, ocarina::max(moments_alpha, rcp(history)), 1.f);
+        param.alpha = ocarina::select(valid, ocarina::max(param.alpha, rcp(history)), 1.f);
+        param.moments_alpha = ocarina::select(valid, ocarina::max(param.moments_alpha, rcp(history)), 1.f);
 
         Float2 moments;
         moments.x = luminance(illumination);
         moments.y = sqr(moments.x);
 
-        moments = lerp(make_float2(moments_alpha), prev_moments, moments);
+        moments = lerp(make_float2(param.moments_alpha), prev_moments, moments);
 
         Float variance = max(0.f, moments.y - sqr(moments.x));
         SVGFDataVar svgf_data;
 
-        BindlessArrayBuffer<SVGFData> cur_buffer = pipeline()->buffer_var<SVGFData>(cur_index);
-        illumination = lerp(make_float3(alpha), prev_illumination.xyz(), illumination);
+        BindlessArrayBuffer<SVGFData> cur_buffer = pipeline()->buffer_var<SVGFData>(param.cur_index);
+        illumination = lerp(make_float3(param.alpha), prev_illumination.xyz(), illumination);
         svgf_data.illumi_v = make_float4(illumination, variance);
         svgf_data.moments = moments;
         svgf_data.history = history;
@@ -181,16 +172,28 @@ void Reproject::compile() noexcept {
     _shader = device().compile(kernel, "SVGF-reproject");
 }
 
+ReprojectParam Reproject::construct_param(RealTimeDenoiseInput &input) const noexcept {
+    ReprojectParam param;
+    param.gbuffer = input.gbuffer.proxy();
+    param.prev_gbuffer = input.prev_gbuffer.proxy();
+    param.history_buffer = _svgf->history.proxy();
+    param.motion_vectors = input.motion_vec.proxy();
+    param.radiance_buffer = input.radiance.proxy();
+    param.albedo_buffer = input.albedo.proxy();
+    param.emission_buffer = input.emission.proxy();
+    param.alpha = _svgf->alpha();
+    param.moments_alpha = _svgf->moments_alpha();
+    param.history_limit = _svgf->history_limit();
+    param.cur_index = _svgf->cur_svgf_index(input.frame_index);
+    param.prev_index = _svgf->prev_svgf_index(input.frame_index);
+    return param;
+}
+
 CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     uint cur_index = _svgf->cur_svgf_index(input.frame_index);
     uint prev_index = _svgf->prev_svgf_index(input.frame_index);
-    ret << _shader(input.gbuffer, input.prev_gbuffer, _svgf->history,
-                   input.motion_vec, input.radiance,
-                   input.albedo, input.emission,
-                   _svgf->alpha(), _svgf->moments_alpha(),
-                   _svgf->history_limit(),
-                   cur_index, prev_index)
+    ret << _shader(construct_param(input))
                .dispatch(input.resolution);
     return ret;
 }
