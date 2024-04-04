@@ -9,6 +9,30 @@
 #include "base/mgr/global.h"
 #include "base/denoiser.h"
 
+namespace vision::svgf {
+
+struct ReprojectParam {
+public:
+    BufferProxy<PixelGeometry> gbuffer;
+    BufferProxy<PixelGeometry> prev_gbuffer;
+    BufferProxy<float> history_buffer;
+    BufferProxy<float2> motion_vectors;
+    BufferProxy<float4> radiance_buffer;
+    BufferProxy<float4> albedo_buffer;
+    BufferProxy<float4> emission_buffer;
+    float alpha{};
+    float moments_alpha{};
+    uint history_limit{};
+    uint cur_index{};
+    uint prev_index{};
+};
+
+}// namespace vision::svgf
+
+OC_PARAM_STRUCT(vision::svgf::ReprojectParam, gbuffer, prev_gbuffer,
+                history_buffer, motion_vectors, radiance_buffer, albedo_buffer,
+                emission_buffer, alpha, moments_alpha, history_limit, cur_index, prev_index){};
+
 namespace vision {
 
 class SVGF;
