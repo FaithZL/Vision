@@ -34,7 +34,7 @@ Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeom
 
 Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                const BufferVar<float> &history_buffer,
-                               const Float2 &motion_vec, const Uint &cur_buffer_index, const Uint &prev_buffer_index,
+                               const Float2 &motion_vec, const BufferVar<SVGFData> &prev_buffer,
                                Float *history, Float3 *prev_illumination,
                                Float2 *prev_moments) const noexcept {
     Uint2 pos = dispatch_idx().xy();
@@ -65,8 +65,6 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
         };
     }
 
-    BindlessArrayBuffer<SVGFData> prev_data = pipeline()->buffer_var<SVGFData>(prev_buffer_index);
-
     $if(valid) {
         Float weight_sum = 0;
         Float x = fract(prev_p_film.x);
@@ -80,7 +78,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
             Int2 loc = prev_pixel + ofs;
             Uint index = dispatch_id(loc);
             $if(v[i] && in_screen(loc, make_int2(dispatch_dim().xy()))) {
-                SVGFDataVar prev_svgf_data = prev_data.read(index);
+                SVGFDataVar prev_svgf_data = prev_buffer.read(index);
                 Float weight = weights[i];
                 *prev_illumination += weight * prev_svgf_data->illumination();
                 *prev_moments += weight * prev_svgf_data.moments;
@@ -99,7 +97,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
             OCPixelGeometry neighbor_data = prev_gbuffer.read(index);
 
             $if(is_valid_reproject(cur_geom, neighbor_data)) {
-                SVGFDataVar prev_svgf_data = prev_data.read(index);
+                SVGFDataVar prev_svgf_data = prev_buffer.read(index);
                 *prev_illumination += prev_svgf_data->illumination();
                 *prev_moments += prev_svgf_data.moments;
                 valid_num += 1;
@@ -141,7 +139,7 @@ void Reproject::compile() noexcept {
         Float2 motion_vec = param.motion_vectors.read(dispatch_id());
 
         Bool valid = load_prev_data(geom_data, param.prev_gbuffer, param.history_buffer, motion_vec,
-                                    param.cur_index, param.prev_index,
+                                    param.prev_buffer,
                                     addressof(history), addressof(prev_illumination),
                                     addressof(prev_moments));
 
@@ -160,14 +158,11 @@ void Reproject::compile() noexcept {
 
         Float variance = max(0.f, moments.y - sqr(moments.x));
         SVGFDataVar svgf_data;
-
-        BindlessArrayBuffer<SVGFData> cur_buffer = pipeline()->buffer_var<SVGFData>(param.cur_index);
         illumination = lerp(make_float3(param.alpha), prev_illumination.xyz(), illumination);
         svgf_data.illumi_v = make_float4(illumination, variance);
         svgf_data.moments = moments;
         svgf_data.history = history;
-
-        cur_buffer.write(dispatch_id(), svgf_data);
+        param.cur_buffer.write(dispatch_id(), svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-reproject");
 }
@@ -184,8 +179,8 @@ ReprojectParam Reproject::construct_param(RealTimeDenoiseInput &input) const noe
     param.alpha = _svgf->alpha();
     param.moments_alpha = _svgf->moments_alpha();
     param.history_limit = _svgf->history_limit();
-    param.cur_index = _svgf->cur_svgf_index(input.frame_index);
-    param.prev_index = _svgf->prev_svgf_index(input.frame_index);
+    param.cur_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
+    param.prev_buffer = _svgf->prev_svgf_buffer(input.frame_index).proxy();
     return param;
 }
 

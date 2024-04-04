@@ -8,6 +8,7 @@
 #include "dsl/dsl.h"
 #include "base/mgr/global.h"
 #include "base/denoiser.h"
+#include "utils.h"
 
 namespace vision::svgf {
 
@@ -23,15 +24,15 @@ public:
     float alpha{};
     float moments_alpha{};
     uint history_limit{};
-    uint cur_index{};
-    uint prev_index{};
+    BufferProxy<SVGFData> cur_buffer{};
+    BufferProxy<SVGFData> prev_buffer{};
 };
 
 }// namespace vision::svgf
 
 OC_PARAM_STRUCT(vision::svgf::ReprojectParam, gbuffer, prev_gbuffer,
                 history_buffer, motion_vectors, radiance_buffer, albedo_buffer,
-                emission_buffer, alpha, moments_alpha, history_limit, cur_index, prev_index){};
+                emission_buffer, alpha, moments_alpha, history_limit, cur_buffer, prev_buffer){};
 
 namespace vision::svgf {
 
@@ -51,7 +52,7 @@ public:
     [[nodiscard]] ReprojectParam construct_param(vision::RealTimeDenoiseInput &input) const noexcept;
     [[nodiscard]] Bool load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                       const BufferVar<float> &history_buffer,
-                                      const Float2 &motion_vec, const Uint &cur_buffer_index, const Uint &prev_buffer_index,
+                                      const Float2 &motion_vec,const BufferVar<SVGFData> &prev_buffer,
                                       Float *history, Float3 *prev_illumination,
                                       Float2 *prev_moments) const noexcept;
     void compile() noexcept;
