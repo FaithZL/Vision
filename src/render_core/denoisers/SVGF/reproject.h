@@ -33,7 +33,7 @@ OC_PARAM_STRUCT(vision::svgf::ReprojectParam, gbuffer, prev_gbuffer,
                 history_buffer, motion_vectors, radiance_buffer, albedo_buffer,
                 emission_buffer, alpha, moments_alpha, history_limit, cur_index, prev_index){};
 
-namespace vision {
+namespace vision::svgf {
 
 class SVGF;
 
@@ -59,4 +59,4 @@ public:
     [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;
 };
 
-}// namespace vision
+}// namespace vision::svgf

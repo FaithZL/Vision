@@ -5,7 +5,7 @@
 #include "modulate.h"
 #include "svgf.h"
 
-namespace vision {
+namespace vision::svgf {
 
 void Modulate::prepare() noexcept {
 }
@@ -31,4 +31,4 @@ CommandList Modulate::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     return ret;
 }
 
-}// namespace vision
+}// namespace vision::svgf

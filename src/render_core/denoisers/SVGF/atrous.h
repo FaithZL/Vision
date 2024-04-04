@@ -12,7 +12,7 @@
 #include "base/mgr/pipeline.h"
 #include "utils.h"
 
-namespace vision {
+namespace vision::svgf {
 using namespace ocarina;
 
 class SVGF;
@@ -32,4 +32,4 @@ public:
     [[nodiscard]] CommandList dispatch(vision::RealTimeDenoiseInput &input, uint step_width) noexcept;
 };
 
-}// namespace vision
+}// namespace vision::svgf

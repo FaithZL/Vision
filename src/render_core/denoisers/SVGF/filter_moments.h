@@ -10,7 +10,7 @@
 #include "base/denoiser.h"
 #include "utils.h"
 
-namespace vision {
+namespace vision::svgf {
 
 class SVGF;
 
@@ -29,4 +29,4 @@ public:
     [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;
 };
 
-}// namespace vision
+}// namespace vision::svgf

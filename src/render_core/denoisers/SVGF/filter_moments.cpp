@@ -5,7 +5,7 @@
 #include "filter_moments.h"
 #include "svgf.h"
 
-namespace vision {
+namespace vision::svgf {
 
 void FilterMoments::prepare() noexcept {
 }
@@ -78,4 +78,4 @@ CommandList FilterMoments::dispatch(vision::RealTimeDenoiseInput &input) noexcep
     return ret;
 }
 
-}// namespace vision
+}// namespace vision::svgf

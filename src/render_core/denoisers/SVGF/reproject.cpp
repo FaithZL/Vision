@@ -5,7 +5,7 @@
 #include "reproject.h"
 #include "svgf.h"
 
-namespace vision {
+namespace vision::svgf {
 using namespace ocarina;
 template<EPort p = D>
 [[nodiscard]] oc_float3<p> demodulate_impl(const oc_float3<p> &c,
@@ -195,4 +195,4 @@ CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     return ret;
 }
 
-}// namespace vision
+}// namespace vision::svgf

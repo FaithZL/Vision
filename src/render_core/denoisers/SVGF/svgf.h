@@ -11,7 +11,7 @@
 #include "modulate.h"
 #include "utils.h"
 
-namespace vision {
+namespace vision::svgf {
 using namespace ocarina;
 
 class SVGF : public Denoiser {
@@ -66,4 +66,4 @@ public:
                                           const Float &cur_illumi, const Float &neighbor_illumi, const Float &sigma_illumi) noexcept;
 };
 
-}// namespace vision
+}// namespace vision::svgf

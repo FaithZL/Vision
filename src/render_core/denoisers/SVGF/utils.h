@@ -7,17 +7,17 @@
 #include "core/basic_types.h"
 #include "dsl/dsl.h"
 
-namespace vision {
+namespace vision::svgf {
 using namespace ocarina;
 struct SVGFData {
     float4 illumi_v{};
     float history{};
     float2 moments{};
 };
-}// namespace vision
+}// namespace vision::svgf
 
 // clang-format off
-OC_STRUCT(vision::SVGFData, illumi_v, history, moments) {
+OC_STRUCT(vision::svgf::SVGFData, illumi_v, history, moments) {
     [[nodiscard]] Float variance() const noexcept {
        return illumi_v.w;
     }
@@ -27,8 +27,8 @@ OC_STRUCT(vision::SVGFData, illumi_v, history, moments) {
 };
 // clang-format on
 
-namespace vision {
+namespace vision::svgf {
 using namespace ocarina;
 using SVGFDataVar = Var<SVGFData>;
 
-}// namespace vision
+}// namespace vision::svgf

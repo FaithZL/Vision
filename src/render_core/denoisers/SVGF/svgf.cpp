@@ -4,7 +4,7 @@
 
 #include "svgf.h"
 
-namespace vision {
+namespace vision::svgf {
 
 void SVGF::prepare_buffers() {
     Pipeline *rp = pipeline();
@@ -33,7 +33,7 @@ void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     _changed |= widgets->input_float_limit("sigma_rt", &_sigma_rt,
                                            0.01, 1e10, 1, 3);
     _changed |= widgets->input_float_limit("sigma_normal", &_sigma_normal,
-                                           0.01, 1e10,1, 3);
+                                           0.01, 1e10, 1, 3);
 }
 
 uint SVGF::cur_svgf_index(ocarina::uint frame_index) const noexcept {
@@ -94,6 +94,6 @@ CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     return ret;
 }
 
-}// namespace vision
+}// namespace vision::svgf
 
-VS_MAKE_CLASS_CREATOR(vision::SVGF)
+VS_MAKE_CLASS_CREATOR(vision::svgf::SVGF)
