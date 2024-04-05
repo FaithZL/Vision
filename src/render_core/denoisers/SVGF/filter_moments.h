@@ -17,10 +17,11 @@ struct FilterMomentsParam {
     BufferProxy<float> history_buffer;
     float sigma_rt{};
     float sigma_normal{};
+    int radius{3};
 };
 }// namespace vision::svgf
 OC_PARAM_STRUCT(vision::svgf::FilterMomentsParam, svgf_buffer,
-                gbuffer, history_buffer, sigma_rt, sigma_normal) {};
+                gbuffer, history_buffer, sigma_rt, sigma_normal,radius) {};
 
 namespace vision::svgf {
 

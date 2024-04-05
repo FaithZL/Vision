@@ -32,6 +32,7 @@ private:
     float _alpha{0.05f};
     float _moments_alpha{0.2f};
     uint _history_limit{32};
+    int _moments_filter_radius{3};
     float _sigma_rt{10.f};
     float _sigma_normal{128.f};
 
@@ -43,11 +44,13 @@ public:
           _alpha(desc["alpha"].as_float(0.05f)),
           _moments_alpha(desc["moments_alpha"].as_float(0.2f)),
           _history_limit(desc["history_limit"].as_uint(32)),
+          _moments_filter_radius(desc["moments_filter_radius"].as_int(3)),
           _sigma_rt(desc["sigma_rt"].as_float(10.f)),
           _sigma_normal(desc["sigma_normal"].as_float(30.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_MAKE_MEMBER_GETTER(alpha, )
     OC_MAKE_MEMBER_GETTER(moments_alpha, )
+    OC_MAKE_MEMBER_GETTER(moments_filter_radius, )
     OC_MAKE_MEMBER_GETTER(sigma_rt, )
     OC_MAKE_MEMBER_GETTER(sigma_normal, )
     OC_MAKE_MEMBER_GETTER(history_limit, )
