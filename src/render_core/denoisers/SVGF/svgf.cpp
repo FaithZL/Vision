@@ -23,7 +23,7 @@ void SVGF::prepare_buffers() {
 void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     _changed |= widgets->check_box("turn on", addressof(_switch));
     _changed |= widgets->check_box("filter moment", addressof(_moment_filter_switch));
-    _changed |= widgets->input_uint_limit("N", &N, 1, 5);
+    _changed |= widgets->input_uint_limit("N", &N, 0, 5);
     _changed |= widgets->input_float_limit("alpha", &_alpha, 0,
                                            1, 0.01, 0.05);
     _changed |= widgets->input_float_limit("moments_alpha", &_moments_alpha,
