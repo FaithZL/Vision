@@ -28,20 +28,18 @@ void AtrousFilter::compile() noexcept {
         return sum;
     };
 
-    Kernel kernel = [&](BufferVar<SVGFData> svgf_buffer, BufferVar<PixelGeometry> gbuffer,
-                        BufferVar<float> history_buffer, Float sigma_rt, Float sigma_normal,
-                        Int step_size) {
+    Kernel kernel = [&](Var<AtrousParam> param) {
         float eps_variance = 1e-10f;
         Float3 kernel_weights = make_float3(1.f, 2.f / 3, 1.f / 6);
-        SVGFDataVar cur_svgf_data = svgf_buffer.read(dispatch_id());
+        SVGFDataVar cur_svgf_data = param.svgf_buffer.read(dispatch_id());
 
         Float3 cur_illumination = cur_svgf_data->illumination();
         Float cur_luminance = ocarina::luminance(cur_illumination);
-        Float variance = compute_variance(svgf_buffer, make_int2(dispatch_idx()));
+        Float variance = compute_variance(param.svgf_buffer, make_int2(dispatch_idx()));
 
-        Float history = history_buffer.read(dispatch_id());
+        Float history = param.history_buffer.read(dispatch_id());
 
-        OCPixelGeometry cur_geom = gbuffer.read(dispatch_id());
+        OCPixelGeometry cur_geom = param.gbuffer.read(dispatch_id());
 
         Float depth = cur_geom.linear_depth;
 
@@ -49,8 +47,8 @@ void AtrousFilter::compile() noexcept {
             $return();
         };
 
-        Float sigma_depth = max(cur_geom.depth_gradient, 1e-8f) * step_size;
-        Float sigma_illumi = sigma_rt * sqrt(max(0.f, eps_variance + variance));
+        Float sigma_depth = max(cur_geom.depth_gradient, 1e-8f) * param.step_size;
+        Float sigma_illumi = param.sigma_rt * sqrt(max(0.f, eps_variance + variance));
 
         Float weight_sum_illumi = 1.f;
         Float4 sum_illumi_v = cur_svgf_data.illumi_v;
@@ -66,19 +64,19 @@ void AtrousFilter::compile() noexcept {
                     $continue;
                 };
                 Float kernel_weight = kernel_weights[abs(offset.x)] * kernel_weights[abs(offset.y)];
-                Int2 new_offset = offset * step_size;
+                Int2 new_offset = offset * param.step_size;
                 Int2 target_pixel = cur_pixel + new_offset;
                 $if(!in_screen(target_pixel, make_int2(dispatch_dim().xy()))) {
                     $continue;
                 };
                 Uint index = dispatch_id(target_pixel);
-                OCPixelGeometry neighbor_geom = gbuffer.read(index);
-                SVGFDataVar neighbor_svgf_data = svgf_buffer.read(index);
+                OCPixelGeometry neighbor_geom = param.gbuffer.read(index);
+                SVGFDataVar neighbor_svgf_data = param.svgf_buffer.read(index);
                 Float neighbor_luminance = ocarina::luminance(neighbor_svgf_data->illumination());
 
                 Float weight = SVGF::cal_weight(cur_geom.linear_depth, neighbor_geom.linear_depth,
                                                 sigma_depth * length(make_float2(offset)),
-                                                cur_geom.normal, neighbor_geom.normal, sigma_normal,
+                                                cur_geom.normal, neighbor_geom.normal, param.sigma_normal,
                                                 cur_luminance, neighbor_luminance, sigma_illumi);
 
                 Float illumi_weight = weight * kernel_weight;
@@ -89,15 +87,25 @@ void AtrousFilter::compile() noexcept {
         Float4 filtered_illumi_v = sum_illumi_v / make_float4(make_float3(weight_sum_illumi), sqr(weight_sum_illumi));
         cur_svgf_data.illumi_v = filtered_illumi_v;
         //        $condition_info("{} {} {} {} --------------",filtered_illumi_v);
-        //        svgf_buffer.write(dispatch_id(), cur_svgf_data);
+        param.svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-atrous");
 }
 
+AtrousParam AtrousFilter::construct_param(RealTimeDenoiseInput &input, uint step_width) const noexcept {
+    AtrousParam param;
+    param.svgf_buffer = _svgf->svgf_data.proxy();
+    param.gbuffer = input.gbuffer.proxy();
+    param.history_buffer = _svgf->history.proxy();
+    param.sigma_rt = _svgf->sigma_rt();
+    param.sigma_normal = _svgf->sigma_normal();
+    param.step_size = step_width;
+    return param;
+}
+
 CommandList AtrousFilter::dispatch(vision::RealTimeDenoiseInput &input, ocarina::uint step_width) noexcept {
     CommandList ret;
-    ret << _shader(_svgf->svgf_data, input.gbuffer, _svgf->history,
-                   _svgf->sigma_rt(), _svgf->sigma_normal(), step_width)
+    ret << _shader(construct_param(input, step_width))
                .dispatch(input.resolution);
     return ret;
 }

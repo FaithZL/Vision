@@ -13,6 +13,19 @@
 #include "utils.h"
 
 namespace vision::svgf {
+struct AtrousParam {
+    BufferProxy<SVGFData> svgf_buffer;
+    BufferProxy<PixelGeometry> gbuffer;
+    BufferProxy<float> history_buffer;
+    float sigma_rt{};
+    float sigma_normal{};
+    int step_size{};
+};
+}// namespace vision::svgf
+OC_PARAM_STRUCT(vision::svgf::AtrousParam, svgf_buffer, gbuffer,
+                history_buffer, sigma_rt, sigma_normal, step_size){};
+
+namespace vision::svgf {
 using namespace ocarina;
 
 class SVGF;
@@ -21,7 +34,7 @@ class AtrousFilter : public Context {
 private:
     SVGF *_svgf{nullptr};
 
-    using signature = void(Buffer<SVGFData>, Buffer<PixelGeometry>, Buffer<float>, float, float, int);
+    using signature = void(AtrousParam);
     Shader<signature> _shader;
 
 public:
@@ -29,6 +42,7 @@ public:
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
+    [[nodiscard]] AtrousParam construct_param(RealTimeDenoiseInput &input, uint step_width) const noexcept;
     [[nodiscard]] CommandList dispatch(vision::RealTimeDenoiseInput &input, uint step_width) noexcept;
 };
 
