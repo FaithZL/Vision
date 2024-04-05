@@ -11,14 +11,25 @@
 #include "utils.h"
 
 namespace vision::svgf {
+struct FilterMomentsParam {
+    BufferProxy<SVGFData> svgf_buffer;
+    BufferProxy<PixelGeometry> gbuffer;
+    BufferProxy<float> history_buffer;
+    float sigma_rt{};
+    float sigma_normal{};
+};
+}// namespace vision::svgf
+OC_PARAM_STRUCT(vision::svgf::FilterMomentsParam, svgf_buffer,
+                gbuffer, history_buffer, sigma_rt, sigma_normal) {};
+
+namespace vision::svgf {
 
 class SVGF;
 
 class FilterMoments : public Context {
 private:
     SVGF *_svgf{nullptr};
-    using signature = void(Buffer<SVGFData>, Buffer<PixelGeometry>,
-                           Buffer<float>, float, float);
+    using signature = void(FilterMomentsParam);
     Shader<signature> _shader;
 
 public:
@@ -26,6 +37,7 @@ public:
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
+    [[nodiscard]] FilterMomentsParam construct_param(RealTimeDenoiseInput &input) const noexcept;
     [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;
 };
 

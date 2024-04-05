@@ -11,20 +11,18 @@ void FilterMoments::prepare() noexcept {
 }
 
 void FilterMoments::compile() noexcept {
-    Kernel kernel = [&](BufferVar<SVGFData> svgf_buffer, BufferVar<PixelGeometry> gbuffer,
-                        BufferVar<float> history_buffer,
-                        Float sigma_rt, Float sigma_normal) {
-        Float history = history_buffer.read(dispatch_id());
+    Kernel kernel = [&](Var<FilterMomentsParam> param) {
+        Float history = param.history_buffer.read(dispatch_id());
         $if(history < 4) {
             $return();
         };
 
-        OCPixelGeometry cur_goem = gbuffer.read(dispatch_id());
+        OCPixelGeometry cur_goem = param.gbuffer.read(dispatch_id());
         $if(cur_goem.linear_depth < 0.f) {
             $return();
         };
 
-        SVGFDataVar cur_svgf_data = svgf_buffer.read(dispatch_id());
+        SVGFDataVar cur_svgf_data = param.svgf_buffer.read(dispatch_id());
 
         Float sigma_depth = max(cur_goem.depth_gradient, 1e-8f) * 3.f;
 
@@ -39,8 +37,8 @@ void FilterMoments::compile() noexcept {
         foreach_neighbor(
             cur_pixel, [&](const Int2 &pixel) {
                 Uint index = dispatch_id(pixel);
-                SVGFDataVar svgf_data = svgf_buffer.read(index);
-                OCPixelGeometry geom = gbuffer.read(index);
+                SVGFDataVar svgf_data = param.svgf_buffer.read(index);
+                OCPixelGeometry geom = param.gbuffer.read(index);
                 Float3 illumination = svgf_data->illumination();
                 Float2 moments = svgf_data.moments;
                 Float luminance = ocarina::luminance(illumination);
@@ -48,8 +46,8 @@ void FilterMoments::compile() noexcept {
                 Float3 normal = geom.normal;
 
                 Float weight = SVGF::cal_weight(cur_goem.linear_depth, depth, sigma_depth,
-                                                cur_goem.normal, normal, sigma_normal,
-                                                cur_luminance, luminance, sigma_rt);
+                                                cur_goem.normal, normal, param.sigma_normal,
+                                                cur_luminance, luminance, param.sigma_rt);
 
                 weight_sum_illumi += weight;
                 sum_illumi += illumination * weight;
@@ -64,16 +62,24 @@ void FilterMoments::compile() noexcept {
         Float variance = sum_moments.y - sqr(sum_moments.x);
         variance *= 4.f / history;
         cur_svgf_data.illumi_v = make_float4(sum_illumi, variance);
-        svgf_buffer.write(dispatch_id(), cur_svgf_data);
+        param.svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
     _shader = device().compile(kernel, "SVGF-filter_moments");
 }
 
+FilterMomentsParam FilterMoments::construct_param(RealTimeDenoiseInput &input) const noexcept {
+    FilterMomentsParam param;
+    param.svgf_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
+    param.gbuffer = input.gbuffer.proxy();
+    param.history_buffer = _svgf->history.proxy();
+    param.sigma_rt = _svgf->sigma_rt();
+    param.sigma_normal = _svgf->sigma_normal();
+    return param;
+}
+
 CommandList FilterMoments::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
-    ret << _shader(_svgf->cur_svgf_buffer(input.frame_index), input.gbuffer,
-                   _svgf->history, _svgf->sigma_rt(),
-                   _svgf->sigma_normal())
+    ret << _shader(construct_param(input))
                .dispatch(input.resolution);
     return ret;
 }
