@@ -93,7 +93,7 @@ void AtrousFilter::compile() noexcept {
 
 AtrousParam AtrousFilter::construct_param(RealTimeDenoiseInput &input, uint step_width) const noexcept {
     AtrousParam param;
-    param.svgf_buffer = _svgf->svgf_data.proxy();
+    param.svgf_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
     param.gbuffer = input.gbuffer.proxy();
     param.history_buffer = _svgf->history.proxy();
     param.sigma_rt = _svgf->sigma_rt();
