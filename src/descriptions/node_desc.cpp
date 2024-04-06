@@ -196,7 +196,7 @@ void UVUnwrapperDesc::init(const vision::ParameterSet &ps) noexcept {
 
 void ToneMapperDesc::init(const vision::ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
-    sub_type = ps["type"].as_string("aces");
+    sub_type = ps["type"].as_string("linear");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
 }
