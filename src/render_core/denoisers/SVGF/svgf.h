@@ -8,7 +8,7 @@
 #include "reproject.h"
 #include "filter_moments.h"
 #include "atrous.h"
-#include "modulate.h"
+#include "modulator.h"
 #include "utils.h"
 
 namespace vision::svgf {
@@ -23,7 +23,7 @@ private:
     Reproject _reproject{this};
     FilterMoments _filter_moments{this};
     AtrousFilter _atrous{this};
-    Modulate _modulate{this};
+    Modulator _modulator{this};
 
 private:
     bool _switch{false};

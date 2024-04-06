@@ -31490,7 +31490,7 @@
         "polymorphic_mode": 1
     },
     "spectrum" : {
-        "type" : "hero",
+//        "type" : "hero",
         "param" : {
             "dimension": 3
         }

@@ -26,19 +26,19 @@ namespace vision::svgf {
 
 class SVGF;
 
-class Modulate : public Context {
+class Modulator : public Context {
 private:
     SVGF *_svgf{nullptr};
     using signature = void(ModulateParam);
     Shader<signature> _shader;
 
 public:
-    explicit Modulate(SVGF *svgf)
+    explicit Modulator(SVGF *svgf)
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
     [[nodiscard]] ModulateParam construct_param(RealTimeDenoiseInput &input) const noexcept;
-    [[nodiscard]] CommandList dispatch(RealTimeDenoiseInput &input) noexcept;
+    [[nodiscard]] CommandList modulate(RealTimeDenoiseInput &input) noexcept;
 };
 
 }// namespace vision::svgf

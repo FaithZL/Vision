@@ -2,15 +2,15 @@
 // Created by Zero on 2024/3/8.
 //
 
-#include "modulate.h"
+#include "modulator.h"
 #include "svgf.h"
 
 namespace vision::svgf {
 
-void Modulate::prepare() noexcept {
+void Modulator::prepare() noexcept {
 }
 
-void Modulate::compile() noexcept {
+void Modulator::compile() noexcept {
     Kernel kernel = [&](Var<ModulateParam> param) noexcept {
         Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz();
         Float3 emission = param.emission_buffer.read(dispatch_id()).xyz();
@@ -22,7 +22,7 @@ void Modulate::compile() noexcept {
     _shader = device().compile(kernel, "SVGF-modulate");
 }
 
-ModulateParam Modulate::construct_param(vision::RealTimeDenoiseInput &input) const noexcept {
+ModulateParam Modulator::construct_param(vision::RealTimeDenoiseInput &input) const noexcept {
     ModulateParam param;
     param.albedo_buffer = input.albedo.proxy();
     param.emission_buffer = input.emission.proxy();
@@ -31,7 +31,7 @@ ModulateParam Modulate::construct_param(vision::RealTimeDenoiseInput &input) con
     return param;
 }
 
-CommandList Modulate::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
+CommandList Modulator::modulate(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     ret << _shader(construct_param(input))
                .dispatch(input.resolution);
