@@ -274,7 +274,7 @@
 				"transform" : {
 					"type" : "trs",
 					"param" : {
-						"t" : [0, 0.8, 0],
+						"t" : [0.3, 0.6, 0],
 						"r" : [1, 0, 0, 0],
 						"s" : [0.4, 0.4, 0.4]
 					}
@@ -296,7 +296,7 @@
 //				"material" : "ShortBox",
 //								"material" : "substrate",
 //								"material" : "Mirror",
-								"material" : "Metal",
+								"material" : "matte2",
 //								                "material" : "disney",
 //												                "material" : "mix",
 //								                                "material" : "Glass",
@@ -325,7 +325,7 @@
 				"transform" : {
 					"type" : "trs",
 					"param" : {
-						"t" : [0, 0.3, 0],
+						"t" : [-0.3, 0.6, 0],
 						"r" : [1, 0, 0, 0],
 						"s" : [0.4, 0.4, 0.4]
 					}
@@ -801,6 +801,23 @@
 		{
 			"type" : "substrate",
 			"name" : "substrate",
+			"param" : {
+				"roughness" : 0.3,
+				"spec" : [
+					0.04,
+					0.04,
+					0.04
+				],
+				"color" : [
+					0.725,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"type" : "matte",
+			"name" : "matte2",
 			"param" : {
 				"roughness" : 0.3,
 				"spec" : [
