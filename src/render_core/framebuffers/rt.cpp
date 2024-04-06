@@ -48,7 +48,7 @@ public:
             Float3 emission;
             $if(hit->is_hit()) {
                 Interaction it = pipeline()->compute_surface_interaction(hit, rs.ray, true);
-                geom.normal = it.ng;
+                geom.normal = it.shading.normal();
                 Float4x4 w2c = inverse(camera->device_c2w());
                 Float3 c_pos = transform_point(w2c, it.pos);
                 geom.linear_depth = c_pos.z;

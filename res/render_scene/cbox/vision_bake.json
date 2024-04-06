@@ -242,8 +242,8 @@
 				"z" : 1,
 				//				"smooth": true,
 				//				"material" : "Light",
-				"material" : "ShortBox",
-				//								"material" : "substrate",
+//				"material" : "ShortBox",
+												"material" : "substrate",
 				//								"material" : "Mirror",
 				//								"material" : "Metal",
 				//								                "material" : "disney",
@@ -274,7 +274,7 @@
 				"transform" : {
 					"type" : "trs",
 					"param" : {
-						"t" : [0, 0.8, 0],
+						"t" : [0, 0.8, -1],
 						"r" : [1, 0, 0, 0],
 						"s" : [0.4, 0.4, 0.4]
 					}
@@ -293,10 +293,10 @@
 				"z" : 1,
 //				"smooth": true,
 //				"material" : "Light",
-				"material" : "ShortBox",
+//				"material" : "ShortBox",
 //								"material" : "substrate",
 //								"material" : "Mirror",
-//								"material" : "Metal",
+								"material" : "Metal",
 //								                "material" : "disney",
 //												                "material" : "mix",
 //								                                "material" : "Glass",
@@ -1180,21 +1180,21 @@
 		}
 	},
 	"pipeline" : {
-		"type" : "bake",
-		"param": {
-			"rasterizer" : {
-				"type": "cpu"
-			},
-			"uv_unwrapper": {
-				"type": "xatlas",
-				"param" : {
-					"min": 300,
-//					"max": 1024,
-//					"scale": 1,
-					"padding": 3
-				}
-			}
-		}
+//		"type" : "bake",
+//		"param": {
+//			"rasterizer" : {
+//				"type": "cpu"
+//			},
+//			"uv_unwrapper": {
+//				"type": "xatlas",
+//				"param" : {
+//					"min": 300,
+////					"max": 1024,
+////					"scale": 1,
+//					"padding": 3
+//				}
+//			}
+//		}
 		//		"type" : "customized"
 	},
 	"output" : {
