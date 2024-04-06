@@ -98,8 +98,8 @@ public:
             k_slot = desc.slot("", k);
         }
 
-        _eta = scene().create_slot(eta_slot);
-        _k = scene().create_slot(k_slot);
+        _eta.set(scene().create_slot(eta_slot));
+        _k.set(scene().create_slot(k_slot));
     }
 
     void prepare() noexcept override {
