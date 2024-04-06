@@ -28,6 +28,7 @@ private:
 private:
     bool _switch{false};
     bool _moment_filter_switch{true};
+    bool _reproject_switch{true};
     uint N;
     float _alpha{0.05f};
     float _moments_alpha{0.2f};
