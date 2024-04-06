@@ -11,16 +11,16 @@
 #include "utils.h"
 
 namespace vision::svgf {
-struct ModulateParam {
+struct ModulatorParam {
     BufferProxy<float4> albedo_buffer;
     BufferProxy<float4> emission_buffer;
     BufferProxy<SVGFData> svgf_buffer;
-    BufferProxy<float4> output_buffer;
+    BufferProxy<float4> radiance_buffer;
 };
 }// namespace vision::svgf
 
-OC_PARAM_STRUCT(vision::svgf::ModulateParam, albedo_buffer,
-                emission_buffer, svgf_buffer, output_buffer){};
+OC_PARAM_STRUCT(vision::svgf::ModulatorParam, albedo_buffer,
+                emission_buffer, svgf_buffer, radiance_buffer){};
 
 namespace vision::svgf {
 
@@ -29,16 +29,17 @@ class SVGF;
 class Modulator : public Context {
 private:
     SVGF *_svgf{nullptr};
-    using signature = void(ModulateParam);
-    Shader<signature> _shader;
+    using signature = void(ModulatorParam);
+    Shader<signature> _modulate;
+    Shader<signature> _demodulate;
 
 public:
     explicit Modulator(SVGF *svgf)
         : _svgf(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
-    [[nodiscard]] ModulateParam construct_param(RealTimeDenoiseInput &input) const noexcept;
     [[nodiscard]] CommandList modulate(RealTimeDenoiseInput &input) noexcept;
+    [[nodiscard]] CommandList demodulate(RealTimeDenoiseInput &input) noexcept;
 };
 
 }// namespace vision::svgf
