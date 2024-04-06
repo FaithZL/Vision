@@ -83,6 +83,7 @@ void SVGF::compile() noexcept {
 CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
     if (_switch) {
+        ret << _modulator.demodulate(input);
         ret << _reproject.dispatch(input);
         if (_moment_filter_switch) {
             ret << _filter_moments.dispatch(input);

@@ -120,11 +120,8 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 void Reproject::compile() noexcept {
     Kernel kernel = [&](Var<ReprojectParam> param) {
         OCPixelGeometry geom_data = param.gbuffer.read(dispatch_id());
-
-        Float3 emission = param.emission_buffer.read(dispatch_id()).xyz();
-        Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz();
-        Float3 radiance = param.radiance_buffer.read(dispatch_id()).xyz();
-        Float3 illumination = demodulate(radiance.xyz() - emission, albedo);
+        SVGFDataVar svgf_data = param.cur_buffer.read(dispatch_id());
+        Float3 illumination = svgf_data->illumination();
 
         Float history = 0.f;
         Float3 prev_illumination = make_float3(0.f);
@@ -151,7 +148,6 @@ void Reproject::compile() noexcept {
         moments = lerp(make_float2(param.moments_alpha), prev_moments, moments);
 
         Float variance = max(0.f, moments.y - sqr(moments.x));
-        SVGFDataVar svgf_data;
         illumination = lerp(make_float3(param.alpha), prev_illumination.xyz(), illumination);
         svgf_data.illumi_v = make_float4(illumination, variance);
         svgf_data.moments = moments;
@@ -167,9 +163,6 @@ ReprojectParam Reproject::construct_param(RealTimeDenoiseInput &input) const noe
     param.prev_gbuffer = input.prev_gbuffer.proxy();
     param.history_buffer = _svgf->history.proxy();
     param.motion_vectors = input.motion_vec.proxy();
-    param.radiance_buffer = input.radiance.proxy();
-    param.albedo_buffer = input.albedo.proxy();
-    param.emission_buffer = input.emission.proxy();
     param.alpha = _svgf->alpha();
     param.moments_alpha = _svgf->moments_alpha();
     param.history_limit = _svgf->history_limit();

@@ -30,7 +30,7 @@ void Modulator::compile() noexcept {
         svgf_data.illumi_v = make_float4(illumination, 0.f);
         param.svgf_buffer.write(dispatch_id(), svgf_data);
     };
-    _demodulate = device().compile(kernel, "SVGF-demodulate");
+    _demodulate = device().compile(kernel2, "SVGF-demodulate");
 }
 
 CommandList Modulator::demodulate(vision::RealTimeDenoiseInput &input) noexcept {
@@ -40,7 +40,7 @@ CommandList Modulator::demodulate(vision::RealTimeDenoiseInput &input) noexcept 
     param.emission_buffer = input.emission.proxy();
     param.svgf_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
     param.radiance_buffer = input.radiance.proxy();
-    ret << _modulate(param).dispatch(input.resolution);
+    ret << _demodulate(param).dispatch(input.resolution);
     return ret;
 }
 

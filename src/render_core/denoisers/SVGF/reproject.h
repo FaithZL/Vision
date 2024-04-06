@@ -18,9 +18,6 @@ public:
     BufferProxy<PixelGeometry> prev_gbuffer;
     BufferProxy<float> history_buffer;
     BufferProxy<float2> motion_vectors;
-    BufferProxy<float4> radiance_buffer;
-    BufferProxy<float4> albedo_buffer;
-    BufferProxy<float4> emission_buffer;
     float alpha{};
     float moments_alpha{};
     uint history_limit{};
@@ -31,8 +28,8 @@ public:
 }// namespace vision::svgf
 
 OC_PARAM_STRUCT(vision::svgf::ReprojectParam, gbuffer, prev_gbuffer,
-                history_buffer, motion_vectors, radiance_buffer, albedo_buffer,
-                emission_buffer, alpha, moments_alpha, history_limit, cur_buffer, prev_buffer){};
+                history_buffer, motion_vectors, alpha, moments_alpha,
+                history_limit, cur_buffer, prev_buffer){};
 
 namespace vision::svgf {
 
