@@ -80,6 +80,8 @@ public:
 
 public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint gbuffer_base() const noexcept { return _gbuffer.index().hv(); }

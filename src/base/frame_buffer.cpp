@@ -9,6 +9,18 @@ namespace vision {
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
     : Node(desc) {}
 
+bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
+    return widgets->use_folding_header(
+        ocarina::format("{} FrameBuffer", impl_type().data()),
+        [&] {
+            render_sub_UI(widgets);
+        });
+}
+
+void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    
+}
+
 uint FrameBuffer::pixel_num() const noexcept {
     return pipeline()->pixel_num();
 }
