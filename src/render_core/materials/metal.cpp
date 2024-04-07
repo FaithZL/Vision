@@ -40,7 +40,7 @@ public:
                      MicrofacetReflection refl)
         : _fresnel(fresnel), _refl(ocarina::move(refl)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(ConductorBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _refl.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return _refl.safe_evaluate(wo, wi, _fresnel->clone(), mode);
     }

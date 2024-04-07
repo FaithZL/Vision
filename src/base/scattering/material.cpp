@@ -38,10 +38,11 @@ void MaterialEvaluator::mollify() noexcept {
     });
 }
 
-SampledSpectrum MaterialEvaluator::albedo() const noexcept {
+SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept {
     SampledSpectrum ret{swl->dimension()};
+    Float3 wo = shading_frame.to_local(world_wo);
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->albedo();
+        ret = lobe_set->albedo(wo);
     });
     return ret;
 }

@@ -22,7 +22,7 @@ public:
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(Diffuse)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
             Float Fo = schlick_weight(abs_cos_theta(wo));
@@ -48,7 +48,7 @@ public:
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FakeSS)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
@@ -80,7 +80,7 @@ public:
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(color),
           _roughness(r) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
@@ -110,7 +110,7 @@ public:
     explicit Sheen(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
           _color(kr) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _color; }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
             Float3 wh = wi + wo;
@@ -157,7 +157,7 @@ public:
         : BxDF(swl, BxDFFlag::GlossyRefl),
           _weight(weight),
           _alpha(alpha) {}
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return {swl().dimension(), _weight}; }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return {swl().dimension(), _weight}; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float weight, Float alpha) {
             Float3 wh = wi + wo;
@@ -472,7 +472,7 @@ public:
         }
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _diffuse->albedo(); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _diffuse->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return outline([&] {
             ScatterEval ret{_spec_refl->swl().dimension()};

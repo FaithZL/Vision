@@ -198,7 +198,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
                 swl.check_dispersive(spectrum(), evaluator);
                 Ld = direct_light_mis(it, evaluator, light_sample, occluded,
                                       sampler, swl, bsdf_sample);
-                albedo = spectrum().linear_srgb(evaluator.albedo(), swl);
+                albedo = spectrum().linear_srgb(evaluator.albedo(it.wo), swl);
             });
         };
 

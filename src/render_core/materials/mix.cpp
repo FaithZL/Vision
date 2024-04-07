@@ -25,8 +25,8 @@ public:
         MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float scale)
         : _b0(ocarina::move(b0)), _b1(ocarina::move(b1)), _scale(scale) {}
 
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override {
-        return _b0->albedo() * _scale + _b1->albedo() * (1 - _scale);
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
+        return _b0->albedo(wo) * _scale + _b1->albedo(wo) * (1 - _scale);
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         optional<Bool> v0 = _b0->is_dispersive();
@@ -65,7 +65,7 @@ public:
     }
 
     BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret{_b0->albedo().dimension()};
+        BSDFSample ret{_b0->albedo(wo).dimension()};
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
         ret.wi = sd.wi;

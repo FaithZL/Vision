@@ -110,7 +110,7 @@ public:
           _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
           _dispersive(dispersive) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _refl.albedo(); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _refl.albedo(wo); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         return _dispersive;
     }

@@ -14,7 +14,7 @@ namespace vision {
 
 struct BxDFSet : public ocarina::Hashable {
 public:
-    [[nodiscard]] virtual SampledSpectrum albedo() const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept = 0;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept {
@@ -54,7 +54,7 @@ public:
 
     void regularize() noexcept;
     void mollify() noexcept;
-    [[nodiscard]] SampledSpectrum albedo() const noexcept;
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &world_wo) const noexcept;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi, MaterialEvalMode mode = All,
                                        const Uint &flag = BxDFFlag::All) const noexcept;

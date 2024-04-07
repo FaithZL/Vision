@@ -28,7 +28,7 @@ public:
         ret.wi = wo;
         return ret;
     }
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
         return {_swl->dimension(), 0.f};
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)

@@ -22,7 +22,7 @@ public:
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(PbrBxDFSet)
     // clang-format on
-    [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf->albedo(); }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _bxdf->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return _bxdf->safe_evaluate(wo, wi, nullptr, mode);
     }

@@ -16,11 +16,11 @@ private:
 
 public:
     FresnelBlend(SampledSpectrum Rd, SampledSpectrum Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::Reflection), Rd(Rd), Rs(Rs), _microfacet(m) {}
+        : BxDF(swl, BxDFFlag::Reflection), Rd(std::move(Rd)), Rs(std::move(Rs)), _microfacet(m) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FresnelBlend)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return Rd; }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Rd; }
 
     [[nodiscard]] SampledSpectrum f_diffuse(Float3 wo, Float3 wi) const noexcept {
         SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd * (SampledSpectrum(swl().dimension(), 1.f) - Rs) *
@@ -84,7 +84,7 @@ public:
     SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf)
         : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo() const noexcept override { return _bxdf.albedo(); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _bxdf.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
                                              Uint flag) const noexcept override {
         return _bxdf.safe_evaluate(wo, wi, _fresnel->clone(), mode);
