@@ -41,7 +41,6 @@ private:
     RenderSettingDesc _render_setting{};
     MaterialRegistry *_material_registry{&MaterialRegistry::instance()};
     MeshRegistry *_mesh_registry{&MeshRegistry::instance()};
-    FrameBuffer *_frame_buffer{nullptr};
     SP<Spectrum> _spectrum{nullptr};
     Wrap<Medium> _global_medium{};
     SP<Material> _black_body{};
@@ -55,7 +54,7 @@ public:
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return _render_setting.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, _camera, _integrator, _light_sampler,
-                         _material_registry, _spectrum,_frame_buffer, _sampler)
+                         _material_registry, _spectrum, _sampler)
     MAKE_GETTER(integrator)
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)

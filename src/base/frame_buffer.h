@@ -70,10 +70,10 @@ protected:
 
     RegistrableBuffer<float2> _motion_vectors{};
 
-    RegistrableBuffer<float4> _bufferA;
-    RegistrableBuffer<float4> _bufferB;
-    RegistrableBuffer<float4> _bufferC;
-    RegistrableBuffer<float4> _bufferD;
+    RegistrableManaged<float4> _bufferA;
+    RegistrableManaged<float4> _bufferB;
+    RegistrableManaged<float4> _bufferC;
+    RegistrableManaged<float4> _bufferD;
 
 public:
     using Desc = FrameBufferDesc;
@@ -132,6 +132,19 @@ public:
         vector<T> vec{};
         vec.assign(element_num, T{});
         buffer.upload_immediately(vec.data());
+        buffer.set_bindless_array(bindless_array());
+        buffer.register_self();
+        for (int i = 1; i < count; ++i) {
+            buffer.register_view(pixel_num() * i, pixel_num());
+        }
+    }
+
+    template<typename T>
+    void init_buffer(RegistrableManaged<T> &buffer, const string &desc, uint count = 1) noexcept {
+        uint element_num = count * pixel_num();
+        buffer.reset_all(device(), element_num, desc);
+        vector<T> vec{};
+        vec.assign(element_num, T{});
         buffer.set_bindless_array(bindless_array());
         buffer.register_self();
         for (int i = 1; i < count; ++i) {

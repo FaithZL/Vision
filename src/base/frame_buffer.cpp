@@ -18,7 +18,21 @@ bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    
+    auto show_buffer = [&](Managed<float4> &buffer) {
+        if (buffer.device_buffer().size() == 0) {
+            return;
+        }
+
+        widgets->use_tree(buffer.name(), [&] {
+            buffer.download_immediately();
+            ImageView image_view(buffer.host_buffer().data(), resolution());
+            widgets->image(image_view);
+        });
+    };
+    show_buffer(_bufferA);
+    show_buffer(_bufferB);
+    show_buffer(_bufferC);
+    show_buffer(_bufferD);
 }
 
 uint FrameBuffer::pixel_num() const noexcept {

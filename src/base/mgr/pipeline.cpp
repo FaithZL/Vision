@@ -41,6 +41,9 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
                       render_time() / frame_index(),
                       frame_index());
     });
+    widgets->use_window("frame buffer", [&] {
+        _frame_buffer->render_UI(widgets);
+    });
     return _scene.render_UI(widgets);
 }
 

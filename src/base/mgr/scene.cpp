@@ -30,7 +30,6 @@ void Scene::init(const SceneDesc &scene_desc) {
     _sampler = load<Sampler>(scene_desc.sampler_desc);
     _min_radius = scene_desc.render_setting.min_world_radius;
     Interaction::set_ray_offset_factor(scene_desc.render_setting.ray_offset_factor);
-    _frame_buffer = pipeline()->frame_buffer();
 }
 
 void Scene::tidy_up() noexcept {
