@@ -205,7 +205,7 @@ void App::check_and_save() noexcept {
 
 void App::save_result() noexcept {
     OutputDesc desc = rp->output_desc;
-    ImageIO::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
+    Image::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
                         pipeline().resolution(), pipeline().final_picture(desc));
     if (desc.save_exit) {
         exit(0);

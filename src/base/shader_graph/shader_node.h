@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/node.h"
-#include "util/image_io.h"
+#include "util/image.h"
 #include "base/color/spectrum.h"
 #include "base/scattering/interaction.h"
 
@@ -35,7 +35,7 @@ public:
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
     [[nodiscard]] virtual ocarina::vector<float> average() const noexcept = 0;
     [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
-    virtual void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept {
+    virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }

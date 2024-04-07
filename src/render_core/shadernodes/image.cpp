@@ -10,14 +10,14 @@
 
 namespace vision {
 using namespace ocarina;
-class Image : public ShaderNode {
+class ImageNode : public ShaderNode {
 private:
     RegistrableTexture *_texture;
     Serial<uint> _tex_id{};
     ShaderNodeDesc _desc;
 
 public:
-    explicit Image(const ShaderNodeDesc &desc)
+    explicit ImageNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
           _desc(desc),
           _texture(&Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
@@ -60,10 +60,10 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept override {
         return _texture->device_tex()->resolution().xy();
     }
-    void for_each_pixel(const function<ImageIO::foreach_signature> &func) const noexcept override {
+    void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept override {
         _texture->host_tex().for_each_pixel(func);
     }
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::Image)
+VS_MAKE_CLASS_CREATOR(vision::ImageNode)

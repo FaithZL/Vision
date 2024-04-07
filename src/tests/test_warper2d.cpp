@@ -5,7 +5,7 @@
 #include "base/warper.h"
 #include "core/stl.h"
 #include "rhi/common.h"
-#include "util/image_io.h"
+#include "util/image.h"
 #include "util/file_manager.h"
 #include "descriptions/node_desc.h"
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
     auto path1 = R"(E:/work/compile/vision/res/spruit_sunrise_2k.hdr)";
 
-    auto image_io = ImageIO::load(path1, LINEAR);
+    auto image_io = Image::load(path1, LINEAR);
     auto image_out = device.create_texture(image_io.resolution(), image_io.pixel_storage());
 
     auto image = device.create_texture(image_io.resolution(), image_io.pixel_storage());

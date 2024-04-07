@@ -11,9 +11,9 @@ namespace vision {
 using namespace ocarina;
 
 RegistrableTexture ImagePool::load_texture(const ShaderNodeDesc &desc) noexcept {
-    ImageIO image_io;
+    Image image_io;
     if (desc.sub_type == "constant") {
-        image_io = ImageIO::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));
+        image_io = Image::pure_color(desc["value"].as_float4(), ocarina::LINEAR, make_uint2(1));
     } else {
         string color_space = desc["color_space"].as_string();
         if (color_space.empty()) {
@@ -25,7 +25,7 @@ RegistrableTexture ImagePool::load_texture(const ShaderNodeDesc &desc) noexcept 
         if (!fpath.is_absolute()) {
             fpath = Global::instance().scene_path() / fpath;
         }
-        image_io = ImageIO::load(fpath, cs);
+        image_io = Image::load(fpath, cs);
     }
     RegistrableTexture ret{Global::instance().pipeline()->bindless_array()};
     ret.host_tex() = ocarina::move(image_io);

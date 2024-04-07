@@ -10,7 +10,7 @@
 #include "core/stl.h"
 #include "base/mgr/pipeline.h"
 #include "util/file_manager.h"
-#include "util/image_io.h"
+#include "util/image.h"
 #include "core/logging.h"
 #include "base/denoiser.h"
 #include "base/mgr/global.h"
