@@ -34,17 +34,24 @@ bool Pipeline::has_changed() noexcept {
 }
 
 bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->use_window("pipeline stats", [&]() {
+    widgets->use_window("render stats", [&]() {
         widgets->text("pipeline type: %s", impl_type().data());
         widgets->text("current frame: %.3f\naverage: %.3f\nframe index: %u",
                       cur_render_time(),
                       render_time() / frame_index(),
                       frame_index());
+        widgets->check_box("pipeline data", &_show_pipeline_data);
+        widgets->check_box("scene data", &_show_scene_data);
     });
-    widgets->use_window("frame buffer", [&] {
-        _frame_buffer->render_UI(widgets);
-    });
-    return _scene.render_UI(widgets);
+    if (_show_pipeline_data) {
+        widgets->use_window("frame buffer", [&] {
+            _frame_buffer->render_UI(widgets);
+        });
+    }
+    if (_show_scene_data) {
+        _scene.render_UI(widgets);
+    }
+    return true;
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {

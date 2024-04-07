@@ -31,6 +31,8 @@ protected:
     RegistrableManaged<float4> _final_picture;
     Postprocessor _postprocessor{this};
     SP<FrameBuffer> _frame_buffer{nullptr};
+    bool _show_scene_data{true};
+    bool _show_pipeline_data{true};
 
 protected:
     [[nodiscard]] Integrator *integrator() noexcept { return scene().integrator(); }
