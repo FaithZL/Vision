@@ -38,12 +38,24 @@ private:
 
 public:
     explicit Multiply(const ShaderNodeDesc &desc)
-        : ShaderNode(desc),
-          _lhs(Global::node_mgr().create_slot(*desc.slot("lhs"))),
-          _rhs(Global::node_mgr().create_slot(*desc.slot("rhs"))) {}
+        : ShaderNode(desc) {
+        _lhs.set(Global::node_mgr().create_slot(*desc.slot("lhs")));
+        _rhs.set(Global::node_mgr().create_slot(*desc.slot("rhs")));
+    }
 
-    OC_SERIALIZABLE_FUNC(ShaderNode, *_lhs.node(), *_rhs.node())
+    OC_SERIALIZABLE_FUNC(ShaderNode, _lhs, _rhs)
     VS_MAKE_PLUGIN_NAME_FUNC
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, _lhs, _rhs)
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        bool ret = widgets->use_tree(_name, [&] {
+            widgets->text("type:%s", impl_type().data());
+            _lhs.render_UI(widgets);
+            _rhs.render_UI(widgets);
+        });
+        return ret;
+    }
+
     [[nodiscard]] bool is_uniform() const noexcept override {
         return _lhs->is_uniform() && _rhs->is_uniform();
     }
@@ -60,7 +72,7 @@ public:
         return _lhs.average() * _rhs.average();
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl) const noexcept override {
+                                               const SampledWavelengths &swl) const noexcept override {
         return _lhs.evaluate(ctx, swl) * _rhs.evaluate(ctx, swl);
     }
 };
