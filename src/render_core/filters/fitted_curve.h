@@ -38,7 +38,7 @@ public:
                                    (y + 0.5f) / table_size * r.y);
             float val = filter->evaluate(p);
             func[i] = ocarina::abs(val);
-            _lut.at(i) = val;
+            _lut.host_buffer().at(i) = val;
         }
         float sum = std::accumulate(_lut.begin(), _lut.end(), 0.f);
         float integral = sum / len;
