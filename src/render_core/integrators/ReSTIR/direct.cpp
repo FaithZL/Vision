@@ -524,6 +524,21 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     _reservoirs.upload_immediately(host.data());
 }
 
+direct::Param ReSTIRDirectIllumination::construct_param() const noexcept {
+    direct::Param param;
+    param.M_light = M_light;
+    param.M_bsdf = M_bsdf;
+    param.N = _spatial.sample_num;
+    param.s_dot = _spatial.dot_threshold();
+    param.s_depth = _spatial.depth_threshold;
+    param.s_radius = _spatial.sampling_radius;
+    param.history_limit = _temporal.limit;
+    param.t_dot = _temporal.dot_threshold();
+    param.t_depth = _temporal.depth_threshold;
+    param.t_radius = _temporal.sampling_radius;
+    return param;
+}
+
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();

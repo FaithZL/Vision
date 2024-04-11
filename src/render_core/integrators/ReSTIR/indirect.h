@@ -75,13 +75,13 @@ public:
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
-                                   _spatial.dot_threshold,
+                                   _spatial.dot_threshold(),
                                    _spatial.depth_threshold);
     }
     [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
                                          const OCSurfaceData &prev_surface) const noexcept {
         return vision::is_neighbor(cur_surface, prev_surface,
-                                   _temporal.dot_threshold,
+                                   _temporal.dot_threshold(),
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }

@@ -10,10 +10,28 @@
 #include "base/mgr/pipeline.h"
 #include "core/thread_pool.h"
 
-
 namespace vision::direct {
+struct Param {
+    uint M_light{};
+    uint M_bsdf{};
 
-}
+    /// spatial
+    uint N{};
+    float s_dot{};
+    float s_depth{};
+    float s_radius{};
+
+    /// temporal
+    uint history_limit{};
+    float t_dot{};
+    float t_depth{};
+    float t_radius{};
+};
+}// namespace vision::direct
+
+OC_PARAM_STRUCT(vision::direct::Param, M_light, M_bsdf, N,
+                s_dot, s_depth, s_radius, history_limit,
+                t_dot, t_depth, t_radius){};
 
 namespace vision {
 
@@ -63,16 +81,18 @@ public:
         compile_shader0();
         compile_shader1();
     }
+
+
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
-                                   _spatial.dot_threshold,
+                                   _spatial.dot_threshold(),
                                    _spatial.depth_threshold);
     }
     [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
                                          const OCSurfaceData &prev_surface) const noexcept {
         return vision::is_neighbor(cur_surface, prev_surface,
-                                   _temporal.dot_threshold,
+                                   _temporal.dot_threshold(),
                                    _temporal.depth_threshold);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
@@ -152,6 +172,7 @@ public:
     [[nodiscard]] Float3 shading(DIReservoir rsv, const HitVar &hit) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
+    [[nodiscard]] direct::Param construct_param() const noexcept;
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 
