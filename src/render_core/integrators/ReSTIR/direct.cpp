@@ -367,7 +367,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     Camera *camera = scene().camera().get();
     Spectrum &spectrum = rp->spectrum();
 
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);
@@ -479,7 +479,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         initial(sampler(), frame_index, spectrum);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
@@ -542,9 +542,10 @@ direct::Param ReSTIRDirectIllumination::construct_param() const noexcept {
 CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    ret << _shader0.get()(frame_index).dispatch(rp->resolution());
+    auto param = construct_param();
+    ret << _shader0.get()(frame_index, param).dispatch(rp->resolution());
     if (_open) {
-        ret << _shader1.get()(frame_index).dispatch(rp->resolution());
+        ret << _shader1.get()(frame_index, param).dispatch(rp->resolution());
     }
     return ret;
 }

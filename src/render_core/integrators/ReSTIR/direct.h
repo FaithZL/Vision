@@ -63,11 +63,11 @@ private:
      * check visibility
      * temporal reuse
      */
-    std::shared_future<Shader<void(uint)>> _shader0;
+    std::shared_future<Shader<void(uint, direct::Param)>> _shader0;
     /**
      * spatial reuse and shading
      */
-    std::shared_future<Shader<void(uint)>> _shader1;
+    std::shared_future<Shader<void(uint, direct::Param)>> _shader1;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
@@ -81,7 +81,6 @@ public:
         compile_shader0();
         compile_shader1();
     }
-
 
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {
