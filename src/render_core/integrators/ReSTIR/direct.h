@@ -43,7 +43,8 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDirectIllumination : public SerialObject, public Context, public RenderEnv {
+class ReSTIRDirectIllumination : public SerialObject, public Context,
+                                 public RenderEnv, public GUI {
 private:
     IlluminationIntegrator *_integrator{};
     uint M_light{};
@@ -81,6 +82,8 @@ public:
         compile_shader0();
         compile_shader1();
     }
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
                                    const OCSurfaceData &another_surface) const noexcept {

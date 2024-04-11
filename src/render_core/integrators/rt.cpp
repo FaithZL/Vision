@@ -26,6 +26,9 @@ public:
           _denoiser(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
         _max_depth = _max_depth.hv() - 1;
     }
+
+    VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, _direct, _indirect)
+
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
@@ -39,6 +42,11 @@ public:
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_motion_vectors();
+    }
+
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        _direct.render_UI(widgets);
+        _indirect.render_UI(widgets);
     }
 
     void compile() noexcept override {

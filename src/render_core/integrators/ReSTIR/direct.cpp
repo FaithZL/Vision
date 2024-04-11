@@ -18,6 +18,20 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _pairwise(desc["pairwise"].as_bool(false)),
       _open(desc["open"].as_bool(true)) {}
 
+bool ReSTIRDirectIllumination::render_UI(ocarina::Widgets *widgets) noexcept {
+    bool open = widgets->use_tree("ReSTIR DI", [&] {
+        _changed |= widgets->input_uint_limit("M light", &M_light, 0, 100);
+        _changed |= widgets->input_uint_limit("M BSDF", &M_bsdf, 0, 100);
+        _changed |= widgets->input_float_limit("spatial theta",
+                                               &_spatial.theta, 0, 90, 1, 1);
+        _changed |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
+                                               0, 1, 0.02, 0.1);
+        _changed |= widgets->input_float_limit("spatial radius", &_spatial.sampling_radius,
+                                               0, 50, 1, 5);
+    });
+    return open;
+}
+
 SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
                                              BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();

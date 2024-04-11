@@ -53,6 +53,7 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
 
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
+        _integrator->load_data();
         OCSurfaceData surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             frame_buffer().bufferB().write(dispatch_id(), make_float4(0.f));
