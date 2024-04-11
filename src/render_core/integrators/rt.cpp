@@ -28,6 +28,7 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
+        IlluminationIntegrator::prepare();
         _direct.prepare();
         _indirect.prepare();
         _denoiser->prepare();
