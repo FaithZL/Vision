@@ -11,7 +11,7 @@
 #include "base/illumination/light.h"
 #include "common.h"
 
-namespace vision::ReSTIRDirect {
+namespace vision::direct {
 struct RSVSample {
     uint light_index{InvalidUI32};
     uint prim_id{};
@@ -27,10 +27,10 @@ struct RSVSample {
         pos[2] = p[2];
     }
 };
-}// namespace vision::ReSTIRDirect
+}// namespace vision::direct
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, bary, p_hat, pos) {
+OC_STRUCT(vision::direct::RSVSample, light_index,prim_id, bary, p_hat, pos) {
     [[nodiscard]] Bool valid() const noexcept {
         return light_index != InvalidUI32;
     }
@@ -58,13 +58,13 @@ OC_STRUCT(vision::ReSTIRDirect::RSVSample, light_index,prim_id, bary, p_hat, pos
 // clang-format on
 
 namespace vision {
-using DIRSVSample = Var<ReSTIRDirect::RSVSample>;
+using DIRSVSample = Var<direct::RSVSample>;
 }// namespace vision
 
 namespace vision {
 using namespace ocarina;
 
-namespace ReSTIRDirect {
+namespace direct {
 struct Reservoir {
 public:
     static constexpr EPort p = H;
@@ -87,12 +87,12 @@ public:
         return ret;
     }
 };
-}// namespace ReSTIRDirect
+}// namespace direct
 
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision::direct::Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
@@ -121,7 +121,7 @@ OC_STRUCT(vision::ReSTIRDirect::Reservoir, weight_sum, C, W, sample) {
 // clang-format on
 
 namespace vision {
-using namespace ReSTIRDirect;
+using namespace direct;
 using namespace ocarina;
-using DIReservoir = Var<ReSTIRDirect::Reservoir>;
+using DIReservoir = Var<direct::Reservoir>;
 }// namespace vision

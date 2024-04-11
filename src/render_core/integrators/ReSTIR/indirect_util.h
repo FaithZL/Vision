@@ -9,7 +9,7 @@
 #include "dsl/dsl.h"
 #include "base/sampler.h"
 
-namespace vision::ReSTIRIndirect {
+namespace vision::indirect {
 struct SurfacePoint {
     array<float, 3> pos{};
     array<float, 3> ng{};
@@ -27,10 +27,10 @@ struct SurfacePoint {
     [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
     [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f); }
 };
-}// namespace vision::ReSTIRIndirect
+}// namespace vision::indirect
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
+OC_STRUCT(vision::indirect::SurfacePoint, pos, ng) {
     void set_position(Float3 p) noexcept {
         pos.set(p);
     }
@@ -47,16 +47,16 @@ OC_STRUCT(vision::ReSTIRIndirect::SurfacePoint, pos, ng) {
 };
 // clang-format on
 
-namespace vision::ReSTIRIndirect {
+namespace vision::indirect {
 struct RSVSample {
     SurfacePoint sp{};
     SurfacePoint vp{};
     array<float, 3> u{};
     array<float, 3> Lo{};
 };
-}// namespace vision::ReSTIRIndirect
+}// namespace vision::indirect
 
-OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
+OC_STRUCT(vision::indirect::RSVSample, sp, vp, u, Lo) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return vp->valid();
@@ -70,10 +70,10 @@ OC_STRUCT(vision::ReSTIRIndirect::RSVSample, sp, vp, u, Lo) {
 };
 
 namespace vision {
-using IIRSVSample = Var<ReSTIRIndirect::RSVSample>;
+using IIRSVSample = Var<indirect::RSVSample>;
 }
 
-namespace vision::ReSTIRIndirect {
+namespace vision::indirect {
 struct Reservoir {
 public:
     static constexpr EPort p = H;
@@ -96,10 +96,10 @@ public:
         return ret;
     }
 };
-}// namespace vision::ReSTIRIndirect
+}// namespace vision::indirect
 
 // clang-format off
-OC_STRUCT(vision::ReSTIRIndirect::Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision::indirect::Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
@@ -129,6 +129,6 @@ OC_STRUCT(vision::ReSTIRIndirect::Reservoir, weight_sum, C, W, sample) {
 };
 // clang-format on
 
-namespace vision::ReSTIRIndirect {
+namespace vision::indirect {
 using IIReservoir = ocarina::Var<Reservoir>;
 }

@@ -10,6 +10,11 @@
 #include "base/mgr/pipeline.h"
 #include "core/thread_pool.h"
 
+
+namespace vision::direct {
+
+}
+
 namespace vision {
 
 class RayTracingIntegrator;

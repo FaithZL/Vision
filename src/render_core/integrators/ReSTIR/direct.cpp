@@ -513,7 +513,7 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
 }
 
 void ReSTIRDirectIllumination::prepare() noexcept {
-    using ReSTIRDirect::Reservoir;
+    using direct::Reservoir;
     Pipeline *rp = pipeline();
     _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRDirectIllumination::_reservoirs x 3");

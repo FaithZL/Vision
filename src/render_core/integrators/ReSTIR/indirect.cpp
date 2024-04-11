@@ -214,7 +214,7 @@ IIReservoir ReSTIRIndirectIllumination::spatial_reuse(IIReservoir rsv, const OCS
     return rsv;
 }
 
-Float3 ReSTIRIndirectIllumination::shading(ReSTIRIndirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
+Float3 ReSTIRIndirectIllumination::shading(indirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, MaterialEvalMode::F);
@@ -257,7 +257,7 @@ CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcep
 }
 
 void ReSTIRIndirectIllumination::prepare() noexcept {
-    using ReSTIRIndirect::Reservoir;
+    using indirect::Reservoir;
     Pipeline *rp = pipeline();
 
     _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
@@ -268,7 +268,7 @@ void ReSTIRIndirectIllumination::prepare() noexcept {
     vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
     _reservoirs.upload_immediately(host.data());
 
-    using ReSTIRIndirect::RSVSample;
+    using indirect::RSVSample;
     _samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
                                                          "ReSTIRIndirectIllumination::_samples");
     _samples.register_self();

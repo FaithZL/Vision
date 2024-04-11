@@ -14,7 +14,7 @@
 namespace vision {
 
 class RayTracingIntegrator;
-using namespace vision::ReSTIRIndirect;
+using namespace vision::indirect;
 
 class ReSTIRIndirectIllumination : public SerialObject, public Context, public RenderEnv {
 private:
@@ -23,8 +23,8 @@ private:
     bool _open{true};
     IlluminationIntegrator *_integrator{};
 
-    RegistrableBuffer<ReSTIRIndirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
-    RegistrableBuffer<ReSTIRIndirect::RSVSample> _samples{pipeline()->bindless_array()};
+    RegistrableBuffer<indirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
+    RegistrableBuffer<indirect::RSVSample> _samples{pipeline()->bindless_array()};
 
     /**
      * initial sample
@@ -92,13 +92,13 @@ public:
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
-        return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>((frame_index() & 1) + reservoir_base());
+        return pipeline()->buffer_var<indirect::Reservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] auto cur_reservoirs() const noexcept {
-        return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer_var<indirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] auto passthrough_reservoirs() const noexcept {
-        return pipeline()->buffer_var<ReSTIRIndirect::Reservoir>(2 + reservoir_base());
+        return pipeline()->buffer_var<indirect::Reservoir>(2 + reservoir_base());
     }
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
