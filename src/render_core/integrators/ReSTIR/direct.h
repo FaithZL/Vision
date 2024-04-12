@@ -64,11 +64,11 @@ private:
      * check visibility
      * temporal reuse
      */
-    std::shared_future<Shader<void(uint, direct::Param)>> _shader0;
+    Shader<void(uint, direct::Param)> _shader0;
     /**
      * spatial reuse and shading
      */
-    std::shared_future<Shader<void(uint, direct::Param)>> _shader1;
+    Shader<void(uint, direct::Param)> _shader1;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
