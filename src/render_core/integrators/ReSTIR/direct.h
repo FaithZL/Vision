@@ -43,8 +43,7 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDI : public SerialObject, public Context,
-                                 public RenderEnv, public GUI {
+class ReSTIRDI : public SerialObject, public Context, public RenderEnv, public GUI {
 private:
     IlluminationIntegrator *_integrator{};
     uint M_light{};
@@ -92,10 +91,11 @@ public:
                                    _spatial.depth_threshold);
     }
     [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
-                                         const OCSurfaceData &prev_surface) const noexcept {
+                                         const OCSurfaceData &prev_surface,
+                                         const Var<direct::Param> &param) const noexcept {
         return vision::is_neighbor(cur_surface, prev_surface,
-                                   _temporal.dot_threshold(),
-                                   _temporal.depth_threshold);
+                                   param.t_dot,
+                                   param.t_depth);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
@@ -113,7 +113,8 @@ public:
     [[nodiscard]] auto cur_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
-    [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it) const noexcept;
+    [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it,
+                                  const Var<direct::Param> &param) const noexcept;
 
     /// evaluate Li from light
     [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
@@ -170,7 +171,8 @@ public:
     [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
                                              const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,
-                                             const SensorSample &ss) const noexcept;
+                                             const SensorSample &ss,
+                                             const Var<Param> &param) const noexcept;
     [[nodiscard]] Float3 shading(DIReservoir rsv, const HitVar &hit) const noexcept;
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;

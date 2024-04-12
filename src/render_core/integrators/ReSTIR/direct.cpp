@@ -22,6 +22,13 @@ bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("ReSTIR DI", [&] {
         _changed |= widgets->input_uint_limit("M light", &M_light, 0, 100);
         _changed |= widgets->input_uint_limit("M BSDF", &M_bsdf, 0, 100);
+        _changed |= widgets->input_uint_limit("history", &_temporal.limit, 0, 50, 1, 3);
+        _changed |= widgets->input_float_limit("temporal theta",
+                                               &_temporal.theta, 0, 90, 1, 1);
+        _changed |= widgets->input_float_limit("temporal depth", &_temporal.depth_threshold,
+                                               0, 1, 0.02, 0.1);
+        _changed |= widgets->input_float_limit("temporal radius", &_temporal.sampling_radius,
+                                               0, 50, 1, 5);
         _changed |= widgets->input_float_limit("spatial theta",
                                                &_spatial.theta, 0, 90, 1, 1);
         _changed |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
@@ -140,11 +147,14 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
     return f;
 }
 
-DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it) const noexcept {
+DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
+                          const Var<Param> &param) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = *scene().spectrum();
     comment("RIS start");
+    Uint M_light = param.M_light;
+    Uint M_bsdf = param.M_bsdf;
     DIReservoir ret;
     const SampledWavelengths &swl = sampled_wavelengths();
     auto sample_light = [&](MaterialEvaluator *bsdf) {
@@ -357,19 +367,20 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
 
 DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
                                      const Float2 &motion_vec,
-                                     const SensorSample &ss) const noexcept {
+                                     const SensorSample &ss,
+                                     const Var<Param> &param) const noexcept {
     if (!_temporal.open) {
         return rsv;
     }
     Float2 prev_p_film = ss.p_film - motion_vec;
-    Float limit = rsv.C * _temporal.limit;
+    Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
         DIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
         OCSurfaceData another_surf = prev_surfaces().read(index);
-        $if(is_temporal_valid(cur_surf, another_surf)) {
+        $if(is_temporal_valid(cur_surf, another_surf,param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         };
     };
@@ -401,15 +412,16 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf->set_t_max(rs.t_max());
             cur_surf->set_normal(it.shading.normal());
         };
-        DIReservoir rsv = RIS(hit->is_hit(), it);
-        Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera().get(), ss.p_film, it.pos, hit->is_hit());
+        DIReservoir rsv = RIS(hit->is_hit(), it, param);
+        Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera().get(), ss.p_film,
+                                                            it.pos, hit->is_hit());
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
 
         $if(hit->is_hit()) {
             Bool occluded = geometry.occluded(it, rsv.sample->p_light());
             rsv->process_occluded(occluded);
         };
-        rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss);
+        rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, param);
         passthrough_reservoirs().write(dispatch_id(), rsv);
         cur_surfaces().write(dispatch_id(), cur_surf);
     };
