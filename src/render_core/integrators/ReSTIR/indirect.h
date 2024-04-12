@@ -29,15 +29,15 @@ private:
     /**
      * initial sample
      */
-    std::shared_future<Shader<void(uint)>> _initial_samples;
+    Shader<void(uint)> _initial_samples;
     /**
      * initial samples and temporal reuse
      */
-    std::shared_future<Shader<void(uint)>> _temporal_pass;
+    Shader<void(uint)> _temporal_pass;
     /**
      * spatial reuse and shading
      */
-    std::shared_future<Shader<void(uint)>> _spatial_shading;
+    Shader<void(uint)> _spatial_shading;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }

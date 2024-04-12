@@ -69,7 +69,7 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
         _samples.write(dispatch_id(), sample);
     };
 
-    _initial_samples = device().async_compile(ocarina::move(kernel),
+    _initial_samples = device().compile(ocarina::move(kernel),
                                               "ReSTIR indirect initial samples");
 }
 
@@ -152,7 +152,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv = temporal_reuse(rsv, surf, motion_vec, ss);
         passthrough_reservoirs().write(dispatch_id(), rsv);
     };
-    _temporal_pass = device().async_compile(ocarina::move(kernel), "ReSTIR indirect temporal reuse");
+    _temporal_pass = device().compile(ocarina::move(kernel), "ReSTIR indirect temporal reuse");
 }
 
 IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
@@ -243,16 +243,16 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);
     };
-    _spatial_shading = device().async_compile(ocarina::move(kernel), "ReSTIR indirect spatial reuse and shading");
+    _spatial_shading = device().compile(ocarina::move(kernel), "ReSTIR indirect spatial reuse and shading");
 }
 
 CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     if (_open) {
-        ret << _initial_samples.get()(frame_index).dispatch(rp->resolution());
-        ret << _temporal_pass.get()(frame_index).dispatch(rp->resolution());
-        ret << _spatial_shading.get()(frame_index).dispatch(rp->resolution());
+        ret << _initial_samples(frame_index).dispatch(rp->resolution());
+        ret << _temporal_pass(frame_index).dispatch(rp->resolution());
+        ret << _spatial_shading(frame_index).dispatch(rp->resolution());
     }
     return ret;
 }
