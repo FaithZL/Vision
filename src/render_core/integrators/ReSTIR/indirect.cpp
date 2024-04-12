@@ -8,7 +8,7 @@
 namespace vision {
 
 ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
-                                                       const vision::ParameterSet &desc)
+                   const vision::ParameterSet &desc)
     : _integrator(integrator),
       _spatial(desc["spatial"]),
       _temporal(desc["temporal"]),
@@ -16,7 +16,7 @@ ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
 }
 
 Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
-                                               Var<SurfacePoint> sample_point) const noexcept {
+                             Var<SurfacePoint> sample_point) const noexcept {
     Float ret;
     Float3 cur_vec = cur_pos - sample_point->position();
     Float3 neighbor_vec = neighbor_pos - sample_point->position();
@@ -36,7 +36,7 @@ bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 IIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
-                                                    OCHitBSDF &hit_bsdf) noexcept {
+                                  OCHitBSDF &hit_bsdf) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, frame_index(), 3);
     Interaction sp_it{false};
@@ -79,7 +79,7 @@ void ReSTIRGI::compile_initial_samples() noexcept {
 }
 
 ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
-                                                  MaterialEvalMode mode) const noexcept {
+                                MaterialEvalMode mode) const noexcept {
     return outline(
         [&] {
             ScatterEval ret{spectrum().dimension()};
@@ -93,13 +93,14 @@ ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const IIRSVSample &sample
         "ReSTIRGI::eval_bsdf");
 }
 
-Float ReSTIRGI::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
+Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
+                              const vision::IIRSVSample &sample) const noexcept {
     //    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
     return sample->p_hat(abs_dot(it.ng, normalize(sample.sp->position() - it.pos)));
 }
 
 IIReservoir ReSTIRGI::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
-                                                         const IIReservoir &other_rsv) const noexcept {
+                                       const IIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
     IIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
@@ -110,7 +111,7 @@ IIReservoir ReSTIRGI::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData
 }
 
 IIReservoir ReSTIRGI::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
-                                                       const Float2 &motion_vec, const SensorSample &ss) const noexcept {
+                                     const Float2 &motion_vec, const SensorSample &ss) const noexcept {
     if (!_temporal.open) {
         return rsv;
     }
@@ -160,7 +161,8 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
     _temporal_pass = device().compile(kernel, "ReSTIR indirect temporal reuse");
 }
 
-IIReservoir ReSTIRGI::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
+IIReservoir ReSTIRGI::constant_combine(const IIReservoir &canonical_rsv,
+                                       const Container<uint> &rsv_idx) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
@@ -189,7 +191,7 @@ IIReservoir ReSTIRGI::constant_combine(const IIReservoir &canonical_rsv, const C
 }
 
 IIReservoir ReSTIRGI::combine_spatial(IIReservoir cur_rsv,
-                                                        const Container<uint> &rsv_idx) const noexcept {
+                                      const Container<uint> &rsv_idx) const noexcept {
 
     cur_rsv = constant_combine(cur_rsv, rsv_idx);
 
@@ -197,7 +199,7 @@ IIReservoir ReSTIRGI::combine_spatial(IIReservoir cur_rsv,
 }
 
 IIReservoir ReSTIRGI::spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
-                                                      const Int2 &pixel) const noexcept {
+                                    const Int2 &pixel) const noexcept {
     if (!_spatial.open) {
         return rsv;
     }
@@ -220,7 +222,8 @@ IIReservoir ReSTIRGI::spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_su
     return rsv;
 }
 
-Float3 ReSTIRGI::shading(indirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
+Float3 ReSTIRGI::shading(indirect::IIReservoir rsv,
+                         const OCSurfaceData &cur_surf) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, MaterialEvalMode::F);
