@@ -69,8 +69,7 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
         _samples.write(dispatch_id(), sample);
     };
 
-    _initial_samples = device().compile(ocarina::move(kernel),
-                                              "ReSTIR indirect initial samples");
+    _initial_samples = device().compile(kernel,"ReSTIR indirect initial samples");
 }
 
 ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
@@ -152,7 +151,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
         rsv = temporal_reuse(rsv, surf, motion_vec, ss);
         passthrough_reservoirs().write(dispatch_id(), rsv);
     };
-    _temporal_pass = device().compile(ocarina::move(kernel), "ReSTIR indirect temporal reuse");
+    _temporal_pass = device().compile(kernel, "ReSTIR indirect temporal reuse");
 }
 
 IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
@@ -243,7 +242,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);
     };
-    _spatial_shading = device().compile(ocarina::move(kernel), "ReSTIR indirect spatial reuse and shading");
+    _spatial_shading = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
 }
 
 CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
