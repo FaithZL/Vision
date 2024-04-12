@@ -13,8 +13,8 @@ namespace vision {
 
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
-    ReSTIRDirectIllumination _direct;
-    ReSTIRIndirectIllumination _indirect;
+    ReSTIRDI _direct;
+    ReSTIRGI _indirect;
     std::shared_future<Shader<void(uint)>> _combine;
     SP<Denoiser> _denoiser;
 

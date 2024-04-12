@@ -7,7 +7,7 @@
 
 namespace vision {
 
-ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(IlluminationIntegrator *integrator,
+ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
                                                        const vision::ParameterSet &desc)
     : _integrator(integrator),
       _spatial(desc["spatial"]),
@@ -15,7 +15,7 @@ ReSTIRIndirectIllumination::ReSTIRIndirectIllumination(IlluminationIntegrator *i
       _open(desc["open"].as_bool(true)) {
 }
 
-Float ReSTIRIndirectIllumination::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
+Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
                                                Var<SurfacePoint> sample_point) const noexcept {
     Float ret;
     Float3 cur_vec = cur_pos - sample_point->position();
@@ -29,7 +29,13 @@ Float ReSTIRIndirectIllumination::Jacobian_det(Float3 cur_pos, Float3 neighbor_p
     return ret;
 }
 
-IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const SensorSample &ss,
+bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
+    return widgets->use_tree("ReSTIR GI", [&] {
+
+    });
+}
+
+IIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
                                                     OCHitBSDF &hit_bsdf) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, frame_index(), 3);
@@ -47,7 +53,7 @@ IIRSVSample ReSTIRIndirectIllumination::init_sample(const Interaction &it, const
     return sample;
 }
 
-void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
+void ReSTIRGI::compile_initial_samples() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera *camera = scene().camera().get();
 
@@ -69,10 +75,10 @@ void ReSTIRIndirectIllumination::compile_initial_samples() noexcept {
         _samples.write(dispatch_id(), sample);
     };
 
-    _initial_samples = device().compile(kernel,"ReSTIR indirect initial samples");
+    _initial_samples = device().compile(kernel, "ReSTIR indirect initial samples");
 }
 
-ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
+ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
                                                   MaterialEvalMode mode) const noexcept {
     return outline(
         [&] {
@@ -84,15 +90,15 @@ ScatterEval ReSTIRIndirectIllumination::eval_bsdf(const Interaction &it, const I
             });
             return ret;
         },
-        "ReSTIRIndirectIllumination::eval_bsdf");
+        "ReSTIRGI::eval_bsdf");
 }
 
-Float ReSTIRIndirectIllumination::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
+Float ReSTIRGI::compute_p_hat(const vision::Interaction &it, const vision::IIRSVSample &sample) const noexcept {
     //    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
     return sample->p_hat(abs_dot(it.ng, normalize(sample.sp->position() - it.pos)));
 }
 
-IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
+IIReservoir ReSTIRGI::combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
                                                          const IIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
     IIReservoir ret = other_rsv;
@@ -103,7 +109,7 @@ IIReservoir ReSTIRIndirectIllumination::combine_temporal(const IIReservoir &cur_
     return ret;
 }
 
-IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
+IIReservoir ReSTIRGI::temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                        const Float2 &motion_vec, const SensorSample &ss) const noexcept {
     if (!_temporal.open) {
         return rsv;
@@ -123,7 +129,7 @@ IIReservoir ReSTIRIndirectIllumination::temporal_reuse(IIReservoir rsv, const OC
     return rsv;
 }
 
-void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
+void ReSTIRGI::compile_temporal_reuse() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera *camera = scene().camera().get();
     Kernel kernel = [&](Uint frame_index) {
@@ -154,7 +160,7 @@ void ReSTIRIndirectIllumination::compile_temporal_reuse() noexcept {
     _temporal_pass = device().compile(kernel, "ReSTIR indirect temporal reuse");
 }
 
-IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
+IIReservoir ReSTIRGI::constant_combine(const IIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
@@ -182,7 +188,7 @@ IIReservoir ReSTIRIndirectIllumination::constant_combine(const IIReservoir &cano
     return ret;
 }
 
-IIReservoir ReSTIRIndirectIllumination::combine_spatial(IIReservoir cur_rsv,
+IIReservoir ReSTIRGI::combine_spatial(IIReservoir cur_rsv,
                                                         const Container<uint> &rsv_idx) const noexcept {
 
     cur_rsv = constant_combine(cur_rsv, rsv_idx);
@@ -190,7 +196,7 @@ IIReservoir ReSTIRIndirectIllumination::combine_spatial(IIReservoir cur_rsv,
     return cur_rsv;
 }
 
-IIReservoir ReSTIRIndirectIllumination::spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
+IIReservoir ReSTIRGI::spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
                                                       const Int2 &pixel) const noexcept {
     if (!_spatial.open) {
         return rsv;
@@ -214,14 +220,14 @@ IIReservoir ReSTIRIndirectIllumination::spatial_reuse(IIReservoir rsv, const OCS
     return rsv;
 }
 
-Float3 ReSTIRIndirectIllumination::shading(indirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
+Float3 ReSTIRGI::shading(indirect::IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, MaterialEvalMode::F);
     return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W;
 }
 
-void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
+void ReSTIRGI::compile_spatial_shading() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
@@ -245,7 +251,7 @@ void ReSTIRIndirectIllumination::compile_spatial_shading() noexcept {
     _spatial_shading = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
 }
 
-CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcept {
+CommandList ReSTIRGI::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     if (_open) {
@@ -256,12 +262,12 @@ CommandList ReSTIRIndirectIllumination::estimate(uint frame_index) const noexcep
     return ret;
 }
 
-void ReSTIRIndirectIllumination::prepare() noexcept {
+void ReSTIRGI::prepare() noexcept {
     using indirect::Reservoir;
     Pipeline *rp = pipeline();
 
     _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
-                                                            "ReSTIRIndirectIllumination::_reservoirs x 3");
+                                                            "ReSTIRGI::_reservoirs x 3");
     _reservoirs.register_self(0, rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
@@ -270,7 +276,7 @@ void ReSTIRIndirectIllumination::prepare() noexcept {
 
     using indirect::RSVSample;
     _samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
-                                                         "ReSTIRIndirectIllumination::_samples");
+                                                         "ReSTIRGI::_samples");
     _samples.register_self();
     vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
     _samples.upload_immediately(vec.data());

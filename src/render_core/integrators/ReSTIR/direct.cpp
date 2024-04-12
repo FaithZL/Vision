@@ -7,7 +7,7 @@
 
 namespace vision {
 
-ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc)
+ReSTIRDI::ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc)
     : _integrator(integrator),
       M_light(desc["M_light"].as_uint(10)),
       M_bsdf(desc["M_bsdf"].as_uint(1)),
@@ -18,7 +18,7 @@ ReSTIRDirectIllumination::ReSTIRDirectIllumination(IlluminationIntegrator *integ
       _pairwise(desc["pairwise"].as_bool(false)),
       _open(desc["open"].as_bool(true)) {}
 
-bool ReSTIRDirectIllumination::render_UI(ocarina::Widgets *widgets) noexcept {
+bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("ReSTIR DI", [&] {
         _changed |= widgets->input_uint_limit("M light", &M_light, 0, 100);
         _changed |= widgets->input_uint_limit("M BSDF", &M_bsdf, 0, 100);
@@ -32,7 +32,7 @@ bool ReSTIRDirectIllumination::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
-SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
+SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
                                              BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
@@ -49,12 +49,12 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
                 *bs = bsdf.sample(it.wo, sampler);
             });
         },
-                "ReSTIRDirectIllumination::Li from bsdf");
+                "ReSTIRDI::Li from bsdf");
     } else {
         outline([&] {
             *bs = bsdf->sample(it.wo, sampler);
         },
-                "ReSTIRDirectIllumination::Li from bsdf");
+                "ReSTIRDI::Li from bsdf");
     }
     RayVar ray = it.spawn_ray(bs->wi);
     HitVar hit = geometry.trace_closest(ray);
@@ -102,7 +102,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     return f;
 }
 
-SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEvaluator *bsdf,
+SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf,
                                              const DIRSVSample &sample, LightSample *output_ls, Float *bsdf_pdf_point) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
@@ -123,13 +123,13 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
             });
             f = eval.f * ls.eval.L;
         },
-                "ReSTIRDirectIllumination::Li from light");
+                "ReSTIRDI::Li from light");
     } else {
         outline([&] {
             eval = bsdf->evaluate(it.wo, wi);
             f = eval.f * ls.eval.L;
         },
-                "ReSTIRDirectIllumination::Li from light");
+                "ReSTIRDI::Li from light");
     }
     if (bsdf_pdf_point) {
         *bsdf_pdf_point = light_sampler->PDF_point(it, sample->lsp(), eval.pdf);
@@ -140,7 +140,7 @@ SampledSpectrum ReSTIRDirectIllumination::Li(const Interaction &it, MaterialEval
     return f;
 }
 
-DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it) const noexcept {
+DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
     Spectrum &spectrum = *scene().spectrum();
@@ -208,7 +208,7 @@ DIReservoir ReSTIRDirectIllumination::RIS(Bool hit, const Interaction &it) const
     return ret;
 }
 
-Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
+Float ReSTIRDI::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
                                                       const DIReservoir &other_rsv, const Interaction &other_it,
                                                       Uint M, DIReservoir *output_rsv) const noexcept {
     Sampler *sampler = scene().sampler();
@@ -231,13 +231,13 @@ Float ReSTIRDirectIllumination::neighbor_pairwise_MIS(const DIReservoir &canonic
     return canonical_weight;
 }
 
-void ReSTIRDirectIllumination::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
+void ReSTIRDI::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
                                                       DIReservoir *output_rsv) const noexcept {
     Float weight = Reservoir::safe_weight(canonical_weight, canonical_rsv.sample.p_hat, canonical_rsv.W);
     (*output_rsv)->update(sampler()->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
 }
 
-DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canonical_rsv,
+DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
                                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     const SampledWavelengths &swl = sampled_wavelengths();
     Camera *camera = scene().camera().get();
@@ -261,7 +261,7 @@ DIReservoir ReSTIRDirectIllumination::pairwise_combine(const DIReservoir &canoni
     return ret;
 }
 
-DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canonical_rsv, const Container<ocarina::uint> &rsv_idx) const noexcept {
+DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv, const Container<ocarina::uint> &rsv_idx) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
@@ -285,7 +285,7 @@ DIReservoir ReSTIRDirectIllumination::constant_combine(const DIReservoir &canoni
     return ret;
 }
 
-DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
+DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
                                                       const Container<uint> &rsv_idx) const noexcept {
     DIReservoir ret;
 
@@ -301,7 +301,7 @@ DIReservoir ReSTIRDirectIllumination::combine_spatial(DIReservoir cur_rsv,
     return ret;
 }
 
-DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rsv,
+DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
                                                        OCSurfaceData cur_surf,
                                                        const DIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
@@ -354,7 +354,7 @@ DIReservoir ReSTIRDirectIllumination::combine_temporal(const DIReservoir &cur_rs
     return ret;
 }
 
-DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
+DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
                                                      const Float2 &motion_vec,
                                                      const SensorSample &ss) const noexcept {
     if (!_temporal.open) {
@@ -375,7 +375,7 @@ DIReservoir ReSTIRDirectIllumination::temporal_reuse(DIReservoir rsv, const OCSu
     return rsv;
 }
 
-void ReSTIRDirectIllumination::compile_shader0() noexcept {
+void ReSTIRDI::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
     Camera *camera = scene().camera().get();
@@ -415,7 +415,7 @@ void ReSTIRDirectIllumination::compile_shader0() noexcept {
     _shader0 = device().compile(kernel, "ReSTIR direct initial candidates and temporal reuse");
 }
 
-DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
+DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
                                                     const Int2 &pixel) const noexcept {
     if (!_spatial.open) {
         return rsv;
@@ -439,7 +439,7 @@ DIReservoir ReSTIRDirectIllumination::spatial_reuse(DIReservoir rsv, const OCSur
     return rsv;
 }
 
-Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
+Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     const Camera *camera = scene().camera().get();
@@ -488,7 +488,7 @@ Float3 ReSTIRDirectIllumination::shading(vision::DIReservoir rsv, const HitVar &
     return spectrum.linear_srgb(value + Le, swl);
 }
 
-void ReSTIRDirectIllumination::compile_shader1() noexcept {
+void ReSTIRDI::compile_shader1() noexcept {
     Camera *camera = scene().camera().get();
     Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
@@ -525,11 +525,11 @@ void ReSTIRDirectIllumination::compile_shader1() noexcept {
     _shader1 = device().compile(kernel, "ReSTIR direct spatial reuse and shading");
 }
 
-void ReSTIRDirectIllumination::prepare() noexcept {
+void ReSTIRDI::prepare() noexcept {
     using direct::Reservoir;
     Pipeline *rp = pipeline();
     _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
-                                                            "ReSTIRDirectIllumination::_reservoirs x 3");
+                                                            "ReSTIRDI::_reservoirs x 3");
     _reservoirs.register_self(0, rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
@@ -537,7 +537,7 @@ void ReSTIRDirectIllumination::prepare() noexcept {
     _reservoirs.upload_immediately(host.data());
 }
 
-direct::Param ReSTIRDirectIllumination::construct_param() const noexcept {
+direct::Param ReSTIRDI::construct_param() const noexcept {
     direct::Param param;
     param.M_light = M_light;
     param.M_bsdf = M_bsdf;
@@ -552,7 +552,7 @@ direct::Param ReSTIRDirectIllumination::construct_param() const noexcept {
     return param;
 }
 
-CommandList ReSTIRDirectIllumination::estimate(uint frame_index) const noexcept {
+CommandList ReSTIRDI::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     auto param = construct_param();

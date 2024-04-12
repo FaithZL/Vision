@@ -16,7 +16,7 @@ namespace vision {
 class RayTracingIntegrator;
 using namespace vision::indirect;
 
-class ReSTIRIndirectIllumination : public SerialObject, public Context, public RenderEnv, public GUI {
+class ReSTIRGI : public SerialObject, public Context, public RenderEnv, public GUI {
 private:
     SpatialResamplingParam _spatial;
     TemporalResamplingParam _temporal;
@@ -43,10 +43,11 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRIndirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc);
+    ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
     OC_MAKE_MEMBER_GETTER(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
     [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it, const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;

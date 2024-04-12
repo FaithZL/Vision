@@ -43,7 +43,7 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDirectIllumination : public SerialObject, public Context,
+class ReSTIRDI : public SerialObject, public Context,
                                  public RenderEnv, public GUI {
 private:
     IlluminationIntegrator *_integrator{};
@@ -74,7 +74,7 @@ protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
-    ReSTIRDirectIllumination(IlluminationIntegrator *integrator, const ParameterSet &desc);
+    ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);
     OC_MAKE_MEMBER_GETTER(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
