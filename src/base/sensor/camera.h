@@ -62,6 +62,7 @@ public:
     [[nodiscard]] Float3 device_up() const noexcept;
     [[nodiscard]] Float3 device_right() const noexcept;
     [[nodiscard]] Float4x4 device_c2w() const noexcept;
+    [[nodiscard]] Float linear_depth(const Float3 &world_pos) const noexcept;
     void move(float3 delta) noexcept { _position += delta; }
     virtual void update_focal_distance(float val) noexcept {}
     [[nodiscard]] virtual float focal_distance() const noexcept { return 0; }

@@ -412,9 +412,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         $if(hit->is_hit()) {
             it = geometry.compute_surface_interaction(hit, rs.ray, true);
             cur_surf.mat_id = it.material_id();
-            Float4x4 w2c = inverse(camera->device_c2w());
-            Float3 c_pos = transform_point(w2c, it.pos);
-            cur_surf->set_depth(c_pos.z);
+            cur_surf->set_depth(camera->linear_depth(it.pos));
             cur_surf->set_normal(it.shading.normal());
         };
         DIReservoir rsv = RIS(hit->is_hit(), it, param);

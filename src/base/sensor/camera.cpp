@@ -132,6 +132,12 @@ Float4x4 Camera::device_c2w() const noexcept {
     return *_c2w;
 }
 
+Float Camera::linear_depth(const Float3 &world_pos) const noexcept {
+    Float4x4 w2c = inverse(device_c2w());
+    Float3 c_pos = transform_point(w2c, world_pos);
+    return c_pos.z;
+}
+
 Float3 Camera::device_forward() const noexcept {
     return (*_c2w)[2].xyz();
 }
