@@ -16,12 +16,14 @@ struct Param {
     uint M_bsdf{};
 
     /// spatial
+    uint spatial{1};
     uint N{};
     float s_dot{};
     float s_depth{};
     float s_radius{};
 
     /// temporal
+    uint temporal{1};
     uint history_limit{};
     float t_dot{};
     float t_depth{};
@@ -29,8 +31,8 @@ struct Param {
 };
 }// namespace vision::direct
 
-OC_PARAM_STRUCT(vision::direct::Param, M_light, M_bsdf, N,
-                s_dot, s_depth, s_radius, history_limit,
+OC_PARAM_STRUCT(vision::direct::Param, M_light, M_bsdf, spatial, N,
+                s_dot, s_depth, s_radius, temporal, history_limit,
                 t_dot, t_depth, t_radius){};
 
 namespace vision {
@@ -167,7 +169,8 @@ public:
                                                const DIReservoir &other_rsv) const noexcept;
     [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
                                             const OCSurfaceData &cur_surf,
-                                            const Int2 &pixel) const noexcept;
+                                            const Int2 &pixel,
+                                            const Var<Param> &param) const noexcept;
     [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
                                              const OCSurfaceData &cur_surf,
                                              const Float2 &motion_vec,

@@ -429,14 +429,14 @@ void ReSTIRDI::compile_shader0() noexcept {
 }
 
 DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
-                                    const Int2 &pixel) const noexcept {
+                                    const Int2 &pixel, const Var<Param> &param) const noexcept {
     if (!_spatial.open) {
         return rsv;
     }
     int2 res = make_int2(pipeline()->resolution());
     Container<uint> rsv_idx{_spatial.sample_num};
     $for(i, _spatial.sample_num) {
-        Float2 offset = square_to_disk(sampler()->next_2d()) * _spatial.sampling_radius;
+        Float2 offset = square_to_disk(sampler()->next_2d()) * param.s_radius;
         Int2 offset_i = make_int2(ocarina::round(offset));
         Int2 another_pixel = pixel + offset_i;
         another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
@@ -517,7 +517,7 @@ void ReSTIRDI::compile_shader1() noexcept {
         sampler()->start(pixel, frame_index, 1);
         OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
         DIReservoir temporal_rsv = passthrough_reservoirs().read(dispatch_id());
-        DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel));
+        DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), param);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
         $if(hit->is_hit()) {
@@ -554,10 +554,14 @@ direct::Param ReSTIRDI::construct_param() const noexcept {
     direct::Param param;
     param.M_light = M_light;
     param.M_bsdf = M_bsdf;
+
+    param.spatial = static_cast<uint>(_spatial.open);
     param.N = _spatial.sample_num;
     param.s_dot = _spatial.dot_threshold();
     param.s_depth = _spatial.depth_threshold;
     param.s_radius = _spatial.sampling_radius;
+    
+    param.temporal = static_cast<uint>(_temporal.open);
     param.history_limit = _temporal.limit;
     param.t_dot = _temporal.dot_threshold();
     param.t_depth = _temporal.depth_threshold;
