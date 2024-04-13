@@ -87,10 +87,11 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
     [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
-                                   const OCSurfaceData &another_surface) const noexcept {
+                                   const OCSurfaceData &another_surface,
+                                   const Var<direct::Param> &param) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
-                                   _spatial.dot_threshold(),
-                                   _spatial.depth_threshold);
+                                   param.s_dot,
+                                   param.s_depth);
     }
     [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
                                          const OCSurfaceData &prev_surface,
