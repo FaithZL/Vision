@@ -378,13 +378,28 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_s
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
-    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        Uint index = dispatch_id(make_uint2(prev_p_film));
+
+    auto get_prev_data = [this, &limit](const Float2 &pos) {
+        Uint index = dispatch_id(make_uint2(pos));
         DIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
-        OCSurfaceData another_surf = prev_surfaces().read(index);
-        $if(is_temporal_valid(cur_surf, another_surf, param)) {
+        return make_pair(prev_surfaces().read(index), prev_rsv);
+    };
+
+    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
+        auto [prev_surf, prev_rsv] = get_prev_data(prev_p_film);
+        $if(is_temporal_valid(cur_surf, prev_surf, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
+        }
+        $else {
+            $for(i, 9) {
+                Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
+                auto [another_surf, another_rsv] = get_prev_data(p);
+                $if(is_temporal_valid(cur_surf, another_surf, param)) {
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv);
+                    $break;
+                };
+            };
         };
     };
     return rsv;
@@ -562,7 +577,7 @@ direct::Param ReSTIRDI::construct_param() const noexcept {
     param.s_dot = _spatial.dot_threshold();
     param.s_depth = _spatial.depth_threshold;
     param.s_radius = _spatial.sampling_radius;
-    
+
     param.temporal = static_cast<uint>(_temporal.open);
     param.history_limit = _temporal.limit;
     param.t_dot = _temporal.dot_threshold();
