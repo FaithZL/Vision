@@ -58,7 +58,8 @@ namespace vision {
 
 using namespace ocarina;
 
-using OCHitBSDF = Var<HitBSDF>;
+using HitBSDFVar = Var<HitBSDF>;
+using SurfaceDataVar = Var<SurfaceData>;
 
 template<typename T>
 requires is_vector3_expr_v<T>
@@ -193,7 +194,7 @@ private:
     optional<HenyeyGreenstein> _phase{};
 
 public:
-    Interaction(bool has_medium);
+    explicit Interaction(bool has_medium);
     Interaction(Float3 pos, Float3 wo, bool has_medium);
     void init_volumetric_param(bool has_medium) noexcept;
     void init_phase(Float g, const SampledWavelengths &swl);

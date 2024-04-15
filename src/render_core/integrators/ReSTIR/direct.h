@@ -86,15 +86,15 @@ public:
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
-    [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
-                                   const OCSurfaceData &another_surface,
+    [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
+                                   const SurfaceDataVar &another_surface,
                                    const Var<direct::Param> &param) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
                                    param.s_depth);
     }
-    [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
-                                         const OCSurfaceData &prev_surface,
+    [[nodiscard]] Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
+                                         const SurfaceDataVar &prev_surface,
                                          const Var<direct::Param> &param) const noexcept {
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,
@@ -126,7 +126,7 @@ public:
     /// evaluate Li from bsdf
     [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
                                      DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point,
-                                     OCHitBSDF *hit_bsdf) const noexcept;
+                                     HitBSDFVar *hit_bsdf) const noexcept;
 
     template<typename... Args>
     [[nodiscard]] Float compute_p_hat(Args &&...args) const noexcept {
@@ -166,14 +166,14 @@ public:
     [[nodiscard]] DIReservoir combine_spatial(DIReservoir cur_rsv,
                                               const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_temporal(const DIReservoir &cur_rsv,
-                                               OCSurfaceData cur_surf,
+                                               SurfaceDataVar cur_surf,
                                                const DIReservoir &other_rsv) const noexcept;
     [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
-                                            const OCSurfaceData &cur_surf,
+                                            const SurfaceDataVar &cur_surf,
                                             const Int2 &pixel,
                                             const Var<Param> &param) const noexcept;
     [[nodiscard]] DIReservoir temporal_reuse(DIReservoir rsv,
-                                             const OCSurfaceData &cur_surf,
+                                             const SurfaceDataVar &cur_surf,
                                              const Float2 &motion_vec,
                                              const SensorSample &ss,
                                              const Var<Param> &param) const noexcept;

@@ -11,6 +11,14 @@
 #include "indirect_util.h"
 #include "core/thread_pool.h"
 
+namespace vision::indirect {
+
+struct Param {
+
+};
+
+}
+
 namespace vision {
 
 class RayTracingIntegrator;
@@ -60,27 +68,27 @@ public:
     }
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
-                                          OCHitBSDF &hit_bsdf) noexcept;
-    [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, OCSurfaceData cur_surf,
+                                          HitBSDFVar &hit_bsdf) noexcept;
+    [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, SurfaceDataVar cur_surf,
                                                const IIReservoir &other_rsv) const noexcept;
-    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
+    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const SurfaceDataVar &cur_surf,
                                              const Float2 &motion_vec, const SensorSample &ss) const noexcept;
 
     [[nodiscard]] IIReservoir constant_combine(const IIReservoir &canonical_rsv,
                                                const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] IIReservoir combine_spatial(IIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const OCSurfaceData &cur_surf,
+    [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const SurfaceDataVar &cur_surf,
                                             const Int2 &pixel) const noexcept;
-    [[nodiscard]] Float3 shading(IIReservoir rsv, const OCSurfaceData &cur_surf) const noexcept;
+    [[nodiscard]] Float3 shading(IIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
-    [[nodiscard]] Bool is_neighbor(const OCSurfaceData &cur_surface,
-                                   const OCSurfaceData &another_surface) const noexcept {
+    [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
+                                   const SurfaceDataVar &another_surface) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    _spatial.dot_threshold(),
                                    _spatial.depth_threshold);
     }
-    [[nodiscard]] Bool is_temporal_valid(const OCSurfaceData &cur_surface,
-                                         const OCSurfaceData &prev_surface) const noexcept {
+    [[nodiscard]] Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
+                                         const SurfaceDataVar &prev_surface) const noexcept {
         return vision::is_neighbor(cur_surface, prev_surface,
                                    _temporal.dot_threshold(),
                                    _temporal.depth_threshold);

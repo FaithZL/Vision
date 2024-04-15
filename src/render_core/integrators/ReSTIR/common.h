@@ -65,9 +65,8 @@ public:
 }// namespace vision
 
 namespace vision {
-using OCSurfaceData = Var<SurfaceData>;
-[[nodiscard]] inline Bool is_neighbor(const OCSurfaceData &cur_surface,
-                                      const OCSurfaceData &another_surface,
+[[nodiscard]] inline Bool is_neighbor(const SurfaceDataVar &cur_surface,
+                                      const SurfaceDataVar &another_surface,
                                       const Float &dot_threshold, const Float &depth_threshold) noexcept {
     Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
     Bool cond1 = (abs(cur_surface->depth() - another_surface->depth()) / cur_surface->depth()) < depth_threshold;

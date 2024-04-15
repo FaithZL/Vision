@@ -46,7 +46,7 @@ bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
-                             BSDFSample *bs, Float *light_pdf_point, OCHitBSDF *hit_bsdf) const noexcept {
+                             BSDFSample *bs, Float *light_pdf_point, HitBSDFVar *hit_bsdf) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = *scene().spectrum();
     const SampledWavelengths &swl = sampled_wavelengths();
@@ -181,7 +181,7 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
         ret->update(sampler->next_1d(), sample, weight);
     };
 
-    OCHitBSDF hit_bsdf;
+    HitBSDFVar hit_bsdf;
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DIRSVSample sample;
@@ -258,7 +258,7 @@ DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
     const SampledWavelengths &swl = sampled_wavelengths();
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
-    OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
+    SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
@@ -266,7 +266,7 @@ DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
     Uint M = rsv_idx.count() + 1;
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir neighbor_rsv = passthrough_reservoirs().read(idx);
-        OCSurfaceData surf = cur_surfaces().read(idx);
+        SurfaceDataVar surf = cur_surfaces().read(idx);
         Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, c_pos);
         canonical_weight += neighbor_pairwise_MIS(canonical_rsv, canonical_it, neighbor_rsv, neighbor_it, M, &ret);
     });
@@ -281,7 +281,7 @@ DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
-    OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
+    SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
     DIReservoir ret;
@@ -319,7 +319,7 @@ DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
 }
 
 DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
-                                       OCSurfaceData cur_surf,
+                                       SurfaceDataVar cur_surf,
                                        const DIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
@@ -371,7 +371,7 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
     return ret;
 }
 
-DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
+DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_surf,
                                      const Float2 &motion_vec,
                                      const SensorSample &ss,
                                      const Var<Param> &param) const noexcept {
@@ -420,7 +420,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         Var hit = geometry.trace_closest(rs.ray);
 
-        OCSurfaceData cur_surf;
+        SurfaceDataVar cur_surf;
         cur_surf.hit = hit;
         cur_surf->set_depth(0.f);
         Interaction it{false};
@@ -446,7 +446,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     _shader0 = device().compile(kernel, "ReSTIR direct initial candidates and temporal reuse");
 }
 
-DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_surf,
+DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_surf,
                                     const Int2 &pixel, const Var<Param> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
@@ -457,7 +457,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const OCSurfaceData &cur_su
             Int2 another_pixel = pixel + offset_i;
             another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
             Uint index = dispatch_id(another_pixel);
-            OCSurfaceData other_surf = cur_surfaces().read(index);
+            SurfaceDataVar other_surf = cur_surfaces().read(index);
             $if(is_neighbor(cur_surf, other_surf, param)) {
                 rsv_idx.push_back(index);
             };
@@ -532,7 +532,7 @@ void ReSTIRDI::compile_shader1() noexcept {
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
         sampler()->start(pixel, frame_index, 1);
-        OCSurfaceData cur_surf = cur_surfaces().read(dispatch_id());
+        SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
         DIReservoir temporal_rsv = passthrough_reservoirs().read(dispatch_id());
         DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), param);
         Var hit = cur_surf.hit;
