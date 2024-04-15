@@ -130,5 +130,5 @@ OC_STRUCT(vision::indirect::Reservoir, weight_sum, C, W, sample) {
 // clang-format on
 
 namespace vision::indirect {
-using IIReservoir = ocarina::Var<Reservoir>;
+using GIReservoir = ocarina::Var<Reservoir>;
 }

@@ -85,7 +85,7 @@ public:
     }
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
-
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                    const SurfaceDataVar &another_surface,
                                    const Var<direct::Param> &param) const noexcept {

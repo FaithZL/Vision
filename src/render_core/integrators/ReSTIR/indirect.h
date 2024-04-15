@@ -12,12 +12,26 @@
 #include "core/thread_pool.h"
 
 namespace vision::indirect {
-
 struct Param {
+    /// spatial
+    uint spatial{1};
+    uint N{};
+    float s_dot{};
+    float s_depth{};
+    float s_radius{};
 
+    /// temporal
+    uint temporal{1};
+    uint history_limit{};
+    float t_dot{};
+    float t_depth{};
+    float t_radius{};
 };
+}// namespace vision::indirect
 
-}
+OC_PARAM_STRUCT(vision::indirect::Param, spatial, N,
+                s_dot, s_depth, s_radius, temporal, history_limit,
+                t_dot, t_depth, t_radius){};
 
 namespace vision {
 
@@ -41,11 +55,11 @@ private:
     /**
      * initial samples and temporal reuse
      */
-    Shader<void(uint)> _temporal_pass;
+    Shader<void(indirect::Param, uint)> _temporal_pass;
     /**
      * spatial reuse and shading
      */
-    Shader<void(uint)> _spatial_shading;
+    Shader<void(indirect::Param, uint)> _spatial_shading;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
@@ -56,6 +70,7 @@ public:
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
     [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it, const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;
@@ -69,17 +84,17 @@ public:
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
                                           HitBSDFVar &hit_bsdf) noexcept;
-    [[nodiscard]] IIReservoir combine_temporal(const IIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                               const IIReservoir &other_rsv) const noexcept;
-    [[nodiscard]] IIReservoir temporal_reuse(IIReservoir rsv, const SurfaceDataVar &cur_surf,
+    [[nodiscard]] GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
+                                               const GIReservoir &other_rsv) const noexcept;
+    [[nodiscard]] GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                              const Float2 &motion_vec, const SensorSample &ss) const noexcept;
 
-    [[nodiscard]] IIReservoir constant_combine(const IIReservoir &canonical_rsv,
+    [[nodiscard]] GIReservoir constant_combine(const GIReservoir &canonical_rsv,
                                                const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] IIReservoir combine_spatial(IIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] IIReservoir spatial_reuse(IIReservoir rsv, const SurfaceDataVar &cur_surf,
+    [[nodiscard]] GIReservoir combine_spatial(GIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
+    [[nodiscard]] GIReservoir spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                             const Int2 &pixel) const noexcept;
-    [[nodiscard]] Float3 shading(IIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
+    [[nodiscard]] Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
     [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                    const SurfaceDataVar &another_surface) const noexcept {
@@ -109,6 +124,7 @@ public:
     [[nodiscard]] auto passthrough_reservoirs() const noexcept {
         return pipeline()->buffer_var<indirect::Reservoir>(2 + reservoir_base());
     }
+    [[nodiscard]] indirect::Param construct_param() const noexcept;
     [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
 };
 

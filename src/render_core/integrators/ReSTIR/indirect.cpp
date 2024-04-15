@@ -31,8 +31,33 @@ Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
 
 bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
     return widgets->use_tree("ReSTIR GI", [&] {
-
+        _changed |= widgets->check_box("switch", &_open);
+        if (_open) {
+            render_sub_UI(widgets);
+        }
     });
+}
+
+void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    _changed |= widgets->check_box("temporal", &_temporal.open);
+    if (_temporal.open) {
+        _changed |= widgets->input_uint_limit("history", &_temporal.limit, 0, 50, 1, 3);
+        _changed |= widgets->input_float_limit("temporal theta",
+                                               &_temporal.theta, 0, 90, 1, 1);
+        _changed |= widgets->input_float_limit("temporal depth", &_temporal.depth_threshold,
+                                               0, 1, 0.02, 0.1);
+        _changed |= widgets->input_float_limit("temporal radius", &_temporal.sampling_radius,
+                                               0, 50, 1, 5);
+    }
+    _changed |= widgets->check_box("spatial", &_spatial.open);
+    if (_spatial.open) {
+        _changed |= widgets->input_float_limit("spatial theta",
+                                               &_spatial.theta, 0, 90, 1, 1);
+        _changed |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
+                                               0, 1, 0.02, 0.1);
+        _changed |= widgets->input_float_limit("spatial radius", &_spatial.sampling_radius,
+                                               0, 50, 1, 5);
+    }
 }
 
 IIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
@@ -45,7 +70,10 @@ IIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
     IIRSVSample sample;
     sample.vp->set(it);
     $if(hit_bsdf.next_hit->is_hit()) {
-        Float3 L = _integrator->Li(ray_state, hit_bsdf.pdf, SampledSpectrum(throughput), sp_it, *this) / throughput;
+        Float3 L = _integrator->Li(ray_state, hit_bsdf.pdf,
+                                   SampledSpectrum(throughput),
+                                   sp_it, *this) /
+                   throughput;
         L = ocarina::zero_if_nan_inf(L);
         sample.sp->set(sp_it);
         sample.Lo.set(L);
@@ -99,10 +127,10 @@ Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
     return sample->p_hat(abs_dot(it.ng, normalize(sample.sp->position() - it.pos)));
 }
 
-IIReservoir ReSTIRGI::combine_temporal(const IIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                       const IIReservoir &other_rsv) const noexcept {
+GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
+                                       const GIReservoir &other_rsv) const noexcept {
     Camera *camera = scene().camera().get();
-    IIReservoir ret = other_rsv;
+    GIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     Float p_hat = compute_p_hat(it, ret.sample);
@@ -110,7 +138,7 @@ IIReservoir ReSTIRGI::combine_temporal(const IIReservoir &cur_rsv, SurfaceDataVa
     return ret;
 }
 
-IIReservoir ReSTIRGI::temporal_reuse(IIReservoir rsv, const SurfaceDataVar &cur_surf,
+GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                      const Float2 &motion_vec, const SensorSample &ss) const noexcept {
     if (!_temporal.open) {
         return rsv;
@@ -120,7 +148,7 @@ IIReservoir ReSTIRGI::temporal_reuse(IIReservoir rsv, const SurfaceDataVar &cur_
     int2 res = make_int2(pipeline()->resolution());
     $if(in_screen(make_int2(prev_p_film), res)) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
-        IIReservoir prev_rsv = prev_reservoirs().read(index);
+        GIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
         SurfaceDataVar another_surf = prev_surfaces().read(index);
         $if(is_temporal_valid(cur_surf, another_surf)) {
@@ -133,7 +161,7 @@ IIReservoir ReSTIRGI::temporal_reuse(IIReservoir rsv, const SurfaceDataVar &cur_
 void ReSTIRGI::compile_temporal_reuse() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera *camera = scene().camera().get();
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
@@ -149,7 +177,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
         sampler()->start(pixel, frame_index, 4);
         IIRSVSample sample = _samples.read(dispatch_id());
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
-        IIReservoir rsv;
+        GIReservoir rsv;
         Float p_hat = sample->p_hat(hit_bsdf.cos_theta);
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
         rsv->update(0.5f, sample, weight);
@@ -161,18 +189,18 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
     _temporal_pass = device().compile(kernel, "ReSTIR indirect temporal reuse");
 }
 
-IIReservoir ReSTIRGI::constant_combine(const IIReservoir &canonical_rsv,
+GIReservoir ReSTIRGI::constant_combine(const GIReservoir &canonical_rsv,
                                        const Container<uint> &rsv_idx) const noexcept {
     Camera *camera = scene().camera().get();
     Float3 c_pos = camera->device_position();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
 
-    IIReservoir ret = canonical_rsv;
+    GIReservoir ret = canonical_rsv;
     Uint sample_num = rsv_idx.count() + 1;
 
     rsv_idx.for_each([&](const Uint &idx) {
-        IIReservoir rsv = passthrough_reservoirs().read(idx);
+        GIReservoir rsv = passthrough_reservoirs().read(idx);
         $if(luminance(rsv.sample.Lo.as_vec3()) > 0) {
             SurfaceDataVar neighbor_surf = cur_surfaces().read(idx);
             Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf.hit, c_pos);
@@ -190,7 +218,7 @@ IIReservoir ReSTIRGI::constant_combine(const IIReservoir &canonical_rsv,
     return ret;
 }
 
-IIReservoir ReSTIRGI::combine_spatial(IIReservoir cur_rsv,
+GIReservoir ReSTIRGI::combine_spatial(GIReservoir cur_rsv,
                                       const Container<uint> &rsv_idx) const noexcept {
 
     cur_rsv = constant_combine(cur_rsv, rsv_idx);
@@ -198,7 +226,7 @@ IIReservoir ReSTIRGI::combine_spatial(IIReservoir cur_rsv,
     return cur_rsv;
 }
 
-IIReservoir ReSTIRGI::spatial_reuse(IIReservoir rsv, const SurfaceDataVar &cur_surf,
+GIReservoir ReSTIRGI::spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                     const Int2 &pixel) const noexcept {
     if (!_spatial.open) {
         return rsv;
@@ -222,7 +250,7 @@ IIReservoir ReSTIRGI::spatial_reuse(IIReservoir rsv, const SurfaceDataVar &cur_s
     return rsv;
 }
 
-Float3 ReSTIRGI::shading(indirect::IIReservoir rsv,
+Float3 ReSTIRGI::shading(indirect::GIReservoir rsv,
                          const SurfaceDataVar &cur_surf) const noexcept {
     Camera *camera = scene().camera().get();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
@@ -236,7 +264,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
 
-    Kernel kernel = [&](Uint frame_index) {
+    Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         sampler()->try_load_data();
         sampler()->start(dispatch_idx().xy(), frame_index, 5);
         initial(sampler(), frame_index, spectrum);
@@ -245,7 +273,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
         $if(surf.hit->is_miss()) {
             $return();
         };
-        IIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
+        GIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
         rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()));
         Float3 L = shading(rsv, surf);
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
@@ -254,13 +282,31 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     _spatial_shading = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
 }
 
+indirect::Param ReSTIRGI::construct_param() const noexcept {
+    indirect::Param param;
+
+    param.spatial = static_cast<uint>(_spatial.open);
+    param.N = _spatial.sample_num;
+    param.s_dot = _spatial.dot_threshold();
+    param.s_depth = _spatial.depth_threshold;
+    param.s_radius = _spatial.sampling_radius;
+
+    param.temporal = static_cast<uint>(_temporal.open);
+    param.history_limit = _temporal.limit;
+    param.t_dot = _temporal.dot_threshold();
+    param.t_depth = _temporal.depth_threshold;
+    param.t_radius = _temporal.sampling_radius;
+    return param;
+}
+
 CommandList ReSTIRGI::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     if (_open) {
+        indirect::Param param = construct_param();
         ret << _initial_samples(frame_index).dispatch(rp->resolution());
-        ret << _temporal_pass(frame_index).dispatch(rp->resolution());
-        ret << _spatial_shading(frame_index).dispatch(rp->resolution());
+        ret << _temporal_pass(param, frame_index).dispatch(rp->resolution());
+        ret << _spatial_shading(param, frame_index).dispatch(rp->resolution());
     }
     return ret;
 }
