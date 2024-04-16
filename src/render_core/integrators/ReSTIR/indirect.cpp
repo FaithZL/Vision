@@ -136,19 +136,17 @@ GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVa
 }
 
 GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                     const Float2 &motion_vec, const SensorSample &ss) const noexcept {
-    if (!_temporal.open) {
-        return rsv;
-    }
+                                     const Float2 &motion_vec, const SensorSample &ss,
+                                     const Var<indirect::Param> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
-    Float limit = rsv.C * _temporal.limit;
+    Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
-    $if(in_screen(make_int2(prev_p_film), res)) {
+    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
         Uint index = dispatch_id(make_uint2(prev_p_film));
         GIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
         SurfaceDataVar another_surf = prev_surfaces().read(index);
-        $if(is_temporal_valid(cur_surf, another_surf)) {
+        $if(is_temporal_valid(cur_surf, another_surf, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         };
     };
@@ -180,7 +178,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
         Float2 motion_vec = frame_buffer().motion_vectors().read(dispatch_id());
-        rsv = temporal_reuse(rsv, surf, motion_vec, ss);
+        rsv = temporal_reuse(rsv, surf, motion_vec, ss, param);
         passthrough_reservoirs().write(dispatch_id(), rsv);
     };
     _temporal_pass = device().compile(kernel, "ReSTIR indirect temporal reuse");
@@ -222,25 +220,24 @@ GIReservoir ReSTIRGI::combine_spatial(GIReservoir cur_rsv,
 }
 
 GIReservoir ReSTIRGI::spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                    const Int2 &pixel) const noexcept {
-    if (!_spatial.open) {
-        return rsv;
-    }
-    int2 res = make_int2(pipeline()->resolution());
-    Container<uint> rsv_idx{_spatial.sample_num};
-    $for(i, _spatial.sample_num) {
-        Float2 offset = square_to_disk(sampler()->next_2d()) * _spatial.sampling_radius;
-        Int2 offset_i = make_int2(ocarina::round(offset));
-        Int2 another_pixel = pixel + offset_i;
-        another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
-        Uint index = dispatch_id(another_pixel);
-        SurfaceDataVar other_surf = cur_surfaces().read(index);
-        $if(is_neighbor(cur_surf, other_surf)) {
-            rsv_idx.push_back(index);
+                                    const Int2 &pixel, const Var<indirect::Param> &param) const noexcept {
+    $if(param.spatial) {
+        int2 res = make_int2(pipeline()->resolution());
+        Container<uint> rsv_idx{_spatial.sample_num};
+        $for(i, _spatial.sample_num) {
+            Float2 offset = square_to_disk(sampler()->next_2d()) * _spatial.sampling_radius;
+            Int2 offset_i = make_int2(ocarina::round(offset));
+            Int2 another_pixel = pixel + offset_i;
+            another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
+            Uint index = dispatch_id(another_pixel);
+            SurfaceDataVar other_surf = cur_surfaces().read(index);
+            $if(is_neighbor(cur_surf, other_surf, param)) {
+                rsv_idx.push_back(index);
+            };
         };
-    };
-    $if(cur_surf.hit->is_hit()) {
-        rsv = combine_spatial(rsv, rsv_idx);
+        $if(cur_surf.hit->is_hit()) {
+            rsv = combine_spatial(rsv, rsv_idx);
+        };
     };
     return rsv;
 }
@@ -269,7 +266,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
             $return();
         };
         GIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
-        rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()));
+        rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()), param);
         Float3 L = shading(rsv, surf);
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);

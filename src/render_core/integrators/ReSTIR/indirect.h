@@ -87,26 +87,29 @@ public:
     [[nodiscard]] GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
                                                const GIReservoir &other_rsv) const noexcept;
     [[nodiscard]] GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                             const Float2 &motion_vec, const SensorSample &ss) const noexcept;
+                                             const Float2 &motion_vec, const SensorSample &ss,
+                                             const Var<indirect::Param> &param) const noexcept;
 
     [[nodiscard]] GIReservoir constant_combine(const GIReservoir &canonical_rsv,
                                                const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] GIReservoir combine_spatial(GIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] GIReservoir spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                            const Int2 &pixel) const noexcept;
+                                            const Int2 &pixel, const Var<indirect::Param> &param) const noexcept;
     [[nodiscard]] Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
     [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
-                                   const SurfaceDataVar &another_surface) const noexcept {
+                                   const SurfaceDataVar &another_surface,
+                                   const Var<indirect::Param> &param) const noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
-                                   _spatial.dot_threshold(),
-                                   _spatial.depth_threshold);
+                                   param.s_dot,
+                                   param.s_depth);
     }
     [[nodiscard]] Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
-                                         const SurfaceDataVar &prev_surface) const noexcept {
+                                         const SurfaceDataVar &prev_surface,
+                                         const Var<indirect::Param> &param) const noexcept {
         return vision::is_neighbor(cur_surface, prev_surface,
-                                   _temporal.dot_threshold(),
-                                   _temporal.depth_threshold);
+                                   param.t_dot,
+                                   param.t_depth);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
     [[nodiscard]] auto prev_surfaces() const noexcept {
