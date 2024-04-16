@@ -1051,7 +1051,7 @@
 //					"open": false,
 //					"mis": true,
 					"theta": 2,
-					"depth": 1,
+					"depth": 0.3,
 					"radius": 0,
 					"history_limit": 10
 				},
@@ -1075,7 +1075,7 @@
 //					"open": false,
 					//					"mis": true,
 					"theta": 2,
-					"depth": 1,
+					"depth": 0.3,
 					"radius": 0,
 					"history_limit": 10
 				},
