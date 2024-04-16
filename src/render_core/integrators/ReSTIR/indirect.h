@@ -73,8 +73,8 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void compile_initial_samples() noexcept;
     void compile_temporal_reuse() noexcept;
-    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it, const IIRSVSample &sample, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] Float compute_p_hat(const Interaction &it, const IIRSVSample &sample) const noexcept;
+    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it, const GIRSVSample &sample, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] Float compute_p_hat(const Interaction &it, const GIRSVSample &sample) const noexcept;
     void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();
@@ -82,7 +82,7 @@ public:
         compile_spatial_shading();
     }
     [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
-    [[nodiscard]] IIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
+    [[nodiscard]] GIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
                                           HitBSDFVar &hit_bsdf) noexcept;
     [[nodiscard]] GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
                                                const GIReservoir &other_rsv) const noexcept;

@@ -15,7 +15,7 @@ class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIRDI _direct;
     ReSTIRGI _indirect;
-    std::shared_future<Shader<void(uint)>> _combine;
+    Shader<void(uint, float, float)> _combine;
     SP<Denoiser> _denoiser;
 
 public:
@@ -54,14 +54,14 @@ public:
         _indirect.compile();
 
         Camera *camera = scene().camera().get();
-        Kernel kernel = [&](Uint frame_index) {
+        Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
             camera->load_data();
-            Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz() * _direct.factor();
-            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()).xyz() * _indirect.factor();
+            Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz() * di;
+            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()).xyz() * ii;
             Float3 L = direct + indirect;
             camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };
-        _combine = device().async_compile(ocarina::move(kernel), "combine");
+        _combine = device().compile(kernel, "combine");
     }
 
     void render() const noexcept override {
@@ -70,7 +70,9 @@ public:
         stream << Env::debugger().upload();
         stream << _direct.estimate(_frame_index);
         stream << _indirect.estimate(_frame_index);
-        stream << _combine.get()(_frame_index).dispatch(pipeline()->resolution());
+        stream << _combine(_frame_index, _direct.factor(),
+                           _indirect.factor())
+                      .dispatch(pipeline()->resolution());
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

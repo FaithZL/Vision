@@ -70,7 +70,7 @@ OC_STRUCT(vision::indirect::RSVSample, sp, vp, u, Lo) {
 };
 
 namespace vision {
-using IIRSVSample = Var<indirect::RSVSample>;
+using GIRSVSample = Var<indirect::RSVSample>;
 }
 
 namespace vision::indirect {
@@ -104,7 +104,7 @@ OC_STRUCT(vision::indirect::Reservoir, weight_sum, C, W, sample) {
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
     }
-    Bool update(oc_float<p> u, vision::IIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
+    Bool update(oc_float<p> u, vision::GIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
         C += new_C;
         Bool ret = u * weight_sum < weight;

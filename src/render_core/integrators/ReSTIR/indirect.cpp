@@ -60,14 +60,14 @@ void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     }
 }
 
-IIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
+GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
                                   HitBSDFVar &hit_bsdf) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, frame_index(), 3);
     Interaction sp_it{false};
     RayState ray_state = RayState::create(hit_bsdf.next_ray);
     Float3 throughput = hit_bsdf->safe_throughput();
-    IIRSVSample sample;
+    GIRSVSample sample;
     sample.vp->set(it);
     $if(hit_bsdf.next_hit->is_hit()) {
         Float3 L = _integrator->Li(ray_state, hit_bsdf.pdf,
@@ -84,7 +84,6 @@ IIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
 void ReSTIRGI::compile_initial_samples() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera *camera = scene().camera().get();
-
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         _integrator->load_data();
@@ -99,14 +98,13 @@ void ReSTIRGI::compile_initial_samples() noexcept {
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
-        IIRSVSample sample = init_sample(it, ss, hit_bsdf);
+        GIRSVSample sample = init_sample(it, ss, hit_bsdf);
         _samples.write(dispatch_id(), sample);
     };
-
     _initial_samples = device().compile(kernel, "ReSTIR indirect initial samples");
 }
 
-ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const IIRSVSample &sample,
+ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GIRSVSample &sample,
                                 MaterialEvalMode mode) const noexcept {
     return outline(
         [&] {
@@ -122,8 +120,7 @@ ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const IIRSVSample &sample
 }
 
 Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
-                              const vision::IIRSVSample &sample) const noexcept {
-    //    Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
+                              const vision::GIRSVSample &sample) const noexcept {
     return sample->p_hat(abs_dot(it.ng, normalize(sample.sp->position() - it.pos)));
 }
 
@@ -175,7 +172,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
             ss = sampler->sensor_sample(pixel, camera->filter());
         });
         sampler()->start(pixel, frame_index, 4);
-        IIRSVSample sample = _samples.read(dispatch_id());
+        GIRSVSample sample = _samples.read(dispatch_id());
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         GIReservoir rsv;
         Float p_hat = sample->p_hat(hit_bsdf.cos_theta);
@@ -211,10 +208,8 @@ GIReservoir ReSTIRGI::constant_combine(const GIReservoir &canonical_rsv,
             ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);
         };
     });
-
     Float p_hat = compute_p_hat(canonical_it, ret.sample);
     ret->update_W(p_hat);
-
     return ret;
 }
 
@@ -302,12 +297,10 @@ indirect::Param ReSTIRGI::construct_param() const noexcept {
 CommandList ReSTIRGI::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    if (_open) {
-        indirect::Param param = construct_param();
-        ret << _initial_samples(frame_index).dispatch(rp->resolution());
-        ret << _temporal_pass(param, frame_index).dispatch(rp->resolution());
-        ret << _spatial_shading(param, frame_index).dispatch(rp->resolution());
-    }
+    indirect::Param param = construct_param();
+    ret << _initial_samples(frame_index).dispatch(rp->resolution());
+    ret << _temporal_pass(param, frame_index).dispatch(rp->resolution());
+    ret << _spatial_shading(param, frame_index).dispatch(rp->resolution());
     return ret;
 }
 
