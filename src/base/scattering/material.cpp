@@ -79,13 +79,13 @@ BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler *sampler, const Ui
 
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     if (desc.has_attr("bump")) {
-        _bump.set(scene().create_slot(desc.slot("bump", 1.f, Number)));
-        _bump_scale.set(scene().create_slot(desc.slot("bump_scale", 1.f, Number)));
+        bump_.set(scene().create_slot(desc.slot("bump", 1.f, Number)));
+        bump_scale_.set(scene().create_slot(desc.slot("bump_scale", 1.f, Number)));
     }
 }
 
 bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
-    string label = format("{} {} material: {}", _index, impl_type().data(), _name.c_str());
+    string label = format("{} {} material: {}", index_, impl_type().data(), _name.c_str());
     bool open = widgets->use_tree(label, [&] {
         render_sub_UI(widgets);
     });
@@ -203,9 +203,9 @@ Uint Material::combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept {
 }
 
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
-    switch (_bump.dim()) {
-        case 1: detail::compute_by_bump_map(_bump, _bump_scale, it, swl); break;
-        case 3: detail::compute_by_normal_map(_bump, _bump_scale, it, swl); break;
+    switch (bump_.dim()) {
+        case 1: detail::compute_by_bump_map(bump_, bump_scale_, it, swl); break;
+        case 3: detail::compute_by_normal_map(bump_, bump_scale_, it, swl); break;
         default: break;
     }
 }
@@ -219,7 +219,7 @@ MaterialEvaluator Material::create_evaluator(const Interaction &it,
 
 void Material::build_evaluator(Evaluator &evaluator, Interaction it,
                                const SampledWavelengths &swl) const noexcept {
-    if (_bump) {
+    if (bump_) {
         _apply_bump(std::addressof(it), swl);
     }
     _build_evaluator(evaluator, it, swl);

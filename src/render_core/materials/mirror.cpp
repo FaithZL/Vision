@@ -10,40 +10,40 @@ namespace vision {
 
 class MirrorBxDFSet : public BxDFSet {
 private:
-    DCSP<Fresnel> _fresnel;
-    MicrofacetReflection _bxdf;
+    DCSP<Fresnel> fresnel_;
+    MicrofacetReflection bxdf_;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_fresnel->type_hash(), _bxdf.type_hash());
+        return hash64(fresnel_->type_hash(), bxdf_.type_hash());
     }
 
 public:
     MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf)
-        : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+        : fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MirrorBxDFSet)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _bxdf.albedo(wo); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
-        return _bxdf.safe_evaluate(wo, wi, _fresnel->clone(), mode);
+        return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        return _bxdf.sample(wo, sampler, _fresnel->clone());
+        return bxdf_.sample(wo, sampler, fresnel_->clone());
     }
 
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
                                              Sampler *sampler) const noexcept override {
-        return _bxdf.sample_wi(wo, sampler->next_2d(), _fresnel->clone());
+        return bxdf_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
     }
 };
 
 class MirrorMaterial : public Material {
 private:
-    VS_MAKE_SLOT(color)
-    VS_MAKE_SLOT(roughness)
-    bool _remapping_roughness{true};
+    VS_MAKE_SLOT_(color)
+    VS_MAKE_SLOT_(roughness)
+    bool remapping_roughness_{true};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -54,18 +54,18 @@ protected:
 public:
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
-        _color.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.0001f))));
-        init_slot_cursor(&_color, 2);
+          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
+        color_.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        roughness_.set(scene().create_slot(desc.slot("roughness", make_float2(0.0001f))));
+        init_slot_cursor(&color_, 2);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 
 protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum kr = _color.eval_albedo_spectrum(it, swl).sample;
-        Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
+        SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
+        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
+        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, pipeline());

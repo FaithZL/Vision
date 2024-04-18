@@ -14,22 +14,22 @@ private:
     static constexpr float float_min = std::numeric_limits<float>::min();
 
 private:
-    Serial<float> _factor{float_min};
-    Slot _thickness;
-    SP<Material> _bottom{};
-    SP<Material> _top{};
+    Serial<float> factor_{float_min};
+    Slot thickness_;
+    SP<Material> bottom_{};
+    SP<Material> top_{};
 
 public:
     explicit MultiLayeredMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _thickness(scene().create_slot(desc.slot("_thickness", 1.f, Number))),
-          _bottom(scene().load<Material>(*desc.mat0)),
-          _top(scene().load<Material>(*desc.mat1)) {}
+          thickness_(scene().create_slot(desc.slot("thickness_", 1.f, Number))),
+          bottom_(scene().load<Material>(*desc.mat0)),
+          top_(scene().load<Material>(*desc.mat1)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
-        _bottom->prepare();
-        _top->prepare();
-        _thickness->prepare();
+        bottom_->prepare();
+        top_->prepare();
+        thickness_->prepare();
     }
 };
 

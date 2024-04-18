@@ -11,19 +11,19 @@ namespace vision {
 
 class FresnelBlend : public BxDF {
 private:
-    SampledSpectrum Rd, Rs;
+    SampledSpectrum Rd_, Rs_;
     DCSP<Microfacet<D>> _microfacet;
 
 public:
     FresnelBlend(SampledSpectrum Rd, SampledSpectrum Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::Reflection), Rd(std::move(Rd)), Rs(std::move(Rs)), _microfacet(m) {}
+        : BxDF(swl, BxDFFlag::Reflection), Rd_(std::move(Rd)), Rs_(std::move(Rs)), _microfacet(m) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FresnelBlend)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Rd; }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Rd_; }
 
     [[nodiscard]] SampledSpectrum f_diffuse(Float3 wo, Float3 wi) const noexcept {
-        SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd * (SampledSpectrum(swl().dimension(), 1.f) - Rs) *
+        SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd_ * (SampledSpectrum(swl().dimension(), 1.f) - Rs_) *
                                   (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
                                   (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
         return diffuse;
@@ -35,7 +35,7 @@ public:
         Float3 wh = wi + wo;
         wh = normalize(wh);
         SampledSpectrum specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
-                                   fresnel_schlick(Rs, dot(wi, wh));
+                                   fresnel_schlick(Rs_, dot(wi, wh));
         return select(is_zero(wh), 0.f, 1.f) * specular;
     }
     [[nodiscard]] Float PDF_specular(Float3 wo, Float3 wi) const noexcept {
@@ -72,29 +72,29 @@ public:
 
 class SubstrateBxDFSet : public BxDFSet {
 private:
-    SP<Fresnel> _fresnel;
-    FresnelBlend _bxdf;
+    SP<Fresnel> fresnel_;
+    FresnelBlend bxdf_;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_bxdf.type_hash(), _fresnel->type_hash());
+        return hash64(bxdf_.type_hash(), fresnel_->type_hash());
     }
 
 public:
     SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf)
-        : _fresnel(fresnel), _bxdf(std::move(bxdf)) {}
+        : fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _bxdf.albedo(wo); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
                                              Uint flag) const noexcept override {
-        return _bxdf.safe_evaluate(wo, wi, _fresnel->clone(), mode);
+        return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        return _bxdf.sample(wo, sampler, _fresnel->clone());
+        return bxdf_.sample(wo, sampler, fresnel_->clone());
     }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
                                              Sampler *sampler) const noexcept override {
-        return _bxdf.sample_wi(wo, sampler->next_2d(), _fresnel->clone());
+        return bxdf_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
     }
 };
 
@@ -114,10 +114,10 @@ public:
 //    }
 class SubstrateMaterial : public Material {
 private:
-    VS_MAKE_SLOT(diff)
-    VS_MAKE_SLOT(spec)
-    VS_MAKE_SLOT(roughness)
-    bool _remapping_roughness{true};
+    VS_MAKE_SLOT_(diff)
+    VS_MAKE_SLOT_(spec)
+    VS_MAKE_SLOT_(roughness)
+    bool remapping_roughness_{true};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -128,19 +128,19 @@ protected:
 public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
-        _diff.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        _spec.set(scene().create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
-        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.001f))));
-        init_slot_cursor(&_diff, 3);
+          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
+        diff_.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        spec_.set(scene().create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
+        roughness_.set(scene().create_slot(desc.slot("roughness", make_float2(0.001f))));
+        init_slot_cursor(&diff_, 3);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = _diff.eval_albedo_spectrum(it, swl).sample;
-        SampledSpectrum Rs = _spec.eval_albedo_spectrum(it, swl).sample;
-        Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
+        SampledSpectrum Rd = diff_.eval_albedo_spectrum(it, swl).sample;
+        SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
+        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
+        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},

@@ -91,14 +91,14 @@ public:
 
 class DielectricBxDFSet : public BxDFSet {
 private:
-    DCSP<Fresnel> _fresnel;
-    MicrofacetReflection _refl;
-    MicrofacetTransmission _trans;
-    Bool _dispersive{};
+    DCSP<Fresnel> fresnel_;
+    MicrofacetReflection refl_;
+    MicrofacetTransmission trans_;
+    Bool dispersive_{};
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_fresnel->type_hash(), _refl.type_hash(), _trans.type_hash());
+        return hash64(fresnel_->type_hash(), refl_.type_hash(), trans_.type_hash());
     }
 
 public:
@@ -106,60 +106,60 @@ public:
                       MicrofacetReflection refl,
                       MicrofacetTransmission trans,
                       const Bool &dispersive)
-        : _fresnel(fresnel),
-          _refl(ocarina::move(refl)), _trans(ocarina::move(trans)),
-          _dispersive(dispersive) {}
+        : fresnel_(fresnel),
+          refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
+          dispersive_(dispersive) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _refl.albedo(wo); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
-        return _dispersive;
+        return dispersive_;
     }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
                                              Uint flag) const noexcept override {
-        ScatterEval ret{_refl.swl().dimension()};
-        auto fresnel = _fresnel->clone();
+        ScatterEval ret{refl_.swl().dimension()};
+        auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         $if(same_hemisphere(wo, wi)) {
-            ret = _refl.evaluate(wo, wi, fresnel, mode);
+            ret = refl_.evaluate(wo, wi, fresnel, mode);
         }
         $else {
-            ret = _trans.evaluate(wo, wi, fresnel, mode);
+            ret = trans_.evaluate(wo, wi, fresnel, mode);
         };
         return ret;
     }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
                                              Sampler *sampler) const noexcept override {
         Float uc = sampler->next_1d();
-        auto fresnel = _fresnel->clone();
+        auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         SampledDirection ret;
         $if(uc < fr) {
-            ret = _refl.sample_wi(wo, sampler->next_2d(), fresnel);
+            ret = refl_.sample_wi(wo, sampler->next_2d(), fresnel);
             ret.pdf = fr;
         }
         $else {
-            ret = _trans.sample_wi(wo, sampler->next_2d(), fresnel);
+            ret = trans_.sample_wi(wo, sampler->next_2d(), fresnel);
             ret.pdf = 1 - fr;
         };
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag,
                                           Sampler *sampler) const noexcept override {
-        BSDFSample ret{_refl.swl().dimension()};
+        BSDFSample ret{refl_.swl().dimension()};
         Float uc = sampler->next_1d();
-        auto fresnel = _fresnel->clone();
+        auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(uc < fr) {
-            ret = _refl.sample(wo, sampler, fresnel);
+            ret = refl_.sample(wo, sampler, fresnel);
             ret.eval.pdf *= fr;
         }
         $else {
-            ret = _trans.sample(wo, sampler, fresnel);
+            ret = trans_.sample(wo, sampler, fresnel);
             ret.eval.pdf *= 1 - fr;
         };
         return ret;
@@ -181,10 +181,10 @@ public:
 //    }
 class GlassMaterial : public Material {
 private:
-    VS_MAKE_SLOT(color);
-    VS_MAKE_SLOT(ior);
-    VS_MAKE_SLOT(roughness);
-    bool _remapping_roughness{true};
+    VS_MAKE_SLOT_(color);
+    VS_MAKE_SLOT_(ior);
+    VS_MAKE_SLOT_(roughness);
+    bool remapping_roughness_{true};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -195,11 +195,11 @@ protected:
 public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
-        _color.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
+          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
+        color_.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        roughness_.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
         init_ior(desc);
-        init_slot_cursor(&_color, 3);
+        init_slot_cursor(&color_, 3);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void init_ior(const MaterialDesc &desc) noexcept {
@@ -216,27 +216,27 @@ public:
             float ior = (*ior_curve(name))(lambda);
             eta_slot = desc.slot("", ior);
         }
-        _ior = scene().create_slot(eta_slot);
-        _ior->set_name("ior");
+        ior_ = scene().create_slot(eta_slot);
+        ior_->set_name("ior");
     }
 
     void prepare() noexcept override {
-        _ior->prepare();
+        ior_->prepare();
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum color = _color.eval_albedo_spectrum(it, swl).sample;
-        DynamicArray<float> iors = _ior.evaluate(it, swl);
+        SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
+        DynamicArray<float> iors = ior_.evaluate(it, swl);
 
-        Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
+        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
+        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors},
                                                       swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), _ior->type() == ESPD);
+        return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), ior_->type() == ESPD);
     }
 };
 }// namespace vision

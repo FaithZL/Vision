@@ -11,45 +11,46 @@ namespace vision {
 
 class FresnelConductor : public Fresnel {
 private:
-    SampledSpectrum _eta, _k;
+    SampledSpectrum eta_, k_;
 
 public:
-    FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k, const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), _eta(eta), _k(k) {}
+    FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k,
+                     const SampledWavelengths &swl, const Pipeline *rp)
+        : Fresnel(swl, rp), eta_(eta), k_(k) {}
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
-        return fresnel_complex(abs_cos_theta, _eta, _k);
+        return fresnel_complex(abs_cos_theta, eta_, k_);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConductor>(_eta, _k, *swl_, rp_);
+        return make_shared<FresnelConductor>(eta_, k_, *swl_, rp_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
 class ConductorBxDFSet : public BxDFSet {
 private:
-    DCSP<Fresnel> _fresnel;
-    MicrofacetReflection _refl;
+    DCSP<Fresnel> fresnel_;
+    MicrofacetReflection refl_;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_fresnel->type_hash(), _refl.type_hash());
+        return hash64(fresnel_->type_hash(), refl_.type_hash());
     }
 
 public:
     ConductorBxDFSet(const SP<Fresnel> &fresnel,
                      MicrofacetReflection refl)
-        : _fresnel(fresnel), _refl(ocarina::move(refl)) {}
+        : fresnel_(fresnel), refl_(ocarina::move(refl)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(ConductorBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _refl.albedo(wo); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
-        return _refl.safe_evaluate(wo, wi, _fresnel->clone(), mode);
+        return refl_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        return _refl.sample(wo, sampler, _fresnel->clone());
+        return refl_.sample(wo, sampler, fresnel_->clone());
     }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
                                              Sampler *sampler) const noexcept override {
-        return _refl.sample_wi(wo, sampler->next_2d(), _fresnel->clone());
+        return refl_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
     }
 };
 
@@ -60,10 +61,10 @@ public:
 //    }
 class MetalMaterial : public Material {
 private:
-    VS_MAKE_SLOT(eta);
-    VS_MAKE_SLOT(k);
-    VS_MAKE_SLOT(roughness);
-    bool _remapping_roughness{false};
+    VS_MAKE_SLOT_(eta);
+    VS_MAKE_SLOT_(k);
+    VS_MAKE_SLOT_(roughness);
+    bool remapping_roughness_{false};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -74,10 +75,10 @@ protected:
 public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
-          _remapping_roughness(desc["remapping_roughness"].as_bool(true)) {
-        _roughness.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
+          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
+        roughness_.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
         init_ior(desc);
-        init_slot_cursor(&_eta, 3);
+        init_slot_cursor(&eta_, 3);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void init_ior(const MaterialDesc &desc) noexcept {
@@ -98,22 +99,22 @@ public:
             k_slot = desc.slot("", k);
         }
 
-        _eta.set(scene().create_slot(eta_slot));
-        _k.set(scene().create_slot(k_slot));
+        eta_.set(scene().create_slot(eta_slot));
+        k_.set(scene().create_slot(k_slot));
     }
 
     void prepare() noexcept override {
-        _eta->prepare();
-        _k->prepare();
+        eta_->prepare();
+        k_->prepare();
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = _roughness.evaluate(it, swl).as_vec2();
-        alpha = _remapping_roughness ? roughness_to_alpha(alpha) : alpha;
+        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
+        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        SampledSpectrum eta = SampledSpectrum{_eta.evaluate(it, swl)};
-        SampledSpectrum k = SampledSpectrum{_k.evaluate(it, swl)};
+        SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl)};
+        SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);

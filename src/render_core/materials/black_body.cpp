@@ -9,19 +9,19 @@ namespace vision {
 
 class BlackBodyBxDFSet : public BxDFSet {
 private:
-    const SampledWavelengths *_swl{nullptr};
+    const SampledWavelengths *swl_{nullptr};
 
 public:
-    explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : _swl(&swl) {}
+    explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi,
                                              MaterialEvalMode mode, Uint flag) const noexcept override {
-        ScatterEval ret{_swl->dimension()};
-        ret.f = {_swl->dimension(), 0.f};
+        ScatterEval ret{swl_->dimension()};
+        ret.f = {swl_->dimension(), 0.f};
         ret.pdf = 1.f;
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret{_swl->dimension()};
+        BSDFSample ret{swl_->dimension()};
         ret.eval.pdf = 1.f;
         /// Avoid sample discarding due to hemispherical check
         ret.eval.flags = BxDFFlag::DiffRefl;
@@ -29,7 +29,7 @@ public:
         return ret;
     }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
-        return {_swl->dimension(), 0.f};
+        return {swl_->dimension(), 0.f};
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
 };

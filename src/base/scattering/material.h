@@ -69,9 +69,9 @@ public:
     using Evaluator = MaterialEvaluator;
 
 protected:
-    uint _index{InvalidUI32};
-    VS_MAKE_SLOT(bump);
-    VS_MAKE_SLOT(bump_scale);
+    uint index_{InvalidUI32};
+    VS_MAKE_SLOT_(bump);
+    VS_MAKE_SLOT_(bump_scale);
 
 protected:
     static constexpr uint stride = sizeof(Slot);
@@ -80,43 +80,43 @@ protected:
         uint offset{0u};
         uint num{0u};
     };
-    SlotCursor _slot_cursor;
+    SlotCursor slot_cursor_;
     const Slot &get_slot(uint index) const noexcept {
-        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
+        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
         return head[index];
     }
 
     Slot &get_slot(uint index) noexcept {
-        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + _slot_cursor.offset);
+        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
         return (const_cast<Slot *>(head))[index];
     }
 
 public:
     explicit Material(const MaterialDesc &desc);
-    OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
         uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
-        _slot_cursor.offset = offset;
-        _slot_cursor.num = num;
+        slot_cursor_.offset = offset;
+        slot_cursor_.num = num;
     }
     void init_slot_cursor(const Slot *head, const Slot *back) noexcept {
         uint offset = reinterpret_cast<const char *>(head) - reinterpret_cast<char *>(this);
-        _slot_cursor.offset = offset;
-        _slot_cursor.num = (back - head) + 1;
+        slot_cursor_.offset = offset;
+        slot_cursor_.num = (back - head) + 1;
     }
 
     template<typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
-        if (_bump) {
-            ret = OC_FORWARD(func)(ret, _bump);
+        if (bump_) {
+            ret = OC_FORWARD(func)(ret, bump_);
         }
-        if (_bump_scale) {
-            ret = OC_FORWARD(func)(ret, _bump_scale);
+        if (bump_scale_) {
+            ret = OC_FORWARD(func)(ret, bump_scale_);
         }
-        for (int i = 0; i < _slot_cursor.num; ++i) {
+        for (int i = 0; i < slot_cursor_.num; ++i) {
             const Slot &slot = get_slot(i);
             if (slot) {
                 ret = OC_FORWARD(func)(ret, slot);
@@ -128,13 +128,13 @@ public:
     template<typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) noexcept {
         T ret = OC_FORWARD(initial);
-        if (_bump) {
-            ret = OC_FORWARD(func)(ret, _bump);
+        if (bump_) {
+            ret = OC_FORWARD(func)(ret, bump_);
         }
-        if (_bump_scale) {
-            ret = OC_FORWARD(func)(ret, _bump_scale);
+        if (bump_scale_) {
+            ret = OC_FORWARD(func)(ret, bump_scale_);
         }
-        for (int i = 0; i < _slot_cursor.num; ++i) {
+        for (int i = 0; i < slot_cursor_.num; ++i) {
             Slot &slot = get_slot(i);
             if (slot) {
                 ret = OC_FORWARD(func)(ret, slot);
@@ -145,13 +145,13 @@ public:
 
     template<typename F>
     void for_each_slot(F &&func) const noexcept {
-        if (_bump) {
-            func(_bump);
+        if (bump_) {
+            func(bump_);
         }
-        if (_bump_scale) {
-            func(_bump_scale);
+        if (bump_scale_) {
+            func(bump_scale_);
         }
-        for (int i = 0; i < _slot_cursor.num; ++i) {
+        for (int i = 0; i < slot_cursor_.num; ++i) {
             const Slot &slot = get_slot(i);
             if (slot) {
                 func(slot);
@@ -161,13 +161,13 @@ public:
 
     template<typename F>
     void for_each_slot(F &&func) noexcept {
-        if (_bump) {
-            func(_bump);
+        if (bump_) {
+            func(bump_);
         }
-        if (_bump_scale) {
-            func(_bump_scale);
+        if (bump_scale_) {
+            func(bump_scale_);
         }
-        for (int i = 0; i < _slot_cursor.num; ++i) {
+        for (int i = 0; i < slot_cursor_.num; ++i) {
             Slot &slot = get_slot(i);
             if (slot) {
                 func(slot);

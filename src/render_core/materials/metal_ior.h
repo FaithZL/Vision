@@ -33,12 +33,12 @@ public:
 
 class ComplexIorTable {
 private:
-    map<string, ComplexIor> _table;
+    map<string, ComplexIor> table_;
 
 private:
     ComplexIorTable() {
 #define VS_ADD_METAL_IOR(name) \
-    _table.insert(std::make_pair(#name, ComplexIor::from(name)));
+    table_.insert(std::make_pair(#name, ComplexIor::from(name)));
         VS_ADD_METAL_IOR(Ag)
         VS_ADD_METAL_IOR(Al)
         VS_ADD_METAL_IOR(Au)
@@ -59,10 +59,10 @@ public:
     }
 
     const ComplexIor &get_ior(string name) const noexcept {
-        if (auto iter = _table.find(name); iter == _table.end()) {
-            return _table.at("Ag");
+        if (auto iter = table_.find(name); iter == table_.end()) {
+            return table_.at("Ag");
         }
-        return _table.at(name);
+        return table_.at(name);
     }
 };
 

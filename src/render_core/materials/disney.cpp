@@ -12,17 +12,17 @@ inline namespace disney {
 
 class Diffuse : public BxDF {
 private:
-    SampledSpectrum _color;
+    SampledSpectrum color_;
 
 public:
     Diffuse() = default;
     explicit Diffuse(SampledSpectrum color, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
-          _color(color) {}
+          color_(color) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(Diffuse)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
             Float Fo = schlick_weight(abs_cos_theta(wo));
@@ -30,25 +30,25 @@ public:
             return InvPi * (1 - 0.5f * Fo) * (1 - 0.5f * Fi);
         };
         impl.function()->set_description("disney::Diffuse::f");
-        return _color * impl(wi, wi);
+        return color_ * impl(wi, wi);
     }
 };
 
 class FakeSS : public BxDF {
 private:
-    SampledSpectrum _color;
-    Float _roughness;
+    SampledSpectrum color_;
+    Float roughness_;
 
 public:
     FakeSS() = default;
     explicit FakeSS(SampledSpectrum color, Float r, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
-          _color(color),
-          _roughness(r) {}
+          color_(color),
+          roughness_(r) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FakeSS)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
@@ -64,23 +64,23 @@ public:
             return select(valid, ret, 0.f);
         };
         impl.function()->set_description("disney::FakeSS::f");
-        return _color * impl(wo, wi, _roughness);
+        return color_ * impl(wo, wi, roughness_);
     }
 };
 
 class Retro : public BxDF {
 private:
-    SampledSpectrum _color;
-    Float _roughness;
+    SampledSpectrum color_;
+    Float roughness_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(Retro)
         Retro() = default;
     explicit Retro(SampledSpectrum color, Float r, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
-          _color(color),
-          _roughness(r) {}
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
+          color_(color),
+          roughness_(r) {}
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float roughness) {
             Float3 wh = wi + wo;
@@ -96,21 +96,21 @@ public:
             return select(valid, ret, 0.f);
         };
         impl.function()->set_description("disney::Retro::f");
-        return _color * impl(wo, wi, _roughness);
+        return color_ * impl(wo, wi, roughness_);
     }
 };
 
 class Sheen : public BxDF {
 private:
-    SampledSpectrum _color;
+    SampledSpectrum color_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(Sheen)
         Sheen() = default;
     explicit Sheen(SampledSpectrum kr, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
-          _color(kr) {}
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _color; }
+          color_(kr) {}
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi) {
             Float3 wh = wi + wo;
@@ -121,7 +121,7 @@ public:
             return select(valid, ret, 0.f);
         };
         impl.function()->set_description("disney::Sheen::f");
-        return _color * impl(wo, wi);
+        return color_ * impl(wo, wi);
     }
 };
 
@@ -147,17 +147,17 @@ public:
 
 class Clearcoat : public BxDF {
 private:
-    Float _weight;
-    Float _alpha;
+    Float weight_;
+    Float alpha_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(Clearcoat)
         Clearcoat() = default;
     Clearcoat(Float weight, Float alpha, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::GlossyRefl),
-          _weight(weight),
-          _alpha(alpha) {}
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return {swl().dimension(), _weight}; }
+          weight_(weight),
+          alpha_(alpha) {}
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return {swl().dimension(), weight_}; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float weight, Float alpha) {
             Float3 wh = wi + wo;
@@ -170,7 +170,7 @@ public:
             return select(valid, ret, 0.f);
         };
         impl.function()->set_description("disney::Clearcoat::f");
-        return {swl().dimension(), impl(wo, wi, _weight, _alpha)};
+        return {swl().dimension(), impl(wo, wi, weight_, alpha_)};
     }
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wi, Float alpha) {
@@ -182,7 +182,7 @@ public:
             return select(valid, ret, 0.f);
         };
         impl.function()->set_description("disney::Clearcoat::PDF");
-        return impl(wo, wi, _alpha);
+        return impl(wo, wi, alpha_);
     }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float2 u, Float alpha) {
@@ -195,7 +195,7 @@ public:
             return reflect(wo, wh);
         };
         impl.function()->set_description("disney::Clearcoat::sample_wi");
-        Float3 wi = impl(wo, u, _alpha);
+        Float3 wi = impl(wo, u, alpha_);
         return {wi, 1.f};
     }
 
@@ -211,25 +211,25 @@ public:
 
 class FresnelDisney : public Fresnel {
 private:
-    SampledSpectrum R0;
-    Float _metallic;
-    Float _eta;
+    SampledSpectrum R0_;
+    Float metallic_;
+    Float eta_;
 
 public:
     FresnelDisney(const SampledSpectrum &R0, Float metallic, Float eta,
                   const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), R0(R0), _metallic(metallic), _eta(eta) {}
+        : Fresnel(swl, rp), R0_(R0), metallic_(metallic), eta_(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
-        _eta = select(cos_theta > 0, _eta, rcp(_eta));
+        eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override {
-        return lerp(_metallic,
-                    fresnel_dielectric(cos_theta, _eta),
-                    fresnel_schlick(R0, cos_theta));
+        return lerp(metallic_,
+                    fresnel_dielectric(cos_theta, eta_),
+                    fresnel_schlick(R0_, cos_theta));
     }
-    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {swl_->dimension(), _eta}; }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {swl_->dimension(), eta_}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDisney>(R0, _metallic, _eta, *swl_, rp_);
+        return make_shared<FresnelDisney>(R0_, metallic_, eta_, *swl_, rp_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDisney)
 };
@@ -322,34 +322,34 @@ public:
 
 class PrincipledBxDFSet : public BxDFSet {
 private:
-    const SampledWavelengths *_swl{};
-    DCSP<Fresnel> _fresnel{};
-    optional<Diffuse> _diffuse{};
-    optional<Retro> _retro{};
-    optional<Sheen> _sheen{};
-    optional<FakeSS> _fake_ss{};
-    optional<MicrofacetReflection> _spec_refl{};
-    optional<Clearcoat> _clearcoat{};
-    optional<MicrofacetTransmission> _spec_trans{};
+    const SampledWavelengths *swl_{};
+    DCSP<Fresnel> fresnel_{};
+    optional<Diffuse> diffuse_{};
+    optional<Retro> retro_{};
+    optional<Sheen> sheen_{};
+    optional<FakeSS> fake_ss_{};
+    optional<MicrofacetReflection> spec_refl_{};
+    optional<Clearcoat> clearcoat_{};
+    optional<MicrofacetTransmission> spec_trans_{};
 
     // sampling strategy
     static constexpr size_t max_sampling_strategy_num = 4u;
-    array<Float, max_sampling_strategy_num> _sampling_weights;
-    uint _diffuse_index{InvalidUI32};
-    uint _spec_refl_index{InvalidUI32};
-    uint _clearcoat_index{InvalidUI32};
-    uint _spec_trans_index{InvalidUI32};
-    uint _sampling_strategy_num{0u};
+    array<Float, max_sampling_strategy_num> sampling_weights_;
+    uint diffuse_index_{InvalidUI32};
+    uint spec_refl_index_{InvalidUI32};
+    uint clearcoat_index_{InvalidUI32};
+    uint spec_trans_index_{InvalidUI32};
+    uint sampling_strategy_num_{0u};
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_fresnel->type_hash(), _diffuse.has_value(),
-                      _retro.has_value(), _sheen.has_value(),
-                      _fake_ss.has_value(), _spec_refl.has_value(),
-                      _clearcoat.has_value(), _spec_trans.has_value(),
-                      _diffuse_index, _spec_refl_index,
-                      _clearcoat_index, _spec_trans_index,
-                      _sampling_strategy_num);
+        return hash64(fresnel_->type_hash(), diffuse_.has_value(),
+                      retro_.has_value(), sheen_.has_value(),
+                      fake_ss_.has_value(), spec_refl_.has_value(),
+                      clearcoat_.has_value(), spec_trans_.has_value(),
+                      diffuse_index_, spec_refl_index_,
+                      clearcoat_index_, spec_trans_index_,
+                      sampling_strategy_num_);
     }
 
 private:
@@ -358,7 +358,7 @@ private:
         if (lobe.has_value()) {
             return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
         }
-        return SampledSpectrum(_swl->dimension(), 0.f);
+        return SampledSpectrum(swl_->dimension(), 0.f);
     }
 
     template<typename T, typename... Args>
@@ -371,13 +371,13 @@ private:
 
     template<typename... Args>
     [[nodiscard]] SampledSpectrum f_diffuse(Args &&...args) const noexcept {
-        return lobe_f(_diffuse, OC_FORWARD(args)...) + lobe_f(_retro, OC_FORWARD(args)...) +
-               lobe_f(_sheen, OC_FORWARD(args)...) + lobe_f(_fake_ss, OC_FORWARD(args)...);
+        return lobe_f(diffuse_, OC_FORWARD(args)...) + lobe_f(retro_, OC_FORWARD(args)...) +
+               lobe_f(sheen_, OC_FORWARD(args)...) + lobe_f(fake_ss_, OC_FORWARD(args)...);
     }
 
     template<typename... Args>
     [[nodiscard]] Float PDF_diffuse(Args &&...args) const noexcept {
-        return lobe_PDF(_diffuse, OC_FORWARD(args)...);
+        return lobe_PDF(diffuse_, OC_FORWARD(args)...);
     }
 
 public:
@@ -385,7 +385,7 @@ public:
                       Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
                       Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
                       Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
-                      Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) : _swl(&swl) {
+                      Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) : swl_(&swl) {
 
         auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
@@ -403,15 +403,15 @@ public:
         bool has_diffuse = false;
 
         if (!color_slot->is_zero()) {
-            _diffuse = Diffuse(Cdiff, swl);
-            _retro = Retro(Cdiff, roughness, swl);
+            diffuse_ = Diffuse(Cdiff, swl);
+            retro_ = Retro(Cdiff, roughness, swl);
             has_diffuse = true;
         }
 
         if (!flatness_slot->is_zero()) {
             Float Css_weight = diffuse_weight * flatness;
             SampledSpectrum Css = Css_weight * color;
-            _fake_ss = FakeSS(Css, roughness, swl);
+            fake_ss_ = FakeSS(Css, roughness, swl);
             has_diffuse = true;
         }
 
@@ -420,13 +420,13 @@ public:
             Float sheen_tint = sheen_tint_slot.evaluate(it, swl).as_scalar();
             Float Csheen_weight = diffuse_weight * sheen;
             SampledSpectrum Csheen = Csheen_weight * lerp(sheen_tint, 1.f, tint);
-            _sheen = Sheen(Csheen, swl);
+            sheen_ = Sheen(Csheen, swl);
             has_diffuse = true;
         }
 
         if (has_diffuse) {
-            _diffuse_index = _sampling_strategy_num++;
-            _sampling_weights[_diffuse_index] = saturate(diffuse_weight * color_lum);
+            diffuse_index_ = sampling_strategy_num_++;
+            sampling_weights_[diffuse_index_] = saturate(diffuse_weight * color_lum);
         }
 
         Float spec_tint = spec_tint_slot.evaluate(it, swl).as_scalar();
@@ -434,87 +434,87 @@ public:
         Float SchlickR0 = schlick_R0_from_eta(eta);
         SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
-        _fresnel = make_deep_copy_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
+        fresnel_ = make_deep_copy_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
         Float anisotropic = anisotropic_slot.evaluate(it, swl).as_scalar();
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
         auto microfacet = make_shared<DisneyMicrofacet>(alpha);
-        _spec_refl = MicrofacetReflection(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
+        spec_refl_ = MicrofacetReflection(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
-        _spec_refl_index = _sampling_strategy_num++;
-        _sampling_weights[_spec_refl_index] = saturate(Cspec0_lum);
+        spec_refl_index_ = sampling_strategy_num_++;
+        sampling_weights_[spec_refl_index_] = saturate(Cspec0_lum);
 
         if (!clearcoat_slot->is_zero()) {
             Float cc = clearcoat_slot.evaluate(it, swl).as_scalar();
             Float cc_alpha = lerp(clearcoat_alpha_slot.evaluate(it, swl).as_scalar(), 0.001f, 1.f);
-            _clearcoat = Clearcoat(cc, cc_alpha, swl);
-            _clearcoat_index = _sampling_strategy_num++;
-            _sampling_weights[_clearcoat_index] = saturate(cc * fresnel_schlick(0.04f, 1.f));
+            clearcoat_ = Clearcoat(cc, cc_alpha, swl);
+            clearcoat_index_ = sampling_strategy_num_++;
+            sampling_weights_[clearcoat_index_] = saturate(cc * fresnel_schlick(0.04f, 1.f));
         }
 
         if (!spec_trans_slot->is_zero()) {
             Float Cst_weight = (1.f - metallic) * spec_trans;
             SampledSpectrum Cst = Cst_weight * sqrt(color);
-            _spec_trans = MicrofacetTransmission(Cst, swl, microfacet);
+            spec_trans_ = MicrofacetTransmission(Cst, swl, microfacet);
             Float Cst_lum = Cst_weight * sqrt(color_lum);
-            _spec_trans_index = _sampling_strategy_num++;
-            _sampling_weights[_spec_trans_index] = saturate(Cst_lum);
+            spec_trans_index_ = sampling_strategy_num_++;
+            sampling_weights_[spec_trans_index_] = saturate(Cst_lum);
         }
 
         Float sum_weights = 0.f;
-        for (uint i = 0u; i < _sampling_strategy_num; i++) {
-            sum_weights += _sampling_weights[i];
+        for (uint i = 0u; i < sampling_strategy_num_; i++) {
+            sum_weights += sampling_weights_[i];
         }
         Float inv_sum_weights = select(sum_weights == 0.f, 0.f, 1.f / sum_weights);
-        for (uint i = 0u; i < _sampling_strategy_num; i++) {
-            _sampling_weights[i] *= inv_sum_weights;
+        for (uint i = 0u; i < sampling_strategy_num_; i++) {
+            sampling_weights_[i] *= inv_sum_weights;
         }
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return _diffuse->albedo(wo); }
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return diffuse_->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return outline([&] {
-            ScatterEval ret{_spec_refl->swl().dimension()};
-            SampledSpectrum f = {_spec_refl->swl().dimension(), 0.f};
+            ScatterEval ret{spec_refl_->swl().dimension()};
+            SampledSpectrum f = {spec_refl_->swl().dimension(), 0.f};
             Float pdf = 0.f;
-            auto fresnel = _fresnel->clone();
+            auto fresnel = fresnel_->clone();
             Float cos_theta_o = cos_theta(wo);
             fresnel->correct_eta(cos_theta_o);
             $if(same_hemisphere(wo, wi)) {
-                if (_diffuse_index != InvalidUI32) {
+                if (diffuse_index_ != InvalidUI32) {
                     if (BxDF::match_F(mode)) {
                         f = f_diffuse(wo, wi, fresnel);
                     }
                     ret.flags = BxDFFlag::DiffRefl;
                     if (BxDF::match_PDF(mode)) {
-                        pdf = _sampling_weights[_diffuse_index] * PDF_diffuse(wo, wi, fresnel);
+                        pdf = sampling_weights_[diffuse_index_] * PDF_diffuse(wo, wi, fresnel);
                     }
                 }
                 if (BxDF::match_F(mode)) {
-                    f += _spec_refl->f(wo, wi, fresnel);
+                    f += spec_refl_->f(wo, wi, fresnel);
                 }
                 if (BxDF::match_PDF(mode)) {
-                    pdf += _sampling_weights[_spec_refl_index] * _spec_refl->PDF(wo, wi, fresnel);
+                    pdf += sampling_weights_[spec_refl_index_] * spec_refl_->PDF(wo, wi, fresnel);
                 }
                 ret.flags = BxDFFlag::GlossyRefl;
-                if (_clearcoat.has_value()) {
+                if (clearcoat_.has_value()) {
                     if (BxDF::match_F(mode)) {
-                        f += _clearcoat->f(wo, wi, fresnel);
+                        f += clearcoat_->f(wo, wi, fresnel);
                     }
                     if (BxDF::match_PDF(mode)) {
-                        pdf += _sampling_weights[_clearcoat_index] * _clearcoat->PDF(wo, wi, fresnel);
+                        pdf += sampling_weights_[clearcoat_index_] * clearcoat_->PDF(wo, wi, fresnel);
                     }
                 }
             }
             $else {
-                if (_spec_trans.has_value()) {
+                if (spec_trans_.has_value()) {
                     if (BxDF::match_F(mode)) {
-                        f = _spec_trans->f(wo, wi, fresnel);
+                        f = spec_trans_->f(wo, wi, fresnel);
                     }
                     ret.flags = BxDFFlag::GlossyTrans;
                     if (BxDF::match_PDF(mode)) {
-                        pdf = _sampling_weights[_spec_trans_index] * _spec_trans->PDF(wo, wi, fresnel);
+                        pdf = sampling_weights_[spec_trans_index_] * spec_trans_->PDF(wo, wi, fresnel);
                     }
                 }
             };
@@ -533,34 +533,34 @@ public:
 
             Uint sampling_strategy = 0u;
             Float sum_weights = 0.f;
-            for (uint i = 0; i < _sampling_strategy_num; ++i) {
+            for (uint i = 0; i < sampling_strategy_num_; ++i) {
                 sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
-                sum_weights += _sampling_weights[i];
+                sum_weights += sampling_weights_[i];
             }
-            auto fresnel = _fresnel->clone();
+            auto fresnel = fresnel_->clone();
             Float cos_theta_o = cos_theta(wo);
             fresnel->correct_eta(cos_theta_o);
 
             $switch(sampling_strategy) {
-                if (_diffuse.has_value()) {
-                    $case(_diffuse_index) {
-                        sampled_direction = _diffuse->sample_wi(wo, u, fresnel);
+                if (diffuse_.has_value()) {
+                    $case(diffuse_index_) {
+                        sampled_direction = diffuse_->sample_wi(wo, u, fresnel);
                         $break;
                     };
                 }
-                $case(_spec_refl_index) {
-                    sampled_direction = _spec_refl->sample_wi(wo, u, fresnel);
+                $case(spec_refl_index_) {
+                    sampled_direction = spec_refl_->sample_wi(wo, u, fresnel);
                     $break;
                 };
-                if (_clearcoat.has_value()) {
-                    $case(_clearcoat_index) {
-                        sampled_direction = _clearcoat->sample_wi(wo, u, fresnel);
+                if (clearcoat_.has_value()) {
+                    $case(clearcoat_index_) {
+                        sampled_direction = clearcoat_->sample_wi(wo, u, fresnel);
                         $break;
                     };
                 }
-                if (_spec_trans.has_value()) {
-                    $case(_spec_trans_index) {
-                        sampled_direction = _spec_trans->sample_wi(wo, u, fresnel);
+                if (spec_trans_.has_value()) {
+                    $case(spec_trans_index_) {
+                        sampled_direction = spec_trans_->sample_wi(wo, u, fresnel);
                         $break;
                     };
                 }
@@ -575,7 +575,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
-        BSDFSample ret{_spec_refl->swl().dimension()};
+        BSDFSample ret{spec_refl_->swl().dimension()};
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, MaterialEvalMode::All, flag);
         ret.wi = sampled_direction.wi;
