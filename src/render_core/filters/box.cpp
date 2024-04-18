@@ -17,7 +17,7 @@ public:
         return {p, 1.f};
     }
     [[nodiscard]] float evaluate(float2 p) const noexcept override {
-        return (std::abs(p.x) <= _radius.hv().x && std::abs(p.y) <= _radius.hv().y) ? 1 : 0;
+        return (std::abs(p.x) <= radius_.hv().x && std::abs(p.y) <= radius_.hv().y) ? 1 : 0;
     }
 };
 }// namespace vision

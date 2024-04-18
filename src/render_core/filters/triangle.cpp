@@ -16,8 +16,8 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(float2 p) const noexcept override {
-        return std::max(0.f, _radius.hv().x - std::abs(p.x)) *
-               std::max(0.f, _radius.hv().y - std::abs(p.y));
+        return std::max(0.f, radius_.hv().x - std::abs(p.x)) *
+               std::max(0.f, radius_.hv().y - std::abs(p.y));
     }
 };
 }// namespace vision

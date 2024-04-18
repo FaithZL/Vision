@@ -10,16 +10,16 @@ using namespace ocarina;
 
 class LanczosSincFilter : public FittedCurveFilter {
 private:
-    float _tau{};
+    float tau_{};
 
 public:
     explicit LanczosSincFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
-          _tau(desc["tau"].as_float(3.f)) {}
+          tau_(desc["tau"].as_float(3.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
-        return windowed_sinc<H>(p.x, _radius.hv().x, _tau) *
-               windowed_sinc<H>(p.y, _radius.hv().y, _tau) * 4;
+        return windowed_sinc<H>(p.x, radius_.hv().x, tau_) *
+               windowed_sinc<H>(p.y, radius_.hv().y, tau_) * 4;
     }
 };
 

@@ -28,23 +28,23 @@ public:
     using Desc = SensorDesc;
 
 protected:
-    SP<Filter> _filter{};
-    SP<Film> _film{};
-    Wrap<Medium> _medium{};
-    Serial<uint> _medium_id{InvalidUI32};
+    SP<Filter> filter_{};
+    SP<Film> film_{};
+    Wrap<Medium> medium_{};
+    Serial<uint> medium_id_{InvalidUI32};
 
 public:
     explicit Sensor(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(SerialObject, *_filter, *_film)
-    VS_MAKE_GUI_STATUS_FUNC(Node, _filter, _film)
+    OC_SERIALIZABLE_FUNC(SerialObject, filter_, film_)
+    VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;
-    [[nodiscard]] Filter *filter() noexcept { return _filter.get(); }
-    [[nodiscard]] const Filter *filter() const noexcept { return _filter.get(); }
-    [[nodiscard]] auto film() noexcept { return _film.get(); }
-    [[nodiscard]] auto film() const noexcept { return _film.get(); }
-    [[nodiscard]] uint2 resolution() noexcept { return _film->resolution(); }
-    virtual void set_resolution(uint2 res) noexcept { _film->set_resolution(res); }
+    [[nodiscard]] Filter *filter() noexcept { return filter_.get(); }
+    [[nodiscard]] const Filter *filter() const noexcept { return filter_.get(); }
+    [[nodiscard]] auto film() noexcept { return film_.get(); }
+    [[nodiscard]] auto film() const noexcept { return film_.get(); }
+    [[nodiscard]] uint2 resolution() noexcept { return film_->resolution(); }
+    virtual void set_resolution(uint2 res) noexcept { film_->set_resolution(res); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 

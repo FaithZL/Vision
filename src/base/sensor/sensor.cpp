@@ -11,24 +11,24 @@ using namespace ocarina;
 
 Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
-      _filter(scene().load<Filter>(desc.filter_desc)),
-      _film(scene().load<Film>(desc.film_desc)),
-      _medium_id(desc.medium.id) {
+      filter_(scene().load<Filter>(desc.filter_desc)),
+      film_(scene().load<Film>(desc.film_desc)),
+      medium_id_(desc.medium.id) {
     if (!scene().has_medium()) {
         return;
     }
     if (desc.contains("medium")) {
-        _medium.name = desc["medium"].as_string();
+        medium_.name = desc["medium"].as_string();
     } else {
-        _medium = scene().global_medium();
+        medium_ = scene().global_medium();
     }
     auto &mediums = scene().mediums();
     auto iter = std::find_if(mediums.begin(), mediums.end(), [&](const SP<Medium> &medium) {
-        return _medium.name == medium->name();
+        return medium_.name == medium->name();
     });
     if (iter != mediums.end()) {
-        _medium.object = *iter;
-        _medium_id = _medium.object->index();
+        medium_.object = *iter;
+        medium_id_ = medium_.object->index();
     }
 }
 
@@ -39,14 +39,14 @@ bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
             widgets->text("type: %s", impl_type().data());
             render_sub_UI(widgets);
         });
-    _filter->render_UI(widgets);
-    _film->render_UI(widgets);
+    filter_->render_UI(widgets);
+    film_->render_UI(widgets);
     return open;
 }
 
 void Sensor::prepare() noexcept {
-    _filter->prepare();
-    _film->prepare();
+    filter_->prepare();
+    film_->prepare();
 }
 
 }// namespace vision

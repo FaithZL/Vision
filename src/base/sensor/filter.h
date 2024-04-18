@@ -31,13 +31,13 @@ public:
     using Desc = FilterDesc;
 
 protected:
-    Serial<float2> _radius;
+    Serial<float2> radius_;
 
 public:
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
-          _radius(desc["radius"].as_float2(make_float2(1.5f))) {}
-    OC_SERIALIZABLE_FUNC(Serializable<float>, _radius)
+          radius_(desc["radius"].as_float2(make_float2(1.5f))) {}
+    OC_SERIALIZABLE_FUNC(Serializable<float>, radius_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;
@@ -50,9 +50,9 @@ public:
     template<EPort p = D>
     [[nodiscard]] auto radius() const noexcept {
         if constexpr (p == D) {
-            return *_radius;
+            return *radius_;
         } else {
-            return _radius.hv();
+            return radius_.hv();
         }
     }
 };

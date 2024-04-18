@@ -12,31 +12,31 @@ using namespace ocarina;
 /// temporary solution
 class RGBFilm : public Film {
 private:
-    RegistrableManaged<float4> _rt_buffer;
-    RegistrableManaged<float4> _accumulation_buffer;
-    RegistrableManaged<float4> _output_buffer;
+    RegistrableManaged<float4> rt_buffer_;
+    RegistrableManaged<float4> accumulation_buffer_;
+    RegistrableManaged<float4> output_buffer_;
 
-    Shader<void(Buffer<float4>, Buffer<float4>, uint)> _accumulate;
-    Shader<void(Buffer<float4>, Buffer<float4>)> _tone_mapping;
-    Shader<void(Buffer<float4>, Buffer<float4>)> _gamma_correct;
-    bool _gamma{true};
+    Shader<void(Buffer<float4>, Buffer<float4>, uint)> accumulate_;
+    Shader<void(Buffer<float4>, Buffer<float4>)> tone_mapping_;
+    Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
+    bool gamma_{true};
 
 public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
-          _rt_buffer(pipeline()->bindless_array()),
-          _output_buffer(pipeline()->bindless_array()),
-          _gamma(desc["gamma"].as_bool(true)) {}
+          rt_buffer_(pipeline()->bindless_array()),
+          output_buffer_(pipeline()->bindless_array()),
+          gamma_(desc["gamma"].as_bool(true)) {}
 
-    OC_SERIALIZABLE_FUNC(Film, _rt_buffer, _output_buffer)
+    OC_SERIALIZABLE_FUNC(Film, rt_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        _tone_mapper->render_UI(widgets);
+        tone_mapper_->render_UI(widgets);
         return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&]{
-            _changed |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(_accumulation.hv())));
+            _changed |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
             widgets->same_line();
-            _changed |= widgets->check_box("gamma", &_gamma);
+            _changed |= widgets->check_box("gamma", &gamma_);
         });
     }
 
@@ -48,17 +48,17 @@ public:
             val = lerp(make_float4(a), accum_prev, val);
             output.write(dispatch_id(), val);
         };
-        _accumulate = device().compile(kernel, "RGBFilm-accumulation");
+        accumulate_ = device().compile(kernel, "RGBFilm-accumulation");
     }
 
     void compile_tone_mapping() noexcept {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output) {
             Float4 val = input.read(dispatch_id());
-            val = _tone_mapper->apply(val);
+            val = tone_mapper_->apply(val);
             val.w = 1.f;
             output.write(dispatch_id(), val);
         };
-        _tone_mapping = device().compile(kernel, "RGBFilm-tone_mapping");
+        tone_mapping_ = device().compile(kernel, "RGBFilm-tone_mapping");
     }
 
     void compile_gamma_correction() noexcept {
@@ -68,7 +68,7 @@ public:
             val.w = 1.f;
             output.write(dispatch_id(), val);
         };
-        _gamma_correct = device().compile(kernel, "RGBFilm-gamma_correction");
+        gamma_correct_ = device().compile(kernel, "RGBFilm-gamma_correction");
     }
 
     void compile() noexcept override {
@@ -83,30 +83,30 @@ public:
             managed.reset_immediately();
             managed.register_self();
         };
-        prepare(_rt_buffer, "RGBFilm::_rt_buffer");
-        prepare(_accumulation_buffer, "RGBFilm::_accumulation_buffer");
-        prepare(_output_buffer, "RGBFilm::_output_buffer");
+        prepare(rt_buffer_, "RGBFilm::rt_buffer_");
+        prepare(accumulation_buffer_, "RGBFilm::accumulation_buffer_");
+        prepare(output_buffer_, "RGBFilm::output_buffer_");
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
         Uint index = dispatch_id(pixel);
         val = Env::instance().zero_if_nan_inf(val);
-        if (_accumulation.hv()) {
-            Float4 accum_prev = _rt_buffer.read(index);
+        if (accumulation_.hv()) {
+            Float4 accum_prev = rt_buffer_.read(index);
             val = lerp(make_float4(a), accum_prev, val);
         }
-        _rt_buffer.write(index, val);
-        val = _tone_mapper->apply(val);
-        if (_gamma) {
+        rt_buffer_.write(index, val);
+        val = tone_mapper_->apply(val);
+        if (gamma_) {
             val = linear_to_srgb(val);
         }
         val.w = 1.f;
-        _output_buffer.write(index, val);
+        output_buffer_.write(index, val);
     }
     [[nodiscard]] CommandList accumulate(BufferView<float4> input, BufferView<float4> output,
                                          uint frame_index) const noexcept override {
         CommandList ret;
-        ret << _accumulate(input,
+        ret << accumulate_(input,
                            output,
                            frame_index)
                    .dispatch(resolution());
@@ -115,7 +115,7 @@ public:
     [[nodiscard]] CommandList tone_mapping(BufferView<float4> input,
                                            BufferView<float4> output) const noexcept override {
         CommandList ret;
-        ret << _tone_mapping(input,
+        ret << tone_mapping_(input,
                              output)
                    .dispatch(resolution());
         return ret;
@@ -123,19 +123,19 @@ public:
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
                                             BufferView<float4> output) const noexcept override {
         CommandList ret;
-        if (_gamma) {
-            ret << _gamma_correct(input,
+        if (gamma_) {
+            ret << gamma_correct_(input,
                                   output)
                        .dispatch(resolution());
         }
         return ret;
     }
-    [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return _output_buffer; }
-    [[nodiscard]] RegistrableManaged<float4> &output_buffer() noexcept override { return _output_buffer; }
-    [[nodiscard]] const RegistrableManaged<float4> &accumulation_buffer() const noexcept override { return _accumulation_buffer; }
-    [[nodiscard]] RegistrableManaged<float4> &accumulation_buffer() noexcept override { return _accumulation_buffer; }
-    [[nodiscard]] const RegistrableManaged<float4> &rt_buffer() const noexcept override { return _rt_buffer; }
-    [[nodiscard]] RegistrableManaged<float4> &rt_buffer() noexcept override { return _rt_buffer; }
+    [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return output_buffer_; }
+    [[nodiscard]] RegistrableManaged<float4> &output_buffer() noexcept override { return output_buffer_; }
+    [[nodiscard]] const RegistrableManaged<float4> &accumulation_buffer() const noexcept override { return accumulation_buffer_; }
+    [[nodiscard]] RegistrableManaged<float4> &accumulation_buffer() noexcept override { return accumulation_buffer_; }
+    [[nodiscard]] const RegistrableManaged<float4> &rt_buffer() const noexcept override { return rt_buffer_; }
+    [[nodiscard]] RegistrableManaged<float4> &rt_buffer() noexcept override { return rt_buffer_; }
 };
 
 }// namespace vision

@@ -9,32 +9,32 @@ namespace vision {
 
 class MitchellFilter : public FittedCurveFilter {
 private:
-    float _b;
-    float _c;
+    float b_;
+    float c_;
 
 public:
     explicit MitchellFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
-          _b(desc["b"].as_float(1.f / 3.f)),
-          _c(desc["c"].as_float(1.f / 3.f)) {}
+          b_(desc["b"].as_float(1.f / 3.f)),
+          c_(desc["c"].as_float(1.f / 3.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float mitchell_1d(float x) const {
         x = ocarina::abs(x);
         if (x <= 1)
-            return ((12 - 9 * _b - 6 * _c) * Pow<3>(x) + (-18 + 12 * _b + 6 * _c) * ocarina::sqr(x) +
-                    (6 - 2 * _b)) *
+            return ((12 - 9 * b_ - 6 * c_) * Pow<3>(x) + (-18 + 12 * b_ + 6 * c_) * ocarina::sqr(x) +
+                    (6 - 2 * b_)) *
                    (1.f / 6.f);
         else if (x <= 2)
-            return ((-_b - 6 * _c) * Pow<3>(x) + (6 * _b + 30 * _c) * ocarina::sqr(x) +
-                    (-12 * _b - 48 * _c) * x + (8 * _b + 24 * _c)) *
+            return ((-b_ - 6 * c_) * Pow<3>(x) + (6 * b_ + 30 * c_) * ocarina::sqr(x) +
+                    (-12 * b_ - 48 * c_) * x + (8 * b_ + 24 * c_)) *
                    (1.f / 6.f);
         else
             return 0;
     }
 
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
-        return mitchell_1d(2 * p.x / _radius.hv().x) *
-               mitchell_1d(2 * p.y / _radius.hv().y);
+        return mitchell_1d(2 * p.x / radius_.hv().x) *
+               mitchell_1d(2 * p.y / radius_.hv().y);
     }
 };
 

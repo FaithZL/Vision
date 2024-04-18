@@ -9,20 +9,20 @@ namespace vision {
 
 class GaussianFilter : public FittedCurveFilter {
 private:
-    float _sigma{};
-    float _exp_x{};
-    float _exp_y{};
+    float sigma_{};
+    float exp_x_{};
+    float exp_y_{};
 
 public:
     explicit GaussianFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
-          _sigma(desc["sigma"].as_float(1.f)),
-          _exp_x(gaussian<H>(_radius.hv().x, 0, _sigma)),
-          _exp_y(gaussian<H>(_radius.hv().y, 0, _sigma)) {}
+          sigma_(desc["sigma"].as_float(1.f)),
+          exp_x_(gaussian<H>(radius_.hv().x, 0, sigma_)),
+          exp_y_(gaussian<H>(radius_.hv().y, 0, sigma_)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
-        float vx = gaussian<H>(p.x, 0, _sigma) - _exp_x;
-        float vy = gaussian<H>(p.y, 0, _sigma) - _exp_y;
+        float vx = gaussian<H>(p.x, 0, sigma_) - exp_x_;
+        float vy = gaussian<H>(p.y, 0, sigma_) - exp_y_;
         return ocarina::max(0.f, vx) * ocarina::max(0.f, vy);
     }
 };

@@ -18,16 +18,16 @@ public:
     static constexpr int table_size = 20;
 
 private:
-    SP<Warper2D> _warper{};
-    RegistrableManaged<float> _lut{pipeline()->bindless_array()};
+    SP<Warper2D> warper_{};
+    RegistrableManaged<float> lut_{pipeline()->bindless_array()};
 
 public:
     FilterSampler()
-        : _warper(scene().load_warper2d()) {}
+        : warper_(scene().load_warper2d()) {}
 
     void prepare(const Filter *filter) {
         int len = ocarina::sqr(table_size);
-        _lut.resize(len);
+        lut_.resize(len);
         vector<float> func;
         func.resize(len);
         float2 r = filter->radius<H>();
@@ -38,25 +38,25 @@ public:
                                    (y + 0.5f) / table_size * r.y);
             float val = filter->evaluate(p);
             func[i] = ocarina::abs(val);
-            _lut.host_buffer().at(i) = val;
+            lut_.host_buffer().at(i) = val;
         }
-        float sum = std::accumulate(_lut.begin(), _lut.end(), 0.f);
+        float sum = std::accumulate(lut_.begin(), lut_.end(), 0.f);
         float integral = sum / len;
-        std::transform(_lut.cbegin(), _lut.cend(), _lut.begin(), [&](float val) {
+        std::transform(lut_.cbegin(), lut_.cend(), lut_.begin(), [&](float val) {
             return val / integral;
         });
-        _lut.reset_device_buffer_immediately(filter->device());
-        _lut.upload_immediately();
-        _lut.register_self();
-        _warper->build(ocarina::move(func), make_uint2(table_size));
-        _warper->prepare();
+        lut_.reset_device_buffer_immediately(filter->device());
+        lut_.upload_immediately();
+        lut_.register_self();
+        warper_->build(ocarina::move(func), make_uint2(table_size));
+        warper_->prepare();
     }
 
     template<typename X, typename Y>
     requires is_all_integral_expr_v<X, Y>
     [[nodiscard]] Float lut_at(const X &x, const Y &y) const noexcept {
         Var index = y * table_size + x;
-        return _lut.read(index);
+        return lut_.read(index);
     }
 
     template<typename V2>
@@ -68,7 +68,7 @@ public:
         u = u * 2.f - make_float2(1.f);
         Float pdf = 0.f;
         Uint2 offset;
-        Float2 p = _warper->sample_continuous(abs(u), std::addressof(pdf), std::addressof(offset));
+        Float2 p = warper_->sample_continuous(abs(u), std::addressof(pdf), std::addressof(offset));
         p = p * sign(u);
         return FilterSample{p, lut_at(offset) / pdf};
     }

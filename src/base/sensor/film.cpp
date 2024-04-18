@@ -9,17 +9,17 @@ namespace vision {
 
 Film::Film(const vision::FilmDesc &desc)
     : Node(desc),
-      _tone_mapper(scene().load<ToneMapper>(desc.tone_mapper)),
-      _resolution(desc["resolution"].as_uint2(make_uint2(1280, 720))),
-      _screen_window(make_float2(-1.f), make_float2(1.f)),
-      _accumulation(desc["accumulation"].as_uint(1)){
-    float ratio = _resolution.x * 1.f / _resolution.y;
+      tone_mapper_(scene().load<ToneMapper>(desc.tone_mapper)),
+      resolution_(desc["resolution"].as_uint2(make_uint2(1280, 720))),
+      screen_window_(make_float2(-1.f), make_float2(1.f)),
+      accumulation_(desc["accumulation"].as_uint(1)){
+    float ratio = resolution_.x * 1.f / resolution_.y;
     if (ratio > 1.f) {
-        _screen_window.lower.x = -ratio;
-        _screen_window.upper.x = ratio;
+        screen_window_.lower.x = -ratio;
+        screen_window_.upper.x = ratio;
     } else {
-        _screen_window.lower.y = -1.f / ratio;
-        _screen_window.upper.y = 1.f / ratio;
+        screen_window_.lower.y = -1.f / ratio;
+        screen_window_.upper.y = 1.f / ratio;
     }
 }
 
