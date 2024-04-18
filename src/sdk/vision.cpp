@@ -198,7 +198,7 @@ void VisionRendererImpl::build_accel() {
     _pipeline->prepare_geometry();
     _pipeline->upload_bindless_array();
     _prepared = true;
-    OC_INFO("build _accel");
+    OC_INFO("build accel_");
 }
 
 void VisionRendererImpl::update_camera(vision::sdk::Camera c) {

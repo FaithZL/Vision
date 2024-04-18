@@ -78,7 +78,7 @@ void Geometry::reset_device_buffer() {
     init_buffer(_triangles, "Geometry::_triangles");
     init_buffer(_instances, "Geometry::_instances");
     init_buffer(_mesh_handles, "Geometry::_mesh_handles");
-    init_buffer(_transforms, "Geometry::_transforms");
+    init_buffer(_transforms, "Geometry::transforms_");
 }
 
 void Geometry::upload() const {
