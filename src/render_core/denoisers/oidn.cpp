@@ -11,7 +11,7 @@ using namespace ocarina;
 
 class OIDN : public Denoiser {
 private:
-    oidn::DeviceRef _device{};
+    oidn::DeviceRef device_{};
 
 private:
     [[nodiscard]] oidn::DeviceRef create_device() const noexcept {
@@ -31,9 +31,9 @@ private:
     [[nodiscard]] oidn::FilterRef create_filter() const noexcept {
         switch (_mode) {
             case RT:
-                return _device.newFilter("RT");
+                return device_.newFilter("RT");
             case RTLightmap:
-                return _device.newFilter("RTLightmap");
+                return device_.newFilter("RTLightmap");
             default:
                 break;
         }
@@ -43,8 +43,8 @@ private:
 public:
     explicit OIDN(const DenoiserDesc &desc)
         : Denoiser(desc),
-          _device{create_device()} {
-        _device.commit();
+          device_{create_device()} {
+        device_.commit();
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void apply(vision::OfflineDenoiseInput &input) noexcept override {
@@ -110,20 +110,24 @@ public:
                float4 *normal, float4 *albedo) noexcept {
         TIMER(oidn_denoise)
         oidn::FilterRef filter = create_filter();
-        filter.setImage("output", output, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
-        filter.setImage("color", color, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
+        filter.setImage("output", output, oidn::Format::Float3,
+                        res.x, res.y, 0, sizeof(float4));
+        filter.setImage("color", color, oidn::Format::Float3,
+                        res.x, res.y, 0, sizeof(float4));
         if (normal && albedo) {
-            filter.setImage("normal", normal, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
-            filter.setImage("albedo", albedo, oidn::Format::Float3, res.x, res.y, 0, sizeof(float4));
+            filter.setImage("normal", normal, oidn::Format::Float3,
+                            res.x, res.y, 0, sizeof(float4));
+            filter.setImage("albedo", albedo, oidn::Format::Float3,
+                            res.x, res.y, 0, sizeof(float4));
         }
         // color image is HDR
         filter.set("hdr", true);
         filter.commit();
         filter.execute();
-        _device.sync();
+        device_.sync();
 
         const char *errorMessage;
-        if (_device.getError(errorMessage) != oidn::Error::None) {
+        if (device_.getError(errorMessage) != oidn::Error::None) {
             OC_ERROR_FORMAT("oidn error: {}", errorMessage)
         }
     }

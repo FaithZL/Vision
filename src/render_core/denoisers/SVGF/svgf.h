@@ -20,41 +20,41 @@ public:
     Buffer<float> history;
 
 private:
-    Reproject _reproject{this};
-    FilterMoments _filter_moments{this};
-    AtrousFilter _atrous{this};
-    Modulator _modulator{this};
+    Reproject reproject_{this};
+    FilterMoments filter_moments_{this};
+    AtrousFilter atrous_{this};
+    Modulator modulator_{this};
 
 private:
-    bool _switch{false};
-    bool _moment_filter_switch{true};
-    bool _reproject_switch{true};
+    bool switch_{false};
+    bool moment_filter_switch_{true};
+    bool reproject_switch_{true};
     uint N;
-    float _alpha{0.05f};
-    float _moments_alpha{0.2f};
-    uint _history_limit{32};
-    int _moments_filter_radius{3};
-    float _sigma_rt{10.f};
-    float _sigma_normal{128.f};
+    float alpha_{0.05f};
+    float moments_alpha_{0.2f};
+    uint history_limit_{32};
+    int moments_filter_radius_{3};
+    float sigma_rt_{10.f};
+    float sigma_normal_{128.f};
 
 public:
     explicit SVGF(const DenoiserDesc &desc)
         : Denoiser(desc),
           svgf_data(pipeline()->bindless_array()),
           N(desc["N"].as_uint(3)),
-          _alpha(desc["alpha"].as_float(0.05f)),
-          _moments_alpha(desc["moments_alpha"].as_float(0.2f)),
-          _history_limit(desc["history_limit"].as_uint(32)),
-          _moments_filter_radius(desc["moments_filter_radius"].as_int(3)),
-          _sigma_rt(desc["sigma_rt"].as_float(10.f)),
-          _sigma_normal(desc["sigma_normal"].as_float(30.f)) {}
+          alpha_(desc["alpha"].as_float(0.05f)),
+          moments_alpha_(desc["moments_alpha"].as_float(0.2f)),
+          history_limit_(desc["history_limit"].as_uint(32)),
+          moments_filter_radius_(desc["moments_filter_radius"].as_int(3)),
+          sigma_rt_(desc["sigma_rt"].as_float(10.f)),
+          sigma_normal_(desc["sigma_normal"].as_float(30.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_MAKE_MEMBER_GETTER(alpha, )
-    OC_MAKE_MEMBER_GETTER(moments_alpha, )
-    OC_MAKE_MEMBER_GETTER(moments_filter_radius, )
-    OC_MAKE_MEMBER_GETTER(sigma_rt, )
-    OC_MAKE_MEMBER_GETTER(sigma_normal, )
-    OC_MAKE_MEMBER_GETTER(history_limit, )
+    OC_MAKE_MEMBER_GETTER_(alpha, )
+    OC_MAKE_MEMBER_GETTER_(moments_alpha, )
+    OC_MAKE_MEMBER_GETTER_(moments_filter_radius, )
+    OC_MAKE_MEMBER_GETTER_(sigma_rt, )
+    OC_MAKE_MEMBER_GETTER_(sigma_normal, )
+    OC_MAKE_MEMBER_GETTER_(history_limit, )
     void prepare_buffers();
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }

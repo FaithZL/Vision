@@ -28,14 +28,14 @@ class SVGF;
 
 class Modulator : public Context {
 private:
-    SVGF *_svgf{nullptr};
+    SVGF *svgf_{nullptr};
     using signature = void(ModulatorParam);
-    Shader<signature> _modulate;
-    Shader<signature> _demodulate;
+    Shader<signature> modulate_;
+    Shader<signature> demodulate_;
 
 public:
     explicit Modulator(SVGF *svgf)
-        : _svgf(svgf) {}
+        : svgf_(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
     [[nodiscard]] CommandList modulate(RealTimeDenoiseInput &input) noexcept;

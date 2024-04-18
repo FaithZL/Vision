@@ -29,13 +29,13 @@ class SVGF;
 
 class FilterMoments : public Context {
 private:
-    SVGF *_svgf{nullptr};
+    SVGF *svgf_{nullptr};
     using signature = void(FilterMomentsParam);
     Shader<signature> _shader;
 
 public:
     explicit FilterMoments(SVGF *svgf)
-        : _svgf(svgf) {}
+        : svgf_(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
     [[nodiscard]] FilterMomentsParam construct_param(RealTimeDenoiseInput &input) const noexcept;

@@ -32,14 +32,14 @@ class SVGF;
 
 class AtrousFilter : public Context {
 private:
-    SVGF *_svgf{nullptr};
+    SVGF *svgf_{nullptr};
 
     using signature = void(AtrousParam);
     Shader<signature> _shader;
 
 public:
     explicit AtrousFilter(SVGF *svgf)
-        : _svgf(svgf) {}
+        : svgf_(svgf) {}
     void prepare() noexcept;
     void compile() noexcept;
     [[nodiscard]] AtrousParam construct_param(RealTimeDenoiseInput &input, uint step_width) const noexcept;

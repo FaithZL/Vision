@@ -37,13 +37,13 @@ class SVGF;
 
 class Reproject : public Context {
 private:
-    SVGF *_svgf{nullptr};
+    SVGF *svgf_{nullptr};
     using signature = void(ReprojectParam);
-    Shader<signature> _shader;
+    Shader<signature> shader_;
 
 public:
     explicit Reproject(SVGF *svgf)
-        : _svgf(svgf) {}
+        : svgf_(svgf) {}
     void prepare() noexcept;
     [[nodiscard]] Bool is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeometry &prev) const noexcept;
     [[nodiscard]] ReprojectParam construct_param(vision::RealTimeDenoiseInput &input) const noexcept;

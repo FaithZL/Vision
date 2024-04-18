@@ -154,28 +154,28 @@ void Reproject::compile() noexcept {
         svgf_data.history = history;
         param.cur_buffer.write(dispatch_id(), svgf_data);
     };
-    _shader = device().compile(kernel, "SVGF-reproject");
+    shader_ = device().compile(kernel, "SVGF-reproject");
 }
 
 ReprojectParam Reproject::construct_param(RealTimeDenoiseInput &input) const noexcept {
     ReprojectParam param;
     param.gbuffer = input.gbuffer.proxy();
     param.prev_gbuffer = input.prev_gbuffer.proxy();
-    param.history_buffer = _svgf->history.proxy();
+    param.history_buffer = svgf_->history.proxy();
     param.motion_vectors = input.motion_vec.proxy();
-    param.alpha = _svgf->alpha();
-    param.moments_alpha = _svgf->moments_alpha();
-    param.history_limit = _svgf->history_limit();
-    param.cur_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
-    param.prev_buffer = _svgf->prev_svgf_buffer(input.frame_index).proxy();
+    param.alpha = svgf_->alpha();
+    param.moments_alpha = svgf_->moments_alpha();
+    param.history_limit = svgf_->history_limit();
+    param.cur_buffer = svgf_->cur_svgf_buffer(input.frame_index).proxy();
+    param.prev_buffer = svgf_->prev_svgf_buffer(input.frame_index).proxy();
     return param;
 }
 
 CommandList Reproject::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
-    uint cur_index = _svgf->cur_svgf_index(input.frame_index);
-    uint prev_index = _svgf->prev_svgf_index(input.frame_index);
-    ret << _shader(construct_param(input))
+    uint cur_index = svgf_->cur_svgf_index(input.frame_index);
+    uint prev_index = svgf_->prev_svgf_index(input.frame_index);
+    ret << shader_(construct_param(input))
                .dispatch(input.resolution);
     return ret;
 }

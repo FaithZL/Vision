@@ -19,7 +19,7 @@ void Modulator::compile() noexcept {
         Float3 output = illumination * albedo + emission;
         param.radiance_buffer.write(dispatch_id(), make_float4(output, 1.f));
     };
-    _modulate = device().compile(kernel, "SVGF-modulate");
+    modulate_ = device().compile(kernel, "SVGF-modulate");
 
     Kernel kernel2 = [&](Var<ModulatorParam> param) noexcept {
         Float3 emission = param.emission_buffer.read(dispatch_id()).xyz();
@@ -30,7 +30,7 @@ void Modulator::compile() noexcept {
         svgf_data.illumi_v = make_float4(illumination, 0.f);
         param.svgf_buffer.write(dispatch_id(), svgf_data);
     };
-    _demodulate = device().compile(kernel2, "SVGF-demodulate");
+    demodulate_ = device().compile(kernel2, "SVGF-demodulate");
 }
 
 CommandList Modulator::demodulate(vision::RealTimeDenoiseInput &input) noexcept {
@@ -38,9 +38,9 @@ CommandList Modulator::demodulate(vision::RealTimeDenoiseInput &input) noexcept 
     ModulatorParam param;
     param.albedo_buffer = input.albedo.proxy();
     param.emission_buffer = input.emission.proxy();
-    param.svgf_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
+    param.svgf_buffer = svgf_->cur_svgf_buffer(input.frame_index).proxy();
     param.radiance_buffer = input.radiance.proxy();
-    ret << _demodulate(param).dispatch(input.resolution);
+    ret << demodulate_(param).dispatch(input.resolution);
     return ret;
 }
 
@@ -49,9 +49,9 @@ CommandList Modulator::modulate(vision::RealTimeDenoiseInput &input) noexcept {
     ModulatorParam param;
     param.albedo_buffer = input.albedo.proxy();
     param.emission_buffer = input.emission.proxy();
-    param.svgf_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
+    param.svgf_buffer = svgf_->cur_svgf_buffer(input.frame_index).proxy();
     param.radiance_buffer = input.output.proxy();
-    ret << _modulate(param).dispatch(input.resolution);
+    ret << modulate_(param).dispatch(input.resolution);
     return ret;
 }
 

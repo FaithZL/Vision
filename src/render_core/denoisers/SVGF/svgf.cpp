@@ -21,21 +21,21 @@ void SVGF::prepare_buffers() {
 }
 
 void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    changed_ |= widgets->check_box("turn on", addressof(_switch));
-    changed_ |= widgets->check_box("reproject", addressof(_reproject_switch));
-    changed_ |= widgets->check_box("filter moment", addressof(_moment_filter_switch));
+    changed_ |= widgets->check_box("turn on", addressof(switch_));
+    changed_ |= widgets->check_box("reproject", addressof(reproject_switch_));
+    changed_ |= widgets->check_box("filter moment", addressof(moment_filter_switch_));
     changed_ |= widgets->input_uint_limit("N", &N, 0, 10);
-    changed_ |= widgets->input_float_limit("alpha", &_alpha, 0,
+    changed_ |= widgets->input_float_limit("alpha", &alpha_, 0,
                                            1, 0.01, 0.05);
-    changed_ |= widgets->input_float_limit("moments_alpha", &_moments_alpha,
+    changed_ |= widgets->input_float_limit("moments_alpha", &moments_alpha_,
                                            0, 1, 0.01, 0.05);
-    changed_ |= widgets->input_uint_limit("history_limit", &_history_limit,
+    changed_ |= widgets->input_uint_limit("history_limit", &history_limit_,
                                           1, 100, 1, 5);
-    changed_ |= widgets->input_int_limit("moments_filter_radius", &_moments_filter_radius,
+    changed_ |= widgets->input_int_limit("moments_filter_radius", &moments_filter_radius_,
                                          0, 5, 1, 1);
-    changed_ |= widgets->input_float_limit("sigma_rt", &_sigma_rt,
+    changed_ |= widgets->input_float_limit("sigma_rt", &sigma_rt_,
                                            0.01, 1e10, 1, 3);
-    changed_ |= widgets->input_float_limit("sigma_normal", &_sigma_normal,
+    changed_ |= widgets->input_float_limit("sigma_normal", &sigma_normal_,
                                            0.01, 1e10, 1, 3);
 }
 
@@ -68,34 +68,34 @@ Float SVGF::cal_weight(const Float &cur_depth, const Float &neighbor_depth, cons
 
 void SVGF::prepare() noexcept {
     prepare_buffers();
-    _reproject.prepare();
-    _filter_moments.prepare();
-    _atrous.prepare();
-    _modulator.prepare();
+    reproject_.prepare();
+    filter_moments_.prepare();
+    atrous_.prepare();
+    modulator_.prepare();
 }
 
 void SVGF::compile() noexcept {
-    _reproject.compile();
-    _filter_moments.compile();
-    _atrous.compile();
-    _modulator.compile();
+    reproject_.compile();
+    filter_moments_.compile();
+    atrous_.compile();
+    modulator_.compile();
 }
 
 CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
-    if (_switch) {
-        ret << _modulator.demodulate(input);
-        if (_reproject_switch) {
-            ret << _reproject.dispatch(input);
+    if (switch_) {
+        ret << modulator_.demodulate(input);
+        if (reproject_switch_) {
+            ret << reproject_.dispatch(input);
         }
-        if (_moment_filter_switch) {
-            ret << _filter_moments.dispatch(input);
+        if (moment_filter_switch_) {
+            ret << filter_moments_.dispatch(input);
         }
         for (int i = 0; i < N; ++i) {
             uint step_width = 1 << i;
-            ret << _atrous.dispatch(input, step_width);
+            ret << atrous_.dispatch(input, step_width);
         }
-        ret << _modulator.modulate(input);
+        ret << modulator_.modulate(input);
     }
     return ret;
 }

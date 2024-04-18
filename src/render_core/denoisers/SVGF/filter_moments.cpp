@@ -69,12 +69,12 @@ void FilterMoments::compile() noexcept {
 
 FilterMomentsParam FilterMoments::construct_param(RealTimeDenoiseInput &input) const noexcept {
     FilterMomentsParam param;
-    param.svgf_buffer = _svgf->cur_svgf_buffer(input.frame_index).proxy();
+    param.svgf_buffer = svgf_->cur_svgf_buffer(input.frame_index).proxy();
     param.gbuffer = input.gbuffer.proxy();
-    param.history_buffer = _svgf->history.proxy();
-    param.sigma_rt = _svgf->sigma_rt();
-    param.sigma_normal = _svgf->sigma_normal();
-    param.radius = _svgf->moments_filter_radius();
+    param.history_buffer = svgf_->history.proxy();
+    param.sigma_rt = svgf_->sigma_rt();
+    param.sigma_normal = svgf_->sigma_normal();
+    param.radius = svgf_->moments_filter_radius();
     return param;
 }
 
