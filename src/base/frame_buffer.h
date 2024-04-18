@@ -61,19 +61,19 @@ class Camera;
 class FrameBuffer : public Node {
 protected:
     /// save two frames of data
-    RegistrableBuffer<PixelGeometry> _gbuffer{};
+    RegistrableBuffer<PixelGeometry> gbuffer_{};
 
     /// save two frames of data , use for ReSTIR
-    RegistrableBuffer<SurfaceData> _surfaces{};
+    RegistrableBuffer<SurfaceData> surfaces_{};
 
-    RegistrableBuffer<HitBSDF> _hit_bsdfs{};
+    RegistrableBuffer<HitBSDF> hit_bsdfs_{};
 
-    RegistrableBuffer<float2> _motion_vectors{};
+    RegistrableBuffer<float2> motion_vectors_{};
 
-    RegistrableManaged<float4> _bufferA;
-    RegistrableManaged<float4> _bufferB;
-    RegistrableManaged<float4> _bufferC;
-    RegistrableManaged<float4> _bufferD;
+    RegistrableManaged<float4> bufferA_;
+    RegistrableManaged<float4> bufferB_;
+    RegistrableManaged<float4> bufferC_;
+    RegistrableManaged<float4> bufferD_;
 
 public:
     using Desc = FrameBufferDesc;
@@ -84,8 +84,8 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
-    [[nodiscard]] uint gbuffer_base() const noexcept { return _gbuffer.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return _surfaces.index().hv(); }
+    [[nodiscard]] uint gbuffer_base() const noexcept { return gbuffer_.index().hv(); }
+    [[nodiscard]] uint surface_base() const noexcept { return surfaces_.index().hv(); }
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T prev_gbuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + gbuffer_base(); }
@@ -102,10 +102,10 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
-#define VS_MAKE_ATTR_FUNC(buffer_name, count)                              \
-    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
-    void prepare_##buffer_name() noexcept {                                \
-        init_buffer(_##buffer_name, "FrameBuffer::_" #buffer_name, count); \
+#define VS_MAKE_ATTR_FUNC(buffer_name, count)                                  \
+    OC_MAKE_MEMBER_GETTER_(buffer_name, &)                                      \
+    void prepare_##buffer_name() noexcept {                                    \
+        init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
     }
 
     VS_MAKE_ATTR_FUNC(surfaces, 2)

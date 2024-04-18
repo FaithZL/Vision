@@ -29,10 +29,10 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
             widgets->image(image_view);
         });
     };
-    show_buffer(_bufferA);
-    show_buffer(_bufferB);
-    show_buffer(_bufferC);
-    show_buffer(_bufferD);
+    show_buffer(bufferA_);
+    show_buffer(bufferB_);
+    show_buffer(bufferC_);
+    show_buffer(bufferD_);
 }
 
 uint FrameBuffer::pixel_num() const noexcept {

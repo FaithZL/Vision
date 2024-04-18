@@ -38,7 +38,7 @@ namespace vision {
 
 class UnwrapperResult;
 
-struct Mesh : public Hashable {
+class Mesh : public Hashable {
 public:
     struct Handle {
         uint vertex_offset;
@@ -46,28 +46,28 @@ public:
     };
 
 protected:
-    vector<Vertex> _vertices;
-    vector<Triangle> _triangles;
-    uint _index{};
+    vector<Vertex> vertices_;
+    vector<Triangle> triangles_;
+    uint index_{};
 
-    bool _has_lightmap_uv{false};
+    bool has_lightmap_uv_{false};
     /// light map resolution
-    uint2 _resolution;
+    uint2 resolution_;
     /// auto unwrap light map uv is not normalized
-    bool _normalized{false};
+    bool normalized_{false};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
 public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
-        : _vertices(std::move(vert)), _triangles(std::move(tri)) {}
+        : vertices_(std::move(vert)), triangles_(std::move(tri)) {}
     Mesh() = default;
-    OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
-    OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
-    OC_MAKE_MEMBER_GETTER_SETTER(has_lightmap_uv, )
-    OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(vertices, &)
+    OC_MAKE_MEMBER_GETTER_SETTER_(triangles, &)
+    OC_MAKE_MEMBER_GETTER_SETTER_(has_lightmap_uv, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(resolution, )
     void normalize_lightmap_uv() noexcept;
     void setup_lightmap_uv(const UnwrapperResult &result);
     [[nodiscard]] float2 lightmap_uv_unnormalized(uint index) const noexcept;
@@ -81,40 +81,40 @@ public:
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
-    void set_##attr(decltype(_##attr.object) val) noexcept { \
-        _##attr.object = val;                                \
+    void set_##attr(decltype(attr##_.object) val) noexcept { \
+        attr##_.object = val;                                \
     }                                                        \
     void set_##attr##_name(const string &name) noexcept {    \
-        _##attr.name = name;                                 \
+        attr##_.name = name;                                 \
     }                                                        \
-    void set_##attr(decltype(_##attr) val) noexcept {        \
-        _##attr = val;                                       \
+    void set_##attr(decltype(attr##_) val) noexcept {        \
+        attr##_ = val;                                       \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
-        return _##attr.object;                               \
+        return attr##_.object;                               \
     }                                                        \
     [[nodiscard]] auto attr() noexcept {                     \
-        return _##attr.object;                               \
+        return attr##_.object;                               \
     }                                                        \
     [[nodiscard]] bool has_##attr() const noexcept {         \
         return bool(attr());                                 \
     }                                                        \
     [[nodiscard]] string attr##_name() const noexcept {      \
-        return _##attr.name;                                 \
+        return attr##_.name;                                 \
     }
 
 namespace vision {
 class ShapeInstance {
 protected:
-    InstanceHandle _handle;
-    float _factor{};
-    uint _index{};
-    Wrap<IAreaLight> _emission{};
-    Wrap<Material> _material{};
-    Wrap<Medium> _inside{};
-    Wrap<Medium> _outside{};
-    SP<Mesh> _mesh{};
-    string _name;
+    InstanceHandle handle_;
+    float factor_{};
+    uint index_{};
+    Wrap<IAreaLight> emission_{};
+    Wrap<Material> material_{};
+    Wrap<Medium> inside_{};
+    Wrap<Medium> outside_{};
+    SP<Mesh> mesh_{};
+    string name_;
 
 public:
     Box3f aabb;
@@ -122,10 +122,10 @@ public:
 public:
     explicit ShapeInstance(SP<Mesh> mesh);
     explicit ShapeInstance(Mesh mesh);
-    OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
-    OC_MAKE_MEMBER_GETTER_SETTER(name, )
-    OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
+    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(mesh, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(name, )
+    OC_MAKE_MEMBER_GETTER_SETTER_(handle, &)
     void fill_mesh_id() noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     void init_aabb() noexcept { aabb = compute_aabb(); }
@@ -133,15 +133,15 @@ public:
     VS_MAKE_ATTR_SETTER_GETTER(outside)
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
-    void set_lightmap_id(uint id) noexcept { _handle.lightmap_id = id; }
-    [[nodiscard]] float4x4 o2w() const noexcept { return _handle.o2w; }
-    void set_o2w(float4x4 o2w) noexcept { _handle.o2w = o2w; }
-    virtual void update_inside_medium_id(uint id) noexcept { _handle.inside_medium = id; }
-    virtual void update_outside_medium_id(uint id) noexcept { _handle.outside_medium = id; }
-    virtual void update_material_id(uint id) noexcept { _handle.mat_id = id; }
-    virtual void update_light_id(uint id) noexcept { _handle.light_id = id; }
+    void set_lightmap_id(uint id) noexcept { handle_.lightmap_id = id; }
+    [[nodiscard]] float4x4 o2w() const noexcept { return handle_.o2w; }
+    void set_o2w(float4x4 o2w) noexcept { handle_.o2w = o2w; }
+    virtual void update_inside_medium_id(uint id) noexcept { handle_.inside_medium = id; }
+    virtual void update_outside_medium_id(uint id) noexcept { handle_.outside_medium = id; }
+    virtual void update_material_id(uint id) noexcept { handle_.mat_id = id; }
+    virtual void update_light_id(uint id) noexcept { handle_.light_id = id; }
     [[nodiscard]] vector<float> surface_areas() const noexcept;
-    [[nodiscard]] bool has_lightmap() const noexcept { return _handle.lightmap_id != InvalidUI32; }
+    [[nodiscard]] bool has_lightmap() const noexcept { return handle_.lightmap_id != InvalidUI32; }
 };
 }// namespace vision
 
@@ -155,11 +155,11 @@ public:
     Box3f aabb;
 
 private:
-    vector<ShapeInstance> _instances;
+    vector<ShapeInstance> instances_;
 
 protected:
-    Wrap<IAreaLight> _emission{};
-    Wrap<Material> _material{};
+    Wrap<IAreaLight> emission_{};
+    Wrap<Material> material_{};
 
 public:
     ShapeGroup() = default;
@@ -170,18 +170,18 @@ public:
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
     void post_init(const ShapeDesc &desc);
-    [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return _instances[i]; }
-    [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return _instances[i]; }
+    [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return instances_[i]; }
+    [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return instances_[i]; }
     void add_instance(const ShapeInstance &instance) noexcept;
     void add_instances(const vector<ShapeInstance> &instances) noexcept;
     void for_each(const std::function<void(const ShapeInstance &, uint)> &func) const noexcept {
-        for (uint i = 0; i < _instances.size(); ++i) {
-            func(_instances[i], i);
+        for (uint i = 0; i < instances_.size(); ++i) {
+            func(instances_[i], i);
         }
     }
     void for_each(const std::function<void(ShapeInstance &, uint)> &func) noexcept {
-        for (uint i = 0; i < _instances.size(); ++i) {
-            func(_instances[i], i);
+        for (uint i = 0; i < instances_.size(); ++i) {
+            func(instances_[i], i);
         }
     }
 };

@@ -12,30 +12,30 @@ using namespace ocarina;
 
 class IndependentSampler : public Sampler {
 private:
-    optional<Uint> _state{};
+    optional<Uint> state_{};
 
 public:
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
     void load_data() noexcept override {
-        _state.emplace(Uint{0u});
+        state_.emplace(Uint{0u});
     }
     void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept override {
         Uint state = tea<D>(tea<D>(pixel.x, pixel.y), tea<D>(sample_index, dim));
         try_load_data();
-        _state = state;
+        state_ = state;
     }
     void temporary(const ocarina::function<void (Sampler *)> &func) noexcept override {
         try_load_data();
-        Uint temp_state = *_state;
+        Uint temp_state = *state_;
         func(this);
-        *_state = temp_state;
+        *state_ = temp_state;
     }
     [[nodiscard]] bool is_valid() const noexcept override {
-        return _state && _state->is_valid();
+        return state_ && state_->is_valid();
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float next_1d() noexcept override {
-        Float ret = lcg<D>(*_state);
+        Float ret = lcg<D>(*state_);
         return ret;
     }
 };

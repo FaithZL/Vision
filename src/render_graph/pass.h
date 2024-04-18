@@ -26,22 +26,22 @@ public:
     using Desc = PassDesc;
 
 private:
-    std::map<string, const RenderResource *> _res_map;
-    bool _recompile{false};
+    std::map<string, const RenderResource *> res_map_;
+    bool recompile_{false};
 
 public:
     RenderPass() = default;
     explicit RenderPass(const PassDesc &desc) : Node(desc) {}
     [[nodiscard]] const RenderResource *get_resource(const string &name) const noexcept {
-        if (_res_map.find(name) == _res_map.cend()) {
+        if (res_map_.find(name) == res_map_.cend()) {
             return nullptr;
         }
-        return _res_map.at(name);
+        return res_map_.at(name);
     }
-    OC_MAKE_MEMBER_GETTER(recompile, )
+    OC_MAKE_MEMBER_GETTER_(recompile, )
     template<typename T>
     void set_resource(const string &name, const T &res) noexcept {
-        _res_map.insert(std::make_pair(name, &res));
+        res_map_.insert(std::make_pair(name, &res));
     }
     template<typename T>
     [[nodiscard]] const T &res(const string &name) const noexcept {

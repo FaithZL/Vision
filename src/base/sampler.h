@@ -16,11 +16,11 @@ public:
     using Desc = SamplerDesc;
 
 protected:
-    uint _spp{1u};
+    uint spp_{1u};
 
 public:
     explicit Sampler(const SamplerDesc &desc)
-        : Node(desc), _spp(desc["spp"].as_uint(1u)) {}
+        : Node(desc), spp_(desc["spp"].as_uint(1u)) {}
     virtual void load_data() noexcept = 0;
     [[nodiscard]] virtual Float next_1d() noexcept = 0;
     [[nodiscard]] virtual bool is_valid() const noexcept = 0;
@@ -40,7 +40,7 @@ public:
      * @param func
      */
     virtual void temporary(const ocarina::function<void(Sampler *)> &func) noexcept = 0;
-    [[nodiscard]] virtual uint sample_per_pixel() const noexcept { return _spp; }
+    [[nodiscard]] virtual uint sample_per_pixel() const noexcept { return spp_; }
     virtual void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept = 0;
     [[nodiscard]] virtual Float2 next_2d() noexcept {
         Float x = next_1d();

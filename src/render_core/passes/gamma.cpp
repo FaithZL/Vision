@@ -9,7 +9,7 @@ namespace vision {
 
 class GammaCorrectionPass : public RenderPass {
 private:
-    Shader<void(Buffer<float4>, Buffer<float4>)> _shader;
+    Shader<void(Buffer<float4>, Buffer<float4>)> shader_;
 
 public:
     explicit GammaCorrectionPass(const PassDesc &desc)
@@ -20,11 +20,11 @@ public:
             Float4 pixel = input.read(dispatch_id());
             output.write(dispatch_id(), linear_to_srgb(pixel));
         };
-        _shader = device().compile(kernel, "Gamma correction");
+        shader_ = device().compile(kernel, "Gamma correction");
     }
 
     [[nodiscard]] Command *dispatch() noexcept override {
-        return _shader(res<Buffer<float4>>("input"),
+        return shader_(res<Buffer<float4>>("input"),
                        res<Buffer<float4>>("output"))
             .dispatch(pipeline()->resolution());
     }

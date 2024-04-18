@@ -11,29 +11,29 @@ namespace vision {
 
 class ToneMappingPass : public RenderPass {
 private:
-    mutable SP<ToneMapper> _tone_mapper{};
-    Shader<void(Buffer<float4>, Buffer<float4>)> _shader;
+    mutable SP<ToneMapper> tone_mapper_{};
+    Shader<void(Buffer<float4>, Buffer<float4>)> shader_;
 
 public:
     explicit ToneMappingPass(const PassDesc &desc)
         : RenderPass(desc) {
         ToneMapperDesc tone_mapper_desc;
         tone_mapper_desc.init(DataWrap::object());
-        _tone_mapper = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc);
+        tone_mapper_ = NodeMgr::instance().load<ToneMapper>(tone_mapper_desc);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {
         Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output) {
             Float4 pixel = input.read(dispatch_id());
-            pixel = _tone_mapper->apply(input.read(dispatch_id()));
+            pixel = tone_mapper_->apply(input.read(dispatch_id()));
             pixel.w = 1.f;
             output.write(dispatch_id(), pixel);
         };
-        _shader = device().compile(kernel, "tone mapping");
+        shader_ = device().compile(kernel, "tone mapping");
     }
 
     [[nodiscard]] Command *dispatch() noexcept override {
-        return _shader(res<Buffer<float4>>("input"),
+        return shader_(res<Buffer<float4>>("input"),
                        res<Buffer<float4>>("output"))
             .dispatch(pipeline()->resolution());
     }

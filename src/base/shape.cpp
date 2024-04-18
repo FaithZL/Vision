@@ -12,21 +12,21 @@
 namespace vision {
 
 ShapeInstance::ShapeInstance(SP<vision::Mesh> mesh)
-    : _mesh(ocarina::move(mesh)) {}
+    : mesh_(ocarina::move(mesh)) {}
 
 ShapeInstance::ShapeInstance(vision::Mesh mesh)
-    : _mesh(MeshRegistry::instance().register_(ocarina::move(mesh))) {}
+    : mesh_(MeshRegistry::instance().register_(ocarina::move(mesh))) {}
 
 void ShapeInstance::fill_mesh_id() noexcept {
-    _handle.mesh_id = _mesh->index();
+    handle_.mesh_id = mesh_->index();
 }
 
 vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
-    for (const Triangle &tri : _mesh->triangles()) {
-        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.i].position());
-        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.j].position());
-        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.k].position());
+    for (const Triangle &tri : mesh_->triangles()) {
+        float3 v0 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.i].position());
+        float3 v1 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.j].position());
+        float3 v2 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.k].position());
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;
@@ -34,10 +34,10 @@ vector<float> ShapeInstance::surface_areas() const noexcept {
 
 Box3f ShapeInstance::compute_aabb() const noexcept {
     Box3f box;
-    for (const Triangle &tri : _mesh->triangles()) {
-        float3 v0 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.i].position());
-        float3 v1 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.j].position());
-        float3 v2 = transform_point<H>(_handle.o2w, _mesh->vertices()[tri.k].position());
+    for (const Triangle &tri : mesh_->triangles()) {
+        float3 v0 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.i].position());
+        float3 v1 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.j].position());
+        float3 v2 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.k].position());
         box.extend(v0);
         box.extend(v1);
         box.extend(v2);
@@ -47,46 +47,46 @@ Box3f ShapeInstance::compute_aabb() const noexcept {
 
 uint64_t Mesh::_compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
-    for (Vertex vertex : _vertices) {
+    for (Vertex vertex : vertices_) {
         ret = hash64(vertex, ret);
     }
-    for (Triangle triangle : _triangles) {
+    for (Triangle triangle : triangles_) {
         ret = hash64(triangle, ret);
     }
     return ret;
 }
 
 void Mesh::setup_lightmap_uv(const UnwrapperResult &result) {
-    _resolution = make_uint2(result.width, result.height);
+    resolution_ = make_uint2(result.width, result.height);
     const UnwrapperMesh &u_mesh = result.meshes[0];
     vector<Vertex> vertices;
     vertices.reserve(u_mesh.vertices.size());
     for (auto &vert : u_mesh.vertices) {
-        Vertex vertex = _vertices[vert.xref];
+        Vertex vertex = vertices_[vert.xref];
         vertex.set_lightmap_uv(vert.uv);
         vertices.push_back(vertex);
     }
     set_vertices(ocarina::move(vertices));
     set_triangles(u_mesh.triangles);
-    _has_lightmap_uv = true;
+    has_lightmap_uv_ = true;
 }
 
 void Mesh::normalize_lightmap_uv() noexcept {
-    if (_normalized) {
+    if (normalized_) {
         return;
     }
-    for (Vertex &vertex : _vertices) {
-        vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(_resolution));
+    for (Vertex &vertex : vertices_) {
+        vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(resolution_));
     }
-    _normalized = true;
+    normalized_ = true;
 }
 
 Box3f Mesh::compute_aabb() const noexcept {
     Box3f box;
-    for (const Triangle &tri : _triangles) {
-        float3 v0 = _vertices[tri.i].position();
-        float3 v1 = _vertices[tri.j].position();
-        float3 v2 = _vertices[tri.k].position();
+    for (const Triangle &tri : triangles_) {
+        float3 v0 = vertices_[tri.i].position();
+        float3 v1 = vertices_[tri.j].position();
+        float3 v2 = vertices_[tri.k].position();
         box.extend(v0);
         box.extend(v1);
         box.extend(v2);
@@ -95,9 +95,9 @@ Box3f Mesh::compute_aabb() const noexcept {
 }
 
 float2 Mesh::lightmap_uv_unnormalized(uint index) const noexcept {
-    float2 ret = _vertices[index].lightmap_uv();
-    if (_normalized) {
-        ret *= make_float2(_resolution);
+    float2 ret = vertices_[index].lightmap_uv();
+    if (normalized_) {
+        ret *= make_float2(resolution_);
     }
     return ret;
 }
@@ -111,10 +111,10 @@ uint Mesh::lightmap_size() const noexcept {
 
 vector<float> Mesh::surface_areas() const noexcept {
     vector<float> ret;
-    for (const Triangle &tri : _triangles) {
-        float3 v0 = _vertices[tri.i].position();
-        float3 v1 = _vertices[tri.j].position();
-        float3 v2 = _vertices[tri.k].position();
+    for (const Triangle &tri : triangles_) {
+        float3 v0 = vertices_[tri.i].position();
+        float3 v1 = vertices_[tri.j].position();
+        float3 v2 = vertices_[tri.k].position();
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;
@@ -122,18 +122,18 @@ vector<float> Mesh::surface_areas() const noexcept {
 
 ShapeGroup::ShapeGroup(const vision::ShapeDesc &desc)
     : Node(desc) {
-    _material.name = desc["material"].as_string();
+    material_.name = desc["material"].as_string();
 }
 
 ShapeGroup::ShapeGroup(vision::ShapeInstance inst) {
     inst.init_aabb();
     aabb.extend(inst.aabb);
     inst.set_name(ocarina::format("{}_0", name()));
-    _instances.push_back(inst);
+    instances_.push_back(inst);
 }
 
 void ShapeGroup::add_instance(const vision::ShapeInstance &instance) noexcept {
-    _instances.push_back(instance);
+    instances_.push_back(instance);
 }
 
 void ShapeGroup::add_instances(const vector<vision::ShapeInstance> &instances) noexcept {

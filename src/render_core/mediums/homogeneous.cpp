@@ -10,21 +10,21 @@ namespace vision {
 
 class HomogeneousMedium : public Medium {
 private:
-    float3 _sigma_a;
-    float3 _sigma_s;
-    float3 _sigma_t;
-    float _g;
+    float3 sigma_a_;
+    float3 sigma_s_;
+    float3 sigma_t_;
+    float g_;
 
 public:
     explicit HomogeneousMedium(const MediumDesc &desc)
         : Medium(desc),
-          _sigma_a(desc.sigma_a["value"].as_float3() * scale_),
-          _sigma_s(desc.sigma_s["value"].as_float3() * scale_),
-          _sigma_t(_sigma_a + _sigma_s),
-          _g(desc.g["value"].as_float()) {}
+          sigma_a_(desc.sigma_a["value"].as_float3() * scale_),
+          sigma_s_(desc.sigma_s["value"].as_float3() * scale_),
+          sigma_t_(sigma_a_ + sigma_s_),
+          g_(desc.g["value"].as_float()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledSpectrum Tr(Float t, const SampledWavelengths &swl) const noexcept {
-        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
+        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(sigma_t_, swl).sample;
         return exp(-sigma_t * min(RayTMax, t));
     }
 
@@ -36,15 +36,15 @@ public:
     [[nodiscard]] SampledSpectrum sample(const RayVar &ray, Interaction &it,
                                          const SampledWavelengths &swl,
                                          Sampler *sampler) const noexcept override {
-        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(_sigma_t, swl).sample;
-        SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(_sigma_s, swl).sample;
+        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(sigma_t_, swl).sample;
+        SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(sigma_s_, swl).sample;
         Uint channel = min(cast<uint>(sampler->next_1d() * swl.dimension()), swl.dimension() - 1);
         Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
         Float t = min(dist / length(ray->direction()), ray->t_max());
         Bool sampled_medium = t < ray->t_max();
         $if(sampled_medium) {
             it = Interaction(ray->at(t), -ray->direction(), true);
-            it.init_phase(_g, swl);
+            it.init_phase(g_, swl);
             it.set_medium(index_, index_);
         };
         SampledSpectrum tr = Tr(t, swl);

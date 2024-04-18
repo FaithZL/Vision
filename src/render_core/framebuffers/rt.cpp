@@ -12,10 +12,10 @@ namespace vision {
 class RayTracingFrameBuffer : public FrameBuffer {
 private:
     using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float2>, Buffer<float4>, Buffer<float4>);
-    Shader<gbuffer_signature> _compute_geom;
+    Shader<gbuffer_signature> compute_geom_;
 
     using grad_signature = void(uint, Buffer<PixelGeometry>);
-    Shader<grad_signature> _compute_grad;
+    Shader<grad_signature> compute_grad_;
 
 public:
     explicit RayTracingFrameBuffer(const FrameBufferDesc &desc)
@@ -70,7 +70,7 @@ public:
             albedo_buffer.write(dispatch_id(), make_float4(albedo, 1.f));
             emission_buffer.write(dispatch_id(), make_float4(emission, 1.f));
         };
-        _compute_geom = device().compile(kernel, "rt_geom");
+        compute_geom_ = device().compile(kernel, "rt_geom");
     }
 
     void compile_compute_grad() noexcept {
@@ -120,7 +120,7 @@ public:
             center_data.depth_gradient = abs(depth_dx) + abs(depth_dy);
             gbuffer.write(dispatch_id(), center_data);
         };
-        _compute_grad = device().compile(kernel, "rt_gradient");
+        compute_grad_ = device().compile(kernel, "rt_gradient");
     }
 
     void compile() noexcept override {
@@ -131,8 +131,8 @@ public:
     [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                               BufferView<float4> albedo, BufferView<float4> emission) const noexcept override {
         CommandList ret;
-        ret << _compute_geom(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
-        ret << _compute_grad(frame_index, gbuffer).dispatch(resolution());
+        ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
+        ret << compute_grad_(frame_index, gbuffer).dispatch(resolution());
         return ret;
     }
 };

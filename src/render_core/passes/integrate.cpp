@@ -11,7 +11,7 @@ namespace vision {
 
 class IntegratePass : public RenderPass {
 private:
-    Shader<void(uint, Buffer<float4>)> _shader;
+    Shader<void(uint, Buffer<float4>)> shader_;
 
 public:
     explicit IntegratePass(const PassDesc &desc)
@@ -31,11 +31,11 @@ public:
             Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), {}, render_env);
             output.write(dispatch_id(), make_float4(L, 1.f));
         };
-        _shader = device().compile(kernel, "integrate pass");
+        shader_ = device().compile(kernel, "integrate pass");
     }
 
     [[nodiscard]] Command *dispatch() noexcept override {
-        return _shader(pipeline()->frame_index(),
+        return shader_(pipeline()->frame_index(),
                        res<Buffer<float4>>("radiance"))
             .dispatch(pipeline()->resolution());
     }

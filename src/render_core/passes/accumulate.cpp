@@ -9,7 +9,7 @@ namespace vision {
 
 class AccumulatePass : public RenderPass {
 private:
-    Shader<void(Buffer<float4>, Buffer<float4>, uint)> _shader;
+    Shader<void(Buffer<float4>, Buffer<float4>, uint)> shader_;
 
 public:
     explicit AccumulatePass(const PassDesc &desc)
@@ -22,7 +22,7 @@ public:
             new_pixel.w = 1.f;
             output.write(dispatch_id(), new_pixel);
         };
-        _shader = device().compile(kernel, "accumulate");
+        shader_ = device().compile(kernel, "accumulate");
     }
 
     [[nodiscard]] ChannelList inputs() const noexcept override {
@@ -36,7 +36,7 @@ public:
     }
 
     [[nodiscard]] Command *dispatch() noexcept override {
-        return _shader(res<Buffer<float4>>("input"),
+        return shader_(res<Buffer<float4>>("input"),
                        res<Buffer<float4>>("output"),
                        pipeline()->frame_index())
             .dispatch(pipeline()->resolution());
