@@ -42,6 +42,7 @@ public:
 };
 
 #define VS_MAKE_SLOT(attr_name) Slot _##attr_name{#attr_name};
+#define VS_MAKE_SLOT_(attr_name) Slot attr_name##_{#attr_name};
 
 class Slot : public ocarina::Hashable, public GUI {
 private:

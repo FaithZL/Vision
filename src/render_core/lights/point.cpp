@@ -37,7 +37,7 @@ public:
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum value = _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
+        SampledSpectrum value = color_.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
         return value / length_squared(p_ref.pos - position());
     }
 };

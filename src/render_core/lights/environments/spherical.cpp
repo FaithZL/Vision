@@ -48,7 +48,7 @@ public:
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
         Float2 uv = UV(local_dir);
-        return _color.eval_illumination_spectrum(uv, swl).sample * scale();
+        return color_.eval_illumination_spectrum(uv, swl).sample * scale();
     }
 
     [[nodiscard]] Float2 convert_to_bary(const Float3 &world_dir) const noexcept override {
@@ -152,9 +152,9 @@ public:
     }
 
     [[nodiscard]] vector<float> calculate_weights() noexcept {
-        uint2 res = _color.node()->resolution();
+        uint2 res = color_->resolution();
         vector<float> weights(res.x * res.y, 0);
-        _color.node()->for_each_pixel([&](const std::byte *pixel, int idx, PixelStorage pixel_storage) {
+        color_->for_each_pixel([&](const std::byte *pixel, int idx, PixelStorage pixel_storage) {
             float f = 0;
             float v = idx / res.y + 0.5f;
             float theta = v / res.x;
@@ -181,7 +181,7 @@ public:
 
     void prepare() noexcept override {
         _warper = scene().load_warper2d();
-        uint2 res = _color.node()->resolution();
+        uint2 res = color_->resolution();
         vector<float> weights;
         if (any(res == 0u)) {
             res = make_uint2(1);

@@ -9,8 +9,8 @@ namespace vision {
 
 LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc),
-      _env_separate(desc["env_separate"].as_bool(false)),
-      _env_prob(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
+      env_separate_(desc["env_separate"].as_bool(false)),
+      env_prob_(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
         SP<Light> light = scene().load<Light>(light_desc);
         if (light->match(LightType::Area)) {
@@ -18,22 +18,22 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
             emission->instance()->set_emission(emission);
         }
         if (light->match(LightType::Infinite)) {
-            _env_light = std::dynamic_pointer_cast<Environment>(light);
+            env_light_ = std::dynamic_pointer_cast<Environment>(light);
         }
         add_light(light);
     }
 }
 
 Uint LightSampler::correct_index(Uint index) const noexcept {
-    if (env_light() && _env_separate) {
+    if (env_light() && env_separate_) {
         return ocarina::select(index < env_index(), index, index + 1u);
     }
     return index;
 }
 
 void LightSampler::tidy_up() noexcept {
-    std::sort(_lights.begin(), _lights.end(), [&](SP<Light> a, SP<Light> b) {
-        return _lights.type_index(a.get()) < _lights.type_index(b.get());
+    std::sort(lights_.begin(), lights_.end(), [&](SP<Light> a, SP<Light> b) {
+        return lights_.type_index(a.get()) < lights_.type_index(b.get());
     });
     for_each([&](SP<Light> light, uint index) noexcept {
         light->set_index(index);
@@ -45,12 +45,12 @@ void LightSampler::prepare() noexcept {
         light->prepare();
     });
     auto rp = pipeline();
-    _lights.prepare(rp->bindless_array(), rp->device());
+    lights_.prepare(rp->bindless_array(), rp->device());
 }
 
 void LightSampler::update_device_data() noexcept {
     if (has_changed()) {
-        _lights.update();
+        lights_.update();
     }
 }
 
@@ -59,7 +59,7 @@ bool LightSampler::render_UI(ocarina::Widgets *widgets) noexcept {
         ocarina::format("{} light sampler", impl_type().data()),
         [&] {
             render_sub_UI(widgets);
-            _lights.render_UI(widgets);
+            lights_.render_UI(widgets);
         });
     return open;
 }
@@ -71,15 +71,15 @@ Uint LightSampler::extract_light_index(const vision::Interaction &it) const noex
 Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
     vector<uint> nums;
     Uint ret = 0u;
-    switch (_lights.mode()) {
+    switch (lights_.mode()) {
         case ocarina::EInstance: {
             ret = inst_id;
             break;
         }
         case ocarina::EType: {
-            nums.reserve(_lights.type_num());
-            for (int i = 0; i < _lights.type_num(); ++i) {
-                nums.push_back(static_cast<uint>(_lights.instance_num(i)));
+            nums.reserve(lights_.type_num());
+            for (int i = 0; i < lights_.type_num(); ++i) {
+                nums.push_back(static_cast<uint>(lights_.instance_num(i)));
             }
             DynamicArray<uint> arr{nums};
             $for(i, type_id) {
@@ -98,9 +98,9 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
     Uint type_id = 0u;
     Uint inst_id = 0u;
     vector<uint> nums;
-    nums.reserve(_lights.type_num());
-    for (int i = 0; i < _lights.type_num(); ++i) {
-        nums.push_back(static_cast<uint>(_lights.instance_num(i)));
+    nums.reserve(lights_.type_num());
+    for (int i = 0; i < lights_.type_num(); ++i) {
+        nums.push_back(static_cast<uint>(lights_.instance_num(i)));
     }
 
     Uint accum = 0u;
@@ -109,7 +109,7 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
         inst_id = select(index >= accum, index - accum, inst_id);
         accum += nums[i];
     }
-    switch (_lights.mode()) {
+    switch (lights_.mode()) {
         case ocarina::EInstance:
             return {type_id, index};
         case ocarina::EType:
@@ -122,30 +122,30 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
 }
 
 Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const noexcept {
-    if (_env_separate) {
+    if (env_separate_) {
         if (env_prob() == 1) {
             return 1.f;
         } else if (env_prob() == 0) {
-            return _PMF(lsc, index);
+            return PMF_(lsc, index);
         }
         Float ret = 0;
         $if(index == env_index()) {
             ret = env_prob();
         }
         $else {
-            ret = (1 - env_prob()) * _PMF(lsc, index);
+            ret = (1 - env_prob()) * PMF_(lsc, index);
         };
         return ret;
     }
-    return _PMF(lsc, index);
+    return PMF_(lsc, index);
 }
 
 SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) const noexcept {
-    if (_env_separate) {
+    if (env_separate_) {
         if (env_prob() == 1) {
             return SampledLight{0, 1.f};
         } else if (env_prob() == 0) {
-            return _select_light(lsc, u);
+            return select_light_(lsc, u);
         }
         SampledLight sampled_light;
         $if(u < env_prob()) {
@@ -153,12 +153,12 @@ SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) 
         }
         $else {
             u = remapping(u, env_prob(), 1);
-            sampled_light = _select_light(lsc, u);
+            sampled_light = select_light_(lsc, u);
             sampled_light.PMF *= 1 - env_prob();
         };
         return sampled_light;
     }
-    return _select_light(lsc, u);
+    return select_light_(lsc, u);
 }
 
 LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
@@ -278,7 +278,7 @@ LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, con
 }
 
 void LightSampler::dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept {
-    uint type_index = _lights.type_index(env_light());
+    uint type_index = lights_.type_index(env_light());
     dispatch_light(type_index, 0, [&](const Light *light) {
         auto env = dynamic_cast<const Environment *>(light);
         if (env) {
@@ -288,12 +288,12 @@ void LightSampler::dispatch_environment(const std::function<void(const Environme
 }
 
 void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
-    _lights.dispatch(id, func);
+    lights_.dispatch(id, func);
 }
 
 void LightSampler::dispatch_light(const Uint &type_id, const Uint &inst_id,
                                   const std::function<void(const Light *)> &func) const noexcept {
-    _lights.dispatch(type_id, inst_id, func);
+    lights_.dispatch(type_id, inst_id, func);
 }
 
 }// namespace vision

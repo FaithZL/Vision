@@ -8,17 +8,17 @@
 namespace vision {
 
 Light::Light(const LightDesc &desc, LightType light_type)
-    : Node(desc), _type(light_type),
-      _scale(desc["scale"].as_float(1.f)) {
-    _color.set(scene().create_slot(desc.color));
+    : Node(desc), type_(light_type),
+      scale_(desc["scale"].as_float(1.f)) {
+    color_.set(scene().create_slot(desc.color));
 }
 
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
-    string label = format("{} {} light: {}", _index, impl_type().data(), _name.c_str());
+    string label = format("{} {} light: {}", index_, impl_type().data(), _name.c_str());
     bool open = widgets->use_tree(label, [&] {
-        _changed |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(_switch.hv())));
-        _changed |= widgets->input_float_limit("scale", &_scale.hv(), 0, 100000, 0.1, 2);
-        _color.render_UI(widgets);
+        _changed |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(switch_.hv())));
+        _changed |= widgets->input_float_limit("scale", &scale_.hv(), 0, 100000, 0.1, 2);
+        color_.render_UI(widgets);
         render_sub_UI(widgets);
     });
     return open;

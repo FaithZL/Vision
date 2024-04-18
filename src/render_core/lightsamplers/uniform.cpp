@@ -9,8 +9,8 @@
 namespace vision {
 class UniformLightSampler : public LightSampler {
 protected:
-    [[nodiscard]] Float _PMF(const LightSampleContext &lsc, const Uint &index) const noexcept override {
-        if (_env_separate) {
+    [[nodiscard]] Float PMF_(const LightSampleContext &lsc, const Uint &index) const noexcept override {
+        if (env_separate_) {
             return 1.f / punctual_light_num();
         }
         return 1.f / light_num();
@@ -19,9 +19,9 @@ protected:
 public:
     explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] SampledLight _select_light(const LightSampleContext &lsc, const Float &u) const noexcept override {
+    [[nodiscard]] SampledLight select_light_(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
-        if (_env_separate) {
+        if (env_separate_) {
             ret.light_index = min(u * float(punctual_light_num()), float(punctual_light_num()) - 1);
             ret.light_index = correct_index(ret.light_index);
             ret.PMF = 1.f / punctual_light_num();

@@ -68,16 +68,16 @@ public:
     using Desc = LightDesc;
 
 protected:
-    const LightType _type{LightType::Area};
-    Serial<float> _scale{1.f};
-    Serial<uint> _switch{true};
-    VS_MAKE_SLOT(color)
-    uint _index{InvalidUI32};
+    const LightType type_{LightType::Area};
+    Serial<float> scale_{1.f};
+    Serial<uint> switch_{true};
+    VS_MAKE_SLOT_(color)
+    uint index_{InvalidUI32};
 
 protected:
     [[nodiscard]] float3 average() const noexcept {
-        auto a = _color.average();
-        return make_float3(a[0], a[1], a[2]) * _scale.hv();
+        auto a = color_.average();
+        return make_float3(a[0], a[1], a[2]) * scale_.hv();
     }
 
     [[nodiscard]] static bool match_L(LightEvalMode mode) noexcept {
@@ -104,16 +104,16 @@ protected:
 
 public:
     explicit Light(const LightDesc &desc, LightType light_type);
-    OC_SERIALIZABLE_FUNC(Serializable<float>, _scale, *_color.node(), _switch)
+    OC_SERIALIZABLE_FUNC(Serializable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return _color.type_hash();
+        return color_.type_hash();
     }
-    OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    VS_MAKE_GUI_STATUS_FUNC(Node, _color)
+    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
+    VS_MAKE_GUI_STATUS_FUNC(Node, color_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
-    [[nodiscard]] Float scale() const noexcept { return *_scale * *_switch; }
+    [[nodiscard]] Float scale() const noexcept { return *scale_ * *switch_; }
     [[nodiscard]] virtual SampledSpectrum Le(const LightSampleContext &p_ref,
                                              const LightEvalContext &p_light,
                                              const SampledWavelengths &swl) const noexcept = 0;
@@ -147,9 +147,9 @@ public:
     }
     [[nodiscard]] virtual LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                                 const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] LightType type() const noexcept { return _type; }
-    [[nodiscard]] bool match(LightType t) const noexcept { return static_cast<bool>(t & _type); }
-    [[nodiscard]] bool is(LightType t) const noexcept { return t == _type; }
+    [[nodiscard]] LightType type() const noexcept { return type_; }
+    [[nodiscard]] bool match(LightType t) const noexcept { return static_cast<bool>(t & type_); }
+    [[nodiscard]] bool is(LightType t) const noexcept { return t == type_; }
     [[nodiscard]] virtual LightEval evaluate_wi(const LightSampleContext &p_ref,
                                                 const LightEvalContext &p_light,
                                                 const SampledWavelengths &swl,

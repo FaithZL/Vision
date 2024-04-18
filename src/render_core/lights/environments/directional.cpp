@@ -67,7 +67,7 @@ public:
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
-        return _color.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
+        return color_.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
     }
 
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,

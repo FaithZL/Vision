@@ -42,7 +42,7 @@ public:
           _angle_y(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           _o2w(desc.o2w.mat) {
         if (_ratio.hv() == 0) {
-            uint2 res = _color.node()->resolution();
+            uint2 res = color_->resolution();
             _ratio = float(res.x) / res.y;
         }
     }
@@ -106,7 +106,7 @@ public:
         Float2 tan_xy = make_float2(tan_x, tan_y);
         Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
-        return select(valid, 1.f, 0.f) * _color.eval_illumination_spectrum(uv, swl).sample / d2 * scale();
+        return select(valid, 1.f, 0.f) * color_.eval_illumination_spectrum(uv, swl).sample / d2 * scale();
     }
 };
 }// namespace vision
