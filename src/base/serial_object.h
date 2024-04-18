@@ -43,7 +43,7 @@ public:
     virtual void prepare_data() noexcept {
         encode_data();
         datas().reset_device_buffer_immediately(Global::instance().device(),
-                                                ocarina::format("SerialObject: {}::_data", typeid(*this).name()));
+                                                ocarina::format("SerialObject: {}::data_", typeid(*this).name()));
         datas().register_self();
     }
 
