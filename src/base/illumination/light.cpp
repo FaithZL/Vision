@@ -25,11 +25,11 @@ bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void IAreaLight::set_instance(const vision::ShapeInstance *inst) noexcept {
-    _instance = inst;
+    instance_ = inst;
 }
 
 ShapeInstance *IAreaLight::instance() const noexcept {
-    return scene().get_instance(_inst_idx.hv());
+    return scene().get_instance(inst_idx_.hv());
 }
 
 LightSample IPointLight::sample_wi(const LightSampleContext &p_ref, Float2 u,

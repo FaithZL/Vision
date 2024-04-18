@@ -10,11 +10,11 @@
 namespace vision {
 class PowerLightSampler : public LightSampler {
 private:
-    SP<Warper> _warper{};
+    SP<Warper> warper_{};
 
 protected:
     [[nodiscard]] Float PMF_(const LightSampleContext &lsc, const Uint &index) const noexcept override {
-        return _warper->PMF(index);
+        return warper_->PMF(index);
     }
 
 public:
@@ -23,14 +23,14 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledLight select_light_(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
-        ret.light_index = _warper->sample_discrete(u, nullptr, nullptr);
+        ret.light_index = warper_->sample_discrete(u, nullptr, nullptr);
         ret.PMF = PMF_(lsc, ret.light_index);
         return ret;
     }
 
     void prepare() noexcept override {
         LightSampler::prepare();
-        _warper = scene().load_warper();
+        warper_ = scene().load_warper();
         vector<float> weights;
         if (env_separate_) {
             lights_.for_each_instance([&](SP<Light> light) {
@@ -45,8 +45,8 @@ public:
                 weights.push_back(luminance(light->power()));
             });
         }
-        _warper->build(std::move(weights));
-        _warper->prepare();
+        warper_->build(std::move(weights));
+        warper_->prepare();
     }
 };
 }// namespace vision

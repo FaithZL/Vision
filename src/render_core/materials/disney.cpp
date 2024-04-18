@@ -227,9 +227,9 @@ public:
                     fresnel_dielectric(cos_theta, _eta),
                     fresnel_schlick(R0, cos_theta));
     }
-    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {_swl->dimension(), _eta}; }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {swl_->dimension(), _eta}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDisney>(R0, _metallic, _eta, *_swl, _rp);
+        return make_shared<FresnelDisney>(R0, _metallic, _eta, *swl_, rp_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDisney)
 };
@@ -250,21 +250,21 @@ public:
             return microfacet::D_<D>(wh, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::D");
-        return impl(wh, _alpha_x, _alpha_y);
+        return impl(wh, alpha_x_, alpha_y_);
     }
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float2 u, Float ax, Float ay) {
             return microfacet::sample_wh<D>(wo, u, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::sample_wh");
-        return impl(wo, u, _alpha_x, _alpha_y);
+        return impl(wo, u, alpha_x_, alpha_y_);
     }
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wo, Float3 wh, Float ax, Float ay) {
             return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wh");
-        return impl(wo, wh, _alpha_x, _alpha_y);
+        return impl(wo, wh, alpha_x_, alpha_y_);
     }
 
     [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override {
@@ -297,7 +297,7 @@ public:
             return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::BRDF_div_fr");
-        return impl(wo, wh, wi, _alpha_x, _alpha_y) * Fr;
+        return impl(wo, wh, wi, alpha_x_, alpha_y_) * Fr;
     }
 
     [[nodiscard]] SampledSpectrum BRDF(Float3 wo, Float3 wi, const SampledSpectrum &Fr) const noexcept override {
@@ -311,7 +311,7 @@ public:
             return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::BTDF_div_ft");
-        return impl(wo, wh, wi, eta, _alpha_x, _alpha_y) * Ft;
+        return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
     }
 
     [[nodiscard]] SampledSpectrum BTDF(Float3 wo, Float3 wi, const SampledSpectrum &Ft, Float eta) const noexcept override {

@@ -42,7 +42,7 @@ template<typename T, size_t N>
 }// namespace detail
 
 SPD::SPD(Pipeline *rp)
-    : _rp(rp), _func(rp->bindless_array()) {}
+    : rp_(rp), func_(rp->bindless_array()) {}
 
 SPD::SPD(vector<float> func, Pipeline *rp)
     : SPD(rp) {
@@ -50,34 +50,34 @@ SPD::SPD(vector<float> func, Pipeline *rp)
 }
 
 void SPD::init(vector<float> func) noexcept {
-    _sample_interval = static_cast<float>(cie::cie_sample_count) / func.size();
-    _func.set_host(ocarina::move(func));
+    sample_interval_ = static_cast<float>(cie::cie_sample_count) / func.size();
+    func_.set_host(ocarina::move(func));
 }
 
 void SPD::prepare() noexcept {
-    _func.reset_device_buffer_immediately(_rp->device());
-    _func.register_self();
-    _func.upload_immediately();
+    func_.reset_device_buffer_immediately(rp_->device());
+    func_.register_self();
+    func_.upload_immediately();
 }
 
 float SPD::eval(float lambda) const noexcept {
     using namespace cie;
     using namespace cie;
-    float t = (ocarina::clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
-    float sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
+    float t = (ocarina::clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / sample_interval_.hv();
+    float sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / sample_interval_.hv()) + 1u;
     uint i = static_cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
-    float l = _func.host_buffer().at(i);
-    float r = _func.host_buffer().at(i + 1);
+    float l = func_.host_buffer().at(i);
+    float r = func_.host_buffer().at(i + 1);
     return ocarina::lerp(fract(t), l, r);
 }
 
 Float SPD::eval(const Float &lambda) const noexcept {
     using namespace cie;
-    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / _sample_interval.hv();
-    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / _sample_interval.hv()) + 1u;
+    Float t = (clamp(lambda, visible_wavelength_min, visible_wavelength_max) - visible_wavelength_min) / sample_interval_.hv();
+    uint sample_count = static_cast<uint>((visible_wavelength_max - visible_wavelength_min) / sample_interval_.hv()) + 1u;
     Uint i = cast<uint>(min(t, static_cast<float>(sample_count - 2u)));
-    Float l = _rp->buffer_var<float>(*_func.index()).read(i);
-    Float r = _rp->buffer_var<float>(*_func.index()).read(i + 1);
+    Float l = rp_->buffer_var<float>(*func_.index()).read(i);
+    Float r = rp_->buffer_var<float>(*func_.index()).read(i + 1);
     return lerp(fract(t), l, r);
 }
 

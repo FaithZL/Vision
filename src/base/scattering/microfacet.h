@@ -305,22 +305,22 @@ template<EPort p = EPort::D>
 template<EPort p = EPort::D, typename TSpectrum = SampledSpectrum>
 class Microfacet {
 protected:
-    oc_float<p> _alpha_x{};
-    oc_float<p> _alpha_y{};
-    MicrofacetType _type{GGX};
+    oc_float<p> alpha_x_{};
+    oc_float<p> alpha_y_{};
+    MicrofacetType type_{GGX};
 
 public:
     explicit Microfacet(oc_float2<p> alpha, MicrofacetType type = GGX)
-        : _alpha_x(alpha.x), _alpha_y(alpha.y), _type(type) {}
+        : alpha_x_(alpha.x), alpha_y_(alpha.y), type_(type) {}
     Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
-        : _alpha_x(ax), _alpha_y(ay), _type(type) {}
-    [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(_alpha_x, _alpha_y); }
-    [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept { return microfacet::D_<p>(wh, _alpha_x, _alpha_y, _type); }
+        : alpha_x_(ax), alpha_y_(ay), type_(type) {}
+    [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(alpha_x_, alpha_y_); }
+    [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept { return microfacet::D_<p>(wh, alpha_x_, alpha_y_, type_); }
     [[nodiscard]] virtual oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {
-        return microfacet::sample_wh<p>(wo, u, _alpha_x, _alpha_y, _type);
+        return microfacet::sample_wh<p>(wo, u, alpha_x_, alpha_y_, type_);
     }
     [[nodiscard]] virtual oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh) const noexcept {
-        return microfacet::PDF_wh<p>(wo, wh, _alpha_x, _alpha_y, _type);
+        return microfacet::PDF_wh<p>(wo, wh, alpha_x_, alpha_y_, type_);
     }
 
     [[nodiscard]] virtual oc_float<p> PDF_wi_reflection(oc_float<p> pdf_wh, oc_float3<p> wo, oc_float3<p> wh) const noexcept {
@@ -351,7 +351,7 @@ public:
     }
 
     [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
-        return microfacet::BRDF_div_fr<p>(wo, wh, wi, _alpha_x, _alpha_y, _type) * Fr;
+        return microfacet::BRDF_div_fr<p>(wo, wh, wi, alpha_x_, alpha_y_, type_) * Fr;
     }
 
     [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
@@ -361,12 +361,12 @@ public:
 
     [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
                                          const TSpectrum &Ft, oc_float<p> eta) const noexcept {
-        return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, _alpha_x, _alpha_y, _type) * Ft;
+        return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, alpha_x_, alpha_y_, type_) * Ft;
     }
 
     [[nodiscard]] virtual oc_float<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
                                            const oc_float<p> &Ft, oc_float<p> eta) const noexcept {
-        return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, _alpha_x, _alpha_y, _type) * Ft;
+        return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, alpha_x_, alpha_y_, type_) * Ft;
     }
 
     [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {

@@ -17,14 +17,14 @@ using namespace ocarina;
 class SPD : public Serializable<float>{
 private:
     static constexpr auto spd_lut_interval = 5u;
-    RegistrableManaged<float> _func;
-    Serial<float> _sample_interval{};
-    Pipeline *_rp{};
+    RegistrableManaged<float> func_;
+    Serial<float> sample_interval_{};
+    Pipeline *rp_{};
 
 public:
     explicit SPD(Pipeline *rp);
     SPD(vector<float> func, Pipeline *rp);
-    OC_SERIALIZABLE_FUNC(Serializable<float>, _func, _sample_interval)
+    OC_SERIALIZABLE_FUNC(Serializable<float>, func_, sample_interval_)
 
     void init(vector<float> func) noexcept;
     template<typename T>

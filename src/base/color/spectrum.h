@@ -17,29 +17,29 @@ class MaterialEvaluator;
 
 class SampledWavelengths {
 private:
-    DynamicArray<float> _lambdas;
-    mutable DynamicArray<float> _pdfs;
+    DynamicArray<float> lambdas_;
+    mutable DynamicArray<float> pdfs_;
 
 public:
-    explicit SampledWavelengths(uint dim) noexcept : _lambdas{dim}, _pdfs{dim} {}
-    [[nodiscard]] Float lambda(const Uint &i) const noexcept { return _lambdas[i]; }
-    [[nodiscard]] Float pdf(const Uint &i) const noexcept { return _pdfs[i]; }
-    void set_lambda(const Uint &i, const Float &lambda) noexcept { _lambdas[i] = lambda; }
-    void set_pdf(const Uint &i, const Float &p) const noexcept { _pdfs[i] = p; }
-    [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(_lambdas.size()); }
+    explicit SampledWavelengths(uint dim) noexcept : lambdas_{dim}, pdfs_{dim} {}
+    [[nodiscard]] Float lambda(const Uint &i) const noexcept { return lambdas_[i]; }
+    [[nodiscard]] Float pdf(const Uint &i) const noexcept { return pdfs_[i]; }
+    void set_lambda(const Uint &i, const Float &lambda) noexcept { lambdas_[i] = lambda; }
+    void set_pdf(const Uint &i, const Float &p) const noexcept { pdfs_[i] = p; }
+    [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(lambdas_.size()); }
     [[nodiscard]] Uint valid_dimension() const noexcept;
     void invalidation_channel(Uint idx) const noexcept { set_pdf(idx, 0); }
     [[nodiscard]] Float3 lambda_vec3() const noexcept {
-        return make_float3(_lambdas[0], _lambdas[1], _lambdas[2]);
+        return make_float3(lambdas_[0], lambdas_[1], lambdas_[2]);
     }
     [[nodiscard]] Float4 lambda_vec4() const noexcept {
-        return make_float4(_lambdas[0], _lambdas[1], _lambdas[2], _lambdas[3]);
+        return make_float4(lambdas_[0], lambdas_[1], lambdas_[2], lambdas_[3]);
     }
     [[nodiscard]] Float3 pdf_vec3() const noexcept {
-        return make_float3(_pdfs[0], _pdfs[1], _pdfs[2]);
+        return make_float3(pdfs_[0], pdfs_[1], pdfs_[2]);
     }
     [[nodiscard]] Float4 pdf_vec4() const noexcept {
-        return make_float4(_pdfs[0], _pdfs[1], _pdfs[2], _pdfs[3]);
+        return make_float4(pdfs_[0], pdfs_[1], pdfs_[2], pdfs_[3]);
     }
     [[nodiscard]] Bool secondary_valid() const noexcept;
     void invalidation_secondary() const noexcept;
@@ -48,54 +48,54 @@ public:
 
 class SampledSpectrum {
 private:
-    DynamicArray<float> _values;
+    DynamicArray<float> values_;
 
 public:
     explicit SampledSpectrum(const DynamicArray<float> &value) noexcept
-        : _values(value) {}
+        : values_(value) {}
     SampledSpectrum(uint n, const Float &value) noexcept
-        : _values(n) {
+        : values_(n) {
         for (int i = 0; i < n; ++i) {
-            _values[i] = value;
+            values_[i] = value;
         }
     }
     explicit SampledSpectrum(uint n = 1u) noexcept : SampledSpectrum{n, 0.f} {}
-    explicit SampledSpectrum(const Float3 &value) noexcept : _values(3) {
+    explicit SampledSpectrum(const Float3 &value) noexcept : values_(3) {
         for (int i = 0; i < 3; ++i) {
-            _values[i] = value[i];
+            values_[i] = value[i];
         }
     }
-    explicit SampledSpectrum(const Float4 &value) noexcept : _values(4) {
+    explicit SampledSpectrum(const Float4 &value) noexcept : values_(4) {
         for (int i = 0; i < 4; ++i) {
-            _values[i] = value[i];
+            values_[i] = value[i];
         }
     }
     explicit SampledSpectrum(const Float &value) noexcept : SampledSpectrum{1u, value} {}
     explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
     [[nodiscard]] uint dimension() const noexcept {
-        return static_cast<uint>(_values.size());
+        return static_cast<uint>(values_.size());
     }
-    [[nodiscard]] DynamicArray<float> &values() noexcept { return _values; }
-    [[nodiscard]] const DynamicArray<float> &values() const noexcept { return _values; }
+    [[nodiscard]] DynamicArray<float> &values() noexcept { return values_; }
+    [[nodiscard]] const DynamicArray<float> &values() const noexcept { return values_; }
     [[nodiscard]] Float &operator[](const Uint &i) noexcept {
-        return dimension() == 1u ? _values[0u] : _values[i];
+        return dimension() == 1u ? values_[0u] : values_[i];
     }
     [[nodiscard]] Float operator[](const Uint &i) const noexcept {
-        return dimension() == 1u ? _values[0u] : _values[i];
+        return dimension() == 1u ? values_[0u] : values_[i];
     }
     SampledSpectrum &operator=(const Float &value) noexcept {
-        _values = value;
+        values_ = value;
         return *this;
     }
     SampledSpectrum &operator=(const DynamicArray<float> &value) noexcept {
-        _values = value;
+        values_ = value;
         return *this;
     }
     [[nodiscard]] Float3 vec3() const noexcept {
-        return _values.as_vec3();
+        return values_.as_vec3();
     }
     [[nodiscard]] Float4 vec4() const noexcept {
-        return _values.as_vec4();
+        return values_.as_vec4();
     }
     template<typename F>
     [[nodiscard]] auto map(F &&f) const noexcept {
@@ -162,16 +162,16 @@ public:
         return SampledSpectrum(lhs op rhs.values());                                                                        \
     }                                                                                                                       \
     SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                                            \
-        _values op## = rhs;                                                                                                 \
+        values_ op## = rhs;                                                                                                 \
         return *this;                                                                                                       \
     }                                                                                                                       \
     SampledSpectrum &operator op##=(const DynamicArray<float> &rhs) noexcept {                                              \
-        _values op## = rhs;                                                                                                 \
+        values_ op## = rhs;                                                                                                 \
         return *this;                                                                                                       \
     }                                                                                                                       \
     SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                                  \
         OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                              \
-        _values op## = rhs.values();                                                                                        \
+        values_ op## = rhs.values();                                                                                        \
         return *this;                                                                                                       \
     }
 

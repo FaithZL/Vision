@@ -39,7 +39,7 @@ public:
     explicit AreaLight(const LightDesc &desc)
         : IAreaLight(desc),
           _two_sided{desc["two_sided"].as_bool(false)} {
-        if (_inst_idx.hv() == InvalidUI32) {
+        if (inst_idx_.hv() == InvalidUI32) {
             init_geometry(desc);
         }
     }
@@ -54,7 +54,7 @@ public:
         sd.o2w = desc.o2w;
         SP<ShapeGroup> shape = Global::node_mgr().load<ShapeGroup>(sd);
         scene().groups().push_back(shape);
-        _inst_idx = scene().instances().size();
+        inst_idx_ = scene().instances().size();
         shape->for_each([&](ShapeInstance &instance, uint i) {
             instance.set_material(scene().obtain_black_body());
             scene().instances().push_back(instance);
@@ -72,7 +72,7 @@ public:
 
     [[nodiscard]] float surface_area() const noexcept {
         float ret = 0.f;
-        vector<float> weights = _instance->surface_areas();
+        vector<float> weights = instance_->surface_areas();
         for (float weight : weights) {
             ret += weight;
         }
@@ -121,7 +121,7 @@ public:
     [[nodiscard]] LightEvalContext sample_surface(Float2 u, Uint prim_id, Float pmf) const noexcept {
         Float2 bary = square_to_triangle(u);
         auto rp = scene().pipeline();
-        LightEvalContext p_light = rp->compute_light_eval_context(*_inst_idx, prim_id, bary);
+        LightEvalContext p_light = rp->compute_light_eval_context(*inst_idx_, prim_id, bary);
         p_light.PDF_pos *= pmf;
         return p_light;
     }
@@ -146,7 +146,7 @@ public:
     [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
                                                               LightSurfacePoint lsp) const noexcept override {
         auto rp = scene().pipeline();
-        return rp->compute_light_eval_context(*_inst_idx, lsp.prim_id, lsp.bary);
+        return rp->compute_light_eval_context(*inst_idx_, lsp.prim_id, lsp.bary);
     }
 
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,

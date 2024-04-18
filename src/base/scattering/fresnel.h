@@ -13,11 +13,11 @@ class Pipeline;
 
 class Fresnel : public ocarina::Hashable {
 protected:
-    const SampledWavelengths *_swl{};
-    const Pipeline *_rp{};
+    const SampledWavelengths *swl_{};
+    const Pipeline *rp_{};
 
 public:
-    explicit Fresnel(const SampledWavelengths &swl, const Pipeline *rp) : _swl(&swl), _rp(rp) {}
+    explicit Fresnel(const SampledWavelengths &swl, const Pipeline *rp) : swl_(&swl), rp_(rp) {}
     [[nodiscard]] virtual SampledSpectrum evaluate(Float cos_theta) const noexcept = 0;
     [[nodiscard]] virtual Float evaluate(Float cos_theta, Uint channel) const noexcept {
         OC_ERROR("Fresnel evaluate by channel invalid !");
@@ -26,7 +26,7 @@ public:
     virtual Fresnel &operator=(const Fresnel &other) noexcept = default;
     [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
-        return {_swl->dimension(), 1.f};
+        return {swl_->dimension(), 1.f};
     }
     virtual void correct_eta(Float cos_theta) noexcept {
         OC_ERROR("correct_eta only dielectric material !");
@@ -41,25 +41,25 @@ public:
     }
 class FresnelDielectric : public Fresnel {
 private:
-    SampledSpectrum _eta;
+    SampledSpectrum eta_;
 
 public:
     explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp),
-          _eta(ior) {}
+          eta_(ior) {}
     void correct_eta(Float cos_theta) noexcept override {
-        _eta = select(cos_theta > 0, _eta, rcp(_eta));
+        eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
     [[nodiscard]] Float evaluate(ocarina::Float cos_theta, ocarina::Uint channel) const noexcept override {
-        return fresnel_dielectric<D>(cos_theta, _eta[channel]);
+        return fresnel_dielectric<D>(cos_theta, eta_[channel]);
     }
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
-        SampledSpectrum fr = _eta.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
+        SampledSpectrum fr = eta_.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
         return fr;
     }
-    [[nodiscard]] SampledSpectrum eta() const noexcept override { return _eta; }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override { return eta_; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDielectric>(_eta, *_swl, _rp);
+        return make_shared<FresnelDielectric>(eta_, *swl_, rp_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
 };
@@ -67,9 +67,9 @@ public:
 class FresnelNoOp : public Fresnel {
 public:
     explicit FresnelNoOp(const SampledWavelengths &swl, const Pipeline *rp) : Fresnel(swl, rp) {}
-    [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {_swl->dimension(), 1.f}; }
+    [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {swl_->dimension(), 1.f}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelNoOp>(*_swl, _rp);
+        return make_shared<FresnelNoOp>(*swl_, rp_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelNoOp)
 };

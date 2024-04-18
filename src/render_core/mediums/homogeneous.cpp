@@ -18,8 +18,8 @@ private:
 public:
     explicit HomogeneousMedium(const MediumDesc &desc)
         : Medium(desc),
-          _sigma_a(desc.sigma_a["value"].as_float3() * _scale),
-          _sigma_s(desc.sigma_s["value"].as_float3() * _scale),
+          _sigma_a(desc.sigma_a["value"].as_float3() * scale_),
+          _sigma_s(desc.sigma_s["value"].as_float3() * scale_),
           _sigma_t(_sigma_a + _sigma_s),
           _g(desc.g["value"].as_float()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -45,7 +45,7 @@ public:
         $if(sampled_medium) {
             it = Interaction(ray->at(t), -ray->direction(), true);
             it.init_phase(_g, swl);
-            it.set_medium(_index, _index);
+            it.set_medium(index_, index_);
         };
         SampledSpectrum tr = Tr(t, swl);
         SampledSpectrum density = select(sampled_medium, sigma_t * tr, tr);

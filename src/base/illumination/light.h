@@ -198,14 +198,14 @@ class ShapeInstance;
 
 class IAreaLight : public Light {
 protected:
-    Serial<uint> _inst_idx{InvalidUI32};
-    const ShapeInstance *_instance{};
+    Serial<uint> inst_idx_{InvalidUI32};
+    const ShapeInstance *instance_{};
 
 public:
     explicit IAreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
-          _inst_idx(desc["inst_id"].as_uint(InvalidUI32)) {}
-    OC_SERIALIZABLE_FUNC(Light, _inst_idx)
+          inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
+    OC_SERIALIZABLE_FUNC(Light, inst_idx_)
     void set_instance(const ShapeInstance *inst) noexcept;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };

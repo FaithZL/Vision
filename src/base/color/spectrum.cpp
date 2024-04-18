@@ -24,7 +24,7 @@ void SampledWavelengths::invalidation_secondary() const noexcept {
     }
     $if(secondary_valid()) {
         for (uint i = 1; i < dimension(); ++i) {
-            _pdfs[i] = 0.f;
+            pdfs_[i] = 0.f;
         }
     };
 }
@@ -39,7 +39,7 @@ void SampledWavelengths::check_dispersive(const Spectrum &spectrum,
 }
 
 Uint SampledWavelengths::valid_dimension() const noexcept {
-    Uint ret = _pdfs.reduce(0u, [&](Uint num, auto f) {
+    Uint ret = pdfs_.reduce(0u, [&](Uint num, auto f) {
         return num + ocarina::select(f > 0.f, 1, 0);
     });
     return ret;

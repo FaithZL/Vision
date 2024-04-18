@@ -41,16 +41,16 @@ using namespace ocarina;
 
 class BxDF : public ocarina::Hashable {
 protected:
-    uint _flags{};
-    const SampledWavelengths *_swl{};
+    uint flags_{};
+    const SampledWavelengths *swl_{};
 
 public:
     BxDF() = default;
-    explicit BxDF(const SampledWavelengths &swl, uint flag) : _flags(flag), _swl(&swl) {}
+    explicit BxDF(const SampledWavelengths &swl, uint flag) : flags_(flag), swl_(&swl) {}
     BxDF(const BxDF &other) = default;
     virtual BxDF &operator=(const BxDF &other) noexcept = default;
     virtual void regularize() noexcept {}
-    [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *_swl; }
+    [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *swl_; }
     [[nodiscard]] virtual Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
@@ -61,7 +61,7 @@ public:
                                             MaterialEvalMode mode) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler *sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] Uint flags() const noexcept { return _flags; }
+    [[nodiscard]] Uint flags() const noexcept { return flags_; }
     [[nodiscard]] static bool match_F(MaterialEvalMode mode) noexcept {
         return static_cast<bool>(mode & MaterialEvalMode::F);
     }
@@ -69,7 +69,7 @@ public:
         return static_cast<bool>(mode & MaterialEvalMode::PDF);
     }
     [[nodiscard]] Bool match_flag(const Uint &bxdf_flag) const noexcept {
-        return ((_flags & bxdf_flag) == _flags);
+        return ((flags_ & bxdf_flag) == flags_);
     }
     virtual ~BxDF() = default;
 };
@@ -97,16 +97,16 @@ public:
 
 class MicrofacetReflection : public BxDF {
 private:
-    SampledSpectrum Kr;
-    DCSP<Microfacet<D>> _microfacet;
+    SampledSpectrum kr_;
+    DCSP<Microfacet<D>> microfacet_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(MicrofacetReflection)
         MicrofacetReflection() = default;
     MicrofacetReflection(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::GlossyRefl), Kr(color),
-          _microfacet(m) {}
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Kr; }
+        : BxDF(swl, BxDFFlag::GlossyRefl), kr_(color),
+          microfacet_(m) {}
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return kr_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
@@ -115,16 +115,16 @@ public:
 
 class MicrofacetTransmission : public BxDF {
 private:
-    SampledSpectrum Kt;
-    DCSP<Microfacet<D>> _microfacet;
+    SampledSpectrum kt_;
+    DCSP<Microfacet<D>> microfacet_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(MicrofacetTransmission)
         MicrofacetTransmission() = default;
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::GlossyTrans), Kt(color), _microfacet(m) {}
+        : BxDF(swl, BxDFFlag::GlossyTrans), kt_(color), microfacet_(m) {}
     [[nodiscard]] Bool safe(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Kt; }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return kt_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
