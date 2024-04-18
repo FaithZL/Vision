@@ -22,17 +22,17 @@ public:
     using Desc = PipelineDesc;
 
 protected:
-    Device *_device{};
-    Scene _scene{};
-    Geometry _geometry{this};
-    BindlessArray _bindless_array{};
-    mutable Stream _stream;
-    bool _show_fps{true};
-    RegistrableManaged<float4> _final_picture;
-    Postprocessor _postprocessor{this};
-    SP<FrameBuffer> _frame_buffer{nullptr};
-    bool _show_scene_data{true};
-    bool _show_pipeline_data{true};
+    Device *device_{};
+    Scene scene_{};
+    Geometry geometry_{this};
+    BindlessArray bindless_array_{};
+    mutable Stream stream_;
+    bool show_fps_{true};
+    RegistrableManaged<float4> final_picture_;
+    Postprocessor postprocessor_{this};
+    SP<FrameBuffer> frame_buffer_{nullptr};
+    bool show_scene_data_{true};
+    bool show_pipeline_data_{true};
 
 protected:
     [[nodiscard]] Integrator *integrator() noexcept { return scene().integrator(); }
@@ -43,12 +43,12 @@ public:
 
 public:
     explicit Pipeline(const PipelineDesc &desc);
-    [[nodiscard]] const Device &device() const noexcept { return *_device; }
-    [[nodiscard]] Device &device() noexcept { return *_device; }
-    [[nodiscard]] Scene &scene() noexcept { return _scene; }
-    [[nodiscard]] const Scene &scene() const noexcept { return _scene; }
-    [[nodiscard]] auto frame_buffer() const noexcept { return _frame_buffer.get(); }
-    [[nodiscard]] auto frame_buffer() noexcept { return _frame_buffer.get(); }
+    [[nodiscard]] const Device &device() const noexcept { return *device_; }
+    [[nodiscard]] Device &device() noexcept { return *device_; }
+    [[nodiscard]] Scene &scene() noexcept { return scene_; }
+    [[nodiscard]] const Scene &scene() const noexcept { return scene_; }
+    [[nodiscard]] auto frame_buffer() const noexcept { return frame_buffer_.get(); }
+    [[nodiscard]] auto frame_buffer() noexcept { return frame_buffer_.get(); }
 
     [[nodiscard]] bool has_changed() noexcept override;
     void reset_status() noexcept override;
@@ -70,9 +70,9 @@ public:
     virtual void render(double dt) noexcept = 0;
     virtual void before_render() noexcept;
     virtual void after_render() noexcept;
-    virtual void upload_data() noexcept { _scene.upload_data(); }
+    virtual void upload_data() noexcept { scene_.upload_data(); }
     [[nodiscard]] virtual float4 *final_picture(const OutputDesc &desc) noexcept;
-    [[nodiscard]] virtual uint2 resolution() const noexcept { return _scene.camera()->resolution(); }
+    [[nodiscard]] virtual uint2 resolution() const noexcept { return scene_.camera()->resolution(); }
     [[nodiscard]] uint pixel_num() const noexcept { return resolution().x * resolution().y; }
     /// virtual function end
 
@@ -92,36 +92,36 @@ public:
     [[nodiscard]] double render_time() const noexcept { return integrator()->render_time(); }
     [[nodiscard]] double cur_render_time() const noexcept { return integrator()->cur_render_time(); }
     static void flip_debugger() noexcept { Env::debugger().filp_enabled(); }
-    void filp_show_fps() noexcept { _show_fps = !_show_fps; }
+    void filp_show_fps() noexcept { show_fps_ = !show_fps_; }
     template<typename T>
     requires is_buffer_or_view_v<T>
     [[nodiscard]] handle_ty register_buffer(T &&buffer) noexcept {
-        return _bindless_array.emplace(OC_FORWARD(buffer));
+        return bindless_array_.emplace(OC_FORWARD(buffer));
     }
     handle_ty register_texture(const Texture &texture) noexcept {
-        return _bindless_array.emplace(texture);
+        return bindless_array_.emplace(texture);
     }
     template<typename T>
     requires is_buffer_or_view_v<T>
     void set_buffer(handle_ty index, T &&buffer) noexcept {
-        _bindless_array.set_buffer(index, OC_FORWARD(buffer));
+        bindless_array_.set_buffer(index, OC_FORWARD(buffer));
     }
     void set_texture(handle_ty index, const Texture &texture) noexcept {
-        _bindless_array.set_texture(index, texture);
+        bindless_array_.set_texture(index, texture);
     }
     void deregister_buffer(handle_ty index) noexcept;
     void deregister_texture(handle_ty index) noexcept;
     [[nodiscard]] ImagePool &image_pool() noexcept { return Global::instance().image_pool(); }
-    [[nodiscard]] BindlessArray &bindless_array() noexcept { return _bindless_array; }
-    [[nodiscard]] const BindlessArray &bindless_array() const noexcept { return _bindless_array; }
+    [[nodiscard]] BindlessArray &bindless_array() noexcept { return bindless_array_; }
+    [[nodiscard]] const BindlessArray &bindless_array() const noexcept { return bindless_array_; }
     void upload_bindless_array() noexcept;
-    [[nodiscard]] Geometry &geometry() noexcept { return _geometry; }
-    [[nodiscard]] const Geometry &geometry() const noexcept { return _geometry; }
-    [[nodiscard]] Stream &stream() const noexcept { return _stream; }
+    [[nodiscard]] Geometry &geometry() noexcept { return geometry_; }
+    [[nodiscard]] const Geometry &geometry() const noexcept { return geometry_; }
+    [[nodiscard]] Stream &stream() const noexcept { return stream_; }
 
     template<typename... Args>
     void denoise(Args &&...args) const noexcept {
-        _postprocessor.denoise(OC_FORWARD(args)...);
+        postprocessor_.denoise(OC_FORWARD(args)...);
     }
 
     /// for dsl
@@ -148,31 +148,31 @@ public:
 
     template<typename T>
     [[nodiscard]] BufferView<T> buffer_view(uint index) const noexcept {
-        return _bindless_array.buffer_view<T>(index);
+        return bindless_array_.buffer_view<T>(index);
     }
 
     template<typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayTexture tex_var(Index &&index) const noexcept {
-        return _bindless_array.tex_var(OC_FORWARD(index));
+        return bindless_array_.tex_var(OC_FORWARD(index));
     }
 
     template<typename T, typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayBuffer<T> buffer_var(Index &&index) const noexcept {
-        return _bindless_array.buffer_var<T>(OC_FORWARD(index));
+        return bindless_array_.buffer_var<T>(OC_FORWARD(index));
     }
 
     template<typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] BindlessArrayByteBuffer byte_buffer_var(Index &&index) const noexcept {
-        return _bindless_array.byte_buffer_var(OC_FORWARD(index));
+        return bindless_array_.byte_buffer_var(OC_FORWARD(index));
     }
 
     template<typename Elm,typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] SOAView<Elm, BindlessArrayByteBuffer> soa_view(Index &&index) noexcept {
-        return _bindless_array.soa_view<Elm>(OC_FORWARD(index));
+        return bindless_array_.soa_view<Elm>(OC_FORWARD(index));
     }
 };
 

@@ -15,25 +15,25 @@ Pipeline *Scene::pipeline() noexcept { return Global::instance().pipeline(); }
 
 void Scene::init(const SceneDesc &scene_desc) {
     TIMER(init_scene);
-    _warper_desc = scene_desc.warper_desc;
-    _render_setting = scene_desc.render_setting;
-    materials().set_mode(_render_setting.polymorphic_mode);
+    warper_desc_ = scene_desc.warper_desc;
+    render_setting_ = scene_desc.render_setting;
+    materials().set_mode(render_setting_.polymorphic_mode);
     OC_INFO_FORMAT("polymorphic mode is {}", materials().mode());
-    _light_sampler = load<LightSampler>(scene_desc.light_sampler_desc);
-    _light_sampler->set_mode(_render_setting.polymorphic_mode);
-    _spectrum = load<Spectrum>(scene_desc.spectrum_desc);
+    light_sampler_ = load<LightSampler>(scene_desc.light_sampler_desc);
+    light_sampler_->set_mode(render_setting_.polymorphic_mode);
+    spectrum_ = load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
     load_mediums(scene_desc.mediums_desc);
-    _camera = load<Camera>(scene_desc.sensor_desc);
+    camera_ = load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
-    _integrator = load<Integrator>(scene_desc.integrator_desc);
-    _sampler = load<Sampler>(scene_desc.sampler_desc);
-    _min_radius = scene_desc.render_setting.min_world_radius;
+    integrator_ = load<Integrator>(scene_desc.integrator_desc);
+    sampler_ = load<Sampler>(scene_desc.sampler_desc);
+    min_radius_ = scene_desc.render_setting.min_world_radius;
     Interaction::set_ray_offset_factor(scene_desc.render_setting.ray_offset_factor);
 }
 
 void Scene::tidy_up() noexcept {
-    _light_sampler->tidy_up();
+    light_sampler_->tidy_up();
     material_registry().tidy_up();
     MeshRegistry::instance().tidy_up();
     tidy_up_mediums();
@@ -49,7 +49,7 @@ void Scene::tidy_up_materials() noexcept {
 }
 
 void Scene::tidy_up_mediums() noexcept {
-    _mediums.for_each_instance([&](SP<Medium> medium, uint i) {
+    mediums_.for_each_instance([&](SP<Medium> medium, uint i) {
         medium->set_index(i);
     });
 }
@@ -59,31 +59,31 @@ Slot Scene::create_slot(const SlotDesc &desc) {
 }
 
 SP<Material> Scene::obtain_black_body() noexcept {
-    if (!_black_body) {
+    if (!black_body_) {
         MaterialDesc md;
         md.sub_type = "black_body";
-        _black_body = load<Material>(md);
-        materials().push_back(_black_body);
+        black_body_ = load<Material>(md);
+        materials().push_back(black_body_);
     }
-    return _black_body;
+    return black_body_;
 }
 
 void Scene::prepare() noexcept {
     material_registry().remove_unused_materials();
     tidy_up();
     fill_instances();
-    _camera->prepare();
-    _sampler->prepare();
-    _integrator->prepare();
-    _camera->update_device_data();
+    camera_->prepare();
+    sampler_->prepare();
+    integrator_->prepare();
+    camera_->update_device_data();
     prepare_lights();
     prepare_materials();
     pipeline()->spectrum().prepare();
 }
 
 void Scene::prepare_lights() noexcept {
-    _light_sampler->prepare();
-    auto &light = _light_sampler->lights();
+    light_sampler_->prepare();
+    auto &light = light_sampler_->lights();
     OC_INFO_FORMAT("This scene contains {} light types with {} light instances",
                    light.type_num(),
                    light.all_instance_num());
@@ -94,7 +94,7 @@ void Scene::add_material(SP<vision::Material> material) noexcept {
 }
 
 void Scene::add_light(SP<vision::Light> light) noexcept {
-    _light_sampler->add_light(ocarina::move(light));
+    light_sampler_->add_light(ocarina::move(light));
 }
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
@@ -104,8 +104,8 @@ void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
 }
 
 void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
-    _groups.push_back(group);
-    _aabb.extend(group->aabb);
+    groups_.push_back(group);
+    aabb_.extend(group->aabb);
     group->for_each([&](ShapeInstance &instance, uint i) {
         auto iter = materials().find_if([&](SP<Material> &material) {
             return material->name() == instance.material_name();
@@ -116,32 +116,32 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
         }
 
         if (desc.emission.valid()) {
-            desc.emission.set_value("inst_id", _instances.size());
+            desc.emission.set_value("inst_id", instances_.size());
             SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
             instance.set_emission(light);
             light->set_instance(&instance);
         }
         if (has_medium()) {
-            auto inside = _mediums.find_if([&](SP<Medium> &medium) {
+            auto inside = mediums_.find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance.inside_name();
             });
-            if (inside != _mediums.end()) {
+            if (inside != mediums_.end()) {
                 instance.set_inside(*inside);
             }
-            auto outside = _mediums.find_if([&](SP<Medium> &medium) {
+            auto outside = mediums_.find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance.outside_name();
             });
-            if (outside != _mediums.end()) {
+            if (outside != mediums_.end()) {
                 instance.set_outside(*outside);
             }
         }
-        _instances.push_back(instance);
+        instances_.push_back(instance);
     });
 }
 
 void Scene::clear_shapes() noexcept {
-    _instances.clear();
-    _groups.clear();
+    instances_.clear();
+    groups_.clear();
 }
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
@@ -152,14 +152,14 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 }
 
 void Scene::fill_instances() {
-    for (ShapeInstance &instance : _instances) {
+    for (ShapeInstance &instance : instances_) {
         if (instance.has_material()) {
             const Material *material = instance.material().get();
             instance.update_material_id(materials().encode_id(material->index(), material));
         }
         if (instance.has_emission()) {
             const Light *emission = instance.emission().get();
-            instance.update_light_id(_light_sampler->lights().encode_id(emission->index(), emission));
+            instance.update_light_id(light_sampler_->lights().encode_id(emission->index(), emission));
         }
         instance.fill_mesh_id();
         if (has_medium()) {
@@ -174,18 +174,18 @@ void Scene::fill_instances() {
 }
 
 void Scene::load_mediums(const MediumsDesc &md) {
-    _global_medium.name = md.global;
+    global_medium_.name = md.global;
     for (uint i = 0; i < md.mediums.size(); ++i) {
         const MediumDesc &desc = md.mediums[i];
         auto medium = load<Medium>(desc);
         medium->set_index(i);
-        _mediums.push_back(medium);
+        mediums_.push_back(medium);
     }
-    uint index = _mediums.get_index([&](const SP<Medium> &medium) {
-        return medium->name() == _global_medium.name;
+    uint index = mediums_.get_index([&](const SP<Medium> &medium) {
+        return medium->name() == global_medium_.name;
     });
     if (index != InvalidUI32) {
-        _global_medium.object = _mediums[index];
+        global_medium_.object = mediums_[index];
     }
 }
 
@@ -198,10 +198,10 @@ void Scene::prepare_materials() {
 }
 
 void Scene::upload_data() noexcept {
-    _camera->update_device_data();
-    _integrator->update_device_data();
-    _light_sampler->update_device_data();
-    _material_registry->upload_device_data();
+    camera_->update_device_data();
+    integrator_->update_device_data();
+    light_sampler_->update_device_data();
+    material_registry_->upload_device_data();
     if (has_changed()) {
         pipeline()->upload_bindless_array();
     }

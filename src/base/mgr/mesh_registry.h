@@ -11,8 +11,8 @@ namespace vision {
 
 class MeshRegistry {
 private:
-    std::map<uint64_t, SP<Mesh>> _mesh_map;
-    vector<Mesh *> _meshes;
+    std::map<uint64_t, SP<Mesh>> mesh_map_;
+    vector<Mesh *> meshes_;
 
 private:
     static MeshRegistry *s_mesh_registry;

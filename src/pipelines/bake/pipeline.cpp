@@ -14,19 +14,19 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
 }
 
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
-    _scene.init(scene_desc);
+    scene_.init(scene_desc);
     init_postprocessor(scene_desc.denoiser_desc);
-    _postprocessor.set_tone_mapper(_scene.camera()->film()->tone_mapper());
+    postprocessor_.set_tone_mapper(scene_.camera()->film()->tone_mapper());
 }
 
 void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
-    _postprocessor.set_denoiser(_scene.load<Denoiser>(desc));
+    postprocessor_.set_denoiser(scene_.load<Denoiser>(desc));
 }
 
 void BakePipeline::prepare() noexcept {
     auto pixel_num = resolution().x * resolution().y;
-    _final_picture.reset_all(device(), pixel_num);
-    _scene.prepare();
+    final_picture_.reset_all(device(), pixel_num);
+    scene_.prepare();
     image_pool().prepare();
     preprocess();
     prepare_geometry();

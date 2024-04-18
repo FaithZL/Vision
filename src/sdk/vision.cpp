@@ -184,7 +184,7 @@ void VisionRendererImpl::add_instance(const vision::sdk::Instance &instance, con
     inst.set_mesh(MeshRegistry::instance().register_(inst.mesh()));
 //    auto material = NodeMgr::instance().load<Material>(md);
 //    inst.set_material(material);
-//    _pipeline->scene().add_material(material);
+//    pipeline_->scene().add_material(material);
     group->add_instance(inst);
     _pipeline->scene().add_shape(group);
 }

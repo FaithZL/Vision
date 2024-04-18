@@ -14,14 +14,14 @@ using namespace ocarina;
 class Scene;
 class Pipeline;
 class ShapeInstance;
-struct Geometry {
+class Geometry {
 private:
-    RegistrableManaged<Vertex> _vertices;
-    RegistrableManaged<Triangle> _triangles;
-    RegistrableManaged<float4x4> _transforms;
-    RegistrableManaged<InstanceHandle> _instances;
-    RegistrableManaged<Mesh::Handle> _mesh_handles;
-    ocarina::Accel _accel;
+    RegistrableManaged<Vertex> vertices_;
+    RegistrableManaged<Triangle> triangles_;
+    RegistrableManaged<float4x4> transforms_;
+    RegistrableManaged<InstanceHandle> instances_;
+    RegistrableManaged<Mesh::Handle> mesh_handles_;
+    ocarina::Accel accel_;
 
 public:
     Pipeline *rp{};
@@ -29,7 +29,7 @@ public:
 public:
     explicit Geometry(Pipeline *rp = nullptr);
 
-    OC_MAKE_MEMBER_GETTER(accel, &)
+    OC_MAKE_MEMBER_GETTER_(accel, &)
 
     /**
      * update shape attribute

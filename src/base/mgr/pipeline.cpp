@@ -12,25 +12,25 @@ namespace vision {
 
 Pipeline::Pipeline(const vision::PipelineDesc &desc)
     : Node(desc),
-      _device(&Global::instance().device()),
-      _geometry(this),
-      _stream(device().create_stream()),
-      _bindless_array(device().create_bindless_array()) {
+      device_(&Global::instance().device()),
+      geometry_(this),
+      stream_(device().create_stream()),
+      bindless_array_(device().create_bindless_array()) {
     Global::instance().set_pipeline(this);
     Env::printer().init(device());
     Env::debugger().init(device());
     Env::set_code_obfuscation(desc["obfuscation"].as_bool(false));
     Env::set_valid_check(desc["valid_check"].as_bool(false));
-    _frame_buffer = NodeMgr::instance().load<FrameBuffer>(desc.frame_buffer_desc);
+    frame_buffer_ = NodeMgr::instance().load<FrameBuffer>(desc.frame_buffer_desc);
 }
 
 void Pipeline::reset_status() noexcept {
     GUI::reset_status();
-    _scene.reset_status();
+    scene_.reset_status();
 }
 
 bool Pipeline::has_changed() noexcept {
-    return _changed || _scene.has_changed();
+    return _changed || scene_.has_changed();
 }
 
 bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
@@ -40,16 +40,16 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
                       cur_render_time(),
                       render_time() / frame_index(),
                       frame_index());
-        widgets->check_box("pipeline data", &_show_pipeline_data);
-        widgets->check_box("scene data", &_show_scene_data);
+        widgets->check_box("pipeline data", &show_pipeline_data_);
+        widgets->check_box("scene data", &show_scene_data_);
     });
-    if (_show_pipeline_data) {
+    if (show_pipeline_data_) {
         widgets->use_window("frame buffer", [&] {
-            _frame_buffer->render_UI(widgets);
+            frame_buffer_->render_UI(widgets);
         });
     }
-    if (_show_scene_data) {
-        _scene.render_UI(widgets);
+    if (show_scene_data_) {
+        scene_.render_UI(widgets);
     }
     return true;
 }
@@ -59,40 +59,40 @@ const Buffer<float4> &Pipeline::view_buffer() {
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {
-    auto film = _scene.camera()->film();
+    auto film = scene_.camera()->film();
     film->set_resolution(res);
     film->prepare();
 }
 
 void Pipeline::prepare_geometry() noexcept {
-    _geometry.update_instances(_scene.instances());
-    _geometry.reset_device_buffer();
-    _geometry.upload();
-    _geometry.build_accel();
+    geometry_.update_instances(scene_.instances());
+    geometry_.reset_device_buffer();
+    geometry_.upload();
+    geometry_.build_accel();
 }
 
 void Pipeline::update_geometry() noexcept {
-    _geometry.update_instances(_scene.instances());
-    _geometry.upload();
+    geometry_.update_instances(scene_.instances());
+    geometry_.upload();
 }
 
 void Pipeline::clear_geometry() noexcept {
-    _geometry.clear();
-    _scene.clear_shapes();
+    geometry_.clear();
+    scene_.clear_shapes();
     MeshRegistry::instance().clear();
 }
 
 void Pipeline::upload_bindless_array() noexcept {
-    _stream << _bindless_array.update_slotSOA() << synchronize() << commit();
-    _stream << _bindless_array.upload_handles() << synchronize() << commit();
+    stream_ << bindless_array_.update_slotSOA() << synchronize() << commit();
+    stream_ << bindless_array_.upload_handles() << synchronize() << commit();
 }
 
 void Pipeline::deregister_buffer(handle_ty index) noexcept {
-    _bindless_array->remove_buffer(index);
+    bindless_array_->remove_buffer(index);
 }
 
 void Pipeline::deregister_texture(handle_ty index) noexcept {
-    _bindless_array->remove_texture(index);
+    bindless_array_->remove_texture(index);
 }
 
 void Pipeline::before_render() noexcept {
@@ -113,20 +113,20 @@ void Pipeline::display(double dt) noexcept {
 }
 
 float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
-    RegistrableManaged<float4> &original = _scene.film()->rt_buffer();
+    RegistrableManaged<float4> &original = scene_.film()->rt_buffer();
     bool gamma = !(desc.fn.ends_with("exr") || desc.fn.ends_with("hdr"));
     if (desc.denoise) {
         OfflineDenoiseInput input;
         input.resolution = resolution();
-        input.output = &_final_picture;
+        input.output = &final_picture_;
         input.color = &original;
-        _postprocessor.denoise(input);
-        _postprocessor.tone_mapping(_final_picture, _final_picture, gamma);
+        postprocessor_.denoise(input);
+        postprocessor_.tone_mapping(final_picture_, final_picture_, gamma);
     } else {
-        _postprocessor.tone_mapping(original, _final_picture, gamma);
+        postprocessor_.tone_mapping(original, final_picture_, gamma);
     }
-    _final_picture.download_immediately();
-    return _final_picture.data();
+    final_picture_.download_immediately();
+    return final_picture_.data();
 }
 
 }// namespace vision

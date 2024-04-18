@@ -22,11 +22,11 @@ Global::~Global() {
     ImagePool::destroy_instance();
 }
 
-void Global::set_pipeline(vision::Pipeline *pipeline) { _pipeline = pipeline; }
+void Global::set_pipeline(vision::Pipeline *pipeline) { pipeline_ = pipeline; }
 
 Pipeline *Global::pipeline() {
-    OC_ASSERT(_pipeline);
-    return _pipeline;
+    OC_ASSERT(pipeline_);
+    return pipeline_;
 }
 
 BindlessArray &Global::bindless_array() {
@@ -34,15 +34,15 @@ BindlessArray &Global::bindless_array() {
 }
 
 void Global::set_scene_path(const fs::path &sp) noexcept {
-    _scene_path = sp;
+    scene_path_ = sp;
 }
 
 fs::path Global::scene_path() const noexcept {
-    return _scene_path;
+    return scene_path_;
 }
 
 fs::path Global::scene_cache_path() const noexcept {
-    return _scene_path / ".cache";
+    return scene_path_ / ".cache";
 }
 
 void Global::destroy_instance() {

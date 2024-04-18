@@ -13,7 +13,7 @@ using namespace ocarina;
 class Pipeline;
 class ImagePool {
 private:
-    map<uint64_t, RegistrableTexture> _textures;
+    map<uint64_t, RegistrableTexture> textures_;
     ImagePool() = default;
     static ImagePool *s_image_pool;
     ImagePool(const ImagePool &) = delete;
@@ -28,7 +28,7 @@ public:
     [[nodiscard]] RegistrableTexture load_texture(const ShaderNodeDesc &desc) noexcept;
     [[nodiscard]] RegistrableTexture &obtain_texture(const ShaderNodeDesc &desc) noexcept;
     void prepare() noexcept;
-    [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return _textures.contains(hash); }
+    [[nodiscard]] bool is_contain(uint64_t hash) const noexcept { return textures_.contains(hash); }
 };
 
 }// namespace vision

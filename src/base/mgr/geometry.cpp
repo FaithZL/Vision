@@ -12,59 +12,59 @@
 namespace vision {
 
 Geometry::Geometry(Pipeline *rp)
-    : rp(rp), _vertices(rp->bindless_array()),
-      _triangles(rp->bindless_array()),
-      _instances(rp->bindless_array()),
-      _mesh_handles(rp->bindless_array()),
-      _transforms(rp->bindless_array()),
-      _accel(rp->device().create_accel()) {}
+    : rp(rp), vertices_(rp->bindless_array()),
+      triangles_(rp->bindless_array()),
+      instances_(rp->bindless_array()),
+      mesh_handles_(rp->bindless_array()),
+      transforms_(rp->bindless_array()),
+      accel_(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {
-    
-    _vertices.host_buffer().clear();
-    _triangles.host_buffer().clear();
-    _instances.host_buffer().clear();
-    _mesh_handles.host_buffer().clear();
+
+    vertices_.host_buffer().clear();
+    triangles_.host_buffer().clear();
+    instances_.host_buffer().clear();
+    mesh_handles_.host_buffer().clear();
 
     MeshRegistry::instance().for_each([&](const Mesh *mesh, uint i) {
-        Mesh::Handle mesh_handle{.vertex_offset = (uint)_vertices.host_buffer().size(),
-                                 .triangle_offset = (uint)_triangles.host_buffer().size()};
-        _vertices.append(mesh->vertices());
-        _triangles.append(mesh->triangles());
-        _mesh_handles.push_back(mesh_handle);
+        Mesh::Handle mesh_handle{.vertex_offset = (uint)vertices_.host_buffer().size(),
+                                 .triangle_offset = (uint)triangles_.host_buffer().size()};
+        vertices_.append(mesh->vertices());
+        triangles_.append(mesh->triangles());
+        mesh_handles_.push_back(mesh_handle);
     });
 
     std::for_each(instances.begin(), instances.end(), [&](const ShapeInstance &instance) {
-        _instances.push_back(instance.handle());
-        _transforms.push_back(instance.o2w());
+        instances_.push_back(instance.handle());
+        transforms_.push_back(instance.o2w());
     });
 }
 
 void Geometry::build_accel() {
     Stream &stream = rp->stream();
-    for (const auto &inst : _instances) {
+    for (const auto &inst : instances_) {
         uint mesh_id = inst.mesh_id;
-        const auto &mesh_handle = _mesh_handles[mesh_id];
+        const auto &mesh_handle = mesh_handles_[mesh_id];
         ocarina::RHIMesh mesh;
-        if (mesh_id == _mesh_handles.host_buffer().size() - 1) {
+        if (mesh_id == mesh_handles_.host_buffer().size() - 1) {
             // last element
-            BufferView<Vertex> verts = _vertices.device_buffer().view(mesh_handle.vertex_offset, 0);
-            BufferView<Triangle> tris = _triangles.device_buffer().view(mesh_handle.triangle_offset, 0);
+            BufferView<Vertex> verts = vertices_.device_buffer().view(mesh_handle.vertex_offset, 0);
+            BufferView<Triangle> tris = triangles_.device_buffer().view(mesh_handle.triangle_offset, 0);
             mesh = rp->device().create_mesh(verts, tris);
         } else {
-            const auto &next_mesh_handle = _mesh_handles[mesh_id + 1];
+            const auto &next_mesh_handle = mesh_handles_[mesh_id + 1];
             uint vert_count = next_mesh_handle.vertex_offset - mesh_handle.vertex_offset;
             uint tri_count = next_mesh_handle.triangle_offset - mesh_handle.triangle_offset;
-            BufferView<Vertex> verts = _vertices.device_buffer().view(mesh_handle.vertex_offset, vert_count);
-            BufferView<Triangle> tris = _triangles.device_buffer().view(mesh_handle.triangle_offset, tri_count);
+            BufferView<Vertex> verts = vertices_.device_buffer().view(mesh_handle.vertex_offset, vert_count);
+            BufferView<Triangle> tris = triangles_.device_buffer().view(mesh_handle.triangle_offset, tri_count);
             mesh = rp->device().create_mesh(verts, tris);
         }
         stream << mesh.build_bvh();
-        _accel.add_instance(ocarina::move(mesh), inst.o2w);
+        accel_.add_instance(ocarina::move(mesh), inst.o2w);
     }
 
-    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", _accel.vertex_num(), _accel.triangle_num());
-    stream << _accel.build_bvh();
+    OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel_.vertex_num(), accel_.triangle_num());
+    stream << accel_.build_bvh();
     stream << synchronize();
     stream << commit();
 }
@@ -74,40 +74,40 @@ void Geometry::reset_device_buffer() {
         buffer.reset_device_buffer_immediately(rp->device(), desc);
         buffer.register_self();
     };
-    init_buffer(_vertices, "Geometry::_vertices");
-    init_buffer(_triangles, "Geometry::_triangles");
-    init_buffer(_instances, "Geometry::_instances");
-    init_buffer(_mesh_handles, "Geometry::_mesh_handles");
-    init_buffer(_transforms, "Geometry::transforms_");
+    init_buffer(vertices_, "Geometry::vertices_");
+    init_buffer(triangles_, "Geometry::triangles_");
+    init_buffer(instances_, "Geometry::instances_");
+    init_buffer(mesh_handles_, "Geometry::mesh_handles_");
+    init_buffer(transforms_, "Geometry::transforms_");
 }
 
 void Geometry::upload() const {
     Stream &stream = rp->stream();
-    stream << _vertices.upload()
-           << _triangles.upload()
-           << _mesh_handles.upload()
-           << _instances.upload()
-           << _transforms.upload()
+    stream << vertices_.upload()
+           << triangles_.upload()
+           << mesh_handles_.upload()
+           << instances_.upload()
+           << transforms_.upload()
            << synchronize();
     stream << commit();
 }
 
 void Geometry::clear() noexcept {
-    _vertices.clear_all();
-    _triangles.clear_all();
-    _instances.clear_all();
-    _mesh_handles.clear_all();
-    _transforms.clear_all();
-    _accel.clear();
+    vertices_.clear_all();
+    triangles_.clear_all();
+    instances_.clear_all();
+    mesh_handles_.clear_all();
+    transforms_.clear_all();
+    accel_.clear();
 }
 
 Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_complete) const noexcept {
     Interaction it{Global::instance().pipeline()->scene().has_medium()};
     it.prim_id = hit.prim_id;
-    Var inst = _instances.read(hit.inst_id);
-    Var mesh = _mesh_handles.read(inst.mesh_id);
+    Var inst = instances_.read(hit.inst_id);
+    Var mesh = mesh_handles_.read(inst.mesh_id);
     auto o2w = Transform(inst.o2w);
-    Var tri = _triangles.read(mesh.triangle_offset + hit.prim_id);
+    Var tri = triangles_.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     it.lightmap_id = inst.lightmap_id;
     it.set_light(inst.light_id);
@@ -191,10 +191,10 @@ Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_com
 }
 
 HitVar Geometry::trace_closest(const RayVar &ray) const noexcept {
-    return _accel.trace_closest(ray);
+    return accel_.trace_closest(ray);
 }
 Bool Geometry::trace_any(const RayVar &ray) const noexcept {
-    return _accel.trace_any(ray);
+    return accel_.trace_any(ray);
 }
 
 Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) const noexcept {
@@ -224,9 +224,9 @@ SampledSpectrum Geometry::Tr(Scene &scene, const SampledWavelengths &swl,
 
 array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
                                              const Uint &offset) const noexcept {
-    return {_vertices.read(offset + tri.i),
-            _vertices.read(offset + tri.j),
-            _vertices.read(offset + tri.k)};
+    return {vertices_.read(offset + tri.i),
+            vertices_.read(offset + tri.j),
+            vertices_.read(offset + tri.k)};
 }
 LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
                                                       const Uint &prim_id,

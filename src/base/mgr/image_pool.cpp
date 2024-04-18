@@ -37,16 +37,16 @@ RegistrableTexture ImagePool::load_texture(const ShaderNodeDesc &desc) noexcept 
 RegistrableTexture &ImagePool::obtain_texture(const ShaderNodeDesc &desc) noexcept {
     uint64_t hash = desc.hash();
     if (!is_contain(hash)) {
-        _textures.insert(make_pair(hash, load_texture(desc)));
+        textures_.insert(make_pair(hash, load_texture(desc)));
     } else {
         auto scene_path = Global::instance().scene_path();
         OC_INFO_FORMAT("image load: find {} from image pool", (scene_path / desc.file_name()).string().c_str());
     }
-    return _textures[hash];
+    return textures_[hash];
 }
 
 void ImagePool::prepare() noexcept {
-    for (auto &iter : _textures) {
+    for (auto &iter : textures_) {
         pipeline()->stream() << iter.second.upload();
     }
 
