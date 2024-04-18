@@ -8,22 +8,22 @@ namespace vision {
 
 class ExposureToneMapper : public ToneMapper {
 private:
-    Serial<float> _exposure{};
+    Serial<float> exposure_{};
 
 public:
     explicit ExposureToneMapper(const ToneMapperDesc &desc)
         : ToneMapper(desc),
-          _exposure(desc["exposure"].as_float(1.f)) {}
-    OC_SERIALIZABLE_FUNC(ToneMapper, _exposure)
+          exposure_(desc["exposure"].as_float(1.f)) {}
+    OC_SERIALIZABLE_FUNC(ToneMapper, exposure_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        _changed |= widgets->input_float("exposure", addressof(_exposure.hv()), 0.1, 0.5);
+        changed_ |= widgets->input_float("exposure", addressof(exposure_.hv()), 0.1, 0.5);
     }
     
     [[nodiscard]] Float4 apply(const ocarina::Float4 &input) const noexcept override {
-        _exposure.decode();
-        return 1.f - exp(-input * *_exposure);
+        exposure_.decode();
+        return 1.f - exp(-input * *exposure_);
     }
 };
 

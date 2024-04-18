@@ -34,7 +34,7 @@ public:
             texture_ = &Global::instance().pipeline()->image_pool().obtain_texture(desc_);
             texture_->upload_immediately();
             tex_id_.hv() = texture_->index().hv();
-            _changed = true;
+            changed_ = true;
         }
     }
 

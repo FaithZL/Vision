@@ -21,21 +21,21 @@ void SVGF::prepare_buffers() {
 }
 
 void SVGF::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    _changed |= widgets->check_box("turn on", addressof(_switch));
-    _changed |= widgets->check_box("reproject", addressof(_reproject_switch));
-    _changed |= widgets->check_box("filter moment", addressof(_moment_filter_switch));
-    _changed |= widgets->input_uint_limit("N", &N, 0, 10);
-    _changed |= widgets->input_float_limit("alpha", &_alpha, 0,
+    changed_ |= widgets->check_box("turn on", addressof(_switch));
+    changed_ |= widgets->check_box("reproject", addressof(_reproject_switch));
+    changed_ |= widgets->check_box("filter moment", addressof(_moment_filter_switch));
+    changed_ |= widgets->input_uint_limit("N", &N, 0, 10);
+    changed_ |= widgets->input_float_limit("alpha", &_alpha, 0,
                                            1, 0.01, 0.05);
-    _changed |= widgets->input_float_limit("moments_alpha", &_moments_alpha,
+    changed_ |= widgets->input_float_limit("moments_alpha", &_moments_alpha,
                                            0, 1, 0.01, 0.05);
-    _changed |= widgets->input_uint_limit("history_limit", &_history_limit,
+    changed_ |= widgets->input_uint_limit("history_limit", &_history_limit,
                                           1, 100, 1, 5);
-    _changed |= widgets->input_int_limit("moments_filter_radius", &_moments_filter_radius,
+    changed_ |= widgets->input_int_limit("moments_filter_radius", &_moments_filter_radius,
                                          0, 5, 1, 1);
-    _changed |= widgets->input_float_limit("sigma_rt", &_sigma_rt,
+    changed_ |= widgets->input_float_limit("sigma_rt", &_sigma_rt,
                                            0.01, 1e10, 1, 3);
-    _changed |= widgets->input_float_limit("sigma_normal", &_sigma_normal,
+    changed_ |= widgets->input_float_limit("sigma_normal", &_sigma_normal,
                                            0.01, 1e10, 1, 3);
 }
 

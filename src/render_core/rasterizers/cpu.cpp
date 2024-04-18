@@ -8,8 +8,8 @@ namespace vision {
 
 class CPURasterizer : public Rasterizer {
 private:
-    uint4 *_pixels{};
-    uint2 _res{};
+    uint4 *pixels_{};
+    uint2 res_{};
     static constexpr ocarina::array<float2, 10> _color{make_float2(0.5, 0),
                                                    make_float2(0, 1),
                                                    make_float2(0, 0.5),
@@ -89,11 +89,11 @@ public:
     }
 
     void write(uint x, uint y, uint4 val) noexcept {
-        OC_ASSERT(all(make_uint2(x, y) <= _res));
-        x = ocarina::clamp(x, 0u, _res.x - 1u);
-        y = ocarina::clamp(y, 0u, _res.y - 1u);
-        uint index = y * _res.x + x;
-        _pixels[index] = val;
+        OC_ASSERT(all(make_uint2(x, y) <= res_));
+        x = ocarina::clamp(x, 0u, res_.x - 1u);
+        y = ocarina::clamp(y, 0u, res_.y - 1u);
+        uint index = y * res_.x + x;
+        pixels_[index] = val;
     }
 
     void scan_line(float2 p0, float2 p1, uint tri_index) noexcept {
@@ -207,8 +207,8 @@ public:
         auto &stream = pipeline()->stream();
         vector<uint4> pixels;
         pixels.resize(bs.pixel_num());
-        _pixels = pixels.data();
-        _res = bs.resolution();
+        pixels_ = pixels.data();
+        res_ = bs.resolution();
         const vector<Vertex> &vertices = mesh.vertices;
         const vector<Triangle> &triangles = mesh.triangles;
         for (uint i = 0; i < triangles.size(); ++i) {
@@ -219,7 +219,7 @@ public:
             //            draw(v0, v1, v2, i);
             draw_bound(v0.lightmap_uv(), v1.lightmap_uv(), v2.lightmap_uv(), i);
         }
-        bs.pixels().upload_immediately(_pixels);
+        bs.pixels().upload_immediately(pixels_);
     }
 };
 

@@ -9,11 +9,11 @@
 namespace vision {
 
 void RenderGraph::add_edge(const string &output, const string &input) noexcept {
-    _edges.emplace_back(output, input);
+    edges_.emplace_back(output, input);
 }
 
 void RenderGraph::mark_output(const string &output) noexcept {
-    _output = Field(output);
+    output_ = Field(output);
 }
 
 Pipeline *RenderGraph::pipeline() noexcept {
@@ -33,7 +33,7 @@ uint RenderGraph::pixel_num() noexcept {
 }
 
 RenderGraph::EdgeData RenderGraph::_find_edge(const RenderGraph::Field &dst) noexcept {
-    for (const auto &edge : _edges) {
+    for (const auto &edge : edges_) {
         if (dst.str() == edge.dst.str()) {
             return edge;
         }
@@ -48,15 +48,15 @@ void RenderGraph::DFS_traverse(vision::RenderPass *pass) noexcept {
         if (edge.empty()) {
             continue;
         }
-        _simple_edges.push_back(edge);
-        RenderPass *output_pass = _pass_map[edge.src.pass()].get();
+        simple_edges_.push_back(edge);
+        RenderPass *output_pass = pass_map_[edge.src.pass()].get();
         DFS_traverse(output_pass);
     }
-    _pass_list.push_back(pass);
+    pass_list_.push_back(pass);
 }
 
 void RenderGraph::_simplification() noexcept {
-    RenderPass *output_pass = _pass_map[_output.pass()].get();
+    RenderPass *output_pass = pass_map_[output_.pass()].get();
     DFS_traverse(output_pass);
 }
 
@@ -66,22 +66,22 @@ void RenderGraph::_build_graph() noexcept {
 }
 
 void RenderGraph::_allocate_resource() noexcept {
-    for (const auto &edge : _simple_edges) {
+    for (const auto &edge : simple_edges_) {
         const Field &src = edge.src;
         const Field &dst = edge.dst;
         Buffer<float4> buffer = device().create_buffer<float4>(pixel_num());
         UP<RenderResource> render_resource = make_unique<TResource<Buffer<float4>>>(ocarina::move(buffer));
-        RenderPass *src_pass = _pass_map[src.pass()].get();
+        RenderPass *src_pass = pass_map_[src.pass()].get();
         src_pass->set_resource(src.channel(), *render_resource);
-        RenderPass *dst_pass = _pass_map[dst.pass()].get();
+        RenderPass *dst_pass = pass_map_[dst.pass()].get();
         dst_pass->set_resource(dst.channel(), *render_resource);
-        _resources.push_back(ocarina::move(render_resource));
+        resources_.push_back(ocarina::move(render_resource));
     }
     Buffer<float4> buffer = device().create_buffer<float4>(pixel_num());
     UP<RenderResource> render_resource = make_unique<TResource<Buffer<float4>>>(ocarina::move(buffer));
-    RenderPass *pass = _pass_map[_output.pass()].get();
-    pass->set_resource(_output.channel(), *render_resource);
-    _resources.push_back(ocarina::move(render_resource));
+    RenderPass *pass = pass_map_[output_.pass()].get();
+    pass->set_resource(output_.channel(), *render_resource);
+    resources_.push_back(ocarina::move(render_resource));
 }
 
 void RenderGraph::setup() noexcept {
@@ -89,14 +89,14 @@ void RenderGraph::setup() noexcept {
 }
 
 void RenderGraph::compile() noexcept {
-    for (const auto &pass : _pass_list.commands()) {
+    for (const auto &pass : pass_list_.commands()) {
         pass->compile();
     }
 }
 
 CommandList RenderGraph::dispatch() noexcept {
     CommandList ret;
-    for (const auto &pass : _pass_list.commands()) {
+    for (const auto &pass : pass_list_.commands()) {
         ret.push_back(pass->dispatch());
     }
     return ret;

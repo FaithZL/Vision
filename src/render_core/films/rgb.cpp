@@ -34,9 +34,9 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         tone_mapper_->render_UI(widgets);
         return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&]{
-            _changed |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
+            changed_ |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
             widgets->same_line();
-            _changed |= widgets->check_box("gamma", &gamma_);
+            changed_ |= widgets->check_box("gamma", &gamma_);
         });
     }
 

@@ -23,27 +23,27 @@ class AliasTable2D;
 
 class AliasTable : public Warper {
 private:
-    RegistrableManaged<AliasEntry> _table;
-    RegistrableManaged<float> _func;
+    RegistrableManaged<AliasEntry> table_;
+    RegistrableManaged<float> func_;
     friend class AliasTable2D;
 
 public:
     explicit AliasTable(BindlessArray &bindless_array)
-        : _table(bindless_array), _func(bindless_array) {}
+        : table_(bindless_array), func_(bindless_array) {}
     explicit AliasTable(const WarperDesc &desc)
         : Warper(desc),
-          _table(pipeline()->bindless_array()),
-          _func(pipeline()->bindless_array()) {}
+          table_(pipeline()->bindless_array()),
+          func_(pipeline()->bindless_array()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(Warper, _table, _func)
+    OC_SERIALIZABLE_FUNC(Warper, table_, func_)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
-    [[nodiscard]] Uint size() const noexcept override { return *_func.length(); }
+    [[nodiscard]] Uint size() const noexcept override { return *func_.length(); }
     [[nodiscard]] Float PDF(const Uint &i) const noexcept override {
         return select(*integral() > 0, func_at(i) / *integral(), 0.f);
     }
     [[nodiscard]] Float func_at(const Uint &i) const noexcept override {
-        return _func.read(i);
+        return func_.read(i);
     }
     [[nodiscard]] Float PMF(const Uint &i) const noexcept override {
         return select(*integral() > 0, func_at(i) / (*integral() * size()), 0.f);
@@ -55,13 +55,13 @@ public:
 };
 
 void AliasTable::prepare() noexcept {
-    _table.reset_device_buffer_immediately(device(), "AliasTable::table_");
-    _func.reset_device_buffer_immediately(device(), "AliasTable::func_");
-    _table.upload_immediately();
-    _func.upload_immediately();
+    table_.reset_device_buffer_immediately(device(), "AliasTable::table_");
+    func_.reset_device_buffer_immediately(device(), "AliasTable::func_");
+    table_.upload_immediately();
+    func_.upload_immediately();
 
-    _table.register_self();
-    _func.register_self();
+    table_.register_self();
+    func_.register_self();
 }
 void AliasTable::build(vector<float> weights) noexcept {
     double sum = std::reduce(weights.cbegin(), weights.cend(), 0.0);
@@ -97,8 +97,8 @@ void AliasTable::build(vector<float> weights) noexcept {
     for (auto i : under) { table[i] = {1.0f, i}; }
 
     _integral = sum / weights.size();
-    _func.set_host(std::move(weights));
-    _table.set_host(std::move(table));
+    func_.set_host(std::move(weights));
+    table_.set_host(std::move(table));
 }
 
 namespace detail {
@@ -129,7 +129,7 @@ pair<Uint, Float> AliasTable::offset_u_remapped(Float u, const Uint &size) const
     u = u * size;
     Uint idx = min(cast<uint>(u), size - 1);
     u = min(u - idx, OneMinusEpsilon);
-    Var alias_entry = _table.read(idx);
+    Var alias_entry = table_.read(idx);
     idx = select(u < alias_entry.prob, idx, alias_entry.alias);
     Float u_remapped = select(u < alias_entry.prob,
                               min(u / alias_entry.prob, OneMinusEpsilon),

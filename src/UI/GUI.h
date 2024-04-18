@@ -22,7 +22,7 @@ class Widgets;
         MAP(VS_MAKE_RESET_STATUS, ##__VA_ARGS__) \
     }                                            \
     bool has_changed() noexcept override {       \
-        bool ret = Super::_changed;              \
+        bool ret = Super::changed_;              \
         MAP(VS_MAKE_HAS_CHANGED, ##__VA_ARGS__)  \
         return ret;                              \
     }
@@ -49,11 +49,11 @@ OC_MAKE_AUTO_MEMBER_FUNC(render_sub_UI)
 
 class GUI {
 protected:
-    bool _changed{false};
+    bool changed_{false};
 
 public:
-    virtual void reset_status() noexcept { _changed = false; }
-    [[nodiscard]] virtual bool has_changed() noexcept { return _changed; }
+    virtual void reset_status() noexcept { changed_ = false; }
+    [[nodiscard]] virtual bool has_changed() noexcept { return changed_; }
 
     /**
      * @param widgets

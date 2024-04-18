@@ -51,14 +51,14 @@ public:
 template<typename T>
 class TResource final : public RenderResource {
 private:
-    T _rhi_resource{};
+    T rhi_resource_{};
 
 public:
     explicit TResource(T &&res)
-        : _rhi_resource(OC_FORWARD(res)) {}
+        : rhi_resource_(OC_FORWARD(res)) {}
     [[nodiscard]] const Type *type() const noexcept { return Type::of<T>(); }
-    [[nodiscard]] const RHIResource *rhi_resource() const noexcept override { return &_rhi_resource; }
-    [[nodiscard]] RHIResource *rhi_resource() noexcept override { return &_rhi_resource; }
+    [[nodiscard]] const RHIResource *rhi_resource() const noexcept override { return &rhi_resource_; }
+    [[nodiscard]] RHIResource *rhi_resource() noexcept override { return &rhi_resource_; }
 };
 
 }// namespace vision

@@ -35,15 +35,15 @@ static bool progress_callback(xatlas::ProgressCategory category, int progress, v
 
 class XAtlas : public UVUnwrapper {
 private:
-    xatlas::Atlas *_atlas{};
-    Stopwatch _global_stopwatch;
-    Stopwatch _stopwatch;
-    vector<float3> _pos;
+    xatlas::Atlas *atlas_{};
+    Stopwatch global_stopwatch_;
+    Stopwatch stopwatch_;
+    vector<float3> pos_;
 
 public:
     explicit XAtlas(const UVUnwrapperDesc &desc)
         : UVUnwrapper(desc),
-          _atlas(nullptr) {
+          atlas_(nullptr) {
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     struct Guard {
@@ -53,15 +53,15 @@ public:
     };
 
     void destroy_xatlas() {
-        if (_atlas) {
-            xatlas::Destroy(_atlas);
-            _atlas = nullptr;
+        if (atlas_) {
+            xatlas::Destroy(atlas_);
+            atlas_ = nullptr;
         }
     }
 
     void init_xatlas() {
-        _atlas = xatlas::Create();
-        xatlas::SetProgressCallback(_atlas, progress_callback, &_stopwatch);
+        atlas_ = xatlas::Create();
+        xatlas::SetProgressCallback(atlas_, progress_callback, &stopwatch_);
     }
 
     [[nodiscard]] static xatlas::MeshDecl mesh_decl(const vision::Mesh &mesh) {
@@ -113,18 +113,18 @@ public:
         Guard __(this);
         UnwrapperResult unwrapper_result;
         xatlas::MeshDecl decl = mesh_decl(*shape);
-        xatlas::AddMeshError error = xatlas::AddMesh(_atlas, decl, 1);
+        xatlas::AddMeshError error = xatlas::AddMesh(atlas_, decl, 1);
         if (error != xatlas::AddMeshError::Success) {
             destroy_xatlas();
             OC_ERROR("xatlas adding mesh error");
         }
 
-        xatlas::AddMeshJoin(_atlas);
-        xatlas::Generate(_atlas, chart_options(), pack_options(shape));
-        unwrapper_result.width = _atlas->width;
-        unwrapper_result.height = _atlas->height;
-        for (int i = 0; i < _atlas->meshCount; ++i) {
-            xatlas::Mesh &mesh = _atlas->meshes[i];
+        xatlas::AddMeshJoin(atlas_);
+        xatlas::Generate(atlas_, chart_options(), pack_options(shape));
+        unwrapper_result.width = atlas_->width;
+        unwrapper_result.height = atlas_->height;
+        for (int i = 0; i < atlas_->meshCount; ++i) {
+            xatlas::Mesh &mesh = atlas_->meshes[i];
             UnwrapperMesh u_mesh;
             for (int j = 0; j < mesh.vertexCount; ++j) {
                 xatlas::Vertex &vertex = mesh.vertexArray[j];

@@ -24,7 +24,7 @@ VS_MAKE_CALLABLE(visible_wavelength_PDF)
 
 class RGBSigmoidPolynomial {
 private:
-    array<Float, 3> _c;
+    array<Float, 3> c_;
 
 private:
     [[nodiscard]] static Float _s(Float x) noexcept {
@@ -33,14 +33,14 @@ private:
     }
 
     [[nodiscard]] Float _f(Float lambda) const noexcept {
-        return fma(fma(_c[0], lambda, _c[1]), lambda, _c[2]);
+        return fma(fma(c_[0], lambda, c_[1]), lambda, c_[2]);
     }
 
 public:
     RGBSigmoidPolynomial() noexcept = default;
     RGBSigmoidPolynomial(Float c0, Float c1, Float c2) noexcept
-        : _c{c0, c1, c2} {}
-    explicit RGBSigmoidPolynomial(Float3 c) noexcept : _c{c[0], c[1], c[2]} {}
+        : c_{c0, c1, c2} {}
+    explicit RGBSigmoidPolynomial(Float3 c) noexcept : c_{c[0], c[1], c[2]} {}
     [[nodiscard]] Float operator()(Float lambda) const noexcept {
         return _s(_f(lambda));// c0 * x * x + c1 * x + c2
     }
@@ -52,12 +52,12 @@ public:
     using coefficient_table_type = const float[3][res][res][res][4];
 
 private:
-    const coefficient_table_type &_coefficients;
-    Pipeline *_rp{};
-    uint _base_index{InvalidUI32};
-    Texture _coefficient0;
-    Texture _coefficient1;
-    Texture _coefficient2;
+    const coefficient_table_type &coefficients_;
+    Pipeline *rp_{};
+    uint base_index_{InvalidUI32};
+    Texture coefficient0_;
+    Texture coefficient1_;
+    Texture coefficient2_;
 
 private:
     [[nodiscard]] inline static auto _inverse_smooth_step(auto x) noexcept {
@@ -66,21 +66,21 @@ private:
 
 public:
     explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, Pipeline *rp) noexcept
-        : _coefficients{coefficients}, _rp(rp) {}
+        : coefficients_{coefficients}, rp_(rp) {}
 
     void init() noexcept {
-        _coefficient0 = _rp->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
-        _coefficient1 = _rp->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
-        _coefficient2 = _rp->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
+        coefficient0_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
+        coefficient1_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
+        coefficient2_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
     }
 
     void prepare() noexcept {
-        _base_index = _rp->register_texture(_coefficient0);
-        _rp->register_texture(_coefficient1);
-        _rp->register_texture(_coefficient2);
-        _coefficient0.upload_immediately(&_coefficients[0]);
-        _coefficient1.upload_immediately(&_coefficients[1]);
-        _coefficient2.upload_immediately(&_coefficients[2]);
+        base_index_ = rp_->register_texture(coefficient0_);
+        rp_->register_texture(coefficient1_);
+        rp_->register_texture(coefficient2_);
+        coefficient0_.upload_immediately(&coefficients_[0]);
+        coefficient1_.upload_immediately(&coefficients_[1]);
+        coefficient2_.upload_immediately(&coefficients_[2]);
     }
 
     [[nodiscard]] float4 decode_albedo(float3 rgb_in) const noexcept {
@@ -112,7 +112,7 @@ public:
         for (auto i = 0u; i < 3u; i++) {
             // Define _co_ lambda for looking up sigmoid polynomial coefficients
             auto co = [&](int dx, int dy, int dz) noexcept {
-                return _coefficients[maxc][zi + dz][yi + dy][xi + dx][i];
+                return coefficients_[maxc][zi + dz][yi + dy][xi + dx][i];
             };
             c[i] = lerp(dz,
                         lerp(dy,
@@ -156,7 +156,7 @@ public:
             return c;
         };
         decode.function()->set_description("RGBToSpectrumTable::decode");
-        return make_float4(decode(_rp->bindless_array().var(), _base_index, rgb),
+        return make_float4(decode(rp_->bindless_array().var(), base_index_, rgb),
                            cie::linear_srgb_to_y(rgb));
     }
 
@@ -171,44 +171,44 @@ public:
 
 class RGBAlbedoSpectrum {
 protected:
-    RGBSigmoidPolynomial _rsp;
+    RGBSigmoidPolynomial rsp_;
 
 public:
-    explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : _rsp{ocarina::move(rsp)} {}
-    [[nodiscard]] virtual Float eval(const Float &lambda) const noexcept { return _rsp(lambda); }
+    explicit RGBAlbedoSpectrum(RGBSigmoidPolynomial rsp) noexcept : rsp_{ocarina::move(rsp)} {}
+    [[nodiscard]] virtual Float eval(const Float &lambda) const noexcept { return rsp_(lambda); }
 };
 
 class RGBUnboundSpectrum : public RGBAlbedoSpectrum {
 private:
-    Float _scale;
+    Float scale_;
 
 public:
     using Super = RGBAlbedoSpectrum;
 
 public:
     explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
-        : Super{ocarina::move(rsp)}, _scale(scale) {}
+        : Super{ocarina::move(rsp)}, scale_(scale) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
         : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {
-        return Super::eval(lambda) * _scale;
+        return Super::eval(lambda) * scale_;
     }
 };
 
 class RGBIlluminationSpectrum : public RGBUnboundSpectrum {
 private:
-    const SPD &_illuminant;
+    const SPD &illuminant_;
 
 public:
     using Super = RGBUnboundSpectrum;
 
 public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
-        : Super(rsp, scale), _illuminant(wp) {}
+        : Super(rsp, scale), illuminant_(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {
-        return Super::eval(lambda) * _illuminant.eval(lambda);
+        return Super::eval(lambda) * illuminant_.eval(lambda);
     }
 };
 
@@ -220,35 +220,35 @@ public:
 //}
 class HeroWavelengthSpectrum : public Spectrum {
 private:
-    uint _dimension{};
-    SPD _illuminant_d65;
-    SPD _cie_x;
-    SPD _cie_y;
-    SPD _cie_z;
-    RGBToSpectrumTable _rgb_to_spectrum_table;
+    uint dimension_{};
+    SPD illuminant_d65_;
+    SPD cie_x_;
+    SPD cie_y_;
+    SPD cie_z_;
+    RGBToSpectrumTable rgb_to_spectrum_table_;
 
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc), _dimension(desc["dimension"].as_uint(3u)),
-          _rgb_to_spectrum_table(sRGBToSpectrumTable_Data, pipeline()),
-          _illuminant_d65(SPD::create_cie_d65(pipeline())),
-          _cie_x(SPD::create_cie_x(pipeline())),
-          _cie_y(SPD::create_cie_y(pipeline())),
-          _cie_z(SPD::create_cie_z(pipeline())) {
-        _rgb_to_spectrum_table.init();
+        : Spectrum(desc), dimension_(desc["dimension"].as_uint(3u)),
+          rgb_to_spectrum_table_(sRGBToSpectrumTable_Data, pipeline()),
+          illuminant_d65_(SPD::create_cie_d65(pipeline())),
+          cie_x_(SPD::create_cie_x(pipeline())),
+          cie_y_(SPD::create_cie_y(pipeline())),
+          cie_z_(SPD::create_cie_z(pipeline())) {
+        rgb_to_spectrum_table_.init();
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        _changed |= widgets->input_uint("dimension", &_dimension, 1, 1);
+        changed_ |= widgets->input_uint("dimension", &dimension_, 1, 1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
-        _illuminant_d65.prepare();
-        _rgb_to_spectrum_table.prepare();
-        _cie_x.prepare();
-        _cie_y.prepare();
-        _cie_z.prepare();
+        illuminant_d65_.prepare();
+        rgb_to_spectrum_table_.prepare();
+        cie_x_.prepare();
+        cie_y_.prepare();
+        cie_z_.prepare();
     }
-    [[nodiscard]] uint dimension() const noexcept override { return _dimension; }
+    [[nodiscard]] uint dimension() const noexcept override { return dimension_; }
     [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
@@ -267,7 +267,7 @@ public:
         };
 
         for (uint i = 0; i < sp.dimension(); ++i) {
-            sum += safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i));
+            sum += safe_div(cie_y_.eval(swl.lambda(i)) * sp[i], swl.pdf(i));
         }
         Float factor = 1.f / (swl.valid_dimension() * SPD::cie_y_integral());
         return sum * factor;
@@ -278,9 +278,9 @@ public:
             return select(b == 0.0f, 0.0f, a / b);
         };
         for (uint i = 0; i < sp.dimension(); ++i) {
-            sum += make_float3(safe_div(_cie_x.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
-                               safe_div(_cie_y.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
-                               safe_div(_cie_z.eval(swl.lambda(i)) * sp[i], swl.pdf(i)));
+            sum += make_float3(safe_div(cie_x_.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(cie_y_.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
+                               safe_div(cie_z_.eval(swl.lambda(i)) * sp[i], swl.pdf(i)));
         }
         Float factor = 1.f / (swl.valid_dimension() * SPD::cie_y_integral());
         return sum * factor;
@@ -299,19 +299,19 @@ public:
         return swl;
     }
     [[nodiscard]] float4 albedo_params(float4 rgb) const noexcept override {
-        return _rgb_to_spectrum_table.decode_albedo(rgb.xyz());
+        return rgb_to_spectrum_table_.decode_albedo(rgb.xyz());
     }
     [[nodiscard]] float4 illumination_params(float4 rgb) const noexcept override {
-        return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
+        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz());
     }
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
-        return _rgb_to_spectrum_table.decode_unbound(rgb.xyz());
+        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz());
     }
     [[nodiscard]] Float luminance(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return sp.average();
     }
     [[nodiscard]] SampledSpectrum params_to_illumination(Float4 val, const SampledWavelengths &swl) const noexcept {
-        RGBIlluminationSpectrum spec{val, _illuminant_d65};
+        RGBIlluminationSpectrum spec{val, illuminant_d65_};
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
             sp[i] = spec.eval(swl.lambda(i));
@@ -335,15 +335,15 @@ public:
         return sp;
     }
     [[nodiscard]] ColorDecode decode_to_albedo(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        Float4 c = _rgb_to_spectrum_table.decode_albedo(rgb);
+        Float4 c = rgb_to_spectrum_table_.decode_albedo(rgb);
         return {params_to_albedo(c, swl), ocarina::luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
+        Float4 c = rgb_to_spectrum_table_.decode_unbound(rgb);
         return {params_to_illumination(c, swl), ocarina::luminance(rgb)};
     }
     [[nodiscard]] ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept override {
-        Float4 c = _rgb_to_spectrum_table.decode_unbound(rgb);
+        Float4 c = rgb_to_spectrum_table_.decode_unbound(rgb);
         return {params_to_unbound(c, swl), ocarina::luminance(rgb)};
     }
 };

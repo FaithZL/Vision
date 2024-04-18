@@ -32,7 +32,7 @@ Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
 
 bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
     return widgets->use_tree("ReSTIR GI", [&] {
-        _changed |= widgets->check_box("switch", &_open);
+        changed_ |= widgets->check_box("switch", &_open);
         if (_open) {
             render_sub_UI(widgets);
         }
@@ -40,23 +40,23 @@ bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    _changed |= widgets->check_box("temporal", &_temporal.open);
+    changed_ |= widgets->check_box("temporal", &_temporal.open);
     if (_temporal.open) {
-        _changed |= widgets->input_uint_limit("history", &_temporal.limit, 0, 50, 1, 3);
-        _changed |= widgets->input_float_limit("temporal theta",
+        changed_ |= widgets->input_uint_limit("history", &_temporal.limit, 0, 50, 1, 3);
+        changed_ |= widgets->input_float_limit("temporal theta",
                                                &_temporal.theta, 0, 90, 1, 1);
-        _changed |= widgets->input_float_limit("temporal depth", &_temporal.depth_threshold,
+        changed_ |= widgets->input_float_limit("temporal depth", &_temporal.depth_threshold,
                                                0, 1, 0.02, 0.1);
-        _changed |= widgets->input_float_limit("temporal radius", &_temporal.sampling_radius,
+        changed_ |= widgets->input_float_limit("temporal radius", &_temporal.sampling_radius,
                                                0, 50, 1, 5);
     }
-    _changed |= widgets->check_box("spatial", &_spatial.open);
+    changed_ |= widgets->check_box("spatial", &_spatial.open);
     if (_spatial.open) {
-        _changed |= widgets->input_float_limit("spatial theta",
+        changed_ |= widgets->input_float_limit("spatial theta",
                                                &_spatial.theta, 0, 90, 1, 1);
-        _changed |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
+        changed_ |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
                                                0, 1, 0.02, 0.1);
-        _changed |= widgets->input_float_limit("spatial radius", &_spatial.sampling_radius,
+        changed_ |= widgets->input_float_limit("spatial radius", &_spatial.sampling_radius,
                                                0, 50, 1, 5);
     }
 }

@@ -56,12 +56,12 @@ bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} integrator", impl_type().data()),
         [&] {
-            _changed |= widgets->button_click("recompile", [&] {
+            changed_ |= widgets->button_click("recompile", [&] {
                 compile();
             });
-            _changed |= widgets->input_uint_limit("max depth", &_max_depth.hv(), 0, 30, 1, 1);
-            _changed |= widgets->input_uint_limit("min depth", &_min_depth.hv(), 0, 20, 1, 1);
-            _changed |= widgets->drag_float("rr threshold", &_rr_threshold.hv(), 0.01, 0, 1);
+            changed_ |= widgets->input_uint_limit("max depth", &_max_depth.hv(), 0, 30, 1, 1);
+            changed_ |= widgets->input_uint_limit("min depth", &_min_depth.hv(), 0, 20, 1, 1);
+            changed_ |= widgets->drag_float("rr threshold", &_rr_threshold.hv(), 0.01, 0, 1);
             render_sub_UI(widgets);
         });
     _denoiser->render_UI(widgets);

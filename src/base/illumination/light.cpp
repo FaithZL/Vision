@@ -16,8 +16,8 @@ Light::Light(const LightDesc &desc, LightType light_type)
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = format("{} {} light: {}", index_, impl_type().data(), _name.c_str());
     bool open = widgets->use_tree(label, [&] {
-        _changed |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(switch_.hv())));
-        _changed |= widgets->input_float_limit("scale", &scale_.hv(), 0, 100000, 0.1, 2);
+        changed_ |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(switch_.hv())));
+        changed_ |= widgets->input_float_limit("scale", &scale_.hv(), 0, 100000, 0.1, 2);
         color_.render_UI(widgets);
         render_sub_UI(widgets);
     });
@@ -43,7 +43,7 @@ LightSample IPointLight::sample_wi(const LightSampleContext &p_ref, Float2 u,
     return ret;
 }
 void IPointLight::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    _changed |= widgets->input_float3("position", &host_position());
+    changed_ |= widgets->input_float3("position", &host_position());
 }
 
 }// namespace vision

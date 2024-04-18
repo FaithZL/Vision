@@ -21,9 +21,9 @@ public:
     OC_SERIALIZABLE_FUNC(Camera, focal_distance_, lens_radius_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Camera::render_sub_UI(widgets);
-        _changed |= widgets->input_float_limit("lens radius", &lens_radius_.hv(),
+        changed_ |= widgets->input_float_limit("lens radius", &lens_radius_.hv(),
                                                0, 0.5, 0.01, 0.01);
-        _changed |= widgets->input_float_limit("focal distance", &focal_distance_.hv(),
+        changed_ |= widgets->input_float_limit("focal distance", &focal_distance_.hv(),
                                                0, 100, 0.1, 0.5);
     }
     VS_MAKE_PLUGIN_NAME_FUNC

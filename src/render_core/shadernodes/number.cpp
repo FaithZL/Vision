@@ -29,24 +29,24 @@ public:
         switch (type_) {
             case ShaderNodeType::Number: {
                 if (values.size() > 1) {
-                    _changed |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &sync_);
+                    changed_ |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &sync_);
                 }
                 if (sync_) {
-                    _changed |= widgets->input_float(_name, values.data(), 0.01, 0.2);
+                    changed_ |= widgets->input_float(_name, values.data(), 0.01, 0.2);
                     for (int i = 1; i < values.size(); ++i) {
                         values[i] = values[0];
                     }
                 } else {
-                    _changed |= widgets->input_floatN(_name, values.data(), values.size());
+                    changed_ |= widgets->input_floatN(_name, values.data(), values.size());
                 }
                 break;
             }
             case ShaderNodeType::Albedo: {
-                _changed |= widgets->colorN_edit(_name, values.data(), values.size());
+                changed_ |= widgets->colorN_edit(_name, values.data(), values.size());
                 break;
             }
             case ShaderNodeType::Illumination: {
-                _changed |= widgets->colorN_edit(ocarina::format("intensity:{} {}", intensity_.hv(), _name.c_str()),
+                changed_ |= widgets->colorN_edit(ocarina::format("intensity:{} {}", intensity_.hv(), _name.c_str()),
                                                  values.data(), values.size());
                 break;
             }

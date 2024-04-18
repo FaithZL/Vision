@@ -30,7 +30,7 @@ void Pipeline::reset_status() noexcept {
 }
 
 bool Pipeline::has_changed() noexcept {
-    return _changed || scene_.has_changed();
+    return changed_ || scene_.has_changed();
 }
 
 bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {

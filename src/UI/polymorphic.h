@@ -27,14 +27,14 @@ public:
     }
 
     void reset_status() noexcept override {
-        _changed = false;
+        changed_ = false;
         Super::for_each_instance([&](auto elm) {
             UI::reset_status(elm);
         });
     }
 
     [[nodiscard]] bool has_changed() noexcept override {
-        bool ret = _changed;
+        bool ret = changed_;
         Super::for_each_instance([&](auto elm) {
             ret |= UI::has_changed(elm);
         });

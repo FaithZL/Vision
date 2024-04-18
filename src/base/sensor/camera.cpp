@@ -22,10 +22,10 @@ void Camera::init(const SensorDesc &desc) noexcept {
 }
 
 void Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    _changed |= widgets->input_float3("position", &position_);
+    changed_ |= widgets->input_float3("position", &position_);
     widgets->text("fov y: %.2f", fov_y_);
-    _changed |= widgets->input_float("yaw", &yaw_, 0.1, 5);
-    _changed |= widgets->input_float_limit("pitch", &pitch_, -pitch_max, pitch_max, 0.1, 5);
+    changed_ |= widgets->input_float("yaw", &yaw_, 0.1, 5);
+    changed_ |= widgets->input_float_limit("pitch", &pitch_, -pitch_max, pitch_max, 0.1, 5);
     widgets->input_float_limit("velocity", &velocity_, 0, 200, 1, 5);
 }
 

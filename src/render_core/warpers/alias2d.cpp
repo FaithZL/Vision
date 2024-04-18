@@ -8,20 +8,20 @@ namespace vision {
 
 class AliasTable2D : public Warper2D {
 private:
-    AliasTable _marginal;
-    RegistrableManaged<AliasEntry> _conditional_v_tables;
-    RegistrableManaged<float> _conditional_v_weights;
-    uint2 _resolution;
+    AliasTable marginal_;
+    RegistrableManaged<AliasEntry> conditional_v_tables_;
+    RegistrableManaged<float> conditional_v_weights_;
+    uint2 resolution_;
 
 public:
     explicit AliasTable2D(const WarperDesc &desc)
         : Warper2D(desc),
-          _marginal(pipeline()->bindless_array()),
-          _conditional_v_tables(pipeline()->bindless_array()),
-          _conditional_v_weights(pipeline()->bindless_array()) {
+          marginal_(pipeline()->bindless_array()),
+          conditional_v_tables_(pipeline()->bindless_array()),
+          conditional_v_weights_(pipeline()->bindless_array()) {
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(Warper2D, _marginal, _conditional_v_tables, _conditional_v_weights)
+    OC_SERIALIZABLE_FUNC(Warper2D, marginal_, conditional_v_tables_, conditional_v_weights_)
     void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v
         vector<AliasTable> conditional_v;
@@ -42,61 +42,61 @@ public:
         for (int v = 0; v < res.y; ++v) {
             marginal_func.push_back(conditional_v[v].integral().hv());
         }
-        _marginal.build(ocarina::move(marginal_func));
+        marginal_.build(ocarina::move(marginal_func));
 
         // flatten conditionals table and weight
-        _conditional_v_tables.reserve(res.x * res.y);
-        _conditional_v_weights.reserve(res.x * res.y);
+        conditional_v_tables_.reserve(res.x * res.y);
+        conditional_v_weights_.reserve(res.x * res.y);
 
         for (auto &alias_table : conditional_v) {
-            _conditional_v_tables.insert(_conditional_v_tables.cend(),
-                                         alias_table._table.begin(),
-                                         alias_table._table.end());
-            _conditional_v_weights.insert(_conditional_v_weights.cend(),
-                                          alias_table._func.begin(),
-                                          alias_table._func.end());
+            conditional_v_tables_.insert(conditional_v_tables_.cend(),
+                                         alias_table.table_.begin(),
+                                         alias_table.table_.end());
+            conditional_v_weights_.insert(conditional_v_weights_.cend(),
+                                          alias_table.func_.begin(),
+                                          alias_table.func_.end());
         }
-        _resolution = res;
+        resolution_ = res;
     }
     void prepare() noexcept override {
-        _marginal.prepare();
-        _conditional_v_tables.reset_device_buffer_immediately(device(),
-                                                              "AliasTable2D::_conditional_v_tables");
-        _conditional_v_weights.reset_device_buffer_immediately(device(),
-                                                               "AliasTable2D::_conditional_v_weights");
-        _conditional_v_tables.upload_immediately();
-        _conditional_v_weights.upload_immediately();
+        marginal_.prepare();
+        conditional_v_tables_.reset_device_buffer_immediately(device(),
+                                                              "AliasTable2D::conditional_v_tables_");
+        conditional_v_weights_.reset_device_buffer_immediately(device(),
+                                                               "AliasTable2D::conditional_v_weights_");
+        conditional_v_tables_.upload_immediately();
+        conditional_v_weights_.upload_immediately();
 
-        _conditional_v_weights.register_self();
-        _conditional_v_tables.register_self();
+        conditional_v_weights_.register_self();
+        conditional_v_tables_.register_self();
     }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
-        Uint idx = coord.y * _resolution.x + coord.x;
-        return _conditional_v_weights.read(idx);
+        Uint idx = coord.y * resolution_.x + coord.x;
+        return conditional_v_weights_.read(idx);
     }
     [[nodiscard]] Float PDF(Float2 p) const noexcept override {
-        Uint iu = clamp(cast<uint>(p.x * _resolution.x), 0u, _resolution.x - 1);
-        Uint iv = clamp(cast<uint>(p.y * _resolution.y), 0u, _resolution.y - 1);
+        Uint iu = clamp(cast<uint>(p.x * resolution_.x), 0u, resolution_.x - 1);
+        Uint iv = clamp(cast<uint>(p.y * resolution_.y), 0u, resolution_.y - 1);
         return select(*integral() > 0, func_at(make_uint2(iu, iv)) / *integral(), 0.f);
     }
     [[nodiscard]] Serial<float> integral() const noexcept override {
-        return _marginal.integral();
+        return marginal_.integral();
     }
     [[nodiscard]] Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept override {
         // sample v
         Float pdf_v;
         Uint iv;
-        Float fv = _marginal.sample_continuous(u.y, std::addressof(pdf_v), std::addressof(iv));
+        Float fv = marginal_.sample_continuous(u.y, std::addressof(pdf_v), std::addressof(iv));
 
         // sample u
-        Uint buffer_offset = _resolution.x * iv;
+        Uint buffer_offset = resolution_.x * iv;
         Float u_remapped;
         Uint iu = detail::offset(buffer_offset, u.x, pipeline(),
-                                 _conditional_v_tables.index().hv(), _resolution.x, &u_remapped);
+                                 conditional_v_tables_.index().hv(), resolution_.x, &u_remapped);
 
-        Float fu = (iu + u_remapped) / _resolution.x;
-        Float integral_u = _marginal._func.read(iv);
-        Float func_u = _conditional_v_weights.read(buffer_offset + iu);
+        Float fu = (iu + u_remapped) / resolution_.x;
+        Float integral_u = marginal_.func_.read(iv);
+        Float func_u = conditional_v_weights_.read(buffer_offset + iu);
         Float pdf_u = select(integral_u > 0, func_u / integral_u, 0.f);
         if (pdf) {
             *pdf = pdf_u * pdf_v;

@@ -50,8 +50,8 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);
-        _changed |= widgets->input_float_limit("radio", addressof(_ratio.hv()), 0.1,10, 0.05,0.2);
-        _changed |= widgets->slider_float("_angle_y", &_angle_y.hv(), radians(1.f), radians(89.f));
+        changed_ |= widgets->input_float_limit("radio", addressof(_ratio.hv()), 0.1,10, 0.05,0.2);
+        changed_ |= widgets->slider_float("_angle_y", &_angle_y.hv(), radians(1.f), radians(89.f));
     }
     [[nodiscard]] float3 power() const noexcept override {
         // http://math.stackexchange.com/questions/9819/area-of-a-spherical-triangle
