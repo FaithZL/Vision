@@ -98,8 +98,8 @@ public:
 
     [[nodiscard]] xatlas::PackOptions pack_options(const Mesh *shape) const noexcept {
         xatlas::PackOptions ret;
-        ret.padding = _padding;
-        ret.resolution = ocarina::clamp(uint(shape->lightmap_size() * _scale), _min, _max);
+        ret.padding = padding_;
+        ret.resolution = ocarina::clamp(uint(shape->lightmap_size() * scale_), min_, max_);
         ret.bruteForce = true;
         return ret;
     }

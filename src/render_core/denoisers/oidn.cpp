@@ -16,7 +16,7 @@ private:
 private:
     [[nodiscard]] oidn::DeviceRef create_device() const noexcept {
         oidn::DeviceType device_type{};
-        switch (_backend) {
+        switch (backend_) {
             case CPU:
                 device_type = oidn::DeviceType::CPU;
                 break;
@@ -29,7 +29,7 @@ private:
         return oidn::DeviceRef(oidn::newDevice(device_type));
     }
     [[nodiscard]] oidn::FilterRef create_filter() const noexcept {
-        switch (_mode) {
+        switch (mode_) {
             case RT:
                 return device_.newFilter("RT");
             case RTLightmap:
@@ -64,7 +64,7 @@ public:
 #define VS_DENOISE_ATTR_CPU(attr_name) \
     attr_name->download_immediately(); \
     attr_name##_ptr = attr_name->data();
-            switch (_backend) {
+            switch (backend_) {
                 case CPU: {
                     output_ptr = output->data();
                     VS_DENOISE_ATTR_CPU(color)
@@ -89,7 +89,7 @@ public:
         };
 
         auto after_denoise = [&]() {
-            switch (_backend) {
+            switch (backend_) {
                 case CPU: {
                     output->upload_immediately();
                 }

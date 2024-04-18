@@ -15,15 +15,15 @@ public:
     using Desc = WarperDesc;
 
 protected:
-    Serial<float> _integral{};
+    Serial<float> integral_{};
 
 public:
     Warper() = default;
-    OC_SERIALIZABLE_FUNC(Serializable<>, _integral)
+    OC_SERIALIZABLE_FUNC(Serializable<>, integral_)
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     [[nodiscard]] virtual Uint size() const noexcept = 0;
-    [[nodiscard]] virtual Serial<float> integral() const noexcept { return _integral; }
+    [[nodiscard]] virtual Serial<float> integral() const noexcept { return integral_; }
     [[nodiscard]] virtual Float func_at(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(const Uint &i) const noexcept = 0;
     [[nodiscard]] virtual Float PMF(const Uint &i) const noexcept = 0;

@@ -13,30 +13,30 @@ namespace vision {
 void Integrator::invalidation() const noexcept {
     Film *film = scene().film();
     if (film->enable_accumulation()) {
-        _frame_index = 0u;
-        _render_time = 0;
+        frame_index_ = 0u;
+        render_time_ = 0;
     }
 }
 
 void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
     Uint2 pixel = dispatch_idx().xy();
-    _frame_index.emplace(frame_index);
+    frame_index_.emplace(frame_index);
     SampledWavelengths wavelengths{spectrum.dimension()};
     sampler->temporary([&](Sampler *) {
         sampler->start(pixel, frame_index, -1);
         wavelengths = spectrum.sample_wavelength(sampler);
     });
-    _swl.emplace(wavelengths);
+    swl_.emplace(wavelengths);
 }
 
 IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &desc)
     : Integrator(desc),
-      _max_depth(desc["max_depth"].as_uint(16)),
-      _min_depth(desc["min_depth"].as_uint(5)),
-      _rr_threshold(desc["rr_threshold"].as_float(1.f)),
-      _mis_mode(MISMode(desc["mis_mode"].as_int(0))),
-      _separate(desc["separate"].as_bool(false)),
-      _denoiser(scene().load<Denoiser>(desc.denoiser_desc)) {}
+      max_depth_(desc["max_depth"].as_uint(16)),
+      min_depth_(desc["min_depth"].as_uint(5)),
+      rr_threshold_(desc["rr_threshold"].as_float(1.f)),
+      mis_mode_(MISMode(desc["mis_mode"].as_int(0))),
+      separate_(desc["separate"].as_bool(false)),
+      denoiser_(scene().load<Denoiser>(desc.denoiser_desc)) {}
 
 void IlluminationIntegrator::prepare() noexcept {
     encode_data();
@@ -59,21 +59,21 @@ bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
             changed_ |= widgets->button_click("recompile", [&] {
                 compile();
             });
-            changed_ |= widgets->input_uint_limit("max depth", &_max_depth.hv(), 0, 30, 1, 1);
-            changed_ |= widgets->input_uint_limit("min depth", &_min_depth.hv(), 0, 20, 1, 1);
-            changed_ |= widgets->drag_float("rr threshold", &_rr_threshold.hv(), 0.01, 0, 1);
+            changed_ |= widgets->input_uint_limit("max depth", &max_depth_.hv(), 0, 30, 1, 1);
+            changed_ |= widgets->input_uint_limit("min depth", &min_depth_.hv(), 0, 20, 1, 1);
+            changed_ |= widgets->drag_float("rr threshold", &rr_threshold_.hv(), 0.01, 0, 1);
             render_sub_UI(widgets);
         });
-    _denoiser->render_UI(widgets);
+    denoiser_->render_UI(widgets);
     return open;
 }
 
 CommandList IlluminationIntegrator::denoise(RealTimeDenoiseInput &input) const noexcept {
     CommandList ret;
-    if (!_denoiser) {
+    if (!denoiser_) {
         return ret;
     }
-    ret << _denoiser->dispatch(input);
+    ret << denoiser_->dispatch(input);
     return ret;
 }
 
@@ -184,7 +184,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         Float3 albedo = make_float3(0.f);
 
         auto sample_surface = [&]() {
-            if (_separate) {
+            if (separate_) {
                 MaterialEvaluator evaluator(it, swl);
                 scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                     material->build_evaluator(evaluator, it, swl);
@@ -224,7 +224,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             $break;
         };
         throughput *= bsdf_sample.eval.throughput();
-        $if(eta_scale * lum < *_rr_threshold && bounces >= *_min_depth) {
+        $if(eta_scale * lum < *rr_threshold_ && bounces >= *min_depth_) {
             Float q = min(0.95f, lum);
             Float rr = sampler->next_1d();
             $if(q < rr) {
@@ -236,7 +236,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         rs = it.spawn_ray_state(bsdf_sample.wi);
     };
 
-    if (only_direct && _mis_mode == MISMode::EBoth) {
+    if (only_direct && mis_mode_ == MISMode::EBoth) {
         /// Supplement only direct light BSDF sampling
         $for(&bounce, 1u) {
             mis_bsdf(bounce, false);
@@ -247,7 +247,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
 
 Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
                                   SampledSpectrum throughput, const HitContext &hc, const RenderEnv &render_env) const noexcept {
-    return Li(rs, scatter_pdf, *_max_depth, throughput, _max_depth.hv() < 2, hc, render_env);
+    return Li(rs, scatter_pdf, *max_depth_, throughput, max_depth_.hv() < 2, hc, render_env);
 }
 
 }// namespace vision

@@ -48,8 +48,8 @@ public:
     };
 
 protected:
-    Mode _mode{};
-    Backend _backend{};
+    Mode mode_{};
+    Backend backend_{};
 
 public:
     using Desc = DenoiserDesc;
@@ -57,8 +57,8 @@ public:
 public:
     explicit Denoiser(const DenoiserDesc &desc)
         : Node(desc),
-          _mode(RT),
-          _backend(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
+          mode_(RT),
+          backend_(to_upper(desc["backend"].as_string()) == "CPU" ? CPU : GPU) {}
 
     virtual void compile() noexcept {}
 
@@ -78,7 +78,7 @@ public:
         OC_ERROR_FORMAT("denoiser {} error dispatch", typeid(*this).name());
         return {};
     }
-    [[nodiscard]] Backend backend() const noexcept { return _backend; }
+    [[nodiscard]] Backend backend() const noexcept { return backend_; }
 };
 
 }// namespace vision

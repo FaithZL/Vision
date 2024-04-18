@@ -18,7 +18,7 @@ public:
 
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
-        _denoiser->prepare();
+        denoiser_->prepare();
         frame_buffer().prepare_gbuffer();
         // albedo
         frame_buffer().prepare_bufferB();
@@ -31,7 +31,7 @@ public:
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
 
     void compile() noexcept override {
-        _denoiser->compile();
+        denoiser_->compile();
         film()->compile();
         frame_buffer().compile();
         Camera *camera = scene().camera().get();
@@ -50,16 +50,16 @@ public:
             Float3 L = Li(rs, scatter_pdf, spectrum().one(), {}, render_env) * ss.filter_weight;
             film()->rt_buffer().write(dispatch_id(), make_float4(L, 1.f));
         };
-        _shader = device().compile(kernel, "path tracing integrator");
+        shader_ = device().compile(kernel, "path tracing integrator");
     }
 
     RealTimeDenoiseInput denoise_input() const noexcept {
         RealTimeDenoiseInput ret;
         Camera *camera = scene().camera().get();
-        ret.frame_index = _frame_index;
+        ret.frame_index = frame_index_;
         ret.resolution = pipeline()->resolution();
-        ret.gbuffer = frame_buffer().cur_gbuffer(_frame_index);
-        ret.prev_gbuffer = frame_buffer().prev_gbuffer(_frame_index);
+        ret.gbuffer = frame_buffer().cur_gbuffer(frame_index_);
+        ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
         ret.motion_vec = frame_buffer().motion_vectors();
         ret.radiance = film()->rt_buffer();
         ret.albedo = frame_buffer().bufferB();
@@ -72,15 +72,15 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
-        stream << frame_buffer().compute_GBuffer(_frame_index,
-                                                 frame_buffer().cur_gbuffer(_frame_index),
+        stream << frame_buffer().compute_GBuffer(frame_index_,
+                                                 frame_buffer().cur_gbuffer(frame_index_),
                                                  frame_buffer().motion_vectors(),
                                                  frame_buffer().bufferB(),
                                                  frame_buffer().bufferC());
-        stream << _shader(_frame_index).dispatch(rp->resolution());
+        stream << shader_(frame_index_).dispatch(rp->resolution());
         RealTimeDenoiseInput input = denoise_input();
         if (film()->enable_accumulation()) {
-            stream << film()->accumulate(film()->rt_buffer(), film()->accumulation_buffer(), _frame_index);
+            stream << film()->accumulate(film()->rt_buffer(), film()->accumulation_buffer(), frame_index_);
             stream << film()->tone_mapping(film()->accumulation_buffer(), film()->output_buffer());
         } else {
             stream << film()->tone_mapping(film()->rt_buffer(), film()->output_buffer());

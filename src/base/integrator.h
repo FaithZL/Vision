@@ -36,10 +36,10 @@ public:
     using signature = void(uint);
 
 protected:
-    mutable uint _frame_index{};
-    mutable double _render_time{};
-    mutable double _cur_render_time{};
-    ocarina::Shader<signature> _shader;
+    mutable uint frame_index_{};
+    mutable double render_time_{};
+    mutable double cur_render_time_{};
+    ocarina::Shader<signature> shader_;
 
 public:
     explicit Integrator(const IntegratorDesc &desc)
@@ -56,14 +56,14 @@ public:
         return make_float3(0.f);
     }
     [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
-    [[nodiscard]] uint frame_index() const noexcept { return _frame_index; }
-    [[nodiscard]] double render_time() const noexcept { return _render_time; }
-    OC_MAKE_MEMBER_GETTER(cur_render_time, )
-    void increase_frame_index() const noexcept { _frame_index++; }
-    void reset_frame_index() const noexcept { _frame_index = 0; }
+    [[nodiscard]] uint frame_index() const noexcept { return frame_index_; }
+    [[nodiscard]] double render_time() const noexcept { return render_time_; }
+    OC_MAKE_MEMBER_GETTER_(cur_render_time, )
+    void increase_frame_index() const noexcept { frame_index_++; }
+    void reset_frame_index() const noexcept { frame_index_ = 0; }
     void accumulate_render_time(double ms) const noexcept {
-        _cur_render_time = ms;
-        _render_time += ms;
+        cur_render_time_ = ms;
+        render_time_ += ms;
     }
     virtual void update_device_data() noexcept {}
     virtual void invalidation() const noexcept;
@@ -72,22 +72,22 @@ public:
 
 struct RenderEnv {
 private:
-    mutable optional<Uint> _frame_index{};
-    mutable optional<SampledWavelengths> _swl{};
+    mutable optional<Uint> frame_index_{};
+    mutable optional<SampledWavelengths> swl_{};
 
 public:
     void reset() noexcept {
-        _frame_index.reset();
-        _swl.reset();
+        frame_index_.reset();
+        swl_.reset();
     }
     void emplace_frame_index(const Uint &val) const noexcept {
-        _frame_index.emplace(val);
+        frame_index_.emplace(val);
     }
     void emplace_sampled_wavelengths(const SampledWavelengths &val) const noexcept {
-        _swl.emplace(val);
+        swl_.emplace(val);
     }
-    [[nodiscard]] Uint &frame_index() const noexcept { return *_frame_index; }
-    [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *_swl; }
+    [[nodiscard]] Uint &frame_index() const noexcept { return *frame_index_; }
+    [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *swl_; }
     void initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
 };
 
@@ -99,30 +99,30 @@ enum MISMode {
 
 class IlluminationIntegrator : public Integrator {
 protected:
-    Serial<uint> _max_depth{};
-    Serial<uint> _min_depth{};
-    Serial<float> _rr_threshold{};
-    MISMode _mis_mode{};
+    Serial<uint> max_depth_{};
+    Serial<uint> min_depth_{};
+    Serial<float> rr_threshold_{};
+    MISMode mis_mode_{};
 
     /// Material computation is separated from access memory
-    bool _separate{false};
-    SP<Denoiser> _denoiser{};
+    bool separate_{false};
+    SP<Denoiser> denoiser_{};
 
 public:
     explicit IlluminationIntegrator(const IntegratorDesc &desc);
 
-    OC_SERIALIZABLE_FUNC(Integrator, _max_depth, _min_depth, _rr_threshold)
+    OC_SERIALIZABLE_FUNC(Integrator, max_depth_, min_depth_, rr_threshold_)
 
-    VS_MAKE_GUI_STATUS_FUNC(Integrator, _denoiser)
+    VS_MAKE_GUI_STATUS_FUNC(Integrator, denoiser_)
 
-    OC_MAKE_MEMBER_GETTER(separate, )
+    OC_MAKE_MEMBER_GETTER_(separate, )
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
-    [[nodiscard]] bool has_denoiser() const noexcept override { return bool(_denoiser); }
+    [[nodiscard]] bool has_denoiser() const noexcept override { return bool(denoiser_); }
 
     [[nodiscard]] Float correct_bsdf_weight(Float weight, Uint bounce) const noexcept {
-        switch (_mis_mode) {
+        switch (mis_mode_) {
             case MISMode::EBSDF: {
                 weight = 1.f;
                 break;
@@ -138,7 +138,7 @@ public:
 
     template<typename... Args>
     [[nodiscard]] SampledSpectrum direct_light_mis(Args &&...args) const noexcept {
-        switch (_mis_mode) {
+        switch (mis_mode_) {
             case MISMode::EBSDF: {
                 return direct_lighting(OC_FORWARD(args)...) * 0.f;
             }
@@ -154,7 +154,8 @@ public:
                                                 const Float &scatter_pdf, const Uint &bounces,
                                                 const SampledWavelengths &swl) const noexcept;
 
-    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
+    [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput,
+                            const HitContext &hc, const RenderEnv &render_env) const noexcept override;
     [[nodiscard]] Float3 Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                             bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept override;
 

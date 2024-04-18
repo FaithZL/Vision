@@ -40,33 +40,33 @@ using namespace vision::indirect;
 
 class ReSTIRGI : public SerialObject, public Context, public RenderEnv, public GUI {
 private:
-    SpatialResamplingParam _spatial;
-    TemporalResamplingParam _temporal;
-    bool _open{true};
-    IlluminationIntegrator *_integrator{};
+    SpatialResamplingParam spatial_;
+    TemporalResamplingParam temporal_;
+    bool open_{true};
+    IlluminationIntegrator *integrator_{};
 
-    RegistrableBuffer<indirect::Reservoir> _reservoirs{pipeline()->bindless_array()};
-    RegistrableBuffer<indirect::RSVSample> _samples{pipeline()->bindless_array()};
+    RegistrableBuffer<indirect::Reservoir> reservoirs_{pipeline()->bindless_array()};
+    RegistrableBuffer<indirect::RSVSample> samples_{pipeline()->bindless_array()};
 
     /**
      * initial sample
      */
-    Shader<void(uint)> _initial_samples;
+    Shader<void(uint)> initial_samples_;
     /**
      * initial samples and temporal reuse
      */
-    Shader<void(indirect::Param, uint)> _temporal_pass;
+    Shader<void(indirect::Param, uint)> temporal_pass_;
     /**
      * spatial reuse and shading
      */
-    Shader<void(indirect::Param, uint)> _spatial_shading;
+    Shader<void(indirect::Param, uint)> spatial_shading_;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 
 public:
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    OC_MAKE_MEMBER_GETTER(open, )
+    OC_MAKE_MEMBER_GETTER_(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -111,7 +111,7 @@ public:
                                    param.t_dot,
                                    param.t_depth);
     }
-    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
+    [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }

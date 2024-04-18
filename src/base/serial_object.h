@@ -20,21 +20,21 @@ using namespace ocarina;
  */
 class SerialObject : public Serializable<float> {
 protected:
-    RegistrableManaged<float> _datas{Global::instance().bindless_array()};
+    RegistrableManaged<float> datas_{Global::instance().bindless_array()};
 
 protected:
     SerialObject() = default;
 
 public:
-    [[nodiscard]] RegistrableManaged<float> &datas() noexcept { return _datas; }
-    [[nodiscard]] const RegistrableManaged<float> &datas() const noexcept { return _datas; }
+    [[nodiscard]] RegistrableManaged<float> &datas() noexcept { return datas_; }
+    [[nodiscard]] const RegistrableManaged<float> &datas() const noexcept { return datas_; }
 
     /**
      * Serialize the data to managed memory
      * for upload to device memory
      */
     virtual void encode_data() noexcept {
-        encode(_datas);
+        encode(datas_);
     }
 
     /**
@@ -52,7 +52,7 @@ public:
      * tips: Called on the host side code
      */
     virtual void update_data() noexcept {
-        update(_datas);
+        update(datas_);
     }
 
     /**
@@ -60,7 +60,7 @@ public:
      * tips: Called on the device side code
      */
     virtual void load_data() noexcept {
-        DataAccessor<float> da = {0, _datas};
+        DataAccessor<float> da = {0, datas_};
         decode(&da);
     }
 

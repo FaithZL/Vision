@@ -32,7 +32,7 @@ void BakePipeline::prepare() noexcept {
     prepare_geometry();
     compile();
     upload_bindless_array();
-    _lightmap_base_index = pipeline()->bindless_array().texture_num();
+    lightmap_base_index_ = pipeline()->bindless_array().texture_num();
     bake_all();
     update_geometry();
     upload_bindless_array();
@@ -41,13 +41,13 @@ void BakePipeline::prepare() noexcept {
 void BakePipeline::preprocess() noexcept {
     // fill baked shape list
     for_each_need_bake([&](ShapeInstance &item) {
-        _baked_shapes.emplace_back(&item);
+        baked_shapes_.emplace_back(&item);
     });
     SP<UVUnwrapper> uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
 
     // uv unwrap
-    VS_BAKER_STATS(_baker_stats, uv_unwrap)
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &baked_shape) {
+    VS_BAKER_STATS(baker_stats_, uv_unwrap)
+    std::for_each(baked_shapes_.begin(), baked_shapes_.end(), [&](BakedShape &baked_shape) {
         Mesh *mesh = baked_shape.shape()->mesh().get();
         if (mesh->has_lightmap_uv()) {
             return ;
@@ -96,42 +96,42 @@ void BakePipeline::compile_displayer() noexcept {
         };
         camera->film()->add_sample(pixel, L, frame_index);
     };
-    _display_shader = device().compile(kernel, "display");
+    display_shader_ = device().compile(kernel, "display");
 }
 
 void BakePipeline::bake_all() noexcept {
-    Baker baker{_baker_stats, Global::node_mgr().load<Rasterizer>(_desc.rasterizer_desc)};
+    Baker baker{baker_stats_, Global::node_mgr().load<Rasterizer>(_desc.rasterizer_desc)};
     baker.allocate();
     baker.compile();
-    _baker_stats.set_model_num(_baked_shapes.size());
+    baker_stats_.set_model_num(baked_shapes_.size());
 
     async([&] {
-        while (_baker_stats.is_valid()) {
-            _baker_stats.report_progress();
+        while (baker_stats_.is_valid()) {
+            baker_stats_.report_progress();
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     });
 
-    _baker_stats.set_spp(scene().sampler()->sample_per_pixel());
+    baker_stats_.set_spp(scene().sampler()->sample_per_pixel());
     size_t bake_pixel_num = 0;
-    std::sort(_baked_shapes.begin(), _baked_shapes.end(),
+    std::sort(baked_shapes_.begin(), baked_shapes_.end(),
               [&](const BakedShape &a, const BakedShape &b) {
                   return a.perimeter() > b.perimeter();
               });
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](const BakedShape &bs) {
+    std::for_each(baked_shapes_.begin(), baked_shapes_.end(), [&](const BakedShape &bs) {
         bake_pixel_num += bs.pixel_num();
     });
-    _baker_stats.set_pixel_num(bake_pixel_num);
+    baker_stats_.set_pixel_num(bake_pixel_num);
 
-    for (int i = 0; i < _baked_shapes.size(); ++i) {
-        BakedShape &bs = _baked_shapes[i];
+    for (int i = 0; i < baked_shapes_.size(); ++i) {
+        BakedShape &bs = baked_shapes_[i];
         bs.shape()->set_lightmap_id(i);
     }
 
-    for (auto iter = _baked_shapes.begin(); iter != _baked_shapes.end();) {
+    for (auto iter = baked_shapes_.begin(); iter != baked_shapes_.end();) {
         uint pixel_num = 0;
         auto it = iter;
-        for (; it != _baked_shapes.end(); ++it) {
+        for (; it != baked_shapes_.end(); ++it) {
             if (pixel_num + it->pixel_num() <= baker.buffer_size()) {
                 pixel_num += it->pixel_num();
             } else {
@@ -142,20 +142,20 @@ void BakePipeline::bake_all() noexcept {
         iter = it;
     }
 
-    std::for_each(_baked_shapes.begin(), _baked_shapes.end(), [&](BakedShape &bs) {
+    std::for_each(baked_shapes_.begin(), baked_shapes_.end(), [&](BakedShape &bs) {
         bs.normalize_lightmap_uv();
     });
 
     stream() << baker.deallocate()
              << synchronize() << commit();
-    OC_INFO(_baker_stats.get_all_stats());
-    _baker_stats.clear();
+    OC_INFO(baker_stats_.get_all_stats());
+    baker_stats_.clear();
 }
 
 void BakePipeline::render(double dt) noexcept {
     Clock clk;
-    stream() << _display_shader(frame_index(),
-                                _lightmap_base_index)
+    stream() << display_shader_(frame_index(),
+                                lightmap_base_index_)
                     .dispatch(resolution());
     stream() << synchronize();
     stream() << commit();

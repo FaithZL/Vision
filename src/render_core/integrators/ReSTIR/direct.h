@@ -47,16 +47,16 @@ class RayTracingIntegrator;
  */
 class ReSTIRDI : public SerialObject, public Context, public RenderEnv, public GUI {
 private:
-    IlluminationIntegrator *_integrator{};
-    uint M_light{};
-    uint M_bsdf{};
-    bool _debias{false};
-    bool _pairwise{false};
-    bool _reweight{false};
-    bool _open{true};
+    IlluminationIntegrator *integrator_{};
+    uint M_light_{};
+    uint M_bsdf_{};
+    bool debias_{false};
+    bool pairwise_{false};
+    bool reweight_{false};
+    bool open_{true};
 
-    SpatialResamplingParam _spatial;
-    TemporalResamplingParam _temporal;
+    SpatialResamplingParam spatial_;
+    TemporalResamplingParam temporal_;
 
     mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
 
@@ -76,7 +76,7 @@ protected:
 
 public:
     ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    OC_MAKE_MEMBER_GETTER(open, )
+    OC_MAKE_MEMBER_GETTER_(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     void compile() noexcept {

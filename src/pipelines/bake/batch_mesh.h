@@ -12,16 +12,16 @@ namespace vision {
 
 struct BatchMesh : public Context {
 private:
-    Buffer<Triangle> _triangles;
-    Buffer<Vertex> _vertices;
+    Buffer<Triangle> triangles_;
+    Buffer<Vertex> vertices_;
     /**
      * store the pixel data eg.
      * triangle id
      * lightmap offset
      * resolution
      */
-    Buffer<uint4> _pixels;
-    uint _pixel_num{};
+    Buffer<uint4> pixels_;
+    uint pixel_num_{};
     using signature = void(Buffer<Triangle>, Buffer<Vertex>,
                            Buffer<uint4>, uint, uint, uint2);
 
@@ -33,9 +33,9 @@ public:
     [[nodiscard]] CommandList clear() noexcept;
     void compile() noexcept;
     void batch(ocarina::span<BakedShape> baked_shapes) noexcept;
-    OC_MAKE_MEMBER_GETTER(pixel_num, )
-    OC_MAKE_MEMBER_GETTER(pixels, &)
-    OC_MAKE_MEMBER_GETTER(triangles, &)
-    OC_MAKE_MEMBER_GETTER(vertices, &)
+    OC_MAKE_MEMBER_GETTER_(pixel_num, )
+    OC_MAKE_MEMBER_GETTER_(pixels, &)
+    OC_MAKE_MEMBER_GETTER_(triangles, &)
+    OC_MAKE_MEMBER_GETTER_(vertices, &)
 };
 }// namespace vision

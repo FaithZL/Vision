@@ -40,10 +40,10 @@ struct MergedMesh {
 
 struct BakedShape : public Context {
 private:
-    ShapeInstance *_shape{};
-    Texture _lightmap_tex;
-    MergedMesh _merged_mesh;
-    Buffer<uint4> _pixels;
+    ShapeInstance *shape_{};
+    Texture lightmap_tex_;
+    MergedMesh merged_mesh_;
+    Buffer<uint4> pixels_;
 
 public:
     BakedShape() = default;
@@ -51,7 +51,7 @@ public:
 
     [[nodiscard]] fs::path cache_directory() const noexcept {
         return Global::instance().scene_cache_path() / ocarina::format("baked_shape_{:016x}",
-                                                                       _shape->mesh()->hash());
+                                                                       shape_->mesh()->hash());
     }
 
     [[nodiscard]] fs::path instance_cache_directory() const noexcept {
@@ -61,11 +61,11 @@ public:
 
     void prepare_to_rasterize() noexcept;
     void merge_meshes() noexcept;
-    [[nodiscard]] uint2 resolution() const noexcept { return _shape->mesh()->resolution(); }
-    OC_MAKE_MEMBER_GETTER(shape, )
-    OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
-    OC_MAKE_MEMBER_GETTER(merged_mesh, &)
-    OC_MAKE_MEMBER_GETTER(pixels, &)
+    [[nodiscard]] uint2 resolution() const noexcept { return shape_->mesh()->resolution(); }
+    OC_MAKE_MEMBER_GETTER_(shape, )
+    OC_MAKE_MEMBER_GETTER_(lightmap_tex, &)
+    OC_MAKE_MEMBER_GETTER_(merged_mesh, &)
+    OC_MAKE_MEMBER_GETTER_(pixels, &)
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;
@@ -86,17 +86,17 @@ public:
     using Desc = UVUnwrapperDesc;
 
 protected:
-    uint _padding{};
-    float _scale{};
-    uint _min{};
-    uint _max{};
+    uint padding_{};
+    float scale_{};
+    uint min_{};
+    uint max_{};
 
 public:
     explicit UVUnwrapper(const UVUnwrapperDesc &desc)
-        : Node(desc), _padding(desc["padding"].as_uint(3)),
-          _scale(desc["scale"].as_float(1.f)),
-          _min(desc["min"].as_uint(50)),
-          _max(desc["max"].as_uint(1024)) {}
+        : Node(desc), padding_(desc["padding"].as_uint(3)),
+          scale_(desc["scale"].as_float(1.f)),
+          min_(desc["min"].as_uint(50)),
+          max_(desc["max"].as_uint(1024)) {}
     [[nodiscard]] virtual UnwrapperResult apply(const Mesh *shape) = 0;
 };
 

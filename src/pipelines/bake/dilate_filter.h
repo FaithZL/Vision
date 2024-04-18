@@ -14,13 +14,13 @@ using namespace ocarina;
 
 class DilateFilter : public Context {
 private:
-    int _padding{};
+    int padding_{};
     using signature = void(Buffer<uint4>, Buffer<float4>, Buffer<float4>);
     Shader<signature> _shader;
 
 public:
     explicit DilateFilter(int padding = 2);
-    void set_padding(int padding) noexcept { _padding = padding; }
+    void set_padding(int padding) noexcept { padding_ = padding; }
     void compile() noexcept;
     template<typename... Args>
     [[nodiscard]] ShaderInvoke operator()(Args &&...args) const noexcept {

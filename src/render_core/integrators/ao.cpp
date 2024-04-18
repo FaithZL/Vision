@@ -11,18 +11,18 @@ namespace vision {
 
 class AmbientOcclusionIntegrator : public Integrator {
 private:
-    Serial<float> _distance{1.f};
-    Serial<uint> _cos_sample{true};
-    Serial<uint> _sample_num{64u};
+    Serial<float> distance_{1.f};
+    Serial<uint> cos_sample_{true};
+    Serial<uint> sample_num_{64u};
 
 public:
     explicit AmbientOcclusionIntegrator(const IntegratorDesc &desc)
         : Integrator(desc),
-          _distance(desc["distance"].as_float(1.f)),
-          _cos_sample(desc["cos_sample"].as_bool(true)),
-          _sample_num(desc["sample_num"].as_uint(32u)) {}
+          distance_(desc["distance"].as_float(1.f)),
+          cos_sample_(desc["cos_sample"].as_bool(true)),
+          sample_num_(desc["sample_num"].as_uint(32u)) {}
 
-    OC_SERIALIZABLE_FUNC(Integrator, _distance, _cos_sample, _sample_num)
+    OC_SERIALIZABLE_FUNC(Integrator, distance_, cos_sample_, sample_num_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, SampledSpectrum throughput,
                             const HitContext &hc, const RenderEnv &render_env) const noexcept override {
@@ -42,8 +42,8 @@ public:
             };
             Float3 wi;
             Float pdf;
-            $for(i, *_sample_num) {
-                if (_cos_sample.hv()) {
+            $for(i, *sample_num_) {
+                if (cos_sample_.hv()) {
                     wi = square_to_cosine_hemisphere(sampler->next_2d());
                     pdf = cosine_hemisphere_PDF(geometry::abs_cos_theta(wi));
                 } else {
@@ -52,9 +52,9 @@ public:
                 }
                 it.shading.z = face_forward(it.shading.normal(), -rs.direction());
                 wi = it.shading.to_world(wi);
-                Bool occ = geom.trace_any(it.spawn_ray(wi, *_distance));
+                Bool occ = geom.trace_any(it.spawn_ray(wi, *distance_));
                 $if(!occ) {
-                    L += dot(wi, it.shading.normal()) / (pdf * *_sample_num);
+                    L += dot(wi, it.shading.normal()) / (pdf * *sample_num_);
                 };
             };
             $break;
@@ -92,8 +92,8 @@ public:
                 };
                 Float3 wi;
                 Float pdf;
-                $for(i, *_sample_num) {
-                    if (_cos_sample.hv()) {
+                $for(i, *sample_num_) {
+                    if (cos_sample_.hv()) {
                         wi = square_to_cosine_hemisphere(sampler->next_2d());
                         pdf = cosine_hemisphere_PDF(geometry::abs_cos_theta(wi));
                     } else {
@@ -102,9 +102,9 @@ public:
                     }
                     it.shading.z = face_forward(it.shading.normal(), -rs.direction());
                     wi = it.shading.to_world(wi);
-                    Bool occ = geom.trace_any(it.spawn_ray(wi, *_distance));
+                    Bool occ = geom.trace_any(it.spawn_ray(wi, *distance_));
                     $if(!occ) {
-                        L += dot(wi, it.shading.normal()) / (pdf * *_sample_num);
+                        L += dot(wi, it.shading.normal()) / (pdf * *sample_num_);
                     };
                 };
                 $break;
@@ -112,13 +112,13 @@ public:
 
             camera->film()->add_sample(pixel, L, frame_index);
         };
-        _shader = rp->device().compile(kernel);
+        shader_ = rp->device().compile(kernel);
     }
 
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << _shader(_frame_index++).dispatch(rp->resolution());
+        stream << shader_(frame_index_++).dispatch(rp->resolution());
         stream << synchronize();
         stream << commit();
     }

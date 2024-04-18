@@ -22,10 +22,10 @@ namespace vision {
  */
 class BakePipeline : public Pipeline {
 private:
-    BakerStats _baker_stats;
-    vector<BakedShape> _baked_shapes;
-    Shader<void(uint, uint)> _display_shader;
-    uint _lightmap_base_index{InvalidUI32};
+    BakerStats baker_stats_;
+    vector<BakedShape> baked_shapes_;
+    Shader<void(uint, uint)> display_shader_;
+    uint lightmap_base_index_{InvalidUI32};
     PipelineDesc _desc;
 
 public:

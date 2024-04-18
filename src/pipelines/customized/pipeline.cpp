@@ -9,7 +9,7 @@ namespace vision {
 
 class CustomizedRenderPipeline : public Pipeline {
 private:
-    RenderGraph _render_graph;
+    RenderGraph render_graph_;
 
 public:
     explicit CustomizedRenderPipeline(const PipelineDesc &desc)
@@ -27,24 +27,24 @@ public:
 
     void prepare_render_graph() noexcept override {
         SP<RenderPass> integrate = RenderPass::create("integrate");
-        _render_graph.add_pass(integrate, "integrate");
+        render_graph_.add_pass(integrate, "integrate");
         SP<RenderPass> accum = RenderPass::create("accumulate");
-        _render_graph.add_pass(accum, "accumulate");
+        render_graph_.add_pass(accum, "accumulate");
         SP<RenderPass> tonemapping = RenderPass::create("tonemapping");
-        _render_graph.add_pass(tonemapping, "tonemapping");
+        render_graph_.add_pass(tonemapping, "tonemapping");
         SP<RenderPass> gamma = RenderPass::create("gamma");
-        _render_graph.add_pass(gamma, "gamma");
+        render_graph_.add_pass(gamma, "gamma");
 
-        _render_graph.add_edge("integrate.radiance", "accumulate.input");
-        _render_graph.add_edge("accumulate.output", "tonemapping.input");
-        _render_graph.add_edge("tonemapping.output", "gamma.input");
-        _render_graph.mark_output("gamma.output");
+        render_graph_.add_edge("integrate.radiance", "accumulate.input");
+        render_graph_.add_edge("accumulate.output", "tonemapping.input");
+        render_graph_.add_edge("tonemapping.output", "gamma.input");
+        render_graph_.mark_output("gamma.output");
 
-        _render_graph.setup();
+        render_graph_.setup();
     }
 
     [[nodiscard]] const Buffer<float4> &view_buffer() override {
-        return _render_graph.output_buffer();
+        return render_graph_.output_buffer();
     }
 
     void prepare() noexcept override {
@@ -60,11 +60,11 @@ public:
     }
 
     void compile() noexcept override {
-        _render_graph.compile();
+        render_graph_.compile();
     }
 
     void render(double dt) noexcept override {
-        stream() << _render_graph.dispatch() << synchronize() << commit();
+        stream() << render_graph_.dispatch() << synchronize() << commit();
         integrator()->increase_frame_index();
     }
 };

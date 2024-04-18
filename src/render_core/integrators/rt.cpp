@@ -13,28 +13,28 @@ namespace vision {
 
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
-    ReSTIRDI _direct;
-    ReSTIRGI _indirect;
-    Shader<void(uint, float, float)> _combine;
-    SP<Denoiser> _denoiser;
+    ReSTIRDI direct_;
+    ReSTIRGI indirect_;
+    Shader<void(uint, float, float)> combine_;
+    SP<Denoiser> denoiser_;
 
 public:
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          _direct(this, desc["direct"]),
-          _indirect(this, desc["indirect"]),
-          _denoiser(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
-        _max_depth = _max_depth.hv() - 1;
+          direct_(this, desc["direct"]),
+          indirect_(this, desc["indirect"]),
+          denoiser_(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
+        max_depth_ = max_depth_.hv() - 1;
     }
 
-    VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, _direct, _indirect)
+    VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, direct_, indirect_)
 
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
-        _direct.prepare();
-        _indirect.prepare();
-        _denoiser->prepare();
+        direct_.prepare();
+        indirect_.prepare();
+        denoiser_->prepare();
         Pipeline *rp = pipeline();
 
         frame_buffer().prepare_bufferA();
@@ -45,13 +45,13 @@ public:
     }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        _direct.render_UI(widgets);
-        _indirect.render_UI(widgets);
+        direct_.render_UI(widgets);
+        indirect_.render_UI(widgets);
     }
 
     void compile() noexcept override {
-        _direct.compile();
-        _indirect.compile();
+        direct_.compile();
+        indirect_.compile();
 
         Camera *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
@@ -61,17 +61,17 @@ public:
             Float3 L = direct + indirect;
             camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };
-        _combine = device().compile(kernel, "combine");
+        combine_ = device().compile(kernel, "combine");
     }
 
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
-        stream << _direct.estimate(_frame_index);
-        stream << _indirect.estimate(_frame_index);
-        stream << _combine(_frame_index, _direct.factor(),
-                           _indirect.factor())
+        stream << direct_.estimate(frame_index_);
+        stream << indirect_.estimate(frame_index_);
+        stream << combine_(frame_index_, direct_.factor(),
+                           indirect_.factor())
                       .dispatch(pipeline()->resolution());
         stream << synchronize();
         stream << commit();

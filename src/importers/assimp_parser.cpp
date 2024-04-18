@@ -19,9 +19,9 @@ float4x4 AssimpParser::parse_camera(aiCamera *ai_camera) noexcept {
 
 vector<float4x4> AssimpParser::parse_cameras() noexcept {
     vector<float4x4> ret;
-    ret.reserve(_ai_scene->mNumCameras);
-    vector<aiCamera *> ai_cameras(_ai_scene->mNumCameras);
-    std::copy(_ai_scene->mCameras, _ai_scene->mCameras + _ai_scene->mNumCameras, ai_cameras.begin());
+    ret.reserve(ai_scene_->mNumCameras);
+    vector<aiCamera *> ai_cameras(ai_scene_->mNumCameras);
+    std::copy(ai_scene_->mCameras, ai_scene_->mCameras + ai_scene_->mNumCameras, ai_cameras.begin());
     for (auto ai_camera : ai_cameras) {
         ret.push_back(parse_camera(ai_camera));
     }
@@ -114,9 +114,9 @@ SP<vision::Light> AssimpParser::parse_light(aiLight *ai_light) noexcept {
 
 vector<SP<vision::Light>> AssimpParser::parse_lights() noexcept {
     vector<SP<vision::Light>> ret;
-    ret.reserve(_ai_scene->mNumLights);
-    vector<aiLight *> ai_lights(_ai_scene->mNumLights);
-    std::copy(_ai_scene->mLights, _ai_scene->mLights + _ai_scene->mNumLights, ai_lights.begin());
+    ret.reserve(ai_scene_->mNumLights);
+    vector<aiLight *> ai_lights(ai_scene_->mNumLights);
+    std::copy(ai_scene_->mLights, ai_scene_->mLights + ai_scene_->mNumLights, ai_lights.begin());
     for (auto ai_light : ai_lights) {
         auto light = parse_light(ai_light);
         if (light) {
@@ -181,7 +181,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     auto get_vec3 = [this](std::pair<string, float4> val) -> DataWrap {
         if (!val.first.empty()) {
             DataWrap ret = DataWrap::object();
-            fs::path fn = _directory / val.first;
+            fs::path fn = directory_ / val.first;
             ret["channels"] = "xyz";
             ret["node"] = DataWrap::object();
             ret["node"]["fn"] = fn.string();
@@ -198,7 +198,7 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
     auto get_scalar = [this](std::pair<string, float4> val) -> DataWrap {
         if (!val.first.empty()) {
             DataWrap ret = DataWrap::object();
-            fs::path fn = _directory / val.first;
+            fs::path fn = directory_ / val.first;
             ret["channels"] = "x";
             ret["node"] = DataWrap::object();
             ret["node"]["fn"] = fn.string();
@@ -219,9 +219,9 @@ vision::MaterialDesc AssimpParser::parse_material(aiMaterial *ai_material) noexc
 
 vector<vision::MaterialDesc> AssimpParser::parse_materials() noexcept {
     vector<vision::MaterialDesc> ret;
-    ret.reserve(_ai_scene->mNumMaterials);
-    vector<aiMaterial *> ai_materials(_ai_scene->mNumMaterials);
-    std::copy(_ai_scene->mMaterials, _ai_scene->mMaterials + _ai_scene->mNumMaterials, ai_materials.begin());
+    ret.reserve(ai_scene_->mNumMaterials);
+    vector<aiMaterial *> ai_materials(ai_scene_->mNumMaterials);
+    std::copy(ai_scene_->mMaterials, ai_scene_->mMaterials + ai_scene_->mNumMaterials, ai_materials.begin());
     for (auto ai_material : ai_materials) {
         ret.push_back(parse_material(ai_material));
     }
@@ -231,7 +231,7 @@ vector<vision::MaterialDesc> AssimpParser::parse_materials() noexcept {
 vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
                                                  uint32_t subdiv_level) {
     std::vector<ShapeInstance> instances;
-    const aiScene *ai_scene = _ai_scene;
+    const aiScene *ai_scene = ai_scene_;
     vector<aiMesh *> ai_meshes(ai_scene->mNumMeshes);
     if (subdiv_level != 0u) {
         auto subdiv = Assimp::Subdivider::Create(Assimp::Subdivider::CATMULL_CLARKE);
@@ -307,8 +307,8 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
 }
 
 const aiScene *AssimpParser::load_scene(const fs::path &fn, bool swap_handed, bool smooth, bool flip_uv) {
-    _directory = fn.parent_path();
-    _ai_importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
+    directory_ = fn.parent_path();
+    ai_importer_.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
                                     aiComponent_COLORS |
                                         aiComponent_BONEWEIGHTS |
                                         aiComponent_ANIMATIONS |
@@ -334,9 +334,9 @@ const aiScene *AssimpParser::load_scene(const fs::path &fn, bool swap_handed, bo
     post_process_steps = swap_handed ?
                              post_process_steps | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder :
                              post_process_steps;
-    auto ai_scene = _ai_importer.ReadFile(fn.string().c_str(),
+    auto ai_scene = ai_importer_.ReadFile(fn.string().c_str(),
                                           post_process_steps);
-    _ai_scene = ai_scene;
+    ai_scene_ = ai_scene;
     return ai_scene;
 }
 

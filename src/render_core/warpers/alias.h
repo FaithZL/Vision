@@ -96,7 +96,7 @@ void AliasTable::build(vector<float> weights) noexcept {
     for (auto i : over) { table[i] = {1.0f, i}; }
     for (auto i : under) { table[i] = {1.0f, i}; }
 
-    _integral = sum / weights.size();
+    integral_ = sum / weights.size();
     func_.set_host(std::move(weights));
     table_.set_host(std::move(table));
 }

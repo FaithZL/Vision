@@ -10,7 +10,7 @@ namespace vision {
 using namespace ocarina;
 
 DilateFilter::DilateFilter(int padding)
-    : _padding(padding) {}
+    : padding_(padding) {}
 
 void DilateFilter::compile() noexcept {
     Kernel kernel = [&](BufferVar<uint4> pixels,
@@ -36,8 +36,8 @@ void DilateFilter::compile() noexcept {
         Uint exterior_num = 0;
         Float4 color = make_float4(0);
         $if(check(pixel_index)) {
-            $for(x, -_padding, _padding + 1) {
-                $for(y, -_padding, _padding + 1) {
+            $for(x, -padding_, padding_ + 1) {
+                $for(y, -padding_, padding_ + 1) {
                     Int2 p = make_int2(pixel) + make_int2(x, y);
                     Uint p_index = p.y * res.x + p.x;
                     Uint g_index = offset + p_index;

@@ -109,32 +109,32 @@ void Baker::_compile_bake() noexcept {
 
 void Baker::compile() noexcept {
     _compile_bake();
-    _rasterizer->compile();
-    _dilate_filter.compile();
-    _batch_mesh.compile();
+    rasterizer_->compile();
+    dilate_filter_.compile();
+    batch_mesh_.compile();
 }
 
 void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
-    VS_BAKER_STATS(_baker_stats, raster)
+    VS_BAKER_STATS(baker_stats_, raster)
     for (BakedShape &bs : baked_shapes) {
         bs.prepare_to_rasterize();
-        _rasterizer->apply(bs);
+        rasterizer_->apply(bs);
         stream() << bs.save_rasterize_map_to_cache() << synchronize() << commit();
     }
-    _batch_mesh.batch(baked_shapes);
+    batch_mesh_.batch(baked_shapes);
 }
 
 void Baker::_baking() noexcept {
     {
-        VS_BAKER_STATS(_baker_stats, bake)
+        VS_BAKER_STATS(baker_stats_, bake)
         Sampler *sampler = scene().sampler();
         for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
-            _baker_stats.set_sample_index(i);
-            stream() << _baker(i, _batch_mesh.triangles(),
-                               _batch_mesh.vertices(),
-                               _batch_mesh.pixels(),
-                               _radiance)
-                            .dispatch(_batch_mesh.pixel_num());
+            baker_stats_.set_sample_index(i);
+            stream() << _baker(i, batch_mesh_.triangles(),
+                               batch_mesh_.vertices(),
+                               batch_mesh_.pixels(),
+                               radiance_)
+                            .dispatch(batch_mesh_.pixel_num());
             stream() << synchronize();
             stream() << commit();
         }
@@ -143,20 +143,20 @@ void Baker::_baking() noexcept {
     }
 
     {
-        VS_BAKER_STATS(_baker_stats, filter)
-        stream() << _dilate_filter(_batch_mesh.pixels(),
-                                   _radiance, _final_radiance)
-                        .dispatch(_batch_mesh.pixel_num())
+        VS_BAKER_STATS(baker_stats_, filter)
+        stream() << dilate_filter_(batch_mesh_.pixels(),
+                                   radiance_, final_radiance_)
+                        .dispatch(batch_mesh_.pixel_num())
                  << synchronize() << commit();
     }
 }
 
 void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
-    VS_BAKER_STATS(_baker_stats, save)
+    VS_BAKER_STATS(baker_stats_, save)
     uint offset = 0;
     for (BakedShape &bs : baked_shapes) {
         bs.allocate_lightmap_texture();
-        stream() << bs.lightmap_tex().copy_from(_final_radiance, offset);
+        stream() << bs.lightmap_tex().copy_from(final_radiance_, offset);
         stream() << bs.save_lightmap_to_cache();
         stream() << synchronize() << commit();
         pipeline()->register_texture(bs.lightmap_tex());
@@ -166,18 +166,18 @@ void Baker::_save_result(ocarina::span<BakedShape> baked_shapes) noexcept {
 
 void Baker::baking(ocarina::span<BakedShape> baked_shapes) noexcept {
     stream() << clear() << synchronize() << commit();
-    _baker_stats.on_batch_start(baked_shapes);
+    baker_stats_.on_batch_start(baked_shapes);
     _prepare(baked_shapes);
     _baking();
-    _baker_stats.on_batch_end();
+    baker_stats_.on_batch_end();
     _save_result(baked_shapes);
 }
 
 CommandList Baker::clear() noexcept {
     CommandList ret;
-    ret << _radiance.reset();
-    ret << _final_radiance.reset();
-    ret << _batch_mesh.clear();
+    ret << radiance_.reset();
+    ret << final_radiance_.reset();
+    ret << batch_mesh_.clear();
     return ret;
 }
 
@@ -187,15 +187,15 @@ uint Baker::calculate_buffer_size() noexcept {
 
 void Baker::allocate() noexcept {
     uint buffer_size = calculate_buffer_size();
-    _radiance = device().create_buffer<float4>(buffer_size, "bake radiance");
-    _final_radiance = device().create_buffer<float4>(buffer_size, "bake final radiance");
-    _batch_mesh.allocate(buffer_size);
+    radiance_ = device().create_buffer<float4>(buffer_size, "bake radiance");
+    final_radiance_ = device().create_buffer<float4>(buffer_size, "bake final radiance");
+    batch_mesh_.allocate(buffer_size);
 }
 
 CommandList Baker::deallocate() noexcept {
     CommandList ret;
-    ret << _radiance.reallocate(0)
-        << _final_radiance.reallocate(0);
+    ret << radiance_.reallocate(0)
+        << final_radiance_.reallocate(0);
     return ret;
 }
 

@@ -13,10 +13,10 @@ using namespace ocarina;
 
 class CLIParser {
 private:
-    int _argc;
-    char **_argv;
-    mutable cxxopts::Options _cli_options;
-    mutable std::optional<cxxopts::ParseResult> _parsed_cli_options;
+    int argc_;
+    char **argv_;
+    mutable cxxopts::Options cli_options_;
+    mutable std::optional<cxxopts::ParseResult> parsed_cli_options_;
 
 private:
     const cxxopts::ParseResult &_parse_result() const noexcept;

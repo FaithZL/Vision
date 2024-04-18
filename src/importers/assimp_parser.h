@@ -35,9 +35,9 @@ namespace assimp {
 
 class AssimpParser {
 private:
-    Assimp::Importer _ai_importer;
-    const aiScene *_ai_scene{};
-    fs::path _directory;
+    Assimp::Importer ai_importer_;
+    const aiScene *ai_scene_{};
+    fs::path directory_;
 
 public:
     const aiScene *load_scene(const fs::path &fn,

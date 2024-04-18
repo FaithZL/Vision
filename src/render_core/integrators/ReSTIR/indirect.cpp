@@ -9,10 +9,10 @@ namespace vision {
 
 ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
                    const vision::ParameterSet &desc)
-    : _integrator(integrator),
-      _spatial(desc["spatial"]),
-      _temporal(desc["temporal"]),
-      _open(desc["open"].as_bool(true)) {
+    : integrator_(integrator),
+      spatial_(desc["spatial"]),
+      temporal_(desc["temporal"]),
+      open_(desc["open"].as_bool(true)) {
 }
 
 Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
@@ -32,31 +32,31 @@ Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
 
 bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
     return widgets->use_tree("ReSTIR GI", [&] {
-        changed_ |= widgets->check_box("switch", &_open);
-        if (_open) {
+        changed_ |= widgets->check_box("switch", &open_);
+        if (open_) {
             render_sub_UI(widgets);
         }
     });
 }
 
 void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    changed_ |= widgets->check_box("temporal", &_temporal.open);
-    if (_temporal.open) {
-        changed_ |= widgets->input_uint_limit("history", &_temporal.limit, 0, 50, 1, 3);
+    changed_ |= widgets->check_box("temporal", &temporal_.open);
+    if (temporal_.open) {
+        changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
-                                               &_temporal.theta, 0, 90, 1, 1);
-        changed_ |= widgets->input_float_limit("temporal depth", &_temporal.depth_threshold,
+                                               &temporal_.theta, 0, 90, 1, 1);
+        changed_ |= widgets->input_float_limit("temporal depth", &temporal_.depth_threshold,
                                                0, 1, 0.02, 0.1);
-        changed_ |= widgets->input_float_limit("temporal radius", &_temporal.sampling_radius,
+        changed_ |= widgets->input_float_limit("temporal radius", &temporal_.sampling_radius,
                                                0, 50, 1, 5);
     }
-    changed_ |= widgets->check_box("spatial", &_spatial.open);
-    if (_spatial.open) {
+    changed_ |= widgets->check_box("spatial", &spatial_.open);
+    if (spatial_.open) {
         changed_ |= widgets->input_float_limit("spatial theta",
-                                               &_spatial.theta, 0, 90, 1, 1);
-        changed_ |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
+                                               &spatial_.theta, 0, 90, 1, 1);
+        changed_ |= widgets->input_float_limit("spatial depth", &spatial_.depth_threshold,
                                                0, 1, 0.02, 0.1);
-        changed_ |= widgets->input_float_limit("spatial radius", &_spatial.sampling_radius,
+        changed_ |= widgets->input_float_limit("spatial radius", &spatial_.sampling_radius,
                                                0, 50, 1, 5);
     }
 }
@@ -71,7 +71,7 @@ GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
     GIRSVSample sample;
     sample.vp->set(it);
     $if(hit_bsdf.next_hit->is_hit()) {
-        Float3 L = _integrator->Li(ray_state, hit_bsdf.pdf,
+        Float3 L = integrator_->Li(ray_state, hit_bsdf.pdf,
                                    SampledSpectrum(throughput),
                                    sp_it, *this) /
                    throughput;
@@ -87,7 +87,7 @@ void ReSTIRGI::compile_initial_samples() noexcept {
     Camera *camera = scene().camera().get();
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
-        _integrator->load_data();
+        integrator_->load_data();
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             frame_buffer().bufferB().write(dispatch_id(), make_float4(0.f));
@@ -100,9 +100,9 @@ void ReSTIRGI::compile_initial_samples() noexcept {
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         GIRSVSample sample = init_sample(it, ss, hit_bsdf);
-        _samples.write(dispatch_id(), sample);
+        samples_.write(dispatch_id(), sample);
     };
-    _initial_samples = device().compile(kernel, "ReSTIR indirect initial samples");
+    initial_samples_ = device().compile(kernel, "ReSTIR indirect initial samples");
 }
 
 ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GIRSVSample &sample,
@@ -171,7 +171,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
             ss = sampler->sensor_sample(pixel, camera->filter());
         });
         sampler()->start(pixel, frame_index, 4);
-        GIRSVSample sample = _samples.read(dispatch_id());
+        GIRSVSample sample = samples_.read(dispatch_id());
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         GIReservoir rsv;
         Float p_hat = sample->p_hat(hit_bsdf.cos_theta);
@@ -182,7 +182,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
         rsv = temporal_reuse(rsv, surf, motion_vec, ss, param);
         passthrough_reservoirs().write(dispatch_id(), rsv);
     };
-    _temporal_pass = device().compile(kernel, "ReSTIR indirect temporal reuse");
+    temporal_pass_ = device().compile(kernel, "ReSTIR indirect temporal reuse");
 }
 
 GIReservoir ReSTIRGI::constant_combine(const GIReservoir &canonical_rsv,
@@ -224,8 +224,8 @@ GIReservoir ReSTIRGI::spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_s
                                     const Int2 &pixel, const Var<indirect::Param> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
-        Container<uint> rsv_idx{_spatial.sample_num};
-        $for(i, _spatial.sample_num) {
+        Container<uint> rsv_idx{spatial_.sample_num};
+        $for(i, spatial_.sample_num) {
             Float2 offset = square_to_disk(sampler()->next_2d()) * param.s_radius;
             Int2 offset_i = make_int2(ocarina::round(offset));
             Int2 another_pixel = pixel + offset_i;
@@ -272,23 +272,23 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);
     };
-    _spatial_shading = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
+    spatial_shading_ = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
 }
 
 indirect::Param ReSTIRGI::construct_param() const noexcept {
     indirect::Param param;
 
-    param.spatial = static_cast<uint>(_spatial.open);
-    param.N = _spatial.sample_num;
-    param.s_dot = _spatial.dot_threshold();
-    param.s_depth = _spatial.depth_threshold;
-    param.s_radius = _spatial.sampling_radius;
+    param.spatial = static_cast<uint>(spatial_.open);
+    param.N = spatial_.sample_num;
+    param.s_dot = spatial_.dot_threshold();
+    param.s_depth = spatial_.depth_threshold;
+    param.s_radius = spatial_.sampling_radius;
 
-    param.temporal = static_cast<uint>(_temporal.open);
-    param.history_limit = _temporal.limit;
-    param.t_dot = _temporal.dot_threshold();
-    param.t_depth = _temporal.depth_threshold;
-    param.t_radius = _temporal.sampling_radius;
+    param.temporal = static_cast<uint>(temporal_.open);
+    param.history_limit = temporal_.limit;
+    param.t_dot = temporal_.dot_threshold();
+    param.t_depth = temporal_.depth_threshold;
+    param.t_radius = temporal_.sampling_radius;
     return param;
 }
 
@@ -296,9 +296,9 @@ CommandList ReSTIRGI::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     indirect::Param param = construct_param();
-    ret << _initial_samples(frame_index).dispatch(rp->resolution());
-    ret << _temporal_pass(param, frame_index).dispatch(rp->resolution());
-    ret << _spatial_shading(param, frame_index).dispatch(rp->resolution());
+    ret << initial_samples_(frame_index).dispatch(rp->resolution());
+    ret << temporal_pass_(param, frame_index).dispatch(rp->resolution());
+    ret << spatial_shading_(param, frame_index).dispatch(rp->resolution());
     return ret;
 }
 
@@ -306,20 +306,20 @@ void ReSTIRGI::prepare() noexcept {
     using indirect::Reservoir;
     Pipeline *rp = pipeline();
 
-    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
-                                                            "ReSTIRGI::_reservoirs x 3");
-    _reservoirs.register_self(0, rp->pixel_num());
-    _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
-    _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
+    reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
+                                                            "ReSTIRGI::reservoirs_ x 3");
+    reservoirs_.register_self(0, rp->pixel_num());
+    reservoirs_.register_view(rp->pixel_num(), rp->pixel_num());
+    reservoirs_.register_view(rp->pixel_num() * 2, rp->pixel_num());
     vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
-    _reservoirs.upload_immediately(host.data());
+    reservoirs_.upload_immediately(host.data());
 
     using indirect::RSVSample;
-    _samples.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
-                                                         "ReSTIRGI::_samples");
-    _samples.register_self();
+    samples_.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
+                                                         "ReSTIRGI::samples_");
+    samples_.register_self();
     vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
-    _samples.upload_immediately(vec.data());
+    samples_.upload_immediately(vec.data());
 }
 
 }// namespace vision

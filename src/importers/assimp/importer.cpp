@@ -10,7 +10,7 @@ namespace vision {
 
 class AssimpImporter : public Importer {
 private:
-    AssimpParser _parser;
+    AssimpParser parser_;
 
 public:
     explicit AssimpImporter(const ImporterDesc &desc)
@@ -18,7 +18,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] vector<SP<ShapeGroup>> parse_shapes() noexcept {
         vector<SP<ShapeGroup>> ret;
-        vector<ShapeInstance> instances = _parser.parse_meshes(true, 0);
+        vector<ShapeInstance> instances = parser_.parse_meshes(true, 0);
         for (const auto &inst : instances) {
             SP<ShapeGroup> group = make_shared<ShapeGroup>(inst);
             ret.push_back(group);
@@ -36,7 +36,7 @@ public:
         Scene &scene = ret->scene();
         scene.init(scene_desc);
 
-        _parser.load_scene(fn);
+        parser_.load_scene(fn);
 
         auto shapes = parse_shapes();
         std::for_each(shapes.begin(), shapes.end(), [&](const SP<ShapeGroup>& shape) {
@@ -44,12 +44,12 @@ public:
             scene.add_material(shape->instance(0).material());
         });
 
-        auto lights = _parser.parse_lights();
+        auto lights = parser_.parse_lights();
         std::for_each(lights.begin(), lights.end(), [&](SP<Light> light) {
             scene.add_light(ocarina::move(light));
         });
 
-        auto cameras = _parser.parse_cameras();
+        auto cameras = parser_.parse_cameras();
         scene.camera()->update_mat(cameras[0]);
         return ret;
     }

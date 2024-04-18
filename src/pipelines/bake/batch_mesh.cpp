@@ -10,17 +10,17 @@ namespace vision {
 
 CommandList BatchMesh::clear() noexcept {
     CommandList ret;
-    ret << _triangles.reset();
-    ret << _vertices.reset();
-    ret << _pixels.reset();
+    ret << triangles_.reset();
+    ret << vertices_.reset();
+    ret << pixels_.reset();
     ret << [&] {
-        _pixel_num = 0;
+        pixel_num_ = 0;
     };
     return ret;
 }
 
 void BatchMesh::allocate(ocarina::uint buffer_size) {
-    _pixels = device().create_buffer<uint4>(buffer_size, "batch mesh pixel");
+    pixels_ = device().create_buffer<uint4>(buffer_size, "batch mesh pixel");
 }
 
 void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
@@ -36,7 +36,7 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
         const MergedMesh &mesh = bs.merged_mesh();
 
         cmd_lst << _shader(bs.pixels(), triangle_offset,
-                           pixel_offset, _pixels)
+                           pixel_offset, pixels_)
                        .dispatch(bs.resolution());
         for (Triangle tri : mesh.triangles) {
             triangles.emplace_back(tri.i + vert_offset,
@@ -47,14 +47,14 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
         vert_offset += mesh.vertices.size();
         pixel_offset += bs.pixel_num();
         append(vertices, mesh.vertices);
-        _pixel_num += bs.pixel_num();
+        pixel_num_ += bs.pixel_num();
         cmd_lst << bs.pixels().reset();
     }
     stream() << cmd_lst << synchronize() << commit();
-    _vertices = device().create_buffer<Vertex>(vertices.size(), "batched mesh vertices");
-    _triangles = device().create_buffer<Triangle>(triangles.size(), "batched mesh triangles");
-    stream() << _vertices.upload(vertices.data())
-             << _triangles.upload(triangles.data())
+    vertices_ = device().create_buffer<Vertex>(vertices.size(), "batched mesh vertices");
+    triangles_ = device().create_buffer<Triangle>(triangles.size(), "batched mesh triangles");
+    stream() << vertices_.upload(vertices.data())
+             << triangles_.upload(triangles.data())
              << synchronize() << commit();
 }
 

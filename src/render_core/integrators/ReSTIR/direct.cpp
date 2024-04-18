@@ -8,20 +8,20 @@
 namespace vision {
 
 ReSTIRDI::ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc)
-    : _integrator(integrator),
-      M_light(desc["M_light"].as_uint(10)),
-      M_bsdf(desc["M_bsdf"].as_uint(1)),
-      _spatial(desc["spatial"]),
-      _temporal(desc["temporal"]),
-      _debias(desc["debias"].as_bool(false)),
-      _reweight(desc["reweight"].as_bool(false)),
-      _pairwise(desc["pairwise"].as_bool(false)),
-      _open(desc["open"].as_bool(true)) {}
+    : integrator_(integrator),
+      M_light_(desc["M_light"].as_uint(10)),
+      M_bsdf_(desc["M_bsdf"].as_uint(1)),
+      spatial_(desc["spatial"]),
+      temporal_(desc["temporal"]),
+      debias_(desc["debias"].as_bool(false)),
+      reweight_(desc["reweight"].as_bool(false)),
+      pairwise_(desc["pairwise"].as_bool(false)),
+      open_(desc["open"].as_bool(true)) {}
 
 bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("ReSTIR DI", [&] {
-        changed_ |= widgets->check_box("switch", &_open);
-        if (_open) {
+        changed_ |= widgets->check_box("switch", &open_);
+        if (open_) {
             render_sub_UI(widgets);
         }
     });
@@ -29,25 +29,25 @@ bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    changed_ |= widgets->input_uint_limit("M light", &M_light, 0, 100);
-    changed_ |= widgets->input_uint_limit("M BSDF", &M_bsdf, 0, 100);
-    changed_ |= widgets->check_box("temporal", &_temporal.open);
-    if (_temporal.open) {
-        changed_ |= widgets->input_uint_limit("history", &_temporal.limit, 0, 50, 1, 3);
+    changed_ |= widgets->input_uint_limit("M light", &M_light_, 0, 100);
+    changed_ |= widgets->input_uint_limit("M BSDF", &M_bsdf_, 0, 100);
+    changed_ |= widgets->check_box("temporal", &temporal_.open);
+    if (temporal_.open) {
+        changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
-                                               &_temporal.theta, 0, 90, 1, 1);
-        changed_ |= widgets->input_float_limit("temporal depth", &_temporal.depth_threshold,
+                                               &temporal_.theta, 0, 90, 1, 1);
+        changed_ |= widgets->input_float_limit("temporal depth", &temporal_.depth_threshold,
                                                0, 1, 0.02, 0.1);
-        changed_ |= widgets->input_float_limit("temporal radius", &_temporal.sampling_radius,
+        changed_ |= widgets->input_float_limit("temporal radius", &temporal_.sampling_radius,
                                                0, 50, 1, 5);
     }
-    changed_ |= widgets->check_box("spatial", &_spatial.open);
-    if (_spatial.open) {
+    changed_ |= widgets->check_box("spatial", &spatial_.open);
+    if (spatial_.open) {
         changed_ |= widgets->input_float_limit("spatial theta",
-                                               &_spatial.theta, 0, 90, 1, 1);
-        changed_ |= widgets->input_float_limit("spatial depth", &_spatial.depth_threshold,
+                                               &spatial_.theta, 0, 90, 1, 1);
+        changed_ |= widgets->input_float_limit("spatial depth", &spatial_.depth_threshold,
                                                0, 1, 0.02, 0.1);
-        changed_ |= widgets->input_float_limit("spatial radius", &_spatial.sampling_radius,
+        changed_ |= widgets->input_float_limit("spatial radius", &spatial_.sampling_radius,
                                                0, 50, 1, 5);
     }
 }
@@ -202,7 +202,7 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
     };
 
     $if(hit) {
-        if (_integrator->separate()) {
+        if (integrator_->separate()) {
             MaterialEvaluator bsdf(it, swl);
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 material->build_evaluator(bsdf, it, swl);
@@ -313,13 +313,13 @@ DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
                                       const Container<uint> &rsv_idx) const noexcept {
     DIReservoir ret;
 
-    if (_pairwise) {
+    if (pairwise_) {
         ret = pairwise_combine(cur_rsv, rsv_idx);
     } else {
         ret = constant_combine(cur_rsv, rsv_idx);
     }
 
-    if (_reweight) {
+    if (reweight_) {
     }
 
     return ret;
@@ -343,7 +343,7 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
     Float mis_cur;
     Float mis_prev;
 
-    if (_temporal.mis) {
+    if (temporal_.mis) {
         it.update_wo(prev_c_pos);
         p_hat_c_at_n = compute_p_hat(it, nullptr, cur_rsv.sample);
         p_hat_n_at_n = compute_p_hat(it, nullptr, other_rsv.sample);
@@ -457,8 +457,8 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
                                     const Int2 &pixel, const Var<Param> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
-        Container<uint> rsv_idx{_spatial.sample_num};
-        $for(i, _spatial.sample_num) {
+        Container<uint> rsv_idx{spatial_.sample_num};
+        $for(i, spatial_.sample_num) {
             Float2 offset = square_to_disk(sampler()->next_2d()) * param.s_radius;
             Int2 offset_i = make_int2(ocarina::round(offset));
             Int2 another_pixel = pixel + offset_i;
@@ -566,7 +566,7 @@ void ReSTIRDI::prepare() noexcept {
     using direct::Reservoir;
     Pipeline *rp = pipeline();
     _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
-                                                            "ReSTIRDI::_reservoirs x 3");
+                                                            "ReSTIRDI::reservoirs_ x 3");
     _reservoirs.register_self(0, rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
     _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
@@ -576,20 +576,20 @@ void ReSTIRDI::prepare() noexcept {
 
 direct::Param ReSTIRDI::construct_param() const noexcept {
     direct::Param param;
-    param.M_light = M_light;
-    param.M_bsdf = M_bsdf;
+    param.M_light = M_light_;
+    param.M_bsdf = M_bsdf_;
 
-    param.spatial = static_cast<uint>(_spatial.open);
-    param.N = _spatial.sample_num;
-    param.s_dot = _spatial.dot_threshold();
-    param.s_depth = _spatial.depth_threshold;
-    param.s_radius = _spatial.sampling_radius;
+    param.spatial = static_cast<uint>(spatial_.open);
+    param.N = spatial_.sample_num;
+    param.s_dot = spatial_.dot_threshold();
+    param.s_depth = spatial_.depth_threshold;
+    param.s_radius = spatial_.sampling_radius;
 
-    param.temporal = static_cast<uint>(_temporal.open);
-    param.history_limit = _temporal.limit;
-    param.t_dot = _temporal.dot_threshold();
-    param.t_depth = _temporal.depth_threshold;
-    param.t_radius = _temporal.sampling_radius;
+    param.temporal = static_cast<uint>(temporal_.open);
+    param.history_limit = temporal_.limit;
+    param.t_dot = temporal_.dot_threshold();
+    param.t_depth = temporal_.depth_threshold;
+    param.t_radius = temporal_.sampling_radius;
     return param;
 }
 
@@ -598,7 +598,7 @@ CommandList ReSTIRDI::estimate(uint frame_index) const noexcept {
     const Pipeline *rp = pipeline();
     auto param = construct_param();
     ret << _shader0(frame_index, param).dispatch(rp->resolution());
-    if (_open) {
+    if (open_) {
         ret << _shader1(frame_index, param).dispatch(rp->resolution());
     }
     return ret;

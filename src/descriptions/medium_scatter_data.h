@@ -9,7 +9,7 @@
 namespace vision {
 
 struct MeasuredSS {
-    const char *name;
+    const char *name{};
     float3 sigma_s;
     float3 sigma_a;
 };

@@ -10,13 +10,13 @@ namespace vision {
 using namespace ocarina;
 
 CLIParser::CLIParser(int argc, char **argv)
-    : _argc(argc), _argv(argv),
-      _cli_options{ocarina::fs::path{argv[0]}.filename().string()} {
+    : argc_(argc), argv_(argv),
+      cli_options_{ocarina::fs::path{argv[0]}.filename().string()} {
     init(argc, argv);
 }
 
 void CLIParser::init(int argc, char **argv) {
-    _cli_options.add_options(
+    cli_options_.add_options(
         "Renderer",
         {{"d, device", "Select compute device: cuda",
           cxxopts::value<std::string>()->default_value("cuda")},
@@ -44,16 +44,16 @@ void CLIParser::init(int argc, char **argv) {
 }
 
 const cxxopts::ParseResult &CLIParser::_parse_result() const noexcept {
-    if (!_parsed_cli_options.has_value()) {
-        _cli_options.parse_positional("positional");
-        _parsed_cli_options.emplace(
-            _cli_options.parse(const_cast<int &>(_argc), const_cast<const char **&>(_argv)));
+    if (!parsed_cli_options_.has_value()) {
+        cli_options_.parse_positional("positional");
+        parsed_cli_options_.emplace(
+            cli_options_.parse(const_cast<int &>(argc_), const_cast<const char **&>(argv_)));
     }
-    return *_parsed_cli_options;
+    return *parsed_cli_options_;
 }
 
 void CLIParser::print_help() const noexcept {
-    cout << _cli_options.help() << endl;
+    cout << cli_options_.help() << endl;
 }
 
 fs::path CLIParser::working_dir() const noexcept {
