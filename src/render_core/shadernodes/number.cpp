@@ -8,30 +8,30 @@
 namespace vision {
 class NumberInput : public ShaderNode {
 private:
-    Serial<vector<float>> _value;
-    Serial<float> _intensity{1.f};
-    bool _sync{true};
+    Serial<vector<float>> value_;
+    Serial<float> intensity_{1.f};
+    bool sync_{true};
 
 public:
     explicit NumberInput(const ShaderNodeDesc &desc)
-        : ShaderNode(desc), _value(desc["value"].as_vector<float>()) {
-        if (_type == Illumination) {
-            float max_v = *std::max_element(_value.hv().begin(), _value.hv().end());
-            _intensity = max_v;
-            std::transform(_value.hv().begin(), _value.hv().end(), _value.hv().begin(), [&](auto v) {
+        : ShaderNode(desc), value_(desc["value"].as_vector<float>()) {
+        if (type_ == Illumination) {
+            float max_v = *std::max_element(value_.hv().begin(), value_.hv().end());
+            intensity_ = max_v;
+            std::transform(value_.hv().begin(), value_.hv().end(), value_.hv().begin(), [&](auto v) {
                 return v / max_v;
             });
         }
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, _value, _intensity)
+    OC_SERIALIZABLE_FUNC(ShaderNode, value_, intensity_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        auto &values = _value.hv();
-        switch (_type) {
+        auto &values = value_.hv();
+        switch (type_) {
             case ShaderNodeType::Number: {
                 if (values.size() > 1) {
-                    _changed |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &_sync);
+                    _changed |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &sync_);
                 }
-                if (_sync) {
+                if (sync_) {
                     _changed |= widgets->input_float(_name, values.data(), 0.01, 0.2);
                     for (int i = 1; i < values.size(); ++i) {
                         values[i] = values[0];
@@ -46,7 +46,7 @@ public:
                 break;
             }
             case ShaderNodeType::Illumination: {
-                _changed |= widgets->colorN_edit(ocarina::format("intensity:{} {}", _intensity.hv(), _name.c_str()),
+                _changed |= widgets->colorN_edit(ocarina::format("intensity:{} {}", intensity_.hv(), _name.c_str()),
                                                  values.data(), values.size());
                 break;
             }
@@ -58,17 +58,17 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool is_zero() const noexcept override { return false; }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
-    [[nodiscard]] uint dim() const noexcept override { return _value.element_num(); }
+    [[nodiscard]] uint dim() const noexcept override { return value_.element_num(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return _value.hv();
+        return value_.hv();
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64_list(_value.hv());
+        return hash64_list(value_.hv());
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
-        return *_value * *_intensity;
+        return *value_ * *intensity_;
     }
 };
 }// namespace vision

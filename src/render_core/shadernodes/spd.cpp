@@ -9,25 +9,25 @@ namespace vision {
 
 class SPDNode : public ShaderNode {
 private:
-    SPD _spd{nullptr};
+    SPD spd_{nullptr};
 
 public:
     explicit SPDNode(const ShaderNodeDesc &desc)
-        : ShaderNode(desc), _spd(scene().pipeline()) {
-        _spd.init(desc["value"].data());
+        : ShaderNode(desc), spd_(scene().pipeline()) {
+        spd_.init(desc["value"].data());
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, _spd)
+    OC_SERIALIZABLE_FUNC(ShaderNode, spd_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] vector<float> average() const noexcept override {
-        float3 color = _spd.eval(rgb_spectrum_peak_wavelengths);
+        float3 color = spd_.eval(rgb_spectrum_peak_wavelengths);
         return vector<float>{color.x, color.y, color.z};
     }
     void prepare() noexcept override {
-        _spd.prepare();
+        spd_.prepare();
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return _spd.eval(swl);
+        return spd_.eval(swl);
     }
 };
 

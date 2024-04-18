@@ -33,47 +33,47 @@ namespace vision {
 //}
 class Multiply : public ShaderNode {
 private:
-    VS_MAKE_SLOT(lhs)
-    VS_MAKE_SLOT(rhs)
+    VS_MAKE_SLOT_(lhs)
+    VS_MAKE_SLOT_(rhs)
 
 public:
     explicit Multiply(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
-        _lhs.set(Global::node_mgr().create_slot(*desc.slot("lhs")));
-        _rhs.set(Global::node_mgr().create_slot(*desc.slot("rhs")));
+        lhs_.set(Global::node_mgr().create_slot(*desc.slot("lhs")));
+        rhs_.set(Global::node_mgr().create_slot(*desc.slot("rhs")));
     }
 
-    OC_SERIALIZABLE_FUNC(ShaderNode, _lhs, _rhs)
+    OC_SERIALIZABLE_FUNC(ShaderNode, lhs_, rhs_)
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, _lhs, _rhs)
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, lhs_, rhs_)
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         bool ret = widgets->use_tree(_name, [&] {
             widgets->text("type:%s", impl_type().data());
-            _lhs.render_UI(widgets);
-            _rhs.render_UI(widgets);
+            lhs_.render_UI(widgets);
+            rhs_.render_UI(widgets);
         });
         return ret;
     }
 
     [[nodiscard]] bool is_uniform() const noexcept override {
-        return _lhs->is_uniform() && _rhs->is_uniform();
+        return lhs_->is_uniform() && rhs_->is_uniform();
     }
     [[nodiscard]] bool is_constant() const noexcept override {
-        return _lhs->is_constant() && _rhs->is_constant();
+        return lhs_->is_constant() && rhs_->is_constant();
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(_lhs.hash(), _rhs.hash());
+        return hash64(lhs_.hash(), rhs_.hash());
     }
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(_lhs.type_hash(), _rhs.type_hash());
+        return hash64(lhs_.type_hash(), rhs_.type_hash());
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return _lhs.average() * _rhs.average();
+        return lhs_.average() * rhs_.average();
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
-        return _lhs.evaluate(ctx, swl) * _rhs.evaluate(ctx, swl);
+        return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
     }
 };
 }// namespace vision

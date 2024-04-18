@@ -8,30 +8,30 @@
 namespace vision {
 class Constant : public ShaderNode {
 private:
-    vector<float> _value;
+    vector<float> value_;
 
 public:
     explicit Constant(const ShaderNodeDesc &desc)
-        : ShaderNode(desc), _value(desc["value"].as_vector<float>()) {}
+        : ShaderNode(desc), value_(desc["value"].as_vector<float>()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool is_zero() const noexcept override {
-        return std::all_of(_value.begin(), _value.end(), [](float elm) { return elm == 0; });
+        return std::all_of(value_.begin(), value_.end(), [](float elm) { return elm == 0; });
     }
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64_list(_value);
+        return hash64_list(value_);
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64_list(_value);
+        return hash64_list(value_);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return _value;
+        return value_;
     }
     [[nodiscard]] bool is_constant() const noexcept override { return true; }
-    [[nodiscard]] uint dim() const noexcept override { return _value.size(); }
+    [[nodiscard]] uint dim() const noexcept override { return value_.size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return DynamicArray<float>(_value);
+        return DynamicArray<float>(value_);
     }
 };
 }// namespace vision

@@ -5,50 +5,50 @@ def generate(file, dim):
     input = ["x", "y", "z", "w"]
     if dim == 1:
         for i, x in enumerate(input):
-            str = f"case 0x{i}: return _node->evaluate(ctx, swl).{x}();"
+            str = f"case 0x{i}: return node_->evaluate(ctx, swl).{x}();"
             print(str, file=file)
     elif dim == 2:
         for i, x in enumerate(input):
             for j, y in enumerate(input):
-                str = f"case 0x{i}{j}: return _node->evaluate(ctx, swl).{x}{y}();"
+                str = f"case 0x{i}{j}: return node_->evaluate(ctx, swl).{x}{y}();"
                 print(str, file=file)
     elif dim == 3:
         for i, x in enumerate(input):
             for j, y in enumerate(input):
                 for k, z in enumerate(input):
-                    str = f"case 0x{i}{j}{k}: return _node->evaluate(ctx, swl).{x}{y}{z}();"
+                    str = f"case 0x{i}{j}{k}: return node_->evaluate(ctx, swl).{x}{y}{z}();"
                     print(str, file=file)
     else:
         for i, x in enumerate(input):
             for j, y in enumerate(input):
                 for k, z in enumerate(input):
                     for l, w in enumerate(input):
-                        str = f"case 0x{i}{j}{k}{l}: return _node->evaluate(ctx, swl).{x}{y}{z}{w}();"
+                        str = f"case 0x{i}{j}{k}{l}: return node_->evaluate(ctx, swl).{x}{y}{z}{w}();"
                         print(str, file=file)
 
 def generate_average(file, dim):
     input = ["x", "y", "z", "w"]
     if dim == 1:
         for i, x in enumerate(input):
-            str = f"case 0x{i}: return ocarina::vector<float>{{_node->average()[{i}]}};"
+            str = f"case 0x{i}: return ocarina::vector<float>{{node_->average()[{i}]}};"
             print(str, file=file)
     elif dim == 2:
         for i, x in enumerate(input):
             for j, y in enumerate(input):
-                str = f"case 0x{i}{j}: return ocarina::vector<float>{{_node->average()[{i}],_node->average()[{j}]}};"
+                str = f"case 0x{i}{j}: return ocarina::vector<float>{{node_->average()[{i}],node_->average()[{j}]}};"
                 print(str, file=file)
     elif dim == 3:
         for i, x in enumerate(input):
             for j, y in enumerate(input):
                 for k, z in enumerate(input):
-                    str = f"case 0x{i}{j}{k}: return ocarina::vector<float>{{_node->average()[{i}], _node->average()[{j}], _node->average()[{k}]}};"
+                    str = f"case 0x{i}{j}{k}: return ocarina::vector<float>{{node_->average()[{i}], node_->average()[{j}], node_->average()[{k}]}};"
                     print(str, file=file)
     else:
         for i, x in enumerate(input):
             for j, y in enumerate(input):
                 for k, z in enumerate(input):
                     for l, w in enumerate(input):
-                        str = f"case 0x{i}{j}{k}{l}: return ocarina::vector<float>{{_node->average()[{i}], _node->average()[{j}], _node->average()[{k}], _node->average()[{l}]}};"
+                        str = f"case 0x{i}{j}{k}{l}: return ocarina::vector<float>{{node_->average()[{i}], node_->average()[{j}], node_->average()[{k}], node_->average()[{l}]}};"
                         print(str, file=file)
 
 if __name__ == "__main__":

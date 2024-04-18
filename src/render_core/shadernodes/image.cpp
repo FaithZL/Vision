@@ -12,28 +12,28 @@ namespace vision {
 using namespace ocarina;
 class ImageNode : public ShaderNode {
 private:
-    RegistrableTexture *_texture;
-    Serial<uint> _tex_id{};
-    ShaderNodeDesc _desc;
+    RegistrableTexture *texture_;
+    Serial<uint> tex_id_{};
+    ShaderNodeDesc desc_;
 
 public:
     explicit ImageNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
-          _desc(desc),
-          _texture(&Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
-        _tex_id = _texture->index();
+          desc_(desc),
+          texture_(&Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
+        tex_id_ = texture_->index();
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, _tex_id)
+    OC_SERIALIZABLE_FUNC(ShaderNode, tex_id_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void reload(ocarina::Widgets *widgets) noexcept {
-        fs::path path = _texture->host_tex().path();
+        fs::path path = texture_->host_tex().path();
         if (Widgets::open_file_dialog(path)) {
-            _desc.set_value("fn", path.string());
-            _desc.reset_hash();
-            _texture = &Global::instance().pipeline()->image_pool().obtain_texture(_desc);
-            _texture->upload_immediately();
-            _tex_id.hv() = _texture->index().hv();
+            desc_.set_value("fn", path.string());
+            desc_.reset_hash();
+            texture_ = &Global::instance().pipeline()->image_pool().obtain_texture(desc_);
+            texture_->upload_immediately();
+            tex_id_.hv() = texture_->index().hv();
             _changed = true;
         }
     }
@@ -44,7 +44,7 @@ public:
         widgets->button_click("reload", [&] {
             reload(widgets);
         });
-        widgets->image(_texture->host_tex());
+        widgets->image(texture_->host_tex());
         return true;
     }
 
@@ -52,16 +52,16 @@ public:
 
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
-        return pipeline()->tex_var(*_tex_id).sample(_texture->host_tex().channel_num(), ctx.uv);
+        return pipeline()->tex_var(*tex_id_).sample(texture_->host_tex().channel_num(), ctx.uv);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return _texture->host_tex().average_vector();
+        return texture_->host_tex().average_vector();
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
-        return _texture->device_tex()->resolution().xy();
+        return texture_->device_tex()->resolution().xy();
     }
     void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept override {
-        _texture->host_tex().for_each_pixel(func);
+        texture_->host_tex().for_each_pixel(func);
     }
 };
 }// namespace vision

@@ -13,15 +13,15 @@ namespace vision {
 
 class ShaderNode : public Node, public Serializable<float> {
 protected:
-    ShaderNodeType _type{};
+    ShaderNodeType type_{};
 
 public:
     using Desc = ShaderNodeDesc;
 
 public:
-    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), _type(desc.type) {}
+    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), type_(desc.type) {}
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
-    [[nodiscard]] ShaderNodeType type() const noexcept { return _type; }
+    [[nodiscard]] ShaderNodeType type() const noexcept { return type_; }
     [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
     /**
      * if shader node is constant, the result will be inlined
@@ -46,13 +46,13 @@ public:
 
 class Slot : public ocarina::Hashable, public GUI {
 private:
-    SP<ShaderNode> _node{};
-    uint _dim{4};
+    SP<ShaderNode> node_{};
+    uint dim_{4};
 #ifndef NDEBUG
-    string _channels;
+    string channels_;
 #endif
-    uint _channel_mask{};
-    string _attr_name{};
+    uint channel_mask_{};
+    string attr_name_{};
 
 private:
     [[nodiscard]] static uint _calculate_mask(string channels) noexcept;
@@ -60,33 +60,33 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    explicit Slot(string attr_name = "") : _attr_name(std::move(attr_name)) {}
+    explicit Slot(string attr_name = "") : attr_name_(std::move(attr_name)) {}
     void set(const Slot &other) noexcept {
-        string old_name = _attr_name;
+        string old_name = attr_name_;
         *this = other;
-        if (other._attr_name.empty()) {
-            _attr_name = old_name;
+        if (other.attr_name_.empty()) {
+            attr_name_ = old_name;
         }
     }
     explicit Slot(SP<ShaderNode> input, string channels)
-        : _node(std::move(input)),
-          _dim(channels.size()),
+        : node_(std::move(input)),
+          dim_(channels.size()),
 #ifndef NDEBUG
-          _channels(channels),
+          channels_(channels),
 #endif
-          _channel_mask(_calculate_mask(ocarina::move(channels))) {
-        OC_ASSERT(_dim <= 4);
+          channel_mask_(_calculate_mask(ocarina::move(channels))) {
+        OC_ASSERT(dim_ <= 4);
     }
 
     void reset_status() noexcept override {
-        if (_node) {
-            _node->reset_status();
+        if (node_) {
+            node_->reset_status();
         }
     }
 
     bool has_changed() noexcept override {
-        if (_node) {
-            return _node->has_changed();
+        if (node_) {
+            return node_->has_changed();
         }
         return false;
     }
@@ -94,17 +94,17 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        if (_node) {
-            _node->render_sub_UI(widgets);
+        if (node_) {
+            node_->render_sub_UI(widgets);
         }
     }
 
-    [[nodiscard]] uint dim() const noexcept { return _dim; }
+    [[nodiscard]] uint dim() const noexcept { return dim_; }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
     [[nodiscard]] float luminance() const noexcept;
-    [[nodiscard]] bool valid() const noexcept { return _node != nullptr; }
+    [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }
     [[nodiscard]] explicit operator bool() const noexcept { return valid(); }
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                    const SampledWavelengths &swl) const noexcept;
@@ -112,10 +112,10 @@ public:
                                                     const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                          const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] const ShaderNode *node() const noexcept { return _node.get(); }
-    [[nodiscard]] const ShaderNode *operator->() const noexcept { return _node.get(); }
-    [[nodiscard]] ShaderNode *node() noexcept { return _node.get(); }
-    [[nodiscard]] ShaderNode *operator->() noexcept { return _node.get(); }
+    [[nodiscard]] const ShaderNode *node() const noexcept { return node_.get(); }
+    [[nodiscard]] const ShaderNode *operator->() const noexcept { return node_.get(); }
+    [[nodiscard]] ShaderNode *node() noexcept { return node_.get(); }
+    [[nodiscard]] ShaderNode *operator->() noexcept { return node_.get(); }
 };
 
 }// namespace vision
