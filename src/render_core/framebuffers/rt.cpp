@@ -42,7 +42,7 @@ public:
 
             Float2 motion_vec = make_float2(0.f);
 
-            OCPixelGeometry geom;
+            PixelGeometryVar geom;
             geom.p_film = ss.p_film;
             Float3 albedo;
             Float3 emission;
@@ -73,51 +73,56 @@ public:
         compute_geom_ = device().compile(kernel, "rt_geom");
     }
 
+    void compute_gradient(PixelGeometryVar &center_data,
+                          const BufferVar<PixelGeometry> &gbuffer) const noexcept {
+        Uint x_sample_num = 0u;
+        Uint y_sample_num = 0u;
+        Float3 normal_dx = make_float3(0.f);
+        Float3 normal_dy = make_float3(0.f);
+
+        Float depth_dx = 0.f;
+        Float depth_dy = 0.f;
+
+        Uint2 center = dispatch_idx().xy();
+        foreach_neighbor(dispatch_idx().xy(), [&](const Int2 &pixel) {
+            Uint index = dispatch_id(pixel);
+            PixelGeometryVar neighbor_data = gbuffer.read(index);
+            $if(center.x > pixel.x) {
+                x_sample_num += 1;
+                normal_dx += center_data.normal - neighbor_data.normal;
+                depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
+            }
+            $elif(pixel.x > center.x) {
+                x_sample_num += 1;
+                normal_dx += neighbor_data.normal - center_data.normal;
+                depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
+            };
+
+            $if(center.y > pixel.y) {
+                y_sample_num += 1;
+                normal_dy += center_data.normal - neighbor_data.normal;
+                depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
+            }
+            $elif(pixel.y > center.y) {
+                y_sample_num += 1;
+                normal_dy += neighbor_data.normal - center_data.normal;
+                depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
+            };
+        });
+        normal_dx /= cast<float>(x_sample_num);
+        normal_dy /= cast<float>(y_sample_num);
+        Float3 normal_fwidth = abs(normal_dx) + abs(normal_dy);
+        center_data.normal_fwidth = length(normal_fwidth);
+
+        depth_dx /= x_sample_num;
+        depth_dy /= y_sample_num;
+        center_data.depth_gradient = abs(depth_dx) + abs(depth_dy);
+    }
+
     void compile_compute_grad() noexcept {
         Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer) {
-            Uint x_sample_num = 0u;
-            Uint y_sample_num = 0u;
-            Float3 normal_dx = make_float3(0.f);
-            Float3 normal_dy = make_float3(0.f);
-
-            Float depth_dx = 0.f;
-            Float depth_dy = 0.f;
-
-            Uint2 center = dispatch_idx().xy();
-            OCPixelGeometry center_data = gbuffer.read(dispatch_id());
-            foreach_neighbor(dispatch_idx().xy(), [&](const Int2 &pixel) {
-                Uint index = dispatch_id(pixel);
-                OCPixelGeometry neighbor_data = gbuffer.read(index);
-                $if(center.x > pixel.x) {
-                    x_sample_num += 1;
-                    normal_dx += center_data.normal - neighbor_data.normal;
-                    depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
-                }
-                $elif(pixel.x > center.x) {
-                    x_sample_num += 1;
-                    normal_dx += neighbor_data.normal - center_data.normal;
-                    depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
-                };
-
-                $if(center.y > pixel.y) {
-                    y_sample_num += 1;
-                    normal_dy += center_data.normal - neighbor_data.normal;
-                    depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
-                }
-                $elif(pixel.y > center.y) {
-                    y_sample_num += 1;
-                    normal_dy += neighbor_data.normal - center_data.normal;
-                    depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
-                };
-            });
-            normal_dx /= cast<float>(x_sample_num);
-            normal_dy /= cast<float>(y_sample_num);
-            Float3 normal_fwidth = abs(normal_dx) + abs(normal_dy);
-            center_data.normal_fwidth = length(normal_fwidth);
-
-            depth_dx /= x_sample_num;
-            depth_dy /= y_sample_num;
-            center_data.depth_gradient = abs(depth_dx) + abs(depth_dy);
+            PixelGeometryVar center_data = gbuffer.read(dispatch_id());
+            compute_gradient(center_data, gbuffer);
             gbuffer.write(dispatch_id(), center_data);
         };
         compute_grad_ = device().compile(kernel, "rt_gradient");
@@ -128,8 +133,23 @@ public:
         compile_compute_grad();
     }
 
-    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
-                                              BufferView<float4> albedo, BufferView<float4> emission) const noexcept override {
+    [[nodiscard]] CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
+                                           BufferView<float4> albedo, BufferView<float4> emission) const noexcept override {
+        CommandList ret;
+        ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
+        return ret;
+    }
+
+    CommandList compute_grad(uint frame_index, BufferView<vision::PixelGeometry> gbuffer) const noexcept override {
+        CommandList ret;
+        ret << compute_grad_(frame_index, gbuffer).dispatch(resolution());
+        return ret;
+    }
+
+    [[nodiscard]] CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+                                              BufferView<float2> motion_vectors,
+                                              BufferView<float4> albedo,
+                                              BufferView<float4> emission) const noexcept override {
         CommandList ret;
         ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
         ret << compute_grad_(frame_index, gbuffer).dispatch(resolution());

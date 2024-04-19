@@ -45,9 +45,9 @@ public:
     explicit Reproject(SVGF *svgf)
         : svgf_(svgf) {}
     void prepare() noexcept;
-    [[nodiscard]] Bool is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeometry &prev) const noexcept;
+    [[nodiscard]] Bool is_valid_reproject(const PixelGeometryVar &cur, const PixelGeometryVar &prev) const noexcept;
     [[nodiscard]] ReprojectParam construct_param(vision::RealTimeDenoiseInput &input) const noexcept;
-    [[nodiscard]] Bool load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
+    [[nodiscard]] Bool load_prev_data(const PixelGeometryVar &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                       const BufferVar<float> &history_buffer,
                                       const Float2 &motion_vec,const BufferVar<SVGFData> &prev_buffer,
                                       Float *history, Float3 *prev_illumination,

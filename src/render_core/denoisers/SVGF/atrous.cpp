@@ -39,7 +39,7 @@ void AtrousFilter::compile() noexcept {
 
         Float history = param.history_buffer.read(dispatch_id());
 
-        OCPixelGeometry cur_geom = param.gbuffer.read(dispatch_id());
+        PixelGeometryVar cur_geom = param.gbuffer.read(dispatch_id());
 
         Float depth = cur_geom.linear_depth;
 
@@ -70,7 +70,7 @@ void AtrousFilter::compile() noexcept {
                     $continue;
                 };
                 Uint index = dispatch_id(target_pixel);
-                OCPixelGeometry neighbor_geom = param.gbuffer.read(index);
+                PixelGeometryVar neighbor_geom = param.gbuffer.read(index);
                 SVGFDataVar neighbor_svgf_data = param.svgf_buffer.read(index);
                 Float neighbor_luminance = ocarina::luminance(neighbor_svgf_data->illumination());
 

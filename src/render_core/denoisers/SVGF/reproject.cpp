@@ -11,7 +11,7 @@ using namespace ocarina;
 void Reproject::prepare() noexcept {
 }
 
-Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeometry &prev) const noexcept {
+Bool Reproject::is_valid_reproject(const PixelGeometryVar &cur, const PixelGeometryVar &prev) const noexcept {
     Uint2 resolution = dispatch_dim().xy();
     Bool inside = in_screen(make_int2(prev.p_film), make_int2(resolution));
 
@@ -26,7 +26,7 @@ Bool Reproject::is_valid_reproject(const OCPixelGeometry &cur, const OCPixelGeom
     return inside && z_valid && normal_valid;
 }
 
-Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
+Bool Reproject::load_prev_data(const PixelGeometryVar &cur_geom, const BufferVar<PixelGeometry> &prev_gbuffer,
                                const BufferVar<float> &history_buffer,
                                const Float2 &motion_vec, const BufferVar<SVGFData> &prev_buffer,
                                Float *history, Float3 *prev_illumination,
@@ -38,7 +38,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
     Uint prev_pixel_index = dispatch_id(prev_pixel);
     Bool inside = in_screen(prev_pixel, make_int2(dispatch_dim().xy()));
 
-    OCPixelGeometry prev_geom;
+    PixelGeometryVar prev_geom;
 
     *prev_illumination = make_float3(0);
     *prev_moments = make_float2(0);
@@ -88,7 +88,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
         Float valid_num = 0.f;
         foreach_neighbor(make_uint2(prev_pixel), [&](const Int2 &neighbor_pixel) {
             Uint index = dispatch_id(neighbor_pixel);
-            OCPixelGeometry neighbor_data = prev_gbuffer.read(index);
+            PixelGeometryVar neighbor_data = prev_gbuffer.read(index);
 
             $if(is_valid_reproject(cur_geom, neighbor_data)) {
                 SVGFDataVar prev_svgf_data = prev_buffer.read(index);
@@ -119,7 +119,7 @@ Bool Reproject::load_prev_data(const OCPixelGeometry &cur_geom, const BufferVar<
 
 void Reproject::compile() noexcept {
     Kernel kernel = [&](Var<ReprojectParam> param) {
-        OCPixelGeometry geom_data = param.gbuffer.read(dispatch_id());
+        PixelGeometryVar geom_data = param.gbuffer.read(dispatch_id());
         SVGFDataVar svgf_data = param.cur_buffer.read(dispatch_id());
         Float3 illumination = svgf_data->illumination();
 

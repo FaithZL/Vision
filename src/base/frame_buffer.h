@@ -23,7 +23,7 @@ OC_STRUCT(vision::PixelGeometry, normal, p_film,
             normal_fwidth,depth_gradient,linear_depth) {};
 // clang-format on
 namespace vision {
-using OCPixelGeometry = ocarina::Var<PixelGeometry>;
+using PixelGeometryVar = ocarina::Var<PixelGeometry>;
 }// namespace vision
 
 namespace vision {
@@ -102,9 +102,9 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
-#define VS_MAKE_ATTR_FUNC(buffer_name, count)                                  \
-    OC_MAKE_MEMBER_GETTER_(buffer_name, &)                                      \
-    void prepare_##buffer_name() noexcept {                                    \
+#define VS_MAKE_ATTR_FUNC(buffer_name, count)                             \
+    OC_MAKE_MEMBER_GETTER_(buffer_name, &)                                \
+    void prepare_##buffer_name() noexcept {                               \
         init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
     }
 
@@ -122,6 +122,9 @@ public:
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
     [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                                       BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
+    [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
+                                                   BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
+    [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const Camera *camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
     virtual void compile() noexcept = 0;

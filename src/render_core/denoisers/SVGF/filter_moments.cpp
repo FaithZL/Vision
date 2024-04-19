@@ -17,7 +17,7 @@ void FilterMoments::compile() noexcept {
             $return();
         };
 
-        OCPixelGeometry cur_goem = param.gbuffer.read(dispatch_id());
+        PixelGeometryVar cur_goem = param.gbuffer.read(dispatch_id());
         $if(cur_goem.linear_depth < 0.f) {
             $return();
         };
@@ -38,7 +38,7 @@ void FilterMoments::compile() noexcept {
             cur_pixel, [&](const Int2 &pixel) {
                 Uint index = dispatch_id(pixel);
                 SVGFDataVar svgf_data = param.svgf_buffer.read(index);
-                OCPixelGeometry geom = param.gbuffer.read(index);
+                PixelGeometryVar geom = param.gbuffer.read(index);
                 Float3 illumination = svgf_data->illumination();
                 Float2 moments = svgf_data.moments;
                 Float luminance = ocarina::luminance(illumination);
