@@ -450,7 +450,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         passthrough_reservoirs().write(dispatch_id(), rsv);
         cur_surfaces().write(dispatch_id(), cur_surf);
     };
-    _shader0 = device().compile(kernel, "ReSTIR direct initial candidates and temporal reuse");
+    shader0_ = device().compile(kernel, "ReSTIR direct initial candidates and temporal reuse");
 }
 
 DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_surf,
@@ -559,19 +559,19 @@ void ReSTIRDI::compile_shader1() noexcept {
         frame_buffer().bufferA().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), st_rsv);
     };
-    _shader1 = device().compile(kernel, "ReSTIR direct spatial reuse and shading");
+    shader1_ = device().compile(kernel, "ReSTIR direct spatial reuse and shading");
 }
 
 void ReSTIRDI::prepare() noexcept {
     using direct::Reservoir;
     Pipeline *rp = pipeline();
-    _reservoirs.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
+    reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRDI::reservoirs_ x 3");
-    _reservoirs.register_self(0, rp->pixel_num());
-    _reservoirs.register_view(rp->pixel_num(), rp->pixel_num());
-    _reservoirs.register_view(rp->pixel_num() * 2, rp->pixel_num());
+    reservoirs_.register_self(0, rp->pixel_num());
+    reservoirs_.register_view(rp->pixel_num(), rp->pixel_num());
+    reservoirs_.register_view(rp->pixel_num() * 2, rp->pixel_num());
     vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
-    _reservoirs.upload_immediately(host.data());
+    reservoirs_.upload_immediately(host.data());
 }
 
 direct::Param ReSTIRDI::construct_param() const noexcept {
@@ -597,9 +597,9 @@ CommandList ReSTIRDI::estimate(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     auto param = construct_param();
-    ret << _shader0(frame_index, param).dispatch(rp->resolution());
+    ret << shader0_(frame_index, param).dispatch(rp->resolution());
     if (open_) {
-        ret << _shader1(frame_index, param).dispatch(rp->resolution());
+        ret << shader1_(frame_index, param).dispatch(rp->resolution());
     }
     return ret;
 }

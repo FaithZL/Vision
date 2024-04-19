@@ -58,18 +58,18 @@ private:
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;
 
-    mutable RegistrableBuffer<Reservoir> _reservoirs{pipeline()->bindless_array()};
+    mutable RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
 
     /**
      * generate initial candidates
      * check visibility
      * temporal reuse
      */
-    Shader<void(uint, direct::Param)> _shader0;
+    Shader<void(uint, direct::Param)> shader0_;
     /**
      * spatial reuse and shading
      */
-    Shader<void(uint, direct::Param)> _shader1;
+    Shader<void(uint, direct::Param)> shader1_;
 
 protected:
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
@@ -100,7 +100,7 @@ public:
                                    param.t_dot,
                                    param.t_depth);
     }
-    [[nodiscard]] uint reservoir_base() const noexcept { return _reservoirs.index().hv(); }
+    [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
         return pipeline()->buffer_var<Reservoir>((frame_index() & 1) + reservoir_base());
     }
