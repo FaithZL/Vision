@@ -34,6 +34,7 @@ public:
 
     void compile() noexcept override {
         scene_.integrator()->compile();
+        frame_buffer()->compile();
     }
 
     void render(double dt) noexcept override {

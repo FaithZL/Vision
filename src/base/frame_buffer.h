@@ -95,6 +95,7 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
+    [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
     [[nodiscard]] uint gbuffer_base() const noexcept { return gbuffer_.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return surfaces_.index().hv(); }
     template<typename T>

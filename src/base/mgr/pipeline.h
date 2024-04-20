@@ -49,7 +49,7 @@ public:
     [[nodiscard]] const Scene &scene() const noexcept { return scene_; }
     [[nodiscard]] auto frame_buffer() const noexcept { return frame_buffer_.get(); }
     [[nodiscard]] auto frame_buffer() noexcept { return frame_buffer_.get(); }
-
+    void on_touch(uint2 pos) noexcept;
     [[nodiscard]] bool has_changed() noexcept override;
     void reset_status() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

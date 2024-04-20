@@ -33,7 +33,6 @@ public:
     void compile() noexcept override {
         denoiser_->compile();
         film()->compile();
-        frame_buffer().compile();
         Camera *camera = scene().camera().get();
         Sampler *sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {

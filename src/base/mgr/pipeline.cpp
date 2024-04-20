@@ -29,6 +29,18 @@ void Pipeline::reset_status() noexcept {
     scene_.reset_status();
 }
 
+void Pipeline::on_touch(ocarina::uint2 pos) noexcept {
+    Env::debugger().set_lower(pos);
+
+    auto &buffer = frame_buffer_->hit_buffer();
+    uint index = frame_buffer()->pixel_index(pos);
+    stream_ << frame_buffer_->compute_hit();
+    stream_ << frame_buffer()->hit_buffer().download(index, 1);
+    stream_ << synchronize() << commit();
+    Hit v2 = buffer[index];
+
+}
+
 bool Pipeline::has_changed() noexcept {
     return changed_ || scene_.has_changed();
 }
