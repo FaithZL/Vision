@@ -76,8 +76,8 @@ void AtrousFilter::compile() noexcept {
 
                 Float weight = SVGF::cal_weight(cur_geom.linear_depth, neighbor_geom.linear_depth,
                                                 sigma_depth * length(make_float2(offset)),
-                                                cur_geom.normal.xyz(), neighbor_geom.normal.xyz(), param.sigma_normal,
-                                                cur_luminance, neighbor_luminance, sigma_illumi);
+                                                cur_geom.normal_fwidth.xyz(), neighbor_geom.normal_fwidth.xyz(),
+                                                param.sigma_normal,cur_luminance, neighbor_luminance, sigma_illumi);
 
                 Float illumi_weight = weight * kernel_weight;
                 weight_sum_illumi += illumi_weight;

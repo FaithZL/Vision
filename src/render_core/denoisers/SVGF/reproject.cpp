@@ -19,9 +19,9 @@ Bool Reproject::is_valid_reproject(const PixelGeometryVar &cur, const PixelGeome
     Float z_prev = prev.linear_depth;
     Bool z_valid = (abs(z - z_prev) / (cur.depth_gradient + 1e-2f)) < 10;
 
-    Float3 normal = cur.normal.xyz();
-    Float3 normal_prev = prev.normal.xyz();
-    Bool normal_valid = (distance(normal, normal_prev) / (cur.normal.w + 1e-2f)) < 16;
+    Float3 normal = cur.normal_fwidth.xyz();
+    Float3 normal_prev = prev.normal_fwidth.xyz();
+    Bool normal_valid = (distance(normal, normal_prev) / (cur.normal_fwidth.w + 1e-2f)) < 16;
 
     return inside && z_valid && normal_valid;
 }

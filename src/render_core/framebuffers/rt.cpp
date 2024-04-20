@@ -89,23 +89,23 @@ public:
             PixelGeometryVar neighbor_data = gbuffer.read(index);
             $if(center.x > pixel.x) {
                 x_sample_num += 1;
-                normal_dx += center_data.normal.xyz() - neighbor_data.normal.xyz();
+                normal_dx += center_data.normal_fwidth.xyz() - neighbor_data.normal_fwidth.xyz();
                 depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.x > center.x) {
                 x_sample_num += 1;
-                normal_dx += neighbor_data.normal.xyz() - center_data.normal.xyz();
+                normal_dx += neighbor_data.normal_fwidth.xyz() - center_data.normal_fwidth.xyz();
                 depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
             };
 
             $if(center.y > pixel.y) {
                 y_sample_num += 1;
-                normal_dy += center_data.normal.xyz() - neighbor_data.normal.xyz();
+                normal_dy += center_data.normal_fwidth.xyz() - neighbor_data.normal_fwidth.xyz();
                 depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.y > center.y) {
                 y_sample_num += 1;
-                normal_dy += neighbor_data.normal.xyz() - center_data.normal.xyz();
+                normal_dy += neighbor_data.normal_fwidth.xyz() - center_data.normal_fwidth.xyz();
                 depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
             };
         });
