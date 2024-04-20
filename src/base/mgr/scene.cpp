@@ -54,6 +54,11 @@ void Scene::tidy_up_mediums() noexcept {
     });
 }
 
+void Scene::mark_selected(ocarina::Hit hit) noexcept {
+    ShapeInstance *instance = get_instance(hit.inst_id);
+    pipeline()->set_cur_node(instance);
+}
+
 Slot Scene::create_slot(const SlotDesc &desc) {
     return Global::node_mgr().create_slot(desc);
 }

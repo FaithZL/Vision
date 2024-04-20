@@ -37,7 +37,9 @@ void Pipeline::on_touch(ocarina::uint2 pos) noexcept {
     stream_ << frame_buffer_->compute_hit();
     stream_ << frame_buffer()->hit_buffer().download(index, 1);
     stream_ << synchronize() << commit();
-    Hit v2 = buffer[index];
+    Hit hit = buffer[index];
+
+    scene_.mark_selected(hit);
 }
 
 bool Pipeline::has_changed() noexcept {

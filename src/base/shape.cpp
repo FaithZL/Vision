@@ -21,6 +21,10 @@ void ShapeInstance::fill_mesh_id() noexcept {
     handle_.mesh_id = mesh_->index();
 }
 
+bool ShapeInstance::render_UI(ocarina::Widgets *widgets) noexcept {
+    return true;
+}
+
 vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : mesh_->triangles()) {
