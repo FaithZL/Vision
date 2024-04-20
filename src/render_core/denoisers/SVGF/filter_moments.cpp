@@ -17,14 +17,14 @@ void FilterMoments::compile() noexcept {
             $return();
         };
 
-        PixelGeometryVar cur_goem = param.gbuffer.read(dispatch_id());
-        $if(cur_goem.linear_depth < 0.f) {
+        PixelGeometryVar cur_geom = param.gbuffer.read(dispatch_id());
+        $if(cur_geom.linear_depth < 0.f) {
             $return();
         };
 
         SVGFDataVar cur_svgf_data = param.svgf_buffer.read(dispatch_id());
 
-        Float sigma_depth = max(cur_goem.depth_gradient, 1e-8f) * 3.f;
+        Float sigma_depth = max(cur_geom.depth_gradient, 1e-8f) * 3.f;
 
         Float cur_luminance = ocarina::luminance(cur_svgf_data->illumination());
         Int2 radius = make_int2(param.radius);
@@ -45,8 +45,8 @@ void FilterMoments::compile() noexcept {
                 Float depth = geom.linear_depth;
                 Float3 normal = geom.normal_fwidth.xyz();
 
-                Float weight = SVGF::cal_weight(cur_goem.linear_depth, depth, sigma_depth,
-                                                cur_goem.normal_fwidth.xyz(), normal, param.sigma_normal,
+                Float weight = SVGF::cal_weight(cur_geom.linear_depth, depth, sigma_depth,
+                                                cur_geom.normal_fwidth.xyz(), normal, param.sigma_normal,
                                                 cur_luminance, luminance, param.sigma_rt);
 
                 weight_sum_illumi += weight;

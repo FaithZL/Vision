@@ -41,6 +41,7 @@ public:
         frame_buffer().prepare_bufferB();
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
+        frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_motion_vectors();
     }
 
@@ -50,6 +51,7 @@ public:
     }
 
     void compile() noexcept override {
+        frame_buffer().compile();
         direct_.compile();
         indirect_.compile();
 
@@ -68,6 +70,7 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
+        stream << frame_buffer().compute_hit();
         stream << direct_.estimate(frame_index_);
         stream << indirect_.estimate(frame_index_);
         stream << combine_(frame_index_, direct_.factor(),

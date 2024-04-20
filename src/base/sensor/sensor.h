@@ -21,6 +21,9 @@ struct SensorSample {
     Float2 p_lens;
     Float time;
     Float filter_weight{1.f};
+    SensorSample() = default;
+    SensorSample(const Uint2 &pixel)
+        : p_film(pixel + 0.5f) {}
 };
 
 class Sensor : public Node, public SerialObject {

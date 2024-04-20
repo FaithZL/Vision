@@ -35,15 +35,6 @@ using PixelGeometryVar = ocarina::Var<PixelGeometry>;
 }// namespace vision
 
 namespace vision {
-struct PixelData {
-    uint inst_id{InvalidUI32};
-};
-}// namespace vision
-// clang-format off
-OC_STRUCT(vision::PixelData, inst_id) {};
-// clang-format on
-
-namespace vision {
 
 /// use for pingpong
 template<typename T>
@@ -87,6 +78,9 @@ protected:
 
     RegistrableBuffer<float2> motion_vectors_{};
 
+    /// used for editor
+    RegistrableManaged<Hit> hit_buffer_;
+
     RegistrableManaged<float4> bufferA_;
     RegistrableManaged<float4> bufferB_;
     RegistrableManaged<float4> bufferC_;
@@ -129,6 +123,7 @@ public:
     VS_MAKE_ATTR_FUNC(gbuffer, 2)
     VS_MAKE_ATTR_FUNC(hit_bsdfs, 1)
     VS_MAKE_ATTR_FUNC(motion_vectors, 1)
+    VS_MAKE_ATTR_FUNC(hit_buffer, 1)
     VS_MAKE_ATTR_FUNC(bufferA, 1)
     VS_MAKE_ATTR_FUNC(bufferB, 1)
     VS_MAKE_ATTR_FUNC(bufferC, 1)
@@ -142,6 +137,7 @@ public:
     [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                                    BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept = 0;
+    [[nodiscard]] virtual CommandList compute_hit() const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const Camera *camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
     virtual void compile() noexcept = 0;

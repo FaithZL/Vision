@@ -15,14 +15,18 @@ public:
     void compile() noexcept override {
     }
 
-    CommandList compute_geom(ocarina::uint frame_index, BufferView<vision::PixelGeometry> gbuffer,
+    [[nodiscard]] CommandList compute_geom(ocarina::uint frame_index, BufferView<vision::PixelGeometry> gbuffer,
                              BufferView<ocarina::float2> motion_vectors,
                              BufferView<ocarina::float4> albedo,
                              BufferView<ocarina::float4> emission) const noexcept override {
         return {};
     }
 
-    CommandList compute_grad(uint frame_index, BufferView<vision::PixelGeometry> gbuffer) const noexcept override {
+    [[nodiscard]] CommandList compute_hit() const noexcept override {
+        return {};
+    }
+
+    [[nodiscard]] CommandList compute_grad(uint frame_index, BufferView<vision::PixelGeometry> gbuffer) const noexcept override {
         return {};
     }
 

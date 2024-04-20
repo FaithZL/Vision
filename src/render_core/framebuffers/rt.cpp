@@ -17,6 +17,8 @@ private:
     using grad_signature = void(uint, Buffer<PixelGeometry>);
     Shader<grad_signature> compute_grad_;
 
+    Shader<void(Buffer<Hit>)> compute_hit_;
+
 public:
     explicit RayTracingFrameBuffer(const FrameBufferDesc &desc)
         : FrameBuffer(desc) {}
@@ -128,9 +130,32 @@ public:
         compute_grad_ = device().compile(kernel, "rt_gradient");
     }
 
+    void compile_compute_hit() noexcept {
+        Camera *camera = scene().camera().get();
+        Sampler *sampler = scene().sampler();
+        Kernel kernel = [&](BufferVar<Hit> hit_buffer) {
+            Uint2 pixel = dispatch_idx().xy();
+            sampler->start(pixel, 0, 0);
+            camera->load_data();
+
+            SensorSample ss(pixel);
+            RayState rs = camera->generate_ray(ss);
+            HitVar hit = pipeline()->trace_closest(rs.ray);
+            hit_buffer.write(dispatch_id(), hit);
+        };
+        compute_hit_ = device().compile(kernel, "rt_compute_pixel");
+    }
+
     void compile() noexcept override {
         compile_compute_geom();
         compile_compute_grad();
+        compile_compute_hit();
+    }
+
+    [[nodiscard]] CommandList compute_hit() const noexcept override {
+        CommandList ret;
+        ret << compute_hit_(hit_buffer_).dispatch(resolution());
+        return ret;
     }
 
     [[nodiscard]] CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
