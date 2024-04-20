@@ -114,9 +114,9 @@ public:
 //    }
 class SubstrateMaterial : public Material {
 private:
-    VS_MAKE_SLOT_(diff)
-    VS_MAKE_SLOT_(spec)
-    VS_MAKE_SLOT_(roughness)
+    VS_MAKE_SLOT(diff)
+    VS_MAKE_SLOT(spec)
+    VS_MAKE_SLOT(roughness)
     bool remapping_roughness_{true};
 
 protected:

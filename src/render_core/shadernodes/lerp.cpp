@@ -7,9 +7,9 @@
 namespace vision {
 class Lerp : public ShaderNode {
 private:
-    VS_MAKE_SLOT_(t)
-    VS_MAKE_SLOT_(A)
-    VS_MAKE_SLOT_(B)
+    VS_MAKE_SLOT(t)
+    VS_MAKE_SLOT(A)
+    VS_MAKE_SLOT(B)
 
 public:
     explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}

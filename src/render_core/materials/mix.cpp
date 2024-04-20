@@ -91,25 +91,25 @@ public:
         : Material(desc),
           mat0_(scene().load<Material>(*desc.mat0)),
           mat1_(scene().load<Material>(*desc.mat1)) {
-        _scale.set(scene().create_slot(desc.slot("scale", 0.5f, Number)));
+        scale_.set(scene().create_slot(desc.slot("scale", 0.5f, Number)));
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(Material, *mat0_, *mat1_, *_scale.node())
+    OC_SERIALIZABLE_FUNC(Material, *mat0_, *mat1_, *scale_.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(mat0_->type_hash(), mat1_->type_hash(), _scale.type_hash());
+        return hash64(mat0_->type_hash(), mat1_->type_hash(), scale_.type_hash());
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(mat0_->hash(), mat1_->hash(), _scale.hash());
+        return hash64(mat0_->hash(), mat1_->hash(), scale_.hash());
     }
 
     void prepare() noexcept override {
         mat0_->prepare();
         mat1_->prepare();
-        _scale->prepare();
+        scale_->prepare();
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        Float scale = _scale.evaluate(it, swl)[0];
+        Float scale = scale_.evaluate(it, swl)[0];
         return make_unique<MixBxDFSet>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl), scale);
     }
 };

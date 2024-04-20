@@ -41,8 +41,8 @@ public:
 
 class MirrorMaterial : public Material {
 private:
-    VS_MAKE_SLOT_(color)
-    VS_MAKE_SLOT_(roughness)
+    VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(roughness)
     bool remapping_roughness_{true};
 
 protected:

@@ -618,7 +618,7 @@ private:
     VS_MAKE_SLOT(spec_trans)
     VS_MAKE_SLOT(flatness)
     VS_MAKE_SLOT(diff_trans)
-    bool _thin{false};
+    bool thin_{false};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -629,26 +629,26 @@ protected:
 public:
     explicit DisneyMaterial(const MaterialDesc &desc)
         : Material(desc) {
-        _color.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        _metallic.set(scene().create_slot(desc.slot("metallic", 0.f, Number)));
-        _eta.set(scene().create_slot(desc.slot("ior", 1.5f, Number)));
-        _roughness.set(scene().create_slot(desc.slot("roughness", 0.5f, Number)));
-        _spec_tint.set(scene().create_slot(desc.slot("spec_tint", 0.f, Number)));
-        _anisotropic.set(scene().create_slot(desc.slot("anisotropic", 0.f, Number)));
-        _sheen.set(scene().create_slot(desc.slot("sheen", 0.f, Number)));
-        _sheen_tint.set(scene().create_slot(desc.slot("sheen_tint", 0.f, Number)));
-        _clearcoat.set(scene().create_slot(desc.slot("clearcoat", 0.3f, Number)));
-        _clearcoat_alpha.set(scene().create_slot(desc.slot("clearcoat_alpha", 0.2f, Number)));
-        _spec_trans.set(scene().create_slot(desc.slot("spec_trans", 0.f, Number)));
-        _flatness.set(scene().create_slot(desc.slot("flatness", 0.f, Number)));
-        _diff_trans.set(scene().create_slot(desc.slot("diff_trans", 0.f, Number)));
-        init_slot_cursor(&_color, &_diff_trans);
+        color_.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        metallic_.set(scene().create_slot(desc.slot("metallic", 0.f, Number)));
+        eta_.set(scene().create_slot(desc.slot("ior", 1.5f, Number)));
+        roughness_.set(scene().create_slot(desc.slot("roughness", 0.5f, Number)));
+        spec_tint_.set(scene().create_slot(desc.slot("spec_tint", 0.f, Number)));
+        anisotropic_.set(scene().create_slot(desc.slot("anisotropic", 0.f, Number)));
+        sheen_.set(scene().create_slot(desc.slot("sheen", 0.f, Number)));
+        sheen_tint_.set(scene().create_slot(desc.slot("sheen_tint", 0.f, Number)));
+        clearcoat_.set(scene().create_slot(desc.slot("clearcoat", 0.3f, Number)));
+        clearcoat_alpha_.set(scene().create_slot(desc.slot("clearcoat_alpha", 0.2f, Number)));
+        spec_trans_.set(scene().create_slot(desc.slot("spec_trans", 0.f, Number)));
+        flatness_.set(scene().create_slot(desc.slot("flatness", 0.f, Number)));
+        diff_trans_.set(scene().create_slot(desc.slot("diff_trans", 0.f, Number)));
+        init_slot_cursor(&color_, &diff_trans_);
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), _color, _metallic,
-                                              _eta, _roughness, _spec_tint, _anisotropic,
-                                              _sheen, _sheen_tint, _clearcoat, _clearcoat_alpha,
-                                              _spec_trans, _flatness, _diff_trans);
+        return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
+                                              eta_, roughness_, spec_tint_, anisotropic_,
+                                              sheen_, sheen_tint_, clearcoat_, clearcoat_alpha_,
+                                              spec_trans_, flatness_, diff_trans_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 };

@@ -70,8 +70,8 @@ public:
 
 protected:
     uint index_{InvalidUI32};
-    VS_MAKE_SLOT_(bump);
-    VS_MAKE_SLOT_(bump_scale);
+    VS_MAKE_SLOT(bump);
+    VS_MAKE_SLOT(bump_scale);
 
 protected:
     static constexpr uint stride = sizeof(Slot);

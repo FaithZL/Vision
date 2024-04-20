@@ -91,6 +91,7 @@
         "xutility": "cpp",
         "*.ih": "cpp",
         "*.ipp": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "bitset": "cpp"
     }
 }

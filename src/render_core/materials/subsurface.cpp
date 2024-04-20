@@ -11,11 +11,11 @@ namespace vision {
 class SubsurfaceMaterial : public Material {
 private:
     float sigma_scale_{};
-    VS_MAKE_SLOT_(sigma_a)
-    VS_MAKE_SLOT_(sigma_s)
-    VS_MAKE_SLOT_(color)
-    VS_MAKE_SLOT_(ior)
-    VS_MAKE_SLOT_(roughness)
+    VS_MAKE_SLOT(sigma_a)
+    VS_MAKE_SLOT(sigma_s)
+    VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(ior)
+    VS_MAKE_SLOT(roughness)
     bool remapping_roughness_{false};
 
 public:

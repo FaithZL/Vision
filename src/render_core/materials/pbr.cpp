@@ -36,10 +36,10 @@ public:
 
 class PbrMaterial : public Material {
 private:
-    VS_MAKE_SLOT_(color)
-    VS_MAKE_SLOT_(spec)
-    VS_MAKE_SLOT_(roughness)
-    VS_MAKE_SLOT_(metallic)
+    VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(spec)
+    VS_MAKE_SLOT(roughness)
+    VS_MAKE_SLOT(metallic)
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
