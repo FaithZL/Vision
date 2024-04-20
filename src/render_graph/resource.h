@@ -33,16 +33,16 @@ public:
     using Tag = ocarina::RHIResource::Tag;
 
 protected:
-    uint _width{};
-    uint _height{};
-    uint _depth{};
-    Tag _tag{};
+    uint width_{};
+    uint height_{};
+    uint depth_{};
+    Tag tag_{};
 
 public:
     RenderResource() = default;
-    OC_MAKE_MEMBER_GETTER(width, )
-    OC_MAKE_MEMBER_GETTER(height, )
-    OC_MAKE_MEMBER_GETTER(depth, )
+    OC_MAKE_MEMBER_GETTER_(width, )
+    OC_MAKE_MEMBER_GETTER_(height, )
+    OC_MAKE_MEMBER_GETTER_(depth, )
     [[nodiscard]] virtual const RHIResource *rhi_resource() const noexcept = 0;
     [[nodiscard]] virtual RHIResource *rhi_resource() noexcept = 0;
     virtual ~RenderResource() = default;

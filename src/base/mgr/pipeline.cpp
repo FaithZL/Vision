@@ -73,7 +73,9 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
     if (cur_node_ == nullptr) {
         return;
     }
-    cur_node_->render_UI(widgets);
+    widgets->use_window("detail", [&] {
+        cur_node_->render_UI(widgets);
+    });
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {

@@ -104,7 +104,7 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
     }
 
 namespace vision {
-class ShapeInstance {
+class ShapeInstance : public GUI {
 protected:
     InstanceHandle handle_;
     float factor_{};
