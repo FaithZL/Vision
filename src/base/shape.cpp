@@ -5,8 +5,7 @@
 #include "shape.h"
 #include "bake_utlis.h"
 #include <utility>
-#include "base/mgr/scene.h"
-#include "base/mgr/geometry.h"
+#include "base/scattering/material.h"
 #include "base/mgr/mesh_registry.h"
 
 namespace vision {
@@ -22,6 +21,12 @@ void ShapeInstance::fill_mesh_id() noexcept {
 }
 
 bool ShapeInstance::render_UI(ocarina::Widgets *widgets) noexcept {
+    if (has_material()) {
+        material()->render_UI(widgets);
+    }
+    if (has_emission()) {
+        emission()->render_UI(widgets);
+    }
     return true;
 }
 
