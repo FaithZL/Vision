@@ -11,20 +11,37 @@
 namespace vision {
 using namespace ocarina;
 struct PixelGeometry {
-    float3 normal{};
+    float4 normal{};
     float2 p_film{};
-    float normal_fwidth{};
     float depth_gradient{};
     float linear_depth{-1};
 };
 }// namespace vision
 // clang-format off
 OC_STRUCT(vision::PixelGeometry, normal, p_film,
-            normal_fwidth,depth_gradient,linear_depth) {};
+            depth_gradient, linear_depth) {
+    void set_normal(const Float3 &n) noexcept {
+        normal = make_float4(n, normal.w);
+    }
+
+    void set_normal_fwidth(const Float &fw) noexcept {
+        normal.w = fw;
+    }
+};
+
 // clang-format on
 namespace vision {
 using PixelGeometryVar = ocarina::Var<PixelGeometry>;
 }// namespace vision
+
+namespace vision {
+struct PixelData {
+    uint inst_id{InvalidUI32};
+};
+}// namespace vision
+// clang-format off
+OC_STRUCT(vision::PixelData, inst_id) {};
+// clang-format on
 
 namespace vision {
 

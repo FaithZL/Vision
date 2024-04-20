@@ -48,7 +48,7 @@ public:
             Float3 emission;
             $if(hit->is_hit()) {
                 Interaction it = pipeline()->compute_surface_interaction(hit, rs.ray, true);
-                geom.normal = it.shading.normal();
+                geom->set_normal(it.shading.normal());
                 geom.linear_depth = camera->linear_depth(it.pos);
                 $if(it.has_material()) {
                     scene().materials().dispatch(it.material_id(), [&](const Material *material) {
@@ -89,30 +89,30 @@ public:
             PixelGeometryVar neighbor_data = gbuffer.read(index);
             $if(center.x > pixel.x) {
                 x_sample_num += 1;
-                normal_dx += center_data.normal - neighbor_data.normal;
+                normal_dx += center_data.normal.xyz() - neighbor_data.normal.xyz();
                 depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.x > center.x) {
                 x_sample_num += 1;
-                normal_dx += neighbor_data.normal - center_data.normal;
+                normal_dx += neighbor_data.normal.xyz() - center_data.normal.xyz();
                 depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
             };
 
             $if(center.y > pixel.y) {
                 y_sample_num += 1;
-                normal_dy += center_data.normal - neighbor_data.normal;
+                normal_dy += center_data.normal.xyz() - neighbor_data.normal.xyz();
                 depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.y > center.y) {
                 y_sample_num += 1;
-                normal_dy += neighbor_data.normal - center_data.normal;
+                normal_dy += neighbor_data.normal.xyz() - center_data.normal.xyz();
                 depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
             };
         });
         normal_dx /= cast<float>(x_sample_num);
         normal_dy /= cast<float>(y_sample_num);
         Float3 normal_fwidth = abs(normal_dx) + abs(normal_dy);
-        center_data.normal_fwidth = length(normal_fwidth);
+        center_data->set_normal_fwidth(length(normal_fwidth));
 
         depth_dx /= x_sample_num;
         depth_dy /= y_sample_num;
