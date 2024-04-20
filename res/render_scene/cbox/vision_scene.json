@@ -862,7 +862,7 @@
 	"light_sampler" : {
 		"type" : "uniform",
 		"param" : {
-//			"lights" : [
+			"lights" : [
 //				//				{
 //				//					"type" : "spot",
 //				//					"param" : {
@@ -874,28 +874,28 @@
 //				//						"scale" : 1
 //				//					}
 //				//				},
-//								{
-//									"type" : "spot",
-//									"param" : {
-//										"angle" : 20,
-//										"falloff" : 2,
-//										"direction" : [0.2, -1, 0],
-//										"color" : [1, 1, 1],
-//										"position" : [0.5, 1.9, 0],
-//										"scale" : 3
-//									}
-//								},
-//								{
-//									"type" : "point",
-//									"param" : {
-//										"color" : {
-//											"channels" : "xyz",
-//											"node" : [1, 1, 1]
-//										},
-//										"position" : [-0.5, 1.8, 0],
-//										"scale" : 0.2
-//									}
-//								},
+								{
+									"type" : "spot",
+									"param" : {
+										"angle" : 20,
+										"falloff" : 2,
+										"direction" : [0.2, -1, 0],
+										"color" : [1, 1, 1],
+										"position" : [0.5, 1.9, 0],
+										"scale" : 3
+									}
+								},
+								{
+									"type" : "point",
+									"param" : {
+										"color" : {
+											"channels" : "xyz",
+											"node" : [1, 1, 1]
+										},
+										"position" : [-0.5, 1.8, 0],
+										"scale" : 0.2
+									}
+								},
 //				{
 //					"type" : "spherical",
 //					"param": {
@@ -923,41 +923,41 @@
 //				//						"scale" : 0.5
 //				//					}
 //				//				},
-//								{
-//									"type" : "projector",
-//									"param" : {
-//										"angle" : 6,
-//										"color" : {
-//											"channels" : "xyz",
-//											"node" : {
-//												"fn" : "Painting3.jpg",
-//												"color_space" : "srgb"
-//											}
-//										},
-//										"ratio" : 1,
-//										"o2w" : {
-//											"type" : "look_at",
-//											"param" : {
-//												"position" : [
-//													0,
-//													1,
-//													6.8
-//												],
-//												"up" : [
-//													0,
-//													1,
-//													0
-//												],
-//												"target_pos" : [
-//													0,
-//													1,
-//													0
-//												]
-//											}
-//										},
-//										"scale" : 300
-//									}
-//								}
+								{
+									"type" : "projector",
+									"param" : {
+										"angle" : 6,
+										"color" : {
+											"channels" : "xyz",
+											"node" : {
+												"fn" : "Painting3.jpg",
+												"color_space" : "srgb"
+											}
+										},
+										"ratio" : 1,
+										"o2w" : {
+											"type" : "look_at",
+											"param" : {
+												"position" : [
+													0,
+													1,
+													6.8
+												],
+												"up" : [
+													0,
+													1,
+													0
+												],
+												"target_pos" : [
+													0,
+													1,
+													0
+												]
+											}
+										},
+										"scale" : 300
+									}
+								}
 ////								{
 ////									"type" : "projector",
 ////									"param" : {
@@ -993,7 +993,7 @@
 ////										"scale" : 300
 ////									}
 ////								}
-//			]
+			]
 		}
 	},
 	"render_setting" : {
