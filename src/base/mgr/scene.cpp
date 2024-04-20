@@ -55,6 +55,9 @@ void Scene::tidy_up_mediums() noexcept {
 }
 
 void Scene::mark_selected(ocarina::Hit hit) noexcept {
+    if (hit.is_miss()) {
+        return;
+    }
     ShapeInstance *instance = get_instance(hit.inst_id);
     pipeline()->set_cur_node(instance);
 }
