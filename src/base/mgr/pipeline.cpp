@@ -38,7 +38,6 @@ void Pipeline::on_touch(ocarina::uint2 pos) noexcept {
     stream_ << frame_buffer()->hit_buffer().download(index, 1);
     stream_ << synchronize() << commit();
     Hit v2 = buffer[index];
-
 }
 
 bool Pipeline::has_changed() noexcept {
@@ -52,18 +51,29 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
                       cur_render_time(),
                       render_time() / frame_index(),
                       frame_index());
-        widgets->check_box("pipeline data", &show_pipeline_data_);
         widgets->check_box("scene data", &show_scene_data_);
+        widgets->check_box("detail", &show_detail_);
+        widgets->check_box("pipeline data", &show_pipeline_data_);
     });
+    if (show_scene_data_) {
+        scene_.render_UI(widgets);
+    }
+    if (show_detail_) {
+        render_detail(widgets);
+    }
     if (show_pipeline_data_) {
         widgets->use_window("frame buffer", [&] {
             frame_buffer_->render_UI(widgets);
         });
     }
-    if (show_scene_data_) {
-        scene_.render_UI(widgets);
-    }
     return true;
+}
+
+void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
+    if (cur_node_ == nullptr) {
+        return;
+    }
+    cur_node_->render_UI(widgets);
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {

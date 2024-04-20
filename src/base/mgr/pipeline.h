@@ -32,7 +32,11 @@ protected:
     Postprocessor postprocessor_{this};
     SP<FrameBuffer> frame_buffer_{nullptr};
     bool show_scene_data_{true};
-    bool show_pipeline_data_{true};
+    bool show_pipeline_data_{false};
+    bool show_detail_{true};
+
+    /// node for show detail
+    mutable GUI * cur_node_{nullptr};
 
 protected:
     [[nodiscard]] Integrator *integrator() noexcept { return scene().integrator(); }
@@ -53,6 +57,8 @@ public:
     [[nodiscard]] bool has_changed() noexcept override;
     void reset_status() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_detail(Widgets *widgets) noexcept;
+    OC_MAKE_MEMBER_GETTER_SETTER_(cur_node, )
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;
@@ -169,7 +175,7 @@ public:
         return bindless_array_.byte_buffer_var(OC_FORWARD(index));
     }
 
-    template<typename Elm,typename Index>
+    template<typename Elm, typename Index>
     requires is_integral_expr_v<Index>
     [[nodiscard]] SOAView<Elm, BindlessArrayByteBuffer> soa_view(Index &&index) noexcept {
         return bindless_array_.soa_view<Elm>(OC_FORWARD(index));
