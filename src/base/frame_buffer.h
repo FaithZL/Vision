@@ -115,7 +115,7 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
 #define VS_MAKE_ATTR_FUNC(buffer_name, count)                             \
-    OC_MAKE_MEMBER_GETTER_(buffer_name, &)                                \
+    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                \
     void prepare_##buffer_name() noexcept {                               \
         init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
     }

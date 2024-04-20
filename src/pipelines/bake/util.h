@@ -113,10 +113,10 @@ public:
         model_counter_ += cur_batch_model_num_;
         pixel_counter_ += cur_batch_pixel_num_;
     }
-    OC_MAKE_MEMBER_SETTER_(sample_index)
-    OC_MAKE_MEMBER_SETTER_(spp)
-    OC_MAKE_MEMBER_SETTER_(model_num)
-    OC_MAKE_MEMBER_SETTER_(pixel_num)
+    OC_MAKE_MEMBER_SETTER(sample_index)
+    OC_MAKE_MEMBER_SETTER(spp)
+    OC_MAKE_MEMBER_SETTER(model_num)
+    OC_MAKE_MEMBER_SETTER(pixel_num)
 
     /**
      * report cur batch mesh num

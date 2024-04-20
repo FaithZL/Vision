@@ -62,10 +62,10 @@ public:
     void prepare_to_rasterize() noexcept;
     void merge_meshes() noexcept;
     [[nodiscard]] uint2 resolution() const noexcept { return shape_->mesh()->resolution(); }
-    OC_MAKE_MEMBER_GETTER_(shape, )
-    OC_MAKE_MEMBER_GETTER_(lightmap_tex, &)
-    OC_MAKE_MEMBER_GETTER_(merged_mesh, &)
-    OC_MAKE_MEMBER_GETTER_(pixels, &)
+    OC_MAKE_MEMBER_GETTER(shape, )
+    OC_MAKE_MEMBER_GETTER(lightmap_tex, &)
+    OC_MAKE_MEMBER_GETTER(merged_mesh, &)
+    OC_MAKE_MEMBER_GETTER(pixels, &)
     [[nodiscard]] uint64_t instance_hash() const noexcept;
     [[nodiscard]] fs::path uv_config_fn() const noexcept;
     [[nodiscard]] bool has_uv_cache() const noexcept;

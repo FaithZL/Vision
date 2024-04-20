@@ -49,12 +49,12 @@ public:
           sigma_rt_(desc["sigma_rt"].as_float(10.f)),
           sigma_normal_(desc["sigma_normal"].as_float(30.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_MAKE_MEMBER_GETTER_(alpha, )
-    OC_MAKE_MEMBER_GETTER_(moments_alpha, )
-    OC_MAKE_MEMBER_GETTER_(moments_filter_radius, )
-    OC_MAKE_MEMBER_GETTER_(sigma_rt, )
-    OC_MAKE_MEMBER_GETTER_(sigma_normal, )
-    OC_MAKE_MEMBER_GETTER_(history_limit, )
+    OC_MAKE_MEMBER_GETTER(alpha, )
+    OC_MAKE_MEMBER_GETTER(moments_alpha, )
+    OC_MAKE_MEMBER_GETTER(moments_filter_radius, )
+    OC_MAKE_MEMBER_GETTER(sigma_rt, )
+    OC_MAKE_MEMBER_GETTER(sigma_normal, )
+    OC_MAKE_MEMBER_GETTER(history_limit, )
     void prepare_buffers();
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint svgf_data_base() const noexcept { return svgf_data.index().hv(); }

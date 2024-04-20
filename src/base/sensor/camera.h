@@ -52,11 +52,11 @@ public:
     void set_sensitivity(float v) noexcept { sensitivity_ = v; }
     [[nodiscard]] Float3 prev_raster_coord(Float3 pos) const noexcept;
     [[nodiscard]] Float3 prev_device_position() const noexcept { return *prev_pos_; }
-    OC_MAKE_MEMBER_GETTER_(sensitivity, )
-    OC_MAKE_MEMBER_GETTER_(position, )
-    OC_MAKE_MEMBER_GETTER_(yaw, )
-    OC_MAKE_MEMBER_GETTER_(velocity, )
-    OC_MAKE_MEMBER_GETTER_(pitch, )
+    OC_MAKE_MEMBER_GETTER(sensitivity, )
+    OC_MAKE_MEMBER_GETTER(position, )
+    OC_MAKE_MEMBER_GETTER(yaw, )
+    OC_MAKE_MEMBER_GETTER(velocity, )
+    OC_MAKE_MEMBER_GETTER(pitch, )
     [[nodiscard]] Float3 device_position() const noexcept;
     [[nodiscard]] Float3 device_forward() const noexcept;
     [[nodiscard]] Float3 device_up() const noexcept;

@@ -59,10 +59,10 @@ public:
     MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
-    OC_MAKE_MEMBER_GETTER_SETTER_(camera, &)
-    OC_MAKE_MEMBER_GETTER_(global_medium, )
-    OC_MAKE_MEMBER_GETTER_(groups, &)
-    OC_MAKE_MEMBER_GETTER_(instances, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(camera, &)
+    OC_MAKE_MEMBER_GETTER(global_medium, )
+    OC_MAKE_MEMBER_GETTER(groups, &)
+    OC_MAKE_MEMBER_GETTER(instances, &)
     [[nodiscard]] const auto &material_registry() const noexcept { return *material_registry_; }
     [[nodiscard]] auto &material_registry() noexcept { return *material_registry_; }
     [[nodiscard]] auto film() noexcept { return camera()->film(); }

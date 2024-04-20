@@ -29,7 +29,7 @@ public:
 public:
     explicit Geometry(Pipeline *rp = nullptr);
 
-    OC_MAKE_MEMBER_GETTER_(accel, &)
+    OC_MAKE_MEMBER_GETTER(accel, &)
 
     /**
      * update shape attribute

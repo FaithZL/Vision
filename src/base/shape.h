@@ -63,11 +63,11 @@ public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
         : vertices_(std::move(vert)), triangles_(std::move(tri)) {}
     Mesh() = default;
-    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
-    OC_MAKE_MEMBER_GETTER_SETTER_(vertices, &)
-    OC_MAKE_MEMBER_GETTER_SETTER_(triangles, &)
-    OC_MAKE_MEMBER_GETTER_SETTER_(has_lightmap_uv, )
-    OC_MAKE_MEMBER_GETTER_SETTER_(resolution, )
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(has_lightmap_uv, )
+    OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
     void normalize_lightmap_uv() noexcept;
     void setup_lightmap_uv(const UnwrapperResult &result);
     [[nodiscard]] float2 lightmap_uv_unnormalized(uint index) const noexcept;
@@ -122,10 +122,10 @@ public:
 public:
     explicit ShapeInstance(SP<Mesh> mesh);
     explicit ShapeInstance(Mesh mesh);
-    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
-    OC_MAKE_MEMBER_GETTER_SETTER_(mesh, )
-    OC_MAKE_MEMBER_GETTER_SETTER_(name, )
-    OC_MAKE_MEMBER_GETTER_SETTER_(handle, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(mesh, )
+    OC_MAKE_MEMBER_GETTER_SETTER(name, )
+    OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
     void fill_mesh_id() noexcept;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     void init_aabb() noexcept { aabb = compute_aabb(); }

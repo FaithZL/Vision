@@ -93,7 +93,7 @@ protected:
 
 public:
     explicit Material(const MaterialDesc &desc);
-    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {

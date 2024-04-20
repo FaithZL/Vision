@@ -38,7 +38,7 @@ public:
         }
         return res_map_.at(name);
     }
-    OC_MAKE_MEMBER_GETTER_(recompile, )
+    OC_MAKE_MEMBER_GETTER(recompile, )
     template<typename T>
     void set_resource(const string &name, const T &res) noexcept {
         res_map_.insert(std::make_pair(name, &res));

@@ -40,9 +40,9 @@ protected:
 
 public:
     RenderResource() = default;
-    OC_MAKE_MEMBER_GETTER_(width, )
-    OC_MAKE_MEMBER_GETTER_(height, )
-    OC_MAKE_MEMBER_GETTER_(depth, )
+    OC_MAKE_MEMBER_GETTER(width, )
+    OC_MAKE_MEMBER_GETTER(height, )
+    OC_MAKE_MEMBER_GETTER(depth, )
     [[nodiscard]] virtual const RHIResource *rhi_resource() const noexcept = 0;
     [[nodiscard]] virtual RHIResource *rhi_resource() noexcept = 0;
     virtual ~RenderResource() = default;

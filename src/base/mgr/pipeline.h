@@ -58,7 +58,7 @@ public:
     void reset_status() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_detail(Widgets *widgets) noexcept;
-    OC_MAKE_MEMBER_GETTER_SETTER_(cur_node, )
+    OC_MAKE_MEMBER_GETTER_SETTER(cur_node, )
 
     /// virtual function start
     virtual void init_scene(const SceneDesc &scene_desc) = 0;

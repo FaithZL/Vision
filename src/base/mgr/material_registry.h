@@ -32,7 +32,7 @@ public:
     void upload_device_data() noexcept;
     void remove_unused_materials() noexcept;
     void tidy_up() noexcept;
-    OC_MAKE_MEMBER_GETTER_(materials, &)
+    OC_MAKE_MEMBER_GETTER(materials, &)
 };
 
 }// namespace vision

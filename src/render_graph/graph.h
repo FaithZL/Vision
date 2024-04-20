@@ -61,7 +61,7 @@ public:
         vector<RenderPass *> commands_;
 
     public:
-        OC_MAKE_MEMBER_GETTER_(commands, &)
+        OC_MAKE_MEMBER_GETTER(commands, &)
         void push_back(RenderPass *pass) noexcept {
             if (pass_set_.contains(pass)) {
                 return;

@@ -33,9 +33,9 @@ public:
     [[nodiscard]] CommandList clear() noexcept;
     void compile() noexcept;
     void batch(ocarina::span<BakedShape> baked_shapes) noexcept;
-    OC_MAKE_MEMBER_GETTER_(pixel_num, )
-    OC_MAKE_MEMBER_GETTER_(pixels, &)
-    OC_MAKE_MEMBER_GETTER_(triangles, &)
-    OC_MAKE_MEMBER_GETTER_(vertices, &)
+    OC_MAKE_MEMBER_GETTER(pixel_num, )
+    OC_MAKE_MEMBER_GETTER(pixels, &)
+    OC_MAKE_MEMBER_GETTER(triangles, &)
+    OC_MAKE_MEMBER_GETTER(vertices, &)
 };
 }// namespace vision

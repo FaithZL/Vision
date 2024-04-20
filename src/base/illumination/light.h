@@ -108,7 +108,7 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
     }
-    OC_MAKE_MEMBER_GETTER_SETTER_(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
     VS_MAKE_GUI_STATUS_FUNC(Node, color_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }

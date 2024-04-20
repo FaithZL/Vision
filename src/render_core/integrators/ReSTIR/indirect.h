@@ -66,7 +66,7 @@ protected:
 
 public:
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    OC_MAKE_MEMBER_GETTER_(open, )
+    OC_MAKE_MEMBER_GETTER(open, )
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

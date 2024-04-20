@@ -58,7 +58,7 @@ public:
     [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
     [[nodiscard]] uint frame_index() const noexcept { return frame_index_; }
     [[nodiscard]] double render_time() const noexcept { return render_time_; }
-    OC_MAKE_MEMBER_GETTER_(cur_render_time, )
+    OC_MAKE_MEMBER_GETTER(cur_render_time, )
     void increase_frame_index() const noexcept { frame_index_++; }
     void reset_frame_index() const noexcept { frame_index_ = 0; }
     void accumulate_render_time(double ms) const noexcept {
@@ -115,7 +115,7 @@ public:
 
     VS_MAKE_GUI_STATUS_FUNC(Integrator, denoiser_)
 
-    OC_MAKE_MEMBER_GETTER_(separate, )
+    OC_MAKE_MEMBER_GETTER(separate, )
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
 

@@ -29,7 +29,7 @@ public:
           scale_(desc.scale["value"].as_float()) {}
     ~Medium() override = default;
     void set_index(uint index) noexcept { index_ = index; }
-    OC_MAKE_MEMBER_GETTER_(index,)
+    OC_MAKE_MEMBER_GETTER(index,)
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
                                Sampler *sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const RayVar &ray, Interaction &it,
