@@ -13,8 +13,7 @@ bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
         ocarina::format("{} filter", impl_type().data()),
         [&] {
             float2 &r = radius_.hv();
-            changed_ |= widgets->input_float_limit("radius x", &r.x, 0.01, 10, 0.01, 0.2);
-            changed_ |= widgets->input_float_limit("radius y", &r.y, 0.01, 10, 0.01, 0.2);
+            changed_ |= widgets->drag_float2("radius", addressof(r), 0.1,0.01,10);
             render_sub_UI(widgets);
         });
     return ret;

@@ -29,15 +29,15 @@ public:
         switch (type_) {
             case ShaderNodeType::Number: {
                 if (values.size() > 1) {
-                    changed_ |= widgets->check_box(ocarina::format("{} sync", _name.c_str()), &sync_);
+                    widgets->check_box(ocarina::format("{} sync", _name.c_str()), &sync_);
                 }
                 if (sync_) {
-                    changed_ |= widgets->input_float(_name, values.data(), 0.01, 0.2);
+                    changed_ |= widgets->drag_floatN(_name, values.data(), 1, 0.01);
                     for (int i = 1; i < values.size(); ++i) {
                         values[i] = values[0];
                     }
                 } else {
-                    changed_ |= widgets->input_floatN(_name, values.data(), values.size());
+                    changed_ |= widgets->drag_floatN(_name, values.data(), values.size(),0.01);
                 }
                 break;
             }
