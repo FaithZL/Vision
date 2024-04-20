@@ -19,6 +19,7 @@ public:
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
         denoiser_->prepare();
+        frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
         // albedo
         frame_buffer().prepare_bufferB();
