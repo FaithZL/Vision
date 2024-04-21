@@ -394,14 +394,18 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
     };
 
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        auto [prev_surf, prev_rsv] = get_prev_data(prev_p_film);
+        auto data = get_prev_data(prev_p_film);
+        auto prev_surf = data.first;
+        auto prev_rsv = data.second;
         $if(is_temporal_valid(cur_surf, prev_surf, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         }
         $else {
             $for(i, 9) {
                 Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                auto [another_surf, another_rsv] = get_prev_data(p);
+                auto data = get_prev_data(p);
+                auto another_surf = data.first;
+                auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf, param)) {
                     rsv = combine_temporal(rsv, cur_surf, another_rsv);
                     $break;
