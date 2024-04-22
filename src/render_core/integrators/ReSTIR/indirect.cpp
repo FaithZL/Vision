@@ -26,7 +26,8 @@ Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
     Float neighbor_dist2 = length_squared(neighbor_vec);
     ret = (cos_phi_c * neighbor_dist2) / (cos_phi_n * cur_dist2);
     ret = ocarina::zero_if_nan_inf(ret);
-    ret = ocarina::clamp(ret, 0.5f, 2.f);
+    float lower = 0.6f;
+    ret = ocarina::clamp(ret, lower, ocarina::rcp(lower));
     return ret;
 }
 
