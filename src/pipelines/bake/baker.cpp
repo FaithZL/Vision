@@ -20,7 +20,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
                                                               const BufferVar<uint4> &pixels,
                                                               Float2 *p_film) noexcept {
     Sampler *sampler = scene().sampler();
-    Filter *filter = scene().camera()->filter();
+    OldFilter *filter = scene().camera()->filter();
     Uint4 pixel_data = pixels.read(dispatch_id());
     Uint triangle_id = pixel_data.x;
     Uint pixel_offset = pixel_data.y;

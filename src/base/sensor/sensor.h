@@ -31,7 +31,7 @@ public:
     using Desc = SensorDesc;
 
 protected:
-    SP<Filter> filter_{};
+    SP<OldFilter> filter_{};
     SP<Film> film_{};
     Wrap<Medium> medium_{};
     Serial<uint> medium_id_{InvalidUI32};
@@ -42,8 +42,8 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;
-    [[nodiscard]] Filter *filter() noexcept { return filter_.get(); }
-    [[nodiscard]] const Filter *filter() const noexcept { return filter_.get(); }
+    [[nodiscard]] OldFilter *filter() noexcept { return filter_.get(); }
+    [[nodiscard]] const OldFilter *filter() const noexcept { return filter_.get(); }
     [[nodiscard]] auto film() noexcept { return film_.get(); }
     [[nodiscard]] auto film() const noexcept { return film_.get(); }
     [[nodiscard]] uint2 resolution() noexcept { return film_->resolution(); }

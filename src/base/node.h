@@ -8,6 +8,7 @@
 #include "core/stl.h"
 #include "UI/GUI.h"
 #include "descriptions/node_desc.h"
+#include "util/file_manager.h"
 
 namespace ocarina {
 class Device;
