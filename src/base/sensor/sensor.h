@@ -42,8 +42,8 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;
-    [[nodiscard]] auto filter() noexcept { return filter_.get(); }
-    [[nodiscard]] auto filter() const noexcept { return filter_.get(); }
+    [[nodiscard]] auto& filter() noexcept { return filter_; }
+    [[nodiscard]] auto& filter() const noexcept { return filter_; }
     [[nodiscard]] auto film() noexcept { return film_.get(); }
     [[nodiscard]] auto film() const noexcept { return film_.get(); }
     [[nodiscard]] uint2 resolution() noexcept { return film_->resolution(); }
