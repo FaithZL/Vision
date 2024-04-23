@@ -11,7 +11,7 @@ using namespace ocarina;
 
 Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
-      filter_(scene().load<OldFilter>(desc.filter_desc)),
+      filter_(desc.filter_desc),
       film_(scene().load<Film>(desc.film_desc)),
       medium_id_(desc.medium.id) {
     if (!scene().has_medium()) {

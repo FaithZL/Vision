@@ -56,6 +56,17 @@ public:
     virtual ~Node() = default;
 };
 
+
+template<typename T, typename desc_ty>
+[[nodiscard]] static SP<typename T::Impl> load(const desc_ty &desc) {
+    const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
+    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
+    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+    SP<typename T::Impl> ret = SP<typename T::Impl>(dynamic_cast<typename T::Impl *>(creator(desc)), deleter);
+    OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
+    return ret;
+}
+
 #define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
     [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
