@@ -56,16 +56,35 @@ public:
     virtual ~Node() = default;
 };
 
+template<typename impl_t, typename desc_t = impl_t::Desc>
+class TObject {
+public:
+    using Impl = impl_t;
+    using Desc = desc_t;
 
-template<typename T, typename desc_ty>
-[[nodiscard]] static SP<typename T::Impl> load(const desc_ty &desc) {
-    const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
-    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-    SP<typename T::Impl> ret = SP<typename T::Impl>(dynamic_cast<typename T::Impl *>(creator(desc)), deleter);
-    OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
-    return ret;
-}
+    [[nodiscard]] static SP<impl_t> load(const Desc &desc) {
+        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
+        auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
+        auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+        SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(desc)), deleter);
+        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
+        return ret;
+    }
+
+private:
+    SP<impl_t> _impl;
+
+public:
+    TObject() = default;
+    explicit TObject(const desc_t &desc) : _impl(load(desc)) {}
+    void init(const desc_t &desc) noexcept {
+        _impl = load<Impl>(desc);
+    }
+    [[nodiscard]] auto get() const noexcept { return _impl.get(); }
+    [[nodiscard]] auto get() noexcept { return _impl.get(); }
+    [[nodiscard]] auto operator->() const noexcept { return _impl.get(); }
+    [[nodiscard]] auto operator->() noexcept { return _impl.get(); }
+};
 
 #define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \

@@ -8,7 +8,7 @@
 
 namespace vision {
 
-vector<float> Filter::Impl::discretize(ocarina::uint width) const noexcept {
+vector<float> FilterImpl::discretize(ocarina::uint width) const noexcept {
     auto mapping = [&](int i) {
         return -radius_.hv().x + (2 * radius_.hv().x) * (i + 0.5f) / width;
     };
@@ -29,7 +29,7 @@ vector<float> Filter::Impl::discretize(ocarina::uint width) const noexcept {
     return ret;
 }
 
-bool Filter::Impl::render_UI(ocarina::Widgets *widgets) noexcept {
+bool FilterImpl::render_UI(ocarina::Widgets *widgets) noexcept {
     bool ret = widgets->use_folding_header(
         ocarina::format("{} filter", impl_type().data()),
         [&] {
