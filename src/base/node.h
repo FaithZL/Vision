@@ -53,7 +53,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
-    virtual ~Node() = default;
+    ~Node() override = default;
 };
 
 template<typename impl_t, typename desc_t = impl_t::Desc>
@@ -72,18 +72,23 @@ public:
     }
 
 private:
-    SP<impl_t> _impl;
+    SP<impl_t> impl_;
 
 public:
     TObject() = default;
-    explicit TObject(const desc_t &desc) : _impl(load(desc)) {}
+    explicit TObject(const desc_t &desc) : impl_(load(desc)) {}
     void init(const desc_t &desc) noexcept {
-        _impl = load<Impl>(desc);
+        impl_ = load<Impl>(desc);
     }
-    [[nodiscard]] auto get() const noexcept { return _impl.get(); }
-    [[nodiscard]] auto get() noexcept { return _impl.get(); }
-    [[nodiscard]] auto operator->() const noexcept { return _impl.get(); }
-    [[nodiscard]] auto operator->() noexcept { return _impl.get(); }
+    OC_MAKE_MEMBER_GETTER(impl, &)
+    [[nodiscard]] const Impl *get() const noexcept { return impl_.get(); }
+    [[nodiscard]] Impl *get() noexcept { return impl_.get(); }
+    [[nodiscard]] const Impl *operator->() const noexcept { return impl_.get(); }
+    [[nodiscard]] Impl *operator->() noexcept { return impl_.get(); }
+    [[nodiscard]] const Impl &operator*() const noexcept { return *impl_.get(); }
+    [[nodiscard]] Impl &operator*() noexcept { return *impl_.get(); }
+    template<typename... Args>
+    void reset(Args &&...args) noexcept { impl_.reset(OC_FORWARD(args)...); }
 };
 
 #define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
