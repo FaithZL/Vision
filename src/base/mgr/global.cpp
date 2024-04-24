@@ -17,7 +17,6 @@ Global &Global::instance() {
 }
 
 Global::~Global() {
-    NodeMgr::destroy_instance();
     FileManager::destroy_instance();
     ImagePool::destroy_instance();
 }

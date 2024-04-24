@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "node_mgr.h"
 #include "util/file_manager.h"
 #include "image_pool.h"
 #include "rhi/common.h"
 
 namespace vision {
 class Pipeline;
+class Spectrum;
 class Global {
 private:
     Global() = default;
@@ -40,9 +40,6 @@ public:
     void set_scene_path(const fs::path &sp) noexcept;
     [[nodiscard]] fs::path scene_path() const noexcept;
     [[nodiscard]] fs::path scene_cache_path() const noexcept;
-    [[nodiscard]] static decltype(auto) node_mgr() {
-        return NodeMgr::instance();
-    }
     [[nodiscard]] static decltype(auto) file_manager() {
         return FileManager::instance();
     }
