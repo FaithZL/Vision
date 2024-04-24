@@ -64,7 +64,7 @@ void Scene::mark_selected(ocarina::Hit hit) noexcept {
 }
 
 Slot Scene::create_slot(const SlotDesc &desc) {
-    return Global::node_mgr().create_slot(desc);
+    return Slot::create_slot(desc);
 }
 
 SP<Material> Scene::obtain_black_body() noexcept {

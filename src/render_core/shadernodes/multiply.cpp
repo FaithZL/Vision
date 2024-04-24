@@ -39,8 +39,8 @@ private:
 public:
     explicit Multiply(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
-        lhs_.set(Global::node_mgr().create_slot(*desc.slot("lhs")));
-        rhs_.set(Global::node_mgr().create_slot(*desc.slot("rhs")));
+        lhs_.set(Slot::create_slot(*desc.slot("lhs")));
+        rhs_.set(Slot::create_slot(*desc.slot("rhs")));
     }
 
     OC_SERIALIZABLE_FUNC(ShaderNode, lhs_, rhs_)

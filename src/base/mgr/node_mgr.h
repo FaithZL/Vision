@@ -35,6 +35,6 @@ public:
 //        return ret;
 //    }
 //    [[nodiscard]] SP<ShaderNode> load_shader_node(const ShaderNodeDesc &desc);
-    [[nodiscard]] Slot create_slot(const SlotDesc &desc);
+//    [[nodiscard]] Slot create_slot(const SlotDesc &desc);
 };
 }// namespace vision

@@ -59,6 +59,11 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
+    [[nodiscard]] static Slot create_slot(const SlotDesc &desc) {
+        SP<ShaderNode> shader_node = Node::load<ShaderNode>(desc.node);
+        return Slot(shader_node, desc.channels);
+    }
+
     explicit Slot(string attr_name = "") : attr_name_(std::move(attr_name)) {}
     void set(const Slot &other) noexcept {
         string old_name = attr_name_;

@@ -24,8 +24,8 @@ void NodeMgr::destroy_instance() noexcept {
     }
 }
 
-Slot NodeMgr::create_slot(const SlotDesc &desc) {
-    SP<ShaderNode> shader_node = Node::load<ShaderNode>(desc.node);
-    return Slot(shader_node, desc.channels);
-}
+//Slot NodeMgr::create_slot(const SlotDesc &desc) {
+//    SP<ShaderNode> shader_node = Node::load<ShaderNode>(desc.node);
+//    return Slot(shader_node, desc.channels);
+//}
 }// namespace vision
