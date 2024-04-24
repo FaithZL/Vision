@@ -29,14 +29,14 @@ public:
     using Wrapper = shared_ptr<Node>;
 
 protected:
-    string _name;
+    string name_;
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
 
 public:
     Node() = default;
-    explicit Node(const NodeDesc &desc) : _name(desc.name) {}
+    explicit Node(const NodeDesc &desc) : name_(desc.name) {}
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static fs::path scene_path() noexcept;
@@ -60,8 +60,8 @@ public:
         return ret;
     }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] string name() const noexcept { return _name; }
-    void set_name(const string &name) noexcept { _name = name; }
+    [[nodiscard]] string name() const noexcept { return name_; }
+    void set_name(const string &name) noexcept { name_ = name; }
     ~Node() override = default;
 };
 

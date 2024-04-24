@@ -39,7 +39,7 @@ public:
     }
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        widgets->text(_name.c_str());
+        widgets->text(name_.c_str());
         widgets->same_line();
         widgets->button_click("reload", [&] {
             reload(widgets);

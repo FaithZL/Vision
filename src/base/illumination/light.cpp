@@ -14,7 +14,7 @@ Light::Light(const LightDesc &desc, LightType light_type)
 }
 
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
-    string label = format("{} {} light: {}", index_, impl_type().data(), _name.c_str());
+    string label = format("{} {} light: {}", index_, impl_type().data(), name_.c_str());
     bool open = widgets->use_tree(label, [&] {
         changed_ |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(switch_.hv())));
         changed_ |= widgets->input_float_limit("scale", &scale_.hv(), 0, 100000, 0.1, 2);

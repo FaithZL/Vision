@@ -48,7 +48,7 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, lhs_, rhs_)
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree(_name, [&] {
+        bool ret = widgets->use_tree(name_, [&] {
             widgets->text("type:%s", impl_type().data());
             lhs_.render_UI(widgets);
             rhs_.render_UI(widgets);
