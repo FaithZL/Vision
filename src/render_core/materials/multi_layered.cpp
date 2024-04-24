@@ -22,9 +22,9 @@ private:
 public:
     explicit MultiLayeredMaterial(const MaterialDesc &desc)
         : Material(desc),
-          thickness_(scene().create_slot(desc.slot("thickness_", 1.f, Number))),
-          bottom_(scene().load<Material>(*desc.mat0)),
-          top_(scene().load<Material>(*desc.mat1)) {}
+          thickness_(Slot::create_slot(desc.slot("thickness_", 1.f, Number))),
+          bottom_(Node::load<Material>(*desc.mat0)),
+          top_(Node::load<Material>(*desc.mat1)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         bottom_->prepare();

@@ -21,7 +21,7 @@ public:
     }
 
     void init_postprocessor(const DenoiserDesc &desc) override {
-        postprocessor_.set_denoiser(scene_.load<Denoiser>(desc));
+        postprocessor_.set_denoiser(Node::load<Denoiser>(desc));
         postprocessor_.set_tone_mapper(scene_.camera()->film()->tone_mapper());
     }
 

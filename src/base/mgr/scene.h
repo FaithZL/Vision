@@ -74,19 +74,15 @@ public:
     void tidy_up_materials() noexcept;
     void tidy_up_mediums() noexcept;
     void mark_selected(Hit hit) noexcept;
-    [[nodiscard]] Slot create_slot(const SlotDesc &desc);
     [[nodiscard]] SP<Material> obtain_black_body() noexcept;
-    template<typename T, typename desc_ty>
-    [[nodiscard]] SP<T> load(const desc_ty &desc) {
-        return Node::load<T>(desc);
-    }
+
     [[nodiscard]] uint light_num() const noexcept { return light_sampler_->light_num(); }
     void prepare_lights() noexcept;
-    [[nodiscard]] SP<Warper> load_warper() noexcept { return load<Warper>(warper_desc_); }
+    [[nodiscard]] SP<Warper> load_warper() noexcept { return Node::load<Warper>(warper_desc_); }
     [[nodiscard]] SP<Warper2D> load_warper2d() noexcept {
         WarperDesc warper_desc = warper_desc_;
         warper_desc.sub_type += "2d";
-        return load<Warper2D>(warper_desc);
+        return Node::load<Warper2D>(warper_desc);
     }
     [[nodiscard]] bool has_medium() const noexcept { return !mediums_.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);

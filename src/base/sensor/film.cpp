@@ -9,7 +9,7 @@ namespace vision {
 
 Film::Film(const vision::FilmDesc &desc)
     : Node(desc),
-      tone_mapper_(scene().load<ToneMapper>(desc.tone_mapper)),
+      tone_mapper_(Node::load<ToneMapper>(desc.tone_mapper)),
       resolution_(desc["resolution"].as_uint2(make_uint2(1280, 720))),
       screen_window_(make_float2(-1.f), make_float2(1.f)),
       accumulation_(desc["accumulation"].as_uint(1)){

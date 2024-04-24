@@ -98,10 +98,10 @@ public:
     }
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc) {
-        color_.set(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo)));
+        color_.set(Slot::create_slot(desc.slot("color", make_float3(0.5f), Albedo)));
         init_slot_cursor(&color_, 2);
         if (desc.has_attr("sigma")) {
-            sigma_.set(scene().create_slot(desc.slot("sigma", 1.f, Number)));
+            sigma_.set(Slot::create_slot(desc.slot("sigma", 1.f, Number)));
         }
     }
     VS_MAKE_PLUGIN_NAME_FUNC

@@ -19,15 +19,15 @@ void Scene::init(const SceneDesc &scene_desc) {
     render_setting_ = scene_desc.render_setting;
     materials().set_mode(render_setting_.polymorphic_mode);
     OC_INFO_FORMAT("polymorphic mode is {}", materials().mode());
-    light_sampler_ = load<LightSampler>(scene_desc.light_sampler_desc);
+    light_sampler_ = Node::load<LightSampler>(scene_desc.light_sampler_desc);
     light_sampler_->set_mode(render_setting_.polymorphic_mode);
-    spectrum_ = load<Spectrum>(scene_desc.spectrum_desc);
+    spectrum_ = Node::load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
     load_mediums(scene_desc.mediums_desc);
-    camera_ = load<Camera>(scene_desc.sensor_desc);
+    camera_ = Node::load<Camera>(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
-    integrator_ = load<Integrator>(scene_desc.integrator_desc);
-    sampler_ = load<Sampler>(scene_desc.sampler_desc);
+    integrator_ = Node::load<Integrator>(scene_desc.integrator_desc);
+    sampler_ = Node::load<Sampler>(scene_desc.sampler_desc);
     min_radius_ = scene_desc.render_setting.min_world_radius;
     Interaction::set_ray_offset_factor(scene_desc.render_setting.ray_offset_factor);
 }
@@ -63,15 +63,11 @@ void Scene::mark_selected(ocarina::Hit hit) noexcept {
     pipeline()->set_cur_node(instance);
 }
 
-Slot Scene::create_slot(const SlotDesc &desc) {
-    return Slot::create_slot(desc);
-}
-
 SP<Material> Scene::obtain_black_body() noexcept {
     if (!black_body_) {
         MaterialDesc md;
         md.sub_type = "black_body";
-        black_body_ = load<Material>(md);
+        black_body_ = Node::load<Material>(md);
         materials().push_back(black_body_);
     }
     return black_body_;
@@ -108,7 +104,7 @@ void Scene::add_light(SP<vision::Light> light) noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        add_material(ocarina::move(load<Material>(desc)));
+        add_material(ocarina::move(Node::load<Material>(desc)));
     }
 }
 
@@ -126,7 +122,7 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
 
         if (desc.emission.valid()) {
             desc.emission.set_value("inst_id", instances_.size());
-            SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+            SP<IAreaLight> light = Node::load<IAreaLight>(desc.emission);
             instance.set_emission(light);
             light->set_instance(&instance);
         }
@@ -155,7 +151,7 @@ void Scene::clear_shapes() noexcept {
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
-        SP<ShapeGroup> group = load<ShapeGroup>(desc);
+        SP<ShapeGroup> group = Node::load<ShapeGroup>(desc);
         add_shape(group, desc);
     }
 }
@@ -186,7 +182,7 @@ void Scene::load_mediums(const MediumsDesc &md) {
     global_medium_.name = md.global;
     for (uint i = 0; i < md.mediums.size(); ++i) {
         const MediumDesc &desc = md.mediums[i];
-        auto medium = load<Medium>(desc);
+        auto medium = Node::load<Medium>(desc);
         medium->set_index(i);
         mediums_.push_back(medium);
     }

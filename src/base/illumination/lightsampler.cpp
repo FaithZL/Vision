@@ -12,7 +12,7 @@ LightSampler::LightSampler(const LightSamplerDesc &desc)
       env_separate_(desc["env_separate"].as_bool(false)),
       env_prob_(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
-        SP<Light> light = scene().load<Light>(light_desc);
+        SP<Light> light = Node::load<Light>(light_desc);
         if (light->match(LightType::Area)) {
             SP<IAreaLight> emission = std::dynamic_pointer_cast<IAreaLight>(light);
             emission->instance()->set_emission(emission);

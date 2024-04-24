@@ -55,8 +55,8 @@ public:
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        color_.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        roughness_.set(scene().create_slot(desc.slot("roughness", make_float2(0.0001f))));
+        color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.0001f))));
         init_slot_cursor(&color_, 2);
     }
     VS_MAKE_PLUGIN_NAME_FUNC

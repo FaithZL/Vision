@@ -10,7 +10,7 @@ namespace vision {
 Light::Light(const LightDesc &desc, LightType light_type)
     : Node(desc), type_(light_type),
       scale_(desc["scale"].as_float(1.f)) {
-    color_.set(scene().create_slot(desc.color));
+    color_.set(Slot::create_slot(desc.color));
 }
 
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {

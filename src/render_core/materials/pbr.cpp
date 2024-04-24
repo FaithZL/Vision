@@ -50,7 +50,7 @@ protected:
 public:
     explicit PbrMaterial(const MaterialDesc &desc)
         : Material(desc) {
-        color_.set(scene().create_slot(desc.slot("color", make_float3(0.5f), Albedo)));
+        color_.set(Slot::create_slot(desc.slot("color", make_float3(0.5f), Albedo)));
         init_slot_cursor(&color_, 1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC

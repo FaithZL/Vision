@@ -196,8 +196,8 @@ public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        color_.set(scene().create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        roughness_.set(scene().create_slot(desc.slot("roughness", make_float2(0.01f))));
+        color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
+        roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.01f))));
         init_ior(desc);
         init_slot_cursor(&color_, 3);
     }
@@ -216,7 +216,7 @@ public:
             float ior = (*ior_curve(name))(lambda);
             eta_slot = desc.slot("", ior);
         }
-        ior_ = scene().create_slot(eta_slot);
+        ior_ = Slot::create_slot(eta_slot);
         ior_->set_name("ior");
     }
 

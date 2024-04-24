@@ -20,7 +20,7 @@ void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
 }
 
 void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
-    postprocessor_.set_denoiser(scene_.load<Denoiser>(desc));
+    postprocessor_.set_denoiser(Node::load<Denoiser>(desc));
 }
 
 void BakePipeline::prepare() noexcept {
