@@ -122,7 +122,7 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
 
         if (desc.emission.valid()) {
             desc.emission.set_value("inst_id", instances_.size());
-            SP<IAreaLight> light = Node::load<IAreaLight>(desc.emission);
+            SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
             instance.set_emission(light);
             light->set_instance(&instance);
         }

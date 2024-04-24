@@ -96,7 +96,7 @@ public:
     template<typename T = Light>
     SP<T> load_light(const LightDesc &desc) {
         OC_ASSERT(light_sampler_ != nullptr);
-        auto ret = load<T>(desc);
+        auto ret = Node::load<T>(desc);
         light_sampler_->add_light(ret);
         return ret;
     }
