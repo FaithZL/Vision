@@ -43,7 +43,7 @@ void BakePipeline::preprocess() noexcept {
     for_each_need_bake([&](ShapeInstance &item) {
         baked_shapes_.emplace_back(&item);
     });
-    SP<UVUnwrapper> uv_unwrapper = Global::node_mgr().load<UVUnwrapper>(_desc.unwrapper_desc);
+    SP<UVUnwrapper> uv_unwrapper = Node::load<UVUnwrapper>(_desc.unwrapper_desc);
 
     // uv unwrap
     VS_BAKER_STATS(baker_stats_, uv_unwrap)
@@ -100,7 +100,7 @@ void BakePipeline::compile_displayer() noexcept {
 }
 
 void BakePipeline::bake_all() noexcept {
-    Baker baker{baker_stats_, Global::node_mgr().load<Rasterizer>(_desc.rasterizer_desc)};
+    Baker baker{baker_stats_, Node::load<Rasterizer>(_desc.rasterizer_desc)};
     baker.allocate();
     baker.compile();
     baker_stats_.set_model_num(baked_shapes_.size());

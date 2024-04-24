@@ -29,7 +29,7 @@ public:
     [[nodiscard]] SP<Pipeline> read_file(const fs::path &fn) override {
         PipelineDesc desc;
         desc.sub_type = "fixed";
-        SP<Pipeline> ret = Global::node_mgr().load<Pipeline>(desc);
+        SP<Pipeline> ret = Node::load<Pipeline>(desc);
         Global::instance().set_pipeline(ret.get());
         SceneDesc scene_desc;
         scene_desc.init(DataWrap::object());

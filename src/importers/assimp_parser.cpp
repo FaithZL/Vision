@@ -42,7 +42,7 @@ SP<vision::Light> AssimpParser::point_light(aiLight *ai_light) noexcept {
     ps["param"] = param;
     ps["type"] = "point";
     desc.init(ps);
-    auto ret = Global::node_mgr().load<Light>(desc);
+    auto ret = Node::load<Light>(desc);
     return ret;
 }
 
@@ -72,7 +72,7 @@ SP<vision::Light> AssimpParser::spot_light(aiLight *ai_light) noexcept {
     ps["param"] = param;
     ps["type"] = "spot";
     desc.init(ps);
-    auto ret = Global::node_mgr().load<Light>(desc);
+    auto ret = Node::load<Light>(desc);
     return ret;
 }
 
@@ -94,7 +94,7 @@ SP<vision::Light> AssimpParser::directional_light(aiLight *ai_light) noexcept {
     ps["param"] = param;
     ps["type"] = "directional";
     desc.init(ps);
-    auto ret = Global::node_mgr().load<Light>(desc);
+    auto ret = Node::load<Light>(desc);
     return ret;
 }
 
@@ -256,7 +256,7 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
         SP<Material> material;
         if (ai_mesh->mMaterialIndex >= 0 && parse_material) {
             const MaterialDesc &desc = materials[ai_mesh->mMaterialIndex];
-            material = Global::node_mgr().load<Material>(desc);
+            material = Node::load<Material>(desc);
             scene.materials().push_back(material);
         }
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {

@@ -3,6 +3,7 @@
 //
 
 #include "node_mgr.h"
+#include "base/node.h"
 #include "pipeline.h"
 
 namespace vision {
@@ -23,13 +24,8 @@ void NodeMgr::destroy_instance() noexcept {
     }
 }
 
-SP<ShaderNode> NodeMgr::load_shader_node(const ShaderNodeDesc &desc) {
-    auto ret = load<ShaderNode>(desc);
-    return ret;
-}
-
 Slot NodeMgr::create_slot(const SlotDesc &desc) {
-    SP<ShaderNode> shader_node = load_shader_node(desc.node);
+    SP<ShaderNode> shader_node = Node::load<ShaderNode>(desc.node);
     return Slot(shader_node, desc.channels);
 }
 }// namespace vision

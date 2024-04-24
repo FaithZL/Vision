@@ -23,7 +23,7 @@ public:
         : IlluminationIntegrator(desc),
           direct_(this, desc["direct"]),
           indirect_(this, desc["indirect"]),
-          denoiser_(NodeMgr::instance().load<Denoiser>(desc.denoiser_desc)) {
+          denoiser_(Node::load<Denoiser>(desc.denoiser_desc)) {
         max_depth_ = max_depth_.hv() - 1;
     }
 

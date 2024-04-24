@@ -78,7 +78,7 @@ public:
     [[nodiscard]] SP<Material> obtain_black_body() noexcept;
     template<typename T, typename desc_ty>
     [[nodiscard]] SP<T> load(const desc_ty &desc) {
-        return Global::node_mgr().load<T>(desc);
+        return Node::load<T>(desc);
     }
     [[nodiscard]] uint light_num() const noexcept { return light_sampler_->light_num(); }
     void prepare_lights() noexcept;

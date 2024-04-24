@@ -52,7 +52,7 @@ public:
         sd.set_value("width", desc["width"].as_float(1));
         sd.set_value("height", desc["height"].as_float(1));
         sd.o2w = desc.o2w;
-        SP<ShapeGroup> shape = Global::node_mgr().load<ShapeGroup>(sd);
+        SP<ShapeGroup> shape = Node::load<ShapeGroup>(sd);
         scene().groups().push_back(shape);
         inst_idx_ = scene().instances().size();
         shape->for_each([&](ShapeInstance &instance, uint i) {
