@@ -74,7 +74,7 @@ void App::on_key_event(int key, int action) noexcept {
         return;
     }
     double dt = window->dt();
-    Camera *camera = pipeline().scene().camera().get();
+    Camera camera = pipeline().scene().camera();
     float3 forward = camera->forward();
     float3 up = camera->up();
     float3 right = camera->right();

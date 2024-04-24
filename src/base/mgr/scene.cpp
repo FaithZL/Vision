@@ -24,7 +24,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     spectrum_ = Node::load<Spectrum>(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
     load_mediums(scene_desc.mediums_desc);
-    camera_ = Node::load<Camera>(scene_desc.sensor_desc);
+    camera_.init(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
     integrator_ = Node::load<Integrator>(scene_desc.integrator_desc);
     sampler_ = Node::load<Sampler>(scene_desc.sampler_desc);

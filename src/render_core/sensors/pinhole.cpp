@@ -6,10 +6,10 @@
 
 namespace vision {
 
-class PinholeCamera : public Camera {
+class PinholeCamera : public CameraImpl {
 public:
     explicit PinholeCamera(const SensorDesc &desc)
-        : Camera(desc) {}
+        : CameraImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
 };
 

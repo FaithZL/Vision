@@ -30,7 +30,7 @@ using namespace ocarina;
 class Scene : public GUI {
 private:
     Box3f aabb_;
-    SP<Camera> camera_{nullptr};
+    Camera camera_{};
     SP<Sampler> sampler_{nullptr};
     SP<Integrator> integrator_{nullptr};
     SP<LightSampler> light_sampler_{nullptr};

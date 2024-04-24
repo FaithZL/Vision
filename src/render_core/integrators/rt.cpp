@@ -54,7 +54,7 @@ public:
         direct_.compile();
         indirect_.compile();
 
-        Camera *camera = scene().camera().get();
+        CameraImpl *camera = scene().camera().get();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
             camera->load_data();
             Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz() * di;

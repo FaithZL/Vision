@@ -8,7 +8,7 @@
 
 namespace vision {
 
-class Camera : public SensorImpl {
+class CameraImpl : public SensorImpl {
 public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
@@ -39,7 +39,7 @@ protected:
     [[nodiscard]] virtual RayVar generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:
-    explicit Camera(const SensorDesc &desc);
+    explicit CameraImpl(const SensorDesc &desc);
     OC_SERIALIZABLE_FUNC(SensorImpl, tan_fov_y_over_2_, c2w_, prev_w2c_,
                          raster_to_camera_, prev_c2r_, prev_pos_)
     void init(const SensorDesc &desc) noexcept;
@@ -103,5 +103,7 @@ public:
     [[nodiscard]] float3 right() const noexcept;
     [[nodiscard]] RayState generate_ray(const SensorSample &ss) const noexcept override;
 };
+
+using Camera = TObject<CameraImpl>;
 
 }// namespace vision

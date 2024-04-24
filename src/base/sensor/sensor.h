@@ -46,7 +46,7 @@ public:
     [[nodiscard]] auto& filter() const noexcept { return filter_; }
     [[nodiscard]] auto film() noexcept { return film_.get(); }
     [[nodiscard]] auto film() const noexcept { return film_.get(); }
-    [[nodiscard]] uint2 resolution() noexcept { return film_->resolution(); }
+    [[nodiscard]] uint2 resolution() const noexcept { return film_->resolution(); }
     virtual void set_resolution(uint2 res) noexcept { film_->set_resolution(res); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };

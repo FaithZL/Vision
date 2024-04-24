@@ -45,7 +45,7 @@ public:
     }
 
     [[nodiscard]] static Integrator *integrator() noexcept { return scene().integrator(); }
-    [[nodiscard]] static Camera *camera() noexcept { return scene().camera().get(); }
+    [[nodiscard]] static CameraImpl *camera() noexcept { return scene().camera().get(); }
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 };
 

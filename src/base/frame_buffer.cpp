@@ -59,7 +59,7 @@ BufferView<PixelGeometry> FrameBuffer::cur_gbuffer(ocarina::uint frame_index) co
     return pipeline()->buffer_view<PixelGeometry>(cur_gbuffer_index(frame_index));
 }
 
-Float2 FrameBuffer::compute_motion_vec(const Camera *camera, const Float2 &p_film,
+Float2 FrameBuffer::compute_motion_vec(const CameraImpl *camera, const Float2 &p_film,
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
