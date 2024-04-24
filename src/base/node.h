@@ -50,6 +50,15 @@ public:
     [[nodiscard]] string plugin_name() const noexcept {
         return ocarina::format("vision-{}-{}", category().data(), impl_type().data());
     }
+    template<typename impl_t, typename Desc>
+    [[nodiscard]] static SP<impl_t> load(const Desc &desc) {
+        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
+        auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
+        auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+        SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(desc)), deleter);
+        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
+        return ret;
+    }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] string name() const noexcept { return _name; }
     void set_name(const string &name) noexcept { _name = name; }
@@ -62,23 +71,14 @@ public:
     using Impl = impl_t;
     using Desc = desc_t;
 
-    [[nodiscard]] static SP<impl_t> load(const Desc &desc) {
-        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
-        auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-        auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-        SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(desc)), deleter);
-        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
-        return ret;
-    }
-
-private:
+protected:
     SP<impl_t> impl_;
 
 public:
     TObject() = default;
-    explicit TObject(const desc_t &desc) : impl_(load(desc)) {}
+    explicit TObject(const desc_t &desc) : impl_(Node::load<Impl>(desc)) {}
     void init(const desc_t &desc) noexcept {
-        impl_ = load<Impl>(desc);
+        impl_ = Node::load<Impl>(desc);
     }
     OC_MAKE_MEMBER_GETTER(impl, &)
     [[nodiscard]] const Impl *get() const noexcept { return impl_.get(); }
