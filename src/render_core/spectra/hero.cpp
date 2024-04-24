@@ -218,7 +218,7 @@ public:
 //        "dimension": 3
 //    }
 //}
-class HeroWavelengthSpectrum : public Spectrum {
+class HeroWavelengthSpectrum : public SpectrumImpl {
 private:
     uint dimension_{};
     SPD illuminant_d65_;
@@ -229,7 +229,7 @@ private:
 
 public:
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc), dimension_(desc["dimension"].as_uint(3u)),
+        : SpectrumImpl(desc), dimension_(desc["dimension"].as_uint(3u)),
           rgb_to_spectrum_table_(sRGBToSpectrumTable_Data, pipeline()),
           illuminant_d65_(SPD::create_cie_d65(pipeline())),
           cie_x_(SPD::create_cie_x(pipeline())),

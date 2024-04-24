@@ -67,7 +67,7 @@ FrameBuffer &Context::frame_buffer() noexcept {
     return *pipeline()->frame_buffer();
 }
 
-Spectrum &Context::spectrum() noexcept {
+SpectrumImpl &Context::spectrum() noexcept {
     return *scene().spectrum();
 }
 

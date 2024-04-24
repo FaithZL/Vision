@@ -43,7 +43,7 @@ public:
     }
     [[nodiscard]] Bool secondary_valid() const noexcept;
     void invalidation_secondary() const noexcept;
-    void check_dispersive(const Spectrum &spectrum, const MaterialEvaluator &bsdf) const noexcept;
+    void check_dispersive(const SpectrumImpl &spectrum, const MaterialEvaluator &bsdf) const noexcept;
 };
 
 class SampledSpectrum {
@@ -230,12 +230,12 @@ struct ColorDecode {
 class Sampler;
 class MaterialEvaluator;
 
-class Spectrum : public Node {
+class SpectrumImpl : public Node {
 public:
     using Desc = SpectrumDesc;
 
 public:
-    explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
+    explicit SpectrumImpl(const SpectrumDesc &desc) : Node(desc) {}
     [[nodiscard]] SampledSpectrum zero() const noexcept { return SampledSpectrum{dimension(), 0.f}; }
     [[nodiscard]] SampledSpectrum one() const noexcept { return SampledSpectrum{dimension(), 1.f}; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -254,5 +254,7 @@ public:
     [[nodiscard]] virtual ColorDecode decode_to_illumination(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] virtual ColorDecode decode_to_unbound_spectrum(Float3 rgb, const SampledWavelengths &swl) const noexcept = 0;
 };
+
+using Spectrum = TObject<SpectrumImpl>;
 
 }// namespace vision

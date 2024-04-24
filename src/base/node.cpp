@@ -26,7 +26,7 @@ fs::path Node::scene_path() noexcept {
     return Global::instance().scene_path();
 }
 
-Spectrum &Node::spectrum() noexcept {
+SpectrumImpl &Node::spectrum() noexcept {
     return *scene().spectrum();
 }
 

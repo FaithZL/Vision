@@ -84,7 +84,7 @@ GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
 }
 
 void ReSTIRGI::compile_initial_samples() noexcept {
-    Spectrum &spectrum = pipeline()->spectrum();
+    SpectrumImpl &spectrum = pipeline()->spectrum();
     Camera &camera = scene().camera();
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
@@ -156,7 +156,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
 }
 
 void ReSTIRGI::compile_temporal_reuse() noexcept {
-    Spectrum &spectrum = pipeline()->spectrum();
+    SpectrumImpl &spectrum = pipeline()->spectrum();
     Camera &camera = scene().camera();
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
@@ -256,7 +256,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     Camera &camera = scene().camera();
     Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = pipeline()->spectrum();
+    SpectrumImpl &spectrum = pipeline()->spectrum();
 
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         sampler()->try_load_data();

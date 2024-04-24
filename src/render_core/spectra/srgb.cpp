@@ -7,10 +7,10 @@
 
 namespace vision {
 
-class SRGBSpectrum : public Spectrum {
+class SRGBSpectrum : public SpectrumImpl {
 public:
     explicit SRGBSpectrum(const SpectrumDesc &desc)
-        : Spectrum(desc) {}
+        : SpectrumImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
         SampledWavelengths swl{dimension()};

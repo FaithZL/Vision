@@ -17,7 +17,7 @@ class Device;
 namespace vision {
 
 class Pipeline;
-class Spectrum;
+class SpectrumImpl;
 class FrameBuffer;
 
 using namespace ocarina;
@@ -40,7 +40,7 @@ public:
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static fs::path scene_path() noexcept;
-    [[nodiscard]] static Spectrum &spectrum() noexcept;
+    [[nodiscard]] static SpectrumImpl &spectrum() noexcept;
     [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
     [[nodiscard]] static Device &device() noexcept;
     virtual void prepare() noexcept {}

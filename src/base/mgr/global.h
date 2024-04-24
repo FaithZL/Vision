@@ -10,7 +10,7 @@
 
 namespace vision {
 class Pipeline;
-class Spectrum;
+class SpectrumImpl;
 class Global {
 private:
     Global() = default;
@@ -57,7 +57,7 @@ public:
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
-    [[nodiscard]] static Spectrum &spectrum() noexcept;
+    [[nodiscard]] static SpectrumImpl &spectrum() noexcept;
 };
 
 }// namespace vision

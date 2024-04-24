@@ -55,7 +55,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
                              BSDFSample *bs, Float *light_pdf_point, HitBSDFVar *hit_bsdf) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = *scene().spectrum();
+    SpectrumImpl &spectrum = *scene().spectrum();
     const SampledWavelengths &swl = sampled_wavelengths();
     const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
@@ -125,7 +125,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
 SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, const DIRSVSample &sample,
                              LightSample *output_ls, Float *bsdf_pdf_point) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = *scene().spectrum();
+    SpectrumImpl &spectrum = *scene().spectrum();
     const SampledWavelengths &swl = sampled_wavelengths();
     SampledSpectrum f{swl.dimension()};
     LightSample ls{swl.dimension()};
@@ -164,7 +164,7 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
                           const Var<Param> &param) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
     Sampler *sampler = scene().sampler();
-    Spectrum &spectrum = *scene().spectrum();
+    SpectrumImpl &spectrum = *scene().spectrum();
     comment("RIS start");
     Uint M_light = param.M_light;
     Uint M_bsdf = param.M_bsdf;
@@ -420,7 +420,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
     Camera &camera = scene().camera();
-    Spectrum &spectrum = rp->spectrum();
+    SpectrumImpl &spectrum = rp->spectrum();
 
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         Uint2 pixel = dispatch_idx().xy();
@@ -482,7 +482,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
 
 Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = pipeline()->spectrum();
+    SpectrumImpl &spectrum = pipeline()->spectrum();
     const Camera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
     Float3 c_pos = camera->device_position();
@@ -533,7 +533,7 @@ void ReSTIRDI::compile_shader1() noexcept {
     Camera &camera = scene().camera();
     Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
-    Spectrum &spectrum = pipeline()->spectrum();
+    SpectrumImpl &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         initial(sampler(), frame_index, spectrum);
         Uint2 pixel = dispatch_idx().xy();

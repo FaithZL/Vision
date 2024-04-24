@@ -15,7 +15,7 @@
 
 namespace vision {
 using namespace ocarina;
-class Spectrum;
+class SpectrumImpl;
 
 class Pipeline : public Node {
 public:

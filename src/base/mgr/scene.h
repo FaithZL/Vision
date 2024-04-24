@@ -41,7 +41,7 @@ private:
     RenderSettingDesc render_setting_{};
     MaterialRegistry *material_registry_{&MaterialRegistry::instance()};
     MeshRegistry *mesh_registry_{&MeshRegistry::instance()};
-    SP<Spectrum> spectrum_{nullptr};
+    Spectrum spectrum_{};
     Wrap<Medium> global_medium_{};
     SP<Material> black_body_{};
     float min_radius_{};
@@ -56,10 +56,10 @@ public:
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
                          material_registry_, spectrum_, sampler_)
     MAKE_GETTER(integrator)
-    MAKE_GETTER(spectrum)
     MAKE_GETTER(sampler)
     MAKE_GETTER(light_sampler)
     OC_MAKE_MEMBER_GETTER_SETTER(camera, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(spectrum, &)
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)

@@ -29,7 +29,7 @@ void SampledWavelengths::invalidation_secondary() const noexcept {
     };
 }
 
-void SampledWavelengths::check_dispersive(const Spectrum &spectrum,
+void SampledWavelengths::check_dispersive(const SpectrumImpl &spectrum,
                                           const MaterialEvaluator &bsdf) const noexcept {
     if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
         $if(*dispersive) {
@@ -45,7 +45,7 @@ Uint SampledWavelengths::valid_dimension() const noexcept {
     return ret;
 }
 
-bool Spectrum::render_UI(ocarina::Widgets *widgets) noexcept {
+bool SpectrumImpl::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = ocarina::format("{} spectrum", impl_type().data());
     return widgets->use_folding_header(label, [&] {
         render_sub_UI(widgets);
