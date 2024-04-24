@@ -8,7 +8,7 @@
 
 namespace vision {
 
-class Camera : public Sensor {
+class Camera : public SensorImpl {
 public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
@@ -40,7 +40,7 @@ protected:
 
 public:
     explicit Camera(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(Sensor, tan_fov_y_over_2_, c2w_, prev_w2c_,
+    OC_SERIALIZABLE_FUNC(SensorImpl, tan_fov_y_over_2_, c2w_, prev_w2c_,
                          raster_to_camera_, prev_c2r_, prev_pos_)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;

@@ -9,7 +9,7 @@
 namespace vision {
 
 Camera::Camera(const SensorDesc &desc)
-    : Sensor(desc) {
+    : SensorImpl(desc) {
     init(desc);
     _update_resolution(film_->resolution());
 }
@@ -44,7 +44,7 @@ RayVar Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) cons
 }
 
 void Camera::set_resolution(ocarina::uint2 res) noexcept {
-    Sensor::set_resolution(res);
+    SensorImpl::set_resolution(res);
     _update_resolution(res);
 }
 
@@ -94,12 +94,12 @@ Float3 Camera::prev_raster_coord(Float3 pos) const noexcept {
 
 void Camera::update_device_data() noexcept {
     c2w_ = camera_to_world();
-    Sensor::update_data();
+    SensorImpl::update_data();
     upload_immediately();
 }
 
 void Camera::prepare() noexcept {
-    Sensor::prepare();
+    SensorImpl::prepare();
     prepare_data();
     upload_immediately();
     store_prev_data();

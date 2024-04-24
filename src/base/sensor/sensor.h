@@ -22,11 +22,11 @@ struct SensorSample {
     Float time;
     Float filter_weight{1.f};
     SensorSample() = default;
-    SensorSample(const Uint2 &pixel)
+    explicit SensorSample(const Uint2 &pixel)
         : p_film(pixel + 0.5f) {}
 };
 
-class Sensor : public Node, public SerialObject {
+class SensorImpl : public Node, public SerialObject {
 public:
     using Desc = SensorDesc;
 
@@ -37,7 +37,7 @@ protected:
     Serial<uint> medium_id_{InvalidUI32};
 
 public:
-    explicit Sensor(const SensorDesc &desc);
+    explicit SensorImpl(const SensorDesc &desc);
     OC_SERIALIZABLE_FUNC(SerialObject, filter_, film_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -50,5 +50,7 @@ public:
     virtual void set_resolution(uint2 res) noexcept { film_->set_resolution(res); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
+
+using Sensor = TObject<SensorImpl>;
 
 }// namespace vision
