@@ -84,7 +84,7 @@ GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
 }
 
 void ReSTIRGI::compile_initial_samples() noexcept {
-    SpectrumImpl &spectrum = pipeline()->spectrum();
+    Spectrum &spectrum = pipeline()->spectrum();
     Camera &camera = scene().camera();
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
@@ -110,7 +110,7 @@ ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GIRSVSample &sample
                                 MaterialEvalMode mode) const noexcept {
     return outline(
         [&] {
-            ScatterEval ret{spectrum().dimension()};
+            ScatterEval ret{spectrum()->dimension()};
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
                 Float3 wi = normalize(sample.sp->position() - it.pos);
@@ -156,7 +156,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
 }
 
 void ReSTIRGI::compile_temporal_reuse() noexcept {
-    SpectrumImpl &spectrum = pipeline()->spectrum();
+    Spectrum &spectrum = pipeline()->spectrum();
     Camera &camera = scene().camera();
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
@@ -256,7 +256,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     Camera &camera = scene().camera();
     Film *film = camera->film();
     LightSampler *light_sampler = scene().light_sampler();
-    SpectrumImpl &spectrum = pipeline()->spectrum();
+    Spectrum &spectrum = pipeline()->spectrum();
 
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         sampler()->try_load_data();

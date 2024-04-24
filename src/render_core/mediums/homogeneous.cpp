@@ -24,7 +24,7 @@ public:
           g_(desc.g["value"].as_float()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledSpectrum Tr(Float t, const SampledWavelengths &swl) const noexcept {
-        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(sigma_t_, swl).sample;
+        SampledSpectrum sigma_t = spectrum()->decode_to_unbound_spectrum(sigma_t_, swl).sample;
         return exp(-sigma_t * min(RayTMax, t));
     }
 
@@ -36,8 +36,8 @@ public:
     [[nodiscard]] SampledSpectrum sample(const RayVar &ray, Interaction &it,
                                          const SampledWavelengths &swl,
                                          Sampler *sampler) const noexcept override {
-        SampledSpectrum sigma_t = spectrum().decode_to_unbound_spectrum(sigma_t_, swl).sample;
-        SampledSpectrum sigma_s = spectrum().decode_to_unbound_spectrum(sigma_s_, swl).sample;
+        SampledSpectrum sigma_t = spectrum()->decode_to_unbound_spectrum(sigma_t_, swl).sample;
+        SampledSpectrum sigma_s = spectrum()->decode_to_unbound_spectrum(sigma_s_, swl).sample;
         Uint channel = min(cast<uint>(sampler->next_1d() * swl.dimension()), swl.dimension() - 1);
         Float dist = -log(1 - sampler->next_1d()) / sigma_t[channel];
         Float t = min(dist / length(ray->direction()), ray->t_max());

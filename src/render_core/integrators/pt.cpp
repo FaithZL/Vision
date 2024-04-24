@@ -47,7 +47,7 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
-            Float3 L = Li(rs, scatter_pdf, spectrum().one(), {}, render_env) * ss.filter_weight;
+            Float3 L = Li(rs, scatter_pdf, spectrum()->one(), {}, render_env) * ss.filter_weight;
             film()->rt_buffer().write(dispatch_id(), make_float4(L, 1.f));
         };
         shader_ = device().compile(kernel, "path tracing integrator");

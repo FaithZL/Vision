@@ -207,7 +207,7 @@ public:
         SlotDesc eta_slot;
         if (name.empty()) {
             eta_slot = desc.slot("ior", 1.5f);
-        } else if (spectrum().is_complete()) {
+        } else if (spectrum()->is_complete()) {
             eta_slot = SlotDesc(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
             auto lst = SPD::to_list(*ior_curve(name));
             eta_slot.node.set_value("value", lst);

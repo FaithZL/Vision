@@ -85,7 +85,7 @@ public:
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(desc["material_name"].as_string());
         SlotDesc eta_slot;
         SlotDesc k_slot;
-        if (spectrum().is_complete()) {
+        if (spectrum()->is_complete()) {
             eta_slot = SlotDesc(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
             eta_slot.node.set_value("value", complex_ior.eta);
             k_slot = SlotDesc(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);

@@ -43,7 +43,7 @@ public:
     }
     [[nodiscard]] Bool secondary_valid() const noexcept;
     void invalidation_secondary() const noexcept;
-    void check_dispersive(const SpectrumImpl &spectrum, const MaterialEvaluator &bsdf) const noexcept;
+    void check_dispersive(const Spectrum &spectrum, const MaterialEvaluator &bsdf) const noexcept;
 };
 
 class SampledSpectrum {

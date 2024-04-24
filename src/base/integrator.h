@@ -46,7 +46,7 @@ public:
         : Node(desc) {}
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, const HitContext &hc, const RenderEnv &render_env) const noexcept {
-        return Li(rs, scatter_pdf, spectrum().one(), hc, render_env);
+        return Li(rs, scatter_pdf, spectrum()->one(), hc, render_env);
     }
     virtual Float3 Li(RayState rs, Float scatter_pdf, SampledSpectrum throughput,
                       const HitContext &hc, const RenderEnv &render_env) const noexcept = 0;
@@ -88,7 +88,7 @@ public:
     }
     [[nodiscard]] Uint &frame_index() const noexcept { return *frame_index_; }
     [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *swl_; }
-    void initial(Sampler *sampler, const Uint &frame_index, const SpectrumImpl &spectrum) noexcept;
+    void initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
 };
 
 enum MISMode {

@@ -55,7 +55,7 @@ public:
                 $if(it.has_material()) {
                     scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                         MaterialEvaluator bsdf = material->create_evaluator(it, swl);
-                        albedo = spectrum().linear_srgb(bsdf.albedo(it.wo), swl);
+                        albedo = spectrum()->linear_srgb(bsdf.albedo(it.wo), swl);
                     });
                 };
                 $if(it.has_emission()) {
@@ -63,7 +63,7 @@ public:
                     p_ref.pos = rs.origin();
                     p_ref.ng = rs.direction();
                     LightEval eval = light_sampler->evaluate_hit_wi(p_ref, it, swl);
-                    emission = spectrum().linear_srgb(eval.L, swl);
+                    emission = spectrum()->linear_srgb(eval.L, swl);
                 };
                 motion_vec = compute_motion_vec(camera, ss.p_film, it.pos, true);
             };

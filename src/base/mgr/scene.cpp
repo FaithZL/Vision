@@ -83,7 +83,7 @@ void Scene::prepare() noexcept {
     camera_->update_device_data();
     prepare_lights();
     prepare_materials();
-    pipeline()->spectrum().prepare();
+    pipeline()->spectrum()->prepare();
 }
 
 void Scene::prepare_lights() noexcept {

@@ -18,13 +18,13 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
-void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const SpectrumImpl &spectrum) noexcept {
+void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     frame_index_.emplace(frame_index);
-    SampledWavelengths wavelengths{spectrum.dimension()};
+    SampledWavelengths wavelengths{spectrum->dimension()};
     sampler->temporary([&](Sampler *) {
         sampler->start(pixel, frame_index, -1);
-        wavelengths = spectrum.sample_wavelength(sampler);
+        wavelengths = spectrum->sample_wavelength(sampler);
     });
     swl_.emplace(wavelengths);
 }
@@ -81,13 +81,13 @@ SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3
                                                       const Float &scatter_pdf, const Uint &bounces,
                                                       const SampledWavelengths &swl) const noexcept {
     LightSampler *light_sampler = scene().light_sampler();
-    SampledSpectrum ret = spectrum().zero();
+    SampledSpectrum ret = spectrum()->zero();
     const Geometry &geometry = pipeline()->geometry();
     if (light_sampler->env_light()) {
         LightSampleContext p_ref;
         p_ref.pos = rs.origin();
         p_ref.ng = normal;
-        SampledSpectrum tr = spectrum().one();
+        SampledSpectrum tr = spectrum()->one();
         if (scene().has_medium()) {
             rs.ray.dir_max.w = scene().world_diameter();
             tr = geometry.Tr(scene(), swl, rs);
@@ -107,7 +107,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     LightSampler *light_sampler = scene().light_sampler();
 
     const SampledWavelengths &swl = render_env.sampled_wavelengths();
-    SampledSpectrum value = spectrum().zero();
+    SampledSpectrum value = spectrum()->zero();
     const Geometry &geometry = rp->geometry();
 
     HitVar hit;
@@ -199,7 +199,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
                 swl.check_dispersive(spectrum(), evaluator);
                 Ld = direct_light_mis(it, evaluator, light_sample, occluded,
                                       sampler, swl, bsdf_sample);
-                albedo = spectrum().linear_srgb(evaluator.albedo(it.wo), swl);
+                albedo = spectrum()->linear_srgb(evaluator.albedo(it.wo), swl);
             });
         };
 
@@ -242,7 +242,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             mis_bsdf(bounce, false);
         };
     }
-    return spectrum().linear_srgb(value, swl);
+    return spectrum()->linear_srgb(value, swl);
 }
 
 Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,

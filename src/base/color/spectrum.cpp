@@ -29,9 +29,9 @@ void SampledWavelengths::invalidation_secondary() const noexcept {
     };
 }
 
-void SampledWavelengths::check_dispersive(const SpectrumImpl &spectrum,
+void SampledWavelengths::check_dispersive(const Spectrum &spectrum,
                                           const MaterialEvaluator &bsdf) const noexcept {
-    if (auto dispersive = spectrum.is_dispersive(&bsdf)) {
+    if (auto dispersive = spectrum->is_dispersive(&bsdf)) {
         $if(*dispersive) {
             invalidation_secondary();
         };

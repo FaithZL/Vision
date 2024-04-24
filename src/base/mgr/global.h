@@ -47,6 +47,11 @@ public:
 
 class FrameBuffer;
 
+class SpectrumImpl;
+template<typename impl_t, typename desc_t>
+class TObject;
+using Spectrum = TObject<SpectrumImpl, SpectrumDesc>;
+
 class Context {
 protected:
     Context() = default;
@@ -57,7 +62,7 @@ public:
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
-    [[nodiscard]] static SpectrumImpl &spectrum() noexcept;
+    [[nodiscard]] static Spectrum &spectrum() noexcept;
 };
 
 }// namespace vision
