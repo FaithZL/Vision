@@ -6,6 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
+#include "sensor/camera.h"
 #include "scattering/interaction.h"
 
 namespace vision {
@@ -139,7 +140,7 @@ public:
                                                    BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_hit() const noexcept = 0;
-    [[nodiscard]] static Float2 compute_motion_vec(const CameraImpl *camera, const Float2 &p_film, const Float3 &cur_pos,
+    [[nodiscard]] static Float2 compute_motion_vec(const Camera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
     virtual void compile() noexcept = 0;
     template<typename T>

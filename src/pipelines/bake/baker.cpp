@@ -78,7 +78,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
 
 void Baker::_compile_bake() noexcept {
     Sampler *sampler = scene().sampler();
-    CameraImpl *camera = scene().camera().get();
+    Camera camera = scene().camera();
     Integrator *integrator = scene().integrator();
     Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
