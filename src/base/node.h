@@ -72,15 +72,16 @@ public:
     using Desc = desc_t;
 
 protected:
-    SP<impl_t> impl_;
+    SP<Impl> impl_;
 
 public:
     TObject() = default;
+    explicit TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
     explicit TObject(const desc_t &desc) : impl_(Node::load<Impl>(desc)) {}
-    void init(const desc_t &desc) noexcept {
-        impl_ = Node::load<Impl>(desc);
-    }
+    void init(const desc_t &desc) noexcept { impl_ = Node::load<Impl>(desc); }
+    void init(SP<Impl> sp) { impl_ = ocarina::move(sp); }
     OC_MAKE_MEMBER_GETTER(impl, &)
+    [[nodiscard]] operator bool() const noexcept { return impl_.get() != nullptr; }
     [[nodiscard]] const Impl *get() const noexcept { return impl_.get(); }
     [[nodiscard]] Impl *get() noexcept { return impl_.get(); }
     [[nodiscard]] const Impl *operator->() const noexcept { return impl_.get(); }

@@ -23,7 +23,7 @@ public:
     explicit Postprocessor(Pipeline *rp);
     void set_denoiser(SP<Denoiser> denoiser) noexcept { denoiser_ = denoiser; }
     void set_tone_mapper(const ToneMapper& tone_mapper) noexcept {
-        if (tone_mapper_.get() && tone_mapper->type_hash() == tone_mapper_->type_hash()) {
+        if (tone_mapper_ && tone_mapper->type_hash() == tone_mapper_->type_hash()) {
             return;
         }
         tone_mapper_ = tone_mapper;
