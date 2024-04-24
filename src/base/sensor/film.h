@@ -32,7 +32,7 @@ protected:
     uint2 resolution_;
     Box2f screen_window_;
     Serial<uint> accumulation_;
-    SP<ToneMapper> tone_mapper_{};
+    ToneMapper tone_mapper_{};
 
 public:
     explicit Film(const FilmDesc &desc);

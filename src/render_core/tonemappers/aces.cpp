@@ -6,10 +6,10 @@
 
 namespace vision {
 
-class ACESToneMapper : public ToneMapper {
+class ACESToneMapper : public ToneMapperImpl {
 public:
     explicit ACESToneMapper(const ToneMapperDesc &desc)
-        : ToneMapper(desc) {}
+        : ToneMapperImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float4 apply(const ocarina::Float4 &x) const noexcept override {
         float a = 2.51f;
