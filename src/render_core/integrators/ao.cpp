@@ -9,7 +9,7 @@
 
 namespace vision {
 
-class AmbientOcclusionIntegrator : public Integrator {
+class AmbientOcclusionIntegrator : public IntegratorImpl {
 private:
     Serial<float> distance_{1.f};
     Serial<uint> cos_sample_{true};
@@ -17,12 +17,12 @@ private:
 
 public:
     explicit AmbientOcclusionIntegrator(const IntegratorDesc &desc)
-        : Integrator(desc),
+        : IntegratorImpl(desc),
           distance_(desc["distance"].as_float(1.f)),
           cos_sample_(desc["cos_sample"].as_bool(true)),
           sample_num_(desc["sample_num"].as_uint(32u)) {}
 
-    OC_SERIALIZABLE_FUNC(Integrator, distance_, cos_sample_, sample_num_)
+    OC_SERIALIZABLE_FUNC(IntegratorImpl, distance_, cos_sample_, sample_num_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, SampledSpectrum throughput,
                             const HitContext &hc, const RenderEnv &render_env) const noexcept override {

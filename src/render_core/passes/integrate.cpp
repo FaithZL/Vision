@@ -44,7 +44,7 @@ public:
         return {{"radiance", "radiance", false, ResourceFormat::FLOAT4}};
     }
 
-    [[nodiscard]] static Integrator *integrator() noexcept { return scene().integrator(); }
+    [[nodiscard]] static Integrator &integrator() noexcept { return scene().integrator(); }
     [[nodiscard]] static CameraImpl *camera() noexcept { return scene().camera().get(); }
     [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
 };

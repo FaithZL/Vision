@@ -32,7 +32,7 @@ private:
     Box3f aabb_;
     Camera camera_{};
     SP<Sampler> sampler_{nullptr};
-    SP<Integrator> integrator_{nullptr};
+    Integrator integrator_{};
     LightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
     vector<ShapeInstance> instances_;
@@ -55,9 +55,9 @@ public:
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
                          material_registry_, spectrum_, sampler_)
-    MAKE_GETTER(integrator)
     MAKE_GETTER(sampler)
     OC_MAKE_MEMBER_GETTER_SETTER(light_sampler, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(integrator, &)
     OC_MAKE_MEMBER_GETTER_SETTER(camera, &)
     OC_MAKE_MEMBER_GETTER_SETTER(spectrum, &)
     OC_MAKE_MEMBER_GETTER(global_medium, )

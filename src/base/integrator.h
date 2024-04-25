@@ -30,7 +30,7 @@ class RenderEnv;
 //        "rr_threshold": 1
 //    }
 //}
-class Integrator : public Node, public SerialObject {
+class IntegratorImpl : public Node, public SerialObject {
 public:
     using Desc = IntegratorDesc;
     using signature = void(uint);
@@ -42,7 +42,7 @@ protected:
     ocarina::Shader<signature> shader_;
 
 public:
-    explicit Integrator(const IntegratorDesc &desc)
+    explicit IntegratorImpl(const IntegratorDesc &desc)
         : Node(desc) {}
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, const HitContext &hc, const RenderEnv &render_env) const noexcept {
@@ -69,6 +69,8 @@ public:
     virtual void invalidation() const noexcept;
     virtual void render() const noexcept {}
 };
+
+using Integrator = TObject<IntegratorImpl>;
 
 struct RenderEnv {
 private:
@@ -97,7 +99,7 @@ enum MISMode {
     EBSDF
 };
 
-class IlluminationIntegrator : public Integrator {
+class IlluminationIntegrator : public IntegratorImpl {
 protected:
     Serial<uint> max_depth_{};
     Serial<uint> min_depth_{};
@@ -111,9 +113,9 @@ protected:
 public:
     explicit IlluminationIntegrator(const IntegratorDesc &desc);
 
-    OC_SERIALIZABLE_FUNC(Integrator, max_depth_, min_depth_, rr_threshold_)
+    OC_SERIALIZABLE_FUNC(IntegratorImpl, max_depth_, min_depth_, rr_threshold_)
 
-    VS_MAKE_GUI_STATUS_FUNC(Integrator, denoiser_)
+    VS_MAKE_GUI_STATUS_FUNC(IntegratorImpl, denoiser_)
 
     OC_MAKE_MEMBER_GETTER(separate, )
 

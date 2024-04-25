@@ -36,11 +36,11 @@ protected:
     bool show_detail_{true};
 
     /// node for show detail
-    mutable GUI * cur_node_{nullptr};
+    mutable GUI *cur_node_{nullptr};
 
 protected:
-    [[nodiscard]] Integrator *integrator() noexcept { return scene().integrator(); }
-    [[nodiscard]] const Integrator *integrator() const noexcept { return scene().integrator(); }
+    [[nodiscard]] auto &integrator() noexcept { return scene().integrator(); }
+    [[nodiscard]] auto &integrator() const noexcept { return scene().integrator(); }
 
 public:
     OutputDesc output_desc;

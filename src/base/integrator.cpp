@@ -10,7 +10,7 @@
 
 namespace vision {
 
-void Integrator::invalidation() const noexcept {
+void IntegratorImpl::invalidation() const noexcept {
     Film *film = scene().film();
     if (film->enable_accumulation()) {
         frame_index_ = 0u;
@@ -30,7 +30,7 @@ void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const Spectru
 }
 
 IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &desc)
-    : Integrator(desc),
+    : IntegratorImpl(desc),
       max_depth_(desc["max_depth"].as_uint(16)),
       min_depth_(desc["min_depth"].as_uint(5)),
       rr_threshold_(desc["rr_threshold"].as_float(1.f)),
