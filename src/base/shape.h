@@ -82,13 +82,13 @@ OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
     void set_##attr(decltype(attr##_.impl()) val) noexcept { \
-        attr##_.init(std::move(val));                        \
+        attr##_.init(val);                                   \
     }                                                        \
     void set_##attr##_name(const string &name) noexcept {    \
         attr##_.name = name;                                 \
     }                                                        \
     void set_##attr(decltype(attr##_) val) noexcept {        \
-        attr##_ = std::move(val);                            \
+        attr##_ = ocarina::move(val);                        \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
         return attr##_.impl();                               \
