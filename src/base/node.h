@@ -78,6 +78,7 @@ protected:
     SP<Impl> impl_;
 
 public:
+    string name;
     TObject() = default;
     explicit TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
     explicit TObject(const desc_t &desc) : impl_(Node::load<Impl>(desc)) {}
@@ -98,12 +99,6 @@ public:
 #define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
     [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
-
-template<typename T>
-struct Wrap {
-    string name;
-    SP<T> object;
-};
 
 }// namespace vision
 

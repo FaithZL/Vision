@@ -190,7 +190,7 @@ void Scene::load_mediums(const MediumsDesc &md) {
         return medium->name() == global_medium_.name;
     });
     if (index != InvalidUI32) {
-        global_medium_.object = mediums_[index];
+        global_medium_.init(mediums_[index]);
     }
 }
 

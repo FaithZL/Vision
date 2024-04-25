@@ -81,20 +81,20 @@ public:
 OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
-    void set_##attr(decltype(attr##_.object) val) noexcept { \
-        attr##_.object = val;                                \
+    void set_##attr(decltype(attr##_.impl()) val) noexcept { \
+        attr##_.init(std::move(val));                        \
     }                                                        \
     void set_##attr##_name(const string &name) noexcept {    \
         attr##_.name = name;                                 \
     }                                                        \
     void set_##attr(decltype(attr##_) val) noexcept {        \
-        attr##_ = val;                                       \
+        attr##_ = std::move(val);                            \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
-        return attr##_.object;                               \
+        return attr##_.impl();                               \
     }                                                        \
     [[nodiscard]] auto attr() noexcept {                     \
-        return attr##_.object;                               \
+        return attr##_.impl();                               \
     }                                                        \
     [[nodiscard]] bool has_##attr() const noexcept {         \
         return bool(attr());                                 \
@@ -109,10 +109,10 @@ protected:
     InstanceHandle handle_;
     float factor_{};
     uint index_{};
-    Wrap<IAreaLight> emission_{};
-    Wrap<Material> material_{};
-    Wrap<Medium> inside_{};
-    Wrap<Medium> outside_{};
+    TObject<IAreaLight> emission_{};
+    TObject<Material> material_{};
+    TObject<Medium> inside_{};
+    TObject<Medium> outside_{};
     SP<Mesh> mesh_{};
     string name_;
 
@@ -159,8 +159,8 @@ private:
     vector<ShapeInstance> instances_;
 
 protected:
-    Wrap<IAreaLight> emission_{};
-    Wrap<Material> material_{};
+    TObject<IAreaLight> emission_{};
+    TObject<Material> material_{};
 
 public:
     ShapeGroup() = default;

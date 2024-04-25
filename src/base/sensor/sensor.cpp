@@ -27,8 +27,8 @@ SensorImpl::SensorImpl(const SensorDesc &desc)
         return medium_.name == medium->name();
     });
     if (iter != mediums.end()) {
-        medium_.object = *iter;
-        medium_id_ = medium_.object->index();
+        medium_.init(*iter);
+        medium_id_ = medium_->index();
     }
 }
 

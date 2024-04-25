@@ -42,7 +42,7 @@ private:
     MaterialRegistry *material_registry_{&MaterialRegistry::instance()};
     MeshRegistry *mesh_registry_{&MeshRegistry::instance()};
     Spectrum spectrum_{};
-    Wrap<Medium> global_medium_{};
+    TObject<Medium> global_medium_{};
     SP<Material> black_body_{};
     float min_radius_{};
     friend class Pipeline;

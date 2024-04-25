@@ -33,7 +33,7 @@ public:
 protected:
     Filter filter_{};
     SP<Film> film_{};
-    Wrap<Medium> medium_{};
+    TObject<Medium> medium_{};
     Serial<uint> medium_id_{InvalidUI32};
 
 public:
