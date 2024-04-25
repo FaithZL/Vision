@@ -122,7 +122,7 @@ public:
         Float val = f(wo, wi);
         return {{swl_->dimension(), val}, val, 0};
     }
-    [[nodiscard]] virtual PhaseSample sample(Float3 wo, SamplerImpl *sampler) const noexcept = 0;
+    [[nodiscard]] virtual PhaseSample sample(Float3 wo, Sampler &sampler) const noexcept = 0;
     [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;
 };
 
@@ -138,7 +138,7 @@ public:
         swl_ = &swl;
     }
     [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] PhaseSample sample(Float3 wo, SamplerImpl *sampler) const noexcept override;
+    [[nodiscard]] PhaseSample sample(Float3 wo, Sampler &sampler) const noexcept override;
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != g_; }
 };
 

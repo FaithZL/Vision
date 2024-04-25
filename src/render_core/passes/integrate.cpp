@@ -46,7 +46,7 @@ public:
 
     [[nodiscard]] static Integrator &integrator() noexcept { return scene().integrator(); }
     [[nodiscard]] static Camera &camera() noexcept { return scene().camera(); }
-    [[nodiscard]] static SamplerImpl *sampler() noexcept { return scene().sampler().get(); }
+    [[nodiscard]] static Sampler &sampler() noexcept { return scene().sampler(); }
 };
 
 }// namespace vision

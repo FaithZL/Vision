@@ -20,7 +20,7 @@ public:
         ret.pdf = 1.f;
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, SamplerImpl *sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler &sampler) const noexcept override {
         BSDFSample ret{swl_->dimension()};
         ret.eval.pdf = 1.f;
         /// Avoid sample discarding due to hemispherical check

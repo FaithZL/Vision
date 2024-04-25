@@ -172,7 +172,7 @@ LightSample LightSamplerImpl::sample_wi(const SampledLight &sampled_light, const
     return ls;
 }
 
-LightSample LightSamplerImpl::sample_wi(const LightSampleContext &lsc, SamplerImpl *sampler,
+LightSample LightSamplerImpl::sample_wi(const LightSampleContext &lsc, Sampler &sampler,
                                     const SampledWavelengths &swl) const noexcept {
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
@@ -180,7 +180,7 @@ LightSample LightSamplerImpl::sample_wi(const LightSampleContext &lsc, SamplerIm
     return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSurfacePoint LightSamplerImpl::sample_only(const LightSampleContext &lsc, SamplerImpl *sampler) const noexcept {
+LightSurfacePoint LightSamplerImpl::sample_only(const LightSampleContext &lsc, Sampler &sampler) const noexcept {
     LightSurfacePoint lsp;
     SampledLight sampled_light = select_light(lsc, sampler->next_1d());
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);

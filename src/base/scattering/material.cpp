@@ -18,7 +18,7 @@ ScatterEval MaterialEvaluator::evaluate_local(Float3 wo, Float3 wi,
 }
 
 BSDFSample MaterialEvaluator::sample_local(Float3 wo, Uint flag,
-                                           SamplerImpl *sampler) const noexcept {
+                                           Sampler &sampler) const noexcept {
     BSDFSample ret{swl->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->sample_local(wo, flag, sampler);
@@ -67,7 +67,7 @@ ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi,
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample(Float3 world_wo, SamplerImpl *sampler, const Uint &flag) const noexcept {
+BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler &sampler, const Uint &flag) const noexcept {
     Float3 wo = shading_frame.to_local(world_wo);
     BSDFSample ret = sample_local(wo, flag, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);

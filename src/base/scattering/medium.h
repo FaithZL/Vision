@@ -38,7 +38,7 @@ public:
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
                                Sampler &sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const RayVar &ray, Interaction &it,
-                                   const SampledWavelengths &swl, SamplerImpl *sampler) const noexcept = 0;
+                                   const SampledWavelengths &swl, Sampler &sampler) const noexcept = 0;
 };
 
 }// namespace vision

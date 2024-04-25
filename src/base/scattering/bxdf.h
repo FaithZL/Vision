@@ -59,7 +59,7 @@ public:
                                        MaterialEvalMode mode) const noexcept;
     [[nodiscard]] ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
                                             MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] virtual BSDFSample sample(Float3 wo, SamplerImpl *sampler, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return flags_; }
     [[nodiscard]] static bool match_F(MaterialEvalMode mode) noexcept {
@@ -110,7 +110,7 @@ public:
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] BSDFSample sample(Float3 wo, SamplerImpl *sampler, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] BSDFSample sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept override;
 };
 
 class MicrofacetTransmission : public BxDF {
@@ -128,7 +128,7 @@ public:
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] BSDFSample sample(Float3 wo, SamplerImpl *sampler, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] BSDFSample sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept override;
 };
 
 }// namespace vision

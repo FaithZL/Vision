@@ -89,11 +89,11 @@ public:
                                              Uint flag) const noexcept override {
         return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, SamplerImpl *sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler &sampler) const noexcept override {
         return bxdf_.sample(wo, sampler, fresnel_->clone());
     }
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
-                                             SamplerImpl *sampler) const noexcept override {
+                                             Sampler &sampler) const noexcept override {
         return bxdf_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
     }
 };
