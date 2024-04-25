@@ -7,7 +7,7 @@
 #include "base/sampler.h"
 
 namespace vision {
-class UniformLightSampler : public LightSampler {
+class UniformLightSampler : public LightSamplerImpl {
 protected:
     [[nodiscard]] Float PMF_(const LightSampleContext &lsc, const Uint &index) const noexcept override {
         if (env_separate_) {
@@ -17,7 +17,7 @@ protected:
     }
 
 public:
-    explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
+    explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSamplerImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledLight select_light_(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;

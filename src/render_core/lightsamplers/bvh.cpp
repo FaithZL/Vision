@@ -12,13 +12,13 @@ struct LightBVHNode {
 
 };
 
-class BVHLightSampler : public LightSampler {
+class BVHLightSampler : public LightSamplerImpl {
 public:
     explicit BVHLightSampler(const LightSamplerDesc &desc)
-        : LightSampler(desc) {}
+        : LightSamplerImpl(desc) {}
 
     void prepare() noexcept override {
-        LightSampler::prepare();
+        LightSamplerImpl::prepare();
         build_bvh();
     }
     VS_MAKE_PLUGIN_NAME_FUNC

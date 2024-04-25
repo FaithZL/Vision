@@ -255,7 +255,7 @@ Float3 ReSTIRGI::shading(indirect::GIReservoir rsv,
 void ReSTIRGI::compile_spatial_shading() noexcept {
     Camera &camera = scene().camera();
     Film *film = camera->film();
-    LightSampler *light_sampler = scene().light_sampler();
+    LightSamplerImpl *light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
 
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {

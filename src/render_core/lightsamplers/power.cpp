@@ -8,7 +8,7 @@
 #include "base/sampler.h"
 
 namespace vision {
-class PowerLightSampler : public LightSampler {
+class PowerLightSampler : public LightSamplerImpl {
 private:
     SP<Warper> warper_{};
 
@@ -19,7 +19,7 @@ protected:
 
 public:
     explicit PowerLightSampler(const LightSamplerDesc &desc)
-        : LightSampler(desc) {}
+        : LightSamplerImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledLight select_light_(const LightSampleContext &lsc, const Float &u) const noexcept override {
         SampledLight ret;
@@ -29,7 +29,7 @@ public:
     }
 
     void prepare() noexcept override {
-        LightSampler::prepare();
+        LightSamplerImpl::prepare();
         warper_ = scene().load_warper();
         vector<float> weights;
         if (env_separate_) {

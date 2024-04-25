@@ -27,7 +27,7 @@ public:
     void compile_compute_geom() noexcept {
         Camera &camera = scene().camera();
         Sampler *sampler = scene().sampler();
-        LightSampler *light_sampler = scene().light_sampler();
+        LightSamplerImpl *light_sampler = scene().light_sampler();
         Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer, BufferVar<float2> motion_vectors,
                             BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer) {
             RenderEnv render_env;

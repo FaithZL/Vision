@@ -33,7 +33,7 @@ private:
     Camera camera_{};
     SP<Sampler> sampler_{nullptr};
     SP<Integrator> integrator_{nullptr};
-    SP<LightSampler> light_sampler_{nullptr};
+    SP<LightSamplerImpl> light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
     vector<ShapeInstance> instances_;
     Polymorphic<SP<Medium>> mediums_;
