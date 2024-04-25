@@ -6,7 +6,7 @@
 
 namespace vision {
 
-class CPURasterizer : public Rasterizer {
+class CPURasterizer : public RasterizerImpl {
 private:
     uint4 *pixels_{};
     uint2 res_{};
@@ -23,7 +23,7 @@ private:
 
 public:
     explicit CPURasterizer(const RasterizerDesc &desc)
-        : Rasterizer(desc) {}
+        : RasterizerImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {}
 

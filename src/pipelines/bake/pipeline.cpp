@@ -100,7 +100,7 @@ void BakePipeline::compile_displayer() noexcept {
 }
 
 void BakePipeline::bake_all() noexcept {
-    Baker baker{baker_stats_, Node::load<Rasterizer>(_desc.rasterizer_desc)};
+    Baker baker{baker_stats_, Rasterizer (_desc.rasterizer_desc)};
     baker.allocate();
     baker.compile();
     baker_stats_.set_model_num(baked_shapes_.size());
