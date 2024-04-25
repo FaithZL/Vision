@@ -18,7 +18,7 @@ LightSamplerImpl::LightSamplerImpl(const LightSamplerDesc &desc)
             emission->instance()->set_emission(emission);
         }
         if (light->match(LightType::Infinite)) {
-            env_light_ = std::dynamic_pointer_cast<EnvironmentImpl>(light);
+            env_light_.init(std::dynamic_pointer_cast<EnvironmentImpl>(light));
         }
         add_light(light);
     }

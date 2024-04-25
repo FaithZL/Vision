@@ -29,7 +29,7 @@ public:
 
 protected:
     PolymorphicGUI<SP<LightImpl>> lights_;
-    SP<EnvironmentImpl> env_light_{};
+    Environment env_light_{};
     bool env_separate_{false};
     float env_prob_{};
 
