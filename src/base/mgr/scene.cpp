@@ -27,7 +27,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     camera_.init(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
     integrator_.init(scene_desc.integrator_desc);
-    sampler_ = Node::load<Sampler>(scene_desc.sampler_desc);
+    sampler_.init(scene_desc.sampler_desc);
     min_radius_ = scene_desc.render_setting.min_world_radius;
     Interaction::set_ray_offset_factor(scene_desc.render_setting.ray_offset_factor);
 }

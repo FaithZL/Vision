@@ -18,7 +18,7 @@ namespace vision {
 
 class Pipeline;
 
-class Sampler;
+class SamplerImpl;
 
 class RenderEnv;
 
@@ -90,7 +90,7 @@ public:
     }
     [[nodiscard]] Uint &frame_index() const noexcept { return *frame_index_; }
     [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *swl_; }
-    void initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
+    void initial(SamplerImpl *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept;
 };
 
 enum MISMode {
@@ -169,7 +169,7 @@ public:
 
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(const Interaction &it, const SF &sf, LightSample ls,
-                                           Bool occluded, Sampler *sampler,
+                                           Bool occluded, SamplerImpl *sampler,
                                            const SampledWavelengths &swl, SS &ss, bool mis = true) {
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval scatter_eval = sf.evaluate(it.wo, wi);

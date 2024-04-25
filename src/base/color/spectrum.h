@@ -227,7 +227,7 @@ struct ColorDecode {
     [[nodiscard]] static ColorDecode zero(uint dim) noexcept { return constant(dim, 0.f); }
 };
 
-class Sampler;
+class SamplerImpl;
 class MaterialEvaluator;
 
 class SpectrumImpl : public Node {
@@ -239,7 +239,7 @@ public:
     [[nodiscard]] SampledSpectrum zero() const noexcept { return SampledSpectrum{dimension(), 0.f}; }
     [[nodiscard]] SampledSpectrum one() const noexcept { return SampledSpectrum{dimension(), 1.f}; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] virtual SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept = 0;
+    [[nodiscard]] virtual SampledWavelengths sample_wavelength(SamplerImpl *sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
     [[nodiscard]] virtual bool is_complete() const noexcept { return false; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const MaterialEvaluator *bsdf) const noexcept { return {}; }

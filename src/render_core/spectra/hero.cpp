@@ -285,7 +285,7 @@ public:
         Float factor = 1.f / (swl.valid_dimension() * SPD::cie_y_integral());
         return sum * factor;
     }
-    [[nodiscard]] SampledWavelengths sample_wavelength(Sampler *sampler) const noexcept override {
+    [[nodiscard]] SampledWavelengths sample_wavelength(SamplerImpl *sampler) const noexcept override {
         uint n = dimension();
         SampledWavelengths swl{n};
         Float u = sampler->next_1d();

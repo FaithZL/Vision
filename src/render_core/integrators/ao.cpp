@@ -28,7 +28,7 @@ public:
                             const HitContext &hc, const RenderEnv &render_env) const noexcept override {
         Float3 L = make_float3(0.f);
         Pipeline *rp = pipeline();
-        Sampler *sampler = scene().sampler();
+        SamplerImpl *sampler = scene().sampler().get();
         Geometry &geom = rp->geometry();
         $while(true) {
             Var hit = geom.trace_closest(rs.ray);
@@ -65,7 +65,7 @@ public:
     void compile() noexcept override {
         Pipeline *rp = pipeline();
         CameraImpl *camera = scene().camera().get();
-        Sampler *sampler = scene().sampler();
+        SamplerImpl *sampler = scene().sampler().get();
         Geometry &geom = rp->geometry();
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {

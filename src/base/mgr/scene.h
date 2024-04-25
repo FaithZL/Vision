@@ -31,7 +31,7 @@ class Scene : public GUI {
 private:
     Box3f aabb_;
     Camera camera_{};
-    SP<Sampler> sampler_{nullptr};
+    Sampler sampler_{};
     Integrator integrator_{};
     LightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
@@ -55,7 +55,7 @@ public:
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
                          material_registry_, spectrum_, sampler_)
-    MAKE_GETTER(sampler)
+    OC_MAKE_MEMBER_GETTER_SETTER(sampler, &)
     OC_MAKE_MEMBER_GETTER_SETTER(light_sampler, &)
     OC_MAKE_MEMBER_GETTER_SETTER(integrator, &)
     OC_MAKE_MEMBER_GETTER_SETTER(camera, &)

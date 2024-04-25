@@ -69,7 +69,7 @@ void BakePipeline::compile() noexcept {
 
 void BakePipeline::compile_displayer() noexcept {
     Camera &camera = scene().camera();
-    Sampler *sampler = scene().sampler();
+    SamplerImpl *sampler = scene().sampler().get();
     Kernel kernel = [&](Uint frame_index, Uint lightmap_base) {
         Uint2 pixel = dispatch_idx().xy();
         sampler->start(pixel, frame_index, 0);

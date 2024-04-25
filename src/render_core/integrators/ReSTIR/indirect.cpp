@@ -167,7 +167,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
         camera->load_data();
         Uint2 pixel = dispatch_idx().xy();
         SensorSample ss;
-        sampler()->temporary([&](Sampler *sampler) {
+        sampler()->temporary([&](SamplerImpl *sampler) {
             sampler->start(pixel, frame_index, 0);
             ss = sampler->sensor_sample(pixel, camera->filter());
         });

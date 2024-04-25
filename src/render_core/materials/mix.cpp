@@ -52,7 +52,7 @@ public:
         return ret;
     }
 
-    SampledDirection sample_wi(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+    SampledDirection sample_wi(Float3 wo, Uint flag, SamplerImpl *sampler) const noexcept override {
         SampledDirection sd;
         Float u = sampler->next_1d();
         $if(u < scale_) {
@@ -64,7 +64,7 @@ public:
         return sd;
     }
 
-    BSDFSample sample_local(Float3 wo, Uint flag, Sampler *sampler) const noexcept override {
+    BSDFSample sample_local(Float3 wo, Uint flag, SamplerImpl *sampler) const noexcept override {
         BSDFSample ret{b0_->albedo(wo).dimension()};
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);

@@ -35,7 +35,7 @@ public:
         denoiser_->compile();
         film()->compile();
         Camera &camera = scene().camera();
-        Sampler *sampler = scene().sampler();
+        SamplerImpl *sampler = scene().sampler().get();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Env::instance().clear_global_vars();
             Uint2 pixel = dispatch_idx().xy();

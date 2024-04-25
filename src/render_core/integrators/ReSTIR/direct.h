@@ -72,7 +72,7 @@ private:
     Shader<void(uint, direct::Param)> shader1_;
 
 protected:
-    [[nodiscard]] static Sampler *sampler() noexcept { return scene().sampler(); }
+    [[nodiscard]] static SamplerImpl *sampler() noexcept { return scene().sampler().get(); }
 
 public:
     ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);

@@ -18,11 +18,11 @@ void IntegratorImpl::invalidation() const noexcept {
     }
 }
 
-void RenderEnv::initial(Sampler *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
+void RenderEnv::initial(SamplerImpl *sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     frame_index_.emplace(frame_index);
     SampledWavelengths wavelengths{spectrum->dimension()};
-    sampler->temporary([&](Sampler *) {
+    sampler->temporary([&](SamplerImpl *) {
         sampler->start(pixel, frame_index, -1);
         wavelengths = spectrum->sample_wavelength(sampler);
     });
@@ -103,7 +103,7 @@ SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3
 Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                                   bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept {
     Pipeline *rp = pipeline();
-    Sampler *sampler = scene().sampler();
+    SamplerImpl *sampler = scene().sampler().get();
     LightSampler &light_sampler = scene().light_sampler();
 
     const SampledWavelengths &swl = render_env.sampled_wavelengths();
