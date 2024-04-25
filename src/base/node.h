@@ -96,6 +96,12 @@ public:
     void reset(Args &&...args) noexcept { impl_.reset(OC_FORWARD(args)...); }
 };
 
+template<typename To, typename From, typename Desc>
+requires std::is_base_of_v<From, To>
+[[nodiscard]] auto dynamic_object_cast(TObject<From, Desc> object) noexcept {
+    return TObject<To, Desc>(std::move(std::dynamic_pointer_cast<To>(object.impl())));
+}
+
 #define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
     [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
