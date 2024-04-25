@@ -17,7 +17,7 @@ namespace vision {
 //        "scale" : 1,
 //        "direction" : [1,1,1]
 //    }
-class DirectionalLight : public Environment {
+class DirectionalLight : public EnvironmentImpl {
 private:
     Serial<float3> _direction;
     Serial<float> _world_radius;
@@ -25,9 +25,9 @@ private:
 
 public:
     explicit DirectionalLight(const LightDesc &desc)
-        : Environment(desc, LightType::DeltaDirection | LightType::Infinite),
+        : EnvironmentImpl(desc, LightType::DeltaDirection | LightType::Infinite),
           _direction(desc["direction"].as_float3(make_float3(-1.f))) {}
-    OC_SERIALIZABLE_FUNC(Environment, _direction, _world_radius, _world_center)
+    OC_SERIALIZABLE_FUNC(EnvironmentImpl, _direction, _world_radius, _world_center)
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         _world_radius = scene().world_radius();

@@ -92,8 +92,8 @@ public:
     void add_material(SP<Material> material) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
-    void add_light(SP<Light> light) noexcept;
-    template<typename T = Light>
+    void add_light(SP<LightImpl> light) noexcept;
+    template<typename T = LightImpl>
     SP<T> load_light(const LightDesc &desc) {
         OC_ASSERT(light_sampler_);
         auto ret = Node::load<T>(desc);

@@ -45,7 +45,7 @@ public:
         });
 
         auto lights = parser_.parse_lights();
-        std::for_each(lights.begin(), lights.end(), [&](SP<Light> light) {
+        std::for_each(lights.begin(), lights.end(), [&](SP<LightImpl> light) {
             scene.add_light(ocarina::move(light));
         });
 

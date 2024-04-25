@@ -63,7 +63,7 @@ struct LightSurfacePoint {
     Float2 bary;
 };
 
-class Light : public Node, public Serializable<float> {
+class LightImpl : public Node, public Serializable<float> {
 public:
     using Desc = LightDesc;
 
@@ -103,7 +103,7 @@ protected:
     }
 
 public:
-    explicit Light(const LightDesc &desc, LightType light_type);
+    explicit LightImpl(const LightDesc &desc, LightType light_type);
     OC_SERIALIZABLE_FUNC(Serializable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
@@ -196,23 +196,23 @@ public:
 class Mesh;
 class ShapeInstance;
 
-class IAreaLight : public Light {
+class IAreaLight : public LightImpl {
 protected:
     Serial<uint> inst_idx_{InvalidUI32};
     const ShapeInstance *instance_{};
 
 public:
     explicit IAreaLight(const LightDesc &desc)
-        : Light(desc, LightType::Area),
+        : LightImpl(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
-    OC_SERIALIZABLE_FUNC(Light, inst_idx_)
+    OC_SERIALIZABLE_FUNC(LightImpl, inst_idx_)
     void set_instance(const ShapeInstance *inst) noexcept;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 
-class IPointLight : public Light {
+class IPointLight : public LightImpl {
 public:
-    explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
+    explicit IPointLight(const LightDesc &desc) : LightImpl(desc, LightType::DeltaPosition) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
@@ -240,12 +240,15 @@ public:
     }
 };
 
-class Environment : public Light {
+class EnvironmentImpl : public LightImpl {
 public:
-    using Light::Light;
+    using LightImpl::LightImpl;
     [[nodiscard]] virtual Float2 convert_to_bary(const Float3 &world_dir) const noexcept {
         return make_float2(0.f);
     }
 };
+
+using Light = TObject<LightImpl>;
+using Environment = TObject<EnvironmentImpl>;
 
 }// namespace vision

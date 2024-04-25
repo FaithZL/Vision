@@ -23,20 +23,20 @@ namespace vision {
 //        },
 //        "scale" : 3
 //    }
-class SphericalMap : public Environment {
+class SphericalMap : public EnvironmentImpl {
 private:
     Serial<float4x4> _w2o;
     SP<Warper2D> _warper{};
 
 public:
     explicit SphericalMap(const Desc &desc)
-        : Environment(desc, LightType::Infinite) {
+        : EnvironmentImpl(desc, LightType::Infinite) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
         _w2o = inverse(o2w * rx);
     }
 
-    OC_SERIALIZABLE_FUNC(Environment, _w2o, *_warper)
+    OC_SERIALIZABLE_FUNC(EnvironmentImpl, _w2o, *_warper)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;

@@ -492,7 +492,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
     Interaction it = geometry.compute_surface_interaction(hit, c_pos);
 
     $if(it.has_emission()) {
-        light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
+        light_sampler->dispatch_light(it.light_id(), [&](const LightImpl *light) {
             if (!light->match(LightType::Area)) { return; }
             LightSampleContext p_ref;
             p_ref.pos = camera->device_position();

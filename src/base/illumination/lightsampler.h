@@ -28,8 +28,8 @@ public:
     using Desc = LightSamplerDesc;
 
 protected:
-    PolymorphicGUI<SP<Light>> lights_;
-    SP<Environment> env_light_{};
+    PolymorphicGUI<SP<LightImpl>> lights_;
+    SP<EnvironmentImpl> env_light_{};
     bool env_separate_{false};
     float env_prob_{};
 
@@ -48,17 +48,17 @@ public:
     [[nodiscard]] float env_prob() const noexcept {
         return (!env_light_) ? 0 : (lights_.empty() ? 1 : env_prob_);
     }
-    [[nodiscard]] const Environment *env_light() const noexcept { return env_light_.get(); }
-    [[nodiscard]] Environment *env_light() noexcept { return env_light_.get(); }
+    [[nodiscard]] const EnvironmentImpl *env_light() const noexcept { return env_light_.get(); }
+    [[nodiscard]] EnvironmentImpl *env_light() noexcept { return env_light_.get(); }
     [[nodiscard]] uint env_index() const noexcept { return env_light()->index(); }
     void tidy_up() noexcept;
-    [[nodiscard]] const Polymorphic<SP<Light>> &lights() const noexcept { return lights_; }
-    [[nodiscard]] Polymorphic<SP<Light>> &lights() noexcept { return lights_; }
+    [[nodiscard]] const Polymorphic<SP<LightImpl>> &lights() const noexcept { return lights_; }
+    [[nodiscard]] Polymorphic<SP<LightImpl>> &lights() noexcept { return lights_; }
     [[nodiscard]] uint light_num() const noexcept { return lights_.size(); }
     [[nodiscard]] uint punctual_light_num() const noexcept { return light_num() - environment_light_num(); }
     [[nodiscard]] uint environment_light_num() const noexcept { return static_cast<int>(bool(env_light_)); }
     [[nodiscard]] Uint correct_index(Uint index) const noexcept;
-    void add_light(SP<Light> light) noexcept { lights_.push_back(ocarina::move(light)); }
+    void add_light(SP<LightImpl> light) noexcept { lights_.push_back(ocarina::move(light)); }
     [[nodiscard]] Float PMF(const LightSampleContext &lsc, const Uint &index) const noexcept;
     [[nodiscard]] SampledLight select_light(const LightSampleContext &lsc, Float u) const noexcept;
     [[nodiscard]] LightEval evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
@@ -86,18 +86,18 @@ public:
     [[nodiscard]] Float PDF_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                   const Float &pdf_wi) const noexcept;
     [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler &sampler) const noexcept;
-    void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
-    void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
-    void dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept;
+    void dispatch_light(const Uint &id, const std::function<void(const LightImpl *)> &func) const noexcept;
+    void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const LightImpl *)> &func) const noexcept;
+    void dispatch_environment(const std::function<void(const EnvironmentImpl *)> &func) const noexcept;
     template<typename Func>
     void for_each(Func &&func) noexcept {
-        if constexpr (std::invocable<Func, SP<Light>>) {
-            for (SP<Light> light : lights_) {
+        if constexpr (std::invocable<Func, SP<LightImpl>>) {
+            for (SP<LightImpl> light : lights_) {
                 func(light);
             }
         } else {
             uint i = 0u;
-            for (SP<Light> light : lights_) {
+            for (SP<LightImpl> light : lights_) {
                 func(light, i++);
             }
         }
@@ -105,13 +105,13 @@ public:
 
     template<typename Func>
     void for_each(Func &&func) const noexcept {
-        if constexpr (std::invocable<Func, SP<const Light>>) {
-            for (const SP<Light> &light : lights_) {
+        if constexpr (std::invocable<Func, SP<const LightImpl>>) {
+            for (const SP<LightImpl> &light : lights_) {
                 func(light);
             }
         } else {
             uint i = 0u;
-            for (const SP<Light> &light : lights_) {
+            for (const SP<LightImpl> &light : lights_) {
                 func(light, i++);
             }
         }
