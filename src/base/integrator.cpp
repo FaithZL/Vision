@@ -80,7 +80,7 @@ CommandList IlluminationIntegrator::denoise(RealTimeDenoiseInput &input) const n
 SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3 &normal,
                                                       const Float &scatter_pdf, const Uint &bounces,
                                                       const SampledWavelengths &swl) const noexcept {
-    LightSamplerImpl *light_sampler = scene().light_sampler();
+    LightSampler &light_sampler = scene().light_sampler();
     SampledSpectrum ret = spectrum()->zero();
     const Geometry &geometry = pipeline()->geometry();
     if (light_sampler->env_light()) {
@@ -104,7 +104,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
                                   bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept {
     Pipeline *rp = pipeline();
     Sampler *sampler = scene().sampler();
-    LightSamplerImpl *light_sampler = scene().light_sampler();
+    LightSampler &light_sampler = scene().light_sampler();
 
     const SampledWavelengths &swl = render_env.sampled_wavelengths();
     SampledSpectrum value = spectrum()->zero();

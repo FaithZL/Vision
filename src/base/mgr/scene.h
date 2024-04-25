@@ -33,7 +33,7 @@ private:
     Camera camera_{};
     SP<Sampler> sampler_{nullptr};
     SP<Integrator> integrator_{nullptr};
-    SP<LightSamplerImpl> light_sampler_{};
+    LightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
     vector<ShapeInstance> instances_;
     Polymorphic<SP<Medium>> mediums_;
@@ -57,7 +57,7 @@ public:
                          material_registry_, spectrum_, sampler_)
     MAKE_GETTER(integrator)
     MAKE_GETTER(sampler)
-    MAKE_GETTER(light_sampler)
+    OC_MAKE_MEMBER_GETTER_SETTER(light_sampler, &)
     OC_MAKE_MEMBER_GETTER_SETTER(camera, &)
     OC_MAKE_MEMBER_GETTER_SETTER(spectrum, &)
     OC_MAKE_MEMBER_GETTER(global_medium, )
@@ -95,7 +95,7 @@ public:
     void add_light(SP<Light> light) noexcept;
     template<typename T = Light>
     SP<T> load_light(const LightDesc &desc) {
-        OC_ASSERT(light_sampler_ != nullptr);
+        OC_ASSERT(light_sampler_);
         auto ret = Node::load<T>(desc);
         light_sampler_->add_light(ret);
         return ret;
