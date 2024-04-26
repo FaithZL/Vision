@@ -52,6 +52,6 @@ public:
     }
 };
 
-using Filter = TObject<FilterImpl>;
+using Filter = TObjectUI<FilterImpl>;
 
 }// namespace vision

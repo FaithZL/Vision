@@ -812,7 +812,8 @@
 				}
 			},
 			"filter" : {
-				"type" : "box",
+//				"type" : "box",
+				"type" : "triangle",
 //				"type" : "mitchell",
 				"name" : "boxFilter",
 				"param" : {

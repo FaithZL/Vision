@@ -7,6 +7,7 @@
 #include <utility>
 #include "core/stl.h"
 #include "UI/GUI.h"
+#include "GUI/widgets.h"
 #include "descriptions/node_desc.h"
 #include "util/file_manager.h"
 
@@ -128,12 +129,45 @@ public:
     using TObject<impl_t, desc_t>::TObject;
     using Super = TObject<impl_t, desc_t>;
 
+protected:
+    int current_item_{0};
+    vector<const char *> extract_name_list() noexcept {
+        static vector<string> name_list = [&]() {
+            vector<string> ret;
+            string pattern = ocarina::format("vision-{}-.*\\.dll", Super::impl()->category().data());
+            for (const auto &entry : fs::directory_iterator(".")) {
+                if (entry.is_regular_file()) {
+                    std::string filename = entry.path().filename().string();
+                    if (std::regex_search(filename, std::regex(pattern))) {
+                        ret.push_back(filename);
+                    }
+                }
+            }
+            return ret;
+        }();
+        vector<const char *> ret;
+        for (const string &fn : name_list) {
+            ret.push_back(fn.c_str());
+        }
+        return ret;
+    }
+
 public:
     bool has_changed() noexcept override {
         return Super::impl()->has_changed();
     }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        return Super::impl()->render_UI(widgets);
+        auto names = extract_name_list();
+        for (int i = 0; i < names.size(); ++i) {
+            if (Super::impl()->plugin_name() == names[i]) {
+                current_item_ = i;
+                break;
+            }
+        }
+        widgets->combo(Super::impl()->category().data(), &current_item_, names);
+        return widgets->use_folding_header(Super::impl()->category().data(), [&] {
+            Super::impl()->render_UI(widgets);
+        });
     }
     void reset_status() noexcept override {
         Super::impl()->reset_status();

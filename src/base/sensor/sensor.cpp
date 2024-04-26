@@ -39,7 +39,7 @@ bool SensorImpl::render_UI(ocarina::Widgets *widgets) noexcept {
             widgets->text("type: %s", impl_type().data());
             render_sub_UI(widgets);
         });
-    filter_->render_UI(widgets);
+    filter_.render_UI(widgets);
     film_->render_UI(widgets);
     return open;
 }
