@@ -98,7 +98,7 @@ void Scene::add_material(SP<vision::Material> material) noexcept {
     materials().push_back(ocarina::move(material));
 }
 
-void Scene::add_light(SP<vision::LightImpl> light) noexcept {
+void Scene::add_light(SP<LightImpl> light) noexcept {
     light_sampler_->add_light(ocarina::move(light));
 }
 
