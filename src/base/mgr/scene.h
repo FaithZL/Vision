@@ -92,12 +92,12 @@ public:
     void add_material(SP<Material> material) noexcept;
     void load_materials(const vector<MaterialDesc> &material_descs);
     void fill_instances();
-    void add_light(SP<LightImpl> light) noexcept;
+    void add_light(Light light) noexcept;
     template<typename T = LightImpl>
-    SP<T> load_light(const LightDesc &desc) {
+    TObject<T, LightDesc> load_light(const LightDesc &desc) {
         OC_ASSERT(light_sampler_);
-        auto ret = Node::load<T>(desc);
-        light_sampler_->add_light(ret);
+        auto ret = TObject<T,LightDesc>(desc);
+        light_sampler_->add_light(TObject<LightImpl,LightDesc>(ret.impl()));
         return ret;
     }
     void prepare_materials();

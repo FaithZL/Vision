@@ -98,7 +98,7 @@ void Scene::add_material(SP<vision::Material> material) noexcept {
     materials().push_back(ocarina::move(material));
 }
 
-void Scene::add_light(SP<LightImpl> light) noexcept {
+void Scene::add_light(Light light) noexcept {
     light_sampler_->add_light(ocarina::move(light));
 }
 
@@ -122,7 +122,7 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
 
         if (desc.emission.valid()) {
             desc.emission.set_value("inst_id", instances_.size());
-            SP<IAreaLight> light = load_light<IAreaLight>(desc.emission);
+            TObject<IAreaLight> light = load_light<IAreaLight>(desc.emission);
             instance.set_emission(light);
             light->set_instance(&instance);
         }

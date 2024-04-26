@@ -28,7 +28,7 @@ vector<float4x4> AssimpParser::parse_cameras() noexcept {
     return ret;
 }
 
-SP<LightImpl> AssimpParser::point_light(aiLight *ai_light) noexcept {
+Light AssimpParser::point_light(aiLight *ai_light) noexcept {
     LightDesc desc;
     DataWrap param = DataWrap::object();
 
@@ -42,15 +42,15 @@ SP<LightImpl> AssimpParser::point_light(aiLight *ai_light) noexcept {
     ps["param"] = param;
     ps["type"] = "point";
     desc.init(ps);
-    auto ret = Node::load<LightImpl>(desc);
+    auto ret = Light(desc);
     return ret;
 }
 
-SP<LightImpl> AssimpParser::area_light(aiLight *ai_light) noexcept {
-    return nullptr;
+Light AssimpParser::area_light(aiLight *ai_light) noexcept {
+    return Light(nullptr);
 }
 
-SP<LightImpl> AssimpParser::spot_light(aiLight *ai_light) noexcept {
+Light AssimpParser::spot_light(aiLight *ai_light) noexcept {
     LightDesc desc;
     DataWrap param = DataWrap::object();
     auto color = assimp::from_color3(ai_light->mColorDiffuse);
@@ -72,15 +72,15 @@ SP<LightImpl> AssimpParser::spot_light(aiLight *ai_light) noexcept {
     ps["param"] = param;
     ps["type"] = "spot";
     desc.init(ps);
-    auto ret = Node::load<LightImpl>(desc);
+    auto ret = Light(desc);
     return ret;
 }
 
-SP<LightImpl> AssimpParser::environment(aiLight *ai_light) noexcept {
-    return nullptr;
+Light AssimpParser::environment(aiLight *ai_light) noexcept {
+    return Light(nullptr);
 }
 
-SP<LightImpl> AssimpParser::directional_light(aiLight *ai_light) noexcept {
+Light AssimpParser::directional_light(aiLight *ai_light) noexcept {
     LightDesc desc;
     DataWrap param = DataWrap::object();
 
@@ -94,11 +94,11 @@ SP<LightImpl> AssimpParser::directional_light(aiLight *ai_light) noexcept {
     ps["param"] = param;
     ps["type"] = "directional";
     desc.init(ps);
-    auto ret = Node::load<LightImpl>(desc);
+    auto ret = Light(desc);
     return ret;
 }
 
-SP<LightImpl> AssimpParser::parse_light(aiLight *ai_light) noexcept {
+Light AssimpParser::parse_light(aiLight *ai_light) noexcept {
     switch (ai_light->mType) {
         case aiLightSource_POINT:
             return point_light(ai_light);
@@ -109,11 +109,11 @@ SP<LightImpl> AssimpParser::parse_light(aiLight *ai_light) noexcept {
         default:
             break;
     }
-    return nullptr;
+    return Light(nullptr);
 }
 
-vector<SP<LightImpl>> AssimpParser::parse_lights() noexcept {
-    vector<SP<LightImpl>> ret;
+vector<Light> AssimpParser::parse_lights() noexcept {
+    vector<Light> ret;
     ret.reserve(ai_scene_->mNumLights);
     vector<aiLight *> ai_lights(ai_scene_->mNumLights);
     std::copy(ai_scene_->mLights, ai_scene_->mLights + ai_scene_->mNumLights, ai_lights.begin());

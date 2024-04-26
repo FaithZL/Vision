@@ -12,13 +12,13 @@ LightSamplerImpl::LightSamplerImpl(const LightSamplerDesc &desc)
       env_separate_(desc["env_separate"].as_bool(false)),
       env_prob_(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
     for (const LightDesc &light_desc : desc.light_descs) {
-        SP<LightImpl> light = Node::load<LightImpl>(light_desc);
+        Light light = Light(light_desc);
         if (light->match(LightType::Area)) {
-            SP<IAreaLight> emission = std::dynamic_pointer_cast<IAreaLight>(light);
+            TObject<IAreaLight> emission = dynamic_object_cast<IAreaLight>(light);
             emission->instance()->set_emission(emission);
         }
         if (light->match(LightType::Infinite)) {
-            env_light_.init(std::dynamic_pointer_cast<EnvironmentImpl>(light));
+            env_light_ = dynamic_object_cast<EnvironmentImpl>(light);
         }
         add_light(light);
     }
@@ -37,16 +37,16 @@ void LightSamplerImpl::tidy_up() noexcept {
 
     static_assert(ocarina::is_ptr_v<TObject<FilterImpl>>);
 
-    std::sort(lights_.begin(), lights_.end(), [&](SP<LightImpl> a, SP<LightImpl> b) {
+    std::sort(lights_.begin(), lights_.end(), [&](Light a, Light b) {
         return lights_.type_index(a.get()) < lights_.type_index(b.get());
     });
-    for_each([&](SP<LightImpl> light, uint index) noexcept {
+    for_each([&](Light light, uint index) noexcept {
         light->set_index(index);
     });
 }
 
 void LightSamplerImpl::prepare() noexcept {
-    for_each([&](SP<LightImpl> light, uint index) noexcept {
+    for_each([&](Light light, uint index) noexcept {
         light->prepare();
     });
     auto rp = pipeline();

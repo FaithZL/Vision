@@ -80,7 +80,7 @@ protected:
 public:
     string name;
     TObject() = default;
-    explicit TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
+    TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
     explicit TObject(const desc_t &desc) : impl_(Node::load<Impl>(desc)) {}
     void init(const desc_t &desc) noexcept { impl_ = Node::load<Impl>(desc); }
     void init(SP<Impl> sp) { impl_ = ocarina::move(sp); }
