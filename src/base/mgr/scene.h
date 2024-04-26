@@ -96,8 +96,8 @@ public:
     template<typename T = LightImpl>
     TObject<T, LightDesc> load_light(const LightDesc &desc) {
         OC_ASSERT(light_sampler_);
-        auto ret = TObject<T,LightDesc>(desc);
-        light_sampler_->add_light(TObject<LightImpl,LightDesc>(ret.impl()));
+        auto ret = TObject<T, LightDesc>(desc);
+        light_sampler_->add_light(ret);
         return ret;
     }
     void prepare_materials();

@@ -84,6 +84,22 @@ public:
     explicit TObject(const desc_t &desc) : impl_(Node::load<Impl>(desc)) {}
     void init(const desc_t &desc) noexcept { impl_ = Node::load<Impl>(desc); }
     void init(SP<Impl> sp) { impl_ = ocarina::move(sp); }
+
+    template<class U>
+    requires std::is_base_of_v<Impl, U>
+    TObject(const TObject<U, Desc> &other) {
+        impl_ = other.impl();
+        name = other.name;
+    }
+
+    template<class U>
+    requires std::is_base_of_v<Impl, U>
+    TObject &operator=(const TObject<U, Desc> &other) {
+        impl_ = other.impl();
+        name = other.name;
+        return *this;
+    }
+
     OC_MAKE_MEMBER_GETTER(impl, &)
     [[nodiscard]] operator bool() const noexcept { return impl_.get() != nullptr; }
     [[nodiscard]] const Impl *get() const noexcept { return impl_.get(); }
