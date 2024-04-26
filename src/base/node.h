@@ -68,6 +68,10 @@ public:
     ~Node() override = default;
 };
 
+#define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
+    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
+    [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
+
 template<typename impl_t, typename desc_t = impl_t::Desc>
 class TObject {
 public:
@@ -118,9 +122,26 @@ requires std::is_base_of_v<From, To>
     return TObject<To, Desc>(std::move(std::dynamic_pointer_cast<To>(object.impl())));
 }
 
-#define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
-    [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
-    [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
+template<typename impl_t, typename desc_t = impl_t::Desc>
+class TObjectUI : public TObject<impl_t, desc_t>, public GUI {
+public:
+    using TObject<impl_t, desc_t>::TObject;
+    using Super = TObject<impl_t, desc_t>;
+
+public:
+    bool has_changed() noexcept override {
+        return Super::impl()->has_changed();
+    }
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        return Super::impl()->render_UI(widgets);
+    }
+    void reset_status() noexcept override {
+        Super::impl()->reset_status();
+    }
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        Super::impl()->render_sub_UI(widgets);
+    }
+};
 
 }// namespace vision
 
