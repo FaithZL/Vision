@@ -50,6 +50,7 @@ private:
     IlluminationIntegrator *integrator_{};
     uint M_light_{};
     uint M_bsdf_{};
+    uint max_age_{};
     bool debias_{false};
     bool pairwise_{false};
     bool reweight_{false};

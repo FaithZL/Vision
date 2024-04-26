@@ -11,6 +11,7 @@ ReSTIRDI::ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc)
     : integrator_(integrator),
       M_light_(desc["M_light"].as_uint(10)),
       M_bsdf_(desc["M_bsdf"].as_uint(1)),
+      max_age_(desc["max_age"].as_uint(30)),
       spatial_(desc["spatial"]),
       temporal_(desc["temporal"]),
       debias_(desc["debias"].as_bool(false)),
@@ -32,6 +33,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->input_uint_limit("M light", &M_light_, 0, 100);
     changed_ |= widgets->input_uint_limit("M BSDF", &M_bsdf_, 0, 100);
     changed_ |= widgets->check_box("temporal", &temporal_.open);
+    changed_ |= widgets->drag_uint("max age", &max_age_, 1, 1, 100);
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",

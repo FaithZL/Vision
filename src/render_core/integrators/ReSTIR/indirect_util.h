@@ -53,10 +53,11 @@ struct RSVSample {
     SurfacePoint vp{};
     array<float, 3> u{};
     array<float, 3> Lo{};
+    float age{};
 };
 }// namespace vision::indirect
 
-OC_STRUCT(vision::indirect::RSVSample, sp, vp, u, Lo) {
+OC_STRUCT(vision::indirect::RSVSample, sp, vp, u, Lo, age) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return vp->valid();

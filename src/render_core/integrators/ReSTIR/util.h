@@ -16,6 +16,7 @@ struct RSVSample {
     uint light_index{InvalidUI32};
     uint prim_id{};
     float2 bary{};
+    uint age{};
     float p_hat{};
     array<float, 3> pos{};
     [[nodiscard]] auto p_light() const noexcept {
@@ -30,7 +31,7 @@ struct RSVSample {
 }// namespace vision::direct
 
 // clang-format off
-OC_STRUCT(vision::direct::RSVSample, light_index,prim_id, bary, p_hat, pos) {
+OC_STRUCT(vision::direct::RSVSample, light_index,prim_id, bary, age, p_hat, pos) {
     [[nodiscard]] Bool valid() const noexcept {
         return light_index != InvalidUI32;
     }

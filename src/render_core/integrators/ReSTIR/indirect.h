@@ -43,6 +43,7 @@ private:
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;
     bool open_{true};
+    uint max_age_{};
     IlluminationIntegrator *integrator_{};
 
     RegistrableBuffer<indirect::Reservoir> reservoirs_{pipeline()->bindless_array()};
