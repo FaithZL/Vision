@@ -43,7 +43,7 @@ bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->check_box("temporal", &temporal_.open);
-    changed_ |= widgets->drag_uint("max age", &max_age_, 1, 1, 100);
+    changed_ |= widgets->drag_uint("max age", &max_age_, 1, 0, 100);
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
