@@ -584,6 +584,7 @@ direct::Param ReSTIRDI::construct_param() const noexcept {
     direct::Param param;
     param.M_light = M_light_;
     param.M_bsdf = M_bsdf_;
+    param.max_age = max_age_;
 
     param.spatial = static_cast<uint>(spatial_.open);
     param.N = spatial_.sample_num;

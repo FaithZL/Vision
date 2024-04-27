@@ -280,6 +280,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
 
 indirect::Param ReSTIRGI::construct_param() const noexcept {
     indirect::Param param;
+    param.max_age = max_age_;
 
     param.spatial = static_cast<uint>(spatial_.open);
     param.N = spatial_.sample_num;

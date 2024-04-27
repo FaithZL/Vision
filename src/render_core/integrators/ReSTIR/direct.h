@@ -14,6 +14,7 @@ namespace vision::direct {
 struct Param {
     uint M_light{};
     uint M_bsdf{};
+    uint max_age{};
 
     /// spatial
     uint spatial{1};
@@ -31,7 +32,7 @@ struct Param {
 };
 }// namespace vision::direct
 
-OC_PARAM_STRUCT(vision::direct::Param, M_light, M_bsdf, spatial, N,
+OC_PARAM_STRUCT(vision::direct::Param, M_light, M_bsdf, max_age, spatial, N,
                 s_dot, s_depth, s_radius, temporal, history_limit,
                 t_dot, t_depth, t_radius){};
 
