@@ -92,17 +92,19 @@ public:
                                    const SurfaceDataVar &another_surface,
                                    const Var<direct::Param> &param,
                                    DIRSVSample *sample) const noexcept {
+        Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
-                                   param.s_depth);
+                                   param.s_depth) && cond;
     }
     [[nodiscard]] Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                          const SurfaceDataVar &prev_surface,
                                          const Var<direct::Param> &param,
                                          DIRSVSample *sample) const noexcept {
+        Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,
-                                   param.t_depth);
+                                   param.t_depth) && cond;
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
