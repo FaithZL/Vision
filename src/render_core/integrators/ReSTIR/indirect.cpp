@@ -160,7 +160,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
 
-        $if(is_temporal_valid(cur_surf, prev_surf, param)) {
+        $if(is_temporal_valid(cur_surf, prev_surf, prev_rsv.sample, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         }
         $else {
@@ -169,7 +169,8 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
                 auto data = get_prev_data(p);
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
-                $if(is_temporal_valid(cur_surf, another_surf, param)) {
+                $if(is_temporal_valid(cur_surf, another_surf,
+                                      another_rsv.sample, param)) {
                     rsv = combine_temporal(rsv, cur_surf, another_rsv);
                     $break;
                 };
