@@ -129,13 +129,17 @@ Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
 }
 
 GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                       GIReservoir &other_rsv) const noexcept {
+                                       GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf) const noexcept {
     other_rsv.sample.age += 1;
     Camera &camera = scene().camera();
     GIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     Float p_hat = compute_p_hat(it, ret.sample);
+    if (neighbor_surf) {
+        Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf->hit, camera->device_position());
+        p_hat = p_hat * Jacobian_det(it.pos, neighbor_it.pos, other_rsv.sample.sp);
+    }
     ret->update_W(p_hat);
     return ret;
 }
@@ -160,7 +164,8 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
 
-        $if(is_temporal_valid(cur_surf, prev_surf, prev_rsv.sample, param)) {
+        $if(is_temporal_valid(cur_surf, prev_surf,
+                              prev_rsv.sample, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         }
         $else {
@@ -171,7 +176,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf,
                                       another_rsv.sample, param)) {
-                    rsv = combine_temporal(rsv, cur_surf, another_rsv);
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf));
                     $break;
                 };
             };

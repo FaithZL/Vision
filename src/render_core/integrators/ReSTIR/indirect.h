@@ -88,7 +88,7 @@ public:
     [[nodiscard]] GIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
                                           HitBSDFVar &hit_bsdf) noexcept;
     [[nodiscard]] GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                               GIReservoir &other_rsv) const noexcept;
+                                               GIReservoir &other_rsv, SurfaceDataVar* neighbor_surf = nullptr) const noexcept;
     [[nodiscard]] GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                              const Float2 &motion_vec, const SensorSample &ss,
                                              const Var<indirect::Param> &param) const noexcept;
