@@ -400,6 +400,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
         $if(is_temporal_valid(cur_surf, prev_surf, param)) {
+            prev_rsv.sample.age += 1;
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         }
         $else {
@@ -409,6 +410,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf, param)) {
+                    another_rsv.sample.age += 1;
                     rsv = combine_temporal(rsv, cur_surf, another_rsv);
                     $break;
                 };

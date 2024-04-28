@@ -149,6 +149,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
         Uint index = dispatch_id(make_uint2(prev_p_film));
         GIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
+        prev_rsv.sample.age += 1;
         SurfaceDataVar another_surf = prev_surfaces().read(index);
         $if(is_temporal_valid(cur_surf, another_surf, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
