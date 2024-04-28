@@ -41,6 +41,7 @@ public:
 struct TemporalResamplingParam {
 public:
     uint limit{};
+    uint N{};
     float sampling_radius{};
     float theta{};
     float depth_threshold{};
@@ -55,6 +56,7 @@ public:
           theta(ps["theta"].as_float(5)),
           depth_threshold(ps["depth"].as_float(0.5)),
           open{ps["open"].as_bool(true)},
+          N{ps["N"].as_uint(9)},
           mis{ps["mis"].as_bool(false)} {}
 
     [[nodiscard]] float dot_threshold() const noexcept {

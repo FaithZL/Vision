@@ -169,7 +169,7 @@ public:
                                               const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] DIReservoir combine_temporal(const DIReservoir &cur_rsv,
                                                SurfaceDataVar cur_surf,
-                                               const DIReservoir &other_rsv) const noexcept;
+                                               DIReservoir &other_rsv) const noexcept;
     [[nodiscard]] DIReservoir spatial_reuse(DIReservoir rsv,
                                             const SurfaceDataVar &cur_surf,
                                             const Int2 &pixel,

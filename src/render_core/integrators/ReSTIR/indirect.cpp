@@ -129,7 +129,8 @@ Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
 }
 
 GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                       const GIReservoir &other_rsv) const noexcept {
+                                       GIReservoir &other_rsv) const noexcept {
+    other_rsv.sample.age += 1;
     Camera &camera = scene().camera();
     GIReservoir ret = other_rsv;
     ret->update(sampler()->next_1d(), cur_rsv.sample, cur_rsv.weight_sum);
@@ -145,14 +146,34 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
-    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        Uint index = dispatch_id(make_uint2(prev_p_film));
+
+    auto get_prev_data = [this, &limit](const Float2 &pos) {
+        Uint index = dispatch_id(make_uint2(pos));
         GIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
-        prev_rsv.sample.age += 1;
-        SurfaceDataVar another_surf = prev_surfaces().read(index);
-        $if(is_temporal_valid(cur_surf, another_surf, param)) {
+        return make_pair(prev_surfaces().read(index), prev_rsv);
+    };
+
+    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
+
+        auto data = get_prev_data(prev_p_film);
+        auto prev_surf = data.first;
+        auto prev_rsv = data.second;
+
+        $if(is_temporal_valid(cur_surf, prev_surf, param)) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
+        }
+        $else {
+            $for(i, temporal_.N) {
+                Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
+                auto data = get_prev_data(p);
+                auto another_surf = data.first;
+                auto another_rsv = data.second;
+                $if(is_temporal_valid(cur_surf, another_surf, param)) {
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv);
+                    $break;
+                };
+            };
         };
     };
     return rsv;

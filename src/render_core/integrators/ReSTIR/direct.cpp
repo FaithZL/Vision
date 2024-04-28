@@ -329,7 +329,8 @@ DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
 
 DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
                                        SurfaceDataVar cur_surf,
-                                       const DIReservoir &other_rsv) const noexcept {
+                                       DIReservoir &other_rsv) const noexcept {
+    other_rsv.sample.age += 1;
     Camera &camera = scene().camera();
     Float3 c_pos = camera->device_position();
     Float3 prev_c_pos = camera->prev_device_position();
@@ -400,17 +401,15 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
         $if(is_temporal_valid(cur_surf, prev_surf, param)) {
-            prev_rsv.sample.age += 1;
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         }
         $else {
-            $for(i, 9) {
+            $for(i, temporal_.N) {
                 Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
                 auto data = get_prev_data(p);
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf, param)) {
-                    another_rsv.sample.age += 1;
                     rsv = combine_temporal(rsv, cur_surf, another_rsv);
                     $break;
                 };
