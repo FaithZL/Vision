@@ -165,7 +165,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
         auto prev_rsv = data.second;
 
         $if(is_temporal_valid(cur_surf, prev_surf,
-                              prev_rsv.sample, param)) {
+                              param, addressof(prev_rsv.sample))) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv);
         }
         $else {
@@ -175,7 +175,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf,
-                                      another_rsv.sample, param)) {
+                                      param, addressof(another_rsv.sample))) {
                     rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf));
                     $break;
                 };
@@ -263,7 +263,9 @@ GIReservoir ReSTIRGI::spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_s
             another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
             Uint index = dispatch_id(another_pixel);
             SurfaceDataVar other_surf = cur_surfaces().read(index);
-            $if(is_neighbor(cur_surf, other_surf, param)) {
+            GIReservoir other_rsv = cur_reservoirs().read(index);
+            $if(is_neighbor(cur_surf, other_surf, param,
+                            addressof(other_rsv.sample))) {
                 rsv_idx.push_back(index);
             };
         };
