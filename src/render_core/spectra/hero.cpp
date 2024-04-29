@@ -147,7 +147,7 @@ public:
                 Float y = rgb[(maxc + 2u) % 3u] / z;
                 Float zz = _inverse_smooth_step(_inverse_smooth_step(z));
                 Float3 coord = make_float3(x, y, zz);
-                coord = dsl::fma(
+                coord = fma(
                     coord,
                     make_float3((res - 1.0f) / res),
                     make_float3(0.5f / res));
