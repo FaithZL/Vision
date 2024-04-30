@@ -474,8 +474,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
             another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
             Uint index = dispatch_id(another_pixel);
             SurfaceDataVar other_surf = cur_surfaces().read(index);
-            DIReservoir other_rsv = cur_reservoirs().read(index);
-            $if(is_neighbor(cur_surf, other_surf, param, addressof(other_rsv.sample))) {
+            $if(is_neighbor(cur_surf, other_surf, param)) {
                 rsv_idx.push_back(index);
             };
         };
