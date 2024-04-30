@@ -88,17 +88,17 @@ public:
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
-                                   const SurfaceDataVar &another_surface,
-                                   const Var<direct::Param> &param) const noexcept {
+    [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
+                                          const SurfaceDataVar &another_surface,
+                                          const Var<direct::Param> &param) noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
                                    param.s_depth);
     }
-    [[nodiscard]] Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
-                                         const SurfaceDataVar &prev_surface,
-                                         const Var<direct::Param> &param,
-                                         DIRSVSample *sample) const noexcept {
+    [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
+                                                const SurfaceDataVar &prev_surface,
+                                                const Var<direct::Param> &param,
+                                                DIRSVSample *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,

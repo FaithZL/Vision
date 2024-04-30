@@ -88,7 +88,7 @@ public:
     [[nodiscard]] GIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
                                           HitBSDFVar &hit_bsdf) noexcept;
     [[nodiscard]] GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                               GIReservoir &other_rsv, SurfaceDataVar* neighbor_surf = nullptr) const noexcept;
+                                               GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf = nullptr) const noexcept;
     [[nodiscard]] GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                              const Float2 &motion_vec, const SensorSample &ss,
                                              const Var<indirect::Param> &param) const noexcept;
@@ -100,17 +100,17 @@ public:
                                             const Int2 &pixel, const Var<indirect::Param> &param) const noexcept;
     [[nodiscard]] Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
-    [[nodiscard]] Bool is_neighbor(const SurfaceDataVar &cur_surface,
-                                   const SurfaceDataVar &another_surface,
-                                   const Var<indirect::Param> &param) const noexcept {
+    [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
+                                          const SurfaceDataVar &another_surface,
+                                          const Var<indirect::Param> &param) noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
                                    param.s_depth);
     }
-    [[nodiscard]] Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
-                                         const SurfaceDataVar &prev_surface,
-                                         const Var<indirect::Param> &param,
-                                         GIRSVSample *sample) const noexcept {
+    [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
+                                                const SurfaceDataVar &prev_surface,
+                                                const Var<indirect::Param> &param,
+                                                GIRSVSample *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,
