@@ -24,7 +24,7 @@ struct LightBound {
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::LightBound, _axis, theta_o, theta_e){
+OC_STRUCT(vision,LightBound, _axis, theta_o, theta_e){
     [[nodiscard]] auto axis() const noexcept {
         return make_float3(_axis[0], _axis[1], _axis[2]);
     }

@@ -31,7 +31,7 @@ struct Param {
 };
 }// namespace vision::indirect
 
-OC_PARAM_STRUCT(vision::indirect::Param, max_age, spatial, N,
+OC_PARAM_STRUCT(vision::indirect, Param, max_age, spatial, N,
                 s_dot, s_depth, s_radius, temporal, history_limit,
                 t_dot, t_depth, t_radius){};
 

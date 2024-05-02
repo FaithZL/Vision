@@ -31,7 +31,7 @@ struct InstanceHandle {
 
 }// namespace vision
 
-OC_STRUCT(vision::InstanceHandle, light_id, mat_id, lightmap_id,
+OC_STRUCT(vision,InstanceHandle, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
@@ -78,7 +78,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision::Mesh::Handle, vertex_offset, triangle_offset){};
+OC_STRUCT(vision::Mesh, Handle, vertex_offset, triangle_offset){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
     void set_##attr(decltype(attr##_.impl()) val) noexcept { \

@@ -30,7 +30,7 @@ struct SurfacePoint {
 }// namespace vision::indirect
 
 // clang-format off
-OC_STRUCT(vision::indirect::SurfacePoint, pos, ng) {
+OC_STRUCT(vision::indirect, SurfacePoint, pos, ng) {
     void set_position(Float3 p) noexcept {
         pos.set(p);
     }
@@ -57,7 +57,7 @@ struct RSVSample {
 };
 }// namespace vision::indirect
 
-OC_STRUCT(vision::indirect::RSVSample, sp, vp, u, Lo, age) {
+OC_STRUCT(vision::indirect, RSVSample, sp, vp, u, Lo, age) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return vp->valid();
@@ -100,7 +100,7 @@ public:
 }// namespace vision::indirect
 
 // clang-format off
-OC_STRUCT(vision::indirect::Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision::indirect,Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();

@@ -15,7 +15,7 @@ struct AliasEntry {
 };
 }// namespace vision
 
-OC_STRUCT(vision::AliasEntry, prob, alias){};
+OC_STRUCT(vision,AliasEntry, prob, alias){};
 
 namespace vision {
 

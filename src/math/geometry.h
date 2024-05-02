@@ -224,7 +224,7 @@ struct Triangle {
 };
 }// namespace geometry
 }// namespace vision
-OC_STRUCT(vision::Triangle, i, j, k){};
+OC_STRUCT(vision,Triangle, i, j, k){};
 
 [[nodiscard]] inline bool operator==(const vision::Triangle &lhs,
                                      const vision::Triangle &rhs) noexcept {
@@ -298,7 +298,7 @@ public:
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::Vertex, pos, n, uv, uv2){
+OC_STRUCT(vision,Vertex, pos, n, uv, uv2){
     void set_position(Float3 p) noexcept {
         pos[0] = p[0];
         pos[1] = p[1];

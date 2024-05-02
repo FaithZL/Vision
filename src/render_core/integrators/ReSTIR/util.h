@@ -31,7 +31,7 @@ struct RSVSample {
 }// namespace vision::direct
 
 // clang-format off
-OC_STRUCT(vision::direct::RSVSample, light_index,prim_id, bary, age, p_hat, pos) {
+OC_STRUCT(vision::direct,RSVSample, light_index,prim_id, bary, age, p_hat, pos) {
     [[nodiscard]] Bool valid() const noexcept {
         return light_index != InvalidUI32;
     }
@@ -93,7 +93,7 @@ public:
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::direct::Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision::direct,Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();

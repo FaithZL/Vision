@@ -20,7 +20,7 @@ struct FilterMomentsParam {
     int radius{3};
 };
 }// namespace vision::svgf
-OC_PARAM_STRUCT(vision::svgf::FilterMomentsParam, svgf_buffer,
+OC_PARAM_STRUCT(vision::svgf, FilterMomentsParam, svgf_buffer,
                 gbuffer, history_buffer, sigma_rt, sigma_normal,radius) {};
 
 namespace vision::svgf {

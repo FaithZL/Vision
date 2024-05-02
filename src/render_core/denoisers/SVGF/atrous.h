@@ -22,7 +22,7 @@ struct AtrousParam {
     int step_size{};
 };
 }// namespace vision::svgf
-OC_PARAM_STRUCT(vision::svgf::AtrousParam, svgf_buffer, gbuffer,
+OC_PARAM_STRUCT(vision::svgf, AtrousParam, svgf_buffer, gbuffer,
                 history_buffer, sigma_rt, sigma_normal, step_size){};
 
 namespace vision::svgf {

@@ -24,7 +24,7 @@ struct SVGFData {
 }// namespace vision::svgf
 
 // clang-format off
-OC_STRUCT(vision::svgf::SVGFData, illumi_v, history, moments) {
+OC_STRUCT(vision::svgf, SVGFData, illumi_v, history, moments) {
     [[nodiscard]] Float variance() const noexcept {
        return illumi_v.w;
     }

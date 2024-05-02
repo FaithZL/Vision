@@ -19,7 +19,7 @@ struct PixelGeometry {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::PixelGeometry, normal_fwidth, p_film,
+OC_STRUCT(vision,PixelGeometry, normal_fwidth, p_film,
             depth_gradient, linear_depth) {
     void set_normal(const Float3 &n) noexcept {
         normal_fwidth = make_float4(n, normal_fwidth.w);

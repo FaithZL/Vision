@@ -27,7 +27,7 @@ public:
 
 }// namespace vision::svgf
 
-OC_PARAM_STRUCT(vision::svgf::ReprojectParam, gbuffer, prev_gbuffer,
+OC_PARAM_STRUCT(vision::svgf, ReprojectParam, gbuffer, prev_gbuffer,
                 history_buffer, motion_vectors, alpha, moments_alpha,
                 history_limit, cur_buffer, prev_buffer){};
 

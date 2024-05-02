@@ -20,7 +20,7 @@ struct Element {
 }// namespace vision::surfel
 
 // clang-format off
-OC_STRUCT(vision::surfel::Element, pos, ng, radius, transform_id, irr, depth) {
+OC_STRUCT(vision::surfel, Element, pos, ng, radius, transform_id, irr, depth) {
     [[nodiscard]] auto normal() const noexcept {
         return ng.as_vec();
     }

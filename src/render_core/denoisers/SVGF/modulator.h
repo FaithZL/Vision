@@ -19,7 +19,7 @@ struct ModulatorParam {
 };
 }// namespace vision::svgf
 
-OC_PARAM_STRUCT(vision::svgf::ModulatorParam, albedo_buffer,
+OC_PARAM_STRUCT(vision::svgf, ModulatorParam, albedo_buffer,
                 emission_buffer, svgf_buffer, radiance_buffer){};
 
 namespace vision::svgf {

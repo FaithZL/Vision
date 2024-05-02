@@ -18,7 +18,7 @@ struct SurfaceData {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision::SurfaceData, hit, normal_depth, mat_id) {
+OC_STRUCT(vision,SurfaceData, hit, normal_depth, mat_id) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
@@ -41,7 +41,7 @@ struct HitBSDF {
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::HitBSDF, next_ray, next_hit,bsdf, cos_theta, pdf) {
+OC_STRUCT(vision,HitBSDF, next_ray, next_hit,bsdf, cos_theta, pdf) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
     }
