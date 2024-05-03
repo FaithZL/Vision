@@ -20,7 +20,7 @@ private:
     RegistrableManaged<Triangle> triangles_;
     RegistrableManaged<float4x4> transforms_;
     RegistrableManaged<InstanceHandle> instances_;
-    RegistrableManaged<Mesh::Handle> mesh_handles_;
+    RegistrableManaged<MeshHandle> mesh_handles_;
     ocarina::Accel accel_;
 
 public:
