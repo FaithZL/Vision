@@ -18,7 +18,7 @@ struct SurfaceData {
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision,SurfaceData, hit, normal_depth, mat_id) {
+OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
@@ -57,10 +57,6 @@ OC_STRUCT(vision,HitBSDF, next_ray, next_hit,bsdf, cos_theta, pdf) {
 namespace vision {
 
 using namespace ocarina;
-
-using HitBSDFVar = Var<HitBSDF>;
-using SurfaceDataVar = Var<SurfaceData>;
-
 template<typename T>
 requires is_vector3_expr_v<T>
 struct PartialDerivative : Frame<T, false> {
