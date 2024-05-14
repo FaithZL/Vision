@@ -29,7 +29,7 @@ OC_STRUCT(vision::svgf, SVGFData, illumi_v, history, moments) {
        return illumi_v.w;
     }
     [[nodiscard]] Float3 illumination() const noexcept {
-       return illumi_v.xyz();
+       return illumi_v.xyz_();
     }
 };
 // clang-format on

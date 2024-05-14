@@ -32,7 +32,7 @@ public:
                             BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer) {
             RenderEnv render_env;
             render_env.initial(sampler, frame_index, spectrum());
-            Uint2 pixel = dispatch_idx().xy();
+            Uint2 pixel = dispatch_idx().xy_();
             sampler->start(pixel, frame_index, 0);
             camera->load_data();
 
@@ -85,29 +85,29 @@ public:
         Float depth_dx = 0.f;
         Float depth_dy = 0.f;
 
-        Uint2 center = dispatch_idx().xy();
-        foreach_neighbor(dispatch_idx().xy(), [&](const Int2 &pixel) {
+        Uint2 center = dispatch_idx().xy_();
+        foreach_neighbor(dispatch_idx().xy_(), [&](const Int2 &pixel) {
             Uint index = dispatch_id(pixel);
             PixelGeometryVar neighbor_data = gbuffer.read(index);
             $if(center.x > pixel.x) {
                 x_sample_num += 1;
-                normal_dx += center_data.normal_fwidth.xyz() - neighbor_data.normal_fwidth.xyz();
+                normal_dx += center_data.normal_fwidth.xyz_() - neighbor_data.normal_fwidth.xyz_();
                 depth_dx += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.x > center.x) {
                 x_sample_num += 1;
-                normal_dx += neighbor_data.normal_fwidth.xyz() - center_data.normal_fwidth.xyz();
+                normal_dx += neighbor_data.normal_fwidth.xyz_() - center_data.normal_fwidth.xyz_();
                 depth_dx += neighbor_data.linear_depth - center_data.linear_depth;
             };
 
             $if(center.y > pixel.y) {
                 y_sample_num += 1;
-                normal_dy += center_data.normal_fwidth.xyz() - neighbor_data.normal_fwidth.xyz();
+                normal_dy += center_data.normal_fwidth.xyz_() - neighbor_data.normal_fwidth.xyz_();
                 depth_dy += center_data.linear_depth - neighbor_data.linear_depth;
             }
             $elif(pixel.y > center.y) {
                 y_sample_num += 1;
-                normal_dy += neighbor_data.normal_fwidth.xyz() - center_data.normal_fwidth.xyz();
+                normal_dy += neighbor_data.normal_fwidth.xyz_() - center_data.normal_fwidth.xyz_();
                 depth_dy += neighbor_data.linear_depth - center_data.linear_depth;
             };
         });
@@ -134,7 +134,7 @@ public:
         Camera &camera = scene().camera();
         Sampler &sampler = scene().sampler();
         Kernel kernel = [&](BufferVar<Hit> hit_buffer) {
-            Uint2 pixel = dispatch_idx().xy();
+            Uint2 pixel = dispatch_idx().xy_();
             sampler->start(pixel, 0, 0);
             camera->load_data();
 

@@ -69,7 +69,7 @@ public:
         Geometry &geom = rp->geometry();
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
-            Uint2 pixel = dispatch_idx().xy();
+            Uint2 pixel = dispatch_idx().xy_();
             sampler->start(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             camera->load_data();

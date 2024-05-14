@@ -47,13 +47,13 @@ int main(int argc, char *argv[]) {
         switch (pixel_storage) {
             case PixelStorage::FLOAT4: {
                 float4 val = *(reinterpret_cast<const float4 *>(pixel));
-                f = luminance(val.xyz());
+                f = luminance(val.xyz_());
                 break;
             }
             case PixelStorage::BYTE4: {
                 uchar4 val = *(reinterpret_cast<const uchar4 *>(pixel));
                 float4 f4 = make_float4(val) / 255.f;
-                f = luminance(f4.xyz());
+                f = luminance(f4.xyz_());
                 break;
             }
             default:
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 
     Kernel kernel = [&]() {
         uint2 res = image_io.resolution();
-        Uint2 pixel = dispatch_idx().xy();
+        Uint2 pixel = dispatch_idx().xy_();
         Float u = cast<float>(pixel.x) / res.x;
         Float v = cast<float>(pixel.y) / res.y;
         Float2 uv = make_float2(u,v);

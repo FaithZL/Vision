@@ -57,10 +57,10 @@ public:
         Camera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
             camera->load_data();
-            Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz() * di;
-            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()).xyz() * ii;
+            Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz_() * di;
+            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()).xyz_() * ii;
             Float3 L = direct + indirect;
-            camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
+            camera->film()->add_sample(dispatch_idx().xy_(), L, frame_index);
         };
         combine_ = device().compile(kernel, "combine");
     }

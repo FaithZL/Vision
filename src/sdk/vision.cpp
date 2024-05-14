@@ -48,13 +48,13 @@ void VisionRendererImpl::compile() {
     auto sampler = _pipeline->scene().sampler();
     Buffer<float4> &buffer = film->rt_buffer().device_buffer();
     Kernel kernel = [&](Uint frame_index) {
-        Uint2 pixel = dispatch_idx().xy();
+        Uint2 pixel = dispatch_idx().xy_();
         sampler->start(pixel, 0, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
 
         RayState rs = camera->generate_ray(ss);
-        Uint2 res = dispatch_dim().xy();
+        Uint2 res = dispatch_dim().xy_();
         Uint2 center = res / 2u;
 
 

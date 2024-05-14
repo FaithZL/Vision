@@ -428,7 +428,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     Spectrum &spectrum = rp->spectrum();
 
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
-        Uint2 pixel = dispatch_idx().xy();
+        Uint2 pixel = dispatch_idx().xy_();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);
         initial(sampler(), frame_index, spectrum);
@@ -541,7 +541,7 @@ void ReSTIRDI::compile_shader1() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         initial(sampler(), frame_index, spectrum);
-        Uint2 pixel = dispatch_idx().xy();
+        Uint2 pixel = dispatch_idx().xy_();
         camera->load_data();
         sampler()->start(pixel, frame_index, 0);
         const SampledWavelengths &swl = sampled_wavelengths();

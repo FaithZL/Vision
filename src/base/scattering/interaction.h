@@ -22,7 +22,7 @@ OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
-    [[nodiscard]] Float3 normal() const noexcept { return normal_depth.xyz();}
+    [[nodiscard]] Float3 normal() const noexcept { return normal_depth.xyz_();}
     void set_depth(const Float &t) { normal_depth.w = t; }
     [[nodiscard]] Bool valid() const { return depth() > 0.f; }
     [[nodiscard]] Float depth() const noexcept { return normal_depth.w;}

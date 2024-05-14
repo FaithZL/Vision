@@ -12,8 +12,8 @@ void Modulator::prepare() noexcept {
 
 void Modulator::compile() noexcept {
     Kernel kernel = [&](Var<ModulatorParam> param) noexcept {
-        Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz();
-        Float3 emission = param.emission_buffer.read(dispatch_id()).xyz();
+        Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz_();
+        Float3 emission = param.emission_buffer.read(dispatch_id()).xyz_();
         SVGFDataVar svgf_data = param.svgf_buffer.read(dispatch_id());
         Float3 illumination = svgf_data->illumination();
         Float3 output = illumination * albedo + emission;
@@ -22,10 +22,10 @@ void Modulator::compile() noexcept {
     modulate_ = device().compile(kernel, "SVGF-modulate");
 
     Kernel kernel2 = [&](Var<ModulatorParam> param) noexcept {
-        Float3 emission = param.emission_buffer.read(dispatch_id()).xyz();
-        Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz();
-        Float3 radiance = param.radiance_buffer.read(dispatch_id()).xyz();
-        Float3 illumination = svgf::demodulate(radiance.xyz() - emission, albedo);
+        Float3 emission = param.emission_buffer.read(dispatch_id()).xyz_();
+        Float3 albedo = param.albedo_buffer.read(dispatch_id()).xyz_();
+        Float3 radiance = param.radiance_buffer.read(dispatch_id()).xyz_();
+        Float3 illumination = svgf::demodulate(radiance.xyz_() - emission, albedo);
         SVGFDataVar svgf_data;
         svgf_data.illumi_v = make_float4(illumination, 0.f);
         param.svgf_buffer.write(dispatch_id(), svgf_data);

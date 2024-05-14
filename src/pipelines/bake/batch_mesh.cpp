@@ -61,7 +61,7 @@ void BatchMesh::batch(ocarina::span<BakedShape> baked_shapes) noexcept {
 void BatchMesh::compile() noexcept {
     Kernel kernel = [&](BufferVar<uint4> src_pixels, Uint triangle_offset,
                         Uint pixel_offset, BufferVar<uint4> dst_pixels) {
-        Uint2 res = dispatch_dim().xy();
+        Uint2 res = dispatch_dim().xy_();
         Uint4 pixel = src_pixels.read(dispatch_id());
         Bool valid = bit_cast<uint>(1.f) == pixel.w;
         $if(valid) {

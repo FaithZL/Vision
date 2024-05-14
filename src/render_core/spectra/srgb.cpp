@@ -23,13 +23,13 @@ public:
     }
 
     [[nodiscard]] float4 albedo_params(float4 rgb) const noexcept override {
-        return make_float4(rgb.xyz(), ocarina::luminance(rgb.xyz()));
+        return make_float4(rgb.xyz_(), ocarina::luminance(rgb.xyz_()));
     }
     [[nodiscard]] float4 illumination_params(float4 rgb) const noexcept override {
-        return make_float4(rgb.xyz(), ocarina::luminance(rgb.xyz()));
+        return make_float4(rgb.xyz_(), ocarina::luminance(rgb.xyz_()));
     }
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
-        return make_float4(rgb.xyz(), ocarina::luminance(rgb.xyz()));
+        return make_float4(rgb.xyz_(), ocarina::luminance(rgb.xyz_()));
     }
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::linear_srgb_to_y(linear_srgb(sp, swl));

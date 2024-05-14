@@ -117,15 +117,15 @@ float4x4 CameraImpl::camera_to_world() const noexcept {
 }
 
 float3 CameraImpl::forward() const noexcept {
-    return c2w_.hv()[2].xyz();
+    return c2w_.hv()[2].xyz_();
 }
 
 float3 CameraImpl::up() const noexcept {
-    return c2w_.hv()[1].xyz();
+    return c2w_.hv()[1].xyz_();
 }
 
 float3 CameraImpl::right() const noexcept {
-    return c2w_.hv()[0].xyz();
+    return c2w_.hv()[0].xyz_();
 }
 
 Float4x4 CameraImpl::device_c2w() const noexcept {
@@ -139,18 +139,18 @@ Float CameraImpl::linear_depth(const Float3 &world_pos) const noexcept {
 }
 
 Float3 CameraImpl::device_forward() const noexcept {
-    return (*c2w_)[2].xyz();
+    return (*c2w_)[2].xyz_();
 }
 
 Float3 CameraImpl::device_up() const noexcept {
-    return (*c2w_)[1].xyz();
+    return (*c2w_)[1].xyz_();
 }
 
 Float3 CameraImpl::device_right() const noexcept {
-    return (*c2w_)[0].xyz();
+    return (*c2w_)[0].xyz_();
 }
 
 Float3 CameraImpl::device_position() const noexcept {
-    return (*c2w_)[3].xyz();
+    return (*c2w_)[3].xyz_();
 }
 }// namespace vision

@@ -19,7 +19,7 @@ void IntegratorImpl::invalidation() const noexcept {
 }
 
 void RenderEnv::initial(Sampler &sampler, const Uint &frame_index, const Spectrum &spectrum) noexcept {
-    Uint2 pixel = dispatch_idx().xy();
+    Uint2 pixel = dispatch_idx().xy_();
     frame_index_.emplace(frame_index);
     SampledWavelengths wavelengths{spectrum->dimension()};
     sampler->temporary([&](SamplerImpl *) {

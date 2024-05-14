@@ -78,7 +78,7 @@ public:
         return *this;
     }
     oc_float3<p> v() const noexcept {
-        return _vw.xyz();
+        return _vw.xyz_();
     }
     oc_float<p> w() const noexcept {
         return _vw.w;

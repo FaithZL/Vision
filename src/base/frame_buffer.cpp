@@ -63,7 +63,7 @@ Float2 FrameBuffer::compute_motion_vec(const Camera &camera, const Float2 &p_fil
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
-        Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy();
+        Float2 raster_coord = camera->prev_raster_coord(cur_pos).xy_();
         ret = p_film - raster_coord;
     };
     return ret;

@@ -54,7 +54,7 @@ void AtrousFilter::compile() noexcept {
         Float4 sum_illumi_v = cur_svgf_data.illumi_v;
 
         Int2 radius = make_int2(2);
-        Int2 cur_pixel = make_int2(dispatch_idx().xy());
+        Int2 cur_pixel = make_int2(dispatch_idx().xy_());
         foreach_neighbor(
             cur_pixel,
             [&](const Int2 &neighbor) {
@@ -66,7 +66,7 @@ void AtrousFilter::compile() noexcept {
                 Float kernel_weight = kernel_weights[abs(offset.x)] * kernel_weights[abs(offset.y)];
                 Int2 new_offset = offset * param.step_size;
                 Int2 target_pixel = cur_pixel + new_offset;
-                $if(!in_screen(target_pixel, make_int2(dispatch_dim().xy()))) {
+                $if(!in_screen(target_pixel, make_int2(dispatch_dim().xy_()))) {
                     $continue;
                 };
                 Uint index = dispatch_id(target_pixel);
@@ -76,7 +76,7 @@ void AtrousFilter::compile() noexcept {
 
                 Float weight = SVGF::cal_weight(cur_geom.linear_depth, neighbor_geom.linear_depth,
                                                 sigma_depth * length(make_float2(offset)),
-                                                cur_geom.normal_fwidth.xyz(), neighbor_geom.normal_fwidth.xyz(),
+                                                cur_geom.normal_fwidth.xyz_(), neighbor_geom.normal_fwidth.xyz_(),
                                                 param.sigma_normal,cur_luminance, neighbor_luminance, sigma_illumi);
 
                 Float illumi_weight = weight * kernel_weight;

@@ -66,7 +66,7 @@ void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 
 GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
                                   HitBSDFVar &hit_bsdf) noexcept {
-    Uint2 pixel = dispatch_idx().xy();
+    Uint2 pixel = dispatch_idx().xy_();
     sampler()->start(pixel, frame_index(), 3);
     Interaction sp_it{false};
     RayState ray_state = RayState::create(hit_bsdf.next_ray);
@@ -97,7 +97,7 @@ void ReSTIRGI::compile_initial_samples() noexcept {
             $return();
         };
         camera->load_data();
-        Uint2 pixel = dispatch_idx().xy();
+        Uint2 pixel = dispatch_idx().xy_();
         sampler()->start(pixel, frame_index, 0);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, camera->device_position());
@@ -195,7 +195,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
             $return();
         };
         camera->load_data();
-        Uint2 pixel = dispatch_idx().xy();
+        Uint2 pixel = dispatch_idx().xy_();
         SensorSample ss;
         sampler()->temporary([&](SamplerImpl *sampler) {
             sampler->start(pixel, frame_index, 0);
@@ -290,7 +290,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
 
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         sampler()->try_load_data();
-        sampler()->start(dispatch_idx().xy(), frame_index, 5);
+        sampler()->start(dispatch_idx().xy_(), frame_index, 5);
         initial(sampler(), frame_index, spectrum);
         camera->load_data();
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
@@ -298,7 +298,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
             $return();
         };
         GIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
-        rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()), param);
+        rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy_()), param);
         Float3 L = shading(rsv, surf);
         frame_buffer().bufferB().write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);

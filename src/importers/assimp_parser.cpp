@@ -268,7 +268,7 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
             float2 tex_coord;
             if (ai_mesh->mTextureCoords[0] != nullptr) {
                 auto ai_tex_coord = ai_mesh->mTextureCoords[0][i];
-                tex_coord = assimp::from_vec3(ai_tex_coord).xy();
+                tex_coord = assimp::from_vec3(ai_tex_coord).xy_();
             } else {
                 tex_coord = make_float2(0.f);
             }
