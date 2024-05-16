@@ -20,7 +20,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {
         Kernel kernel = [&](Uint frame_index, BufferVar<float4> output) {
-            Uint2 pixel = dispatch_idx().xy_();
+            Uint2 pixel = dispatch_idx().xy();
             RenderEnv render_env;
             render_env.initial(sampler(), frame_index, spectrum());
             sampler()->start(pixel, frame_index, 0);

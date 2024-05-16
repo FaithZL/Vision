@@ -130,7 +130,7 @@ public:
         float m = max_comp(rgb);
         float scale = 2.f * m;
         float4 c = decode_albedo(select(scale == 0.f, make_float3(0.f), rgb / scale));
-        return make_float4(c.xyz_(), scale);
+        return make_float4(c.xyz(), scale);
     }
 
     [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
@@ -151,7 +151,7 @@ public:
                     coord,
                     make_float3((res - 1.0f) / res),
                     make_float3(0.5f / res));
-                c = array.tex_var(base_index + maxc).sample(4, coord).as_vec4().xyz_();
+                c = array.tex_var(base_index + maxc).sample(4, coord).as_vec4().xyz();
             };
             return c;
         };
@@ -165,7 +165,7 @@ public:
         Float m = max_comp(rgb);
         Float scale = 2.f * m;
         Float4 c = decode_albedo(select(scale == 0.f, make_float3(0.f), rgb / scale));
-        return make_float4(c.xyz_(), scale);
+        return make_float4(c.xyz(), scale);
     }
 };
 
@@ -189,7 +189,7 @@ public:
     explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
         : Super{ocarina::move(rsp)}, scale_(scale) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
-        : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz_()), c.w) {}
+        : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {
         return Super::eval(lambda) * scale_;
     }
@@ -206,7 +206,7 @@ public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
         : Super(rsp, scale), illuminant_(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
-        : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz_()), c.w, wp) {}
+        : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
     [[nodiscard]] Float eval(const Float &lambda) const noexcept {
         return Super::eval(lambda) * illuminant_.eval(lambda);
     }
@@ -299,13 +299,13 @@ public:
         return swl;
     }
     [[nodiscard]] float4 albedo_params(float4 rgb) const noexcept override {
-        return rgb_to_spectrum_table_.decode_albedo(rgb.xyz_());
+        return rgb_to_spectrum_table_.decode_albedo(rgb.xyz());
     }
     [[nodiscard]] float4 illumination_params(float4 rgb) const noexcept override {
-        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz_());
+        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz());
     }
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
-        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz_());
+        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz());
     }
     [[nodiscard]] Float luminance(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return sp.average();
@@ -327,7 +327,7 @@ public:
         return sp;
     }
     [[nodiscard]] SampledSpectrum params_to_albedo(Float4 val, const SampledWavelengths &swl) const noexcept {
-        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz_()});
+        RGBAlbedoSpectrum spec(RGBSigmoidPolynomial{val.xyz()});
         SampledSpectrum sp{dimension()};
         for (uint i = 0; i < dimension(); ++i) {
             sp[i] = spec.eval(swl.lambda(i));

@@ -58,7 +58,7 @@ public:
         return texture_->host_tex().average_vector();
     }
     [[nodiscard]] uint2 resolution() const noexcept override {
-        return texture_->device_tex()->resolution().xy_();
+        return texture_->device_tex()->resolution().xy();
     }
     void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept override {
         texture_->host_tex().for_each_pixel(func);

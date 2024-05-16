@@ -71,7 +71,7 @@ void BakePipeline::compile_displayer() noexcept {
     Camera &camera = scene().camera();
     Sampler &sampler = scene().sampler();
     Kernel kernel = [&](Uint frame_index, Uint lightmap_base) {
-        Uint2 pixel = dispatch_idx().xy_();
+        Uint2 pixel = dispatch_idx().xy();
         sampler->start(pixel, frame_index, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
         camera->load_data();
@@ -89,7 +89,7 @@ void BakePipeline::compile_displayer() noexcept {
 
         $if(it.has_lightmap()) {
             Float4 t = bindless_array().tex_var(lightmap_base + it.lightmap_id).sample(4, it.lightmap_uv).as_vec4();
-            L = t.xyz_() / t.w;
+            L = t.xyz() / t.w;
             $if(has_invalid(L)) {
                 L = make_float3(0.f);
             };

@@ -49,7 +49,7 @@ template<typename TPixel, typename Func>
 requires is_vector2_expr_v<TPixel>
 void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_int2(1)) {
     Int2 cur_pixel = make_int2(pixel);
-    Int2 res = make_int2(dispatch_dim().xy_());
+    Int2 res = make_int2(dispatch_dim().xy());
     Int x_start = cur_pixel.x - radius.x;
     x_start = max(0, x_start);
     Int x_end = cur_pixel.x + radius.x;

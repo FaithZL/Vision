@@ -28,7 +28,7 @@ void FilterMoments::compile() noexcept {
 
         Float cur_luminance = ocarina::luminance(cur_svgf_data->illumination());
         Int2 radius = make_int2(param.radius);
-        Int2 cur_pixel = make_int2(dispatch_idx().xy_());
+        Int2 cur_pixel = make_int2(dispatch_idx().xy());
 
         Float weight_sum_illumi = 0;
         Float3 sum_illumi = make_float3(0.f);
@@ -43,10 +43,10 @@ void FilterMoments::compile() noexcept {
                 Float2 moments = svgf_data.moments;
                 Float luminance = ocarina::luminance(illumination);
                 Float depth = geom.linear_depth;
-                Float3 normal = geom.normal_fwidth.xyz_();
+                Float3 normal = geom.normal_fwidth.xyz();
 
                 Float weight = SVGF::cal_weight(cur_geom.linear_depth, depth, sigma_depth,
-                                                cur_geom.normal_fwidth.xyz_(), normal, param.sigma_normal,
+                                                cur_geom.normal_fwidth.xyz(), normal, param.sigma_normal,
                                                 cur_luminance, luminance, param.sigma_rt);
 
                 weight_sum_illumi += weight;

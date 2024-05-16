@@ -12,15 +12,15 @@ void Reproject::prepare() noexcept {
 }
 
 Bool Reproject::is_valid_reproject(const PixelGeometryVar &cur, const PixelGeometryVar &prev) const noexcept {
-    Uint2 resolution = dispatch_dim().xy_();
+    Uint2 resolution = dispatch_dim().xy();
     Bool inside = in_screen(make_int2(prev.p_film), make_int2(resolution));
 
     Float z = cur.linear_depth;
     Float z_prev = prev.linear_depth;
     Bool z_valid = (abs(z - z_prev) / (cur.depth_gradient + 1e-2f)) < 10;
 
-    Float3 normal = cur.normal_fwidth.xyz_();
-    Float3 normal_prev = prev.normal_fwidth.xyz_();
+    Float3 normal = cur.normal_fwidth.xyz();
+    Float3 normal_prev = prev.normal_fwidth.xyz();
     Bool normal_valid = (distance(normal, normal_prev) / (cur.normal_fwidth.w + 1e-2f)) < 16;
 
     return inside && z_valid && normal_valid;
@@ -31,12 +31,12 @@ Bool Reproject::load_prev_data(const PixelGeometryVar &cur_geom, const BufferVar
                                const Float2 &motion_vec, const BufferVar<SVGFData> &prev_buffer,
                                Float *history, Float3 *prev_illumination,
                                Float2 *prev_moments) const noexcept {
-    Uint2 pos = dispatch_idx().xy_();
+    Uint2 pos = dispatch_idx().xy();
 
     Float2 prev_p_film = cur_geom.p_film - motion_vec;
     Int2 prev_pixel = make_int2(prev_p_film - 0.5f);
     Uint prev_pixel_index = dispatch_id(prev_pixel);
-    Bool inside = in_screen(prev_pixel, make_int2(dispatch_dim().xy_()));
+    Bool inside = in_screen(prev_pixel, make_int2(dispatch_dim().xy()));
 
     PixelGeometryVar prev_geom;
 
@@ -52,7 +52,7 @@ Bool Reproject::load_prev_data(const PixelGeometryVar &cur_geom, const BufferVar
         int2 ofs = offsets[i];
         Int2 loc = prev_pixel + ofs;
         Uint index = dispatch_id(loc);
-        $if(in_screen(loc, make_int2(dispatch_dim().xy_()))) {
+        $if(in_screen(loc, make_int2(dispatch_dim().xy()))) {
             prev_geom = prev_gbuffer.read(index);
             v[i] = is_valid_reproject(cur_geom, prev_geom);
             valid = valid || v[i];
@@ -71,7 +71,7 @@ Bool Reproject::load_prev_data(const PixelGeometryVar &cur_geom, const BufferVar
             int2 ofs = offsets[i];
             Int2 loc = prev_pixel + ofs;
             Uint index = dispatch_id(loc);
-            $if(v[i] && in_screen(loc, make_int2(dispatch_dim().xy_()))) {
+            $if(v[i] && in_screen(loc, make_int2(dispatch_dim().xy()))) {
                 SVGFDataVar prev_svgf_data = prev_buffer.read(index);
                 Float weight = weights[i];
                 *prev_illumination += weight * prev_svgf_data->illumination();
@@ -148,7 +148,7 @@ void Reproject::compile() noexcept {
         moments = lerp(make_float2(param.moments_alpha), prev_moments, moments);
 
         Float variance = max(0.f, moments.y - sqr(moments.x));
-        illumination = lerp(make_float3(param.alpha), prev_illumination.xyz_(), illumination);
+        illumination = lerp(make_float3(param.alpha), prev_illumination.xyz(), illumination);
         svgf_data.illumi_v = make_float4(illumination, variance);
         svgf_data.moments = moments;
         svgf_data.history = history;

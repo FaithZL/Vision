@@ -38,7 +38,7 @@ public:
         Sampler &sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Env::instance().clear_global_vars();
-            Uint2 pixel = dispatch_idx().xy_();
+            Uint2 pixel = dispatch_idx().xy();
             RenderEnv render_env;
             render_env.initial(sampler, frame_index, spectrum());
             sampler->start(pixel, frame_index, 0);

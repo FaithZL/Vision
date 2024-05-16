@@ -87,7 +87,7 @@ public:
             ocarina::acos(clamp(dot(cross20, -cross01), -1.f, 1.f)) - Pi);
         return (2 * solid_angle) / (4 * Pi) * average();
     }
-    [[nodiscard]] Float3 position() const noexcept override { return (*_o2w)[3].xyz_(); }
+    [[nodiscard]] Float3 position() const noexcept override { return (*_o2w)[3].xyz(); }
     [[nodiscard]] float3 &host_position() noexcept override {
         return reinterpret_cast<float3 &>(_o2w.hv()[3]);
     }
@@ -104,7 +104,7 @@ public:
         Float tan_y = tan(*_angle_y);
         Float tan_x = *_ratio * tan_y;
         Float2 tan_xy = make_float2(tan_x, tan_y);
-        Float2 uv = (p.xy_() + tan_xy) / (2.f * tan_xy);
+        Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
         return select(valid, 1.f, 0.f) * color_.eval_illumination_spectrum(uv, swl).sample / d2 * scale();
     }

@@ -162,13 +162,13 @@ public:
             switch (pixel_storage) {
                 case PixelStorage::FLOAT4: {
                     float4 val = *(reinterpret_cast<const float4 *>(pixel));
-                    f = luminance(val.xyz_());
+                    f = luminance(val.xyz());
                     break;
                 }
                 case PixelStorage::BYTE4: {
                     uchar4 val = *(reinterpret_cast<const uchar4 *>(pixel));
                     float4 f4 = make_float4(val) / 255.f;
-                    f = luminance(f4.xyz_());
+                    f = luminance(f4.xyz());
                     break;
                 }
                 default:

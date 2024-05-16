@@ -139,18 +139,18 @@ Float CameraImpl::linear_depth(const Float3 &world_pos) const noexcept {
 }
 
 Float3 CameraImpl::device_forward() const noexcept {
-    return (*c2w_)[2].xyz_();
+    return (*c2w_)[2].xyz();
 }
 
 Float3 CameraImpl::device_up() const noexcept {
-    return (*c2w_)[1].xyz_();
+    return (*c2w_)[1].xyz();
 }
 
 Float3 CameraImpl::device_right() const noexcept {
-    return (*c2w_)[0].xyz_();
+    return (*c2w_)[0].xyz();
 }
 
 Float3 CameraImpl::device_position() const noexcept {
-    return (*c2w_)[3].xyz_();
+    return (*c2w_)[3].xyz();
 }
 }// namespace vision

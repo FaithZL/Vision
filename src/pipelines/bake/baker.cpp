@@ -86,8 +86,8 @@ void Baker::_compile_bake() noexcept {
         camera->load_data();
         RenderEnv render_env;
         render_env.initial(sampler, frame_index, spectrum());
-        sampler->start(dispatch_idx().xy_(), frame_index, 0);
-        Float2 p_film = make_float2(dispatch_idx().xy_()) + 0.5f;
+        sampler->start(dispatch_idx().xy(), frame_index, 0);
+        Float2 p_film = make_float2(dispatch_idx().xy()) + 0.5f;
         auto [position, norm, valid, weight] = fetch_geometry_data(triangles, vertices, pixels, &p_film);
         $if(!valid) {
             $return();
