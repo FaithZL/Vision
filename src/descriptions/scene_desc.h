@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "core/stl.h"
 #include "node_desc.h"
 

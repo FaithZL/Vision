@@ -4,7 +4,7 @@
 
 #include "application.h"
 #include "GUI/window.h"
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "base/mgr/global.h"
 #include "base/importer.h"
 #include "rhi/stats.h"

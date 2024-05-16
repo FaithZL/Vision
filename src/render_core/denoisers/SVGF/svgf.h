@@ -2,7 +2,7 @@
 // Created by Zero on 2024/2/15.
 //
 
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "dsl/dsl.h"
 #include "base/denoiser.h"
 #include "reproject.h"

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "node.h"
 #include "shape.h"
 #include "base/mgr/pipeline.h"

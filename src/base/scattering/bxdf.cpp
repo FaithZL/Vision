@@ -5,7 +5,7 @@
 #include "bxdf.h"
 #include "math/geometry.h"
 #include "math/warp.h"
-#include "core/constants.h"
+#include "math/constants.h"
 
 namespace vision {
 

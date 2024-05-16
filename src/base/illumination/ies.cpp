@@ -3,8 +3,8 @@
 //
 
 #include "ies.h"
-#include "core/basic_types.h"
-#include "core/constants.h"
+#include "math/basic_types.h"
+#include "math/constants.h"
 
 namespace vision {
 
@@ -201,8 +201,8 @@ bool IESFile::process_type_b() {
 
     if (h_first == 0.0f) {
         /**
-         * The range in the file corresponds to 90¡ã-180¡ã, we need to mirror that to get the
-         * full 180¡ã range.
+         * The range in the file corresponds to 90ï¿½ï¿½-180ï¿½ï¿½, we need to mirror that to get the
+         * full 180ï¿½ï¿½ range.
          */
         vector<float> new_h_angles;
         vector<vector<float>> new_intensity;
@@ -220,14 +220,14 @@ bool IESFile::process_type_b() {
         _h_angles.swap(new_h_angles);
         _intensity.swap(new_intensity);
     } else if (h_first == -90.0f) {
-        /* We have full 180¡ã coverage, so just shift to match the angle range convention. */
+        /* We have full 180ï¿½ï¿½ coverage, so just shift to match the angle range convention. */
         for (int i = 0; i < _h_angles.size(); i++) {
             _h_angles[i] += 90.0f;
         }
     }
     /**
      * To get correct results with the cubic interpolation in the kernel, the horizontal range
-     * has to cover all 360¡ã. Therefore, we copy the 0¡ã entry to 360¡ã to ensure full coverage
+     * has to cover all 360ï¿½ï¿½. Therefore, we copy the 0ï¿½ï¿½ entry to 360ï¿½ï¿½ to ensure full coverage
      * and seamless interpolation.
      */
     _h_angles.push_back(360.0f);
@@ -239,8 +239,8 @@ bool IESFile::process_type_b() {
     }
 
     if (v_first == 0.0f) {
-        /** The range in the file corresponds to 90¡ã-180¡ã, we need to mirror that to get the
-         * full 180¡ã range.
+        /** The range in the file corresponds to 90ï¿½ï¿½-180ï¿½ï¿½, we need to mirror that to get the
+         * full 180ï¿½ï¿½ range.
          */
         vector<float> new_v_angles;
         int hnum = _h_angles.size();
@@ -263,7 +263,7 @@ bool IESFile::process_type_b() {
         }
         _v_angles.swap(new_v_angles);
     } else if (v_first == -90.0f) {
-        /* We have full 180¡ã coverage, so just shift to match the angle range convention. */
+        /* We have full 180ï¿½ï¿½ coverage, so just shift to match the angle range convention. */
         for (float & _v_angle : _v_angles) {
             _v_angle += 90.0f;
         }
@@ -274,7 +274,7 @@ bool IESFile::process_type_b() {
 
 bool IESFile::process_type_c() {
     if (_h_angles[0] == 90.0f) {
-        /* Some files are stored from 90¡ã to 270¡ã, so we just rotate them to the regular 0¡ã-180¡ã range
+        /* Some files are stored from 90ï¿½ï¿½ to 270ï¿½ï¿½, so we just rotate them to the regular 0ï¿½ï¿½-180ï¿½ï¿½ range
      * here. */
         for (int i = 0; i < _h_angles.size(); i++) {
             _h_angles[i] -= 90.0f;
@@ -312,8 +312,8 @@ bool IESFile::process_type_c() {
         }
     }
 
-    /* Some files skip the 360¡ã entry (contrary to standard) because it's supposed to be identical to
-   * the 0¡ã entry. If the file has a discernible order in its spacing, just fix this. */
+    /* Some files skip the 360ï¿½ï¿½ entry (contrary to standard) because it's supposed to be identical to
+   * the 0ï¿½ï¿½ entry. If the file has a discernible order in its spacing, just fix this. */
     if (_h_angles[_h_angles.size() - 1] != 360.0f) {
         int hnum = _h_angles.size();
         float last_step = _h_angles[hnum - 1] - _h_angles[hnum - 2];

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "base/node.h"
 #include "base/serial_object.h"
 #include "base/sample.h"

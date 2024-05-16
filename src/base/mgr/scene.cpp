@@ -3,7 +3,7 @@
 //
 
 #include "scene.h"
-#include "ocarina/src/core/dynamic_module.h"
+#include "core/dynamic_module.h"
 #include "pipeline.h"
 #include "base/scattering/interaction.h"
 #include "mesh_registry.h"

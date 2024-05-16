@@ -7,10 +7,10 @@
 #include <utility>
 #include "core/stl.h"
 #include "core/hash.h"
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "parameter_set.h"
 #include "math/geometry.h"
-#include "ocarina/src/core/dynamic_module.h"
+#include "core/dynamic_module.h"
 
 namespace vision {
 

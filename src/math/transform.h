@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "dsl/dsl.h"
 #include "core/concepts.h"
-#include "ocarina/src/math/box.h"
+#include "math/box.h"
 #include "quaternion.h"
 
 namespace vision {

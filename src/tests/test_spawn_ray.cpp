@@ -2,7 +2,7 @@
 // Created by Zero on 10/10/2022.
 //
 
-#include "ocarina/src/math/box.h"
+#include "math/box.h"
 #include "core/stl.h"
 #include "rhi/common.h"
 #include "core/string_util.h"

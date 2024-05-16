@@ -5,7 +5,7 @@
 #pragma once
 
 #include "cxxopts.hpp"
-#include "ocarina/src/core/stl.h"
+#include "core/stl.h"
 
 namespace vision {
 

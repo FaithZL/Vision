@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/stl.h"
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 
 namespace vision {
 using namespace ocarina;

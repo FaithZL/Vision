@@ -2,14 +2,14 @@
 // Created by Zero on 15/09/2022.
 //
 
-#include "ocarina/src/math/box.h"
+#include "math/box.h"
 #include "core/stl.h"
 #include "rhi/common.h"
 #include "core/string_util.h"
 #include "math/transform.h"
 #include "base/scattering/interaction.h"
 #include "math/geometry.h"
-#include "core/constants.h"
+#include "math/constants.h"
 #include "render_core/spectra/srgb2spec.h"
 #include "base/color/spd.h"
 

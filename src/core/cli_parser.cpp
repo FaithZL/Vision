@@ -3,7 +3,7 @@
 //
 
 #include "cli_parser.h"
-#include "ocarina/src/core/logging.h"
+#include "core/logging.h"
 
 namespace vision {
 

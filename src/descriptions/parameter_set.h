@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ocarina/src/core/basic_types.h"
+#include "math/basic_types.h"
 #include "core/logging.h"
 #include "core/vs_header.h"
 

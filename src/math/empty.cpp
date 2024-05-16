@@ -3,8 +3,8 @@
 //
 
 #include "optics.h"
-#include "ocarina/src/math/interval.h"
-#include "ocarina/src/math/box.h"
+#include "math/interval.h"
+#include "math/box.h"
 #include "transform.h"
 #include "geometry.h"
 #include "warp.h"

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "core/basic_types.h"
+#include "math/basic_types.h"
 #include "rhi/common.h"
 #include "dsl/dsl.h"
 #include "GUI/widgets.h"
