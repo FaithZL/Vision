@@ -131,5 +131,4 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_illumination(val, swl);
 }
-
 }// namespace vision
