@@ -117,15 +117,15 @@ float4x4 CameraImpl::camera_to_world() const noexcept {
 }
 
 float3 CameraImpl::forward() const noexcept {
-    return c2w_.hv()[2].xyz;
+    return c2w_.hv()[2].xyz();
 }
 
 float3 CameraImpl::up() const noexcept {
-    return c2w_.hv()[1].xyz;
+    return c2w_.hv()[1].xyz();
 }
 
 float3 CameraImpl::right() const noexcept {
-    return c2w_.hv()[0].xyz;
+    return c2w_.hv()[0].xyz();
 }
 
 Float4x4 CameraImpl::device_c2w() const noexcept {
