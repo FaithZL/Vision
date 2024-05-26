@@ -46,7 +46,7 @@ requires is_integral_expr_v<T>
 [[nodiscard]] inline T cur_index(const T &frame_index) noexcept { return (frame_index + 1) & 1; }
 
 template<typename TPixel, typename Func>
-requires is_vector2_expr_v<TPixel>
+requires is_general_vector_v<remove_device_t<TPixel>>
 void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_int2(1)) {
     Int2 cur_pixel = make_int2(pixel);
     Int2 res = make_int2(dispatch_dim().xy());
