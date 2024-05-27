@@ -133,7 +133,7 @@ public:
         return make_float4(c.xyz(), scale);
     }
 
-    [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
+    [[nodiscard]] Float4 decode_albedo(Float3 rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
         static CALLABLE_TYPE decode = [](Var<BindlessArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
             Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
@@ -299,13 +299,13 @@ public:
         return swl;
     }
     [[nodiscard]] float4 albedo_params(float4 rgb) const noexcept override {
-        return rgb_to_spectrum_table_.decode_albedo(rgb.xyz());
+        return rgb_to_spectrum_table_.decode_albedo(rgb.xyz().decay());
     }
     [[nodiscard]] float4 illumination_params(float4 rgb) const noexcept override {
-        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz());
+        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz().decay());
     }
     [[nodiscard]] float4 unbound_params(float4 rgb) const noexcept override {
-        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz());
+        return rgb_to_spectrum_table_.decode_unbound(rgb.xyz().decay());
     }
     [[nodiscard]] Float luminance(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return sp.average();
