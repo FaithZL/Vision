@@ -145,7 +145,6 @@ GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVa
         p_hat = p_hat * Jacobian_det(it.pos, neighbor_it.pos, other_rsv.sample.sp);
     }
     ret->update_W(p_hat);
-    $condition_info("{} {} {} --", ret.W, cur_rsv.W, other_rsv.W);
     return ret;
 }
 
@@ -214,7 +213,6 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
         Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
-        $condition_info("{} {}  {} --as_vec3---",sample.Lo.as_vec3());
         Float2 motion_vec = frame_buffer().motion_vectors().read(dispatch_id());
         rsv = temporal_reuse(rsv, surf, motion_vec, ss, param);
         passthrough_reservoirs().write(dispatch_id(), rsv);

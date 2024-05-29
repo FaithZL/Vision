@@ -31,7 +31,7 @@ class FilterMoments : public Context {
 private:
     SVGF *svgf_{nullptr};
     using signature = void(FilterMomentsParam);
-    Shader<signature> _shader;
+    Shader<signature> shader_;
 
 public:
     explicit FilterMoments(SVGF *svgf)

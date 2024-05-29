@@ -35,7 +35,7 @@ private:
     SVGF *svgf_{nullptr};
 
     using signature = void(AtrousParam);
-    Shader<signature> _shader;
+    Shader<signature> shader_;
 
 public:
     explicit AtrousFilter(SVGF *svgf)

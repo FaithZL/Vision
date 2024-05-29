@@ -88,7 +88,7 @@ void AtrousFilter::compile() noexcept {
         cur_svgf_data.illumi_v = filtered_illumi_v;
         param.svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
-    _shader = device().compile(kernel, "SVGF-atrous");
+    shader_ = device().compile(kernel, "SVGF-atrous");
 }
 
 AtrousParam AtrousFilter::construct_param(RealTimeDenoiseInput &input, uint step_width) const noexcept {
@@ -104,7 +104,7 @@ AtrousParam AtrousFilter::construct_param(RealTimeDenoiseInput &input, uint step
 
 CommandList AtrousFilter::dispatch(vision::RealTimeDenoiseInput &input, ocarina::uint step_width) noexcept {
     CommandList ret;
-    ret << _shader(construct_param(input, step_width))
+    ret << shader_(construct_param(input, step_width))
                .dispatch(input.resolution);
     return ret;
 }

@@ -64,7 +64,7 @@ void FilterMoments::compile() noexcept {
         cur_svgf_data.illumi_v = make_float4(sum_illumi, variance);
         param.svgf_buffer.write(dispatch_id(), cur_svgf_data);
     };
-    _shader = device().compile(kernel, "SVGF-filter_moments");
+    shader_ = device().compile(kernel, "SVGF-filter_moments");
 }
 
 FilterMomentsParam FilterMoments::construct_param(RealTimeDenoiseInput &input) const noexcept {
@@ -80,7 +80,7 @@ FilterMomentsParam FilterMoments::construct_param(RealTimeDenoiseInput &input) c
 
 CommandList FilterMoments::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
     CommandList ret;
-    ret << _shader(construct_param(input))
+    ret << shader_(construct_param(input))
                .dispatch(input.resolution);
     return ret;
 }
