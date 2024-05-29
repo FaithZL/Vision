@@ -25,18 +25,18 @@ namespace vision {
 //    }
 class SphericalMap : public EnvironmentImpl {
 private:
-    Serial<float4x4> _w2o;
-    SP<Warper2D> _warper{};
+    Serial<float4x4> w2o_;
+    SP<Warper2D> warper_{};
 
 public:
     explicit SphericalMap(const Desc &desc)
         : EnvironmentImpl(desc, LightType::Infinite) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
-        _w2o = inverse(o2w * rx);
+        w2o_ = inverse(o2w * rx);
     }
 
-    OC_SERIALIZABLE_FUNC(EnvironmentImpl, _w2o, *_warper)
+    OC_SERIALIZABLE_FUNC(EnvironmentImpl, w2o_, *warper_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;
@@ -52,7 +52,7 @@ public:
     }
 
     [[nodiscard]] Float2 convert_to_bary(const Float3 &world_dir) const noexcept override {
-        Float3 local_dir = normalize(transform_vector(*_w2o, world_dir));
+        Float3 local_dir = normalize(transform_vector(*w2o_, world_dir));
         return UV(local_dir);
     }
 
@@ -71,7 +71,7 @@ public:
                                         const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         LightEval ret{swl.dimension()};
         Float3 world_dir = normalize(p_light.pos - p_ref.pos);
-        Float3 local_dir = transform_vector(*_w2o, world_dir);
+        Float3 local_dir = transform_vector(*w2o_, world_dir);
         Float theta = spherical_theta(local_dir);
         Float phi = spherical_phi(local_dir);
         Float sin_theta = sin(theta);
@@ -80,7 +80,7 @@ public:
             ret.L = L(local_dir, swl);
         }
         if (match_PDF(mode)) {
-            Float pdf = _warper->PDF(uv) / (_2Pi * Pi * sin_theta);
+            Float pdf = warper_->PDF(uv) / (_2Pi * Pi * sin_theta);
             ret.pdf = select(sin_theta == 0, 0.f, pdf);
         }
         return ret;
@@ -94,7 +94,7 @@ public:
         Float sin_theta = sin(theta);
         Float cos_theta = cos(theta);
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
-        Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
+        Float3 world_dir = normalize(transform_vector(inverse(*w2o_), local_dir));
         if (match_PDF(mode)) {
             Float pdf_dir = pdf_map / (_2Pi * Pi * sin_theta);
             pdf_dir = select(ocarina::isinf(pdf_dir), 0.f, pdf_dir);
@@ -110,7 +110,7 @@ public:
 
     [[nodiscard]] LightSurfacePoint sample_only(ocarina::Float2 u) const noexcept override {
         LightSurfacePoint lsp;
-        Float2 uv = _warper->sample_continuous(u, nullptr, nullptr);
+        Float2 uv = warper_->sample_continuous(u, nullptr, nullptr);
         lsp.bary = uv;
         return lsp;
     }
@@ -119,7 +119,7 @@ public:
                                              const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         Float pdf_map = 0.f;
         if (match_PDF(mode)) {
-            pdf_map = _warper->PDF(lsp.bary);
+            pdf_map = warper_->PDF(lsp.bary);
         }
         return evaluate(p_ref, lsp.bary, pdf_map, swl, mode);
     }
@@ -131,14 +131,14 @@ public:
 
     [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
                                                               LightSurfacePoint lsp) const noexcept override {
-        Float pdf_map = _warper->PDF(lsp.bary);
+        Float pdf_map = warper_->PDF(lsp.bary);
         Float2 uv = lsp.bary;
         Float theta = uv[1] * Pi;
         Float phi = uv[0] * _2Pi;
         Float sin_theta = sin(theta);
         Float cos_theta = cos(theta);
         Float3 local_dir = spherical_direction(sin_theta, cos_theta, phi);
-        Float3 world_dir = normalize(transform_vector(inverse(*_w2o), local_dir));
+        Float3 world_dir = normalize(transform_vector(inverse(*w2o_), local_dir));
         Float3 pos = p_ref.pos + world_dir * scene().world_diameter();
         return LightEvalContext{pos, -world_dir};
     }
@@ -146,7 +146,7 @@ public:
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         Float pdf_map;
-        Float2 uv = _warper->sample_continuous(u, std::addressof(pdf_map),
+        Float2 uv = warper_->sample_continuous(u, std::addressof(pdf_map),
                                                nullptr);
         return evaluate(p_ref, uv, pdf_map, swl, LightEvalMode::All);
     }
@@ -180,7 +180,7 @@ public:
     }
 
     void prepare() noexcept override {
-        _warper = scene().load_warper2d();
+        warper_ = scene().load_warper2d();
         uint2 res = color_->resolution();
         vector<float> weights;
         if (any(res == 0u)) {
@@ -189,8 +189,8 @@ public:
         } else {
             weights = calculate_weights();
         }
-        _warper->build(weights, res);
-        _warper->prepare();
+        warper_->build(weights, res);
+        warper_->prepare();
     }
 };
 

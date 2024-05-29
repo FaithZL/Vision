@@ -19,49 +19,49 @@ namespace vision {
 //    }
 class DirectionalLight : public EnvironmentImpl {
 private:
-    Serial<float3> _direction;
-    Serial<float> _world_radius;
-    Serial<float3> _world_center;
+    Serial<float3> direction_;
+    Serial<float> world_radius_;
+    Serial<float3> world_center_;
 
 public:
     explicit DirectionalLight(const LightDesc &desc)
         : EnvironmentImpl(desc, LightType::DeltaDirection | LightType::Infinite),
-          _direction(desc["direction"].as_float3(make_float3(-1.f))) {}
-    OC_SERIALIZABLE_FUNC(EnvironmentImpl, _direction, _world_radius, _world_center)
+          direction_(desc["direction"].as_float3(make_float3(-1.f))) {}
+    OC_SERIALIZABLE_FUNC(EnvironmentImpl, direction_, world_radius_, world_center_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
-        _world_radius = scene().world_radius();
-        _world_center = scene().world_center();
+        world_radius_ = scene().world_radius();
+        world_center_ = scene().world_center();
     }
 
     [[nodiscard]] Float3 w_light() const noexcept {
-        return -(*_direction);
+        return -(*direction_);
     }
 
     [[nodiscard]] float3 power() const noexcept override {
-        return average() * Pi * ocarina::sqr(_world_radius.hv());
+        return average() * Pi * ocarina::sqr(world_radius_.hv());
     }
 
     [[nodiscard]] LightSample sample_wi(const LightSampleContext &p_ref, Float2 u,
                                         const SampledWavelengths &swl) const noexcept override {
         LightSample ret{swl.dimension()};
-        ret.p_light = p_ref.pos + w_light() * *_world_radius;
-        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *_direction), swl, LightEvalMode::All);
+        ret.p_light = p_ref.pos + w_light() * *world_radius_;
+        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *direction_), swl, LightEvalMode::All);
         return ret;
     }
 
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &p_ref, LightSurfacePoint lsp,
                                              const SampledWavelengths &swl, LightEvalMode mode) const noexcept override {
         LightSample ret{swl.dimension()};
-        ret.p_light = p_ref.pos + w_light() * *_world_radius;
-        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *_direction), swl, mode);
+        ret.p_light = p_ref.pos + w_light() * *world_radius_;
+        ret.eval = evaluate_wi(p_ref, LightEvalContext(ret.p_light, *direction_), swl, mode);
         return ret;
     }
 
     [[nodiscard]] LightEvalContext compute_light_eval_context(const LightSampleContext &p_ref,
                                                               vision::LightSurfacePoint lsp) const noexcept override {
-        Float3 p_light = p_ref.pos + w_light() * *_world_radius;
-        return LightEvalContext(p_light, *_direction);
+        Float3 p_light = p_ref.pos + w_light() * *world_radius_;
+        return LightEvalContext(p_light, *direction_);
     }
 
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,

@@ -32,19 +32,19 @@ namespace vision {
 //    }
 class AreaLight : public IAreaLight {
 private:
-    Serial<uint> _two_sided{0u};
-    SP<Warper> _warper{nullptr};
+    Serial<uint> two_sided_{0u};
+    SP<Warper> warper_{nullptr};
 
 public:
     explicit AreaLight(const LightDesc &desc)
         : IAreaLight(desc),
-          _two_sided{desc["two_sided"].as_bool(false)} {
+          two_sided_{desc["two_sided"].as_bool(false)} {
         if (inst_idx_.hv() == InvalidUI32) {
             init_geometry(desc);
         }
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(IAreaLight, _two_sided, *_warper)
+    OC_SERIALIZABLE_FUNC(IAreaLight, two_sided_, *warper_)
 
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;
@@ -63,11 +63,11 @@ public:
     }
 
     [[nodiscard]] Float PMF(const Uint &prim_id) const noexcept override {
-        return _warper->PMF(prim_id);
+        return warper_->PMF(prim_id);
     }
 
     [[nodiscard]] bool two_sided() const noexcept {
-        return _two_sided.hv();
+        return two_sided_.hv();
     }
 
     [[nodiscard]] float surface_area() const noexcept {
@@ -86,7 +86,7 @@ public:
     [[nodiscard]] SampledSpectrum L(const LightEvalContext &p_light, const Float3 &w,
                                     const SampledWavelengths &swl) const {
         SampledSpectrum radiance = color_.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
-        return radiance * select(dot(w, p_light.ng) > 0 || (*_two_sided), 1.f, 0.f);
+        return radiance * select(dot(w, p_light.ng) > 0 || (*two_sided_), 1.f, 0.f);
     }
 
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
@@ -114,7 +114,7 @@ public:
 
     [[nodiscard]] LightEvalContext sample_surface(Float2 u) const noexcept {
         Float pmf;
-        Uint prim_id = _warper->sample_discrete(u.x, addressof(pmf), addressof(u.x));
+        Uint prim_id = warper_->sample_discrete(u.x, addressof(pmf), addressof(u.x));
         return sample_surface(u, prim_id, pmf);
     }
 
@@ -127,7 +127,7 @@ public:
     }
 
     [[nodiscard]] LightSurfacePoint sample_only(Float2 u) const noexcept override {
-        Uint prim_id = _warper->sample_discrete(u.x, nullptr, addressof(u.x));
+        Uint prim_id = warper_->sample_discrete(u.x, nullptr, addressof(u.x));
         LightSurfacePoint lsp;
         lsp.prim_id = prim_id;
         lsp.bary = square_to_triangle(u);
@@ -155,7 +155,7 @@ public:
         LightEvalContext p_light = compute_light_eval_context(p_ref, lsp);
         ret.eval = _evaluate_point(p_ref, p_light, swl, mode);
         if (match_PDF(mode)) {
-            Float pmf = _warper->PMF(lsp.prim_id);
+            Float pmf = warper_->PMF(lsp.prim_id);
             ret.eval.pdf *= pmf;
         }
         ret.p_light = p_light.robust_pos(p_ref.pos - p_light.pos);
@@ -163,10 +163,10 @@ public:
     }
 
     void prepare() noexcept override {
-        _warper = scene().load_warper();
+        warper_ = scene().load_warper();
         vector<float> weights = instance()->surface_areas();
-        _warper->build(std::move(weights));
-        _warper->prepare();
+        warper_->build(std::move(weights));
+        warper_->prepare();
     }
 };
 

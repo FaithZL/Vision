@@ -18,37 +18,37 @@ namespace vision {
 //    }
 class SpotLight : public IPointLight {
 private:
-    Serial<float3> _position;
-    Serial<float3> _direction;
-    Serial<float> _angle;
+    Serial<float3> position_;
+    Serial<float3> direction_;
+    Serial<float> angle_;
     // falloff angle range
-    Serial<float> _falloff;
+    Serial<float> falloff_;
 
 public:
     explicit SpotLight(const LightDesc &desc)
         : IPointLight(desc),
-          _position(desc["position"].as_float3()),
-          _angle(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
-          _falloff(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, _angle.hv()))),
-          _direction(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
-    OC_SERIALIZABLE_FUNC(IPointLight, _position, _direction, _angle, _falloff)
+          position_(desc["position"].as_float3()),
+          angle_(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
+          falloff_(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, angle_.hv()))),
+          direction_(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
+    OC_SERIALIZABLE_FUNC(IPointLight, position_, direction_, angle_, falloff_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);
-        changed_ |= widgets->input_float3("direction", &_direction.hv());
-        changed_ |= widgets->slider_float("angle", &_angle.hv(), radians(1.f), radians(89.f));
-        changed_ |= widgets->slider_float("fall off", &_falloff.hv(), 0.001, _angle.hv());
+        changed_ |= widgets->input_float3("direction", &direction_.hv());
+        changed_ |= widgets->slider_float("angle", &angle_.hv(), radians(1.f), radians(89.f));
+        changed_ |= widgets->slider_float("fall off", &falloff_.hv(), 0.001, angle_.hv());
     }
     [[nodiscard]] float3 power() const noexcept override {
-        return 2 * Pi * average() * (1 - .5f * (_angle.hv() * 2 + _falloff.hv()));
+        return 2 * Pi * average() * (1 - .5f * (angle_.hv() * 2 + falloff_.hv()));
     }
-    [[nodiscard]] Float3 position() const noexcept override { return *_position; }
+    [[nodiscard]] Float3 position() const noexcept override { return *position_; }
     [[nodiscard]] float3 &host_position() noexcept override {
-        return _position.hv();
+        return position_.hv();
     }
     [[nodiscard]] Float falloff(Float cos_theta) const noexcept {
-        Float falloff_start = max(0.f, *_angle - *_falloff);
-        Float cos_angle = cos(*_angle);
+        Float falloff_start = max(0.f, *angle_ - *falloff_);
+        Float cos_angle = cos(*angle_);
         Float cos_falloff_start = cos(falloff_start);
         cos_theta = clamp(cos_theta, cos_angle, cos_falloff_start);
         Float factor = (cos_theta - cos_angle) / (cos_falloff_start - cos_angle);
@@ -56,7 +56,7 @@ public:
         return ret;
     }
     [[nodiscard]] Float3 direction(const LightSampleContext &p_ref) const noexcept override {
-        return *_direction;
+        return *direction_;
     }
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
@@ -64,7 +64,7 @@ public:
         Float3 w_un = p_ref.pos - position();
         Float3 w = normalize(w_un);
         SampledSpectrum value = color_.eval_illumination_spectrum(p_light.uv, swl).sample * scale();
-        return value / length_squared(w_un) * falloff(dot(*_direction, w));
+        return value / length_squared(w_un) * falloff(dot(*direction_, w));
     }
 };
 }// namespace vision

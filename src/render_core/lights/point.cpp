@@ -19,20 +19,20 @@ namespace vision {
 //}
 class PointLight : public IPointLight {
 private:
-    Serial<float3> _position;
+    Serial<float3> position_;
 
 public:
     explicit PointLight(const LightDesc &desc)
         : IPointLight(desc),
-          _position(desc["position"].as_float3()) {}
-    OC_SERIALIZABLE_FUNC(IPointLight, _position)
+          position_(desc["position"].as_float3()) {}
+    OC_SERIALIZABLE_FUNC(IPointLight, position_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         return 4 * Pi * average();
     }
-    [[nodiscard]] Float3 position() const noexcept override { return *_position; }
+    [[nodiscard]] Float3 position() const noexcept override { return *position_; }
     [[nodiscard]] float3 &host_position() noexcept override {
-        return _position.hv();
+        return position_.hv();
     }
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,

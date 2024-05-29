@@ -31,27 +31,27 @@ namespace vision {
 //    }
 class Projector : public IPointLight {
 private:
-    Serial<float4x4> _o2w;
-    Serial<float> _ratio;
-    Serial<float> _angle_y;
+    Serial<float4x4> o2w_;
+    Serial<float> ratio_;
+    Serial<float> angle_y_;
 
 public:
     explicit Projector(const LightDesc &desc)
         : IPointLight(desc),
-          _ratio(desc["ratio"].as_float(1.f)),
-          _angle_y(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
-          _o2w(desc.o2w.mat) {
-        if (_ratio.hv() == 0) {
+          ratio_(desc["ratio"].as_float(1.f)),
+          angle_y_(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
+          o2w_(desc.o2w.mat) {
+        if (ratio_.hv() == 0) {
             uint2 res = color_->resolution();
-            _ratio = float(res.x) / res.y;
+            ratio_ = float(res.x) / res.y;
         }
     }
-    OC_SERIALIZABLE_FUNC(IPointLight, _o2w, _ratio, _angle_y)
+    OC_SERIALIZABLE_FUNC(IPointLight, o2w_, ratio_, angle_y_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);
-        changed_ |= widgets->input_float_limit("radio", addressof(_ratio.hv()), 0.1,10, 0.05,0.2);
-        changed_ |= widgets->slider_float("_angle_y", &_angle_y.hv(), radians(1.f), radians(89.f));
+        changed_ |= widgets->input_float_limit("radio", addressof(ratio_.hv()), 0.1,10, 0.05,0.2);
+        changed_ |= widgets->slider_float("angle_y_", &angle_y_.hv(), radians(1.f), radians(89.f));
     }
     [[nodiscard]] float3 power() const noexcept override {
         // http://math.stackexchange.com/questions/9819/area-of-a-spherical-triangle
@@ -68,8 +68,8 @@ public:
         using ocarina::clamp;
         using ocarina::sqr;
         using ocarina::sqrt;
-        float y = sqrt(1.f / (sqr(_ratio.hv()) + 1.f));
-        float x = _ratio.hv() * y;
+        float y = sqrt(1.f / (sqr(ratio_.hv()) + 1.f));
+        float x = ratio_.hv() * y;
         float z = sqrt(sqr(x) + sqr(y));
         float3 p0 = make_float3(x, y, z);
         float3 p1 = make_float3(x, -y, z);
@@ -87,22 +87,22 @@ public:
             ocarina::acos(clamp(dot(cross20, -cross01), -1.f, 1.f)) - Pi);
         return (2 * solid_angle) / (4 * Pi) * average();
     }
-    [[nodiscard]] Float3 position() const noexcept override { return (*_o2w)[3].xyz(); }
+    [[nodiscard]] Float3 position() const noexcept override { return (*o2w_)[3].xyz(); }
     [[nodiscard]] float3 &host_position() noexcept override {
-        return reinterpret_cast<float3 &>(_o2w.hv()[3]);
+        return reinterpret_cast<float3 &>(o2w_.hv()[3]);
     }
     [[nodiscard]] Float3 direction(const LightSampleContext &p_ref) const noexcept override {
-        return transform_vector<D>(*_o2w, make_float3(0, 0, 1));
+        return transform_vector<D>(*o2w_, make_float3(0, 0, 1));
     }
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref,
                                      const LightEvalContext &p_light,
                                      const SampledWavelengths &swl) const noexcept override {
-        Float3 p = transform_point(inverse(*_o2w), p_ref.pos);
+        Float3 p = transform_point(inverse(*o2w_), p_ref.pos);
         Float d2 = length_squared(p);
         Bool valid = p.z > 0;
         p = p / p.z;
-        Float tan_y = tan(*_angle_y);
-        Float tan_x = *_ratio * tan_y;
+        Float tan_y = tan(*angle_y_);
+        Float tan_x = *ratio_ * tan_y;
         Float2 tan_xy = make_float2(tan_x, tan_y);
         Float2 uv = (p.xy() + tan_xy) / (2.f * tan_xy);
         valid = valid && all(uv >= 0.f && uv <= 1.f);
