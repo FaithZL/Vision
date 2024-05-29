@@ -136,9 +136,9 @@ GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVa
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     GIReservoir ret;
     Float cur_p_hat = compute_p_hat(it, cur_rsv.sample);
-    ret->update(sampler()->next_1d(), cur_rsv.sample, cur_p_hat * cur_rsv.C * cur_rsv.W);
+    ret->update(sampler()->next_1d(), cur_rsv.sample, Reservoir::safe_weight(cur_rsv.C, cur_p_hat, cur_rsv.W));
     Float other_p_hat = compute_p_hat(it, other_rsv.sample);
-    ret->update(sampler()->next_1d(), other_rsv.sample, other_p_hat * other_rsv.W * other_rsv.C, other_rsv.C);
+    ret->update(sampler()->next_1d(), other_rsv.sample, Reservoir::safe_weight(other_rsv.C, other_p_hat, other_rsv.W), other_rsv.C);
     Float p_hat = compute_p_hat(it, ret.sample);
 
     if (neighbor_surf) {
