@@ -92,6 +92,15 @@ Float3 CameraImpl::prev_raster_coord(Float3 pos) const noexcept {
     return ret;
 }
 
+Float3 CameraImpl::raster_coord(ocarina::Float3 pos) const noexcept {
+    Float4x4 w2c = inverse(device_c2w());
+    pos = transform_point(w2c, pos);
+    pos /= pos.z;
+    Float4x4 c2r = inverse(raster_to_camera_.dv());
+    Float3 ret = transform_point(c2r, pos);
+    return ret;
+}
+
 void CameraImpl::update_device_data() noexcept {
     c2w_ = camera_to_world();
     SensorImpl::update_data();
