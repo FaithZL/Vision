@@ -72,7 +72,6 @@ GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
     RayState ray_state = RayState::create(hit_bsdf.next_ray);
     Float3 throughput = hit_bsdf->safe_throughput();
     GIRSVSample sample;
-    sample.vp->set(it);
     $if(hit_bsdf.next_hit->is_hit()) {
         Float3 L = integrator_->Li(ray_state, hit_bsdf.pdf,
                                    SampledSpectrum(throughput),

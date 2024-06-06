@@ -50,18 +50,14 @@ OC_STRUCT(vision::indirect, SurfacePoint, pos, ng) {
 namespace vision::indirect {
 struct RSVSample {
     SurfacePoint sp{};
-    SurfacePoint vp{};
     array<float, 3> u{};
     array<float, 3> Lo{};
     float age{};
 };
 }// namespace vision::indirect
 
-OC_STRUCT(vision::indirect, RSVSample, sp, vp, u, Lo, age) {
+OC_STRUCT(vision::indirect, RSVSample, sp, u, Lo, age) {
     static constexpr EPort p = D;
-    [[nodiscard]] Bool valid() const noexcept {
-        return vp->valid();
-    }
     [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
         return ocarina::luminance(Lo.as_vec() * bsdf);
     }
@@ -102,9 +98,6 @@ public:
 // clang-format off
 OC_STRUCT(vision::indirect,Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
-    [[nodiscard]] Bool valid() const noexcept {
-        return sample->valid();
-    }
     Bool update(oc_float<p> u, vision::GIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
         C += new_C;
