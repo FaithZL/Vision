@@ -50,13 +50,12 @@ OC_STRUCT(vision::indirect, SurfacePoint, pos, ng) {
 namespace vision::indirect {
 struct RSVSample {
     SurfacePoint sp{};
-    array<float, 3> u{};
     array<float, 3> Lo{};
     float age{};
 };
 }// namespace vision::indirect
 
-OC_STRUCT(vision::indirect, RSVSample, sp, u, Lo, age) {
+OC_STRUCT(vision::indirect, RSVSample, sp, Lo, age) {
     static constexpr EPort p = D;
     [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
         return ocarina::luminance(Lo.as_vec() * bsdf);
