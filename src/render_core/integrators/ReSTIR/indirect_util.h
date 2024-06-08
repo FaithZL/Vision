@@ -100,7 +100,7 @@ OC_STRUCT(vision::indirect,Reservoir, weight_sum, C, W, sample) {
     Bool update(oc_float<p> u, vision::GIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
         C += new_C;
-        Bool ret = u * weight_sum <= weight;
+        Bool ret = u * weight_sum < weight || weight_sum == 0;
         sample = ocarina::select(ret, v, sample);
         return ret;
     }
