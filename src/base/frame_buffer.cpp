@@ -6,6 +6,7 @@
 #include "mgr/pipeline.h"
 
 namespace vision {
+
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
     : Node(desc) {}
 
@@ -29,6 +30,11 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
             widgets->image(image_view);
         });
     };
+
+    for (auto iter = screen_buffers_.begin();
+         iter != screen_buffers_.end(); ++iter) {
+        show_buffer(*iter->second);
+    }
 }
 
 void FrameBuffer::init_screen_buffer(const SP<ScreenBuffer> &buffer) noexcept {
