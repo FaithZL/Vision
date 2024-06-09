@@ -18,7 +18,6 @@ public:
 
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
-        denoiser_->prepare();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
         // albedo
@@ -32,8 +31,6 @@ public:
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
 
     void compile() noexcept override {
-        denoiser_->compile();
-        film()->compile();
         Camera &camera = scene().camera();
         Sampler &sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
@@ -48,7 +45,7 @@ public:
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
             Float3 L = Li(rs, scatter_pdf, spectrum()->one(), {}, render_env) * ss.filter_weight;
-            film()->rt_buffer().write(dispatch_id(), make_float4(L, 1.f));
+            film()->add_sample(dispatch_idx().xy(), make_float4(L, 1.f), frame_index);
         };
         shader_ = device().compile(kernel, "path tracing integrator");
     }
@@ -72,21 +69,8 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
-        stream << frame_buffer().compute_GBuffer(frame_index_,
-                                                 frame_buffer().cur_gbuffer(frame_index_),
-                                                 frame_buffer().motion_vectors(),
-                                                 frame_buffer().bufferB(),
-                                                 frame_buffer().bufferC());
         stream << shader_(frame_index_).dispatch(rp->resolution());
         RealTimeDenoiseInput input = denoise_input();
-        if (film()->enable_accumulation()) {
-            stream << film()->accumulate(film()->rt_buffer(), film()->accumulation_buffer(), frame_index_);
-            stream << film()->tone_mapping(film()->accumulation_buffer(), film()->output_buffer());
-        } else {
-            stream << film()->tone_mapping(film()->rt_buffer(), film()->output_buffer());
-        }
-        stream << denoise(input);
-        stream << film()->gamma_correct(film()->output_buffer(), film()->output_buffer());
         stream << synchronize();
         stream << commit();
         Env::debugger().reset_range();

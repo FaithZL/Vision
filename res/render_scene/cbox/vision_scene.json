@@ -802,8 +802,8 @@
 					"fb_state" : 0,
 					"tone_mapper" : {
 //												"type": "reinhard",
-												"type": "linear",
-//												"type": "aces",
+//												"type": "linear",
+												"type": "aces",
 //						"type" : "exposure",
 						"param" : {
 							"exposure" : 1.0
@@ -1018,7 +1018,7 @@
 	},
 	"output" : {
 		"spp" : 0,
-		"denoise": true,
+		"denoise": false,
 		"save_exit" : false,
 		"fn" : "hero1-CPU.png"
 	}
