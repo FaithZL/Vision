@@ -20,10 +20,6 @@ public:
         IlluminationIntegrator::prepare();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
-        // albedo
-        frame_buffer().prepare_bufferB();
-        // emission
-        frame_buffer().prepare_bufferC();
         frame_buffer().prepare_motion_vectors();
     }
 
@@ -59,8 +55,6 @@ public:
         ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
         ret.motion_vec = frame_buffer().motion_vectors();
         ret.radiance = film()->rt_buffer();
-        ret.albedo = frame_buffer().bufferB();
-        ret.emission = frame_buffer().bufferC();
         ret.output = film()->output_buffer();
         return ret;
     }

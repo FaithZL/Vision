@@ -59,7 +59,7 @@ private:
 
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;
-
+    RegistrableManaged<float4> radiance_{pipeline()->bindless_array()};
     mutable RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
 
     /**
@@ -79,6 +79,7 @@ protected:
 public:
     ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);
     OC_MAKE_MEMBER_GETTER(open, )
+    OC_MAKE_MEMBER_GETTER(radiance, &)
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     void compile() noexcept {

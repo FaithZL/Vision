@@ -35,6 +35,14 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     show_buffer(bufferD_);
 }
 
+void FrameBuffer::init_screen_buffer(RegistrableManaged<float4> &buffer, const string &name) noexcept {
+    buffer.reset_all(device(), pixel_num(), name);
+    vector<float4> vec{};
+    vec.assign(pixel_num(), float4{});
+    buffer.set_bindless_array(bindless_array());
+    buffer.register_self();
+}
+
 void FrameBuffer::register_(vision::ScreenBuffer &buffer) noexcept {
     buffer.register_(addressof(buffers_));
 }

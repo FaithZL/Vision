@@ -47,7 +47,7 @@ private:
     bool open_{true};
     uint max_age_{};
     IlluminationIntegrator *integrator_{};
-
+    RegistrableManaged<float4> radiance_{pipeline()->bindless_array()};
     RegistrableBuffer<indirect::Reservoir> reservoirs_{pipeline()->bindless_array()};
     RegistrableBuffer<indirect::RSVSample> samples_{pipeline()->bindless_array()};
 
@@ -70,6 +70,7 @@ protected:
 public:
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
     OC_MAKE_MEMBER_GETTER(open, )
+    OC_MAKE_MEMBER_GETTER(radiance, &)
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }
     void prepare() noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

@@ -37,8 +37,6 @@ public:
         denoiser_->prepare();
         Pipeline *rp = pipeline();
 
-        frame_buffer().prepare_bufferA();
-        frame_buffer().prepare_bufferB();
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_hit_buffer();
@@ -60,8 +58,8 @@ public:
         Camera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
             camera->load_data();
-            Float3 direct = frame_buffer().bufferA().read(dispatch_id()).xyz() * di;
-            Float3 indirect = frame_buffer().bufferB().read(dispatch_id()).xyz() * ii;
+            Float3 direct = direct_.radiance().read(dispatch_id()).xyz() * di;
+            Float3 indirect = indirect_.radiance().read(dispatch_id()).xyz() * ii;
             Float3 L = direct + indirect;
             camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };

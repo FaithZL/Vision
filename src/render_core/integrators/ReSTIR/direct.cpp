@@ -565,7 +565,7 @@ void ReSTIRDI::compile_shader1() noexcept {
                 L = spectrum->linear_srgb(eval.L, swl);
             }
         };
-        frame_buffer().bufferA().write(dispatch_id(), make_float4(L, 1.f));
+        radiance_.write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), st_rsv);
     };
     shader1_ = device().compile(kernel, "ReSTIR direct spatial reuse and shading");
@@ -574,6 +574,7 @@ void ReSTIRDI::compile_shader1() noexcept {
 void ReSTIRDI::prepare() noexcept {
     using direct::Reservoir;
     Pipeline *rp = pipeline();
+    frame_buffer().init_screen_buffer(radiance_, "ReSTIRDI::radiance_");
     reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRDI::reservoirs_ x 3");
     reservoirs_.register_self(0, rp->pixel_num());
