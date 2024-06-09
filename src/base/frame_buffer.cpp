@@ -19,20 +19,18 @@ bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    static string cur_item = "final result";
     auto show_buffer = [&](Managed<float4> &buffer) {
         if (buffer.device_buffer().size() == 0) {
             return;
         }
-
-        widgets->text(buffer.name().c_str());
-        if (widgets->is_item_hovered()) {
-            widgets->use_tool_tip([&]{
-                float2 pos = widgets->mouse_pos();
-                widgets->text(ocarina::format("({}, {})", pos.x, pos.y));
-            });
+        if (widgets->radio_button(buffer.name(), cur_item == buffer.name())) {
+            cur_item = buffer.name();
         }
     };
-
+    if (widgets->radio_button("final result", cur_item == "final result")) {
+        cur_item = "final result";
+    }
     for (auto iter = screen_buffers_.begin();
          iter != screen_buffers_.end(); ++iter) {
         show_buffer(*iter->second);
