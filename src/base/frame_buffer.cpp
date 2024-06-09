@@ -24,11 +24,13 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
             return;
         }
 
-        widgets->use_tree(buffer.name(), [&] {
-            buffer.download_immediately();
-            ImageView image_view(buffer.host_buffer().data(), resolution());
-            widgets->image(image_view);
-        });
+        widgets->text(buffer.name().c_str());
+        if (widgets->is_item_hovered()) {
+            widgets->use_tool_tip([&]{
+                float2 pos = widgets->mouse_pos();
+                widgets->text(ocarina::format("({}, {})", pos.x, pos.y));
+            });
+        }
     };
 
     for (auto iter = screen_buffers_.begin();
