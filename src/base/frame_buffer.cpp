@@ -35,6 +35,14 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     show_buffer(bufferD_);
 }
 
+void FrameBuffer::register_(vision::ScreenBuffer &buffer) noexcept {
+    buffer.register_(addressof(buffers_));
+}
+
+void FrameBuffer::unregister(vision::ScreenBuffer &buffer) noexcept {
+    buffer.unregister();
+}
+
 uint FrameBuffer::pixel_index(uint2 pos) const noexcept {
     return pos.y * resolution().x + pos.x;
 }

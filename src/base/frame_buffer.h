@@ -67,6 +67,35 @@ void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_
 
 class CameraImpl;
 
+class ScreenBuffer : public RegistrableManaged<float4> {
+public:
+    using manager_type = ocarina::map<string, ScreenBuffer *>;
+    using RegistrableManaged<float4>::RegistrableManaged;
+    using Super = RegistrableManaged<float4>;
+
+private:
+    manager_type *manager_{nullptr};
+
+public:
+    ScreenBuffer() = default;
+    explicit ScreenBuffer(string key) : Super() {
+        name_ = std::move(key);
+    }
+    void register_(manager_type *manager) {
+        manager_ = manager;
+        manager->insert(std::make_pair(name(), this));
+    }
+    void unregister() {
+        if (manager_) {
+            auto iter = manager_->find(name());
+            manager_->erase(iter);
+        }
+    }
+    ~ScreenBuffer() override {
+        unregister();
+    }
+};
+
 class FrameBuffer : public Node {
 protected:
     /// save two frames of data
@@ -86,6 +115,10 @@ protected:
     RegistrableManaged<float4> bufferB_;
     RegistrableManaged<float4> bufferC_;
     RegistrableManaged<float4> bufferD_;
+
+    using buffer_type = RegistrableManaged<float4>;
+
+    ScreenBuffer::manager_type buffers_;
 
 public:
     using Desc = FrameBufferDesc;
@@ -115,8 +148,11 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
+    void register_(ScreenBuffer &buffer) noexcept;
+    void unregister(ScreenBuffer &buffer) noexcept;
+
 #define VS_MAKE_ATTR_FUNC(buffer_name, count)                             \
-    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                \
+    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                 \
     void prepare_##buffer_name() noexcept {                               \
         init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
     }
