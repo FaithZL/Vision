@@ -40,6 +40,8 @@ IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &des
 
 void IlluminationIntegrator::prepare() noexcept {
     encode_data();
+    frame_buffer().prepare_screen_buffer(albedo_);
+    frame_buffer().prepare_screen_buffer(emission_);
     datas().reset_device_buffer_immediately(device());
     datas().register_self();
     datas().upload_immediately();

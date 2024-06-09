@@ -105,8 +105,8 @@ protected:
     Serial<uint> min_depth_{};
     Serial<float> rr_threshold_{};
     MISMode mis_mode_{};
-    ScreenBuffer albedo_{"IlluminationIntegrator::albedo_"};
-    ScreenBuffer emission_{"IlluminationIntegrator::emission_"};
+    SP<ScreenBuffer> albedo_{make_shared<ScreenBuffer>("IlluminationIntegrator::albedo_")};
+    SP<ScreenBuffer> emission_{make_shared<ScreenBuffer>("IlluminationIntegrator::emission_")};
 
     /// Material computation is separated from access memory
     bool separate_{false};
