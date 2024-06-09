@@ -59,7 +59,7 @@ private:
 
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;
-    ScreenBuffer radiance_{"ReSTIRDI::radiance_"};
+    SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRDI::radiance_")};
     mutable RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
 
     /**

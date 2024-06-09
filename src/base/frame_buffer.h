@@ -128,6 +128,12 @@ public:
 
     void register_(const SP<ScreenBuffer> &buffer) noexcept;
     void unregister(const SP<ScreenBuffer> &buffer) noexcept;
+    void unregister(const string &name) noexcept;
+    void init_screen_buffer(const SP<ScreenBuffer> &buffer) noexcept;
+    void prepare_screen_buffer(const SP<ScreenBuffer> &buffer) noexcept {
+        init_screen_buffer(buffer);
+        register_(buffer);
+    }
 
 #define VS_MAKE_ATTR_FUNC(buffer_name, count)                             \
     OC_MAKE_MEMBER_GETTER(buffer_name, &)                                 \
@@ -166,8 +172,6 @@ public:
             buffer.register_view(pixel_num() * i, pixel_num());
         }
     }
-
-    void init_screen_buffer(ScreenBuffer &buffer) noexcept;
 
     template<typename T>
     void init_buffer(RegistrableManaged<T> &buffer, const string &desc, uint count = 1) noexcept {

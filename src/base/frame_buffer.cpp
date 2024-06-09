@@ -31,20 +31,32 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     };
 }
 
-void FrameBuffer::init_screen_buffer(ScreenBuffer &buffer) noexcept {
-    buffer.reset_all(device(), pixel_num(), buffer.name());
+void FrameBuffer::init_screen_buffer(const SP<ScreenBuffer> &buffer) noexcept {
+    buffer->reset_all(device(), pixel_num(), buffer->name());
     vector<float4> vec{};
     vec.assign(pixel_num(), float4{});
-    buffer.set_bindless_array(bindless_array());
-    buffer.register_self();
+    buffer->set_bindless_array(bindless_array());
+    buffer->register_self();
 }
 
 void FrameBuffer::register_(const SP<ScreenBuffer> &buffer) noexcept {
+    auto iter = screen_buffers_.find(buffer->name());
+    if (iter != screen_buffers_.end()) {
+        OC_ERROR("");
+    }
     screen_buffers_.insert(std::make_pair(buffer->name(), buffer));
 }
 
 void FrameBuffer::unregister(const SP<ScreenBuffer> &buffer) noexcept {
-    //    buffer.unregister();
+    unregister(buffer->name());
+}
+
+void FrameBuffer::unregister(const std::string &name) noexcept {
+    auto iter = screen_buffers_.find(name);
+    if (iter == screen_buffers_.end()) {
+        OC_ERROR("");
+    }
+    screen_buffers_.erase(iter);
 }
 
 uint FrameBuffer::pixel_index(uint2 pos) const noexcept {

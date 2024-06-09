@@ -92,7 +92,7 @@ void ReSTIRGI::compile_initial_samples() noexcept {
         integrator_->load_data();
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
-            radiance_.write(dispatch_id(), make_float4(0.f));
+            radiance_->write(dispatch_id(), make_float4(0.f));
             $return();
         };
         camera->load_data();
@@ -304,7 +304,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
         GIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
         rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()), param);
         Float3 L = shading(rsv, surf);
-        radiance_.write(dispatch_id(), make_float4(L, 1.f));
+        radiance_->write(dispatch_id(), make_float4(L, 1.f));
         cur_reservoirs().write(dispatch_id(), rsv);
     };
     spatial_shading_ = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
@@ -342,7 +342,7 @@ void ReSTIRGI::prepare() noexcept {
     using indirect::Reservoir;
     Pipeline *rp = pipeline();
 
-    frame_buffer().init_screen_buffer(radiance_);
+    frame_buffer().prepare_screen_buffer(radiance_);
 
     reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRGI::reservoirs_ x 3");
