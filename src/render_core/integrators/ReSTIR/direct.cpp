@@ -574,7 +574,7 @@ void ReSTIRDI::compile_shader1() noexcept {
 void ReSTIRDI::prepare() noexcept {
     using direct::Reservoir;
     Pipeline *rp = pipeline();
-    frame_buffer().init_screen_buffer(radiance_, "ReSTIRDI::radiance_");
+    frame_buffer().init_screen_buffer(radiance_);
     reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRDI::reservoirs_ x 3");
     reservoirs_.register_self(0, rp->pixel_num());

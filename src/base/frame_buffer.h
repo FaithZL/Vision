@@ -67,9 +67,10 @@ void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_
 
 class CameraImpl;
 
-class ScreenBuffer : public RegistrableManaged<float4>, public enable_shared_from_this<ScreenBuffer> {
+class ScreenBuffer : public RegistrableManaged<float4>,
+                     public enable_shared_from_this<ScreenBuffer> {
 public:
-    using manager_type = ocarina::map<string, ScreenBuffer *>;
+    using manager_type = ocarina::map<string, SP<ScreenBuffer>>;
     using RegistrableManaged<float4>::RegistrableManaged;
     using Super = RegistrableManaged<float4>;
 
@@ -83,7 +84,7 @@ public:
     }
     void register_(manager_type *manager) {
         manager_ = manager;
-        manager->insert(std::make_pair(name(), this));
+        manager->insert(std::make_pair(name(), shared_from_this()));
     }
     void unregister() {
         if (manager_) {
@@ -182,7 +183,7 @@ public:
         }
     }
 
-    void init_screen_buffer(RegistrableManaged<float4> &buffer, const string &name) noexcept;
+    void init_screen_buffer(ScreenBuffer &buffer) noexcept;
 
     template<typename T>
     void init_buffer(RegistrableManaged<T> &buffer, const string &desc, uint count = 1) noexcept {

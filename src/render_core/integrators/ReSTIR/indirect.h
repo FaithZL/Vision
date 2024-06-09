@@ -47,7 +47,7 @@ private:
     bool open_{true};
     uint max_age_{};
     IlluminationIntegrator *integrator_{};
-    RegistrableManaged<float4> radiance_{pipeline()->bindless_array()};
+    ScreenBuffer radiance_{"ReSTIRGI::radiance_"};
     RegistrableBuffer<indirect::Reservoir> reservoirs_{pipeline()->bindless_array()};
     RegistrableBuffer<indirect::RSVSample> samples_{pipeline()->bindless_array()};
 

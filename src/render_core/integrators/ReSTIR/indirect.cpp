@@ -342,7 +342,7 @@ void ReSTIRGI::prepare() noexcept {
     using indirect::Reservoir;
     Pipeline *rp = pipeline();
 
-    frame_buffer().init_screen_buffer(radiance_, "ReSTIRGI::radiance_");
+    frame_buffer().init_screen_buffer(radiance_);
 
     reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRGI::reservoirs_ x 3");

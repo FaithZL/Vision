@@ -31,8 +31,8 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     };
 }
 
-void FrameBuffer::init_screen_buffer(RegistrableManaged<float4> &buffer, const string &name) noexcept {
-    buffer.reset_all(device(), pixel_num(), name);
+void FrameBuffer::init_screen_buffer(ScreenBuffer &buffer) noexcept {
+    buffer.reset_all(device(), pixel_num(), buffer.name());
     vector<float4> vec{};
     vec.assign(pixel_num(), float4{});
     buffer.set_bindless_array(bindless_array());
