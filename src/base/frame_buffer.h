@@ -111,11 +111,6 @@ protected:
     /// used for editor
     RegistrableManaged<Hit> hit_buffer_;
 
-    RegistrableManaged<float4> bufferA_;
-    RegistrableManaged<float4> bufferB_;
-    RegistrableManaged<float4> bufferC_;
-    RegistrableManaged<float4> bufferD_;
-
     ScreenBuffer::manager_type buffers_;
 
 public:

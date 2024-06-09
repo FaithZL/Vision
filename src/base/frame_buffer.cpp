@@ -29,10 +29,6 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
             widgets->image(image_view);
         });
     };
-    show_buffer(bufferA_);
-    show_buffer(bufferB_);
-    show_buffer(bufferC_);
-    show_buffer(bufferD_);
 }
 
 void FrameBuffer::init_screen_buffer(RegistrableManaged<float4> &buffer, const string &name) noexcept {
