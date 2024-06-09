@@ -74,26 +74,10 @@ public:
     using RegistrableManaged<float4>::RegistrableManaged;
     using Super = RegistrableManaged<float4>;
 
-private:
-    manager_type *manager_{nullptr};
-
 public:
     ScreenBuffer() = default;
     explicit ScreenBuffer(string key) : Super() {
         name_ = std::move(key);
-    }
-    void register_(manager_type *manager) {
-        manager_ = manager;
-        manager->insert(std::make_pair(name(), shared_from_this()));
-    }
-    void unregister() {
-        if (manager_) {
-            auto iter = manager_->find(name());
-            manager_->erase(iter);
-        }
-    }
-    ~ScreenBuffer() override {
-        unregister();
     }
 };
 
@@ -112,7 +96,7 @@ protected:
     /// used for editor
     RegistrableManaged<Hit> hit_buffer_;
 
-    ScreenBuffer::manager_type buffers_;
+    ScreenBuffer::manager_type screen_buffers_;
 
 public:
     using Desc = FrameBufferDesc;
@@ -142,8 +126,8 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
-    void register_(ScreenBuffer &buffer) noexcept;
-    void unregister(ScreenBuffer &buffer) noexcept;
+    void register_(const SP<ScreenBuffer> &buffer) noexcept;
+    void unregister(const SP<ScreenBuffer> &buffer) noexcept;
 
 #define VS_MAKE_ATTR_FUNC(buffer_name, count)                             \
     OC_MAKE_MEMBER_GETTER(buffer_name, &)                                 \

@@ -39,12 +39,12 @@ void FrameBuffer::init_screen_buffer(ScreenBuffer &buffer) noexcept {
     buffer.register_self();
 }
 
-void FrameBuffer::register_(vision::ScreenBuffer &buffer) noexcept {
-    buffer.register_(addressof(buffers_));
+void FrameBuffer::register_(const SP<ScreenBuffer> &buffer) noexcept {
+    screen_buffers_.insert(std::make_pair(buffer->name(), buffer));
 }
 
-void FrameBuffer::unregister(vision::ScreenBuffer &buffer) noexcept {
-    buffer.unregister();
+void FrameBuffer::unregister(const SP<ScreenBuffer> &buffer) noexcept {
+    //    buffer.unregister();
 }
 
 uint FrameBuffer::pixel_index(uint2 pos) const noexcept {
