@@ -32,7 +32,7 @@ protected:
     Postprocessor postprocessor_{this};
     SP<FrameBuffer> frame_buffer_{nullptr};
     bool show_scene_data_{true};
-    bool show_pipeline_data_{false};
+    bool show_framebuffer_data_{true};
     bool show_detail_{true};
 
     /// node for show detail
@@ -72,7 +72,9 @@ public:
     virtual void prepare_geometry() noexcept;
     virtual void update_geometry() noexcept;
     virtual void prepare_render_graph() noexcept {}
-    virtual void compile() noexcept = 0;
+    virtual void compile() noexcept {
+        frame_buffer()->compile();
+    }
     virtual void display(double dt) noexcept;
     virtual void render(double dt) noexcept = 0;
     virtual void commit_command() noexcept;

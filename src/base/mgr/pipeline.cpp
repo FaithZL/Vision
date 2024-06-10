@@ -59,7 +59,7 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
                       frame_index());
         widgets->check_box("scene data", &show_scene_data_);
         widgets->check_box("detail", &show_detail_);
-        widgets->check_box("pipeline data", &show_pipeline_data_);
+        widgets->check_box("framebuffer", &show_framebuffer_data_);
     });
     if (show_scene_data_) {
         scene_.render_UI(widgets);
@@ -67,7 +67,7 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
     if (show_detail_) {
         render_detail(widgets);
     }
-    if (show_pipeline_data_) {
+    if (show_framebuffer_data_) {
         widgets->use_window("frame buffer", [&] {
             frame_buffer_->render_UI(widgets);
         });
@@ -85,7 +85,7 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
-    return frame_buffer_->view_buffer();
+    return frame_buffer_->cur_screen_buffer();
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {
@@ -134,7 +134,7 @@ void Pipeline::after_render() noexcept {
 }
 
 void Pipeline::commit_command() noexcept {
-    stream_ << frame_buffer_->gamma_correct();
+//    stream_ << frame_buffer_->gamma_correct();
     stream_ << synchronize();
     stream_ << commit();
 }

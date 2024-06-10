@@ -34,8 +34,8 @@ public:
     }
 
     void compile() noexcept override {
+        Pipeline::compile();
         scene_.integrator()->compile();
-        frame_buffer()->compile();
     }
 
     void render(double dt) noexcept override {

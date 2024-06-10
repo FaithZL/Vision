@@ -61,6 +61,7 @@ public:
     }
 
     void compile() noexcept override {
+//        Pipeline::compile();
         render_graph_.compile();
     }
 
