@@ -78,6 +78,10 @@ BindlessArray &FrameBuffer::bindless_array() noexcept {
     return pipeline()->bindless_array();
 }
 
+const Buffer<float4> &FrameBuffer::view_buffer() const noexcept {
+    return screen_buffers_.at(final_result)->device_buffer();
+}
+
 BufferView<PixelGeometry> FrameBuffer::prev_gbuffer(ocarina::uint frame_index) const noexcept {
     return pipeline()->buffer_view<PixelGeometry>(prev_gbuffer_index(frame_index));
 }

@@ -81,7 +81,7 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
-    return scene().film()->output_buffer().device_buffer();
+    return frame_buffer_->view_buffer();
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {

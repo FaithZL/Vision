@@ -192,6 +192,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
 void ReSTIRGI::compile_temporal_reuse() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera &camera = scene().camera();
+    //todo remedy init samples and reservoir
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
