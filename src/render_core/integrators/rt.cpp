@@ -76,8 +76,6 @@ public:
         stream << combine_(frame_index_, direct_.factor(),
                            indirect_.factor())
                       .dispatch(pipeline()->resolution());
-        stream << frame_buffer().hit_buffer().download(100, 1);
-        stream << synchronize();
         increase_frame_index();
     }
 };

@@ -1197,21 +1197,21 @@
 		}
 	},
 	"pipeline" : {
-//		"type" : "bake",
-//		"param": {
-//			"rasterizer" : {
-//				"type": "cpu"
-//			},
-//			"uv_unwrapper": {
-//				"type": "xatlas",
-//				"param" : {
-//					"min": 300,
-////					"max": 1024,
-////					"scale": 1,
-//					"padding": 3
-//				}
-//			}
-//		}
+		"type" : "bake",
+		"param": {
+			"rasterizer" : {
+				"type": "cpu"
+			},
+			"uv_unwrapper": {
+				"type": "xatlas",
+				"param" : {
+					"min": 300,
+//					"max": 1024,
+//					"scale": 1,
+					"padding": 3
+				}
+			}
+		}
 		//		"type" : "customized"
 	},
 	"output" : {

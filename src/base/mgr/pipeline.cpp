@@ -134,6 +134,7 @@ void Pipeline::after_render() noexcept {
 }
 
 void Pipeline::commit_command() noexcept {
+    stream_ << synchronize();
     stream_ << commit();
 }
 
