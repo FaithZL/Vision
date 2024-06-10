@@ -14,7 +14,7 @@ class RGBFilm : public Film {
 private:
     RegistrableManaged<float4> rt_buffer_;
     RegistrableManaged<float4> accumulation_buffer_;
-    RegistrableManaged<float4> output_buffer_;
+    SP<ScreenBuffer> output_buffer_{make_shared<ScreenBuffer>(FrameBuffer::final_result)};
 
     Shader<void(Buffer<float4>, Buffer<float4>, uint)> accumulate_;
     Shader<void(Buffer<float4>, Buffer<float4>)> tone_mapping_;
@@ -25,15 +25,14 @@ public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
           rt_buffer_(pipeline()->bindless_array()),
-          output_buffer_(pipeline()->bindless_array()),
           gamma_(desc["gamma"].as_bool(true)) {}
 
-    OC_SERIALIZABLE_FUNC(Film, rt_buffer_, output_buffer_)
+    OC_SERIALIZABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         tone_mapper_->render_UI(widgets);
-        return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&]{
+        return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&] {
             changed_ |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
             widgets->same_line();
             changed_ |= widgets->check_box("gamma", &gamma_);
@@ -85,7 +84,7 @@ public:
         };
         prepare(rt_buffer_, "RGBFilm::rt_buffer_");
         prepare(accumulation_buffer_, "RGBFilm::accumulation_buffer_");
-        prepare(output_buffer_, "RGBFilm::output_buffer_");
+        frame_buffer().prepare_screen_buffer(output_buffer_);
     }
     void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
@@ -101,7 +100,7 @@ public:
             val = linear_to_srgb(val);
         }
         val.w = 1.f;
-        output_buffer_.write(index, val);
+        output_buffer_->write(index, val);
     }
     [[nodiscard]] CommandList accumulate(BufferView<float4> input, BufferView<float4> output,
                                          uint frame_index) const noexcept override {
@@ -130,8 +129,8 @@ public:
         }
         return ret;
     }
-    [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return output_buffer_; }
-    [[nodiscard]] RegistrableManaged<float4> &output_buffer() noexcept override { return output_buffer_; }
+    [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return *output_buffer_; }
+    [[nodiscard]] RegistrableManaged<float4> &output_buffer() noexcept override { return *output_buffer_; }
     [[nodiscard]] const RegistrableManaged<float4> &accumulation_buffer() const noexcept override { return accumulation_buffer_; }
     [[nodiscard]] RegistrableManaged<float4> &accumulation_buffer() noexcept override { return accumulation_buffer_; }
     [[nodiscard]] const RegistrableManaged<float4> &rt_buffer() const noexcept override { return rt_buffer_; }

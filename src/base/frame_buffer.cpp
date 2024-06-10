@@ -19,7 +19,7 @@ bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    static string cur_item = "final result";
+    static string cur_item = final_result;
     auto show_buffer = [&](Managed<float4> &buffer) {
         if (buffer.device_buffer().size() == 0) {
             return;
@@ -28,9 +28,6 @@ void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
             cur_item = buffer.name();
         }
     };
-    if (widgets->radio_button("final result", cur_item == "final result")) {
-        cur_item = "final result";
-    }
     for (auto iter = screen_buffers_.begin();
          iter != screen_buffers_.end(); ++iter) {
         show_buffer(*iter->second);

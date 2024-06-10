@@ -81,7 +81,11 @@ public:
     }
 };
 
+
 class FrameBuffer : public Node {
+public:
+    static constexpr auto final_result = "FrameBuffer::final_result_";
+
 protected:
     /// save two frames of data
     RegistrableBuffer<PixelGeometry> gbuffer_{};
