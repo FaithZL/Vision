@@ -22,6 +22,7 @@ public:
         Kernel kernel = [&](Uint frame_index, BufferVar<float4> output) {
             Uint2 pixel = dispatch_idx().xy();
             RenderEnv render_env;
+            sampler()->load_data();
             render_env.initial(sampler(), frame_index, spectrum());
             sampler()->start(pixel, frame_index, 0);
             SensorSample ss = sampler()->sensor_sample(pixel, camera()->filter());

@@ -33,9 +33,10 @@ public:
             Env::instance().clear_global_vars();
             Uint2 pixel = dispatch_idx().xy();
             RenderEnv render_env;
+            sampler->load_data();
+            camera->load_data();
             render_env.initial(sampler, frame_index, spectrum());
             sampler->start(pixel, frame_index, 0);
-            camera->load_data();
             load_data();
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;
