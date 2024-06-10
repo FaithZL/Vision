@@ -71,8 +71,8 @@ public:
         Stream &stream = rp->stream();
         stream << Env::debugger().upload();
         stream << frame_buffer().compute_hit();
-        stream << direct_.estimate(frame_index_);
-        stream << indirect_.estimate(frame_index_);
+        stream << direct_.dispatch(frame_index_);
+        stream << indirect_.dispatch(frame_index_);
         stream << combine_(frame_index_, direct_.factor(),
                            indirect_.factor())
                       .dispatch(pipeline()->resolution());

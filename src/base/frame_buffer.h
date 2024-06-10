@@ -93,17 +93,15 @@ protected:
 
     /// save two frames of data , use for ReSTIR
     RegistrableBuffer<SurfaceData> surfaces_{};
-
     RegistrableBuffer<HitBSDF> hit_bsdfs_{};
-
     RegistrableBuffer<float2> motion_vectors_{};
 
     /// used for editor
     RegistrableManaged<Hit> hit_buffer_;
-
     ScreenBuffer::manager_type screen_buffers_;
-
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
+    /// Display in full screen on the screen
+    Buffer<float4> view_buffer_;
 
 public:
     using Desc = FrameBufferDesc;

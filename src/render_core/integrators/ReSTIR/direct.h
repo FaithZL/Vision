@@ -186,7 +186,7 @@ public:
     void compile_shader0() noexcept;
     void compile_shader1() noexcept;
     [[nodiscard]] direct::Param construct_param() const noexcept;
-    [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
+    [[nodiscard]] CommandList dispatch(uint frame_index) const noexcept;
 };
 
 }// namespace vision

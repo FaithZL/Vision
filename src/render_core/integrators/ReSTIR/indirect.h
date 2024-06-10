@@ -134,7 +134,7 @@ public:
         return pipeline()->buffer_var<indirect::Reservoir>(2 + reservoir_base());
     }
     [[nodiscard]] indirect::Param construct_param() const noexcept;
-    [[nodiscard]] CommandList estimate(uint frame_index) const noexcept;
+    [[nodiscard]] CommandList dispatch(uint frame_index) const noexcept;
 };
 
 }// namespace vision

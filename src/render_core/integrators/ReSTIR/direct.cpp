@@ -604,7 +604,7 @@ direct::Param ReSTIRDI::construct_param() const noexcept {
     return param;
 }
 
-CommandList ReSTIRDI::estimate(uint frame_index) const noexcept {
+CommandList ReSTIRDI::dispatch(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     auto param = construct_param();

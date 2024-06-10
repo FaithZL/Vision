@@ -329,7 +329,7 @@ indirect::Param ReSTIRGI::construct_param() const noexcept {
     return param;
 }
 
-CommandList ReSTIRGI::estimate(uint frame_index) const noexcept {
+CommandList ReSTIRGI::dispatch(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
     indirect::Param param = construct_param();
