@@ -65,6 +65,7 @@ public:
     virtual void init_postprocessor(const DenoiserDesc &desc) = 0;
     [[nodiscard]] virtual const Buffer<float4> &view_buffer();
     virtual void preprocess() noexcept {}
+    void prepare() noexcept override;
     virtual void change_resolution(uint2 res) noexcept;
     virtual void invalidate() noexcept { integrator()->invalidation(); }
     virtual void clear_geometry() noexcept;

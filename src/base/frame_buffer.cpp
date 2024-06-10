@@ -10,6 +10,10 @@ namespace vision {
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
     : Node(desc) {}
 
+void FrameBuffer::prepare() noexcept {
+    init_buffer(view_buffer_, "FrameBuffer::view_buffer_");
+}
+
 bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
     return widgets->use_folding_header(
         ocarina::format("{} FrameBuffer", impl_type().data()),

@@ -101,13 +101,14 @@ protected:
     ScreenBuffer::manager_type screen_buffers_;
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
     /// Display in full screen on the screen
-    Buffer<float4> view_buffer_;
+    RegistrableBuffer<float4> view_buffer_;
 
 public:
     using Desc = FrameBufferDesc;
 
 public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
+    void prepare() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint pixel_num() const noexcept;

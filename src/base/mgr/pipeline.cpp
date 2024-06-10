@@ -24,6 +24,10 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     frame_buffer_ = Node::load<FrameBuffer>(desc.frame_buffer_desc);
 }
 
+void Pipeline::prepare() noexcept {
+    frame_buffer_->prepare();
+}
+
 void Pipeline::reset_status() noexcept {
     GUI::reset_status();
     scene_.reset_status();

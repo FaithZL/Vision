@@ -48,6 +48,7 @@ public:
     }
 
     void prepare() noexcept override {
+        Pipeline::prepare();
         auto pixel_num = resolution().x * resolution().y;
         final_picture_.reset_all(device(), pixel_num);
         scene_.prepare();
