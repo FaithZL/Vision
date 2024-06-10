@@ -13,6 +13,7 @@ public:
         : FrameBuffer(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {
+        FrameBuffer::compile();
     }
 
     [[nodiscard]] CommandList compute_geom(ocarina::uint frame_index, BufferView<vision::PixelGeometry> gbuffer,

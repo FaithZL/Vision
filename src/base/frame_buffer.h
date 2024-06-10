@@ -103,6 +103,8 @@ protected:
 
     ScreenBuffer::manager_type screen_buffers_;
 
+    Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
+
 public:
     using Desc = FrameBufferDesc;
 
@@ -165,7 +167,9 @@ public:
     [[nodiscard]] virtual CommandList compute_hit() const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const Camera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
-    virtual void compile() noexcept = 0;
+    virtual void compile() noexcept;
+    [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
+                                            BufferView<float4> output) const noexcept;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
         uint element_num = count * pixel_num();

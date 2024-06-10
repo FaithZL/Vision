@@ -119,16 +119,6 @@ public:
                    .dispatch(resolution());
         return ret;
     }
-    [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
-                                            BufferView<float4> output) const noexcept override {
-        CommandList ret;
-        if (gamma_) {
-            ret << gamma_correct_(input,
-                                  output)
-                       .dispatch(resolution());
-        }
-        return ret;
-    }
     [[nodiscard]] const RegistrableManaged<float4> &output_buffer() const noexcept override { return *output_buffer_; }
     [[nodiscard]] RegistrableManaged<float4> &output_buffer() noexcept override { return *output_buffer_; }
     [[nodiscard]] const RegistrableManaged<float4> &accumulation_buffer() const noexcept override { return accumulation_buffer_; }

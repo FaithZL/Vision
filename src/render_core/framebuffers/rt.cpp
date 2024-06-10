@@ -147,6 +147,7 @@ public:
     }
 
     void compile() noexcept override {
+        FrameBuffer::compile();
         compile_compute_geom();
         compile_compute_grad();
         compile_compute_hit();

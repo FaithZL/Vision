@@ -54,8 +54,6 @@ public:
                                                  uint frame_index) const noexcept = 0;
     [[nodiscard]] virtual CommandList tone_mapping(BufferView<float4> input,
                                                    BufferView<float4> output) const noexcept = 0;
-    [[nodiscard]] virtual CommandList gamma_correct(BufferView<float4> input,
-                                                    BufferView<float4> output) const noexcept = 0;
     [[nodiscard]] virtual const RegistrableManaged<float4> &output_buffer() const noexcept = 0;
     [[nodiscard]] virtual RegistrableManaged<float4> &output_buffer() noexcept = 0;
     [[nodiscard]] virtual const RegistrableManaged<float4> &accumulation_buffer() const noexcept = 0;

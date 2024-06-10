@@ -41,6 +41,25 @@ void FrameBuffer::init_screen_buffer(const SP<ScreenBuffer> &buffer) noexcept {
     buffer->register_self();
 }
 
+void FrameBuffer::compile() noexcept {
+    Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output) {
+        Float4 val = input.read(dispatch_id());
+        val = linear_to_srgb(val);
+        val.w = 1.f;
+        output.write(dispatch_id(), val);
+    };
+    gamma_correct_ = device().compile(kernel, "FrameBuffer-gamma_correction");
+}
+
+CommandList FrameBuffer::gamma_correct(BufferView<float4> input,
+                                       BufferView<float4> output) const noexcept {
+    CommandList ret;
+    ret << gamma_correct_(input,
+                          output)
+               .dispatch(resolution());
+    return ret;
+}
+
 void FrameBuffer::register_(const SP<ScreenBuffer> &buffer) noexcept {
     auto iter = screen_buffers_.find(buffer->name());
     if (iter != screen_buffers_.end()) {
