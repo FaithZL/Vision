@@ -19,13 +19,12 @@ bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    static string cur_item = final_result;
     auto show_buffer = [&](Managed<float4> &buffer) {
         if (buffer.device_buffer().size() == 0) {
             return;
         }
-        if (widgets->radio_button(buffer.name(), cur_item == buffer.name())) {
-            cur_item = buffer.name();
+        if (widgets->radio_button(buffer.name(), cur_view_ == buffer.name())) {
+            cur_view_ = buffer.name();
         }
     };
     for (auto iter = screen_buffers_.begin();
@@ -79,7 +78,7 @@ BindlessArray &FrameBuffer::bindless_array() noexcept {
 }
 
 const Buffer<float4> &FrameBuffer::view_buffer() const noexcept {
-    return screen_buffers_.at(final_result)->device_buffer();
+    return screen_buffers_.at(cur_view_)->device_buffer();
 }
 
 BufferView<PixelGeometry> FrameBuffer::prev_gbuffer(ocarina::uint frame_index) const noexcept {

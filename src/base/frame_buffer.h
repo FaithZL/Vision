@@ -87,6 +87,7 @@ public:
     static constexpr auto final_result = "FrameBuffer::final_result_";
 
 protected:
+    string cur_view_{final_result};
     /// save two frames of data
     RegistrableBuffer<PixelGeometry> gbuffer_{};
 
