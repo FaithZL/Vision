@@ -81,7 +81,7 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
-    return frame_buffer_->view_buffer();
+    return frame_buffer_->cur_screen_buffer();
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {
@@ -125,13 +125,19 @@ void Pipeline::before_render() noexcept {
 }
 
 void Pipeline::after_render() noexcept {
+    Env::debugger().reset_range();
     scene().camera()->after_render();
+}
+
+void Pipeline::commit_command() noexcept {
+    stream_ << commit();
 }
 
 void Pipeline::display(double dt) noexcept {
     Clock clk;
     before_render();
     render(dt);
+    commit_command();
     after_render();
     double ms = clk.elapse_ms();
     integrator()->accumulate_render_time(ms);

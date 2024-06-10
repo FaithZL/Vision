@@ -66,8 +66,6 @@ public:
         stream << shader_(frame_index_).dispatch(rp->resolution());
         RealTimeDenoiseInput input = denoise_input();
         stream << synchronize();
-        stream << commit();
-        Env::debugger().reset_range();
         increase_frame_index();
     }
 };

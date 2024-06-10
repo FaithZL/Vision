@@ -78,8 +78,6 @@ public:
                       .dispatch(pipeline()->resolution());
         stream << frame_buffer().hit_buffer().download(100, 1);
         stream << synchronize();
-        stream << commit();
-        Env::debugger().reset_range();
         increase_frame_index();
     }
 };

@@ -60,6 +60,11 @@ CommandList FrameBuffer::gamma_correct(BufferView<float4> input,
     return ret;
 }
 
+CommandList FrameBuffer::gamma_correct() const noexcept {
+    const Buffer<float4> &input = cur_screen_buffer();
+    return gamma_correct(input, view_buffer_);
+}
+
 void FrameBuffer::register_(const SP<ScreenBuffer> &buffer) noexcept {
     auto iter = screen_buffers_.find(buffer->name());
     if (iter != screen_buffers_.end()) {
@@ -96,7 +101,7 @@ BindlessArray &FrameBuffer::bindless_array() noexcept {
     return pipeline()->bindless_array();
 }
 
-const Buffer<float4> &FrameBuffer::view_buffer() const noexcept {
+const Buffer<float4> &FrameBuffer::cur_screen_buffer() const noexcept {
     return screen_buffers_.at(cur_view_)->device_buffer();
 }
 

@@ -74,6 +74,7 @@ public:
     virtual void compile() noexcept = 0;
     virtual void display(double dt) noexcept;
     virtual void render(double dt) noexcept = 0;
+    virtual void commit_command() noexcept;
     virtual void before_render() noexcept;
     virtual void after_render() noexcept;
     virtual void upload_data() noexcept { scene_.upload_data(); }

@@ -131,7 +131,7 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
-    [[nodiscard]] const Buffer<float4> &view_buffer() const noexcept;
+    [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
 
     void register_(const SP<ScreenBuffer> &buffer) noexcept;
     void unregister(const SP<ScreenBuffer> &buffer) noexcept;
@@ -168,6 +168,7 @@ public:
     virtual void compile() noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
                                             BufferView<float4> output) const noexcept;
+    [[nodiscard]] CommandList gamma_correct() const noexcept;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
         uint element_num = count * pixel_num();
