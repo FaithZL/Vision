@@ -19,13 +19,11 @@ private:
     Shader<void(Buffer<float4>, Buffer<float4>, uint)> accumulate_;
     Shader<void(Buffer<float4>, Buffer<float4>)> tone_mapping_;
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
-    bool gamma_{true};
 
 public:
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
-          rt_buffer_(pipeline()->bindless_array()),
-          gamma_(desc["gamma"].as_bool(true)) {}
+          rt_buffer_(pipeline()->bindless_array()){}
 
     OC_SERIALIZABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -34,8 +32,6 @@ public:
         tone_mapper_->render_UI(widgets);
         return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&] {
             changed_ |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
-            widgets->same_line();
-            changed_ |= widgets->check_box("gamma", &gamma_);
         });
     }
 
@@ -96,9 +92,6 @@ public:
         }
         rt_buffer_.write(index, val);
         val = tone_mapper_->apply(val);
-        if (gamma_) {
-            val = linear_to_srgb(val);
-        }
         val.w = 1.f;
         output_buffer_->write(index, val);
     }

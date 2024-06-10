@@ -133,6 +133,7 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
 
     [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
+    OC_MAKE_MEMBER_GETTER(view_buffer, &)
 
     void register_(const SP<ScreenBuffer> &buffer) noexcept;
     void unregister(const SP<ScreenBuffer> &buffer) noexcept;
