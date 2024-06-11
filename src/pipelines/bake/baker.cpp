@@ -84,6 +84,8 @@ void Baker::_compile_bake() noexcept {
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
         camera->load_data();
+        sampler->load_data();
+        integrator->load_data();
         RenderEnv render_env;
         render_env.initial(sampler, frame_index, spectrum());
         sampler->start(dispatch_idx().xy(), frame_index, 0);

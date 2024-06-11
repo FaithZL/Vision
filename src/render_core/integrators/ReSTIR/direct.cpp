@@ -430,6 +430,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
+        sampler()->load_data();
         sampler()->start(pixel, frame_index, 0);
         initial(sampler(), frame_index, spectrum);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
@@ -540,6 +541,7 @@ void ReSTIRDI::compile_shader1() noexcept {
     LightSampler &light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
+        sampler()->load_data();
         initial(sampler(), frame_index, spectrum);
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
