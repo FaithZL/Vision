@@ -81,8 +81,8 @@ protected:
     }
 
 public:
-    SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf)
-        : fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
+    SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf, const Bool &near_spec)
+        : BxDFSet(near_spec), fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
@@ -146,7 +146,7 @@ public:
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl, pipeline());
         FresnelBlend bxdf(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBxDFSet>(fresnel, ocarina::move(bxdf));
+        return make_unique<SubstrateBxDFSet>(fresnel, ocarina::move(bxdf), false);
     }
 };
 
