@@ -23,10 +23,11 @@ public:
             Uint2 pixel = dispatch_idx().xy();
             RenderEnv render_env;
             sampler()->load_data();
+            camera()->load_data();
+            integrator()->load_data();
             render_env.initial(sampler(), frame_index, spectrum());
             sampler()->start(pixel, frame_index, 0);
             SensorSample ss = sampler()->sensor_sample(pixel, camera()->filter());
-            camera()->load_data();
             Float scatter_pdf = 1e16f;
             RayState rs = camera()->generate_ray(ss);
             Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), {}, render_env);
