@@ -17,6 +17,8 @@ protected:
     Bool near_spec_{false};
 
 public:
+    BxDFSet(const Bool &near_spec = false)
+        : near_spec_(near_spec) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler &sampler) const noexcept = 0;
