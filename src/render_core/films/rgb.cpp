@@ -92,7 +92,6 @@ public:
         }
         rt_buffer_.write(index, val);
         val = tone_mapper_->apply(val);
-        val = linear_to_srgb(val);
         val.w = 1.f;
         output_buffer_->write(index, val);
     }

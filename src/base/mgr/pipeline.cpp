@@ -85,7 +85,7 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
 }
 
 const Buffer<float4> &Pipeline::view_buffer() {
-    return frame_buffer_->cur_screen_buffer();
+    return frame_buffer_->view_buffer();
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {
@@ -134,7 +134,7 @@ void Pipeline::after_render() noexcept {
 }
 
 void Pipeline::commit_command() noexcept {
-//    stream_ << frame_buffer_->gamma_correct();
+    stream_ << frame_buffer_->gamma_correct();
     stream_ << synchronize();
     stream_ << commit();
 }
