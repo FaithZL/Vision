@@ -65,6 +65,7 @@ void BakePipeline::preprocess() noexcept {
 }
 
 void BakePipeline::compile() noexcept {
+    Pipeline::compile();
     compile_displayer();
 }
 
@@ -73,9 +74,9 @@ void BakePipeline::compile_displayer() noexcept {
     Sampler &sampler = scene().sampler();
     Kernel kernel = [&](Uint frame_index, Uint lightmap_base) {
         Uint2 pixel = dispatch_idx().xy();
+        camera->load_data();
         sampler->start(pixel, frame_index, 0);
         SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-        camera->load_data();
         RayState rs = camera->generate_ray(ss);
 
         Float3 L = make_float3(0.f);
@@ -167,7 +168,7 @@ void BakePipeline::render(double dt) noexcept {
 }
 
 void BakePipeline::display(double dt) noexcept {
-    render(dt);
+    Pipeline::display(dt);
 }
 
 }// namespace vision
