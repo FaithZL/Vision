@@ -10,7 +10,7 @@ namespace vision {
 
 ScatterEval MaterialEvaluator::evaluate_local(Float3 wo, Float3 wi,
                                               MaterialEvalMode mode, Uint flag) const noexcept {
-    ScatterEval ret{swl->dimension()};
+    ScatterEval ret{swl_->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->evaluate_local(wo, wi, mode, flag);
     });
@@ -19,7 +19,7 @@ ScatterEval MaterialEvaluator::evaluate_local(Float3 wo, Float3 wi,
 
 BSDFSample MaterialEvaluator::sample_local(Float3 wo, Uint flag,
                                            Sampler &sampler) const noexcept {
-    BSDFSample ret{swl->dimension()};
+    BSDFSample ret{swl_->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->sample_local(wo, flag, sampler);
     });
@@ -39,8 +39,8 @@ void MaterialEvaluator::mollify() noexcept {
 }
 
 SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept {
-    SampledSpectrum ret{swl->dimension()};
-    Float3 wo = shading_frame.to_local(world_wo);
+    SampledSpectrum ret{swl_->dimension()};
+    Float3 wo = shading_frame_.to_local(world_wo);
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->albedo(wo);
     });
@@ -55,24 +55,32 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     return ret;
 }
 
+Bool MaterialEvaluator::near_spec() const noexcept {
+    Bool ret;
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->near_spec();
+    });
+    return ret;
+}
+
 ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi,
                                         MaterialEvalMode mode,
                                         const Uint &flag) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
-    Float3 wi = shading_frame.to_local(world_wi);
+    Float3 wo = shading_frame_.to_local(world_wo);
+    Float3 wi = shading_frame_.to_local(world_wi);
     ScatterEval ret = evaluate_local(wo, wi, mode, flag);
-    Bool discard = same_hemisphere(world_wo, world_wi, ng) == BxDFFlag::is_transmission(ret.flags);
+    Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
     ret.pdf = select(discard, 0.f, ret.pdf);
     ret.f *= abs_cos_theta(wi);
     return ret;
 }
 
 BSDFSample MaterialEvaluator::sample(Float3 world_wo, Sampler &sampler, const Uint &flag) const noexcept {
-    Float3 wo = shading_frame.to_local(world_wo);
+    Float3 wo = shading_frame_.to_local(world_wo);
     BSDFSample ret = sample_local(wo, flag, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
-    ret.wi = shading_frame.to_world(ret.wi);
-    Bool discard = same_hemisphere(world_wo, ret.wi, ng) == BxDFFlag::is_transmission(ret.eval.flags);
+    ret.wi = shading_frame_.to_world(ret.wi);
+    Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
     ret.eval.pdf = select(discard, 0.f, ret.eval.pdf);
     return ret;
 }

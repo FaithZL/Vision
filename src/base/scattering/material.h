@@ -13,6 +13,9 @@
 namespace vision {
 
 struct BxDFSet : public ocarina::Hashable {
+protected:
+    Bool near_spec_{false};
+
 public:
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
@@ -24,6 +27,7 @@ public:
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
+    OC_MAKE_MEMBER_GETTER(near_spec, &)
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -40,9 +44,9 @@ public:
     using Super = PolyEvaluator<BxDFSet>;
 
 protected:
-    PartialDerivative<Float3> shading_frame;
-    Float3 ng;
-    const SampledWavelengths *swl{};
+    PartialDerivative<Float3> shading_frame_;
+    Float3 ng_;
+    const SampledWavelengths *swl_{};
 
 protected:
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept;
@@ -50,7 +54,7 @@ protected:
 
 public:
     explicit MaterialEvaluator(const Interaction &it, const SampledWavelengths &swl)
-        : shading_frame(it.shading), ng(it.ng), swl(&swl) {}
+        : shading_frame_(it.shading), ng_(it.ng), swl_(&swl) {}
 
     void regularize() noexcept;
     void mollify() noexcept;
@@ -60,6 +64,7 @@ public:
                                        const Uint &flag = BxDFFlag::All) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler &sampler,
                                     const Uint &flag = BxDFFlag::All) const noexcept;
+    [[nodiscard]] Bool near_spec() const noexcept;
 };
 
 class Material : public Node, public Serializable<float> {
