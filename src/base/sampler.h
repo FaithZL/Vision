@@ -11,6 +11,16 @@
 
 namespace vision {
 using namespace ocarina;
+
+enum Dimension {
+    PathTracing,
+    ReSTIR_RIS,
+    ReSTIR_combine,
+    ReSTIRGI_init,
+    ReSTIRGI_temporal,
+    ReSTIRGI_spatial
+};
+
 class SamplerImpl : public Node {
 public:
     using Desc = SamplerDesc;
@@ -42,6 +52,9 @@ public:
     virtual void temporary(const ocarina::function<void(SamplerImpl *)> &func) noexcept = 0;
     [[nodiscard]] virtual uint sample_per_pixel() const noexcept { return spp_; }
     virtual void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept = 0;
+    void start(const Uint2 &pixel, const Uint &sample_index, Dimension dim) noexcept {
+        start(pixel, sample_index, to_underlying(dim));
+    }
     [[nodiscard]] virtual Float2 next_2d() noexcept {
         Float x = next_1d();
         Float y = next_1d();

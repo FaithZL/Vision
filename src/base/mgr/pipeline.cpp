@@ -38,7 +38,7 @@ void Pipeline::on_touch(ocarina::uint2 pos) noexcept {
 
     auto &buffer = frame_buffer_->hit_buffer();
     uint index = frame_buffer()->pixel_index(pos);
-    stream_ << frame_buffer_->compute_hit();
+    stream_ << frame_buffer_->compute_hit(0);
     stream_ << frame_buffer()->hit_buffer().download(index, 1);
     stream_ << synchronize() << commit();
     Hit hit = buffer[index];
@@ -126,6 +126,7 @@ void Pipeline::deregister_texture(handle_ty index) noexcept {
 }
 
 void Pipeline::before_render() noexcept {
+    stream_ << Env::debugger().upload();
 }
 
 void Pipeline::after_render() noexcept {

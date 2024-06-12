@@ -153,7 +153,7 @@ public:
         compile_compute_hit();
     }
 
-    [[nodiscard]] CommandList compute_hit() const noexcept override {
+    [[nodiscard]] CommandList compute_hit(uint frame_index) const noexcept override {
         CommandList ret;
         ret << compute_hit_(hit_buffer_).dispatch(resolution());
         return ret;

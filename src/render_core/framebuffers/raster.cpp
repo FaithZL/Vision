@@ -23,7 +23,7 @@ public:
         return {};
     }
 
-    [[nodiscard]] CommandList compute_hit() const noexcept override {
+    [[nodiscard]] CommandList compute_hit(uint frame_index) const noexcept override {
         return {};
     }
 

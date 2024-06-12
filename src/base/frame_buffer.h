@@ -164,7 +164,7 @@ public:
     [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                                    BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept = 0;
-    [[nodiscard]] virtual CommandList compute_hit() const noexcept = 0;
+    [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const Camera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
     virtual void compile() noexcept;
