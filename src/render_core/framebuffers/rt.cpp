@@ -17,7 +17,7 @@ private:
     using grad_signature = void(uint, Buffer<PixelGeometry>);
     Shader<grad_signature> compute_grad_;
 
-    Shader<void(Buffer<Hit>)> compute_hit_;
+    Shader<void(Buffer<Hit>, uint)> compute_hit_;
 
 public:
     explicit RayTracingFrameBuffer(const FrameBufferDesc &desc)
@@ -133,9 +133,9 @@ public:
     void compile_compute_hit() noexcept {
         Camera &camera = scene().camera();
         Sampler &sampler = scene().sampler();
-        Kernel kernel = [&](BufferVar<Hit> hit_buffer) {
+        Kernel kernel = [&](BufferVar<Hit> hit_buffer, Uint frame_index) {
             Uint2 pixel = dispatch_idx().xy();
-            sampler->start(pixel, 0, 0);
+            sampler->start(pixel, frame_index, 0);
             camera->load_data();
 
             SensorSample ss(pixel);
@@ -155,7 +155,7 @@ public:
 
     [[nodiscard]] CommandList compute_hit(uint frame_index) const noexcept override {
         CommandList ret;
-        ret << compute_hit_(hit_buffer_).dispatch(resolution());
+        ret << compute_hit_(hit_buffer_, frame_index).dispatch(resolution());
         return ret;
     }
 
