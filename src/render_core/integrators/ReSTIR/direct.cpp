@@ -81,10 +81,9 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     RayVar ray = it.spawn_ray(bs->wi);
     HitVar hit = geometry.trace_closest(ray);
     Float pdf = bs->eval.pdf;
-    hit_bsdf->next_ray = ray;
-    hit_bsdf->next_hit = hit;
+    hit_bsdf->wi.set(bs->wi);
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
-    hit_bsdf->cos_theta = abs_dot(it.ng, bs->wi);
+    hit_bsdf->flag = HitBSDF::diffuse;
     hit_bsdf->pdf = pdf;
 
     LightEval le{swl.dimension()};
@@ -435,7 +434,10 @@ void ReSTIRDI::compile_shader0() noexcept {
         initial(sampler(), frame_index, spectrum);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
-        Var hit = geometry.trace_closest(rs.ray);
+//        Var hit = geometry.trace_closest(rs.ray);
+
+        Var hit = frame_buffer().hit_buffer().read(dispatch_id());
+
 
         SurfaceDataVar cur_surf;
         cur_surf.hit = hit;

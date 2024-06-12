@@ -69,6 +69,7 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
+        stream << frame_buffer().compute_hit(frame_index_);
         stream << direct_.dispatch(frame_index_);
         stream << indirect_.dispatch(frame_index_);
         stream << combine_(frame_index_, direct_.factor(),

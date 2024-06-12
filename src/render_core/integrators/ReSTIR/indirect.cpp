@@ -69,18 +69,17 @@ GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, frame_index(), 3);
     Interaction sp_it{false};
-    RayState ray_state = RayState::create(hit_bsdf.next_ray);
+    RayVar ray = it.spawn_ray(hit_bsdf.wi.as_vec3());
+    RayState ray_state = RayState::create(ray);
     Float3 throughput = hit_bsdf->safe_throughput();
     GIRSVSample sample;
-    $if(hit_bsdf.next_hit->is_hit()) {
-        Float3 L = integrator_->Li(ray_state, hit_bsdf.pdf,
-                                   SampledSpectrum(throughput),
-                                   sp_it, *this) /
-                   throughput;
-        L = ocarina::zero_if_nan_inf(L);
-        sample.sp->set(sp_it);
-        sample.Lo.set(L);
-    };
+    Float3 L = integrator_->Li(ray_state, hit_bsdf.pdf,
+                               SampledSpectrum(throughput),
+                               sp_it, *this) /
+               throughput;
+    L = ocarina::zero_if_nan_inf(L);
+    sample.sp->set(sp_it);
+    sample.Lo.set(L);
     return sample;
 }
 

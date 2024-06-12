@@ -138,7 +138,7 @@ public:
             sampler->start(pixel, frame_index, 0);
             camera->load_data();
 
-            SensorSample ss(pixel);
+            SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
             HitVar hit = pipeline()->trace_closest(rs.ray);
             hit_buffer.write(dispatch_id(), hit);

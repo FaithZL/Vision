@@ -32,16 +32,22 @@ OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id) {
 namespace vision {
 using namespace ocarina;
 struct HitBSDF {
-    ocarina::Ray next_ray{};
-    ocarina::Hit next_hit{};
+public:
+    static constexpr uint miss = 0;
+    static constexpr uint near_spec = 1;
+    static constexpr uint glossy = 2;
+    static constexpr uint diffuse = 3;
+
+public:
+    array<float, 3> wi{};
     array<float, 3> bsdf{};
-    float cos_theta{};
     float pdf{-1};
+    uint flag{miss};
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision,HitBSDF, next_ray, next_hit,bsdf, cos_theta, pdf) {
+OC_STRUCT(vision,HitBSDF, wi, bsdf, pdf, flag) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
     }
