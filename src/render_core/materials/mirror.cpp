@@ -19,8 +19,8 @@ protected:
     }
 
 public:
-    MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf, const Bool &near_spec)
-        : BxDFSet(near_spec),fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
+    MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf, const Uint &flag)
+        : BxDFSet(flag),fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MirrorBxDFSet)
         // clang-format on
@@ -70,7 +70,7 @@ protected:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), false);
+        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), HitBSDF::glossy);
     }
 };
 

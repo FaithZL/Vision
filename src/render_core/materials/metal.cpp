@@ -39,8 +39,8 @@ protected:
 public:
     ConductorBxDFSet(const SP<Fresnel> &fresnel,
                      MicrofacetReflection refl,
-                     const Bool &near_spec)
-        : BxDFSet(near_spec), fresnel_(fresnel), refl_(ocarina::move(refl)) {}
+                     const Uint &flag)
+        : BxDFSet(flag), fresnel_(fresnel), refl_(ocarina::move(refl)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(ConductorBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
@@ -119,7 +119,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf), false);
+        return make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf), HitBSDF::glossy);
     }
 };
 

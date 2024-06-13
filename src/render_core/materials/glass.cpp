@@ -106,8 +106,8 @@ public:
                       MicrofacetReflection refl,
                       MicrofacetTransmission trans,
                       const Bool &dispersive,
-                      const Bool near_spec)
-        : BxDFSet(near_spec),
+                      const Uint &flag)
+        : BxDFSet(flag),
           fresnel_(fresnel),
           refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
           dispersive_(dispersive) {}
@@ -238,7 +238,8 @@ public:
                                                       swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans), ior_->type() == ESPD, false);
+        return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
+                                              ior_->type() == ESPD, HitBSDF::glossy);
     }
 };
 }// namespace vision
