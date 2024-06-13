@@ -33,16 +33,16 @@ namespace vision {
 using namespace ocarina;
 struct HitBSDF {
 public:
-    static constexpr uint miss = 0;
-    static constexpr uint near_spec = 1;
-    static constexpr uint glossy = 2;
-    static constexpr uint diffuse = 3;
+    static constexpr uint Miss = 0;
+    static constexpr uint NearSpec = 1;
+    static constexpr uint Glossy = 2;
+    static constexpr uint Diffuse = 3;
 
 public:
     array<float, 3> wi{};
     array<float, 3> bsdf{};
     float pdf{-1};
-    uint flag{miss};
+    uint flag{Miss};
 };
 }// namespace vision
 

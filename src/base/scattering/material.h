@@ -17,7 +17,7 @@ protected:
     Bool flag_{false};
 
 public:
-    BxDFSet(const Uint &flag = HitBSDF::glossy)
+    BxDFSet(const Uint &flag = HitBSDF::Glossy)
         : flag_(flag) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;

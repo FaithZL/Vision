@@ -83,7 +83,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     Float pdf = bs->eval.pdf;
     hit_bsdf->wi.set(bs->wi);
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
-    hit_bsdf->flag = HitBSDF::diffuse;
+    hit_bsdf->flag = HitBSDF::Glossy;
     hit_bsdf->pdf = pdf;
 
     LightEval le{swl.dimension()};

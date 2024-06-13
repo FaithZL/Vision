@@ -119,7 +119,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf), HitBSDF::glossy);
+        return make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf), HitBSDF::Glossy);
     }
 };
 

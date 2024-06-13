@@ -239,7 +239,7 @@ public:
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
-                                              ior_->type() == ESPD, HitBSDF::glossy);
+                                              ior_->type() == ESPD, HitBSDF::Glossy);
     }
 };
 }// namespace vision
