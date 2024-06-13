@@ -14,11 +14,11 @@ namespace vision {
 
 struct BxDFSet : public ocarina::Hashable {
 protected:
-    Bool near_spec_{false};
+    Bool flag_{false};
 
 public:
     BxDFSet(const Bool &near_spec = false)
-        : near_spec_(near_spec) {}
+        : flag_(near_spec) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, Sampler &sampler) const noexcept = 0;
@@ -29,7 +29,7 @@ public:
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
-    OC_MAKE_MEMBER_GETTER(near_spec, &)
+    OC_MAKE_MEMBER_GETTER(flag, &)
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -66,7 +66,7 @@ public:
                                        const Uint &flag = BxDFFlag::All) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler &sampler,
                                     const Uint &flag = BxDFFlag::All) const noexcept;
-    [[nodiscard]] Bool near_spec() const noexcept;
+    [[nodiscard]] Bool flag() const noexcept;
 };
 
 class Material : public Node, public Serializable<float> {

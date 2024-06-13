@@ -55,10 +55,10 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     return ret;
 }
 
-Bool MaterialEvaluator::near_spec() const noexcept {
+Bool MaterialEvaluator::flag() const noexcept {
     Bool ret;
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->near_spec();
+        ret = lobe_set->flag();
     });
     return ret;
 }
