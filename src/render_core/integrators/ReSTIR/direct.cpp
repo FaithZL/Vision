@@ -62,11 +62,12 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
     Sampler &sampler = scene().sampler();
-
+    Uint flag;
     if (!bsdf) {
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
+                flag = bsdf.flag();
                 swl.check_dispersive(spectrum, bsdf);
                 *bs = bsdf.sample(it.wo, sampler);
             });
@@ -75,6 +76,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     } else {
         outline([&] {
             *bs = bsdf->sample(it.wo, sampler);
+            flag = bsdf->flag();
         },
                 "ReSTIRDI::Li from bsdf");
     }
@@ -83,7 +85,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     Float pdf = bs->eval.pdf;
     hit_bsdf->wi.set(bs->wi);
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
-    hit_bsdf->flag = HitBSDF::Glossy;
+    hit_bsdf->flag = flag;
     hit_bsdf->pdf = pdf;
 
     LightEval le{swl.dimension()};
