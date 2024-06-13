@@ -55,8 +55,8 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     return ret;
 }
 
-Bool MaterialEvaluator::flag() const noexcept {
-    Bool ret;
+Uint MaterialEvaluator::flag() const noexcept {
+    Uint ret;
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->flag();
     });

@@ -103,7 +103,8 @@ public:
         Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,
-                                   param.t_depth) && cond;
+                                   param.t_depth) &&
+               cond;
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
@@ -122,7 +123,7 @@ public:
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] DIReservoir RIS(Bool hit, const Interaction &it,
-                                  const Var<direct::Param> &param) const noexcept;
+                                  const Var<direct::Param> &param, Uint *flag) const noexcept;
 
     /// evaluate Li from light
     [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
@@ -131,7 +132,7 @@ public:
     /// evaluate Li from bsdf
     [[nodiscard]] SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
                                      DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point,
-                                     HitBSDFVar *hit_bsdf) const noexcept;
+                                     HitBSDFVar *hit_bsdf, Uint *flag) const noexcept;
 
     template<typename... Args>
     [[nodiscard]] Float compute_p_hat(Args &&...args) const noexcept {

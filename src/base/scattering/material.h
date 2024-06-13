@@ -14,10 +14,10 @@ namespace vision {
 
 struct BxDFSet : public ocarina::Hashable {
 protected:
-    Bool flag_{false};
+    Uint flag_{SurfaceData::Glossy};
 
 public:
-    BxDFSet(const Uint &flag = HitBSDF::Glossy)
+    BxDFSet(const Uint &flag = SurfaceData::Glossy)
         : flag_(flag) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
@@ -66,7 +66,7 @@ public:
                                        const Uint &flag = BxDFFlag::All) const noexcept;
     [[nodiscard]] BSDFSample sample(Float3 world_wo, Sampler &sampler,
                                     const Uint &flag = BxDFFlag::All) const noexcept;
-    [[nodiscard]] Bool flag() const noexcept;
+    [[nodiscard]] Uint flag() const noexcept;
 };
 
 class Material : public Node, public Serializable<float> {

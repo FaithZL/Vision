@@ -12,13 +12,21 @@
 namespace vision {
 using namespace ocarina;
 struct SurfaceData {
+public:
+    static constexpr uint Miss = 0;
+    static constexpr uint NearSpec = 1;
+    static constexpr uint Glossy = 2;
+    static constexpr uint Diffuse = 3;
+
+public:
     Hit hit{};
     float4 normal_depth{};
     uint mat_id{};
+    uint flag{Miss};
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id) {
+OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id, flag) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
@@ -33,21 +41,14 @@ namespace vision {
 using namespace ocarina;
 struct HitBSDF {
 public:
-    static constexpr uint Miss = 0;
-    static constexpr uint NearSpec = 1;
-    static constexpr uint Glossy = 2;
-    static constexpr uint Diffuse = 3;
-
-public:
     array<float, 3> wi{};
     array<float, 3> bsdf{};
     float pdf{-1};
-    uint flag{Miss};
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision,HitBSDF, wi, bsdf, pdf, flag) {
+OC_STRUCT(vision,HitBSDF, wi, bsdf, pdf) {
     [[nodiscard]] Float3 throughput() const noexcept {
         return bsdf.as_vec3() / pdf;
     }

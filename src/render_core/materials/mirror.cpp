@@ -70,7 +70,7 @@ protected:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), HitBSDF::Glossy);
+        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), SurfaceData::Glossy);
     }
 };
 

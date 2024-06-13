@@ -55,19 +55,18 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
-                             BSDFSample *bs, Float *light_pdf_point, HitBSDFVar *hit_bsdf) const noexcept {
+                             BSDFSample *bs, Float *light_pdf_point, HitBSDFVar *hit_bsdf, Uint *flag) const noexcept {
     LightSampler &light_sampler = scene().light_sampler();
     Spectrum &spectrum = scene().spectrum();
     const SampledWavelengths &swl = sampled_wavelengths();
     const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
     Sampler &sampler = scene().sampler();
-    Uint flag;
     if (!bsdf) {
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
-                flag = bsdf.flag();
+                *flag = bsdf.flag();
                 swl.check_dispersive(spectrum, bsdf);
                 *bs = bsdf.sample(it.wo, sampler);
             });
@@ -76,7 +75,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     } else {
         outline([&] {
             *bs = bsdf->sample(it.wo, sampler);
-            flag = bsdf->flag();
+            *flag = bsdf->flag();
         },
                 "ReSTIRDI::Li from bsdf");
     }
@@ -85,7 +84,6 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     Float pdf = bs->eval.pdf;
     hit_bsdf->wi.set(bs->wi);
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
-    hit_bsdf->flag = flag;
     hit_bsdf->pdf = pdf;
 
     LightEval le{swl.dimension()};
@@ -164,7 +162,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
 }
 
 DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
-                          const Var<Param> &param) const noexcept {
+                          const Var<Param> &param, Uint *flag) const noexcept {
     LightSampler &light_sampler = scene().light_sampler();
     Sampler &sampler = scene().sampler();
     Spectrum &spectrum = scene().spectrum();
@@ -197,7 +195,7 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
         DIRSVSample sample;
         BSDFSample bs{swl.dimension()};
         Float light_pdf_point = 0.f;
-        Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf);
+        Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf, flag);
         sample.p_hat = p_hat;
         Float weight = Reservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
                                               sample.p_hat, 1.f / bs.eval.pdf);
@@ -451,7 +449,8 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf->set_depth(camera->linear_depth(it.pos));
             cur_surf->set_normal(it.shading.normal());
         };
-        DIReservoir rsv = RIS(hit->is_hit(), it, param);
+        DIReservoir rsv = RIS(hit->is_hit(), it, param, addressof(cur_surf.flag));
+        $condition_info("{} ---", cur_surf.flag);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             it.pos, hit->is_hit());
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
