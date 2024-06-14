@@ -451,7 +451,12 @@ void ReSTIRDI::compile_shader0() noexcept {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
         });
-
+        cur_surfaces().write(dispatch_id(), cur_surf);
+//        $if(cur_surf.flag < SurfaceData::Glossy) {
+//            passthrough_reservoirs().write(dispatch_id(), DIReservoir{});
+//            frame_buffer().hit_bsdfs().write(dispatch_id(), HitBSDFVar{});
+//            $return();
+//        };
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             it.pos, hit->is_hit());
@@ -463,7 +468,6 @@ void ReSTIRDI::compile_shader0() noexcept {
         };
         rsv = temporal_reuse(rsv, cur_surf, motion_vec, ss, param);
         passthrough_reservoirs().write(dispatch_id(), rsv);
-        cur_surfaces().write(dispatch_id(), cur_surf);
     };
     shader0_ = device().compile(kernel, "ReSTIR direct initial candidates and temporal reuse");
 }
