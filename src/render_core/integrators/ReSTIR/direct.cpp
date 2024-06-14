@@ -166,7 +166,6 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
     LightSampler &light_sampler = scene().light_sampler();
     Sampler &sampler = scene().sampler();
     Spectrum &spectrum = scene().spectrum();
-    
     comment("RIS start");
     Uint M_light = param.M_light;
     Uint M_bsdf = param.M_bsdf;
@@ -435,10 +434,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         initial(sampler(), frame_index, spectrum);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
-//        Var hit = geometry.trace_closest(rs.ray);
-
         Var hit = frame_buffer().hit_buffer().read(dispatch_id());
-
 
         SurfaceDataVar cur_surf;
         cur_surf.hit = hit;

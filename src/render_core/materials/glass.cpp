@@ -187,6 +187,7 @@ private:
     VS_MAKE_SLOT(ior);
     VS_MAKE_SLOT(roughness);
     bool remapping_roughness_{true};
+    float alpha_threshold_{0.022};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -202,6 +203,10 @@ public:
         roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.01f))));
         init_ior(desc);
         init_slot_cursor(&color_, 3);
+    }
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
+        Material::render_sub_UI(widgets);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void init_ior(const MaterialDesc &desc) noexcept {
@@ -233,13 +238,17 @@ public:
         Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors},
                                                       swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
+        
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
-                                              ior_->type() == ESPD, SurfaceData::Glossy);
+                                              ior_->type() == ESPD, flag);
     }
 };
 }// namespace vision
