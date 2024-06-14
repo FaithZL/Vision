@@ -131,6 +131,8 @@ public:
 
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<SurfaceData> prev_surfaces(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<SurfaceData> cur_surfaces(uint frame_index) const noexcept;
 
     [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
     OC_MAKE_MEMBER_GETTER(view_buffer, &)

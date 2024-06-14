@@ -15,6 +15,7 @@ class RealTimeIntegrator : public IlluminationIntegrator {
 private:
     ReSTIRDI direct_;
     ReSTIRGI indirect_;
+    SP<ScreenBuffer> specular_buffer_{make_shared<ScreenBuffer>("RealTimeIntegrator::specular_buffer_")};
     Shader<void(uint, float, float)> combine_;
     Shader<void(uint, Buffer<SurfaceData>)> path_tracing_;
     SP<Denoiser> denoiser_;
@@ -38,6 +39,7 @@ public:
         denoiser_->prepare();
         Pipeline *rp = pipeline();
 
+        frame_buffer().prepare_screen_buffer(specular_buffer_);
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_hit_buffer();
@@ -57,13 +59,22 @@ public:
         Camera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, BufferVar<SurfaceData> surfaces) {
             SurfaceDataVar surface = surfaces.read(dispatch_id());
-            $if (surface.flag > SurfaceData::NearSpec) {
+            $if(surface.flag != SurfaceData::NearSpec) {
+                specular_buffer_->write(dispatch_id(), make_float4(0.f));
                 $return();
             };
             load_data();
             sampler->load_data();
             camera->load_data();
-            sampler->start(dispatch_idx().xy(), frame_index, 5);
+            Uint2 pixel = dispatch_idx().xy();
+            sampler->start(pixel, frame_index, 5);
+            RenderEnv render_env;
+            render_env.initial(sampler, frame_index, spectrum());
+            SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
+            Float scatter_pdf = 1e16f;
+            RayState rs = camera->generate_ray(ss);
+            Float3 L = Li(rs, scatter_pdf, spectrum()->one(), {}, render_env) * ss.filter_weight;
+            specular_buffer_->write(dispatch_id(), make_float4(L, 1.f));
         };
         path_tracing_ = device().compile(kernel, "real_time_pt");
     }
@@ -89,6 +100,9 @@ public:
         Stream &stream = rp->stream();
         stream << frame_buffer().compute_hit(frame_index_);
         stream << direct_.dispatch(frame_index_);
+//        stream << path_tracing_(frame_index_,
+//                                frame_buffer().cur_surfaces(frame_index_))
+//                      .dispatch(pipeline()->resolution());
         stream << indirect_.dispatch(frame_index_);
         stream << combine_(frame_index_, direct_.factor(),
                            indirect_.factor())

@@ -117,6 +117,14 @@ BufferView<PixelGeometry> FrameBuffer::cur_gbuffer(ocarina::uint frame_index) co
     return pipeline()->buffer_view<PixelGeometry>(cur_gbuffer_index(frame_index));
 }
 
+BufferView<SurfaceData> FrameBuffer::prev_surfaces(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer_view<SurfaceData>(prev_surfaces_index(frame_index));
+}
+
+BufferView<SurfaceData> FrameBuffer::cur_surfaces(ocarina::uint frame_index) const noexcept {
+    return pipeline()->buffer_view<SurfaceData>(cur_surfaces_index(frame_index));
+}
+
 Float2 FrameBuffer::compute_motion_vec(const Camera &camera, const Float2 &p_film,
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);
