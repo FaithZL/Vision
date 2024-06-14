@@ -66,7 +66,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
-                *flag = bsdf.flag();
+                if (flag) { *flag = bsdf.flag(); }
                 swl.check_dispersive(spectrum, bsdf);
                 *bs = bsdf.sample(it.wo, sampler);
             });
@@ -75,7 +75,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     } else {
         outline([&] {
             *bs = bsdf->sample(it.wo, sampler);
-            *flag = bsdf->flag();
+            if (flag) { *flag = bsdf->flag(); }
         },
                 "ReSTIRDI::Li from bsdf");
     }
@@ -446,8 +446,13 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf->set_depth(camera->linear_depth(it.pos));
             cur_surf->set_normal(it.shading.normal());
         };
-        DIReservoir rsv = RIS(hit->is_hit(), it, param, addressof(cur_surf.flag));
 
+        scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
+            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
+            cur_surf.flag = bsdf.flag();
+        });
+
+        DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             it.pos, hit->is_hit());
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
