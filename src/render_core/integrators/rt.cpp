@@ -16,6 +16,7 @@ private:
     ReSTIRDI direct_;
     ReSTIRGI indirect_;
     Shader<void(uint, float, float)> combine_;
+    Shader<void(uint, Buffer<SurfaceData>)> path_tracing_;
     SP<Denoiser> denoiser_;
 
 public:
@@ -51,9 +52,26 @@ public:
         indirect_.render_UI(widgets);
     }
 
+    void compile_path_tracing() noexcept {
+        Sampler &sampler = scene().sampler();
+        Camera &camera = scene().camera();
+        Kernel kernel = [&](Uint frame_index, BufferVar<SurfaceData> surfaces) {
+            SurfaceDataVar surface = surfaces.read(dispatch_id());
+            $if (surface.flag > SurfaceData::NearSpec) {
+                $return();
+            };
+            load_data();
+            sampler->load_data();
+            camera->load_data();
+            sampler->start(dispatch_idx().xy(), frame_index, 5);
+        };
+        path_tracing_ = device().compile(kernel, "real_time_pt");
+    }
+
     void compile() noexcept override {
         direct_.compile();
         indirect_.compile();
+        compile_path_tracing();
 
         Camera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
