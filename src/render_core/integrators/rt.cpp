@@ -59,7 +59,7 @@ public:
         Camera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, BufferVar<SurfaceData> surfaces) {
             SurfaceDataVar surface = surfaces.read(dispatch_id());
-            $if(surface.flag != SurfaceData::NearSpec) {
+            $if(!surface->near_specular()) {
                 specular_buffer_->write(dispatch_id(), make_float4(0.f));
                 $return();
             };
@@ -89,7 +89,8 @@ public:
             camera->load_data();
             Float3 direct = direct_.radiance()->read(dispatch_id()).xyz() * di;
             Float3 indirect = indirect_.radiance()->read(dispatch_id()).xyz() * ii;
-            Float3 L = direct + indirect;
+            Float3 spec = specular_buffer_->read(dispatch_id()).xyz();
+            Float3 L = direct + indirect + spec;
             camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };
         combine_ = device().compile(kernel, "combine");
@@ -100,9 +101,9 @@ public:
         Stream &stream = rp->stream();
         stream << frame_buffer().compute_hit(frame_index_);
         stream << direct_.dispatch(frame_index_);
-//        stream << path_tracing_(frame_index_,
-//                                frame_buffer().cur_surfaces(frame_index_))
-//                      .dispatch(pipeline()->resolution());
+        stream << path_tracing_(frame_index_,
+                                frame_buffer().cur_surfaces(frame_index_))
+                      .dispatch(pipeline()->resolution());
         stream << indirect_.dispatch(frame_index_);
         stream << combine_(frame_index_, direct_.factor(),
                            indirect_.factor())

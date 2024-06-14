@@ -89,7 +89,7 @@ void ReSTIRGI::compile_initial_samples() noexcept {
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
-        $if(surf.hit->is_miss()) {
+        $if(surf.hit->is_miss() || surf->near_specular()) {
             radiance_->write(dispatch_id(), make_float4(0.f));
             $return();
         };
@@ -196,7 +196,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
-        $if(surf.hit->is_miss()) {
+        $if(surf.hit->is_miss() || surf->near_specular()) {
             $return();
         };
         sampler()->load_data();
@@ -297,7 +297,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
-        $if(surf.hit->is_miss()) {
+        $if(surf.hit->is_miss() || surf->near_specular()) {
             $return();
         };
         sampler()->load_data();

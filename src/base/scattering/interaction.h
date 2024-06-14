@@ -32,8 +32,9 @@ OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id, flag) {
     }
     [[nodiscard]] Float3 normal() const noexcept { return normal_depth.xyz();}
     void set_depth(const Float &t) { normal_depth.w = t; }
-    [[nodiscard]] Bool valid() const { return depth() > 0.f; }
-    [[nodiscard]] Float depth() const noexcept { return normal_depth.w;}
+    [[nodiscard]] Bool valid() const noexcept { return depth() > 0.f; }
+    [[nodiscard]] Bool near_specular() const noexcept { return flag == vision::SurfaceData::NearSpec; }
+    [[nodiscard]] Float depth() const noexcept { return normal_depth.w; }
 };
 // clang-format on
 
