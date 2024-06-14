@@ -166,6 +166,7 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
     LightSampler &light_sampler = scene().light_sampler();
     Sampler &sampler = scene().sampler();
     Spectrum &spectrum = scene().spectrum();
+    
     comment("RIS start");
     Uint M_light = param.M_light;
     Uint M_bsdf = param.M_bsdf;
@@ -450,7 +451,7 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf->set_normal(it.shading.normal());
         };
         DIReservoir rsv = RIS(hit->is_hit(), it, param, addressof(cur_surf.flag));
-        $condition_info("{} ---", cur_surf.flag);
+
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             it.pos, hit->is_hit());
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);

@@ -44,6 +44,7 @@ private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(roughness)
     bool remapping_roughness_{true};
+    float alpha_threshold_{0.022};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -61,16 +62,23 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
+        Material::render_sub_UI(widgets);
+    }
+
 protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), SurfaceData::Glossy);
+        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), flag);
     }
 };
 
