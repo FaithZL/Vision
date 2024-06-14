@@ -87,15 +87,15 @@ void ReSTIRGI::compile_initial_samples() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
     Camera &camera = scene().camera();
     Kernel kernel = [&](Uint frame_index) {
-        camera->load_data();
-        sampler()->load_data();
-        integrator_->load_data();
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             radiance_->write(dispatch_id(), make_float4(0.f));
             $return();
         };
+        camera->load_data();
+        sampler()->load_data();
+        integrator_->load_data();
         Uint2 pixel = dispatch_idx().xy();
         sampler()->start(pixel, frame_index, 0);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
@@ -194,12 +194,12 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
     Camera &camera = scene().camera();
     //todo remedy init samples and reservoir
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
-        sampler()->load_data();
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             $return();
         };
+        sampler()->load_data();
         camera->load_data();
         Uint2 pixel = dispatch_idx().xy();
         SensorSample ss;
@@ -295,14 +295,14 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     Spectrum &spectrum = pipeline()->spectrum();
 
     Kernel kernel = [&](Var<indirect::Param> param, Uint frame_index) {
-        sampler()->try_load_data();
-        sampler()->start(dispatch_idx().xy(), frame_index, 5);
         initial(sampler(), frame_index, spectrum);
-        camera->load_data();
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
             $return();
         };
+        sampler()->load_data();
+        sampler()->start(dispatch_idx().xy(), frame_index, 5);
+        camera->load_data();
         GIReservoir rsv = passthrough_reservoirs().read(dispatch_id());
         rsv = spatial_reuse(rsv, surf, make_int2(dispatch_idx().xy()), param);
         Float3 L = shading(rsv, surf);
