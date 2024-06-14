@@ -3824,7 +3824,7 @@
     },
     "integrator" : {
        "type" : "rt",
-       		//  "type" : "pt",
+//       		  "type" : "pt",
         "param" : {
             "mis_mode": 0,
             "direct": {
@@ -3868,7 +3868,7 @@
                 "pairwise": true
             },
             "min_depth" : 5,
-            "max_depth" : 1,
+            "max_depth" : 8,
             "rr_threshold" : 1
         }
     },
