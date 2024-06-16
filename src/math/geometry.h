@@ -224,7 +224,7 @@ struct Triangle {
 };
 }// namespace geometry
 }// namespace vision
-OC_STRUCT(vision,Triangle, i, j, k){};
+OC_STRUCT(vision, Triangle, i, j, k){};
 
 [[nodiscard]] inline bool operator==(const vision::Triangle &lhs,
                                      const vision::Triangle &rhs) noexcept {
@@ -235,14 +235,16 @@ OC_STRUCT(vision,Triangle, i, j, k){};
 
 namespace vision {
 using namespace ocarina;
+using array_float3 = std::array<float, 3>;
+using array_float2 = std::array<float, 2>;
 inline namespace geometry {
 struct Vertex {
 public:
     //todo compress
-    array<float, 3> pos;
-    array<float, 3> n;
-    array<float, 2> uv;
-    array<float, 2> uv2;
+    array_float3 pos;
+    array_float3 n;
+    array_float2 uv;
+    array_float2 uv2;
 
 public:
     Vertex() = default;
@@ -317,19 +319,19 @@ OC_STRUCT(vision,Vertex, pos, n, uv, uv2){
     }
 
     [[nodiscard]] auto position() const noexcept {
-        return make_float3(pos[0], pos[1], pos[2]);
+        return pos.as_vec3();
     }
 
     [[nodiscard]] auto normal() const noexcept {
-        return make_float3(n[0], n[1], n[2]);
+        return n.as_vec3();
     }
 
     [[nodiscard]] auto tex_coord() const noexcept {
-        return make_float2(uv[0], uv[1]);
+        return uv.as_vec2();
     }
 
     [[nodiscard]] auto lightmap_uv() const noexcept {
-        return make_float2(uv2[0], uv2[1]);
+        return uv2.as_vec2();
     }
 };
 // clang-format on

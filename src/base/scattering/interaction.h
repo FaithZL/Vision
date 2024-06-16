@@ -39,6 +39,22 @@ OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id, flag) {
 // clang-format on
 
 namespace vision {
+struct SurfaceExtend {
+    array_float3 throughput{};
+    array_float3 pos{};
+    array_float3 ray_org;
+    array_float3 ray_dir;
+};
+}// namespace vision
+// clang-format off
+OC_STRUCT(vision, SurfaceExtend, throughput, pos, ray_org, ray_dir) {
+    [[nodiscard]] ocarina::RayVar incoming_ray() const noexcept {
+        return ocarina::make_ray(ray_org.as_vec(), ray_dir.as_vec());
+    }
+};
+// clang-format om
+
+namespace vision {
 using namespace ocarina;
 struct HitBSDF {
 public:
