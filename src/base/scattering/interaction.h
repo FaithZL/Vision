@@ -42,8 +42,8 @@ namespace vision {
 struct SurfaceExtend {
     array_float3 throughput{};
     array_float3 pos{};
-    array_float3 ray_org;
-    array_float3 ray_dir;
+    array_float3 ray_org{};
+    array_float3 ray_dir{};
 };
 }// namespace vision
 // clang-format off
