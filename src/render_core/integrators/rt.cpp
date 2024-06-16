@@ -101,9 +101,9 @@ public:
         Stream &stream = rp->stream();
         stream << frame_buffer().compute_hit(frame_index_);
         stream << direct_.dispatch(frame_index_);
-        stream << path_tracing_(frame_index_,
-                                frame_buffer().cur_surfaces(frame_index_))
-                      .dispatch(pipeline()->resolution());
+//        stream << path_tracing_(frame_index_,
+//                                frame_buffer().cur_surfaces(frame_index_))
+//                      .dispatch(pipeline()->resolution());
         stream << indirect_.dispatch(frame_index_);
         stream << combine_(frame_index_, direct_.factor(),
                            indirect_.factor())

@@ -73,7 +73,6 @@ namespace vision {
     Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
     Bool cond1 = (abs(cur_surface->depth() - another_surface->depth()) / cur_surface->depth()) < depth_threshold;
     return cond0 && cond1 &&
-           (cur_surface.mat_id == another_surface.mat_id) &&
-           another_surface.flag >= SurfaceData::Glossy;
+           (cur_surface.mat_id == another_surface.mat_id);
 }
 }// namespace vision

@@ -452,11 +452,7 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf.flag = bsdf.flag();
         });
         cur_surfaces().write(dispatch_id(), cur_surf);
-        $if(cur_surf->near_specular()) {
-            passthrough_reservoirs().write(dispatch_id(), DIReservoir{});
-            frame_buffer().hit_bsdfs().write(dispatch_id(), HitBSDFVar{});
-            $return();
-        };
+
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             it.pos, hit->is_hit());
