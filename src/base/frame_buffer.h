@@ -169,6 +169,7 @@ public:
     [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const Camera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
+    [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord) noexcept;
     virtual void compile() noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
                                             BufferView<float4> output) const noexcept;

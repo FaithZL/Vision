@@ -125,6 +125,10 @@ BufferView<SurfaceData> FrameBuffer::cur_surfaces(ocarina::uint frame_index) con
     return pipeline()->buffer_view<SurfaceData>(cur_surfaces_index(frame_index));
 }
 
+Uint FrameBuffer::checkerboard_value(const Uint2 &coord) noexcept {
+    return (coord.x & 1) ^ (coord.y & 1);
+}
+
 Float2 FrameBuffer::compute_motion_vec(const Camera &camera, const Float2 &p_film,
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);

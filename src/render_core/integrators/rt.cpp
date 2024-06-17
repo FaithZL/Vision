@@ -89,8 +89,7 @@ public:
             camera->load_data();
             Float3 direct = direct_.radiance()->read(dispatch_id()).xyz() * di;
             Float3 indirect = indirect_.radiance()->read(dispatch_id()).xyz() * ii;
-            Float3 spec = specular_buffer_->read(dispatch_id()).xyz();
-            Float3 L = direct + indirect + spec;
+            Float3 L = direct + indirect;
             camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };
         combine_ = device().compile(kernel, "combine");
