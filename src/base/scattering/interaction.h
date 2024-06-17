@@ -58,8 +58,8 @@ namespace vision {
 using namespace ocarina;
 struct HitBSDF {
 public:
-    array<float, 3> wi{};
-    array<float, 3> bsdf{};
+    array_float3 wi{};
+    array_float3 bsdf{};
     float pdf{-1};
 };
 }// namespace vision
