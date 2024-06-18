@@ -445,6 +445,7 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf.mat_id = it.material_id();
             cur_surf->set_depth(camera->linear_depth(it.pos));
             cur_surf->set_normal(it.shading.normal());
+            cur_surf->set_position(it.pos);
         };
 
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {

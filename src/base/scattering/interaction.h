@@ -21,17 +21,20 @@ public:
 public:
     Hit hit{};
     float4 normal_depth{};
+    float3 pos{};
     uint mat_id{};
     uint flag{Miss};
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision, SurfaceData, hit, normal_depth, mat_id, flag) {
+OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos, mat_id, flag) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
     [[nodiscard]] Float3 normal() const noexcept { return normal_depth.xyz();}
     void set_depth(const Float &t) { normal_depth.w = t; }
+    void set_position(const Float3 &p) noexcept { pos = p; }
+    [[nodiscard]] Float3 position() const noexcept { return pos; }
     [[nodiscard]] Bool valid() const noexcept { return depth() > 0.f; }
     [[nodiscard]] Bool near_specular() const noexcept { return flag == vision::SurfaceData::NearSpec; }
     [[nodiscard]] Float depth() const noexcept { return normal_depth.w; }
