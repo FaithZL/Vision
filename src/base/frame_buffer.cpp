@@ -125,6 +125,14 @@ BufferView<SurfaceData> FrameBuffer::cur_surfaces(ocarina::uint frame_index) con
     return pipeline()->buffer_view<SurfaceData>(cur_surfaces_index(frame_index));
 }
 
+BindlessArrayBuffer<SurfaceData> FrameBuffer::prev_surfaces(const ocarina::Uint &frame_index) const noexcept {
+    return pipeline()->buffer_var<SurfaceData>(prev_surfaces_index(frame_index));
+}
+
+BindlessArrayBuffer<SurfaceData> FrameBuffer::cur_surfaces(const ocarina::Uint &frame_index) const noexcept {
+    return pipeline()->buffer_var<SurfaceData>(cur_surfaces_index(frame_index));
+}
+
 Uint FrameBuffer::checkerboard_value(const Uint2 &coord) noexcept {
     return (coord.x & 1) ^ (coord.y & 1);
 }
@@ -137,6 +145,17 @@ Float2 FrameBuffer::compute_motion_vec(const Camera &camera, const Float2 &p_fil
         ret = p_film - raster_coord;
     };
     return ret;
+}
+
+Float3 FrameBuffer::compute_motion_vector(const Camera &camera, const Float2 &p_film,
+                                          const Uint &frame_index) const noexcept {
+    Uint2 pixel = make_uint2(p_film);
+    Uint pixel_index = dispatch_id(pixel);
+    SurfaceDataVar cur_surf = cur_surfaces(frame_index).read(pixel_index);
+    SurfaceDataVar prev_surf = prev_surfaces(frame_index).read(pixel_index);
+    Float3 cur_coord = camera->raster_coord(cur_surf->position());
+    Float3 prev_coord = camera->raster_coord(prev_surf->position());
+    return cur_coord - prev_coord;
 }
 
 }// namespace vision

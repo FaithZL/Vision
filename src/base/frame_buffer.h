@@ -132,7 +132,9 @@ public:
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<SurfaceData> prev_surfaces(uint frame_index) const noexcept;
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces(const Uint &frame_index) const noexcept;
     [[nodiscard]] BufferView<SurfaceData> cur_surfaces(uint frame_index) const noexcept;
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces(const Uint &frame_index) const noexcept;
 
     [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
     OC_MAKE_MEMBER_GETTER(view_buffer, &)
@@ -169,6 +171,7 @@ public:
     [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const Camera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
+    [[nodiscard]] Float3 compute_motion_vector(const Camera &camera, const Float2 &p_film, const Uint &frame_index) const noexcept;
     [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord) noexcept;
     virtual void compile() noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
