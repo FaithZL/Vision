@@ -76,18 +76,18 @@ public:
 
 class FittedCurveFilter : public FilterImpl {
 protected:
-    FilterSampler _sampler{};
+    FilterSampler sampler_{};
 
 public:
     explicit FittedCurveFilter(const FilterDesc &desc)
         : FilterImpl(desc) {}
 
     void prepare() noexcept override {
-        _sampler.prepare(this);
+        sampler_.prepare(this);
     }
 
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
-        FilterSample fs = _sampler.sample(u);
+        FilterSample fs = sampler_.sample(u);
         fs.p = fs.p * radius();
         return fs;
     }
