@@ -60,6 +60,7 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
         widgets->check_box("scene data", &show_scene_data_);
         widgets->check_box("detail", &show_detail_);
         widgets->check_box("framebuffer", &show_framebuffer_data_);
+        widgets->check_box("stats", &show_stats_);
     });
     if (show_scene_data_) {
         scene_.render_UI(widgets);
@@ -72,6 +73,9 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
             frame_buffer_->render_UI(widgets);
         });
     }
+    if (show_stats_) {
+        render_stats(widgets);
+    }
     return true;
 }
 
@@ -81,6 +85,20 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
     }
     widgets->use_window("detail", [&] {
         cur_node_->render_UI(widgets);
+    });
+}
+
+void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
+    widgets->use_window("stats", [&] {
+        widgets->use_folding_header("buffer stats", [&]{
+            auto buffer_size = MemoryStats::instance().buffer_size();
+            MemoryStats::instance().foreach_buffer_info([&](auto data) {
+                double percent = double(data.size) / buffer_size;
+                widgets->text(ocarina::format("size {}, percent {:.2f} %, block {}\n",
+                                              bytes_string(data.size),percent * 100,
+                                              data.name));
+            });
+        });
     });
 }
 
