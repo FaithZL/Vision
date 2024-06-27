@@ -92,12 +92,22 @@ void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
     widgets->use_window("stats", [&] {
         widgets->use_folding_header("buffer stats", [&]{
             auto buffer_size = MemoryStats::instance().buffer_size();
+            widgets->text("total buffer size is %s", bytes_string(buffer_size).c_str());
             MemoryStats::instance().foreach_buffer_info([&](auto data) {
                 double percent = double(data.size) / buffer_size;
                 widgets->text(ocarina::format("size {}, percent {:.2f} %, block {}\n",
                                               bytes_string(data.size),percent * 100,
                                               data.name));
             });
+        });
+
+        widgets->use_folding_header("mesh stats", [&] {
+            auto triangle_num = geometry_.accel().triangle_num();
+            auto vert_num = geometry_.accel().vertex_num();
+            auto mesh_num = geometry_.accel().mesh_num();
+            auto string = ocarina::format("vertex num is {}\ntriangle num is {}\nmesh num is {}",
+                                          triangle_num,vert_num, mesh_num);
+            widgets->text(std::move(string));
         });
     });
 }
