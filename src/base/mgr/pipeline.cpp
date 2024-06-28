@@ -107,7 +107,7 @@ void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
             auto mesh_num = geometry_.accel().mesh_num();
             auto string = ocarina::format("vertex num is {}\ntriangle num is {}\nmesh num is {}",
                                           triangle_num,vert_num, mesh_num);
-            widgets->text(std::move(string));
+            widgets->text(string);
         });
     });
 }
