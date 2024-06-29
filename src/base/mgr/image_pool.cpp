@@ -29,7 +29,7 @@ RegistrableTexture ImagePool::load_texture(const ShaderNodeDesc &desc) noexcept 
     }
     RegistrableTexture ret{Global::instance().pipeline()->bindless_array()};
     ret.host_tex() = ocarina::move(image_io);
-    ret.allocate_on_device(Global::instance().device());
+    ret.allocate_on_device(Global::instance().device(),desc.file_name());
     ret.register_self();
     return ret;
 }

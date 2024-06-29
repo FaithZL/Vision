@@ -89,13 +89,24 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
 }
 
 void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
-    widgets->use_window("stats", [&] {
+    auto tex_size = MemoryStats::instance().tex_size();
+    auto buffer_size = MemoryStats::instance().buffer_size();
+    auto label = ocarina::format("memory stats total is {}", bytes_string(tex_size + buffer_size).c_str());
+    widgets->use_window(label, [&] {
+        widgets->use_folding_header("texture stats", [&]{
+            widgets->text("total texture size is %s", bytes_string(tex_size).c_str());
+            MemoryStats::instance().foreach_tex_info([&](auto data) {
+                double percent = double(data.size()) / tex_size;
+                widgets->text(ocarina::format("size {}, percent {:.2f} %%, tex name {}\n",
+                                              bytes_string(data.size()),percent * 100, data.name));
+            });
+        });
+
         widgets->use_folding_header("buffer stats", [&]{
-            auto buffer_size = MemoryStats::instance().buffer_size();
             widgets->text("total buffer size is %s", bytes_string(buffer_size).c_str());
             MemoryStats::instance().foreach_buffer_info([&](auto data) {
                 double percent = double(data.size) / buffer_size;
-                widgets->text(ocarina::format("size {}, percent {:.2f} %, block {}\n",
+                widgets->text(ocarina::format("size {}, percent {:.2f} %%, block {}\n",
                                               bytes_string(data.size),percent * 100,
                                               data.name));
             });
