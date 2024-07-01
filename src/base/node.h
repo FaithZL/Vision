@@ -28,7 +28,7 @@ using namespace ocarina;
 
 class Node : public Hashable, public GUI {
 public:
-    using Creator = Node *(const NodeDesc &);
+    using Creator = Node *(const NodeDesc *);
     using Deleter = void(Node *);
     using Wrapper = shared_ptr<Node>;
 
@@ -59,7 +59,7 @@ public:
         const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
         auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
         auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-        SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(desc)), deleter);
+        SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(&desc)), deleter);
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
@@ -158,14 +158,14 @@ public:
     }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         return widgets->use_folding_header(Super::impl()->category().data(), [&] {
-//            auto names = extract_name_list();
-//            for (int i = 0; i < names.size(); ++i) {
-//                if (Super::impl()->plugin_name() + ".dll" == names[i]) {
-//                    current_item_ = i;
-//                    break;
-//                }
-//            }
-//            widgets->combo(Super::impl()->category().data(), &current_item_, names);
+            //            auto names = extract_name_list();
+            //            for (int i = 0; i < names.size(); ++i) {
+            //                if (Super::impl()->plugin_name() + ".dll" == names[i]) {
+            //                    current_item_ = i;
+            //                    break;
+            //                }
+            //            }
+            //            widgets->combo(Super::impl()->category().data(), &current_item_, names);
             Super::impl()->render_UI(widgets);
         });
     }
@@ -179,10 +179,10 @@ public:
 
 }// namespace vision
 
-#define VS_MAKE_CLASS_CREATOR(Class)                                                        \
-    VS_EXPORT_API Class *create(const vision::NodeDesc &desc) {                             \
-        return ocarina::new_with_allocator<Class>(dynamic_cast<const Class::Desc &>(desc)); \
-    }                                                                                       \
-    OC_EXPORT_API void destroy(Class *obj) {                                                \
-        ocarina::delete_with_allocator(obj);                                                \
+#define VS_MAKE_CLASS_CREATOR(Class)                                                         \
+    VS_EXPORT_API Class *create(const vision::NodeDesc *desc) {                              \
+        return ocarina::new_with_allocator<Class>(*dynamic_cast<const Class::Desc *>(desc)); \
+    }                                                                                        \
+    OC_EXPORT_API void destroy(Class *obj) {                                                 \
+        ocarina::delete_with_allocator(obj);                                                 \
     }
