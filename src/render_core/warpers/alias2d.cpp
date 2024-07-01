@@ -79,7 +79,7 @@ public:
         Uint iv = clamp(cast<uint>(p.y * resolution_.y), 0u, resolution_.y - 1);
         return select(*integral() > 0, func_at(make_uint2(iu, iv)) / *integral(), 0.f);
     }
-    [[nodiscard]] Serial<float> integral() const noexcept override {
+    [[nodiscard]] EncodedData<float> integral() const noexcept override {
         return marginal_.integral();
     }
     [[nodiscard]] Float2 sample_continuous(Float2 u, Float *pdf, Uint2 *coord) const noexcept override {

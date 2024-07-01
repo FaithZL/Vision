@@ -63,14 +63,14 @@ struct LightSurfacePoint {
     Float2 bary;
 };
 
-class LightImpl : public Node, public Serializable<float> {
+class LightImpl : public Node, public Encodable<float> {
 public:
     using Desc = LightDesc;
 
 protected:
     const LightType type_{LightType::Area};
-    Serial<float> scale_{1.f};
-    Serial<uint> switch_{true};
+    EncodedData<float> scale_{1.f};
+    EncodedData<uint> switch_{true};
     VS_MAKE_SLOT(color)
     uint index_{InvalidUI32};
 
@@ -104,7 +104,7 @@ protected:
 
 public:
     explicit LightImpl(const LightDesc &desc, LightType light_type);
-    OC_SERIALIZABLE_FUNC(Serializable<float>, scale_, color_, switch_)
+    OC_SERIALIZABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
     }
@@ -198,7 +198,7 @@ class ShapeInstance;
 
 class IAreaLight : public LightImpl {
 protected:
-    Serial<uint> inst_idx_{InvalidUI32};
+    EncodedData<uint> inst_idx_{InvalidUI32};
     const ShapeInstance *instance_{};
 
 public:

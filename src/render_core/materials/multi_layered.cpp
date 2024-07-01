@@ -14,7 +14,7 @@ private:
     static constexpr float float_min = std::numeric_limits<float>::min();
 
 private:
-    Serial<float> factor_{float_min};
+    EncodedData<float> factor_{float_min};
     Slot thickness_;
     SP<Material> bottom_{};
     SP<Material> top_{};

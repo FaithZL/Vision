@@ -7,8 +7,8 @@
 namespace vision {
 class UVMapping : public ShaderNode {
 private:
-    Serial<float2> offset_{};
-    Serial<float2> scale_{};
+    EncodedData<float2> offset_{};
+    EncodedData<float2> scale_{};
 
 public:
     explicit UVMapping(const ShaderNodeDesc &desc)

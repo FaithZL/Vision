@@ -13,7 +13,7 @@ using namespace ocarina;
 class ImageNode : public ShaderNode {
 private:
     RegistrableTexture *texture_;
-    Serial<uint> tex_id_{};
+    EncodedData<uint> tex_id_{};
     ShaderNodeDesc desc_;
 
 public:

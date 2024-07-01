@@ -8,8 +8,8 @@
 namespace vision {
 class NumberInput : public ShaderNode {
 private:
-    Serial<vector<float>> value_;
-    Serial<float> intensity_{1.f};
+    EncodedData<vector<float>> value_;
+    EncodedData<float> intensity_{1.f};
     bool sync_{true};
 
 public:

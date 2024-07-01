@@ -214,7 +214,6 @@ void App::save_result() noexcept {
 }
 
 int App::run() noexcept {
-    OC_INFO(MemoryStats::instance().buffer_info());
     window->run([&](double dt) {
         update(dt);
     });

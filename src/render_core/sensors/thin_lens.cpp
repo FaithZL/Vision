@@ -9,8 +9,8 @@
 namespace vision {
 class ThinLensCamera : public CameraImpl {
 private:
-    Serial<float> focal_distance_;
-    Serial<float> lens_radius_;
+    EncodedData<float> focal_distance_;
+    EncodedData<float> lens_radius_;
 
 public:
     explicit ThinLensCamera(const SensorDesc &desc)

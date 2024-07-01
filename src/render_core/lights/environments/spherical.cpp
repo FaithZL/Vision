@@ -25,7 +25,7 @@ namespace vision {
 //    }
 class SphericalMap : public EnvironmentImpl {
 private:
-    Serial<float4x4> w2o_;
+    EncodedData<float4x4> w2o_;
     SP<Warper2D> warper_{};
 
 public:

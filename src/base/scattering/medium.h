@@ -20,7 +20,7 @@ using Sampler = TObject<SamplerImpl, SamplerDesc>;
 
 class SampledWavelengths;
 
-class Medium : public Node, public Serializable<float> {
+class Medium : public Node, public Encodable<float> {
 protected:
     uint index_{InvalidUI32};
     float scale_{};

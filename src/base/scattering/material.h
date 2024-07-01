@@ -69,7 +69,7 @@ public:
     [[nodiscard]] Uint flag() const noexcept;
 };
 
-class Material : public Node, public Serializable<float> {
+class Material : public Node, public Encodable<float> {
 public:
     using Desc = MaterialDesc;
 

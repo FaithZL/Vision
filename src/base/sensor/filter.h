@@ -26,18 +26,18 @@ struct FilterSample {
 //        ]
 //    }
 //}
-class FilterImpl : public Node, public Serializable<float> {
+class FilterImpl : public Node, public Encodable<float> {
 public:
     using Desc = FilterDesc;
 
 protected:
-    Serial<float2> radius_;
+    EncodedData<float2> radius_;
 
 public:
     explicit FilterImpl(const FilterDesc &desc)
         : Node(desc),
           radius_(desc["radius"].as_float2(make_float2(1.5f))) {}
-    OC_SERIALIZABLE_FUNC(Serializable<float>, radius_)
+    OC_SERIALIZABLE_FUNC(Encodable<float>, radius_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;

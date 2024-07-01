@@ -18,11 +18,11 @@ namespace vision {
 //    }
 class SpotLight : public IPointLight {
 private:
-    Serial<float3> position_;
-    Serial<float3> direction_;
-    Serial<float> angle_;
+    EncodedData<float3> position_;
+    EncodedData<float3> direction_;
+    EncodedData<float> angle_;
     // falloff angle range
-    Serial<float> falloff_;
+    EncodedData<float> falloff_;
 
 public:
     explicit SpotLight(const LightDesc &desc)

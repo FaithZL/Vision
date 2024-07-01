@@ -18,7 +18,7 @@ using namespace ocarina;
  * cameras and other monolithic objects
  * that do not need to be added to polymorphic lists
  */
-class SerialObject : public Serializable<float> {
+class SerialObject : public Encodable<float> {
 protected:
     RegistrableManaged<float> datas_{Global::instance().bindless_array()};
 

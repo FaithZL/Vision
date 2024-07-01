@@ -32,7 +32,7 @@ namespace vision {
 //    }
 class AreaLight : public IAreaLight {
 private:
-    Serial<uint> two_sided_{0u};
+    EncodedData<uint> two_sided_{0u};
     SP<Warper> warper_{nullptr};
 
 public:

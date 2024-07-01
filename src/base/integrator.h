@@ -101,9 +101,9 @@ enum MISMode {
 
 class IlluminationIntegrator : public IntegratorImpl {
 protected:
-    Serial<uint> max_depth_{};
-    Serial<uint> min_depth_{};
-    Serial<float> rr_threshold_{};
+    EncodedData<uint> max_depth_{};
+    EncodedData<uint> min_depth_{};
+    EncodedData<float> rr_threshold_{};
     MISMode mis_mode_{};
     SP<ScreenBuffer> albedo_{make_shared<ScreenBuffer>("IlluminationIntegrator::albedo_")};
     SP<ScreenBuffer> emission_{make_shared<ScreenBuffer>("IlluminationIntegrator::emission_")};

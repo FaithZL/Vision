@@ -14,17 +14,17 @@ namespace vision {
 
 using namespace ocarina;
 
-class SPD : public Serializable<float>{
+class SPD : public Encodable<float>{
 private:
     static constexpr auto spd_lut_interval = 5u;
     RegistrableManaged<float> func_;
-    Serial<float> sample_interval_{};
+    EncodedData<float> sample_interval_{};
     Pipeline *rp_{};
 
 public:
     explicit SPD(Pipeline *rp);
     SPD(vector<float> func, Pipeline *rp);
-    OC_SERIALIZABLE_FUNC(Serializable<float>, func_, sample_interval_)
+    OC_SERIALIZABLE_FUNC(Encodable<float>, func_, sample_interval_)
 
     void init(vector<float> func) noexcept;
     template<typename T>

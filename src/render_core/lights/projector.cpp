@@ -31,9 +31,9 @@ namespace vision {
 //    }
 class Projector : public IPointLight {
 private:
-    Serial<float4x4> o2w_;
-    Serial<float> ratio_;
-    Serial<float> angle_y_;
+    EncodedData<float4x4> o2w_;
+    EncodedData<float> ratio_;
+    EncodedData<float> angle_y_;
 
 public:
     explicit Projector(const LightDesc &desc)

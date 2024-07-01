@@ -8,7 +8,7 @@ namespace vision {
 
 class ExposureToneMapper : public ToneMapperImpl {
 private:
-    Serial<float> exposure_{};
+    EncodedData<float> exposure_{};
 
 public:
     explicit ExposureToneMapper(const ToneMapperDesc &desc)

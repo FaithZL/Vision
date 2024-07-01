@@ -25,13 +25,13 @@ protected:
     float fov_y_{20.f};
     float4x4 raster_to_screen_{};
     float4x4 camera_to_screen_{};
-    Serial<float> tan_fov_y_over_2_{};
-    Serial<float4x4> c2w_;
-    Serial<float4x4> prev_w2c_;
-    Serial<float4x4> raster_to_camera_{};
-    Serial<float4x4> prev_c2r_{};
+    EncodedData<float> tan_fov_y_over_2_{};
+    EncodedData<float4x4> c2w_;
+    EncodedData<float4x4> prev_w2c_;
+    EncodedData<float4x4> raster_to_camera_{};
+    EncodedData<float4x4> prev_c2r_{};
     /// previous position in world space
-    Serial<float3> prev_pos_;
+    EncodedData<float3> prev_pos_;
 
 protected:
     void _update_raster() noexcept;

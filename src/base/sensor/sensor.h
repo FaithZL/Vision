@@ -34,7 +34,7 @@ protected:
     Filter filter_{};
     SP<Film> film_{};
     TObject<Medium> medium_{};
-    Serial<uint> medium_id_{InvalidUI32};
+    EncodedData<uint> medium_id_{InvalidUI32};
 
 public:
     explicit SensorImpl(const SensorDesc &desc);

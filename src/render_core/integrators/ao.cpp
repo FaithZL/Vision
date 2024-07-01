@@ -11,9 +11,9 @@ namespace vision {
 
 class AmbientOcclusionIntegrator : public IntegratorImpl {
 private:
-    Serial<float> distance_{1.f};
-    Serial<uint> cos_sample_{true};
-    Serial<uint> sample_num_{64u};
+    EncodedData<float> distance_{1.f};
+    EncodedData<uint> cos_sample_{true};
+    EncodedData<uint> sample_num_{64u};
 
 public:
     explicit AmbientOcclusionIntegrator(const IntegratorDesc &desc)

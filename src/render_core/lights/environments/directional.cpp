@@ -19,9 +19,9 @@ namespace vision {
 //    }
 class DirectionalLight : public EnvironmentImpl {
 private:
-    Serial<float3> direction_;
-    Serial<float> world_radius_;
-    Serial<float3> world_center_;
+    EncodedData<float3> direction_;
+    EncodedData<float> world_radius_;
+    EncodedData<float3> world_center_;
 
 public:
     explicit DirectionalLight(const LightDesc &desc)

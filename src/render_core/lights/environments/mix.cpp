@@ -8,9 +8,9 @@ namespace vision {
 
 class MixEnvironment : public EnvironmentImpl {
 private:
-    Serial<float> scale0_;
+    EncodedData<float> scale0_;
     SP<EnvironmentImpl> env0_;
-    Serial<float> scale1_;
+    EncodedData<float> scale1_;
     SP<EnvironmentImpl> env1_;
 
 public:

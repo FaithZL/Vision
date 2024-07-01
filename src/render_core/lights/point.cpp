@@ -19,7 +19,7 @@ namespace vision {
 //}
 class PointLight : public IPointLight {
 private:
-    Serial<float3> position_;
+    EncodedData<float3> position_;
 
 public:
     explicit PointLight(const LightDesc &desc)

@@ -18,7 +18,7 @@ namespace vision {
 //
 //    }
 //}
-class ToneMapperImpl : public Node, public Serializable<float> {
+class ToneMapperImpl : public Node, public Encodable<float> {
 public:
     using Desc = ToneMapperDesc;
 
