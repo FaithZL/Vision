@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     const DynamicModule *module = file_manager.obtain_module(desc.plugin_name());
     auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
     auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-    auto node = Node::Wrapper(creator(desc), deleter);
+    auto node = Node::Wrapper(creator(&desc), deleter);
     Warper2D *warper2d = dynamic_cast<Warper2D*>(node.get());
 
     uint2 res = image_io.resolution();
