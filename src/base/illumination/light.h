@@ -14,19 +14,19 @@
 
 namespace vision {
 struct LightBound {
-    ocarina::array<float, 3> _axis{};
+    ocarina::array<float, 3> axis_{};
     float theta_o{};
     float theta_e{};
     [[nodiscard]] auto axis() const noexcept {
-        return make_float3(_axis[0], _axis[1], _axis[2]);
+        return make_float3(axis_[0], axis_[1], axis_[2]);
     }
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision,LightBound, _axis, theta_o, theta_e){
+OC_STRUCT(vision,LightBound, axis_, theta_o, theta_e){
     [[nodiscard]] auto axis() const noexcept {
-        return make_float3(_axis[0], _axis[1], _axis[2]);
+        return axis_.as_vec3();
     }
 };
 // clang-format on
