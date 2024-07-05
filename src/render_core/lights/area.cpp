@@ -44,7 +44,7 @@ public:
         }
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(IAreaLight, two_sided_, *warper_)
+    OC_ENCODABLE_FUNC(IAreaLight, two_sided_, *warper_)
 
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;

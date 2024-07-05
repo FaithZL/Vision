@@ -23,7 +23,7 @@ public:
           texture_(&Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
         tex_id_ = texture_->index();
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, tex_id_)
+    OC_ENCODABLE_FUNC(ShaderNode, tex_id_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void reload(ocarina::Widgets *widgets) noexcept {

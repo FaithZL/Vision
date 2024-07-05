@@ -115,7 +115,7 @@ protected:
 public:
     explicit IlluminationIntegrator(const IntegratorDesc &desc);
 
-    OC_SERIALIZABLE_FUNC(IntegratorImpl, max_depth_, min_depth_, rr_threshold_)
+    OC_ENCODABLE_FUNC(IntegratorImpl, max_depth_, min_depth_, rr_threshold_)
 
     VS_MAKE_GUI_STATUS_FUNC(IntegratorImpl, denoiser_)
 

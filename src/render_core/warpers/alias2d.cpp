@@ -21,7 +21,7 @@ public:
           conditional_v_weights_(pipeline()->bindless_array()) {
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(Warper2D, marginal_, conditional_v_tables_, conditional_v_weights_)
+    OC_ENCODABLE_FUNC(Warper2D, marginal_, conditional_v_tables_, conditional_v_weights_)
     void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v
         vector<AliasTable> conditional_v;

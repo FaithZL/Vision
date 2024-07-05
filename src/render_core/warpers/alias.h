@@ -35,7 +35,7 @@ public:
           table_(pipeline()->bindless_array()),
           func_(pipeline()->bindless_array()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(Warper, table_, func_)
+    OC_ENCODABLE_FUNC(Warper, table_, func_)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
     [[nodiscard]] Uint size() const noexcept override { return *func_.length(); }

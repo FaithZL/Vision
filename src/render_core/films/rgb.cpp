@@ -25,7 +25,7 @@ public:
         : Film(desc),
           rt_buffer_(pipeline()->bindless_array()){}
 
-    OC_SERIALIZABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
+    OC_ENCODABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {

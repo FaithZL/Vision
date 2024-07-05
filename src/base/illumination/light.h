@@ -104,7 +104,7 @@ protected:
 
 public:
     explicit LightImpl(const LightDesc &desc, LightType light_type);
-    OC_SERIALIZABLE_FUNC(Encodable<float>, scale_, color_, switch_)
+    OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
     }
@@ -205,7 +205,7 @@ public:
     explicit IAreaLight(const LightDesc &desc)
         : LightImpl(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
-    OC_SERIALIZABLE_FUNC(LightImpl, inst_idx_)
+    OC_ENCODABLE_FUNC(LightImpl, inst_idx_)
     void set_instance(const ShapeInstance *inst) noexcept;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };

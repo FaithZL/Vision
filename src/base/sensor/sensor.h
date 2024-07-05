@@ -38,7 +38,7 @@ protected:
 
 public:
     explicit SensorImpl(const SensorDesc &desc);
-    OC_SERIALIZABLE_FUNC(SerialObject, filter_, film_)
+    OC_ENCODABLE_FUNC(SerialObject, filter_, film_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;

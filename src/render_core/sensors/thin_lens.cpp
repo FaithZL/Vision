@@ -18,7 +18,7 @@ public:
           focal_distance_(desc["focal_distance"].as_float(5.f)),
           lens_radius_(desc["lens_radius"].as_float(0.f)) {
     }
-    OC_SERIALIZABLE_FUNC(CameraImpl, focal_distance_, lens_radius_)
+    OC_ENCODABLE_FUNC(CameraImpl, focal_distance_, lens_radius_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         CameraImpl::render_sub_UI(widgets);
         changed_ |= widgets->input_float_limit("lens radius", &lens_radius_.hv(),

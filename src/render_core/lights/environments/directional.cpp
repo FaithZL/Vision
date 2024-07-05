@@ -27,7 +27,7 @@ public:
     explicit DirectionalLight(const LightDesc &desc)
         : EnvironmentImpl(desc, LightType::DeltaDirection | LightType::Infinite),
           direction_(desc["direction"].as_float3(make_float3(-1.f))) {}
-    OC_SERIALIZABLE_FUNC(EnvironmentImpl, direction_, world_radius_, world_center_)
+    OC_ENCODABLE_FUNC(EnvironmentImpl, direction_, world_radius_, world_center_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         world_radius_ = scene().world_radius();

@@ -19,7 +19,7 @@ protected:
 
 public:
     Warper() = default;
-    OC_SERIALIZABLE_FUNC(Encodable<>, integral_)
+    OC_ENCODABLE_FUNC(Encodable<>, integral_)
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     [[nodiscard]] virtual Uint size() const noexcept = 0;

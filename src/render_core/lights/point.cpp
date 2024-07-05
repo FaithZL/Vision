@@ -25,7 +25,7 @@ public:
     explicit PointLight(const LightDesc &desc)
         : IPointLight(desc),
           position_(desc["position"].as_float3()) {}
-    OC_SERIALIZABLE_FUNC(IPointLight, position_)
+    OC_ENCODABLE_FUNC(IPointLight, position_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         return 4 * Pi * average();

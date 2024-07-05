@@ -31,7 +31,7 @@ public:
           angle_(radians(ocarina::clamp(desc["angle"].as_float(45.f), 1.f, 89.f))),
           falloff_(radians(ocarina::clamp(desc["falloff"].as_float(10.f), 0.f, angle_.hv()))),
           direction_(normalize(desc["direction"].as_float3(float3(0, 0, 1)))) {}
-    OC_SERIALIZABLE_FUNC(IPointLight, position_, direction_, angle_, falloff_)
+    OC_ENCODABLE_FUNC(IPointLight, position_, direction_, angle_, falloff_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);

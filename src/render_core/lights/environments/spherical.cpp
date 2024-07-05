@@ -36,7 +36,7 @@ public:
         w2o_ = inverse(o2w * rx);
     }
 
-    OC_SERIALIZABLE_FUNC(EnvironmentImpl, w2o_, *warper_)
+    OC_ENCODABLE_FUNC(EnvironmentImpl, w2o_, *warper_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;

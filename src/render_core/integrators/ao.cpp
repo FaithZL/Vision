@@ -22,7 +22,7 @@ public:
           cos_sample_(desc["cos_sample"].as_bool(true)),
           sample_num_(desc["sample_num"].as_uint(32u)) {}
 
-    OC_SERIALIZABLE_FUNC(IntegratorImpl, distance_, cos_sample_, sample_num_)
+    OC_ENCODABLE_FUNC(IntegratorImpl, distance_, cos_sample_, sample_num_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, SampledSpectrum throughput,
                             const HitContext &hc, const RenderEnv &render_env) const noexcept override {

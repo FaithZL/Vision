@@ -96,7 +96,7 @@ public:
         scale_.set(Slot::create_slot(desc.slot("scale", 0.5f, Number)));
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_SERIALIZABLE_FUNC(Material, *mat0_, *mat1_, *scale_.node())
+    OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_, *scale_.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(mat0_->type_hash(), mat1_->type_hash(), scale_.type_hash());
     }

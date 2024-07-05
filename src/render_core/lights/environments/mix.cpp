@@ -17,7 +17,7 @@ public:
     explicit MixEnvironment(const Desc &desc)
         : EnvironmentImpl(desc, LightType::Infinite) {}
 
-    OC_SERIALIZABLE_FUNC(EnvironmentImpl, scale0_, *env0_, scale1_, *env1_)
+    OC_ENCODABLE_FUNC(EnvironmentImpl, scale0_, *env0_, scale1_, *env1_)
 
     [[nodiscard]] float3 power() const noexcept override {
         return scale0_.hv() * env0_->power() + scale1_.hv() * env1_->power();

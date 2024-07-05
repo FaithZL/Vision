@@ -14,7 +14,7 @@ public:
     explicit ExposureToneMapper(const ToneMapperDesc &desc)
         : ToneMapperImpl(desc),
           exposure_(desc["exposure"].as_float(1.f)) {}
-    OC_SERIALIZABLE_FUNC(ToneMapperImpl, exposure_)
+    OC_ENCODABLE_FUNC(ToneMapperImpl, exposure_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {

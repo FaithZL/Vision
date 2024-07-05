@@ -36,7 +36,7 @@ protected:
 
 public:
     explicit Film(const FilmDesc &desc);
-    OC_SERIALIZABLE_FUNC(Encodable<float>, accumulation_, tone_mapper_)
+    OC_ENCODABLE_FUNC(Encodable<float>, accumulation_, tone_mapper_)
     VS_MAKE_GUI_STATUS_FUNC(Node, tone_mapper_)
     virtual void compile() noexcept = 0;
     [[nodiscard]] uint pixel_num() const noexcept { return resolution_.x * resolution_.y; }

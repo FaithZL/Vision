@@ -16,7 +16,7 @@ public:
         : ShaderNode(desc), spd_(scene().pipeline()) {
         spd_.init(desc["value"].data());
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, spd_)
+    OC_ENCODABLE_FUNC(ShaderNode, spd_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] vector<float> average() const noexcept override {
         float3 color = spd_.eval(rgb_spectrum_peak_wavelengths);

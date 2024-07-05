@@ -46,7 +46,7 @@ public:
             ratio_ = float(res.x) / res.y;
         }
     }
-    OC_SERIALIZABLE_FUNC(IPointLight, o2w_, ratio_, angle_y_)
+    OC_ENCODABLE_FUNC(IPointLight, o2w_, ratio_, angle_y_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);

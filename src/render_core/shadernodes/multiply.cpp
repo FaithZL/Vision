@@ -43,7 +43,7 @@ public:
         rhs_.set(Slot::create_slot(*desc.slot("rhs")));
     }
 
-    OC_SERIALIZABLE_FUNC(ShaderNode, lhs_, rhs_)
+    OC_ENCODABLE_FUNC(ShaderNode, lhs_, rhs_)
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, lhs_, rhs_)
 

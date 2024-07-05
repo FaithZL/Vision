@@ -23,7 +23,7 @@ public:
             });
         }
     }
-    OC_SERIALIZABLE_FUNC(ShaderNode, value_, intensity_)
+    OC_ENCODABLE_FUNC(ShaderNode, value_, intensity_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = value_.hv();
         switch (type_) {
