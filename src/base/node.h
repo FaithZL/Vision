@@ -10,6 +10,7 @@
 #include "GUI/widgets.h"
 #include "descriptions/node_desc.h"
 #include "util/file_manager.h"
+#include "hotfix/common.h"
 
 namespace ocarina {
 class Device;
@@ -73,7 +74,7 @@ public:
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
     [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
 
-template<typename impl_t, typename desc_t = impl_t::Desc>
+template<typename impl_t, typename desc_t = typename impl_t::Desc>
 class TObject {
 public:
     using Impl = impl_t;

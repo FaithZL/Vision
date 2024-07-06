@@ -4,6 +4,7 @@ file(GLOB_RECURSE SOURCE_FILES *.c*)
 add_library(vision-base SHARED ${SOURCE_FILES})
 target_link_libraries(vision-base PUBLIC
         ocarina
+        vision-hotfix
         vision-UI
         vision-ext
         vision-description)

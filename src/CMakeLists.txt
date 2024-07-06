@@ -4,7 +4,7 @@ function(vision_add_plugin name)
     set(lib_name vision-${PLUGIN_CATEGORY}-${name})
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
-    target_link_libraries(${lib_name} PRIVATE vision-base vision-math vision-hotfix)
+    target_link_libraries(${lib_name} PRIVATE vision-base vision-math)
     target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}"  VISION_CATEGORY="${PLUGIN_CATEGORY}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
