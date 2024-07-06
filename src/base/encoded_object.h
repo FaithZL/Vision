@@ -18,12 +18,12 @@ using namespace ocarina;
  * cameras and other monolithic objects
  * that do not need to be added to polymorphic lists
  */
-class SerialObject : public Encodable<float> {
+class EncodedObject : public Encodable<float> {
 protected:
     RegistrableManaged<float> datas_{Global::instance().bindless_array()};
 
 protected:
-    SerialObject() = default;
+    EncodedObject() = default;
 
 public:
     [[nodiscard]] RegistrableManaged<float> &datas() noexcept { return datas_; }
@@ -43,7 +43,7 @@ public:
     virtual void prepare_data() noexcept {
         encode_data();
         datas().reset_device_buffer_immediately(Global::instance().device(),
-                                                ocarina::format("SerialObject: {}::data_", typeid(*this).name()));
+                                                ocarina::format("EncodedObject: {}::data_", typeid(*this).name()));
         datas().register_self();
     }
 

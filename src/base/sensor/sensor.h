@@ -6,7 +6,7 @@
 
 #include "math/basic_types.h"
 #include "base/node.h"
-#include "base/serial_object.h"
+#include "base/encoded_object.h"
 #include "base/sample.h"
 #include "math/transform.h"
 #include "base/scattering/medium.h"
@@ -26,7 +26,7 @@ struct SensorSample {
         : p_film(pixel + 0.5f) {}
 };
 
-class SensorImpl : public Node, public SerialObject {
+class SensorImpl : public Node, public EncodedObject {
 public:
     using Desc = SensorDesc;
 
@@ -38,7 +38,7 @@ protected:
 
 public:
     explicit SensorImpl(const SensorDesc &desc);
-    OC_ENCODABLE_FUNC(SerialObject, filter_, film_)
+    OC_ENCODABLE_FUNC(EncodedObject, filter_, film_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;

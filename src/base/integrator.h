@@ -5,7 +5,7 @@
 #pragma once
 
 #include "node.h"
-#include "serial_object.h"
+#include "encoded_object.h"
 #include "rhi/common.h"
 #include "base/scattering/interaction.h"
 #include "base/denoiser.h"
@@ -30,7 +30,7 @@ class RenderEnv;
 //        "rr_threshold": 1
 //    }
 //}
-class IntegratorImpl : public Node, public SerialObject {
+class IntegratorImpl : public Node, public EncodedObject {
 public:
     using Desc = IntegratorDesc;
     using signature = void(uint);

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "common.h"
-#include "base/serial_object.h"
+#include "base/encoded_object.h"
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
 #include "indirect_util.h"
@@ -40,7 +40,7 @@ namespace vision {
 class RayTracingIntegrator;
 using namespace vision::indirect;
 
-class ReSTIRGI : public SerialObject, public Context, public RenderEnv, public GUI {
+class ReSTIRGI : public EncodedObject, public Context, public RenderEnv, public GUI {
 private:
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;

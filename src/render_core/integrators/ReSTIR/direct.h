@@ -5,7 +5,7 @@
 #pragma once
 
 #include "util.h"
-#include "base/serial_object.h"
+#include "base/encoded_object.h"
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
 #include "core/thread_pool.h"
@@ -46,7 +46,7 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDI : public SerialObject, public Context, public RenderEnv, public GUI {
+class ReSTIRDI : public EncodedObject, public Context, public RenderEnv, public GUI {
 private:
     IlluminationIntegrator *integrator_{};
     uint M_light_{};

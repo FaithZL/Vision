@@ -8,7 +8,7 @@
 #include "base/node.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/sample.h"
-#include "base/serial_object.h"
+#include "base/encoded_object.h"
 #include "base/color/spectrum.h"
 #include "math/warp.h"
 
