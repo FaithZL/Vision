@@ -115,7 +115,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     Float3 prev_surface_ng = rs.direction();
 
     Float3 primary_dir = rs.direction();
-    auto mis_bsdf = [&](Uint &bounces, bool inner) {
+    auto mis_bsdf = [&](auto &bounces, bool inner) {
         hit = geometry.trace_closest(rs.ray);
         comment("miss");
         if (!inner) {
