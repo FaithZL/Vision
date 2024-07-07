@@ -22,7 +22,7 @@ private:
     data_type data_;
 
 public:
-    SerializedData(const data_type &v) : data_(v) {}
+    explicit SerializedData(const data_type &v) : data_(v) {}
 };
 
 class Serializer {
