@@ -8,6 +8,22 @@ namespace vision ::inline hotfix {
 
 RuntimeObjectMgr *RuntimeObjectMgr::s_mgr = nullptr;
 
+Observer::Observer() {
+    RuntimeObjectMgr::instance().register_observer(this);
+}
+
+Observer::~Observer() {
+    RuntimeObjectMgr::instance().deregister_observer(this);
+}
+
+void RuntimeObjectMgr::register_observer(vision::Observer *observer) noexcept {
+    observers_.insert(observer);
+}
+
+void RuntimeObjectMgr::deregister_observer(vision::Observer *observer) noexcept {
+    observers_.erase(observer);
+}
+
 void RuntimeObjectMgr::add_object(SP<vision::RuntimeObject> object) noexcept {
     string c_name = object->class_name();
     if (!map_.contains(c_name)) {
@@ -36,7 +52,9 @@ void RuntimeObjectMgr::update(const std::string &c_name) noexcept {
         return;
     }
     ObjectGroup &group = map_[c_name];
+    std::for_each(observers_.begin(), observers_.end(), [&](Observer *observer) {
 
+    });
 }
 
 RuntimeObjectMgr &RuntimeObjectMgr::instance() noexcept {

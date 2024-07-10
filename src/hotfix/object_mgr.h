@@ -18,6 +18,14 @@ public:
     virtual void deserialize(Serializer *serializer) const noexcept = 0;
 };
 
+class Observer {
+public:
+    virtual void on_update(RuntimeObject *old_obj,
+                           RuntimeObject *new_obj) noexcept = 0;
+    Observer();
+    ~Observer();
+};
+
 class RuntimeObjectMgr {
 private:
     RuntimeObjectMgr() = default;
@@ -28,6 +36,7 @@ private:
     using ObjectGroup = vector<SP<RuntimeObject>>;
     map<string, ObjectGroup> map_;
     Serializer serializer_;
+    ocarina::set<Observer *> observers_;
 
 public:
     RuntimeObjectMgr(const RuntimeObjectMgr &) = delete;
@@ -35,6 +44,8 @@ public:
     RuntimeObjectMgr operator=(const RuntimeObjectMgr &) = delete;
     RuntimeObjectMgr operator=(RuntimeObjectMgr &&) = delete;
     void add_object(SP<RuntimeObject> object) noexcept;
+    void register_observer(Observer *observer) noexcept;
+    void deregister_observer(Observer *observer) noexcept;
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
