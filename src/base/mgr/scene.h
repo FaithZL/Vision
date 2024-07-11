@@ -18,6 +18,7 @@
 #include "material_registry.h"
 #include "mesh_registry.h"
 #include "UI/GUI.h"
+#include "hotfix/object_mgr.h"
 
 namespace vision {
 
@@ -27,7 +28,7 @@ using namespace ocarina;
     [[nodiscard]] auto member() const noexcept { return member##_.get(); } \
     [[nodiscard]] auto member() noexcept { return member##_.get(); }
 
-class Scene : public GUI {
+class Scene : public GUI, public hotfix::Observer {
 private:
     Box3f aabb_;
     Camera camera_{};
@@ -51,6 +52,7 @@ public:
     Scene() = default;
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
+    void on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept override;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return render_setting_.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
