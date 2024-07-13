@@ -2,29 +2,29 @@
 // Created by Zero on 2024/7/29.
 //
 
-#include "object_mgr.h"
+#include "system.h"
 
 namespace vision ::inline hotfix {
 
-RuntimeObjectMgr *RuntimeObjectMgr::s_mgr = nullptr;
+HotfixSystem *HotfixSystem::s_mgr = nullptr;
 
 Observer::Observer() {
-    RuntimeObjectMgr::instance().register_observer(this);
+    HotfixSystem::instance().register_observer(this);
 }
 
 Observer::~Observer() {
-    RuntimeObjectMgr::instance().deregister_observer(this);
+    HotfixSystem::instance().deregister_observer(this);
 }
 
-void RuntimeObjectMgr::register_observer(vision::Observer *observer) noexcept {
+void HotfixSystem::register_observer(vision::Observer *observer) noexcept {
     observers_.insert(observer);
 }
 
-void RuntimeObjectMgr::deregister_observer(vision::Observer *observer) noexcept {
+void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     observers_.erase(observer);
 }
 
-void RuntimeObjectMgr::add_object(SP<vision::RuntimeObject> object) noexcept {
+void HotfixSystem::add_object(SP<vision::RuntimeObject> object) noexcept {
     string c_name = object->class_name();
     if (!map_.contains(c_name)) {
         map_.insert(make_pair(c_name, ObjectGroup{}));
@@ -32,7 +32,7 @@ void RuntimeObjectMgr::add_object(SP<vision::RuntimeObject> object) noexcept {
     map_[c_name].push_back(std::move(object));
 }
 
-void RuntimeObjectMgr::remove_object(SP<vision::RuntimeObject> object) noexcept {
+void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
     string c_name = object->class_name();
     if (!map_.contains(c_name)) {
         return;
@@ -47,7 +47,7 @@ void RuntimeObjectMgr::remove_object(SP<vision::RuntimeObject> object) noexcept 
     group.erase(iter);
 }
 
-void RuntimeObjectMgr::update(const std::string &c_name) noexcept {
+void HotfixSystem::update(const std::string &c_name) noexcept {
     if (!map_.contains(c_name)) {
         return;
     }
@@ -57,14 +57,14 @@ void RuntimeObjectMgr::update(const std::string &c_name) noexcept {
     });
 }
 
-RuntimeObjectMgr &RuntimeObjectMgr::instance() noexcept {
+HotfixSystem &HotfixSystem::instance() noexcept {
     if (s_mgr == nullptr) {
-        s_mgr = new RuntimeObjectMgr();
+        s_mgr = new HotfixSystem();
     }
     return *s_mgr;
 }
 
-void RuntimeObjectMgr::destroy_instance() noexcept {
+void HotfixSystem::destroy_instance() noexcept {
     if (s_mgr == nullptr) {
         return;
     }
@@ -72,6 +72,6 @@ void RuntimeObjectMgr::destroy_instance() noexcept {
     s_mgr = nullptr;
 }
 
-RuntimeObjectMgr::~RuntimeObjectMgr() {}
+HotfixSystem::~HotfixSystem() {}
 
 }// namespace vision::inline hotfix

@@ -2,7 +2,7 @@
 // Created by Zero on 2024/7/31.
 //
 
-#include "hotfix/object_mgr.h"
+#include "hotfix/system.h"
 #include "core/stl.h"
 #include "dsl/dsl.h"
 #include "util/file_manager.h"

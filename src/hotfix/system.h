@@ -21,11 +21,11 @@ public:
     ~Observer();
 };
 
-class RuntimeObjectMgr {
+class HotfixSystem {
 private:
-    RuntimeObjectMgr() = default;
-    ~RuntimeObjectMgr();
-    static RuntimeObjectMgr *s_mgr;
+    HotfixSystem() = default;
+    ~HotfixSystem();
+    static HotfixSystem *s_mgr;
 
 private:
     using ObjectGroup = vector<SP<RuntimeObject>>;
@@ -34,10 +34,10 @@ private:
     ocarina::set<Observer *> observers_;
 
 public:
-    RuntimeObjectMgr(const RuntimeObjectMgr &) = delete;
-    RuntimeObjectMgr(RuntimeObjectMgr &&) = delete;
-    RuntimeObjectMgr operator=(const RuntimeObjectMgr &) = delete;
-    RuntimeObjectMgr operator=(RuntimeObjectMgr &&) = delete;
+    HotfixSystem(const HotfixSystem &) = delete;
+    HotfixSystem(HotfixSystem &&) = delete;
+    HotfixSystem operator=(const HotfixSystem &) = delete;
+    HotfixSystem operator=(HotfixSystem &&) = delete;
     void add_object(SP<RuntimeObject> object) noexcept;
     void register_observer(Observer *observer) noexcept;
     void deregister_observer(Observer *observer) noexcept;
@@ -47,7 +47,7 @@ public:
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;
     OC_MAKE_MEMBER_GETTER(serializer, &)
-    static RuntimeObjectMgr &instance() noexcept;
+    static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
 };
 

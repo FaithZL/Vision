@@ -15,4 +15,7 @@ ModuleInterface &ModuleInterface::instance() noexcept {
     return *s_module_interface;
 }
 
+ModuleInterface::~ModuleInterface() {}
+
 }// namespace vision::inline hotfix
+
