@@ -22,9 +22,16 @@ int main(int argc, char *argv[]) {
     FileManager file_manager(path.parent_path());
 
     auto window = file_manager.create_window("display", make_uint2(500), "imGui");
-    auto image_io = Image::pure_color(make_float4(1,0,0,1), ColorSpace::LINEAR, make_uint2(500));
-    window->run([&](double d){
-        window->set_background(image_io.pixel_ptr<float4>(), make_uint2(500));
+    auto image_io = Image::pure_color(make_float4(1, 0, 0, 1), ColorSpace::LINEAR, make_uint2(500));
+    window->init_widgets();
+
+    auto widget = window->widgets();
+
+    window->run([&](double d) {
+        widget->button_click("hotfix", [&] {
+            OC_INFO("SAFASDFAS");
+        });
+//        window->set_background(image_io.pixel_ptr<float4>(), make_uint2(500));
     });
 
     return 0;
