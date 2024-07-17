@@ -19,3 +19,6 @@ ModuleInterface::~ModuleInterface() {}
 
 }// namespace vision::inline hotfix
 
+extern "C" __declspec(dllexport) vision::ModuleInterface *module_interface() {
+    return &vision::ModuleInterface::instance();
+}

@@ -8,4 +8,8 @@
 
 namespace vision {
 
+class Demo : public RuntimeObject {
+
+};
+
 }
