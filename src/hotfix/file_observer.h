@@ -33,6 +33,7 @@ public:
     FileObserver() = default;
     void add_observed(const fs::path &path, bool recursive = false) noexcept;
     void remove_observed(const fs::path &path) noexcept;
+    void apply() noexcept;
 };
 
 }// namespace vision::inline hotfix
