@@ -8,7 +8,7 @@
 
 namespace vision::inline hotfix {
 using namespace ocarina;
-class FileObserver {
+class FileInspector {
 public:
     enum Action {
         Add = 1,
@@ -16,23 +16,23 @@ public:
         Modify = 1 << 2,
     };
 
-    struct ObservedFile {
+    struct InspectedPath {
     public:
         ocarina::fs::path path{};
         bool recursive{};
         Action action{Modify};
-        uint32_t change_time{};
+        uint32_t write_time{};
     };
 
-    using group_type = map<string, ObservedFile>;
+    using group_type = map<string, InspectedPath>;
 
 private:
     group_type group_;
 
 public:
-    FileObserver() = default;
-    void add_observed(const fs::path &path, bool recursive = false) noexcept;
-    void remove_observed(const fs::path &path) noexcept;
+    FileInspector() = default;
+    void add_inspected(const fs::path &path, bool recursive = false) noexcept;
+    void remove_inspected(const fs::path &path) noexcept;
     void apply() noexcept;
 };
 

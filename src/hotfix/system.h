@@ -8,7 +8,7 @@
 #include "core/hash.h"
 #include "serializer.h"
 #include "object.h"
-#include "file_observer.h"
+#include "file_inspector.h"
 
 namespace vision::inline hotfix {
 
@@ -33,7 +33,7 @@ private:
     map<string, ObjectGroup> map_;
     Serializer serializer_;
     ocarina::set<Observer *> observers_;
-    FileObserver file_observer_;
+    FileInspector file_inspector_;
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;
@@ -46,7 +46,12 @@ public:
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
-
+    void add_inspected(const fs::path &path, bool recursive = false) noexcept {
+        file_inspector_.add_inspected(path, recursive);
+    }
+    void remove_inspected(const fs::path &path) noexcept {
+        file_inspector_.remove_inspected(path);
+    }
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;
     OC_MAKE_MEMBER_GETTER(serializer, &)
