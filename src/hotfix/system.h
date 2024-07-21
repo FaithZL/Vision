@@ -46,12 +46,13 @@ public:
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
-    void add_inspected(const fs::path &path, bool recursive = false) noexcept {
+    void add_inspected(const fs::path &path, bool recursive = true) noexcept {
         file_inspector_.add_inspected(path, recursive);
     }
     void remove_inspected(const fs::path &path) noexcept {
         file_inspector_.remove_inspected(path);
     }
+    static void inspect_path(const fs::path &path, int back = 0) noexcept;
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;
     OC_MAKE_MEMBER_GETTER(serializer, &)

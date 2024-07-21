@@ -27,6 +27,11 @@ int main(int argc, char *argv[]) {
 
     auto widget = window->widgets();
 
+
+
+
+    vision::HotfixSystem::instance().add_inspected(__FILE__);
+
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             OC_INFO("SAFASDFAS");

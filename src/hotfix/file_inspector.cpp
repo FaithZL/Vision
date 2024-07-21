@@ -16,12 +16,18 @@ uint32_t get_change_timestamp(const fs::path &path) {
                              nullptr, OPEN_EXISTING,
                              FILE_ATTRIBUTE_NORMAL, nullptr);
     GetFileTime(file, &ft_create, &ft_access, &ft_write);
+    SYSTEMTIME st;
+    FileTimeToSystemTime(&ft_write, &st);
     return ft_write.dwLowDateTime;
 }
 
 }// namespace detail
 
 void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept {
+    string key = path.string();
+    if (group_.contains(key)) {
+        return;
+    }
     InspectedPath inspected_path;
     inspected_path.path = path;
     inspected_path.recursive = recursive;

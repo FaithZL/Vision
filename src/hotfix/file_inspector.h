@@ -31,7 +31,7 @@ private:
 
 public:
     FileInspector() = default;
-    void add_inspected(const fs::path &path, bool recursive = false) noexcept;
+    void add_inspected(const fs::path &path, bool recursive = true) noexcept;
     void remove_inspected(const fs::path &path) noexcept;
     void apply() noexcept;
 };

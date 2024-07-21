@@ -47,6 +47,10 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
     group.erase(iter);
 }
 
+void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {
+    instance().add_inspected(ocarina::parent_path(path, back), true);
+}
+
 void HotfixSystem::update(const std::string &c_name) noexcept {
     if (!map_.contains(c_name)) {
         return;
