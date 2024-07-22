@@ -7,34 +7,39 @@
 
 namespace vision::inline hotfix {
 
-namespace detail {
-
-uint32_t get_change_timestamp(const fs::path &path) {
-    FILETIME ft_create, ft_access, ft_write;
-    auto fn = path.string();
-    HANDLE file = CreateFile(fn.c_str(), GENERIC_READ, FILE_SHARE_READ,
-                             nullptr, OPEN_EXISTING,
-                             FILE_ATTRIBUTE_NORMAL, nullptr);
-    GetFileTime(file, &ft_create, &ft_access, &ft_write);
-    SYSTEMTIME st;
-    FileTimeToSystemTime(&ft_write, &st);
-    return ft_write.dwLowDateTime;
-}
-
-}// namespace detail
-
 void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (group_.contains(key)) {
+    if (group_.contains(key) || !fs::exists(path)) {
         return;
     }
-    InspectedPath inspected_path;
-    inspected_path.path = path;
-    inspected_path.is_directory = fs::is_directory(path);
-    inspected_path.recursive = inspected_path.is_directory ? recursive : false;
-    inspected_path.write_time = detail::get_change_timestamp(path);
-    inspected_path.action = Action::Modify;
-    group_.insert(std::make_pair(inspected_path.path.string(), inspected_path));
+    auto is_directory = fs::is_directory(path);
+    recursive = is_directory ? recursive : false;
+    vector<InspectedPath> paths;
+
+    if (!is_directory) {
+        InspectedPath inspected(path);
+        paths.push_back(inspected);
+        return;
+    }
+
+    auto func = [&](auto entry) {
+        if (fs::is_directory(entry)) {
+            return ;
+        }
+        InspectedPath inspected(entry);
+        paths.push_back(inspected);
+    };
+
+    if (recursive) {
+        for (const auto &entry : fs::recursive_directory_iterator(path)) {
+            func(entry);
+        }
+    } else {
+        for (const auto &entry : fs::directory_iterator(path)) {
+            func(entry);
+        }
+    }
+    group_.insert(std::make_pair(key, paths));
 }
 
 void FileInspector::remove_inspected(const fs::path &path) noexcept {
@@ -44,26 +49,22 @@ void FileInspector::remove_inspected(const fs::path &path) noexcept {
     }
 }
 
-void FileInspector::apply() noexcept {
-
-    auto func = [&](const fs::path &path,
-                    const InspectedPath& inspected) {
-
+vector<fs::path> FileInspector::get_updated_files() noexcept {
+    vector<fs::path> ret;
+    auto func = [&](InspectedPath &inspected) {
+        uint32_t write_time = get_change_timestamp(inspected.path);
+        if (write_time > inspected.write_time) {
+            ret.push_back(inspected.path);
+            inspected.write_time = write_time;
+        }
     };
 
-    std::for_each(group_.begin(), group_.end(), [&](auto it) {
+    std::for_each(group_.begin(), group_.end(), [&](auto &it) {
         string key = it.first;
-        InspectedPath inspected = it.second;
-        if (inspected.is_directory) {
-            for (const auto &entry : fs::recursive_directory_iterator(inspected.path)) {
-                if (fs::is_regular_file(entry)) {
-                    func(entry, inspected);
-                }
-            }
-        } else {
-            func(inspected.path, inspected);
-        }
+        vector<InspectedPath> paths = it.second;
+        std::for_each(paths.begin(), paths.end(), func);
     });
+    return ret;
 }
 
 }// namespace vision::inline hotfix

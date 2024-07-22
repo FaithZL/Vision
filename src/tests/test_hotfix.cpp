@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    vision::HotfixSystem::inspect_path(__FILE__, 2);
+    vision::HotfixSystem::inspect_path(__FILE__, 1);
 
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
