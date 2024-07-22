@@ -28,15 +28,23 @@ int main(int argc, char *argv[]) {
     auto widget = window->widgets();
 
 
+    auto pt = ocarina::parent_path(__FILE__, 2) / "render_core";
 
+    for (const auto& entry : fs::recursive_directory_iterator(pt)) {
+        if (fs::is_regular_file(entry)) {
+            std::cout << "File: " << entry.path() << std::endl;
+        } else if (fs::is_directory(entry)) {
+//            std::cout << "Directory: " << entry.path() << std::endl;
+        }
+    }
 
-    vision::HotfixSystem::instance().add_inspected(__FILE__);
+    vision::HotfixSystem::inspect_path(__FILE__, 2);
 
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             OC_INFO("SAFASDFAS");
         });
-//        window->set_background(image_io.pixel_ptr<float4>(), make_uint2(500));
+
     });
 
     return 0;

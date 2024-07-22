@@ -20,6 +20,7 @@ public:
     public:
         ocarina::fs::path path{};
         bool recursive{};
+        bool is_directory{};
         Action action{Modify};
         uint32_t write_time{};
     };

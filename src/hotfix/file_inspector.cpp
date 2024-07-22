@@ -30,7 +30,8 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
     }
     InspectedPath inspected_path;
     inspected_path.path = path;
-    inspected_path.recursive = recursive;
+    inspected_path.is_directory = fs::is_directory(path);
+    inspected_path.recursive = inspected_path.is_directory ? recursive : false;
     inspected_path.write_time = detail::get_change_timestamp(path);
     inspected_path.action = Action::Modify;
     group_.insert(std::make_pair(inspected_path.path.string(), inspected_path));
@@ -44,12 +45,23 @@ void FileInspector::remove_inspected(const fs::path &path) noexcept {
 }
 
 void FileInspector::apply() noexcept {
+
+    auto func = [&](const fs::path &path,
+                    const InspectedPath& inspected) {
+
+    };
+
     std::for_each(group_.begin(), group_.end(), [&](auto it) {
         string key = it.first;
         InspectedPath inspected = it.second;
-        auto write_ft = detail::get_change_timestamp(inspected.path);
-        if (write_ft > inspected.write_time) {
-
+        if (inspected.is_directory) {
+            for (const auto &entry : fs::recursive_directory_iterator(inspected.path)) {
+                if (fs::is_regular_file(entry)) {
+                    func(entry, inspected);
+                }
+            }
+        } else {
+            func(inspected.path, inspected);
         }
     });
 }
