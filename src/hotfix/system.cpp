@@ -3,6 +3,7 @@
 //
 
 #include "system.h"
+#include "core/logging.h"
 
 namespace vision ::inline hotfix {
 
@@ -38,7 +39,7 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
         return;
     }
     ObjectGroup &group = map_[c_name];
-    auto iter = std::find_if(group.begin(), group.end(), [&](SP<RuntimeObject> element) {
+    auto iter = std::find_if(group.begin(), group.end(), [&](const SP<RuntimeObject>& element) {
         return element.get() == object.get();
     });
     if (iter == group.end()) {
@@ -47,9 +48,16 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
     group.erase(iter);
 }
 
-void HotfixSystem::check_files() noexcept {
+void HotfixSystem::check_and_build() noexcept {
     auto files = file_inspector_.get_updated_files();
-    int i = 0;
+    if (files.empty()) {
+        return;
+    }
+    OC_INFO("updated files");
+    for (auto p : files) {
+        std::cout << p << std::endl;
+    }
+    build_tool_.build(std::move(files));
 }
 
 void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {

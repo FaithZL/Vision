@@ -6,4 +6,10 @@
 
 namespace vision::inline hotfix {
 
+void BuildTool::clear() noexcept {
 }
+
+void BuildTool::build(vector<fs::path> &&paths) noexcept {
+}
+
+}// namespace vision::inline hotfix

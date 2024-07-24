@@ -42,8 +42,7 @@ int main(int argc, char *argv[]) {
 
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
-            vision::HotfixSystem::instance().check_files();
-            OC_INFO("SAFASDFAS");
+            vision::HotfixSystem::instance().check_and_build();
         });
 
     });

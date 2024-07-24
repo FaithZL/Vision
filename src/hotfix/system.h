@@ -8,6 +8,7 @@
 #include "core/hash.h"
 #include "serializer.h"
 #include "object.h"
+#include "build_tool.h"
 #include "file_inspector.h"
 
 namespace vision::inline hotfix {
@@ -34,6 +35,7 @@ private:
     Serializer serializer_;
     ocarina::set<Observer *> observers_;
     FileInspector file_inspector_;
+    BuildTool build_tool_;
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;
@@ -52,7 +54,7 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_inspector_.remove_inspected(path);
     }
-    void check_files() noexcept;
+    void check_and_build() noexcept;
     static void inspect_path(const fs::path &path, int back = 0) noexcept;
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;
