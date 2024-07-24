@@ -13,7 +13,7 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
         return;
     }
     auto is_directory = fs::is_directory(path);
-    recursive = is_directory ? recursive : false;
+    recursive = is_directory && recursive;
     vector<InspectedPath> paths;
 
     if (!is_directory) {
@@ -51,8 +51,9 @@ void FileInspector::remove_inspected(const fs::path &path) noexcept {
 
 vector<fs::path> FileInspector::get_updated_files() noexcept {
     vector<fs::path> ret;
+    ret.reserve(6);
     auto func = [&](InspectedPath &inspected) {
-        uint32_t write_time = get_change_timestamp(inspected.path);
+        FileTime write_time = modification_time(inspected.path);
         if (write_time > inspected.write_time) {
             ret.push_back(inspected.path);
             inspected.write_time = write_time;
@@ -61,7 +62,7 @@ vector<fs::path> FileInspector::get_updated_files() noexcept {
 
     std::for_each(group_.begin(), group_.end(), [&](auto &it) {
         string key = it.first;
-        vector<InspectedPath> paths = it.second;
+        vector<InspectedPath> &paths = it.second;
         std::for_each(paths.begin(), paths.end(), func);
     });
     return ret;

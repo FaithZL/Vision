@@ -52,6 +52,7 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_inspector_.remove_inspected(path);
     }
+    void check_files() noexcept;
     static void inspect_path(const fs::path &path, int back = 0) noexcept;
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;

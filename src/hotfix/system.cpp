@@ -47,6 +47,11 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
     group.erase(iter);
 }
 
+void HotfixSystem::check_files() noexcept {
+    auto files = file_inspector_.get_updated_files();
+    int i = 0;
+}
+
 void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {
     instance().add_inspected(ocarina::parent_path(path, back), true);
 }
