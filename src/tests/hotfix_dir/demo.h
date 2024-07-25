@@ -13,3 +13,5 @@ class Demo : public RuntimeObject {
 };
 
 }
+
+//REGISTER_FILE(__FILE__)

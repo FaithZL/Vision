@@ -19,6 +19,7 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
     if (!is_directory) {
         InspectedPath inspected(path);
         paths.push_back(inspected);
+        group_.insert(std::make_pair(key, paths));
         return;
     }
 

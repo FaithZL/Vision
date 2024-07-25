@@ -11,6 +11,30 @@
 #include "build_tool.h"
 #include "file_inspector.h"
 
+#define INSPECT_PATH_(path) vision::HotfixSystem::instance().add_inspected(path);
+
+#define REGISTER_FILES(...)                   \
+    namespace {                               \
+    struct FileRegistrar {                    \
+        FileRegistrar() {                     \
+            MAP(INSPECT_PATH_, ##__VA_ARGS__) \
+        }                                     \
+    };                                        \
+    static FileRegistrar registrar;           \
+    }
+
+#define REGISTER_CURRENT_FILE REGISTER_FILES(__FILE__)
+
+#define REGISTER_PATH(path, level)                           \
+    namespace {                                              \
+    struct FileRegistrar {                                   \
+        FileRegistrar() {                                    \
+            INSPECT_PATH_(ocarina::parent_path(path, level)) \
+        }                                                    \
+    };                                                       \
+    static FileRegistrar registrar;                          \
+    }
+
 namespace vision::inline hotfix {
 
 using namespace ocarina;
