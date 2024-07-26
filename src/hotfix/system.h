@@ -56,10 +56,10 @@ private:
 private:
     using ObjectGroup = vector<SP<RuntimeObject>>;
     map<string, ObjectGroup> map_;
-    Serializer serializer_;
+    Serializer serializer_{};
     ocarina::set<Observer *> observers_;
     FileInspector file_inspector_;
-    BuildTool build_tool_;
+    BuildTool build_tool_{};
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;

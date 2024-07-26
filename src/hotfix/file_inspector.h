@@ -49,7 +49,7 @@ public:
             : path(p), write_time(modification_time(p)) {}
     };
 
-    using group_type = map<string, vector<InspectedPath>>;
+    using group_type = map<string, InspectedPath>;
 
 private:
     group_type group_;
@@ -57,7 +57,7 @@ private:
 public:
     FileInspector() = default;
     void add_inspected(const fs::path &path, bool recursive = true) noexcept;
-    void remove_inspected(const fs::path &path) noexcept;
+    void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] vector<fs::path> get_updated_files() noexcept;
 };
 

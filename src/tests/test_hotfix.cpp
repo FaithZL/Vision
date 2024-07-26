@@ -16,7 +16,11 @@
 
 using namespace ocarina;
 
-REGISTER_CURRENT_FILE
+
+
+
+
+REGISTER_PATH(__FILE__, 1)
 
 int main(int argc, char *argv[]) {
 

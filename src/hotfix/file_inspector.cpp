@@ -14,21 +14,19 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
     }
     auto is_directory = fs::is_directory(path);
     recursive = is_directory && recursive;
-    vector<InspectedPath> paths;
 
     if (!is_directory) {
         InspectedPath inspected(path);
-        paths.push_back(inspected);
-        group_.insert(std::make_pair(key, paths));
+        group_.insert(std::make_pair(key, inspected));
         return;
     }
 
-    auto func = [&](auto entry) {
+    auto func = [&](const fs::directory_entry &entry) {
         if (fs::is_directory(entry)) {
             return ;
         }
         InspectedPath inspected(entry);
-        paths.push_back(inspected);
+        group_.insert(std::make_pair(entry.path().string(), inspected));
     };
 
     if (recursive) {
@@ -40,13 +38,27 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
             func(entry);
         }
     }
-    group_.insert(std::make_pair(key, paths));
 }
 
-void FileInspector::remove_inspected(const fs::path &path) noexcept {
+void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (group_.contains(key)) {
+    if (!group_.contains(key)) {
+        return;
+    }
+    if (fs::is_regular_file(path)) {
         group_.erase(key);
+    }
+    auto func = [&](const fs::directory_entry &entry) {
+        group_.erase(entry.path().string());
+    };
+    if (recursive) {
+        for (const auto &entry : fs::recursive_directory_iterator(path)) {
+            func(entry);
+        }
+    } else {
+        for (const auto &entry : fs::directory_iterator(path)) {
+            func(entry);
+        }
     }
 }
 
@@ -63,8 +75,7 @@ vector<fs::path> FileInspector::get_updated_files() noexcept {
 
     std::for_each(group_.begin(), group_.end(), [&](auto &it) {
         string key = it.first;
-        vector<InspectedPath> &paths = it.second;
-        std::for_each(paths.begin(), paths.end(), func);
+        func(it.second);
     });
     return ret;
 }
