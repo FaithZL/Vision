@@ -3,12 +3,29 @@
 //
 
 #include "core/stl.h"
+#include "file_inspector.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
 
-class CompileOption {
+enum OptimizationLevel {
+    Default = 0,
+    Debug = 1,
+    Release = 2
+};
 
+struct CompileOptions {
+    vector<fs::path> include_paths;
+    vector<fs::path> library_paths;
+    fs::path intermediate_path;
+    CompileOptions() {
+        init();
+    }
+    void init() {
+        fs::path src_dir = FileInspector::project_path() / "src";
+        include_paths.push_back(src_dir / "ocarina" / "src");
+        include_paths.push_back(src_dir);
+    }
 };
 
 class Compiler {

@@ -80,4 +80,8 @@ vector<fs::path> FileInspector::get_updated_files() noexcept {
     return ret;
 }
 
+fs::path FileInspector::project_path() noexcept {
+    return parent_path(__FILE__, 3);
+}
+
 }// namespace vision::inline hotfix

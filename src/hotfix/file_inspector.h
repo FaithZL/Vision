@@ -59,6 +59,7 @@ public:
     void add_inspected(const fs::path &path, bool recursive = true) noexcept;
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] vector<fs::path> get_updated_files() noexcept;
+    [[nodiscard]] static fs::path project_path() noexcept;
 };
 
 }// namespace vision::inline hotfix
