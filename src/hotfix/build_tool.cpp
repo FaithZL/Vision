@@ -9,8 +9,7 @@ namespace vision::inline hotfix {
 void BuildTool::clear() noexcept {
 }
 
-void BuildTool::build(vector<fs::path> &&paths) noexcept {
-
+void BuildTool::build_module(vector<fs::path> &&paths) noexcept {
 }
 
 }// namespace vision::inline hotfix

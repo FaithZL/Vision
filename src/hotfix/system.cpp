@@ -57,7 +57,7 @@ void HotfixSystem::check_and_build() noexcept {
     for (auto p : files) {
         std::cout << p << std::endl;
     }
-    build_tool_.build(std::move(files));
+    build_tool_.build_module(std::move(files));
 }
 
 void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {
