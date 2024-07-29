@@ -33,6 +33,7 @@ class Compiler {
 public:
     virtual void init() noexcept = 0;
     virtual void compile(const CompileOptions &options) noexcept = 0;
+    static UP<Compiler> create() noexcept;
 };
 
 }// namespace vision::inline hotfix
