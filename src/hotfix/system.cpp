@@ -54,7 +54,7 @@ void HotfixSystem::check_and_build() noexcept {
         return;
     }
     OC_INFO("updated files");
-    for (auto p : files) {
+    for (const auto& p : files) {
         std::cout << p << std::endl;
     }
     build_tool_.build_module(std::move(files));

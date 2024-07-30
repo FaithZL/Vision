@@ -13,33 +13,91 @@ struct VSVersionInfo {
     fs::path path;
 };
 
-struct CmdProcessor {
+struct CmdProcess {
 public:
     PROCESS_INFORMATION cmd_process_info{};
     HANDLE cmd_process_read{};
     HANDLE cmd_process_write{};
     volatile bool is_complete{};
-    bool m_bStoreCmdOutput{};
-    std::string m_CmdOutput;
+    bool store_cmd_output{};
+    std::string cmd_output;
 
 public:
-    CmdProcessor() {
+    CmdProcess() {
         ZeroMemory(&cmd_process_info, sizeof(cmd_process_info));
     }
-    void write_input(ocarina::string& input) {
 
+    void init_process() noexcept {
+        STARTUPINFOW startup_info;
+        ZeroMemory(&startup_info, sizeof(startup_info));
+        startup_info.cb = sizeof(startup_info);
+
+        // Set up the security attributes struct.
+        SECURITY_ATTRIBUTES sa;
+        sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+        sa.lpSecurityDescriptor = nullptr;
+        sa.bInheritHandle = TRUE;
+
+        startup_info.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+        startup_info.wShowWindow = SW_HIDE;
+        HANDLE hOutputReadTmp = nullptr, hOutputWrite = nullptr, hErrorWrite = nullptr;
+
+        auto error_func = [&] {
+            if (hOutputReadTmp) {
+                CloseHandle(hOutputReadTmp);
+            }
+            if (hOutputWrite) {
+                CloseHandle(hOutputWrite);
+            }
+            if (hErrorWrite) {
+                CloseHandle(hErrorWrite);
+            }
+        };
+
+        if (!CreatePipe(&hOutputReadTmp, &hOutputWrite,
+                        &sa, 20 * 1024)) {
+            error_func();
+            return;
+        }
+        startup_info.hStdOutput = hOutputWrite;
+
+        if (!DuplicateHandle(GetCurrentProcess(), hOutputWrite,
+                             GetCurrentProcess(), &hErrorWrite,
+                             0, TRUE, DUPLICATE_SAME_ACCESS)) {
+            error_func();
+            return;
+        }
+        startup_info.hStdError = hErrorWrite;
+
+        if (startup_info.hStdOutput) {
+            if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
+                                 GetCurrentProcess(),
+                                 &cmd_process_read, // Address of new handle.
+                                 0, FALSE, // Make it uninheritable.
+                                 DUPLICATE_SAME_ACCESS))
+            error_func;
+            CloseHandle(hOutputReadTmp);
+            hOutputReadTmp = nullptr;
+            return;
+        }
+    }
+
+    void write_input(ocarina::string &input) {
+        DWORD nBytesWritten;
+        DWORD length = (DWORD)input.length();
     }
     void cleanup() {
-
     }
-    ~CmdProcessor() {
+
+    ~CmdProcess() {
         cleanup();
     }
 };
 
 class CompilerVisualStudio : public Compiler {
 private:
-    CmdProcessor cmd_processor_;
+    CmdProcess cmd_process_;
+
 public:
     void init() noexcept override {
     }
