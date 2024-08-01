@@ -56,7 +56,7 @@ void ReadAndHandleOutputThread(LPVOID arg) {
             bReadActive = false;
             //broken pipe is OK
             if (GetLastError() != ERROR_BROKEN_PIPE) {
-                OC_ERROR("[RuntimeCompiler] Redirect of compile output failed on read");
+                OC_WARNING("[RuntimeCompiler] Redirect of compile output failed on read");
             }
         } else {
             // Add null termination
@@ -82,7 +82,7 @@ void ReadAndHandleOutputThread(LPVOID arg) {
                     size_t errorFound = buffer.find(" : error ");
                     size_t fatalErrorFound = buffer.find(" : fatal error ");
                     if ((errorFound != std::string::npos) || (fatalErrorFound != std::string::npos)) {
-                        OC_ERROR(buffer.c_str())
+                        OC_WARNING(buffer.c_str())
                     } else {
                         OC_INFO(buffer.c_str())
                     }
@@ -169,7 +169,7 @@ void CmdProcess::init_process() noexcept {
                              &cmd_process_write,// Address of new handle.
                              0, FALSE,          // Make it uninheritable.
                              DUPLICATE_SAME_ACCESS)) {
-            OC_ERROR("[RuntimeCompiler] Failed to duplicate input write pipe");
+            OC_WARNING("[RuntimeCompiler] Failed to duplicate input write pipe");
             error_func();
             return;
         }
