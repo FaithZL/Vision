@@ -93,6 +93,7 @@ void ReadAndHandleOutputThread(LPVOID arg) {
 }
 
 void CmdProcess::init_process() noexcept {
+    //init compile process
     STARTUPINFOW startup_info;
     ZeroMemory(&startup_info, sizeof(startup_info));
     startup_info.cb = sizeof(startup_info);
@@ -119,6 +120,8 @@ void CmdProcess::init_process() noexcept {
         }
     };
 
+    // Create the child output pipe.
+    //redirection of output
     if (!CreatePipe(&hOutputReadTmp, &hOutputWrite,
                     &sa, 20 * 1024)) {
         OC_INFO("[RuntimeCompiler] Failed to create output redirection pipe");
@@ -127,6 +130,9 @@ void CmdProcess::init_process() noexcept {
     }
     startup_info.hStdOutput = hOutputWrite;
 
+    // Create a duplicate of the output write handle for the std error
+    // write handle. This is necessary in case the child application
+    // closes one of its std output handles.
     if (!DuplicateHandle(GetCurrentProcess(), hOutputWrite,
                          GetCurrentProcess(), &hErrorWrite,
                          0, TRUE, DUPLICATE_SAME_ACCESS)) {
@@ -136,6 +142,10 @@ void CmdProcess::init_process() noexcept {
     }
     startup_info.hStdError = hErrorWrite;
 
+    // Create new output read handle and the input write handles. Set
+    // the Properties to FALSE. Otherwise, the child inherits the
+    // properties and, as a result, non-closeable handles to the pipes
+    // are created.
     if (startup_info.hStdOutput) {
         if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
                              GetCurrentProcess(),
