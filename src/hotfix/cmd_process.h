@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <thread>
 #include "core/stl.h"
+#include "core/logging.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
@@ -53,10 +54,9 @@ void ReadAndHandleOutputThread(LPVOID arg) {
                       &nBytesRead, NULL) ||
             !nBytesRead) {
             bReadActive = false;
-            if (GetLastError() != ERROR_BROKEN_PIPE)//broken pipe is OK
-            {
-                std::cout << "[RuntimeCompiler] Redirect of compile output failed on read\n"
-                          << std::endl;
+            //broken pipe is OK
+            if (GetLastError() != ERROR_BROKEN_PIPE) {
+                OC_ERROR("[RuntimeCompiler] Redirect of compile output failed on read");
             }
         } else {
             // Add null termination
@@ -69,11 +69,12 @@ void ReadAndHandleOutputThread(LPVOID arg) {
                 //we've found the completion token, which means we quit
                 buffer = buffer.substr(0, found);
                 if (!pCmdProc->store_cmd_output) {
+                    OC_INFO("[RuntimeCompiler] Complete");
                 }
                 pCmdProc->is_complete = true;
             }
-            if (bReadActive || buffer.length())//don't output blank last line
-            {
+            if (bReadActive || !buffer.empty()) {
+                //don't output blank last line
                 if (pCmdProc->store_cmd_output) {
                     pCmdProc->cmd_output += buffer;
                 } else {
@@ -81,8 +82,9 @@ void ReadAndHandleOutputThread(LPVOID arg) {
                     size_t errorFound = buffer.find(" : error ");
                     size_t fatalErrorFound = buffer.find(" : fatal error ");
                     if ((errorFound != std::string::npos) || (fatalErrorFound != std::string::npos)) {
-
+                        OC_ERROR(buffer.c_str())
                     } else {
+                        OC_INFO(buffer.c_str())
                     }
                 }
             }
@@ -119,6 +121,7 @@ void CmdProcess::init_process() noexcept {
 
     if (!CreatePipe(&hOutputReadTmp, &hOutputWrite,
                     &sa, 20 * 1024)) {
+        OC_INFO("[RuntimeCompiler] Failed to create output redirection pipe");
         error_func();
         return;
     }
@@ -127,6 +130,7 @@ void CmdProcess::init_process() noexcept {
     if (!DuplicateHandle(GetCurrentProcess(), hOutputWrite,
                          GetCurrentProcess(), &hErrorWrite,
                          0, TRUE, DUPLICATE_SAME_ACCESS)) {
+        OC_INFO("[RuntimeCompiler]  Failed to duplicate error output redirection pipe");
         error_func();
         return;
     }
@@ -137,17 +141,21 @@ void CmdProcess::init_process() noexcept {
                              GetCurrentProcess(),
                              &cmd_process_read,// Address of new handle.
                              0, FALSE,         // Make it uninheritable.
-                             DUPLICATE_SAME_ACCESS))
-            error_func;
+                             DUPLICATE_SAME_ACCESS)) {
+            OC_INFO("[RuntimeCompiler] Failed to duplicate output read pipe");
+            error_func();
+            return;
+        }
         CloseHandle(hOutputReadTmp);
         hOutputReadTmp = nullptr;
-        return;
     }
 
     HANDLE hInputRead, hInputWriteTmp;
     // Create a pipe for the child process's STDIN.
     if (!CreatePipe(&hInputRead, &hInputWriteTmp, &sa, 4096)) {
+        OC_INFO("[RuntimeCompiler] Failed to create input pipes");
         error_func();
+        return;
     }
     startup_info.hStdInput = hInputRead;
 
@@ -161,7 +169,9 @@ void CmdProcess::init_process() noexcept {
                              &cmd_process_write,// Address of new handle.
                              0, FALSE,          // Make it uninheritable.
                              DUPLICATE_SAME_ACCESS)) {
+            OC_ERROR("[RuntimeCompiler] Failed to duplicate input write pipe");
             error_func();
+            return;
         }
     }
 
