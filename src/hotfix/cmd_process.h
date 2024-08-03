@@ -23,6 +23,7 @@ public:
     volatile bool is_complete{};
     bool store_cmd_output{};
     std::string cmd_output;
+    fs::path cmd_tmp_file{};
 
 public:
     CmdProcess() {
@@ -31,11 +32,27 @@ public:
 
     void init_process() noexcept;
 
-    void write_input(ocarina::string &input) {
+    void write_input(const ocarina::string &input) const noexcept {
         DWORD nBytesWritten;
         DWORD length = (DWORD)input.length();
+        WriteFile(cmd_process_write, input.c_str(),
+                  length, &nBytesWritten, nullptr);
     }
     void cleanup() {
+        if (!cmd_tmp_file.empty() && fs::exists(cmd_tmp_file)) {
+            fs::remove(cmd_tmp_file);
+            cmd_tmp_file.clear();
+        }
+        if (cmd_process_info.hProcess) {
+            TerminateProcess(cmd_process_info.hProcess, 0);
+            TerminateThread(cmd_process_info.hThread, 0);
+            CloseHandle(cmd_process_info.hThread);
+            ZeroMemory(&cmd_process_info, sizeof(cmd_process_info));
+            CloseHandle(cmd_process_write);
+            cmd_process_write = nullptr;
+            CloseHandle(cmd_process_read);
+            cmd_process_read = nullptr;
+        }
     }
 
     ~CmdProcess() {
@@ -51,7 +68,7 @@ void ReadAndHandleOutputThread(LPVOID arg) {
     bool bReadActive = true;
     while (bReadActive) {
         if (!ReadFile(pCmdProc->cmd_process_read, lpBuffer, sizeof(lpBuffer) - 1,
-                      &nBytesRead, NULL) ||
+                      &nBytesRead, nullptr) ||
             !nBytesRead) {
             bReadActive = false;
             //broken pipe is OK
@@ -190,14 +207,14 @@ void CmdProcess::init_process() noexcept {
     wchar_t pCmdLineNonConst[1024];
     wcscpy_s(pCmdLineNonConst, pCommandLine);
     CreateProcessW(
-        NULL,            //__in_opt     LPCTSTR lpApplicationName,
+        nullptr,            //__in_opt     LPCTSTR lpApplicationName,
         pCmdLineNonConst,//__inout_opt  LPTSTR lpCommandLine,
-        NULL,            //__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes,
-        NULL,            //__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes,
+        nullptr,            //__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes,
+        nullptr,            //__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes,
         TRUE,            //__in         BOOL bInheritHandles,
         0,               //__in         DWORD dwCreationFlags,
-        NULL,            //__in_opt     LPVOID lpEnvironment,
-        NULL,            //__in_opt     LPCTSTR lpCurrentDirectory,
+        nullptr,            //__in_opt     LPVOID lpEnvironment,
+        nullptr,            //__in_opt     LPCTSTR lpCurrentDirectory,
         &startup_info,   //__in         LPSTARTUPINFO lpStartupInfo,
         &cmd_process_info//__out        LPPROCESS_INFORMATION lpProcessInformation
     );
