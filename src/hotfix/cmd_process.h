@@ -190,16 +190,15 @@ void CmdProcess::init_process() noexcept {
     // the Properties to FALSE. Otherwise, the child inherits the
     // properties and, as a result, non-closeable handles to the pipes
     // are created.
-    if (startup_info.hStdOutput) {
-        if (!DuplicateHandle(GetCurrentProcess(), hInputWriteTmp,
-                             GetCurrentProcess(),
-                             &cmd_process_write,// Address of new handle.
-                             0, FALSE,          // Make it uninheritable.
-                             DUPLICATE_SAME_ACCESS)) {
-            OC_WARNING("[RuntimeCompiler] Failed to duplicate input write pipe");
-            error_func();
-            return;
-        }
+    if (startup_info.hStdOutput && !DuplicateHandle(GetCurrentProcess(),
+                                                    hInputWriteTmp,
+                                                    GetCurrentProcess(),
+                                                    &cmd_process_write,// Address of new handle.
+                                                    0, FALSE,          // Make it uninheritable.
+                                                    DUPLICATE_SAME_ACCESS)) {
+        OC_WARNING("[RuntimeCompiler] Failed to duplicate input write pipe");
+        error_func();
+        return;
     }
 
     const wchar_t *pCommandLine = L"cmd /q /K @PROMPT $";
@@ -207,14 +206,14 @@ void CmdProcess::init_process() noexcept {
     wchar_t pCmdLineNonConst[1024];
     wcscpy_s(pCmdLineNonConst, pCommandLine);
     CreateProcessW(
-        nullptr,            //__in_opt     LPCTSTR lpApplicationName,
+        nullptr,         //__in_opt     LPCTSTR lpApplicationName,
         pCmdLineNonConst,//__inout_opt  LPTSTR lpCommandLine,
-        nullptr,            //__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes,
-        nullptr,            //__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes,
+        nullptr,         //__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes,
+        nullptr,         //__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes,
         TRUE,            //__in         BOOL bInheritHandles,
         0,               //__in         DWORD dwCreationFlags,
-        nullptr,            //__in_opt     LPVOID lpEnvironment,
-        nullptr,            //__in_opt     LPCTSTR lpCurrentDirectory,
+        nullptr,         //__in_opt     LPVOID lpEnvironment,
+        nullptr,         //__in_opt     LPCTSTR lpCurrentDirectory,
         &startup_info,   //__in         LPSTARTUPINFO lpStartupInfo,
         &cmd_process_info//__out        LPPROCESS_INFORMATION lpProcessInformation
     );
