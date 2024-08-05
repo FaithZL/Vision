@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <windows.h>
+#include <Windows.h>
 #include <thread>
 #include "core/stl.h"
 #include "core/logging.h"
