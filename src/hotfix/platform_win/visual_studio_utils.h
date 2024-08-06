@@ -119,6 +119,58 @@ void get_visualstudio_paths(vector<VSVersionInfo> *lst) {
         for (int i = startVersion; i >= 0; --i) {
             VSVersionDiscoveryInfo vsinfo = VS_DISCOVERY_INFO[i];
             VSKey vskey = VS_KEYS[vsinfo.versionKey];
+
+            if (vsinfo.tryVSWhere) {
+                CmdProcess cmdProc;
+                cmdProc.init_process();
+                cmdProc.store_cmd_output = true;
+                cmdProc.cmd_output = "";
+                std::string maxVersion;
+                if (!bMSCVersionFound && i == startVersion) {
+                    // open ended max version so we find the latest
+                    maxVersion = "";
+                } else {
+                    maxVersion = vsinfo.versionNextName;
+                }
+                std::string vsWhereQuery = "\"%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vswhere\""
+                                           " -version [" +
+                                           std::string(vsinfo.versionName) + "," + maxVersion + ") "// [min,max) format for version names
+                                                                                                " -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+                                                                                                " -property installationPath"
+                                                                                                "\nexit\n";
+                cmdProc.write_input(vsWhereQuery);
+                WaitForSingleObject(cmdProc.cmd_process_info.hProcess, 2000);// max 2 secs
+                // get the first non-empty substring
+                size_t start = cmdProc.cmd_output.find_first_not_of("\r\n", 0);
+                if (start != std::string::npos) {
+                    size_t end = cmdProc.cmd_output.find_first_of("\r\n", start);
+                    if (end == std::string::npos) {
+                        end = cmdProc.cmd_output.length();
+                    }
+                    fs::path path = cmdProc.cmd_output.substr(start, end - start);
+                    if (path.string().length() && fs::exists(path)) {
+                        VSVersionInfo vInfo;
+                        vInfo.path = path.string() / vskey.pathToAdd;
+                        lst->push_back(vInfo);
+                        continue;
+                    }
+                }
+            }
+
+            LONG retVal = RegQueryValueExA(
+                vskey.key,         //__in         HKEY hKey,
+                vsinfo.versionName,//__in_opt     LPCTSTR lpValueName,
+                nullptr,              //__reserved   LPDWORD lpReserved,
+                nullptr,              //__out_opt    LPDWORD lpType,
+                (LPBYTE)value,     //__out_opt    LPBYTE lpData,
+                &size              //__inout_opt  LPDWORD lpcbData
+            );
+            if (ERROR_SUCCESS == retVal) {
+                VSVersionInfo vInfo;
+                vInfo.path = value;
+                vInfo.path += vskey.pathToAdd;
+                lst->push_back(vInfo);
+            }
         }
     }
 }
