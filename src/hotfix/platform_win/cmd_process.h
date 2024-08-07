@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 #include <thread>
 #include "core/stl.h"
 #include "core/logging.h"
@@ -12,6 +12,9 @@
 namespace vision::inline hotfix {
 using namespace ocarina;
 const std::string c_CompletionToken("_COMPLETION_TOKEN_");
+
+
+/// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
 struct CmdProcess {
     CmdProcess();
@@ -21,7 +24,7 @@ struct CmdProcess {
     void WriteInput(std::string &input);
     void CleanupProcessAndPipes();
 
-    PROCESS_INFORMATION m_CmdProcessInfo;
+    PROCESS_INFORMATION m_CmdProcessInfo{};
     HANDLE m_CmdProcessOutputRead;
     HANDLE m_CmdProcessInputWrite;
     volatile bool m_bIsComplete;

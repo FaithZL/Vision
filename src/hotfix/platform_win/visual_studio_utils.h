@@ -8,6 +8,8 @@
 
 namespace vision::inline hotfix {
 
+/// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
+
 struct VSVersionInfo {
     fs::path Path{};
 };
