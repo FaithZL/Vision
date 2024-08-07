@@ -26,10 +26,13 @@ struct CompileOptions {
         fs::path src_dir = FileInspector::project_path() / "src";
         include_paths.push_back(src_dir / "ocarina" / "src");
         include_paths.push_back(src_dir);
+        intermediate_path = fs::current_path() / "hotfix_temp";
     }
 };
 
 class Compiler {
+private:
+
 public:
     virtual void init() noexcept = 0;
     virtual void compile(const CompileOptions &options) noexcept = 0;

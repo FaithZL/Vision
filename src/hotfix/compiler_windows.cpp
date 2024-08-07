@@ -19,9 +19,8 @@ private:
 public:
     void init() noexcept override {
         vector<VSVersionInfo> vec;
+        CompileOptions op;
         GetPathsOfVisualStudioInstalls(&vec);
-
-        int i = 0;
     }
     void compile(const vision::CompileOptions &options) noexcept override {
     }
