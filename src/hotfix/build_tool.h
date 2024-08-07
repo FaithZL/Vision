@@ -9,7 +9,7 @@ using namespace ocarina;
 
 class BuildTool {
 private:
-    UP<Compiler> compiler_{};
+    UP<Compiler> compiler_{Compiler::create()};
 
 public:
     BuildTool() = default;

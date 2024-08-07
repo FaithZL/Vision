@@ -18,13 +18,19 @@ private:
 
 public:
     void init() noexcept override {
+        vector<VSVersionInfo> vec;
+        get_visualstudio_paths(&vec);
+
+        int i = 0;
     }
     void compile(const vision::CompileOptions &options) noexcept override {
     }
 };
 
 UP<Compiler> Compiler::create() noexcept {
-    return make_unique<CompilerVisualStudio>();
+    auto ret = make_unique<CompilerVisualStudio>();
+    ret->init();
+    return ret;
 }
 
 }// namespace vision::inline hotfix

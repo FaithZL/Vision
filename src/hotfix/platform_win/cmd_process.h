@@ -13,8 +13,6 @@ namespace vision::inline hotfix {
 using namespace ocarina;
 const std::string c_CompletionToken("_COMPLETION_TOKEN_");
 
-struct CmdProcess;
-
 struct CmdProcess {
 public:
     PROCESS_INFORMATION cmd_process_info{};
