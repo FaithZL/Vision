@@ -19,7 +19,7 @@ private:
 public:
     void init() noexcept override {
         vector<VSVersionInfo> vec;
-        get_visualstudio_paths(&vec);
+        GetPathsOfVisualStudioInstalls(&vec);
 
         int i = 0;
     }
