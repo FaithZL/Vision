@@ -9,7 +9,7 @@
 namespace vision::inline hotfix {
 
 struct VSVersionInfo {
-    fs::path path;
+    fs::path path{};
 };
 
 struct VSKey {
@@ -150,7 +150,7 @@ void get_visualstudio_paths(vector<VSVersionInfo> *lst) {
                     fs::path path = cmdProc.cmd_output.substr(start, end - start);
                     if (path.string().length() && fs::exists(path)) {
                         VSVersionInfo vInfo;
-                        vInfo.path = path.string() / vskey.pathToAdd;
+                        vInfo.path = path / vskey.pathToAdd;
                         lst->push_back(vInfo);
                         continue;
                     }
