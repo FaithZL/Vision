@@ -26,7 +26,7 @@ struct CompileOptions {
         fs::path src_dir = FileInspector::project_path() / "src";
         include_paths.push_back(src_dir / "ocarina" / "src");
         include_paths.push_back(src_dir);
-        intermediate_path = fs::current_path() / "hotfix_temp";
+        intermediate_path = fs::current_path() / "hotfix_debug";
     }
 };
 

@@ -27,20 +27,29 @@ public:
         return f_time;
     }
 
-    struct InspectedPath {
+    struct InspectedFile {
     public:
         ocarina::fs::path path{};
         Action action{Modify};
         FileTime write_time{};
-        InspectedPath() = default;
-        InspectedPath(const fs::path &p)
+        InspectedFile() = default;
+        InspectedFile(const fs::path &p)
             : path(p), write_time(modification_time(p)) {}
     };
 
-    using group_type = map<string, InspectedPath>;
+    using map_type = map<string, InspectedFile>;
+
+    struct Module {
+        vector<fs::path> files;
+        string name;
+    };
+
+    /// key: path(directory or file), value : Module
+    using groups_type = map<string, Module>;
 
 private:
-    group_type group_;
+    map_type map_;
+    groups_type groups_;
 
 public:
     FileInspector() = default;

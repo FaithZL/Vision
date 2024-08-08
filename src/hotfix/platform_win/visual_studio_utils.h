@@ -187,7 +187,7 @@ void GetPathsOfVisualStudioInstalls(std::vector<VSVersionInfo> *pVersions) {
         RegCloseKey(VS_KEYS[i].key);
     }
     if (pVersions->size() > 0) {
-        OC_INFO("The path of visual studio is", pVersions->at(0).Path);
+        OC_INFO_FORMAT("The path of visual studio is {}", pVersions->at(0).Path.string());
     }
     return;
 }

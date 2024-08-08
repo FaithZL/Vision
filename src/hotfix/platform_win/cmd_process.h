@@ -21,7 +21,7 @@ struct CmdProcess {
     ~CmdProcess();
 
     void InitialiseProcess();
-    void WriteInput(std::string &input);
+    void WriteInput(std::string &input) const;
     void CleanupProcessAndPipes();
 
     PROCESS_INFORMATION m_CmdProcessInfo{};
@@ -199,7 +199,7 @@ void CmdProcess::InitialiseProcess() {
     exit_func();
 }
 
-void CmdProcess::WriteInput(std::string &input) {
+void CmdProcess::WriteInput(std::string &input) const {
     DWORD nBytesWritten;
     DWORD length = (DWORD)input.length();
     WriteFile(m_CmdProcessInputWrite, input.c_str(), length, &nBytesWritten, nullptr);
