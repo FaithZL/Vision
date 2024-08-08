@@ -37,12 +37,10 @@ public:
             : path(p), write_time(modification_time(p)) {}
     };
 
-    using map_type = map<string, InspectedFile>;
-
     struct Module {
+        string name;
         vector<InspectedFile> files;
         vector<fs::path> modified_files;
-        string name;
     };
 
     /// key: path(directory or file), value : Module
