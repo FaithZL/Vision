@@ -49,15 +49,10 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
 }
 
 void HotfixSystem::check_and_build() noexcept {
-    auto files = file_inspector_.get_updated_files();
-    if (files.empty()) {
+    auto modules = file_inspector_.get_modified_modules();
+    if(modules.empty()) {
         return;
     }
-    OC_INFO("updated files");
-    for (const auto& p : files) {
-        std::cout << p << std::endl;
-    }
-    build_tool_.build_module(std::move(files));
 }
 
 void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {

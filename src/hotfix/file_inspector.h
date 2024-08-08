@@ -29,7 +29,7 @@ public:
 
     struct InspectedFile {
     public:
-        ocarina::fs::path path{};
+        fs::path path{};
         Action action{Modify};
         FileTime write_time{};
         InspectedFile() = default;
@@ -40,7 +40,8 @@ public:
     using map_type = map<string, InspectedFile>;
 
     struct Module {
-        vector<fs::path> files;
+        vector<InspectedFile> files;
+        vector<fs::path> modified_files;
         string name;
     };
 
@@ -48,14 +49,13 @@ public:
     using groups_type = map<string, Module>;
 
 private:
-    map_type map_;
     groups_type groups_;
 
 public:
     FileInspector() = default;
     void add_inspected(const fs::path &path, bool recursive = true) noexcept;
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
-    [[nodiscard]] vector<fs::path> get_updated_files() noexcept;
+    [[nodiscard]] vector<Module> get_modified_modules() noexcept;
     [[nodiscard]] static fs::path project_path() noexcept;
 };
 

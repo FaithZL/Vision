@@ -9,24 +9,23 @@ namespace vision::inline hotfix {
 
 void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (map_.contains(key) || !fs::exists(path)) {
+    if (groups_.contains(key) || !fs::exists(path)) {
         return;
     }
     auto is_directory = fs::is_directory(path);
     recursive = is_directory && recursive;
 
+    Module module;
     if (!is_directory) {
         InspectedFile inspected(path);
-        map_.insert(std::make_pair(key, inspected));
+        module.name = "";
+        module.files.push_back(inspected);
+        groups_.insert(std::make_pair(key, module));
         return;
     }
 
     auto func = [&](const fs::directory_entry &entry) {
-        if (fs::is_directory(entry)) {
-            return ;
-        }
-        InspectedFile inspected(entry);
-        map_.insert(std::make_pair(entry.path().string(), inspected));
+        module.files.push_back(entry.path());
     };
 
     if (recursive) {
@@ -38,45 +37,43 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
             func(entry);
         }
     }
+    groups_.insert(std::make_pair(key, module));
 }
 
 void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (!map_.contains(key)) {
+    if (!groups_.contains(key)) {
         return;
     }
-    if (fs::is_regular_file(path)) {
-        map_.erase(key);
-    }
-    auto func = [&](const fs::directory_entry &entry) {
-        map_.erase(entry.path().string());
-    };
-    if (recursive) {
-        for (const auto &entry : fs::recursive_directory_iterator(path)) {
-            func(entry);
-        }
-    } else {
-        for (const auto &entry : fs::directory_iterator(path)) {
-            func(entry);
-        }
-    }
+    groups_.erase(key);
 }
 
-vector<fs::path> FileInspector::get_updated_files() noexcept {
-    vector<fs::path> ret;
-    ret.reserve(6);
-    auto func = [&](InspectedFile &inspected) {
-        FileTime write_time = modification_time(inspected.path);
-        if (write_time > inspected.write_time) {
-            ret.push_back(inspected.path);
-            inspected.write_time = write_time;
-        }
+vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
+    vector<Module> ret;
+
+    auto is_modified = [&](Module &module) {
+        bool modified = false;
+        module.modified_files.clear();
+        std::for_each(module.files.begin(), module.files.end(), [&](InspectedFile &file) {
+            FileTime write_time = modification_time(file.path);
+            if (write_time > file.write_time) {
+                file.write_time = write_time;
+                module.modified_files.push_back(file.path);
+                modified = true;
+            }
+        });
+
+        return modified;
     };
 
-    std::for_each(map_.begin(), map_.end(), [&](auto &it) {
-        string key = it.first;
-        func(it.second);
-    });
+    for (auto &it : groups_) {
+        const string &key = it.first;
+        Module &module = it.second;
+        if (is_modified(module)) {
+            ret.push_back(module);
+        }
+        module.modified_files.clear();
+    }
     return ret;
 }
 
