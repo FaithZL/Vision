@@ -6,9 +6,6 @@
 
 namespace vision {
 
-
-
-
 }
 
-REGISTER_CURRENT_FILE
+VS_REGISTER_CURRENT_PATH(1)

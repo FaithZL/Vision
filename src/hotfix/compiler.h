@@ -9,6 +9,8 @@
 
 namespace vision::inline hotfix {
 
+
+
 enum OptimizationLevel {
     Default = 0,
     Debug = 1,
@@ -23,16 +25,14 @@ struct CompileOptions {
         init();
     }
     void init() {
-        fs::path src_dir = FileInspector::project_path() / "src";
+        fs::path src_dir = FileInspector::project_src_path();
         include_paths.push_back(src_dir / "ocarina" / "src");
         include_paths.push_back(src_dir);
-        intermediate_path = fs::current_path() / "hotfix_debug";
+        intermediate_path = FileInspector::intermediate_path();
     }
 };
 
 class Compiler {
-private:
-
 public:
     virtual void init() noexcept = 0;
     virtual void compile(const CompileOptions &options) noexcept = 0;

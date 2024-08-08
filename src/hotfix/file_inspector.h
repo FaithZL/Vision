@@ -9,6 +9,8 @@
 namespace vision::inline hotfix {
 using namespace ocarina;
 
+static const char *debug_dir = "hotfix_debug";
+
 class FileInspector {
 public:
     enum Action {
@@ -33,7 +35,7 @@ public:
         Action action{Modify};
         FileTime write_time{};
         InspectedFile() = default;
-        InspectedFile(const fs::path &p)
+        explicit InspectedFile(const fs::path &p)
             : path(p), write_time(modification_time(p)) {}
     };
 
@@ -55,6 +57,8 @@ public:
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] vector<Module> get_modified_modules() noexcept;
     [[nodiscard]] static fs::path project_path() noexcept;
+    [[nodiscard]] static fs::path project_src_path() noexcept;
+    [[nodiscard]] static fs::path intermediate_path() noexcept;
 };
 
 }// namespace vision::inline hotfix

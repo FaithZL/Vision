@@ -11,29 +11,31 @@
 #include "build_tool.h"
 #include "file_inspector.h"
 
-#define INSPECT_PATH_(path) vision::HotfixSystem::instance().add_inspected(path);
+#define VS_INSPECT_PATH_(path) vision::HotfixSystem::instance().add_inspected(path);
 
-#define REGISTER_FILES(...)                   \
-    namespace {                               \
-    struct FileRegistrar {                    \
-        FileRegistrar() {                     \
-            MAP(INSPECT_PATH_, ##__VA_ARGS__) \
-        }                                     \
-    };                                        \
-    static FileRegistrar registrar;           \
+#define VS_REGISTER_FILES(...)                   \
+    namespace {                                  \
+    struct FileRegistrar {                       \
+        FileRegistrar() {                        \
+            MAP(VS_INSPECT_PATH_, ##__VA_ARGS__) \
+        }                                        \
+    };                                           \
+    static FileRegistrar registrar;              \
     }
 
-#define REGISTER_CURRENT_FILE REGISTER_FILES(__FILE__)
+#define VS_REGISTER_CURRENT_FILE VS_REGISTER_FILES(__FILE__)
 
-#define REGISTER_PATH(path, level)                           \
-    namespace {                                              \
-    struct FileRegistrar {                                   \
-        FileRegistrar() {                                    \
-            INSPECT_PATH_(ocarina::parent_path(path, level)) \
-        }                                                    \
-    };                                                       \
-    static FileRegistrar registrar;                          \
+#define VS_REGISTER_PATH(path, level)                           \
+    namespace {                                                 \
+    struct FileRegistrar {                                      \
+        FileRegistrar() {                                       \
+            VS_INSPECT_PATH_(ocarina::parent_path(path, level)) \
+        }                                                       \
+    };                                                          \
+    static FileRegistrar registrar;                             \
     }
+
+#define VS_REGISTER_CURRENT_PATH(level) VS_REGISTER_PATH(__FILE__, level)
 
 namespace vision::inline hotfix {
 

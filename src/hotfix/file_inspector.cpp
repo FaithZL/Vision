@@ -16,16 +16,16 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
     recursive = is_directory && recursive;
 
     Module module;
+    module.name = path.stem().string();
     if (!is_directory) {
         InspectedFile inspected(path);
-        module.name = "";
         module.files.push_back(inspected);
         groups_.insert(std::make_pair(key, module));
         return;
     }
 
     auto func = [&](const fs::directory_entry &entry) {
-        module.files.push_back(entry.path());
+        module.files.emplace_back(entry.path());
     };
 
     if (recursive) {
@@ -77,8 +77,16 @@ vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
     return ret;
 }
 
+fs::path FileInspector::intermediate_path() noexcept {
+    return fs::current_path() / debug_dir;
+}
+
 fs::path FileInspector::project_path() noexcept {
     return parent_path(__FILE__, 3);
+}
+
+fs::path FileInspector::project_src_path() noexcept {
+    return parent_path(__FILE__, 2);
 }
 
 }// namespace vision::inline hotfix

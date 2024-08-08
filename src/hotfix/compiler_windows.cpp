@@ -21,6 +21,10 @@ public:
         vector<VSVersionInfo> vec;
         CompileOptions op;
         GetPathsOfVisualStudioInstalls(&vec);
+        if (!fs::exists(FileInspector::intermediate_path())) {
+            fs::create_directory(FileInspector::intermediate_path());
+        }
+        clear_directory(FileInspector::intermediate_path());
     }
     void compile(const vision::CompileOptions &options) noexcept override {
     }
