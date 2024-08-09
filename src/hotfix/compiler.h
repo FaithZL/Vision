@@ -9,8 +9,6 @@
 
 namespace vision::inline hotfix {
 
-
-
 enum OptimizationLevel {
     Default = 0,
     Debug = 1,
@@ -21,6 +19,7 @@ struct CompileOptions {
     vector<fs::path> include_paths;
     vector<fs::path> library_paths;
     fs::path intermediate_path;
+    OptimizationLevel optimization_level;
     CompileOptions() {
         init();
     }

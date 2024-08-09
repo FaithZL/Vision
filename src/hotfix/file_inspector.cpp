@@ -9,7 +9,7 @@ namespace vision::inline hotfix {
 
 void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (groups_.contains(key) || !fs::exists(path)) {
+    if (module_map_.contains(key) || !fs::exists(path)) {
         return;
     }
     auto is_directory = fs::is_directory(path);
@@ -20,7 +20,7 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
     if (!is_directory) {
         InspectedFile inspected(path);
         module.files.push_back(inspected);
-        groups_.insert(std::make_pair(key, module));
+        module_map_.insert(std::make_pair(key, module));
         return;
     }
 
@@ -37,15 +37,15 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
             func(entry);
         }
     }
-    groups_.insert(std::make_pair(key, module));
+    module_map_.insert(std::make_pair(key, module));
 }
 
 void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (!groups_.contains(key)) {
+    if (!module_map_.contains(key)) {
         return;
     }
-    groups_.erase(key);
+    module_map_.erase(key);
 }
 
 vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
@@ -66,7 +66,7 @@ vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
         return modified;
     };
 
-    for (auto &it : groups_) {
+    for (auto &it : module_map_) {
         const string &key = it.first;
         Module &module = it.second;
         if (is_modified(module)) {

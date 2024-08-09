@@ -5,7 +5,9 @@ function(vision_add_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-base vision-math)
-    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}"  VISION_CATEGORY="${PLUGIN_CATEGORY}")
+    target_compile_definitions(${lib_name} PRIVATE
+            VISION_PLUGIN_NAME="${name}"
+            VISION_CATEGORY="${PLUGIN_CATEGORY}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 
@@ -23,7 +25,7 @@ function(vision_add_render_pass_plugin name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE vision-render_graph vision-math)
-    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}"  VISION_CATEGORY="${PLUGIN_CATEGORY}")
+    target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}" VISION_CATEGORY="${PLUGIN_CATEGORY}")
     set(category vision-${PLUGIN_CATEGORY})
     add_dependencies(${category} ${lib_name})
 
@@ -49,9 +51,9 @@ add_subdirectory(pipelines)
 add_subdirectory(render_core)
 add_subdirectory(hotfix)
 add_subdirectory(sdk)
-if(${OCARINA_BUILD_TESTS})
+if (${OCARINA_BUILD_TESTS})
     add_subdirectory(tests)
-endif()
+endif ()
 
 
 add_library(vision-main INTERFACE)

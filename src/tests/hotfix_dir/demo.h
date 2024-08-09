@@ -6,6 +6,7 @@
 
 #include "hotfix/system.h"
 
+
 namespace vision {
 
 class Demo : public RuntimeObject {

@@ -53,6 +53,7 @@ void HotfixSystem::check_and_build() noexcept {
     if(modules.empty()) {
         return;
     }
+    build_tool_.build_modules(modules);
 }
 
 void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {

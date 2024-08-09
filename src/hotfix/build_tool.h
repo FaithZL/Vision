@@ -14,7 +14,7 @@ private:
 public:
     BuildTool() = default;
     void clear() noexcept;
-    void build_module(vector<fs::path> &&paths) noexcept;
+    void build_modules(const vector<FileInspector::Module>& modules) const noexcept;
 };
 
 }// namespace vision::inline hotfix

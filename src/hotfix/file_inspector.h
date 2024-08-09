@@ -46,10 +46,10 @@ public:
     };
 
     /// key: path(directory or file), value : Module
-    using groups_type = map<string, Module>;
+    using map_type = map<string, Module>;
 
 private:
-    groups_type groups_;
+    map_type module_map_;
 
 public:
     FileInspector() = default;
