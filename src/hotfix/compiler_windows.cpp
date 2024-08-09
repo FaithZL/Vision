@@ -14,12 +14,14 @@ using namespace ocarina;
 class CompilerVisualStudio : public Compiler {
 private:
     CmdProcess cmd_process_;
+    fs::path vs_path_;
 
 public:
     void init() noexcept override {
         vector<VSVersionInfo> vec;
         CompileOptions op;
         GetPathsOfVisualStudioInstalls(&vec);
+        vs_path_ = vec.at(0).Path;
         if (!fs::exists(FileInspector::intermediate_path())) {
             fs::create_directory(FileInspector::intermediate_path());
         }
@@ -44,11 +46,16 @@ public:
             if (file.path.extension() != ".cpp") {
                 continue;
             }
+
+            std::string cmdSetParams = "\"" + vs_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
+
+            cmd_process_.InitialiseProcess();
+            cmd_process_.WriteInput(cmdSetParams);
+
             string cmd = assemble_compile_cmd(file.path, module_path);
             fs::path cmd_fn = (module_path / file.path.stem()).string() + ".tmp";
             std::ofstream cmd_file(cmd_fn);
             cmd_file <<cmd;
-
             cout << cmd << endl;
             cmd_file.close();
         }
