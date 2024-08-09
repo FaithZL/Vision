@@ -30,7 +30,6 @@ struct CmdProcess {
     volatile bool m_bIsComplete;
     bool m_bStoreCmdOutput;
     std::string m_CmdOutput;
-    fs::path m_PathTempCLCommandFile;
 };
 
 CmdProcess::CmdProcess()
@@ -206,12 +205,6 @@ void CmdProcess::WriteInput(std::string &input) const {
 }
 
 void CmdProcess::CleanupProcessAndPipes() {
-    // do not reset m_bIsComplete and other members here, just process and pipes and
-    if (!m_PathTempCLCommandFile.empty() && fs::exists(m_PathTempCLCommandFile)) {
-        fs::remove(m_PathTempCLCommandFile);
-        m_PathTempCLCommandFile.clear();
-    }
-
     if (m_CmdProcessInfo.hProcess) {
         TerminateProcess(m_CmdProcessInfo.hProcess, 0);
         TerminateThread(m_CmdProcessInfo.hThread, 0);

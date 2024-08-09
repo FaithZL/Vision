@@ -45,7 +45,12 @@ public:
                 continue;
             }
             string cmd = assemble_compile_cmd(file.path, module_path);
+            fs::path cmd_fn = (module_path / file.path.stem()).string() + ".tmp";
+            std::ofstream cmd_file(cmd_fn);
+            cmd_file <<cmd;
+
             cout << cmd << endl;
+            cmd_file.close();
         }
     }
 };
