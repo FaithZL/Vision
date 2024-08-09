@@ -9,4 +9,4 @@ namespace vision {
 
 }
 
-VS_REGISTER_CURRENT_PATH(1)
+VS_REGISTER_CURRENT_PATH(1, "vision-base", "vision-math")

@@ -16,8 +16,6 @@
 
 using namespace ocarina;
 
-VS_REGISTER_CURRENT_PATH(1)
-
 int main(int argc, char *argv[]) {
 
     fs::path path(argv[0]);

@@ -9,7 +9,7 @@
 namespace vision::inline hotfix {
 using namespace ocarina;
 
-static const char *debug_dir = "hotfix_debug";
+static constexpr const char *debug_dir = "hotfix_debug";
 
 class FileInspector {
 public:
@@ -42,6 +42,7 @@ public:
     struct Module {
         string name;
         vector<InspectedFile> files;
+        vector<string> dependencies;
         vector<fs::path> modified_files;
     };
 
@@ -53,8 +54,9 @@ private:
 
 public:
     FileInspector() = default;
-    void add_inspected(const fs::path &path, bool recursive = true) noexcept;
+    void add_inspected(const fs::path &path, bool recursive = true) ;
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
+    [[nodiscard]] Module &get_module(const fs::path &key) noexcept;
     [[nodiscard]] vector<Module> get_modified_modules() noexcept;
     [[nodiscard]] static fs::path project_path() noexcept;
     [[nodiscard]] static fs::path project_src_path() noexcept;

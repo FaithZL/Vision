@@ -7,7 +7,7 @@
 
 namespace vision::inline hotfix {
 
-void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept {
+void FileInspector::add_inspected(const fs::path &path, bool recursive) {
     string key = path.string();
     if (module_map_.contains(key) || !fs::exists(path)) {
         return;
@@ -25,7 +25,10 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) noexcept
     }
 
     auto func = [&](const fs::directory_entry &entry) {
-        module.files.emplace_back(entry.path());
+        if (entry.exists() && entry.is_regular_file()) {
+            auto f = InspectedFile(entry.path());
+            module.files.push_back(f);
+        }
     };
 
     if (recursive) {
@@ -46,6 +49,10 @@ void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexc
         return;
     }
     module_map_.erase(key);
+}
+
+FileInspector::Module &FileInspector::get_module(const fs::path &key) noexcept {
+    return module_map_.at(key.string());
 }
 
 vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {

@@ -11,31 +11,18 @@
 #include "build_tool.h"
 #include "file_inspector.h"
 
-#define VS_INSPECT_PATH_(path) vision::HotfixSystem::instance().add_inspected(path);
-
-#define VS_REGISTER_FILES(...)                   \
-    namespace {                                  \
-    struct FileRegistrar {                       \
-        FileRegistrar() {                        \
-            MAP(VS_INSPECT_PATH_, ##__VA_ARGS__) \
-        }                                        \
-    };                                           \
-    static FileRegistrar registrar;              \
+#define VS_REGISTER_PATH(path, level, ...)                                        \
+    namespace {                                                                   \
+    struct FileRegistrar {                                                        \
+        FileRegistrar() {                                                         \
+            auto key = ocarina::parent_path(path, level);                         \
+            vision::HotfixSystem::instance().register_module(key, ##__VA_ARGS__); \
+        }                                                                         \
+    };                                                                            \
+    static FileRegistrar registrar;                                               \
     }
 
-#define VS_REGISTER_CURRENT_FILE VS_REGISTER_FILES(__FILE__)
-
-#define VS_REGISTER_PATH(path, level)                           \
-    namespace {                                                 \
-    struct FileRegistrar {                                      \
-        FileRegistrar() {                                       \
-            VS_INSPECT_PATH_(ocarina::parent_path(path, level)) \
-        }                                                       \
-    };                                                          \
-    static FileRegistrar registrar;                             \
-    }
-
-#define VS_REGISTER_CURRENT_PATH(level) VS_REGISTER_PATH(__FILE__, level)
+#define VS_REGISTER_CURRENT_PATH(level, ...) VS_REGISTER_PATH(__FILE__, level, ##__VA_ARGS__)
 
 namespace vision::inline hotfix {
 
@@ -74,8 +61,14 @@ public:
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
-    void add_inspected(const fs::path &path, bool recursive = true) noexcept {
+    void add_inspected(const fs::path &path, bool recursive = true) {
         file_inspector_.add_inspected(path, recursive);
+    }
+    template<typename... Args>
+    void register_module(const fs::path &path, Args &&...args) {
+        add_inspected(path);
+        auto &module = file_inspector_.get_module(path);
+        (module.dependencies.push_back(OC_FORWARD(args)), ...);
     }
     void remove_inspected(const fs::path &path) noexcept {
         file_inspector_.remove_inspected(path);
