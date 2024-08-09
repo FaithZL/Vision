@@ -19,23 +19,40 @@ struct CompileOptions {
     vector<fs::path> include_paths;
     vector<fs::path> library_paths;
     fs::path intermediate_path;
-    OptimizationLevel optimization_level;
+    OptimizationLevel optimization_level{Default};
     CompileOptions() {
         init();
     }
+
+    static OptimizationLevel correct_optimization_level(OptimizationLevel level) noexcept {
+        switch (level) {
+            case Default:
+#ifndef NDEBUG
+                return OptimizationLevel::Debug;
+#else
+                return OptimizationLevel::Release;
+#endif
+            default:
+                return level;
+        }
+    }
+
     void init() {
         fs::path src_dir = FileInspector::project_src_path();
         include_paths.push_back(src_dir / "ocarina" / "src");
         include_paths.push_back(src_dir);
         intermediate_path = FileInspector::intermediate_path();
+        optimization_level = correct_optimization_level(optimization_level);
     }
 };
 
 class Compiler {
 public:
     virtual void init() noexcept = 0;
-    virtual void compile(const CompileOptions &options) noexcept = 0;
-    static UP<Compiler> create() noexcept;
+    virtual void compile(const CompileOptions &options,
+                         const FileInspector::Module &module) noexcept = 0;
+    [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
+    [[nodiscard]] static UP<Compiler> create() noexcept;
 };
 
 }// namespace vision::inline hotfix

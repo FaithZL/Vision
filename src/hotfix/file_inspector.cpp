@@ -27,6 +27,7 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) {
     auto func = [&](const fs::directory_entry &entry) {
         if (entry.exists() && entry.is_regular_file()) {
             auto f = InspectedFile(entry.path());
+            f.write_time = {};
             module.files.push_back(f);
         }
     };
@@ -64,7 +65,7 @@ vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
         std::for_each(module.files.begin(), module.files.end(), [&](InspectedFile &file) {
             FileTime write_time = modification_time(file.path);
             if (write_time > file.write_time) {
-                file.write_time = write_time;
+//                file.write_time = write_time;
                 module.modified_files.push_back(file.path);
                 modified = true;
             }
