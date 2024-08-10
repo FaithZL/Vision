@@ -13,7 +13,6 @@ namespace vision::inline hotfix {
 using namespace ocarina;
 const std::string c_CompletionToken("_COMPLETION_TOKEN_");
 
-
 /// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
 struct CmdProcess {
@@ -24,67 +23,68 @@ struct CmdProcess {
     void WriteInput(std::string &input) const;
     void CleanupProcessAndPipes();
 
+    static void ReadAndHandleOutputThread(LPVOID arg) {
+        CmdProcess *pCmdProc = (CmdProcess *)arg;
+
+        CHAR lpBuffer[1024];
+        DWORD nBytesRead;
+        bool bReadActive = true;
+        while (bReadActive) {
+            if (!ReadFile(pCmdProc->m_CmdProcessOutputRead, lpBuffer, sizeof(lpBuffer) - 1,
+                          &nBytesRead, nullptr) ||
+                !nBytesRead) {
+                bReadActive = false;
+                if (GetLastError() != ERROR_BROKEN_PIPE) {
+                    //broken pipe is OK
+                    OC_WARNING("[RuntimeCompiler] Redirect of compile output failed on read\n");
+                }
+            } else {
+                // Add null termination
+                lpBuffer[nBytesRead] = 0;
+                //fist check for completion token...
+                std::string buffer(lpBuffer);
+                size_t found = buffer.find(c_CompletionToken);
+                if (found != std::string::npos) {
+                    //we've found the completion token, which means we quit
+                    buffer = buffer.substr(0, found);
+                    if (!pCmdProc->m_bStoreCmdOutput) {
+                        OC_INFO("[RuntimeCompiler] Complete\n");
+                    }
+                    pCmdProc->m_bIsComplete = true;
+                }
+
+                if (bReadActive || buffer.length()) {
+                    //don't output blank last line
+                    if (pCmdProc->m_bStoreCmdOutput) {
+                        pCmdProc->m_CmdOutput += buffer;
+                    } else {
+                        //check if this is an error
+                        size_t errorFound = buffer.find(" : error ");
+                        size_t fatalErrorFound = buffer.find(" : fatal error ");
+                        if ((errorFound != std::string::npos) || (fatalErrorFound != std::string::npos)) {
+                            OC_WARNING_FORMAT("{}", buffer.c_str());
+                        } else {
+                            OC_INFO_FORMAT("{}", buffer.c_str());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     PROCESS_INFORMATION m_CmdProcessInfo{};
     HANDLE m_CmdProcessOutputRead;
     HANDLE m_CmdProcessInputWrite;
     volatile bool m_bIsComplete;
     bool m_bStoreCmdOutput;
     std::string m_CmdOutput;
+    std::thread m_OutputThread;
 };
 
 CmdProcess::CmdProcess()
     : m_CmdProcessOutputRead(nullptr), m_CmdProcessInputWrite(nullptr),
       m_bIsComplete(false), m_bStoreCmdOutput(false) {
     ZeroMemory(&m_CmdProcessInfo, sizeof(m_CmdProcessInfo));
-}
-
-void ReadAndHandleOutputThread(LPVOID arg) {
-    CmdProcess *pCmdProc = (CmdProcess *)arg;
-
-    CHAR lpBuffer[1024];
-    DWORD nBytesRead;
-    bool bReadActive = true;
-    while (bReadActive) {
-        if (!ReadFile(pCmdProc->m_CmdProcessOutputRead, lpBuffer, sizeof(lpBuffer) - 1,
-                      &nBytesRead, nullptr) ||
-            !nBytesRead) {
-            bReadActive = false;
-            if (GetLastError() != ERROR_BROKEN_PIPE)//broken pipe is OK
-            {
-                OC_WARNING("[RuntimeCompiler] Redirect of compile output failed on read\n");
-            }
-        } else {
-            // Add null termination
-            lpBuffer[nBytesRead] = 0;
-            //fist check for completion token...
-            std::string buffer(lpBuffer);
-            size_t found = buffer.find(c_CompletionToken);
-            if (found != std::string::npos) {
-                //we've found the completion token, which means we quit
-                buffer = buffer.substr(0, found);
-                if (!pCmdProc->m_bStoreCmdOutput) {
-                    OC_INFO("[RuntimeCompiler] Complete\n");
-                }
-                pCmdProc->m_bIsComplete = true;
-            }
-
-            if (bReadActive || buffer.length()) {
-                //don't output blank last line
-                if (pCmdProc->m_bStoreCmdOutput) {
-                    pCmdProc->m_CmdOutput += buffer;
-                } else {
-                    //check if this is an error
-                    size_t errorFound = buffer.find(" : error ");
-                    size_t fatalErrorFound = buffer.find(" : fatal error ");
-                    if ((errorFound != std::string::npos) || (fatalErrorFound != std::string::npos)) {
-                        OC_WARNING_FORMAT("{}", buffer.c_str());
-                    } else {
-                        OC_INFO_FORMAT("{}", buffer.c_str());
-                    }
-                }
-            }
-        }
-    }
 }
 
 void CmdProcess::InitialiseProcess() {
@@ -193,7 +193,8 @@ void CmdProcess::InitialiseProcess() {
     );
 
     //launch threaded read.
-    _beginthread(ReadAndHandleOutputThread, 0, this);//this will exit when process for compile is closed
+    m_OutputThread = std::thread(&CmdProcess::ReadAndHandleOutputThread, this);
+    m_OutputThread.detach();
 
     exit_func();
 }
