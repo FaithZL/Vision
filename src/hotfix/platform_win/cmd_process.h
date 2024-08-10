@@ -40,50 +40,41 @@ CmdProcess::CmdProcess() {
 }
 
 void CmdProcess::ReadAndHandleOutputThread() {
-    CmdProcess *pCmdProc = this;
-
     CHAR lpBuffer[1024];
     DWORD nBytesRead;
-    bool bReadActive = true;
-    while (bReadActive) {
+    while (true) {
         if (!ReadFile(m_CmdProcessOutputRead, lpBuffer, sizeof(lpBuffer) - 1,
                       &nBytesRead, nullptr) ||
             !nBytesRead) {
-            bReadActive = false;
             if (GetLastError() != ERROR_BROKEN_PIPE) {
-                //broken pipe is OK
-                OC_WARNING("[RuntimeCompiler] Redirect of compile output failed on read\n");
+                std::cerr << "[RuntimeCompiler] Redirect of compile output failed on read" << std::endl;
             }
-        } else {
-            // Add null termination
-            lpBuffer[nBytesRead] = 0;
-            //fist check for completion token...
-            std::string buffer(lpBuffer);
-            size_t found = buffer.find(c_CompletionToken);
-            if (found != std::string::npos) {
-                //we've found the completion token, which means we quit
-                buffer = buffer.substr(0, found);
-                if (!m_bStoreCmdOutput) {
-                    OC_INFO("[RuntimeCompiler] Complete\n");
-                }
-                m_bIsComplete = true;
-            }
+            break;
+        }
 
-            if (bReadActive || buffer.length()) {
-                //don't output blank last line
-                if (m_bStoreCmdOutput) {
-                    m_CmdOutput += buffer;
-                } else {
-                    //check if this is an error
-                    size_t errorFound = buffer.find(" : error ");
-                    size_t fatalErrorFound = buffer.find(" : fatal error ");
-                    if ((errorFound != std::string::npos) || (fatalErrorFound != std::string::npos)) {
-                        OC_WARNING_FORMAT("{}", buffer.c_str());
-                    } else {
-                        OC_INFO_FORMAT("{}", buffer.c_str());
-                    }
-                }
+        lpBuffer[nBytesRead] = 0;// Add null termination
+        std::string buffer(lpBuffer);
+        size_t found = buffer.find(c_CompletionToken);
+        if (found != std::string::npos) {
+            buffer = buffer.substr(0, found);
+            if (!m_bStoreCmdOutput) {
+                std::cout << "[RuntimeCompiler] Complete" << std::endl;
             }
+            m_bIsComplete = true;
+        }
+
+        if (buffer.empty()) {
+            continue;
+        }
+        if (m_bStoreCmdOutput) {
+            m_CmdOutput += buffer;
+            continue;
+        }
+        if (buffer.find(" : error ") != std::string::npos ||
+            buffer.find(" : fatal error ") != std::string::npos) {
+            std::cerr << "Warning: " << buffer << std::endl;
+        } else {
+            std::cout << buffer << std::endl;
         }
     }
 }
