@@ -23,8 +23,8 @@ struct CmdProcess {
     void WriteInput(std::string &input) const;
     void CleanupProcessAndPipes();
 
-    static void ReadAndHandleOutputThread(LPVOID arg) {
-        CmdProcess *pCmdProc = (CmdProcess *)arg;
+    void ReadAndHandleOutputThread() {
+        CmdProcess *pCmdProc = this;
 
         CHAR lpBuffer[1024];
         DWORD nBytesRead;
@@ -75,7 +75,7 @@ struct CmdProcess {
     PROCESS_INFORMATION m_CmdProcessInfo{};
     HANDLE m_CmdProcessOutputRead;
     HANDLE m_CmdProcessInputWrite;
-    volatile bool m_bIsComplete;
+    std::atomic<bool> m_bIsComplete;
     bool m_bStoreCmdOutput;
     std::string m_CmdOutput;
     std::thread m_OutputThread;
