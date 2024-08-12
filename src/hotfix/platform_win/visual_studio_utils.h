@@ -133,14 +133,11 @@ std::vector<VSVersionInfo> GetPathsOfVisualStudioInstalls() {
                 cmdProc.InitialiseProcess();
                 cmdProc.m_bStoreCmdOutput = true;
                 cmdProc.m_CmdOutput = "";
-                std::string maxVersion;
+                std::string maxVersion = vsinfo.versionNextName;
                 if (!bMSCVersionFound && i == startVersion) {
                     // open ended max version so we find the latest
                     maxVersion = "";
-                } else {
-                    maxVersion = vsinfo.versionNextName;
                 }
-
 
                 std::string vsWhereQuery = R"("%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere" -version [)" +
                                            std::string(vsinfo.versionName) + "," +

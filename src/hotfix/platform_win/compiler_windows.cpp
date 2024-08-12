@@ -2,10 +2,10 @@
 // Created by Zero on 2024/8/6.
 //
 
-#include "compiler.h"
+#include "hotfix/compiler.h"
 
-#include "platform_win/cmd_process.h"
-#include "platform_win/visual_studio_utils.h"
+#include "hotfix/cmd_process.h"
+#include "visual_studio_utils.h"
 
 namespace vision::inline hotfix {
 
@@ -30,6 +30,11 @@ public:
         return "obj";
     }
 
+    void setup_environment() const {
+        std::string cmdSetParams = "\"" + vs_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
+        cmd_process_.WriteInput(cmdSetParams);
+    }
+
     [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file, const fs::path &output_path) noexcept {
         return ocarina::format(R"(/nologo /Z7 /FC /utf-8 /MDd /Od /MP /Fo "{}" /D WIN32 /EHa /c "{}")",
                                output_path.string(), src_file.string());
@@ -41,20 +46,18 @@ public:
         if (!fs::exists(module_path)) {
             fs::create_directory(module_path);
         }
+        cmd_process_.InitialiseProcess();
+        setup_environment();
         for (const auto &file : module.files) {
             if (file.path.extension() != ".cpp") {
                 continue;
             }
 
-            std::string cmdSetParams = "\"" + vs_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
-
-            cmd_process_.InitialiseProcess();
-            cmd_process_.WriteInput(cmdSetParams);
-
             string cmd = assemble_compile_cmd(file.path, module_path);
             fs::path cmd_fn = (module_path / file.path.stem()).string() + ".tmp";
             std::ofstream cmd_file(cmd_fn);
-            cmd_file <<cmd;
+            cmd = "cl " + cmd;
+            cmd_file << cmd;
             cout << cmd << endl;
             cmd_file.close();
         }
