@@ -27,12 +27,13 @@ struct VSVersionDiscoveryInfo {
     bool tryVSWhere;
 };
 
-void GetPathsOfVisualStudioInstalls(std::vector<VSVersionInfo> *pVersions) {
+std::vector<VSVersionInfo> GetPathsOfVisualStudioInstalls() {
+    std::vector<VSVersionInfo> versions;
     //e.g.: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\<version>\Setup\VS\<edition>
     // to view 32bit keys on Windows use start->run and enter: %systemroot%\syswow64\regedit
     // as for 32bit keys need to run 32bit regedit.
-    VSKey VS_KEYS[] = {{"SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "", nullptr},
-                       {"SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "VC\\Auxiliary\\Build\\", nullptr}};
+    VSKey VS_KEYS[] = {{R"(SOFTWARE\Microsoft\VisualStudio\SxS\VC7)", "", nullptr},
+                       {R"(SOFTWARE\Microsoft\VisualStudio\SxS\VS7)", R"(VC\Auxiliary\Build\)", nullptr}};
     int NUMVSKEYS = sizeof(VS_KEYS) / sizeof(VSKey);
 
     // supporting: VS2005, VS2008, VS2010, VS2011, VS2013, VS2015, VS2017, VS2019
@@ -139,13 +140,13 @@ void GetPathsOfVisualStudioInstalls(std::vector<VSVersionInfo> *pVersions) {
                 } else {
                     maxVersion = vsinfo.versionNextName;
                 }
-                std::string vsWhereQuery = "\"%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vswhere\""
-                                           " -version [" +
+
+
+                std::string vsWhereQuery = R"("%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere" -version [)" +
                                            std::string(vsinfo.versionName) + "," +
-                                           maxVersion + ") "// [min,max) format for version names
-                                                        " -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
-                                                        " -property installationPath"
-                                                        "\nexit\n";
+                                           maxVersion +
+                                           ") "// [min,max) format for version names
+                                           " -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath \nexit\n";
                 cmdProc.WriteInput(vsWhereQuery);
                 WaitForSingleObject(cmdProc.m_CmdProcessInfo.hProcess, 2000);// max 2 secs
                 // get the first non-empty substring
@@ -159,7 +160,7 @@ void GetPathsOfVisualStudioInstalls(std::vector<VSVersionInfo> *pVersions) {
                     if (path.string().length() && fs::exists(path)) {
                         VSVersionInfo vInfo;
                         vInfo.Path = path / vskey.pathToAdd;
-                        pVersions->push_back(vInfo);
+                        versions.push_back(vInfo);
                         continue;
                     }
                 }
@@ -177,7 +178,7 @@ void GetPathsOfVisualStudioInstalls(std::vector<VSVersionInfo> *pVersions) {
                 VSVersionInfo vInfo;
                 vInfo.Path = value;
                 vInfo.Path += vskey.pathToAdd;
-                pVersions->push_back(vInfo);
+                versions.push_back(vInfo);
             }
         }
         startVersion = NUMNAMESTOCHECK - 1;// if we loop around again make sure it's from the top
@@ -186,10 +187,10 @@ void GetPathsOfVisualStudioInstalls(std::vector<VSVersionInfo> *pVersions) {
     for (int i = 0; i < NUMVSKEYS; ++i) {
         RegCloseKey(VS_KEYS[i].key);
     }
-    if (pVersions->size() > 0) {
-        OC_INFO_FORMAT("The path of visual studio is {}", pVersions->at(0).Path.string());
+    if (versions.size() > 0) {
+        OC_INFO_FORMAT("The path of visual studio is {}", versions.at(0).Path.string());
     }
-    return;
+    return versions;
 }
 
 }// namespace vision::inline hotfix

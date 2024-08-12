@@ -18,9 +18,8 @@ private:
 
 public:
     void init() noexcept override {
-        vector<VSVersionInfo> vec;
+        vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
         CompileOptions op;
-        GetPathsOfVisualStudioInstalls(&vec);
         vs_path_ = vec.at(0).Path;
         if (!fs::exists(FileInspector::intermediate_path())) {
             fs::create_directory(FileInspector::intermediate_path());

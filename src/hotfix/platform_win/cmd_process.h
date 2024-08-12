@@ -81,9 +81,9 @@ void CmdProcess::ReadAndHandleOutputThread() {
 
 void CmdProcess::InitialiseProcess() {
     //init compile process
-    STARTUPINFOW si;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
+    STARTUPINFOW startupInfo;
+    ZeroMemory(&startupInfo, sizeof(startupInfo));
+    startupInfo.cb = sizeof(startupInfo);
 
     // Set up the security attributes struct.
     SECURITY_ATTRIBUTES sa;
@@ -93,8 +93,8 @@ void CmdProcess::InitialiseProcess() {
 
     // Create the child output pipe.
     //redirection of output
-    si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
-    si.wShowWindow = SW_HIDE;
+    startupInfo.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+    startupInfo.wShowWindow = SW_HIDE;
     HANDLE hOutputReadTmp = nullptr, hOutputWrite = nullptr, hErrorWrite = nullptr;
     auto exit_func = [&] {
         if (hOutputReadTmp) {
@@ -112,7 +112,7 @@ void CmdProcess::InitialiseProcess() {
         exit_func();
         return;
     }
-    si.hStdOutput = hOutputWrite;
+    startupInfo.hStdOutput = hOutputWrite;
 
     // Create a duplicate of the output write handle for the std error
     // write handle. This is necessary in case the child application
@@ -124,13 +124,13 @@ void CmdProcess::InitialiseProcess() {
         exit_func();
         return;
     }
-    si.hStdError = hErrorWrite;
+    startupInfo.hStdError = hErrorWrite;
 
     // Create new output read handle and the input write handles. Set
     // the Properties to FALSE. Otherwise, the child inherits the
     // properties and, as a result, non-closeable handles to the pipes
     // are created.
-    if (si.hStdOutput) {
+    if (startupInfo.hStdOutput) {
         if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
                              GetCurrentProcess(),
                              &m_CmdProcessOutputRead,// Address of new handle.
@@ -151,13 +151,13 @@ void CmdProcess::InitialiseProcess() {
         exit_func();
         return;
     }
-    si.hStdInput = hInputRead;
+    startupInfo.hStdInput = hInputRead;
 
     // Create new output read handle and the input write handles. Set
     // the Properties to FALSE. Otherwise, the child inherits the
     // properties and, as a result, non-closeable handles to the pipes
     // are created.
-    if (si.hStdOutput && !DuplicateHandle(GetCurrentProcess(), hInputWriteTmp,
+    if (startupInfo.hStdOutput && !DuplicateHandle(GetCurrentProcess(), hInputWriteTmp,
                                           GetCurrentProcess(),
                                           &m_CmdProcessInputWrite,// Address of new handle.
                                           0, FALSE,               // Make it uninheritable.
@@ -180,7 +180,7 @@ void CmdProcess::InitialiseProcess() {
         0,               //__in         DWORD dwCreationFlags,
         nullptr,         //__in_opt     LPVOID lpEnvironment,
         nullptr,         //__in_opt     LPCTSTR lpCurrentDirectory,
-        &si,             //__in         LPSTARTUPINFO lpStartupInfo,
+        &startupInfo,             //__in         LPSTARTUPINFO lpStartupInfo,
         &m_CmdProcessInfo//__out        LPPROCESS_INFORMATION lpProcessInformation
     );
 
