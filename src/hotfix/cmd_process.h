@@ -74,7 +74,7 @@ void CmdProcess::ReadAndHandleOutputThread() {
             buffer.find(" : fatal error ") != std::string::npos) {
             std::cerr << "[Cmd process Warning]: " << buffer << std::endl;
         } else {
-            std::cout << "[Cmd process]" << buffer << std::endl;
+            std::cout << "" << buffer;
         }
     }
 }

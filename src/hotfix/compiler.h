@@ -6,6 +6,7 @@
 
 #include "core/stl.h"
 #include "file_inspector.h"
+#include "util/file_manager.h"
 
 namespace vision::inline hotfix {
 
@@ -39,12 +40,16 @@ struct CompileOptions {
 
     void init() {
         fs::path src_dir = FileInspector::project_src_path();
-        include_paths.push_back(src_dir / "ocarina" / "src");
-        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "xxHash");
-        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "EASTL" / "include");
-        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "EASTL" / "packages" /"EABase" / "include" / "Common");
-        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "fmt" / "include");
+
+        include_paths = ocarina::include_paths();
+
+//        include_paths.push_back(src_dir / "ocarina" / "src");
+//        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "xxHash");
+//        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "EASTL" / "include");
+//        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "EASTL" / "packages" /"EABase" / "include" / "Common");
+//        include_paths.push_back(src_dir / "ocarina" / "src" / "ext" / "fmt" / "include");
         include_paths.push_back(src_dir);
+//        paths.push_back(src_dir);
         intermediate_path = FileInspector::intermediate_path();
         optimization_level = correct_optimization_level(optimization_level);
     }

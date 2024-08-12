@@ -33,6 +33,7 @@ public:
     void setup_environment() const {
         std::string cmdSetParams = "\"" + vs_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
         cmd_process_.WriteInput(cmdSetParams);
+        cmd_process_.WriteInput( std::string("chcp 65001\n") );
     }
 
     [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file,
