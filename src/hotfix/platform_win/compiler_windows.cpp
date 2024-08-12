@@ -35,9 +35,16 @@ public:
         cmd_process_.WriteInput(cmdSetParams);
     }
 
-    [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file, const fs::path &output_path) noexcept {
-        return ocarina::format(R"(/nologo /Z7 /FC /utf-8 /MDd /Od /MP /Fo "{}" /D WIN32 /EHa /c "{}")",
-                               output_path.string(), src_file.string());
+    [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file,
+                                                     const fs::path &output_path,
+                                                     const CompileOptions &options) noexcept {
+        string cmd = ocarina::format(R"(/nologo /Z7 /FC /utf-8 /MDd /Od /MP /Fo"{}\\" /D WIN32 /EHa /c "{}")",
+                                     output_path.string(), src_file.string());
+        for (const auto &p : options.include_paths) {
+            cmd += format(R"( /I "{}")", p.string());
+        }
+        cmd += " /std:c++20";
+        return cmd;
     }
 
     void compile(const vision::CompileOptions &options,
@@ -53,13 +60,15 @@ public:
                 continue;
             }
 
-            string cmd = assemble_compile_cmd(file.path, module_path);
+            string cmd = assemble_compile_cmd(file.path, module_path, options);
             fs::path cmd_fn = (module_path / file.path.stem()).string() + ".tmp";
             std::ofstream cmd_file(cmd_fn);
-            cmd = "cl " + cmd;
             cmd_file << cmd;
-            cout << cmd << endl;
             cmd_file.close();
+            string cmd_to_send = "cl @" + cmd_fn.string() ;
+            cmd_to_send += "\necho ";
+            cmd_to_send += string(c_CompletionToken) + "\n";
+            cmd_process_.WriteInput(cmd_to_send);
         }
     }
 };

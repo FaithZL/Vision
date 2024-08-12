@@ -11,7 +11,7 @@
 
 namespace vision::inline hotfix {
 using namespace ocarina;
-const std::string c_CompletionToken("_COMPLETION_TOKEN_");
+static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
 
 /// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
@@ -28,7 +28,7 @@ public:
     ~CmdProcess();
 
     void InitialiseProcess();
-    void WriteInput(std::string &input) const;
+    void WriteInput(const std::string &input) const;
     void CleanupProcessAndPipes();
 
 private:
@@ -47,7 +47,7 @@ void CmdProcess::ReadAndHandleOutputThread() {
                       &nBytesRead, nullptr) ||
             !nBytesRead) {
             if (GetLastError() != ERROR_BROKEN_PIPE) {
-                std::cerr << "[RuntimeCompiler] Redirect of compile output failed on read" << std::endl;
+                std::cerr << "[Cmd process error] Redirect of compile output failed on read" << std::endl;
             }
             break;
         }
@@ -58,7 +58,7 @@ void CmdProcess::ReadAndHandleOutputThread() {
         if (found != std::string::npos) {
             buffer = buffer.substr(0, found);
             if (!m_bStoreCmdOutput) {
-                std::cout << "[RuntimeCompiler] Complete" << std::endl;
+                std::cout << "[Cmd process] Complete" << std::endl;
             }
             m_bIsComplete = true;
         }
@@ -72,9 +72,9 @@ void CmdProcess::ReadAndHandleOutputThread() {
         }
         if (buffer.find(" : error ") != std::string::npos ||
             buffer.find(" : fatal error ") != std::string::npos) {
-            std::cerr << "Warning: " << buffer << std::endl;
+            std::cerr << "[Cmd process Warning]: " << buffer << std::endl;
         } else {
-            std::cout << buffer << std::endl;
+            std::cout << "[Cmd process]" << buffer << std::endl;
         }
     }
 }
@@ -158,10 +158,10 @@ void CmdProcess::InitialiseProcess() {
     // properties and, as a result, non-closeable handles to the pipes
     // are created.
     if (startupInfo.hStdOutput && !DuplicateHandle(GetCurrentProcess(), hInputWriteTmp,
-                                          GetCurrentProcess(),
-                                          &m_CmdProcessInputWrite,// Address of new handle.
-                                          0, FALSE,               // Make it uninheritable.
-                                          DUPLICATE_SAME_ACCESS)) {
+                                                   GetCurrentProcess(),
+                                                   &m_CmdProcessInputWrite,// Address of new handle.
+                                                   0, FALSE,               // Make it uninheritable.
+                                                   DUPLICATE_SAME_ACCESS)) {
         OC_WARNING("[RuntimeCompiler] Failed to duplicate input write pipe\n");
         exit_func();
         return;
@@ -180,7 +180,7 @@ void CmdProcess::InitialiseProcess() {
         0,               //__in         DWORD dwCreationFlags,
         nullptr,         //__in_opt     LPVOID lpEnvironment,
         nullptr,         //__in_opt     LPCTSTR lpCurrentDirectory,
-        &startupInfo,             //__in         LPSTARTUPINFO lpStartupInfo,
+        &startupInfo,    //__in         LPSTARTUPINFO lpStartupInfo,
         &m_CmdProcessInfo//__out        LPPROCESS_INFORMATION lpProcessInformation
     );
 
@@ -191,7 +191,7 @@ void CmdProcess::InitialiseProcess() {
     exit_func();
 }
 
-void CmdProcess::WriteInput(std::string &input) const {
+void CmdProcess::WriteInput(const std::string &input) const {
     DWORD nBytesWritten;
     DWORD length = (DWORD)input.length();
     WriteFile(m_CmdProcessInputWrite, input.c_str(), length, &nBytesWritten, nullptr);
