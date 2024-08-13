@@ -3,7 +3,7 @@
 //
 
 #include "base/importer.h"
-#include "descriptions/json_util.h"
+#include "core/json_util.h"
 #include "base/mgr/pipeline.h"
 
 namespace vision {

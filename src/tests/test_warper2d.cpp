@@ -7,7 +7,7 @@
 #include "rhi/common.h"
 #include "util/image.h"
 #include "util/file_manager.h"
-#include "descriptions/node_desc.h"
+#include "core/node_desc.h"
 
 using namespace vision;
 using namespace ocarina;

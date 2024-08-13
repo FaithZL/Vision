@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "descriptions/scene_desc.h"
+#include "core/scene_desc.h"
 #include "global.h"
 #include "base/sensor/camera.h"
 #include "base/sampler.h"

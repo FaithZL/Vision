@@ -9,7 +9,7 @@
 #include "shape.h"
 #include "base/mgr/pipeline.h"
 #include "mgr/global.h"
-#include "descriptions/json_util.h"
+#include "core/json_util.h"
 
 namespace vision {
 

@@ -10,7 +10,7 @@
 #include "node.h"
 #include "scattering/medium.h"
 #include "math/box.h"
-#include "descriptions/vs_header.h"
+#include "core/vs_header.h"
 #include "base/scattering/material.h"
 #include "base/illumination/light.h"
 

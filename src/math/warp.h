@@ -7,7 +7,7 @@
 #include "math/basic_types.h"
 #include "dsl/dsl.h"
 #include "math/constants.h"
-#include "descriptions/vs_header.h"
+#include "core/vs_header.h"
 
 namespace vision {
 

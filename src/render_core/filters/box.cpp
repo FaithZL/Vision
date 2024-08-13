@@ -2,7 +2,7 @@
 // Created by Zero on 10/09/2022.
 //
 
-#include "descriptions/node_desc.h"
+#include "core/node_desc.h"
 #include "base/sensor/filter.h"
 
 namespace vision {

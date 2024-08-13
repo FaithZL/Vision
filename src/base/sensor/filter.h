@@ -6,7 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "base/node.h"
-#include "descriptions/node_desc.h"
+#include "core/node_desc.h"
 
 namespace vision {
 using namespace ocarina;
