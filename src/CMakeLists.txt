@@ -40,7 +40,6 @@ endfunction()
 add_subdirectory(ocarina)
 add_subdirectory(ext)
 add_subdirectory(descriptions)
-add_subdirectory(core)
 add_subdirectory(UI)
 add_subdirectory(base)
 add_subdirectory(math)
@@ -64,7 +63,7 @@ target_link_libraries(vision-main INTERFACE
         vision-pipeline
         vision-render_graph
         vision-math
-        vision-core)
+        vision-description)
 
 add_library(vision-all_libs INTERFACE)
 target_link_libraries(vision-all_libs INTERFACE

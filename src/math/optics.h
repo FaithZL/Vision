@@ -6,7 +6,7 @@
 
 #include "math/basic_types.h"
 #include "dsl/dsl.h"
-#include "core/vs_header.h"
+#include "descriptions/vs_header.h"
 #include "math/complex.h"
 
 namespace vision {

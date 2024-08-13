@@ -6,7 +6,7 @@
 
 #include "math/basic_types.h"
 #include "core/logging.h"
-#include "core/vs_header.h"
+#include "vs_header.h"
 
 using namespace ocarina;
 

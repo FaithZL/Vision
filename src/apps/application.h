@@ -5,7 +5,7 @@
 #pragma once
 
 #include <iostream>
-#include "core/cli_parser.h"
+#include "descriptions/cli_parser.h"
 #include "descriptions/scene_desc.h"
 #include "core/stl.h"
 #include "base/mgr/pipeline.h"
