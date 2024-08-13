@@ -63,7 +63,7 @@ struct LightSurfacePoint {
     Float2 bary;
 };
 
-class LightImpl : public Node, public Encodable<float> {
+class Light : public Node, public Encodable<float> {
 public:
     using Desc = LightDesc;
 
@@ -103,7 +103,7 @@ protected:
     }
 
 public:
-    explicit LightImpl(const LightDesc &desc, LightType light_type);
+    explicit Light(const LightDesc &desc, LightType light_type);
     OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
@@ -196,23 +196,23 @@ public:
 class Mesh;
 class ShapeInstance;
 
-class IAreaLight : public LightImpl {
+class IAreaLight : public Light {
 protected:
     EncodedData<uint> inst_idx_{InvalidUI32};
     const ShapeInstance *instance_{};
 
 public:
     explicit IAreaLight(const LightDesc &desc)
-        : LightImpl(desc, LightType::Area),
+        : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
-    OC_ENCODABLE_FUNC(LightImpl, inst_idx_)
+    OC_ENCODABLE_FUNC(Light, inst_idx_)
     void set_instance(const ShapeInstance *inst) noexcept;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 
-class IPointLight : public LightImpl {
+class IPointLight : public Light {
 public:
-    explicit IPointLight(const LightDesc &desc) : LightImpl(desc, LightType::DeltaPosition) {}
+    explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,
                                const LightEvalContext &p_light) const noexcept override {
@@ -240,15 +240,15 @@ public:
     }
 };
 
-class EnvironmentImpl : public LightImpl {
+class Environment : public Light {
 public:
-    using LightImpl::LightImpl;
+    using Light::Light;
     [[nodiscard]] virtual Float2 convert_to_bary(const Float3 &world_dir) const noexcept {
         return make_float2(0.f);
     }
 };
 
-using Light = TObject<LightImpl>;
-using Environment = TObject<EnvironmentImpl>;
+using TLight = TObject<Light>;
+using TEnvironment = TObject<Environment>;
 
 }// namespace vision

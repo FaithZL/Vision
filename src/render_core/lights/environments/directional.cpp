@@ -17,7 +17,7 @@ namespace vision {
 //        "scale" : 1,
 //        "direction" : [1,1,1]
 //    }
-class DirectionalLight : public EnvironmentImpl {
+class DirectionalLight : public Environment {
 private:
     EncodedData<float3> direction_;
     EncodedData<float> world_radius_;
@@ -25,9 +25,9 @@ private:
 
 public:
     explicit DirectionalLight(const LightDesc &desc)
-        : EnvironmentImpl(desc, LightType::DeltaDirection | LightType::Infinite),
+        : Environment(desc, LightType::DeltaDirection | LightType::Infinite),
           direction_(desc["direction"].as_float3(make_float3(-1.f))) {}
-    OC_ENCODABLE_FUNC(EnvironmentImpl, direction_, world_radius_, world_center_)
+    OC_ENCODABLE_FUNC(Environment, direction_, world_radius_, world_center_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         world_radius_ = scene().world_radius();

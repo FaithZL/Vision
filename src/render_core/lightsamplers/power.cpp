@@ -33,7 +33,7 @@ public:
         warper_ = scene().load_warper();
         vector<float> weights;
         if (env_separate_) {
-            lights_.for_each_instance([&](Light light) {
+            lights_.for_each_instance([&](TLight light) {
                 float weight = 0;
                 if (!light->match(LightType::Infinite)) {
                     weight = luminance(light->power());
@@ -41,7 +41,7 @@ public:
                 weights.push_back(weight);
             });
         } else {
-            lights_.for_each_instance([&](Light light) {
+            lights_.for_each_instance([&](TLight light) {
                 weights.push_back(luminance(light->power()));
             });
         }

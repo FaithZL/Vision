@@ -102,7 +102,7 @@ void Scene::add_material(SP<vision::Material> material) noexcept {
     materials().push_back(ocarina::move(material));
 }
 
-void Scene::add_light(Light light) noexcept {
+void Scene::add_light(TLight light) noexcept {
     light_sampler_->add_light(ocarina::move(light));
 }
 
@@ -167,7 +167,7 @@ void Scene::fill_instances() {
             instance.update_material_id(materials().encode_id(material->index(), material));
         }
         if (instance.has_emission()) {
-            const LightImpl *emission = instance.emission().get();
+            const Light *emission = instance.emission().get();
             instance.update_light_id(light_sampler_->lights().encode_id(emission->index(), emission));
         }
         instance.fill_mesh_id();

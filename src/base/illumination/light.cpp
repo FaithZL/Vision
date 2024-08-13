@@ -7,13 +7,13 @@
 
 namespace vision {
 
-LightImpl::LightImpl(const LightDesc &desc, LightType light_type)
+Light::Light(const LightDesc &desc, LightType light_type)
     : Node(desc), type_(light_type),
       scale_(desc["scale"].as_float(1.f)) {
     color_.set(Slot::create_slot(desc.color));
 }
 
-bool LightImpl::render_UI(ocarina::Widgets *widgets) noexcept {
+bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = format("{} {} light: {}", index_, impl_type().data(), name_.c_str());
     bool open = widgets->use_tree(label, [&] {
         changed_ |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(switch_.hv())));
