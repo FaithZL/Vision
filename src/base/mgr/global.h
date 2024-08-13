@@ -10,7 +10,7 @@
 
 namespace vision {
 class Pipeline;
-class SpectrumImpl;
+class Spectrum;
 class Global {
 private:
     Global() = default;
@@ -47,10 +47,10 @@ public:
 
 class FrameBuffer;
 
-class SpectrumImpl;
+class Spectrum;
 template<typename impl_t, typename desc_t>
 class TObject;
-using Spectrum = TObject<SpectrumImpl, SpectrumDesc>;
+using TSpectrum = TObject<Spectrum, SpectrumDesc>;
 
 class Context {
 protected:
@@ -62,7 +62,7 @@ public:
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
-    [[nodiscard]] static Spectrum &spectrum() noexcept;
+    [[nodiscard]] static TSpectrum &spectrum() noexcept;
 };
 
 }// namespace vision

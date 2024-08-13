@@ -42,7 +42,7 @@ private:
     RenderSettingDesc render_setting_{};
     MaterialRegistry *material_registry_{&MaterialRegistry::instance()};
     MeshRegistry *mesh_registry_{&MeshRegistry::instance()};
-    Spectrum spectrum_{};
+    TSpectrum spectrum_{};
     TObject<Medium> global_medium_{};
     SP<Material> black_body_{};
     float min_radius_{};
