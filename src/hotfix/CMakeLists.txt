@@ -1,7 +1,9 @@
-file(GLOB_RECURSE HEADER_FILES *.h*)
-file(GLOB_RECURSE SOURCE_FILES *.c*)
+file(GLOB HEADER_FILES *.h*)
+file(GLOB SOURCE_FILES *.c*)
 
-add_library(vision-hotfix SHARED ${SOURCE_FILES})
+add_library(vision-hotfix SHARED ${SOURCE_FILES}
+        rule_parser/ninja_parser.cpp
+        platform_win/compiler_windows.cpp)
 target_link_libraries(vision-hotfix PUBLIC
         ocarina
         ocarina-include)
