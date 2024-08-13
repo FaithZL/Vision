@@ -7,7 +7,7 @@
 
 namespace vision {
 
-LightSamplerImpl::LightSamplerImpl(const LightSamplerDesc &desc)
+LightSampler::LightSampler(const LightSamplerDesc &desc)
     : Node(desc),
       env_separate_(desc["env_separate"].as_bool(false)),
       env_prob_(ocarina::clamp(desc["env_prob"].as_float(0.5f), 0.01f, 0.99f)) {
@@ -24,18 +24,18 @@ LightSamplerImpl::LightSamplerImpl(const LightSamplerDesc &desc)
     }
 }
 
-Uint LightSamplerImpl::correct_index(Uint index) const noexcept {
+Uint LightSampler::correct_index(Uint index) const noexcept {
     if (env_light() && env_separate_) {
         return ocarina::select(index < env_index(), index, index + 1u);
     }
     return index;
 }
 
-void LightSamplerImpl::tidy_up() noexcept {
+void LightSampler::tidy_up() noexcept {
 
-    auto ss = typeid(std::declval<TObject<FilterImpl>>().get()).name();
+    auto ss = typeid(std::declval<TObject<Filter>>().get()).name();
 
-    static_assert(ocarina::is_ptr_v<TObject<FilterImpl>>);
+    static_assert(ocarina::is_ptr_v<TObject<Filter>>);
 
     std::sort(lights_.begin(), lights_.end(), [&](TLight a, TLight b) {
         return lights_.type_index(a.get()) < lights_.type_index(b.get());
@@ -45,7 +45,7 @@ void LightSamplerImpl::tidy_up() noexcept {
     });
 }
 
-void LightSamplerImpl::prepare() noexcept {
+void LightSampler::prepare() noexcept {
     for_each([&](TLight light, uint index) noexcept {
         light->prepare();
     });
@@ -53,13 +53,13 @@ void LightSamplerImpl::prepare() noexcept {
     lights_.prepare(rp->bindless_array(), rp->device());
 }
 
-void LightSamplerImpl::update_device_data() noexcept {
+void LightSampler::update_device_data() noexcept {
     if (has_changed()) {
         lights_.update();
     }
 }
 
-bool LightSamplerImpl::render_UI(ocarina::Widgets *widgets) noexcept {
+bool LightSampler::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} light sampler", impl_type().data()),
         [&] {
@@ -69,11 +69,11 @@ bool LightSamplerImpl::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
-Uint LightSamplerImpl::extract_light_index(const vision::Interaction &it) const noexcept {
+Uint LightSampler::extract_light_index(const vision::Interaction &it) const noexcept {
     return combine_to_light_index(it.light_type_id(), it.light_inst_id());
 }
 
-Uint LightSamplerImpl::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
+Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_id) const noexcept {
     vector<uint> nums;
     Uint ret = 0u;
     switch (lights_.mode()) {
@@ -99,7 +99,7 @@ Uint LightSamplerImpl::combine_to_light_index(const Uint &type_id, const Uint &i
     return ret;
 }
 
-pair<Uint, Uint> LightSamplerImpl::extract_light_id(const Uint &index) const noexcept {
+pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcept {
     Uint type_id = 0u;
     Uint inst_id = 0u;
     vector<uint> nums;
@@ -126,7 +126,7 @@ pair<Uint, Uint> LightSamplerImpl::extract_light_id(const Uint &index) const noe
     return {type_id, inst_id};
 }
 
-Float LightSamplerImpl::PMF(const LightSampleContext &lsc, const Uint &index) const noexcept {
+Float LightSampler::PMF(const LightSampleContext &lsc, const Uint &index) const noexcept {
     if (env_separate_) {
         if (env_prob() == 1) {
             return 1.f;
@@ -145,7 +145,7 @@ Float LightSamplerImpl::PMF(const LightSampleContext &lsc, const Uint &index) co
     return PMF_(lsc, index);
 }
 
-SampledLight LightSamplerImpl::select_light(const LightSampleContext &lsc, Float u) const noexcept {
+SampledLight LightSampler::select_light(const LightSampleContext &lsc, Float u) const noexcept {
     if (env_separate_) {
         if (env_prob() == 1) {
             return SampledLight{0, 1.f};
@@ -166,7 +166,7 @@ SampledLight LightSamplerImpl::select_light(const LightSampleContext &lsc, Float
     return select_light_(lsc, u);
 }
 
-LightSample LightSamplerImpl::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
+LightSample LightSampler::sample_wi(const SampledLight &sampled_light, const LightSampleContext &lsc,
                                     const Float2 &u, const SampledWavelengths &swl) const noexcept {
     LightSample ls{swl.dimension()};
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
@@ -177,7 +177,7 @@ LightSample LightSamplerImpl::sample_wi(const SampledLight &sampled_light, const
     return ls;
 }
 
-LightSample LightSamplerImpl::sample_wi(const LightSampleContext &lsc, Sampler &sampler,
+LightSample LightSampler::sample_wi(const LightSampleContext &lsc, Sampler &sampler,
                                     const SampledWavelengths &swl) const noexcept {
     Float u_light = sampler->next_1d();
     Float2 u_surface = sampler->next_2d();
@@ -185,7 +185,7 @@ LightSample LightSamplerImpl::sample_wi(const LightSampleContext &lsc, Sampler &
     return sample_wi(sampled_light, lsc, u_surface, swl);
 }
 
-LightSurfacePoint LightSamplerImpl::sample_only(const LightSampleContext &lsc, Sampler &sampler) const noexcept {
+LightSurfacePoint LightSampler::sample_only(const LightSampleContext &lsc, Sampler &sampler) const noexcept {
     LightSurfacePoint lsp;
     SampledLight sampled_light = select_light(lsc, sampler->next_1d());
     auto [type_id, inst_id] = extract_light_id(sampled_light.light_index);
@@ -197,7 +197,7 @@ LightSurfacePoint LightSamplerImpl::sample_only(const LightSampleContext &lsc, S
     return lsp;
 }
 
-LightSample LightSamplerImpl::evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
+LightSample LightSampler::evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                          const SampledWavelengths &swl, LightEvalMode mode) const noexcept {
     auto [type_id, inst_id] = extract_light_id(lsp.light_index);
     Float pmf = PMF(lsc, lsp.light_index);
@@ -209,7 +209,7 @@ LightSample LightSamplerImpl::evaluate_point(const LightSampleContext &lsc, cons
     return ls;
 }
 
-Float LightSamplerImpl::PDF_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
+Float LightSampler::PDF_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                               const Float &pdf_wi) const noexcept {
     auto [type_id, inst_id] = extract_light_id(lsp.light_index);
     Float ret = 0.f;
@@ -219,7 +219,7 @@ Float LightSamplerImpl::PDF_point(const LightSampleContext &lsc, const LightSurf
     return ret;
 }
 
-LightEval LightSamplerImpl::evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
+LightEval LightSampler::evaluate_hit_wi(const LightSampleContext &p_ref, const Interaction &it,
                                         const SampledWavelengths &swl, LightEvalMode mode) const noexcept {
     LightEval ret = LightEval{swl.dimension()};
     Uint light_idx = extract_light_index(it);
@@ -236,7 +236,7 @@ LightEval LightSamplerImpl::evaluate_hit_wi(const LightSampleContext &p_ref, con
     return ret;
 }
 
-LightEval LightSamplerImpl::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
+LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, const Interaction &it,
                                            const Float &pdf_wi,
                                            const SampledWavelengths &swl,
                                            Float *light_pdf_point, LightEvalMode mode) const noexcept {
@@ -257,7 +257,7 @@ LightEval LightSamplerImpl::evaluate_hit_point(const LightSampleContext &p_ref, 
     return ret;
 }
 
-LightEval LightSamplerImpl::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
+LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
                                          const SampledWavelengths &swl, LightEvalMode mode) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret{swl.dimension()};
@@ -269,7 +269,7 @@ LightEval LightSamplerImpl::evaluate_miss_wi(const LightSampleContext &p_ref, Fl
     return ret;
 }
 
-LightEval LightSamplerImpl::evaluate_miss_point(const LightSampleContext &p_ref, const Float3 &wi,
+LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, const Float3 &wi,
                                             const Float &pdf_wi, const SampledWavelengths &swl,
                                             Float *light_pdf_point, LightEvalMode mode) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
@@ -282,7 +282,7 @@ LightEval LightSamplerImpl::evaluate_miss_point(const LightSampleContext &p_ref,
     return ret;
 }
 
-void LightSamplerImpl::dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept {
+void LightSampler::dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept {
     uint type_index = lights_.type_index(env_light());
     dispatch_light(type_index, 0, [&](const Light *light) {
         auto env = dynamic_cast<const Environment *>(light);
@@ -292,11 +292,11 @@ void LightSamplerImpl::dispatch_environment(const std::function<void(const Envir
     });
 }
 
-void LightSamplerImpl::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
+void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
     lights_.dispatch(id, func);
 }
 
-void LightSamplerImpl::dispatch_light(const Uint &type_id, const Uint &inst_id,
+void LightSampler::dispatch_light(const Uint &type_id, const Uint &inst_id,
                                   const std::function<void(const Light *)> &func) const noexcept {
     lights_.dispatch(type_id, inst_id, func);
 }

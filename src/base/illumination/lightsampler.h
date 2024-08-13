@@ -23,7 +23,7 @@ struct SampledLight {
 
 class SamplerImpl;
 
-class LightSamplerImpl : public Node {
+class LightSampler : public Node {
 public:
     using Desc = LightSamplerDesc;
 
@@ -38,7 +38,7 @@ protected:
     [[nodiscard]] virtual Float PMF_(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
 
 public:
-    explicit LightSamplerImpl(const LightSamplerDesc &desc);
+    explicit LightSampler(const LightSamplerDesc &desc);
     void prepare() noexcept override;
     void update_device_data() noexcept;
     VS_MAKE_GUI_STATUS_FUNC(Node, lights_)
@@ -118,6 +118,6 @@ public:
     }
 };
 
-using LightSampler = TObject<LightSamplerImpl>;
+using TLightSampler = TObject<LightSampler>;
 
 }// namespace vision

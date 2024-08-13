@@ -31,7 +31,7 @@ public:
     using Desc = SensorDesc;
 
 protected:
-    Filter filter_{};
+    TFilter filter_{};
     SP<Film> film_{};
     TObject<Medium> medium_{};
     EncodedData<uint> medium_id_{InvalidUI32};

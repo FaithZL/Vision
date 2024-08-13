@@ -26,7 +26,7 @@ struct FilterSample {
 //        ]
 //    }
 //}
-class FilterImpl : public Node, public Encodable<float> {
+class Filter : public Node, public Encodable<float> {
 public:
     using Desc = FilterDesc;
 
@@ -34,7 +34,7 @@ protected:
     EncodedData<float2> radius_;
 
 public:
-    explicit FilterImpl(const FilterDesc &desc)
+    explicit Filter(const FilterDesc &desc)
         : Node(desc),
           radius_(desc["radius"].as_float2(make_float2(1.5f))) {}
     OC_ENCODABLE_FUNC(Encodable<float>, radius_)
@@ -52,6 +52,6 @@ public:
     }
 };
 
-using Filter = TObjectUI<FilterImpl>;
+using TFilter = TObjectUI<Filter>;
 
 }// namespace vision

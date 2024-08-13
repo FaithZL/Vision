@@ -7,9 +7,9 @@
 
 namespace vision {
 
-class BoxFilter : public FilterImpl {
+class BoxFilter : public Filter {
 public:
-    explicit BoxFilter(const FilterDesc &desc) : FilterImpl(desc) {}
+    explicit BoxFilter(const FilterDesc &desc) : Filter(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         Float2 p = make_float2(lerp(u[0], -radius().x, radius().x),

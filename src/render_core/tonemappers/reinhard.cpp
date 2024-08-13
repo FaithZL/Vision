@@ -6,10 +6,10 @@
 
 namespace vision {
 
-class ReinhardToneMapper : public ToneMapperImpl {
+class ReinhardToneMapper : public ToneMapper {
 public:
     explicit ReinhardToneMapper(const ToneMapperDesc &desc)
-        : ToneMapperImpl(desc) {}
+        : ToneMapper(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float4 apply(const ocarina::Float4 &input) const noexcept override {
         return input / (input + 1.f);

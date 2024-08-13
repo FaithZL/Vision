@@ -18,12 +18,12 @@ namespace vision {
 //
 //    }
 //}
-class ToneMapperImpl : public Node, public Encodable<float> {
+class ToneMapper : public Node, public Encodable<float> {
 public:
     using Desc = ToneMapperDesc;
 
 public:
-    explicit ToneMapperImpl(const ToneMapperDesc &desc)
+    explicit ToneMapper(const ToneMapperDesc &desc)
         : Node(desc) {}
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         return widgets->use_folding_header(ocarina::format("{} tone mapper", impl_type().data()),[&]{
@@ -33,6 +33,6 @@ public:
     [[nodiscard]] virtual Float4 apply(const Float4 &input) const noexcept = 0;
 };
 
-using ToneMapper = TObject<ToneMapperImpl>;
+using TToneMapper = TObject<ToneMapper>;
 
 }// namespace vision

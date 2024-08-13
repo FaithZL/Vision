@@ -8,9 +8,9 @@
 
 namespace vision {
 
-class TriangleFilter : public FilterImpl {
+class TriangleFilter : public Filter {
 public:
-    explicit TriangleFilter(const FilterDesc &desc) : FilterImpl(desc) {}
+    explicit TriangleFilter(const FilterDesc &desc) : Filter(desc) {}
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         return {make_float2(sample_tent(u.x, radius().x), sample_tent(u.y, radius().y)), 1.f};
     }

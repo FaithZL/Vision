@@ -25,7 +25,7 @@ public:
     FilterSampler()
         : warper_(scene().load_warper2d()) {}
 
-    void prepare(const FilterImpl *filter) {
+    void prepare(const Filter *filter) {
         int len = ocarina::sqr(table_size);
         lut_.resize(len);
         vector<float> func;
@@ -74,13 +74,13 @@ public:
     }
 };
 
-class FittedCurveFilter : public FilterImpl {
+class FittedCurveFilter : public Filter {
 protected:
     FilterSampler sampler_{};
 
 public:
     explicit FittedCurveFilter(const FilterDesc &desc)
-        : FilterImpl(desc) {}
+        : Filter(desc) {}
 
     void prepare() noexcept override {
         sampler_.prepare(this);

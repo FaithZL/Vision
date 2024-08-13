@@ -34,7 +34,7 @@ private:
     TCamera camera_{};
     Sampler sampler_{};
     Integrator integrator_{};
-    LightSampler light_sampler_{};
+    TLightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
     vector<ShapeInstance> instances_;
     Polymorphic<SP<Medium>> mediums_;

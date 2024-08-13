@@ -56,7 +56,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 
 SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
                              BSDFSample *bs, Float *light_pdf_point, HitBSDFVar *hit_bsdf, Uint *flag) const noexcept {
-    LightSampler &light_sampler = scene().light_sampler();
+    TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = scene().spectrum();
     const SampledWavelengths &swl = sampled_wavelengths();
     const Geometry &geometry = pipeline()->geometry();
@@ -125,7 +125,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
 
 SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, const DIRSVSample &sample,
                              LightSample *output_ls, Float *bsdf_pdf_point) const noexcept {
-    LightSampler &light_sampler = scene().light_sampler();
+    TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = scene().spectrum();
     const SampledWavelengths &swl = sampled_wavelengths();
     SampledSpectrum f{swl.dimension()};
@@ -163,7 +163,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
 
 DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
                           const Var<Param> &param, Uint *flag) const noexcept {
-    LightSampler &light_sampler = scene().light_sampler();
+    TLightSampler &light_sampler = scene().light_sampler();
     Sampler &sampler = scene().sampler();
     TSpectrum &spectrum = scene().spectrum();
     comment("RIS start");
@@ -493,7 +493,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
 }
 
 Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
-    LightSampler &light_sampler = scene().light_sampler();
+    TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
     const TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
@@ -544,7 +544,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
 void ReSTIRDI::compile_shader1() noexcept {
     TCamera &camera = scene().camera();
     Film *film = camera->film();
-    LightSampler &light_sampler = scene().light_sampler();
+    TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
         sampler()->load_data();
