@@ -65,7 +65,7 @@ private:
     Shader<void(indirect::Param, uint)> spatial_shading_;
 
 protected:
-    [[nodiscard]] static Sampler &sampler() noexcept { return scene().sampler(); }
+    [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
 
 public:
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);

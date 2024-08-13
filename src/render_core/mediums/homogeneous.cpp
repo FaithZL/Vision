@@ -29,13 +29,13 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
-                                     Sampler &sampler) const noexcept override {
+                                     TSampler &sampler) const noexcept override {
         return Tr(length(ray->direction()) * ray->t_max(), swl);
     }
 
     [[nodiscard]] SampledSpectrum sample(const RayVar &ray, Interaction &it,
                                          const SampledWavelengths &swl,
-                                         Sampler &sampler) const noexcept override {
+                                         TSampler &sampler) const noexcept override {
         SampledSpectrum sigma_t = spectrum()->decode_to_unbound_spectrum(sigma_t_, swl).sample;
         SampledSpectrum sigma_s = spectrum()->decode_to_unbound_spectrum(sigma_s_, swl).sample;
         Uint channel = min(cast<uint>(sampler->next_1d() * swl.dimension()), swl.dimension() - 1);

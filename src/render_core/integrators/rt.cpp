@@ -55,7 +55,7 @@ public:
     }
 
     void compile_path_tracing() noexcept {
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         TCamera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, BufferVar<SurfaceData> surfaces) {
             SurfaceDataVar surface = surfaces.read(dispatch_id());

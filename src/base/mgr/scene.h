@@ -32,8 +32,8 @@ class Scene : public GUI, public hotfix::Observer {
 private:
     Box3f aabb_;
     TCamera camera_{};
-    Sampler sampler_{};
-    Integrator integrator_{};
+    TSampler sampler_{};
+    TIntegrator integrator_{};
     TLightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
     vector<ShapeInstance> instances_;

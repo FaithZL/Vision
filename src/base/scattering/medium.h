@@ -12,11 +12,11 @@
 namespace vision {
 using namespace ocarina;
 
-class SamplerImpl;
+class Sampler;
 template<typename T, typename Desc>
 class TObject;
 
-using Sampler = TObject<SamplerImpl, SamplerDesc>;
+using TSampler = TObject<Sampler, SamplerDesc>;
 
 class SampledWavelengths;
 
@@ -36,9 +36,9 @@ public:
     void set_index(uint index) noexcept { index_ = index; }
     OC_MAKE_MEMBER_GETTER(index,)
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
-                               Sampler &sampler) const noexcept = 0;
+                               TSampler &sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const RayVar &ray, Interaction &it,
-                                   const SampledWavelengths &swl, Sampler &sampler) const noexcept = 0;
+                                   const SampledWavelengths &swl, TSampler &sampler) const noexcept = 0;
 };
 
 }// namespace vision

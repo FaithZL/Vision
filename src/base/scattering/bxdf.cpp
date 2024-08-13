@@ -49,7 +49,7 @@ SampledDirection BxDF::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const
     return {wi, 1.f};
 }
 
-BSDFSample BxDF::sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept {
+BSDFSample BxDF::sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
@@ -78,7 +78,7 @@ SampledDirection MicrofacetReflection::sample_wi(Float3 wo, Float2 u, SP<Fresnel
     return {wi, 1.f};
 }
 
-BSDFSample MicrofacetReflection::sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept {
+BSDFSample MicrofacetReflection::sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
@@ -114,7 +114,7 @@ SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresn
     return {wi, valid && dot(wh, wo) > 0};
 }
 
-BSDFSample MicrofacetTransmission::sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept {
+BSDFSample MicrofacetTransmission::sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);

@@ -26,7 +26,7 @@ public:
 
     void compile_compute_geom() noexcept {
         TCamera &camera = scene().camera();
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         TLightSampler &light_sampler = scene().light_sampler();
         Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer, BufferVar<float2> motion_vectors,
                             BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer) {
@@ -132,7 +132,7 @@ public:
 
     void compile_compute_hit() noexcept {
         TCamera &camera = scene().camera();
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         Kernel kernel = [&](BufferVar<Hit> hit_buffer, Uint frame_index) {
             Uint2 pixel = dispatch_idx().xy();
             sampler->start(pixel, frame_index, 0);

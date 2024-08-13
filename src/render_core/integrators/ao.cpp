@@ -9,7 +9,7 @@
 
 namespace vision {
 
-class AmbientOcclusionIntegrator : public IntegratorImpl {
+class AmbientOcclusionIntegrator : public Integrator {
 private:
     EncodedData<float> distance_{1.f};
     EncodedData<uint> cos_sample_{true};
@@ -17,18 +17,18 @@ private:
 
 public:
     explicit AmbientOcclusionIntegrator(const IntegratorDesc &desc)
-        : IntegratorImpl(desc),
+        : Integrator(desc),
           distance_(desc["distance"].as_float(1.f)),
           cos_sample_(desc["cos_sample"].as_bool(true)),
           sample_num_(desc["sample_num"].as_uint(32u)) {}
 
-    OC_ENCODABLE_FUNC(IntegratorImpl, distance_, cos_sample_, sample_num_)
+    OC_ENCODABLE_FUNC(Integrator, distance_, cos_sample_, sample_num_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] Float3 Li(vision::RayState rs, Float scatter_pdf, SampledSpectrum throughput,
                             const HitContext &hc, const RenderEnv &render_env) const noexcept override {
         Float3 L = make_float3(0.f);
         Pipeline *rp = pipeline();
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         Geometry &geom = rp->geometry();
         $while(true) {
             Var hit = geom.trace_closest(rs.ray);
@@ -65,7 +65,7 @@ public:
     void compile() noexcept override {
         Pipeline *rp = pipeline();
         Camera *camera = scene().camera().get();
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         Geometry &geom = rp->geometry();
 
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {

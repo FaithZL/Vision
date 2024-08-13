@@ -199,7 +199,7 @@ public:
         return {wi, 1.f};
     }
 
-    [[nodiscard]] BSDFSample sample(Float3 wo, Sampler &sampler, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] BSDFSample sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept override {
         Float2 u = sampler->next_2d();
         auto [wi, pdf] = sample_wi(wo, u, fresnel);
         BSDFSample ret{swl().dimension()};
@@ -525,7 +525,7 @@ public:
                        "PrincipledBxDFSet::evaluate_local");
     }
 
-    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, Sampler &sampler) const noexcept override {
+    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
         return outline([&] {
             Float uc = sampler->next_1d();
             Float2 u = sampler->next_2d();
@@ -574,7 +574,7 @@ public:
                        "PrincipledBxDFSet::sample_wi");
     }
 
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, Sampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
         BSDFSample ret{spec_refl_->swl().dimension()};
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, MaterialEvalMode::All, flag);

@@ -10,12 +10,12 @@
 namespace vision {
 using namespace ocarina;
 
-class IndependentSampler : public SamplerImpl {
+class IndependentSampler : public Sampler {
 private:
     optional<Uint> state_{};
 
 public:
-    explicit IndependentSampler(const SamplerDesc &desc) : SamplerImpl(desc) {}
+    explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
     void load_data() noexcept override {
         state_.emplace(Uint{0u});
     }
@@ -24,7 +24,7 @@ public:
         try_load_data();
         state_ = state;
     }
-    void temporary(const ocarina::function<void (SamplerImpl *)> &func) noexcept override {
+    void temporary(const ocarina::function<void (Sampler *)> &func) noexcept override {
         try_load_data();
         Uint temp_state = *state_;
         func(this);

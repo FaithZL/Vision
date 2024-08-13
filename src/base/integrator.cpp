@@ -10,7 +10,7 @@
 
 namespace vision {
 
-void IntegratorImpl::invalidation() const noexcept {
+void Integrator::invalidation() const noexcept {
     Film *film = scene().film();
     if (film->enable_accumulation()) {
         frame_index_ = 0u;
@@ -18,11 +18,11 @@ void IntegratorImpl::invalidation() const noexcept {
     }
 }
 
-void RenderEnv::initial(Sampler &sampler, const Uint &frame_index, const TSpectrum &spectrum) noexcept {
+void RenderEnv::initial(TSampler &sampler, const Uint &frame_index, const TSpectrum &spectrum) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     frame_index_.emplace(frame_index);
     SampledWavelengths wavelengths{spectrum->dimension()};
-    sampler->temporary([&](SamplerImpl *) {
+    sampler->temporary([&](Sampler *) {
         sampler->start(pixel, frame_index, -1);
         wavelengths = spectrum->sample_wavelength(sampler);
     });
@@ -30,7 +30,7 @@ void RenderEnv::initial(Sampler &sampler, const Uint &frame_index, const TSpectr
 }
 
 IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &desc)
-    : IntegratorImpl(desc),
+    : Integrator(desc),
       max_depth_(desc["max_depth"].as_uint(16)),
       min_depth_(desc["min_depth"].as_uint(5)),
       rr_threshold_(desc["rr_threshold"].as_float(1.f)),
@@ -103,7 +103,7 @@ SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3
 Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &max_depth, SampledSpectrum throughput,
                                   bool only_direct, const HitContext &hc, const RenderEnv &render_env) const noexcept {
     Pipeline *rp = pipeline();
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     TLightSampler &light_sampler = scene().light_sampler();
 
     const SampledWavelengths &swl = render_env.sampled_wavelengths();

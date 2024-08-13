@@ -46,9 +46,9 @@ public:
         return {{"radiance", "radiance", false, ResourceFormat::FLOAT4}};
     }
 
-    [[nodiscard]] static Integrator &integrator() noexcept { return scene().integrator(); }
+    [[nodiscard]] static TIntegrator &integrator() noexcept { return scene().integrator(); }
     [[nodiscard]] static TCamera &camera() noexcept { return scene().camera(); }
-    [[nodiscard]] static Sampler &sampler() noexcept { return scene().sampler(); }
+    [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
 };
 
 }// namespace vision

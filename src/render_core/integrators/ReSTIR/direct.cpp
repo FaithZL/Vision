@@ -61,7 +61,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     const SampledWavelengths &swl = sampled_wavelengths();
     const Geometry &geometry = pipeline()->geometry();
     SampledSpectrum f{swl.dimension()};
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     if (!bsdf) {
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
@@ -164,7 +164,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
 DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
                           const Var<Param> &param, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     TSpectrum &spectrum = scene().spectrum();
     comment("RIS start");
     Uint M_light = param.M_light;
@@ -235,7 +235,7 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
 Float ReSTIRDI::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
                                       const DIReservoir &other_rsv, const Interaction &other_it,
                                       Uint M, DIReservoir *output_rsv) const noexcept {
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     const SampledWavelengths &swl = sampled_wavelengths();
     Float p_hat_c_at_c = compute_p_hat(canonical_it, nullptr, canonical_rsv.sample);
     Float p_hat_c_at_n = compute_p_hat(other_it, nullptr, canonical_rsv.sample);

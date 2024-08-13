@@ -21,7 +21,7 @@ struct SampledLight {
     Float PMF;
 };
 
-class SamplerImpl;
+class Sampler;
 
 class LightSampler : public Node {
 public:
@@ -79,13 +79,13 @@ public:
     [[nodiscard]] LightSample sample_wi(const SampledLight &sampled_light,
                                         const LightSampleContext &lsc,
                                         const Float2 &u, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] LightSample sample_wi(const LightSampleContext &lsc, Sampler &sampler,
+    [[nodiscard]] LightSample sample_wi(const LightSampleContext &lsc, TSampler &sampler,
                                         const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] LightSample evaluate_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                              const SampledWavelengths &swl, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] Float PDF_point(const LightSampleContext &lsc, const LightSurfacePoint &lsp,
                                   const Float &pdf_wi) const noexcept;
-    [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, Sampler &sampler) const noexcept;
+    [[nodiscard]] LightSurfacePoint sample_only(const LightSampleContext &lsc, TSampler &sampler) const noexcept;
     void dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_light(const Uint &type_id, const Uint &inst_id, const std::function<void(const Light *)> &func) const noexcept;
     void dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept;

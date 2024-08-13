@@ -21,7 +21,7 @@ enum Dimension {
     ReSTIRGI_spatial
 };
 
-class SamplerImpl : public Node {
+class Sampler : public Node {
 public:
     using Desc = SamplerDesc;
 
@@ -29,7 +29,7 @@ protected:
     uint spp_{1u};
 
 public:
-    explicit SamplerImpl(const SamplerDesc &desc)
+    explicit Sampler(const SamplerDesc &desc)
         : Node(desc), spp_(desc["spp"].as_uint(1u)) {}
     virtual void load_data() noexcept = 0;
     [[nodiscard]] virtual Float next_1d() noexcept = 0;
@@ -49,7 +49,7 @@ public:
      * performed without changing the state quantity
      * @param func
      */
-    virtual void temporary(const ocarina::function<void(SamplerImpl *)> &func) noexcept = 0;
+    virtual void temporary(const ocarina::function<void(Sampler *)> &func) noexcept = 0;
     [[nodiscard]] virtual uint sample_per_pixel() const noexcept { return spp_; }
     virtual void start(const Uint2 &pixel, const Uint &sample_index, const Uint &dim) noexcept = 0;
     void start(const Uint2 &pixel, const Uint &sample_index, Dimension dim) noexcept {
@@ -71,6 +71,6 @@ public:
     }
 };
 
-using Sampler = TObject<SamplerImpl>;
+using TSampler = TObject<Sampler>;
 
 }// namespace vision

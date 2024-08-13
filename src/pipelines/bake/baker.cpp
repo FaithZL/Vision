@@ -7,7 +7,7 @@
 namespace vision {
 
 RayState Baker::generate_ray(const Float3 &position, const Float3 &normal, Float *scatter_pdf) const noexcept {
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
     *scatter_pdf = cosine_hemisphere_PDF(wi.z);
     Frame frame(normal);
@@ -19,7 +19,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
                                                               const BufferVar<Vertex> &vertices,
                                                               const BufferVar<uint4> &pixels,
                                                               Float2 *p_film) noexcept {
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     auto filter = scene().camera()->filter();
     Uint4 pixel_data = pixels.read(dispatch_id());
     Uint triangle_id = pixel_data.x;
@@ -77,9 +77,9 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
 }
 
 void Baker::_compile_bake() noexcept {
-    Sampler &sampler = scene().sampler();
+    TSampler &sampler = scene().sampler();
     TCamera camera = scene().camera();
-    Integrator &integrator = scene().integrator();
+    TIntegrator &integrator = scene().integrator();
     Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,
                         BufferVar<float4> radiance) {
@@ -129,7 +129,7 @@ void Baker::_prepare(ocarina::span<BakedShape> baked_shapes) noexcept {
 void Baker::_baking() noexcept {
     {
         VS_BAKER_STATS(baker_stats_, bake)
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         for (uint i = 0; i < sampler->sample_per_pixel(); ++i) {
             baker_stats_.set_sample_index(i);
             stream() << _baker(i, batch_mesh_.triangles(),

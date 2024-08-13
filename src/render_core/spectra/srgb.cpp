@@ -12,7 +12,7 @@ public:
     explicit SRGBSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] SampledWavelengths sample_wavelength(Sampler &sampler) const noexcept override {
+    [[nodiscard]] SampledWavelengths sample_wavelength(TSampler &sampler) const noexcept override {
         SampledWavelengths swl{dimension()};
         auto lambdas = rgb_spectrum_peak_wavelengths;
         for (auto i = 0u; i < dimension(); i++) {

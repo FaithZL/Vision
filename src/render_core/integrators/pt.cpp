@@ -28,7 +28,7 @@ public:
 
     void compile() noexcept override {
         TCamera &camera = scene().camera();
-        Sampler &sampler = scene().sampler();
+        TSampler &sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Env::instance().clear_global_vars();
             Uint2 pixel = dispatch_idx().xy();

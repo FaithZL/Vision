@@ -18,7 +18,7 @@ namespace vision {
 
 class Pipeline;
 
-class SamplerImpl;
+class Sampler;
 
 class RenderEnv;
 
@@ -30,7 +30,7 @@ class RenderEnv;
 //        "rr_threshold": 1
 //    }
 //}
-class IntegratorImpl : public Node, public EncodedObject {
+class Integrator : public Node, public EncodedObject {
 public:
     using Desc = IntegratorDesc;
     using signature = void(uint);
@@ -42,7 +42,7 @@ protected:
     ocarina::Shader<signature> shader_;
 
 public:
-    explicit IntegratorImpl(const IntegratorDesc &desc)
+    explicit Integrator(const IntegratorDesc &desc)
         : Node(desc) {}
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, const HitContext &hc, const RenderEnv &render_env) const noexcept {
@@ -70,7 +70,7 @@ public:
     virtual void render() const noexcept {}
 };
 
-using Integrator = TObject<IntegratorImpl>;
+using TIntegrator = TObject<Integrator>;
 
 struct RenderEnv {
 private:
@@ -90,7 +90,7 @@ public:
     }
     [[nodiscard]] Uint &frame_index() const noexcept { return *frame_index_; }
     [[nodiscard]] SampledWavelengths &sampled_wavelengths() const noexcept { return *swl_; }
-    void initial(Sampler &sampler, const Uint &frame_index, const TSpectrum &spectrum) noexcept;
+    void initial(TSampler &sampler, const Uint &frame_index, const TSpectrum &spectrum) noexcept;
 };
 
 enum MISMode {
@@ -99,7 +99,7 @@ enum MISMode {
     EBSDF
 };
 
-class IlluminationIntegrator : public IntegratorImpl {
+class IlluminationIntegrator : public Integrator {
 protected:
     EncodedData<uint> max_depth_{};
     EncodedData<uint> min_depth_{};
@@ -115,9 +115,9 @@ protected:
 public:
     explicit IlluminationIntegrator(const IntegratorDesc &desc);
 
-    OC_ENCODABLE_FUNC(IntegratorImpl, max_depth_, min_depth_, rr_threshold_)
+    OC_ENCODABLE_FUNC(Integrator, max_depth_, min_depth_, rr_threshold_)
 
-    VS_MAKE_GUI_STATUS_FUNC(IntegratorImpl, denoiser_)
+    VS_MAKE_GUI_STATUS_FUNC(Integrator, denoiser_)
 
     OC_MAKE_MEMBER_GETTER(separate, )
 
@@ -171,7 +171,7 @@ public:
 
     template<typename SF, typename SS>
     static SampledSpectrum direct_lighting(const Interaction &it, const SF &sf, LightSample ls,
-                                           Bool occluded, Sampler &sampler,
+                                           Bool occluded, TSampler &sampler,
                                            const SampledWavelengths &swl, SS &ss, bool mis = true) {
         Float3 wi = normalize(ls.p_light - it.pos);
         ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
