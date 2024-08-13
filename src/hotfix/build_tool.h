@@ -3,6 +3,7 @@
 //
 
 #include "compiler.h"
+#include "rule_parser.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
