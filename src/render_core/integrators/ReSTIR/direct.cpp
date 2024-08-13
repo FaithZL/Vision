@@ -264,7 +264,7 @@ void ReSTIRDI::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float ca
 DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     const SampledWavelengths &swl = sampled_wavelengths();
-    Camera &camera = scene().camera();
+    TCamera &camera = scene().camera();
     Float3 c_pos = camera->device_position();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
@@ -287,7 +287,7 @@ DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
 
 DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
-    Camera &camera = scene().camera();
+    TCamera &camera = scene().camera();
     Float3 c_pos = camera->device_position();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
@@ -330,7 +330,7 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
                                        SurfaceDataVar cur_surf,
                                        DIReservoir &other_rsv) const noexcept {
     other_rsv.sample.age += 1;
-    Camera &camera = scene().camera();
+    TCamera &camera = scene().camera();
     Float3 c_pos = camera->device_position();
     Float3 prev_c_pos = camera->prev_device_position();
     const Geometry &geom = pipeline()->geometry();
@@ -423,7 +423,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
 void ReSTIRDI::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
-    Camera &camera = scene().camera();
+    TCamera &camera = scene().camera();
     Spectrum &spectrum = rp->spectrum();
 
     Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
@@ -495,7 +495,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
 Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
     LightSampler &light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();
-    const Camera &camera = scene().camera();
+    const TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
     Float3 c_pos = camera->device_position();
     const SampledWavelengths &swl = sampled_wavelengths();
@@ -542,7 +542,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
 }
 
 void ReSTIRDI::compile_shader1() noexcept {
-    Camera &camera = scene().camera();
+    TCamera &camera = scene().camera();
     Film *film = camera->film();
     LightSampler &light_sampler = scene().light_sampler();
     Spectrum &spectrum = pipeline()->spectrum();

@@ -64,7 +64,7 @@ public:
 
     void compile() noexcept override {
         Pipeline *rp = pipeline();
-        CameraImpl *camera = scene().camera().get();
+        Camera *camera = scene().camera().get();
         Sampler &sampler = scene().sampler();
         Geometry &geom = rp->geometry();
 

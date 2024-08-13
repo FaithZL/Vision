@@ -65,7 +65,7 @@ void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_
     };
 }
 
-class CameraImpl;
+class Camera;
 
 class ScreenBuffer : public RegistrableManaged<float4>,
                      public enable_shared_from_this<ScreenBuffer> {
@@ -169,9 +169,9 @@ public:
                                                    BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept = 0;
-    [[nodiscard]] static Float2 compute_motion_vec(const Camera &camera, const Float2 &p_film, const Float3 &cur_pos,
+    [[nodiscard]] static Float2 compute_motion_vec(const TCamera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
-    [[nodiscard]] Float3 compute_motion_vector(const Camera &camera, const Float2 &p_film, const Uint &frame_index) const noexcept;
+    [[nodiscard]] Float3 compute_motion_vector(const TCamera &camera, const Float2 &p_film, const Uint &frame_index) const noexcept;
     [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord) noexcept;
     virtual void compile() noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,

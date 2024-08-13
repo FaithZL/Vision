@@ -27,7 +27,7 @@ public:
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
 
     void compile() noexcept override {
-        Camera &camera = scene().camera();
+        TCamera &camera = scene().camera();
         Sampler &sampler = scene().sampler();
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Env::instance().clear_global_vars();
@@ -49,7 +49,7 @@ public:
 
     RealTimeDenoiseInput denoise_input() const noexcept {
         RealTimeDenoiseInput ret;
-        Camera &camera = scene().camera();
+        TCamera &camera = scene().camera();
         ret.frame_index = frame_index_;
         ret.resolution = pipeline()->resolution();
         ret.gbuffer = frame_buffer().cur_gbuffer(frame_index_);

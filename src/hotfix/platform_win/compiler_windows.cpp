@@ -7,6 +7,7 @@
 #include "hotfix/cmd_process.h"
 #include "visual_studio_utils.h"
 
+
 namespace vision::inline hotfix {
 
 using namespace ocarina;

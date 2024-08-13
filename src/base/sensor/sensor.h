@@ -26,7 +26,7 @@ struct SensorSample {
         : p_film(pixel + 0.5f) {}
 };
 
-class SensorImpl : public Node, public EncodedObject {
+class Sensor : public Node, public EncodedObject {
 public:
     using Desc = SensorDesc;
 
@@ -37,7 +37,7 @@ protected:
     EncodedData<uint> medium_id_{InvalidUI32};
 
 public:
-    explicit SensorImpl(const SensorDesc &desc);
+    explicit Sensor(const SensorDesc &desc);
     OC_ENCODABLE_FUNC(EncodedObject, filter_, film_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -51,6 +51,6 @@ public:
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 
-using Sensor = TObject<SensorImpl>;
+using TSensor = TObject<Sensor>;
 
 }// namespace vision

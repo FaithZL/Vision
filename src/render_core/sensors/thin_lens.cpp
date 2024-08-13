@@ -7,20 +7,20 @@
 #include "GUI/widgets.h"
 
 namespace vision {
-class ThinLensCamera : public CameraImpl {
+class ThinLensCamera : public Camera {
 private:
     EncodedData<float> focal_distance_;
     EncodedData<float> lens_radius_;
 
 public:
     explicit ThinLensCamera(const SensorDesc &desc)
-        : CameraImpl(desc),
+        : Camera(desc),
           focal_distance_(desc["focal_distance"].as_float(5.f)),
           lens_radius_(desc["lens_radius"].as_float(0.f)) {
     }
-    OC_ENCODABLE_FUNC(CameraImpl, focal_distance_, lens_radius_)
+    OC_ENCODABLE_FUNC(Camera, focal_distance_, lens_radius_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        CameraImpl::render_sub_UI(widgets);
+        Camera::render_sub_UI(widgets);
         changed_ |= widgets->input_float_limit("lens radius", &lens_radius_.hv(),
                                                0, 0.5, 0.01, 0.01);
         changed_ |= widgets->input_float_limit("focal distance", &focal_distance_.hv(),
@@ -50,7 +50,7 @@ public:
         return lens_radius_.hv();
     }
     [[nodiscard]] RayVar generate_ray_in_camera_space(const SensorSample &ss) const noexcept override {
-        RayVar ray = CameraImpl::generate_ray_in_camera_space(ss);
+        RayVar ray = Camera::generate_ray_in_camera_space(ss);
         Float2 p_lens = square_to_disk<D>(ss.p_lens) * *lens_radius_;
         Float ft = *focal_distance_ / ray->direction().z;
         Float3 p_focus = ray->at(ft);

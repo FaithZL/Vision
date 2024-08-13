@@ -31,7 +31,7 @@ using namespace ocarina;
 class Scene : public GUI, public hotfix::Observer {
 private:
     Box3f aabb_;
-    Camera camera_{};
+    TCamera camera_{};
     Sampler sampler_{};
     Integrator integrator_{};
     LightSampler light_sampler_{};

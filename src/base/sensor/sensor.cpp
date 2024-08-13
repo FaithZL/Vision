@@ -9,7 +9,7 @@
 namespace vision {
 using namespace ocarina;
 
-SensorImpl::SensorImpl(const SensorDesc &desc)
+Sensor::Sensor(const SensorDesc &desc)
     : Node(desc),
       filter_(desc.filter_desc),
       film_(Node::load<Film>(desc.film_desc)),
@@ -32,7 +32,7 @@ SensorImpl::SensorImpl(const SensorDesc &desc)
     }
 }
 
-bool SensorImpl::render_UI(ocarina::Widgets *widgets) noexcept {
+bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} camera", impl_type().data()),
         [&] {
@@ -44,7 +44,7 @@ bool SensorImpl::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
-void SensorImpl::prepare() noexcept {
+void Sensor::prepare() noexcept {
     filter_->prepare();
     film_->prepare();
 }

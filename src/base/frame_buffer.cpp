@@ -137,7 +137,7 @@ Uint FrameBuffer::checkerboard_value(const Uint2 &coord) noexcept {
     return (coord.x & 1) ^ (coord.y & 1);
 }
 
-Float2 FrameBuffer::compute_motion_vec(const Camera &camera, const Float2 &p_film,
+Float2 FrameBuffer::compute_motion_vec(const TCamera &camera, const Float2 &p_film,
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
@@ -147,7 +147,7 @@ Float2 FrameBuffer::compute_motion_vec(const Camera &camera, const Float2 &p_fil
     return ret;
 }
 
-Float3 FrameBuffer::compute_motion_vector(const Camera &camera, const Float2 &p_film,
+Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float2 &p_film,
                                           const Uint &frame_index) const noexcept {
     Uint2 pixel = make_uint2(p_film);
     Uint pixel_index = dispatch_id(pixel);
