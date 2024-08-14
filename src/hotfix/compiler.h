@@ -16,12 +16,12 @@ enum OptimizationLevel {
     Release = 2
 };
 
-struct CompileOptions {
+struct BuildOptions {
     vector<fs::path> include_paths;
     vector<fs::path> library_paths;
     fs::path intermediate_path;
     OptimizationLevel optimization_level{Default};
-    CompileOptions() {
+    BuildOptions() {
         init();
     }
 
@@ -50,7 +50,7 @@ struct CompileOptions {
 class Compiler {
 public:
     virtual void init() noexcept = 0;
-    virtual void compile(const CompileOptions &options,
+    virtual void compile(const BuildOptions &options,
                          const FileInspector::Module &module) noexcept = 0;
     [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
     [[nodiscard]] static UP<Compiler> create() noexcept;

@@ -20,7 +20,7 @@ private:
 public:
     void init() noexcept override {
         vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
-        CompileOptions op;
+        BuildOptions op;
         vs_path_ = vec.at(0).Path;
         if (!fs::exists(FileInspector::intermediate_path())) {
             fs::create_directory(FileInspector::intermediate_path());
@@ -39,7 +39,7 @@ public:
 
     [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file,
                                                      const fs::path &output_path,
-                                                     const CompileOptions &options) noexcept {
+                                                     const BuildOptions &options) noexcept {
         string cmd = ocarina::format(R"(/nologo /Z7 /FC /utf-8 /MDd /Od /MP /DFMT_CONSTEVAL=constexpr -D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING /Fo"{}\\" /D WIN32 /EHa /c "{}")",
                                      output_path.string(), src_file.string());
         for (const auto &p : options.include_paths) {

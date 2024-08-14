@@ -11,7 +11,7 @@ void BuildTool::clear() noexcept {
 }
 
 void BuildTool::build_module(const FileInspector::Module &module) const noexcept {
-    CompileOptions compile_options;
+    BuildOptions compile_options;
     compiler_->compile(compile_options, module);
 }
 
