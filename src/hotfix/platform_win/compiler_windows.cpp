@@ -49,7 +49,7 @@ public:
         return cmd;
     }
 
-    void compile(const vision::CompileOptions &options,
+    void compile(const vision::BuildOptions &options,
                  const FileInspector::Module &module) noexcept override {
         fs::path module_path = FileInspector::intermediate_path() / module.name;
         if (!fs::exists(module_path)) {
