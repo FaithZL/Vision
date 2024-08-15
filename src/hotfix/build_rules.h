@@ -7,6 +7,7 @@
 #include "core/stl.h"
 #include "core/logging.h"
 #include "util/file_manager.h"
+#include "core/dynamic_module.h"
 
 namespace vision::inline hotfix {
 
