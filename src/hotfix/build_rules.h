@@ -5,6 +5,8 @@
 #pragma once
 
 #include "core/stl.h"
+#include "core/logging.h"
+#include "util/file_manager.h"
 
 namespace vision::inline hotfix {
 
@@ -27,6 +29,11 @@ struct LinkOptions {
 };
 
 class BuildRules {
+public:
+    using Creator = BuildRules *();
+    using Deleter = void(BuildRules *);
+    using Handle = unique_ptr<BuildRules, Deleter *>;
+
 protected:
     vector<CompileOptions> compiles_;
     vector<LinkOptions> links_;
@@ -34,6 +41,14 @@ protected:
 public:
     BuildRules() = default;
     virtual void parse(const string &content) = 0;
-    virtual ~BuildRules() {}
+    [[nodiscard]] static Handle create(const string &name) {
+        string plugin_name = ocarina::format("vision-hotfix-rules_parser-{}.dll", name);
+        auto module = ocarina::FileManager::instance().obtain_module(plugin_name);
+        auto creator = module->function<BuildRules::Creator *>("create");
+        auto deleter = module->function<BuildRules::Deleter *>("destroy");
+        return Handle{creator(), deleter};
+    }
+    virtual ~BuildRules() = default;
 };
+
 }// namespace vision::inline hotfix

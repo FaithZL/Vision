@@ -7,24 +7,20 @@
 
 namespace vision::inline hotfix {
 
-BuildTool::BuildTool() {
-
-}
+BuildTool::BuildTool() = default;
 
 void BuildTool::clear() noexcept {
 }
 
 void BuildTool::build_module(const FileInspector::Module &module) const noexcept {
     BuildOptions compile_options;
-    auto module_ = ocarina::FileManager::instance().obtain_module("vision-hotfix-rules_parser-ninja.dll");
-    int i = 0;
     compiler_->compile(compile_options, module);
 }
 
 void BuildTool::build_modules(const vector<FileInspector::Module> &modules) const noexcept {
     std::for_each(modules.begin(), modules.end(), [&](const auto &module) {
         OC_INFO_FORMAT("module {} has been modified", module.name);
-        for(const fs::path &fn: module.modified_files) {
+        for (const fs::path &fn : module.modified_files) {
             OC_INFO_FORMAT("file: {}", fn.string());
         }
         build_module(module);

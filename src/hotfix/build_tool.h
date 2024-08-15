@@ -10,13 +10,13 @@ using namespace ocarina;
 
 class BuildTool {
 private:
-    UP<BuildRules> build_rules_;
+    BuildRules::Handle build_rules_{BuildRules::create("ninja")};
     UP<Compiler> compiler_{Compiler::create()};
 
 public:
     BuildTool();
     void clear() noexcept;
-    void build_modules(const vector<FileInspector::Module>& modules) const noexcept;
+    void build_modules(const vector<FileInspector::Module> &modules) const noexcept;
     void build_module(const FileInspector::Module &module) const noexcept;
 };
 
