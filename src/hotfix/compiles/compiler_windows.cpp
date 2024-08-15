@@ -3,10 +3,9 @@
 //
 
 #include "hotfix/compiler.h"
-
+#include "core/vs_header.h"
 #include "hotfix/cmd_process.h"
 #include "visual_studio_utils.h"
-
 
 namespace vision::inline hotfix {
 
@@ -34,7 +33,7 @@ public:
     void setup_environment() const {
         std::string cmdSetParams = "\"" + vs_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
         cmd_process_.WriteInput(cmdSetParams);
-        cmd_process_.WriteInput( std::string("chcp 65001\n") );
+        cmd_process_.WriteInput(std::string("chcp 65001\n"));
     }
 
     [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file,
@@ -67,7 +66,7 @@ public:
             std::ofstream cmd_file(cmd_fn);
             cmd_file << cmd;
             cmd_file.close();
-            string cmd_to_send = "cl @" + cmd_fn.string() ;
+            string cmd_to_send = "cl @" + cmd_fn.string();
             cmd_to_send += "\necho ";
             cmd_to_send += string(c_CompletionToken) + "\n";
             cmd_process_.WriteInput(cmd_to_send);
@@ -82,3 +81,11 @@ UP<Compiler> Compiler::create() noexcept {
 }
 
 }// namespace vision::inline hotfix
+
+VS_EXPORT_API vision::hotfix::CompilerVisualStudio *create() {
+    return ocarina::new_with_allocator<vision::hotfix::CompilerVisualStudio>();
+}
+
+VS_EXPORT_API void destroy(vision::hotfix::CompilerVisualStudio *obj) {
+    ocarina::delete_with_allocator(obj);
+}

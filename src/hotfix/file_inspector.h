@@ -54,13 +54,19 @@ private:
 
 public:
     FileInspector() = default;
-    void add_inspected(const fs::path &path, bool recursive = true) ;
+    void add_inspected(const fs::path &path, bool recursive = true);
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] Module &get_module(const fs::path &key) noexcept;
     [[nodiscard]] vector<Module> get_modified_modules() noexcept;
-    [[nodiscard]] static fs::path project_path() noexcept;
-    [[nodiscard]] static fs::path project_src_path() noexcept;
-    [[nodiscard]] static fs::path intermediate_path() noexcept;
+    [[nodiscard]] static fs::path project_path() noexcept {
+        return parent_path(__FILE__, 3);
+    }
+    [[nodiscard]] static fs::path project_src_path() noexcept {
+        return parent_path(__FILE__, 2);
+    }
+    [[nodiscard]] static fs::path intermediate_path() noexcept {
+        return fs::current_path() / debug_dir;
+    }
 };
 
 }// namespace vision::inline hotfix

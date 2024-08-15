@@ -85,16 +85,6 @@ vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
     return ret;
 }
 
-fs::path FileInspector::intermediate_path() noexcept {
-    return fs::current_path() / debug_dir;
-}
 
-fs::path FileInspector::project_path() noexcept {
-    return parent_path(__FILE__, 3);
-}
-
-fs::path FileInspector::project_src_path() noexcept {
-    return parent_path(__FILE__, 2);
-}
 
 }// namespace vision::inline hotfix
