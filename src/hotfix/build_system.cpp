@@ -2,22 +2,22 @@
 // Created by Zero on 2024/8/2.
 //
 
-#include "build_tool.h"
+#include "build_system.h"
 #include "core/logging.h"
 
 namespace vision::inline hotfix {
 
-BuildTool::BuildTool() = default;
+BuildSystem::BuildSystem() = default;
 
-void BuildTool::clear() noexcept {
+void BuildSystem::clear() noexcept {
 }
 
-void BuildTool::build_module(const FileInspector::Module &module) const noexcept {
+void BuildSystem::build_module(const FileInspector::Module &module) const noexcept {
     BuildOptions compile_options;
     compiler_->compile(compile_options, module);
 }
 
-void BuildTool::build_modules(const vector<FileInspector::Module> &modules) const noexcept {
+void BuildSystem::build_modules(const vector<FileInspector::Module> &modules) const noexcept {
     std::for_each(modules.begin(), modules.end(), [&](const auto &module) {
         OC_INFO_FORMAT("module {} has been modified", module.name);
         for (const fs::path &fn : module.modified_files) {

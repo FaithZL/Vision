@@ -22,4 +22,4 @@ function(vision_add_rules_parser_plugins name)
             DEBUG_POSTFIX "")
 endfunction()
 
-vision_add_rules_parser_plugins(ninja CATEGORY rules_parser SOURCES ninja_parser.cpp)
+vision_add_rules_parser_plugins(ninja CATEGORY rules_parser SOURCES ninja.cpp)

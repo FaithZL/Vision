@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include "hotfix/system.h"
-
+#include "hotfix/hotfix.h"
 
 namespace vision {
 

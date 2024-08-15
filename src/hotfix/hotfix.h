@@ -8,7 +8,7 @@
 #include "core/hash.h"
 #include "serializer.h"
 #include "object.h"
-#include "build_tool.h"
+#include "build_system.h"
 #include "file_inspector.h"
 
 #define VS_REGISTER_PATH(path, level, ...)                                        \
@@ -48,7 +48,7 @@ private:
     Serializer serializer_{};
     ocarina::set<Observer *> observers_;
     FileInspector file_inspector_;
-    BuildTool build_tool_{};
+    BuildSystem build_system_{};
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;

@@ -2,7 +2,7 @@
 // Created by Zero on 2024/7/29.
 //
 
-#include "system.h"
+#include "hotfix.h"
 #include "core/logging.h"
 
 namespace vision ::inline hotfix {
@@ -53,7 +53,7 @@ void HotfixSystem::check_and_build() noexcept {
     if(modules.empty()) {
         return;
     }
-    build_tool_.build_modules(modules);
+    build_system_.build_modules(modules);
 }
 
 void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {

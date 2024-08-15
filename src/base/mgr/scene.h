@@ -18,7 +18,7 @@
 #include "material_registry.h"
 #include "mesh_registry.h"
 #include "UI/GUI.h"
-#include "hotfix/system.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 

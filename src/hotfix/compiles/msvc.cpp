@@ -8,16 +8,15 @@
 #include "visual_studio_utils.h"
 
 namespace vision::inline hotfix {
-
 using namespace ocarina;
 
-class CompilerVisualStudio : public Compiler {
+class MSVCompiler : public Compiler {
 private:
     CmdProcess cmd_process_;
     fs::path vs_path_;
 
 public:
-    CompilerVisualStudio() {
+    MSVCompiler() {
         vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
         BuildOptions op;
         vs_path_ = vec.at(0).Path;
@@ -77,10 +76,10 @@ public:
 
 }// namespace vision::inline hotfix
 
-VS_EXPORT_API vision::hotfix::CompilerVisualStudio *create() {
-    return ocarina::new_with_allocator<vision::hotfix::CompilerVisualStudio>();
+VS_EXPORT_API vision::hotfix::MSVCompiler *create() {
+    return ocarina::new_with_allocator<vision::hotfix::MSVCompiler>();
 }
 
-VS_EXPORT_API void destroy(vision::hotfix::CompilerVisualStudio *obj) {
+VS_EXPORT_API void destroy(vision::hotfix::MSVCompiler *obj) {
     ocarina::delete_with_allocator(obj);
 }

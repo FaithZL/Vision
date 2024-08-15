@@ -8,13 +8,13 @@
 namespace vision::inline hotfix {
 using namespace ocarina;
 
-class BuildTool {
+class BuildSystem {
 private:
     BuildRules::Handle build_rules_{BuildRules::create("ninja")};
     Compiler::Handle compiler_{Compiler::create("msvc")};
 
 public:
-    BuildTool();
+    BuildSystem();
     void clear() noexcept;
     void build_modules(const vector<FileInspector::Module> &modules) const noexcept;
     void build_module(const FileInspector::Module &module) const noexcept;
