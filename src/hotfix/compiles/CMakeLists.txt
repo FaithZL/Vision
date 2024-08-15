@@ -23,4 +23,4 @@ function(vision_add_compiler_plugins name)
 endfunction()
 
 
-vision_add_compiler_plugins(cl CATEGORY compiler SOURCES msvc.cpp)
+vision_add_compiler_plugins(msvc CATEGORY compiler SOURCES msvc.cpp)

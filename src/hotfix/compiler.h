@@ -54,11 +54,9 @@ public:
     using Handle = unique_ptr<Compiler, Deleter *>;
 
 public:
-    virtual void init() noexcept = 0;
     virtual void compile(const BuildOptions &options,
                          const FileInspector::Module &module) noexcept = 0;
     [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
-    [[nodiscard]] static UP<Compiler> create() noexcept;
     [[nodiscard]] static Handle create(const string &name) {
         string plugin_name = ocarina::format("vision-hotfix-compiler-{}.dll", name);
         auto module = ocarina::FileManager::instance().obtain_module(plugin_name);

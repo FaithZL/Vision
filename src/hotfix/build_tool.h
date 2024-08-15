@@ -11,7 +11,7 @@ using namespace ocarina;
 class BuildTool {
 private:
     BuildRules::Handle build_rules_{BuildRules::create("ninja")};
-    UP<Compiler> compiler_{Compiler::create()};
+    Compiler::Handle compiler_{Compiler::create("msvc")};
 
 public:
     BuildTool();

@@ -17,7 +17,7 @@ private:
     fs::path vs_path_;
 
 public:
-    void init() noexcept override {
+    CompilerVisualStudio() {
         vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
         BuildOptions op;
         vs_path_ = vec.at(0).Path;
@@ -26,6 +26,7 @@ public:
         }
         clear_directory(FileInspector::intermediate_path());
     }
+
     [[nodiscard]] string get_object_file_extension() const noexcept override {
         return "obj";
     }
@@ -73,12 +74,6 @@ public:
         }
     }
 };
-
-UP<Compiler> Compiler::create() noexcept {
-    auto ret = make_unique<CompilerVisualStudio>();
-    ret->init();
-    return ret;
-}
 
 }// namespace vision::inline hotfix
 
