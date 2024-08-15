@@ -26,13 +26,14 @@ struct LinkOptions {
     fs::path target_implib;
 };
 
-class BuildRulesParser {
+class BuildRules {
 protected:
     vector<CompileOptions> compiles_;
     vector<LinkOptions> links_;
 
 public:
-    BuildRulesParser() = default;
+    BuildRules() = default;
     virtual void parse(const string &content) = 0;
+    virtual ~BuildRules() {}
 };
 }// namespace vision::inline hotfix

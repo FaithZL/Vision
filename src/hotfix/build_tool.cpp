@@ -7,6 +7,10 @@
 
 namespace vision::inline hotfix {
 
+BuildTool::BuildTool() {
+
+}
+
 void BuildTool::clear() noexcept {
 }
 

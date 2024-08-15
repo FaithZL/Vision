@@ -3,17 +3,18 @@
 //
 
 #include "compiler.h"
-#include "rules_parser.h"
+#include "build_rules.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
 
 class BuildTool {
 private:
+    UP<BuildRules> build_rules_;
     UP<Compiler> compiler_{Compiler::create()};
 
 public:
-    BuildTool() = default;
+    BuildTool();
     void clear() noexcept;
     void build_modules(const vector<FileInspector::Module>& modules) const noexcept;
     void build_module(const FileInspector::Module &module) const noexcept;
