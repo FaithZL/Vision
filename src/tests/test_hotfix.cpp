@@ -17,7 +17,7 @@
 using namespace ocarina;
 
 int main(int argc, char *argv[]) {
-
+    FileManager::instance().init(fs::path(argv[0]).parent_path());
     fs::path path(argv[0]);
     FileManager file_manager(path.parent_path());
 

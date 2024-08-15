@@ -16,6 +16,8 @@ void BuildTool::clear() noexcept {
 
 void BuildTool::build_module(const FileInspector::Module &module) const noexcept {
     BuildOptions compile_options;
+    auto module_ = ocarina::FileManager::instance().obtain_module("vision-hotfix-rules_parser-ninja.dll");
+    int i = 0;
     compiler_->compile(compile_options, module);
 }
 
