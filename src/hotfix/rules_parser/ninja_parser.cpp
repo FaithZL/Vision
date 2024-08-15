@@ -6,5 +6,14 @@
 
 namespace vision::inline hotfix {
 
+class NinjaParser : public BuildRulesParser {
+public:
+    void parse(const std::string &content) override;
+};
+
+void NinjaParser::parse(const std::string &content) {
+
 
 }
+
+}// namespace vision::inline hotfix

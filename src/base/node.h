@@ -58,8 +58,8 @@ public:
     template<typename impl_t, typename Desc>
     [[nodiscard]] static SP<impl_t> load(const Desc &desc) {
         const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
-        auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-        auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
+        Node::Creator *creator = module->function<Node::Creator *>("create");
+        Node::Deleter *deleter = module->function<Node::Deleter *>("destroy");
         SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(&desc)), deleter);
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;

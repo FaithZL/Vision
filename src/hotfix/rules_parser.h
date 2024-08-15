@@ -33,5 +33,6 @@ protected:
 
 public:
     BuildRulesParser() = default;
+    virtual void parse(const string &content) = 0;
 };
 }// namespace vision::inline hotfix
