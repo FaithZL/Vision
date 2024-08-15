@@ -2,7 +2,7 @@ file(GLOB HEADER_FILES *.h*)
 file(GLOB SOURCE_FILES *.c*)
 
 add_library(vision-hotfix SHARED ${SOURCE_FILES}
-        compiles/compiler_windows.cpp)
+        compiles/msvc.cpp)
 target_link_libraries(vision-hotfix PUBLIC
         ocarina
         ocarina-include)
