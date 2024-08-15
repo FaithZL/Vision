@@ -17,11 +17,9 @@
 using namespace ocarina;
 
 int main(int argc, char *argv[]) {
-    FileManager::instance().init(fs::path(argv[0]).parent_path());
     fs::path path(argv[0]);
-    FileManager file_manager(path.parent_path());
 
-    auto window = file_manager.create_window("display", make_uint2(500), "imGui");
+    auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
     auto image_io = Image::pure_color(make_float4(1, 0, 0, 1), ColorSpace::LINEAR, make_uint2(500));
     window->init_widgets();
 

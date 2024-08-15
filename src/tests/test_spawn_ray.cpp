@@ -46,7 +46,7 @@ auto get_cube(float x = 1, float y = 1, float z = 1) {
 
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
-    FileManager file_manager(path.parent_path());
+    FileManager &file_manager = FileManager::instance();
     Device device = file_manager.create_device("cuda");
     device.init_rtx();
     Stream stream = device.create_stream();
