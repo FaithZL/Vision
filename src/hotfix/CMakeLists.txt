@@ -14,5 +14,6 @@ set_target_properties(vision-hotfix PROPERTIES
 
 add_subdirectory(rules_parsers)
 add_subdirectory(compiles)
+add_subdirectory(test)
 
 add_dependencies(vision-hotfix vision-hotfix-rules_parser vision-hotfix-compiler)
