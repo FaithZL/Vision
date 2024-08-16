@@ -57,13 +57,12 @@ endif ()
 
 add_library(vision-main INTERFACE)
 target_link_libraries(vision-main INTERFACE
-        vision-description
+        vision-core
         vision-base
         vision-importer
         vision-pipeline
         vision-render_graph
-        vision-math
-        vision-description)
+        vision-math)
 
 add_library(vision-all_libs INTERFACE)
 target_link_libraries(vision-all_libs INTERFACE
