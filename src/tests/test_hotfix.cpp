@@ -13,6 +13,7 @@
 #include "dsl/dsl.h"
 #include "GUI_impl/imGui/window.h"
 #include "util/image.h"
+#include "hotfix/test/test.h"
 
 using namespace ocarina;
 

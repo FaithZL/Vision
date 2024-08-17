@@ -20,7 +20,7 @@ vision_add_test(test-render_graph SOURCES test_render_graph.cpp)
 function(vision_add_simple_test name)
     cmake_parse_arguments(TEST "" "" "SOURCES" ${ARGN})
     add_executable(${name}  ${TEST_SOURCES})
-    target_link_libraries(${name} vision-hotfix)
+    target_link_libraries(${name} vision-hotfix-test)
     set_target_properties(${name} PROPERTIES
             PUBLIC_HEADER "${HEADER_FILES}"
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
