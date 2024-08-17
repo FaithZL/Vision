@@ -28,7 +28,7 @@ function(vision_add_simple_test name)
             WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endfunction()
 
-vision_add_simple_test(vision-test_hotfix SOURCES test_hotfix.cpp hotfix_dir/demo.cpp)
+vision_add_simple_test(vision-test_hotfix SOURCES test_hotfix.cpp)
 
 add_executable(vision-test_sdk test_sdk.cpp)
 add_dependencies(vision-test_sdk vision-renderer)
