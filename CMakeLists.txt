@@ -33,6 +33,10 @@ function(vision_add_application name)
     set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 endfunction()
 
+message(STATUS "C Compiler: ${CMAKE_C_COMPILER}")
+
+message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
+
 add_subdirectory(src)
 
 add_custom_target(CP_OIDN_CUDA ALL

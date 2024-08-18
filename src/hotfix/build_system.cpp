@@ -9,6 +9,10 @@ namespace vision::inline hotfix {
 
 BuildSystem::BuildSystem() = default;
 
+fs::path BuildSystem::compiler_path() noexcept {
+    return CPP_COMPILER_PATH;
+}
+
 void BuildSystem::clear() noexcept {
 }
 

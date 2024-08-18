@@ -15,6 +15,7 @@ private:
 
 public:
     BuildSystem();
+    [[nodiscard]] static fs::path compiler_path() noexcept;
     void clear() noexcept;
     void build_modules(const vector<FileInspector::Module> &modules) const noexcept;
     void build_module(const FileInspector::Module &module) const noexcept;

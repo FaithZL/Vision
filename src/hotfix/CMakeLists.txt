@@ -6,7 +6,10 @@ target_link_libraries(vision-hotfix PUBLIC
         ocarina
         ocarina-include)
 
-target_compile_definitions(vision-hotfix PRIVATE VISION_HOTFIX_EXPORT_DLL=1 -DCMAKE_VERBOSE_MAKEFILE=ON)
+target_compile_definitions(vision-hotfix PRIVATE
+        VISION_HOTFIX_EXPORT_DLL=1
+        CPP_COMPILER_PATH="${CMAKE_CXX_COMPILER}"
+        -DCMAKE_VERBOSE_MAKEFILE=ON)
 set_target_properties(vision-hotfix PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
