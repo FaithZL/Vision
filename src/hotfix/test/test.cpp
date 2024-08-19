@@ -19,4 +19,4 @@ IObjectConstructor *Test::constructor() const noexcept {
 
 }// namespace vision::inline hotfix
 
-VS_REGISTER_CURRENT_PATH(1, "test")
+VS_REGISTER_CURRENT_PATH(1)

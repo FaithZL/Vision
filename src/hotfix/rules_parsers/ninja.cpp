@@ -9,10 +9,24 @@ namespace vision::inline hotfix {
 
 class NinjaParser : public BuildRules {
 public:
+    NinjaParser();
     void parse(const std::string &content) override;
 };
 
+NinjaParser::NinjaParser() {
+    std::ifstream fst;
+    fs::path fn = fs::current_path().parent_path() / "build.ninja";
+    fst.open(fn.c_str());
+    std::stringstream buffer;
+    buffer << fst.rdbuf();
+    std::string str = buffer.str();
+    parse(str);
+}
+
 void NinjaParser::parse(const std::string &content) {
+
+
+
 }
 
 }// namespace vision::inline hotfix
