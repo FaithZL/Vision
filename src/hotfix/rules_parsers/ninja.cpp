@@ -16,17 +16,19 @@ public:
 NinjaParser::NinjaParser() {
     std::ifstream fst;
     fs::path fn = fs::current_path().parent_path() / "build.ninja";
-    fst.open(fn.c_str());
-    std::stringstream buffer;
-    buffer << fst.rdbuf();
-    std::string str = buffer.str();
-    parse(str);
+    string content = from_file(fn);
+    parse(content);
 }
 
 void NinjaParser::parse(const std::string &content) {
+    auto lines = string_split(content, '\n');
+    for (int i = 0; i < lines.size(); ++i) {
+        string_view line = lines[i];
+        string_view next_line = lines[i + 1];
+        if (line.starts_with("build") && next_line.starts_with("  DEFINES")) {
 
-
-
+        }
+    }
 }
 
 }// namespace vision::inline hotfix
