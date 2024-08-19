@@ -7,7 +7,16 @@
 
 namespace vision ::inline hotfix {
 
+void Test::serialize(vision::Serializer *serializer) const noexcept {
 }
 
+void Test::deserialize(vision::Serializer *serializer) const noexcept {
+}
 
-//VS_REGISTER_CURRENT_PATH(1, "vision-base", "vision-math")
+IObjectConstructor *Test::constructor() const noexcept {
+    return nullptr;
+}
+
+}// namespace vision::inline hotfix
+
+VS_REGISTER_CURRENT_PATH(1, "test")

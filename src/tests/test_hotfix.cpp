@@ -20,6 +20,8 @@ using namespace ocarina;
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
 
+    vision::Test test;
+
     auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
     auto image_io = Image::pure_color(make_float4(1, 0, 0, 1), ColorSpace::LINEAR, make_uint2(500));
     window->init_widgets();

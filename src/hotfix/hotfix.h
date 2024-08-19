@@ -64,11 +64,13 @@ public:
     void add_inspected(const fs::path &path, bool recursive = true) {
         file_inspector_.add_inspected(path, recursive);
     }
-    template<typename... Args>
-    void register_module(const fs::path &path, Args &&...args) {
+    void register_module(const fs::path &path, const string &module_name = "") {
         add_inspected(path);
         auto &module = file_inspector_.get_module(path);
-        (module.dependencies.push_back(OC_FORWARD(args)), ...);
+        if (module_name.empty()) {
+            return;
+        }
+        module.name = module_name;
     }
     void remove_inspected(const fs::path &path) noexcept {
         file_inspector_.remove_inspected(path);
