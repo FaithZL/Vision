@@ -6,8 +6,7 @@ function(vision_add_rules_parser_plugins name)
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
     target_link_libraries(${lib_name} PRIVATE
-            ocarina
-            ocarina-include)
+            vision-hotfix)
     target_compile_definitions(${lib_name} PRIVATE
             VISION_PLUGIN_NAME="${name}"
             VISION_CATEGORY="${PLUGIN_CATEGORY}")

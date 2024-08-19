@@ -12,6 +12,7 @@ using namespace ocarina;
 
 class MSVCompiler : public Compiler {
 private:
+    static constexpr auto bat_dir = R"(VC\Auxiliary\Build\)";
     CmdProcess cmd_process_;
     fs::path vs_path_;
 
@@ -20,10 +21,17 @@ public:
         vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
         BuildOptions op;
         vs_path_ = vec.at(0).Path;
+        vs_path_ = installation_directory() / bat_dir;
         if (!fs::exists(FileInspector::intermediate_path())) {
             fs::create_directory(FileInspector::intermediate_path());
         }
+        auto aaa = installation_directory();
+
         clear_directory(FileInspector::intermediate_path());
+    }
+
+    [[nodiscard]] fs::path installation_directory() noexcept override {
+        return parent_path(cli_path(), 8);
     }
 
     [[nodiscard]] string get_object_file_extension() const noexcept override {

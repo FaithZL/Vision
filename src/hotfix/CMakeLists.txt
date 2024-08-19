@@ -26,4 +26,10 @@ add_subdirectory(rules_parsers)
 add_subdirectory(compiles)
 add_subdirectory(test)
 
-add_dependencies(vision-hotfix vision-hotfix-rules_parser vision-hotfix-compiler)
+add_library(vision-hotfix-all INTERFACE)
+
+target_link_libraries(vision-hotfix-all INTERFACE
+        vision-hotfix-compiler
+        vision-hotfix
+        vision-hotfix-test
+        vision-hotfix-rules_parser)
