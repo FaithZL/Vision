@@ -14,11 +14,11 @@ namespace vision::inline hotfix {
 using namespace ocarina;
 
 struct CompileOptions {
+    fs::path src;
+    fs::path dst;
     vector<string> defines;
     vector<string> flags;
     vector<fs::path> includes;
-    fs::path src;
-    fs::path dst;
 };
 
 struct LinkOptions {
