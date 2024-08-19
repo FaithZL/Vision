@@ -41,13 +41,12 @@ NinjaParser::NinjaParser() {
 
 void NinjaParser::parse(const std::string &content) {
     auto lines = string_split(content, '\n');
-//    for (int i = 0; i < lines.size(); ++i) {
-//        string_view& line = lines[i];
-//        string_view& next_line = lines[i + 1];
-//        if (line.starts_with("build") && next_line.starts_with("  DEFINES")) {
-//            process_lines(addressof(line));
-//        }
-//    }
+    for (int i = 0; i < lines.size(); ++i) {
+        string_view& line = lines[i];
+        if (line.starts_with("build") && lines[i + 1].starts_with("  DEFINES")) {
+            process_lines(addressof(line));
+        }
+    }
 }
 
 }// namespace vision::inline hotfix
