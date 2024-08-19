@@ -24,3 +24,4 @@ endfunction()
 
 
 vision_add_compiler_plugins(msvc CATEGORY compiler SOURCES msvc.cpp)
+vision_add_compiler_plugins(llvm CATEGORY compiler SOURCES llvm.cpp)

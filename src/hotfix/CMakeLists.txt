@@ -6,9 +6,16 @@ target_link_libraries(vision-hotfix PUBLIC
         ocarina
         ocarina-include)
 
+if (MSVC)
+    set(CPP_COMPILE_TYPE "msvc")
+else ()
+    set(CPP_COMPILE_TYPE "llvm")
+endif ()
+
 target_compile_definitions(vision-hotfix PRIVATE
         VISION_HOTFIX_EXPORT_DLL=1
         CPP_COMPILER_PATH="${CMAKE_CXX_COMPILER}"
+        CPP_COMPILER_TYPE="${CPP_COMPILE_TYPE}"
         -DCMAKE_VERBOSE_MAKEFILE=ON)
 set_target_properties(vision-hotfix PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
