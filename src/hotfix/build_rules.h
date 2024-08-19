@@ -16,13 +16,13 @@ using namespace ocarina;
 struct CompileOptions {
     fs::path src;
     fs::path dst;
-    vector<string> defines;
-    vector<string> flags;
-    vector<fs::path> includes;
+    string defines;
+    string flags;
+    string includes;
 };
 
 struct LinkOptions {
-    vector<string> compile_flags;
+    string compile_flags;
     vector<fs::path> obj_files;
     vector<fs::path> link_libraries;
     fs::path target_file;

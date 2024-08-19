@@ -10,14 +10,14 @@ namespace vision::inline hotfix {
 class NinjaParser : public BuildRules {
 public:
     NinjaParser();
-    void process_lines(string_view *lines);
+    void process_lines(const string_view *lines);
     void parse(const std::string &content) override;
 };
 
-void NinjaParser::process_lines(std::string_view *lines) {
+void NinjaParser::process_lines(const std::string_view *lines) {
     string_view line = lines[0];
 
-    auto find_dst = [&]{
+    auto extract_dst = [&]{
         constexpr auto obj_token = ".cpp.obj";
         constexpr auto build_token = "build ";
         auto index = line.find(obj_token, 0);
@@ -27,7 +27,7 @@ void NinjaParser::process_lines(std::string_view *lines) {
         return line.substr(size_build_token, index + size_obj_token - size_build_token);
     };
 
-    auto find_src = [&]{
+    auto extract_src = [&]{
         constexpr auto compiler_token = "CXX_COMPILER__";
         auto index = line.find(compiler_token);
         uint start = index + strlen(compiler_token);
@@ -39,9 +39,27 @@ void NinjaParser::process_lines(std::string_view *lines) {
         return ret;
     };
 
+    auto extract_defines = [&] {
+        string next_line = string(lines[1]);
+        return replace(next_line, "  DEFINES = ", "");
+    };
+
+    auto extract_flags = [&] {
+        string line = string(lines[2]);
+        return replace(line, "  FLAGS = ", "");
+    };
+
+    auto extract_includes = [&] {
+        string line = string (lines[3]);
+        return replace(line, "  INCLUDES = ", "");
+    };
+
     CompileOptions options;
-    options.dst = find_dst();
-    options.src = find_src();
+    options.dst = extract_dst();
+    options.src = extract_src();
+    options.defines = extract_defines();
+    options.flags = extract_flags();
+    options.includes = extract_includes();
     compiles_.push_back(options);
 }
 
