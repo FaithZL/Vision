@@ -22,22 +22,6 @@ NinjaParser::NinjaParser() {
     parse(content);
 }
 
-namespace {
-std::vector<std::string> extract_file_paths(const std::string &input) {
-    std::vector<std::string> results;
-
-    std::regex path_regex(R"((?:(?:[a-zA-Z]:[\\/]|\\\\|/)?(?:[\w.-]+[\\/])*[\w.-]+\.[\w]+))");
-    std::sregex_iterator it(input.begin(), input.end(), path_regex);
-    std::sregex_iterator end;
-
-    while (it != end) {
-        results.push_back(it->str());
-        ++it;
-    }
-    return results;
-}
-}// namespace
-
 void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
 
     auto extract_dst = [&] {
@@ -88,9 +72,44 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
     compiles_.push_back(options);
 }
 
+
+namespace {
+auto extract_file_paths(const std::string &input) {
+    std::vector<fs::path> results;
+
+    std::regex path_regex(R"((?:(?:[a-zA-Z]:[\\/]|\\\\|/)?(?:[\w.-]+[\\/])*[\w.-]+\.[\w]+))");
+    std::sregex_iterator it(input.begin(), input.end(), path_regex);
+    std::sregex_iterator end;
+
+    while (it != end) {
+        results.emplace_back(it->str());
+        ++it;
+    }
+    return results;
+}
+}// namespace
+
 void NinjaParser::extract_link_cmd(const std::string_view *lines) {
-    static constexpr auto path_pattern = R"((?:(?:[a-zA-Z]:[\\/]|\\\\|/)?(?:[\w.-]+[\\/])*[\w.-]+\.[\w]+))";
-    
+    LinkOptions options;
+    auto extract_target = [&]{
+        auto lst = extract_file_paths(string(lines[0]));
+        return lst[0];
+    };
+
+    auto extract_files = [&] {
+        auto lst = extract_file_paths(string(lines[2]));
+
+        for(const fs::path &p : lst) {
+            if (p.extension() == ".obj") {
+                options.obj_files.push_back(p);
+            } else if (p.extension() == ".lib" || p.extension() == ".dll") {
+                options.link_libraries.push_back(p);
+            }
+        }
+    };
+
+    options.target_file = extract_target();
+    extract_files();
 }
 
 void NinjaParser::parse(const std::string &content) {
