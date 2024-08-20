@@ -9,6 +9,11 @@ namespace vision::inline hotfix {
 
 BuildSystem::BuildSystem() = default;
 
+void BuildSystem::init() {
+    build_rules_ = BuildRules::create();
+    compiler_ = Compiler::create();
+}
+
 void BuildSystem::clear() noexcept {
 }
 
@@ -16,16 +21,13 @@ fs::path BuildSystem::directory() noexcept {
     return fs::current_path().parent_path();
 }
 
-void BuildSystem::build_module(const FileInspector::Module &module) const noexcept {
+void BuildSystem::build_module(const FileInspector::Target &module) const noexcept {
     BuildOptions compile_options;
 
     compiler_->compile(compile_options, module);
 }
 
-void BuildSystem::build_modules(const vector<FileInspector::Module> &modules) const noexcept {
-    if (compiler_ == nullptr) {
-        compiler_ = Compiler::create();
-    }
+void BuildSystem::build_modules(const vector<FileInspector::Target> &modules) const noexcept {
     std::for_each(modules.begin(), modules.end(), [&](const auto &module) {
         OC_INFO_FORMAT("module {} has been modified", module.name);
         for (const fs::path &fn : module.modified_files) {

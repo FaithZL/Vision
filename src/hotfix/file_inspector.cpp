@@ -7,27 +7,26 @@
 
 namespace vision::inline hotfix {
 
-void FileInspector::add_inspected(const fs::path &path, bool recursive) {
-    string key = path.string();
-    if (module_map_.contains(key) || !fs::exists(path)) {
+void FileInspector::add_inspected(const fs::path &path, string_view module_name, bool recursive) {
+    if (target_map_.contains(module_name) || !fs::exists(path)) {
         return;
     }
     auto is_directory = fs::is_directory(path);
     recursive = is_directory && recursive;
 
-    auto add_file = [this](Module &module, const InspectedFile &inspected) {
+    auto add_file = [this](Target &module, const InspectedFile &inspected) {
         if (inspected.path.extension() != ".cpp")
-            return ;
+            return;
         module.files.push_back(inspected);
         files_.insert(inspected.path.string());
     };
 
-    Module module;
-    module.name = path.stem().string();
+    Target target;
+    target.name = module_name;
     if (!is_directory) {
         InspectedFile inspected(path);
-        add_file(module, inspected);
-        module_map_.insert(std::make_pair(key, module));
+        add_file(target, inspected);
+        target_map_.insert(std::make_pair(module_name, target));
         return;
     }
 
@@ -35,7 +34,7 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) {
         if (entry.exists() && entry.is_regular_file()) {
             auto f = InspectedFile(entry.path());
             f.write_time = {};
-            add_file(module, f);
+            add_file(target, f);
         }
     };
 
@@ -48,25 +47,21 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) {
             func(entry);
         }
     }
-    module_map_.insert(std::make_pair(key, module));
+    target_map_.insert(std::make_pair(module_name, target));
 }
 
 void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
-    if (!module_map_.contains(key)) {
+    if (!target_map_.contains(key)) {
         return;
     }
-    module_map_.erase(key);
+    target_map_.erase(key);
 }
 
-FileInspector::Module &FileInspector::get_module(const fs::path &key) noexcept {
-    return module_map_.at(key.string());
-}
+vector<FileInspector::Target> FileInspector::get_modified_targets() noexcept {
+    vector<Target> ret;
 
-vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
-    vector<Module> ret;
-
-    auto is_modified = [&](Module &module) {
+    auto is_modified = [&](Target &module) {
         bool modified = false;
         module.modified_files.clear();
         std::for_each(module.files.begin(), module.files.end(), [&](InspectedFile &file) {
@@ -81,9 +76,9 @@ vector<FileInspector::Module> FileInspector::get_modified_modules() noexcept {
         return modified;
     };
 
-    for (auto &it : module_map_) {
-        const string &key = it.first;
-        Module &module = it.second;
+    for (auto &it : target_map_) {
+        const string_view &key = it.first;
+        Target &module = it.second;
         if (is_modified(module)) {
             ret.push_back(module);
         }

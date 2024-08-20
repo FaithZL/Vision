@@ -39,26 +39,24 @@ public:
             : path(p), write_time(modification_time(p)) {}
     };
 
-    struct Module {
+    struct Target {
         string name;
         vector<InspectedFile> files;
-        vector<string> dependencies;
         vector<fs::path> modified_files;
     };
 
-    /// key: path(directory or file), value : Module
-    using map_type = map<string, Module>;
+    /// key: name, value : Target
+    using map_type = map<string_view, Target>;
 
 private:
-    map_type module_map_;
+    map_type target_map_;
     set<string> files_;
 
 public:
     FileInspector() = default;
-    void add_inspected(const fs::path &path, bool recursive = true);
+    void add_inspected(const fs::path &path, string_view module_name, bool recursive = true);
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
-    [[nodiscard]] Module &get_module(const fs::path &key) noexcept;
-    [[nodiscard]] vector<Module> get_modified_modules() noexcept;
+    [[nodiscard]] vector<Target> get_modified_targets() noexcept;
     [[nodiscard]] static fs::path project_path() noexcept {
         return parent_path(__FILE__, 3);
     }

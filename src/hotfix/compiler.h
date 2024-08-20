@@ -57,7 +57,7 @@ public:
 
 public:
     virtual void compile(const BuildOptions &options,
-                         const FileInspector::Module &module) noexcept = 0;
+                         const FileInspector::Target &module) noexcept = 0;
     virtual void compile(const CompileOptions& options, const fs::path &cpp_file) noexcept = 0;
     [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;

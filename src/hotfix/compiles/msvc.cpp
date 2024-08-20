@@ -60,7 +60,7 @@ public:
     }
 
     void compile(const vision::BuildOptions &options,
-                 const FileInspector::Module &module) noexcept override {
+                 const FileInspector::Target &module) noexcept override {
         fs::path module_path = FileInspector::intermediate_path() / module.name;
         if (!fs::exists(module_path)) {
             fs::create_directory(module_path);

@@ -16,7 +16,7 @@
     struct FileRegistrar {                                                        \
         FileRegistrar() {                                                         \
             auto key = ocarina::parent_path(path, level);                         \
-            vision::HotfixSystem::instance().register_module(key, ##__VA_ARGS__); \
+            vision::HotfixSystem::instance().register_target(key, ##__VA_ARGS__); \
         }                                                                         \
     };                                                                            \
     static FileRegistrar registrar;                                               \
@@ -58,25 +58,18 @@ public:
     void add_object(SP<RuntimeObject> object) noexcept;
     void register_observer(Observer *observer) noexcept;
     void deregister_observer(Observer *observer) noexcept;
+    void init() noexcept;
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
-    void add_inspected(const fs::path &path, bool recursive = true) {
-        file_inspector_.add_inspected(path, recursive);
-    }
-    void register_module(const fs::path &path, const string &module_name = "") {
-        add_inspected(path);
-        auto &module = file_inspector_.get_module(path);
-        if (module_name.empty()) {
-            return;
-        }
-        module.name = module_name;
+    template<typename ...Args>
+    void register_target(Args &&...args) {
+        file_inspector_.add_inspected(OC_FORWARD(args)...);
     }
     void remove_inspected(const fs::path &path) noexcept {
         file_inspector_.remove_inspected(path);
     }
     void check_and_build() noexcept;
-    static void inspect_path(const fs::path &path, int back = 0) noexcept;
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;
     OC_MAKE_MEMBER_GETTER(serializer, &)

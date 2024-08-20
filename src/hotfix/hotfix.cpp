@@ -49,15 +49,11 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
 }
 
 void HotfixSystem::check_and_build() noexcept {
-    auto modules = file_inspector_.get_modified_modules();
+    auto modules = file_inspector_.get_modified_targets();
     if(modules.empty()) {
         return;
     }
     build_system_.build_modules(modules);
-}
-
-void HotfixSystem::inspect_path(const fs::path &path, int back) noexcept {
-    instance().add_inspected(ocarina::parent_path(path, back), true);
 }
 
 void HotfixSystem::update(const std::string &c_name) noexcept {
@@ -68,6 +64,10 @@ void HotfixSystem::update(const std::string &c_name) noexcept {
     std::for_each(observers_.begin(), observers_.end(), [&](Observer *observer) {
 
     });
+}
+
+void HotfixSystem::init() noexcept {
+    build_system_.init();
 }
 
 HotfixSystem &HotfixSystem::instance() noexcept {

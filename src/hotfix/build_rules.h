@@ -43,7 +43,7 @@ protected:
 public:
     BuildRules() = default;
     virtual void parse(const string &content) = 0;
-    [[nodiscard]] static Handle create(const string &name) {
+    [[nodiscard]] static Handle create(const string &name = "ninja") {
         string plugin_name = ocarina::format("vision-hotfix-rules_parser-{}.dll", name);
         auto module = ocarina::FileManager::instance().obtain_module(plugin_name);
         auto creator = module->function<BuildRules::Creator *>("create");
