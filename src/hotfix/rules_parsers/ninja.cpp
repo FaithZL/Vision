@@ -98,8 +98,11 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
 
     auto extract_files = [&] {
         auto lst = extract_file_paths(string(lines[2]));
-
+        auto stem = options.target_file.stem();
         for(const fs::path &p : lst) {
+            if (p.stem() == stem) {
+                continue;
+            }
             if (p.extension() == ".obj") {
                 options.obj_files.push_back(p);
             } else if (p.extension() == ".lib" || p.extension() == ".dll") {
@@ -108,8 +111,38 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
         }
     };
 
+    auto extract_compile_flags = [&] {
+        static constexpr auto token = "LANGUAGE_COMPILE_FLAGS = ";
+        auto len = strlen(token);
+        auto line = lines[3];
+        auto index = line.find(token);
+        index += len;
+        return line.substr(index);
+    };
+
+    auto extract_link_flags = [&] {
+        static constexpr auto token = "LINK_FLAGS = ";
+        auto len = strlen(token);
+        auto line = lines[4];
+        auto index = line.find(token);
+        index += len;
+        return line.substr(index);
+    };
+
+    auto extract_implib = [&] {
+        static constexpr auto token = "TARGET_IMPLIB = ";
+        auto len = strlen(token);
+        auto line = lines[12];
+        auto index = line.find(token);
+        index += len;
+        return line.substr(index);
+    };
+
     options.target_file = extract_target();
     extract_files();
+    options.compile_flags = extract_compile_flags();
+    options.link_flags = extract_link_flags();
+    options.target_implib = extract_implib();
 }
 
 void NinjaParser::parse(const std::string &content) {
