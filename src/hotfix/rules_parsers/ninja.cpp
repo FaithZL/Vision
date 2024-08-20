@@ -22,6 +22,17 @@ NinjaParser::NinjaParser() {
     parse(content);
 }
 
+namespace {
+[[nodiscard]] string_view extract_args(const string_view &line,
+                                       string arg) {
+    arg += " = ";
+    auto len = arg.length();
+    auto index = line.find(arg);
+    index += len;
+    return line.substr(index);
+};
+}// namespace
+
 void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
 
     auto extract_dst = [&] {
@@ -44,34 +55,27 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         constexpr auto next_token = "||";
         auto next_token_index = line.find(next_token, space_index);
         auto ret = string(line.substr(space_index + 1, next_token_index - space_index - 2));
-        ret = replace(ret, "$", "");
+        ret = string_replace(ret, "$", "");
         return ret;
     };
-
-    auto extract_defines = [&] {
-        string line = string(lines[1]);
-        return replace(line, "  DEFINES = ", "");
-    };
-
-    auto extract_flags = [&] {
-        string line = string(lines[2]);
-        return replace(line, "  FLAGS = ", "");
-    };
-
-    auto extract_includes = [&] {
-        string line = string(lines[3]);
-        return replace(line, "  INCLUDES = ", "");
-    };
-
     CompileOptions options;
+    uint i = 0;
+    string_view line;
+    do {
+        line = lines[i++];
+        if (string_contains(line, "DEFINES")) {
+            options.defines = extract_args(line, "DEFINES");
+        } else if (string_contains(line, "FLAGS")) {
+            options.flags = extract_args(line, "FLAGS");
+        } else if (string_contains(line, "INCLUDES")) {
+            options.includes = extract_args(line, "INCLUDES");
+        }
+    } while (!line.empty() || i < 10);
+
     options.dst = extract_dst();
     options.src = extract_src();
-    options.defines = extract_defines();
-    options.flags = extract_flags();
-    options.includes = extract_includes();
     compiles_.push_back(options);
 }
-
 
 namespace {
 auto extract_file_paths(const std::string &input) {
@@ -91,7 +95,7 @@ auto extract_file_paths(const std::string &input) {
 
 void NinjaParser::extract_link_cmd(const std::string_view *lines) {
     LinkOptions options;
-    auto extract_target = [&]{
+    auto extract_target = [&] {
         auto lst = extract_file_paths(string(lines[0]));
         return lst[0];
     };
@@ -99,7 +103,7 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
     auto extract_files = [&] {
         auto lst = extract_file_paths(string(lines[2]));
         auto stem = options.target_file.stem();
-        for(const fs::path &p : lst) {
+        for (const fs::path &p : lst) {
             if (p.stem() == stem) {
                 continue;
             }
@@ -111,38 +115,22 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
         }
     };
 
-    auto extract_compile_flags = [&] {
-        static constexpr auto token = "LANGUAGE_COMPILE_FLAGS = ";
-        auto len = strlen(token);
-        auto line = lines[3];
-        auto index = line.find(token);
-        index += len;
-        return line.substr(index);
-    };
-
-    auto extract_link_flags = [&] {
-        static constexpr auto token = "LINK_FLAGS = ";
-        auto len = strlen(token);
-        auto line = lines[4];
-        auto index = line.find(token);
-        index += len;
-        return line.substr(index);
-    };
-
-    auto extract_implib = [&] {
-        static constexpr auto token = "TARGET_IMPLIB = ";
-        auto len = strlen(token);
-        auto line = lines[12];
-        auto index = line.find(token);
-        index += len;
-        return line.substr(index);
-    };
+    uint i = 0;
+    string_view line;
+    do {
+        line = lines[i++];
+        if (string_contains(line, "LANGUAGE_COMPILE_FLAGS")) {
+            options.compile_flags = extract_args(line, "LANGUAGE_COMPILE_FLAGS");
+        } else if (string_contains(line, "LINK_FLAGS")) {
+            options.link_flags = extract_args(line, "LINK_FLAGS");
+        } else if (string_contains(line, "TARGET_IMPLIB")) {
+            options.target_implib = extract_args(line, "TARGET_IMPLIB");
+        }
+    } while (!line.empty() || i < 10);
 
     options.target_file = extract_target();
     extract_files();
-    options.compile_flags = extract_compile_flags();
-    options.link_flags = extract_link_flags();
-    options.target_implib = extract_implib();
+    links_.push_back(options);
 }
 
 void NinjaParser::parse(const std::string &content) {
