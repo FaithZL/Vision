@@ -8,6 +8,7 @@
 #include "file_inspector.h"
 #include "util/file_manager.h"
 #include "core/dynamic_module.h"
+#include "build_rules.h"
 
 namespace vision::inline hotfix {
 
@@ -57,6 +58,7 @@ public:
 public:
     virtual void compile(const BuildOptions &options,
                          const FileInspector::Module &module) noexcept = 0;
+    virtual void compile(const CompileOptions& options, const fs::path &cpp_file) noexcept = 0;
     [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;

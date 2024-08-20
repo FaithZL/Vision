@@ -55,6 +55,10 @@ public:
         return cmd;
     }
 
+    void compile(const vision::CompileOptions &options, const fs::path &cpp_file) noexcept override {
+        
+    }
+
     void compile(const vision::BuildOptions &options,
                  const FileInspector::Module &module) noexcept override {
         fs::path module_path = FileInspector::intermediate_path() / module.name;
