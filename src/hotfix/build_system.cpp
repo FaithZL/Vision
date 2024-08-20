@@ -25,6 +25,8 @@ void BuildSystem::build_module(const FileInspector::Target &module) const noexce
     BuildOptions compile_options;
 
     compiler_->compile(compile_options, module);
+
+
 }
 
 void BuildSystem::build_modules(const vector<FileInspector::Target> &modules) const noexcept {
