@@ -62,6 +62,7 @@ public:
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
+    OC_MAKE_MEMBER_GETTER(file_inspector, &)
     template<typename ...Args>
     void register_target(Args &&...args) {
         file_inspector_.add_inspected(OC_FORWARD(args)...);

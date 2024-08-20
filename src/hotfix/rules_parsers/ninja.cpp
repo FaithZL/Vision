@@ -4,7 +4,7 @@
 
 #include "core/vs_header.h"
 #include "hotfix/build_rules.h"
-
+#include "hotfix/hotfix.h"
 
 namespace vision::inline hotfix {
 
@@ -36,17 +36,6 @@ namespace {
 
 void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
 
-    auto extract_dst = [&] {
-        string_view line = lines[0];
-        constexpr auto obj_token = ".cpp.obj";
-        constexpr auto build_token = "build ";
-        auto index = line.find(obj_token, 0);
-        CompileOptions options;
-        uint size_obj_token = strlen(obj_token);
-        uint size_build_token = strlen(build_token);
-        return line.substr(size_build_token, index + size_obj_token - size_build_token);
-    };
-
     auto extract_src = [&] {
         string_view line = lines[0];
         constexpr auto compiler_token = "CXX_COMPILER__";
@@ -60,6 +49,25 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         return ret;
     };
     CompileOptions options;
+    options.src = extract_src();
+
+    auto &inspector = HotfixSystem::instance().file_inspector();
+    if (!inspector.has_file(options.src.string())) {
+        return;
+    }
+
+    auto extract_dst = [&] {
+        string_view line = lines[0];
+        constexpr auto obj_token = ".cpp.obj";
+        constexpr auto build_token = "build ";
+        auto index = line.find(obj_token, 0);
+        CompileOptions options;
+        uint size_obj_token = strlen(obj_token);
+        uint size_build_token = strlen(build_token);
+        return line.substr(size_build_token, index + size_obj_token - size_build_token);
+    };
+    options.dst = extract_dst();
+
     uint i = 0;
     string_view line;
     do {
@@ -73,8 +81,6 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         }
     } while (!line.empty() || i < 10);
 
-    options.dst = extract_dst();
-    options.src = extract_src();
     compile_map_.insert(make_pair(options.src.string(), options));
 }
 
@@ -100,6 +106,12 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
         auto lst = extract_file_paths(string(lines[0]));
         return lst[0];
     };
+    options.target_file = extract_target();
+
+    auto &inspector = HotfixSystem::instance().file_inspector();
+    if (!inspector.has_target(options.target_file.stem().string())) {
+        return;
+    }
 
     auto extract_files = [&] {
         auto lst = extract_file_paths(string(lines[2]));
@@ -129,7 +141,6 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
         }
     } while (!line.empty() || i < 10);
 
-    options.target_file = extract_target();
     extract_files();
     link_map_.insert(make_pair(options.target_file.string(), options));
 }
