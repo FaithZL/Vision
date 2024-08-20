@@ -51,6 +51,7 @@ public:
 
 private:
     map_type module_map_;
+    set<string> files_;
 
 public:
     FileInspector() = default;

@@ -37,8 +37,8 @@ public:
     using Handle = unique_ptr<BuildRules, Deleter *>;
 
 protected:
-    vector<CompileOptions> compiles_;
-    vector<LinkOptions> links_;
+    map<string, CompileOptions> compile_map_;
+    map<string, LinkOptions> link_map_;
 
 public:
     BuildRules() = default;

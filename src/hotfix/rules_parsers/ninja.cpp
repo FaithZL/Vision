@@ -5,6 +5,7 @@
 #include "core/vs_header.h"
 #include "hotfix/build_rules.h"
 
+
 namespace vision::inline hotfix {
 
 class NinjaParser : public BuildRules {
@@ -74,7 +75,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
 
     options.dst = extract_dst();
     options.src = extract_src();
-    compiles_.push_back(options);
+    compile_map_.insert(make_pair(options.src.string(), options));
 }
 
 namespace {
@@ -130,7 +131,7 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
 
     options.target_file = extract_target();
     extract_files();
-    links_.push_back(options);
+    link_map_.insert(make_pair(options.target_file.string(), options));
 }
 
 void NinjaParser::parse(const std::string &content) {

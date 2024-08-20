@@ -15,11 +15,18 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) {
     auto is_directory = fs::is_directory(path);
     recursive = is_directory && recursive;
 
+    auto add_file = [this](Module &module, const InspectedFile &inspected) {
+        if (inspected.path.extension() != ".cpp")
+            return ;
+        module.files.push_back(inspected);
+        files_.insert(inspected.path.string());
+    };
+
     Module module;
     module.name = path.stem().string();
     if (!is_directory) {
         InspectedFile inspected(path);
-        module.files.push_back(inspected);
+        add_file(module, inspected);
         module_map_.insert(std::make_pair(key, module));
         return;
     }
@@ -28,7 +35,7 @@ void FileInspector::add_inspected(const fs::path &path, bool recursive) {
         if (entry.exists() && entry.is_regular_file()) {
             auto f = InspectedFile(entry.path());
             f.write_time = {};
-            module.files.push_back(f);
+            add_file(module, f);
         }
     };
 

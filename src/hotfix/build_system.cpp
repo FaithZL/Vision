@@ -12,6 +12,10 @@ BuildSystem::BuildSystem() = default;
 void BuildSystem::clear() noexcept {
 }
 
+fs::path BuildSystem::directory() noexcept {
+    return fs::current_path().parent_path();
+}
+
 void BuildSystem::build_module(const FileInspector::Module &module) const noexcept {
     BuildOptions compile_options;
 

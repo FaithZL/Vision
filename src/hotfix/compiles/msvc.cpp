@@ -55,8 +55,8 @@ public:
         return cmd;
     }
 
-    void compile(const vision::CompileOptions &options, const fs::path &cpp_file) noexcept override {
-        
+    void compile(const CompileOptions &options, const fs::path &cpp_file) noexcept override {
+
     }
 
     void compile(const vision::BuildOptions &options,
