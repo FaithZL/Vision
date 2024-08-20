@@ -10,14 +10,38 @@ namespace vision::inline hotfix {
 class NinjaParser : public BuildRules {
 public:
     NinjaParser();
-    void process_lines(const string_view *lines);
+    void extract_compile_cmd(const std::string_view *lines);
+    void extract_link_cmd(const std::string_view *lines);
     void parse(const std::string &content) override;
 };
 
-void NinjaParser::process_lines(const std::string_view *lines) {
-    string_view line = lines[0];
+NinjaParser::NinjaParser() {
+    std::ifstream fst;
+    fs::path fn = fs::current_path().parent_path() / "build.ninja";
+    string content = from_file(fn);
+    parse(content);
+}
 
-    auto extract_dst = [&]{
+namespace {
+std::vector<std::string> extract_file_paths(const std::string &input) {
+    std::vector<std::string> results;
+
+    std::regex path_regex(R"((?:(?:[a-zA-Z]:[\\/]|\\\\|/)?(?:[\w.-]+[\\/])*[\w.-]+\.[\w]+))");
+    std::sregex_iterator it(input.begin(), input.end(), path_regex);
+    std::sregex_iterator end;
+
+    while (it != end) {
+        results.push_back(it->str());
+        ++it;
+    }
+    return results;
+}
+}// namespace
+
+void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
+
+    auto extract_dst = [&] {
+        string_view line = lines[0];
         constexpr auto obj_token = ".cpp.obj";
         constexpr auto build_token = "build ";
         auto index = line.find(obj_token, 0);
@@ -27,7 +51,8 @@ void NinjaParser::process_lines(const std::string_view *lines) {
         return line.substr(size_build_token, index + size_obj_token - size_build_token);
     };
 
-    auto extract_src = [&]{
+    auto extract_src = [&] {
+        string_view line = lines[0];
         constexpr auto compiler_token = "CXX_COMPILER__";
         auto index = line.find(compiler_token);
         uint start = index + strlen(compiler_token);
@@ -40,8 +65,8 @@ void NinjaParser::process_lines(const std::string_view *lines) {
     };
 
     auto extract_defines = [&] {
-        string next_line = string(lines[1]);
-        return replace(next_line, "  DEFINES = ", "");
+        string line = string(lines[1]);
+        return replace(line, "  DEFINES = ", "");
     };
 
     auto extract_flags = [&] {
@@ -50,7 +75,7 @@ void NinjaParser::process_lines(const std::string_view *lines) {
     };
 
     auto extract_includes = [&] {
-        string line = string (lines[3]);
+        string line = string(lines[3]);
         return replace(line, "  INCLUDES = ", "");
     };
 
@@ -63,19 +88,19 @@ void NinjaParser::process_lines(const std::string_view *lines) {
     compiles_.push_back(options);
 }
 
-NinjaParser::NinjaParser() {
-    std::ifstream fst;
-    fs::path fn = fs::current_path().parent_path() / "build.ninja";
-    string content = from_file(fn);
-    parse(content);
+void NinjaParser::extract_link_cmd(const std::string_view *lines) {
+    static constexpr auto path_pattern = R"((?:(?:[a-zA-Z]:[\\/]|\\\\|/)?(?:[\w.-]+[\\/])*[\w.-]+\.[\w]+))";
+    
 }
 
 void NinjaParser::parse(const std::string &content) {
     auto lines = string_split(content, '\n');
     for (int i = 0; i < lines.size(); ++i) {
-        string_view& line = lines[i];
+        string_view &line = lines[i];
         if (line.starts_with("build") && lines[i + 1].starts_with("  DEFINES")) {
-            process_lines(addressof(line));
+            extract_compile_cmd(addressof(line));
+        } else if (line.starts_with("# Link the ")) {
+            extract_link_cmd(addressof(line));
         }
     }
 }

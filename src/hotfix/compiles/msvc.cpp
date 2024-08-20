@@ -14,14 +14,13 @@ class MSVCompiler : public Compiler {
 private:
     static constexpr auto bat_dir = R"(VC\Auxiliary\Build\)";
     CmdProcess cmd_process_;
-    fs::path vs_path_;
+    fs::path env_path_;
 
 public:
     MSVCompiler() {
-        vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
-        BuildOptions op;
-        vs_path_ = vec.at(0).Path;
-        vs_path_ = installation_directory() / bat_dir;
+//        vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
+//        env_path_ = vec.at(0).Path;
+        env_path_ = installation_directory() / bat_dir;
         if (!fs::exists(FileInspector::intermediate_path())) {
             fs::create_directory(FileInspector::intermediate_path());
         }
@@ -39,7 +38,7 @@ public:
     }
 
     void setup_environment() const {
-        std::string cmdSetParams = "\"" + vs_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
+        std::string cmdSetParams = "\"" + env_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
         cmd_process_.WriteInput(cmdSetParams);
         cmd_process_.WriteInput(std::string("chcp 65001\n"));
     }
