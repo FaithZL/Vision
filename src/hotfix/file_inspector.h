@@ -57,6 +57,12 @@ public:
     void add_inspected(const fs::path &path, string_view module_name, bool recursive = true);
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] vector<Target> get_modified_targets() noexcept;
+    [[nodiscard]] bool has_target(string_view target_name) noexcept {
+        return target_map_.contains(target_name);
+    }
+    [[nodiscard]] bool has_file(const string &fn) noexcept {
+        return files_.contains(fn);
+    }
     [[nodiscard]] static fs::path project_path() noexcept {
         return parent_path(__FILE__, 3);
     }

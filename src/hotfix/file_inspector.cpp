@@ -61,14 +61,14 @@ void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexc
 vector<FileInspector::Target> FileInspector::get_modified_targets() noexcept {
     vector<Target> ret;
 
-    auto is_modified = [&](Target &module) {
+    auto is_modified = [&](Target &target) {
         bool modified = false;
-        module.modified_files.clear();
-        std::for_each(module.files.begin(), module.files.end(), [&](InspectedFile &file) {
+        target.modified_files.clear();
+        std::for_each(target.files.begin(), target.files.end(), [&](InspectedFile &file) {
             FileTime write_time = modification_time(file.path);
             if (write_time > file.write_time) {
                 //                file.write_time = write_time;
-                module.modified_files.push_back(file.path);
+                target.modified_files.push_back(file.path);
                 modified = true;
             }
         });
