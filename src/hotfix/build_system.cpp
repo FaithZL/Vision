@@ -35,7 +35,16 @@ void BuildSystem::link(const FileInspector::Target &target) const noexcept {
     compiler_->link(options, target);
 }
 
+void BuildSystem::create_immediate_path(const fs::path &path) noexcept {
+    if (fs::exists(path)) {
+        return;
+    }
+    fs::create_directory(path);
+}
+
 void BuildSystem::build_target(const FileInspector::Target &target) const noexcept {
+    fs::path im_path = FileInspector::intermediate_path() / fs::path(target.name).stem();
+    create_immediate_path(im_path);
     compiler_->setup_environment();
     compile(target);
     link(target);

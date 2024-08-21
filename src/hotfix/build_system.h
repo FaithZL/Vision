@@ -20,6 +20,7 @@ public:
     [[nodiscard]] static fs::path directory() noexcept;
     void build_targets(const vector<FileInspector::Target> &targets) const noexcept;
     void build_target(const FileInspector::Target &target) const noexcept;
+    static void create_immediate_path(const fs::path &path) noexcept;
     void compile(const FileInspector::Target &target) const noexcept;
     void link(const FileInspector::Target &target) const noexcept;
 };
