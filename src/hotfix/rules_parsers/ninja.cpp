@@ -49,10 +49,10 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         return ret;
     };
     CompileOptions options;
-    options.src = extract_src();
+    options.src_fn = extract_src();
 
     auto &inspector = HotfixSystem::instance().file_inspector();
-    if (!inspector.has_file(options.src.string())) {
+    if (!inspector.has_file(options.src_fn.string())) {
         return;
     }
 
@@ -66,7 +66,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         uint size_build_token = strlen(build_token);
         return line.substr(size_build_token, index + size_obj_token - size_build_token);
     };
-    options.dst = extract_dst();
+    options.dst_fn = extract_dst();
 
     uint i = 0;
     string_view line;
@@ -81,7 +81,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         }
     } while (!line.empty() || i < 10);
 
-    compile_map_.insert(make_pair(options.src.string(), options));
+    compile_map_.insert(make_pair(options.src_fn.string(), options));
 }
 
 namespace {

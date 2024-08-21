@@ -55,7 +55,7 @@ public:
         return cmd;
     }
 
-    void compile(const CompileOptions &options, const fs::path &cpp_file) noexcept override {
+    void compile(const CompileOptions &options) noexcept override {
 
     }
 

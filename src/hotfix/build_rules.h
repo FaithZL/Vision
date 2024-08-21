@@ -14,8 +14,8 @@ namespace vision::inline hotfix {
 using namespace ocarina;
 
 struct CompileOptions {
-    fs::path src;
-    fs::path dst;
+    fs::path src_fn;
+    fs::path dst_fn;
     string defines;
     string flags;
     string includes;
