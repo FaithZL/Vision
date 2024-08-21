@@ -29,7 +29,10 @@ void BuildSystem::compile(const FileInspector::Target &target) const noexcept {
 }
 
 void BuildSystem::link(const FileInspector::Target &target) const noexcept {
-
+    fs::path fn("bin");
+    fn = fn / target.name;
+    const LinkOptions &options = build_rules_->link_options(fn.string());
+    compiler_->link(options, target);
 }
 
 void BuildSystem::build_target(const FileInspector::Target &target) const noexcept {

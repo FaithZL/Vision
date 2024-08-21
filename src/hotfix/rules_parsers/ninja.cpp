@@ -108,7 +108,7 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
     options.target_file = extract_target();
 
     auto &inspector = HotfixSystem::instance().file_inspector();
-    if (!inspector.has_target(options.target_file.stem().string())) {
+    if (!inspector.has_target(options.target_file.filename().string())) {
         return;
     }
 

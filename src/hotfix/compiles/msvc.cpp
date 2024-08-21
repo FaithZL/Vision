@@ -57,7 +57,14 @@ public:
         string cmd = assemble_compile_cmd(options);
         cmd_process_.WriteInput(cmd);
     }
+
+    void link(const vision::LinkOptions &options, const FileInspector::Target &target) noexcept override;
 };
+
+void MSVCompiler::link(const vision::LinkOptions &options,
+                       const FileInspector::Target &target) noexcept {
+
+}
 
 }// namespace vision::inline hotfix
 
