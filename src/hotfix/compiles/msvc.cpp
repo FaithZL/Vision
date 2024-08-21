@@ -57,10 +57,11 @@ public:
     }
 
     [[nodiscard]] static string assemble_compile_cmd(const CompileOptions &options) noexcept {
-        /// defines includes flags obj cpp
-        static constexpr string_view cmd_template = R"(/nologo /TP {} {} {} /Fo{} -c {})";
+        /// defines includes flags obj cpp c_CompletionToken
+        static constexpr string_view cmd_template = "cl /nologo /TP {} {} {} /Fo{} -c {} \n echo {} \n";
         string cmd = ocarina::format(cmd_template, options.defines, options.includes, options.flags,
-                                     options.dst_fn.string(), options.src_fn.string());
+                                     options.dst_fn.string(), options.src_fn.string(),
+                                     c_CompletionToken);
         return cmd;
     }
 
@@ -68,10 +69,7 @@ public:
         cmd_process_.InitialiseProcess();
         setup_environment();
         string cmd = assemble_compile_cmd(options);
-        string cmd_to_send = "cl " + cmd;
-        cmd_to_send += "\necho ";
-        cmd_to_send += string(c_CompletionToken) + "\n";
-        cmd_process_.WriteInput(cmd_to_send);
+        cmd_process_.WriteInput(cmd);
         OC_INFO(cmd);
     }
 
