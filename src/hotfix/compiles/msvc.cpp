@@ -49,14 +49,25 @@ public:
         string cmd = ocarina::format(R"(/nologo /Z7 /FC /utf-8 /MDd /Od /MP /DFMT_CONSTEVAL=constexpr -D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING /Fo"{}\\" /D WIN32 /EHa /c "{}")",
                                      output_path.string(), src_file.string());
         for (const auto &p : options.include_paths) {
-            cmd += format(R"( /I "{}")", p.string());
+            cmd += format(R"( /I{})", p.string());
         }
         cmd += " /std:c++20";
+//        OC_INFO(cmd);
+        return cmd;
+    }
+
+    [[nodiscard]] static string assemble_compile_cmd(const CompileOptions &options) noexcept {
+        /// defines includes flags obj cpp
+        static constexpr string_view cmd_template = R"(/nologo /TP {} {} {} /Fo{} -c {})";
+        string cmd = ocarina::format(cmd_template, options.defines, options.includes, options.flags, options.dst_fn.string(), options.src_fn.string());
         return cmd;
     }
 
     void compile(const CompileOptions &options) noexcept override {
-
+//        cmd_process_.InitialiseProcess();
+//        setup_environment();
+        string cmd = assemble_compile_cmd(options);
+        OC_INFO(cmd);
     }
 
     void compile(const vision::BuildOptions &options,
