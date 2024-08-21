@@ -66,7 +66,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         uint size_build_token = strlen(build_token);
         return line.substr(size_build_token, index + size_obj_token - size_build_token);
     };
-    options.dst_fn = extract_dst();
+    options.dst_fn = BuildSystem::directory() / extract_dst();
 
     uint i = 0;
     string_view line;
@@ -80,7 +80,6 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
             options.includes = extract_args(line, "INCLUDES");
         }
     } while (!line.empty() || i < 10);
-
     compile_map_.insert(make_pair(options.src_fn.string(), options));
 }
 
