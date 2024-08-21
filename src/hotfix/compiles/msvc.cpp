@@ -18,16 +18,16 @@ private:
 
 public:
     MSVCompiler() {
-//        vector<VSVersionInfo> vec = GetPathsOfVisualStudioInstalls();
-//        env_path_ = vec.at(0).Path;
         env_path_ = installation_directory() / bat_dir;
         if (!fs::exists(FileInspector::intermediate_path())) {
             fs::create_directory(FileInspector::intermediate_path());
         }
-        auto aaa = installation_directory();
-
         clear_directory(FileInspector::intermediate_path());
+        cmd_process_.InitialiseProcess();
+    }
 
+    ~MSVCompiler() override {
+        cmd_process_.CleanupProcessAndPipes();
     }
 
     [[nodiscard]] fs::path installation_directory() noexcept override {
@@ -66,11 +66,9 @@ public:
     }
 
     void compile(const CompileOptions &options) noexcept override {
-        cmd_process_.InitialiseProcess();
         setup_environment();
         string cmd = assemble_compile_cmd(options);
         cmd_process_.WriteInput(cmd);
-        OC_INFO(cmd);
     }
 
     void compile(const vision::BuildOptions &options,

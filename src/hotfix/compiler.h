@@ -64,6 +64,7 @@ public:
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;
     [[nodiscard]] static Handle create(const string &name);
     [[nodiscard]] static Handle create();
+    virtual ~Compiler() = default;
 };
 
 }// namespace vision::inline hotfix
