@@ -56,12 +56,11 @@ public:
     using Handle = unique_ptr<Compiler, Deleter *>;
 
 public:
-    virtual void compile(const BuildOptions &options,
-                         const FileInspector::Target &module) noexcept = 0;
     virtual void compile(const CompileOptions& options) noexcept = 0;
     [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;
+    virtual void setup_environment() const {}
     [[nodiscard]] static Handle create(const string &name);
     [[nodiscard]] static Handle create();
     virtual ~Compiler() = default;

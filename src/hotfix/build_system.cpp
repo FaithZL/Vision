@@ -33,9 +33,7 @@ void BuildSystem::link(const FileInspector::Target &target) const noexcept {
 }
 
 void BuildSystem::build_module(const FileInspector::Target &target) const noexcept {
-//    BuildOptions compile_options;
-//
-//    compiler_->compile(compile_options, target);
+    compiler_->setup_environment();
     compile(target);
     link(target);
 }

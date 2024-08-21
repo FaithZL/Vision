@@ -38,22 +38,10 @@ public:
         return "obj";
     }
 
-    void setup_environment() const {
+    void setup_environment() const override {
         std::string cmdSetParams = "\"" + env_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
         cmd_process_.WriteInput(cmdSetParams);
         cmd_process_.WriteInput(std::string("chcp 65001\n"));
-    }
-
-    [[nodiscard]] static string assemble_compile_cmd(const fs::path &src_file,
-                                                     const fs::path &output_path,
-                                                     const BuildOptions &options) noexcept {
-        string cmd = ocarina::format(R"(/nologo /Z7 /FC /utf-8 /MDd /Od /MP /DFMT_CONSTEVAL=constexpr -D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING /Fo"{}\\" /D WIN32 /EHa /c "{}")",
-                                     output_path.string(), src_file.string());
-        for (const auto &p : options.include_paths) {
-            cmd += format(R"( /I{})", p.string());
-        }
-        cmd += " /std:c++20";
-        return cmd;
     }
 
     [[nodiscard]] static string assemble_compile_cmd(const CompileOptions &options) noexcept {
@@ -66,30 +54,8 @@ public:
     }
 
     void compile(const CompileOptions &options) noexcept override {
-        setup_environment();
         string cmd = assemble_compile_cmd(options);
         cmd_process_.WriteInput(cmd);
-    }
-
-    void compile(const vision::BuildOptions &options,
-                 const FileInspector::Target &module) noexcept override {
-        fs::path module_path = FileInspector::intermediate_path() / module.name;
-        if (!fs::exists(module_path)) {
-            fs::create_directory(module_path);
-        }
-        cmd_process_.InitialiseProcess();
-        setup_environment();
-        for (const auto &file : module.files) {
-            if (file.path.extension() != ".cpp") {
-                continue;
-            }
-
-            string cmd = assemble_compile_cmd(file.path, module_path, options);
-            string cmd_to_send = "cl " + cmd;
-            cmd_to_send += "\necho ";
-            cmd_to_send += string(c_CompletionToken) + "\n";
-            cmd_process_.WriteInput(cmd_to_send);
-        }
     }
 };
 
