@@ -53,7 +53,7 @@ void HotfixSystem::check_and_build() noexcept {
     if(modules.empty()) {
         return;
     }
-    build_system_.build_modules(modules);
+    build_system_.build_targets(modules);
 }
 
 void HotfixSystem::update(const std::string &c_name) noexcept {

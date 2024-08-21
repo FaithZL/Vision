@@ -18,8 +18,8 @@ public:
     void init();
     void clear() noexcept;
     [[nodiscard]] static fs::path directory() noexcept;
-    void build_modules(const vector<FileInspector::Target> &targets) const noexcept;
-    void build_module(const FileInspector::Target &module) const noexcept;
+    void build_targets(const vector<FileInspector::Target> &targets) const noexcept;
+    void build_target(const FileInspector::Target &target) const noexcept;
     void compile(const FileInspector::Target &target) const noexcept;
     void link(const FileInspector::Target &target) const noexcept;
 };
