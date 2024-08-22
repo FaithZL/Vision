@@ -15,8 +15,8 @@ static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
 
 /// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
-struct CmdProcess {
-public:
+class CmdProcess {
+private:
     PROCESS_INFORMATION m_CmdProcessInfo{};
     HANDLE m_CmdProcessOutputRead{};
     HANDLE m_CmdProcessInputWrite{};
@@ -24,6 +24,8 @@ public:
     bool m_bStoreCmdOutput{};
     std::string m_CmdOutput;
     std::thread m_OutputThread;
+
+public:
     CmdProcess();
     ~CmdProcess();
 
