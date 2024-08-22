@@ -9,7 +9,7 @@ namespace vision::inline hotfix {
 
 IObjectConstructor *Demo::constructor() const noexcept {
 
-    std::cout << "wocaowwww" << std::endl;
+    std::cout << "wocaoas---------dfa" << std::endl;
     return nullptr;
 }
 
