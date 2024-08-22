@@ -137,6 +137,10 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
             options.link_flags = extract_args(line, "LINK_FLAGS");
         } else if (string_contains(line, "TARGET_IMPLIB")) {
             options.target_implib = extract_args(line, "TARGET_IMPLIB");
+        } else if (string_contains(line, "TARGET_PDB")) {
+            options.target_pdb = extract_args(line, "TARGET_PDB");
+        } else if (string_contains(line, "PRE_LINK")) {
+            options.pre_link = extract_args(line, "PRE_LINK");
         }
     } while (!line.empty() || i < 10);
 

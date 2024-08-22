@@ -24,9 +24,11 @@ struct CompileOptions {
 struct LinkOptions {
     string compile_flags;
     string link_flags;
+    string pre_link;
     vector<fs::path> obj_files;
     vector<fs::path> link_libraries;
     fs::path target_file;
+    fs::path target_pdb;
     fs::path target_implib;
 };
 
