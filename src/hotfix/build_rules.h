@@ -30,6 +30,20 @@ struct LinkOptions {
     fs::path target_file;
     fs::path target_pdb;
     fs::path target_implib;
+    [[nodiscard]] string obj_files_string() const noexcept {
+        string ret;
+        for (const auto &item : obj_files) {
+            ret += " " + item.string();
+        }
+        return ret;
+    }
+    [[nodiscard]] string link_libraries_string() const noexcept {
+        string ret;
+        for (const auto &item : link_libraries) {
+            ret += " " + item.string();
+        }
+        return ret;
+    }
 };
 
 class BuildRules {
