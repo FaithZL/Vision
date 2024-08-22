@@ -64,14 +64,14 @@ string MSVCompiler::assemble_link_cmd(const LinkOptions &options,
                                       const FileInspector::Target &target) noexcept {
     /// pre link
     static constexpr string_view cmd_template = "{}";
-    string cmd = "cd D:\\work\\renderers\\Vision\\cmake-build-debug\\ ";
+    string cmd = "cd ../";
     return cmd;
 }
 
 void MSVCompiler::link(const vision::LinkOptions &options,
                        const FileInspector::Target &target) noexcept {
     string cmd = assemble_link_cmd(options, target);
-    cmd_process_.write_input(cmd);
+//    cmd_process_.write_input(cmd);
 }
 
 }// namespace vision::inline hotfix
