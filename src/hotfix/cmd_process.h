@@ -35,6 +35,10 @@ public:
     void write_input(const std::string &input) const;
     void cleanup_process();
 
+    [[nodiscard]] static string add_complete_flag(const string &cmd) noexcept {
+        return cmd + ocarina::format("\n echo {} \n", c_CompletionToken);
+    }
+
 private:
     void read_output_thread();
 };
@@ -44,7 +48,7 @@ CmdProcess::CmdProcess() {
 }
 
 void CmdProcess::change_directory(const fs::path &dir) const noexcept {
-    
+
 }
 
 void CmdProcess::read_output_thread() {
