@@ -22,11 +22,11 @@ public:
             fs::create_directory(FileInspector::intermediate_path());
         }
         clear_directory(FileInspector::intermediate_path());
-        cmd_process_.InitialiseProcess();
+        cmd_process_.initialise();
     }
 
     ~MSVCompiler() override {
-        cmd_process_.CleanupProcessAndPipes();
+        cmd_process_.cleanup_process();
     }
 
     [[nodiscard]] fs::path installation_directory() noexcept override {
@@ -39,8 +39,8 @@ public:
 
     void setup_environment() const override {
         std::string cmdSetParams = "\"" + env_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
-        cmd_process_.WriteInput(cmdSetParams);
-        cmd_process_.WriteInput(std::string("chcp 65001\n"));
+        cmd_process_.write_input(cmdSetParams);
+        cmd_process_.write_input(std::string("chcp 65001\n"));
     }
 
     [[nodiscard]] static string add_complete_flag(const string &cmd) noexcept {
@@ -58,7 +58,7 @@ public:
     void compile(const CompileOptions &options) noexcept override {
         string cmd = assemble_compile_cmd(options);
         cmd = add_complete_flag(cmd);
-        cmd_process_.WriteInput(cmd);
+        cmd_process_.write_input(cmd);
     }
 
     [[nodiscard]] static string assemble_link_cmd(const LinkOptions &options, const FileInspector::Target &target) noexcept;
@@ -77,7 +77,7 @@ void MSVCompiler::link(const vision::LinkOptions &options,
                        const FileInspector::Target &target) noexcept {
     string cmd = assemble_link_cmd(options, target);
     cmd = add_complete_flag(cmd);
-    cmd_process_.WriteInput(cmd);
+    cmd_process_.write_input(cmd);
 }
 
 }// namespace vision::inline hotfix

@@ -17,35 +17,41 @@ static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
 
 class CmdProcess {
 private:
-    PROCESS_INFORMATION m_CmdProcessInfo{};
-    HANDLE m_CmdProcessOutputRead{};
-    HANDLE m_CmdProcessInputWrite{};
-    std::atomic<bool> m_bIsComplete;
-    bool m_bStoreCmdOutput{};
-    std::string m_CmdOutput;
-    std::thread m_OutputThread;
+    PROCESS_INFORMATION process_info_{};
+    HANDLE output_read_{};
+    HANDLE input_write_{};
+    std::atomic<bool> is_complete_;
+    bool store_cmd_output_{};
+    std::string m_CmdOutput_;
+    std::thread output_thread_;
+    mutable fs::path work_directory_{fs::current_path()};
 
 public:
     CmdProcess();
     ~CmdProcess();
 
-    void InitialiseProcess();
-    void WriteInput(const std::string &input) const;
-    void CleanupProcessAndPipes();
+    void initialise();
+    void change_directory(const fs::path &dir) const noexcept;
+    void write_input(const std::string &input) const;
+    void cleanup_process();
 
 private:
-    void ReadAndHandleOutputThread();
+    void read_output_thread();
 };
 
 CmdProcess::CmdProcess() {
-    ZeroMemory(&m_CmdProcessInfo, sizeof(m_CmdProcessInfo));
+    ZeroMemory(&process_info_, sizeof(process_info_));
 }
 
-void CmdProcess::ReadAndHandleOutputThread() {
+void CmdProcess::change_directory(const fs::path &dir) const noexcept {
+    
+}
+
+void CmdProcess::read_output_thread() {
     CHAR lpBuffer[1024];
     DWORD nBytesRead;
     while (true) {
-        if (!ReadFile(m_CmdProcessOutputRead, lpBuffer, sizeof(lpBuffer) - 1,
+        if (!ReadFile(output_read_, lpBuffer, sizeof(lpBuffer) - 1,
                       &nBytesRead, nullptr) ||
             !nBytesRead) {
             if (GetLastError() != ERROR_BROKEN_PIPE) {
@@ -59,17 +65,17 @@ void CmdProcess::ReadAndHandleOutputThread() {
         size_t found = buffer.find(c_CompletionToken);
         if (found != std::string::npos) {
             buffer = buffer.substr(0, found);
-            if (!m_bStoreCmdOutput) {
+            if (!store_cmd_output_) {
                 std::cout << "[Cmd process] Complete" << std::endl;
             }
-            m_bIsComplete = true;
+            is_complete_ = true;
         }
 
         if (buffer.empty()) {
             continue;
         }
-        if (m_bStoreCmdOutput) {
-            m_CmdOutput += buffer;
+        if (store_cmd_output_) {
+            m_CmdOutput_ += buffer;
             continue;
         }
         if (buffer.find(" : error ") != std::string::npos ||
@@ -81,7 +87,7 @@ void CmdProcess::ReadAndHandleOutputThread() {
     }
 }
 
-void CmdProcess::InitialiseProcess() {
+void CmdProcess::initialise() {
     //init compile process
     STARTUPINFOW startupInfo;
     ZeroMemory(&startupInfo, sizeof(startupInfo));
@@ -135,8 +141,8 @@ void CmdProcess::InitialiseProcess() {
     if (startupInfo.hStdOutput) {
         if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
                              GetCurrentProcess(),
-                             &m_CmdProcessOutputRead,// Address of new handle.
-                             0, FALSE,               // Make it uninheritable.
+                             &output_read_,// Address of new handle.
+                             0, FALSE,     // Make it uninheritable.
                              DUPLICATE_SAME_ACCESS)) {
             OC_WARNING("[RuntimeCompiler] Failed to duplicate output read pipe\n");
             exit_func();
@@ -161,8 +167,8 @@ void CmdProcess::InitialiseProcess() {
     // are created.
     if (startupInfo.hStdOutput && !DuplicateHandle(GetCurrentProcess(), hInputWriteTmp,
                                                    GetCurrentProcess(),
-                                                   &m_CmdProcessInputWrite,// Address of new handle.
-                                                   0, FALSE,               // Make it uninheritable.
+                                                   &input_write_,// Address of new handle.
+                                                   0, FALSE,     // Make it uninheritable.
                                                    DUPLICATE_SAME_ACCESS)) {
         OC_WARNING("[RuntimeCompiler] Failed to duplicate input write pipe\n");
         exit_func();
@@ -183,37 +189,37 @@ void CmdProcess::InitialiseProcess() {
         nullptr,         //__in_opt     LPVOID lpEnvironment,
         nullptr,         //__in_opt     LPCTSTR lpCurrentDirectory,
         &startupInfo,    //__in         LPSTARTUPINFO lpStartupInfo,
-        &m_CmdProcessInfo//__out        LPPROCESS_INFORMATION lpProcessInformation
+        &process_info_   //__out        LPPROCESS_INFORMATION lpProcessInformation
     );
 
     //launch threaded read.
-    m_OutputThread = std::thread(&CmdProcess::ReadAndHandleOutputThread, this);
-    m_OutputThread.detach();
+    output_thread_ = std::thread(&CmdProcess::read_output_thread, this);
+    output_thread_.detach();
 
     exit_func();
 }
 
-void CmdProcess::WriteInput(const std::string &input) const {
+void CmdProcess::write_input(const std::string &input) const {
     DWORD nBytesWritten;
     DWORD length = (DWORD)input.length();
-    WriteFile(m_CmdProcessInputWrite, input.c_str(), length, &nBytesWritten, nullptr);
+    WriteFile(input_write_, input.c_str(), length, &nBytesWritten, nullptr);
 }
 
-void CmdProcess::CleanupProcessAndPipes() {
-    if (m_CmdProcessInfo.hProcess) {
-        TerminateProcess(m_CmdProcessInfo.hProcess, 0);
-        TerminateThread(m_CmdProcessInfo.hThread, 0);
-        CloseHandle(m_CmdProcessInfo.hThread);
-        ZeroMemory(&m_CmdProcessInfo, sizeof(m_CmdProcessInfo));
-        CloseHandle(m_CmdProcessInputWrite);
-        m_CmdProcessInputWrite = nullptr;
-        CloseHandle(m_CmdProcessOutputRead);
-        m_CmdProcessOutputRead = nullptr;
+void CmdProcess::cleanup_process() {
+    if (process_info_.hProcess) {
+        TerminateProcess(process_info_.hProcess, 0);
+        TerminateThread(process_info_.hThread, 0);
+        CloseHandle(process_info_.hThread);
+        ZeroMemory(&process_info_, sizeof(process_info_));
+        CloseHandle(input_write_);
+        input_write_ = nullptr;
+        CloseHandle(output_read_);
+        output_read_ = nullptr;
     }
 }
 
 CmdProcess::~CmdProcess() {
-    CleanupProcessAndPipes();
+    cleanup_process();
 }
 
 }// namespace vision::inline hotfix
