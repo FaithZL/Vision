@@ -31,8 +31,8 @@ public:
     ~CmdProcess();
 
     void initialise();
-    void change_directory(const fs::path &dir) const noexcept;
-    void write_input(const std::string &input) const;
+    void change_directory(fs::path dir) const noexcept;
+    void write_input(std::string input) const;
     void cleanup_process();
 
     [[nodiscard]] static string add_complete_flag(const string &cmd) noexcept {
@@ -47,8 +47,11 @@ CmdProcess::CmdProcess() {
     ZeroMemory(&process_info_, sizeof(process_info_));
 }
 
-void CmdProcess::change_directory(const fs::path &dir) const noexcept {
-
+void CmdProcess::change_directory(fs::path dir) const noexcept {
+    //    if (dir.is_relative()) {
+    //        dir = work_directory_ / dir;
+    //    }
+    write_input(ocarina::format("cd {}", dir.string()));
 }
 
 void CmdProcess::read_output_thread() {
@@ -203,8 +206,9 @@ void CmdProcess::initialise() {
     exit_func();
 }
 
-void CmdProcess::write_input(const std::string &input) const {
+void CmdProcess::write_input(std::string input) const {
     DWORD nBytesWritten;
+    input = add_complete_flag(input);
     DWORD length = (DWORD)input.length();
     WriteFile(input_write_, input.c_str(), length, &nBytesWritten, nullptr);
 }

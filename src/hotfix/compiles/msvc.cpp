@@ -53,7 +53,6 @@ public:
 
     void compile(const CompileOptions &options) noexcept override {
         string cmd = assemble_compile_cmd(options);
-        cmd = CmdProcess::add_complete_flag(cmd);
         cmd_process_.write_input(cmd);
     }
 
@@ -65,14 +64,13 @@ string MSVCompiler::assemble_link_cmd(const LinkOptions &options,
                                       const FileInspector::Target &target) noexcept {
     /// pre link
     static constexpr string_view cmd_template = "{}";
-    string cmd = "echo %cd%";
+    string cmd = "cd D:\\work\\renderers\\Vision\\cmake-build-debug\\ ";
     return cmd;
 }
 
 void MSVCompiler::link(const vision::LinkOptions &options,
                        const FileInspector::Target &target) noexcept {
     string cmd = assemble_link_cmd(options, target);
-    cmd = CmdProcess::add_complete_flag(cmd);
     cmd_process_.write_input(cmd);
 }
 
