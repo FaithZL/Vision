@@ -3,10 +3,13 @@
 //
 
 #include "demo.h"
+#include "core/vs_header.h"
 
 namespace vision::inline hotfix {
 
 IObjectConstructor *Demo::constructor() const noexcept {
+
+    std::cout << "wocaowwww" << std::endl;
     return nullptr;
 }
 
@@ -17,3 +20,8 @@ void Demo::deserialize(vision::Serializer *serializer) const noexcept {
 }
 
 }// namespace vision::inline hotfix
+
+VS_EXPORT_API vision::hotfix::Demo *create() {
+    std::cout << "wocao" << std::endl;
+    return ocarina::new_with_allocator<vision::hotfix::Demo>();
+}
