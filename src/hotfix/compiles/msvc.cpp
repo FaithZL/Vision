@@ -70,15 +70,15 @@ string MSVCompiler::assemble_link_cmd(const LinkOptions &options,
                                       const FileInspector::Target &target) noexcept {
     /// pre link
     static constexpr string_view cmd_template = "{}";
-    string cmd;
-    return string(R"(C:\WINDOWS\system32\cmd.exe /C "C:\WINDOWS\system32\cmd.exe /C ""C:\Program Files\JetBrains\CLion 2024.2\bin\cmake\win\x64\bin\cmake.exe" -E __create_def D:\work\renderers\Vision\cmake-build-relwithdebinfo\src\hotfix\test\CMakeFiles\vision-hotfix-test.dir\.\exports.def D:\work\renderers\Vision\cmake-build-relwithdebinfo\src\hotfix\test\CMakeFiles\vision-hotfix-test.dir\.\exports.def.objs && cd D:\work\renderers\Vision\cmake-build-relwithdebinfo" && "C:\Program Files\JetBrains\CLion 2024.2\bin\cmake\win\x64\bin\cmake.exe" -E vs_link_dll --intdir=src\hotfix\test\CMakeFiles\vision-hotfix-test.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100226~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100226~1.0\x64\mt.exe --manifests  -- C:\PROGRA~1\MICROS~1\2022\COMMUN~1\VC\Tools\MSVC\1441~1.341\bin\Hostx64\x64\link.exe  src\hotfix\test\CMakeFiles\vision-hotfix-test.dir\demo.cpp.obj src\hotfix\test\CMakeFiles\vision-hotfix-test.dir\test.cpp.obj  /out:bin\vision-hotfix-test.dll /implib:lib\vision-hotfix-test.lib /pdb:bin\vision-hotfix-test.pdb /dll /version:0.0 /machine:x64 /debug /INCREMENTAL  /DEF:src\hotfix\test\CMakeFiles\vision-hotfix-test.dir\.\exports.def  lib\vision-hotfix.lib  lib\ocarina.lib  lib\ocarina-dsl.lib  lib\ocarina-rhi.lib  lib\ocarina-GUI.lib  lib\ocarina-generator.lib  lib\ocarina-ast.lib  lib\ocarina-util.lib  lib\ocarina-core.lib  lib\ocarina-math.lib  lib\ocarina-ext.lib  lib\EASTL.lib  lib\spdlog.lib  lib\ocarina-imgui.lib  lib\glfw3.lib  lib\ocarina-ext-stb.lib  lib\ocarina-ext-tinyexr.lib  dbghelp.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd .")");
+    string cmd = "echo %cd%";
+    return cmd;
 }
 
 void MSVCompiler::link(const vision::LinkOptions &options,
                        const FileInspector::Target &target) noexcept {
     string cmd = assemble_link_cmd(options, target);
-    cmd += "\n echo \n _COMPLETION_TOKEN_";
-//    cmd_process_.WriteInput(cmd);
+    cmd = add_complete_flag(cmd);
+    cmd_process_.WriteInput(cmd);
 }
 
 }// namespace vision::inline hotfix
