@@ -52,9 +52,6 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
     options.src_fn = extract_src();
 
     FileInspector &inspector = HotfixSystem::instance().file_inspector();
-    if (!inspector.has_file(options.src_fn.string())) {
-        return;
-    }
 
     auto extract_dst = [&] {
         string_view line = lines[0];
@@ -66,7 +63,17 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         uint size_build_token = strlen(build_token);
         return line.substr(size_build_token, index + size_obj_token - size_build_token);
     };
+
     options.dst_fn = extract_dst();
+
+    if (options.src_fn == ModuleInterface::src_path()) {
+        cpp_to_obj_.insert(make_pair(ModuleInterface::src_path(), options.dst_fn.string()));
+    }
+
+    if (!inspector.has_file(options.src_fn.string())) {
+        return;
+    }
+
 #define NINJA_PARSE(field, MACRO)                  \
     if (string_contains(line, MACRO)) {            \
         options.field = extract_args(line, MACRO); \

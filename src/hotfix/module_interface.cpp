@@ -16,6 +16,10 @@ ModuleInterface &ModuleInterface::instance() noexcept {
     return *s_module_interface;
 }
 
+string_view ModuleInterface::src_path() noexcept {
+    return __FILE__;
+}
+
 ModuleInterface::~ModuleInterface() {}
 
 }// namespace vision::inline hotfix
@@ -23,3 +27,5 @@ ModuleInterface::~ModuleInterface() {}
 VS_EXPORT_API vision::ModuleInterface *module_interface() {
     return &vision::ModuleInterface::instance();
 }
+
+

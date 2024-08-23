@@ -8,6 +8,7 @@
 #include "core/logging.h"
 #include "util/file_manager.h"
 #include "core/dynamic_module.h"
+#include "module_interface.h"
 
 namespace vision::inline hotfix {
 
@@ -34,7 +35,7 @@ struct LinkOptions {
     [[nodiscard]] string obj_files_string() const noexcept {
         string ret;
         for (const auto &item : obj_files) {
-            ret += " " + item.string();
+            ret += item.string() + " ";
         }
         return ret;
     }
@@ -49,6 +50,7 @@ public:
 protected:
     map<string, CompileOptions> compile_map_;
     map<string, LinkOptions> link_map_;
+    map<string_view, string> cpp_to_obj_;
 
 public:
     BuildRules() = default;
@@ -57,6 +59,9 @@ public:
     }
     [[nodiscard]] LinkOptions link_options(const string &target_fn) const noexcept {
         return link_map_.at(target_fn);
+    }
+    [[nodiscard]] string obj_path(string_view cpp_path) const noexcept {
+        return cpp_to_obj_.at(cpp_path);
     }
     virtual void parse(const string &content) = 0;
     [[nodiscard]] static Handle create(const string &name = "ninja") {

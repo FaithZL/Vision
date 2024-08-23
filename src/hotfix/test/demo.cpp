@@ -4,11 +4,11 @@
 
 #include "demo.h"
 #include "core/vs_header.h"
+#include "hotfix/hotfix.h"
 
 namespace vision::inline hotfix {
 
 IObjectConstructor *Demo::constructor() const noexcept {
-
     std::cout << "wocaodfa--------------------" << std::endl;
     return nullptr;
 }
