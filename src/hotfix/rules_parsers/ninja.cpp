@@ -51,7 +51,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
     CompileOptions options;
     options.src_fn = extract_src();
 
-    FileInspector &inspector = HotfixSystem::instance().file_inspector();
+    FileTool &inspector = HotfixSystem::instance().file_inspector();
 
     auto extract_dst = [&] {
         string_view line = lines[0];

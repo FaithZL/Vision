@@ -21,19 +21,19 @@ fs::path BuildSystem::directory() noexcept {
     return fs::current_path().parent_path();
 }
 
-void BuildSystem::compile(const FileInspector::Target &target) const noexcept {
+void BuildSystem::compile(const FileTool::Target &target) const noexcept {
     for (const fs::path &item : target.modified_files) {
         const CompileOptions &options = build_rules_->compile_options(item.string());
         compiler_->compile(options);
     }
 }
 
-void BuildSystem::link(const FileInspector::Target &target) const noexcept {
+void BuildSystem::link(const FileTool::Target &target) const noexcept {
     fs::path fn("bin");
     fn = fn / target.name;
     const LinkOptions &options = build_rules_->link_options(fn.string());
     vector<string> extension_objs = build_rules_->obj_paths(ModuleInterface::src_path());
-    compiler_->link(options, target, FileInspector::files_string(extension_objs));
+    compiler_->link(options, target, FileTool::files_string(extension_objs));
 }
 
 void BuildSystem::create_temp_path(const fs::path &path) noexcept {
@@ -43,14 +43,14 @@ void BuildSystem::create_temp_path(const fs::path &path) noexcept {
     fs::create_directory(path);
 }
 
-void BuildSystem::build_target(const FileInspector::Target &target) const noexcept {
+void BuildSystem::build_target(const FileTool::Target &target) const noexcept {
     create_temp_path(target.temp_directory());
     compiler_->setup_environment();
     compile(target);
     link(target);
 }
 
-void BuildSystem::build_targets(const vector<FileInspector::Target> &targets) const noexcept {
+void BuildSystem::build_targets(const vector<FileTool::Target> &targets) const noexcept {
     std::for_each(targets.begin(), targets.end(), [&](const auto &target) {
         OC_INFO_FORMAT("target {} has been modified", target.name);
         for (const fs::path &fn : target.modified_files) {

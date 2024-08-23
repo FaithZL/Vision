@@ -20,7 +20,7 @@ public:
 
 public:
     virtual void compile(const CompileOptions &options) noexcept = 0;
-    virtual void link(const LinkOptions &options, const FileInspector::Target &target,
+    virtual void link(const LinkOptions &options, const FileTool::Target &target,
                       const string &extension_objs) noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;

@@ -19,10 +19,10 @@ private:
 public:
     MSVCompiler() {
         env_path_ = installation_directory() / bat_dir;
-        if (!fs::exists(FileInspector::intermediate_path())) {
-            fs::create_directory(FileInspector::intermediate_path());
+        if (!fs::exists(FileTool::intermediate_path())) {
+            fs::create_directory(FileTool::intermediate_path());
         }
-        clear_directory(FileInspector::intermediate_path());
+        clear_directory(FileTool::intermediate_path());
         cmd_process_.initialise();
     }
 
@@ -43,7 +43,7 @@ public:
 
     void compile(const CompileOptions &options) noexcept override;
 
-    void link(const vision::LinkOptions &options, const FileInspector::Target &target,
+    void link(const vision::LinkOptions &options, const FileTool::Target &target,
               const string &extension_objs) noexcept override;
 };
 
@@ -56,7 +56,7 @@ void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
 }
 
 void MSVCompiler::link(const vision::LinkOptions &options,
-                       const FileInspector::Target &target,
+                       const FileTool::Target &target,
                        const string &extension_objs) noexcept {
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string() + extension_objs,

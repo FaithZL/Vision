@@ -12,7 +12,7 @@ using namespace ocarina;
 
 static constexpr const char *debug_dir = "hotfix_debug";
 
-class FileInspector {
+class FileTool {
 public:
     enum Action {
         Add = 1,
@@ -49,7 +49,7 @@ public:
         vector<InspectedFile> files;
         vector<fs::path> modified_files;
         [[nodiscard]] fs::path temp_directory() const noexcept {
-            return FileInspector::intermediate_path() / fs::path(name).stem();
+            return FileTool::intermediate_path() / fs::path(name).stem();
         }
         [[nodiscard]] fs::path target_stem() const noexcept {
             return ocarina::format("module_{}", build_count);
@@ -78,7 +78,7 @@ private:
     set<string> files_;
 
 public:
-    FileInspector() = default;
+    FileTool() = default;
     void add_inspected(const fs::path &path, string_view module_name, bool recursive = true);
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] vector<Target> get_modified_targets() noexcept;

@@ -7,7 +7,7 @@
 
 namespace vision::inline hotfix {
 
-void FileInspector::add_inspected(const fs::path &path, string_view module_name, bool recursive) {
+void FileTool::add_inspected(const fs::path &path, string_view module_name, bool recursive) {
     if (target_map_.contains(module_name) || !fs::exists(path)) {
         return;
     }
@@ -51,7 +51,7 @@ void FileInspector::add_inspected(const fs::path &path, string_view module_name,
     target_map_.insert(std::make_pair(module_name, target));
 }
 
-void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexcept {
+void FileTool::remove_inspected(const fs::path &path, bool recursive) noexcept {
     string key = path.string();
     if (!target_map_.contains(key)) {
         return;
@@ -59,7 +59,7 @@ void FileInspector::remove_inspected(const fs::path &path, bool recursive) noexc
     target_map_.erase(key);
 }
 
-vector<FileInspector::Target> FileInspector::get_modified_targets() noexcept {
+vector<FileTool::Target> FileTool::get_modified_targets() noexcept {
     vector<Target> ret;
 
     auto is_modified = [&](Target &target) {

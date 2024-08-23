@@ -47,7 +47,7 @@ private:
     map<string, ObjectGroup> map_;
     Serializer serializer_{};
     ocarina::set<Observer *> observers_;
-    FileInspector file_inspector_;
+    FileTool file_inspector_;
     BuildSystem build_system_{};
 
 public:

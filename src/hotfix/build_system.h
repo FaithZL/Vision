@@ -18,11 +18,11 @@ public:
     void init();
     void clear() noexcept;
     [[nodiscard]] static fs::path directory() noexcept;
-    void build_targets(const vector<FileInspector::Target> &targets) const noexcept;
-    void build_target(const FileInspector::Target &target) const noexcept;
+    void build_targets(const vector<FileTool::Target> &targets) const noexcept;
+    void build_target(const FileTool::Target &target) const noexcept;
     static void create_temp_path(const fs::path &path) noexcept;
-    void compile(const FileInspector::Target &target) const noexcept;
-    void link(const FileInspector::Target &target) const noexcept;
+    void compile(const FileTool::Target &target) const noexcept;
+    void link(const FileTool::Target &target) const noexcept;
 };
 
 }// namespace vision::inline hotfix

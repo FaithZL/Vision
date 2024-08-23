@@ -10,7 +10,7 @@ class LLVMCompiler : public Compiler {
 public:
     LLVMCompiler();
     void compile(const vision::CompileOptions &options) noexcept override;
-    void link(const vision::LinkOptions &options, const FileInspector::Target &target,
+    void link(const vision::LinkOptions &options, const FileTool::Target &target,
               const string &extension_objs) noexcept override;
 };
 
@@ -20,7 +20,7 @@ LLVMCompiler::LLVMCompiler() {
 void LLVMCompiler::compile(const CompileOptions &options) noexcept {
 }
 
-void LLVMCompiler::link(const LinkOptions &options, const FileInspector::Target &target,
+void LLVMCompiler::link(const LinkOptions &options, const FileTool::Target &target,
                         const string &extension_objs) noexcept {
 }
 
