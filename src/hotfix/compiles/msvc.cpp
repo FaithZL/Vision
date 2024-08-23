@@ -68,9 +68,9 @@ string MSVCompiler::assemble_link_cmds(const LinkOptions &options,
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
 
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string(),
-                                      target.target_path(".dll"),
-                                      target.target_path(".lib"),
-                                      target.target_path(".pdb"),
+                                      target.dll_path().string(),
+                                      target.lib_path().string(),
+                                      target.pdb_path().string(),
                                       options.link_flags,
                                       options.link_libraries);
     return link_cmd;

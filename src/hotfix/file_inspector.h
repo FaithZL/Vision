@@ -52,10 +52,19 @@ public:
             return FileInspector::intermediate_path() / fs::path(name).stem();
         }
         [[nodiscard]] fs::path target_stem() const noexcept {
-            return ocarina::format("module_{}.dll", build_count);
+            return ocarina::format("module_{}", build_count);
         }
-        [[nodiscard]] string target_path(string extension) const noexcept {
-            return (temp_directory() / (target_stem().string() + std::move(extension))).string();
+        [[nodiscard]] fs::path target_path(string extension) const noexcept {
+            return temp_directory() / (target_stem().string() + std::move(extension));
+        }
+        [[nodiscard]] fs::path dll_path() const noexcept {
+            return target_path(".dll");
+        }
+        [[nodiscard]] fs::path lib_path() const noexcept {
+            return target_path(".lib");
+        }
+        [[nodiscard]] fs::path pdb_path() const noexcept {
+            return target_path(".pdb");
         }
         void increase_count() const noexcept { ++build_count; }
         void decrease_count() const noexcept { --build_count; }
@@ -73,6 +82,9 @@ public:
     void add_inspected(const fs::path &path, string_view module_name, bool recursive = true);
     void remove_inspected(const fs::path &path, bool recursive = true) noexcept;
     [[nodiscard]] vector<Target> get_modified_targets() noexcept;
+    [[nodiscard]] const Target &get_target(string_view name) const noexcept {
+        return target_map_.at(name);
+    }
     [[nodiscard]] bool has_target(string_view target_name) noexcept {
         return target_map_.contains(target_name);
     }

@@ -73,7 +73,6 @@ vector<FileInspector::Target> FileInspector::get_modified_targets() noexcept {
                 modified = true;
             }
         });
-
         return modified;
     };
 

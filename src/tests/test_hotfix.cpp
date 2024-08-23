@@ -39,15 +39,19 @@ int main(int argc, char *argv[]) {
         });
 
         widget->button_click("test", [&] {
-            auto module = FileManager::instance().obtain_module("vision-hotfix-test333.dll");
+            auto &inspector = vision::HotfixSystem::instance().file_inspector();
+
+            auto target = inspector.get_target("vision-hotfix-test.dll");
+
+            auto module = FileManager::instance().obtain_module(target.dll_path().string());
             using fun_t = vision::Demo *();
             auto func = module->function<fun_t*>("create");
 
             vision::Demo * dd = func();
-
+//
             dd->constructor();
 
-            FileManager::instance().unload_module("vision-hotfix-test333.dll");
+//            FileManager::instance().unload_module(target.target_path(".dll"));
 
         });
 
