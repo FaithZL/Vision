@@ -43,7 +43,6 @@ void BuildSystem::create_temp_path(const fs::path &path) noexcept {
 }
 
 void BuildSystem::build_target(const FileInspector::Target &target) const noexcept {
-    target.increase_count();
     create_temp_path(target.temp_directory());
     compiler_->setup_environment();
     compile(target);

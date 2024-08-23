@@ -33,6 +33,7 @@ void FileInspector::add_inspected(const fs::path &path, string_view module_name,
     auto func = [&](const fs::directory_entry &entry) {
         if (entry.exists() && entry.is_regular_file()) {
             auto f = InspectedFile(entry.path());
+            ///
             f.write_time = {};
             add_file(target, f);
         }
@@ -78,11 +79,12 @@ vector<FileInspector::Target> FileInspector::get_modified_targets() noexcept {
 
     for (auto &it : target_map_) {
         const string_view &key = it.first;
-        Target &module = it.second;
-        if (is_modified(module)) {
-            ret.push_back(module);
+        Target &target = it.second;
+        if (is_modified(target)) {
+            target.increase_count();
+            ret.push_back(target);
         }
-        module.modified_files.clear();
+        target.modified_files.clear();
     }
     return ret;
 }

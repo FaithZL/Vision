@@ -54,8 +54,8 @@ public:
         [[nodiscard]] fs::path target_stem() const noexcept {
             return ocarina::format("module_{}.dll", build_count);
         }
-        [[nodiscard]] fs::path target_path(string extension) const noexcept {
-            return temp_directory() / (target_stem().string() + std::move(extension));
+        [[nodiscard]] string target_path(string extension) const noexcept {
+            return (temp_directory() / (target_stem().string() + std::move(extension))).string();
         }
         void increase_count() const noexcept { ++build_count; }
         void decrease_count() const noexcept { --build_count; }
