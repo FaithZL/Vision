@@ -21,7 +21,6 @@ public:
 public:
     virtual void compile(const CompileOptions &options) noexcept = 0;
     virtual void link(const LinkOptions &options, const FileInspector::Target &target) noexcept = 0;
-    [[nodiscard]] virtual string get_object_file_extension() const noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;
     virtual void setup_environment() const {}

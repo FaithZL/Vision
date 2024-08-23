@@ -8,9 +8,18 @@ namespace vision::inline hotfix {
 
 class LLVMCompiler : public Compiler {
 public:
-    [[nodiscard]] string get_object_file_extension() const noexcept override {
-        return "o";
-    }
+    LLVMCompiler();
+    void compile(const vision::CompileOptions &options) noexcept override;
+    void link(const vision::LinkOptions &options, const FileInspector::Target &target) noexcept override;
 };
+
+LLVMCompiler::LLVMCompiler() {
+}
+
+void LLVMCompiler::compile(const CompileOptions &options) noexcept {
+}
+
+void LLVMCompiler::link(const LinkOptions &options, const FileInspector::Target &target) noexcept {
+}
 
 }// namespace vision::inline hotfix

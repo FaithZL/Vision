@@ -34,10 +34,6 @@ public:
         return parent_path(cli_path(), 8);
     }
 
-    [[nodiscard]] string get_object_file_extension() const noexcept override {
-        return "obj";
-    }
-
     void setup_environment() const override {
         std::string cmdSetParams = "\"" + env_path_.string() + "Vcvarsall.bat\" x86_amd64\n";
         cmd_process_.write_input(cmdSetParams);
@@ -45,41 +41,29 @@ public:
         cmd_process_.change_directory(BuildSystem::directory());
     }
 
-    [[nodiscard]] static string assemble_compile_cmd(const CompileOptions &options) noexcept {
-        /// defines includes flags obj cpp
-        static constexpr string_view cmd_template = "cl /nologo /TP {} {} {} /Fo{} -c {}";
-        string cmd = ocarina::format(cmd_template, options.defines, options.includes, options.flags,
-                                     options.dst_fn.string(), options.src_fn.string());
-        return cmd;
-    }
+    void compile(const CompileOptions &options) noexcept override;
 
-    void compile(const CompileOptions &options) noexcept override {
-        string cmd = assemble_compile_cmd(options);
-        cmd_process_.write_input(cmd);
-    }
-
-    [[nodiscard]] static string assemble_link_cmds(const LinkOptions &options, const FileInspector::Target &target) noexcept;
     void link(const vision::LinkOptions &options, const FileInspector::Target &target) noexcept override;
 };
 
-string MSVCompiler::assemble_link_cmds(const LinkOptions &options,
-                                      const FileInspector::Target &target) noexcept {
-    /// obj out implib pdb link_flags dependency
-    static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
+void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
+    /// defines includes flags obj cpp
+    static constexpr string_view cmd_template = "cl /nologo /TP {} {} {} /Fo{} -c {}";
+    string cmd = ocarina::format(cmd_template, options.defines, options.includes, options.flags,
+                                 options.dst_fn.string(), options.src_fn.string());
+    cmd_process_.write_input(cmd);
+}
 
+void MSVCompiler::link(const vision::LinkOptions &options,
+                       const FileInspector::Target &target) noexcept {
+    static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string(),
                                       target.dll_path().string(),
                                       target.lib_path().string(),
                                       target.pdb_path().string(),
                                       options.link_flags,
                                       options.link_libraries);
-    return link_cmd;
-}
-
-void MSVCompiler::link(const vision::LinkOptions &options,
-                       const FileInspector::Target &target) noexcept {
-    auto cmd = assemble_link_cmds(options, target);
-    cmd_process_.write_input(cmd);
+    cmd_process_.write_input(link_cmd);
 }
 
 }// namespace vision::inline hotfix

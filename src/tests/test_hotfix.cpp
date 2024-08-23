@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     window->init_widgets();
 
     auto widget = window->widgets();
-
+    using fun_t = vision::Demo *();
 
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
@@ -44,14 +44,11 @@ int main(int argc, char *argv[]) {
             auto target = inspector.get_target("vision-hotfix-test.dll");
 
             auto module = FileManager::instance().obtain_module(target.dll_path().string());
-            using fun_t = vision::Demo *();
+
             auto func = module->function<fun_t*>("create");
 
             vision::Demo * dd = func();
-//
             dd->constructor();
-
-//            FileManager::instance().unload_module(target.target_path(".dll"));
 
         });
 
