@@ -140,7 +140,7 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
         NINJA_PARSE(link_libraries, "LINK_LIBRARIES")
         {}
     } while (!line.empty() || i < 10);
-
+#undef NINJA_PARSE
     extract_files();
     link_map_.insert(make_pair(options.target_file.string(), options));
 }

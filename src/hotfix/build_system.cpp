@@ -35,7 +35,7 @@ void BuildSystem::link(const FileInspector::Target &target) const noexcept {
     compiler_->link(options, target);
 }
 
-void BuildSystem::create_immediate_path(const fs::path &path) noexcept {
+void BuildSystem::create_temp_path(const fs::path &path) noexcept {
     if (fs::exists(path)) {
         return;
     }
@@ -43,8 +43,8 @@ void BuildSystem::create_immediate_path(const fs::path &path) noexcept {
 }
 
 void BuildSystem::build_target(const FileInspector::Target &target) const noexcept {
-    fs::path im_path = FileInspector::intermediate_path() / fs::path(target.name).stem();
-    create_immediate_path(im_path);
+    target.increase_count();
+    create_temp_path(target.temp_directory());
     compiler_->setup_environment();
     compile(target);
     link(target);

@@ -66,6 +66,7 @@ string MSVCompiler::assemble_link_cmds(const LinkOptions &options,
                                       const FileInspector::Target &target) noexcept {
     /// obj out implib pdb link_flags dependency
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
+
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string(),
                                       "bin\\vision-hotfix-test333.dll",
                                       "lib\\vision-hotfix-test123.lib",
