@@ -9,7 +9,7 @@
 #include "serializer.h"
 #include "object.h"
 #include "build_system.h"
-#include "file_inspector.h"
+#include "file_tool.h"
 
 #define VS_REGISTER_PATH(path, level, ...)                                        \
     namespace {                                                                   \

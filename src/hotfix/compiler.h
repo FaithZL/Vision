@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/stl.h"
-#include "file_inspector.h"
+#include "file_tool.h"
 #include "util/file_manager.h"
 #include "core/dynamic_module.h"
 #include "build_rules.h"
