@@ -47,7 +47,7 @@ private:
     map<string, ObjectGroup> map_;
     Serializer serializer_{};
     ocarina::set<Observer *> observers_;
-    FileTool file_inspector_;
+    FileTool file_tool_;
     BuildSystem build_system_{};
 
 public:
@@ -62,13 +62,13 @@ public:
     void update(SP<RuntimeObject> object) noexcept {
         update(object->class_name());
     }
-    OC_MAKE_MEMBER_GETTER(file_inspector, &)
+    OC_MAKE_MEMBER_GETTER(file_tool, &)
     template<typename ...Args>
     void register_target(Args &&...args) {
-        file_inspector_.add_inspected(OC_FORWARD(args)...);
+        file_tool_.add_inspected(OC_FORWARD(args)...);
     }
     void remove_inspected(const fs::path &path) noexcept {
-        file_inspector_.remove_inspected(path);
+        file_tool_.remove_inspected(path);
     }
     void check_and_build() noexcept;
     void update(const string &c_name) noexcept;

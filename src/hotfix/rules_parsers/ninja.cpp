@@ -51,7 +51,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
     CompileOptions options;
     options.src_fn = extract_src();
 
-    FileTool &inspector = HotfixSystem::instance().file_inspector();
+    FileTool &tool = HotfixSystem::instance().file_tool();
 
     auto extract_dst = [&] {
         string_view line = lines[0];
@@ -70,7 +70,7 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         cpp_to_obj_.insert(make_pair(ModuleInterface::src_path(), options.dst_fn.string()));
     }
 
-    if (!inspector.has_file(options.src_fn.string())) {
+    if (!tool.has_file(options.src_fn.string())) {
         return;
     }
 
@@ -115,8 +115,8 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
     };
     options.target_file = extract_target();
 
-    auto &inspector = HotfixSystem::instance().file_inspector();
-    if (!inspector.has_target(options.target_file.filename().string())) {
+    auto &tool = HotfixSystem::instance().file_tool();
+    if (!tool.has_target(options.target_file.filename().string())) {
         return;
     }
 

@@ -49,7 +49,7 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
 }
 
 void HotfixSystem::check_and_build() noexcept {
-    auto modules = file_inspector_.get_modified_targets();
+    auto modules = file_tool_.get_modified_targets();
     if(modules.empty()) {
         return;
     }

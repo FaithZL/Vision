@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         });
 
         widget->button_click("test", [&] {
-            auto &inspector = vision::HotfixSystem::instance().file_inspector();
+            auto &inspector = vision::HotfixSystem::instance().file_tool();
 
             auto target = inspector.get_target("vision-hotfix-test.dll");
 
