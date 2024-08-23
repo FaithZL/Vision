@@ -3,6 +3,7 @@
 //
 
 #include "module_interface.h"
+#include "core/vs_header.h"
 
 namespace vision::inline hotfix {
 
@@ -19,6 +20,6 @@ ModuleInterface::~ModuleInterface() {}
 
 }// namespace vision::inline hotfix
 
-extern "C" __declspec(dllexport) vision::ModuleInterface *module_interface() {
+VS_EXPORT_API vision::ModuleInterface *module_interface() {
     return &vision::ModuleInterface::instance();
 }

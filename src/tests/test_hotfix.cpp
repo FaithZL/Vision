@@ -15,6 +15,7 @@
 #include "util/image.h"
 #include "hotfix/test/test.h"
 #include "hotfix/test/demo.h"
+#include "hotfix/module_interface.h"
 
 using namespace ocarina;
 
@@ -32,6 +33,7 @@ int main(int argc, char *argv[]) {
 
     auto widget = window->widgets();
     using fun_t = vision::Demo *();
+    using fun2_t = vision::hotfix::ModuleInterface *();
 
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
@@ -46,6 +48,7 @@ int main(int argc, char *argv[]) {
             auto module = FileManager::instance().obtain_module(target.dll_path().string());
 
             auto func = module->function<fun_t*>("create");
+            auto func2 = module->function<fun2_t*>("module_interface");
 
             vision::Demo * dd = func();
             dd->constructor();

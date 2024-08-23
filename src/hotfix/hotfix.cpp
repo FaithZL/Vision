@@ -88,3 +88,5 @@ void HotfixSystem::destroy_instance() noexcept {
 HotfixSystem::~HotfixSystem() {}
 
 }// namespace vision::inline hotfix
+
+//VS_REGISTER_CURRENT_PATH(1, "vision-hotfix.dll", false)
