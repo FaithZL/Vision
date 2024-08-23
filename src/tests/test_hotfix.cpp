@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
     using fun_t = vision::Demo *();
     using fun2_t = vision::hotfix::ModuleInterface *();
 
+    auto &mi = vision::ModuleInterface::instance();
+
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             vision::HotfixSystem::instance().check_and_build();
@@ -49,7 +51,7 @@ int main(int argc, char *argv[]) {
 
             auto func = module->function<fun_t*>("create");
             auto func2 = module->function<fun2_t*>("module_interface");
-
+            func2();
             vision::Demo * dd = func();
             dd->constructor();
 

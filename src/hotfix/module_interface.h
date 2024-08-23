@@ -13,7 +13,7 @@ namespace vision::inline hotfix {
 class ModuleInterface {
 private:
     static ModuleInterface *s_module_interface;
-    ModuleInterface() = default;
+    ModuleInterface();
     ~ModuleInterface();
 
 public:
@@ -22,7 +22,7 @@ public:
     ModuleInterface operator=(const ModuleInterface &) = delete;
     [[nodiscard]] static string_view src_path() noexcept;
     ModuleInterface operator=(ModuleInterface &&) = delete;
-    static ModuleInterface &instance() noexcept;
+    [[nodiscard]] static ModuleInterface &instance() noexcept;
 };
 
 }// namespace vision::inline hotfix

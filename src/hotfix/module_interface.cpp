@@ -9,8 +9,10 @@ namespace vision::inline hotfix {
 
 ModuleInterface *ModuleInterface::s_module_interface = nullptr;
 
+ModuleInterface::ModuleInterface() = default;
+
 ModuleInterface &ModuleInterface::instance() noexcept {
-    if (s_module_interface) {
+    if (!s_module_interface) {
         s_module_interface = new ModuleInterface();
     }
     return *s_module_interface;
@@ -20,7 +22,7 @@ string_view ModuleInterface::src_path() noexcept {
     return __FILE__;
 }
 
-ModuleInterface::~ModuleInterface() {}
+ModuleInterface::~ModuleInterface() = default;
 
 }// namespace vision::inline hotfix
 
