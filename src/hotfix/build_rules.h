@@ -63,6 +63,13 @@ public:
     [[nodiscard]] string obj_path(string_view cpp_path) const noexcept {
         return cpp_to_obj_.at(cpp_path);
     }
+    template<typename ...Args>
+    [[nodiscard]] vector<string> obj_paths(Args &&...args) const noexcept {
+        vector<string> ret;
+        ret.reserve(sizeof...(Args));
+        (ret.push_back(obj_path(OC_FORWARD(args))),...);
+        return ret;
+    }
     virtual void parse(const string &content) = 0;
     [[nodiscard]] static Handle create(const string &name = "ninja") {
         string plugin_name = ocarina::format("vision-hotfix-rules_parser-{}.dll", name);

@@ -32,7 +32,8 @@ void BuildSystem::link(const FileInspector::Target &target) const noexcept {
     fs::path fn("bin");
     fn = fn / target.name;
     const LinkOptions &options = build_rules_->link_options(fn.string());
-    compiler_->link(options, target);
+    vector<string> extension_objs = build_rules_->obj_paths(ModuleInterface::src_path());
+    compiler_->link(options, target, FileInspector::files_string(extension_objs));
 }
 
 void BuildSystem::create_temp_path(const fs::path &path) noexcept {

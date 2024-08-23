@@ -91,6 +91,13 @@ public:
     [[nodiscard]] bool has_file(const string &fn) noexcept {
         return files_.contains(fn);
     }
+    [[nodiscard]] static string files_string(const vector<string> &files) noexcept{
+        string ret;
+        for (const auto &item : files) {
+            ret += item + " ";
+        }
+        return ret;
+    }
     [[nodiscard]] static fs::path project_path() noexcept {
         return parent_path(__FILE__, 3);
     }

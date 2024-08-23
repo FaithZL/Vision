@@ -43,7 +43,8 @@ public:
 
     void compile(const CompileOptions &options) noexcept override;
 
-    void link(const vision::LinkOptions &options, const FileInspector::Target &target) noexcept override;
+    void link(const vision::LinkOptions &options, const FileInspector::Target &target,
+              const string &extension_objs) noexcept override;
 };
 
 void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
@@ -55,7 +56,8 @@ void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
 }
 
 void MSVCompiler::link(const vision::LinkOptions &options,
-                       const FileInspector::Target &target) noexcept {
+                       const FileInspector::Target &target,
+                       const string &extension_objs) noexcept {
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string(),
                                       target.dll_path().string(),
