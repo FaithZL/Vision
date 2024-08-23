@@ -59,7 +59,7 @@ void MSVCompiler::link(const vision::LinkOptions &options,
                        const FileInspector::Target &target,
                        const string &extension_objs) noexcept {
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
-    string link_cmd = ocarina::format(cmd_template, options.obj_files_string(),
+    string link_cmd = ocarina::format(cmd_template, options.obj_files_string() + extension_objs,
                                       target.dll_path().string(),
                                       target.lib_path().string(),
                                       target.pdb_path().string(),
