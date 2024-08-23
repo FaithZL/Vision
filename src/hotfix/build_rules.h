@@ -26,20 +26,14 @@ struct LinkOptions {
     string link_flags;
     string pre_link;
     vector<fs::path> obj_files;
-    vector<fs::path> link_libraries;
+    vector<fs::path> all_libraries;
+    string link_libraries;
     fs::path target_file;
     fs::path target_pdb;
     fs::path target_implib;
     [[nodiscard]] string obj_files_string() const noexcept {
         string ret;
         for (const auto &item : obj_files) {
-            ret += " " + item.string();
-        }
-        return ret;
-    }
-    [[nodiscard]] string link_libraries_string() const noexcept {
-        string ret;
-        for (const auto &item : link_libraries) {
             ret += " " + item.string();
         }
         return ret;

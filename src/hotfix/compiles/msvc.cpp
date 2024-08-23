@@ -65,12 +65,20 @@ public:
 vector<string> MSVCompiler::assemble_link_cmds(const LinkOptions &options,
                                       const FileInspector::Target &target) noexcept {
     /// pre link
-    static constexpr string_view cmd_template = "{}";
     vector<string> ret;
-    string cmd = options.pre_link;
+
+    /// obj out implib pdb link_flags dependency
+    static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
+    string link_cmd = ocarina::format(cmd_template, options.obj_files_string(),
+                                      "bin\\vision-hotfix-test333.dll",
+                                      options.target_implib.string(),
+                                      options.target_pdb.string(),
+                                      options.link_flags,
+                                      options.link_libraries);
+
+    string cmd = options.pre_link + "&& " + link_cmd;
     ret.push_back(cmd);
-    auto ccc = "link src\\hotfix\\test\\CMakeFiles\\vision-hotfix-test.dir\\demo.cpp.obj src\\hotfix\\test\\CMakeFiles\\vision-hotfix-test.dir\\test.cpp.obj  /out:bin\\vision-hotfix-test333.dll /implib:lib\\vision-hotfix-test333.lib /pdb:bin\\vision-hotfix-test333.pdb /dll /version:0.0 /machine:x64 /debug /INCREMENTAL  /DEF:src\\hotfix\\test\\CMakeFiles\\vision-hotfix-test.dir\\.\\exports.def  lib\\vision-hotfix.lib  lib\\ocarina.lib  lib\\ocarina-dsl.lib  lib\\ocarina-rhi.lib  lib\\ocarina-GUI.lib  lib\\ocarina-generator.lib  lib\\ocarina-ast.lib  lib\\ocarina-util.lib  lib\\ocarina-core.lib  lib\\ocarina-math.lib  lib\\ocarina-ext.lib  lib\\EASTL.lib  lib\\spdlogd.lib  lib\\ocarina-imgui.lib  lib\\glfw3.lib  lib\\ocarina-ext-stb.lib  lib\\ocarina-ext-tinyexr.lib  dbghelp.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib";
-    ret.push_back(ccc);
+
     return ret;
 }
 

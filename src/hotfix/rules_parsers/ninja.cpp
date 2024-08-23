@@ -67,18 +67,19 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         return line.substr(size_build_token, index + size_obj_token - size_build_token);
     };
     options.dst_fn = BuildSystem::directory() / extract_dst();
+#define NINJA_PARSE(field, MACRO)                  \
+    if (string_contains(line, MACRO)) {            \
+        options.field = extract_args(line, MACRO); \
+    } else
 
     uint i = 0;
     string_view line;
     do {
         line = lines[i++];
-        if (string_contains(line, "DEFINES")) {
-            options.defines = extract_args(line, "DEFINES");
-        } else if (string_contains(line, "FLAGS")) {
-            options.flags = extract_args(line, "FLAGS");
-        } else if (string_contains(line, "INCLUDES")) {
-            options.includes = extract_args(line, "INCLUDES");
-        }
+        NINJA_PARSE(defines, "DEFINES")
+        NINJA_PARSE(flags, "FLAGS")
+        NINJA_PARSE(includes, "INCLUDES")
+        {}
     } while (!line.empty() || i < 10);
     compile_map_.insert(make_pair(options.src_fn.string(), options));
 }
@@ -122,7 +123,7 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
             if (p.extension() == ".obj") {
                 options.obj_files.push_back(p);
             } else if (p.extension() == ".lib" || p.extension() == ".dll") {
-                options.link_libraries.push_back(p);
+                options.all_libraries.push_back(p);
             }
         }
     };
@@ -131,17 +132,13 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
     string_view line;
     do {
         line = lines[i++];
-        if (string_contains(line, "LANGUAGE_COMPILE_FLAGS")) {
-            options.compile_flags = extract_args(line, "LANGUAGE_COMPILE_FLAGS");
-        } else if (string_contains(line, "LINK_FLAGS")) {
-            options.link_flags = extract_args(line, "LINK_FLAGS");
-        } else if (string_contains(line, "TARGET_IMPLIB")) {
-            options.target_implib = extract_args(line, "TARGET_IMPLIB");
-        } else if (string_contains(line, "TARGET_PDB")) {
-            options.target_pdb = extract_args(line, "TARGET_PDB");
-        } else if (string_contains(line, "PRE_LINK")) {
-            options.pre_link = extract_args(line, "PRE_LINK");
-        }
+        NINJA_PARSE(compile_flags, "LANGUAGE_COMPILE_FLAGS")
+        NINJA_PARSE(link_flags, "LINK_FLAGS")
+        NINJA_PARSE(target_implib, "TARGET_IMPLIB")
+        NINJA_PARSE(target_pdb, "TARGET_PDB")
+        NINJA_PARSE(pre_link, "PRE_LINK")
+        NINJA_PARSE(link_libraries, "LINK_LIBRARIES")
+        {}
     } while (!line.empty() || i < 10);
 
     extract_files();

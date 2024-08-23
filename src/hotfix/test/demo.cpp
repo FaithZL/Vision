@@ -9,7 +9,7 @@ namespace vision::inline hotfix {
 
 IObjectConstructor *Demo::constructor() const noexcept {
 
-    std::cout << "wocaoas---------dfa" << std::endl;
+    std::cout << "wocao---------dfa" << std::endl;
     return nullptr;
 }
 
@@ -22,6 +22,6 @@ void Demo::deserialize(vision::Serializer *serializer) const noexcept {
 }// namespace vision::inline hotfix
 
 VS_EXPORT_API vision::hotfix::Demo *create() {
-    std::cout << "wocao" << std::endl;
+    std::cout << "woca" << std::endl;
     return ocarina::new_with_allocator<vision::hotfix::Demo>();
 }
