@@ -16,15 +16,25 @@ static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
 
 /// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
-class CmdProcess : public thread_safety<>{
+class CmdProcess : public thread_safety<> {
 private:
+    using callback_t = std::function<void(const string &)>;
+    struct CmdData {
+        string cmd;
+        callback_t callback;
+        void execute_callback() noexcept {
+            if (callback) {
+                std::invoke(callback, cmd);
+            }
+        }
+    };
     PROCESS_INFORMATION process_info_{};
     HANDLE output_read_{};
     HANDLE input_write_{};
     bool store_cmd_output_{};
     std::string cmd_output_;
     std::thread output_thread_;
-    mutable std::queue<string> cmd_queue_;
+    mutable std::queue<CmdData> cmd_queue_;
 
 public:
     CmdProcess();
@@ -32,7 +42,7 @@ public:
 
     void initialise();
     void change_directory(const fs::path &dir) const noexcept;
-    void write_input(std::string input) const;
+    void write_input(std::string input, const callback_t &callback = nullptr) const;
     void cleanup_process();
 
     [[nodiscard]] static string add_complete_flag(const string &cmd) noexcept {
@@ -57,9 +67,9 @@ void CmdProcess::on_finish_cmd() const {
         std::cout << "[Cmd process] Complete" << std::endl;
     }
     with_lock([&] {
-        auto cmd = cmd_queue_.front();
+        CmdData cmd = cmd_queue_.front();
         cmd_queue_.pop();
-        cout << "finish   \n" << cmd << endl;
+        cmd.execute_callback();
     });
 }
 
@@ -213,12 +223,12 @@ void CmdProcess::initialise() {
     exit_func();
 }
 
-void CmdProcess::write_input(std::string input) const {
+void CmdProcess::write_input(std::string input, const callback_t &callback) const {
     DWORD nBytesWritten;
     input = add_complete_flag(input);
     auto length = static_cast<DWORD>(input.length());
     with_lock([&] {
-        cmd_queue_.push(input);
+        cmd_queue_.push({input, callback});
     });
     WriteFile(input_write_, input.c_str(), length, &nBytesWritten, nullptr);
 }
