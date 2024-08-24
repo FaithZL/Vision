@@ -19,22 +19,21 @@ public:
 
 class IObjectConstructor {
 public:
-    [[nodiscard]] virtual RuntimeObject *construct() = 0;
+    [[nodiscard]] virtual RuntimeObject *construct() const = 0;
     static void destroy(RuntimeObject *obj) {
         delete obj;
     }
-    [[nodiscard]] virtual string_view class_name() = 0;
+    [[nodiscard]] virtual string_view class_name() const = 0;
 };
 
 template<typename T>
 requires std::derived_from<T, RuntimeObject>
 class ObjectConstructor : public IObjectConstructor {
-    [[nodiscard]] RuntimeObject *construct() override {
+    [[nodiscard]] RuntimeObject *construct() const override {
         return new T{};
     }
-    [[nodiscard]] string_view class_name() override {
+    [[nodiscard]] string_view class_name() const override {
         return typeid(T).name();
     }
 };
-
 }// namespace vision::inline hotfix

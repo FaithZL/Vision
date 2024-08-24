@@ -4,6 +4,7 @@
 
 #include "module_interface.h"
 #include "core/vs_header.h"
+#include "object.h"
 
 namespace vision::inline hotfix {
 
@@ -16,6 +17,10 @@ ModuleInterface &ModuleInterface::instance() noexcept {
         s_module_interface = new ModuleInterface();
     }
     return *s_module_interface;
+}
+
+void ModuleInterface::add_constructor(const vision::IObjectConstructor *constructor) noexcept {
+    constructor_map_.insert(make_pair(constructor->class_name(), constructor));
 }
 
 string_view ModuleInterface::src_path() noexcept {
