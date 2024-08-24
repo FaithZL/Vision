@@ -8,6 +8,7 @@
 #include <thread>
 #include "core/stl.h"
 #include "core/logging.h"
+#include "core/thread_safety.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
@@ -15,15 +16,15 @@ static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
 
 /// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
-class CmdProcess {
+class CmdProcess : public thread_safety<>{
 private:
     PROCESS_INFORMATION process_info_{};
     HANDLE output_read_{};
     HANDLE input_write_{};
-    std::atomic<bool> is_complete_;
     bool store_cmd_output_{};
-    std::string m_CmdOutput_;
+    std::string cmd_output_;
     std::thread output_thread_;
+    mutable std::queue<string> cmd_queue_;
 
 public:
     CmdProcess();
@@ -40,6 +41,7 @@ public:
 
 private:
     void read_output_thread();
+    void on_finish_cmd() const;
 };
 
 CmdProcess::CmdProcess() {
@@ -50,9 +52,21 @@ void CmdProcess::change_directory(const fs::path &dir) const noexcept {
     write_input(ocarina::format("cd {}", dir.string()));
 }
 
+void CmdProcess::on_finish_cmd() const {
+    if (!store_cmd_output_) {
+        std::cout << "[Cmd process] Complete" << std::endl;
+    }
+    with_lock([&] {
+        auto cmd = cmd_queue_.front();
+        cmd_queue_.pop();
+        cout << "finish   \n" << cmd << endl;
+    });
+}
+
 void CmdProcess::read_output_thread() {
     CHAR lpBuffer[1024];
     DWORD nBytesRead;
+    string output;
     while (true) {
         if (!ReadFile(output_read_, lpBuffer, sizeof(lpBuffer) - 1,
                       &nBytesRead, nullptr) ||
@@ -68,17 +82,14 @@ void CmdProcess::read_output_thread() {
         size_t found = buffer.find(c_CompletionToken);
         if (found != std::string::npos) {
             buffer = buffer.substr(0, found);
-            if (!store_cmd_output_) {
-                std::cout << "[Cmd process] Complete" << std::endl;
-            }
-            is_complete_ = true;
+            on_finish_cmd();
         }
 
         if (buffer.empty()) {
             continue;
         }
         if (store_cmd_output_) {
-            m_CmdOutput_ += buffer;
+            cmd_output_ += buffer;
             continue;
         }
         if (buffer.find(" : error ") != std::string::npos ||
@@ -206,6 +217,9 @@ void CmdProcess::write_input(std::string input) const {
     DWORD nBytesWritten;
     input = add_complete_flag(input);
     auto length = static_cast<DWORD>(input.length());
+    with_lock([&] {
+        cmd_queue_.push(input);
+    });
     WriteFile(input_write_, input.c_str(), length, &nBytesWritten, nullptr);
 }
 
