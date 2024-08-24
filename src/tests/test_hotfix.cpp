@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
             auto func2 = module->function<fun2_t*>("module_interface");
             func2();
             vision::Demo * dd = func();
-            dd->constructor();
+            dd->serialize(nullptr);
 
         });
 

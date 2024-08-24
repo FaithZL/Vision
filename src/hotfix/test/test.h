@@ -13,7 +13,6 @@ namespace vision::inline hotfix {
 struct Test : RuntimeObject {
     void serialize(vision::Serializer *serializer) const noexcept override;
     void deserialize(vision::Serializer *serializer) const noexcept override;
-    [[nodiscard]] IObjectConstructor * constructor() const noexcept override;
 };
 
 }// namespace vision::inline hotfix

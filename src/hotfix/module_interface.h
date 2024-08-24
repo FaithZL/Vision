@@ -16,6 +16,9 @@ private:
     ModuleInterface();
     ~ModuleInterface();
 
+private:
+    vector<SP<IObjectConstructor>> constructors_;
+
 public:
     ModuleInterface(const ModuleInterface &) = delete;
     ModuleInterface(ModuleInterface &&) = delete;

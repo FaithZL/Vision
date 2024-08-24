@@ -8,11 +8,6 @@
 
 namespace vision::inline hotfix {
 
-IObjectConstructor *Demo::constructor() const noexcept {
-    std::cout << "wocaodfa--------------------" << std::endl;
-    return nullptr;
-}
-
 void Demo::serialize(vision::Serializer *serializer) const noexcept {
 }
 
