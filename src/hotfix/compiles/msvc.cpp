@@ -44,7 +44,7 @@ public:
     void compile(const CompileOptions &options) noexcept override;
 
     void link(const vision::LinkOptions &options, const FileTool::Target &target,
-              const string &extension_objs) noexcept override;
+              const string &extension_objs, const CmdProcess::callback_t &callback) noexcept override;
 };
 
 void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
@@ -57,7 +57,8 @@ void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
 
 void MSVCompiler::link(const vision::LinkOptions &options,
                        const FileTool::Target &target,
-                       const string &extension_objs) noexcept {
+                       const string &extension_objs,
+                       const CmdProcess::callback_t &callback) noexcept {
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string() + extension_objs,
                                       target.dll_path().string(),
@@ -65,7 +66,7 @@ void MSVCompiler::link(const vision::LinkOptions &options,
                                       target.pdb_path().string(),
                                       options.link_flags,
                                       options.link_libraries);
-    cmd_process_.write_input(link_cmd);
+    cmd_process_.write_input(link_cmd, callback);
 }
 
 }// namespace vision::inline hotfix

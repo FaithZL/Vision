@@ -9,6 +9,7 @@
 #include "util/file_manager.h"
 #include "core/dynamic_module.h"
 #include "build_rules.h"
+#include "cmd_process.h"
 
 namespace vision::inline hotfix {
 
@@ -21,7 +22,7 @@ public:
 public:
     virtual void compile(const CompileOptions &options) noexcept = 0;
     virtual void link(const LinkOptions &options, const FileTool::Target &target,
-                      const string &extension_objs) noexcept = 0;
+                      const string &extension_objs, const CmdProcess::callback_t &callback) noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;
     virtual void setup_environment() const {}
