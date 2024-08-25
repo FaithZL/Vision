@@ -17,7 +17,7 @@ private:
     ~ModuleInterface();
 
 private:
-    map<string, const IObjectConstructor*> constructor_map_;
+    map<string, SP<const IObjectConstructor>> constructor_map_;
 
 public:
     ModuleInterface(const ModuleInterface &) = delete;
@@ -26,7 +26,8 @@ public:
     [[nodiscard]] static string_view src_path() noexcept;
     ModuleInterface operator=(ModuleInterface &&) = delete;
     [[nodiscard]] static ModuleInterface &instance() noexcept;
-    void add_constructor(const IObjectConstructor* constructor) noexcept;
+    void add_constructor(SP<const IObjectConstructor> constructor) noexcept;
+    [[nodiscard]] const IObjectConstructor* constructor(const string &cls_name) const noexcept;
 };
 
 }// namespace vision::inline hotfix

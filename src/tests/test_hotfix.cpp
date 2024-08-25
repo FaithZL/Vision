@@ -49,10 +49,12 @@ int main(int argc, char *argv[]) {
 
             auto module = FileManager::instance().obtain_module(target.dll_path().string());
 
-            auto func = module->function<fun_t*>("create");
+//            auto func = module->function<fun_t*>("create");
             auto func2 = module->function<fun2_t*>("module_interface");
-            func2();
-            vision::Demo * dd = func();
+            auto *mi = func2();
+            auto constructor = mi->constructor(vision::Demo().class_name());
+
+            auto * dd = constructor->construct();
             dd->serialize(nullptr);
 
         });

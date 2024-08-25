@@ -19,8 +19,13 @@ ModuleInterface &ModuleInterface::instance() noexcept {
     return *s_module_interface;
 }
 
-void ModuleInterface::add_constructor(const vision::IObjectConstructor *constructor) noexcept {
-    constructor_map_.insert(make_pair(constructor->class_name(), constructor));
+void ModuleInterface::add_constructor(SP<const IObjectConstructor> constructor) noexcept {
+    string_view name = constructor->class_name();
+    constructor_map_.insert(make_pair(name, ocarina::move(constructor)));
+}
+
+const IObjectConstructor *ModuleInterface::constructor(const std::string &cls_name) const noexcept {
+    return constructor_map_.at(cls_name).get();
 }
 
 string_view ModuleInterface::src_path() noexcept {
