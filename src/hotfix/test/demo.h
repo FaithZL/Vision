@@ -7,10 +7,15 @@
 #include "core/stl.h"
 #include "hotfix/object.h"
 #include "hotfix/hotfix.h"
+#include "test.h"
 
 namespace vision::inline hotfix {
 
 struct Demo : RuntimeObject {
+private:
+    SP<Test> test;
+
+public:
     void serialize(vision::Serializer *serializer) const noexcept override;
     void deserialize(vision::Serializer *serializer) const noexcept override;
 };
