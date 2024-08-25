@@ -10,6 +10,7 @@
 namespace vision {
 
 class Serializable {
+public:
     virtual ~Serializable() = default;
 };
 
@@ -19,9 +20,10 @@ public:
     using data_type = T;
 
 private:
-    data_type data_;
+    data_type data_{};
 
 public:
+    SerializedData() = default;
     explicit SerializedData(const data_type &v) : data_(v) {}
 };
 

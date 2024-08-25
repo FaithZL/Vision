@@ -14,8 +14,11 @@ namespace vision::inline hotfix {
 struct Demo : RuntimeObject {
 private:
     SP<Test> test;
+//    SerializedData<int> attr_int;
+//    SerializedData<float> attr_float;
 
 public:
+    Demo();
     void serialize(vision::Serializer *serializer) const noexcept override;
     void deserialize(vision::Serializer *serializer) const noexcept override;
 };

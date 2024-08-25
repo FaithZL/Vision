@@ -9,6 +9,9 @@
 
 namespace vision::inline hotfix {
 
+Demo::Demo()
+    :test(make_shared<Test>()) {}
+
 void Demo::serialize(vision::Serializer *serializer) const noexcept {
     std::cout << "Demo::serialize" << endl;
 }
