@@ -7,7 +7,7 @@
 
 namespace vision::inline hotfix {
 
-class LLVMCompiler : public Compiler, public RuntimeObject {
+class LLVMCompiler : public Compiler {
 public:
     LLVMCompiler();
     void compile(const vision::CompileOptions &options) noexcept override;
@@ -15,12 +15,6 @@ public:
               const string &extension_objs, const CmdProcess::callback_t &callback) noexcept override;
     [[nodiscard]] fs::path installation_directory() noexcept override {
         return parent_path(cli_path(), 1);
-    }
-    void serialize(vision::Serializer *serializer) const noexcept override {
-
-    }
-    void deserialize(vision::Serializer *serializer) const noexcept override {
-
     }
 };
 
@@ -43,7 +37,3 @@ VS_EXPORT_API vision::hotfix::LLVMCompiler *create() {
 VS_EXPORT_API void destroy(vision::hotfix::LLVMCompiler *obj) {
     ocarina::delete_with_allocator(obj);
 }
-
-VS_REGISTER_CURRENT_PATH(0, "vision-hotfix-compiler-llvm")
-
-VS_REGISTER_HOTFIX(vision::hotfix, LLVMCompiler)

@@ -70,10 +70,6 @@ void NinjaParser::extract_compile_cmd(const std::string_view *lines) {
         cpp_to_obj_.insert(make_pair(ModuleInterface::src_path(), options.dst_fn.string()));
     }
 
-    if (!tool.has_file(options.src_fn.string())) {
-        return;
-    }
-
 #define NINJA_PARSE(field, MACRO)                  \
     if (string_contains(line, MACRO)) {            \
         options.field = extract_args(line, MACRO); \
@@ -116,9 +112,6 @@ void NinjaParser::extract_link_cmd(const std::string_view *lines) {
     options.target_file = extract_target();
 
     auto &tool = HotfixSystem::instance().file_tool();
-    if (!tool.has_target(options.target_file.filename().string())) {
-        return;
-    }
 
     auto extract_files = [&] {
         auto lst = extract_file_paths(string(lines[2]));
