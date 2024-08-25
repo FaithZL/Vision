@@ -9,9 +9,11 @@
 
 namespace vision::inline hotfix {
 
+using namespace ocarina;
 class Serializable {
 public:
     virtual ~Serializable() = default;
+    virtual void fill_block(void *address) const noexcept = 0;
 };
 
 template<typename T>
@@ -21,15 +23,19 @@ public:
 
 private:
     data_type data_{};
+    static constexpr auto size = sizeof(data_);
 
 public:
     SerializedData() = default;
-    explicit SerializedData(const data_type &v) : data_(v) {}
+    explicit SerializedData(const data_type &v) {
+        oc_memcpy(addressof(data_), addressof(v), size);
+    }
+    void fill_block(void *address) const noexcept override {
+        oc_memcpy(address, addressof(data_), size);
+    }
 };
 
 class RuntimeObject;
-
-using namespace ocarina;
 
 class Serializer {
 public:
@@ -62,10 +68,11 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] T deserialize(RuntimeObject *old_obj, ocarina::string_view name) {
+    void deserialize(RuntimeObject *old_obj, ocarina::string_view name, T *address) {
         attr_map_t &attr_map = get_attr_map(old_obj);
-
+        Serializable *serializable = attr_map.at(name).get();
+        serializable->fill_block(address);
     }
 };
 
-}// namespace vision
+}// namespace vision::inline hotfix
