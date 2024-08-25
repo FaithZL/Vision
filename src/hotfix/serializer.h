@@ -7,7 +7,7 @@
 #include "math/basic_types.h"
 #include "core/stl.h"
 
-namespace vision {
+namespace vision::inline hotfix {
 
 class Serializable {
 public:
