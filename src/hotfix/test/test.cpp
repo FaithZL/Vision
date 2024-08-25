@@ -9,6 +9,7 @@ namespace vision ::inline hotfix {
 
 void Test::serialize(vision::Serializer *serializer) const noexcept {
     std::cout << "Test::serialize" << endl;
+
 }
 
 void Test::deserialize(vision::Serializer *serializer) const noexcept {

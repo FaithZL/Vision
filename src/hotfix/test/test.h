@@ -12,12 +12,12 @@ namespace vision::inline hotfix {
 
 struct Test : RuntimeObject {
 public:
-    SerializedData<int> attr_int;
-    SerializedData<float> attr_float;
+    int attr_int;
+    float attr_float;
 
+public:
     void serialize(vision::Serializer *serializer) const noexcept override;
     void deserialize(vision::Serializer *serializer) const noexcept override;
 };
 
 }// namespace vision::inline hotfix
-
