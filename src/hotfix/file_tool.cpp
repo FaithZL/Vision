@@ -33,8 +33,6 @@ void FileTool::add_inspected(const fs::path &path, string_view module_name, bool
     auto func = [&](const fs::directory_entry &entry) {
         if (entry.exists() && entry.is_regular_file()) {
             auto f = InspectedFile(entry.path());
-            ///
-            f.write_time = {};
             add_file(target, f);
         }
     };
@@ -68,7 +66,7 @@ vector<FileTool::Target> FileTool::get_modified_targets() noexcept {
         std::for_each(target.files.begin(), target.files.end(), [&](InspectedFile &file) {
             FileTime write_time = modification_time(file.path);
             if (write_time > file.write_time) {
-                //                file.write_time = write_time;
+                file.write_time = write_time;
                 target.modified_files.push_back(file.path);
                 modified = true;
             }
