@@ -10,7 +10,7 @@
 namespace vision::inline hotfix {
 
 void Demo::serialize(vision::Serializer *serializer) const noexcept {
-    std::cout << "wocao222" << endl;
+    std::cout << "Demo::serialize" << endl;
 }
 
 void Demo::deserialize(vision::Serializer *serializer) const noexcept {
@@ -18,12 +18,4 @@ void Demo::deserialize(vision::Serializer *serializer) const noexcept {
 
 }// namespace vision::inline hotfix
 
-namespace {
-struct ConstructorRegistrar {
-    ConstructorRegistrar() {
-        using namespace vision::hotfix;
-        ModuleInterface::instance().add_constructor(ocarina::make_shared<ObjectConstructor<Demo>>());
-    }
-};
-static ConstructorRegistrar registrar;
-}// namespace
+VS_REGISTER_HOTFIX(vision, Demo)

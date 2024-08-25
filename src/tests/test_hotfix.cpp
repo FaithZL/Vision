@@ -54,9 +54,11 @@ int main(int argc, char *argv[]) {
             auto *mi = func2();
             auto constructor = mi->constructor(vision::Demo().class_name());
 
-            auto * dd = constructor->construct();
+            auto *dd = constructor->construct();
             dd->serialize(nullptr);
 
+            auto *d2 = mi->constructor(vision::Test().class_name())->construct();
+            d2->serialize(nullptr);
         });
 
     });

@@ -7,6 +7,17 @@
 #include "serializer.h"
 #include "core/hash.h"
 
+#define VS_REGISTER_HOTFIX(NS, Class)                                                                          \
+    namespace {                                                                                                \
+    struct ConstructorRegistrar {                                                                              \
+        ConstructorRegistrar() {                                                                               \
+            using namespace vision::hotfix;                                                                    \
+            ModuleInterface::instance().add_constructor(ocarina::make_shared<ObjectConstructor<NS::Class>>()); \
+        }                                                                                                      \
+    };                                                                                                         \
+    static ConstructorRegistrar s_##NS##_##Class##_registrar;                                                  \
+    }// namespace
+
 namespace vision::inline hotfix {
 using namespace ocarina;
 
