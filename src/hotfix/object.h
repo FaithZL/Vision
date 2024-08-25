@@ -15,7 +15,7 @@
             ModuleInterface::instance().add_constructor(ocarina::make_shared<ObjectConstructor<NS::Class>>()); \
         }                                                                                                      \
     };                                                                                                         \
-    static ConstructorRegistrar s_##NS##_##Class##_registrar;                                                  \
+    static ConstructorRegistrar s_##Class##_registrar;                                                         \
     }// namespace
 
 namespace vision::inline hotfix {

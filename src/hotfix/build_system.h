@@ -13,6 +13,7 @@ class BuildSystem {
 private:
     BuildRules::Handle build_rules_{BuildRules::Handle(nullptr, nullptr)};
     mutable Compiler::Handle compiler_{Compiler::Handle{nullptr, nullptr}};
+    mutable Compiler::Handle compiler2_{Compiler::Handle{nullptr, nullptr}};
 
 public:
     BuildSystem();

@@ -12,6 +12,7 @@ BuildSystem::BuildSystem() = default;
 void BuildSystem::init() {
     build_rules_ = BuildRules::create();
     compiler_ = Compiler::create();
+    compiler2_ = Compiler::create("llvm");
 }
 
 void BuildSystem::clear() noexcept {
