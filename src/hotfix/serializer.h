@@ -13,7 +13,7 @@ using namespace ocarina;
 class Serializable {
 public:
     virtual ~Serializable() = default;
-    virtual void fill_block(void *address) const noexcept = 0;
+    virtual void deserialize(void *address) const noexcept = 0;
 };
 
 template<typename T>
@@ -30,7 +30,7 @@ public:
     explicit SerializedData(const data_type &v) {
         oc_memcpy(addressof(data_), addressof(v), size);
     }
-    void fill_block(void *address) const noexcept override {
+    void deserialize(void *address) const noexcept override {
         oc_memcpy(address, addressof(data_), size);
     }
 };
@@ -71,7 +71,7 @@ public:
     void deserialize(RuntimeObject *old_obj, ocarina::string_view name, T *address) {
         attr_map_t &attr_map = get_attr_map(old_obj);
         Serializable *serializable = attr_map.at(name).get();
-        serializable->fill_block(address);
+        serializable->deserialize(address);
     }
 };
 
