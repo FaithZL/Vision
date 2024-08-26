@@ -22,10 +22,29 @@ template<typename T>
 requires std::derived_from<T, RuntimeObject> || std::is_trivially_copyable_v<T>
 class SerializedData : public Serializable {
 public:
-    using data_type = T;
+    using attr_map_t = std::map<ocarina::string_view, UP<Serializable>>;
     static constexpr bool is_pod = std::is_trivially_copyable_v<T>;
 
 private:
+    template<typename U>
+    struct Object {
+        static_assert(always_false_v<U>);
+    };
+
+    template<typename U>
+    requires std::derived_from<U, RuntimeObject>
+    struct Object<U> {
+        using type = attr_map_t;
+    };
+
+    template<typename U>
+    requires std::is_trivially_copyable_v<U>
+    struct Object<U> {
+        using type = U;
+    };
+
+private:
+    using data_type = Object<T>::type;
     data_type data_{};
     static constexpr auto size = sizeof(data_);
 
@@ -37,16 +56,16 @@ public:
 
     void serialize_impl(const data_type &value) {
         if constexpr (is_pod) {
-            oc_memcpy(addressof(data_), addressof(value), size);
+            oc_memcpy(addressof(data_), addressof(value), sizeof(data_));
         }
     }
 
     void serialize(void *address) noexcept override {
-        serialize_impl(*reinterpret_cast<data_type*>(address));
+        serialize_impl(*reinterpret_cast<data_type *>(address));
     }
 
     void deserialize(void *address) const noexcept override {
-        oc_memcpy(address, addressof(data_), size);
+        oc_memcpy(address, addressof(data_), sizeof(data_));
     }
 };
 
@@ -55,19 +74,10 @@ class RuntimeObject;
 class Serializer {
 public:
     using handle_t = const RuntimeObject *;
-    using attr_map_t = std::map<ocarina::string_view, UP<Serializable>>;
-    using object_map_t = std::map<handle_t, attr_map_t>;
+    using object_map_t = std::map<handle_t, UP<Serializable>>;
 
 private:
     object_map_t object_map_;
-
-private:
-    [[nodiscard]] attr_map_t &get_attr_map(handle_t object) noexcept {
-        if (!object_map_.contains(object)) {
-            object_map_.insert(make_pair(object, attr_map_t{}));
-        }
-        return object_map_.at(object);
-    }
 
 public:
     Serializer() = default;
@@ -78,15 +88,12 @@ public:
 
     template<typename T>
     void serialize(handle_t old_obj, ocarina::string_view name, const T &value) {
-        attr_map_t &attr_map = get_attr_map(old_obj);
-        attr_map.insert(make_pair(name, make_unique<SerializedData<T>>(value)));
+
     }
 
     template<typename T>
     void deserialize(handle_t old_obj, ocarina::string_view name, T &value) {
-        attr_map_t &attr_map = get_attr_map(old_obj);
-        Serializable *serializable = attr_map.at(name).get();
-        serializable->deserialize(address(value));
+
     }
 };
 
