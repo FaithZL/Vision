@@ -14,6 +14,8 @@ Demo::Demo()
 
 void Demo::serialize(vision::Serializer *serializer) const noexcept {
     std::cout << "Demo::serialize" << endl;
+    serializer->serialize(this, "attr_int", attr_int);
+    serializer->serialize(this, "attr_float", attr_float);
 }
 
 void Demo::deserialize(vision::Serializer *serializer) const noexcept {

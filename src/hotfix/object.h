@@ -30,7 +30,11 @@ public:
 
 class IObjectConstructor {
 public:
-    [[nodiscard]] virtual RuntimeObject *construct() const = 0;
+    template<typename T = RuntimeObject>
+    [[nodiscard]] T *construct() const {
+        return dynamic_cast<T *>(construct_impl());
+    }
+    [[nodiscard]] virtual RuntimeObject *construct_impl() const = 0;
     static void destroy(RuntimeObject *obj) {
         delete obj;
     }
@@ -40,7 +44,7 @@ public:
 template<typename T>
 requires std::derived_from<T, RuntimeObject>
 class ObjectConstructor : public IObjectConstructor {
-    [[nodiscard]] RuntimeObject *construct() const override {
+    [[nodiscard]] RuntimeObject *construct_impl() const override {
         return new T{};
     }
     [[nodiscard]] string_view class_name() const override {

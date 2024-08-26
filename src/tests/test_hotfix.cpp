@@ -22,8 +22,6 @@ using namespace ocarina;
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
 
-    vision::Test test;
-
     vision::HotfixSystem::instance().init();
 
     auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
@@ -38,12 +36,15 @@ int main(int argc, char *argv[]) {
 
     vision::Serializer serializer;
 
+    vision::Demo *demo = new vision::Demo();
+    vision::Test *test = new vision::Test();
+
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             vision::HotfixSystem::instance().check_and_build();
         });
 
-        widget->button_click("test", [&] {
+        widget->button_click("reload", [&] {
             auto &inspector = vision::HotfixSystem::instance().file_tool();
 
             auto target = inspector.get_target("vision-hotfix-test.dll");
@@ -54,13 +55,14 @@ int main(int argc, char *argv[]) {
             auto *mi = func2();
             auto constructor = mi->constructor(vision::Demo().class_name());
 
-            auto *dd = constructor->construct();
-            dd->serialize(addressof(serializer));
+            demo = constructor->construct<vision::Demo>();
+            test = mi->constructor(vision::Test().class_name())->construct<vision::Test>();
 
-            auto *d2 = mi->constructor(vision::Test().class_name())->construct();
-            d2->serialize(addressof(serializer));
+        });
 
-            int i = 0;
+        widget->button_click("test", [&] {
+            demo->serialize(addressof(serializer));
+            test->serialize(addressof(serializer));
         });
     });
 

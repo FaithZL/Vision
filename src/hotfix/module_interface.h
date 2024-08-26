@@ -28,6 +28,10 @@ public:
     [[nodiscard]] static ModuleInterface &instance() noexcept;
     void add_constructor(SP<const IObjectConstructor> constructor) noexcept;
     [[nodiscard]] const IObjectConstructor* constructor(const string &cls_name) const noexcept;
+    template<typename T>
+    [[nodiscard]] T *construct() const noexcept {
+        return constructor(typeid(T).name())->construct<T>();
+    }
 };
 
 }// namespace vision::inline hotfix

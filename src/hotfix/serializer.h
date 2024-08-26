@@ -87,13 +87,21 @@ public:
     }
 
     template<typename T>
-    void serialize(handle_t old_obj, ocarina::string_view name, const T &value) {
+    [[nodiscard]] Serializable *get_serialized_data(handle_t old_obj) noexcept {
+        if (!object_map_.contains(old_obj)) {
+            object_map_.insert(make_pair(old_obj, make_unique<SerializedData<T>>()));
+        }
+        return object_map_.at(old_obj).get();
+    }
 
+    template<typename T>
+    void serialize(handle_t old_obj, ocarina::string_view name, const T &value) {
+        Serializable *serialized_data = get_serialized_data<T>(old_obj);
+        int i = 0;
     }
 
     template<typename T>
     void deserialize(handle_t old_obj, ocarina::string_view name, T &value) {
-
     }
 };
 

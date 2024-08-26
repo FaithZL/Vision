@@ -25,6 +25,7 @@ void ModuleInterface::add_constructor(SP<const IObjectConstructor> constructor) 
 }
 
 const IObjectConstructor *ModuleInterface::constructor(const std::string &cls_name) const noexcept {
+    OC_ASSERT(constructor_map_.contains(cls_name));
     return constructor_map_.at(cls_name).get();
 }
 

@@ -12,8 +12,8 @@ namespace vision::inline hotfix {
 
 struct Test : RuntimeObject {
 public:
-    int attr_int;
-    float attr_float;
+    int attr_int{};
+    float attr_float{};
 
 public:
     void serialize(vision::Serializer *serializer) const noexcept override;

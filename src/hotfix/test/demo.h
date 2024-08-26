@@ -14,8 +14,8 @@ namespace vision::inline hotfix {
 struct Demo : RuntimeObject {
 private:
     SP<Test> test;
-    int attr_int;
-    float attr_float;
+    int attr_int{};
+    float attr_float{};
 
 public:
     Demo();
