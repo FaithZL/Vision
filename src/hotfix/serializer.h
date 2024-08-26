@@ -38,8 +38,6 @@ public:
     void serialize_impl(const data_type &value) {
         if constexpr (is_pod) {
             oc_memcpy(addressof(data_), addressof(value), size);
-        } else {
-//            value.ser
         }
     }
 
