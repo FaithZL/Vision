@@ -94,9 +94,9 @@ public:
         return object_map_.at(old_obj).get();
     }
 
-    template<typename T>
-    void serialize(handle_t old_obj, ocarina::string_view name, const T &value) {
-        Serializable *serialized_data = get_serialized_data<T>(old_obj);
+    template<typename TObject, typename TMember>
+    void serialize(const TObject *old_obj, string_view name, const TMember &value) {
+        Serializable *serialized_data = get_serialized_data<TObject>(old_obj);
         int i = 0;
     }
 
