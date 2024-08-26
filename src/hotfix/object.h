@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "serializer.h"
 #include "core/hash.h"
 
 #define VS_REGISTER_HOTFIX(NS, Class)                                                                          \
@@ -20,6 +19,7 @@
 
 namespace vision::inline hotfix {
 using namespace ocarina;
+class Serializer;
 
 class RuntimeObject : public Hashable {
 public:

@@ -6,10 +6,9 @@
 
 #include "math/basic_types.h"
 #include "core/stl.h"
+#include "object.h"
 
 namespace vision::inline hotfix {
-
-class RuntimeObject;
 
 using namespace ocarina;
 class Serializable {
@@ -40,7 +39,7 @@ public:
         if constexpr (is_pod) {
             oc_memcpy(addressof(data_), addressof(value), size);
         } else {
-            
+//            value.ser
         }
     }
 
