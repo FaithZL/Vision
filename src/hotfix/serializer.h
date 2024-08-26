@@ -14,15 +14,14 @@ using namespace ocarina;
 class Serializable {
 public:
     virtual ~Serializable() = default;
-    virtual void deserialize(void *address) const noexcept = 0;
-    virtual void serialize(void *address) noexcept = 0;
+    virtual void serialize(string_view field_name, SP<Serializable> serializable) = 0;
 };
 
 template<typename T>
 requires std::derived_from<T, RuntimeObject> || std::is_trivially_copyable_v<T>
 class SerializedData : public Serializable {
 public:
-    using attr_map_t = std::map<ocarina::string_view, UP<Serializable>>;
+    using attr_map_t = std::map<ocarina::string_view, SP<Serializable>>;
     static constexpr bool is_pod = std::is_trivially_copyable_v<T>;
 
 private:
@@ -60,12 +59,12 @@ public:
         }
     }
 
-    void serialize(void *address) noexcept override {
-        serialize_impl(*reinterpret_cast<data_type *>(address));
-    }
+    void serialize(std::string_view field_name, SP<Serializable> serializable) override {
+        if constexpr (is_pod) {
 
-    void deserialize(void *address) const noexcept override {
-        oc_memcpy(address, addressof(data_), sizeof(data_));
+        } else {
+            data_.insert(make_pair(field_name, serializable));
+        }
     }
 };
 
@@ -74,7 +73,7 @@ class RuntimeObject;
 class Serializer {
 public:
     using handle_t = const RuntimeObject *;
-    using object_map_t = std::map<handle_t, UP<Serializable>>;
+    using object_map_t = std::map<handle_t, SP<Serializable>>;
 
 private:
     object_map_t object_map_;
@@ -87,17 +86,17 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] Serializable *get_serialized_data(handle_t old_obj) noexcept {
+    [[nodiscard]] SP<Serializable> get_serialized_data(handle_t old_obj) noexcept {
         if (!object_map_.contains(old_obj)) {
-            object_map_.insert(make_pair(old_obj, make_unique<SerializedData<T>>()));
+            object_map_.insert(make_pair(old_obj, make_shared<SerializedData<T>>()));
         }
-        return object_map_.at(old_obj).get();
+        return object_map_.at(old_obj);
     }
 
     template<typename TObject, typename TMember>
     void serialize(const TObject *old_obj, string_view name, const TMember &value) {
-        Serializable *serialized_data = get_serialized_data<TObject>(old_obj);
-        int i = 0;
+        SP<Serializable> serialized_data = get_serialized_data<TObject>(old_obj);
+        serialized_data->serialize(name, make_shared<SerializedData<TMember>>(value));
     }
 
     template<typename T>
