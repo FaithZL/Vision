@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
 
     vision::HotfixSystem::instance().init();
 
-
     auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
     auto image_io = Image::pure_color(make_float4(1, 0, 0, 1), ColorSpace::LINEAR, make_uint2(500));
     window->init_widgets();
@@ -36,6 +35,8 @@ int main(int argc, char *argv[]) {
     using fun2_t = vision::hotfix::ModuleInterface *();
 
     auto &mi = vision::ModuleInterface::instance();
+
+    vision::Serializer serializer;
 
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
@@ -49,17 +50,18 @@ int main(int argc, char *argv[]) {
 
             auto module = FileManager::instance().obtain_module(target.dll_path().string());
 
-            auto func2 = module->function<fun2_t*>("module_interface");
+            auto func2 = module->function<fun2_t *>("module_interface");
             auto *mi = func2();
             auto constructor = mi->constructor(vision::Demo().class_name());
 
             auto *dd = constructor->construct();
-            dd->serialize(nullptr);
+            dd->serialize(addressof(serializer));
 
             auto *d2 = mi->constructor(vision::Test().class_name())->construct();
-            d2->serialize(nullptr);
-        });
+            d2->serialize(addressof(serializer));
 
+            int i = 0;
+        });
     });
 
     return 0;
