@@ -53,13 +53,18 @@ public:
     static SP<SerializedData<T>> create(T value) noexcept {
         SP<SerializedData<T>> ret = make_shared<SerializedData<T>>();
         if constexpr (is_pod) {
-
+            ret->data_ = value;
         } else if constexpr (is_runtime_object) {
+            value->serialize(ret);
+            int i = 0;
         }
         return ret;
     }
 
     void serialize_impl(std::string_view field_name, SP<Serializable> serializable) override {
+        if constexpr (is_runtime_object) {
+            data_.insert(make_pair(field_name, serializable));
+        }
     }
 };
 
