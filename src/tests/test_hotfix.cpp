@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
             auto constructor = mi->constructor(vision::Demo().class_name());
 
             demo = constructor->construct_shared<vision::Demo>();
-            test = mi->constructor(vision::Test().class_name())->construct<vision::Test>();
+            test = mi->construct<vision::Test>();
 
         });
 
