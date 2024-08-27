@@ -21,10 +21,20 @@ public:
     template<typename T>
     void serialize(string_view field_name, T value);
 
-    virtual void print() const noexcept = 0;
+    virtual void print(int &indent) const noexcept = 0;
 
     virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
 };
+
+namespace {
+string tab_string(int indent) {
+    string ret = "";
+    for (int i = 0; i < indent; ++i) {
+        ret += "    ";
+    }
+    return ret;
+}
+}// namespace
 
 template<typename T>
 class SerializedData : public Serializable {
@@ -63,14 +73,17 @@ public:
         return ret;
     }
 
-    void print() const noexcept override {
+    void print(int &indent) const noexcept override {
         if constexpr (is_runtime_object) {
-            for(const auto &it : data_) {
-                cout << " key = " << it.first << " ";
-                it.second->print();
+            cout << tab_string(indent) << endl;
+            indent ++;
+            for (const auto &it : data_) {
+                cout << tab_string(indent) <<"key = " << it.first << " ";
+                it.second->print(indent);
             }
+            indent --;
         } else if constexpr (is_pod) {
-            cout << "value = " << data_ << endl;
+            cout << tab_string(indent) << "value = " << data_ << endl;
         }
     }
 
@@ -112,9 +125,10 @@ public:
     }
 
     void print() noexcept {
+        int indent = 0;
         for (const auto &item : object_map_) {
-            cout << "object type = " << type_string<decltype(item.first)>() << endl;
-            item.second->print();
+            cout << "object type = " << type_string<decltype(item.first)>();
+            item.second->print(indent);
         }
     }
 
