@@ -61,8 +61,8 @@ int main(int argc, char *argv[]) {
         });
 
         widget->button_click("test", [&] {
-            demo->serialize(addressof(serializer));
-            test->serialize(addressof(serializer));
+            demo->serialize(nullptr);
+            test->serialize(nullptr);
         });
     });
 
