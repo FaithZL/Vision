@@ -30,15 +30,15 @@ public:
     [[nodiscard]] const IObjectConstructor* constructor(const string &cls_name) const noexcept;
     template<typename T>
     [[nodiscard]] T *construct() const noexcept {
-        return constructor(typeid(T).name())->construct<T>();
+        return constructor(type_string<T>())->template construct<T>();
     }
     template<typename T>
     [[nodiscard]] SP<T> construct_shared() const noexcept {
-        return constructor(typeid(T).name())->construct_shared<T>();
+        return constructor(type_string<T>())->template construct_shared<T>();
     }
     template<typename T>
     [[nodiscard]] UP<T> construct_unique() const noexcept {
-        return constructor(typeid(T).name())->construct_unique<T>();
+        return constructor(type_string<T>())->template construct_unique<T>();
     }
 };
 

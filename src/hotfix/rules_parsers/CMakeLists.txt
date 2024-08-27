@@ -22,3 +22,4 @@ function(vision_add_rules_parser_plugins name)
 endfunction()
 
 vision_add_rules_parser_plugins(ninja CATEGORY rules_parser SOURCES ninja.cpp)
+vision_add_rules_parser_plugins(json CATEGORY rules_parser SOURCES json.cpp)

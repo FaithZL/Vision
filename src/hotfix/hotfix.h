@@ -4,25 +4,12 @@
 
 #pragma once
 
-#include "core/stl.h"
+#include "macro.h"
 #include "core/hash.h"
 #include "serializer.h"
 #include "object.h"
 #include "build_system.h"
 #include "file_tool.h"
-
-#define VS_REGISTER_PATH(path, level, ...)                                        \
-    namespace {                                                                   \
-    struct FileRegistrar {                                                        \
-        FileRegistrar() {                                                         \
-            auto key = ocarina::parent_path(path, level);                         \
-            vision::HotfixSystem::instance().register_target(key, ##__VA_ARGS__); \
-        }                                                                         \
-    };                                                                            \
-    static FileRegistrar registrar;                                               \
-    }
-
-#define VS_REGISTER_CURRENT_PATH(level, ...) VS_REGISTER_PATH(__FILE__, level, ##__VA_ARGS__)
 
 namespace vision::inline hotfix {
 
@@ -63,7 +50,7 @@ public:
         update(object->class_name());
     }
     OC_MAKE_MEMBER_GETTER(file_tool, &)
-    template<typename ...Args>
+    template<typename... Args>
     void register_target(Args &&...args) {
         file_tool_.add_inspected(OC_FORWARD(args)...);
     }

@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
     auto demo = std::make_shared<vision::Demo>();
     vision::Test *test = new vision::Test();
 
+
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             vision::HotfixSystem::instance().check_and_build();

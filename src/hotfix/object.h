@@ -6,17 +6,6 @@
 
 #include "core/hash.h"
 
-#define VS_REGISTER_HOTFIX(NS, Class)                                                                          \
-    namespace {                                                                                                \
-    struct ConstructorRegistrar {                                                                              \
-        ConstructorRegistrar() {                                                                               \
-            using namespace vision::hotfix;                                                                    \
-            ModuleInterface::instance().add_constructor(ocarina::make_shared<ObjectConstructor<NS::Class>>()); \
-        }                                                                                                      \
-    };                                                                                                         \
-    static ConstructorRegistrar s_##Class##_registrar;                                                         \
-    }// namespace
-
 namespace vision::inline hotfix {
 using namespace ocarina;
 class Serializer;
@@ -58,7 +47,7 @@ class ObjectConstructor : public IObjectConstructor {
         return new T{};
     }
     [[nodiscard]] string_view class_name() const override {
-        return typeid(T).name();
+        return type_string<T>();
     }
 };
 }// namespace vision::inline hotfix
