@@ -5,6 +5,7 @@
 #pragma once
 
 #include "core/hash.h"
+#include "macro.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
