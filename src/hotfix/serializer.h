@@ -78,12 +78,12 @@ public:
             cout << tab_string(indent) << endl;
             indent ++;
             for (const auto &it : data_) {
-                cout << tab_string(indent) <<"key = " << it.first << " ";
+                cout << tab_string(indent) <<"" << it.first << " = ";
                 it.second->print(indent);
             }
             indent --;
         } else if constexpr (is_pod) {
-            cout << tab_string(indent) << "value = " << data_ << endl;
+            cout << "" << data_ << endl;
         }
     }
 
