@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
     vision::Serializer serializer;
 
-    vision::Demo *demo = new vision::Demo();
+    auto demo = ocarina::SP<vision::Demo>(new vision::Demo());
     vision::Test *test = new vision::Test();
 
     window->run([&](double d) {
@@ -55,13 +55,13 @@ int main(int argc, char *argv[]) {
             auto *mi = func2();
             auto constructor = mi->constructor(vision::Demo().class_name());
 
-            demo = constructor->construct<vision::Demo>();
+            demo = shared_ptr<vision::Demo>(constructor->construct<vision::Demo>());
             test = mi->constructor(vision::Test().class_name())->construct<vision::Test>();
 
         });
 
         widget->button_click("test", [&] {
-            serializer.serialize(SP<vision::Demo>(demo));
+            serializer.serialize(demo);
             serializer.serialize(test);
             int i = 0;
 //            demo->serialize(nullptr);
