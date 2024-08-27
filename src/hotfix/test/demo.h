@@ -19,8 +19,8 @@ private:
 
 public:
     Demo();
-    void serialize(vision::Serializable *serializer) const noexcept override;
-    void deserialize(vision::Serializable *serializer) const noexcept override;
+    void serialize(SP<Serializable> output) const noexcept override;
+    void deserialize(SP<Serializable> input) const noexcept override;
 };
 
 }// namespace vision::inline hotfix

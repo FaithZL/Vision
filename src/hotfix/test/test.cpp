@@ -7,13 +7,13 @@
 
 namespace vision ::inline hotfix {
 
-void Test::serialize(vision::Serializable *serializer) const noexcept {
+void Test::serialize(SP<Serializable> output) const noexcept {
     std::cout << "Test::serialize" << endl;
 //    serializer->serialize(this, "attr_int", attr_int);
 //    serializer->serialize(this, "attr_float", attr_float);
 }
 
-void Test::deserialize(vision::Serializable *serializer) const noexcept {
+void Test::deserialize(SP<Serializable> input) const noexcept {
 }
 
 }// namespace vision::inline hotfix

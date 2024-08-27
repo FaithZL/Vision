@@ -86,21 +86,18 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] SP<Serializable> get_serialized_data(handle_t old_obj) noexcept {
+    [[nodiscard]] SP<Serializable> get_serialized_data(const T *old_obj) noexcept {
         if (!object_map_.contains(old_obj)) {
             object_map_.insert(make_pair(old_obj, make_shared<SerializedData<T>>()));
         }
         return object_map_.at(old_obj);
     }
 
-    template<typename TObject, typename TMember>
-    void serialize(const TObject *old_obj, string_view name, const TMember &value) {
-        SP<Serializable> serialized_data = get_serialized_data<TObject>(old_obj);
-        serialized_data->serialize(name, make_shared<SerializedData<TMember>>(value));
-    }
-
     template<typename T>
-    void deserialize(handle_t old_obj, ocarina::string_view name, T &value) {
+    void serialize(T &&object) noexcept {
+        auto ptr = raw_ptr(OC_FORWARD(object));
+        SP<Serializable> data = get_serialized_data(ptr);
+        ptr->serialize(data);
     }
 };
 
