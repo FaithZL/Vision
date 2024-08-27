@@ -20,15 +20,17 @@ public:
 
     template<typename T>
     void serialize(string_view field_name, T value);
+    virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
+
+    template<typename T>
+    void deserialize(string_view field_name, T &value);
 
     virtual void print(int &indent) const noexcept = 0;
-
-    virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
 };
 
 namespace {
 string tab_string(int indent) {
-    string ret = "";
+    string ret;
     for (int i = 0; i < indent; ++i) {
         ret += "    ";
     }
@@ -68,7 +70,6 @@ public:
             ret->data_ = value;
         } else if constexpr (is_runtime_object) {
             value->serialize(ret);
-            int i = 0;
         }
         return ret;
     }
@@ -130,6 +131,11 @@ public:
     void serialize(T &&object) noexcept {
         auto ptr = raw_ptr(OC_FORWARD(object));
         object_map_.insert(make_pair(ptr, SerializedData<T>::apply(OC_FORWARD(object))));
+    }
+
+    template<typename T>
+    void deserialize(T &&object) noexcept {
+
     }
 };
 
