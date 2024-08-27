@@ -18,10 +18,10 @@ class Serializable {
 public:
     virtual ~Serializable() = default;
 
-//    template<typename T>
-//    void serialize(string_view field_name, T &&value);
+    template<typename T>
+    void serialize(string_view field_name, T value);
 
-    virtual void serialize(string_view field_name, SP<Serializable> serializable) = 0;
+    virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
 };
 
 template<typename T>
@@ -59,9 +59,14 @@ public:
         return ret;
     }
 
-    void serialize(std::string_view field_name, SP<Serializable> serializable) override {
+    void serialize_impl(std::string_view field_name, SP<Serializable> serializable) override {
     }
 };
+
+template<typename T>
+void Serializable::serialize(std::string_view field_name, T value) {
+    serialize_impl(field_name, SerializedData<T>::create(value));
+}
 
 class RuntimeObject;
 
