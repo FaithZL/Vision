@@ -62,7 +62,7 @@ private:
 public:
     SerializedData() = default;
 
-    static SP<SerializedData<T>> create(T value) noexcept {
+    static SP<SerializedData<T>> apply(T value) noexcept {
         SP<SerializedData<T>> ret = make_shared<SerializedData<T>>();
         if constexpr (is_pod) {
             ret->data_ = value;
@@ -76,12 +76,12 @@ public:
     void print(int &indent) const noexcept override {
         if constexpr (is_runtime_object) {
             cout << tab_string(indent) << endl;
-            indent ++;
+            indent++;
             for (const auto &it : data_) {
-                cout << tab_string(indent) <<"" << it.first << " = ";
+                cout << tab_string(indent) << "" << it.first << " = ";
                 it.second->print(indent);
             }
-            indent --;
+            indent--;
         } else if constexpr (is_pod) {
             cout << "" << data_ << endl;
         }
@@ -96,7 +96,7 @@ public:
 
 template<typename T>
 void Serializable::serialize(std::string_view field_name, T value) {
-    serialize_impl(field_name, SerializedData<T>::create(value));
+    serialize_impl(field_name, SerializedData<T>::apply(value));
 }
 
 class RuntimeObject;
@@ -116,13 +116,7 @@ public:
         object_map_.erase(object);
     }
 
-    template<typename T>
-    [[nodiscard]] SP<Serializable> get_serialized_data(T &&old_obj) noexcept {
-        if (!object_map_.contains(old_obj)) {
-            object_map_.insert(make_pair(old_obj, SerializedData<T>::create(OC_FORWARD(old_obj))));
-        }
-        return object_map_.at(old_obj);
-    }
+    void clear() noexcept { object_map_.clear(); }
 
     void print() noexcept {
         int indent = 0;
@@ -135,8 +129,7 @@ public:
     template<typename T>
     void serialize(T &&object) noexcept {
         auto ptr = raw_ptr(OC_FORWARD(object));
-        SP<Serializable> data = get_serialized_data(ptr);
-        ptr->serialize(data);
+        object_map_.insert(make_pair(ptr, SerializedData<T>::apply(OC_FORWARD(object))));
     }
 };
 
