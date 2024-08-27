@@ -28,29 +28,21 @@ public:
     static constexpr bool is_pod = std::is_trivially_copyable_v<raw_type > && !std::is_pointer_v<raw_type>;
     static constexpr bool is_runtime_object = std::derived_from<std::remove_pointer_t<ptr_t<raw_type>>, RuntimeObject>;
 
-//    static_assert(is_pod || is_runtime_object);
+    static_assert(is_pod || is_runtime_object);
 
 
 private:
-    template<typename U>
-    struct Object {
-        static_assert(always_false_v<U>);
-    };
 
-    template<typename U>
-    requires std::derived_from<U, RuntimeObject>
-    struct Object<U> {
-        using type = attr_map_t;
-    };
-
-    template<typename U>
-    requires std::is_trivially_copyable_v<U>
-    struct Object<U> {
-        using type = U;
-    };
+    static constexpr auto type_deduce() noexcept {
+        if constexpr (is_pod) {
+            return T{};
+        } else if constexpr (is_runtime_object) {
+            return attr_map_t{};
+        }
+    }
 
 private:
-    using data_type = Object<raw_type>::type;
+    using data_type = decltype(type_deduce());
     data_type data_{};
 
 public:
@@ -70,6 +62,11 @@ public:
 
     }
 };
+
+template<typename T>
+inline auto create_serialized_data(T value) noexcept {
+
+}
 
 class RuntimeObject;
 

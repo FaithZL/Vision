@@ -14,8 +14,8 @@ Demo::Demo()
 
 void Demo::serialize(SP<Serializable> output) const noexcept {
     std::cout << "Demo::serialize" << endl;
-//    serializer->serialize(this, "attr_int", attr_int);
-//    serializer->serialize(this, "attr_float", attr_float);
+//    output->serialize("attr_int", attr_int);
+//    output->serialize(this, "attr_float", attr_float);
 }
 
 void Demo::deserialize(SP<Serializable> input) const noexcept {
