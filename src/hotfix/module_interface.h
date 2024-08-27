@@ -32,6 +32,14 @@ public:
     [[nodiscard]] T *construct() const noexcept {
         return constructor(typeid(T).name())->construct<T>();
     }
+    template<typename T>
+    [[nodiscard]] SP<T> construct_shared() const noexcept {
+        return constructor(typeid(T).name())->construct_shared<T>();
+    }
+    template<typename T>
+    [[nodiscard]] UP<T> construct_unique() const noexcept {
+        return constructor(typeid(T).name())->construct_unique<T>();
+    }
 };
 
 }// namespace vision::inline hotfix

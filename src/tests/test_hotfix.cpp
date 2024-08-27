@@ -8,6 +8,8 @@
 #include "util/file_manager.h"
 #include "rhi/common.h"
 #include <windows.h>
+
+#include <memory>
 #include "math/base.h"
 #include "util/image.h"
 #include "dsl/dsl.h"
@@ -36,7 +38,7 @@ int main(int argc, char *argv[]) {
 
     vision::Serializer serializer;
 
-    auto demo = ocarina::SP<vision::Demo>(new vision::Demo());
+    auto demo = std::make_shared<vision::Demo>();
     vision::Test *test = new vision::Test();
 
     window->run([&](double d) {
@@ -55,7 +57,7 @@ int main(int argc, char *argv[]) {
             auto *mi = func2();
             auto constructor = mi->constructor(vision::Demo().class_name());
 
-            demo = shared_ptr<vision::Demo>(constructor->construct<vision::Demo>());
+            demo = constructor->construct_shared<vision::Demo>();
             test = mi->constructor(vision::Test().class_name())->construct<vision::Test>();
 
         });

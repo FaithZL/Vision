@@ -36,6 +36,14 @@ public:
     [[nodiscard]] T *construct() const {
         return dynamic_cast<T *>(construct_impl());
     }
+    template<typename T = RuntimeObject>
+    [[nodiscard]] SP<T> construct_shared() const noexcept {
+        return SP<T>(construct<T>());
+    }
+    template<typename T = RuntimeObject>
+    [[nodiscard]] UP<T> construct_unique() const noexcept {
+        return UP<T>(construct<T>());
+    }
     [[nodiscard]] virtual RuntimeObject *construct_impl() const = 0;
     static void destroy(RuntimeObject *obj) {
         delete obj;
