@@ -14,15 +14,22 @@ using namespace ocarina;
 class Serializable {
 public:
     virtual ~Serializable() = default;
+
+
+
     virtual void serialize(string_view field_name, SP<Serializable> serializable) = 0;
 };
 
 template<typename T>
-requires std::derived_from<T, RuntimeObject> || std::is_trivially_copyable_v<T>
 class SerializedData : public Serializable {
 public:
     using attr_map_t = std::map<ocarina::string_view, SP<Serializable>>;
-    static constexpr bool is_pod = std::is_trivially_copyable_v<T>;
+    using raw_type = std::remove_cvref_t<T>;
+    static constexpr bool is_pod = std::is_trivially_copyable_v<raw_type > && !std::is_pointer_v<raw_type>;
+    static constexpr bool is_runtime_object = std::derived_from<std::remove_pointer_t<ptr_t<raw_type>>, RuntimeObject>;
+
+//    static_assert(is_pod || is_runtime_object);
+
 
 private:
     template<typename U>
@@ -43,19 +50,24 @@ private:
     };
 
 private:
-    using data_type = Object<T>::type;
+    using data_type = Object<raw_type>::type;
     data_type data_{};
-    static constexpr auto size = sizeof(data_);
 
 public:
     SerializedData() = default;
 
-    void serialize(std::string_view field_name, SP<Serializable> serializable) override {
+    static SP<SerializedData<T>> create(T value) noexcept {
+        SP<SerializedData<T>> ret = make_shared<SerializedData<T>>();
         if constexpr (is_pod) {
 
-        } else {
-            data_.insert(make_pair(field_name, serializable));
+        } else if constexpr (is_runtime_object) {
+
         }
+        return ret;
+    }
+
+    void serialize(std::string_view field_name, SP<Serializable> serializable) override {
+
     }
 };
 
@@ -77,9 +89,9 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] SP<Serializable> get_serialized_data(const T *old_obj) noexcept {
+    [[nodiscard]] SP<Serializable> get_serialized_data(T old_obj) noexcept {
         if (!object_map_.contains(old_obj)) {
-            object_map_.insert(make_pair(old_obj, make_shared<SerializedData<T>>()));
+            object_map_.insert(make_pair(old_obj, SerializedData<T>::create(old_obj)));
         }
         return object_map_.at(old_obj);
     }
