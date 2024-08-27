@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
             serializer.serialize(demo);
             serializer.serialize(test);
             int i = 0;
+            serializer.print();
 //            demo->serialize(nullptr);
 //            test->serialize(nullptr);
         });

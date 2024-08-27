@@ -21,6 +21,8 @@ public:
     template<typename T>
     void serialize(string_view field_name, T value);
 
+    virtual void print() const noexcept = 0;
+
     virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
 };
 
@@ -61,6 +63,17 @@ public:
         return ret;
     }
 
+    void print() const noexcept override {
+        if constexpr (is_runtime_object) {
+            for(const auto &it : data_) {
+                cout << " key = " << it.first << " ";
+                it.second->print();
+            }
+        } else if constexpr (is_pod) {
+            cout << "value = " << data_ << endl;
+        }
+    }
+
     void serialize_impl(std::string_view field_name, SP<Serializable> serializable) override {
         if constexpr (is_runtime_object) {
             data_.insert(make_pair(field_name, serializable));
@@ -96,6 +109,13 @@ public:
             object_map_.insert(make_pair(old_obj, SerializedData<T>::create(OC_FORWARD(old_obj))));
         }
         return object_map_.at(old_obj);
+    }
+
+    void print() noexcept {
+        for (const auto &item : object_map_) {
+            cout << "object type = " << type_string<decltype(item.first)>() << endl;
+            item.second->print();
+        }
     }
 
     template<typename T>
