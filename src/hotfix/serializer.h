@@ -49,15 +49,6 @@ private:
 
 public:
     SerializedData() = default;
-    explicit SerializedData(const data_type &v) {
-        serialize_impl(v);
-    }
-
-    void serialize_impl(const data_type &value) {
-        if constexpr (is_pod) {
-            oc_memcpy(addressof(data_), addressof(value), sizeof(data_));
-        }
-    }
 
     void serialize(std::string_view field_name, SP<Serializable> serializable) override {
         if constexpr (is_pod) {

@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
         widget->button_click("test", [&] {
             serializer.serialize(SP<vision::Demo>(demo));
             serializer.serialize(test);
+            int i = 0;
 //            demo->serialize(nullptr);
 //            test->serialize(nullptr);
         });
