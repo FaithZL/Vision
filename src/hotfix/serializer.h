@@ -10,12 +10,16 @@
 
 namespace vision::inline hotfix {
 
+template<typename T>
+class SerializedData;
+
 using namespace ocarina;
 class Serializable {
 public:
     virtual ~Serializable() = default;
 
-
+//    template<typename T>
+//    void serialize(string_view field_name, T &&value);
 
     virtual void serialize(string_view field_name, SP<Serializable> serializable) = 0;
 };
@@ -25,14 +29,12 @@ class SerializedData : public Serializable {
 public:
     using attr_map_t = std::map<ocarina::string_view, SP<Serializable>>;
     using raw_type = std::remove_cvref_t<T>;
-    static constexpr bool is_pod = std::is_trivially_copyable_v<raw_type > && !std::is_pointer_v<raw_type>;
+    static constexpr bool is_pod = std::is_trivially_copyable_v<raw_type> && !std::is_pointer_v<raw_type>;
     static constexpr bool is_runtime_object = std::derived_from<std::remove_pointer_t<ptr_t<raw_type>>, RuntimeObject>;
 
     static_assert(is_pod || is_runtime_object);
 
-
 private:
-
     static constexpr auto type_deduce() noexcept {
         if constexpr (is_pod) {
             return T{};
@@ -53,20 +55,13 @@ public:
         if constexpr (is_pod) {
 
         } else if constexpr (is_runtime_object) {
-
         }
         return ret;
     }
 
     void serialize(std::string_view field_name, SP<Serializable> serializable) override {
-
     }
 };
-
-template<typename T>
-inline auto create_serialized_data(T value) noexcept {
-
-}
 
 class RuntimeObject;
 
@@ -86,9 +81,9 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] SP<Serializable> get_serialized_data(T old_obj) noexcept {
+    [[nodiscard]] SP<Serializable> get_serialized_data(T &&old_obj) noexcept {
         if (!object_map_.contains(old_obj)) {
-            object_map_.insert(make_pair(old_obj, SerializedData<T>::create(old_obj)));
+            object_map_.insert(make_pair(old_obj, SerializedData<T>::create(OC_FORWARD(old_obj))));
         }
         return object_map_.at(old_obj);
     }
