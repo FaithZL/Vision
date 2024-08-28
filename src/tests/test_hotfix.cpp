@@ -24,6 +24,22 @@ using namespace ocarina;
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
 
+    float3x3 f333;
+    auto f2 = float2(1,2);
+    auto f22 = float2(8,9);
+    auto f222 = float2(6,7);
+    auto f3 = float3(2,5,7);
+    Mat<2,2> m(f2, f222);
+    Mat<2,2> m1{f22,f2};
+
+    float2x2 fm(f2, f222);
+    float2x2 fm1{f22,f2};
+
+    auto m3 = m1 - m;
+    auto fm3 = fm1 - fm;
+
+    auto m4 = -m3;
+
     vision::HotfixSystem::instance().init();
 
     auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
