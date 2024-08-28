@@ -22,13 +22,14 @@ public:
     void serialize(string_view field_name, T value);
     virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
 
-    template<typename T>
-    void serialize(T value);
-    virtual void serialize_impl(void * ptr) = 0;
+    virtual void serialize_impl(void *ptr) = 0;
+
+    [[nodiscard]] virtual bool is_pod_data() const noexcept = 0;
 
     template<typename T>
     void deserialize(string_view field_name, T &value);
     virtual void deserialize_impl(string_view field_name, void *ptr) = 0;
+    virtual void deserialize_impl(void *ptr) = 0;
 
     virtual void print(int &indent) const noexcept = 0;
 };
@@ -69,6 +70,8 @@ private:
 public:
     SerializedData() = default;
 
+    [[nodiscard]] bool is_pod_data() const noexcept override { return is_pod; }
+
     static SP<SerializedData<T>> apply(T value) noexcept {
         SP<SerializedData<T>> ret = make_shared<SerializedData<T>>();
         if constexpr (is_pod) {
@@ -105,10 +108,20 @@ public:
         }
     }
 
+    void deserialize_impl(void *ptr) override {
+        if constexpr (is_pod) {
+            oc_memcpy(ptr, addressof(data_), sizeof(data_));
+        }
+    }
+
     void deserialize_impl(std::string_view field_name, void *ptr) override {
         if constexpr (is_runtime_object) {
             SP<Serializable> data = data_.at(field_name);
-
+            if (data->is_pod_data()) {
+                data->deserialize_impl(ptr);
+            } else {
+                int i = 0;
+            }
         }
     }
 };

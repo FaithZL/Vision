@@ -24,6 +24,12 @@ public:
         attr_int = 0;
         attr_float = 0;
     }
+
+    void fill() noexcept {
+        test->fill();
+        attr_float = 57.9;
+        attr_int = 789;
+    }
     void serialize(SP<Serializable> output) const noexcept override;
     void deserialize(SP<Serializable> input) noexcept override;
 };
