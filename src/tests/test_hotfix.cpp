@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
     auto f22 = float2(8,9);
     auto f222 = float2(6,7);
     auto f3 = float3(2,5,7);
-    Mat<2,2> m(f2, f222);
-    Mat<2,2> m1{f22,f2};
+    Matrix<2,2> m(f2, f222);
+    Matrix<2,2> m1{f22,f2};
 
     float2x2 fm(f2, f222);
     float2x2 fm1{f22,f2};
