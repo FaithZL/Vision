@@ -66,13 +66,15 @@ int main(int argc, char *argv[]) {
             test->clear();
         });
 
+        widget->button_click("fill", [&] {
+            demo->fill();
+            test->fill();
+        });
+
         widget->button_click("serialize", [&] {
             serializer.serialize(demo);
             serializer.serialize(test);
-            int i = 0;
             serializer.print();
-            //            demo->serialize(nullptr);
-            //            test->serialize(nullptr);
         });
 
         widget->button_click("deserialize", [&] {
