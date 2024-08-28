@@ -16,6 +16,10 @@ public:
     float attr_float{6.6};
 
 public:
+    void clear() noexcept {
+        attr_int = 0;
+        attr_float = 0;
+    }
     void serialize(SP<Serializable>  output) const noexcept override;
     void deserialize(SP<Serializable>  input) noexcept override;
 };

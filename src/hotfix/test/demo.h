@@ -19,6 +19,11 @@ private:
 
 public:
     Demo();
+    void clear() noexcept {
+        test->clear();
+        attr_int = 0;
+        attr_float = 0;
+    }
     void serialize(SP<Serializable> output) const noexcept override;
     void deserialize(SP<Serializable> input) noexcept override;
 };

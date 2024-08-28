@@ -61,6 +61,11 @@ int main(int argc, char *argv[]) {
             test = mi->construct<vision::Test>();
         });
 
+        widget->button_click("clear", [&] {
+            demo->clear();
+            test->clear();
+        });
+
         widget->button_click("serialize", [&] {
             serializer.serialize(demo);
             serializer.serialize(test);
@@ -70,9 +75,8 @@ int main(int argc, char *argv[]) {
             //            test->serialize(nullptr);
         });
 
-
         widget->button_click("deserialize", [&] {
-            serializer.deserialize(demo.get(),demo);
+            serializer.deserialize(demo.get(), demo);
             serializer.deserialize(test, test);
         });
     });

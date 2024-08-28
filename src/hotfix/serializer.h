@@ -153,6 +153,9 @@ public:
     template<typename T>
     void serialize(T &&object) noexcept {
         auto ptr = raw_ptr(OC_FORWARD(object));
+        if (object_map_.contains(ptr)) {
+            erase_old_object(ptr);
+        }
         object_map_.insert(make_pair(ptr, SerializedData<T>::apply(OC_FORWARD(object))));
     }
 
