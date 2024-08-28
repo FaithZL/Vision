@@ -26,8 +26,15 @@ public:
         attr_int = 12;
     }
 
-    void serialize(SP<Serializable>  output) const noexcept override;
-    void deserialize(SP<Serializable>  input) noexcept override;
+    void print() const noexcept {
+        std::cout << "test print begin" << std::endl;
+        std::cout << "      attr_float = " << attr_float << endl;
+        std::cout << "      attr_int = " << attr_int << endl;
+        std::cout << "test print end" << std::endl;
+    }
+
+    void serialize(SP<Serializable> output) const noexcept override;
+    void deserialize(SP<Serializable> input) noexcept override;
 };
 
 }// namespace vision::inline hotfix

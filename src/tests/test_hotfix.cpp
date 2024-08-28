@@ -74,12 +74,20 @@ int main(int argc, char *argv[]) {
         widget->button_click("serialize", [&] {
             serializer.serialize(demo);
             serializer.serialize(test);
-            serializer.print();
         });
 
         widget->button_click("deserialize", [&] {
             serializer.deserialize(demo.get(), demo);
             serializer.deserialize(test, test);
+        });
+
+        widget->button_click("print object", [&] {
+            demo->print();
+            test->print();
+        });
+
+        widget->button_click("print serializer", [&] {
+            serializer.print();
         });
     });
 
