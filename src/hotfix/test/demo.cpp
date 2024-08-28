@@ -19,7 +19,9 @@ void Demo::serialize(SP<Serializable> output) const noexcept {
     output->serialize("test", test);
 }
 
-void Demo::deserialize(SP<Serializable> input) const noexcept {
+void Demo::deserialize(SP<Serializable> input) noexcept {
+    input->deserialize("attr_int", attr_int);
+    input->deserialize("attr_float", attr_float);
 }
 
 }// namespace vision::inline hotfix

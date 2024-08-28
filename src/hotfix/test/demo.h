@@ -20,7 +20,7 @@ private:
 public:
     Demo();
     void serialize(SP<Serializable> output) const noexcept override;
-    void deserialize(SP<Serializable> input) const noexcept override;
+    void deserialize(SP<Serializable> input) noexcept override;
 };
 
 }// namespace vision::inline hotfix

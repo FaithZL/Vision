@@ -23,7 +23,12 @@ public:
     virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
 
     template<typename T>
+    void serialize(T value);
+    virtual void serialize_impl(void * ptr) = 0;
+
+    template<typename T>
     void deserialize(string_view field_name, T &value);
+    virtual void deserialize_impl(string_view field_name, void *ptr) = 0;
 
     virtual void print(int &indent) const noexcept = 0;
 };
@@ -67,7 +72,7 @@ public:
     static SP<SerializedData<T>> apply(T value) noexcept {
         SP<SerializedData<T>> ret = make_shared<SerializedData<T>>();
         if constexpr (is_pod) {
-            ret->data_ = value;
+            ret->serialize_impl(addressof(value));
         } else if constexpr (is_runtime_object) {
             value->serialize(ret);
         }
@@ -88,9 +93,22 @@ public:
         }
     }
 
+    void serialize_impl(void *ptr) override {
+        if constexpr (is_pod) {
+            oc_memcpy(addressof(data_), ptr, sizeof(data_));
+        }
+    }
+
     void serialize_impl(std::string_view field_name, SP<Serializable> serializable) override {
         if constexpr (is_runtime_object) {
             data_.insert(make_pair(field_name, serializable));
+        }
+    }
+
+    void deserialize_impl(std::string_view field_name, void *ptr) override {
+        if constexpr (is_runtime_object) {
+            SP<Serializable> data = data_.at(field_name);
+
         }
     }
 };
@@ -98,6 +116,11 @@ public:
 template<typename T>
 void Serializable::serialize(std::string_view field_name, T value) {
     serialize_impl(field_name, SerializedData<T>::apply(value));
+}
+
+template<typename T>
+void Serializable::deserialize(std::string_view field_name, T &value) {
+    deserialize_impl(field_name, addressof(value));
 }
 
 class RuntimeObject;
@@ -122,7 +145,7 @@ public:
     void print() noexcept {
         int indent = 0;
         for (const auto &item : object_map_) {
-            cout << "object type = " << type_string<decltype(item.first)>();
+            cout << "object type = " << item.first->class_name();
             item.second->print(indent);
         }
     }
@@ -134,8 +157,9 @@ public:
     }
 
     template<typename T>
-    void deserialize(T &&object) noexcept {
-
+    void deserialize(handle_t old_obj, T &&object) noexcept {
+        SP<Serializable> input = object_map_.at(old_obj);
+        object->deserialize(input);
     }
 };
 

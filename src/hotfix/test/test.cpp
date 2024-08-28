@@ -13,7 +13,8 @@ void Test::serialize(SP<Serializable> output) const noexcept {
     output->serialize("attr_float", attr_float);
 }
 
-void Test::deserialize(SP<Serializable> input) const noexcept {
+void Test::deserialize(SP<Serializable> input) noexcept {
+
 }
 
 }// namespace vision::inline hotfix

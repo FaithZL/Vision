@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
     auto demo = std::make_shared<vision::Demo>();
     vision::Test *test = new vision::Test();
 
-
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             vision::HotfixSystem::instance().check_and_build();
@@ -60,16 +59,21 @@ int main(int argc, char *argv[]) {
 
             demo = constructor->construct_shared<vision::Demo>();
             test = mi->construct<vision::Test>();
-
         });
 
-        widget->button_click("test", [&] {
+        widget->button_click("serialize", [&] {
             serializer.serialize(demo);
             serializer.serialize(test);
             int i = 0;
             serializer.print();
-//            demo->serialize(nullptr);
-//            test->serialize(nullptr);
+            //            demo->serialize(nullptr);
+            //            test->serialize(nullptr);
+        });
+
+
+        widget->button_click("deserialize", [&] {
+            serializer.deserialize(demo.get(),demo);
+            serializer.deserialize(test, test);
         });
     });
 

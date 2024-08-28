@@ -16,7 +16,7 @@ class Serializable;
 class RuntimeObject : public Hashable {
 public:
     virtual void serialize(SP<Serializable> output) const noexcept = 0;
-    virtual void deserialize(SP<Serializable> input) const noexcept = 0;
+    virtual void deserialize(SP<Serializable> input) noexcept = 0;
     virtual ~RuntimeObject() = default;
 };
 
