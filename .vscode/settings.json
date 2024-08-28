@@ -95,6 +95,22 @@
         "*.ipp": "cpp",
         "ranges": "cpp",
         "bitset": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "barrier": "cpp",
+        "bit": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "coroutine": "cpp",
+        "csignal": "cpp",
+        "cwctype": "cpp",
+        "format": "cpp",
+        "memory_resource": "cpp",
+        "source_location": "cpp",
+        "span": "cpp",
+        "stop_token": "cpp",
+        "strstream": "cpp",
+        "csetjmp": "cpp"
     }
 }
