@@ -1,8 +1,10 @@
 {
     "files.associations": {
         "*.slang": "hlsl",
-        "*.rgen": "hlsl",
+        "*.ush": "hlsl",
+        "*.usf": "hlsl",
         "*.glsl": "hlsl",
+        "*.rgen": "hlsl",
         "algorithm": "cpp",
         "any": "cpp",
         "array": "cpp",
@@ -92,6 +94,7 @@
         "*.ih": "cpp",
         "*.ipp": "cpp",
         "ranges": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "*.inc": "cpp"
     }
 }
