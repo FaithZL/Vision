@@ -120,7 +120,7 @@ public:
             if (data->is_pod_data()) {
                 data->deserialize_impl(ptr);
             } else {
-                reinterpret_cast<RuntimeObject*>(ptr)->deserialize(data);
+                reinterpret_cast<RuntimeObject *>(ptr)->deserialize(data);
             }
         }
     }
@@ -133,11 +133,7 @@ void Serializable::serialize(std::string_view field_name, T value) {
 
 template<typename T>
 void Serializable::deserialize(std::string_view field_name, T *value) {
-//    if constexpr (is_ptr_v<T>) {
-//        deserialize_impl(field_name, raw_ptr(value));
-//    } else {
-        deserialize_impl(field_name, value);
-//    }
+    deserialize_impl(field_name, value);
 }
 
 class RuntimeObject;
