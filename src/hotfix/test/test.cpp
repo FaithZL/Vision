@@ -15,8 +15,8 @@ void Test::serialize(SP<Serializable> output) const noexcept {
 
 void Test::deserialize(SP<Serializable> input) noexcept {
     std::cout << "Test::deserialize" << endl;
-    input->deserialize("attr_int", attr_int);
-    input->deserialize("attr_float", attr_float);
+    input->deserialize("attr_int", addressof(attr_int));
+    input->deserialize("attr_float", addressof(attr_float));
 }
 
 }// namespace vision::inline hotfix

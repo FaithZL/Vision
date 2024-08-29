@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
         });
 
         widget->button_click("serialize", [&] {
-            serializer.serialize(demo);
+            serializer.serialize(demo.get());
             serializer.serialize(test);
         });
 

@@ -27,7 +27,7 @@ public:
     [[nodiscard]] virtual bool is_pod_data() const noexcept = 0;
 
     template<typename T>
-    void deserialize(string_view field_name, T &value);
+    void deserialize(string_view field_name, T *value);
     virtual void deserialize_impl(string_view field_name, void *ptr) = 0;
     virtual void deserialize_impl(void *ptr) = 0;
 
@@ -50,7 +50,7 @@ public:
     using attr_map_t = std::map<ocarina::string_view, SP<Serializable>>;
     using raw_type = std::remove_cvref_t<T>;
     static constexpr bool is_pod = std::is_trivially_copyable_v<raw_type> && !std::is_pointer_v<raw_type>;
-    static constexpr bool is_runtime_object = std::derived_from<std::remove_pointer_t<ptr_t<raw_type>>, RuntimeObject>;
+    static constexpr bool is_runtime_object = std::derived_from<std::remove_pointer_t<ptr_t<raw_type>>, RuntimeObject> && std::is_pointer_v<raw_type>;
 
     static_assert(is_pod || is_runtime_object);
 
@@ -132,12 +132,12 @@ void Serializable::serialize(std::string_view field_name, T value) {
 }
 
 template<typename T>
-void Serializable::deserialize(std::string_view field_name, T &value) {
-    if constexpr (is_ptr_v<T>) {
-        deserialize_impl(field_name, raw_ptr(value));
-    } else {
-        deserialize_impl(field_name, addressof(value));
-    }
+void Serializable::deserialize(std::string_view field_name, T *value) {
+//    if constexpr (is_ptr_v<T>) {
+//        deserialize_impl(field_name, raw_ptr(value));
+//    } else {
+        deserialize_impl(field_name, value);
+//    }
 }
 
 class RuntimeObject;
@@ -167,13 +167,11 @@ public:
         }
     }
 
-    template<typename T>
-    void serialize(T &&object) noexcept {
-        auto ptr = raw_ptr(OC_FORWARD(object));
+    void serialize(handle_t ptr) noexcept {
         if (object_map_.contains(ptr)) {
             erase_old_object(ptr);
         }
-        object_map_.insert(make_pair(ptr, SerializedData<T>::apply(OC_FORWARD(object))));
+        object_map_.insert(make_pair(ptr, SerializedData<handle_t>::apply(ptr)));
     }
 
     template<typename T>

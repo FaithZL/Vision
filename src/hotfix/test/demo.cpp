@@ -16,14 +16,14 @@ void Demo::serialize(SP<Serializable> output) const noexcept {
     std::cout << "Demo::serialize" << endl;
     output->serialize("attr_int", attr_int);
     output->serialize("attr_float", attr_float);
-    output->serialize("test", test);
+    output->serialize("test", test.get());
 }
 
 void Demo::deserialize(SP<Serializable> input) noexcept {
     std::cout << "Demo::deserialize" << endl;
-    input->deserialize("attr_int", attr_int);
-    input->deserialize("attr_float", attr_float);
-    input->deserialize("test", test);
+    input->deserialize("attr_int", addressof(attr_int));
+    input->deserialize("attr_float", addressof(attr_float));
+    input->deserialize("test", test.get());
 }
 
 }// namespace vision::inline hotfix
