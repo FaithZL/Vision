@@ -64,6 +64,8 @@ int main(int argc, char *argv[]) {
     auto demo = std::make_shared<vision::Demo>();
     vision::Test *test = new vision::Test();
 
+    SP<ISerialized> serialized;
+
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             vision::HotfixSystem::instance().check_and_build();
@@ -100,12 +102,16 @@ int main(int argc, char *argv[]) {
         });
 
         widget->button_click("serialize", [&] {
-            serializer.serialize(demo.get());
+//            serializer.serialize(demo.get());
+            serialized = demo->serialized_data();
+
+
             serializer.serialize(test);
         });
 
         widget->button_click("deserialize", [&] {
-            serializer.deserialize(demo.get(), demo);
+            demo->deserialize(serialized);
+//            serializer.deserialize(demo.get(), demo);
             serializer.deserialize(test, test);
         });
 

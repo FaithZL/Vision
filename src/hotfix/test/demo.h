@@ -42,8 +42,8 @@ public:
         test->print();
         std::cout << "demo print end" << std::endl;
     }
-    void serialize(SP<Serializable> output) const noexcept override;
-    void deserialize(SP<Serializable> input) noexcept override;
+    void serialize(SP<ISerialized> output) const noexcept override;
+    void deserialize(SP<ISerialized> input) noexcept override;
 };
 
 class HotfixTest : public Observer {

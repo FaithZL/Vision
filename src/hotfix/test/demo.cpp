@@ -17,14 +17,14 @@ string Demo::get_string() const {
     return "Demo::string";
 }
 
-void Demo::serialize(SP<Serializable> output) const noexcept {
+void Demo::serialize(SP<ISerialized> output) const noexcept {
     std::cout << "Demo::serialize" << endl;
     output->serialize("attr_int", attr_int);
     output->serialize("attr_float", attr_float);
     output->serialize("test", test.get());
 }
 
-void Demo::deserialize(SP<Serializable> input) noexcept {
+void Demo::deserialize(SP<ISerialized> input) noexcept {
     std::cout << "Demo::deserialize" << endl;
     input->deserialize("attr_int", addressof(attr_int));
     input->deserialize("attr_float", addressof(attr_float));

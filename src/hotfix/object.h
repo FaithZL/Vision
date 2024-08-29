@@ -11,12 +11,13 @@ namespace vision::inline hotfix {
 using namespace ocarina;
 class Serializer;
 
-class Serializable;
+class ISerialized;
 
 class RuntimeObject : public Hashable {
 public:
-    virtual void serialize(SP<Serializable> output) const noexcept = 0;
-    virtual void deserialize(SP<Serializable> input) noexcept = 0;
+    [[nodiscard]] SP<ISerialized> serialized_data() const noexcept;
+    virtual void serialize(SP<ISerialized> output) const noexcept = 0;
+    virtual void deserialize(SP<ISerialized> input) noexcept = 0;
     virtual ~RuntimeObject() = default;
 };
 

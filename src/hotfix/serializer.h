@@ -14,13 +14,15 @@ template<typename T>
 class SerializedData;
 
 using namespace ocarina;
-class Serializable {
+class ISerialized {
 public:
-    virtual ~Serializable() = default;
+    virtual ~ISerialized() = default;
+
+    virtual void clear() noexcept = 0;
 
     template<typename T>
     void serialize(string_view field_name, T value);
-    virtual void serialize_impl(string_view field_name, SP<Serializable> serializable) = 0;
+    virtual void serialize_impl(string_view field_name, SP<ISerialized> serialized) = 0;
 
     virtual void serialize_impl(void *ptr) = 0;
 
@@ -45,9 +47,9 @@ string tab_string(int indent) {
 }// namespace
 
 template<typename T>
-class SerializedData : public Serializable {
+class SerializedData : public ISerialized {
 public:
-    using attr_map_t = std::map<ocarina::string_view, SP<Serializable>>;
+    using attr_map_t = std::map<ocarina::string_view, SP<ISerialized>>;
     using raw_type = std::remove_cvref_t<T>;
     static constexpr bool is_pod = std::is_trivially_copyable_v<raw_type> && !std::is_pointer_v<raw_type>;
     static constexpr bool is_runtime_object = std::derived_from<std::remove_pointer_t<ptr_t<raw_type>>, RuntimeObject> && std::is_pointer_v<raw_type>;
@@ -71,6 +73,14 @@ public:
     SerializedData() = default;
 
     [[nodiscard]] bool is_pod_data() const noexcept override { return is_pod; }
+
+    void clear() noexcept override {
+        if constexpr (is_pod) {
+            memset(addressof(data_), 0, sizeof(data_));
+        } else if constexpr (is_runtime_object) {
+            data_.clear();
+        }
+    }
 
     static SP<SerializedData<T>> apply(T value) noexcept {
         SP<SerializedData<T>> ret = make_shared<SerializedData<T>>();
@@ -102,7 +112,7 @@ public:
         }
     }
 
-    void serialize_impl(std::string_view field_name, SP<Serializable> serializable) override {
+    void serialize_impl(std::string_view field_name, SP<ISerialized> serializable) override {
         if constexpr (is_runtime_object) {
             data_.insert(make_pair(field_name, serializable));
         }
@@ -116,7 +126,7 @@ public:
 
     void deserialize_impl(std::string_view field_name, void *ptr) override {
         if constexpr (is_runtime_object) {
-            SP<Serializable> data = data_.at(field_name);
+            SP<ISerialized> data = data_.at(field_name);
             if (data->is_pod_data()) {
                 data->deserialize_impl(ptr);
             } else {
@@ -127,12 +137,12 @@ public:
 };
 
 template<typename T>
-void Serializable::serialize(std::string_view field_name, T value) {
+void ISerialized::serialize(std::string_view field_name, T value) {
     serialize_impl(field_name, SerializedData<T>::apply(value));
 }
 
 template<typename T>
-void Serializable::deserialize(std::string_view field_name, T *value) {
+void ISerialized::deserialize(std::string_view field_name, T *value) {
     deserialize_impl(field_name, value);
 }
 
@@ -141,7 +151,7 @@ class RuntimeObject;
 class Serializer {
 public:
     using handle_t = const RuntimeObject *;
-    using object_map_t = std::map<handle_t, SP<Serializable>>;
+    using object_map_t = std::map<handle_t, SP<ISerialized>>;
 
 private:
     object_map_t object_map_;
@@ -172,7 +182,7 @@ public:
 
     template<typename T>
     void deserialize(handle_t old_obj, T &&object) noexcept {
-        SP<Serializable> input = object_map_.at(old_obj);
+        SP<ISerialized> input = object_map_.at(old_obj);
         object->deserialize(input);
     }
 };

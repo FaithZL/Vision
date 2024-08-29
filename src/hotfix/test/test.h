@@ -33,8 +33,8 @@ public:
         std::cout << "test print end" << std::endl;
     }
 
-    void serialize(SP<Serializable> output) const noexcept override;
-    void deserialize(SP<Serializable> input) noexcept override;
+    void serialize(SP<ISerialized> output) const noexcept override;
+    void deserialize(SP<ISerialized> input) noexcept override;
 };
 
 }// namespace vision::inline hotfix
