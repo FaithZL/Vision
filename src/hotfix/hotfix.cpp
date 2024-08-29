@@ -25,31 +25,11 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     observers_.erase(observer);
 }
 
-void HotfixSystem::add_object(SP<vision::RuntimeObject> object) noexcept {
-    string c_name = object->class_name();
-    if (!map_.contains(c_name)) {
-        map_.insert(make_pair(c_name, ObjectGroup{}));
-    }
-    map_[c_name].push_back(std::move(object));
-}
+void HotfixSystem::on_build_finish(const vector<FileTool::Target> &target) noexcept {
+    
+    for (const Observer *item : observers_) {
 
-void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
-    string c_name = object->class_name();
-    if (!map_.contains(c_name)) {
-        return;
     }
-    ObjectGroup &group = map_[c_name];
-    auto iter = std::find_if(group.begin(), group.end(), [&](const SP<RuntimeObject> &element) {
-        return element.get() == object.get();
-    });
-    if (iter == group.end()) {
-        return;
-    }
-    group.erase(iter);
-}
-
-void HotfixSystem::on_build_finish() noexcept {
-
 }
 
 void HotfixSystem::check_and_build() noexcept {
@@ -57,18 +37,8 @@ void HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return;
     }
-    build_system_.build_targets(modules, [&](const string &cmd) {
-        this->on_build_finish();
-    });
-}
-
-void HotfixSystem::update(const std::string &c_name) noexcept {
-    if (!map_.contains(c_name)) {
-        return;
-    }
-    ObjectGroup &group = map_[c_name];
-    std::for_each(observers_.begin(), observers_.end(), [&](Observer *observer) {
-
+    build_system_.build_targets(modules, [this,modules](const string &cmd) {
+        this->on_build_finish(modules);
     });
 }
 
@@ -91,7 +61,7 @@ void HotfixSystem::destroy_instance() noexcept {
     s_mgr = nullptr;
 }
 
-HotfixSystem::~HotfixSystem() {}
+HotfixSystem::~HotfixSystem() = default;
 
 }// namespace vision::inline hotfix
 

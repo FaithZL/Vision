@@ -31,7 +31,6 @@ private:
 
 private:
     using ObjectGroup = vector<SP<RuntimeObject>>;
-    map<string, ObjectGroup> map_;
     Serializer serializer_{};
     ocarina::set<Observer *> observers_;
     FileTool file_tool_;
@@ -42,13 +41,9 @@ public:
     HotfixSystem(HotfixSystem &&) = delete;
     HotfixSystem operator=(const HotfixSystem &) = delete;
     HotfixSystem operator=(HotfixSystem &&) = delete;
-    void add_object(SP<RuntimeObject> object) noexcept;
     void register_observer(Observer *observer) noexcept;
     void deregister_observer(Observer *observer) noexcept;
     void init() noexcept;
-    void update(SP<RuntimeObject> object) noexcept {
-        update(object->class_name());
-    }
     OC_MAKE_MEMBER_GETTER(file_tool, &)
     template<typename... Args>
     void register_target(Args &&...args) {
@@ -57,10 +52,8 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_tool_.remove_inspected(path);
     }
-    void on_build_finish() noexcept;
+    void on_build_finish(const vector<FileTool::Target> &target) noexcept;
     void check_and_build() noexcept;
-    void update(const string &c_name) noexcept;
-    void remove_object(SP<RuntimeObject> object) noexcept;
     OC_MAKE_MEMBER_GETTER(serializer, &)
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
