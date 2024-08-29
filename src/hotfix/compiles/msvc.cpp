@@ -43,7 +43,7 @@ public:
 
     void compile(const CompileOptions &options) noexcept override;
 
-    void link(const vision::LinkOptions &options, const FileTool::Target &target,
+    void link(const vision::LinkOptions &options, const Target &target,
               const string &extension_objs, const CmdProcess::callback_t &callback) noexcept override;
 };
 
@@ -56,7 +56,7 @@ void MSVCompiler::compile(const vision::CompileOptions &options) noexcept {
 }
 
 void MSVCompiler::link(const vision::LinkOptions &options,
-                       const FileTool::Target &target,
+                       const Target &target,
                        const string &extension_objs,
                        const CmdProcess::callback_t &callback) noexcept {
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";

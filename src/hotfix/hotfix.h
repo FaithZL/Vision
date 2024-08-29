@@ -51,7 +51,7 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_tool_.remove_inspected(path);
     }
-    void on_build_finish(const vector<FileTool::Target> &targets) noexcept;
+    void on_build_finish(const vector<Target> &targets) noexcept;
     void check_and_build() noexcept;
     OC_MAKE_MEMBER_GETTER(serializer, &)
     static HotfixSystem &instance() noexcept;

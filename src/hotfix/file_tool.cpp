@@ -7,6 +7,10 @@
 
 namespace vision::inline hotfix {
 
+fs::path Target::temp_directory() const noexcept {
+    return FileTool::intermediate_path() / fs::path(name).stem();
+}
+
 void FileTool::add_inspected(const fs::path &path, string_view module_name, bool recursive) {
     if (target_map_.contains(module_name) || !fs::exists(path)) {
         return;
@@ -57,7 +61,7 @@ void FileTool::remove_inspected(const fs::path &path, bool recursive) noexcept {
     target_map_.erase(key);
 }
 
-vector<FileTool::Target> FileTool::get_modified_targets() noexcept {
+vector<Target> FileTool::get_modified_targets() noexcept {
     vector<Target> ret;
 
     auto is_modified = [&](Target &target) {

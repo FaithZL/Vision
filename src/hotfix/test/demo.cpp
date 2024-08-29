@@ -31,7 +31,6 @@ void Demo::deserialize(SP<ISerialized> input) noexcept {
     input->deserialize("test", test.get());
 }
 
-
 void Demo::on_update(const vector<const IObjectConstructor*> &constructors) noexcept {
 
 }

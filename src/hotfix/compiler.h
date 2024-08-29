@@ -21,7 +21,7 @@ public:
 
 public:
     virtual void compile(const CompileOptions &options) noexcept = 0;
-    virtual void link(const LinkOptions &options, const FileTool::Target &target,
+    virtual void link(const LinkOptions &options, const Target &target,
                       const string &extension_objs, const CmdProcess::callback_t &callback) noexcept = 0;
     [[nodiscard]] static fs::path cli_path() noexcept;
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;

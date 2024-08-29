@@ -11,7 +11,7 @@ class LLVMCompiler : public Compiler {
 public:
     LLVMCompiler();
     void compile(const vision::CompileOptions &options) noexcept override;
-    void link(const vision::LinkOptions &options, const FileTool::Target &target,
+    void link(const vision::LinkOptions &options, const Target &target,
               const string &extension_objs, const CmdProcess::callback_t &callback) noexcept override;
     [[nodiscard]] fs::path installation_directory() noexcept override {
         return parent_path(cli_path(), 1);
@@ -24,7 +24,7 @@ LLVMCompiler::LLVMCompiler() {
 void LLVMCompiler::compile(const CompileOptions &options) noexcept {
 }
 
-void LLVMCompiler::link(const LinkOptions &options, const FileTool::Target &target,
+void LLVMCompiler::link(const LinkOptions &options, const Target &target,
                         const string &extension_objs, const CmdProcess::callback_t &callback) noexcept {
 }
 

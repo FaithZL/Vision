@@ -19,13 +19,13 @@ public:
     void init();
     void clear() noexcept;
     [[nodiscard]] static fs::path directory() noexcept;
-    void build_targets(const vector<FileTool::Target> &targets,
+    void build_targets(const vector<Target> &targets,
                        const CmdProcess::callback_t &callback = nullptr) const noexcept;
-    void build_target(const FileTool::Target &target,
+    void build_target(const Target &target,
                       const CmdProcess::callback_t &callback = nullptr) const noexcept;
     static void create_temp_path(const fs::path &path) noexcept;
-    void compile(const FileTool::Target &target) const noexcept;
-    void link(const FileTool::Target &target,const CmdProcess::callback_t &callback = nullptr) const noexcept;
+    void compile(const Target &target) const noexcept;
+    void link(const Target &target,const CmdProcess::callback_t &callback = nullptr) const noexcept;
 };
 
 }// namespace vision::inline hotfix
