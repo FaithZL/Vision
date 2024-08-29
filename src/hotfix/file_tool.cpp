@@ -4,11 +4,27 @@
 
 #include "file_tool.h"
 #include <windows.h>
+#include "util/file_manager.h"
+#include "module_interface.h"
 
 namespace vision::inline hotfix {
 
 fs::path Target::temp_directory() const noexcept {
     return FileTool::intermediate_path() / fs::path(name).stem();
+}
+
+fs::path Target::target_path(std::string extension) const noexcept {
+    return temp_directory() / (target_stem().string() + std::move(extension));
+}
+
+const DynamicModule *Target::obtain_cur_module() const noexcept {
+    return FileManager::instance().obtain_module(dll_path().string());
+}
+
+ModuleInterface *Target::module_interface() const noexcept {
+    const DynamicModule *module = obtain_cur_module();
+    auto creator = module->function<ModuleInterface::creator_t *>("module_interface");
+    return creator();
 }
 
 void FileTool::add_inspected(const fs::path &path, string_view module_name, bool recursive) {

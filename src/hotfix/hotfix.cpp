@@ -25,7 +25,6 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     observers_.erase(observer);
 }
 
-
 void HotfixSystem::on_build_finish(const vector<Target> &targets) noexcept {
     
     OC_INFO("build finish ");
@@ -33,7 +32,7 @@ void HotfixSystem::on_build_finish(const vector<Target> &targets) noexcept {
     vector<const IObjectConstructor *> constructors;
 
     auto process_target = [&](const Target &target) {
-        const DynamicModule *module = FileManager::instance().obtain_module(target.dll_path().string());
+        ModuleInterface *module_interface = target.module_interface();
         for (const fs::path &item : target.modified_files) {
 
         }

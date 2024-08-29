@@ -6,6 +6,7 @@
 
 #include "core/stl.h"
 #include "core/string_util.h"
+#include "core/dynamic_module.h"
 
 namespace vision::inline hotfix {
 using namespace ocarina;
@@ -41,6 +42,8 @@ public:
         : path(p), write_time(modification_time(p)) {}
 };
 
+class ModuleInterface;
+
 struct Target {
 private:
     mutable uint build_count{0u};
@@ -50,11 +53,11 @@ public:
     vector<InspectedFile> files;
     vector<fs::path> modified_files;
     [[nodiscard]] fs::path temp_directory() const noexcept;
+    [[nodiscard]] fs::path target_path(string extension) const noexcept;
+    [[nodiscard]] const DynamicModule *obtain_cur_module() const noexcept;
+    [[nodiscard]] ModuleInterface *module_interface() const noexcept;
     [[nodiscard]] fs::path target_stem() const noexcept {
         return ocarina::format("module_{}", build_count);
-    }
-    [[nodiscard]] fs::path target_path(string extension) const noexcept {
-        return temp_directory() / (target_stem().string() + std::move(extension));
     }
     [[nodiscard]] fs::path dll_path() const noexcept {
         return target_path(".dll");

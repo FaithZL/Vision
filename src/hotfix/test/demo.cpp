@@ -12,7 +12,6 @@ namespace vision::inline hotfix {
 Demo::Demo()
     : test(make_shared<Test>()) {}
 
-
 string Demo::get_string() const {
     return "Demo::string";
 }
