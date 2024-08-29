@@ -27,6 +27,7 @@ public:
     [[nodiscard]] static ModuleInterface &instance() noexcept;
     void add_constructor(UP<const IObjectConstructor> constructor) noexcept;
     [[nodiscard]] const IObjectConstructor* constructor(const string &cls_name) const noexcept;
+    [[nodiscard]] vector<const IObjectConstructor*> constructors(const string &filename) const noexcept;
     template<typename T>
     [[nodiscard]] T *construct() const noexcept {
         return constructor(type_string<T>())->template construct<T>();

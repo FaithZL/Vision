@@ -25,8 +25,14 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     observers_.erase(observer);
 }
 
-void HotfixSystem::on_build_finish(const vector<FileTool::Target> &target) noexcept {
+void HotfixSystem::on_build_finish(const vector<FileTool::Target> &targets) noexcept {
     
+    OC_INFO("build finish ");
+
+    for (const auto &target : targets) {
+
+    }
+
     for (const Observer *item : observers_) {
 
     }

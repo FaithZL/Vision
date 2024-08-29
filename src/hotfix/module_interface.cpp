@@ -25,10 +25,20 @@ const IObjectConstructor *ModuleInterface::constructor(const std::string &cls_na
     return constructor_map_.at(cls_name).get();
 }
 
+vector<const IObjectConstructor *> ModuleInterface::constructors(const std::string &filename) const noexcept {
+    vector<const IObjectConstructor *> ret;
+    for (const auto &item : constructor_map_) {
+        const IObjectConstructor *ptr = item.second.get();
+        if (ptr->filename() == filename) {
+            ret.push_back(ptr);
+        }
+    }
+    return ret;
+}
+
 string_view ModuleInterface::src_path() noexcept {
     return __FILE__;
 }
-
 
 ModuleInterface::~ModuleInterface() {
     cout << "ModuleInterface  exit" <<endl;
