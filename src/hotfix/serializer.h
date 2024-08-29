@@ -112,9 +112,9 @@ public:
         }
     }
 
-    void serialize_impl(std::string_view field_name, SP<ISerialized> serializable) override {
+    void serialize_impl(std::string_view field_name, SP<ISerialized> serialized) override {
         if constexpr (is_runtime_object) {
-            data_.insert(make_pair(field_name, serializable));
+            data_.insert(make_pair(field_name, serialized));
         }
     }
 
