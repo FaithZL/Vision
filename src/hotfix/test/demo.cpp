@@ -12,6 +12,11 @@ namespace vision::inline hotfix {
 Demo::Demo()
     : test(make_shared<Test>()) {}
 
+
+string Demo::get_string() const {
+    return "Demo::string";
+}
+
 void Demo::serialize(SP<Serializable> output) const noexcept {
     std::cout << "Demo::serialize" << endl;
     output->serialize("attr_int", attr_int);
@@ -24,6 +29,10 @@ void Demo::deserialize(SP<Serializable> input) noexcept {
     input->deserialize("attr_int", addressof(attr_int));
     input->deserialize("attr_float", addressof(attr_float));
     input->deserialize("test", test.get());
+}
+
+void Demo::on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept {
+
 }
 
 }// namespace vision::inline hotfix

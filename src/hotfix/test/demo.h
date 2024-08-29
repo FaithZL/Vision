@@ -11,7 +11,7 @@
 
 namespace vision::inline hotfix {
 
-struct Demo : RuntimeObject {
+struct Demo : public RuntimeObject, public Observer {
 private:
     SP<Test> test;
     int attr_int{1};
@@ -24,6 +24,10 @@ public:
         attr_int = 0;
         attr_float = 0;
     }
+
+    void on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept override;
+
+    [[nodiscard]] string get_string() const;
 
     void fill() noexcept {
         test->fill();
@@ -41,6 +45,17 @@ public:
     }
     void serialize(SP<Serializable> output) const noexcept override;
     void deserialize(SP<Serializable> input) noexcept override;
+};
+
+class HotfixTest : public Observer {
+public:
+    SP<Demo> demo{make_shared<Demo>()};
+    SP<Test> test{make_shared<Test>()};
+
+public:
+
+    void on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept override {
+    }
 };
 
 }// namespace vision::inline hotfix

@@ -19,6 +19,10 @@ void Test::deserialize(SP<Serializable> input) noexcept {
     input->deserialize("attr_float", addressof(attr_float));
 }
 
+string Test::get_string() const {
+    return "Test::get_string";
+}
+
 }// namespace vision::inline hotfix
 
 VS_REGISTER_CURRENT_PATH(1, "vision-hotfix-test.dll")

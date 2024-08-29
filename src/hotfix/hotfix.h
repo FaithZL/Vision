@@ -57,6 +57,7 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_tool_.remove_inspected(path);
     }
+    void on_build_finish() noexcept;
     void check_and_build() noexcept;
     void update(const string &c_name) noexcept;
     void remove_object(SP<RuntimeObject> object) noexcept;

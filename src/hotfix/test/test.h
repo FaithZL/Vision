@@ -20,7 +20,7 @@ public:
         attr_int = 0;
         attr_float = 0;
     }
-
+    [[nodiscard]] string get_string() const;
     void fill() noexcept {
         attr_float = 6.66;
         attr_int = 12;

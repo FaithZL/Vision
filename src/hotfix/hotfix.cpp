@@ -39,7 +39,7 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
         return;
     }
     ObjectGroup &group = map_[c_name];
-    auto iter = std::find_if(group.begin(), group.end(), [&](const SP<RuntimeObject>& element) {
+    auto iter = std::find_if(group.begin(), group.end(), [&](const SP<RuntimeObject> &element) {
         return element.get() == object.get();
     });
     if (iter == group.end()) {
@@ -48,12 +48,18 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
     group.erase(iter);
 }
 
+void HotfixSystem::on_build_finish() noexcept {
+    
+}
+
 void HotfixSystem::check_and_build() noexcept {
     auto modules = file_tool_.get_modified_targets();
-    if(modules.empty()) {
+    if (modules.empty()) {
         return;
     }
-    build_system_.build_targets(modules);
+    build_system_.build_targets(modules, [&](const string &cmd) {
+        this->on_build_finish();
+    });
 }
 
 void HotfixSystem::update(const std::string &c_name) noexcept {
