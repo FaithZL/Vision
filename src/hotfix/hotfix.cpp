@@ -49,7 +49,7 @@ void HotfixSystem::remove_object(SP<vision::RuntimeObject> object) noexcept {
 }
 
 void HotfixSystem::on_build_finish() noexcept {
-    
+
 }
 
 void HotfixSystem::check_and_build() noexcept {

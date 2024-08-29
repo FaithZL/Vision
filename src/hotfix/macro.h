@@ -28,13 +28,14 @@ template<typename T>
 
 #define VS_REGISTER_CURRENT_PATH(level, ...) VS_REGISTER_PATH(__FILE__, level, ##__VA_ARGS__)
 
-#define VS_REGISTER_HOTFIX(NS, Class)                                                                          \
-    namespace {                                                                                                \
-    struct ConstructorRegistrar {                                                                              \
-        ConstructorRegistrar() {                                                                               \
-            using namespace vision::hotfix;                                                                    \
-            ModuleInterface::instance().add_constructor(ocarina::make_shared<ObjectConstructor<NS::Class>>()); \
-        }                                                                                                      \
-    };                                                                                                         \
-    static ConstructorRegistrar s_##Class##_registrar;                                                         \
+#define VS_REGISTER_HOTFIX(NS, Class)                                                  \
+    namespace {                                                                        \
+    struct ConstructorRegistrar {                                                      \
+        ConstructorRegistrar() {                                                       \
+            using namespace vision::hotfix;                                            \
+            auto value = ocarina::make_shared<ObjectConstructor<NS::Class>>(__FILE__); \
+            ModuleInterface::instance().add_constructor(std::move(value));             \
+        }                                                                              \
+    };                                                                                 \
+    static ConstructorRegistrar s_##Class##_registrar;                                 \
     }// namespace

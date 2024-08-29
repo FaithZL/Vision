@@ -21,7 +21,12 @@ public:
 };
 
 class IObjectConstructor {
+protected:
+    string_view filename_{};
+
 public:
+    explicit IObjectConstructor(const char *fn) : filename_(fn) {}
+    OC_MAKE_MEMBER_GETTER(filename, )
     template<typename T = RuntimeObject>
     [[nodiscard]] T *construct() const {
         return dynamic_cast<T *>(construct_impl());
@@ -44,6 +49,8 @@ public:
 template<typename T>
 requires std::derived_from<T, RuntimeObject>
 class ObjectConstructor : public IObjectConstructor {
+public:
+    explicit ObjectConstructor(const char *fn = nullptr) : IObjectConstructor(fn) {}
     [[nodiscard]] RuntimeObject *construct_impl() const override {
         return new T{};
     }
