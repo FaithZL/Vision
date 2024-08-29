@@ -73,8 +73,8 @@ SP<Material> Scene::obtain_black_body() noexcept {
     return black_body_;
 }
 
-void Scene::on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept {
-
+void Scene::on_update(const vector<const vision::IObjectConstructor *> &constructors) noexcept {
+    
 }
 
 void Scene::prepare() noexcept {
