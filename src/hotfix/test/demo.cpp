@@ -31,7 +31,8 @@ void Demo::deserialize(SP<Serializable> input) noexcept {
     input->deserialize("test", test.get());
 }
 
-void Demo::on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept {
+
+void Demo::on_update(const vector<const IObjectConstructor*> &constructors) noexcept {
 
 }
 

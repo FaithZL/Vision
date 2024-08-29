@@ -25,7 +25,7 @@ public:
         attr_float = 0;
     }
 
-    void on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept override;
+    void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override;
 
     [[nodiscard]] string get_string() const;
 
@@ -37,11 +37,10 @@ public:
 
     void print() noexcept {
         std::cout << "demo print begin" << std::endl;
-        std::cout << "      attr_float = "<< attr_float << endl;
-        std::cout << "      attr_int = "<< attr_int << endl;
+        std::cout << "      attr_float = " << attr_float << endl;
+        std::cout << "      attr_int = " << attr_int << endl;
         test->print();
         std::cout << "demo print end" << std::endl;
-
     }
     void serialize(SP<Serializable> output) const noexcept override;
     void deserialize(SP<Serializable> input) noexcept override;
@@ -53,8 +52,7 @@ public:
     SP<Test> test{make_shared<Test>()};
 
 public:
-
-    void on_update(vision::RuntimeObject *old_obj, vision::RuntimeObject *new_obj) noexcept override {
+    void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override {
     }
 };
 

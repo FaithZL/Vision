@@ -17,8 +17,7 @@ using namespace ocarina;
 
 class Observer {
 public:
-    virtual void on_update(RuntimeObject *old_obj,
-                           RuntimeObject *new_obj) noexcept = 0;
+    virtual void on_update(const vector<const IObjectConstructor*> &constructors) noexcept = 0;
     Observer();
     ~Observer();
 };
