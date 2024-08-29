@@ -44,6 +44,7 @@ public:
         delete obj;
     }
     [[nodiscard]] virtual string_view class_name() const = 0;
+    virtual ~IObjectConstructor() = default;
 };
 
 template<typename T>

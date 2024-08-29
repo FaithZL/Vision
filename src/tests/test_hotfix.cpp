@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
 
             demo = constructor->construct_shared<vision::Demo>();
             test = mi->construct<vision::Test>();
+//            FileManager::instance().unload_module(target.dll_path().string());
         });
 
         widget->button_click("clear obj", [&] {

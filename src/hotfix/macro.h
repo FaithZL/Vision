@@ -33,7 +33,7 @@ template<typename T>
     struct ConstructorRegistrar {                                                      \
         ConstructorRegistrar() {                                                       \
             using namespace vision::hotfix;                                            \
-            auto value = ocarina::make_shared<ObjectConstructor<NS::Class>>(__FILE__); \
+            auto value = ocarina::make_unique<ObjectConstructor<NS::Class>>(__FILE__); \
             ModuleInterface::instance().add_constructor(std::move(value));             \
         }                                                                              \
     };                                                                                 \
