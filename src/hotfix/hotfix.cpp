@@ -36,6 +36,7 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     vector<const IObjectConstructor *> constructors;
     ModuleInterface *module_interface = target.module_interface();
     auto tmp = module_interface->constructors(target.modified_files);
+    ModuleInterface::instance().merge_constructors(module_interface);
     constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
     for (Observer *item : observers_) {
         item->notified(constructors);
@@ -47,8 +48,8 @@ void HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return;
     }
-    build_system_.build_targets(modules, [this](bool success, const Target &target) {
-        this->on_build_finish(success, target);
+    build_system_.build_targets(modules, [this]<typename ...Args>(Args &&...args) {
+        this->on_build_finish(OC_FORWARD(args)...);
     });
 }
 
