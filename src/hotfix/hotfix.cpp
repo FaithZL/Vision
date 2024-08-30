@@ -25,20 +25,18 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     observers_.erase(observer);
 }
 
-void HotfixSystem::on_build_finish(const vector<Target> &targets, bool success) noexcept {
-    
-    OC_INFO("build finish ");
+void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
+
+    if (!success) {
+        OC_INFO_FORMAT("module {} build failure!", target.name);
+        return;
+    }
+    OC_INFO_FORMAT("module {} build success!", target.name);
 
     vector<const IObjectConstructor *> constructors;
-
-    auto process_target = [&](const Target &target) {
-        ModuleInterface *module_interface = target.module_interface();
-        auto tmp = module_interface->constructors(target.modified_files);
-        constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
-    };
-
-    std::for_each(targets.begin(), targets.end(), process_target);
-
+    ModuleInterface *module_interface = target.module_interface();
+    auto tmp = module_interface->constructors(target.modified_files);
+    constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
     for (Observer *item : observers_) {
         item->notified(constructors);
     }
@@ -49,8 +47,8 @@ void HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return;
     }
-    build_system_.build_targets(modules, [this,modules](const string &cmd, bool success) {
-        this->on_build_finish(modules, success);
+    build_system_.build_targets(modules, [this](bool success, const Target &target) {
+        this->on_build_finish(success, target);
     });
 }
 

@@ -11,6 +11,20 @@ namespace vision::inline hotfix {
 class JsonParser : public BuildRules {
 public:
     JsonParser();
+    void parse(const std::string &content) override;
 };
+JsonParser::JsonParser() {
+}
+
+void JsonParser::parse(const std::string &content) {
+}
 
 }// namespace vision::inline hotfix
+
+VS_EXPORT_API vision::hotfix::BuildRules *create() {
+    return ocarina::new_with_allocator<vision::hotfix::JsonParser>();
+}
+
+VS_EXPORT_API void destroy(vision::hotfix::BuildRules *obj) {
+    ocarina::delete_with_allocator(obj);
+}

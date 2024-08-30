@@ -44,7 +44,7 @@ void BuildSystem::create_temp_path(const fs::path &path) noexcept {
 }
 
 void BuildSystem::build_target(const Target &target,
-                               CmdProcess::callback_t callback) const noexcept {
+                               const CmdProcess::callback_t& callback) const noexcept {
     create_temp_path(target.temp_directory());
     compiler_->setup_environment();
     compile(target);
@@ -52,18 +52,15 @@ void BuildSystem::build_target(const Target &target,
 }
 
 void BuildSystem::build_targets(const vector<Target> &targets,
-                                const CmdProcess::callback_t &callback) const noexcept {
-    for (int i = 0; i < targets.size(); ++i) {
-        const auto &target = targets.at(i);
+                                const std::function<void(bool, Target)> &callback) const noexcept {
+    for (const auto &target : targets) {
         OC_INFO_FORMAT("target {} has been modified", target.name);
         for (const fs::path &fn : target.modified_files) {
             OC_INFO_FORMAT("file: {}", fn.string());
         }
-        if (i == targets.size() - 1) {
-            build_target(target, callback);
-        } else {
-            build_target(target,callback);
-        }
+        build_target(target, [target, callback](const string &cmd, bool success) {
+            callback(success, target);
+        });
     }
 }
 

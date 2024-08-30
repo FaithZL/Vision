@@ -20,12 +20,12 @@ public:
     void clear() noexcept;
     [[nodiscard]] static fs::path directory() noexcept;
     void build_targets(const vector<Target> &targets,
-                       const CmdProcess::callback_t &callback = nullptr) const noexcept;
+                       const std::function<void(bool, Target)> &callback = nullptr) const noexcept;
     void build_target(const Target &target,
-                      CmdProcess::callback_t callback = nullptr) const noexcept;
+                      const CmdProcess::callback_t& callback = nullptr) const noexcept;
     static void create_temp_path(const fs::path &path) noexcept;
     void compile(const Target &target) const noexcept;
-    void link(const Target &target,const CmdProcess::callback_t &callback = nullptr) const noexcept;
+    void link(const Target &target, const CmdProcess::callback_t &callback = nullptr) const noexcept;
 };
 
 }// namespace vision::inline hotfix
