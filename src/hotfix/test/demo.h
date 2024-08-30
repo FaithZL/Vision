@@ -25,7 +25,7 @@ public:
         attr_float = 0;
     }
 
-    void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override;
+    void notified(const vector<const IObjectConstructor *> &constructors) noexcept override;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
 
     [[nodiscard]] string get_string() const;

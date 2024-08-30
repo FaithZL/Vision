@@ -18,7 +18,7 @@ using namespace ocarina;
 class Observer {
 public:
     virtual void update_runtime_object(const IObjectConstructor *constructor) noexcept = 0;
-    virtual void on_update(const vector<const IObjectConstructor*> &constructors) noexcept {
+    virtual void notified(const vector<const IObjectConstructor*> &constructors) noexcept {
         for (const auto &item : constructors) {
             update_runtime_object(item);
         }

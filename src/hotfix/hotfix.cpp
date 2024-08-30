@@ -40,7 +40,7 @@ void HotfixSystem::on_build_finish(const vector<Target> &targets) noexcept {
     std::for_each(targets.begin(), targets.end(), process_target);
 
     for (Observer *item : observers_) {
-        item->on_update(constructors);
+        item->notified(constructors);
     }
 }
 

@@ -23,7 +23,7 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
     test = new_obj;
 }
 
-void Demo::on_update(const vector<const IObjectConstructor*> &constructors) noexcept {
+void Demo::notified(const vector<const IObjectConstructor*> &constructors) noexcept {
     for (const auto &item : constructors) {
         update_runtime_object(item);
     }
