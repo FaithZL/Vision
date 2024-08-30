@@ -57,7 +57,7 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_tool_.remove_inspected(path);
     }
-    void on_build_finish(const vector<Target> &targets) noexcept;
+    void on_build_finish(const vector<Target> &targets, bool success) noexcept;
     void check_and_build() noexcept;
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;

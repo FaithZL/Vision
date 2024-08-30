@@ -25,7 +25,7 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     observers_.erase(observer);
 }
 
-void HotfixSystem::on_build_finish(const vector<Target> &targets) noexcept {
+void HotfixSystem::on_build_finish(const vector<Target> &targets, bool success) noexcept {
     
     OC_INFO("build finish ");
 
@@ -49,8 +49,8 @@ void HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return;
     }
-    build_system_.build_targets(modules, [this,modules](const string &cmd) {
-        this->on_build_finish(modules);
+    build_system_.build_targets(modules, [this,modules](const string &cmd, bool success) {
+        this->on_build_finish(modules, success);
     });
 }
 

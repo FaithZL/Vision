@@ -6,6 +6,7 @@
 
 #include <windows.h>
 #include <thread>
+#include <utility>
 #include "core/stl.h"
 #include "core/logging.h"
 #include "core/thread_safety.h"
@@ -18,13 +19,15 @@ static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
 
 class CmdProcess : public thread_safety<> {
 public:
-    using callback_t = std::function<void(const string &)>;
+    using callback_t = std::function<void(const string &, bool)>;
     struct CmdData {
         string cmd;
+        std::atomic<bool> success{true};
         callback_t callback;
+        CmdData(string cmd, callback_t cb) : cmd(ocarina::move(cmd)), callback(std::move(cb)) {}
         void execute_callback() noexcept {
             if (callback) {
-                std::invoke(callback, cmd);
+                std::invoke(callback, cmd, bool(success));
             }
         }
     };

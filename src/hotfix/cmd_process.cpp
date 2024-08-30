@@ -18,9 +18,9 @@ void CmdProcess::on_finish_cmd() const {
         std::cout << "[Cmd process] Complete" << std::endl;
     }
     with_lock([&] {
-        CmdData cmd = cmd_queue_.front();
-        cmd_queue_.pop();
+        CmdData &cmd = cmd_queue_.front();
         cmd.execute_callback();
+        cmd_queue_.pop();
     });
 }
 
@@ -53,8 +53,9 @@ void CmdProcess::read_output_thread() {
             cmd_output_ += buffer;
             continue;
         }
-        if (buffer.find(" : error ") != std::string::npos ||
-            buffer.find(" : fatal error ") != std::string::npos) {
+        if (buffer.find(": error C") != std::string::npos ||
+            buffer.find(": fatal error ") != std::string::npos) {
+            cmd_queue_.front().success = false;
             std::cerr << "[Cmd process Warning]: " << buffer << std::endl;
         } else {
             std::cout << "" << buffer;
@@ -179,7 +180,7 @@ void CmdProcess::write_input(std::string input, const callback_t &callback) cons
     input = add_complete_flag(input);
     auto length = static_cast<DWORD>(input.length());
     with_lock([&] {
-        cmd_queue_.push({input, callback});
+        cmd_queue_.emplace(input, callback);
     });
     WriteFile(input_write_, input.c_str(), length, &nBytesWritten, nullptr);
 }
