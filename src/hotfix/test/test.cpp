@@ -20,6 +20,32 @@ void Test::serialize(SP<ISerialized> output) const noexcept {
 #endif
 }
 
+void Test::fill() noexcept {
+    attr_float = 6.66;
+    attr_int = 12;
+#ifdef HOTFIX_FLAG
+    attr_double = 678;
+#endif
+}
+
+void Test::clear() noexcept {
+    attr_int = 0;
+    attr_float = 0;
+#ifdef HOTFIX_FLAG
+    attr_double = 0;
+#endif
+}
+
+void Test::print() const noexcept {
+    std::cout << "test print begin" << std::endl;
+    std::cout << "      attr_float = " << attr_float << endl;
+    std::cout << "      attr_int = " << attr_int << endl;
+#ifdef HOTFIX_FLAG
+    std::cout << "      attr_double = " << attr_double << endl;
+#endif
+    std::cout << "test print end" << std::endl;
+}
+
 void Test::deserialize(SP<ISerialized> input) noexcept {
 #ifdef HOTFIX_FLAG
     std::cout << "Test::deserialize  new-----" << endl;
