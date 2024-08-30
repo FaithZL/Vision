@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     vision::HotfixSystem::instance().init();
 
-    vision::HotfixTest hotfix_test;
+//    vision::HotfixTest hotfix_test;
 
     auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
     auto image_io = Image::pure_color(make_float4(1, 0, 0, 1), ColorSpace::LINEAR, make_uint2(500));
@@ -102,16 +102,16 @@ int main(int argc, char *argv[]) {
         });
 
         widget->button_click("serialize", [&] {
-//            serializer.serialize(demo.get());
-            serialized = demo->serialized_data();
+            serializer.serialize(demo.get());
+//            serialized = demo->serialized_data();
 
 
             serializer.serialize(test);
         });
 
         widget->button_click("deserialize", [&] {
-            demo->deserialize(serialized);
-//            serializer.deserialize(demo.get(), demo);
+//            demo->deserialize(serialized);
+            serializer.deserialize(demo.get(), demo);
             serializer.deserialize(test, test);
         });
 

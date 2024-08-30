@@ -7,14 +7,15 @@
 
 namespace vision ::inline hotfix {
 
+
 void Test::serialize(SP<ISerialized> output) const noexcept {
-    std::cout << "Test::serialize" << endl;
+    std::cout << "Test::serialize-------" << endl;
     output->serialize("attr_int", attr_int);
     output->serialize("attr_float", attr_float);
 }
 
 void Test::deserialize(SP<ISerialized> input) noexcept {
-    std::cout << "Test::deserialize" << endl;
+    std::cout << "Test::deserialize===========" << endl;
     input->deserialize("attr_int", addressof(attr_int));
     input->deserialize("attr_float", addressof(attr_float));
 }

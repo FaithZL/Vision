@@ -14,8 +14,8 @@ namespace vision::inline hotfix {
 struct Demo : public RuntimeObject, public Observer {
 private:
     SP<Test> test;
-    int attr_int{1};
-    float attr_float{2.5};
+    int attr_int{};
+    float attr_float{};
 
 public:
     Demo();
@@ -26,6 +26,7 @@ public:
     }
 
     void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override;
+    void update(const IObjectConstructor *constructor) noexcept;
 
     [[nodiscard]] string get_string() const;
 
@@ -52,6 +53,7 @@ public:
     SP<Test> test{make_shared<Test>()};
 
 public:
+
     void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override {
     }
 };
