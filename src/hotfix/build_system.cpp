@@ -44,7 +44,7 @@ void BuildSystem::create_temp_path(const fs::path &path) noexcept {
 }
 
 void BuildSystem::build_target(const Target &target,
-                               const CmdProcess::callback_t &callback) const noexcept {
+                               CmdProcess::callback_t callback) const noexcept {
     create_temp_path(target.temp_directory());
     compiler_->setup_environment();
     compile(target);
@@ -62,7 +62,7 @@ void BuildSystem::build_targets(const vector<Target> &targets,
         if (i == targets.size() - 1) {
             build_target(target, callback);
         } else {
-            build_target(target);
+            build_target(target,callback);
         }
     }
 }

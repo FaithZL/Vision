@@ -22,7 +22,7 @@ public:
     void build_targets(const vector<Target> &targets,
                        const CmdProcess::callback_t &callback = nullptr) const noexcept;
     void build_target(const Target &target,
-                      const CmdProcess::callback_t &callback = nullptr) const noexcept;
+                      CmdProcess::callback_t callback = nullptr) const noexcept;
     static void create_temp_path(const fs::path &path) noexcept;
     void compile(const Target &target) const noexcept;
     void link(const Target &target,const CmdProcess::callback_t &callback = nullptr) const noexcept;
