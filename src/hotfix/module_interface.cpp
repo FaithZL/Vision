@@ -30,7 +30,13 @@ void ModuleInterface::update(SP<const vision::IObjectConstructor> constructor) n
     if (constructor_map_.contains(key)) {
         constructor_map_.erase(key);
     }
-    constructor_map_.insert(make_pair(key, constructor));
+    constructor_map_.insert(make_pair(key, ocarina::move(constructor)));
+}
+
+void ModuleInterface::merge_constructors(const vision::ModuleInterface *other) noexcept {
+    for (const auto &item : other->constructor_map_) {
+        update(item.second);
+    }
 }
 
 string_view ModuleInterface::src_path() noexcept {

@@ -31,6 +31,7 @@ public:
     void add_constructor(SP<const IObjectConstructor> constructor) noexcept;
     [[nodiscard]] const IObjectConstructor *constructor(const string &cls_name) const noexcept;
     void update(SP<const IObjectConstructor> constructor) noexcept;
+    void merge_constructors(const ModuleInterface *other) noexcept;
 
     template<typename... Args>
     requires concepts::all_string_viewable<Args...>
@@ -47,7 +48,6 @@ public:
         }
         return ret;
     }
-
     template<typename T>
     requires requires { string{} == T{}; }
     [[nodiscard]] vector<const IObjectConstructor *> constructors(const vector<T> &paths) const noexcept {
@@ -62,7 +62,6 @@ public:
         }
         return ret;
     }
-
     template<typename T>
     [[nodiscard]] T *construct() const noexcept {
         return constructor(type_string<T>())->template construct<T>();
