@@ -49,6 +49,7 @@ public:
     void deregister_observer(Observer *observer) noexcept;
     void init() noexcept;
     OC_MAKE_MEMBER_GETTER(file_tool, &)
+    OC_MAKE_MEMBER_GETTER(serializer, &)
     template<typename... Args>
     void register_target(Args &&...args) {
         file_tool_.add_inspected(OC_FORWARD(args)...);
@@ -58,7 +59,6 @@ public:
     }
     void on_build_finish(const vector<Target> &targets) noexcept;
     void check_and_build() noexcept;
-    OC_MAKE_MEMBER_GETTER(serializer, &)
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
 };

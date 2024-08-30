@@ -126,6 +126,9 @@ public:
 
     void deserialize_impl(std::string_view field_name, void *ptr) override {
         if constexpr (is_runtime_object) {
+            if (!data_.contains(field_name)) {
+                return;
+            }
             SP<ISerialized> data = data_.at(field_name);
             if (data->is_pod_data()) {
                 data->deserialize_impl(ptr);

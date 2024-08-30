@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 
     auto &mi = vision::ModuleInterface::instance();
 
-    vision::Serializer serializer;
+    vision::Serializer &serializer = HotfixSystem::instance().serializer();
 
     SP<ISerialized> serialized;
 
