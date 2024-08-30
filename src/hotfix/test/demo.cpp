@@ -23,6 +23,26 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
     test = new_obj;
 }
 
+void Demo::clear() noexcept {
+    test->clear();
+    attr_int = 0;
+    attr_float = 0;
+}
+
+void Demo::print() noexcept {
+    std::cout << "demo print begin" << std::endl;
+    std::cout << "      attr_float = " << attr_float << endl;
+    std::cout << "      attr_int = " << attr_int << endl;
+    test->print();
+    std::cout << "demo print end" << std::endl;
+}
+
+void Demo::fill() noexcept {
+    test->fill();
+    attr_float = 57.9;
+    attr_int = 789;
+}
+
 string Demo::get_string() const {
     return "Demo::string";
 }

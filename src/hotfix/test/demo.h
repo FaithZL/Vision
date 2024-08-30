@@ -19,29 +19,11 @@ private:
 
 public:
     Demo();
-    void clear() noexcept {
-        test->clear();
-        attr_int = 0;
-        attr_float = 0;
-    }
-
+    virtual void clear() noexcept;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
-
-    [[nodiscard]] string get_string() const;
-
-    void fill() noexcept {
-        test->fill();
-        attr_float = 57.9;
-        attr_int = 789;
-    }
-
-    void print() noexcept {
-        std::cout << "demo print begin" << std::endl;
-        std::cout << "      attr_float = " << attr_float << endl;
-        std::cout << "      attr_int = " << attr_int << endl;
-        test->print();
-        std::cout << "demo print end" << std::endl;
-    }
+    [[nodiscard]] virtual string get_string() const;
+    virtual void fill() noexcept;
+    virtual void print() noexcept;
     void serialize(SP<ISerialized> output) const noexcept override;
     void deserialize(SP<ISerialized> input) noexcept override;
 };
