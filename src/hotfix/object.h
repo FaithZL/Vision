@@ -29,6 +29,10 @@ protected:
 public:
     explicit IObjectConstructor(const char *fn) : filename_(fn) {}
     OC_MAKE_MEMBER_GETTER(filename, )
+    template<typename T>
+    [[nodiscard]] bool match(T &&t) const noexcept {
+        return class_name() == t->class_name();
+    }
     template<typename T = RuntimeObject>
     [[nodiscard]] T *construct() const {
         return dynamic_cast<T *>(construct_impl());

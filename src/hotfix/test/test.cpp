@@ -7,6 +7,7 @@
 
 namespace vision ::inline hotfix {
 
+
 void Test::serialize(SP<ISerialized> output) const noexcept {
 #ifdef HOTFIX_FLAG
     std::cout << "Test::serialize  new-----" << endl;

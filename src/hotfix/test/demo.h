@@ -46,13 +46,5 @@ public:
     void deserialize(SP<ISerialized> input) noexcept override;
 };
 
-class HotfixTest : public Observer {
-public:
-    SP<Demo> demo{make_shared<Demo>()};
-    SP<Test> test{make_shared<Test>()};
-
-public:
-    void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
-};
 
 }// namespace vision::inline hotfix

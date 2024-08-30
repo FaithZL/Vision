@@ -23,18 +23,6 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
     test = new_obj;
 }
 
-void HotfixTest::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
-    if (constructor->class_name() != test->class_name()) {
-        return;
-    }
-    
-    auto new_obj = constructor->construct_shared<Test>();
-    auto serialized_data = test->serialized_data();
-    new_obj->deserialize(serialized_data);
-    HotfixSystem::instance().serializer().erase_old_object(test.get());
-    test = new_obj;
-}
-
 string Demo::get_string() const {
     return "Demo::string";
 }

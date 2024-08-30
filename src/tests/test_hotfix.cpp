@@ -16,7 +16,7 @@
 #include "GUI_impl/imGui/window.h"
 #include "util/image.h"
 #include "hotfix/test/test.h"
-#include "hotfix/test/demo.h"
+#include "hotfix/test/hotfix_test.h"
 #include "hotfix/module_interface.h"
 
 using namespace ocarina;
