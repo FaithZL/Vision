@@ -9,6 +9,7 @@
 
 namespace vision::inline hotfix {
 using namespace ocarina;
+
 class Serializer;
 
 class ISerialized;

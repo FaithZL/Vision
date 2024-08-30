@@ -12,10 +12,11 @@ namespace vision::inline hotfix {
 Demo::Demo()
     : test(make_shared<Test>()) {}
 
-void Demo::update(const vision::IObjectConstructor *constructor) noexcept {
+void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     if (constructor->class_name() != test->class_name()) {
         return;
     }
+
     auto new_obj = constructor->construct_shared<Test>();
     auto serialized_data = test->serialized_data();
     new_obj->deserialize(serialized_data);
@@ -24,7 +25,7 @@ void Demo::update(const vision::IObjectConstructor *constructor) noexcept {
 
 void Demo::on_update(const vector<const IObjectConstructor*> &constructors) noexcept {
     for (const auto &item : constructors) {
-        update(item);
+        update_runtime_object(item);
     }
 }
 

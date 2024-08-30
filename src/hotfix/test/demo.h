@@ -26,7 +26,7 @@ public:
     }
 
     void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override;
-    void update(const IObjectConstructor *constructor) noexcept;
+    void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
 
     [[nodiscard]] string get_string() const;
 
@@ -54,7 +54,8 @@ public:
 
 public:
 
-    void on_update(const vector<const IObjectConstructor *> &constructors) noexcept override {
+    void update_runtime_object(const IObjectConstructor *constructor) noexcept override {
+
     }
 };
 

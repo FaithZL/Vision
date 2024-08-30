@@ -52,7 +52,7 @@ public:
     Scene() = default;
     void init(const SceneDesc &scene_desc);
     void prepare() noexcept;
-    void on_update(const vector<const vision::IObjectConstructor *> &constructors) noexcept override;
+    void update_runtime_object(const vision::IObjectConstructor * constructors) noexcept override;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return render_setting_.polymorphic_mode; }
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,

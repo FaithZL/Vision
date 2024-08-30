@@ -17,7 +17,12 @@ using namespace ocarina;
 
 class Observer {
 public:
-    virtual void on_update(const vector<const IObjectConstructor*> &constructors) noexcept = 0;
+    virtual void update_runtime_object(const IObjectConstructor *constructor) noexcept = 0;
+    virtual void on_update(const vector<const IObjectConstructor*> &constructors) noexcept {
+        for (const auto &item : constructors) {
+            update_runtime_object(item);
+        }
+    }
     Observer();
     ~Observer();
 };
