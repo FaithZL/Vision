@@ -5,13 +5,14 @@
 #pragma once
 
 #include "demo.h"
+#include "hotfix/module_interface.h"
 
 namespace vision::inline hotfix {
 
 class HotfixTest : public Observer {
 public:
-    SP<Demo> demo{make_shared<Demo>()};
-    SP<Test> test{make_shared<Test>()};
+    SP<Demo> demo{ModuleInterface::instance().construct_shared<Demo>()};
+    SP<Test> test{ModuleInterface::instance().construct_shared<Test>()};
 
 public:
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;

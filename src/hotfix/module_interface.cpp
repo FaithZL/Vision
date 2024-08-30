@@ -15,7 +15,7 @@ ModuleInterface &ModuleInterface::instance() noexcept {
     return s_module_interface;
 }
 
-void ModuleInterface::add_constructor(UP<const IObjectConstructor> constructor) noexcept {
+void ModuleInterface::add_constructor(SP<const IObjectConstructor> constructor) noexcept {
     string_view name = constructor->class_name();
     constructor_map_.insert(make_pair(name, ocarina::move(constructor)));
 }
@@ -25,12 +25,20 @@ const IObjectConstructor *ModuleInterface::constructor(const std::string &cls_na
     return constructor_map_.at(cls_name).get();
 }
 
+void ModuleInterface::update(SP<const vision::IObjectConstructor> constructor) noexcept {
+    string key(constructor->class_name());
+    if (constructor_map_.contains(key)) {
+        constructor_map_.erase(key);
+    }
+    constructor_map_.insert(make_pair(key, constructor));
+}
+
 string_view ModuleInterface::src_path() noexcept {
     return __FILE__;
 }
 
 ModuleInterface::~ModuleInterface() {
-    cout << "ModuleInterface  exit" <<endl;
+    cout << "ModuleInterface  exit" << endl;
 }
 
 }// namespace vision::inline hotfix
@@ -38,5 +46,3 @@ ModuleInterface::~ModuleInterface() {
 VS_EXPORT_API vision::ModuleInterface *module_interface() {
     return &vision::ModuleInterface::instance();
 }
-
-
