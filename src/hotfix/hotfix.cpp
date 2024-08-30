@@ -33,15 +33,14 @@ void HotfixSystem::on_build_finish(const vector<Target> &targets) noexcept {
 
     auto process_target = [&](const Target &target) {
         ModuleInterface *module_interface = target.module_interface();
-        for (const fs::path &item : target.modified_files) {
-
-        }
+        auto tmp = module_interface->constructors(target.modified_files);
+        constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
     };
 
     std::for_each(targets.begin(), targets.end(), process_target);
 
-    for (const Observer *item : observers_) {
-
+    for (Observer *item : observers_) {
+        item->on_update(constructors);
     }
 }
 

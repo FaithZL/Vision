@@ -30,7 +30,38 @@ public:
     [[nodiscard]] static ModuleInterface &instance() noexcept;
     void add_constructor(UP<const IObjectConstructor> constructor) noexcept;
     [[nodiscard]] const IObjectConstructor *constructor(const string &cls_name) const noexcept;
-    [[nodiscard]] vector<const IObjectConstructor *> constructors(const string &filename) const noexcept;
+
+    template<typename... Args>
+    requires concepts::all_string_viewable<Args...>
+    [[nodiscard]] vector<const IObjectConstructor *> constructors(Args &&...args) const noexcept {
+        constexpr array<string_view, sizeof...(Args)> paths = {string_view{args}...};
+        vector<const IObjectConstructor *> ret;
+        for (const auto &filename : paths) {
+            for (const auto &item : constructor_map_) {
+                const IObjectConstructor *ptr = item.second.get();
+                if (ptr->filename() == filename) {
+                    ret.push_back(ptr);
+                }
+            }
+        }
+        return ret;
+    }
+
+    template<typename T>
+    requires requires { string{} == T{}; }
+    [[nodiscard]] vector<const IObjectConstructor *> constructors(const vector<T> &paths) const noexcept {
+        vector<const IObjectConstructor *> ret;
+        for (const auto &filename : paths) {
+            for (const auto &item : constructor_map_) {
+                const IObjectConstructor *ptr = item.second.get();
+                if (ptr->filename() == filename) {
+                    ret.push_back(ptr);
+                }
+            }
+        }
+        return ret;
+    }
+
     template<typename T>
     [[nodiscard]] T *construct() const noexcept {
         return constructor(type_string<T>())->template construct<T>();
