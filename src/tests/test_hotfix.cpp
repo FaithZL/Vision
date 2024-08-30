@@ -25,8 +25,6 @@ using namespace vision;
 
 //VS_REGISTER_CURRENT_PATH(0, "vision-test_hotfix.exe")
 
-
-
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);
     float3x3 f333;
@@ -47,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     vision::HotfixSystem::instance().init();
 
-//    vision::HotfixTest hotfix_test;
+    vision::HotfixTest hotfix_test;
 
     auto window = FileManager::instance().create_window("display", make_uint2(500), "imGui");
     auto image_io = Image::pure_color(make_float4(1, 0, 0, 1), ColorSpace::LINEAR, make_uint2(500));
@@ -60,9 +58,6 @@ int main(int argc, char *argv[]) {
     auto &mi = vision::ModuleInterface::instance();
 
     vision::Serializer serializer;
-
-    auto demo = std::make_shared<vision::Demo>();
-    vision::Test *test = new vision::Test();
 
     SP<ISerialized> serialized;
 
@@ -82,45 +77,48 @@ int main(int argc, char *argv[]) {
             auto *mi = func2();
             auto constructor = mi->constructor(vision::Demo().class_name());
 
-            demo = constructor->construct_shared<vision::Demo>();
-            test = mi->construct<vision::Test>();
-//            FileManager::instance().unload_module(target.dll_path().string());
+            hotfix_test.demo = constructor->construct_shared<vision::Demo>();
+            hotfix_test.test = mi->construct_shared<vision::Test>();
+            //            FileManager::instance().unload_module(target.dll_path().string());
         });
 
         widget->button_click("clear obj", [&] {
-            demo->clear();
-            test->clear();
+            cout << "\nclear obj ----------" << endl;
+            hotfix_test.demo->clear();
+            hotfix_test.test->clear();
         });
 
         widget->button_click("clear serializer", [&] {
+            cout << "\nclear serializer ----------" << endl;
             serializer.clear();
         });
 
         widget->button_click("fill", [&] {
-            demo->fill();
-            test->fill();
+            cout << "fill object ----------" << endl;
+            hotfix_test.demo->fill();
+            hotfix_test.test->fill();
         });
 
         widget->button_click("serialize", [&] {
-            serializer.serialize(demo.get());
-//            serialized = demo->serialized_data();
-
-
-            serializer.serialize(test);
+            cout << "\nserialize ----------" << endl;
+            serializer.serialize(hotfix_test.demo.get());
+            serializer.serialize(hotfix_test.test.get());
         });
 
         widget->button_click("deserialize", [&] {
-//            demo->deserialize(serialized);
-            serializer.deserialize(demo.get(), demo);
-            serializer.deserialize(test, test);
+            cout << "\ndeserialize ----------" << endl;
+            serializer.deserialize(hotfix_test.demo.get(), hotfix_test.demo.get());
+            serializer.deserialize(hotfix_test.test.get(), hotfix_test.test.get());
         });
 
         widget->button_click("print object", [&] {
-            demo->print();
-            test->print();
+            cout << "\nprint object ----------" << endl;
+            hotfix_test.demo->print();
+            hotfix_test.test->print();
         });
 
         widget->button_click("print serializer", [&] {
+            cout << "\nprint serializer ----------" << endl;
             serializer.print();
         });
     });

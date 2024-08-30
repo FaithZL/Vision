@@ -25,7 +25,6 @@ public:
         attr_float = 0;
     }
 
-    void notified(const vector<const IObjectConstructor *> &constructors) noexcept override;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
 
     [[nodiscard]] string get_string() const;
@@ -53,10 +52,7 @@ public:
     SP<Test> test{make_shared<Test>()};
 
 public:
-
-    void update_runtime_object(const IObjectConstructor *constructor) noexcept override {
-
-    }
+    void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
 };
 
 }// namespace vision::inline hotfix
