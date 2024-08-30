@@ -55,7 +55,7 @@ void Test::deserialize(SP<ISerialized> input) noexcept {
     input->deserialize("attr_int", addressof(attr_int));
     input->deserialize("attr_float", addressof(attr_float));
 #ifdef HOTFIX_FLAG
-    input->deserialize("attr_double", addressof(attr_float));
+    input->deserialize("attr_double", addressof(attr_double));
 #endif
 }
 
