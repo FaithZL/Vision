@@ -33,7 +33,7 @@ void ModuleInterface::update(SP<const vision::IObjectConstructor> constructor) n
     constructor_map_.insert(make_pair(key, ocarina::move(constructor)));
 }
 
-void ModuleInterface::merge_constructors(const vision::ModuleInterface *other) noexcept {
+void ModuleInterface::update_constructors(const ModuleInterface *other) noexcept {
     for (const auto &item : other->constructor_map_) {
         update(item.second);
     }

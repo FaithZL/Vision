@@ -36,7 +36,7 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     vector<const IObjectConstructor *> constructors;
     ModuleInterface *module_interface = target.module_interface();
     auto tmp = module_interface->constructors(target.modified_files);
-    ModuleInterface::instance().merge_constructors(module_interface);
+    ModuleInterface::instance().update_constructors(module_interface);
     constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
     for (Observer *item : observers_) {
         item->notified(constructors);

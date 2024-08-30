@@ -31,7 +31,7 @@ public:
     void add_constructor(SP<const IObjectConstructor> constructor) noexcept;
     [[nodiscard]] const IObjectConstructor *constructor(const string &cls_name) const noexcept;
     void update(SP<const IObjectConstructor> constructor) noexcept;
-    void merge_constructors(const ModuleInterface *other) noexcept;
+    void update_constructors(const ModuleInterface *other) noexcept;
 
     template<typename... Args>
     requires concepts::all_string_viewable<Args...>
@@ -63,16 +63,19 @@ public:
         return ret;
     }
     template<typename T>
-    [[nodiscard]] T *construct() const noexcept {
-        return constructor(type_string<T>())->template construct<T>();
+    [[nodiscard]] T *construct(const char *type_name = nullptr) const noexcept {
+        type_name = type_name ? type_name : type_string<T>();
+        return constructor(type_name)->template construct<T>();
     }
     template<typename T>
-    [[nodiscard]] SP<T> construct_shared() const noexcept {
-        return constructor(type_string<T>())->template construct_shared<T>();
+    [[nodiscard]] SP<T> construct_shared(const char *type_name = nullptr) const noexcept {
+        type_name = type_name ? type_name : type_string<T>();
+        return constructor(type_name)->template construct_shared<T>();
     }
     template<typename T>
-    [[nodiscard]] UP<T> construct_unique() const noexcept {
-        return constructor(type_string<T>())->template construct_unique<T>();
+    [[nodiscard]] UP<T> construct_unique(const char *type_name = nullptr) const noexcept {
+        type_name = type_name ? type_name : type_string<T>();
+        return constructor(type_name)->template construct_unique<T>();
     }
 };
 
