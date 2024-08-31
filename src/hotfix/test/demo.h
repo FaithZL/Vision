@@ -21,6 +21,7 @@ public:
     Demo();
     virtual void clear() noexcept;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
+    void restore(const vision::RuntimeObject *old_obj) noexcept override;
     [[nodiscard]] virtual string get_string() const;
     virtual void fill() noexcept;
     virtual void print() noexcept;

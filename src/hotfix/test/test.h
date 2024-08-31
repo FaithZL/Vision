@@ -22,6 +22,7 @@ public:
 public:
     virtual void clear() noexcept;
     [[nodiscard]] string get_string() const;
+    void restore(const vision::RuntimeObject *old_obj) noexcept override;
     virtual void fill() noexcept;
     virtual void print() const noexcept;
     void serialize(SP<ISerialized> output) const noexcept override;

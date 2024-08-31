@@ -7,7 +7,6 @@
 
 namespace vision ::inline hotfix {
 
-
 void Test::serialize(SP<ISerialized> output) const noexcept {
 #ifdef HOTFIX_FLAG
     std::cout << "Test::serialize  new-----" << endl;
@@ -28,6 +27,16 @@ void Test::fill() noexcept {
     attr_double = 678;
 #endif
 }
+
+
+void Test::restore(const vision::RuntimeObject *old_obj) noexcept {
+//        RuntimeObject::restore(old_obj);
+    VS_HOTFIX_MOVE_ATTRS(Test, attr_int, attr_float)
+#ifdef HOTFIX_FLAG
+    VS_HOTFIX_MOVE_ATTR(attr_double)
+#endif
+}
+
 
 void Test::clear() noexcept {
     attr_int = 0;

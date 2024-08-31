@@ -14,11 +14,19 @@ class Serializer;
 
 class ISerialized;
 
+#define VS_HOTFIX_MOVE_ATTR(attr_name) \
+    attr_name = ocarina::move(old_obj_->attr_name);
+
+#define VS_HOTFIX_MOVE_ATTRS(Type, ...)                  \
+    auto old_obj_ = dynamic_cast<const Type *>(old_obj); \
+    MAP(VS_HOTFIX_MOVE_ATTR, ##__VA_ARGS__)
+
 class RuntimeObject : public Hashable {
 public:
     [[nodiscard]] SP<ISerialized> serialized_data() const noexcept;
-    virtual void serialize(SP<ISerialized> output) const noexcept = 0;
-    virtual void deserialize(SP<ISerialized> input) noexcept = 0;
+    virtual void restore(const RuntimeObject *old_obj) noexcept;
+    virtual void serialize(SP<ISerialized> output) const noexcept {}
+    virtual void deserialize(SP<ISerialized> input) noexcept {}
     virtual ~RuntimeObject() = default;
 };
 

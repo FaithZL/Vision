@@ -17,10 +17,13 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
         return;
     }
     auto new_obj = constructor->construct_shared<Test>();
-    auto serialized_data = test->serialized_data();
-    new_obj->deserialize(serialized_data);
     HotfixSystem::instance().serializer().erase_old_object(test.get());
+    new_obj->restore(test.get());
     test = new_obj;
+}
+
+void Demo::restore(const vision::RuntimeObject *old_obj) noexcept {
+    RuntimeObject::restore(old_obj);
 }
 
 void Demo::clear() noexcept {
