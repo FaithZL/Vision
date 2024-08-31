@@ -18,11 +18,16 @@ Observer::~Observer() {
 }
 
 void HotfixSystem::register_observer(vision::Observer *observer) noexcept {
-    observers_.insert(observer);
+    if (std::find(observers_.cbegin(), observers_.cend(), observer) != observers_.cend()) {
+        return;
+    }
+    observers_.push_back(observer);
 }
 
 void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
-    observers_.erase(observer);
+    erase_if(observers_, [&](const Observer *iter) -> bool {
+        return observer == iter;
+    });
 }
 
 void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
@@ -48,7 +53,7 @@ void HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return;
     }
-    build_system_.build_targets(modules, [this]<typename ...Args>(Args &&...args) {
+    build_system_.build_targets(modules, [this]<typename... Args>(Args &&...args) {
         this->on_build_finish(OC_FORWARD(args)...);
     });
 }

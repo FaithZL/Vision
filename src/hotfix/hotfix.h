@@ -34,9 +34,8 @@ private:
     static HotfixSystem *s_mgr;
 
 private:
-    using ObjectGroup = vector<SP<RuntimeObject>>;
     Serializer serializer_{};
-    ocarina::set<Observer *> observers_;
+    ocarina::vector<Observer *> observers_;
     FileTool file_tool_;
     BuildSystem build_system_{};
 
