@@ -15,6 +15,7 @@ public:
     SP<Test> test{ModuleInterface::instance().construct_shared<Test>()};
 
 public:
+    HotfixTest();
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
 };
 }// namespace vision::inline hoftix

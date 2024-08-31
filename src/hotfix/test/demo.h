@@ -12,7 +12,7 @@
 namespace vision::inline hotfix {
 
 struct Demo : public RuntimeObject, public Observer {
-private:
+public:
     SP<Test> test;
     int attr_int{};
     float attr_float{};

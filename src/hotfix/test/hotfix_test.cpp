@@ -10,6 +10,11 @@
 
 namespace vision::inline hotfix {
 using namespace ocarina;
+
+HotfixTest::HotfixTest() {
+    demo->test = make_shared<Test>();
+}
+
 void HotfixTest::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     if (constructor->match(test)) {
         auto new_obj = constructor->construct_shared<Test>();
@@ -18,10 +23,10 @@ void HotfixTest::update_runtime_object(const vision::IObjectConstructor *constru
         test = new_obj;
     } else if (constructor->match(demo)) {
         auto new_obj = constructor->construct_shared<Demo>();
-        auto serialized_data = demo->serialized_data();
-        new_obj->deserialize(serialized_data);
         HotfixSystem::instance().serializer().erase_old_object(demo.get());
+        new_obj->restore(demo.get());
         demo = new_obj;
     }
 }
+
 }// namespace vision::inline hotfix
