@@ -12,6 +12,10 @@ namespace vision::inline hotfix {
 Demo::Demo()
     : test() {}
 
+Demo::~Demo() {
+    std::cout << "del Demo" << endl;
+}
+
 void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     if (constructor->class_name() != test->class_name()) {
         return;

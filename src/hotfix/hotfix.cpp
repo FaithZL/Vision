@@ -30,6 +30,10 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
     });
 }
 
+void HotfixSystem::defer_delete(SP<const Observer> observer) noexcept {
+    defer_delete_.push_back(ocarina::move(observer));
+}
+
 void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
 
     if (!success) {
@@ -43,9 +47,10 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     auto tmp = module_interface->constructors(target.modified_files);
     ModuleInterface::instance().update_constructors(module_interface);
     constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
-    for (Observer *item : observers_) {
-        item->notified(constructors);
+    for (int i = 0; i < observers_.size(); ++i) {
+        observers_[i]->notified(constructors);
     }
+    defer_delete_.clear();
 }
 
 void HotfixSystem::check_and_build() noexcept {

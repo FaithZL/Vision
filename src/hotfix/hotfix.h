@@ -36,6 +36,7 @@ private:
 private:
     Serializer serializer_{};
     ocarina::vector<Observer *> observers_;
+    ocarina::vector<SP<const Observer>> defer_delete_;
     FileTool file_tool_;
     BuildSystem build_system_{};
 
@@ -46,6 +47,7 @@ public:
     HotfixSystem operator=(HotfixSystem &&) = delete;
     void register_observer(Observer *observer) noexcept;
     void deregister_observer(Observer *observer) noexcept;
+    void defer_delete(SP<const Observer> observer) noexcept;
     void init() noexcept;
     OC_MAKE_MEMBER_GETTER(file_tool, &)
     OC_MAKE_MEMBER_GETTER(serializer, &)

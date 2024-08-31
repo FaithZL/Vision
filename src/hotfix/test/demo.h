@@ -19,6 +19,7 @@ public:
 
 public:
     Demo();
+    ~Demo();
     virtual void clear() noexcept;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
     void restore(const vision::RuntimeObject *old_obj) noexcept override;
