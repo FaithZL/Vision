@@ -12,6 +12,7 @@
 #include "math/warp.h"
 #include "base/scattering/interaction.h"
 #include "UI/polymorphic.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 using namespace ocarina;
@@ -23,7 +24,7 @@ struct SampledLight {
 
 class Sampler;
 
-class LightSampler : public Node {
+class LightSampler : public Node, public Observer {
 public:
     using Desc = LightSamplerDesc;
 
@@ -45,6 +46,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     template<typename... Args>
     void set_mode(Args &&...args) noexcept { lights_.set_mode(OC_FORWARD(args)...); }
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     [[nodiscard]] float env_prob() const noexcept {
         return (!env_light_) ? 0 : (lights_.empty() ? 1 : env_prob_);
     }

@@ -31,9 +31,11 @@ Uint LightSampler::correct_index(Uint index) const noexcept {
     return index;
 }
 
-void LightSampler::tidy_up() noexcept {
+void LightSampler::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
 
-    auto ss = typeid(std::declval<TObject<Filter>>().get()).name();
+}
+
+void LightSampler::tidy_up() noexcept {
 
     static_assert(ocarina::is_ptr_v<TObject<Filter>>);
 

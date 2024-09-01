@@ -27,7 +27,7 @@ class FrameBuffer;
 
 using namespace ocarina;
 
-class Node : public Hashable, public GUI {
+class Node : public RuntimeObject, public GUI {
 public:
     using Creator = Node *(const NodeDesc *);
     using Deleter = void(Node *);
