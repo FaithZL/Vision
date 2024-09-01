@@ -15,10 +15,17 @@ namespace vision::inline hotfix {
 
 using namespace ocarina;
 
+class HotfixSystem;
+
 class Observer {
+protected:
+    bool valid_{true};
+    void invalidation() noexcept { valid_ = false; }
+    friend class HotfixSystem;
+
 public:
     virtual void update_runtime_object(const IObjectConstructor *constructor) noexcept = 0;
-    virtual void notified(const vector<const IObjectConstructor*> &constructors) noexcept {
+    virtual void notified(const vector<const IObjectConstructor *> &constructors) noexcept {
         for (const auto &item : constructors) {
             update_runtime_object(item);
         }

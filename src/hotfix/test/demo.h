@@ -16,6 +16,7 @@ public:
     SP<Test> test;
     int attr_int{};
     float attr_float{};
+    vector<SP<Test>> tests;
 
 public:
     Demo();

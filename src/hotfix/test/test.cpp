@@ -47,6 +47,7 @@ void Test::clear() noexcept {
 }
 
 void Test::print() const noexcept {
+    OC_INFO("test new !!!!!!!!!");
     std::cout << "test print begin" << std::endl;
     std::cout << "      attr_float = " << attr_float << endl;
     std::cout << "      attr_int = " << attr_int << endl;

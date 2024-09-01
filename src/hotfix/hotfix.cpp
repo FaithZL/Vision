@@ -31,6 +31,7 @@ void HotfixSystem::deregister_observer(vision::Observer *observer) noexcept {
 }
 
 void HotfixSystem::defer_delete(SP<const Observer> observer) noexcept {
+    const_cast<Observer *>(observer.get())->invalidation();
     defer_delete_.push_back(ocarina::move(observer));
 }
 
@@ -48,7 +49,11 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     ModuleInterface::instance().update_constructors(module_interface);
     constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
     for (int i = 0; i < observers_.size(); ++i) {
-        observers_[i]->notified(constructors);
+        Observer *observer = observers_[i];
+        if (!observer->valid_) {
+            continue;
+        }
+        observer->notified(constructors);
     }
     defer_delete_.clear();
 }
