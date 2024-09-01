@@ -66,7 +66,7 @@ public:
         file_tool_.remove_inspected(path);
     }
     void on_build_finish(bool success, const Target &target) noexcept;
-    void check_and_build() noexcept;
+    bool check_and_build() noexcept;
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
 };

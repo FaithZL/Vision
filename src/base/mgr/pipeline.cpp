@@ -61,6 +61,7 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
         widgets->check_box("detail", &show_detail_);
         widgets->check_box("framebuffer", &show_framebuffer_data_);
         widgets->check_box("stats", &show_stats_);
+        widgets->check_box("hotfix", &show_hotfix_);
     });
     if (show_scene_data_) {
         scene_.render_UI(widgets);
@@ -76,6 +77,9 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
     if (show_stats_) {
         render_stats(widgets);
     }
+    if (show_hotfix_) {
+        render_hotfix(widgets);
+    }
     return true;
 }
 
@@ -88,26 +92,45 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
     });
 }
 
+namespace {
+void hotfix_window(ocarina::Widgets *widgets) noexcept {
+    HotfixSystem &hotfix = HotfixSystem::instance();
+    widgets->button_click("reload", [&] {
+        bool update = hotfix.check_and_build();
+        if (!update) {
+            OC_INFO("no modification");
+        }
+    });
+}
+}// namespace
+
+void Pipeline::render_hotfix(ocarina::Widgets *widgets) noexcept {
+
+    widgets->use_window("hotfix system", [&] {
+        hotfix_window(widgets);
+    });
+}
+
 void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
     auto tex_size = MemoryStats::instance().tex_size();
     auto buffer_size = MemoryStats::instance().buffer_size();
     auto label = ocarina::format("memory stats total is {}", bytes_string(tex_size + buffer_size).c_str());
     widgets->use_window(label, [&] {
-        widgets->use_folding_header("texture stats", [&]{
+        widgets->use_folding_header("texture stats", [&] {
             widgets->text("total texture size is %s", bytes_string(tex_size).c_str());
             MemoryStats::instance().foreach_tex_info([&](auto data) {
                 double percent = double(data.size()) / tex_size;
                 widgets->text(ocarina::format("size {}, percent {:.2f} %%, tex name {}\n",
-                                              bytes_string(data.size()),percent * 100, data.name));
+                                              bytes_string(data.size()), percent * 100, data.name));
             });
         });
 
-        widgets->use_folding_header("buffer stats", [&]{
+        widgets->use_folding_header("buffer stats", [&] {
             widgets->text("total buffer size is %s", bytes_string(buffer_size).c_str());
             MemoryStats::instance().foreach_buffer_info([&](auto data) {
                 double percent = double(data.size) / buffer_size;
                 widgets->text(ocarina::format("size {}, percent {:.2f} %%, block {}\n",
-                                              bytes_string(data.size),percent * 100,
+                                              bytes_string(data.size), percent * 100,
                                               data.name));
             });
         });
@@ -117,7 +140,7 @@ void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
             auto vert_num = geometry_.accel().vertex_num();
             auto mesh_num = geometry_.accel().mesh_num();
             auto string = ocarina::format("vertex num is {}\ntriangle num is {}\nmesh num is {}",
-                                          triangle_num,vert_num, mesh_num);
+                                          triangle_num, vert_num, mesh_num);
             widgets->text(string);
         });
     });

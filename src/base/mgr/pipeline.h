@@ -35,6 +35,7 @@ protected:
     bool show_framebuffer_data_{true};
     bool show_detail_{true};
     bool show_stats_{true};
+    bool show_hotfix_{true};
 
     /// node for show detail
     mutable GUI *cur_node_{nullptr};
@@ -60,6 +61,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_detail(Widgets *widgets) noexcept;
     void render_stats(Widgets *widgets) noexcept;
+    void render_hotfix(Widgets *widgets) noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(cur_node, )
 
     /// virtual function start

@@ -58,14 +58,15 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     defer_delete_.clear();
 }
 
-void HotfixSystem::check_and_build() noexcept {
+bool HotfixSystem::check_and_build() noexcept {
     auto modules = file_tool_.get_modified_targets();
     if (modules.empty()) {
-        return;
+        return false;
     }
     build_system_.build_targets(modules, [this]<typename... Args>(Args &&...args) {
         this->on_build_finish(OC_FORWARD(args)...);
     });
+    return true;
 }
 
 void HotfixSystem::init() noexcept {
