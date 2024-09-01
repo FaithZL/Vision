@@ -214,6 +214,7 @@ public:
 
 class IPointLight : public Light {
 public:
+    IPointLight() = default;
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,

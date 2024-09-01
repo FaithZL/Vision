@@ -46,10 +46,6 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(IAreaLight, two_sided_, *warper_)
-//
-//    bool render_UI(ocarina::Widgets *widgets) noexcept override {
-//        return true;
-//    }
 
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;
