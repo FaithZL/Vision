@@ -36,7 +36,7 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
 }
 
 
-void Demo::restore(const vision::RuntimeObject *old_obj) noexcept {
+void Demo::restore(vision::RuntimeObject *old_obj) noexcept {
 //    RuntimeObject::restore(old_obj);
     VS_HOTFIX_MOVE_ATTRS(Demo, attr_int, attr_float, test, tests)
 }

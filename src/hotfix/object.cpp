@@ -10,7 +10,7 @@ SP<ISerialized> RuntimeObject::serialized_data() const noexcept {
     return SerializedData<decltype(this)>::apply(this);
 }
 
-void RuntimeObject::restore(const vision::RuntimeObject *old_obj) noexcept {
+void RuntimeObject::restore(vision::RuntimeObject *old_obj) noexcept {
     deserialize(old_obj->serialized_data());
 }
 }// namespace vision::inline hotfix

@@ -29,7 +29,7 @@ void Test::fill() noexcept {
 }
 
 
-void Test::restore(const vision::RuntimeObject *old_obj) noexcept {
+void Test::restore(vision::RuntimeObject *old_obj) noexcept {
 //        RuntimeObject::restore(old_obj);
     VS_HOTFIX_MOVE_ATTRS(Test, attr_int, attr_float)
 #ifdef HOTFIX_FLAG
