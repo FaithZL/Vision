@@ -27,6 +27,7 @@ void HotfixTest::update_runtime_object(const vision::IObjectConstructor *constru
         HotfixSystem::instance().serializer().erase_old_object(demo.get());
         HotfixSystem::instance().defer_delete(demo);
         new_obj->restore(demo.get());
+        auto mm = move(demo.get()->tests);
         demo = new_obj;
     }
 }
