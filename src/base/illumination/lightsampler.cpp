@@ -32,7 +32,9 @@ Uint LightSampler::correct_index(Uint index) const noexcept {
 }
 
 void LightSampler::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
-    int i = 0;
+    for (int i = 0; i < lights_.size(); ++i) {
+
+    }
 }
 
 void LightSampler::tidy_up() noexcept {
