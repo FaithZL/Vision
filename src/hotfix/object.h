@@ -21,6 +21,12 @@ class ISerialized;
     auto old_obj_ = dynamic_cast<Type *>(old_obj); \
     MAP(VS_HOTFIX_MOVE_ATTR, ##__VA_ARGS__)
 
+#define VS_HOTFIX_MAKE_RESTORE(Super, Type, ...)             \
+    void restore(RuntimeObject *old_obj) noexcept override { \
+        Super::restore(old_obj);                             \
+        VS_HOTFIX_MOVE_ATTRS(Type, ##__VA_ARGS__)            \
+    }
+
 class RuntimeObject : public Hashable {
 public:
     RuntimeObject() = default;

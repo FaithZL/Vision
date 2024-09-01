@@ -187,3 +187,7 @@ public:
     OC_EXPORT_API void destroy(Class *obj) {                                                 \
         ocarina::delete_with_allocator(obj);                                                 \
     }
+
+#define VS_MAKE_CLASS_CREATOR_HOTFIX(NS, Class) \
+    VS_REGISTER_HOTFIX(NS, Class)               \
+    VS_MAKE_CLASS_CREATOR(NS::Class)
