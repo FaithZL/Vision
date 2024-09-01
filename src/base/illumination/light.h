@@ -103,6 +103,7 @@ protected:
     }
 
 public:
+    Light() = default;
     explicit Light(const LightDesc &desc, LightType light_type);
     OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
@@ -202,6 +203,7 @@ protected:
     const ShapeInstance *instance_{};
 
 public:
+    IAreaLight() = default;
     explicit IAreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}

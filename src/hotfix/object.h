@@ -23,6 +23,7 @@ class ISerialized;
 
 class RuntimeObject : public Hashable {
 public:
+    RuntimeObject() = default;
     [[nodiscard]] SP<ISerialized> serialized_data() const noexcept;
     virtual void restore(RuntimeObject *old_obj) noexcept;
     virtual void serialize(SP<ISerialized> output) const noexcept {}

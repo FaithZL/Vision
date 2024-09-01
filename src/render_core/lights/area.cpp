@@ -36,6 +36,7 @@ private:
     SP<Warper> warper_{nullptr};
 
 public:
+    AreaLight() = default;
     explicit AreaLight(const LightDesc &desc)
         : IAreaLight(desc),
           two_sided_{desc["two_sided"].as_bool(false)} {
@@ -45,6 +46,10 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(IAreaLight, two_sided_, *warper_)
+//
+//    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+//        return true;
+//    }
 
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;
@@ -173,3 +178,5 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR(vision::AreaLight)
+VS_REGISTER_HOTFIX(vision, AreaLight)
+VS_REGISTER_CURRENT_PATH(0, "vision-light-area.dll")
