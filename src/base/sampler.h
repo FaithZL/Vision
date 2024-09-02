@@ -29,8 +29,10 @@ protected:
     uint spp_{1u};
 
 public:
+    Sampler() = default;
     explicit Sampler(const SamplerDesc &desc)
         : Node(desc), spp_(desc["spp"].as_uint(1u)) {}
+    VS_HOTFIX_MAKE_RESTORE(Node, spp_)
     virtual void load_data() noexcept = 0;
     [[nodiscard]] virtual Float next_1d() noexcept = 0;
     [[nodiscard]] virtual bool is_valid() const noexcept = 0;

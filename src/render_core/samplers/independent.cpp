@@ -15,7 +15,9 @@ private:
     optional<Uint> state_{};
 
 public:
+    IndependentSampler() = default;
     explicit IndependentSampler(const SamplerDesc &desc) : Sampler(desc) {}
+    VS_HOTFIX_MAKE_RESTORE(Sampler, state_)
     void load_data() noexcept override {
         state_.emplace(Uint{0u});
     }
@@ -24,7 +26,7 @@ public:
         try_load_data();
         state_ = state;
     }
-    void temporary(const ocarina::function<void (Sampler *)> &func) noexcept override {
+    void temporary(const ocarina::function<void(Sampler *)> &func) noexcept override {
         try_load_data();
         Uint temp_state = *state_;
         func(this);
@@ -42,4 +44,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::IndependentSampler)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, IndependentSampler)
+VS_REGISTER_CURRENT_PATH(0, "vision-sampler-independent.dll")
