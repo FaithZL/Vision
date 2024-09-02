@@ -36,7 +36,9 @@ void LightSampler::update_runtime_object(const vision::IObjectConstructor *const
         TLight light = lights_[i];
         if (constructor->match(light.get())) {
             SP<Light> new_light = ModuleInterface::instance().construct_shared<Light>(light->class_name());
-
+            new_light->restore(light.get());
+            auto l = TLight{new_light};
+            lights_[i] = l;
         }
     }
 }
