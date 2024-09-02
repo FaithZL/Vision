@@ -57,7 +57,7 @@ public:
         inst_idx_ = scene().instances().size();
         shape->for_each([&](SP<ShapeInstance> instance, uint i) {
             instance->set_material(TObject<Material>(scene().obtain_black_body()));
-            scene().instances().push_back(*(instance));
+            scene().instances().push_back(instance);
             set_instance(instance.get());
         });
     }

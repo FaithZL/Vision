@@ -36,7 +36,7 @@ public:
      * There is no need to update the acceleration structure
      * @param shapes
      */
-    void update_instances(const vector<ShapeInstance> &instances);
+    void update_instances(const vector<SP<ShapeInstance>> &instances);
     void reset_device_buffer();
     void build_accel();
     void upload() const;

@@ -19,7 +19,7 @@ Geometry::Geometry(Pipeline *rp)
       transforms_(rp->bindless_array()),
       accel_(rp->device().create_accel()) {}
 
-void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) {
+void Geometry::update_instances(const vector<SP<ShapeInstance>> &instances) {
 
     vertices_.host_buffer().clear();
     triangles_.host_buffer().clear();
@@ -34,9 +34,9 @@ void Geometry::update_instances(const vector<vision::ShapeInstance> &instances) 
         mesh_handles_.push_back(mesh_handle);
     });
 
-    std::for_each(instances.begin(), instances.end(), [&](const ShapeInstance &instance) {
-        instances_.push_back(instance.handle());
-        transforms_.push_back(instance.o2w());
+    std::for_each(instances.begin(), instances.end(), [&](SP<const ShapeInstance> instance) {
+        instances_.push_back(instance->handle());
+        transforms_.push_back(instance->o2w());
     });
 }
 

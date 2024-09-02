@@ -143,7 +143,7 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
                 instance->set_outside(*outside);
             }
         }
-        instances_.push_back(*instance.get());
+        instances_.push_back(instance);
     });
 }
 
@@ -160,22 +160,22 @@ void Scene::load_shapes(const vector<ShapeDesc> &descs) {
 }
 
 void Scene::fill_instances() {
-    for (ShapeInstance &instance : instances_) {
-        if (instance.has_material()) {
-            const Material *material = instance.material().get();
-            instance.update_material_id(materials().encode_id(material->index(), material));
+    for (auto &instance : instances_) {
+        if (instance->has_material()) {
+            const Material *material = instance->material().get();
+            instance->update_material_id(materials().encode_id(material->index(), material));
         }
-        if (instance.has_emission()) {
-            const Light *emission = instance.emission().get();
-            instance.update_light_id(light_sampler_->lights().encode_id(emission->index(), emission));
+        if (instance->has_emission()) {
+            const Light *emission = instance->emission().get();
+            instance->update_light_id(light_sampler_->lights().encode_id(emission->index(), emission));
         }
-        instance.fill_mesh_id();
+        instance->fill_mesh_id();
         if (has_medium()) {
-            if (instance.has_inside()) {
-                instance.update_inside_medium_id(instance.inside()->index());
+            if (instance->has_inside()) {
+                instance->update_inside_medium_id(instance->inside()->index());
             }
-            if (instance.has_outside()) {
-                instance.update_outside_medium_id(instance.outside()->index());
+            if (instance->has_outside()) {
+                instance->update_outside_medium_id(instance->outside()->index());
             }
         }
     }
