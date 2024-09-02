@@ -200,7 +200,7 @@ class ShapeInstance;
 class IAreaLight : public Light {
 protected:
     EncodedData<uint> inst_idx_{InvalidUI32};
-    const ShapeInstance *instance_{};
+    weak_ptr<const ShapeInstance> instance_{};
 
 public:
     IAreaLight() = default;
@@ -208,7 +208,7 @@ public:
         : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_ENCODABLE_FUNC(Light, inst_idx_)
-    void set_instance(const ShapeInstance *inst) noexcept;
+    void set_instance(const SP<const ShapeInstance> &inst) noexcept;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 

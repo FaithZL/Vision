@@ -127,7 +127,7 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
             desc.emission.set_value("inst_id", instances_.size());
             TObject<IAreaLight> light = load_light<IAreaLight>(desc.emission);
             instance->set_emission(light);
-            light->set_instance(instance.get());
+            light->set_instance(instance);
         }
         if (has_medium()) {
             auto inside = mediums_.find_if([&](SP<Medium> &medium) {

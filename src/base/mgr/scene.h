@@ -108,7 +108,7 @@ public:
     [[nodiscard]] float world_diameter() const noexcept { return world_radius() * 2; }
     void upload_data() noexcept;
     [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return instances_[id].get(); }
-    [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return (instances_[id]).get(); }
+    [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return instances_[id].get(); }
 };
 
 #undef MAKE_GETTER

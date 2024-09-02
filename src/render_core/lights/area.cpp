@@ -55,10 +55,10 @@ public:
         SP<ShapeGroup> shape = Node::create_shared<ShapeGroup>(sd);
         scene().groups().push_back(shape);
         inst_idx_ = scene().instances().size();
-        shape->for_each([&](SP<ShapeInstance> instance, uint i) {
+        shape->for_each([&](const SP<ShapeInstance> &instance, uint i) {
             instance->set_material(TObject<Material>(scene().obtain_black_body()));
             scene().instances().push_back(instance);
-            set_instance(instance.get());
+            set_instance(instance);
         });
     }
 
@@ -72,7 +72,7 @@ public:
 
     [[nodiscard]] float surface_area() const noexcept {
         float ret = 0.f;
-        vector<float> weights = instance_->surface_areas();
+        vector<float> weights = instance_.lock()->surface_areas();
         for (float weight : weights) {
             ret += weight;
         }
