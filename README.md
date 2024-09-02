@@ -10,7 +10,7 @@ compute https://github.com/LuisaGroup/LuisaCompute, which is a great invention!
 |--------------|----------|
 | Render Graph | Doing    |
 | Shader Graph | Done     |
-| Hot fix      | Planned  |
+| Hot fix      | Done     |
 
 ### Editor
 
