@@ -41,8 +41,8 @@ void BakePipeline::prepare() noexcept {
 
 void BakePipeline::preprocess() noexcept {
     // fill baked shape list
-    for_each_need_bake([&](ShapeInstance &item) {
-        baked_shapes_.emplace_back(&item);
+    for_each_need_bake([&](SP<ShapeInstance> item) {
+        baked_shapes_.emplace_back(item.get());
     });
     SP<UVUnwrapper> uv_unwrapper = Node::create_shared<UVUnwrapper>(_desc.unwrapper_desc);
 

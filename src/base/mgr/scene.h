@@ -36,7 +36,7 @@ private:
     TIntegrator integrator_{};
     TLightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
-    vector<ShapeInstance> instances_;
+    vector<SP<ShapeInstance>> instances_;
     Polymorphic<SP<Medium>> mediums_;
     WarperDesc warper_desc_;
     RenderSettingDesc render_setting_{};
@@ -107,8 +107,8 @@ public:
     [[nodiscard]] float world_radius() const noexcept { return ocarina::max(aabb_.radius(), min_radius_); }
     [[nodiscard]] float world_diameter() const noexcept { return world_radius() * 2; }
     void upload_data() noexcept;
-    [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return &instances_[id]; }
-    [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return &instances_[id]; }
+    [[nodiscard]] ShapeInstance *get_instance(uint id) noexcept { return instances_[id].get(); }
+    [[nodiscard]] const ShapeInstance *get_instance(uint id) const noexcept { return (instances_[id]).get(); }
 };
 
 #undef MAKE_GETTER

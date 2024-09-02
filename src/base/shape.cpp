@@ -138,14 +138,15 @@ ShapeGroup::ShapeGroup(vision::ShapeInstance inst) {
     inst.init_aabb();
     aabb.extend(inst.aabb);
     inst.set_name(ocarina::format("{}_0", name()));
-    instances_.push_back(inst);
+
+    instances_.push_back(make_shared<ShapeInstance>(inst));
 }
 
 void ShapeGroup::add_instance(const vision::ShapeInstance &instance) noexcept {
-    instances_.push_back(instance);
+    instances_.push_back(make_shared<ShapeInstance>(instance));
 }
 
-void ShapeGroup::add_instances(const vector<vision::ShapeInstance> &instances) noexcept {
+void ShapeGroup::add_instances(vector<vision::ShapeInstance> instances) noexcept {
     for (const auto &instance : instances) {
         add_instance(instance);
     }
@@ -156,24 +157,24 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
     if (desc.contains("medium")) {
         string inside = desc["medium"]["inside"].as_string();
         string outside = desc["medium"]["outside"].as_string();
-        for_each([&](ShapeInstance &instance, uint i) {
-            instance.set_inside_name(inside);
-            instance.set_outside_name(outside);
-            instance.set_material_name(mat_name);
-            instance.set_o2w(desc.o2w.mat);
-            instance.init_aabb();
-            instance.set_name(ocarina::format("{}_{}", name(), i));
-            aabb.extend(instance.aabb);
+        for_each([&](SP<ShapeInstance> instance, uint i) {
+            instance->set_inside_name(inside);
+            instance->set_outside_name(outside);
+            instance->set_material_name(mat_name);
+            instance->set_o2w(desc.o2w.mat);
+            instance->init_aabb();
+            instance->set_name(ocarina::format("{}_{}", name(), i));
+            aabb.extend(instance->aabb);
         });
     } else {
-        for_each([&](ShapeInstance &instance, uint i) {
-            instance.set_inside(scene().global_medium());
-            instance.set_outside(scene().global_medium());
-            instance.set_material_name(mat_name);
-            instance.set_o2w(desc.o2w.mat);
-            instance.init_aabb();
-            instance.set_name(ocarina::format("{}_{}", name(), i));
-            aabb.extend(instance.aabb);
+        for_each([&](SP<ShapeInstance> instance, uint i) {
+            instance->set_inside(scene().global_medium());
+            instance->set_outside(scene().global_medium());
+            instance->set_material_name(mat_name);
+            instance->set_o2w(desc.o2w.mat);
+            instance->init_aabb();
+            instance->set_name(ocarina::format("{}_{}", name(), i));
+            aabb.extend(instance->aabb);
         });
     }
 }
