@@ -50,6 +50,7 @@ void LightSampler::update_runtime_object(const vision::IObjectConstructor *const
             case LightType::Infinite: {
                 TObject<Environment> new_env = dynamic_object_cast<Environment>(new_light);
                 TObject<Environment> old_env = dynamic_object_cast<Environment>(light);
+                env_light_ = new_env;
                 break;
             }
             default:
