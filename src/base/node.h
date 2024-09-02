@@ -43,7 +43,7 @@ protected:
 
 public:
     Node() = default;
-    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, Node, name_)
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, name_)
     explicit Node(const NodeDesc &desc) : name_(desc.name) {}
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;

@@ -27,7 +27,7 @@ public:
         : IPointLight(desc),
           position_(desc["position"].as_float3()) {}
     OC_ENCODABLE_FUNC(IPointLight, position_)
-    VS_HOTFIX_MAKE_RESTORE(IPointLight, PointLight, position_)
+    VS_HOTFIX_MAKE_RESTORE(IPointLight, position_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         return 4 * Pi * average();

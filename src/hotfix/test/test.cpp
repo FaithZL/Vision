@@ -31,7 +31,7 @@ void Test::fill() noexcept {
 
 void Test::restore(vision::RuntimeObject *old_obj) noexcept {
 //        RuntimeObject::restore(old_obj);
-    VS_HOTFIX_MOVE_ATTRS(Test, attr_int, attr_float)
+    VS_HOTFIX_MOVE_ATTRS(attr_int, attr_float)
 #ifdef HOTFIX_FLAG
     VS_HOTFIX_MOVE_ATTR(attr_double)
 #endif

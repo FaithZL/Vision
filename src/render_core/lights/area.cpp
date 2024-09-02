@@ -46,7 +46,7 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(IAreaLight, two_sided_, *warper_)
-    VS_HOTFIX_MAKE_RESTORE(IAreaLight, AreaLight, two_sided_, warper_)
+    VS_HOTFIX_MAKE_RESTORE(IAreaLight, two_sided_, warper_)
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;
         sd.sub_type = "quad";

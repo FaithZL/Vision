@@ -106,7 +106,7 @@ protected:
 public:
     Light(LightType type) noexcept : type_(type) {}
     explicit Light(const LightDesc &desc, LightType light_type);
-    VS_HOTFIX_MAKE_RESTORE(Node, Light, scale_, switch_, color_, index_)
+    VS_HOTFIX_MAKE_RESTORE(Node, scale_, switch_, color_, index_)
     OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
@@ -210,7 +210,7 @@ public:
         : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_ENCODABLE_FUNC(Light, inst_idx_)
-    VS_HOTFIX_MAKE_RESTORE(Light, IAreaLight, inst_idx_, instance_)
+    VS_HOTFIX_MAKE_RESTORE(Light, inst_idx_, instance_)
     void set_instance(const SP<const ShapeInstance> &inst) noexcept;
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };

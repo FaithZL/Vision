@@ -12,7 +12,6 @@ namespace vision::inline hotfix {
 
 Demo::Demo()
     : test() {
-
 }
 
 Demo::~Demo() {
@@ -38,7 +37,7 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
 
 void Demo::restore(vision::RuntimeObject *old_obj) noexcept {
 //    RuntimeObject::restore(old_obj);
-    VS_HOTFIX_MOVE_ATTRS(Demo, attr_int, attr_float, test, tests)
+    VS_HOTFIX_MOVE_ATTRS(attr_int, attr_float, test, tests)
 }
 
 void Demo::clear() noexcept {
