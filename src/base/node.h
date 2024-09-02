@@ -136,6 +136,12 @@ requires std::is_base_of_v<From, To>
     return TObject<To, Desc>(std::move(std::dynamic_pointer_cast<To>(object.impl())));
 }
 
+template<typename To, typename From, typename Desc>
+requires std::is_base_of_v<From, To>
+[[nodiscard]] auto static_object_cast(TObject<From, Desc> object) noexcept {
+    return TObject<To, Desc>(std::move(std::static_pointer_cast<To>(object.impl())));
+}
+
 template<typename impl_t, typename desc_t = impl_t::Desc>
 class TObjectUI : public TObject<impl_t, desc_t>, public GUI {
 public:
