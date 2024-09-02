@@ -42,8 +42,10 @@ protected:
     ocarina::Shader<signature> shader_;
 
 public:
+    Integrator() = default;
     explicit Integrator(const IntegratorDesc &desc)
         : Node(desc) {}
+    VS_HOTFIX_MAKE_RESTORE(Node, frame_index_, render_time_, cur_render_time_, shader_, datas_)
     virtual void compile() noexcept = 0;
     virtual Float3 Li(RayState rs, Float scatter_pdf, const HitContext &hc, const RenderEnv &render_env) const noexcept {
         return Li(rs, scatter_pdf, spectrum()->one(), hc, render_env);
@@ -113,12 +115,12 @@ protected:
     SP<Denoiser> denoiser_{};
 
 public:
+    IlluminationIntegrator() = default;
     explicit IlluminationIntegrator(const IntegratorDesc &desc);
-
+    VS_HOTFIX_MAKE_RESTORE(Integrator, max_depth_, min_depth_, rr_threshold_, mis_mode_,
+                           albedo_, emission_, separate_, denoiser_)
     OC_ENCODABLE_FUNC(Integrator, max_depth_, min_depth_, rr_threshold_)
-
     VS_MAKE_GUI_STATUS_FUNC(Integrator, denoiser_)
-
     OC_MAKE_MEMBER_GETTER(separate, )
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

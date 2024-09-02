@@ -11,6 +11,7 @@ namespace vision {
 using namespace ocarina;
 class PathTracingIntegrator : public IlluminationIntegrator {
 public:
+    PathTracingIntegrator() = default;
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc) {}
 
@@ -22,7 +23,6 @@ public:
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_motion_vectors();
     }
-
     [[nodiscard]] Film *film() noexcept { return scene().film(); }
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
 
@@ -70,4 +70,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::PathTracingIntegrator)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, PathTracingIntegrator)
+VS_REGISTER_CURRENT_PATH(0, "vision-integrator-pt.dll")

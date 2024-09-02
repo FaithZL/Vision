@@ -38,7 +38,7 @@ void LightSampler::update_runtime_object(const vision::IObjectConstructor *const
         if (!constructor->match(light.get())) {
             continue;
         }
-        auto new_light = TLight{ModuleInterface::instance().construct_shared<Light>(light->class_name())};
+        auto new_light = TLight{constructor->construct_shared<Light>()};
         switch (new_light->type()) {
             case LightType::Area: {
                 TObject<IAreaLight> new_al = dynamic_object_cast<IAreaLight>(new_light);
