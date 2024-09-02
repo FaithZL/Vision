@@ -32,8 +32,7 @@ public:
     using Creator = Node *(const NodeDesc *);
     using Deleter = void(Node *);
     using Shared = shared_ptr<Node>;
-    using UniqueCustom = unique_ptr<Node, Deleter *>;
-    using Unique = unique_ptr<Node>;
+    using Unique = unique_ptr<Node, Deleter *>;
 
 protected:
     string name_;
@@ -60,10 +59,11 @@ public:
     }
 
     template<typename impl_t, typename Desc>
-    [[nodiscard]] static UP<impl_t> create_unique(const Desc &desc) {
+    [[nodiscard]] static UP<impl_t, Deleter*> create_unique(const Desc &desc) {
         const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
         Node::Creator *creator = module->function<Node::Creator *>("create");
-        UP<impl_t> ret = UP<impl_t>(dynamic_cast<impl_t *>(creator(&desc)));
+        Node::Deleter *deleter = module->function<Node::Deleter *>("destroy");
+        UP<impl_t, Deleter*> ret = UP<impl_t, Deleter*>(dynamic_cast<impl_t *>(creator(&desc)), deleter);
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
