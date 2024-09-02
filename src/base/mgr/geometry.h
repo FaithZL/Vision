@@ -19,7 +19,7 @@ private:
     RegistrableManaged<Vertex> vertices_;
     RegistrableManaged<Triangle> triangles_;
     RegistrableManaged<float4x4> transforms_;
-    RegistrableManaged<InstanceHandle> instances_;
+    RegistrableManaged<InstanceData> instances_;
     RegistrableManaged<MeshHandle> mesh_handles_;
     ocarina::Accel accel_;
 

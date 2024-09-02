@@ -146,7 +146,7 @@ void ShapeGroup::add_instance(const vision::ShapeInstance &instance) noexcept {
     instances_.push_back(make_shared<ShapeInstance>(instance));
 }
 
-void ShapeGroup::add_instances(const vector<vision::ShapeInstance> &instances) noexcept {
+void ShapeGroup::add_instances(vector<vision::ShapeInstance> instances) noexcept {
     for (const auto &instance : instances) {
         add_instance(instance);
     }

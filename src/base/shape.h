@@ -18,7 +18,7 @@ namespace vision {
 
 struct Geometry;
 
-struct InstanceHandle {
+struct InstanceData {
     // todo compress unsigned int data
     uint light_id{InvalidUI32};
     uint mat_id{InvalidUI32};
@@ -31,7 +31,7 @@ struct InstanceHandle {
 
 }// namespace vision
 
-OC_STRUCT(vision, InstanceHandle, light_id, mat_id, lightmap_id,
+OC_STRUCT(vision, InstanceData, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w){};
 
 namespace vision {
@@ -105,7 +105,7 @@ OC_STRUCT(vision, MeshHandle, vertex_offset, triangle_offset){};
 namespace vision {
 class ShapeInstance : public GUI {
 protected:
-    InstanceHandle handle_;
+    InstanceData handle_;
     float factor_{};
     uint index_{};
     TObject<IAreaLight> emission_{};
@@ -173,7 +173,7 @@ public:
     [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return *(instances_[i]); }
     [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return *(instances_[i]); }
     void add_instance(const ShapeInstance &instance) noexcept;
-    void add_instances(const vector<ShapeInstance> &instances) noexcept;
+    void add_instances(vector<ShapeInstance> instances) noexcept;
     void for_each(const std::function<void(SP<const ShapeInstance>, uint)> &func) const noexcept {
         for (uint i = 0; i < instances_.size(); ++i) {
             func(instances_[i], i);

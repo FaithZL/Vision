@@ -28,7 +28,7 @@ void Geometry::update_instances(const vector<SP<ShapeInstance>> &instances) {
 
     MeshRegistry::instance().for_each([&](const Mesh *mesh, uint i) {
         MeshHandle mesh_handle{.vertex_offset = (uint)vertices_.host_buffer().size(),
-                                 .triangle_offset = (uint)triangles_.host_buffer().size()};
+                               .triangle_offset = (uint)triangles_.host_buffer().size()};
         vertices_.append(mesh->vertices());
         triangles_.append(mesh->triangles());
         mesh_handles_.push_back(mesh_handle);
