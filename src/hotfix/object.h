@@ -54,7 +54,7 @@ public:
     }
     template<typename T = RuntimeObject>
     [[nodiscard]] SP<T> construct_shared() const noexcept {
-        return SP<T>(construct<T>());
+        return SP<T>(construct<T>(), &destroy);
     }
     template<typename T = RuntimeObject>
     [[nodiscard]] UP<T> construct_unique() const noexcept {

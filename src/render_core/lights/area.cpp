@@ -169,6 +169,9 @@ public:
         warper_->build(std::move(weights));
         warper_->prepare();
     }
+    ~AreaLight() {
+        cout << "~AreaLight()" << endl;
+    }
 };
 
 }// namespace vision

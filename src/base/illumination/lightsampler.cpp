@@ -34,12 +34,24 @@ Uint LightSampler::correct_index(Uint index) const noexcept {
 void LightSampler::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     for (int i = 0; i < lights_.size(); ++i) {
         TLight &light = lights_[i];
-        if (constructor->match(light.get())) {
-            SP<Light> light_sp = ModuleInterface::instance().construct_shared<Light>(light->class_name());
-            light_sp->restore(light.get());
-            auto new_light = TLight{light_sp};
-            lights_[i] = new_light;
+        if (!constructor->match(light.get())) {
+            continue;
         }
+        auto new_light = TLight{ModuleInterface::instance().construct_shared<Light>(light->class_name())};
+        switch (new_light->type()) {
+            case LightType::Area: {
+                TObject<IAreaLight> tmp = dynamic_object_cast<IAreaLight>(new_light);
+                ShapeInstance *shape_instance = tmp->instance();
+                break;
+            }
+            case LightType::Infinite: {
+                break;
+            }
+            default:
+                break;
+        }
+        new_light->restore(light.get());
+        lights_[i] = new_light;
     }
 }
 
