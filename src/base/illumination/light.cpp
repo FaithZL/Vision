@@ -24,10 +24,6 @@ bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
-void IAreaLight::set_instance(const SP<const vision::ShapeInstance> &inst) noexcept {
-    instance_ = inst;
-}
-
 ShapeInstance *IAreaLight::instance() const noexcept {
     return scene().get_instance(inst_idx_.hv());
 }

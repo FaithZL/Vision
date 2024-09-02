@@ -59,7 +59,6 @@ public:
         shape->for_each([&](const SP<ShapeInstance> &instance, uint i) {
             instance->set_material(TObject<Material>(scene().obtain_black_body()));
             scene().instances().push_back(instance);
-            set_instance(instance);
         });
     }
 
@@ -73,7 +72,7 @@ public:
 
     [[nodiscard]] float surface_area() const noexcept {
         float ret = 0.f;
-        vector<float> weights = instance_.lock()->surface_areas();
+        vector<float> weights = instance()->surface_areas();
         for (float weight : weights) {
             ret += weight;
         }

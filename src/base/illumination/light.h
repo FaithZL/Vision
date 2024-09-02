@@ -202,7 +202,6 @@ class ShapeInstance;
 class IAreaLight : public Light {
 protected:
     EncodedData<uint> inst_idx_{InvalidUI32};
-    weak_ptr<const ShapeInstance> instance_{};
 
 public:
     IAreaLight() : Light(LightType::Area) {}
@@ -210,8 +209,7 @@ public:
         : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_ENCODABLE_FUNC(Light, inst_idx_)
-    VS_HOTFIX_MAKE_RESTORE(Light, inst_idx_, instance_)
-    void set_instance(const SP<const ShapeInstance> &inst) noexcept;
+    VS_HOTFIX_MAKE_RESTORE(Light, inst_idx_)
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 

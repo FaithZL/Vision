@@ -4,6 +4,7 @@
 
 #include "lightsampler.h"
 #include "base/mgr/pipeline.h"
+#include "base/shape.h"
 
 namespace vision {
 
@@ -40,11 +41,15 @@ void LightSampler::update_runtime_object(const vision::IObjectConstructor *const
         auto new_light = TLight{ModuleInterface::instance().construct_shared<Light>(light->class_name())};
         switch (new_light->type()) {
             case LightType::Area: {
-                TObject<IAreaLight> tmp = dynamic_object_cast<IAreaLight>(new_light);
-                ShapeInstance *shape_instance = tmp->instance();
+                TObject<IAreaLight> new_al = dynamic_object_cast<IAreaLight>(new_light);
+                TObject<IAreaLight> old_al = dynamic_object_cast<IAreaLight>(light);
+                ShapeInstance *shape_instance = old_al->instance();
+                shape_instance->set_emission(new_al);
                 break;
             }
             case LightType::Infinite: {
+                TObject<Environment> new_env = dynamic_object_cast<Environment>(new_light);
+                TObject<Environment> old_env = dynamic_object_cast<Environment>(light);
                 break;
             }
             default:
