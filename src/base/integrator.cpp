@@ -36,7 +36,7 @@ IlluminationIntegrator::IlluminationIntegrator(const vision::IntegratorDesc &des
       rr_threshold_(desc["rr_threshold"].as_float(1.f)),
       mis_mode_(MISMode(desc["mis_mode"].as_int(0))),
       separate_(desc["separate"].as_bool(false)),
-      denoiser_(Node::load_shared<Denoiser>(desc.denoiser_desc)) {}
+      denoiser_(Node::create_shared<Denoiser>(desc.denoiser_desc)) {}
 
 void IlluminationIntegrator::prepare() noexcept {
     encode_data();

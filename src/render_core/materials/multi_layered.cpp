@@ -23,8 +23,8 @@ public:
     explicit MultiLayeredMaterial(const MaterialDesc &desc)
         : Material(desc),
           thickness_(Slot::create_slot(desc.slot("thickness_", 1.f, Number))),
-          bottom_(Node::load_shared<Material>(*desc.mat0)),
-          top_(Node::load_shared<Material>(*desc.mat1)) {}
+          bottom_(Node::create_shared<Material>(*desc.mat0)),
+          top_(Node::create_shared<Material>(*desc.mat1)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         bottom_->prepare();

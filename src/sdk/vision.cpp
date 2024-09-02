@@ -113,7 +113,7 @@ void VisionRendererImpl::init_pipeline(const char *rpath) {
     Global::instance().set_device(_device.get());
     desc.device = _device.get();
     desc.sub_type = "fixed";
-    _pipeline = Node::load_shared<Pipeline>(desc);
+    _pipeline = Node::create_shared<Pipeline>(desc);
     Global::instance().set_pipeline(_pipeline.get());
 }
 

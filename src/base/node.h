@@ -57,8 +57,18 @@ public:
     [[nodiscard]] string plugin_name() const noexcept {
         return ocarina::format("vision-{}-{}", category().data(), impl_type().data());
     }
+
     template<typename impl_t, typename Desc>
-    [[nodiscard]] static SP<impl_t> load_shared(const Desc &desc) {
+    [[nodiscard]] static UP<impl_t> create_unique(const Desc &desc) {
+        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
+        Node::Creator *creator = module->function<Node::Creator *>("create");
+        UP<impl_t> ret = UP<impl_t>(dynamic_cast<impl_t *>(creator(&desc)));
+        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
+        return ret;
+    }
+
+    template<typename impl_t, typename Desc>
+    [[nodiscard]] static SP<impl_t> create_shared(const Desc &desc) {
         const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
         Node::Creator *creator = module->function<Node::Creator *>("create");
         Node::Deleter *deleter = module->function<Node::Deleter *>("destroy");
@@ -66,6 +76,7 @@ public:
         OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
         return ret;
     }
+
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] string name() const noexcept { return name_; }
     void set_name(const string &name) noexcept { name_ = name; }
@@ -89,8 +100,8 @@ public:
     string name;
     TObject() = default;
     TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
-    explicit TObject(const desc_t &desc) : impl_(Node::load_shared<Impl>(desc)) {}
-    void init(const desc_t &desc) noexcept { impl_ = Node::load_shared<Impl>(desc); }
+    explicit TObject(const desc_t &desc) : impl_(Node::create_shared<Impl>(desc)) {}
+    void init(const desc_t &desc) noexcept { impl_ = Node::create_shared<Impl>(desc); }
     void init(SP<Impl> sp) { impl_ = ocarina::move(sp); }
 
     template<class U>

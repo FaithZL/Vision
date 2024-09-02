@@ -21,7 +21,7 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     Env::debugger().init(device());
     Env::set_code_obfuscation(desc["obfuscation"].as_bool(false));
     Env::set_valid_check(desc["valid_check"].as_bool(false));
-    frame_buffer_ = Node::load_shared<FrameBuffer>(desc.frame_buffer_desc);
+    frame_buffer_ = Node::create_shared<FrameBuffer>(desc.frame_buffer_desc);
     HotfixSystem::instance().init();
 }
 

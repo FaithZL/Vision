@@ -11,7 +11,7 @@ SP<RenderPass> RenderPass::create(const std::string &name, const vision::Paramet
     PassDesc desc(name);
     desc.sub_type = name;
     desc.init(ps);
-    return Node::load_shared<RenderPass>(desc);
+    return Node::create_shared<RenderPass>(desc);
 }
 
 }// namespace vision
