@@ -13,12 +13,14 @@ private:
     EncodedData<float> lens_radius_;
 
 public:
+    ThinLensCamera() = default;
     explicit ThinLensCamera(const SensorDesc &desc)
         : Camera(desc),
           focal_distance_(desc["focal_distance"].as_float(5.f)),
           lens_radius_(desc["lens_radius"].as_float(0.f)) {
     }
     OC_ENCODABLE_FUNC(Camera, focal_distance_, lens_radius_)
+    VS_HOTFIX_MAKE_RESTORE(Camera, focal_distance_,lens_radius_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Camera::render_sub_UI(widgets);
         changed_ |= widgets->input_float_limit("lens radius", &lens_radius_.hv(),
@@ -67,5 +69,5 @@ public:
     }
 };
 }// namespace vision
-
-VS_MAKE_CLASS_CREATOR(vision::ThinLensCamera)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, ThinLensCamera)
+VS_REGISTER_CURRENT_PATH(0, "vision-sensor-thin_lens.dll")

@@ -37,8 +37,10 @@ protected:
     EncodedData<uint> medium_id_{InvalidUI32};
 
 public:
+    Sensor() = default;
     explicit Sensor(const SensorDesc &desc);
     OC_ENCODABLE_FUNC(EncodedObject, filter_, film_)
+    VS_HOTFIX_MAKE_RESTORE(Node, filter_, film_, medium_, medium_id_, datas_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;
