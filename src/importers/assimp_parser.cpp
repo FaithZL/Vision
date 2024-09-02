@@ -256,7 +256,7 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
         SP<Material> material;
         if (ai_mesh->mMaterialIndex >= 0 && parse_material) {
             const MaterialDesc &desc = materials[ai_mesh->mMaterialIndex];
-            material = Node::load<Material>(desc);
+            material = Node::load_shared<Material>(desc);
             scene.materials().push_back(material);
         }
         for (int i = 0; i < ai_mesh->mNumVertices; ++i) {

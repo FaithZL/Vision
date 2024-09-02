@@ -19,7 +19,7 @@ public:
         : RenderPass(desc) {
         ToneMapperDesc tone_mapper_desc;
         tone_mapper_desc.init(DataWrap::object());
-        tone_mapper_ = Node::load<ToneMapper>(tone_mapper_desc);
+        tone_mapper_ = Node::load_shared<ToneMapper>(tone_mapper_desc);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {

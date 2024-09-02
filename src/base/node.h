@@ -31,7 +31,9 @@ class Node : public RuntimeObject, public GUI {
 public:
     using Creator = Node *(const NodeDesc *);
     using Deleter = void(Node *);
-    using Wrapper = shared_ptr<Node>;
+    using Shared = shared_ptr<Node>;
+    using UniqueCustom = unique_ptr<Node, Deleter *>;
+    using Unique = unique_ptr<Node>;
 
 protected:
     string name_;
@@ -56,7 +58,7 @@ public:
         return ocarina::format("vision-{}-{}", category().data(), impl_type().data());
     }
     template<typename impl_t, typename Desc>
-    [[nodiscard]] static SP<impl_t> load(const Desc &desc) {
+    [[nodiscard]] static SP<impl_t> load_shared(const Desc &desc) {
         const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
         Node::Creator *creator = module->function<Node::Creator *>("create");
         Node::Deleter *deleter = module->function<Node::Deleter *>("destroy");
@@ -87,8 +89,8 @@ public:
     string name;
     TObject() = default;
     TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
-    explicit TObject(const desc_t &desc) : impl_(Node::load<Impl>(desc)) {}
-    void init(const desc_t &desc) noexcept { impl_ = Node::load<Impl>(desc); }
+    explicit TObject(const desc_t &desc) : impl_(Node::load_shared<Impl>(desc)) {}
+    void init(const desc_t &desc) noexcept { impl_ = Node::load_shared<Impl>(desc); }
     void init(SP<Impl> sp) { impl_ = ocarina::move(sp); }
 
     template<class U>

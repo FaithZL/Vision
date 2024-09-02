@@ -80,11 +80,11 @@ public:
 
     [[nodiscard]] uint light_num() const noexcept { return light_sampler_->light_num(); }
     void prepare_lights() noexcept;
-    [[nodiscard]] SP<Warper> load_warper() noexcept { return Node::load<Warper>(warper_desc_); }
+    [[nodiscard]] SP<Warper> load_warper() noexcept { return Node::load_shared<Warper>(warper_desc_); }
     [[nodiscard]] SP<Warper2D> load_warper2d() noexcept {
         WarperDesc warper_desc = warper_desc_;
         warper_desc.sub_type += "2d";
-        return Node::load<Warper2D>(warper_desc);
+        return Node::load_shared<Warper2D>(warper_desc);
     }
     [[nodiscard]] bool has_medium() const noexcept { return !mediums_.empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);

@@ -60,7 +60,7 @@ private:
 
 public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc) {
-        SP<ShaderNode> shader_node = Node::load<ShaderNode>(desc.node);
+        SP<ShaderNode> shader_node = Node::load_shared<ShaderNode>(desc.node);
         return Slot(shader_node, desc.channels);
     }
 

@@ -17,7 +17,7 @@ SP<Importer> Importer::create(const std::string &ext_name) {
     } else {
         desc.sub_type = "assimp";
     }
-    return Node::load<Importer>(desc);
+    return Node::load_shared<Importer>(desc);
 }
 
 SP<Pipeline> Importer::import_scene(const fs::path &fn) {

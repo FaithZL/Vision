@@ -20,7 +20,7 @@ void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
 }
 
 void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
-    postprocessor_.set_denoiser(Node::load<Denoiser>(desc));
+    postprocessor_.set_denoiser(Node::load_shared<Denoiser>(desc));
 }
 
 void BakePipeline::prepare() noexcept {
@@ -44,7 +44,7 @@ void BakePipeline::preprocess() noexcept {
     for_each_need_bake([&](ShapeInstance &item) {
         baked_shapes_.emplace_back(&item);
     });
-    SP<UVUnwrapper> uv_unwrapper = Node::load<UVUnwrapper>(_desc.unwrapper_desc);
+    SP<UVUnwrapper> uv_unwrapper = Node::load_shared<UVUnwrapper>(_desc.unwrapper_desc);
 
     // uv unwrap
     VS_BAKER_STATS(baker_stats_, uv_unwrap)

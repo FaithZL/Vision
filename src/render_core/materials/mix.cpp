@@ -91,8 +91,8 @@ protected:
 public:
     explicit MixMaterial(const MaterialDesc &desc)
         : Material(desc),
-          mat0_(Node::load<Material>(*desc.mat0)),
-          mat1_(Node::load<Material>(*desc.mat1)) {
+          mat0_(Node::load_shared<Material>(*desc.mat0)),
+          mat1_(Node::load_shared<Material>(*desc.mat1)) {
         scale_.set(Slot::create_slot(desc.slot("scale", 0.5f, Number)));
     }
     VS_MAKE_PLUGIN_NAME_FUNC

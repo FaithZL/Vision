@@ -67,7 +67,7 @@ SP<Material> Scene::obtain_black_body() noexcept {
     if (!black_body_) {
         MaterialDesc md;
         md.sub_type = "black_body";
-        black_body_ = Node::load<Material>(md);
+        black_body_ = Node::load_shared<Material>(md);
         materials().push_back(black_body_);
     }
     return black_body_;
@@ -108,7 +108,7 @@ void Scene::add_light(TLight light) noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        add_material(ocarina::move(Node::load<Material>(desc)));
+        add_material(ocarina::move(Node::load_shared<Material>(desc)));
     }
 }
 
@@ -155,7 +155,7 @@ void Scene::clear_shapes() noexcept {
 
 void Scene::load_shapes(const vector<ShapeDesc> &descs) {
     for (const auto &desc : descs) {
-        SP<ShapeGroup> group = Node::load<ShapeGroup>(desc);
+        SP<ShapeGroup> group = Node::load_shared<ShapeGroup>(desc);
         add_shape(group, desc);
     }
 }
@@ -186,7 +186,7 @@ void Scene::load_mediums(const MediumsDesc &md) {
     global_medium_.name = md.global;
     for (uint i = 0; i < md.mediums.size(); ++i) {
         const MediumDesc &desc = md.mediums[i];
-        auto medium = Node::load<Medium>(desc);
+        auto medium = Node::load_shared<Medium>(desc);
         medium->set_index(i);
         mediums_.push_back(medium);
     }
