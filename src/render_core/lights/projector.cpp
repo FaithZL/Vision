@@ -36,6 +36,7 @@ private:
     EncodedData<float> angle_y_;
 
 public:
+    Projector() = default;
     explicit Projector(const LightDesc &desc)
         : IPointLight(desc),
           ratio_(desc["ratio"].as_float(1.f)),
@@ -111,4 +112,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::Projector)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, Projector)
+VS_REGISTER_CURRENT_PATH(0, "vision-light-projector.dll")

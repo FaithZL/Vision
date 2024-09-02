@@ -24,6 +24,8 @@ private:
     EncodedData<float3> world_center_;
 
 public:
+    DirectionalLight()
+        : Environment(LightType::DeltaDirection | LightType::Infinite) {}
     explicit DirectionalLight(const LightDesc &desc)
         : Environment(desc, LightType::DeltaDirection | LightType::Infinite),
           direction_(desc["direction"].as_float3(make_float3(-1.f))) {}
@@ -79,4 +81,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::DirectionalLight)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, DirectionalLight)
+VS_REGISTER_CURRENT_PATH(0, "vision-light-directional.dll")

@@ -25,6 +25,7 @@ private:
     EncodedData<float> falloff_;
 
 public:
+    SpotLight() = default;
     explicit SpotLight(const LightDesc &desc)
         : IPointLight(desc),
           position_(desc["position"].as_float3()),
@@ -69,4 +70,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::SpotLight)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SpotLight)
+VS_REGISTER_CURRENT_PATH(0, "vision-light-spot.dll")

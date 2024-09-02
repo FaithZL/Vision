@@ -44,6 +44,7 @@ OC_MAKE_ENUM_BIT_OPS(vision::LightEvalMode, |, &, <<, >>)
 namespace vision {
 // LightType Definition
 enum class LightType {
+    Unset = 0,
     Area = 1 << 0,
     DeltaPosition = 1 << 1,
     DeltaDirection = 1 << 2,
@@ -68,7 +69,7 @@ public:
     using Desc = LightDesc;
 
 protected:
-    const LightType type_{LightType::Area};
+    const LightType type_{LightType::Unset};
     EncodedData<float> scale_{1.f};
     EncodedData<uint> switch_{true};
     VS_MAKE_SLOT(color)
@@ -103,9 +104,9 @@ protected:
     }
 
 public:
-    Light() = default;
+    Light(LightType type) noexcept : type_(type) {}
     explicit Light(const LightDesc &desc, LightType light_type);
-    VS_HOTFIX_MAKE_RESTORE(Node, Light, scale_,switch_, color_, index_)
+    VS_HOTFIX_MAKE_RESTORE(Node, Light, scale_, switch_, color_, index_)
     OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
@@ -204,7 +205,7 @@ protected:
     weak_ptr<const ShapeInstance> instance_{};
 
 public:
-    IAreaLight() = default;
+    IAreaLight() : Light(LightType::Area) {}
     explicit IAreaLight(const LightDesc &desc)
         : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
@@ -216,7 +217,7 @@ public:
 
 class IPointLight : public Light {
 public:
-    IPointLight() = default;
+    IPointLight(): Light(LightType::DeltaPosition) {}
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,

@@ -29,6 +29,7 @@ private:
     SP<Warper2D> warper_{};
 
 public:
+    SphericalMap(): Environment(LightType::Infinite) {}
     explicit SphericalMap(const Desc &desc)
         : Environment(desc, LightType::Infinite) {
         float4x4 o2w = desc.o2w.mat;
@@ -196,4 +197,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::SphericalMap)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SphericalMap)
+VS_REGISTER_CURRENT_PATH(0, "vision-light-spherical.dll")
