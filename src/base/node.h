@@ -31,8 +31,6 @@ class Node : public RuntimeObject, public GUI {
 public:
     using Creator = Node *(const NodeDesc *);
     using Deleter = void(Node *);
-    using Shared = shared_ptr<Node>;
-    using Unique = unique_ptr<Node, Deleter *>;
 
 protected:
     string name_;
