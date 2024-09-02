@@ -34,7 +34,7 @@ Uint LightSampler::correct_index(Uint index) const noexcept {
 
 void LightSampler::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     for (int i = 0; i < lights_.size(); ++i) {
-        TLight &light = lights_[i];
+        TLight light = lights_[i];
         if (!constructor->match(light.get())) {
             continue;
         }
@@ -56,7 +56,7 @@ void LightSampler::update_runtime_object(const vision::IObjectConstructor *const
                 break;
         }
         new_light->restore(light.get());
-        lights_[i] = new_light;
+        lights_.replace(i, std::move(new_light));
     }
 }
 
