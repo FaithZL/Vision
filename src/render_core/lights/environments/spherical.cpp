@@ -38,6 +38,7 @@ public:
     }
 
     OC_ENCODABLE_FUNC(Environment, w2o_, *warper_)
+    VS_HOTFIX_MAKE_RESTORE(Environment, w2o_, warper_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;
