@@ -48,10 +48,11 @@ public:
         }
     }
     OC_ENCODABLE_FUNC(IPointLight, o2w_, ratio_, angle_y_)
+    VS_HOTFIX_MAKE_RESTORE(IPointLight, Projector, o2w_, ratio_, angle_y_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);
-        changed_ |= widgets->input_float_limit("radio", addressof(ratio_.hv()), 0.1,10, 0.05,0.2);
+        changed_ |= widgets->input_float_limit("radio", addressof(ratio_.hv()), 0.1, 10, 0.05, 0.2);
         changed_ |= widgets->slider_float("angle_y_", &angle_y_.hv(), radians(1.f), radians(89.f));
     }
     [[nodiscard]] float3 power() const noexcept override {
