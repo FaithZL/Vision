@@ -14,6 +14,8 @@ private:
     float exp_y_{};
 
 public:
+    GaussianFilter() = default;
+    VS_HOTFIX_MAKE_RESTORE(FittedCurveFilter, sigma_, exp_x_, exp_y_)
     explicit GaussianFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
           sigma_(desc["sigma"].as_float(1.f)),
@@ -29,4 +31,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::GaussianFilter)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, GaussianFilter)
+VS_REGISTER_CURRENT_PATH(0, "vision-filter-gaussian.dll")

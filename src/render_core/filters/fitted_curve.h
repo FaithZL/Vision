@@ -79,6 +79,8 @@ protected:
     FilterSampler sampler_{};
 
 public:
+    FittedCurveFilter() = default;
+    VS_HOTFIX_MAKE_RESTORE(Filter, sampler_)
     explicit FittedCurveFilter(const FilterDesc &desc)
         : Filter(desc) {}
 

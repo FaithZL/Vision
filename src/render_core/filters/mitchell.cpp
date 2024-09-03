@@ -13,6 +13,8 @@ private:
     float c_;
 
 public:
+    MitchellFilter() = default;
+    VS_HOTFIX_MAKE_RESTORE(FittedCurveFilter, b_, c_)
     explicit MitchellFilter(const FilterDesc &desc)
         : FittedCurveFilter(desc),
           b_(desc["b"].as_float(1.f / 3.f)),
@@ -40,4 +42,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::MitchellFilter)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MitchellFilter)
+VS_REGISTER_CURRENT_PATH(0, "vision-filter-mitchell.dll")
