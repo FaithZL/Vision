@@ -122,6 +122,8 @@ int main(int argc, char *argv[]) {
             hotfix_test.test->print();
         });
 
+        HotfixSystem::instance().execute_callback();
+
         widget->button_click("print serializer", [&] {
             cout << "\nprint serializer ----------" << endl;
             serializer.print();

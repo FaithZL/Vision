@@ -11,7 +11,7 @@
 
 namespace vision::inline hotfix {
 
-struct Demo : public RuntimeObject, public Observer {
+struct Demo : public RuntimeObject, public Observer, public ocarina::enable_shared_from_this<Demo> {
 public:
     SP<Test> test;
     int attr_int{};

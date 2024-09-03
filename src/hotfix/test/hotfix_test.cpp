@@ -23,9 +23,10 @@ void HotfixTest::update_runtime_object(const vision::IObjectConstructor *constru
         new_obj->restore(test.get());
         test = new_obj;
     } else if (constructor->match(demo)) {
-        auto new_obj = constructor->construct_shared<Demo>();
-        HotfixSystem::instance().serializer().erase_old_object(demo.get());
-        HotfixSystem::instance().defer_delete(demo);
+        auto new_obj = SP<Demo>(constructor->construct<Demo>());
+
+//        HotfixSystem::instance().serializer().erase_old_object(demo.get());
+//        HotfixSystem::instance().defer_delete(demo);
         new_obj->restore(demo.get());
         demo = new_obj;
     }
