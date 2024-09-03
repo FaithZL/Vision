@@ -9,6 +9,7 @@ namespace vision {
 
 class SRGBSpectrum : public Spectrum {
 public:
+    SRGBSpectrum() = default;
     explicit SRGBSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -59,4 +60,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::SRGBSpectrum)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SRGBSpectrum)
+VS_REGISTER_CURRENT_PATH(0, "vision-spectrum-srgb.dll")

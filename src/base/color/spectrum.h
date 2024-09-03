@@ -161,7 +161,7 @@ public:
     [[nodiscard]] friend SampledSpectrum operator op(const DynamicArray<float> &lhs, const SampledSpectrum &rhs) noexcept { \
         return SampledSpectrum(lhs op rhs.values());                                                                        \
     }                                                                                                                       \
-    SampledSpectrum &operator op##=(const Float &rhs) noexcept {                                                            \
+    SampledSpectrum &operator op##=(const Float & rhs) noexcept {                                                           \
         values_ op## = rhs;                                                                                                 \
         return *this;                                                                                                       \
     }                                                                                                                       \
@@ -169,7 +169,7 @@ public:
         values_ op## = rhs;                                                                                                 \
         return *this;                                                                                                       \
     }                                                                                                                       \
-    SampledSpectrum &operator op##=(const SampledSpectrum &rhs) noexcept {                                                  \
+    SampledSpectrum &operator op##=(const SampledSpectrum & rhs) noexcept {                                                 \
         OC_ASSERT(dimension() == 1 || rhs.dimension() == 1 || dimension() == rhs.dimension());                              \
         values_ op## = rhs.values();                                                                                        \
         return *this;                                                                                                       \
@@ -239,6 +239,7 @@ public:
     using Desc = SpectrumDesc;
 
 public:
+    Spectrum() = default;
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
     [[nodiscard]] SampledSpectrum zero() const noexcept { return SampledSpectrum{dimension(), 0.f}; }
     [[nodiscard]] SampledSpectrum one() const noexcept { return SampledSpectrum{dimension(), 1.f}; }

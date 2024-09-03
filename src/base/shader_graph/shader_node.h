@@ -8,6 +8,7 @@
 #include "util/image.h"
 #include "base/color/spectrum.h"
 #include "base/scattering/interaction.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 
@@ -19,7 +20,9 @@ public:
     using Desc = ShaderNodeDesc;
 
 public:
+    ShaderNode() = default;
     explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), type_(desc.type) {}
+    VS_HOTFIX_MAKE_RESTORE(Node, type_)
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     [[nodiscard]] ShaderNodeType type() const noexcept { return type_; }
     [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
@@ -43,7 +46,7 @@ public:
 
 #define VS_MAKE_SLOT(attr_name) Slot attr_name##_{#attr_name};
 
-class Slot : public ocarina::Hashable, public GUI {
+class Slot : public ocarina::Hashable, public GUI, public Observer {
 private:
     SP<ShaderNode> node_{};
     uint dim_{4};
@@ -80,6 +83,12 @@ public:
 #endif
           channel_mask_(_calculate_mask(ocarina::move(channels))) {
         OC_ASSERT(dim_ <= 4);
+    }
+
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
+        if (node_) {
+            hotfix::replace_objects(constructor, std::tuple{addressof(node_)});
+        }
     }
 
     void reset_status() noexcept override {

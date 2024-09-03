@@ -22,6 +22,7 @@ private:
     Pipeline *rp_{};
 
 public:
+    SPD() = default;
     explicit SPD(Pipeline *rp);
     SPD(vector<float> func, Pipeline *rp);
     OC_ENCODABLE_FUNC(Encodable<float>, func_, sample_interval_)

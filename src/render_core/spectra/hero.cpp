@@ -52,7 +52,7 @@ public:
     using coefficient_table_type = const float[3][res][res][res][4];
 
 private:
-    const coefficient_table_type &coefficients_;
+    const coefficient_table_type *coefficients_{};
     Pipeline *rp_{};
     uint base_index_{InvalidUI32};
     Texture coefficient0_;
@@ -65,8 +65,12 @@ private:
     }
 
 public:
+    RGBToSpectrumTable() : coefficients_(&sRGBToSpectrumTable_Data) {}
     explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, Pipeline *rp) noexcept
-        : coefficients_{coefficients}, rp_(rp) {}
+        : coefficients_{&coefficients}, rp_(rp) {}
+
+    const coefficient_table_type& coefficients() const { return *coefficients_; }
+    coefficient_table_type& coefficients() { return *coefficients_; }
 
     void init() noexcept {
         coefficient0_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
@@ -78,9 +82,9 @@ public:
         base_index_ = rp_->register_texture(coefficient0_);
         rp_->register_texture(coefficient1_);
         rp_->register_texture(coefficient2_);
-        coefficient0_.upload_immediately(&coefficients_[0]);
-        coefficient1_.upload_immediately(&coefficients_[1]);
-        coefficient2_.upload_immediately(&coefficients_[2]);
+        coefficient0_.upload_immediately(&coefficients()[0]);
+        coefficient1_.upload_immediately(&coefficients()[1]);
+        coefficient2_.upload_immediately(&coefficients()[2]);
     }
 
     [[nodiscard]] float4 decode_albedo(float3 rgb_in) const noexcept {
@@ -112,7 +116,7 @@ public:
         for (auto i = 0u; i < 3u; i++) {
             // Define _co_ lambda for looking up sigmoid polynomial coefficients
             auto co = [&](int dx, int dy, int dz) noexcept {
-                return coefficients_[maxc][zi + dz][yi + dy][xi + dx][i];
+                return coefficients()[maxc][zi + dz][yi + dy][xi + dx][i];
             };
             c[i] = lerp(dz,
                         lerp(dy,
@@ -228,6 +232,7 @@ private:
     RGBToSpectrumTable rgb_to_spectrum_table_;
 
 public:
+    HeroWavelengthSpectrum() = default;
     explicit HeroWavelengthSpectrum(const SpectrumDesc &desc)
         : Spectrum(desc), dimension_(desc["dimension"].as_uint(3u)),
           rgb_to_spectrum_table_(sRGBToSpectrumTable_Data, pipeline()),
@@ -237,6 +242,8 @@ public:
           cie_z_(SPD::create_cie_z(pipeline())) {
         rgb_to_spectrum_table_.init();
     }
+    VS_HOTFIX_MAKE_RESTORE(Spectrum, dimension_, illuminant_d65_,
+                           cie_x_, cie_y_, cie_z_,rgb_to_spectrum_table_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         changed_ |= widgets->input_uint("dimension", &dimension_, 1, 1);
     }
@@ -350,4 +357,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::HeroWavelengthSpectrum)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, HeroWavelengthSpectrum)
+VS_REGISTER_CURRENT_PATH(0, "vision-spectrum-hero.dll")

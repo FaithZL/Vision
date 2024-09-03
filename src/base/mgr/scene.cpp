@@ -77,7 +77,8 @@ void Scene::update_runtime_object(const vision::IObjectConstructor *constructor)
     std::tuple tp = {addressof(camera_.impl()),
                      addressof(light_sampler_.impl()),
                      addressof(integrator_.impl()),
-                     addressof(sampler_.impl())};
+                     addressof(sampler_.impl()),
+                     addressof(spectrum_.impl())};
     hotfix::replace_objects(constructor, tp);
 }
 

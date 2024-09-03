@@ -13,6 +13,8 @@ private:
     bool sync_{true};
 
 public:
+    NumberInput() = default;
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_)
     explicit NumberInput(const ShaderNodeDesc &desc)
         : ShaderNode(desc), value_(desc["value"].as_vector<float>()) {
         if (type_ == Illumination) {
@@ -73,4 +75,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::NumberInput)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, NumberInput)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-number.dll")
