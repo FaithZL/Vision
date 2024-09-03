@@ -13,29 +13,38 @@ namespace vision {
 
 class RealTimeIntegrator : public IlluminationIntegrator {
 private:
-    ReSTIRDI direct_;
-    ReSTIRGI indirect_;
+    UP<ReSTIRDI> direct_;
+    UP<ReSTIRGI> indirect_;
     SP<ScreenBuffer> specular_buffer_{make_shared<ScreenBuffer>("RealTimeIntegrator::specular_buffer_")};
     Shader<void(uint, float, float)> combine_;
     Shader<void(uint, Buffer<SurfaceData>)> path_tracing_;
     SP<Denoiser> denoiser_;
 
 public:
+    RealTimeIntegrator() = default;
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          direct_(this, desc["direct"]),
-          indirect_(this, desc["indirect"]),
+          direct_(make_unique<ReSTIRDI>(this, desc["direct"])),
+          indirect_(make_unique<ReSTIRGI>(this, desc["indirect"])),
           denoiser_(Node::create_shared<Denoiser>(desc.denoiser_desc)) {
         max_depth_ = max_depth_.hv() - 1;
     }
 
     VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, direct_, indirect_)
 
+    void restore(vision::RuntimeObject *old_obj) noexcept override {
+        IlluminationIntegrator::restore(old_obj);
+        VS_HOTFIX_MOVE_ATTRS(direct_, indirect_, specular_buffer_,
+                             combine_, path_tracing_, denoiser_)
+        direct_->set_integrator(this);
+        indirect_->set_integrator(this);
+    }
+
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
-        direct_.prepare();
-        indirect_.prepare();
+        direct_->prepare();
+        indirect_->prepare();
         denoiser_->prepare();
         Pipeline *rp = pipeline();
 
@@ -50,8 +59,8 @@ public:
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        direct_.render_UI(widgets);
-        indirect_.render_UI(widgets);
+        direct_->render_UI(widgets);
+        indirect_->render_UI(widgets);
     }
 
     void compile_path_tracing() noexcept {
@@ -80,15 +89,15 @@ public:
     }
 
     void compile() noexcept override {
-        direct_.compile();
-        indirect_.compile();
-        compile_path_tracing();
+        direct_->compile();
+        indirect_->compile();
+        //        compile_path_tracing();
 
         TCamera &camera = scene().camera();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
             camera->load_data();
-            Float3 direct = direct_.radiance()->read(dispatch_id()).xyz() * di;
-            Float3 indirect = indirect_.radiance()->read(dispatch_id()).xyz() * ii;
+            Float3 direct = direct_->radiance()->read(dispatch_id()).xyz() * di;
+            Float3 indirect = indirect_->radiance()->read(dispatch_id()).xyz() * ii;
             Float3 L = direct + indirect;
             camera->film()->add_sample(dispatch_idx().xy(), L, frame_index);
         };
@@ -99,13 +108,13 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << frame_buffer().compute_hit(frame_index_);
-        stream << direct_.dispatch(frame_index_);
-//        stream << path_tracing_(frame_index_,
-//                                frame_buffer().cur_surfaces(frame_index_))
-//                      .dispatch(pipeline()->resolution());
-        stream << indirect_.dispatch(frame_index_);
-        stream << combine_(frame_index_, direct_.factor(),
-                           indirect_.factor())
+        stream << direct_->dispatch(frame_index_);
+        //        stream << path_tracing_(frame_index_,
+        //                                frame_buffer().cur_surfaces(frame_index_))
+        //                      .dispatch(pipeline()->resolution());
+        stream << indirect_->dispatch(frame_index_);
+        stream << combine_(frame_index_, direct_->factor(),
+                           indirect_->factor())
                       .dispatch(pipeline()->resolution());
         increase_frame_index();
     }
@@ -113,4 +122,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::RealTimeIntegrator)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision,RealTimeIntegrator)
+VS_REGISTER_CURRENT_PATH(0, "vision-integrator-rt.dll")
