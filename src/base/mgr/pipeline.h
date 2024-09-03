@@ -17,7 +17,7 @@ namespace vision {
 using namespace ocarina;
 class Spectrum;
 
-class Pipeline : public Node {
+class Pipeline : public Node, public Observer {
 public:
     using Desc = PipelineDesc;
 
@@ -62,6 +62,7 @@ public:
     void render_detail(Widgets *widgets) noexcept;
     void render_stats(Widgets *widgets) noexcept;
     void render_hotfix(Widgets *widgets) noexcept;
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     OC_MAKE_MEMBER_GETTER_SETTER(cur_node, )
 
     /// virtual function start

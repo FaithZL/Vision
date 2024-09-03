@@ -20,9 +20,11 @@ private:
     Shader<void(Buffer<Hit>, uint)> compute_hit_;
 
 public:
+    RayTracingFrameBuffer() = default;
     explicit RayTracingFrameBuffer(const FrameBufferDesc &desc)
         : FrameBuffer(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
+    VS_HOTFIX_MAKE_RESTORE(FrameBuffer, compute_geom_, compute_grad_, compute_hit_)
 
     void compile_compute_geom() noexcept {
         TCamera &camera = scene().camera();
@@ -185,4 +187,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::RayTracingFrameBuffer)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RayTracingFrameBuffer)
+VS_REGISTER_CURRENT_PATH(0, "vision-framebuffer-rt.dll")
