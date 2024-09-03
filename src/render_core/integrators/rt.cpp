@@ -11,7 +11,7 @@
 
 namespace vision {
 
-class RealTimeIntegrator : public IlluminationIntegrator {
+class RealTimeIntegrator : public IlluminationIntegrator,public enable_shared_from_this<RealTimeIntegrator> {
 private:
     UP<ReSTIRDI> direct_;
     UP<ReSTIRGI> indirect_;

@@ -27,6 +27,8 @@ class FrameBuffer;
 
 using namespace ocarina;
 
+
+
 class Node : public RuntimeObject, public GUI {
 public:
     using Creator = Node *(const NodeDesc *);
@@ -57,30 +59,64 @@ public:
     }
 
     template<typename impl_t, typename Desc>
-    [[nodiscard]] static UP<impl_t, Deleter*> create_unique(const Desc &desc) {
-        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
-        Node::Creator *creator = module->function<Node::Creator *>("create");
-        Node::Deleter *deleter = module->function<Node::Deleter *>("destroy");
-        UP<impl_t, Deleter*> ret = UP<impl_t, Deleter*>(dynamic_cast<impl_t *>(creator(&desc)), deleter);
-        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
-        return ret;
-    }
-
-    template<typename impl_t, typename Desc>
-    [[nodiscard]] static SP<impl_t> create_shared(const Desc &desc) {
-        const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
-        Node::Creator *creator = module->function<Node::Creator *>("create");
-        Node::Deleter *deleter = module->function<Node::Deleter *>("destroy");
-        SP<impl_t> ret = SP<impl_t>(dynamic_cast<impl_t *>(creator(&desc)), deleter);
-        OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
-        return ret;
-    }
+    [[nodiscard]] static SP<impl_t> create_shared(const Desc &desc);
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] string name() const noexcept { return name_; }
     void set_name(const string &name) noexcept { name_ = name; }
     ~Node() override = default;
 };
+
+class INodeConstructor {
+public:
+    using Deleter = void(Node *);
+
+public:
+    INodeConstructor() = default;
+    [[nodiscard]] virtual Node *construct_impl(const NodeDesc *desc) const = 0;
+    [[nodiscard]] virtual SP<Node> construct_shared_impl(const NodeDesc *desc) const = 0;
+    [[nodiscard]] virtual UP<Node, Deleter *> construct_unique_impl(const NodeDesc *desc) const = 0;
+    template<typename T = Node>
+    [[nodiscard]] T *construct(const NodeDesc *desc) const {
+        return static_cast<T *>(construct_impl(desc));
+    }
+    template<typename T = Node>
+    [[nodiscard]] SP<T> construct_shared(const NodeDesc *desc) const noexcept {
+        return std::static_pointer_cast<T>(construct_shared_impl(desc));
+    }
+    template<typename T = Node>
+    [[nodiscard]] UP<T, Deleter*> construct_unique(const NodeDesc *desc) const noexcept {
+        return ocarina::static_unique_pointer_cast<T>(construct_unique_impl(desc));
+    }
+    static void destroy(Node *obj) {
+        ocarina::delete_with_allocator(obj);
+    }
+};
+
+template<typename T>
+requires std::derived_from<T, Node>
+class NodeConstructor : INodeConstructor {
+public:
+    [[nodiscard]] Node *construct_impl(const NodeDesc *desc) const override {
+        return ocarina::new_with_allocator<T>(*dynamic_cast<const T::Desc *>(desc));
+    }
+    [[nodiscard]] SP<Node> construct_shared_impl(const vision::NodeDesc *desc) const override {
+        return SP<T>(static_cast<T *>(construct_impl(desc)), destroy);
+    }
+    [[nodiscard]] UP<Node, INodeConstructor::Deleter *> construct_unique_impl(const vision::NodeDesc *desc) const override {
+        return UP<T, Deleter *>(static_cast<T *>(construct_impl(desc)), destroy);
+    }
+};
+
+template<typename impl_t, typename Desc>
+SP<impl_t> Node::create_shared(const Desc &desc)  {
+    const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
+    using Constructor = INodeConstructor*();
+    Constructor *constructor = module->function<Constructor *>("constructor");
+    SP<impl_t> ret = constructor()->construct_shared<impl_t>(&desc);
+    OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
+    return ret;
+}
 
 #define VS_MAKE_PLUGIN_NAME_FUNC                                                                 \
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
@@ -199,6 +235,10 @@ public:
 }// namespace vision
 
 #define VS_MAKE_CLASS_CREATOR(Class)                                                         \
+    VS_EXPORT_API vision::NodeConstructor<Class> *constructor() {                            \
+        static vision::NodeConstructor<Class> ret;                                           \
+        return &ret;                                                                         \
+    }                                                                                        \
     VS_EXPORT_API Class *create(const vision::NodeDesc *desc) {                              \
         return ocarina::new_with_allocator<Class>(*dynamic_cast<const Class::Desc *>(desc)); \
     }                                                                                        \
