@@ -21,13 +21,15 @@ private:
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
 
 public:
+    RGBFilm() = default;
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
-          rt_buffer_(pipeline()->bindless_array()){}
+          rt_buffer_(pipeline()->bindless_array()) {}
 
     OC_ENCODABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
-
+    VS_HOTFIX_MAKE_RESTORE(Film, rt_buffer_, accumulation_buffer_, output_buffer_,
+                           accumulate_, tone_mapping_, gamma_correct_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         tone_mapper_->render_UI(widgets);
         return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&] {
@@ -122,4 +124,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::RGBFilm)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RGBFilm)
+VS_REGISTER_CURRENT_PATH(0, "vision-film-rgb.dll")

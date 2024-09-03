@@ -35,8 +35,10 @@ protected:
     TToneMapper tone_mapper_{};
 
 public:
+    Film() = default;
     explicit Film(const FilmDesc &desc);
     OC_ENCODABLE_FUNC(Encodable<float>, accumulation_, tone_mapper_)
+    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, accumulation_, tone_mapper_)
     VS_MAKE_GUI_STATUS_FUNC(Node, tone_mapper_)
     virtual void compile() noexcept = 0;
     [[nodiscard]] uint pixel_num() const noexcept { return resolution_.x * resolution_.y; }
