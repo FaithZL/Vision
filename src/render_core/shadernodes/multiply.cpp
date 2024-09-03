@@ -37,6 +37,7 @@ private:
     VS_MAKE_SLOT(rhs)
 
 public:
+    Multiply() = default;
     explicit Multiply(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
         lhs_.set(Slot::create_slot(*desc.slot("lhs")));
@@ -46,6 +47,7 @@ public:
     OC_ENCODABLE_FUNC(ShaderNode, lhs_, rhs_)
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, lhs_, rhs_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, lhs_, rhs_)
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         bool ret = widgets->use_tree(name_, [&] {
@@ -78,4 +80,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::Multiply)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, Multiply)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-multiply.dll")

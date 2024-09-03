@@ -11,9 +11,11 @@ private:
     vector<float> value_;
 
 public:
+    Constant() = default;
     explicit Constant(const ShaderNodeDesc &desc)
         : ShaderNode(desc), value_(desc["value"].as_vector<float>()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_)
     [[nodiscard]] bool is_zero() const noexcept override {
         return std::all_of(value_.begin(), value_.end(), [](float elm) { return elm == 0; });
     }
@@ -36,4 +38,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::Constant)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, Constant)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-constant.dll")

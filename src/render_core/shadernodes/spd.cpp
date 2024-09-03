@@ -12,11 +12,13 @@ private:
     SPD spd_{nullptr};
 
 public:
+    SPDNode() = default;
     explicit SPDNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc), spd_(scene().pipeline()) {
         spd_.init(desc["value"].data());
     }
     OC_ENCODABLE_FUNC(ShaderNode, spd_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, spd_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] vector<float> average() const noexcept override {
         float3 color = spd_.eval(rgb_spectrum_peak_wavelengths);
@@ -33,4 +35,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::SPDNode)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SPDNode)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-spd.dll")

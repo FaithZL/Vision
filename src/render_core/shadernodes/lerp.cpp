@@ -12,8 +12,11 @@ private:
     VS_MAKE_SLOT(B)
 
 public:
+    Lerp() = default;
     explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
+    OC_ENCODABLE_FUNC(ShaderNode, t_, A_, B_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, t_, A_, B_)
     [[nodiscard]] bool is_uniform() const noexcept override {
         return t_->is_uniform() && A_->is_uniform() && B_->is_uniform();
     }
@@ -30,10 +33,11 @@ public:
         return ocarina::lerp(t_.average(), A_.average(), B_.average());
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl) const noexcept override {
+                                               const SampledWavelengths &swl) const noexcept override {
         return ocarina::lerp(t_.evaluate(ctx, swl), A_.evaluate(ctx, swl), B_.evaluate(ctx, swl));
     }
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::Lerp)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, Lerp)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-lerp.dll")

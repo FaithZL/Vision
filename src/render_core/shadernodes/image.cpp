@@ -17,6 +17,7 @@ private:
     ShaderNodeDesc desc_;
 
 public:
+    ImageNode() = default;
     explicit ImageNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
           desc_(desc),
@@ -25,6 +26,7 @@ public:
     }
     OC_ENCODABLE_FUNC(ShaderNode, tex_id_)
     VS_MAKE_PLUGIN_NAME_FUNC
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, texture_, tex_id_, desc_)
 
     void reload(ocarina::Widgets *widgets) noexcept {
         fs::path path = texture_->host_tex().path();
@@ -66,4 +68,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::ImageNode)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, ImageNode)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-image.dll")
