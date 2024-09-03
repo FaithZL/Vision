@@ -210,6 +210,8 @@ public:
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_ENCODABLE_FUNC(Light, inst_idx_)
     VS_HOTFIX_MAKE_RESTORE(Light, inst_idx_)
+    template<typename T>
+    void add_reference(T shape_instance) noexcept {}
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 

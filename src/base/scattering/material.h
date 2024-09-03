@@ -69,7 +69,10 @@ public:
     [[nodiscard]] Uint flag() const noexcept;
 };
 
-class Material : public Node, public Encodable<float> {
+class ShapeInstance;
+class ShapeGroup;
+
+class Material : public Node, public Encodable<float>, public enable_shared_from_this<Material> {
 public:
     using Desc = MaterialDesc;
 
@@ -79,6 +82,8 @@ protected:
     uint index_{InvalidUI32};
     VS_MAKE_SLOT(bump);
     VS_MAKE_SLOT(bump_scale);
+    vector<weak_ptr<ShapeInstance>> shape_instances;
+    vector<weak_ptr<ShapeGroup>> shape_groups;
 
 protected:
     static constexpr uint stride = sizeof(Slot);
@@ -101,6 +106,12 @@ protected:
 public:
     Material() = default;
     explicit Material(const MaterialDesc &desc);
+    void add_reference(SP<ShapeInstance> shape_instance) noexcept {
+        shape_instances.push_back(ocarina::move(shape_instance));
+    }
+    void add_reference(SP<ShapeGroup> shape_group) noexcept {
+        shape_groups.push_back(ocarina::move(shape_group));
+    }
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
@@ -167,14 +178,7 @@ public:
         }
     }
 
-    void restore(vision::RuntimeObject *old_obj) noexcept override {
-        VS_HOTFIX_MOVE_ATTRS(index_,slot_cursor_, bump_, bump_scale_)
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            Slot &slot = get_slot(i);
-            Slot &old_slot = old_obj_->get_slot(i);
-            slot = ocarina::move(old_slot);
-        }
-    }
+    void restore(vision::RuntimeObject *old_obj) noexcept override;
 
     template<typename F>
     void for_each_slot(F &&func) noexcept {

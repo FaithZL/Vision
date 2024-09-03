@@ -97,6 +97,10 @@ public:
         return make_unique<MatteBxDFSet>(kr, swl);
     }
     MatteMaterial() = default;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        Material::render_UI(widgets);
+        return 1;
+    }
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(0.5f), Albedo)));

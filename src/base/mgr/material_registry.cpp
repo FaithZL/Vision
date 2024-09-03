@@ -54,8 +54,8 @@ void MaterialRegistry::update_runtime_object(const IObjectConstructor *construct
             continue;
         }
         SP<Material> new_material = constructor->construct_shared<Material>();
-//        new_material->restore(material.get());
-//        int a = 0;
+        new_material->restore(material.get());
+        materials_.replace(i, new_material);
     }
 }
 

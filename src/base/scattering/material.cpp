@@ -106,6 +106,26 @@ void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     });
 }
 
+void Material::restore(vision::RuntimeObject *old_obj) noexcept  {
+    Node::restore(old_obj);
+    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_)
+    for (int i = 0; i < slot_cursor_.num; ++i) {
+        Slot &slot = get_slot(i);
+        Slot &old_slot = old_obj_->get_slot(i);
+        slot = ocarina::move(old_slot);
+    }
+    for (const auto &item : old_obj_->shape_instances) {
+        auto sp = item.lock();
+        sp->set_material(shared_from_this());
+        sp->set_material_name(name());
+    }
+    for (const auto &item : old_obj_->shape_groups) {
+        auto sp = item.lock();
+        sp->set_material(shared_from_this());
+        sp->set_material_name(name());
+    }
+}
+
 uint Material::element_num() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
         return size + slot->element_num();

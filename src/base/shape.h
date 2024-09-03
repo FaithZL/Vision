@@ -81,12 +81,14 @@ OC_STRUCT(vision, MeshHandle, vertex_offset, triangle_offset){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
     void set_##attr(decltype(attr##_.impl()) val) noexcept { \
+        val->add_reference(shared_from_this());              \
         attr##_.init(val);                                   \
     }                                                        \
     void set_##attr##_name(const string &name) noexcept {    \
         attr##_.name = name;                                 \
     }                                                        \
     void set_##attr(decltype(attr##_) val) noexcept {        \
+        val->add_reference(shared_from_this());              \
         attr##_ = ocarina::move(val);                        \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
@@ -103,7 +105,7 @@ OC_STRUCT(vision, MeshHandle, vertex_offset, triangle_offset){};
     }
 
 namespace vision {
-class ShapeInstance : public GUI {
+class ShapeInstance : public GUI, public std::enable_shared_from_this<ShapeInstance> {
 protected:
     InstanceData handle_;
     float factor_{};
@@ -136,7 +138,9 @@ public:
     void set_lightmap_id(uint id) noexcept { handle_.lightmap_id = id; }
     [[nodiscard]] float4x4 o2w() const noexcept { return handle_.o2w; }
     void set_o2w(float4x4 o2w) noexcept { handle_.o2w = o2w; }
-    virtual void update_inside_medium_id(uint id) noexcept { handle_.inside_medium = id; }
+    virtual void update_inside_medium_id(uint id) noexcept {
+        handle_.inside_medium = id;
+    }
     virtual void update_outside_medium_id(uint id) noexcept { handle_.outside_medium = id; }
     virtual void update_material_id(uint id) noexcept { handle_.mat_id = id; }
     virtual void update_light_id(uint id) noexcept { handle_.light_id = id; }
@@ -147,7 +151,7 @@ public:
 
 namespace vision {
 
-class ShapeGroup : public Node {
+class ShapeGroup : public Node, public enable_shared_from_this<ShapeGroup>{
 public:
     using Desc = ShapeDesc;
 
