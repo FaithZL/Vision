@@ -96,6 +96,7 @@ public:
         }
         return make_unique<MatteBxDFSet>(kr, swl);
     }
+    MatteMaterial() = default;
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(0.5f), Albedo)));
@@ -108,4 +109,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::MatteMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MatteMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-matte.dll")

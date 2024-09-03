@@ -99,6 +99,7 @@ protected:
     }
 
 public:
+    Material() = default;
     explicit Material(const MaterialDesc &desc);
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -163,6 +164,15 @@ public:
             if (slot) {
                 func(slot);
             }
+        }
+    }
+
+    void restore(vision::RuntimeObject *old_obj) noexcept override {
+        VS_HOTFIX_MOVE_ATTRS(index_,slot_cursor_, bump_, bump_scale_)
+        for (int i = 0; i < slot_cursor_.num; ++i) {
+            Slot &slot = get_slot(i);
+            Slot &old_slot = old_obj_->get_slot(i);
+            slot = ocarina::move(old_slot);
         }
     }
 

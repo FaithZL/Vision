@@ -6,10 +6,11 @@
 
 #include "base/scattering/material.h"
 #include "UI/polymorphic.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 using namespace ocarina;
-class MaterialRegistry : public GUI {
+class MaterialRegistry : public GUI, public Observer {
 private:
     static MaterialRegistry *s_material_registry;
     MaterialRegistry() = default;
@@ -25,6 +26,7 @@ public:
     static MaterialRegistry &instance();
     static void destroy_instance();
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     VS_MAKE_GUI_STATUS_FUNC(GUI, materials_)
     [[nodiscard]] SP<Material> register_(SP<Material> material) noexcept;
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;

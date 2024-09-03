@@ -47,6 +47,18 @@ bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
+void MaterialRegistry::update_runtime_object(const IObjectConstructor *constructor) noexcept {
+    for (int i = 0; i < materials_.size(); ++i) {
+        SP<Material> material = materials_[i];
+        if (!constructor->match(material.get())) {
+            continue;
+        }
+        SP<Material> new_material = constructor->construct_shared<Material>();
+//        new_material->restore(material.get());
+//        int a = 0;
+    }
+}
+
 void MaterialRegistry::tidy_up() noexcept {
     materials_.for_each_instance([&](SP<Material> material, uint i) {
         material->set_index(i);
