@@ -126,6 +126,7 @@ protected:
     }
 
 public:
+    SubstrateMaterial() = default;
     explicit SubstrateMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
@@ -135,7 +136,6 @@ public:
         init_slot_cursor(&diff_, 3);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = diff_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
@@ -152,4 +152,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::SubstrateMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision,SubstrateMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-substrate.dll")

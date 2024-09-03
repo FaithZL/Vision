@@ -75,6 +75,7 @@ protected:
     }
 
 public:
+    MetalMaterial() = default;
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
@@ -132,4 +133,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::MetalMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MetalMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-metal.dll")

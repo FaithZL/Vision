@@ -196,6 +196,7 @@ protected:
     }
 
 public:
+    GlassMaterial() = default;
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
@@ -253,4 +254,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::GlassMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, GlassMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-glass.dll")

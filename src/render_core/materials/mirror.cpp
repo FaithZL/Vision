@@ -53,6 +53,7 @@ protected:
     }
 
 public:
+    MirrorMaterial() = default;
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
@@ -84,4 +85,5 @@ protected:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::MirrorMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MirrorMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-mirror.dll")
