@@ -17,6 +17,7 @@ protected:
     }
 
 public:
+    UniformLightSampler() = default;
     explicit UniformLightSampler(const LightSamplerDesc &desc) : LightSampler(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] SampledLight select_light_(const LightSampleContext &lsc, const Float &u) const noexcept override {
@@ -34,4 +35,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::UniformLightSampler)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, UniformLightSampler)
+VS_REGISTER_CURRENT_PATH(0, "vision-lightsampler-uniform.dll")

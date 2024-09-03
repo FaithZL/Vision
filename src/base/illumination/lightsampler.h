@@ -39,7 +39,9 @@ protected:
     [[nodiscard]] virtual Float PMF_(const LightSampleContext &lsc, const Uint &index) const noexcept = 0;
 
 public:
+    LightSampler() = default;
     explicit LightSampler(const LightSamplerDesc &desc);
+    VS_HOTFIX_MAKE_RESTORE(Node, lights_, env_light_, env_separate_, env_prob_)
     void prepare() noexcept override;
     void update_device_data() noexcept;
     VS_MAKE_GUI_STATUS_FUNC(Node, lights_)
