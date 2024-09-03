@@ -76,10 +76,9 @@ public:
 
 template<typename Tuple>
 void replace_objects(const IObjectConstructor *constructor,Tuple tuple) noexcept {
-    traverse_tuple(tuple, [&]<typename T>(T *ptr) {
+    traverse_tuple(tuple, [&]<typename T>(SP<T> *ptr) {
         if (constructor->match(ptr->get())) {
-            using elm_t = ptr_t<T>;
-            T new_obj = T(constructor->construct<elm_t>());
+            SP<T> new_obj = constructor->construct_shared<T>();
             new_obj->restore(ptr->get());
             *ptr = new_obj;
         }

@@ -24,7 +24,7 @@ class ISerialized;
 #define VS_HOTFIX_MAKE_RESTORE(Super, ...)                   \
     void restore(RuntimeObject *old_obj) noexcept override { \
         Super::restore(old_obj);                             \
-        VS_HOTFIX_MOVE_ATTRS(__VA_ARGS__)                  \
+        VS_HOTFIX_MOVE_ATTRS(__VA_ARGS__)                    \
     }
 
 class RuntimeObject : public Hashable {
@@ -54,13 +54,15 @@ public:
     }
     template<typename T = RuntimeObject>
     [[nodiscard]] SP<T> construct_shared() const noexcept {
-        return SP<T>(construct<T>(), &destroy);
+        return std::static_pointer_cast<T>(construct_shared_impl());
     }
     template<typename T = RuntimeObject>
     [[nodiscard]] UP<T> construct_unique() const noexcept {
         return UP<T>(construct<T>());
     }
     [[nodiscard]] virtual RuntimeObject *construct_impl() const = 0;
+    [[nodiscard]] virtual SP<RuntimeObject> construct_shared_impl() const = 0;
+    [[nodiscard]] virtual UP<RuntimeObject> construct_unique_impl() const = 0;
     static void destroy(RuntimeObject *obj) {
         delete obj;
     }
@@ -75,6 +77,12 @@ public:
     explicit ObjectConstructor(const char *fn = nullptr) : IObjectConstructor(fn) {}
     [[nodiscard]] RuntimeObject *construct_impl() const override {
         return new T{};
+    }
+    [[nodiscard]] SP<RuntimeObject> construct_shared_impl() const override {
+        return SP<T>(static_cast<T *>(construct_impl()), destroy);
+    }
+    [[nodiscard]] UP<RuntimeObject> construct_unique_impl() const override {
+        return UP<T>(static_cast<T *>(construct_impl()));
     }
     [[nodiscard]] string_view class_name() const override {
         return type_string<T>();
