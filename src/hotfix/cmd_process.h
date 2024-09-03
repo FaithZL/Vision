@@ -25,11 +25,7 @@ public:
         std::atomic<bool> success{true};
         callback_t callback;
         CmdData(string cmd, callback_t cb) : cmd(ocarina::move(cmd)), callback(std::move(cb)) {}
-        void execute_callback() noexcept {
-            if (callback) {
-                std::invoke(callback, cmd, bool(success));
-            }
-        }
+        void enqueue_callback() noexcept;
     };
 
 private:

@@ -46,6 +46,7 @@ private:
     ocarina::vector<SP<const Observer>> defer_delete_;
     FileTool file_tool_;
     BuildSystem build_system_{};
+    queue<std::function<void()>> callbacks_;
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;
@@ -65,6 +66,8 @@ public:
     void remove_inspected(const fs::path &path) noexcept {
         file_tool_.remove_inspected(path);
     }
+    void execute_callback();
+    void enqueue_function(std::function<void()> fn) noexcept;
     void on_build_finish(bool success, const Target &target) noexcept;
     bool check_and_build() noexcept;
     static HotfixSystem &instance() noexcept;

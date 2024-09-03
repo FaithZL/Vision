@@ -3,10 +3,21 @@
 //
 
 #include "cmd_process.h"
+#include "hotfix.h"
 
 namespace vision::inline hotfix {
 CmdProcess::CmdProcess() {
     ZeroMemory(&process_info_, sizeof(process_info_));
+}
+
+void CmdProcess::CmdData::enqueue_callback() noexcept {
+    if (callback) {
+        HotfixSystem::instance().enqueue_function([callback = callback,
+                                                   cmd = cmd,
+                                                   success = bool(success)] {
+            std::invoke(callback, cmd, bool(success));
+        });
+    }
 }
 
 void CmdProcess::change_directory(const fs::path &dir) const noexcept {
@@ -19,7 +30,7 @@ void CmdProcess::on_finish_cmd() const {
     }
     with_lock([&] {
         CmdData &cmd = cmd_queue_.front();
-        cmd.execute_callback();
+        cmd.enqueue_callback();
         cmd_queue_.pop();
     });
 }

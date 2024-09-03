@@ -35,6 +35,17 @@ void HotfixSystem::defer_delete(SP<const Observer> observer) noexcept {
     defer_delete_.push_back(ocarina::move(observer));
 }
 
+void HotfixSystem::enqueue_function(std::function<void()> fn) noexcept {
+    callbacks_.push(ocarina::move(fn));
+}
+
+void HotfixSystem::execute_callback() {
+    while (!callbacks_.empty()) {
+        std::invoke(callbacks_.front());
+        callbacks_.pop();
+    }
+}
+
 void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
 
     if (!success) {

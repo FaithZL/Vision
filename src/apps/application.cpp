@@ -180,6 +180,7 @@ bool App::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void App::update(double dt) noexcept {
     pipeline().upload_data();
+    HotfixSystem::instance().execute_callback();
     if (invalidation || pipeline().has_changed()) {
         auto camera = pipeline().scene().camera();
         //        OC_INFO(camera->to_string());
@@ -192,11 +193,6 @@ void App::update(double dt) noexcept {
     auto &view_buffer = pipeline().view_buffer();
     view_buffer.download_immediately(_view_buffer.data());
     window->set_background(_view_buffer.data());
-    if (view_buffer.element_size() > 100) {
-        std::cout << "wocao" <<endl;
-        std::cout << &view_buffer << endl;
-        std::cout << &pipeline().view_buffer() << endl;
-    }
     window->set_background(pipeline().view_buffer());
     check_and_save();
 }
