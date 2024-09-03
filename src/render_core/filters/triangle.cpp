@@ -5,11 +5,13 @@
 #include "core/node_desc.h"
 #include "base/sensor/filter.h"
 #include "math/warp.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 
 class TriangleFilter : public Filter {
 public:
+    TriangleFilter() = default;
     explicit TriangleFilter(const FilterDesc &desc) : Filter(desc) {}
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         return {make_float2(sample_tent(u.x, radius().x), sample_tent(u.y, radius().y)), 1.f};
@@ -22,4 +24,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::TriangleFilter)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, TriangleFilter)
+VS_REGISTER_CURRENT_PATH(0, "vision-filter-triangle.dll")

@@ -30,7 +30,7 @@ vector<float> Filter::discretize(ocarina::uint width) const noexcept {
 }
 
 bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool ret = widgets->use_folding_header(
+    bool ret = widgets->use_tree(
         ocarina::format("{} filter", impl_type().data()),
         [&] {
             float2 &r = radius_.hv();

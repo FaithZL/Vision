@@ -34,10 +34,12 @@ protected:
     EncodedData<float2> radius_;
 
 public:
+    Filter() = default;
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
           radius_(desc["radius"].as_float2(make_float2(1.5f))) {}
     OC_ENCODABLE_FUNC(Encodable<float>, radius_)
+    VS_HOTFIX_MAKE_RESTORE(Node, radius_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual FilterSample sample(Float2 u) const noexcept = 0;
     [[nodiscard]] virtual float evaluate(float2 p) const noexcept = 0;

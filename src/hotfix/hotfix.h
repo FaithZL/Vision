@@ -71,4 +71,16 @@ public:
     static void destroy_instance() noexcept;
 };
 
+template<typename Tuple>
+void replace_objects(const IObjectConstructor *constructor,Tuple tuple) noexcept {
+    traverse_tuple(tuple, [&]<typename T>(T *ptr) {
+        if (constructor->match(ptr->get())) {
+            using elm_t = ptr_t<T>;
+            T new_obj = T(constructor->construct<elm_t>());
+            new_obj->restore(ptr->get());
+            *ptr = new_obj;
+        }
+    });
+}
+
 }// namespace vision::inline hotfix

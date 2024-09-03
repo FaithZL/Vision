@@ -12,6 +12,7 @@
 #include "base/scattering/medium.h"
 #include "filter.h"
 #include "film.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 using namespace ocarina;
@@ -26,7 +27,7 @@ struct SensorSample {
         : p_film(pixel + 0.5f) {}
 };
 
-class Sensor : public Node, public EncodedObject {
+class Sensor : public Node, public EncodedObject, public Observer {
 public:
     using Desc = SensorDesc;
 
@@ -39,6 +40,7 @@ protected:
 public:
     Sensor() = default;
     explicit Sensor(const SensorDesc &desc);
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     OC_ENCODABLE_FUNC(EncodedObject, filter_, film_)
     VS_HOTFIX_MAKE_RESTORE(Node, filter_, film_, medium_, medium_id_, datas_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)

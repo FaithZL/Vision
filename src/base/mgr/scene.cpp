@@ -74,15 +74,10 @@ SP<Material> Scene::obtain_black_body() noexcept {
 }
 
 void Scene::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
-    std::tuple tp = {addressof(camera_.impl()), addressof(integrator_.impl()),
+    std::tuple tp = {addressof(camera_.impl()),
+                     addressof(integrator_.impl()),
                      addressof(sampler_.impl())};
-    traverse_tuple(tp, [&]<typename T>(SP<T> *ptr) {
-        if (constructor->match(ptr->get())) {
-            SP<T> new_obj = constructor->construct_shared<T>();
-            new_obj->restore(ptr->get());
-            *ptr = new_obj;
-        }
-    });
+    hotfix::replace_objects(constructor, tp);
 }
 
 void Scene::prepare() noexcept {

@@ -32,6 +32,12 @@ Sensor::Sensor(const SensorDesc &desc)
     }
 }
 
+void Sensor::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
+    std::tuple tp = {addressof(filter_.impl()),
+        addressof(film_)};
+    hotfix::replace_objects(constructor, tp);
+}
+
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} camera", impl_type().data()),

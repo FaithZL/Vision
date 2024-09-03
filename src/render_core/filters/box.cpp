@@ -4,11 +4,13 @@
 
 #include "core/node_desc.h"
 #include "base/sensor/filter.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 
 class BoxFilter : public Filter {
 public:
+    BoxFilter() = default;
     explicit BoxFilter(const FilterDesc &desc) : Filter(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
@@ -22,4 +24,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::BoxFilter)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, BoxFilter)
+VS_REGISTER_CURRENT_PATH(0, "vision-filter-box.dll")
