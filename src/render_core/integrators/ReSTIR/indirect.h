@@ -40,7 +40,7 @@ namespace vision {
 class RayTracingIntegrator;
 using namespace vision::indirect;
 
-class ReSTIRGI : public EncodedObject, public Context, public RenderEnv, public GUI {
+class ReSTIRGI : public EncodedObject, public Context, public RenderEnv, public GUI, public RuntimeObject {
 private:
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;
@@ -68,7 +68,11 @@ protected:
     [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
 
 public:
+    ReSTIRGI() = default;
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_,temporal_,open_,
+                           max_age_,integrator_,radiance_,reservoirs_,samples_,
+                           initial_samples_,temporal_pass_,spatial_shading_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)
     OC_MAKE_MEMBER_SETTER(integrator)
@@ -116,7 +120,8 @@ public:
         Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,
-                                   param.t_depth) && cond;
+                                   param.t_depth) &&
+               cond;
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_surfaces() const noexcept {
@@ -139,3 +144,4 @@ public:
 };
 
 }// namespace vision
+

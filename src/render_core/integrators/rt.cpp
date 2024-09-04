@@ -11,10 +11,12 @@
 
 namespace vision {
 
-class RealTimeIntegrator : public IlluminationIntegrator,public enable_shared_from_this<RealTimeIntegrator> {
+class RealTimeIntegrator : public IlluminationIntegrator,
+                           public enable_shared_from_this<RealTimeIntegrator>,
+                           public Observer {
 private:
-    UP<ReSTIRDI> direct_;
-    UP<ReSTIRGI> indirect_;
+    SP<ReSTIRDI> direct_;
+    SP<ReSTIRGI> indirect_;
     SP<ScreenBuffer> specular_buffer_{make_shared<ScreenBuffer>("RealTimeIntegrator::specular_buffer_")};
     Shader<void(uint, float, float)> combine_;
     Shader<void(uint, Buffer<SurfaceData>)> path_tracing_;
@@ -24,8 +26,8 @@ public:
     RealTimeIntegrator() = default;
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
-          direct_(make_unique<ReSTIRDI>(this, desc["direct"])),
-          indirect_(make_unique<ReSTIRGI>(this, desc["indirect"])),
+          direct_(make_shared<ReSTIRDI>(this, desc["direct"])),
+          indirect_(make_shared<ReSTIRGI>(this, desc["indirect"])),
           denoiser_(Node::create_shared<Denoiser>(desc.denoiser_desc)) {
         max_depth_ = max_depth_.hv() - 1;
     }
@@ -38,6 +40,11 @@ public:
                              combine_, path_tracing_, denoiser_)
         direct_->set_integrator(this);
         indirect_->set_integrator(this);
+    }
+
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
+        std::tuple tp = {addressof(direct_), addressof(indirect_)};
+        hotfix::replace_objects(constructor, tp);
     }
 
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -122,5 +129,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision,RealTimeIntegrator)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RealTimeIntegrator)
 VS_REGISTER_CURRENT_PATH(0, "vision-integrator-rt.dll")

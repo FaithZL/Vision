@@ -9,6 +9,7 @@
 #include "base/mgr/global.h"
 #include "base/mgr/pipeline.h"
 #include "core/thread_pool.h"
+#include "hotfix/hotfix.h"
 
 namespace vision::direct {
 struct Param {
@@ -46,7 +47,9 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
-class ReSTIRDI : public EncodedObject, public Context, public RenderEnv, public GUI {
+class ReSTIRDI : public EncodedObject, public Context,
+                 public RenderEnv, public GUI,
+                 public RuntimeObject {
 private:
     IlluminationIntegrator *integrator_{};
     uint M_light_{};
@@ -77,7 +80,11 @@ protected:
     [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
 
 public:
+    ReSTIRDI() = default;
     ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, integrator_,M_light_,M_bsdf_,
+                           max_age_,debias_,pairwise_,reweight_,open_,
+                           spatial_,temporal_,radiance_,reservoirs_,shader0_,shader1_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }

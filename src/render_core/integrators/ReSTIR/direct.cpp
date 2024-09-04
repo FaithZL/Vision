@@ -624,3 +624,6 @@ CommandList ReSTIRDI::dispatch(uint frame_index) const noexcept {
 }
 
 }// namespace vision
+
+VS_REGISTER_HOTFIX(vision, ReSTIRDI)
+VS_REGISTER_CURRENT_PATH(1, "vision-integrator-ReSTIR.dll")

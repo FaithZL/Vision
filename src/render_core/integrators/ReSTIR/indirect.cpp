@@ -6,7 +6,6 @@
 #include "base/integrator.h"
 
 namespace vision {
-
 ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
                    const vision::ParameterSet &desc)
     : integrator_(integrator),
@@ -361,5 +360,6 @@ void ReSTIRGI::prepare() noexcept {
     vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
     samples_.upload_immediately(vec.data());
 }
-
 }// namespace vision
+
+VS_REGISTER_HOTFIX(vision, ReSTIRGI)
