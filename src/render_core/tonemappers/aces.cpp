@@ -3,11 +3,13 @@
 //
 
 #include "base/sensor/tonemapper.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 
 class ACESToneMapper : public ToneMapper {
 public:
+    ACESToneMapper() = default;
     explicit ACESToneMapper(const ToneMapperDesc &desc)
         : ToneMapper(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -23,4 +25,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::ACESToneMapper)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, ACESToneMapper)
+VS_REGISTER_CURRENT_PATH(0, "vision-tonemapper-aces.dll")

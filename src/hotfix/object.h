@@ -29,7 +29,7 @@ class ISerialized;
         VS_HOTFIX_MOVE_ATTRS(__VA_ARGS__)                    \
     }
 
-class RuntimeObject : public Hashable {
+class RuntimeObject : public RTTI {
 public:
     RuntimeObject() = default;
     [[nodiscard]] SP<ISerialized> serialized_data() const noexcept;

@@ -26,7 +26,7 @@ using TSpectrum = TObject<Spectrum, SpectrumDesc>;
 class FrameBuffer;
 using namespace ocarina;
 
-class Node : public RuntimeObject, public GUI {
+class Node : public RuntimeObject, public GUI, public Hashable {
 protected:
     string name_;
 
@@ -37,6 +37,9 @@ public:
     Node() = default;
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, name_)
     explicit Node(const NodeDesc &desc) : name_(desc.name) {}
+    [[nodiscard]] const char *class_name() const noexcept override {
+        return Hashable::class_name();
+    }
     [[nodiscard]] static Pipeline *pipeline() noexcept;
     [[nodiscard]] static Scene &scene() noexcept;
     [[nodiscard]] static fs::path scene_path() noexcept;

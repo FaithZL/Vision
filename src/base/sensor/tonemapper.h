@@ -23,6 +23,7 @@ public:
     using Desc = ToneMapperDesc;
 
 public:
+    ToneMapper() = default;
     explicit ToneMapper(const ToneMapperDesc &desc)
         : Node(desc) {}
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
