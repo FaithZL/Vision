@@ -96,7 +96,7 @@ public:
     [[nodiscard]] SP<Node> construct_shared_impl(const vision::NodeDesc *desc) const override {
         return SP<T>(static_cast<T *>(construct_impl(desc)), destroy);
     }
-    [[nodiscard]] UP<Node, INodeConstructor::Deleter *> construct_unique_impl(const vision::NodeDesc *desc) const override {
+    [[nodiscard]] UP<Node, Deleter *> construct_unique_impl(const vision::NodeDesc *desc) const override {
         return UP<T, Deleter *>(static_cast<T *>(construct_impl(desc)), destroy);
     }
 };

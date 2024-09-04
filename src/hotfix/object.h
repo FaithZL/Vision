@@ -14,6 +14,8 @@ class Serializer;
 
 class ISerialized;
 
+#define HOTFIX_VIRTUAL virtual
+
 #define VS_HOTFIX_MOVE_ATTR(attr_name) \
     attr_name = ocarina::move(old_obj_->attr_name);
 
@@ -38,6 +40,9 @@ public:
 };
 
 class IObjectConstructor {
+public:
+    using Deleter = void(RuntimeObject *);
+
 protected:
     string_view filename_{};
 
@@ -57,14 +62,14 @@ public:
         return std::static_pointer_cast<T>(construct_shared_impl());
     }
     template<typename T = RuntimeObject>
-    [[nodiscard]] UP<T> construct_unique() const noexcept {
-        return UP<T>(construct<T>());
+    [[nodiscard]] UP<T, Deleter *> construct_unique() const noexcept {
+        return ocarina::static_unique_pointer_cast<T>(construct_unique_impl());
     }
     [[nodiscard]] virtual RuntimeObject *construct_impl() const = 0;
     [[nodiscard]] virtual SP<RuntimeObject> construct_shared_impl() const = 0;
-    [[nodiscard]] virtual UP<RuntimeObject> construct_unique_impl() const = 0;
+    [[nodiscard]] virtual UP<RuntimeObject, Deleter *> construct_unique_impl() const = 0;
     static void destroy(RuntimeObject *obj) {
-        delete obj;
+        ocarina::delete_with_allocator(obj);
     }
     [[nodiscard]] virtual string_view class_name() const = 0;
     virtual ~IObjectConstructor() = default;
@@ -76,13 +81,13 @@ class ObjectConstructor : public IObjectConstructor {
 public:
     explicit ObjectConstructor(const char *fn = nullptr) : IObjectConstructor(fn) {}
     [[nodiscard]] RuntimeObject *construct_impl() const override {
-        return new T{};
+        return ocarina::new_with_allocator<T>();
     }
     [[nodiscard]] SP<RuntimeObject> construct_shared_impl() const override {
         return SP<T>(static_cast<T *>(construct_impl()), destroy);
     }
-    [[nodiscard]] UP<RuntimeObject> construct_unique_impl() const override {
-        return UP<T>(static_cast<T *>(construct_impl()));
+    [[nodiscard]] UP<RuntimeObject, Deleter *> construct_unique_impl() const override {
+        return UP<T, Deleter *>(static_cast<T *>(construct_impl()), destroy);
     }
     [[nodiscard]] string_view class_name() const override {
         return type_string<T>();
