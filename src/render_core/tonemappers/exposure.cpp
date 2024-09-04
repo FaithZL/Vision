@@ -17,6 +17,7 @@ public:
         : ToneMapper(desc),
           exposure_(desc["exposure"].as_float(1.f)) {}
     OC_ENCODABLE_FUNC(ToneMapper, exposure_)
+    VS_HOTFIX_MAKE_RESTORE(ToneMapper, exposure_)
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
