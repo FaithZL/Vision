@@ -60,11 +60,19 @@ void MSVCompiler::link(const vision::LinkOptions &options,
                        const string &extension_objs,
                        const CmdProcess::callback_t &callback) noexcept {
     static constexpr string_view cmd_template = "link {} /out:{} /implib:{} /pdb:{} /dll {} {}";
+
+    auto delete_def = [](string str) {
+        std::regex def_regex(R"(/DEF:[^\s]+)");
+        str = std::regex_replace(str, def_regex, "");
+        return str;
+    };
+    string link_flag = options.link_flags;
+    link_flag = delete_def(link_flag);
     string link_cmd = ocarina::format(cmd_template, options.obj_files_string() + extension_objs,
                                       target.dll_path().string(),
                                       target.lib_path().string(),
                                       target.pdb_path().string(),
-                                      options.link_flags,
+                                      link_flag,
                                       options.link_libraries);
     cmd_process_.write_input(link_cmd, callback);
 }
