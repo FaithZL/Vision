@@ -24,16 +24,9 @@ template<typename impl_t, typename desc_t>
 class TObject;
 using TSpectrum = TObject<Spectrum, SpectrumDesc>;
 class FrameBuffer;
-
 using namespace ocarina;
 
-
-
 class Node : public RuntimeObject, public GUI {
-public:
-    using Creator = Node *(const NodeDesc *);
-    using Deleter = void(Node *);
-
 protected:
     string name_;
 
@@ -85,7 +78,7 @@ public:
         return std::static_pointer_cast<T>(construct_shared_impl(desc));
     }
     template<typename T = Node>
-    [[nodiscard]] UP<T, Deleter*> construct_unique(const NodeDesc *desc) const noexcept {
+    [[nodiscard]] UP<T, Deleter *> construct_unique(const NodeDesc *desc) const noexcept {
         return ocarina::static_unique_pointer_cast<T>(construct_unique_impl(desc));
     }
     static void destroy(Node *obj) {
@@ -109,9 +102,9 @@ public:
 };
 
 template<typename impl_t, typename Desc>
-SP<impl_t> Node::create_shared(const Desc &desc)  {
+SP<impl_t> Node::create_shared(const Desc &desc) {
     const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
-    using Constructor = INodeConstructor*();
+    using Constructor = INodeConstructor *();
     Constructor *constructor = module->function<Constructor *>("constructor");
     SP<impl_t> ret = constructor()->construct_shared<impl_t>(&desc);
     OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
@@ -234,16 +227,10 @@ public:
 
 }// namespace vision
 
-#define VS_MAKE_CLASS_CREATOR(Class)                                                         \
-    VS_EXPORT_API vision::NodeConstructor<Class> *constructor() {                            \
-        static vision::NodeConstructor<Class> ret;                                           \
-        return &ret;                                                                         \
-    }                                                                                        \
-    VS_EXPORT_API Class *create(const vision::NodeDesc *desc) {                              \
-        return ocarina::new_with_allocator<Class>(*dynamic_cast<const Class::Desc *>(desc)); \
-    }                                                                                        \
-    OC_EXPORT_API void destroy(Class *obj) {                                                 \
-        ocarina::delete_with_allocator(obj);                                                 \
+#define VS_MAKE_CLASS_CREATOR(Class)                              \
+    VS_EXPORT_API vision::NodeConstructor<Class> *constructor() { \
+        static vision::NodeConstructor<Class> ret;                \
+        return &ret;                                              \
     }
 
 #define VS_MAKE_CLASS_CREATOR_HOTFIX(NS, Class) \

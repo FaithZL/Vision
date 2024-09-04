@@ -8,6 +8,7 @@
 #include "util/image.h"
 #include "util/file_manager.h"
 #include "core/node_desc.h"
+#include "base/node.h"
 
 using namespace vision;
 using namespace ocarina;
@@ -32,10 +33,7 @@ int main(int argc, char *argv[]) {
     desc.sub_type = "alias";
 
     const DynamicModule *module = file_manager.obtain_module(desc.plugin_name());
-    auto creator = reinterpret_cast<Node::Creator *>(module->function_ptr("create"));
-    auto deleter = reinterpret_cast<Node::Deleter *>(module->function_ptr("destroy"));
-    auto node = SP<Node>(creator(&desc), deleter);
-    Warper2D *warper2d = dynamic_cast<Warper2D*>(node.get());
+    SP<Warper2D> warper2d = vision::Node::create_shared<vision::Warper2D>(desc);
 
     uint2 res = image_io.resolution();
     vector<float> weights(res.x * res.y, 0);
