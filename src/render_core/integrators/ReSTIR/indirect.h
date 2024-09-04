@@ -70,9 +70,9 @@ protected:
 public:
     ReSTIRGI() = default;
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_,temporal_,open_,
-                           max_age_,integrator_,radiance_,reservoirs_,samples_,
-                           initial_samples_,temporal_pass_,spatial_shading_)
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_,
+                           max_age_, integrator_, radiance_, reservoirs_, samples_,
+                           initial_samples_, temporal_pass_, spatial_shading_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)
     OC_MAKE_MEMBER_SETTER(integrator)
@@ -80,31 +80,31 @@ public:
     void prepare() noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    void compile_initial_samples() noexcept;
-    void compile_temporal_reuse() noexcept;
-    [[nodiscard]] ScatterEval eval_bsdf(const Interaction &it, const GIRSVSample &sample, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] Float compute_p_hat(const Interaction &it, const GIRSVSample &sample) const noexcept;
-    void compile_spatial_shading() noexcept;
+    HOTFIX_VIRTUAL void compile_initial_samples() noexcept;
+    HOTFIX_VIRTUAL void compile_temporal_reuse() noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL ScatterEval eval_bsdf(const Interaction &it, const GIRSVSample &sample, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float compute_p_hat(const Interaction &it, const GIRSVSample &sample) const noexcept;
+    HOTFIX_VIRTUAL void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();
         compile_temporal_reuse();
         compile_spatial_shading();
     }
-    [[nodiscard]] Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
-    [[nodiscard]] GIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
-                                          HitBSDFVar &hit_bsdf) noexcept;
-    [[nodiscard]] GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                               GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf = nullptr) const noexcept;
-    [[nodiscard]] GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                             const Float2 &motion_vec, const SensorSample &ss,
-                                             const Var<indirect::Param> &param) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
+                                                         HitBSDFVar &hit_bsdf) noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
+                                                              GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf = nullptr) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
+                                                            const Float2 &motion_vec, const SensorSample &ss,
+                                                            const Var<indirect::Param> &param) const noexcept;
 
-    [[nodiscard]] GIReservoir constant_combine(const GIReservoir &canonical_rsv,
-                                               const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] GIReservoir combine_spatial(GIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] GIReservoir spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                            const Int2 &pixel, const Var<indirect::Param> &param) const noexcept;
-    [[nodiscard]] Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir constant_combine(const GIReservoir &canonical_rsv,
+                                                              const Container<uint> &rsv_idx) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_spatial(GIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
+                                                           const Int2 &pixel, const Var<indirect::Param> &param) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
     [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                           const SurfaceDataVar &another_surface,
@@ -118,10 +118,9 @@ public:
                                                 const Var<indirect::Param> &param,
                                                 GIRSVSample *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
-        return vision::is_neighbor(cur_surface, prev_surface,
-                                   param.t_dot,
-                                   param.t_depth) &&
-               cond;
+        return cond && vision::is_neighbor(cur_surface, prev_surface,
+                                           param.t_dot,
+                                           param.t_depth);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_surfaces() const noexcept {
@@ -142,6 +141,4 @@ public:
     [[nodiscard]] indirect::Param construct_param() const noexcept;
     [[nodiscard]] CommandList dispatch(uint frame_index) const noexcept;
 };
-
 }// namespace vision
-
