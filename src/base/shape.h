@@ -81,14 +81,18 @@ OC_STRUCT(vision, MeshHandle, vertex_offset, triangle_offset){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
     void set_##attr(decltype(attr##_.impl()) val) noexcept { \
-        val->add_reference(shared_from_this());              \
+        if (val.get()) {                                     \
+            val->add_reference(shared_from_this());          \
+        }                                                    \
         attr##_.init(val);                                   \
     }                                                        \
     void set_##attr##_name(const string &name) noexcept {    \
         attr##_.name = name;                                 \
     }                                                        \
     void set_##attr(decltype(attr##_) val) noexcept {        \
-        val->add_reference(shared_from_this());              \
+        if (val.get()) {                                     \
+            val->add_reference(shared_from_this());          \
+        }                                                    \
         attr##_ = ocarina::move(val);                        \
     }                                                        \
     [[nodiscard]] auto attr() const noexcept {               \
@@ -151,7 +155,7 @@ public:
 
 namespace vision {
 
-class ShapeGroup : public Node, public enable_shared_from_this<ShapeGroup>{
+class ShapeGroup : public Node, public enable_shared_from_this<ShapeGroup> {
 public:
     using Desc = ShapeDesc;
 
@@ -189,7 +193,5 @@ public:
         }
     }
 };
-
 #undef VS_MAKE_ATTR_SETTER_GETTER
-
 }// namespace vision
