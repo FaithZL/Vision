@@ -28,7 +28,7 @@ struct InstanceData {
     uint outside_medium{InvalidUI32};
     float3x4 o2w_transposed;
     [[nodiscard]] auto o2w() const noexcept {
-        return transpose(make_float4x4(o2w_transposed));
+        return make_float4x4(transpose(o2w_transposed));
     }
 };
 
@@ -38,7 +38,7 @@ struct InstanceData {
 OC_STRUCT(vision, InstanceData, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w_transposed){
     [[nodiscard]] auto o2w() const noexcept {
-        return transpose(make_float4x4(o2w_transposed));
+        return make_float4x4(transpose(o2w_transposed));
     }
 };
 // clang-format on
