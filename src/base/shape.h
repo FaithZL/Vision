@@ -26,9 +26,9 @@ struct InstanceData {
     uint mesh_id{InvalidUI32};
     uint inside_medium{InvalidUI32};
     uint outside_medium{InvalidUI32};
-    float4x4 o2w_transposed;
+    float3x4 o2w_transposed;
     [[nodiscard]] auto o2w() const noexcept {
-        return transpose(o2w_transposed);
+        return transpose(make_float4x4(o2w_transposed));
     }
 };
 
@@ -38,7 +38,7 @@ struct InstanceData {
 OC_STRUCT(vision, InstanceData, light_id, mat_id, lightmap_id,
           mesh_id, inside_medium, outside_medium, o2w_transposed){
     [[nodiscard]] auto o2w() const noexcept {
-        return transpose(o2w_transposed);
+        return transpose(make_float4x4(o2w_transposed));
     }
 };
 // clang-format on
@@ -151,7 +151,7 @@ public:
     void set_lightmap_id(uint id) noexcept { handle_.lightmap_id = id; }
     [[nodiscard]] float4x4 o2w() const noexcept { return handle_.o2w(); }
     void set_o2w(float4x4 o2w) noexcept {
-        handle_.o2w_transposed = transpose(o2w);
+        handle_.o2w_transposed = transpose(make_float4x3(o2w));
     }
     virtual void update_inside_medium_id(uint id) noexcept {
         handle_.inside_medium = id;
