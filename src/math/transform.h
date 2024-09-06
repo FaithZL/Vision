@@ -17,7 +17,7 @@ inline namespace transform {
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] constexpr matrix4_t<T> translation(const T &t) noexcept {
+[[nodiscard]] constexpr matrix4_t<T, 4> translation(const T &t) noexcept {
     return make_float4x4(
         1.f, 0.f, 0.f, 0.f,
         0.f, 1.f, 0.f, 0.f,
@@ -27,13 +27,13 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_scalar_expr_v<T>
-[[nodiscard]] constexpr matrix4_t<T> translation(const T &x, const T &y, const T &z) noexcept {
+[[nodiscard]] constexpr matrix4_t<T, 4> translation(const T &x, const T &y, const T &z) noexcept {
     return translation(make_float3(x, y, z));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] constexpr matrix4_t<T> scale(const T &s) noexcept {
+[[nodiscard]] constexpr matrix4_t<T, 4> scale(const T &s) noexcept {
     return make_float4x4(
         s.x, 0.f, 0.f, 0.f,
         0.f, s.y, 0.f, 0.f,
@@ -43,11 +43,11 @@ requires is_vector3_expr_v<T>
 
 template<typename T>
 requires is_scalar_expr_v<T>
-[[nodiscard]] constexpr matrix4_t<T> scale(const T &x, const T &y, const T &z) noexcept { return scale(make_float3(x, y, z)); }
+[[nodiscard]] constexpr matrix4_t<T, 4> scale(const T &x, const T &y, const T &z) noexcept { return scale(make_float3(x, y, z)); }
 
 template<typename T>
 requires is_scalar_expr_v<T>
-[[nodiscard]] constexpr matrix4_t<T> scale(const T &s) noexcept { return scale(make_float3(s)); }
+[[nodiscard]] constexpr matrix4_t<T, 4> scale(const T &s) noexcept { return scale(make_float3(s)); }
 
 template<EPort p = D>
 [[nodiscard]] inline oc_float4x4<p> perspective(oc_float<p> fov_y, const oc_float<p> &z_near,
