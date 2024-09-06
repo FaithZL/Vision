@@ -69,7 +69,7 @@ public:
     [[nodiscard]] virtual SP<RuntimeObject> construct_shared_impl() const = 0;
     [[nodiscard]] virtual UP<RuntimeObject, Deleter *> construct_unique_impl() const = 0;
     static void destroy(RuntimeObject *obj) {
-        ocarina::delete_with_allocator(obj);
+        delete obj;
     }
     [[nodiscard]] virtual string_view class_name() const = 0;
     virtual ~IObjectConstructor() = default;
@@ -81,7 +81,7 @@ class ObjectConstructor : public IObjectConstructor {
 public:
     explicit ObjectConstructor(const char *fn = nullptr) : IObjectConstructor(fn) {}
     [[nodiscard]] RuntimeObject *construct_impl() const override {
-        return ocarina::new_with_allocator<T>();
+        return new T{};
     }
     [[nodiscard]] SP<RuntimeObject> construct_shared_impl() const override {
         return SP<T>(static_cast<T *>(construct_impl()), destroy);

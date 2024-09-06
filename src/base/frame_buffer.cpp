@@ -155,7 +155,7 @@ Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float2 &p
     SurfaceDataVar prev_surf = prev_surfaces(frame_index).read(pixel_index);
     Float3 cur_coord = camera->raster_coord(cur_surf->position());
     Float3 prev_coord = camera->raster_coord(prev_surf->position());
-    return cur_coord - prev_coord;
+    return prev_coord - cur_coord;
 }
 
 }// namespace vision
