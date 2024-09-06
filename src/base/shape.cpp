@@ -33,9 +33,9 @@ bool ShapeInstance::render_UI(ocarina::Widgets *widgets) noexcept {
 vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
     for (const Triangle &tri : mesh_->triangles()) {
-        float3 v0 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.i].position());
-        float3 v1 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.j].position());
-        float3 v2 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.k].position());
+        float3 v0 = transform_point<H>(handle_.o2w_, mesh_->vertices()[tri.i].position());
+        float3 v1 = transform_point<H>(handle_.o2w_, mesh_->vertices()[tri.j].position());
+        float3 v2 = transform_point<H>(handle_.o2w_, mesh_->vertices()[tri.k].position());
         ret.push_back(triangle_area(v0, v1, v2));
     }
     return ret;
@@ -44,9 +44,9 @@ vector<float> ShapeInstance::surface_areas() const noexcept {
 Box3f ShapeInstance::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : mesh_->triangles()) {
-        float3 v0 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.i].position());
-        float3 v1 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.j].position());
-        float3 v2 = transform_point<H>(handle_.o2w, mesh_->vertices()[tri.k].position());
+        float3 v0 = transform_point<H>(handle_.o2w_, mesh_->vertices()[tri.i].position());
+        float3 v1 = transform_point<H>(handle_.o2w_, mesh_->vertices()[tri.j].position());
+        float3 v2 = transform_point<H>(handle_.o2w_, mesh_->vertices()[tri.k].position());
         box.extend(v0);
         box.extend(v1);
         box.extend(v2);

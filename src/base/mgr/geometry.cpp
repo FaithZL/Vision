@@ -16,7 +16,6 @@ Geometry::Geometry(Pipeline *rp)
       triangles_(rp->bindless_array()),
       instances_(rp->bindless_array()),
       mesh_handles_(rp->bindless_array()),
-      transforms_(rp->bindless_array()),
       accel_(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<SP<ShapeInstance>> &instances) {
@@ -36,7 +35,6 @@ void Geometry::update_instances(const vector<SP<ShapeInstance>> &instances) {
 
     std::for_each(instances.begin(), instances.end(), [&](SP<const ShapeInstance> instance) {
         instances_.push_back(instance->handle());
-        transforms_.push_back(instance->o2w());
     });
 }
 
@@ -60,7 +58,7 @@ void Geometry::build_accel() {
             mesh = rp->device().create_mesh(verts, tris);
         }
         stream << mesh.build_bvh();
-        accel_.add_instance(ocarina::move(mesh), inst.o2w);
+        accel_.add_instance(ocarina::move(mesh), inst.o2w_);
     }
 
     OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel_.vertex_num(), accel_.triangle_num());
@@ -78,7 +76,6 @@ void Geometry::reset_device_buffer() {
     init_buffer(triangles_, "Geometry::triangles_");
     init_buffer(instances_, "Geometry::instances_");
     init_buffer(mesh_handles_, "Geometry::mesh_handles_");
-    init_buffer(transforms_, "Geometry::transforms_");
 }
 
 void Geometry::upload() const {
@@ -87,7 +84,6 @@ void Geometry::upload() const {
            << triangles_.upload()
            << mesh_handles_.upload()
            << instances_.upload()
-           << transforms_.upload()
            << synchronize();
     stream << commit();
 }
@@ -97,7 +93,6 @@ void Geometry::clear() noexcept {
     triangles_.clear_all();
     instances_.clear_all();
     mesh_handles_.clear_all();
-    transforms_.clear_all();
     accel_.clear();
 }
 
@@ -106,7 +101,7 @@ Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_com
     it.prim_id = hit.prim_id;
     Var inst = instances_.read(hit.inst_id);
     Var mesh = mesh_handles_.read(inst.mesh_id);
-    auto o2w = Transform(inst.o2w);
+    auto o2w = Transform(inst.o2w_);
     Var tri = triangles_.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     it.lightmap_id = inst.lightmap_id;

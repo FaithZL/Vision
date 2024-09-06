@@ -18,7 +18,6 @@ class Geometry {
 private:
     RegistrableManaged<Vertex> vertices_;
     RegistrableManaged<Triangle> triangles_;
-    RegistrableManaged<float4x4> transforms_;
     RegistrableManaged<InstanceData> instances_;
     RegistrableManaged<MeshHandle> mesh_handles_;
     ocarina::Accel accel_;
