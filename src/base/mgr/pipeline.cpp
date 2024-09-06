@@ -105,6 +105,17 @@ void hotfix_window(ocarina::Widgets *widgets) noexcept {
             OC_INFO("no modification");
         }
     });
+    if (!hotfix.is_first_version()) {
+        widgets->button_click("previous", [&] {
+            hotfix.previous_version();
+        });
+    }
+
+    if (!hotfix.is_last_version()) {
+        widgets->button_click("next", [&] {
+            hotfix.next_version();
+        });
+    }
 }
 }// namespace
 

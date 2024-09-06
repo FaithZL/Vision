@@ -72,6 +72,10 @@ public:
     void decrease_count() const noexcept { --build_count; }
 };
 
+struct Version {
+    vector<Target> targets;
+};
+
 class FileTool {
 public:
     /// key: name, value : Target

@@ -47,6 +47,8 @@ private:
     FileTool file_tool_;
     BuildSystem build_system_{};
     queue<std::function<void()>> callbacks_;
+    vector<Version> versions_;
+    int cur_ver_{0};
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;
@@ -70,13 +72,19 @@ public:
     [[nodiscard]] bool is_working() const noexcept { return build_system_.is_working(); }
     void enqueue_function(std::function<void()> fn) noexcept;
     void on_build_finish(bool success, const Target &target) noexcept;
+    void load_module(Target target) noexcept;
     bool check_and_build() noexcept;
+    void next_version() noexcept;
+    void previous_version() noexcept;
+    [[nodiscard]] bool is_first_version() const noexcept { return cur_ver_ == 0; }
+    [[nodiscard]] bool is_last_version() const noexcept { return cur_ver_ == versions_.size() - 1; }
+    void on_version_change() noexcept;
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
 };
 
 template<typename Tuple>
-void replace_objects(const IObjectConstructor *constructor,Tuple tuple) noexcept {
+void replace_objects(const IObjectConstructor *constructor, Tuple tuple) noexcept {
     traverse_tuple(tuple, [&]<typename T>(SP<T> *ptr) {
         if (constructor->match(ptr->get())) {
             SP<T> new_obj = constructor->construct_shared<T>();

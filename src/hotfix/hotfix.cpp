@@ -46,14 +46,7 @@ void HotfixSystem::execute_callback() {
     }
 }
 
-void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
-
-    if (!success) {
-        OC_INFO_FORMAT("module {} build failure!", target.name);
-        return;
-    }
-    OC_INFO_FORMAT("module {} build success!", target.name);
-
+void HotfixSystem::load_module(vision::Target target) noexcept {
     vector<const IObjectConstructor *> constructors;
     ModuleInterface *module_interface = target.module_interface();
     auto tmp = module_interface->constructors(target.modified_files);
@@ -69,6 +62,37 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     defer_delete_.clear();
 }
 
+void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
+
+    if (!success) {
+        OC_INFO_FORMAT("module {} build failure!", target.name);
+        return;
+    }
+    OC_INFO_FORMAT("module {} build success!", target.name);
+
+    load_module(target);
+}
+
+void HotfixSystem::on_version_change() noexcept {
+    if (versions_.empty()) {
+        return;
+    }
+    Version version = versions_[cur_ver_];
+    for (const auto &item : version.targets) {
+        load_module(item);
+    }
+}
+
+void HotfixSystem::previous_version() noexcept {
+    cur_ver_ = ocarina::clamp(cur_ver_ - 1, 0, int(versions_.size() - 1));
+    on_version_change();
+}
+
+void HotfixSystem::next_version() noexcept {
+    cur_ver_ = ocarina::clamp(cur_ver_ + 1, 0, int(versions_.size() - 1));
+    on_version_change();
+}
+
 bool HotfixSystem::check_and_build() noexcept {
     auto modules = file_tool_.get_modified_targets();
     if (modules.empty()) {
@@ -77,6 +101,10 @@ bool HotfixSystem::check_and_build() noexcept {
     build_system_.build_targets(modules, [this]<typename... Args>(Args &&...args) {
         this->on_build_finish(OC_FORWARD(args)...);
     });
+    Version version;
+    version.targets = ocarina::move(modules);
+    versions_.push_back(version);
+    cur_ver_ = versions_.size() - 1;
     return true;
 }
 
