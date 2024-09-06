@@ -627,6 +627,7 @@ protected:
     }
 
 public:
+    DisneyMaterial() = default;
     explicit DisneyMaterial(const MaterialDesc &desc)
         : Material(desc) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
@@ -644,6 +645,10 @@ public:
         diff_trans_.set(Slot::create_slot(desc.slot("diff_trans", 0.f, Number)));
         init_slot_cursor(&color_, &diff_trans_);
     }
+    void restore(RuntimeObject *old_obj) noexcept override {
+        Material::restore(old_obj);
+        VS_HOTFIX_MOVE_ATTRS(thin_)
+    }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
                                               eta_, roughness_, spec_tint_, anisotropic_,
@@ -655,4 +660,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::DisneyMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, DisneyMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-disney.dll")
