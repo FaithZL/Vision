@@ -58,7 +58,7 @@ void Geometry::build_accel() {
             mesh = rp->device().create_mesh(verts, tris);
         }
         stream << mesh.build_bvh();
-        accel_.add_instance(ocarina::move(mesh), inst.o2w_);
+        accel_.add_instance(ocarina::move(mesh), inst.o2w());
     }
 
     OC_INFO_FORMAT("vertex num is {}, triangle num is {}", accel_.vertex_num(), accel_.triangle_num());
@@ -101,7 +101,7 @@ Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_com
     it.prim_id = hit.prim_id;
     Var inst = instances_.read(hit.inst_id);
     Var mesh = mesh_handles_.read(inst.mesh_id);
-    auto o2w = Transform(inst.o2w_);
+    auto o2w = Transform(inst->o2w());
     Var tri = triangles_.read(mesh.triangle_offset + hit.prim_id);
     auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
     it.lightmap_id = inst.lightmap_id;

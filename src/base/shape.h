@@ -26,10 +26,9 @@ struct InstanceData {
     uint mesh_id{InvalidUI32};
     uint inside_medium{InvalidUI32};
     uint outside_medium{InvalidUI32};
-    float4x4 o2w_;
     float4x4 o2w_transposed;
     [[nodiscard]] auto o2w() const noexcept {
-        return o2w_;
+        return transpose(o2w_transposed);
     }
 };
 
@@ -37,9 +36,9 @@ struct InstanceData {
 
 // clang-format off
 OC_STRUCT(vision, InstanceData, light_id, mat_id, lightmap_id,
-          mesh_id, inside_medium, outside_medium, o2w_, o2w_transposed){
+          mesh_id, inside_medium, outside_medium, o2w_transposed){
     [[nodiscard]] auto o2w() const noexcept {
-        return o2w_;
+        return transpose(o2w_transposed);
     }
 };
 // clang-format on
@@ -150,9 +149,8 @@ public:
     VS_MAKE_ATTR_SETTER_GETTER(material)
     VS_MAKE_ATTR_SETTER_GETTER(emission)
     void set_lightmap_id(uint id) noexcept { handle_.lightmap_id = id; }
-    [[nodiscard]] float4x4 o2w() const noexcept { return handle_.o2w_; }
+    [[nodiscard]] float4x4 o2w() const noexcept { return handle_.o2w(); }
     void set_o2w(float4x4 o2w) noexcept {
-        handle_.o2w_ = transpose(transpose(o2w));
         handle_.o2w_transposed = transpose(o2w);
     }
     virtual void update_inside_medium_id(uint id) noexcept {
