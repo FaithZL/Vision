@@ -32,7 +32,15 @@ void CmdProcess::on_finish_cmd() const {
         CmdData &cmd = cmd_queue_.front();
         cmd.enqueue_callback();
         cmd_queue_.pop();
+        is_working_ = false;
     });
+}
+
+void CmdProcess::on_start_cmd() const {
+    if (!store_cmd_output_) {
+        std::cout << "[Cmd process] start" << std::endl;
+    }
+    is_working_ = true;
 }
 
 void CmdProcess::read_output_thread() {
@@ -55,6 +63,12 @@ void CmdProcess::read_output_thread() {
         if (found != std::string::npos) {
             buffer = buffer.substr(0, found);
             on_finish_cmd();
+        }
+
+        found = buffer.find(c_StartToken);
+        if (found != std::string ::npos) {
+            buffer = buffer.substr(0, found);
+            on_start_cmd();
         }
 
         if (buffer.empty()) {
@@ -188,7 +202,7 @@ void CmdProcess::initialise() {
 
 void CmdProcess::write_input(std::string input, const callback_t &callback) const {
     DWORD nBytesWritten;
-    input = add_complete_flag(input);
+    input = add_flag(input);
     auto length = static_cast<DWORD>(input.length());
     with_lock([&] {
         cmd_queue_.emplace(input, callback);

@@ -30,6 +30,10 @@ public:
         cmd_process_.cleanup_process();
     }
 
+    [[nodiscard]] bool is_working() const noexcept override {
+        return cmd_process_.is_working();
+    }
+
     [[nodiscard]] fs::path installation_directory() noexcept override {
         return parent_path(cli_path(), 8);
     }

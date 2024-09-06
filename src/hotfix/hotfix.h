@@ -67,6 +67,7 @@ public:
         file_tool_.remove_inspected(path);
     }
     void execute_callback();
+    [[nodiscard]] bool is_working() const noexcept { return build_system_.is_working(); }
     void enqueue_function(std::function<void()> fn) noexcept;
     void on_build_finish(bool success, const Target &target) noexcept;
     bool check_and_build() noexcept;

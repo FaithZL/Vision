@@ -14,6 +14,7 @@
 namespace vision::inline hotfix {
 using namespace ocarina;
 static constexpr std::string_view c_CompletionToken("_COMPLETION_TOKEN_");
+static constexpr std::string_view c_StartToken("_START_TOKEN_");
 
 /// from https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/blob/master/Aurora/RuntimeCompiler/Compiler_PlatformWindows.cpp
 
@@ -36,6 +37,7 @@ private:
     std::string cmd_output_;
     std::thread output_thread_;
     mutable std::queue<CmdData> cmd_queue_;
+    mutable std::atomic<bool> is_working_{false};
 
 public:
     CmdProcess();
@@ -45,14 +47,17 @@ public:
     void change_directory(const fs::path &dir) const noexcept;
     void write_input(std::string input, const callback_t &callback = nullptr) const;
     void cleanup_process();
+    [[nodiscard]] bool is_working() const noexcept { return is_working_; }
 
-    [[nodiscard]] static string add_complete_flag(const string &cmd) noexcept {
-        return cmd + ocarina::format("\n echo {} \n", c_CompletionToken);
+    [[nodiscard]] static string add_flag(const string &cmd) noexcept {
+        return ocarina::format("\n echo {} \n", c_StartToken) + cmd +
+               ocarina::format("\n echo {} \n", c_CompletionToken);
     }
 
 private:
     void read_output_thread();
     void on_finish_cmd() const;
+    void on_start_cmd() const;
 };
 
 }// namespace vision::inline hotfix

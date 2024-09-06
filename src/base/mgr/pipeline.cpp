@@ -96,6 +96,9 @@ void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
 namespace {
 void hotfix_window(ocarina::Widgets *widgets) noexcept {
     HotfixSystem &hotfix = HotfixSystem::instance();
+    if (hotfix.is_working()) {
+        return;
+    }
     widgets->button_click("reload", [&] {
         bool update = hotfix.check_and_build();
         if (!update) {

@@ -24,6 +24,7 @@ public:
     void build_target(const Target &target,
                       const CmdProcess::callback_t& callback = nullptr) const noexcept;
     static void create_temp_path(const fs::path &path) noexcept;
+    [[nodiscard]] bool is_working() const noexcept { return compiler_->is_working(); }
     void compile(const Target &target) const noexcept;
     void link(const Target &target, const CmdProcess::callback_t &callback = nullptr) const noexcept;
 };

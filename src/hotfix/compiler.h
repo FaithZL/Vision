@@ -27,6 +27,7 @@ public:
     [[nodiscard]] virtual fs::path installation_directory() noexcept = 0;
     virtual void setup_environment() const {}
     [[nodiscard]] static Handle create(const string &name);
+    [[nodiscard]] virtual bool is_working() const noexcept { return false; }
     [[nodiscard]] static Handle create();
     virtual ~Compiler() = default;
 };
