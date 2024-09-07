@@ -76,8 +76,12 @@ public:
     bool check_and_build() noexcept;
     void next_version() noexcept;
     void previous_version() noexcept;
-    [[nodiscard]] bool is_first_version() const noexcept { return cur_ver_ == 0; }
-    [[nodiscard]] bool is_last_version() const noexcept { return cur_ver_ == versions_.size() - 1; }
+    [[nodiscard]] bool has_previous() const noexcept {
+        return cur_ver_ > 0 && !versions_.empty();
+    }
+    [[nodiscard]] bool has_next() const noexcept {
+        return cur_ver_ < versions_.size() - 1 && !versions_.empty();
+    }
     void on_version_change() noexcept;
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
