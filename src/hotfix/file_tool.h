@@ -72,8 +72,11 @@ public:
     void decrease_count() const noexcept { --build_count; }
 };
 
+class IObjectConstructor;
+
 struct Version {
     vector<Target> targets;
+    vector<IObjectConstructor *> constructors;
 };
 
 class FileTool {

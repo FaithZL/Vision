@@ -157,7 +157,7 @@ Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float2 &p
 }
 
 Float3 FrameBuffer::compute_motion_vector(const TCamera &camera,const Float3 &cur_pos,
-                                          const Float3 &pre_pos) noexcept {
+                                          const Float3 &pre_pos) const noexcept {
     Float3 cur_coord = camera->raster_coord(cur_pos);
     Float3 prev_coord = camera->raster_coord(pre_pos);
     return prev_coord - cur_coord;

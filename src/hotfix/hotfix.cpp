@@ -50,7 +50,6 @@ void HotfixSystem::load_module(vision::Target target) noexcept {
     vector<const IObjectConstructor *> constructors;
     ModuleInterface *module_interface = target.module_interface();
     auto tmp = module_interface->constructors(target.modified_files);
-    ModuleInterface::instance().update_constructors(module_interface);
     constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
     for (int i = 0; i < observers_.size(); ++i) {
         Observer *observer = observers_[i];
@@ -130,5 +129,3 @@ void HotfixSystem::destroy_instance() noexcept {
 HotfixSystem::~HotfixSystem() = default;
 
 }// namespace vision::inline hotfix
-
-//VS_REGISTER_CURRENT_PATH(1, "vision-hotfix.dll", false)
