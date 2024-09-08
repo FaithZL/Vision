@@ -76,7 +76,7 @@ class IObjectConstructor;
 
 struct Version {
     vector<Target> targets;
-    vector<IObjectConstructor *> constructors;
+    vector<const IObjectConstructor *> constructors;
 };
 
 class FileTool {

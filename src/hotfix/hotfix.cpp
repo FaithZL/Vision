@@ -47,18 +47,9 @@ void HotfixSystem::execute_callback() {
 }
 
 void HotfixSystem::load_module(vision::Target target) noexcept {
-    vector<const IObjectConstructor *> constructors;
     ModuleInterface *module_interface = target.module_interface();
-    auto tmp = module_interface->constructors(target.modified_files);
-    constructors.insert(constructors.cend(), tmp.cbegin(), tmp.cend());
-    for (int i = 0; i < observers_.size(); ++i) {
-        Observer *observer = observers_[i];
-        if (!observer->valid_) {
-            continue;
-        }
-        observer->notified(constructors);
-    }
-    defer_delete_.clear();
+    vector<const IObjectConstructor *> constructors = module_interface->constructors(target.modified_files);
+    update_objects(constructors);
 }
 
 void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept {
@@ -70,6 +61,28 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     OC_INFO_FORMAT("module {} build success!", target.name);
 
     load_module(target);
+}
+
+void HotfixSystem::on_build_all_finish(const vector<vision::Target> &modules) noexcept {
+    Version version;
+    version.targets = modules;
+
+    for (const auto &module : modules) {
+        ModuleInterface *module_interface = module.module_interface();
+        auto tmp = module_interface->constructors(module.modified_files);
+        version.constructors.insert(version.constructors.cend(), tmp.cbegin(), tmp.cend());
+    }
+
+    if (versions_.empty()) {
+        Version org;
+        for (const IObjectConstructor *item : version.constructors) {
+            org.constructors.push_back(ModuleInterface::instance().constructor(item->class_name().data()));
+        }
+        versions_.push_back(org);
+    }
+
+    versions_.push_back(version);
+    cur_ver_ = versions_.size() - 1;
 }
 
 void HotfixSystem::on_version_change() noexcept {
@@ -92,18 +105,28 @@ void HotfixSystem::next_version() noexcept {
     on_version_change();
 }
 
+void HotfixSystem::update_objects(const vector<const vision::IObjectConstructor *> &constructors) noexcept {
+    for (int i = 0; i < observers_.size(); ++i) {
+        Observer *observer = observers_[i];
+        if (!observer->valid_) {
+            continue;
+        }
+        observer->notified(constructors);
+    }
+    defer_delete_.clear();
+}
+
 bool HotfixSystem::check_and_build() noexcept {
     auto modules = file_tool_.get_modified_targets();
     if (modules.empty()) {
         return false;
     }
-    build_system_.build_targets(modules, [this]<typename... Args>(Args &&...args) {
-        this->on_build_finish(OC_FORWARD(args)...);
+    build_system_.build_targets(modules, [this, modules](bool success, const Target &target) {
+        this->on_build_finish(success, target);
+        if (target.name == modules.back().name) {
+            on_build_all_finish(modules);
+        }
     });
-    Version version;
-    version.targets = ocarina::move(modules);
-    versions_.push_back(version);
-    cur_ver_ = versions_.size() - 1;
     return true;
 }
 

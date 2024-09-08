@@ -72,7 +72,9 @@ public:
     [[nodiscard]] bool is_working() const noexcept { return build_system_.is_working(); }
     void enqueue_function(std::function<void()> fn) noexcept;
     void on_build_finish(bool success, const Target &target) noexcept;
+    void on_build_all_finish(const vector<Target> &modules) noexcept;
     void load_module(Target target) noexcept;
+    void update_objects(const vector<const IObjectConstructor *> &constructors) noexcept;
     bool check_and_build() noexcept;
     void next_version() noexcept;
     void previous_version() noexcept;
