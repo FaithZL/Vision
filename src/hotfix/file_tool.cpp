@@ -27,6 +27,21 @@ ModuleInterface *Target::module_interface() const noexcept {
     return creator();
 }
 
+void Version::merge_constructor(const vision::IObjectConstructor *input) noexcept {
+    for (const IObjectConstructor *item : constructors) {
+        if (item->class_name() == input->class_name()) {
+            return ;
+        }
+    }
+    constructors.push_back(input);
+}
+
+void Version::merge_constructors(const vector<const vision::IObjectConstructor *> &input) noexcept {
+    for (const IObjectConstructor *item : input) {
+        merge_constructor(item);
+    }
+}
+
 void FileTool::add_inspected(const fs::path &path, string_view module_name, bool recursive) {
     if (target_map_.contains(module_name) || !fs::exists(path)) {
         return;

@@ -77,6 +77,8 @@ class IObjectConstructor;
 struct Version {
     vector<pair<bool, Target>> targets;
     vector<const IObjectConstructor *> constructors;
+    void merge_constructors(const vector<const IObjectConstructor *> &input) noexcept;
+    void merge_constructor(const IObjectConstructor *input) noexcept;
 };
 
 class FileTool {
