@@ -63,11 +63,16 @@ void HotfixSystem::on_build_finish(bool success, const Target &target) noexcept 
     load_module(target);
 }
 
-void HotfixSystem::on_build_all_finish(const vector<vision::Target> &modules) noexcept {
+void HotfixSystem::on_build_all_finish(const vector<pair<bool, Target>> &modules) noexcept {
     Version version;
     version.targets = modules;
 
-    for (const auto &module : modules) {
+    for (const auto &item : modules) {
+        Target module = item.second;
+        on_build_finish(item.first, item.second);
+        if (!item.first) {
+            continue;
+        }
         ModuleInterface *module_interface = module.module_interface();
         auto tmp = module_interface->constructors(module.modified_files);
         version.constructors.insert(version.constructors.cend(), tmp.cbegin(), tmp.cend());
@@ -119,10 +124,13 @@ bool HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return false;
     }
+    static vector<pair<bool, Target>> pairs;
+    pairs.clear();
     build_system_.build_targets(modules, [this, modules](bool success, const Target &target) {
-        this->on_build_finish(success, target);
+//        this->on_build_finish(success, target);
+        pairs.emplace_back(success, target);
         if (target.name == modules.back().name) {
-            on_build_all_finish(modules);
+            on_build_all_finish(pairs);
         }
     });
     return true;

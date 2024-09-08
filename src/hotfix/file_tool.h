@@ -75,7 +75,7 @@ public:
 class IObjectConstructor;
 
 struct Version {
-    vector<Target> targets;
+    vector<pair<bool, Target>> targets;
     vector<const IObjectConstructor *> constructors;
 };
 
