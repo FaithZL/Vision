@@ -39,6 +39,14 @@ void ModuleInterface::update_constructors(const ModuleInterface *other) noexcept
     }
 }
 
+vector<const IObjectConstructor *> ModuleInterface::constructors() const noexcept {
+    vector<const IObjectConstructor *> ret;
+    for (const auto &item : constructor_map_) {
+        ret.push_back(item.second.get());
+    }
+    return ret;
+}
+
 string_view ModuleInterface::src_path() noexcept {
     return __FILE__;
 }

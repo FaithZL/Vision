@@ -32,7 +32,7 @@ public:
     [[nodiscard]] const IObjectConstructor *constructor(const string &cls_name) const noexcept;
     void update(SP<const IObjectConstructor> constructor) noexcept;
     void update_constructors(const ModuleInterface *other) noexcept;
-
+    [[nodiscard]] vector<const IObjectConstructor *> constructors() const noexcept;
     template<typename... Args>
     requires concepts::all_string_viewable<Args...>
     [[nodiscard]] vector<const IObjectConstructor *> constructors(Args &&...args) const noexcept {
