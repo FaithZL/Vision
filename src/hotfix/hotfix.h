@@ -36,7 +36,7 @@ public:
 
 class HotfixSystem {
 private:
-    HotfixSystem() = default;
+    HotfixSystem() { versions_.push_back({}); }
     ~HotfixSystem();
     static HotfixSystem *s_mgr;
 

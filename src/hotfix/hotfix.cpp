@@ -78,12 +78,10 @@ void HotfixSystem::on_build_all_finish(const vector<pair<bool, Target>> &modules
         version.constructors.insert(version.constructors.cend(), tmp.cbegin(), tmp.cend());
     }
 
-    if (versions_.empty()) {
-        Version org;
+    for (auto &ver : versions_) {
         for (const IObjectConstructor *item : version.constructors) {
-            org.constructors.push_back(ModuleInterface::instance().constructor(item->class_name().data()));
+            ver.merge_constructor(ModuleInterface::instance().constructor(item->class_name().data()));
         }
-        versions_.push_back(org);
     }
 
     versions_.push_back(version);
