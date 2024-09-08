@@ -90,9 +90,7 @@ void HotfixSystem::on_version_change() noexcept {
         return;
     }
     Version version = versions_[cur_ver_];
-    for (const auto &item : version.targets) {
-        load_module(item);
-    }
+    update_objects(version.constructors);
 }
 
 void HotfixSystem::previous_version() noexcept {
