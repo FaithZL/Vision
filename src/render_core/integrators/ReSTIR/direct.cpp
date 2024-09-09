@@ -227,7 +227,6 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
         }
     };
 
-
     frame_buffer().hit_bsdfs().write(dispatch_id(), hit_bsdf);
     ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
@@ -423,9 +422,12 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
     return rsv;
 }
 
-SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it) const noexcept {
+SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
+                                     SurfaceExtendVar &surf_ext) const noexcept {
     TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
+    surf_ext.ray_org = rs.origin();
+    surf_ext.ray_dir = rs.direction();
 
     hit = pipeline()->trace_closest(rs.ray);
 
@@ -435,7 +437,8 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it)
         cur_surf.hit = hit;
         cur_surf->set_depth(0.f);
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
-
+        surf_ext.wo = it.wo;
+        surf_ext.t_max += rs.ray->t_max();
         cur_surf.mat_id = it.material_id();
         Float3 w;
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
@@ -445,13 +448,15 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it)
         cur_surf->set_depth(camera->linear_depth(it.pos));
         cur_surf->set_normal(it.shading.normal());
         cur_surf->set_position(it.pos);
-//        $if(cur_surf.flag == SurfaceData::NearSpec) {
-//            w = reflect(-rs.direction(), it.ng);
-//            rs = it.spawn_ray_state(w);
-//            hit = pipeline()->trace_closest(rs.ray);
-//        } $else {
+        $condition_info("{} ------", surf_ext.t_max);
+        $if(cur_surf.flag == SurfaceData::NearSpec) {
+            w = reflect(-rs.direction(), it.ng);
+            rs = it.spawn_ray_state(w);
+            hit = pipeline()->trace_closest(rs.ray);
+        }
+        $else {
             $break;
-//        };
+        };
     };
 
     return cur_surf;
@@ -473,9 +478,11 @@ void ReSTIRDI::compile_shader0() noexcept {
         RayState rs = camera->generate_ray(ss);
         HitVar hit;
         Interaction it{false};
+        SurfaceExtendVar surf_ext;
 
-        SurfaceDataVar cur_surf = compute_hit(rs, hit, it);
+        SurfaceDataVar cur_surf = compute_hit(rs, hit, it, surf_ext);
         cur_surfaces().write(dispatch_id(), cur_surf);
+
 
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
@@ -555,9 +562,8 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
         };
         it.wo = normalize(camera->device_position() - it.pos);
 
-
-      value = Li(it, nullptr, rsv.sample);
-      Bool occluded = geometry.occluded(it, rsv.sample->p_light());
+        value = Li(it, nullptr, rsv.sample);
+        Bool occluded = geometry.occluded(it, rsv.sample->p_light());
         rsv->process_occluded(occluded);
         value = value * rsv.W;
     };

@@ -92,6 +92,7 @@ protected:
 
     /// save two frames of data , use for ReSTIR
     RegistrableBuffer<SurfaceData> surfaces_{};
+    RegistrableBuffer<SurfaceExtend> surface_extends_{};
     RegistrableBuffer<HitBSDF> hit_bsdfs_{};
     RegistrableBuffer<float2> motion_vectors_{};
 
@@ -108,7 +109,7 @@ public:
 public:
     FrameBuffer() = default;
     explicit FrameBuffer(const FrameBufferDesc &desc);
-    VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, hit_bsdfs_, motion_vectors_,
+    VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_, motion_vectors_,
                            hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_)
     void prepare() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -118,6 +119,7 @@ public:
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
     [[nodiscard]] uint gbuffer_base() const noexcept { return gbuffer_.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return surfaces_.index().hv(); }
+    [[nodiscard]] uint surface_ext_base() const noexcept { return surface_extends_.index().hv(); }
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T prev_gbuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + gbuffer_base(); }
@@ -130,6 +132,16 @@ public:
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
+    template<typename T>
+    requires is_integral_expr_v<T>
+    [[nodiscard]] T prev_surface_extends_index(const T &frame_index) const noexcept {
+        return prev_index(frame_index) + surface_ext_base();
+    }
+    template<typename T>
+    requires is_integral_expr_v<T>
+    [[nodiscard]] T cur_surface_extends_index(const T &frame_index) const noexcept {
+        return cur_index(frame_index) + surface_ext_base();
+    }
 
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
@@ -157,6 +169,7 @@ public:
     }
 
     VS_MAKE_ATTR_FUNC(surfaces, 2)
+    VS_MAKE_ATTR_FUNC(surface_extends, 2)
     VS_MAKE_ATTR_FUNC(gbuffer, 2)
     VS_MAKE_ATTR_FUNC(hit_bsdfs, 1)
     VS_MAKE_ATTR_FUNC(motion_vectors, 1)
@@ -174,7 +187,7 @@ public:
     [[nodiscard]] static Float2 compute_motion_vec(const TCamera &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
     [[nodiscard]] Float3 compute_motion_vector(const TCamera &camera, const Float2 &p_film, const Uint &frame_index) const noexcept;
-    [[nodiscard]] Float3 compute_motion_vector(const TCamera &camera,const Float3&cur_pos, const Float3 &pre_pos) const noexcept;
+    [[nodiscard]] Float3 compute_motion_vector(const TCamera &camera, const Float3 &cur_pos, const Float3 &pre_pos) const noexcept;
     [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord) noexcept;
     virtual void compile() noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,

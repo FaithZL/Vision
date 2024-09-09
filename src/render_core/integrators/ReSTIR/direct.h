@@ -127,10 +127,17 @@ public:
     [[nodiscard]] auto cur_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir RIS(Bool hit, const Interaction &it,
-                                  const Var<direct::Param> &param, Uint *flag) const noexcept;
+    [[nodiscard]] auto prev_surface_extends() const noexcept {
+        return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().prev_surface_extends_index(frame_index()));
+    }
+    [[nodiscard]] auto cur_surface_extends() const noexcept {
+        return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().cur_surface_extends_index(frame_index()));
+    }
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir RIS(Bool hit, const Interaction &it, const Var<direct::Param> &param,
+                                                 Uint *flag) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState &rs, HitVar &hit, Interaction &it) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState &rs, HitVar &hit, Interaction &it,
+                                                            SurfaceExtendVar &surf_ext) const noexcept;
 
     /// evaluate Li from light
     [[nodiscard]] HOTFIX_VIRTUAL SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,

@@ -58,6 +58,7 @@ public:
         frame_buffer().prepare_screen_buffer(specular_buffer_);
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
+        frame_buffer().prepare_surface_extends();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_motion_vectors();
     }
