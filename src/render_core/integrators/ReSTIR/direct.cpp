@@ -152,6 +152,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
         },
                 "ReSTIRDI::Li from light");
     }
+
     if (bsdf_pdf_point) {
         *bsdf_pdf_point = light_sampler->PDF_point(it, sample->lsp(), eval.pdf);
     }
@@ -225,6 +226,8 @@ DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
             };
         }
     };
+
+
     frame_buffer().hit_bsdfs().write(dispatch_id(), hit_bsdf);
     ret->update_W(ret.sample.p_hat);
     ret->truncation(1);
@@ -425,21 +428,32 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it)
     const Geometry &geometry = pipeline()->geometry();
 
     hit = pipeline()->trace_closest(rs.ray);
+
     SurfaceDataVar cur_surf;
-    cur_surf.hit = hit;
-    cur_surf->set_depth(0.f);
-    $if(hit->is_hit()) {
+
+    $while(hit->is_hit()) {
+        cur_surf.hit = hit;
+        cur_surf->set_depth(0.f);
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
+
         cur_surf.mat_id = it.material_id();
-        cur_surf->set_depth(camera->linear_depth(it.pos));
-        cur_surf->set_normal(it.shading.normal());
-        cur_surf->set_position(it.pos);
+        Float3 w;
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
         });
+        cur_surf->set_depth(camera->linear_depth(it.pos));
+        cur_surf->set_normal(it.shading.normal());
+        cur_surf->set_position(it.pos);
+//        $if(cur_surf.flag == SurfaceData::NearSpec) {
+//            w = reflect(-rs.direction(), it.ng);
+//            rs = it.spawn_ray_state(w);
+//            hit = pipeline()->trace_closest(rs.ray);
+//        } $else {
+            $break;
+//        };
     };
-    
+
     return cur_surf;
 }
 
@@ -511,7 +525,6 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum Le = {swl.dimension(), 0.f};
     Interaction it = geometry.compute_surface_interaction(hit, c_pos);
-
     $if(it.has_emission()) {
         light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
             if (!light->match(LightType::Area)) { return; }
@@ -541,8 +554,10 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
             };
         };
         it.wo = normalize(camera->device_position() - it.pos);
-        value = Li(it, nullptr, rsv.sample);
-        Bool occluded = geometry.occluded(it, rsv.sample->p_light());
+
+
+      value = Li(it, nullptr, rsv.sample);
+      Bool occluded = geometry.occluded(it, rsv.sample->p_light());
         rsv->process_occluded(occluded);
         value = value * rsv.W;
     };
