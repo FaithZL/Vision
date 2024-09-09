@@ -420,6 +420,29 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
     return rsv;
 }
 
+SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it) const noexcept {
+    TCamera &camera = scene().camera();
+    const Geometry &geometry = pipeline()->geometry();
+
+    hit = pipeline()->trace_closest(rs.ray);
+    SurfaceDataVar cur_surf;
+    cur_surf.hit = hit;
+    cur_surf->set_depth(0.f);
+    $if(hit->is_hit()) {
+        it = geometry.compute_surface_interaction(hit, rs.ray, true);
+        cur_surf.mat_id = it.material_id();
+        cur_surf->set_depth(camera->linear_depth(it.pos));
+        cur_surf->set_normal(it.shading.normal());
+        cur_surf->set_position(it.pos);
+        scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
+            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
+            cur_surf.flag = bsdf.flag();
+        });
+    };
+    
+    return cur_surf;
+}
+
 void ReSTIRDI::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
@@ -434,24 +457,10 @@ void ReSTIRDI::compile_shader0() noexcept {
         initial(sampler(), frame_index, spectrum);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
-        Var hit = frame_buffer().hit_buffer().read(dispatch_id());
-
-        SurfaceDataVar cur_surf;
-        cur_surf.hit = hit;
-        cur_surf->set_depth(0.f);
+        HitVar hit;
         Interaction it{false};
-        $if(hit->is_hit()) {
-            it = geometry.compute_surface_interaction(hit, rs.ray, true);
-            cur_surf.mat_id = it.material_id();
-            cur_surf->set_depth(camera->linear_depth(it.pos));
-            cur_surf->set_normal(it.shading.normal());
-            cur_surf->set_position(it.pos);
-            scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
-                auto bsdf = material->create_evaluator(it, sampled_wavelengths());
-                cur_surf.flag = bsdf.flag();
-            });
-        };
 
+        SurfaceDataVar cur_surf = compute_hit(rs, hit, it);
         cur_surfaces().write(dispatch_id(), cur_surf);
 
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);

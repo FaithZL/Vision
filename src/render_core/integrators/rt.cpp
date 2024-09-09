@@ -114,7 +114,7 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-        stream << frame_buffer().compute_hit(frame_index_);
+//        stream << frame_buffer().compute_hit(frame_index_);
         stream << direct_->dispatch(frame_index_);
         //        stream << path_tracing_(frame_index_,
         //                                frame_buffer().cur_surfaces(frame_index_))
