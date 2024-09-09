@@ -237,6 +237,7 @@ namespace vision {
 using namespace ocarina;
 using array_float3 = std::array<float, 3>;
 using array_float2 = std::array<float, 2>;
+using array_float4 = std::array<float, 4>;
 inline namespace geometry {
 struct Vertex {
 public:
