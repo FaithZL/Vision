@@ -446,12 +446,12 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surf->set_depth(camera->linear_depth(it.pos));
             cur_surf->set_normal(it.shading.normal());
             cur_surf->set_position(it.pos);
+            scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
+                auto bsdf = material->create_evaluator(it, sampled_wavelengths());
+                cur_surf.flag = bsdf.flag();
+            });
         };
 
-        scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
-            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
-            cur_surf.flag = bsdf.flag();
-        });
         cur_surfaces().write(dispatch_id(), cur_surf);
 
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
