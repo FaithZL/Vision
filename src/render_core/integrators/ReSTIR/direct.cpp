@@ -445,14 +445,17 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
         });
+
+        
+        // todo fix depth calculate
         cur_surf->set_depth(camera->linear_depth(it.pos));
         cur_surf->set_normal(it.shading.normal());
         cur_surf->set_position(it.pos);
-        $condition_info("{} ------", surf_ext.t_max);
         $if(cur_surf.flag == SurfaceData::NearSpec) {
             w = reflect(-rs.direction(), it.ng);
             rs = it.spawn_ray_state(w);
             hit = pipeline()->trace_closest(rs.ray);
+            cur_surf.is_replaced = true;
         }
         $else {
             $break;
@@ -483,6 +486,9 @@ void ReSTIRDI::compile_shader0() noexcept {
         SurfaceDataVar cur_surf = compute_hit(rs, hit, it, surf_ext);
         cur_surfaces().write(dispatch_id(), cur_surf);
 
+        $if(cur_surf.is_replaced) {
+            cur_surface_extends().write(dispatch_id(), surf_ext);
+        };
 
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
@@ -522,7 +528,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
     return rsv;
 }
 
-Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexcept {
+Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
     const TCamera &camera = scene().camera();
@@ -531,6 +537,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
     const SampledWavelengths &swl = sampled_wavelengths();
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum Le = {swl.dimension(), 0.f};
+    auto hit = surf.hit;
     Interaction it = geometry.compute_surface_interaction(hit, c_pos);
     $if(it.has_emission()) {
         light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
@@ -560,7 +567,12 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const HitVar &hit) const noexc
                 value = eval.L * bs.eval.f / bs.eval.pdf;
             };
         };
-        it.wo = normalize(camera->device_position() - it.pos);
+        $if(surf.is_replaced) {
+            auto surf_ext = cur_surface_extends().read(dispatch_id());
+            it.wo = surf_ext.wo;
+        } $else {
+            it.wo = normalize(camera->device_position() - it.pos);
+        };
 
         value = Li(it, nullptr, rsv.sample);
         Bool occluded = geometry.occluded(it, rsv.sample->p_light());
@@ -592,7 +604,7 @@ void ReSTIRDI::compile_shader1() noexcept {
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
         $if(hit->is_hit()) {
-            L = shading(st_rsv, hit);
+            L = shading(st_rsv, cur_surf);
         }
         $else {
             if (light_sampler->env_light()) {

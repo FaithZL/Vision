@@ -197,7 +197,7 @@ public:
                                                             const Float2 &motion_vec,
                                                             const SensorSample &ss,
                                                             const Var<Param> &param) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(DIReservoir rsv, const HitVar &hit) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(DIReservoir rsv, const SurfaceDataVar &surf) const noexcept;
     HOTFIX_VIRTUAL void compile_shader0() noexcept;
     HOTFIX_VIRTUAL void compile_shader1() noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL direct::Param construct_param() const noexcept;
