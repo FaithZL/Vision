@@ -4,6 +4,7 @@
 
 #include "hotfix.h"
 #include "core/logging.h"
+#include "core/thread_pool.h"
 
 namespace vision ::inline hotfix {
 
@@ -122,14 +123,16 @@ bool HotfixSystem::check_and_build() noexcept {
     if (modules.empty()) {
         return false;
     }
-    static vector<pair<bool, Target>> pairs;
-    pairs.clear();
-    build_system_.build_targets(modules, [this, modules](bool success, const Target &target) {
-//        this->on_build_finish(success, target);
-        pairs.emplace_back(success, target);
-        if (target.name == modules.back().name) {
-            on_build_all_finish(pairs);
-        }
+    ThreadPool::instance().async([&, modules]{
+        static vector<pair<bool, Target>> pairs;
+        pairs.clear();
+        build_system_.build_targets(modules, [this, modules](bool success, const Target &target) {
+            //        this->on_build_finish(success, target);
+            pairs.emplace_back(success, target);
+            if (target.name == modules.back().name) {
+                on_build_all_finish(pairs);
+            }
+        });
     });
     return true;
 }
