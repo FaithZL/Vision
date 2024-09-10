@@ -44,7 +44,7 @@ OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos, mat_id, is_replaced, flag
 
 namespace vision {
 struct SurfaceExtend {
-    float3 throughput{};
+    float3 throughput{make_float3(1.f)};
     float3 wo{};
     float3 ray_org{};
     float3 ray_dir{};

@@ -435,7 +435,6 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
 
     $while(hit->is_hit()) {
         cur_surf.hit = hit;
-        cur_surf->set_depth(0.f);
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
         surf_ext.wo = it.wo;
         surf_ext.t_max += rs.ray->t_max();
@@ -444,18 +443,24 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
+            $if(cur_surf.flag == SurfaceData::NearSpec) {
+                w = reflect(-rs.direction(), it.ng);
+                ScatterEval se = bsdf.evaluate(it.wo, w);
+                SampledSpectrum throughput = se.safe_throughput();
+                surf_ext.throughput *= throughput.vec3();
+            };
         });
-
         
         // todo fix depth calculate
         cur_surf->set_depth(camera->linear_depth(it.pos));
         cur_surf->set_normal(it.shading.normal());
         cur_surf->set_position(it.pos);
         $if(cur_surf.flag == SurfaceData::NearSpec) {
-            w = reflect(-rs.direction(), it.ng);
+
             rs = it.spawn_ray_state(w);
             hit = pipeline()->trace_closest(rs.ray);
             cur_surf.is_replaced = true;
+            cur_surf->set_depth(0);
         }
         $else {
             $break;
@@ -567,14 +572,16 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) co
                 value = eval.L * bs.eval.f / bs.eval.pdf;
             };
         };
+        Float3 throughput = make_float3(1.f);
         $if(surf.is_replaced) {
             auto surf_ext = cur_surface_extends().read(dispatch_id());
             it.wo = surf_ext.wo;
+            throughput = surf_ext.throughput;
         } $else {
             it.wo = normalize(camera->device_position() - it.pos);
         };
 
-        value = Li(it, nullptr, rsv.sample);
+        value = Li(it, nullptr, rsv.sample) * SampledSpectrum(throughput);
         Bool occluded = geometry.occluded(it, rsv.sample->p_light());
         rsv->process_occluded(occluded);
         value = value * rsv.W;
