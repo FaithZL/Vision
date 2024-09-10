@@ -390,15 +390,18 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
 
-    auto get_prev_data = [this, &limit](const Float2 &pos) {
+    SurfaceExtendVar surf_ext;
+
+    auto get_prev_data = [this, &limit](const Float2 &pos, SurfaceExtendVar &surf_ext) {
         Uint index = dispatch_id(make_uint2(pos));
         DIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
+        surf_ext = prev_surface_extends().read(index);
         return make_pair(prev_surfaces().read(index), prev_rsv);
     };
 
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        auto data = get_prev_data(prev_p_film);
+        auto data = get_prev_data(prev_p_film, surf_ext);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
         $if(is_temporal_valid(cur_surf, prev_surf, param,
@@ -408,7 +411,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
         $else {
             $for(i, temporal_.N) {
                 Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                auto data = get_prev_data(p);
+                auto data = get_prev_data(p, surf_ext);
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf, param,
