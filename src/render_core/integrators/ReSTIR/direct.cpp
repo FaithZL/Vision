@@ -578,10 +578,10 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) co
         Float3 throughput = make_float3(1.f);
         $if(surf.is_replaced) {
             auto surf_ext = cur_surface_extends().read(dispatch_id());
-            it.wo = normalize(surf_ext.view_pos - it.pos);
+            it.update_wo(surf_ext.view_pos);
             throughput = surf_ext.throughput;
         } $else {
-            it.wo = normalize(camera->device_position() - it.pos);
+            it.update_wo(camera->device_position());
         };
 
         value = Li(it, nullptr, rsv.sample) * SampledSpectrum(throughput);
