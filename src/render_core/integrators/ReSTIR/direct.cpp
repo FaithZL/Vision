@@ -387,10 +387,11 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
                                      const Float2 &motion_vec,
                                      const SensorSample &ss,
                                      const Var<Param> &param) const noexcept {
-    Float2 prev_p_film = ss.p_film - motion_vec;
+    //todo calculate motion vector
+    Float2 prev_p_film = ss.p_film - motion_vec * 0;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
-    auto &camera = scene().camera();
+    TCamera &camera = scene().camera();
 
     Float3 view_pos = camera->device_position();
     Float3 prev_view_pos = camera->prev_device_position();
