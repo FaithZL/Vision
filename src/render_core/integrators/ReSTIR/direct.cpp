@@ -331,14 +331,14 @@ DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
 DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
                                        const SurfaceDataVar &cur_surf,
                                        DIReservoir &other_rsv,
-                                       const Float3 &view_pos,
-                                       const Float3 &prev_view_pos) const noexcept {
+                                       Float3 view_pos,
+                                       Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
-    Float3 c_pos = camera->device_position();
-    Float3 prev_c_pos = camera->prev_device_position();
+//    view_pos = camera->device_position();
+//    prev_view_pos = camera->prev_device_position();
     const Geometry &geom = pipeline()->geometry();
-    Interaction it = geom.compute_surface_interaction(cur_surf.hit, c_pos);
+    Interaction it = geom.compute_surface_interaction(cur_surf.hit, view_pos);
 
     Float p_hat_c_at_n;
     Float p_hat_n_at_n;
@@ -350,23 +350,22 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
     Float mis_prev;
 
     if (temporal_.mis) {
-        it.update_wo(prev_c_pos);
+        it.update_wo(prev_view_pos);
         p_hat_c_at_n = compute_p_hat(it, nullptr, cur_rsv.sample);
         p_hat_n_at_n = compute_p_hat(it, nullptr, other_rsv.sample);
 
-        it.update_wo(c_pos);
+        it.update_wo(view_pos);
         p_hat_c_at_c = compute_p_hat(it, nullptr, cur_rsv.sample);
         p_hat_n_at_c = compute_p_hat(it, nullptr, other_rsv.sample);
 
         mis_cur = MIS_weight_n(cur_rsv.C, p_hat_c_at_c, other_rsv.C, p_hat_c_at_n);
         mis_prev = MIS_weight_n(other_rsv.C, p_hat_n_at_n, cur_rsv.C, p_hat_n_at_c);
     } else {
-        it.update_wo(prev_c_pos);
+        it.update_wo(prev_view_pos);
         p_hat_n_at_n = compute_p_hat(it, nullptr, other_rsv.sample);
-
         mis_cur = MIS_weight(cur_rsv.C, other_rsv.C);
         mis_prev = MIS_weight(other_rsv.C, cur_rsv.C);
-        it.update_wo(c_pos);
+        it.update_wo(view_pos);
     }
 
     DIReservoir ret;
@@ -452,6 +451,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
         cur_surf.hit = hit;
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
         surf_ext.t_max += rs.ray->t_max();
+        Float3 v_pos = rs.ray->at(surf_ext.t_max);
         cur_surf.mat_id = it.material_id();
         Float3 w;
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
@@ -465,10 +465,10 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
             };
         });
 
-        // todo fix depth calculate
-        cur_surf->set_depth(camera->linear_depth(it.pos));
+        cur_surf->set_depth(camera->linear_depth(v_pos));
         cur_surf->set_normal(it.shading.normal());
         cur_surf->set_position(it.pos);
+
         $if(cur_surf.flag == SurfaceData::NearSpec) {
             surf_ext.view_pos = it.pos;
             rs = it.spawn_ray_state(w);

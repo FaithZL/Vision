@@ -188,8 +188,8 @@ public:
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_temporal(const DIReservoir &cur_rsv,
                                                               const SurfaceDataVar &cur_surf,
                                                               DIReservoir &other_rsv,
-                                                              const Float3 &view_pos,
-                                                              const Float3 &prev_view_pos) const noexcept;
+                                                              Float3 view_pos,
+                                                              Float3 prev_view_pos) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir spatial_reuse(DIReservoir rsv,
                                                            const SurfaceDataVar &cur_surf,
                                                            const Int2 &pixel,
