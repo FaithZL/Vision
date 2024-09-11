@@ -45,15 +45,15 @@ OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos, mat_id, is_replaced, flag
 namespace vision {
 struct SurfaceExtend {
     float3 throughput{make_float3(1.f)};
-    float3 wo{};
+    float3 view_pos{};
     float3 ray_org{};
     float3 ray_dir{};
     float t_max{};
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision, SurfaceExtend, throughput, wo, ray_org, ray_dir, t_max) {
-    [[nodiscard]] ocarina::RayVar incoming_ray() const noexcept {
+OC_STRUCT(vision, SurfaceExtend, throughput, view_pos, ray_org, ray_dir, t_max) {
+    [[nodiscard]] ocarina::RayVar primary_ray() const noexcept {
         return ocarina::make_ray(ray_org, ray_dir);
     }
 };

@@ -431,6 +431,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
     const Geometry &geometry = pipeline()->geometry();
     surf_ext.ray_org = rs.origin();
     surf_ext.ray_dir = rs.direction();
+    surf_ext.view_pos = rs.origin();
 
     hit = pipeline()->trace_closest(rs.ray);
 
@@ -439,7 +440,6 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
     $while(hit->is_hit()) {
         cur_surf.hit = hit;
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
-        surf_ext.wo = it.wo;
         surf_ext.t_max += rs.ray->t_max();
         cur_surf.mat_id = it.material_id();
         Float3 w;
@@ -459,7 +459,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
         cur_surf->set_normal(it.shading.normal());
         cur_surf->set_position(it.pos);
         $if(cur_surf.flag == SurfaceData::NearSpec) {
-
+            surf_ext.view_pos = it.pos;
             rs = it.spawn_ray_state(w);
             hit = pipeline()->trace_closest(rs.ray);
             cur_surf.is_replaced = true;
@@ -578,7 +578,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) co
         Float3 throughput = make_float3(1.f);
         $if(surf.is_replaced) {
             auto surf_ext = cur_surface_extends().read(dispatch_id());
-            it.wo = surf_ext.wo;
+            it.wo = normalize(surf_ext.view_pos - it.pos);
             throughput = surf_ext.throughput;
         } $else {
             it.wo = normalize(camera->device_position() - it.pos);
