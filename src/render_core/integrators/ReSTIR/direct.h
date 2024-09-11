@@ -133,7 +133,7 @@ public:
     [[nodiscard]] auto cur_surface_extends() const noexcept {
         return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().cur_surface_extends_index(frame_index()));
     }
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir RIS(Bool hit, const Interaction &it, const Var<direct::Param> &param,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir RIS(const Bool &hit, const Interaction &it, const Var<direct::Param> &param,
                                                  Uint *flag) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState &rs, HitVar &hit, Interaction &it,
@@ -186,8 +186,10 @@ public:
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_spatial(DIReservoir cur_rsv,
                                                              const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_temporal(const DIReservoir &cur_rsv,
-                                                              SurfaceDataVar cur_surf,
-                                                              DIReservoir &other_rsv) const noexcept;
+                                                              const SurfaceDataVar &cur_surf,
+                                                              DIReservoir &other_rsv,
+                                                              const Float3 &view_pos,
+                                                              const Float3 &prev_view_pos) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir spatial_reuse(DIReservoir rsv,
                                                            const SurfaceDataVar &cur_surf,
                                                            const Int2 &pixel,

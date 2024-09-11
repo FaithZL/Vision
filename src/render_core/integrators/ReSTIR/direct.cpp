@@ -162,7 +162,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
     return f;
 }
 
-DIReservoir ReSTIRDI::RIS(Bool hit, const Interaction &it,
+DIReservoir ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
                           const Var<Param> &param, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSampler &sampler = scene().sampler();
@@ -329,8 +329,10 @@ DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
 }
 
 DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
-                                       SurfaceDataVar cur_surf,
-                                       DIReservoir &other_rsv) const noexcept {
+                                       const SurfaceDataVar &cur_surf,
+                                       DIReservoir &other_rsv,
+                                       const Float3 &view_pos,
+                                       const Float3 &prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
     Float3 c_pos = camera->device_position();
@@ -389,34 +391,43 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
+    auto &camera = scene().camera();
 
-    SurfaceExtendVar surf_ext;
+    Float3 view_pos = camera->device_position();
+    Float3 prev_view_pos = camera->prev_device_position();
 
-    auto get_prev_data = [this, &limit](const Float2 &pos, SurfaceExtendVar &surf_ext) {
+    auto get_prev_data = [this, &limit](const Float2 &pos, Float3 &view_pos) {
         Uint index = dispatch_id(make_uint2(pos));
         DIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
-        surf_ext = prev_surface_extends().read(index);
-        return make_pair(prev_surfaces().read(index), prev_rsv);
+        SurfaceDataVar surf = prev_surfaces().read(index);
+        $if(surf.is_replaced) {
+            view_pos = prev_surface_extends().read(index).view_pos;
+        };
+        return make_pair(surf, prev_rsv);
     };
 
+    $if(cur_surf.is_replaced) {
+        view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
+    };
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        auto data = get_prev_data(prev_p_film, surf_ext);
+        auto data = get_prev_data(prev_p_film,prev_view_pos);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
+
         $if(is_temporal_valid(cur_surf, prev_surf, param,
                               addressof(prev_rsv.sample))) {
-            rsv = combine_temporal(rsv, cur_surf, prev_rsv);
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, view_pos, prev_view_pos);
         }
         $else {
             $for(i, temporal_.N) {
                 Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                auto data = get_prev_data(p, surf_ext);
+                auto data = get_prev_data(p,prev_view_pos);
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf, param,
                                       addressof(another_rsv.sample))) {
-                    rsv = combine_temporal(rsv, cur_surf, another_rsv);
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv, view_pos, prev_view_pos);
                     $break;
                 };
             };
@@ -453,7 +464,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
                 surf_ext.throughput *= throughput.vec3();
             };
         });
-        
+
         // todo fix depth calculate
         cur_surf->set_depth(camera->linear_depth(it.pos));
         cur_surf->set_normal(it.shading.normal());
@@ -580,7 +591,8 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) co
             auto surf_ext = cur_surface_extends().read(dispatch_id());
             it.update_wo(surf_ext.view_pos);
             throughput = surf_ext.throughput;
-        } $else {
+        }
+        $else {
             it.update_wo(camera->device_position());
         };
 
