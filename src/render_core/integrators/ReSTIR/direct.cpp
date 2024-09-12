@@ -432,8 +432,6 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
     TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
     RayVar camera_ray = rs.ray;
-    surf_ext.ray_org = rs.origin();
-    surf_ext.ray_dir = rs.direction();
     surf_ext.view_pos = rs.origin();
 
     hit = pipeline()->trace_closest(rs.ray);
