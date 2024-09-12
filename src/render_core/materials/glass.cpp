@@ -2,6 +2,8 @@
 // Created by Zero on 05/10/2022.
 //
 
+#include <utility>
+
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
@@ -105,17 +107,16 @@ public:
     DielectricBxDFSet(const SP<Fresnel> &fresnel,
                       MicrofacetReflection refl,
                       MicrofacetTransmission trans,
-                      const Bool &dispersive,
+                      Bool dispersive,
                       const Uint &flag)
         : BxDFSet(flag),
           fresnel_(fresnel),
           refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
-          dispersive_(dispersive) {}
+          dispersive_(ocarina::move(dispersive)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
-    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
-        return dispersive_;
-    }
+    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
+    [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
                                              Uint flag) const noexcept override {
         ScatterEval ret{refl_.swl().dimension()};

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "base/node.h"
 #include "interaction.h"
 #include "core/stl.h"
@@ -17,8 +19,8 @@ protected:
     Uint flag_{SurfaceData::Glossy};
 
 public:
-    BxDFSet(const Uint &flag = SurfaceData::Glossy)
-        : flag_(flag) {}
+    explicit BxDFSet(Uint flag = SurfaceData::Glossy)
+        : flag_(std::move(flag)) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept = 0;
@@ -26,6 +28,7 @@ public:
         OC_ASSERT(false);
         return {};
     }
+    [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
