@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "base.h"
+#include "common.h"
 
 namespace vision::direct {
 struct Param {

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "base.h"
+#include "common.h"
 #include "indirect_util.h"
 
 namespace vision::indirect {
