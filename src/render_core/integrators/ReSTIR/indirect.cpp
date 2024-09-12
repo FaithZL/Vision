@@ -128,7 +128,8 @@ Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
 }
 
 GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                       GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf) const noexcept {
+                                       GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf,
+                                       const Float3 &view_pos, const Float3 &prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
@@ -153,12 +154,20 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
+    TCamera &camera = scene().camera();
+
+    Float3 view_pos = camera->device_position();
+    Float3 prev_view_pos = camera->prev_device_position();
 
     auto get_prev_data = [this, &limit](const Float2 &pos) {
         Uint index = dispatch_id(make_uint2(pos));
         GIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
-        return make_pair(prev_surfaces().read(index), prev_rsv);
+        SurfaceDataVar surf = prev_surfaces().read(index);
+//        $if(surf.is_replaced) {
+//            view_pos = prev_surface_extends().read(index).view_pos;
+//        };
+        return make_pair(surf, prev_rsv);
     };
 
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
@@ -169,7 +178,8 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
 
         $if(is_temporal_valid(cur_surf, prev_surf,
                               param, addressof(prev_rsv.sample))) {
-            rsv = combine_temporal(rsv, cur_surf, prev_rsv);
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, nullptr,
+                                   view_pos, prev_view_pos);
         }
         $else {
             $for(i, temporal_.N) {
@@ -179,7 +189,8 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf,
                                       param, addressof(another_rsv.sample))) {
-                    rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf));
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf),
+                                           view_pos, prev_view_pos);
                     $break;
                 };
             };
