@@ -135,9 +135,9 @@ GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVa
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
     GIReservoir ret;
     Float cur_p_hat = compute_p_hat(it, cur_rsv.sample);
-    ret->update(sampler()->next_1d(), cur_rsv.sample, Reservoir::safe_weight(cur_rsv.C, cur_p_hat, cur_rsv.W));
+    ret->update(sampler()->next_1d(), cur_rsv.sample, indirect::Reservoir::safe_weight(cur_rsv.C, cur_p_hat, cur_rsv.W));
     Float other_p_hat = compute_p_hat(it, other_rsv.sample);
-    ret->update(sampler()->next_1d(), other_rsv.sample, Reservoir::safe_weight(other_rsv.C, other_p_hat, other_rsv.W), other_rsv.C);
+    ret->update(sampler()->next_1d(), other_rsv.sample, indirect::Reservoir::safe_weight(other_rsv.C, other_p_hat, other_rsv.W), other_rsv.C);
     Float p_hat = compute_p_hat(it, ret.sample);
 
     if (neighbor_surf) {
@@ -222,7 +222,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         GIReservoir rsv;
         Float p_hat = sample->p_hat(hit_bsdf.bsdf.as_vec3());
-        Float weight = Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
+        Float weight = indirect::Reservoir::safe_weight(1, p_hat, 1.f / hit_bsdf.pdf);
         rsv->update(0.5f, sample, weight);
         rsv->update_W(p_hat);
         Float2 motion_vec = frame_buffer().motion_vectors().read(dispatch_id());
@@ -250,7 +250,7 @@ GIReservoir ReSTIRGI::constant_combine(const GIReservoir &canonical_rsv,
             Float p_hat = compute_p_hat(canonical_it, rsv.sample);
             p_hat = p_hat * Jacobian_det(canonical_it.pos, neighbor_it.pos, rsv.sample.sp);
             Float v = pipeline()->visibility(canonical_it, rsv.sample.sp->position());
-            Float weight = Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
+            Float weight = indirect::Reservoir::safe_weight(rsv.C, p_hat, rsv.W);
             ret->update(sampler()->next_1d(), rsv.sample, weight * v, rsv.C * v);
         };
     });

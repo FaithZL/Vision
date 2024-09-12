@@ -4,12 +4,8 @@
 
 #pragma once
 
-#include "common.h"
-#include "base/encoded_object.h"
-#include "base/mgr/global.h"
-#include "base/mgr/pipeline.h"
+#include "base.h"
 #include "indirect_util.h"
-#include "core/thread_pool.h"
 
 namespace vision::indirect {
 struct Param {
@@ -40,7 +36,7 @@ namespace vision {
 class RayTracingIntegrator;
 using namespace vision::indirect;
 
-class ReSTIRGI : public EncodedObject, public Context, public RenderEnv, public GUI, public RuntimeObject {
+class ReSTIRGI : public ReSTIR {
 private:
     SpatialResamplingParam spatial_;
     TemporalResamplingParam temporal_;
@@ -124,12 +120,6 @@ public:
                                            param.t_depth);
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
-    [[nodiscard]] auto prev_surfaces() const noexcept {
-        return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
-    }
-    [[nodiscard]] auto cur_surfaces() const noexcept {
-        return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
-    }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
         return pipeline()->buffer_var<indirect::Reservoir>((frame_index() & 1) + reservoir_base());
     }
