@@ -387,8 +387,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
                                      const Float2 &motion_vec,
                                      const SensorSample &ss,
                                      const Var<Param> &param) const noexcept {
-    //todo calculate motion vector
-    Float2 prev_p_film = ss.p_film - motion_vec * 0;
+    Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
     TCamera &camera = scene().camera();
@@ -436,10 +435,11 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
     return rsv;
 }
 
-SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
+SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
                                      SurfaceExtendVar &surf_ext) const noexcept {
     TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
+    RayVar camera_ray = rs.ray;
     surf_ext.ray_org = rs.origin();
     surf_ext.ray_dir = rs.direction();
     surf_ext.view_pos = rs.origin();
@@ -452,7 +452,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState &rs, HitVar &hit, Interaction &it,
         cur_surf.hit = hit;
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
         surf_ext.t_max += rs.ray->t_max();
-        Float3 v_pos = rs.ray->at(surf_ext.t_max);
+        Float3 v_pos = camera_ray->at(surf_ext.t_max);
         cur_surf.mat_id = it.material_id();
         Float3 w;
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
@@ -502,8 +502,9 @@ void ReSTIRDI::compile_shader0() noexcept {
         HitVar hit;
         Interaction it{false};
         SurfaceExtendVar surf_ext;
-
+//        $condition_info("{} {} {}   1", rs.origin());
         SurfaceDataVar cur_surf = compute_hit(rs, hit, it, surf_ext);
+//        $condition_info("{} {} {}   2", rs.origin());
         cur_surfaces().write(dispatch_id(), cur_surf);
 
         $if(cur_surf.is_replaced) {
@@ -512,7 +513,9 @@ void ReSTIRDI::compile_shader0() noexcept {
 
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
-                                                            it.pos, hit->is_hit());
+                                                            rs.ray->at(surf_ext.t_max), hit->is_hit());
+        $condition_info("{} {}    ", motion_vec);
+
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
 
         $if(hit->is_hit()) {
