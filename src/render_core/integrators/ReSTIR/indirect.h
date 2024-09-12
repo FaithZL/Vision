@@ -38,11 +38,6 @@ using namespace vision::indirect;
 
 class ReSTIRGI : public ReSTIR {
 private:
-    SpatialResamplingParam spatial_;
-    TemporalResamplingParam temporal_;
-    bool open_{true};
-    uint max_age_{};
-    IlluminationIntegrator *integrator_{};
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRGI::radiance_")};
     RegistrableBuffer<indirect::Reservoir> reservoirs_{pipeline()->bindless_array()};
     RegistrableBuffer<indirect::RSVSample> samples_{pipeline()->bindless_array()};
@@ -66,8 +61,7 @@ protected:
 public:
     ReSTIRGI() = default;
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_,
-                           max_age_, integrator_, radiance_, reservoirs_, samples_,
+    VS_HOTFIX_MAKE_RESTORE(ReSTIR,radiance_, reservoirs_, samples_,
                            initial_samples_, temporal_pass_, spatial_shading_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)

@@ -44,17 +44,12 @@ class RayTracingIntegrator;
  */
 class ReSTIRDI : public ReSTIR {
 private:
-    IlluminationIntegrator *integrator_{};
     uint M_light_{};
     uint M_bsdf_{};
-    uint max_age_{};
     bool debias_{false};
     bool pairwise_{false};
     bool reweight_{false};
-    bool open_{true};
 
-    SpatialResamplingParam spatial_;
-    TemporalResamplingParam temporal_;
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRDI::radiance_")};
     mutable RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
 
@@ -75,9 +70,8 @@ protected:
 public:
     ReSTIRDI() = default;
     ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, integrator_, M_light_, M_bsdf_,
-                           max_age_, debias_, pairwise_, reweight_, open_,
-                           spatial_, temporal_, radiance_, reservoirs_, shader0_, shader1_)
+    VS_HOTFIX_MAKE_RESTORE(ReSTIR,M_light_, M_bsdf_,debias_, pairwise_, reweight_,
+                           radiance_, reservoirs_, shader0_, shader1_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)
     [[nodiscard]] float factor() const noexcept { return static_cast<float>(open()); }

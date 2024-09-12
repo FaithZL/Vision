@@ -8,11 +8,7 @@
 namespace vision {
 ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
                    const vision::ParameterSet &desc)
-    : integrator_(integrator),
-      spatial_(desc["spatial"]),
-      temporal_(desc["temporal"]),
-      open_(desc["open"].as_bool(true)),
-      max_age_(desc["max_age"].as_uint(30)) {
+    : ReSTIR(integrator,desc) {
 }
 
 Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,

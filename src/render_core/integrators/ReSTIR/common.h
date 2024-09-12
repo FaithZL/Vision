@@ -79,7 +79,24 @@ namespace vision {
 }
 
 class ReSTIR : public EncodedObject, public Context, public RenderEnv, public GUI, public RuntimeObject {
+protected:
+    SpatialResamplingParam spatial_{};
+    TemporalResamplingParam temporal_{};
+    bool open_{true};
+    uint max_age_{};
+    IlluminationIntegrator *integrator_{};
+
 public:
+    ReSTIR() = default;
+    explicit ReSTIR(IlluminationIntegrator *integrator, const ParameterSet &desc)
+        : integrator_(integrator),
+          spatial_(desc["spatial"]),
+          temporal_(desc["temporal"]),
+          open_(desc["open"].as_bool(true)),
+          max_age_(desc["max_age"].as_uint(30)){}
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_, max_age_, integrator_)
+    OC_MAKE_MEMBER_SETTER(integrator)
+    OC_MAKE_MEMBER_GETTER(open, )
     [[nodiscard]] auto prev_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }

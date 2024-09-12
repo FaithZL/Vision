@@ -8,16 +8,12 @@
 namespace vision {
 
 ReSTIRDI::ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc)
-    : integrator_(integrator),
+    : ReSTIR(integrator, desc),
       M_light_(desc["M_light"].as_uint(10)),
       M_bsdf_(desc["M_bsdf"].as_uint(1)),
-      max_age_(desc["max_age"].as_uint(30)),
-      spatial_(desc["spatial"]),
-      temporal_(desc["temporal"]),
       debias_(desc["debias"].as_bool(false)),
       reweight_(desc["reweight"].as_bool(false)),
-      pairwise_(desc["pairwise"].as_bool(false)),
-      open_(desc["open"].as_bool(true)) {}
+      pairwise_(desc["pairwise"].as_bool(false)) {}
 
 bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("ReSTIR DI", [&] {
@@ -335,8 +331,8 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
                                        Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
-//    view_pos = camera->device_position();
-//    prev_view_pos = camera->prev_device_position();
+    //    view_pos = camera->device_position();
+    //    prev_view_pos = camera->prev_device_position();
     const Geometry &geom = pipeline()->geometry();
     Interaction it = geom.compute_surface_interaction(cur_surf.hit, view_pos);
 
@@ -410,7 +406,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
         view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
     };
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        auto data = get_prev_data(prev_p_film,prev_view_pos);
+        auto data = get_prev_data(prev_p_film, prev_view_pos);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
 
@@ -421,7 +417,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
         $else {
             $for(i, temporal_.N) {
                 Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                auto data = get_prev_data(p,prev_view_pos);
+                auto data = get_prev_data(p, prev_view_pos);
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf, param,
@@ -502,9 +498,9 @@ void ReSTIRDI::compile_shader0() noexcept {
         HitVar hit;
         Interaction it{false};
         SurfaceExtendVar surf_ext;
-//        $condition_info("{} {} {}   1", rs.origin());
+        //        $condition_info("{} {} {}   1", rs.origin());
         SurfaceDataVar cur_surf = compute_hit(rs, hit, it, surf_ext);
-//        $condition_info("{} {} {}   2", rs.origin());
+        //        $condition_info("{} {} {}   2", rs.origin());
         cur_surfaces().write(dispatch_id(), cur_surf);
 
         $if(cur_surf.is_replaced) {
