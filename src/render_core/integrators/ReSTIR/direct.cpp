@@ -13,7 +13,8 @@ ReSTIRDI::ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc)
       M_bsdf_(desc["M_bsdf"].as_uint(1)),
       debias_(desc["debias"].as_bool(false)),
       reweight_(desc["reweight"].as_bool(false)),
-      pairwise_(desc["pairwise"].as_bool(false)) {}
+      pairwise_(desc["pairwise"].as_bool(false)),
+      max_recursion_(desc["max_recursion"].as_uint(3)) {}
 
 bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("ReSTIR DI", [&] {
@@ -30,6 +31,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->input_uint_limit("M BSDF", &M_bsdf_, 0, 100);
     changed_ |= widgets->check_box("temporal", &temporal_.open);
     changed_ |= widgets->drag_uint("max age", &max_age_, 1, 0, 100);
+    changed_ |= widgets->drag_uint("max recursion", &max_recursion_, 1, 0, 5);
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
@@ -437,6 +439,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
     hit = pipeline()->trace_closest(rs.ray);
 
     SurfaceDataVar cur_surf;
+    Uint counter = 0;
 
     $while(hit->is_hit()) {
         cur_surf.hit = hit;
@@ -459,7 +462,10 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
         cur_surf->set_depth(camera->linear_depth(v_pos));
         cur_surf->set_normal(it.shading.normal());
         cur_surf->set_position(it.pos);
-
+        counter += 1;
+        $if(counter >= max_recursion_) {
+            $break;
+        };
         $if(cur_surf.flag == SurfaceData::NearSpec) {
             surf_ext.view_pos = it.pos;
             rs = it.spawn_ray_state(w);

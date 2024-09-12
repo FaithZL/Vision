@@ -49,7 +49,7 @@ private:
     bool debias_{false};
     bool pairwise_{false};
     bool reweight_{false};
-
+    uint max_recursion_{};
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRDI::radiance_")};
     mutable RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
 
@@ -70,7 +70,7 @@ protected:
 public:
     ReSTIRDI() = default;
     ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    VS_HOTFIX_MAKE_RESTORE(ReSTIR,M_light_, M_bsdf_,debias_, pairwise_, reweight_,
+    VS_HOTFIX_MAKE_RESTORE(ReSTIR, M_light_, M_bsdf_, debias_, pairwise_, reweight_, max_recursion_,
                            radiance_, reservoirs_, shader0_, shader1_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)
@@ -158,7 +158,7 @@ public:
     HOTFIX_VIRTUAL void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
                                                DIReservoir *output_rsv) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir constant_combine(const DIReservoir &canonical_rsv,Float3 view_pos,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir constant_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
                                                               const Container<uint> &rsv_idx) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_spatial(DIReservoir cur_rsv, Float3 view_pos,
