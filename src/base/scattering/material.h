@@ -64,6 +64,7 @@ public:
     void regularize() noexcept;
     void mollify() noexcept;
     [[nodiscard]] SampledSpectrum albedo(const Float3 &world_wo) const noexcept;
+    [[nodiscard]] Bool splittable() const noexcept;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
     [[nodiscard]] ScatterEval evaluate(Float3 world_wo, Float3 world_wi, MaterialEvalMode mode = All,
                                        const Uint &flag = BxDFFlag::All) const noexcept;

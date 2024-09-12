@@ -47,6 +47,14 @@ SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept
     return ret;
 }
 
+Bool MaterialEvaluator::splittable() const noexcept {
+    Bool ret = false;
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->splittable();
+    });
+    return ret;
+}
+
 optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     optional<Bool> ret;
     dispatch([&](const BxDFSet *lobe_set) {

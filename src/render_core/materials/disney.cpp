@@ -472,6 +472,13 @@ public:
         }
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
+
+    [[nodiscard]] Bool splittable() const noexcept override {
+        if (!spec_trans_) {
+            return false;
+        }
+        return true;
+    }
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return diffuse_->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return outline([&] {
