@@ -146,7 +146,8 @@ public:
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      */
-    HOTFIX_VIRTUAL DIReservoir pairwise_combine(const DIReservoir &canonical_rsv, const Container<uint> &rsv_idx) const noexcept;
+    HOTFIX_VIRTUAL DIReservoir pairwise_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
+                                                const Container<uint> &rsv_idx) const noexcept;
 
     /**
      * @return The weight of the return value is added to the canonical sample
@@ -157,10 +158,10 @@ public:
     HOTFIX_VIRTUAL void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
                                                DIReservoir *output_rsv) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir constant_combine(const DIReservoir &canonical_rsv,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir constant_combine(const DIReservoir &canonical_rsv,Float3 view_pos,
                                                               const Container<uint> &rsv_idx) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_spatial(DIReservoir cur_rsv,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_spatial(DIReservoir cur_rsv, Float3 view_pos,
                                                              const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_temporal(const DIReservoir &cur_rsv,
                                                               const SurfaceDataVar &cur_surf,

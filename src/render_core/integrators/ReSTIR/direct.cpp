@@ -259,13 +259,12 @@ void ReSTIRDI::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float ca
     (*output_rsv)->update(sampler()->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
 }
 
-DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
+DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     const SampledWavelengths &swl = sampled_wavelengths();
     TCamera &camera = scene().camera();
-    Float3 c_pos = camera->device_position();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
-    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
+    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
 
     DIReservoir ret;
     Float canonical_weight = 0.f;
@@ -273,7 +272,7 @@ DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoir neighbor_rsv = passthrough_reservoirs().read(idx);
         SurfaceDataVar surf = cur_surfaces().read(idx);
-        Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, c_pos);
+        Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, view_pos);
         canonical_weight += neighbor_pairwise_MIS(canonical_rsv, canonical_it, neighbor_rsv, neighbor_it, M, &ret);
     });
     canonical_weight = ocarina::select(canonical_weight == 0.f, 1.f, canonical_weight);
@@ -283,12 +282,11 @@ DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv,
     return ret;
 }
 
-DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv,
+DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     TCamera &camera = scene().camera();
-    Float3 c_pos = camera->device_position();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
-    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, c_pos);
+    Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
 
     DIReservoir ret;
     Uint sample_num = rsv_idx.count() + 1;
@@ -308,14 +306,14 @@ DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv,
     return ret;
 }
 
-DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv,
+DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv, Float3 view_pos,
                                       const Container<uint> &rsv_idx) const noexcept {
     DIReservoir ret;
 
     if (pairwise_) {
-        ret = pairwise_combine(cur_rsv, rsv_idx);
+        ret = pairwise_combine(cur_rsv, view_pos, rsv_idx);
     } else {
-        ret = constant_combine(cur_rsv, rsv_idx);
+        ret = constant_combine(cur_rsv, view_pos, rsv_idx);
     }
 
     if (reweight_) {
@@ -539,8 +537,12 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
                 rsv_idx.push_back(index);
             };
         };
+        Float3 view_pos = scene().camera()->device_position();
+        $if(cur_surf.is_replaced) {
+            view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
+        };
         $if(cur_surf.hit->is_hit()) {
-            rsv = combine_spatial(rsv, rsv_idx);
+            rsv = combine_spatial(rsv, view_pos, rsv_idx);
         };
     };
     return rsv;
@@ -551,12 +553,18 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) co
     TSpectrum &spectrum = pipeline()->spectrum();
     const TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
-    Float3 c_pos = camera->device_position();
+    Float3 view_pos = camera->device_position();
+    Float3 throughput = make_float3(1.f);
+    $if(surf.is_replaced) {
+        auto surf_ext = cur_surface_extends().read(dispatch_id());
+        throughput = surf_ext.throughput;
+        view_pos = surf_ext.view_pos;
+    };
     const SampledWavelengths &swl = sampled_wavelengths();
     SampledSpectrum value = {swl.dimension(), 0.f};
     SampledSpectrum Le = {swl.dimension(), 0.f};
     auto hit = surf.hit;
-    Interaction it = geometry.compute_surface_interaction(hit, c_pos);
+    Interaction it = geometry.compute_surface_interaction(hit, view_pos);
     $if(it.has_emission()) {
         light_sampler->dispatch_light(it.light_id(), [&](const Light *light) {
             if (!light->match(LightType::Area)) { return; }
@@ -584,15 +592,6 @@ Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) co
                 LightEval eval = light_sampler->evaluate_hit_wi(p_ref, next_it, swl, LightEvalMode::L);
                 value = eval.L * bs.eval.f / bs.eval.pdf;
             };
-        };
-        Float3 throughput = make_float3(1.f);
-        $if(surf.is_replaced) {
-            auto surf_ext = cur_surface_extends().read(dispatch_id());
-            it.update_wo(surf_ext.view_pos);
-            throughput = surf_ext.throughput;
-        }
-        $else {
-            it.update_wo(camera->device_position());
         };
 
         value = Li(it, nullptr, rsv.sample) * SampledSpectrum(throughput);
@@ -687,6 +686,5 @@ CommandList ReSTIRDI::dispatch(uint frame_index) const noexcept {
 }
 
 }// namespace vision
-
 VS_REGISTER_HOTFIX(vision, ReSTIRDI)
 VS_REGISTER_CURRENT_PATH(1, "vision-integrator-ReSTIR.dll")
