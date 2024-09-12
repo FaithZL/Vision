@@ -120,5 +120,4 @@ public:
         return view_pos;
     }
 };
-
 }// namespace vision

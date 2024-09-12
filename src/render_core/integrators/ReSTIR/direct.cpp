@@ -400,9 +400,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
         return make_pair(surf, prev_rsv);
     };
 
-    $if(cur_surf.is_replaced) {
-        view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
-    };
+    view_pos = cur_view_pos(cur_surf.is_replaced);
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
         auto data = get_prev_data(prev_p_film, prev_view_pos);
         auto prev_surf = data.first;
@@ -537,10 +535,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
                 rsv_idx.push_back(index);
             };
         };
-        Float3 view_pos = scene().camera()->device_position();
-        $if(cur_surf.is_replaced) {
-            view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
-        };
+        Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
         $if(cur_surf.hit->is_hit()) {
             rsv = combine_spatial(rsv, view_pos, rsv_idx);
         };

@@ -153,7 +153,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
     int2 res = make_int2(pipeline()->resolution());
     TCamera &camera = scene().camera();
 
-    Float3 view_pos = camera->device_position();
+    Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
     Float3 prev_view_pos = camera->prev_device_position();
 
     auto get_prev_data = [this, &limit](const Float2 &pos,
@@ -166,10 +166,6 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
             view_pos = prev_surface_extends().read(index).view_pos;
         };
         return make_pair(surf, prev_rsv);
-    };
-
-    $if(cur_surf.is_replaced) {
-        view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
     };
 
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
