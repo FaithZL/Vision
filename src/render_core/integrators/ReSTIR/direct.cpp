@@ -510,7 +510,6 @@ void ReSTIRDI::compile_shader0() noexcept {
         DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             rs.ray->at(surf_ext.t_max), hit->is_hit());
-        $condition_info("{} {}    ", motion_vec);
 
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
 

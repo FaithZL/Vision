@@ -8,7 +8,7 @@
 namespace vision {
 ReSTIRGI::ReSTIRGI(IlluminationIntegrator *integrator,
                    const vision::ParameterSet &desc)
-    : ReSTIR(integrator,desc) {
+    : ReSTIR(integrator, desc) {
 }
 
 Float ReSTIRGI::Jacobian_det(Float3 cur_pos, Float3 neighbor_pos,
@@ -125,10 +125,10 @@ Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
 
 GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
                                        GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf,
-                                       const Float3 &view_pos, const Float3 &prev_view_pos) const noexcept {
+                                       Float3 view_pos, Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
-    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
+    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
     GIReservoir ret;
     Float cur_p_hat = compute_p_hat(it, cur_rsv.sample);
     ret->update(sampler()->next_1d(), cur_rsv.sample, indirect::Reservoir::safe_weight(cur_rsv.C, cur_p_hat, cur_rsv.W));
@@ -137,7 +137,7 @@ GIReservoir ReSTIRGI::combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVa
     Float p_hat = compute_p_hat(it, ret.sample);
 
     if (neighbor_surf) {
-        Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf->hit, camera->device_position());
+        Interaction neighbor_it = pipeline()->compute_surface_interaction(neighbor_surf->hit, prev_view_pos);
         p_hat = p_hat * Jacobian_det(it.pos, neighbor_it.pos, other_rsv.sample.sp);
     }
     ret->update_W(p_hat);
@@ -155,20 +155,25 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
     Float3 view_pos = camera->device_position();
     Float3 prev_view_pos = camera->prev_device_position();
 
-    auto get_prev_data = [this, &limit](const Float2 &pos) {
+    auto get_prev_data = [this, &limit](const Float2 &pos,
+                                        Float3 &view_pos) {
         Uint index = dispatch_id(make_uint2(pos));
         GIReservoir prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
         SurfaceDataVar surf = prev_surfaces().read(index);
-//        $if(surf.is_replaced) {
-//            view_pos = prev_surface_extends().read(index).view_pos;
-//        };
+        $if(surf.is_replaced) {
+            view_pos = prev_surface_extends().read(index).view_pos;
+        };
         return make_pair(surf, prev_rsv);
+    };
+
+    $if(cur_surf.is_replaced) {
+        view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
     };
 
     $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
 
-        auto data = get_prev_data(prev_p_film);
+        auto data = get_prev_data(prev_p_film, prev_view_pos);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
 
@@ -180,7 +185,7 @@ GIReservoir ReSTIRGI::temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_
         $else {
             $for(i, temporal_.N) {
                 Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                auto data = get_prev_data(p);
+                auto data = get_prev_data(p, prev_view_pos);
                 auto another_surf = data.first;
                 auto another_rsv = data.second;
                 $if(is_temporal_valid(cur_surf, another_surf,
@@ -289,9 +294,16 @@ GIReservoir ReSTIRGI::spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_s
 Float3 ReSTIRGI::shading(indirect::GIReservoir rsv,
                          const SurfaceDataVar &cur_surf) const noexcept {
     TCamera &camera = scene().camera();
-    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, camera->device_position());
+    Float3 view_pos = camera->device_position();
+    Float3 throughput = make_float3(1.f);
+    $if(cur_surf.is_replaced) {
+        SurfaceExtendVar surf_ext = cur_surface_extends().read(dispatch_id());
+        throughput = surf_ext.throughput;
+        view_pos = surf_ext.view_pos;
+    };
+    Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
     ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, MaterialEvalMode::F);
-    return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W;
+    return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W * throughput;
 }
 
 void ReSTIRGI::compile_spatial_shading() noexcept {

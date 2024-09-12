@@ -85,7 +85,7 @@ public:
                                                          HitBSDFVar &hit_bsdf) noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
                                                               GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf,
-                                                              const Float3 &view_pos, const Float3 &prev_view_pos) const noexcept;
+                                                              Float3 view_pos, Float3 prev_view_pos) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                                             const Float2 &motion_vec, const SensorSample &ss,
                                                             const Var<indirect::Param> &param) const noexcept;
