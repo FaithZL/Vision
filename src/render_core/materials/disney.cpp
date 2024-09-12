@@ -2,6 +2,8 @@
 // Created by Zero on 28/10/2022.
 //
 
+#include <utility>
+
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
@@ -18,7 +20,7 @@ public:
     Diffuse() = default;
     explicit Diffuse(SampledSpectrum color, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl),
-          color_(color) {}
+          color_(std::move(color)) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(Diffuse)
         // clang-format on
@@ -473,13 +475,13 @@ public:
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
 
-    [[nodiscard]] Bool splittable() const noexcept override {
+        [[nodiscard]] Bool splittable() const noexcept override {
         if (!spec_trans_) {
             return false;
         }
         return true;
     }
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return diffuse_->albedo(wo); }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return diffuse_->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
         return outline([&] {
             ScatterEval ret{spec_refl_->swl().dimension()};
