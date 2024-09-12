@@ -97,6 +97,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_, max_age_, integrator_)
     OC_MAKE_MEMBER_SETTER(integrator)
     OC_MAKE_MEMBER_GETTER(open, )
+
     [[nodiscard]] auto prev_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
@@ -109,5 +110,15 @@ public:
     [[nodiscard]] auto cur_surface_extends() const noexcept {
         return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().cur_surface_extends_index(frame_index()));
     }
+    [[nodiscard]] Float3 cur_view_pos(const Bool &is_replace) const noexcept {
+        Float3 view_pos;
+        $if(is_replace) {
+            view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
+        }$else {
+            view_pos = scene().camera()->device_position();
+        };
+        return view_pos;
+    }
 };
+
 }// namespace vision
