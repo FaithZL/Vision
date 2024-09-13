@@ -66,7 +66,7 @@ void Demo::fill() noexcept {
     attr_float = 57.9;
     attr_int = 789;
 
-    std::random_device rd;  // 用于获取随机种子
+    std::random_device rd; 
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> distrib_real(0.0, 100.0);
     for (int i = 0; i < 1; ++i) {
