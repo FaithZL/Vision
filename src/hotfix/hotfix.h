@@ -95,6 +95,9 @@ void replace_objects(const IObjectConstructor *constructor, Tuple tuple) noexcep
         if (constructor->match(ptr->get())) {
             SP<T> new_obj = constructor->construct_shared<T>();
             new_obj->restore(ptr->get());
+            if constexpr (std::derived_from<T, Observer>) {
+                HotfixSystem::instance().defer_delete(*ptr);
+            }
             *ptr = new_obj;
         }
     });
