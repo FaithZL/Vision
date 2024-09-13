@@ -137,6 +137,10 @@ Uint FrameBuffer::checkerboard_value(const Uint2 &coord) noexcept {
     return (coord.x & 1) ^ (coord.y & 1);
 }
 
+Uint FrameBuffer::checkerboard_value(const Uint2 &coord, const Uint &frame_index) noexcept {
+    return checkerboard_value(coord) ^ (frame_index  & 1);
+}
+
 Float2 FrameBuffer::compute_motion_vec(const TCamera &camera, const Float2 &p_film,
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);

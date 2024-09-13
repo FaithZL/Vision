@@ -189,6 +189,7 @@ public:
     [[nodiscard]] Float3 compute_motion_vector(const TCamera &camera, const Float2 &p_film, const Uint &frame_index) const noexcept;
     [[nodiscard]] Float3 compute_motion_vector(const TCamera &camera, const Float3 &cur_pos, const Float3 &pre_pos) const noexcept;
     [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord) noexcept;
+    [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord, const Uint &frame_index) noexcept;
     virtual void compile() noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
                                             BufferView<float4> output) const noexcept;
