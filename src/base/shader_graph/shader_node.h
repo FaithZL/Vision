@@ -87,7 +87,7 @@ public:
 
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         if (node_) {
-            hotfix::replace_objects(constructor, std::tuple{addressof(node_)});
+            HotfixSystem::replace_objects(constructor, std::tuple{addressof(node_)});
         }
     }
 

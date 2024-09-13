@@ -79,7 +79,7 @@ void Scene::update_runtime_object(const vision::IObjectConstructor *constructor)
                      addressof(integrator_.impl()),
                      addressof(sampler_.impl()),
                      addressof(spectrum_.impl())};
-    hotfix::replace_objects(constructor, tp);
+    HotfixSystem::replace_objects(constructor, tp);
 }
 
 void Scene::prepare() noexcept {

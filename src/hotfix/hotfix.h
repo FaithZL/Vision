@@ -84,23 +84,22 @@ public:
     [[nodiscard]] bool has_next() const noexcept {
         return cur_ver_ < versions_.size() - 1 && !versions_.empty();
     }
+    template<typename Tuple>
+    static void replace_objects(const IObjectConstructor *constructor, Tuple tuple) noexcept {
+        traverse_tuple(tuple, [&]<typename T>(SP<T> *ptr) {
+            if (constructor->match(ptr->get())) {
+                SP<T> new_obj = constructor->construct_shared<T>();
+                new_obj->restore(ptr->get());
+                if constexpr (std::derived_from<T, Observer>) {
+                    instance().defer_delete(*ptr);
+                }
+                *ptr = new_obj;
+            }
+        });
+    }
     void on_version_change() noexcept;
     static HotfixSystem &instance() noexcept;
     static void destroy_instance() noexcept;
 };
-
-template<typename Tuple>
-void replace_objects(const IObjectConstructor *constructor, Tuple tuple) noexcept {
-    traverse_tuple(tuple, [&]<typename T>(SP<T> *ptr) {
-        if (constructor->match(ptr->get())) {
-            SP<T> new_obj = constructor->construct_shared<T>();
-            new_obj->restore(ptr->get());
-            if constexpr (std::derived_from<T, Observer>) {
-                HotfixSystem::instance().defer_delete(*ptr);
-            }
-            *ptr = new_obj;
-        }
-    });
-}
 
 }// namespace vision::inline hotfix

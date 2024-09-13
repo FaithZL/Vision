@@ -129,7 +129,7 @@ void Pipeline::render_hotfix(ocarina::Widgets *widgets) noexcept {
 
 void Pipeline::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     std::tuple tp = {addressof(frame_buffer_)};
-    hotfix::replace_objects(constructor, tp);
+    HotfixSystem::replace_objects(constructor, tp);
 }
 
 void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {

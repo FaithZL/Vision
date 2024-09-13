@@ -44,7 +44,7 @@ public:
 
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         std::tuple tp = {addressof(direct_), addressof(indirect_)};
-        hotfix::replace_objects(constructor, tp);
+        HotfixSystem::replace_objects(constructor, tp);
     }
 
     VS_MAKE_PLUGIN_NAME_FUNC
