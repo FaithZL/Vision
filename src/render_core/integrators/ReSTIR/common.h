@@ -97,7 +97,9 @@ public:
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_, max_age_, integrator_)
     OC_MAKE_MEMBER_SETTER(integrator)
     OC_MAKE_MEMBER_GETTER(open, )
-
+    [[nodiscard]] Uint checkerboard_value() const noexcept {
+        return frame_buffer().checkerboard_value(dispatch_idx().xy());
+    }
     [[nodiscard]] auto prev_surfaces() const noexcept {
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().prev_surfaces_index(frame_index()));
     }
