@@ -20,15 +20,23 @@ protected:
 
 public:
     MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf, const Uint &flag)
-        : BxDFSet(flag),fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
+        : BxDFSet(flag), fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MirrorBxDFSet)
         // clang-format on
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
         return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
 
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
+        Float3 wi = make_float3(-wo.xy(), wo.z);
+        BSDFSample ret{bxdf_.swl().dimension()};
+        ret.wi = wi;
+        ret.eval = bxdf_.evaluate(wo, wi, fresnel_->clone(), All);
+        return ret;
+    }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
         return bxdf_.sample(wo, sampler, fresnel_->clone());
     }

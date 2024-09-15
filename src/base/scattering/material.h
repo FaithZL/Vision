@@ -30,7 +30,6 @@ public:
         return {};
     }
     [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
-        OC_ASSERT(false);
         return BSDFSample{1u};
     }
     [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
