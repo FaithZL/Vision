@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "dsl/dsl.h"
 #include "base/color/spectrum.h"
 
@@ -43,7 +45,7 @@ public:
 public:
     static RayState create(const RayVar &ray, Float ior = 1.f,
                            Uint medium = InvalidUI32) noexcept {
-        return {.ray = ray, .ior = ior, .medium = medium};
+        return {.ray = ray, .ior = std::move(ior), .medium = std::move(medium)};
     }
     [[nodiscard]] Bool in_medium() const noexcept { return medium != InvalidUI32; }
     [[nodiscard]] Float3 origin() const noexcept { return ray->origin(); }
@@ -65,8 +67,8 @@ public:
 
 public:
     explicit ScatterEval(uint dim) : f(dim), pdf(0.f){};
-    ScatterEval(const SampledSpectrum &f, const Float &pdf, const Uint &flags)
-        : f(f), pdf(pdf), flags(flags) {}
+    ScatterEval(SampledSpectrum f, Float pdf, Uint flags)
+        : f(std::move(f)), pdf(std::move(pdf)), flags(std::move(flags)) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdf; }
     [[nodiscard]] SampledSpectrum safe_throughput() const noexcept { return zero_if_any_nan_inf(throughput()); }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
@@ -80,8 +82,8 @@ public:
 
 public:
     explicit LightEval(uint dim) : L(dim), pdf{0.f} {};
-    LightEval(const SampledSpectrum &L, const Float &pdf)
-        : L(L), pdf(pdf) {}
+    LightEval(SampledSpectrum L, Float pdf)
+        : L(std::move(L)), pdf(std::move(pdf)) {}
     [[nodiscard]] SampledSpectrum value() const noexcept { return L / pdf; }
     [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
     void invalidation() noexcept { pdf = 0; }

@@ -451,7 +451,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
-            $if(cur_surf.flag == SurfaceData::NearSpec) {
+            $if(cur_surf->near_specular()) {
                 w = reflect(-rs.direction(), it.ng);
                 ScatterEval se = bsdf.evaluate(it.wo, w);
                 SampledSpectrum throughput = se.safe_throughput();
@@ -466,7 +466,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
         $if(counter >= max_recursion_) {
             $break;
         };
-        $if(cur_surf.flag == SurfaceData::NearSpec) {
+        $if(cur_surf->near_specular()) {
             surf_ext.view_pos = it.pos;
             rs = it.spawn_ray_state(w);
             hit = pipeline()->trace_closest(rs.ray);

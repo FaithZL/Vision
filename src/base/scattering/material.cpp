@@ -26,6 +26,14 @@ BSDFSample MaterialEvaluator::sample_local(Float3 wo, Uint flag,
     return ret;
 }
 
+BSDFSample MaterialEvaluator::sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
+    BSDFSample ret{swl_->dimension()};
+    dispatch([&](const BxDFSet *lobe_set) {
+        ret = lobe_set->sample_delta_local(wo, sampler);
+    });
+    return ret;
+}
+
 void MaterialEvaluator::regularize() noexcept {
     dispatch([&](BxDFSet *lobe_set) {
         lobe_set->regularize();
@@ -71,7 +79,7 @@ Uint MaterialEvaluator::flag() const noexcept {
     return ret;
 }
 
-ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi,
+ScatterEval MaterialEvaluator::evaluate(const Float3& world_wo, const Float3& world_wi,
                                         MaterialEvalMode mode,
                                         const Uint &flag) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
@@ -83,7 +91,15 @@ ScatterEval MaterialEvaluator::evaluate(Float3 world_wo, Float3 world_wi,
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample(Float3 world_wo, TSampler &sampler, const Uint &flag) const noexcept {
+BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo, TSampler &sampler) const noexcept {
+    Float3 wo = shading_frame_.to_local(world_wo);
+    BSDFSample ret = sample_delta_local(wo, sampler);
+    ret.eval.f *= abs_cos_theta(ret.wi);
+    ret.wi = shading_frame_.to_world(ret.wi);
+    return ret;
+}
+
+BSDFSample MaterialEvaluator::sample(const Float3& world_wo, TSampler &sampler, const Uint &flag) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
     BSDFSample ret = sample_local(wo, flag, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
@@ -114,7 +130,7 @@ void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     });
 }
 
-void Material::restore(vision::RuntimeObject *old_obj) noexcept  {
+void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     Node::restore(old_obj);
     VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
