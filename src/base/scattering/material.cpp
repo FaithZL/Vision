@@ -17,7 +17,7 @@ ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample_local(Float3 wo, Uint flag,
+BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
     BSDFSample ret{swl_->dimension()};
     dispatch([&](const BxDFSet *lobe_set) {
