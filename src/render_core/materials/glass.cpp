@@ -117,8 +117,8 @@ public:
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
-                                             Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
         ScatterEval ret{refl_.swl().dimension()};
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
@@ -248,7 +248,7 @@ public:
                                                       swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-        
+
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
                                               ior_->type() == ESPD, flag);
     }

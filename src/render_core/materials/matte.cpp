@@ -65,7 +65,7 @@ public:
         // clang-format on
 
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {

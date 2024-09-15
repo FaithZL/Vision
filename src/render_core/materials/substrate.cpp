@@ -85,8 +85,8 @@ public:
         : BxDFSet(flag), fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
-                                             Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
         return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
@@ -152,5 +152,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision,SubstrateMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SubstrateMaterial)
 VS_REGISTER_CURRENT_PATH(0, "vision-material-substrate.dll")

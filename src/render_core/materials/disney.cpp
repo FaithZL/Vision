@@ -482,7 +482,7 @@ public:
         return true;
     }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return diffuse_->albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return outline([&] {
             ScatterEval ret{spec_refl_->swl().dimension()};
             SampledSpectrum f = {spec_refl_->swl().dimension(), 0.f};

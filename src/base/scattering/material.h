@@ -22,8 +22,8 @@ public:
     explicit BxDFSet(Uint flag = SurfaceData::Glossy)
         : flag_(std::move(flag)) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode,
-                                                     Uint flag) const noexcept = 0;
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                     const Uint &flag) const noexcept = 0;
     [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept = 0;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Uint flag, TSampler &sampler) const noexcept {
         OC_ASSERT(false);
@@ -59,7 +59,7 @@ protected:
     const SampledWavelengths *swl_{};
 
 protected:
-    [[nodiscard]] ScatterEval evaluate_local(Float3 wo, Float3 wi, MaterialEvalMode mode, Uint flag) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept;
     [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept;
 
@@ -72,12 +72,12 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float3 &world_wo) const noexcept;
     [[nodiscard]] Bool splittable() const noexcept;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
-    [[nodiscard]] ScatterEval evaluate(const Float3& world_wo, const Float3& world_wi,
+    [[nodiscard]] ScatterEval evaluate(const Float3 &world_wo, const Float3 &world_wi,
                                        MaterialEvalMode mode = All,
                                        const Uint &flag = BxDFFlag::All) const noexcept;
     [[nodiscard]] BSDFSample sample_delta(const Float3 &world_wo, TSampler &sampler) const noexcept;
-    [[nodiscard]] BSDFSample sample(const Float3& world_wo, TSampler &sampler,
-                                        const Uint &flag = BxDFFlag::All) const noexcept;
+    [[nodiscard]] BSDFSample sample(const Float3 &world_wo, TSampler &sampler,
+                                    const Uint &flag = BxDFFlag::All) const noexcept;
     [[nodiscard]] Uint flag() const noexcept;
 };
 
