@@ -256,9 +256,9 @@
 				"z" : 1,
 //				"material": "TallBox",
 //				"material" : "mix2",
-				"material" : "Mirror",
+//				"material" : "Mirror",
 				//                "material": "Mirror2",
-//								                "material": "Glass2",
+								                "material": "Glass2",
 //												"material" : "Metal",
 				//				"material" : "disney",
 				"transform" : {
@@ -677,7 +677,7 @@
 					]
 				},
 				"ior" : 1.5,
-				"roughness" : [0.001, 0.001]
+				"roughness" : [0.0001, 0.0001]
 			}
 		},
 		{
@@ -1057,6 +1057,7 @@
 				},
 				//								"mis": true,
 				"correct_mode" : 0,
+				"max_recursion": 6,
 //				"debias": true,
 				"pairwise": true,
 				"M_light": 10,

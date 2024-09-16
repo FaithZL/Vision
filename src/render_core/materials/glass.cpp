@@ -149,6 +149,25 @@ public:
         };
         return ret;
     }
+    
+    [[nodiscard]] BSDFSample sample_delta_local(const ocarina::Float3 &wo, vision::TSampler &sampler) const noexcept override {
+        BSDFSample ret{refl_.swl().dimension()};
+        Float uc = sampler->next_1d();
+        auto fresnel = fresnel_->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        $if(uc < fr) {
+            ret = refl_.sample(wo, sampler, fresnel);
+            ret.eval.pdf *= fr;
+        }
+        $else {
+            ret = trans_.sample(wo, sampler, fresnel);
+            ret.eval.pdf *= 1 - fr;
+        };
+        return ret;
+    }
+
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
         BSDFSample ret{refl_.swl().dimension()};
