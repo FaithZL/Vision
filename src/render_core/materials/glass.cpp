@@ -149,8 +149,8 @@ public:
         };
         return ret;
     }
-    
-    [[nodiscard]] BSDFSample sample_delta_local(const ocarina::Float3 &wo, vision::TSampler &sampler) const noexcept override {
+
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
         BSDFSample ret{refl_.swl().dimension()};
         Float uc = sampler->next_1d();
         auto fresnel = fresnel_->clone();
@@ -158,11 +158,18 @@ public:
         fresnel->correct_eta(cos_theta_o);
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(uc < fr) {
-            ret = refl_.sample(wo, sampler, fresnel);
+            Float3 wi = wo;
+            wi.xy() = -wi.xy();
+            ret.wi = wi;
+            ret.eval = refl_.evaluate(wo, wi, fresnel, All);
             ret.eval.pdf *= fr;
         }
         $else {
-            ret = trans_.sample(wo, sampler, fresnel);
+            Float3 wi;
+            Float3 n = face_forward(make_float3(0,0,1), wo);
+            refract(wo, n, fresnel->eta()[0], &wi);
+            ret.eval = trans_.evaluate(wo, wi, fresnel, All);
+            ret.wi = wi;
             ret.eval.pdf *= 1 - fr;
         };
         return ret;
