@@ -49,6 +49,13 @@ public:
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         return refl_.sample(wo, sampler, fresnel_->clone());
     }
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
+        Float3 wi = make_float3(-wo.xy(), wo.z);
+        BSDFSample ret{refl_.swl().dimension()};
+        ret.wi = wi;
+        ret.eval = refl_.evaluate(wo, wi, fresnel_->clone(), All);
+        return ret;
+    }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         return refl_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
