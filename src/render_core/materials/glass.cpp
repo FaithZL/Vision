@@ -131,7 +131,7 @@ public:
         };
         return ret;
     }
-    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         Float uc = sampler->next_1d();
         auto fresnel = fresnel_->clone();
@@ -149,7 +149,7 @@ public:
         };
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag,
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
         BSDFSample ret{refl_.swl().dimension()};
         Float uc = sampler->next_1d();

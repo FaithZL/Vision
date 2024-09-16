@@ -26,10 +26,10 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         return bxdf_->sample(wo, sampler, nullptr);
     }
-    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
     }
 };

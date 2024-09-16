@@ -534,7 +534,7 @@ public:
                        "PrincipledBxDFSet::evaluate_local");
     }
 
-    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         return outline([&] {
             Float uc = sampler->next_1d();
             Float2 u = sampler->next_2d();
@@ -583,7 +583,7 @@ public:
                        "PrincipledBxDFSet::sample_wi");
     }
 
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         BSDFSample ret{spec_refl_->swl().dimension()};
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, MaterialEvalMode::All, flag);

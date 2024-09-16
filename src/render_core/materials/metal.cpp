@@ -46,10 +46,10 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return refl_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
-    [[nodiscard]] BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         return refl_.sample(wo, sampler, fresnel_->clone());
     }
-    [[nodiscard]] SampledDirection sample_wi(Float3 wo, Uint flag,
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         return refl_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
     }

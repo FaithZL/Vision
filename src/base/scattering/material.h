@@ -24,8 +24,8 @@ public:
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept = 0;
-    [[nodiscard]] virtual BSDFSample sample_local(Float3 wo, Uint flag, TSampler &sampler) const noexcept = 0;
-    [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Uint flag, TSampler &sampler) const noexcept {
+    [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept = 0;
+    [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept {
         OC_ASSERT(false);
         return {};
     }
