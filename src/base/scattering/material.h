@@ -226,5 +226,6 @@ public:
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Evaluator create_evaluator(const Interaction &it, const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }
 };
 }// namespace vision

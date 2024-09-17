@@ -45,6 +45,7 @@ public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<BlackBodyBxDFSet>(swl);
     }
+    [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     explicit BlackBodyMaterial(const MaterialDesc &desc)
         : Material(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC

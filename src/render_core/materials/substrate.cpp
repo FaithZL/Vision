@@ -135,6 +135,7 @@ public:
         roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.001f))));
         init_slot_cursor(&diff_, 3);
     }
+    [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = diff_.eval_albedo_spectrum(it, swl).sample;
