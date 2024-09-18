@@ -451,12 +451,14 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
-            //todo add material check
-            $if(cur_surf->near_specular()) {
-                BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
-                w = bsdf_sample.wi;
-                surf_ext.throughput *= bsdf_sample.eval.throughput().vec3();
-            };
+            
+            if (material->enable_delta()) {
+                $if(cur_surf->near_specular()) {
+                    BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
+                    w = bsdf_sample.wi;
+                    surf_ext.throughput *= bsdf_sample.eval.throughput().vec3();
+                };
+            }
         });
 
         cur_surf->set_depth(camera->linear_depth(v_pos));
