@@ -24,11 +24,12 @@ public:
     float3 pos{};
     uint mat_id{};
     uint is_replaced{false};
+    uint is_split{false};
     uint flag{Miss};
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos, mat_id, is_replaced, flag) {
+OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos, mat_id, is_replaced, is_split, flag) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
