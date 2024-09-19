@@ -451,7 +451,6 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
         scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
-            
             if (material->enable_delta()) {
                 $if(cur_surf->near_specular()) {
                     BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
@@ -460,10 +459,11 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
                 };
             }
         });
-
-        cur_surf->set_depth(camera->linear_depth(v_pos));
-        cur_surf->set_normal(it.shading.normal());
-        cur_surf->set_position(it.pos);
+        $if(counter == 0) {
+            cur_surf->set_depth(camera->linear_depth(v_pos));
+            cur_surf->set_normal(it.shading.normal());
+            cur_surf->set_position(it.pos);
+        };
         counter += 1;
         $if(counter >= max_recursion_) {
             $break;
@@ -473,7 +473,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
             rs = it.spawn_ray_state(w);
             hit = pipeline()->trace_closest(rs.ray);
             cur_surf.is_replaced = true;
-            cur_surf->set_depth(0);
+//            cur_surf->set_depth(0);
         }
         $else {
             $break;
