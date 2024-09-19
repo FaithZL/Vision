@@ -10,7 +10,7 @@
 #include "GUI/widgets.h"
 #include "core/node_desc.h"
 #include "util/file_manager.h"
-#include "hotfix/common.h"
+#include "hotfix/hotfix.h"
 
 namespace ocarina {
 class Device;
