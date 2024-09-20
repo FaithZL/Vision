@@ -14,7 +14,7 @@ ReSTIRDI::ReSTIRDI(IlluminationIntegrator *integrator, const ParameterSet &desc)
       debias_(desc["debias"].as_bool(false)),
       reweight_(desc["reweight"].as_bool(false)),
       pairwise_(desc["pairwise"].as_bool(false)),
-      max_recursion_(desc["max_recursion"].as_uint(3)) {}
+      max_recursion_(desc["max_recursion"].as_uint(5)) {}
 
 bool ReSTIRDI::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_tree("ReSTIR DI", [&] {
@@ -31,7 +31,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->input_uint_limit("M BSDF", &M_bsdf_, 0, 100);
     changed_ |= widgets->check_box("temporal", &temporal_.open);
     changed_ |= widgets->drag_uint("max age", &max_age_, 1, 0, 100);
-    changed_ |= widgets->drag_uint("max recursion", &max_recursion_, 1, 0, 5);
+    changed_ |= widgets->input_uint_limit("max recursion", &max_recursion_, 1, 20);
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
@@ -479,7 +479,6 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
             $break;
         };
     };
-
     return cur_surf;
 }
 
@@ -500,9 +499,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         HitVar hit;
         Interaction it{false};
         SurfaceExtendVar surf_ext;
-        //        $condition_info("{} {} {}   1", rs.origin());
         SurfaceDataVar cur_surf = compute_hit(rs, hit, it, surf_ext);
-        //        $condition_info("{} {} {}   2", rs.origin());
         cur_surfaces().write(dispatch_id(), cur_surf);
 
         $if(cur_surf.is_replaced) {
