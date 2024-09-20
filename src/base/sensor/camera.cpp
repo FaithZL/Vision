@@ -8,6 +8,8 @@
 
 namespace vision {
 
+static float4x4 origin_matrix;
+
 Camera::Camera(const SensorDesc &desc)
     : Sensor(desc) {
     init(desc);
@@ -19,9 +21,13 @@ void Camera::init(const SensorDesc &desc) noexcept {
     sensitivity_ = desc["sensitivity"].as_float(0.5f);
     set_fov_y(desc["fov_y"].as_float(20.f));
     update_mat(desc.transform_desc.mat);
+    origin_matrix = desc.transform_desc.mat;
 }
 
 void Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->button_click("reset view", [&]{
+        update_mat(origin_matrix);
+    });
     changed_ |= widgets->input_float3("position", &position_);
     widgets->text("fov y: %.2f", fov_y_);
     changed_ |= widgets->input_float("yaw", &yaw_, 0.1, 5);
