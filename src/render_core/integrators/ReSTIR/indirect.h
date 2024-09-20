@@ -7,8 +7,8 @@
 #include "common.h"
 #include "reservoir.h"
 
-namespace vision::indirect {
-struct Param {
+namespace vision {
+struct GIParam {
     uint max_age{};
 
     /// spatial
@@ -25,16 +25,15 @@ struct Param {
     float t_depth{};
     float t_radius{};
 };
-}// namespace vision::indirect
+}// namespace vision
 
-OC_PARAM_STRUCT(vision::indirect, Param, max_age, spatial, N,
+OC_PARAM_STRUCT(vision, GIParam, max_age, spatial, N,
                 s_dot, s_depth, s_radius, temporal, history_limit,
                 t_dot, t_depth, t_radius){};
 
 namespace vision {
 
 class RayTracingIntegrator;
-using namespace vision::indirect;
 
 class ReSTIRGI : public ReSTIR {
 private:
@@ -49,11 +48,11 @@ private:
     /**
      * initial samples and temporal reuse
      */
-    Shader<void(Param, uint)> temporal_pass_;
+    Shader<void(GIParam, uint)> temporal_pass_;
     /**
      * spatial reuse and shading
      */
-    Shader<void(Param, uint)> spatial_shading_;
+    Shader<void(GIParam, uint)> spatial_shading_;
 
 protected:
     [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
@@ -61,7 +60,7 @@ protected:
 public:
     ReSTIRGI() = default;
     ReSTIRGI(IlluminationIntegrator *integrator, const ParameterSet &desc);
-    VS_HOTFIX_MAKE_RESTORE(ReSTIR,radiance_, reservoirs_, samples_,
+    VS_HOTFIX_MAKE_RESTORE(ReSTIR, radiance_, reservoirs_, samples_,
                            initial_samples_, temporal_pass_, spatial_shading_)
     OC_MAKE_MEMBER_GETTER(open, )
     OC_MAKE_MEMBER_GETTER(radiance, &)
@@ -84,29 +83,29 @@ public:
     [[nodiscard]] HOTFIX_VIRTUAL GISampleVar init_sample(const Interaction &it, const SensorSample &ss,
                                                          HitBSDFVar &hit_bsdf) noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar combine_temporal(const GIReservoirVar &cur_rsv, SurfaceDataVar cur_surf,
-                                                              GIReservoirVar &other_rsv, SurfaceDataVar *neighbor_surf,
-                                                              Float3 view_pos, Float3 prev_view_pos) const noexcept;
+                                                                 GIReservoirVar &other_rsv, SurfaceDataVar *neighbor_surf,
+                                                                 Float3 view_pos, Float3 prev_view_pos) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                                            const Float2 &motion_vec, const SensorSample &ss,
-                                                            const Var<Param> &param) const noexcept;
+                                                               const Float2 &motion_vec, const SensorSample &ss,
+                                                               const Var<GIParam> &param) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar constant_combine(const GIReservoirVar &canonical_rsv,
-                                                              const Container<uint> &rsv_idx) const noexcept;
+                                                                 const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar combine_spatial(GIReservoirVar cur_rsv, const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                                           const Int2 &pixel, const Var<Param> &param) const noexcept;
+                                                              const Int2 &pixel, const Var<GIParam> &param) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(GIReservoirVar rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
     [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                           const SurfaceDataVar &another_surface,
-                                          const Var<Param> &param) noexcept {
+                                          const Var<GIParam> &param) noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
                                    param.s_depth);
     }
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                                 const SurfaceDataVar &prev_surface,
-                                                const Var<Param> &param,
+                                                const Var<GIParam> &param,
                                                 GISampleVar *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return cond && vision::is_neighbor(cur_surface, prev_surface,
@@ -123,7 +122,7 @@ public:
     [[nodiscard]] auto passthrough_reservoirs() const noexcept {
         return pipeline()->buffer_var<GIReservoir>(2 + reservoir_base());
     }
-    [[nodiscard]] Param construct_param() const noexcept;
+    [[nodiscard]] GIParam construct_param() const noexcept;
     [[nodiscard]] CommandList dispatch(uint frame_index) const noexcept;
 };
 }// namespace vision

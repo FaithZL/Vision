@@ -147,7 +147,7 @@ GIReservoirVar ReSTIRGI::combine_temporal(const GIReservoirVar &cur_rsv, Surface
 
 GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                      const Float2 &motion_vec, const SensorSample &ss,
-                                     const Var<Param> &param) const noexcept {
+                                     const Var<GIParam> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
@@ -201,7 +201,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
     TSpectrum &spectrum = pipeline()->spectrum();
     TCamera &camera = scene().camera();
     //todo remedy init samples and reservoir
-    Kernel kernel = [&](Var<Param> param, Uint frame_index) {
+    Kernel kernel = [&](Var<GIParam> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
@@ -266,7 +266,7 @@ GIReservoirVar ReSTIRGI::combine_spatial(GIReservoirVar cur_rsv,
 }
 
 GIReservoirVar ReSTIRGI::spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                    const Int2 &pixel, const Var<Param> &param) const noexcept {
+                                    const Int2 &pixel, const Var<GIParam> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
         Container<uint> rsv_idx{spatial_.sample_num};
@@ -309,7 +309,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
 
-    Kernel kernel = [&](Var<Param> param, Uint frame_index) {
+    Kernel kernel = [&](Var<GIParam> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
         $if(surf.hit->is_miss()) {
@@ -327,8 +327,8 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
     spatial_shading_ = device().compile(kernel, "ReSTIR indirect spatial reuse and shading");
 }
 
-Param ReSTIRGI::construct_param() const noexcept {
-    Param param;
+GIParam ReSTIRGI::construct_param() const noexcept {
+    GIParam param;
     param.max_age = max_age_;
 
     param.spatial = static_cast<uint>(spatial_.open);
@@ -348,7 +348,7 @@ Param ReSTIRGI::construct_param() const noexcept {
 CommandList ReSTIRGI::dispatch(uint frame_index) const noexcept {
     CommandList ret;
     const Pipeline *rp = pipeline();
-    Param param = construct_param();
+    GIParam param = construct_param();
     ret << initial_samples_(frame_index).dispatch(rp->resolution());
     ret << temporal_pass_(param, frame_index).dispatch(rp->resolution());
     ret << spatial_shading_(param, frame_index).dispatch(rp->resolution());
