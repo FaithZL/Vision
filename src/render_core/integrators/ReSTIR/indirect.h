@@ -5,7 +5,7 @@
 #pragma once
 
 #include "common.h"
-#include "indirect_util.h"
+#include "reservoir.h"
 
 namespace vision::indirect {
 struct Param {

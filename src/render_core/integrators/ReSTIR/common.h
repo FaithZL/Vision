@@ -12,7 +12,7 @@
 #include "base/mgr/pipeline.h"
 #include "core/thread_pool.h"
 #include "hotfix/hotfix.h"
-#include "util.h"
+#include "reservoir.h"
 
 namespace vision {
 using namespace ocarina;
