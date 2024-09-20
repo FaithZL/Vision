@@ -59,7 +59,7 @@ void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     }
 }
 
-GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
+GISampleVar ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
                                   HitBSDFVar &hit_bsdf) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     sampler()->start(pixel, frame_index(), 3);
@@ -67,7 +67,7 @@ GIRSVSample ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
     RayVar ray = it.spawn_ray(hit_bsdf.wi.as_vec3());
     RayState ray_state = RayState::create(ray);
     Float3 throughput = hit_bsdf->safe_throughput();
-    GIRSVSample sample;
+    GISampleVar sample;
     Float3 L = integrator_->Li(ray_state, hit_bsdf.pdf,
                                SampledSpectrum(throughput),
                                sp_it, *this) /
@@ -97,13 +97,13 @@ void ReSTIRGI::compile_initial_samples() noexcept {
         Float3 view_pos = cur_view_pos(surf.is_replaced);
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, view_pos);
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
-        GIRSVSample sample = init_sample(it, ss, hit_bsdf);
+        GISampleVar sample = init_sample(it, ss, hit_bsdf);
         samples_.write(dispatch_id(), sample);
     };
     initial_samples_ = device().compile(kernel, "ReSTIR indirect initial samples");
 }
 
-ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GIRSVSample &sample,
+ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GISampleVar &sample,
                                 MaterialEvalMode mode) const noexcept {
     return outline(
         [&] {
@@ -119,7 +119,7 @@ ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GIRSVSample &sample
 }
 
 Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
-                              const vision::GIRSVSample &sample) const noexcept {
+                              const vision::GISampleVar &sample) const noexcept {
     Float3 bsdf = eval_bsdf(it, sample, MaterialEvalMode::F).f.vec3();
     return sample->p_hat(bsdf);
 }
@@ -216,7 +216,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
             ss = sampler->sensor_sample(pixel, camera->filter());
         });
         sampler()->start(pixel, frame_index, 4);
-        GIRSVSample sample = samples_.read(dispatch_id());
+        GISampleVar sample = samples_.read(dispatch_id());
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         GIReservoir rsv;
         Float p_hat = sample->p_hat(hit_bsdf.bsdf.as_vec3());
@@ -368,10 +368,10 @@ void ReSTIRGI::prepare() noexcept {
     vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
     reservoirs_.upload_immediately(host.data());
 
-    samples_.super() = device().create_buffer<RSVSample>(rp->pixel_num(),
+    samples_.super() = device().create_buffer<GISample>(rp->pixel_num(),
                                                          "ReSTIRGI::samples_");
     samples_.register_self();
-    vector<RSVSample> vec{rp->pixel_num(), RSVSample{}};
+    vector<GISample> vec{rp->pixel_num(), GISample{}};
     samples_.upload_immediately(vec.data());
 }
 }// namespace vision

@@ -48,14 +48,14 @@ OC_STRUCT(vision, SurfacePoint, pos, ng) {
 // clang-format on
 
 namespace vision {
-struct RSVSample {
+struct GISample {
     SurfacePoint sp{};
     array<float, 3> Lo{};
     float age{};
 };
 }// namespace vision
 
-OC_STRUCT(vision, RSVSample, sp, Lo, age) {
+OC_STRUCT(vision, GISample, sp, Lo, age) {
     static constexpr EPort p = D;
     [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
         return ocarina::luminance(Lo.as_vec() * bsdf);
@@ -63,7 +63,7 @@ OC_STRUCT(vision, RSVSample, sp, Lo, age) {
 };
 
 namespace vision {
-using GIRSVSample = Var<RSVSample>;
+using GISampleVar = Var<GISample>;
 }
 
 namespace vision {
@@ -73,7 +73,7 @@ public:
     oc_float<p> weight_sum{};
     oc_float<p> C{};
     oc_float<p> W{};
-    RSVSample sample{};
+    GISample sample{};
 
     template<EPort p_ = D>
     [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
@@ -94,7 +94,7 @@ public:
 // clang-format off
 OC_STRUCT(vision,Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
-    Bool update(oc_float<p> u, vision::GIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
+    Bool update(oc_float<p> u, vision::GISampleVar v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
         C += new_C;
         Bool ret = u * weight_sum < weight || weight_sum == 0;

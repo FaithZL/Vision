@@ -40,7 +40,7 @@ class ReSTIRGI : public ReSTIR {
 private:
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRGI::radiance_")};
     RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
-    RegistrableBuffer<RSVSample> samples_{pipeline()->bindless_array()};
+    RegistrableBuffer<GISample> samples_{pipeline()->bindless_array()};
 
     /**
      * initial sample
@@ -72,8 +72,8 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     HOTFIX_VIRTUAL void compile_initial_samples() noexcept;
     HOTFIX_VIRTUAL void compile_temporal_reuse() noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL ScatterEval eval_bsdf(const Interaction &it, const GIRSVSample &sample, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL Float compute_p_hat(const Interaction &it, const GIRSVSample &sample) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL ScatterEval eval_bsdf(const Interaction &it, const GISampleVar &sample, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float compute_p_hat(const Interaction &it, const GISampleVar &sample) const noexcept;
     HOTFIX_VIRTUAL void compile_spatial_shading() noexcept;
     void compile() noexcept {
         compile_initial_samples();
@@ -81,7 +81,7 @@ public:
         compile_spatial_shading();
     }
     [[nodiscard]] HOTFIX_VIRTUAL Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL GIRSVSample init_sample(const Interaction &it, const SensorSample &ss,
+    [[nodiscard]] HOTFIX_VIRTUAL GISampleVar init_sample(const Interaction &it, const SensorSample &ss,
                                                          HitBSDFVar &hit_bsdf) noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
                                                               GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf,
@@ -107,7 +107,7 @@ public:
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                                 const SurfaceDataVar &prev_surface,
                                                 const Var<Param> &param,
-                                                GIRSVSample *sample) noexcept {
+                                                GISampleVar *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return cond && vision::is_neighbor(cur_surface, prev_surface,
                                            param.t_dot,
