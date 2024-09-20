@@ -160,8 +160,8 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
     return f;
 }
 
-DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
-                             const Var<DIParam> &param, Uint *flag) const noexcept {
+DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it, const Var<DIParam> &param,
+                             const Float3 &throughput, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSampler &sampler = scene().sampler();
     TSpectrum &spectrum = scene().spectrum();
@@ -184,7 +184,8 @@ DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
         Float mis_weight = ocarina::select(is_delta_light, 1.f / M_light,
                                            light_pdf / (M_light * light_pdf + M_bsdf * bsdf_light_point));
         Float weight = DIReservoir::safe_weight(mis_weight,
-                                                sample.p_hat, 1.f / light_pdf);
+                                                sample.p_hat, 1.f / light_pdf) *
+                       luminance(throughput);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
@@ -197,7 +198,8 @@ DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
         Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf, flag);
         sample.p_hat = p_hat;
         Float weight = DIReservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
-                                                sample.p_hat, 1.f / bs.eval.pdf);
+                                                sample.p_hat, 1.f / bs.eval.pdf) *
+                       luminance(throughput);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
@@ -509,7 +511,7 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surface_extends().write(dispatch_id(), surf_ext);
         };
 
-        DIReservoirVar rsv = RIS(hit->is_hit(), it, param, nullptr);
+        DIReservoirVar rsv = RIS(hit->is_hit(), it, param, surf_ext.throughput, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             rs.ray->at(surf_ext.t_max), hit->is_hit());
 
@@ -595,7 +597,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf)
             };
         };
 
-        value = Li(it, nullptr, rsv.sample) * SampledSpectrum(throughput);
+        value = Li(it, nullptr, rsv.sample) * SampledSpectrum(throughput) / luminance(throughput);
         Bool occluded = geometry.occluded(it, rsv.sample->p_light());
         rsv->process_occluded(occluded);
         value = value * rsv.W;

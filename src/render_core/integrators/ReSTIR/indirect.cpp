@@ -98,6 +98,11 @@ void ReSTIRGI::compile_initial_samples() noexcept {
         Interaction it = pipeline()->compute_surface_interaction(surf.hit, view_pos);
         HitBSDFVar hit_bsdf = frame_buffer().hit_bsdfs().read(dispatch_id());
         GISampleVar sample = init_sample(it, ss, hit_bsdf);
+        Float3 throughput = make_float3(1.f);
+        $if(surf.is_replaced) {
+            throughput = cur_surface_extends().read(dispatch_id()).throughput;
+        };
+        sample.Lo.set(sample.Lo.as_vec3() * throughput);
         samples_.write(dispatch_id(), sample);
     };
     initial_samples_ = device().compile(kernel, "ReSTIR indirect initial samples");
@@ -300,7 +305,7 @@ Float3 ReSTIRGI::shading(GIReservoirVar rsv,
     };
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
     ScatterEval scatter_eval = eval_bsdf(it, rsv.sample, MaterialEvalMode::F);
-    return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W * throughput;
+    return rsv.sample.Lo.as_vec3() * scatter_eval.f.vec3() * rsv.W;
 }
 
 void ReSTIRGI::compile_spatial_shading() noexcept {

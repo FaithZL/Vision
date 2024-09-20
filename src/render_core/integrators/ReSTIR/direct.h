@@ -111,7 +111,7 @@ public:
         return pipeline()->buffer_var<DIReservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar RIS(const Bool &hit, const Interaction &it, const Var<DIParam> &param,
-                                                    Uint *flag) const noexcept;
+                                                    const Float3 &throughput, Uint *flag) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState rs, HitVar &hit, Interaction &it,
                                                             SurfaceExtendVar &surf_ext) const noexcept;
