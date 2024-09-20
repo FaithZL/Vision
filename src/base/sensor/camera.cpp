@@ -26,6 +26,7 @@ void Camera::init(const SensorDesc &desc) noexcept {
 
 void Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     widgets->button_click("reset view", [&]{
+        changed_ = true;
         update_mat(origin_matrix);
     });
     changed_ |= widgets->input_float3("position", &position_);
