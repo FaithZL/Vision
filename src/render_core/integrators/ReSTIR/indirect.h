@@ -83,19 +83,19 @@ public:
     [[nodiscard]] HOTFIX_VIRTUAL Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GISampleVar init_sample(const Interaction &it, const SensorSample &ss,
                                                          HitBSDFVar &hit_bsdf) noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_temporal(const GIReservoir &cur_rsv, SurfaceDataVar cur_surf,
-                                                              GIReservoir &other_rsv, SurfaceDataVar *neighbor_surf,
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar combine_temporal(const GIReservoirVar &cur_rsv, SurfaceDataVar cur_surf,
+                                                              GIReservoirVar &other_rsv, SurfaceDataVar *neighbor_surf,
                                                               Float3 view_pos, Float3 prev_view_pos) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                                             const Float2 &motion_vec, const SensorSample &ss,
                                                             const Var<Param> &param) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir constant_combine(const GIReservoir &canonical_rsv,
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar constant_combine(const GIReservoirVar &canonical_rsv,
                                                               const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_spatial(GIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL GIReservoir spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar combine_spatial(GIReservoirVar cur_rsv, const Container<uint> &rsv_idx) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL GIReservoirVar spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                                            const Int2 &pixel, const Var<Param> &param) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(GIReservoirVar rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
     [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                           const SurfaceDataVar &another_surface,

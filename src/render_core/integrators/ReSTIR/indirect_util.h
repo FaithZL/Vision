@@ -120,5 +120,5 @@ OC_STRUCT(vision,Reservoir, weight_sum, C, W, sample) {
 // clang-format on
 
 namespace vision {
-using GIReservoir = ocarina::Var<Reservoir>;
+using GIReservoirVar = ocarina::Var<Reservoir>;
 }
