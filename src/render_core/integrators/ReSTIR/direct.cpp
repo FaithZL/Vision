@@ -161,7 +161,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
 }
 
 DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
-                          const Var<Param> &param, Uint *flag) const noexcept {
+                          const Var<DIParam> &param, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSampler &sampler = scene().sampler();
     TSpectrum &spectrum = scene().spectrum();
@@ -382,7 +382,7 @@ DIReservoirVar ReSTIRDI::combine_temporal(const DIReservoirVar &cur_rsv,
 DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                      const Float2 &motion_vec,
                                      const SensorSample &ss,
-                                     const Var<Param> &param) const noexcept {
+                                     const Var<DIParam> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
@@ -489,7 +489,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     TCamera &camera = scene().camera();
     TSpectrum &spectrum = rp->spectrum();
 
-    Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
+    Kernel kernel = [&](Uint frame_index, Var<DIParam> param) {
         Uint2 pixel = dispatch_idx().xy();
         camera->load_data();
         sampler()->load_data();
@@ -526,7 +526,7 @@ void ReSTIRDI::compile_shader0() noexcept {
 }
 
 DIReservoirVar ReSTIRDI::spatial_reuse(DIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                    const Int2 &pixel, const Var<Param> &param) const noexcept {
+                                    const Int2 &pixel, const Var<DIParam> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
         Container<uint> rsv_idx{spatial_.sample_num};
@@ -609,7 +609,7 @@ void ReSTIRDI::compile_shader1() noexcept {
     Film *film = camera->film();
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
-    Kernel kernel = [&](Uint frame_index, Var<direct::Param> param) {
+    Kernel kernel = [&](Uint frame_index, Var<DIParam> param) {
         sampler()->load_data();
         initial(sampler(), frame_index, spectrum);
         Uint2 pixel = dispatch_idx().xy();
@@ -654,8 +654,8 @@ void ReSTIRDI::prepare() noexcept {
     reservoirs_.upload_immediately(host.data());
 }
 
-direct::Param ReSTIRDI::construct_param() const noexcept {
-    direct::Param param;
+DIParam ReSTIRDI::construct_param() const noexcept {
+    DIParam param;
     param.M_light = M_light_;
     param.M_bsdf = M_bsdf_;
     param.max_age = max_age_;

@@ -6,8 +6,8 @@
 
 #include "common.h"
 
-namespace vision::direct {
-struct Param {
+namespace vision {
+struct DIParam {
     uint M_light{};
     uint M_bsdf{};
     uint max_age{};
@@ -26,9 +26,9 @@ struct Param {
     float t_depth{};
     float t_radius{};
 };
-}// namespace vision::direct
+}// namespace vision
 
-OC_PARAM_STRUCT(vision::direct, Param, M_light, M_bsdf, max_age, spatial, N,
+OC_PARAM_STRUCT(vision, DIParam, M_light, M_bsdf, max_age, spatial, N,
                 s_dot, s_depth, s_radius, temporal, history_limit,
                 t_dot, t_depth, t_radius){};
 
@@ -42,7 +42,6 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
- using namespace direct;
 class ReSTIRDI : public ReSTIR {
 private:
     uint M_light_{};
@@ -59,11 +58,11 @@ private:
      * check visibility
      * temporal reuse
      */
-    Shader<void(uint, direct::Param)> shader0_;
+    Shader<void(uint, DIParam)> shader0_;
     /**
      * spatial reuse and shading
      */
-    Shader<void(uint, direct::Param)> shader1_;
+    Shader<void(uint, DIParam)> shader1_;
 
 protected:
     [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
@@ -86,14 +85,14 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                           const SurfaceDataVar &another_surface,
-                                          const Var<direct::Param> &param) noexcept {
+                                          const Var<DIParam> &param) noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
                                    param.s_depth);
     }
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                                 const SurfaceDataVar &prev_surface,
-                                                const Var<direct::Param> &param,
+                                                const Var<DIParam> &param,
                                                 DISampleVar *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
@@ -111,7 +110,7 @@ public:
     [[nodiscard]] auto cur_reservoirs() const noexcept {
         return pipeline()->buffer_var<DIReservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar RIS(const Bool &hit, const Interaction &it, const Var<direct::Param> &param,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar RIS(const Bool &hit, const Interaction &it, const Var<DIParam> &param,
                                                  Uint *flag) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState rs, HitVar &hit, Interaction &it,
@@ -172,16 +171,16 @@ public:
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar spatial_reuse(DIReservoirVar rsv,
                                                            const SurfaceDataVar &cur_surf,
                                                            const Int2 &pixel,
-                                                           const Var<direct::Param> &param) const noexcept;
+                                                           const Var<DIParam> &param) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar temporal_reuse(DIReservoirVar rsv,
                                                             const SurfaceDataVar &cur_surf,
                                                             const Float2 &motion_vec,
                                                             const SensorSample &ss,
-                                                            const Var<direct::Param> &param) const noexcept;
+                                                            const Var<DIParam> &param) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(DIReservoirVar rsv, const SurfaceDataVar &surf) const noexcept;
     HOTFIX_VIRTUAL void compile_shader0() noexcept;
     HOTFIX_VIRTUAL void compile_shader1() noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL direct::Param construct_param() const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL DIParam construct_param() const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL CommandList dispatch(uint frame_index) const noexcept;
 };
 
