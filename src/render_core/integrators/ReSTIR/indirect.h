@@ -39,8 +39,8 @@ using namespace vision::indirect;
 class ReSTIRGI : public ReSTIR {
 private:
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRGI::radiance_")};
-    RegistrableBuffer<indirect::Reservoir> reservoirs_{pipeline()->bindless_array()};
-    RegistrableBuffer<indirect::RSVSample> samples_{pipeline()->bindless_array()};
+    RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
+    RegistrableBuffer<RSVSample> samples_{pipeline()->bindless_array()};
 
     /**
      * initial sample
@@ -49,11 +49,11 @@ private:
     /**
      * initial samples and temporal reuse
      */
-    Shader<void(indirect::Param, uint)> temporal_pass_;
+    Shader<void(Param, uint)> temporal_pass_;
     /**
      * spatial reuse and shading
      */
-    Shader<void(indirect::Param, uint)> spatial_shading_;
+    Shader<void(Param, uint)> spatial_shading_;
 
 protected:
     [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
@@ -88,25 +88,25 @@ public:
                                                               Float3 view_pos, Float3 prev_view_pos) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir temporal_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
                                                             const Float2 &motion_vec, const SensorSample &ss,
-                                                            const Var<indirect::Param> &param) const noexcept;
+                                                            const Var<Param> &param) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir constant_combine(const GIReservoir &canonical_rsv,
                                                               const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir combine_spatial(GIReservoir cur_rsv, const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GIReservoir spatial_reuse(GIReservoir rsv, const SurfaceDataVar &cur_surf,
-                                                           const Int2 &pixel, const Var<indirect::Param> &param) const noexcept;
+                                                           const Int2 &pixel, const Var<Param> &param) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(GIReservoir rsv, const SurfaceDataVar &cur_surf) const noexcept;
 
     [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
                                           const SurfaceDataVar &another_surface,
-                                          const Var<indirect::Param> &param) noexcept {
+                                          const Var<Param> &param) noexcept {
         return vision::is_neighbor(cur_surface, another_surface,
                                    param.s_dot,
                                    param.s_depth);
     }
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                                 const SurfaceDataVar &prev_surface,
-                                                const Var<indirect::Param> &param,
+                                                const Var<Param> &param,
                                                 GIRSVSample *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return cond && vision::is_neighbor(cur_surface, prev_surface,
@@ -115,15 +115,15 @@ public:
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
-        return pipeline()->buffer_var<indirect::Reservoir>((frame_index() & 1) + reservoir_base());
+        return pipeline()->buffer_var<Reservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] auto cur_reservoirs() const noexcept {
-        return pipeline()->buffer_var<indirect::Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer_var<Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] auto passthrough_reservoirs() const noexcept {
-        return pipeline()->buffer_var<indirect::Reservoir>(2 + reservoir_base());
+        return pipeline()->buffer_var<Reservoir>(2 + reservoir_base());
     }
-    [[nodiscard]] indirect::Param construct_param() const noexcept;
+    [[nodiscard]] Param construct_param() const noexcept;
     [[nodiscard]] CommandList dispatch(uint frame_index) const noexcept;
 };
 }// namespace vision

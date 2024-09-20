@@ -9,7 +9,7 @@
 #include "dsl/dsl.h"
 #include "base/sampler.h"
 
-namespace vision::indirect {
+namespace vision {
 struct SurfacePoint {
     array<float, 3> pos{};
     array<float, 3> ng{};
@@ -27,10 +27,10 @@ struct SurfacePoint {
     [[nodiscard]] auto normal() const noexcept { return make_float3(ng[0], ng[1], ng[2]); }
     [[nodiscard]] auto valid() const noexcept { return ocarina::any(normal() != 0.f); }
 };
-}// namespace vision::indirect
+}// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::indirect, SurfacePoint, pos, ng) {
+OC_STRUCT(vision, SurfacePoint, pos, ng) {
     void set_position(Float3 p) noexcept {
         pos.set(p);
     }
@@ -47,15 +47,15 @@ OC_STRUCT(vision::indirect, SurfacePoint, pos, ng) {
 };
 // clang-format on
 
-namespace vision::indirect {
+namespace vision {
 struct RSVSample {
     SurfacePoint sp{};
     array<float, 3> Lo{};
     float age{};
 };
-}// namespace vision::indirect
+}// namespace vision
 
-OC_STRUCT(vision::indirect, RSVSample, sp, Lo, age) {
+OC_STRUCT(vision, RSVSample, sp, Lo, age) {
     static constexpr EPort p = D;
     [[nodiscard]] Float p_hat(const Float3 &bsdf) const noexcept {
         return ocarina::luminance(Lo.as_vec() * bsdf);
@@ -63,10 +63,10 @@ OC_STRUCT(vision::indirect, RSVSample, sp, Lo, age) {
 };
 
 namespace vision {
-using GIRSVSample = Var<indirect::RSVSample>;
+using GIRSVSample = Var<RSVSample>;
 }
 
-namespace vision::indirect {
+namespace vision {
 struct Reservoir {
 public:
     static constexpr EPort p = H;
@@ -89,10 +89,10 @@ public:
         return ret;
     }
 };
-}// namespace vision::indirect
+}// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::indirect,Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision,Reservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     Bool update(oc_float<p> u, vision::GIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
@@ -119,6 +119,6 @@ OC_STRUCT(vision::indirect,Reservoir, weight_sum, C, W, sample) {
 };
 // clang-format on
 
-namespace vision::indirect {
+namespace vision {
 using GIReservoir = ocarina::Var<Reservoir>;
 }
