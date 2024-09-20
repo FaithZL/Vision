@@ -63,11 +63,7 @@ OC_STRUCT(vision, GISample, sp, Lo, age) {
 };
 
 namespace vision {
-using GISampleVar = Var<GISample>;
-}
-
-namespace vision {
-struct Reservoir {
+struct GIReservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
@@ -92,7 +88,7 @@ public:
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision,Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision,GIReservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     Bool update(oc_float<p> u, vision::GISampleVar v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
@@ -118,7 +114,3 @@ OC_STRUCT(vision,Reservoir, weight_sum, C, W, sample) {
     }
 };
 // clang-format on
-
-namespace vision {
-using GIReservoirVar = ocarina::Var<Reservoir>;
-}

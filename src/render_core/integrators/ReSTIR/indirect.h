@@ -39,7 +39,7 @@ using namespace vision::indirect;
 class ReSTIRGI : public ReSTIR {
 private:
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRGI::radiance_")};
-    RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
+    RegistrableBuffer<GIReservoir> reservoirs_{pipeline()->bindless_array()};
     RegistrableBuffer<GISample> samples_{pipeline()->bindless_array()};
 
     /**
@@ -115,13 +115,13 @@ public:
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
-        return pipeline()->buffer_var<Reservoir>((frame_index() & 1) + reservoir_base());
+        return pipeline()->buffer_var<GIReservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] auto cur_reservoirs() const noexcept {
-        return pipeline()->buffer_var<Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer_var<GIReservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] auto passthrough_reservoirs() const noexcept {
-        return pipeline()->buffer_var<Reservoir>(2 + reservoir_base());
+        return pipeline()->buffer_var<GIReservoir>(2 + reservoir_base());
     }
     [[nodiscard]] Param construct_param() const noexcept;
     [[nodiscard]] CommandList dispatch(uint frame_index) const noexcept;
