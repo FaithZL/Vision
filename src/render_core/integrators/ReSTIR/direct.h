@@ -111,7 +111,7 @@ public:
         return pipeline()->buffer_var<DIReservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar RIS(const Bool &hit, const Interaction &it, const Var<DIParam> &param,
-                                                 Uint *flag) const noexcept;
+                                                    Uint *flag) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState rs, HitVar &hit, Interaction &it,
                                                             SurfaceExtendVar &surf_ext) const noexcept;
@@ -147,7 +147,7 @@ public:
      *
      */
     HOTFIX_VIRTUAL DIReservoirVar pairwise_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
-                                                const Container<uint> &rsv_idx) const noexcept;
+                                                   const Container<uint> &rsv_idx) const noexcept;
 
     /**
      * @return The weight of the return value is added to the canonical sample
@@ -159,24 +159,24 @@ public:
                                                DIReservoirVar *output_rsv) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar constant_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
-                                                              const Container<uint> &rsv_idx) const noexcept;
+                                                                 const Container<uint> &rsv_idx) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar combine_spatial(DIReservoirVar cur_rsv, Float3 view_pos,
-                                                             const Container<uint> &rsv_idx) const noexcept;
+                                                                const Container<uint> &rsv_idx) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar combine_temporal(const DIReservoirVar &cur_rsv,
-                                                              const SurfaceDataVar &cur_surf,
-                                                              DIReservoirVar &other_rsv,
-                                                              Float3 view_pos,
-                                                              Float3 prev_view_pos) const noexcept;
+                                                                 const SurfaceDataVar &cur_surf,
+                                                                 DIReservoirVar &other_rsv,
+                                                                 Float3 view_pos,
+                                                                 Float3 prev_view_pos) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar spatial_reuse(DIReservoirVar rsv,
-                                                           const SurfaceDataVar &cur_surf,
-                                                           const Int2 &pixel,
-                                                           const Var<DIParam> &param) const noexcept;
+                                                              const SurfaceDataVar &cur_surf,
+                                                              const Int2 &pixel,
+                                                              const Var<DIParam> &param) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar temporal_reuse(DIReservoirVar rsv,
-                                                            const SurfaceDataVar &cur_surf,
-                                                            const Float2 &motion_vec,
-                                                            const SensorSample &ss,
-                                                            const Var<DIParam> &param) const noexcept;
+                                                               const SurfaceDataVar &cur_surf,
+                                                               const Float2 &motion_vec,
+                                                               const SensorSample &ss,
+                                                               const Var<DIParam> &param) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(DIReservoirVar rsv, const SurfaceDataVar &surf) const noexcept;
     HOTFIX_VIRTUAL void compile_shader0() noexcept;
     HOTFIX_VIRTUAL void compile_shader1() noexcept;

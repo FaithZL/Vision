@@ -161,7 +161,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
 }
 
 DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
-                          const Var<DIParam> &param, Uint *flag) const noexcept {
+                             const Var<DIParam> &param, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSampler &sampler = scene().sampler();
     TSpectrum &spectrum = scene().spectrum();
@@ -184,7 +184,7 @@ DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
         Float mis_weight = ocarina::select(is_delta_light, 1.f / M_light,
                                            light_pdf / (M_light * light_pdf + M_bsdf * bsdf_light_point));
         Float weight = DIReservoir::safe_weight(mis_weight,
-                                              sample.p_hat, 1.f / light_pdf);
+                                                sample.p_hat, 1.f / light_pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
@@ -197,7 +197,7 @@ DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
         Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf, flag);
         sample.p_hat = p_hat;
         Float weight = DIReservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
-                                              sample.p_hat, 1.f / bs.eval.pdf);
+                                                sample.p_hat, 1.f / bs.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
 
@@ -262,7 +262,7 @@ void ReSTIRDI::canonical_pairwise_MIS(const DIReservoirVar &canonical_rsv, Float
 }
 
 DIReservoirVar ReSTIRDI::pairwise_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
-                                       const Container<ocarina::uint> &rsv_idx) const noexcept {
+                                          const Container<ocarina::uint> &rsv_idx) const noexcept {
     const SampledWavelengths &swl = sampled_wavelengths();
     TCamera &camera = scene().camera();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
@@ -285,7 +285,7 @@ DIReservoirVar ReSTIRDI::pairwise_combine(const DIReservoirVar &canonical_rsv, F
 }
 
 DIReservoirVar ReSTIRDI::constant_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
-                                       const Container<ocarina::uint> &rsv_idx) const noexcept {
+                                          const Container<ocarina::uint> &rsv_idx) const noexcept {
     TCamera &camera = scene().camera();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
@@ -293,14 +293,14 @@ DIReservoirVar ReSTIRDI::constant_combine(const DIReservoirVar &canonical_rsv, F
     DIReservoirVar ret;
     Uint sample_num = rsv_idx.count() + 1;
     Float cur_weight = DIReservoir::cal_weight(1.f / sample_num,
-                                             canonical_rsv.sample.p_hat, canonical_rsv.W);
+                                               canonical_rsv.sample.p_hat, canonical_rsv.W);
     ret->update(0.5f, canonical_rsv.sample, cur_weight, canonical_rsv.C);
 
     rsv_idx.for_each([&](const Uint &idx) {
         DIReservoirVar rsv = passthrough_reservoirs().read(idx);
         rsv.sample.p_hat = compute_p_hat(canonical_it, nullptr, rsv.sample);
         Float neighbor_weight = DIReservoir::cal_weight(1.f / sample_num,
-                                                      rsv.sample.p_hat, rsv.W);
+                                                        rsv.sample.p_hat, rsv.W);
         ret->update(sampler()->next_1d(), rsv.sample, neighbor_weight, rsv.C);
     });
 
@@ -309,7 +309,7 @@ DIReservoirVar ReSTIRDI::constant_combine(const DIReservoirVar &canonical_rsv, F
 }
 
 DIReservoirVar ReSTIRDI::combine_spatial(DIReservoirVar cur_rsv, Float3 view_pos,
-                                      const Container<uint> &rsv_idx) const noexcept {
+                                         const Container<uint> &rsv_idx) const noexcept {
     DIReservoirVar ret;
 
     if (pairwise_) {
@@ -325,10 +325,10 @@ DIReservoirVar ReSTIRDI::combine_spatial(DIReservoirVar cur_rsv, Float3 view_pos
 }
 
 DIReservoirVar ReSTIRDI::combine_temporal(const DIReservoirVar &cur_rsv,
-                                       const SurfaceDataVar &cur_surf,
-                                       DIReservoirVar &other_rsv,
-                                       Float3 view_pos,
-                                       Float3 prev_view_pos) const noexcept {
+                                          const SurfaceDataVar &cur_surf,
+                                          DIReservoirVar &other_rsv,
+                                          Float3 view_pos,
+                                          Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
     //    view_pos = camera->device_position();
@@ -366,13 +366,13 @@ DIReservoirVar ReSTIRDI::combine_temporal(const DIReservoirVar &cur_rsv,
 
     DIReservoirVar ret;
     Float cur_weight = DIReservoir::safe_weight(mis_cur,
-                                              cur_rsv.sample.p_hat, cur_rsv.W);
+                                                cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
 
     auto other_sample = other_rsv.sample;
     other_sample.p_hat = p_hat_n_at_n;
     Float other_weight = DIReservoir::safe_weight(mis_prev,
-                                                other_sample.p_hat, other_rsv.W);
+                                                  other_sample.p_hat, other_rsv.W);
 
     ret->update(sampler()->next_1d(), other_sample, other_weight, other_rsv.C);
     ret->update_W(ret.sample.p_hat);
@@ -380,9 +380,9 @@ DIReservoirVar ReSTIRDI::combine_temporal(const DIReservoirVar &cur_rsv,
 }
 
 DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                     const Float2 &motion_vec,
-                                     const SensorSample &ss,
-                                     const Var<DIParam> &param) const noexcept {
+                                        const Float2 &motion_vec,
+                                        const SensorSample &ss,
+                                        const Var<DIParam> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
@@ -441,8 +441,11 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
     SurfaceDataVar cur_surf;
     Uint counter = 0;
 
-    $while(hit->is_hit()) {
+    $loop {
         cur_surf.hit = hit;
+        $if(!hit->is_hit()) {
+            $break;
+        };
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
         surf_ext.t_max += rs.ray->t_max();
         Float3 v_pos = camera_ray->at(surf_ext.t_max);
@@ -473,7 +476,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
             rs = it.spawn_ray_state(w);
             hit = pipeline()->trace_closest(rs.ray);
             cur_surf.is_replaced = true;
-//            cur_surf->set_depth(0);
+            //            cur_surf->set_depth(0);
         }
         $else {
             $break;
@@ -523,7 +526,7 @@ void ReSTIRDI::compile_shader0() noexcept {
 }
 
 DIReservoirVar ReSTIRDI::spatial_reuse(DIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                    const Int2 &pixel, const Var<DIParam> &param) const noexcept {
+                                       const Int2 &pixel, const Var<DIParam> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
         Container<uint> rsv_idx{spatial_.sample_num};
@@ -643,7 +646,7 @@ void ReSTIRDI::prepare() noexcept {
     Pipeline *rp = pipeline();
     frame_buffer().prepare_screen_buffer(radiance_);
     reservoirs_.super() = device().create_buffer<DIReservoir>(rp->pixel_num() * 3,
-                                                            "ReSTIRDI::reservoirs_ x 3");
+                                                              "ReSTIRDI::reservoirs_ x 3");
     reservoirs_.register_self(0, rp->pixel_num());
     reservoirs_.register_view(rp->pixel_num(), rp->pixel_num());
     reservoirs_.register_view(rp->pixel_num() * 2, rp->pixel_num());
