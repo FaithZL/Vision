@@ -52,7 +52,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     }
 }
 
-SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIRSVSample *sample,
+SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DISampleVar *sample,
                              BSDFSample *bs, Float *light_pdf_point, HitBSDFVar *hit_bsdf, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = scene().spectrum();
@@ -121,7 +121,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIR
     return f;
 }
 
-SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, const DIRSVSample &sample,
+SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, const DISampleVar &sample,
                              LightSample *output_ls, Float *bsdf_pdf_point) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = scene().spectrum();
@@ -160,7 +160,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
     return f;
 }
 
-DIReservoir ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
+DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
                           const Var<Param> &param, Uint *flag) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSampler &sampler = scene().sampler();
@@ -168,10 +168,10 @@ DIReservoir ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
     comment("RIS start");
     Uint M_light = param.M_light;
     Uint M_bsdf = param.M_bsdf;
-    DIReservoir ret;
+    DIReservoirVar ret;
     const SampledWavelengths &swl = sampled_wavelengths();
     auto sample_light = [&](MaterialEvaluator *bsdf) {
-        DIRSVSample sample;
+        DISampleVar sample;
         //todo merge sample and evaluate
         LightSurfacePoint lsp = light_sampler->sample_only(it, sampler);
         sample->set_lsp(lsp);
@@ -183,7 +183,7 @@ DIReservoir ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
         Float light_pdf = ocarina::select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
         Float mis_weight = ocarina::select(is_delta_light, 1.f / M_light,
                                            light_pdf / (M_light * light_pdf + M_bsdf * bsdf_light_point));
-        Float weight = Reservoir::safe_weight(mis_weight,
+        Float weight = DIReservoir::safe_weight(mis_weight,
                                               sample.p_hat, 1.f / light_pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
@@ -191,12 +191,12 @@ DIReservoir ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
     HitBSDFVar hit_bsdf;
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
-        DIRSVSample sample;
+        DISampleVar sample;
         BSDFSample bs{swl.dimension()};
         Float light_pdf_point = 0.f;
         Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf, flag);
         sample.p_hat = p_hat;
-        Float weight = Reservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
+        Float weight = DIReservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
                                               sample.p_hat, 1.f / bs.eval.pdf);
         ret->update(sampler->next_1d(), sample, weight);
     };
@@ -232,9 +232,9 @@ DIReservoir ReSTIRDI::RIS(const Bool &hit, const Interaction &it,
     return ret;
 }
 
-Float ReSTIRDI::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
-                                      const DIReservoir &other_rsv, const Interaction &other_it,
-                                      Uint M, DIReservoir *output_rsv) const noexcept {
+Float ReSTIRDI::neighbor_pairwise_MIS(const DIReservoirVar &canonical_rsv, const Interaction &canonical_it,
+                                      const DIReservoirVar &other_rsv, const Interaction &other_it,
+                                      Uint M, DIReservoirVar *output_rsv) const noexcept {
     TSampler &sampler = scene().sampler();
     const SampledWavelengths &swl = sampled_wavelengths();
     Float p_hat_c_at_c = compute_p_hat(canonical_it, nullptr, canonical_rsv.sample);
@@ -246,7 +246,7 @@ Float ReSTIRDI::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const In
 
     Float mi = MIS_weight_n(1, p_hat_n_at_n, num, p_hat_n_at_c);
 
-    Float weight = Reservoir::safe_weight(mi, other_rsv.sample.p_hat, other_rsv.W);
+    Float weight = DIReservoir::safe_weight(mi, other_rsv.sample.p_hat, other_rsv.W);
     (*output_rsv)->update(sampler->next_1d(), other_rsv.sample, weight, other_rsv.C);
 
     Float canonical_weight = MIS_weight_n(1, p_hat_c_at_c, num, p_hat_c_at_n) / num;
@@ -255,24 +255,24 @@ Float ReSTIRDI::neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const In
     return canonical_weight;
 }
 
-void ReSTIRDI::canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
-                                      DIReservoir *output_rsv) const noexcept {
-    Float weight = Reservoir::safe_weight(canonical_weight, canonical_rsv.sample.p_hat, canonical_rsv.W);
+void ReSTIRDI::canonical_pairwise_MIS(const DIReservoirVar &canonical_rsv, Float canonical_weight,
+                                      DIReservoirVar *output_rsv) const noexcept {
+    Float weight = DIReservoir::safe_weight(canonical_weight, canonical_rsv.sample.p_hat, canonical_rsv.W);
     (*output_rsv)->update(sampler()->next_1d(), canonical_rsv.sample, weight, canonical_rsv.C);
 }
 
-DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
+DIReservoirVar ReSTIRDI::pairwise_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     const SampledWavelengths &swl = sampled_wavelengths();
     TCamera &camera = scene().camera();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
 
-    DIReservoir ret;
+    DIReservoirVar ret;
     Float canonical_weight = 0.f;
     Uint M = rsv_idx.count() + 1;
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir neighbor_rsv = passthrough_reservoirs().read(idx);
+        DIReservoirVar neighbor_rsv = passthrough_reservoirs().read(idx);
         SurfaceDataVar surf = cur_surfaces().read(idx);
         Interaction neighbor_it = pipeline()->compute_surface_interaction(surf.hit, view_pos);
         canonical_weight += neighbor_pairwise_MIS(canonical_rsv, canonical_it, neighbor_rsv, neighbor_it, M, &ret);
@@ -284,22 +284,22 @@ DIReservoir ReSTIRDI::pairwise_combine(const DIReservoir &canonical_rsv, Float3 
     return ret;
 }
 
-DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
+DIReservoirVar ReSTIRDI::constant_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
                                        const Container<ocarina::uint> &rsv_idx) const noexcept {
     TCamera &camera = scene().camera();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
 
-    DIReservoir ret;
+    DIReservoirVar ret;
     Uint sample_num = rsv_idx.count() + 1;
-    Float cur_weight = Reservoir::cal_weight(1.f / sample_num,
+    Float cur_weight = DIReservoir::cal_weight(1.f / sample_num,
                                              canonical_rsv.sample.p_hat, canonical_rsv.W);
     ret->update(0.5f, canonical_rsv.sample, cur_weight, canonical_rsv.C);
 
     rsv_idx.for_each([&](const Uint &idx) {
-        DIReservoir rsv = passthrough_reservoirs().read(idx);
+        DIReservoirVar rsv = passthrough_reservoirs().read(idx);
         rsv.sample.p_hat = compute_p_hat(canonical_it, nullptr, rsv.sample);
-        Float neighbor_weight = Reservoir::cal_weight(1.f / sample_num,
+        Float neighbor_weight = DIReservoir::cal_weight(1.f / sample_num,
                                                       rsv.sample.p_hat, rsv.W);
         ret->update(sampler()->next_1d(), rsv.sample, neighbor_weight, rsv.C);
     });
@@ -308,9 +308,9 @@ DIReservoir ReSTIRDI::constant_combine(const DIReservoir &canonical_rsv, Float3 
     return ret;
 }
 
-DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv, Float3 view_pos,
+DIReservoirVar ReSTIRDI::combine_spatial(DIReservoirVar cur_rsv, Float3 view_pos,
                                       const Container<uint> &rsv_idx) const noexcept {
-    DIReservoir ret;
+    DIReservoirVar ret;
 
     if (pairwise_) {
         ret = pairwise_combine(cur_rsv, view_pos, rsv_idx);
@@ -324,9 +324,9 @@ DIReservoir ReSTIRDI::combine_spatial(DIReservoir cur_rsv, Float3 view_pos,
     return ret;
 }
 
-DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
+DIReservoirVar ReSTIRDI::combine_temporal(const DIReservoirVar &cur_rsv,
                                        const SurfaceDataVar &cur_surf,
-                                       DIReservoir &other_rsv,
+                                       DIReservoirVar &other_rsv,
                                        Float3 view_pos,
                                        Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
@@ -364,14 +364,14 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
         it.update_wo(view_pos);
     }
 
-    DIReservoir ret;
-    Float cur_weight = Reservoir::safe_weight(mis_cur,
+    DIReservoirVar ret;
+    Float cur_weight = DIReservoir::safe_weight(mis_cur,
                                               cur_rsv.sample.p_hat, cur_rsv.W);
     ret->update(0.5f, cur_rsv.sample, cur_weight, cur_rsv.C);
 
     auto other_sample = other_rsv.sample;
     other_sample.p_hat = p_hat_n_at_n;
-    Float other_weight = Reservoir::safe_weight(mis_prev,
+    Float other_weight = DIReservoir::safe_weight(mis_prev,
                                                 other_sample.p_hat, other_rsv.W);
 
     ret->update(sampler()->next_1d(), other_sample, other_weight, other_rsv.C);
@@ -379,7 +379,7 @@ DIReservoir ReSTIRDI::combine_temporal(const DIReservoir &cur_rsv,
     return ret;
 }
 
-DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_surf,
+DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                      const Float2 &motion_vec,
                                      const SensorSample &ss,
                                      const Var<Param> &param) const noexcept {
@@ -393,7 +393,7 @@ DIReservoir ReSTIRDI::temporal_reuse(DIReservoir rsv, const SurfaceDataVar &cur_
 
     auto get_prev_data = [this, &limit](const Float2 &pos, Float3 &view_pos) {
         Uint index = dispatch_id(make_uint2(pos));
-        DIReservoir prev_rsv = prev_reservoirs().read(index);
+        DIReservoirVar prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
         SurfaceDataVar surf = prev_surfaces().read(index);
         $if(surf.is_replaced) {
@@ -509,7 +509,7 @@ void ReSTIRDI::compile_shader0() noexcept {
             cur_surface_extends().write(dispatch_id(), surf_ext);
         };
 
-        DIReservoir rsv = RIS(hit->is_hit(), it, param, nullptr);
+        DIReservoirVar rsv = RIS(hit->is_hit(), it, param, nullptr);
         Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
                                                             rs.ray->at(surf_ext.t_max), hit->is_hit());
 
@@ -525,7 +525,7 @@ void ReSTIRDI::compile_shader0() noexcept {
     shader0_ = device().compile(kernel, "ReSTIR direct initial candidates and temporal reuse");
 }
 
-DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_surf,
+DIReservoirVar ReSTIRDI::spatial_reuse(DIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                     const Int2 &pixel, const Var<Param> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
@@ -549,7 +549,7 @@ DIReservoir ReSTIRDI::spatial_reuse(DIReservoir rsv, const SurfaceDataVar &cur_s
     return rsv;
 }
 
-Float3 ReSTIRDI::shading(vision::DIReservoir rsv, const SurfaceDataVar &surf) const noexcept {
+Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
     const TCamera &camera = scene().camera();
@@ -620,8 +620,8 @@ void ReSTIRDI::compile_shader1() noexcept {
         RayState rs = camera->generate_ray(ss);
         sampler()->start(pixel, frame_index, 1);
         SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
-        DIReservoir temporal_rsv = passthrough_reservoirs().read(dispatch_id());
-        DIReservoir st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), param);
+        DIReservoirVar temporal_rsv = passthrough_reservoirs().read(dispatch_id());
+        DIReservoirVar st_rsv = spatial_reuse(temporal_rsv, cur_surf, make_int2(pixel), param);
         Var hit = cur_surf.hit;
         Float3 L = make_float3(0.f);
         $if(hit->is_hit()) {
@@ -643,15 +643,14 @@ void ReSTIRDI::compile_shader1() noexcept {
 }
 
 void ReSTIRDI::prepare() noexcept {
-    using direct::Reservoir;
     Pipeline *rp = pipeline();
     frame_buffer().prepare_screen_buffer(radiance_);
-    reservoirs_.super() = device().create_buffer<Reservoir>(rp->pixel_num() * 3,
+    reservoirs_.super() = device().create_buffer<DIReservoir>(rp->pixel_num() * 3,
                                                             "ReSTIRDI::reservoirs_ x 3");
     reservoirs_.register_self(0, rp->pixel_num());
     reservoirs_.register_view(rp->pixel_num(), rp->pixel_num());
     reservoirs_.register_view(rp->pixel_num() * 2, rp->pixel_num());
-    vector<Reservoir> host{rp->pixel_num() * 3, Reservoir{}};
+    vector<DIReservoir> host{rp->pixel_num() * 3, DIReservoir{}};
     reservoirs_.upload_immediately(host.data());
 }
 

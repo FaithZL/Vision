@@ -42,6 +42,7 @@ class RayTracingIntegrator;
  * temporal reuse
  * spatial reuse and iterate
  */
+ using namespace direct;
 class ReSTIRDI : public ReSTIR {
 private:
     uint M_light_{};
@@ -51,7 +52,7 @@ private:
     bool reweight_{false};
     uint max_recursion_{};
     SP<ScreenBuffer> radiance_{make_shared<ScreenBuffer>("ReSTIRDI::radiance_")};
-    mutable RegistrableBuffer<Reservoir> reservoirs_{pipeline()->bindless_array()};
+    mutable RegistrableBuffer<DIReservoir> reservoirs_{pipeline()->bindless_array()};
 
     /**
      * generate initial candidates
@@ -93,7 +94,7 @@ public:
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                                 const SurfaceDataVar &prev_surface,
                                                 const Var<direct::Param> &param,
-                                                DIRSVSample *sample) noexcept {
+                                                DISampleVar *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
         return vision::is_neighbor(cur_surface, prev_surface,
                                    param.t_dot,
@@ -102,15 +103,15 @@ public:
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
     [[nodiscard]] auto prev_reservoirs() const noexcept {
-        return pipeline()->buffer_var<Reservoir>((frame_index() & 1) + reservoir_base());
+        return pipeline()->buffer_var<DIReservoir>((frame_index() & 1) + reservoir_base());
     }
     [[nodiscard]] auto passthrough_reservoirs() const noexcept {
-        return pipeline()->buffer_var<Reservoir>(2 + reservoir_base());
+        return pipeline()->buffer_var<DIReservoir>(2 + reservoir_base());
     }
     [[nodiscard]] auto cur_reservoirs() const noexcept {
-        return pipeline()->buffer_var<Reservoir>(((frame_index() + 1) & 1) + reservoir_base());
+        return pipeline()->buffer_var<DIReservoir>(((frame_index() + 1) & 1) + reservoir_base());
     }
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir RIS(const Bool &hit, const Interaction &it, const Var<direct::Param> &param,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar RIS(const Bool &hit, const Interaction &it, const Var<direct::Param> &param,
                                                  Uint *flag) const noexcept;
 
     [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState rs, HitVar &hit, Interaction &it,
@@ -118,11 +119,11 @@ public:
 
     /// evaluate Li from light
     [[nodiscard]] HOTFIX_VIRTUAL SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                                    const DIRSVSample &sample, LightSample *output_ls = nullptr,
+                                                    const DISampleVar &sample, LightSample *output_ls = nullptr,
                                                     Float *bsdf_pdf_point = nullptr) const noexcept;
     /// evaluate Li from bsdf
     [[nodiscard]] HOTFIX_VIRTUAL SampledSpectrum Li(const Interaction &it, MaterialEvaluator *bsdf,
-                                                    DIRSVSample *sample, BSDFSample *bs, Float *light_pdf_point,
+                                                    DISampleVar *sample, BSDFSample *bs, Float *light_pdf_point,
                                                     HitBSDFVar *hit_bsdf, Uint *flag) const noexcept;
 
     template<typename... Args>
@@ -146,38 +147,38 @@ public:
      *          M - 1      i=2     p1(x) + (M - 1) * pi(x)
      *
      */
-    HOTFIX_VIRTUAL DIReservoir pairwise_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
+    HOTFIX_VIRTUAL DIReservoirVar pairwise_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
                                                 const Container<uint> &rsv_idx) const noexcept;
 
     /**
      * @return The weight of the return value is added to the canonical sample
      */
-    [[nodiscard]] HOTFIX_VIRTUAL Float neighbor_pairwise_MIS(const DIReservoir &canonical_rsv, const Interaction &canonical_it,
-                                                             const DIReservoir &other_rsv, const Interaction &other_it, Uint M,
-                                                             DIReservoir *output_rsv) const noexcept;
-    HOTFIX_VIRTUAL void canonical_pairwise_MIS(const DIReservoir &canonical_rsv, Float canonical_weight,
-                                               DIReservoir *output_rsv) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float neighbor_pairwise_MIS(const DIReservoirVar &canonical_rsv, const Interaction &canonical_it,
+                                                             const DIReservoirVar &other_rsv, const Interaction &other_it, Uint M,
+                                                             DIReservoirVar *output_rsv) const noexcept;
+    HOTFIX_VIRTUAL void canonical_pairwise_MIS(const DIReservoirVar &canonical_rsv, Float canonical_weight,
+                                               DIReservoirVar *output_rsv) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir constant_combine(const DIReservoir &canonical_rsv, Float3 view_pos,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar constant_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
                                                               const Container<uint> &rsv_idx) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_spatial(DIReservoir cur_rsv, Float3 view_pos,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar combine_spatial(DIReservoirVar cur_rsv, Float3 view_pos,
                                                              const Container<uint> &rsv_idx) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir combine_temporal(const DIReservoir &cur_rsv,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar combine_temporal(const DIReservoirVar &cur_rsv,
                                                               const SurfaceDataVar &cur_surf,
-                                                              DIReservoir &other_rsv,
+                                                              DIReservoirVar &other_rsv,
                                                               Float3 view_pos,
                                                               Float3 prev_view_pos) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir spatial_reuse(DIReservoir rsv,
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar spatial_reuse(DIReservoirVar rsv,
                                                            const SurfaceDataVar &cur_surf,
                                                            const Int2 &pixel,
-                                                           const Var<Param> &param) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL DIReservoir temporal_reuse(DIReservoir rsv,
+                                                           const Var<direct::Param> &param) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar temporal_reuse(DIReservoirVar rsv,
                                                             const SurfaceDataVar &cur_surf,
                                                             const Float2 &motion_vec,
                                                             const SensorSample &ss,
-                                                            const Var<Param> &param) const noexcept;
-    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(DIReservoir rsv, const SurfaceDataVar &surf) const noexcept;
+                                                            const Var<direct::Param> &param) const noexcept;
+    [[nodiscard]] HOTFIX_VIRTUAL Float3 shading(DIReservoirVar rsv, const SurfaceDataVar &surf) const noexcept;
     HOTFIX_VIRTUAL void compile_shader0() noexcept;
     HOTFIX_VIRTUAL void compile_shader1() noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL direct::Param construct_param() const noexcept;

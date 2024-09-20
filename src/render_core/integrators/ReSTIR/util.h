@@ -11,8 +11,8 @@
 #include "base/illumination/light.h"
 #include "common.h"
 
-namespace vision::direct {
-struct RSVSample {
+namespace vision {
+struct DISample {
     uint light_index{InvalidUI32};
     uint prim_id{};
     float2 bary{};
@@ -28,10 +28,10 @@ struct RSVSample {
         pos[2] = p[2];
     }
 };
-}// namespace vision::direct
+}// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::direct,RSVSample, light_index,prim_id, bary, age, p_hat, pos) {
+OC_STRUCT(vision,DISample, light_index,prim_id, bary, age, p_hat, pos) {
     [[nodiscard]] Bool valid() const noexcept {
         return light_index != InvalidUI32;
     }
@@ -59,20 +59,15 @@ OC_STRUCT(vision::direct,RSVSample, light_index,prim_id, bary, age, p_hat, pos) 
 // clang-format on
 
 namespace vision {
-using DIRSVSample = Var<direct::RSVSample>;
-}// namespace vision
-
-namespace vision {
 using namespace ocarina;
 
-namespace direct {
-struct Reservoir {
+struct DIReservoir {
 public:
     static constexpr EPort p = H;
     oc_float<p> weight_sum{};
     oc_float<p> C{};
     oc_float<p> W{};
-    RSVSample sample{};
+    DISample sample{};
 
     template<EPort p_ = D>
     [[nodiscard]] static oc_float<p_> cal_weight(oc_float<p_> mis_weight, oc_float<p_> p_hat,
@@ -88,17 +83,16 @@ public:
         return ret;
     }
 };
-}// namespace direct
 
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision::direct,Reservoir, weight_sum, C, W, sample) {
+OC_STRUCT(vision,DIReservoir, weight_sum, C, W, sample) {
     static constexpr EPort p = D;
     [[nodiscard]] Bool valid() const noexcept {
         return sample->valid();
     }
-    Bool update(oc_float<p> u, vision::DIRSVSample v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
+    Bool update(oc_float<p> u, vision::DISampleVar v, oc_float<p> weight, oc_float<p> new_C = 1.f) noexcept {
         weight_sum += weight;
         C += new_C;
         Bool ret = u * weight_sum < weight;
@@ -120,9 +114,3 @@ OC_STRUCT(vision::direct,Reservoir, weight_sum, C, W, sample) {
     }
 };
 // clang-format on
-
-namespace vision {
-using namespace direct;
-using namespace ocarina;
-using DIReservoir = Var<direct::Reservoir>;
-}// namespace vision
