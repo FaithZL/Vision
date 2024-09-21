@@ -6,6 +6,7 @@ target_link_libraries(vision-base PUBLIC
         ocarina
         vision-hotfix-all
         vision-UI
+        vision-visualize
         vision-ext
         vision-core)
 

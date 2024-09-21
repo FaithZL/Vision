@@ -50,6 +50,7 @@ add_subdirectory(pipelines)
 add_subdirectory(render_core)
 add_subdirectory(hotfix)
 add_subdirectory(sdk)
+add_subdirectory(visualize)
 if (${OCARINA_BUILD_TESTS})
     add_subdirectory(tests)
 endif ()
@@ -59,6 +60,7 @@ add_library(vision-main INTERFACE)
 target_link_libraries(vision-main INTERFACE
         vision-core
         vision-base
+        vision-visualize
         vision-importer
         vision-pipeline
         vision-render_graph
