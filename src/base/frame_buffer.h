@@ -8,7 +8,7 @@
 #include "node.h"
 #include "sensor/camera.h"
 #include "scattering/interaction.h"
-#include "visualize/visualizer.h"
+#include "visualizer.h"
 
 namespace vision {
 using namespace ocarina;

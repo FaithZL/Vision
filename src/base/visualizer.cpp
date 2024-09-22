@@ -41,4 +41,4 @@ void Visualizer::clear() noexcept {
 }// namespace vision
 
 VS_REGISTER_HOTFIX(vision, Visualizer)
-VS_REGISTER_CURRENT_PATH(0, "vision-visualize.dll")
+VS_REGISTER_CURRENT_PATH(1, "vision-base.dll")
