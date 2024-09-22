@@ -4,9 +4,13 @@
 
 #include "visualizer.h"
 #include "base/sensor/camera.h"
+#include "mgr/pipeline.h"
 
 namespace vision {
 
+Camera *Visualizer::camera() const noexcept {
+    return Global::instance().pipeline()->scene().camera().get();
+}
 
 void Visualizer::init() noexcept {
 }
