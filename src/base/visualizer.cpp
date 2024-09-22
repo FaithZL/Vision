@@ -9,10 +9,11 @@
 namespace vision {
 
 Camera *Visualizer::camera() const noexcept {
-    return Global::instance().pipeline()->scene().camera().get();
+    return scene().camera().get();
 }
 
 void Visualizer::init() noexcept {
+    
 }
 
 bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {

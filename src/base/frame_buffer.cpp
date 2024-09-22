@@ -8,7 +8,9 @@
 namespace vision {
 
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
-    : Node(desc) {}
+    : Node(desc) {
+    visualizer_->init();
+}
 
 void FrameBuffer::prepare() noexcept {
     init_buffer(view_buffer_, "FrameBuffer::view_buffer_");
