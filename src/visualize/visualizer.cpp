@@ -11,6 +11,9 @@ void Visualizer::init() noexcept {
 }
 
 bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->use_folding_header("Visualizer", [&]{
+
+    });
     return true;
 }
 

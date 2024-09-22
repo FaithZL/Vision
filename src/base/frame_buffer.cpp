@@ -20,6 +20,7 @@ bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
         [&] {
             render_sub_UI(widgets);
         });
+    ret |= visualizer_->render_UI(widgets);
     return ret;
 }
 

@@ -8,6 +8,7 @@
 #include "node.h"
 #include "sensor/camera.h"
 #include "scattering/interaction.h"
+#include "visualize/visualizer.h"
 
 namespace vision {
 using namespace ocarina;
@@ -102,6 +103,8 @@ protected:
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
     /// Display in full screen on the screen
     RegistrableBuffer<float4> view_buffer_;
+
+    SP<Visualizer> visualizer_{make_shared<Visualizer>()};
 
 public:
     using Desc = FrameBufferDesc;
