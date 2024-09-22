@@ -3,21 +3,33 @@
 //
 
 #include "visualizer.h"
+#include "base/sensor/camera.h"
 
 namespace vision {
 
-void Visualizer::init() noexcept {
 
+void Visualizer::init() noexcept {
 }
 
 bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->use_folding_header("Visualizer", [&]{
-
+    bool ret = widgets->use_folding_header("Visualizer", [&] {
+#define visualize_macro(name)                              \
+    if (widgets->radio_button(#name, state_ == E##name)) { \
+        state_ = E##name;                                  \
+    }
+        visualize_macro(Off);
+        visualize_macro(Ray);
+        visualize_macro(Normal);
+#undef visualize_macro
+        render_sub_UI(widgets);
     });
-    return true;
+    return ret;
 }
 
 void Visualizer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->button_click("clear", [&]{
+        clear();
+    });
 }
 
 void Visualizer::draw(const ocarina::float4 *data, ocarina::uint2 res) const noexcept {

@@ -29,11 +29,13 @@ using namespace ocarina;
 class Visualizer : public GUI, public RuntimeObject {
 public:
     enum State {
+        EOff,
         ERay,
         ENormal
     };
 private:
-    State state_;
+    State state_{EOff};
+    bool show_{false};
     RegistrableManaged<LineSegment> line_segments_;
 
 public:
@@ -41,6 +43,7 @@ public:
     HOTFIX_VIRTUAL void init() noexcept;
     HOTFIX_VIRTUAL void draw(const float4 *data, uint2 res) const noexcept;
     HOTFIX_VIRTUAL void clear() noexcept;
+    OC_MAKE_MEMBER_GETTER(show,)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
 };
