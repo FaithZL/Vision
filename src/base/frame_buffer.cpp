@@ -14,6 +14,11 @@ void FrameBuffer::prepare() noexcept {
     init_buffer(view_buffer_, "FrameBuffer::view_buffer_");
 }
 
+void FrameBuffer::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
+    std::tuple tp = {addressof(visualizer_)};
+    HotfixSystem::replace_objects(constructor, tp);
+}
+
 bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
     bool ret = widgets->use_folding_header(
         ocarina::format("{} FrameBuffer", impl_type().data()),

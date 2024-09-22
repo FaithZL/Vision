@@ -82,7 +82,7 @@ public:
     }
 };
 
-class FrameBuffer : public Node {
+class FrameBuffer : public Node, public Observer {
 public:
     static constexpr auto final_result = "FrameBuffer::final_result_";
 
@@ -115,6 +115,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_, motion_vectors_,
                            hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_)
     void prepare() noexcept override;
+    void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] uint pixel_num() const noexcept;
