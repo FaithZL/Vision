@@ -15,11 +15,12 @@ void FrameBuffer::prepare() noexcept {
 }
 
 bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
-    return widgets->use_folding_header(
+    bool ret = widgets->use_folding_header(
         ocarina::format("{} FrameBuffer", impl_type().data()),
         [&] {
             render_sub_UI(widgets);
         });
+    return ret;
 }
 
 void FrameBuffer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
@@ -138,7 +139,7 @@ Uint FrameBuffer::checkerboard_value(const Uint2 &coord) noexcept {
 }
 
 Uint FrameBuffer::checkerboard_value(const Uint2 &coord, const Uint &frame_index) noexcept {
-    return checkerboard_value(coord) ^ (frame_index  & 1);
+    return checkerboard_value(coord) ^ (frame_index & 1);
 }
 
 Float2 FrameBuffer::compute_motion_vec(const TCamera &camera, const Float2 &p_film,
@@ -160,7 +161,7 @@ Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float2 &p
     return compute_motion_vector(camera, cur_surf->position(), prev_surf->position());
 }
 
-Float3 FrameBuffer::compute_motion_vector(const TCamera &camera,const Float3 &cur_pos,
+Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float3 &cur_pos,
                                           const Float3 &pre_pos) const noexcept {
     Float3 cur_coord = camera->raster_coord(cur_pos);
     Float3 prev_coord = camera->raster_coord(pre_pos);

@@ -3,6 +3,8 @@ file(GLOB SOURCE_FILES *.c*)
 
 add_library(vision-visualize SHARED ${SOURCE_FILES})
 target_link_libraries(vision-visualize PUBLIC
+        vision-UI
+        vision-hotfix-all
         ocarina
         ocarina-include)
 

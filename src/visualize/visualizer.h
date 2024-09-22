@@ -8,6 +8,8 @@
 #include "math/basic_types.h"
 #include "base/node.h"
 #include "dsl/dsl.h"
+#include "UI/GUI.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 struct LineSegment {
@@ -24,12 +26,23 @@ namespace vision {
 
 using namespace ocarina;
 
-class Visualizer {
+class Visualizer : public GUI, public RuntimeObject {
+public:
+    enum State {
+        ERay,
+        ENormal
+    };
 private:
+    State state_;
     RegistrableManaged<LineSegment> line_segments_;
 
 public:
-    void draw(const float4 *data, uint2 res) const noexcept;
+    Visualizer() = default;
+    HOTFIX_VIRTUAL void init() noexcept;
+    HOTFIX_VIRTUAL void draw(const float4 *data, uint2 res) const noexcept;
+    HOTFIX_VIRTUAL void clear() noexcept;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
 };
 
 }// namespace vision
