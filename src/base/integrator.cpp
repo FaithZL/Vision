@@ -107,12 +107,13 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     TLightSampler &light_sampler = scene().light_sampler();
 
     const SampledWavelengths &swl = render_env.sampled_wavelengths();
-    SampledSpectrum value = spectrum()->zero();
     const Geometry &geometry = rp->geometry();
 
     HitVar hit;
     Interaction it{scene().has_medium()};
     Float3 prev_surface_ng = rs.direction();
+
+    Float3 ret = make_float3(0.f);
 
     Float3 primary_dir = rs.direction();
     auto mis_bsdf = [&](auto &bounces, bool inner) {
@@ -127,7 +128,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
 
         $if(hit->is_miss()) {
             SampledSpectrum d = evaluate_miss(rs, prev_surface_ng, scatter_pdf, bounces, swl) * throughput;
-            value += d;
+            ret += spectrum()->linear_srgb(d, swl);
             $break;
         };
 
@@ -164,7 +165,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
             weight = correct_bsdf_weight(weight, bounces);
             SampledSpectrum d = eval.L * throughput * weight * tr;
-            value += d;
+            ret += spectrum()->linear_srgb(d, swl);
         };
         prev_surface_ng = it.ng;
     };
@@ -219,7 +220,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             sample_surface();
         }
         SampledSpectrum d = throughput * Ld * tr;
-        value += d;
+        ret += spectrum()->linear_srgb(d, swl);
         eta_scale *= sqr(bsdf_sample.eta);
         Float lum = throughput.max();
         $if(!bsdf_sample.valid() || lum == 0.f) {
@@ -244,7 +245,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             mis_bsdf(bounce, false);
         };
     }
-    return spectrum()->linear_srgb(value, swl);
+    return ret;
 }
 
 Float3 IlluminationIntegrator::Li(vision::RayState rs, Float scatter_pdf,
