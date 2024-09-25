@@ -29,12 +29,12 @@ private:
     array<Float, 3> c_;
 
 private:
-    [[nodiscard]] static Float _s(const Float& x) noexcept {
+    [[nodiscard]] static Float _s(const Float &x) noexcept {
         return select(ocarina::isinf(x), cast<float>(x > 0.0f),
                       0.5f * fma(x, rsqrt(fma(x, x, 1.f)), 1.f));
     }
 
-    [[nodiscard]] Float _f(const Float& lambda) const noexcept {
+    [[nodiscard]] Float _f(const Float &lambda) const noexcept {
         return fma(fma(c_[0], lambda, c_[1]), lambda, c_[2]);
     }
 
@@ -43,7 +43,7 @@ public:
     RGBSigmoidPolynomial(Float c0, Float c1, Float c2) noexcept
         : c_{std::move(c0), std::move(c1), std::move(c2)} {}
     explicit RGBSigmoidPolynomial(Float3 c) noexcept : c_{c[0], c[1], c[2]} {}
-    [[nodiscard]] Float operator()(const Float& lambda) const noexcept {
+    [[nodiscard]] Float operator()(const Float &lambda) const noexcept {
         return _s(_f(lambda));// c0 * x * x + c1 * x + c2
     }
 };
@@ -71,13 +71,13 @@ public:
     explicit RGBToSpectrumTable(const coefficient_table_type &coefficients, Pipeline *rp) noexcept
         : coefficients_{&coefficients}, rp_(rp) {}
 
-    const coefficient_table_type& coefficients() const { return *coefficients_; }
-    coefficient_table_type& coefficients() { return *coefficients_; }
+    const coefficient_table_type &coefficients() const { return *coefficients_; }
+    coefficient_table_type &coefficients() { return *coefficients_; }
 
     void init() noexcept {
-        coefficient0_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
-        coefficient1_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
-        coefficient2_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4);
+        coefficient0_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4, "RGBToSpectrumTable0");
+        coefficient1_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4, "RGBToSpectrumTable1");
+        coefficient2_ = rp_->device().create_texture(make_uint3(res), PixelStorage::FLOAT4, "RGBToSpectrumTable2");
     }
 
     void prepare() noexcept {
@@ -139,7 +139,7 @@ public:
         return make_float4(c.xyz(), scale);
     }
 
-    [[nodiscard]] Float4 decode_albedo(const Float3& rgb_in) const noexcept {
+    [[nodiscard]] Float4 decode_albedo(const Float3 &rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
         static CALLABLE_TYPE decode = [](Var<BindlessArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
             Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
@@ -245,7 +245,7 @@ public:
         rgb_to_spectrum_table_.init();
     }
     VS_HOTFIX_MAKE_RESTORE(Spectrum, dimension_, illuminant_d65_,
-                           cie_x_, cie_y_, cie_z_,rgb_to_spectrum_table_)
+                           cie_x_, cie_y_, cie_z_, rgb_to_spectrum_table_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         changed_ |= widgets->input_uint_limit("dimension", &dimension_, 1, 16, 1, 1);
     }
