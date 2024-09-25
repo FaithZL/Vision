@@ -2,6 +2,8 @@
 // Created by Zero on 21/12/2022.
 //
 
+#include <utility>
+
 #include "srgb2spec.h"
 #include "base/color/spectrum.h"
 #include "base/color/spd.h"
@@ -27,21 +29,21 @@ private:
     array<Float, 3> c_;
 
 private:
-    [[nodiscard]] static Float _s(Float x) noexcept {
+    [[nodiscard]] static Float _s(const Float& x) noexcept {
         return select(ocarina::isinf(x), cast<float>(x > 0.0f),
                       0.5f * fma(x, rsqrt(fma(x, x, 1.f)), 1.f));
     }
 
-    [[nodiscard]] Float _f(Float lambda) const noexcept {
+    [[nodiscard]] Float _f(const Float& lambda) const noexcept {
         return fma(fma(c_[0], lambda, c_[1]), lambda, c_[2]);
     }
 
 public:
     RGBSigmoidPolynomial() noexcept = default;
     RGBSigmoidPolynomial(Float c0, Float c1, Float c2) noexcept
-        : c_{c0, c1, c2} {}
+        : c_{std::move(c0), std::move(c1), std::move(c2)} {}
     explicit RGBSigmoidPolynomial(Float3 c) noexcept : c_{c[0], c[1], c[2]} {}
-    [[nodiscard]] Float operator()(Float lambda) const noexcept {
+    [[nodiscard]] Float operator()(const Float& lambda) const noexcept {
         return _s(_f(lambda));// c0 * x * x + c1 * x + c2
     }
 };
@@ -137,7 +139,7 @@ public:
         return make_float4(c.xyz(), scale);
     }
 
-    [[nodiscard]] Float4 decode_albedo(Float3 rgb_in) const noexcept {
+    [[nodiscard]] Float4 decode_albedo(const Float3& rgb_in) const noexcept {
         Float3 rgb = clamp(rgb_in, make_float3(0.f), make_float3(1.f));
         static CALLABLE_TYPE decode = [](Var<BindlessArray> array, Uint base_index, Float3 rgb) noexcept -> Float3 {
             Float3 c = make_float3(0.0f, 0.0f, (rgb[0] - 0.5f) * rsqrt(rgb[0] * (1.0f - rgb[0])));
@@ -191,10 +193,10 @@ public:
 
 public:
     explicit RGBUnboundSpectrum(RGBSigmoidPolynomial rsp, Float scale) noexcept
-        : Super{ocarina::move(rsp)}, scale_(scale) {}
+        : Super{ocarina::move(rsp)}, scale_(ocarina::move(scale)) {}
     explicit RGBUnboundSpectrum(const Float4 &c) noexcept
         : RGBUnboundSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w) {}
-    [[nodiscard]] Float eval(const Float &lambda) const noexcept {
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept override {
         return Super::eval(lambda) * scale_;
     }
 };
@@ -208,10 +210,10 @@ public:
 
 public:
     explicit RGBIlluminationSpectrum(RGBSigmoidPolynomial rsp, Float scale, const SPD &wp) noexcept
-        : Super(rsp, scale), illuminant_(wp) {}
+        : Super(ocarina::move(rsp), std::move(scale)), illuminant_(wp) {}
     explicit RGBIlluminationSpectrum(const Float4 &c, const SPD &wp) noexcept
         : RGBIlluminationSpectrum(RGBSigmoidPolynomial(c.xyz()), c.w, wp) {}
-    [[nodiscard]] Float eval(const Float &lambda) const noexcept {
+    [[nodiscard]] Float eval(const Float &lambda) const noexcept override {
         return Super::eval(lambda) * illuminant_.eval(lambda);
     }
 };
