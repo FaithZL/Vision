@@ -28,7 +28,7 @@ public:
     void set_pdf(const Uint &i, const Float &p) const noexcept { pdfs_[i] = p; }
     [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(lambdas_.size()); }
     [[nodiscard]] Uint valid_dimension() const noexcept;
-    void invalidation_channel(Uint idx) const noexcept { set_pdf(idx, 0); }
+    void invalidation_channel(const Uint& idx) const noexcept { set_pdf(idx, 0); }
     [[nodiscard]] Float3 lambda_vec3() const noexcept {
         return make_float3(lambdas_[0], lambdas_[1], lambdas_[2]);
     }
