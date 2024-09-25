@@ -126,7 +126,8 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         }
 
         $if(hit->is_miss()) {
-            value += evaluate_miss(rs, prev_surface_ng, scatter_pdf, bounces, swl) * throughput;
+            SampledSpectrum d = evaluate_miss(rs, prev_surface_ng, scatter_pdf, bounces, swl) * throughput;
+            value += d;
             $break;
         };
 
@@ -162,7 +163,8 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             SampledSpectrum tr = geometry.Tr(scene(), swl, rs);
             Float weight = MIS_weight<D>(scatter_pdf, eval.pdf);
             weight = correct_bsdf_weight(weight, bounces);
-            value += eval.L * throughput * weight * tr;
+            SampledSpectrum d = eval.L * throughput * weight * tr;
+            value += d;
         };
         prev_surface_ng = it.ng;
     };
@@ -216,8 +218,8 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         } else {
             sample_surface();
         }
-
-        value += throughput * Ld * tr;
+        SampledSpectrum d = throughput * Ld * tr;
+        value += d;
         eta_scale *= sqr(bsdf_sample.eta);
         Float lum = throughput.max();
         $if(!bsdf_sample.valid() || lum == 0.f) {
