@@ -247,7 +247,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(Spectrum, dimension_, illuminant_d65_,
                            cie_x_, cie_y_, cie_z_,rgb_to_spectrum_table_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        changed_ |= widgets->input_uint("dimension", &dimension_, 1, 1);
+        changed_ |= widgets->input_uint_limit("dimension", &dimension_, 1, 16, 1, 1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void prepare() noexcept override {
