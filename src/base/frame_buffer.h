@@ -102,9 +102,11 @@ protected:
     ScreenBuffer::manager_type screen_buffers_;
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
     /// Display in full screen on the screen
-    RegistrableManaged<float4> view_buffer_;
+    RegistrableBuffer<float4> view_buffer_;
 
     SP<Visualizer> visualizer_{make_shared<Visualizer>()};
+
+    vector<float4> window_buffer_;
 
 public:
     using Desc = FrameBufferDesc;
@@ -113,12 +115,15 @@ public:
     FrameBuffer() = default;
     explicit FrameBuffer(const FrameBufferDesc &desc);
     VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_, motion_vectors_,
-                           hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_, visualizer_)
+                           hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_, visualizer_, window_buffer_)
     void prepare() noexcept override;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     OC_MAKE_MEMBER_GETTER(visualizer, &)
+    OC_MAKE_MEMBER_GETTER(window_buffer, &)
+    void fill_window_buffer(const Buffer<float4> &input) noexcept;
+    void resize(uint2 res) noexcept;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
@@ -183,6 +188,7 @@ public:
 #undef VS_MAKE_ATTR_FUNC
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
+    void after_render() noexcept;
     [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
                                                       BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
     [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,

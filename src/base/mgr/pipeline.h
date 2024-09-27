@@ -49,6 +49,7 @@ public:
 
 public:
     explicit Pipeline(const PipelineDesc &desc);
+    void init() noexcept;
     [[nodiscard]] const Device &device() const noexcept { return *device_; }
     [[nodiscard]] Device &device() noexcept { return *device_; }
     [[nodiscard]] Scene &scene() noexcept { return scene_; }

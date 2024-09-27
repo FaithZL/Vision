@@ -37,6 +37,7 @@ void App::init(int argc) {
 void App::init_pipeline() {
     Global::instance().set_device(&device);
     rp = Importer::import_scene(params.scene_file);
+    pipeline().init();
     _view_buffer.resize(pipeline().pixel_num());
 }
 
@@ -190,9 +191,9 @@ void App::update(double dt) noexcept {
     pipeline().display(dt);
     pipeline().reset_status();
     render_UI(window->widgets());
-    auto &view_buffer = pipeline().view_buffer();
-    view_buffer.download_immediately(_view_buffer.data());
-    window->set_background(_view_buffer.data());
+//    auto &view_buffer = pipeline().view_buffer();
+//    view_buffer.download_immediately(_view_buffer.data());
+    window->set_background(pipeline().frame_buffer()->window_buffer().data());
     check_and_save();
 }
 

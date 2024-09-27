@@ -102,6 +102,14 @@ uint FrameBuffer::pixel_index(uint2 pos) const noexcept {
     return pos.y * resolution().x + pos.x;
 }
 
+void FrameBuffer::fill_window_buffer(const Buffer<ocarina::float4> &input) noexcept {
+    input.download_immediately(window_buffer_.data());
+}
+
+void FrameBuffer::resize(ocarina::uint2 res) noexcept {
+    window_buffer_.resize(res.x * res.y, make_float4(0.f));
+}
+
 uint FrameBuffer::pixel_num() const noexcept {
     return pipeline()->pixel_num();
 }
@@ -112,6 +120,10 @@ uint2 FrameBuffer::resolution() const noexcept {
 
 BindlessArray &FrameBuffer::bindless_array() noexcept {
     return pipeline()->bindless_array();
+}
+
+void FrameBuffer::after_render() noexcept {
+    fill_window_buffer(view_buffer_);
 }
 
 const Buffer<float4> &FrameBuffer::cur_screen_buffer() const noexcept {

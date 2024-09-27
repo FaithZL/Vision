@@ -47,6 +47,12 @@ public:
         return render_graph_.output_buffer();
     }
 
+    void after_render() noexcept override {
+        Env::debugger().reset_range();
+        scene().camera()->after_render();
+        frame_buffer()->fill_window_buffer(render_graph_.output_buffer());
+    }
+
     void prepare() noexcept override {
         Pipeline::prepare();
         auto pixel_num = resolution().x * resolution().y;

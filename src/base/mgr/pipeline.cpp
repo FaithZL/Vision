@@ -25,6 +25,10 @@ Pipeline::Pipeline(const vision::PipelineDesc &desc)
     HotfixSystem::instance().init();
 }
 
+void Pipeline::init() noexcept {
+    frame_buffer_->resize(resolution());
+}
+
 void Pipeline::prepare() noexcept {
     frame_buffer_->prepare();
 }
@@ -215,7 +219,7 @@ void Pipeline::before_render() noexcept {
 void Pipeline::after_render() noexcept {
     Env::debugger().reset_range();
     scene().camera()->after_render();
-    frame_buffer_->view_buffer().download_immediately();
+    frame_buffer_->after_render();
 }
 
 void Pipeline::commit_command() noexcept {
