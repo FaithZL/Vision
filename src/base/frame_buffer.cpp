@@ -104,6 +104,7 @@ uint FrameBuffer::pixel_index(uint2 pos) const noexcept {
 
 void FrameBuffer::fill_window_buffer(const Buffer<ocarina::float4> &input) noexcept {
     input.download_immediately(window_buffer_.data());
+    visualizer_->draw(window_buffer_.data());
 }
 
 void FrameBuffer::resize(ocarina::uint2 res) noexcept {

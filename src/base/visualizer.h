@@ -38,7 +38,7 @@ public:
 private:
     State state_{EOff};
     bool show_{false};
-    RegistrableManaged<LineSegment> line_segments_;
+    ManagedList<LineSegment> line_segments_;
 
 public:
     Visualizer() = default;
@@ -47,6 +47,7 @@ public:
     HOTFIX_VIRTUAL void clear() noexcept;
     OC_MAKE_MEMBER_GETTER(show, )
     [[nodiscard]] Camera *camera() const noexcept;
+    [[nodiscard]] uint2 resolution() const noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
 };

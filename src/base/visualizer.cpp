@@ -12,8 +12,16 @@ Camera *Visualizer::camera() const noexcept {
     return scene().camera().get();
 }
 
+uint2 Visualizer::resolution() const noexcept {
+    return pipeline()->resolution();
+}
+
 void Visualizer::init() noexcept {
-    
+    line_segments_ = device().create_managed_list<LineSegment>(10000, "line segments");
+}
+
+void Visualizer::draw(const ocarina::float4 *data) const noexcept {
+    if (!show_) { return; }
 }
 
 bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {
@@ -32,12 +40,9 @@ bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void Visualizer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->button_click("clear", [&]{
+    widgets->button_click("clear", [&] {
         clear();
     });
-}
-
-void Visualizer::draw(const ocarina::float4 *data) const noexcept {
 }
 
 void Visualizer::clear() noexcept {
