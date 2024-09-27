@@ -16,7 +16,6 @@ private:
 
 public:
     BuildSystem();
-    void init();
     void clear() noexcept;
     [[nodiscard]] static fs::path directory() noexcept;
     void build_targets(const vector<Target> &targets,
@@ -26,7 +25,7 @@ public:
     [[nodiscard]] BuildRules::Handle& build_rules() const noexcept;
     [[nodiscard]] Compiler::Handle& compiler() const noexcept;
     static void create_temp_path(const fs::path &path) noexcept;
-    [[nodiscard]] bool is_working() const noexcept { return compiler_->is_working(); }
+    [[nodiscard]] bool is_working() const noexcept { return compiler()->is_working(); }
     void compile(const Target &target) const noexcept;
     void link(const Target &target, const CmdProcess::callback_t &callback = nullptr) const noexcept;
 };

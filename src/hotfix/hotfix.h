@@ -58,7 +58,6 @@ public:
     void register_observer(Observer *observer) noexcept;
     void deregister_observer(Observer *observer) noexcept;
     void defer_delete(SP<const Observer> observer) noexcept;
-    void init() noexcept;
     OC_MAKE_MEMBER_GETTER(file_tool, &)
     OC_MAKE_MEMBER_GETTER(serializer, &)
     template<typename... Args>

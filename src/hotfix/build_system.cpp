@@ -9,10 +9,6 @@ namespace vision::inline hotfix {
 
 BuildSystem::BuildSystem() = default;
 
-void BuildSystem::init() {
-    build_rules_ = BuildRules::create();
-    compiler_ = Compiler::create();
-}
 
 Compiler::Handle &BuildSystem::compiler() const noexcept {
     if (compiler_ == nullptr) {
@@ -37,17 +33,17 @@ fs::path BuildSystem::directory() noexcept {
 
 void BuildSystem::compile(const Target &target) const noexcept {
     for (const fs::path &item : target.modified_files) {
-        const CompileOptions &options = build_rules_->compile_options(item.string());
-        compiler_->compile(options);
+        const CompileOptions &options = build_rules()->compile_options(item.string());
+        compiler()->compile(options);
     }
 }
 
 void BuildSystem::link(const Target &target, const CmdProcess::callback_t &callback) const noexcept {
     fs::path fn("bin");
     fn = fn / target.name;
-    const LinkOptions &options = build_rules_->link_options(fn.string());
-    vector<string> extension_objs = build_rules_->obj_paths(ModuleInterface::src_path());
-    compiler_->link(options, target, FileTool::files_string(extension_objs), callback);
+    const LinkOptions &options = build_rules()->link_options(fn.string());
+    vector<string> extension_objs = build_rules()->obj_paths(ModuleInterface::src_path());
+    compiler()->link(options, target, FileTool::files_string(extension_objs), callback);
 }
 
 void BuildSystem::create_temp_path(const fs::path &path) noexcept {
@@ -60,7 +56,7 @@ void BuildSystem::create_temp_path(const fs::path &path) noexcept {
 void BuildSystem::build_target(const Target &target,
                                const CmdProcess::callback_t& callback) const noexcept {
     create_temp_path(target.temp_directory());
-    compiler_->setup_environment();
+    compiler()->setup_environment();
     compile(target);
     link(target,callback);
 }

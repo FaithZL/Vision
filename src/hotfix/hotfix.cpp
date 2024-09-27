@@ -137,10 +137,6 @@ bool HotfixSystem::check_and_build() noexcept {
     return true;
 }
 
-void HotfixSystem::init() noexcept {
-    build_system_.init();
-}
-
 HotfixSystem &HotfixSystem::instance() noexcept {
     if (s_mgr == nullptr) {
         s_mgr = new HotfixSystem();
