@@ -3,6 +3,7 @@
 //
 
 #include "base/bake_utlis.h"
+#include "math/util.h"
 
 namespace vision {
 
@@ -11,82 +12,21 @@ private:
     uint4 *pixels_{};
     uint2 res_{};
     static constexpr ocarina::array<float2, 10> _color{make_float2(0.5, 0),
-                                                   make_float2(0, 1),
-                                                   make_float2(0, 0.5),
-                                                   make_float2(0.3, 1),
-                                                   make_float2(1, 0.3),
-                                                   make_float2(0.3, 0.6),
-                                                   make_float2(0.6, 0.3),
-                                                   make_float2(0.25, 0.75),
-                                                   make_float2(0.75, 0.25),
-                                                   make_float2(1, 1)};
+                                                       make_float2(0, 1),
+                                                       make_float2(0, 0.5),
+                                                       make_float2(0.3, 1),
+                                                       make_float2(1, 0.3),
+                                                       make_float2(0.3, 0.6),
+                                                       make_float2(0.6, 0.3),
+                                                       make_float2(0.25, 0.75),
+                                                       make_float2(0.75, 0.25),
+                                                       make_float2(1, 1)};
 
 public:
     explicit CPURasterizer(const RasterizerDesc &desc)
         : RasterizerImpl(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void compile() noexcept override {}
-
-    void line_bresenham(float2 p1, float2 p2, uint4 val) noexcept {
-        int px1 = p1.x;
-        int py1 = p1.y;
-
-        int px2 = p2.x;
-        int py2 = p2.y;
-
-        if (px1 == px2 && py1 == py2) {
-            write(px1, py1, val);
-        }
-
-        int dx = ocarina::abs(px2 - px1);
-        int dy = ocarina::abs(py2 - py1);
-
-        if (dx >= dy) {
-            if (px1 > px2) {
-                std::swap(p1, p2);
-            }
-            px1 = p1.x;
-            py1 = p1.y;
-
-            px2 = p2.x;
-            py2 = p2.y;
-
-            int sign = py2 >= py1 ? 1 : -1;//б��[-1,1]
-            int k = sign * dy * 2;
-            int e = -dx * sign;
-
-            for (int x = px1, y = py1; x <= px2; ++x) {
-                write(x, y, val);
-                e += k;
-                if (sign * e > 0) {
-                    y += sign;
-                    e -= 2 * dx * sign;
-                }
-            }
-        } else {
-            if (py1 > py2) {
-                std::swap(p1, p2);
-            }
-            px1 = p1.x;
-            py1 = p1.y;
-
-            px2 = p2.x;
-            py2 = p2.y;
-
-            int sign = px2 > px1 ? 1 : -1;//б��[-1,1]
-            int k = sign * dx * 2;
-            int e = -dy * sign;
-
-            for (int x = px1, y = py1; y <= py2; ++y) {
-                write(x, y, val);
-                e += k;
-                if (sign * e > 0) {
-                    x += sign;
-                    e -= 2 * dy * sign;
-                }
-            }
-        }
-    }
 
     void write(uint x, uint y, uint4 val) noexcept {
         OC_ASSERT(all(make_uint2(x, y) <= res_));
@@ -197,9 +137,15 @@ public:
         if (all(p0 == p1) && all(p1 == p2)) {
             return;
         }
-        line_bresenham(p0, p1, val);
-        line_bresenham(p1, p2, val);
-        line_bresenham(p2, p0, val);
+        line_bresenham(p0, p1, [&](int x, int y) {
+            write(x, y, val);
+        });
+        line_bresenham(p1, p2, [&](int x, int y) {
+            write(x, y, val);
+        });
+        line_bresenham(p2, p0, [&](int x, int y) {
+            write(x, y, val);
+        });
     }
 
     void apply(vision::BakedShape &bs) noexcept override {

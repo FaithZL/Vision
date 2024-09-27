@@ -66,4 +66,66 @@ template<EPort p = D>
 }
 VS_MAKE_CALLABLE(windowed_sinc)
 
+void line_bresenham(float2 p1, float2 p2,
+                    const std::function<void(int, int)> &write) noexcept {
+    int px1 = p1.x;
+    int py1 = p1.y;
+
+    int px2 = p2.x;
+    int py2 = p2.y;
+
+    if (px1 == px2 && py1 == py2) {
+        write(px1, py1);
+    }
+
+    int dx = ocarina::abs(px2 - px1);
+    int dy = ocarina::abs(py2 - py1);
+
+    if (dx >= dy) {
+        if (px1 > px2) {
+            std::swap(p1, p2);
+        }
+        px1 = p1.x;
+        py1 = p1.y;
+
+        px2 = p2.x;
+        py2 = p2.y;
+
+        int sign = py2 >= py1 ? 1 : -1;
+        int k = sign * dy * 2;
+        int e = -dx * sign;
+
+        for (int x = px1, y = py1; x <= px2; ++x) {
+            write(x, y);
+            e += k;
+            if (sign * e > 0) {
+                y += sign;
+                e -= 2 * dx * sign;
+            }
+        }
+    } else {
+        if (py1 > py2) {
+            std::swap(p1, p2);
+        }
+        px1 = p1.x;
+        py1 = p1.y;
+
+        px2 = p2.x;
+        py2 = p2.y;
+
+        int sign = px2 > px1 ? 1 : -1;
+        int k = sign * dx * 2;
+        int e = -dy * sign;
+
+        for (int x = px1, y = py1; y <= py2; ++y) {
+            write(x, y);
+            e += k;
+            if (sign * e > 0) {
+                x += sign;
+                e -= 2 * dy * sign;
+            }
+        }
+    }
+}
+
 }// namespace vision
