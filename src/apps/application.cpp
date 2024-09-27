@@ -192,8 +192,8 @@ void App::update(double dt) noexcept {
     render_UI(window->widgets());
     auto &view_buffer = pipeline().view_buffer();
     view_buffer.download_immediately(_view_buffer.data());
+    pipeline().frame_buffer()->visualizer()->draw(_view_buffer.data());
     window->set_background(_view_buffer.data());
-    window->set_background(pipeline().view_buffer());
     check_and_save();
 }
 

@@ -43,7 +43,7 @@ private:
 public:
     Visualizer() = default;
     HOTFIX_VIRTUAL void init() noexcept;
-    HOTFIX_VIRTUAL void draw(const float4 *data, uint2 res) const noexcept;
+    HOTFIX_VIRTUAL void draw(const float4 *data) const noexcept;
     HOTFIX_VIRTUAL void clear() noexcept;
     OC_MAKE_MEMBER_GETTER(show, )
     [[nodiscard]] Camera *camera() const noexcept;

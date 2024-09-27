@@ -37,7 +37,7 @@ void Visualizer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     });
 }
 
-void Visualizer::draw(const ocarina::float4 *data, ocarina::uint2 res) const noexcept {
+void Visualizer::draw(const ocarina::float4 *data) const noexcept {
 }
 
 void Visualizer::clear() noexcept {
