@@ -56,6 +56,7 @@ public:
     void set_sensitivity(float v) noexcept { sensitivity_ = v; }
     [[nodiscard]] Float3 prev_raster_coord(Float3 pos) const noexcept;
     [[nodiscard]] Float3 raster_coord(Float3 pos) const noexcept;
+    [[nodiscard]] float3 raster_coord(float3 pos) const noexcept;
     [[nodiscard]] Float3 prev_device_position() const noexcept { return *prev_pos_; }
     OC_MAKE_MEMBER_GETTER(sensitivity, )
     OC_MAKE_MEMBER_GETTER(position, )

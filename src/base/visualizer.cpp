@@ -23,7 +23,7 @@ void Visualizer::init() noexcept {
 }
 
 void Visualizer::clear() noexcept {
-    line_segments_.device_list().clear_immediately();
+    line_segments_.clear_immediately();
 }
 
 void Visualizer::write(int x, int y, ocarina::float4 val, ocarina::float4 *pixel) const noexcept {
@@ -36,18 +36,30 @@ void Visualizer::write(int x, int y, ocarina::float4 val, ocarina::float4 *pixel
 }
 
 void Visualizer::add_line_segment(const Float3 &p0, const Float3 &p1) noexcept {
+    if (state_ != ERay) { return; }
+    $info_with_location("{} {} {}   {} {} {}", p0, p1);
     LineSegmentVar line_segment;
     line_segment.start = p0;
     line_segment.end = p1;
+    auto p2 = camera()->raster_coord(line_segment.start);
+    auto p3 = camera()->raster_coord(line_segment.end);
+    $condition_info_with_location("{} {} {}      {} {} {}  ---------", p2, p3);
     line_segments_.device_list().push_back(line_segment);
 }
 
 void Visualizer::draw(ocarina::float4 *data) const noexcept {
     if (!show_) { return; }
     line_segments_.download_immediately();
-    vision::line_bresenham(make_float2(0), make_float2(500, 500), [&](int x, int y) {
-        write(x, y, make_float4(1, 0, 0, 1), data);
-    });
+    uint count = line_segments_.host_count();
+
+    for (int i = 0; i < count; ++i) {
+        LineSegment ls = line_segments_[i];
+        auto p0 = camera()->raster_coord(ls.start);
+        auto p1 = camera()->raster_coord(ls.end);
+        safe_line_bresenham(p0.xy(), p1.xy(), [&](int x, int y) {
+            write(x, y, make_float4(1, 0, 0, 1), data);
+        });
+    }
 }
 
 bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {

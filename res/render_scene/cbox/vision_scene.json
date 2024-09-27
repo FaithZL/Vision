@@ -1015,6 +1015,10 @@
 	},
 	"pipeline": {
 //		"type": "customized"
+		"param": {
+			//			"obfuscation" : false,
+						"valid_check" : true
+		}
 	},
 	"output" : {
 		"spp" : 0,
