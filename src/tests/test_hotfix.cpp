@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
 
     auto m4 = -m3;
 
-    vision::HotfixSystem::instance().init();
     auto llvm = Compiler::create("llvm");
 
     vision::HotfixTest hotfix_test;
