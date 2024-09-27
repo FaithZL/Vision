@@ -4,6 +4,7 @@
 
 #include "global.h"
 #include "pipeline.h"
+#include "hotfix/hotfix.h"
 
 namespace vision {
 
@@ -12,6 +13,7 @@ Global *Global::s_global = nullptr;
 Global &Global::instance() {
     if (s_global == nullptr) {
         s_global = new Global();
+        HotfixSystem::instance().register_static_var("Global", *s_global);
     }
     return *s_global;
 }

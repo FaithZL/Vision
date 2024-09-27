@@ -34,7 +34,15 @@ public:
     ~Observer();
 };
 
+struct StaticMemoryBlock {
+    void *ptr{};
+    size_t size{};
+};
+
 class HotfixSystem {
+public:
+    using StaticMap = std::map<string, StaticMemoryBlock>;
+
 private:
     HotfixSystem() { versions_.push_back({}); }
     ~HotfixSystem();
@@ -49,6 +57,7 @@ private:
     queue<std::function<void()>> callbacks_;
     vector<Version> versions_;
     int cur_ver_{0};
+    StaticMap static_map_;
 
 public:
     HotfixSystem(const HotfixSystem &) = delete;
@@ -68,6 +77,21 @@ public:
         file_tool_.remove_inspected(path);
     }
     void execute_callback();
+
+    template<typename T>
+    void register_static_var(const string &key, T &val) noexcept {
+        size_t size = sizeof(T);
+        StaticMemoryBlock new_block{addressof(val), sizeof(T)};
+        if (static_map_.contains(key)) {
+            StaticMemoryBlock old_block = static_map_.at(key);
+            if (old_block.ptr != new_block.ptr) {
+                oc_memcpy(new_block.ptr, old_block.ptr, new_block.size);
+            }
+            static_map_.at(key) = new_block;
+        } else {
+            static_map_.insert(make_pair(key, new_block));
+        }
+    }
     [[nodiscard]] bool is_working() const noexcept { return build_system_.is_working(); }
     void enqueue_function(std::function<void()> fn) noexcept;
     void on_build_finish(bool success, const Target &target) noexcept;
