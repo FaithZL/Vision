@@ -43,9 +43,12 @@ private:
 public:
     Visualizer() = default;
     HOTFIX_VIRTUAL void init() noexcept;
-    HOTFIX_VIRTUAL void draw(const float4 *data) const noexcept;
+    HOTFIX_VIRTUAL void draw(float4 *data) const noexcept;
+    HOTFIX_VIRTUAL void write(int x, int y, float4 val, float4 *pixel) const noexcept;
+    HOTFIX_VIRTUAL void line_bresenham(float2 p1, float2 p2, float4 val, float4 *pixel) const noexcept;
     HOTFIX_VIRTUAL void clear() noexcept;
     OC_MAKE_MEMBER_GETTER(show, )
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, state_, show_, line_segments_)
     [[nodiscard]] Camera *camera() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
