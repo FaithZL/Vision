@@ -114,8 +114,9 @@ public:
 public:
     FrameBuffer() = default;
     explicit FrameBuffer(const FrameBufferDesc &desc);
-    VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_, motion_vectors_,
-                           hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_, visualizer_, window_buffer_)
+    VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_,
+                           motion_vectors_, hit_buffer_, screen_buffers_, gamma_correct_,
+                           view_buffer_, visualizer_, window_buffer_)
     void prepare() noexcept override;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
