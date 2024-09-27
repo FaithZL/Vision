@@ -14,6 +14,20 @@ void BuildSystem::init() {
     compiler_ = Compiler::create();
 }
 
+Compiler::Handle &BuildSystem::compiler() const noexcept {
+    if (compiler_ == nullptr) {
+        compiler_ = Compiler::create();
+    }
+    return compiler_;
+}
+
+BuildRules::Handle &BuildSystem::build_rules() const noexcept {
+    if (build_rules_ == nullptr) {
+        build_rules_ = BuildRules::create();
+    }
+    return build_rules_;
+}
+
 void BuildSystem::clear() noexcept {
 }
 
