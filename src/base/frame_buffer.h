@@ -102,7 +102,7 @@ protected:
     ScreenBuffer::manager_type screen_buffers_;
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
     /// Display in full screen on the screen
-    RegistrableBuffer<float4> view_buffer_;
+    RegistrableManaged<float4> view_buffer_;
 
     SP<Visualizer> visualizer_{make_shared<Visualizer>()};
 
@@ -113,7 +113,7 @@ public:
     FrameBuffer() = default;
     explicit FrameBuffer(const FrameBufferDesc &desc);
     VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_, motion_vectors_,
-                           hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_)
+                           hit_buffer_, screen_buffers_, gamma_correct_, view_buffer_, visualizer_)
     void prepare() noexcept override;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

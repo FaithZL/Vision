@@ -215,6 +215,7 @@ void Pipeline::before_render() noexcept {
 void Pipeline::after_render() noexcept {
     Env::debugger().reset_range();
     scene().camera()->after_render();
+    frame_buffer_->view_buffer().download_immediately();
 }
 
 void Pipeline::commit_command() noexcept {
