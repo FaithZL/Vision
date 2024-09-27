@@ -56,6 +56,11 @@ void Visualizer::draw(ocarina::float4 *data) const noexcept {
         LineSegment ls = line_segments_[i];
         auto p0 = camera()->raster_coord(ls.start);
         auto p1 = camera()->raster_coord(ls.end);
+
+        p0.x = ocarina::isnan(p0.x) ? resolution().x / 2 : p0.x;
+        p0.y = ocarina::isnan(p0.y) ? resolution().y / 2 : p0.y;
+        p1.x = ocarina::isnan(p1.x) ? resolution().x / 2 : p1.x;
+        p1.y = ocarina::isnan(p1.y) ? resolution().y / 2 : p1.y;
         safe_line_bresenham(p0.xy(), p1.xy(), [&](int x, int y) {
             write(x, y, make_float4(1, 0, 0, 1), data);
         });
