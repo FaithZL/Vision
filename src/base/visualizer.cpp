@@ -9,7 +9,6 @@
 
 namespace vision {
 
-
 Camera *Visualizer::camera() const noexcept {
     return scene().camera().get();
 }
@@ -20,6 +19,11 @@ uint2 Visualizer::resolution() const noexcept {
 
 void Visualizer::init() noexcept {
     line_segments_ = device().create_managed_list<LineSegment>(10000, "line segments");
+    clear();
+}
+
+void Visualizer::clear() noexcept {
+    line_segments_.device_list().clear_immediately();
 }
 
 void Visualizer::write(int x, int y, ocarina::float4 val, ocarina::float4 *pixel) const noexcept {
@@ -31,10 +35,18 @@ void Visualizer::write(int x, int y, ocarina::float4 val, ocarina::float4 *pixel
     pixel[index] = val;
 }
 
+void Visualizer::add_line_segment(const Float3 &p0, const Float3 &p1) noexcept {
+    LineSegmentVar line_segment;
+    line_segment.start = p0;
+    line_segment.end = p1;
+    line_segments_.device_list().push_back(line_segment);
+}
+
 void Visualizer::draw(ocarina::float4 *data) const noexcept {
     if (!show_) { return; }
+    line_segments_.download_immediately();
     vision::line_bresenham(make_float2(0), make_float2(500, 500), [&](int x, int y) {
-        write(x, y, make_float4(1,0,0,1), data);
+        write(x, y, make_float4(1, 0, 0, 1), data);
     });
 }
 
@@ -58,9 +70,6 @@ void Visualizer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
         clear();
     });
     widgets->check_box("show", &show_);
-}
-
-void Visualizer::clear() noexcept {
 }
 
 }// namespace vision
