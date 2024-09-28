@@ -117,6 +117,26 @@ float3 Camera::raster_coord(float3 pos) const noexcept {
     return ret;
 }
 
+LineSegment Camera::clipping(vision::LineSegment ls) const noexcept {
+    float3 p0 = ls.p0;
+    float3 p1 = ls.p1;
+    float4x4 w2c = inverse(c2w_.hv());
+    p0 = transform_point<H>(w2c, p0);
+    p1 = transform_point<H>(w2c, p1);
+    float3 sp0 = transform_point<H>(camera_to_screen_, p0);
+    float3 sp1 = transform_point<H>(camera_to_screen_, p1);
+    if (sp1.z > sp0.z) {
+        float t = (sp1.z - 0.5) / (sp1.z - sp0.z);
+        t = ocarina::clamp(t, 0.f, 1.f);
+        ls.p0 = ocarina::lerp(t, ls.p1, ls.p0);
+    } else {
+        float t = (sp0.z - 0.5) / (sp0.z - sp1.z);
+        t = ocarina::clamp(t, 0.f, 1.f);
+        ls.p1 = ocarina::lerp(t, ls.p0, ls.p1);
+    }
+    return ls;
+}
+
 void Camera::update_device_data() noexcept {
     c2w_ = camera_to_world();
     Sensor::update_data();

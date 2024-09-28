@@ -13,17 +13,6 @@
 #include "sensor/camera.h"
 
 namespace vision {
-struct LineSegment {
-    float3 start;
-    float3 end;
-};
-}// namespace vision
-
-//clang-format off
-OC_STRUCT(vision, LineSegment, start, end){};
-//clang-format on
-
-namespace vision {
 
 using namespace ocarina;
 

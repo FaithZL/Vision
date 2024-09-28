@@ -234,6 +234,17 @@ OC_STRUCT(vision, Triangle, i, j, k){};
 }
 
 namespace vision {
+struct LineSegment {
+    float3 p0;
+    float3 p1;
+};
+}// namespace vision
+
+//clang-format off
+OC_STRUCT(vision, LineSegment, p0, p1){};
+//clang-format on
+
+namespace vision {
 using namespace ocarina;
 using array_float3 = std::array<float, 3>;
 using array_float2 = std::array<float, 2>;

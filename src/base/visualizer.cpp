@@ -40,10 +40,8 @@ void Visualizer::write(int x, int y, ocarina::float4 val, ocarina::float4 *pixel
 void Visualizer::add_line_segment(const Float3 &p0, const Float3 &p1) noexcept {
     if (state_ != ERay) { return; }
     LineSegmentVar line_segment;
-    line_segment.start = p0;
-    line_segment.end = p1;
-    auto p2 = camera()->raster_coord(line_segment.start);
-    auto p3 = camera()->raster_coord(line_segment.end);
+    line_segment.p0 = p0;
+    line_segment.p1 = p1;
     line_segments_.push_back(line_segment);
 }
 
@@ -56,8 +54,9 @@ void Visualizer::draw(ocarina::float4 *data) const noexcept {
 
     for (int index = 0; index < count; ++index) {
         LineSegment ls = host[index];
-        float2 p0 = camera()->raster_coord(ls.start).xy();
-        float2 p1 = camera()->raster_coord(ls.end).xy();
+        ls = camera()->clipping(ls);
+        float2 p0 = camera()->raster_coord(ls.p0).xy();
+        float2 p1 = camera()->raster_coord(ls.p1).xy();
 
         p0.x = ocarina::isnan(p0.x) ? resolution().x / 2 : p0.x;
         p0.y = ocarina::isnan(p0.y) ? resolution().y / 2 : p0.y;
