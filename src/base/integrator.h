@@ -184,6 +184,7 @@ public:
         SampledSpectrum Ld = {swl.dimension(), 0.f};
         $if(!occluded && scatter_eval.valid() && ls.valid()) {
             Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
+            frame_buffer().visualizer()->condition_add_line_segment(it.pos, ls.p_light);
         };
         return Ld;
     }
