@@ -39,7 +39,6 @@ void Visualizer::write(int x, int y, ocarina::float4 val, ocarina::float4 *pixel
 
 void Visualizer::add_line_segment(const Float3 &p0, const Float3 &p1) noexcept {
     if (state_ != ERay) { return; }
-//    $info_with_location("add ray {} {} {}    {} {} {}", p0, p1);
     LineSegmentVar line_segment;
     line_segment.start = p0;
     line_segment.end = p1;
@@ -55,18 +54,23 @@ void Visualizer::draw(ocarina::float4 *data) const noexcept {
     stream() << line_segments_.storage_segment().download(host.data(), false);
     uint count = line_segments_.host_count();
 
-    for (int i = 0; i < count; ++i) {
-        LineSegment ls = host[i];
-        auto p0 = camera()->raster_coord(ls.start);
-        auto p1 = camera()->raster_coord(ls.end);
+    for (int index = 0; index < count; ++index) {
+        LineSegment ls = host[index];
+        float2 p0 = camera()->raster_coord(ls.start).xy();
+        float2 p1 = camera()->raster_coord(ls.end).xy();
 
         p0.x = ocarina::isnan(p0.x) ? resolution().x / 2 : p0.x;
         p0.y = ocarina::isnan(p0.y) ? resolution().y / 2 : p0.y;
         p1.x = ocarina::isnan(p1.x) ? resolution().x / 2 : p1.x;
         p1.y = ocarina::isnan(p1.y) ? resolution().y / 2 : p1.y;
-        safe_line_bresenham(p0.xy(), p1.xy(), [&](int x, int y) {
-            write(x, y, make_float4(color_, 1), data);
-        });
+
+        for (int i = -width_; i <= width_; ++i) {
+            for (int j = -width_; j <= width_; ++j) {
+                safe_line_bresenham(p0, p1 + make_float2(i, j), [&](int x, int y) {
+                    write(x, y, make_float4(color_, 1), data);
+                });
+            }
+        }
     }
 }
 
@@ -87,11 +91,11 @@ bool Visualizer::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void Visualizer::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     widgets->button_click("clear", [&] {
-        cout << line_segments_.bindless_array() << endl;
-//        clear();
+        clear();
     });
     widgets->check_box("show", &show_);
     widgets->color_edit("color", &color_);
+    widgets->input_int_limit("width", &width_, 0, 3);
 }
 
 }// namespace vision
