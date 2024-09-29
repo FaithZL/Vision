@@ -70,7 +70,11 @@ public:
     ScatterEval(SampledSpectrum f, Float pdf, Uint flags)
         : f(std::move(f)), pdfs(1, std::move(pdf)), flags(std::move(flags)) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdfs; }
-    [[nodiscard]] SampledSpectrum safe_throughput() const noexcept { return zero_if_any_nan_inf(throughput()); }
+    [[nodiscard]] SampledSpectrum safe_throughput() const noexcept {
+        auto ret = throughput();
+        ret.sanitize();
+        return ret;
+    }
     [[nodiscard]] Bool valid() const noexcept { return pdfs[0] > 0.f; }
     [[nodiscard]] Float &pdf() noexcept { return pdfs[0]; }
     [[nodiscard]] const Float &pdf() const noexcept { return pdfs[0]; }
