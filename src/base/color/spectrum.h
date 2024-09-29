@@ -28,7 +28,7 @@ public:
     void set_pdf(const Uint &i, const Float &p) const noexcept { pdfs_[i] = p; }
     [[nodiscard]] uint dimension() const noexcept { return static_cast<uint>(lambdas_.size()); }
     [[nodiscard]] Uint valid_dimension() const noexcept;
-    void invalidation_channel(const Uint& idx) const noexcept { set_pdf(idx, 0); }
+    void invalidation_channel(const Uint &idx) const noexcept { set_pdf(idx, 0); }
     [[nodiscard]] Float3 lambda_vec3() const noexcept {
         return make_float3(lambdas_[0], lambdas_[1], lambdas_[2]);
     }
@@ -109,36 +109,23 @@ public:
         }
         return s;
     }
-
-    [[nodiscard]] Float sum() const noexcept {
-        return values().sum();
-    }
-    [[nodiscard]] Float max() const noexcept {
-        return values().max();
-    }
-    [[nodiscard]] Float min() const noexcept {
-        return values().min();
-    }
-
+    void sanitize() noexcept { values_.sanitize(); }
+    [[nodiscard]] Float sum() const noexcept { return values().sum(); }
+    [[nodiscard]] Float max() const noexcept { return values().max(); }
+    [[nodiscard]] Float min() const noexcept { return values().min(); }
     [[nodiscard]] Float average() const noexcept {
         return sum() * static_cast<float>(1.0 / dimension());
     }
     template<typename F>
-    [[nodiscard]] Bool any(F &&f) const noexcept {
-        return values().any(OC_FORWARD(f));
-    }
+    [[nodiscard]] Bool any(F &&f) const noexcept { return values().any(OC_FORWARD(f));}
     template<typename F>
-    [[nodiscard]] Bool all(F &&f) const noexcept {
-        return values().all(OC_FORWARD(f));
-    }
+    [[nodiscard]] Bool all(F &&f) const noexcept {return values().all(OC_FORWARD(f));}
     [[nodiscard]] Bool is_zero() const noexcept {
         return all([](auto x) noexcept { return x == 0.f; });
     }
     template<typename F>
     [[nodiscard]] Bool none(F &&f) const noexcept { return !any(std::forward<F>(f)); }
-    [[nodiscard]] SampledSpectrum operator+() const noexcept {
-        return *this;
-    }
+    [[nodiscard]] SampledSpectrum operator+() const noexcept {return *this;}
     [[nodiscard]] SampledSpectrum operator-() const noexcept {
         return SampledSpectrum(-values());
     }
@@ -174,7 +161,6 @@ public:
         values_ op## = rhs.values();                                                                                        \
         return *this;                                                                                                       \
     }
-
     VS_MAKE_SPECTRUM_OPERATOR(+)
     VS_MAKE_SPECTRUM_OPERATOR(-)
     VS_MAKE_SPECTRUM_OPERATOR(*)
@@ -231,8 +217,6 @@ class Sampler;
 template<typename T, typename Desc>
 class TObject;
 using TSampler = TObject<Sampler, SamplerDesc>;
-
-class MaterialEvaluator;
 
 class Spectrum : public Node {
 public:
