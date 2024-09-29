@@ -63,16 +63,18 @@ struct ScatterEval {
 public:
     SampledSpectrum f{};
     Uint flags{BxDFFlag::Unset};
-    Float pdf{};
+    DynamicArray<float> pdfs{1};
 
 public:
-    explicit ScatterEval(uint dim) : f(dim), pdf(0.f){};
+    explicit ScatterEval(uint dim) : f(dim), pdfs(1, 0.f){};
     ScatterEval(SampledSpectrum f, Float pdf, Uint flags)
-        : f(std::move(f)), pdf(std::move(pdf)), flags(std::move(flags)) {}
-    [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdf; }
+        : f(std::move(f)), pdfs(1, std::move(pdf)), flags(std::move(flags)) {}
+    [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdfs; }
     [[nodiscard]] SampledSpectrum safe_throughput() const noexcept { return zero_if_any_nan_inf(throughput()); }
-    [[nodiscard]] Bool valid() const noexcept { return pdf > 0.f; }
-    void invalidation() noexcept { pdf = 0; }
+    [[nodiscard]] Bool valid() const noexcept { return pdfs[0] > 0.f; }
+    [[nodiscard]] Float &pdf() noexcept { return pdfs[0]; }
+    [[nodiscard]] const Float &pdf() const noexcept { return pdfs[0]; }
+    void invalidation() noexcept { pdfs[0] = 0; }
 };
 
 struct LightEval {

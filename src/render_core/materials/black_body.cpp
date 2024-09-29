@@ -17,12 +17,12 @@ public:
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override {
         ScatterEval ret{swl_->dimension()};
         ret.f = {swl_->dimension(), 0.f};
-        ret.pdf = 1.f;
+        ret.pdf() = 1.f;
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         BSDFSample ret{swl_->dimension()};
-        ret.eval.pdf = 1.f;
+        ret.eval.pdf() = 1.f;
         /// Avoid sample discarding due to hemispherical check
         ret.eval.flags = BxDFFlag::DiffRefl;
         ret.wi = wo;

@@ -79,7 +79,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
     }
     RayVar ray = it.spawn_ray(bs->wi);
     HitVar hit = geometry.trace_closest(ray);
-    Float pdf = bs->eval.pdf;
+    Float pdf = bs->eval.pdf();
     hit_bsdf->wi.set(bs->wi);
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
     hit_bsdf->pdf = pdf;
@@ -93,14 +93,14 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
              * The PDF of the LightEval is the PDF of the reflection function
              * from the solid Angle space to the area space
              */
-            le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf,
+            le = light_sampler->evaluate_hit_point(it, next_it, bs->eval.pdf(),
                                                    swl, light_pdf_point);
             lsp.light_index = light_sampler->extract_light_index(next_it);
             lsp.prim_id = hit.prim_id;
             lsp.bary = hit.bary;
             (*sample)->set_lsp(lsp);
             (*sample)->set_pos(next_it.robust_position(it.pos - next_it.pos));
-            bs->eval.pdf = le.pdf;
+            bs->eval.pdf() = le.pdf;
             f = bs->eval.f * le.L;
         };
     }
@@ -108,7 +108,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
         if (light_sampler->env_light()) {
             LightSampleContext p_ref{it};
             Float3 wi = bs->wi * scene().world_diameter();
-            le = light_sampler->evaluate_miss_point(p_ref, wi, bs->eval.pdf,
+            le = light_sampler->evaluate_miss_point(p_ref, wi, bs->eval.pdf(),
                                                     swl, light_pdf_point);
             lsp.light_index = light_sampler->env_index();
             lsp.bary = light_sampler->env_light()->convert_to_bary(bs->wi);
@@ -152,7 +152,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
     }
 
     if (bsdf_pdf_point) {
-        *bsdf_pdf_point = light_sampler->PDF_point(it, sample->lsp(), eval.pdf);
+        *bsdf_pdf_point = light_sampler->PDF_point(it, sample->lsp(), eval.pdf());
     }
     if (output_ls) {
         *output_ls = ls;
@@ -197,8 +197,8 @@ DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it, const Var<D
         Float light_pdf_point = 0.f;
         Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf, flag);
         sample.p_hat = p_hat;
-        Float weight = DIReservoir::safe_weight(bs.eval.pdf / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf),
-                                                sample.p_hat, 1.f / bs.eval.pdf) *
+        Float weight = DIReservoir::safe_weight(bs.eval.pdf() / (M_light * light_pdf_point + M_bsdf * bs.eval.pdf()),
+                                                sample.p_hat, 1.f / bs.eval.pdf()) *
                        luminance(throughput);
         ret->update(sampler->next_1d(), sample, weight);
     };
@@ -593,7 +593,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf)
                 p_ref.pos = ray->origin();
                 p_ref.ng = it.ng;
                 LightEval eval = light_sampler->evaluate_hit_wi(p_ref, next_it, swl, LightEvalMode::L);
-                value = eval.L * bs.eval.f / bs.eval.pdf;
+                value = eval.L * bs.eval.f / bs.eval.pdf();
             };
         };
 

@@ -162,7 +162,7 @@ public:
             wi.xy() = -wi.xy();
             ret.wi = wi;
             ret.eval = refl_.evaluate(wo, wi, fresnel, All);
-            ret.eval.pdf *= fr;
+            ret.eval.pdf() *= fr;
         }
         $else {
             Float3 wi;
@@ -170,7 +170,7 @@ public:
             refract(wo, n, fresnel->eta()[0], &wi);
             ret.eval = trans_.evaluate(wo, wi, fresnel, All);
             ret.wi = wi;
-            ret.eval.pdf *= 1 - fr;
+            ret.eval.pdf() *= 1 - fr;
         };
         return ret;
     }
@@ -185,11 +185,11 @@ public:
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(uc < fr) {
             ret = refl_.sample(wo, sampler, fresnel);
-            ret.eval.pdf *= fr;
+            ret.eval.pdf() *= fr;
         }
         $else {
             ret = trans_.sample(wo, sampler, fresnel);
-            ret.eval.pdf *= 1 - fr;
+            ret.eval.pdf() *= 1 - fr;
         };
         return ret;
     }
