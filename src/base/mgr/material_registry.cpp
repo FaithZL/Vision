@@ -86,6 +86,7 @@ void MaterialRegistry::remove_unused_materials() noexcept {
 MaterialRegistry &MaterialRegistry::instance() {
     if (s_material_registry == nullptr) {
         s_material_registry = new MaterialRegistry();
+        HotfixSystem::instance().register_static_var("MaterialRegistry", *s_material_registry);
     }
     return *s_material_registry;
 }

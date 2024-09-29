@@ -11,6 +11,7 @@ MeshRegistry *MeshRegistry::s_mesh_registry = nullptr;
 MeshRegistry &MeshRegistry::instance() {
     if (s_mesh_registry == nullptr) {
         s_mesh_registry = new MeshRegistry();
+        HotfixSystem::instance().register_static_var("MeshRegistry", *s_mesh_registry);
     }
     return *s_mesh_registry;
 }
