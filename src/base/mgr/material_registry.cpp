@@ -34,6 +34,13 @@ void MaterialRegistry::push_back(SP<vision::Material> material) noexcept {
     materials_.push_back(ocarina::move(material));
 }
 
+bool MaterialRegistry::has_dispersive() const noexcept {
+    return std::any_of(materials_.begin(), materials_.end(),
+                       [&](const SP<Material> &mat) {
+                           return mat->is_dispersive();
+                       });
+}
+
 void MaterialRegistry::upload_device_data() noexcept {
     if (has_changed()) {
         materials_.update();

@@ -30,6 +30,7 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(GUI, materials_)
     [[nodiscard]] SP<Material> register_(SP<Material> material) noexcept;
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
+    [[nodiscard]] bool has_dispersive() const noexcept;
     void push_back(SP<Material> material) noexcept;
     void upload_device_data() noexcept;
     void remove_unused_materials() noexcept;

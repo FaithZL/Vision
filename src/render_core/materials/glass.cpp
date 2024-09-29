@@ -254,11 +254,8 @@ public:
         ior_ = Slot::create_slot(eta_slot);
         ior_->set_name("ior");
     }
-
-    void prepare() noexcept override {
-        ior_->prepare();
-    }
-
+    [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->impl_type() == "spd";}
+    void prepare() noexcept override { ior_->prepare(); }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);

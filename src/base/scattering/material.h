@@ -124,6 +124,7 @@ public:
         shape_groups.push_back(ocarina::move(shape_group));
     }
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    [[nodiscard]] virtual bool is_dispersive() const noexcept { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void init_slot_cursor(const Slot *ptr, uint num) noexcept {
@@ -141,15 +142,15 @@ public:
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
         if (bump_) {
-            ret = OC_FORWARD(func)(ret, bump_);
+            ret = func(ret, bump_);
         }
         if (bump_scale_) {
-            ret = OC_FORWARD(func)(ret, bump_scale_);
+            ret = func(ret, bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             const Slot &slot = get_slot(i);
             if (slot) {
-                ret = OC_FORWARD(func)(ret, slot);
+                ret = func(ret, slot);
             }
         }
         return ret;
@@ -159,15 +160,15 @@ public:
     auto reduce_slots(T &&initial, F &&func) noexcept {
         T ret = OC_FORWARD(initial);
         if (bump_) {
-            ret = OC_FORWARD(func)(ret, bump_);
+            ret = func(ret, bump_);
         }
         if (bump_scale_) {
-            ret = OC_FORWARD(func)(ret, bump_scale_);
+            ret = func(ret, bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             Slot &slot = get_slot(i);
             if (slot) {
-                ret = OC_FORWARD(func)(ret, slot);
+                ret = func(ret, slot);
             }
         }
         return ret;
