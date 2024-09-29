@@ -230,6 +230,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(TSampler &sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
+    [[nodiscard]] virtual uint pdf_dimension() const noexcept { return 1; }
     [[nodiscard]] virtual bool is_complete() const noexcept { return false; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const MaterialEvaluator *bsdf) const noexcept { return {}; }
     [[nodiscard]] virtual float4 albedo_params(float4 rgb) const noexcept = 0;
