@@ -276,7 +276,7 @@ public:
         MicrofacetTransmission trans(color, swl, microfacet);
 
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
-                                              ior_->type() == ESPD, flag);
+                                              is_dispersive(), flag);
     }
 };
 }// namespace vision
