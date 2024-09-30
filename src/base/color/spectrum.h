@@ -19,9 +19,12 @@ class SampledWavelengths {
 private:
     DynamicArray<float> lambdas_;
     mutable DynamicArray<float> pdfs_;
+    uint scatter_pdf_dim_{1u};
 
 public:
-    explicit SampledWavelengths(uint dim) noexcept : lambdas_{dim}, pdfs_{dim} {}
+    explicit SampledWavelengths(uint dim, uint d = 1u) noexcept
+        : lambdas_{dim}, pdfs_{dim}, scatter_pdf_dim_{d} {}
+    OC_MAKE_MEMBER_GETTER(scatter_pdf_dim, )
     [[nodiscard]] Float lambda(const Uint &i) const noexcept { return lambdas_[i]; }
     [[nodiscard]] Float pdf(const Uint &i) const noexcept { return pdfs_[i]; }
     void set_lambda(const Uint &i, const Float &lambda) noexcept { lambdas_[i] = lambda; }
@@ -117,15 +120,15 @@ public:
         return sum() * static_cast<float>(1.0 / dimension());
     }
     template<typename F>
-    [[nodiscard]] Bool any(F &&f) const noexcept { return values().any(OC_FORWARD(f));}
+    [[nodiscard]] Bool any(F &&f) const noexcept { return values().any(OC_FORWARD(f)); }
     template<typename F>
-    [[nodiscard]] Bool all(F &&f) const noexcept {return values().all(OC_FORWARD(f));}
+    [[nodiscard]] Bool all(F &&f) const noexcept { return values().all(OC_FORWARD(f)); }
     [[nodiscard]] Bool is_zero() const noexcept {
         return all([](auto x) noexcept { return x == 0.f; });
     }
     template<typename F>
     [[nodiscard]] Bool none(F &&f) const noexcept { return !any(std::forward<F>(f)); }
-    [[nodiscard]] SampledSpectrum operator+() const noexcept {return *this;}
+    [[nodiscard]] SampledSpectrum operator+() const noexcept { return *this; }
     [[nodiscard]] SampledSpectrum operator-() const noexcept {
         return SampledSpectrum(-values());
     }
@@ -230,7 +233,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(TSampler &sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
-    [[nodiscard]] virtual uint pdf_dimension() const noexcept { return 1; }
+    [[nodiscard]] virtual uint scatter_pdf_dim() const noexcept { return 1; }
     [[nodiscard]] virtual bool is_complete() const noexcept { return false; }
     [[nodiscard]] virtual optional<Bool> is_dispersive(const MaterialEvaluator *bsdf) const noexcept { return {}; }
     [[nodiscard]] virtual float4 albedo_params(float4 rgb) const noexcept = 0;

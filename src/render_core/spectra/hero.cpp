@@ -258,7 +258,7 @@ public:
         cie_z_.prepare();
     }
     [[nodiscard]] uint dimension() const noexcept override { return dimension_; }
-    [[nodiscard]] uint pdf_dimension() const noexcept override { return dimension(); }
+    [[nodiscard]] uint scatter_pdf_dim() const noexcept override { return dimension(); }
 
     [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
