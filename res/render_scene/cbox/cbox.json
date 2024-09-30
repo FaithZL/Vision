@@ -1016,7 +1016,7 @@
 		}
 	},
 	"spectrum" : {
-//				"type" : "hero",
+				"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}
@@ -1029,7 +1029,7 @@
 		}
 	},
 	"output" : {
-				"spp" : 1024,
+//				"spp" : 1024,
 		//		"save_exit" : true,
 		"fn" : "rt-new.exr"
 	},
