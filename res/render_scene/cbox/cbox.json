@@ -207,13 +207,13 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				 "material" : "ShortBox",
+//				 "material" : "ShortBox",
 								// "material" : "substrate",
 //								"material" : "Mirror",
 //								"material" : "Ag",
 //												                "material" : "disney",
 //																                "material" : "mix",
-//												                                "material" : "Glass",
+												                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -254,11 +254,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material": "TallBox",
+//				"material": "TallBox",
 //				"material" : "mix2",
 //				"material" : "Mirror",
 				//                "material": "Mirror2",
-//								                "material": "Glass2",
+								                "material": "Glass2",
 //												"material" : "Metal",
 				//				"material" : "disney",
 				"transform" : {
@@ -1016,7 +1016,7 @@
 		}
 	},
 	"spectrum" : {
-				"type" : "hero",
+//				"type" : "hero",
 		"param" : {
 			"dimension" : 3
 		}
@@ -1029,9 +1029,9 @@
 		}
 	},
 	"output" : {
-		//		"spp" : 128,
+				"spp" : 1024,
 		//		"save_exit" : true,
-		"fn" : "rt-1.exr"
+		"fn" : "rt-new.exr"
 	},
 	"integrator" : {
 //		"type" : "rt",

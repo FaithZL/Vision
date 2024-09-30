@@ -123,11 +123,14 @@ public:
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
+        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(same_hemisphere(wo, wi)) {
             ret = refl_.evaluate(wo, wi, fresnel, mode);
+            ret.pdf() *= fr;
         }
         $else {
             ret = trans_.evaluate(wo, wi, fresnel, mode);
+            ret.pdf() *= 1 - fr;
         };
         return ret;
     }
