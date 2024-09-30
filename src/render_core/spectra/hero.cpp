@@ -258,7 +258,7 @@ public:
         cie_z_.prepare();
     }
     [[nodiscard]] uint dimension() const noexcept override { return dimension_; }
-    [[nodiscard]] uint scatter_pdf_dim() const noexcept override { return dimension(); }
+    [[nodiscard]] uint scatter_pdf_dim() const noexcept override { return 1u; }
 
     [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
@@ -298,7 +298,7 @@ public:
     }
     [[nodiscard]] SampledWavelengths sample_wavelength(TSampler &sampler) const noexcept override {
         uint n = dimension();
-        SampledWavelengths swl{n};
+        SampledWavelengths swl{n, scatter_pdf_dim()};
         Float u = sampler->next_1d();
         for (uint i = 0; i < n; ++i) {
             float offset = static_cast<float>(i * (1.f / n));
