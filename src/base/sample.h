@@ -77,7 +77,7 @@ public:
     }
     [[nodiscard]] Bool valid() const noexcept { return pdfs[0] > 0.f; }
     [[nodiscard]] Float &pdf() noexcept { return pdfs[0]; }
-    [[nodiscard]] const Float &pdf() const noexcept { return pdfs[0]; }
+    [[nodiscard]] Float pdf() const noexcept { return pdfs[0]; }
     void invalidation() noexcept { pdfs[0] = 0; }
 };
 
