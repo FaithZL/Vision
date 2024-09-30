@@ -100,7 +100,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
             lsp.bary = hit.bary;
             (*sample)->set_lsp(lsp);
             (*sample)->set_pos(next_it.robust_position(it.pos - next_it.pos));
-            bs->eval.pdf() = le.pdf;
+            bs->eval.pdfs =le.pdf;
             f = bs->eval.f * le.L;
         };
     }

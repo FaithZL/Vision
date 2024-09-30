@@ -20,7 +20,7 @@ ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEv
         ret.f = f(wo, wi, fresnel);
     }
     if (BxDF::match_PDF(mode)) {
-        ret.pdf() = PDF(wo, wi, fresnel);
+        ret.pdfs =PDF(wo, wi, fresnel);
     }
     ret.flags = flags();
     return ret;
@@ -37,7 +37,7 @@ ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, Mater
         ret.f = select(s, f(wo, wi, fresnel), 0.f);
     }
     if (BxDF::match_PDF(mode)) {
-        ret.pdf() = select(s, PDF(wo, wi, fresnel), 0.f);
+        ret.pdfs =select(s, PDF(wo, wi, fresnel), 0.f);
     }
     ret.flags = flags();
     return ret;
@@ -54,7 +54,7 @@ BSDFSample BxDF::sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
     ret.eval = evaluate(wo, wi, fresnel, MaterialEvalMode::All);
-    ret.eval.pdf() *= pdf;
+    ret.eval.pdfs *=pdf;
     return ret;
 }
 
@@ -118,7 +118,7 @@ BSDFSample MicrofacetTransmission::sample(Float3 wo, TSampler &sampler, SP<Fresn
     BSDFSample ret{swl().dimension()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
-    ret.eval.pdf() = select(valid, ret.eval.pdf(), 0.f);
+    ret.eval.pdfs =select(valid, ret.eval.pdf(), 0.f);
     ret.wi = wi;
     ret.eta = fresnel->eta()[0];
     return ret;

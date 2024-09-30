@@ -86,7 +86,7 @@ ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &wo
     Float3 wi = shading_frame_.to_local(world_wi);
     ScatterEval ret = evaluate_local(wo, wi, mode, flag);
     Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
-    ret.pdf() = select(discard, 0.f, ret.pdf());
+    ret.pdfs =select(discard, 0.f, ret.pdf());
     ret.f *= abs_cos_theta(wi);
     return ret;
 }
@@ -105,7 +105,7 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler, 
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame_.to_world(ret.wi);
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
-    ret.eval.pdf() = select(discard, 0.f, ret.eval.pdf());
+    ret.eval.pdfs =select(discard, 0.f, ret.eval.pdf());
     return ret;
 }
 
