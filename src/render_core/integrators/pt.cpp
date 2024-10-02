@@ -53,17 +53,20 @@ public:
         Pipeline *rp = pipeline();
         TSampler &sampler = scene().sampler();
         TLightSampler &light_sampler = scene().light_sampler();
-
+        RayState rs_o = rs;
+        SampledSpectrum beta = throughput;
         const SampledWavelengths &swl = render_env.sampled_wavelengths();
         const Geometry &geometry = rp->geometry();
         Float3 ret = make_float3(0.f);
         auto func = [&] {
+            rs = rs_o;
+            throughput = beta;
             sampler->start(dispatch_idx().xy(), render_env.frame_index(), 3);
             HitVar hit;
             Interaction it{scene().has_medium()};
             Float3 prev_surface_ng = rs.direction();
 
-
+            $condition_info(" {} {} {} -----------", rs.direction());
 
             Float3 primary_dir = rs.direction();
             auto mis_bsdf = [&](auto &bounces, bool inner) {
@@ -199,6 +202,7 @@ public:
                 };
             }
         };
+        func();
         func();
         return ret;
     }
