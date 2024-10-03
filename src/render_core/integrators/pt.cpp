@@ -55,19 +55,25 @@ public:
         TLightSampler &light_sampler = scene().light_sampler();
         RayState rs_o = rs;
         SampledSpectrum beta = throughput;
-        const SampledWavelengths &swl = render_env.sampled_wavelengths();
+        SampledWavelengths &swl = render_env.sampled_wavelengths();
+        SampledWavelengths swl2 = SampledWavelengths{swl.dimension()};
+
+        swl2 = swl;
+
+        $condition_info("{} {}   {} {}", swl2.pdfs_.as_vec2(), swl2.lambdas_.as_vec2());
+
         const Geometry &geometry = rp->geometry();
         Float3 ret = make_float3(0.f);
         auto func = [&] {
             rs = rs_o;
+            $condition_info("{} {}   {} {}  +++", swl.pdfs_.as_vec2(), swl.lambdas_.as_vec2());
             throughput = beta;
+            ret = make_float3(0.f);
             sampler->start(dispatch_idx().xy(), render_env.frame_index(), 3);
             HitVar hit;
             Interaction it{scene().has_medium()};
             Float3 prev_surface_ng = rs.direction();
-
-            $condition_info(" {} {} {} -----------", rs.direction());
-
+//            $condition_info("{} {} +++++++ ", sampler->next_2d());;
             Float3 primary_dir = rs.direction();
             auto mis_bsdf = [&](auto &bounces, bool inner) {
                 hit = geometry.trace_closest(rs.ray);
@@ -139,7 +145,7 @@ public:
                 comment("sample bsdf");
                 BSDFSample bsdf_sample{swl.dimension()};
                 SampledSpectrum Ld = {swl.dimension(), 0.f};
-
+                $condition_info("{} {} {} ------------  ret {} {} {}", rs.direction(), ret);
                 Float3 albedo = make_float3(0.f);
 
                 auto sample_surface = [&]() {
@@ -202,9 +208,21 @@ public:
                 };
             }
         };
+        Float3 li = make_float3(0.f);
+        swl = swl2;
+        swl.pdfs_[1] = swl2.pdfs_[0];
+        swl.lambdas_[1] = swl2.lambdas_[0];
         func();
+        li += ret;
+//        $condition_info("{} {} {} ret", ret);
+
+        swl = swl2;
+        swl.pdfs_[0] = swl2.pdfs_[1];
+        swl.lambdas_[0] = swl2.lambdas_[1];
         func();
-        return ret;
+        li += ret;
+//        $condition_info("{} {} {} ret", ret);
+        return li / 2;
     }
 
     RealTimeDenoiseInput denoise_input() const noexcept {

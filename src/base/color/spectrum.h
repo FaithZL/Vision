@@ -16,7 +16,7 @@ static constexpr float3 rgb_spectrum_peak_wavelengths = make_float3(602.785f, 53
 class MaterialEvaluator;
 
 class SampledWavelengths {
-private:
+public:
     DynamicArray<float> lambdas_;
     mutable DynamicArray<float> pdfs_;
     uint scatter_pdf_dim_{1u};
