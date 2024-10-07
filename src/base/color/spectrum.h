@@ -49,7 +49,7 @@ public:
     void invalidation_secondary() const noexcept;
     void check_dispersive(const TSpectrum &spectrum, const MaterialEvaluator &bsdf) const noexcept;
     template<typename Func>
-    void foreach_secondary_channel(const Func& func) noexcept {
+    void foreach_secondary_channel(const Func& func) const noexcept {
         for (int i = 1; i < dimension(); ++i) {
             func(i);
         }
