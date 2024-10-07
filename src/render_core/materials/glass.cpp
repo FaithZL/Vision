@@ -123,7 +123,8 @@ public:
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
-        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+        Float fr = frs[0];
         $if(same_hemisphere(wo, wi)) {
             ret = refl_.evaluate(wo, wi, fresnel, mode);
             ret.pdfs *=fr;
@@ -140,7 +141,8 @@ public:
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
-        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+        Float fr = frs[0];
         SampledDirection ret;
         $if(uc < fr) {
             ret = refl_.sample_wi(wo, sampler->next_2d(), fresnel);
@@ -185,7 +187,8 @@ public:
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
-        Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
+        SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+        Float fr = frs[0];
         $if(uc < fr) {
             ret = refl_.sample(wo, sampler, fresnel);
             ret.eval.pdfs *=fr;
