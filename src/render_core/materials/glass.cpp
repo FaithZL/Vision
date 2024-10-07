@@ -127,11 +127,11 @@ public:
         Float fr = frs[0];
         $if(same_hemisphere(wo, wi)) {
             ret = refl_.evaluate(wo, wi, fresnel, mode);
-            ret.pdfs *=fr;
+            ret.pdfs *= fr;
         }
         $else {
             ret = trans_.evaluate(wo, wi, fresnel, mode);
-            ret.pdfs *=1 - fr;
+            ret.pdfs *= 1 - fr;
         };
         return ret;
     }
@@ -167,15 +167,15 @@ public:
             wi.xy() = -wi.xy();
             ret.wi = wi;
             ret.eval = refl_.evaluate(wo, wi, fresnel, All);
-            ret.eval.pdfs *=fr;
+            ret.eval.pdfs *= fr;
         }
         $else {
             Float3 wi;
-            Float3 n = face_forward(make_float3(0,0,1), wo);
+            Float3 n = face_forward(make_float3(0, 0, 1), wo);
             refract(wo, n, fresnel->eta()[0], &wi);
             ret.eval = trans_.evaluate(wo, wi, fresnel, All);
             ret.wi = wi;
-            ret.eval.pdfs *=1 - fr;
+            ret.eval.pdfs *= 1 - fr;
         };
         return ret;
     }
@@ -191,11 +191,11 @@ public:
         Float fr = frs[0];
         $if(uc < fr) {
             ret = refl_.sample(wo, sampler, fresnel);
-            ret.eval.pdfs *=fr;
+            ret.eval.pdfs *= fr;
         }
         $else {
             ret = trans_.sample(wo, sampler, fresnel);
-            ret.eval.pdfs *=1 - fr;
+            ret.eval.pdfs *= 1 - fr;
         };
         return ret;
     }
