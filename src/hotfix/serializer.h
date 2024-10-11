@@ -133,7 +133,7 @@ public:
             if (data->is_pod_data()) {
                 data->deserialize_impl(ptr);
             } else {
-                reinterpret_cast<RuntimeObject *>(ptr)->deserialize(data);
+                static_cast<RuntimeObject *>(ptr)->deserialize(data);
             }
         }
     }
