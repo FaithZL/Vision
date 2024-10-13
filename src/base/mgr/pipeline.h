@@ -142,7 +142,7 @@ public:
 
     /// for dsl
     template<typename... Args>
-    [[nodiscard]] HitVar trace_closest(Args &&...args) const noexcept {
+    [[nodiscard]] TriangleHitVar trace_closest(Args &&...args) const noexcept {
         return geometry().trace_closest(OC_FORWARD(args)...);
     }
     template<typename... Args>

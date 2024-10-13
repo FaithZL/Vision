@@ -98,7 +98,7 @@ protected:
     RegistrableBuffer<float2> motion_vectors_{};
 
     /// used for editor
-    RegistrableManaged<Hit> hit_buffer_;
+    RegistrableManaged<TriangleHit> hit_buffer_;
     ScreenBuffer::manager_type screen_buffers_;
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
     /// Display in full screen on the screen

@@ -19,7 +19,7 @@ public:
     static constexpr uint Diffuse = 3;
 
 public:
-    Hit hit{};
+    TriangleHit hit{};
     float4 normal_depth{};
     float3 pos{};
     uint mat_id{};
@@ -245,16 +245,16 @@ public:
 
 struct HitContext {
 public:
-    mutable HitVar *hit{};
+    mutable TriangleHitVar *hit{};
     mutable Interaction *it{};
 
 public:
     HitContext() = default;
     HitContext(Interaction &it)
         : it(&it) {}
-    HitContext(HitVar &hit)
+    HitContext(TriangleHitVar &hit)
         : hit(&hit) {}
-    HitContext(HitVar &hit, Interaction &it) {
+    HitContext(TriangleHitVar &hit, Interaction &it) {
         this->hit = &hit;
         this->it = &it;
     }

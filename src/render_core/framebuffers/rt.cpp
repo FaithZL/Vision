@@ -17,7 +17,7 @@ private:
     using grad_signature = void(uint, Buffer<PixelGeometry>);
     Shader<grad_signature> compute_grad_;
 
-    Shader<void(Buffer<Hit>, uint)> compute_hit_;
+    Shader<void(Buffer<TriangleHit>, uint)> compute_hit_;
 
 public:
     RayTracingFrameBuffer() = default;
@@ -42,7 +42,7 @@ public:
 
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
-            HitVar hit = pipeline()->trace_closest(rs.ray);
+            TriangleHitVar hit = pipeline()->trace_closest(rs.ray);
 
             Float2 motion_vec = make_float2(0.f);
 
@@ -135,14 +135,14 @@ public:
     void compile_compute_hit() noexcept {
         TCamera &camera = scene().camera();
         TSampler &sampler = scene().sampler();
-        Kernel kernel = [&](BufferVar<Hit> hit_buffer, Uint frame_index) {
+        Kernel kernel = [&](BufferVar<TriangleHit> hit_buffer, Uint frame_index) {
             Uint2 pixel = dispatch_idx().xy();
             sampler->start(pixel, frame_index, 0);
             camera->load_data();
 
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             RayState rs = camera->generate_ray(ss);
-            HitVar hit = pipeline()->trace_closest(rs.ray);
+            TriangleHitVar hit = pipeline()->trace_closest(rs.ray);
             hit_buffer.write(dispatch_id(), hit);
         };
         compute_hit_ = device().compile(kernel, "rt_compute_pixel");

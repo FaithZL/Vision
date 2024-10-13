@@ -78,7 +78,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
                 "ReSTIRDI::Li from bsdf");
     }
     RayVar ray = it.spawn_ray(bs->wi);
-    HitVar hit = geometry.trace_closest(ray);
+    TriangleHitVar hit = geometry.trace_closest(ray);
     Float pdf = bs->eval.pdf();
     hit_bsdf->wi.set(bs->wi);
     hit_bsdf->bsdf.set(bs->eval.f.vec3());
@@ -431,7 +431,7 @@ DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar
     return rsv;
 }
 
-SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, HitVar &hit, Interaction &it,
+SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interaction &it,
                                      SurfaceExtendVar &surf_ext) const noexcept {
     TCamera &camera = scene().camera();
     const Geometry &geometry = pipeline()->geometry();
@@ -501,7 +501,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         initial(sampler(), frame_index, spectrum);
         SensorSample ss = sampler()->sensor_sample(pixel, camera->filter());
         RayState rs = camera->generate_ray(ss);
-        HitVar hit;
+        TriangleHitVar hit;
         Interaction it{false};
         SurfaceExtendVar surf_ext;
         SurfaceDataVar cur_surf = compute_hit(rs, hit, it, surf_ext);
@@ -585,7 +585,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf)
             bs = bsdf.sample(it.wo, sampler());
         });
         RayVar ray = it.spawn_ray(bs.wi);
-        HitVar hit = geometry.trace_closest(ray);
+        TriangleHitVar hit = geometry.trace_closest(ray);
         $if(hit->is_hit()) {
             next_it = geometry.compute_surface_interaction(hit, ray, true);
             $if(next_it.has_emission()) {

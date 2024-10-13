@@ -45,7 +45,7 @@ void Pipeline::on_touch(ocarina::uint2 pos) noexcept {
     stream_ << frame_buffer_->compute_hit(0);
     stream_ << frame_buffer()->hit_buffer().download(index, 1);
     stream_ << synchronize() << commit();
-    Hit hit = buffer[index];
+    TriangleHit hit = buffer[index];
 
     scene_.mark_selected(hit);
 }

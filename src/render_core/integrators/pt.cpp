@@ -71,7 +71,7 @@ public:
 //            throughput = beta;
 //            ret = make_float3(0.f);
 //            sampler->start(dispatch_idx().xy(), render_env.frame_index(), 3);
-//            HitVar hit;
+//            TriangleHitVar hit;
 //            Interaction it{scene().has_medium()};
 //            Float3 prev_surface_ng = rs.direction();
 ////            $condition_info("{} {} +++++++ ", sampler->next_2d());;

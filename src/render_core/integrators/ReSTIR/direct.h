@@ -113,7 +113,7 @@ public:
     [[nodiscard]] HOTFIX_VIRTUAL DIReservoirVar RIS(const Bool &hit, const Interaction &it, const Var<DIParam> &param,
                                                     const Float3 &throughput, Uint *flag) const noexcept;
 
-    [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState rs, HitVar &hit, Interaction &it,
+    [[nodiscard]] HOTFIX_VIRTUAL SurfaceDataVar compute_hit(RayState rs, TriangleHitVar &hit, Interaction &it,
                                                             SurfaceExtendVar &surf_ext) const noexcept;
 
     /// evaluate Li from light

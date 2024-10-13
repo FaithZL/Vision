@@ -75,7 +75,7 @@ public:
     void tidy_up() noexcept;
     void tidy_up_materials() noexcept;
     void tidy_up_mediums() noexcept;
-    void mark_selected(Hit hit) noexcept;
+    void mark_selected(TriangleHit hit) noexcept;
     [[nodiscard]] SP<Material> obtain_black_body() noexcept;
 
     [[nodiscard]] uint light_num() const noexcept { return light_sampler_->light_num(); }

@@ -96,7 +96,7 @@ void Geometry::clear() noexcept {
     accel_.clear();
 }
 
-Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_complete) const noexcept {
+Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, bool is_complete) const noexcept {
     Interaction it{Global::instance().pipeline()->scene().has_medium()};
     it.prim_id = hit.prim_id;
     Var inst = instances_.read(hit.inst_id);
@@ -185,7 +185,7 @@ Interaction Geometry::compute_surface_interaction(const HitVar &hit, bool is_com
     return it;
 }
 
-HitVar Geometry::trace_closest(const RayVar &ray) const noexcept {
+TriangleHitVar Geometry::trace_closest(const RayVar &ray) const noexcept {
     return accel_.trace_closest(ray);
 }
 Bool Geometry::trace_any(const RayVar &ray) const noexcept {
@@ -226,7 +226,7 @@ array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
 LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
                                                       const Uint &prim_id,
                                                       const Float2 &bary) const noexcept {
-    HitVar hit;
+    TriangleHitVar hit;
     hit.inst_id = inst_id;
     hit.prim_id = prim_id;
     hit.bary = bary;

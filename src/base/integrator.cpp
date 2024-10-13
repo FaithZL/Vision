@@ -109,7 +109,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     const SampledWavelengths &swl = render_env.sampled_wavelengths();
     const Geometry &geometry = rp->geometry();
 
-    HitVar hit;
+    TriangleHitVar hit;
     Interaction it{scene().has_medium()};
     Float3 prev_surface_ng = rs.direction();
 
