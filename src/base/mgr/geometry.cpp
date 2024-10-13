@@ -188,8 +188,8 @@ Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, boo
 TriangleHitVar Geometry::trace_closest(const RayVar &ray) const noexcept {
     return accel_.trace_closest(ray);
 }
-Bool Geometry::trace_any(const RayVar &ray) const noexcept {
-    return accel_.trace_any(ray);
+Bool Geometry::trace_occlusion(const RayVar &ray) const noexcept {
+    return accel_.trace_occlusion(ray);
 }
 
 Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) const noexcept {
@@ -200,7 +200,7 @@ Bool Geometry::occluded(const Interaction &it, const Float3 &pos, RayState *rs) 
     } else {
         shadow_ray = it.spawn_ray_to(pos);
     }
-    return trace_any(shadow_ray);
+    return trace_occlusion(shadow_ray);
 }
 
 SampledSpectrum Geometry::Tr(Scene &scene, const SampledWavelengths &swl,

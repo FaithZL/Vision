@@ -296,9 +296,9 @@ struct SpacePoint {
     Float3 pos;
     Float3 ng;
     SpacePoint() = default;
-    explicit SpacePoint(const Float3 &p) : pos(p) {}
-    SpacePoint(const Float3 &p, const Float3 &n)
-        : pos(p), ng(n) {}
+    explicit SpacePoint(Float3 p) : pos(std::move(p)) {}
+    SpacePoint(Float3 p, Float3 n)
+        : pos(std::move(p)), ng(std::move(n)) {}
     explicit SpacePoint(const Interaction &it)
         : pos(it.pos), ng(it.ng) {}
 

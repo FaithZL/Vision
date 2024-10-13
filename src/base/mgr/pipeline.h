@@ -146,8 +146,8 @@ public:
         return geometry().trace_closest(OC_FORWARD(args)...);
     }
     template<typename... Args>
-    [[nodiscard]] Bool trace_any(Args &&...args) const noexcept {
-        return geometry().trace_any(OC_FORWARD(args)...);
+    [[nodiscard]] Bool trace_occlusion(Args &&...args) const noexcept {
+        return geometry().trace_occlusion(OC_FORWARD(args)...);
     }
     template<typename... Args>
     [[nodiscard]] auto visibility(Args &&...args) const noexcept {

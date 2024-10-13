@@ -52,7 +52,7 @@ public:
                 }
                 it.shading.z = face_forward(it.shading.normal(), -rs.direction());
                 wi = it.shading.to_world(wi);
-                Bool occ = geom.trace_any(it.spawn_ray(wi, *distance_));
+                Bool occ = geom.trace_occlusion(it.spawn_ray(wi, *distance_));
                 $if(!occ) {
                     L += dot(wi, it.shading.normal()) / (pdf * *sample_num_);
                 };
@@ -102,7 +102,7 @@ public:
                     }
                     it.shading.z = face_forward(it.shading.normal(), -rs.direction());
                     wi = it.shading.to_world(wi);
-                    Bool occ = geom.trace_any(it.spawn_ray(wi, *distance_));
+                    Bool occ = geom.trace_occlusion(it.spawn_ray(wi, *distance_));
                     $if(!occ) {
                         L += dot(wi, it.shading.normal()) / (pdf * *sample_num_);
                     };

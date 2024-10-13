@@ -43,7 +43,7 @@ public:
 
     // for dsl
     [[nodiscard]] TriangleHitVar trace_closest(const RayVar &ray) const noexcept;
-    [[nodiscard]] Bool trace_any(const RayVar &ray) const noexcept;
+    [[nodiscard]] Bool trace_occlusion(const RayVar &ray) const noexcept;
     [[nodiscard]] Bool occluded(const Interaction &it, const Float3 &pos, RayState *rs = nullptr) const noexcept;
     template<typename ...Args>
     [[nodiscard]] auto visibility(Args &&...args) const noexcept {
