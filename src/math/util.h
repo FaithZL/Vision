@@ -66,8 +66,8 @@ template<EPort p = D>
 }
 VS_MAKE_CALLABLE(windowed_sinc)
 
-void line_bresenham(float2 p1, float2 p2,
-                    const std::function<void(int, int)> &write) noexcept {
+inline void line_bresenham(float2 p1, float2 p2,
+                           const std::function<void(int, int)> &write) noexcept {
     int px1 = p1.x;
     int py1 = p1.y;
 
@@ -128,8 +128,8 @@ void line_bresenham(float2 p1, float2 p2,
     }
 }
 
-void safe_line_bresenham(float2 p1, float2 p2,
-                    const std::function<void(int, int)> &write) noexcept {
+inline void safe_line_bresenham(float2 p1, float2 p2,
+                                const std::function<void(int, int)> &write) noexcept {
     if (has_nan(p1) || has_nan(p2) || has_inf(p1) || has_inf(p2)) {
         return;
     }
