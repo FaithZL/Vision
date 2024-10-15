@@ -40,6 +40,7 @@ public:
     ConvergenceInspector() = default;
     ConvergenceInspector(float threshold, uint start_index)
         : threshold_(threshold), start_index_(start_index){};
+    ~ConvergenceInspector() override = default;
 };
 
 }// namespace vision
