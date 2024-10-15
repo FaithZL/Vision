@@ -31,12 +31,13 @@ OC_STRUCT(vision, VarianceStats, avg, var, N) {};
 
 namespace vision {
 
-class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<> {
+class ConvergenceInspector final : public GUI, public RuntimeObject, Encodable<> {
 private:
     EncodedData<float> threshold_;
     EncodedData<uint> start_index_;
 
 public:
+    ConvergenceInspector() = default;
     ConvergenceInspector(float threshold, uint start_index)
         : threshold_(threshold), start_index_(start_index){};
 };
