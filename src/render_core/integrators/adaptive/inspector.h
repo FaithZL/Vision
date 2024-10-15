@@ -16,8 +16,9 @@ struct alignas(16u) VarianceStats {
     uint N{};
 
     void add(float x) noexcept {
+        using ocarina::sqr;
         float new_avg = (avg * N + x) / (N + 1);
-        float new_var = (N * var + N * sqr(avg - new_avg) + sqr(x - avg) + 2 * (x - avg) * (avg - new_avg)) / (N + 1);
+        float new_var = (N * var + N * sqr(avg - new_avg) + sqr(x - avg) + 2 * (x - avg) * (avg - new_avg) + sqr(avg - new_avg)) / (N + 1);
         N += 1;
         avg = new_avg;
         var = new_var;
