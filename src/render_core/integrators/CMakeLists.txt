@@ -2,6 +2,7 @@ add_library(vision-integrator INTERFACE)
 
 add_subdirectory(ReSTIR)
 add_subdirectory(surfel)
+add_subdirectory(adaptive)
 
 vision_add_plugin(pt CATEGORY integrator SOURCES pt.cpp)
 vision_add_plugin(ao CATEGORY integrator SOURCES ao.cpp)
@@ -14,6 +15,7 @@ function(vision_add_rt_plugin name)
     target_link_libraries(${lib_name} PRIVATE vision-base
             vision-math
             vision-integrator-ReSTIR
+            vision-integrator-adaptive
             vision-integrator-surfel)
     target_compile_definitions(${lib_name} PRIVATE VISION_PLUGIN_NAME="${name}"  VISION_CATEGORY="${PLUGIN_CATEGORY}")
     set(category vision-${PLUGIN_CATEGORY})
