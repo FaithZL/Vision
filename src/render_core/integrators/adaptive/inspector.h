@@ -11,26 +11,34 @@
 
 namespace vision {
 struct alignas(16u) VarianceStats {
-    float average{};
-    float variance{};
-    uint count{};
+    float avg{};
+    float var{};
+    uint N{};
 
-    void add(float value) noexcept {
-        average = (average * count + value) / (count + 1);
-        count += 1;
+    void add(float x) noexcept {
+        float new_avg = (avg * N + x) / (N + 1);
+        float new_var = (N * var + N * sqr(avg - new_avg) + sqr(x - avg) + 2 * (x - avg) * (avg - new_avg)) / (N + 1);
+        N += 1;
+        avg = new_avg;
+        var = new_var;
     }
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision, VarianceStats, average, variance, count) {};
+OC_STRUCT(vision, VarianceStats, avg, var, N) {};
 // clang-format on
 
 namespace vision {
 
-class ConvergenceInspector : public GUI, public RuntimeObject {
+class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<> {
 private:
+    EncodedData<float> threshold_;
+    EncodedData<uint> start_index_;
 
+public:
+    ConvergenceInspector(float threshold, uint start_index)
+        : threshold_(threshold), start_index_(start_index){};
 };
 
 }// namespace vision
