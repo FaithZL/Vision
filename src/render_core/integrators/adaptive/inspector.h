@@ -31,7 +31,7 @@ struct alignas(16u) VarianceStats {
     void add(float x) noexcept {
         add_sample_impl<H>(N, avg, var, x);
     }
-    [[nodiscard]] float relative_variance() noexcept { return var / avg; }
+    [[nodiscard]] float relative_variance() const noexcept { return var / avg; }
 };
 }// namespace vision
 
@@ -40,7 +40,7 @@ OC_STRUCT(vision, VarianceStats, avg, var, N) {
     void add(const Float &x) noexcept {
         vision::VarianceStats::add_sample_impl<D>(N, avg, var, x);
     }
-    [[nodiscard]] Float relative_variance() noexcept { return var / avg; }
+    [[nodiscard]] Float relative_variance() const noexcept { return var / avg; }
 };
 // clang-format on
 
