@@ -24,11 +24,14 @@ struct alignas(16u) VarianceStats {
         avg = new_avg;
         var = new_var;
     }
+
+    [[nodiscard]] float relative_variance() noexcept { return var / avg; }
 };
 }// namespace vision
 
 // clang-format off
-OC_STRUCT(vision, VarianceStats, avg, var, N) {};
+OC_STRUCT(vision, VarianceStats, avg, var, N) {
+};
 // clang-format on
 
 namespace vision {
@@ -45,6 +48,8 @@ public:
         : threshold_(threshold), start_index_(start_index){};
     OC_ENCODABLE_FUNC(Encodable<>, threshold_, start_index_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void add_sample(const Uint2 &pixel, const Float3 &value, const Uint &frame_index) noexcept;
+    [[nodiscard]] Bool is_convergence() const noexcept;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     ~ConvergenceInspector() override = default;
 };

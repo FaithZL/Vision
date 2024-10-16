@@ -42,6 +42,11 @@ public:
         HotfixSystem::replace_objects(constructor, tp);
     }
 
+    void add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
+        inspector_->add_sample(pixel, val, frame_index);
+        film()->add_sample(pixel, make_float4(val, 1.f), frame_index);
+    }
+
     void compile() noexcept override {
         TCamera &camera = scene().camera();
         TSampler &sampler = scene().sampler();
@@ -57,9 +62,8 @@ public:
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
             Float scatter_pdf = 1e16f;
             RayState rs = camera->generate_ray(ss);
-            //            Float3 L = Li(rs, scatter_pdf, spectrum()->one(), {}, render_env) * ss.filter_weight;
             Float3 L = Li(rs, scatter_pdf, *max_depth_, spectrum()->one(), max_depth_.hv() < 2, {}, render_env) * ss.filter_weight;
-            film()->add_sample(dispatch_idx().xy(), make_float4(L, 1.f), frame_index);
+            add_sample(dispatch_idx().xy(), L, frame_index);
         };
         shader_ = device().compile(kernel, "path tracing integrator");
     }

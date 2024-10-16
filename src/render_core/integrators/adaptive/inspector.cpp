@@ -10,6 +10,15 @@ ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
     : ConvergenceInspector(ps["threshold"].as_float(0.01f),
                            ps["start_index"].as_uint(128)) {}
 
+void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
+                                      const Uint &frame_index) noexcept {
+
+}
+
+Bool ConvergenceInspector::is_convergence() const noexcept {
+    return false;
+}
+
 bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
     widgets->use_tree("adaptive sampling", [&] {
         render_sub_UI(widgets);
