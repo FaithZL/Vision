@@ -9,6 +9,7 @@
 #include "dsl/dsl.h"
 #include "UI/GUI.h"
 #include "core/parameter_set.h"
+#include "base/mgr/global.h"
 
 namespace vision {
 struct alignas(16u) VarianceStats {
@@ -36,7 +37,7 @@ OC_STRUCT(vision, VarianceStats, avg, var, N) {
 
 namespace vision {
 
-class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<> {
+class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<>, Context {
 private:
     EncodedData<float> threshold_;
     EncodedData<uint> start_index_;

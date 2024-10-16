@@ -5,13 +5,14 @@
 #include "inspector.h"
 #include "GUI/widgets.h"
 
+
 namespace vision {
 ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
     : ConvergenceInspector(ps["threshold"].as_float(0.01f),
                            ps["start_index"].as_uint(128)) {}
 
 void ConvergenceInspector::prepare() noexcept {
-    
+
 }
 
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
