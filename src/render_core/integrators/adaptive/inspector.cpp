@@ -4,7 +4,7 @@
 
 #include "inspector.h"
 #include "GUI/widgets.h"
-
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
@@ -12,7 +12,7 @@ ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
                            ps["start_index"].as_uint(128)) {}
 
 void ConvergenceInspector::prepare() noexcept {
-
+    variance_stats_ = device().create_buffer<VarianceStats>(pipeline()->pixel_num());
 }
 
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
