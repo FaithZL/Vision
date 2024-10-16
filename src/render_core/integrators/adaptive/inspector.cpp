@@ -19,6 +19,7 @@ bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void ConvergenceInspector::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     widgets->drag_float("threshold", addressof(threshold_.hv()), 0.01f, 0, 10);
+    widgets->drag_uint("min frame index", addressof(start_index_.hv()), 1, 0, 1024);
 }
 
 }// namespace vision
