@@ -33,7 +33,7 @@ OC_STRUCT(vision, VarianceStats, avg, var, N) {};
 
 namespace vision {
 
-class ConvergenceInspector final : public GUI, public RuntimeObject, Encodable<> {
+class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<> {
 private:
     EncodedData<float> threshold_;
     EncodedData<uint> start_index_;
@@ -44,6 +44,8 @@ public:
     ConvergenceInspector(float threshold, uint start_index)
         : threshold_(threshold), start_index_(start_index){};
     OC_ENCODABLE_FUNC(Encodable<>, threshold_, start_index_)
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     ~ConvergenceInspector() override = default;
 };
 

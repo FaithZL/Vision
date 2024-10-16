@@ -19,6 +19,7 @@ void FrameBuffer::prepare() noexcept {
 void FrameBuffer::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     std::tuple tp = {addressof(visualizer_)};
     HotfixSystem::replace_objects(constructor, tp);
+    int i = 0;
 }
 
 bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {

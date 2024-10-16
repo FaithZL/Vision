@@ -22,6 +22,10 @@ public:
 
     VS_MAKE_PLUGIN_NAME_FUNC
 
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        inspector_->render_UI(widgets);
+    }
+
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
         frame_buffer().prepare_hit_buffer();
