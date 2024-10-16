@@ -15,7 +15,7 @@ void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
 
 }
 
-Bool ConvergenceInspector::is_convergence() const noexcept {
+Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcept {
     return false;
 }
 
