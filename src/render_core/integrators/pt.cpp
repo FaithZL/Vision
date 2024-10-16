@@ -28,12 +28,14 @@ public:
 
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
+        inspector_->prepare();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_motion_vectors();
     }
     VS_HOTFIX_MAKE_RESTORE(IlluminationIntegrator, inspector_)
     OC_ENCODABLE_FUNC(IlluminationIntegrator, inspector_)
+    VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, inspector_)
     [[nodiscard]] Film *film() noexcept { return scene().film(); }
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
 

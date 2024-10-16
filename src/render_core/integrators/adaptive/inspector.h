@@ -40,6 +40,7 @@ class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<> {
 private:
     EncodedData<float> threshold_;
     EncodedData<uint> start_index_;
+    Buffer<VarianceStats> variance_stats_;
 
 public:
     ConvergenceInspector() = default;
@@ -48,6 +49,7 @@ public:
         : threshold_(threshold), start_index_(start_index){};
     OC_ENCODABLE_FUNC(Encodable<>, threshold_, start_index_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void prepare() noexcept;
     void add_sample(const Uint2 &pixel, const Float3 &value, const Uint &frame_index) noexcept;
     [[nodiscard]] Bool is_convergence(const Uint &frame_index) const noexcept;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
