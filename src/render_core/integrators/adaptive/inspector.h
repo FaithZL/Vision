@@ -41,7 +41,7 @@ class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<>, Cont
 private:
     EncodedData<float> threshold_;
     EncodedData<uint> start_index_;
-    Buffer<VarianceStats> variance_stats_;
+    RegistrableBuffer<VarianceStats> variance_stats_{};
 
 public:
     ConvergenceInspector() = default;

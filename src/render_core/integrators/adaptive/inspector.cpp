@@ -12,7 +12,9 @@ ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
                            ps["start_index"].as_uint(128)) {}
 
 void ConvergenceInspector::prepare() noexcept {
-    variance_stats_ = device().create_buffer<VarianceStats>(pipeline()->pixel_num());
+    variance_stats_.set_bindless_array(pipeline()->bindless_array());
+    variance_stats_.super() = device().create_buffer<VarianceStats>(pipeline()->pixel_num());
+    variance_stats_.register_self();
 }
 
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
