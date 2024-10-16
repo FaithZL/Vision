@@ -8,6 +8,7 @@
 #include "hotfix/hotfix.h"
 #include "dsl/dsl.h"
 #include "UI/GUI.h"
+#include "core/parameter_set.h"
 
 namespace vision {
 struct alignas(16u) VarianceStats {
@@ -39,8 +40,10 @@ private:
 
 public:
     ConvergenceInspector() = default;
+    explicit ConvergenceInspector(const ParameterSet &ps);
     ConvergenceInspector(float threshold, uint start_index)
         : threshold_(threshold), start_index_(start_index){};
+    OC_ENCODABLE_FUNC(Encodable<>, threshold_, start_index_)
     ~ConvergenceInspector() override = default;
 };
 
