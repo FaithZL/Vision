@@ -19,7 +19,8 @@ void ConvergenceInspector::prepare() noexcept {
 
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
                                       const Uint &frame_index) noexcept {
-
+    VarianceStatsVar vs = variance_stats_.read(dispatch_id());
+    $condition_info("{}  {}", vs.N, vs.avg);
 }
 
 Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcept {
