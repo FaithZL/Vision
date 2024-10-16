@@ -1,10 +1,14 @@
 
 function(vision_add_plugin name)
-    cmake_parse_arguments(PLUGIN "" "CATEGORY" "SOURCES" ${ARGN})
+    cmake_parse_arguments(PLUGIN "" "CATEGORY" "SOURCES;DEPENDENCE" ${ARGN})
     set(lib_name vision-${PLUGIN_CATEGORY}-${name})
 
     add_library(${lib_name} MODULE ${PLUGIN_SOURCES})
-    target_link_libraries(${lib_name} PRIVATE vision-base vision-math)
+    target_link_libraries(${lib_name} PRIVATE
+            vision-base
+            vision-math
+            ${PLUGIN_DEPENDENCE})
+
     target_compile_definitions(${lib_name} PRIVATE
             VISION_PLUGIN_NAME="${name}"
             VISION_CATEGORY="${PLUGIN_CATEGORY}")
