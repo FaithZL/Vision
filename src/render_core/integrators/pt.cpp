@@ -55,6 +55,7 @@ public:
         ocarina::Kernel<signature> kernel = [&](Uint frame_index) -> void {
             Env::instance().clear_global_vars();
             Uint2 pixel = dispatch_idx().xy();
+//            $condition_info("is convergence {}", inspector_->is_convergence(frame_index).cast<uint>());
             RenderEnv render_env;
             sampler->load_data();
             camera->load_data();
@@ -265,7 +266,7 @@ public:
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         if (frame_index_ == 0) {
-            stream << inspector_->reset();
+//            stream << inspector_->reset();
         }
         stream << shader_(frame_index_).dispatch(rp->resolution());
         RealTimeDenoiseInput input = denoise_input();

@@ -49,16 +49,16 @@ namespace vision {
 class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<>, Context {
 private:
     EncodedData<float> threshold_;
-    EncodedData<uint> start_index_;
+    EncodedData<uint> min_sample_num_;
     RegistrableBuffer<VarianceStats> variance_stats_{};
 
 public:
     ConvergenceInspector() = default;
     explicit ConvergenceInspector(const ParameterSet &ps);
-    ConvergenceInspector(float threshold, uint start_index)
-        : threshold_(threshold), start_index_(start_index){};
-    OC_ENCODABLE_FUNC(Encodable<>, threshold_, start_index_)
-    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, threshold_, start_index_, variance_stats_)
+    ConvergenceInspector(float threshold, uint min_sample_num)
+        : threshold_(threshold), min_sample_num_(min_sample_num){};
+    OC_ENCODABLE_FUNC(Encodable<>, threshold_, min_sample_num_)
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, threshold_, min_sample_num_, variance_stats_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept;
     [[nodiscard]] CommandList reset() noexcept;

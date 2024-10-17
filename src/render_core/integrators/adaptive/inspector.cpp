@@ -8,7 +8,7 @@
 
 namespace vision {
 ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
-    : ConvergenceInspector(ps["threshold"].as_float(0.001f),
+    : ConvergenceInspector(ps["threshold"].as_float(0.01f),
                            ps["start_index"].as_uint(128)) {}
 
 void ConvergenceInspector::prepare() noexcept {
@@ -25,12 +25,13 @@ void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
                                       const Uint &frame_index) noexcept {
     VarianceStatsVar vs = variance_stats_.read(dispatch_id());
     vs->add(luminance(value));
-//    $condition_info("{} avg {}  var {}   rv  {}", vs.N, vs.avg, vs.var, vs->relative_variance());
+        $condition_info("{} avg {}  var {}   rv  {}  {}", vs.N, vs.avg, vs.var, vs->relative_variance(), *min_sample_num_);
     variance_stats_.write(dispatch_id(), vs);
 }
 
 Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcept {
-    return false;
+    VarianceStatsVar vs = variance_stats_.read(dispatch_id());
+    return vs.N > *min_sample_num_ && vs->relative_variance() < *threshold_;
 }
 
 bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
@@ -42,7 +43,7 @@ bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void ConvergenceInspector::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->drag_float("threshold", addressof(threshold_.hv()), 0.0001f, 0, 1, "%.5f");
-    changed_ |=widgets->drag_uint("min frame index", addressof(start_index_.hv()), 1, 32, 1024);
+    changed_ |= widgets->drag_uint("min sample num", addressof(min_sample_num_.hv()), 1, 32, 1024);
 }
 
 }// namespace vision
