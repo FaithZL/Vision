@@ -39,6 +39,7 @@ protected:
 
     /// node for show detail
     mutable GUI *cur_node_{nullptr};
+    mutable vector<UP<ShaderBase>> shaders_;
 
 protected:
     [[nodiscard]] auto &integrator() noexcept { return scene().integrator(); }
@@ -98,9 +99,15 @@ public:
         static Kernel kernel = [&](BufferVar<T> buffer_var, Var<T> value) {
             buffer_var.write(dispatch_id(), value);
         };
-        static Shader shader = device().compile(kernel, desc);
+        using shader_t = decltype(device().compile(kernel, desc));
+        static shader_t* shader = [&]{
+            UP<shader_t> uptr = make_unique<shader_t >(device().compile(kernel, desc));
+            auto ret = static_cast<shader_t *>(uptr.get());
+            shaders_.push_back(std::move(uptr));
+            return ret;
+        }();
         CommandList ret;
-        ret << shader(buffer, elm).dispatch(buffer.size());
+        ret << (*shader)(buffer, elm).dispatch(buffer.size());
         return ret;
     }
 
