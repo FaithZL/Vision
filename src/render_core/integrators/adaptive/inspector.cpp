@@ -8,7 +8,7 @@
 
 namespace vision {
 ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
-    : ConvergenceInspector(ps["threshold"].as_float(0.01f),
+    : ConvergenceInspector(ps["threshold"].as_float(0.001f),
                            ps["start_index"].as_uint(128)) {}
 
 void ConvergenceInspector::prepare() noexcept {
@@ -31,7 +31,7 @@ void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
 
 Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcept {
     VarianceStatsVar vs = variance_stats_.read(dispatch_id());
-    return vs.N > *min_sample_num_ && vs->relative_variance() < *threshold_;
+    return vs.N > *min_sample_num_ && vs.var < *threshold_;
 }
 
 bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
