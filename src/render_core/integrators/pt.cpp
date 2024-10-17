@@ -264,6 +264,9 @@ public:
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
+        if (frame_index_ == 0) {
+            stream << inspector_->reset();
+        }
         stream << shader_(frame_index_).dispatch(rp->resolution());
         RealTimeDenoiseInput input = denoise_input();
         increase_frame_index();

@@ -58,8 +58,10 @@ public:
     ConvergenceInspector(float threshold, uint start_index)
         : threshold_(threshold), start_index_(start_index){};
     OC_ENCODABLE_FUNC(Encodable<>, threshold_, start_index_)
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, threshold_, start_index_, variance_stats_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept;
+    [[nodiscard]] CommandList reset() noexcept;
     void add_sample(const Uint2 &pixel, const Float3 &value, const Uint &frame_index) noexcept;
     [[nodiscard]] Bool is_convergence(const Uint &frame_index) const noexcept;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;

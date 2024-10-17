@@ -17,6 +17,10 @@ void ConvergenceInspector::prepare() noexcept {
     variance_stats_.register_self();
 }
 
+CommandList ConvergenceInspector::reset() noexcept {
+    return pipeline()->reset_buffer<VarianceStats>(variance_stats_, {}, "reset_VarianceStats");
+}
+
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
                                       const Uint &frame_index) noexcept {
     VarianceStatsVar vs = variance_stats_.read(dispatch_id());
