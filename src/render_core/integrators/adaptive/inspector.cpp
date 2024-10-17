@@ -8,7 +8,7 @@
 
 namespace vision {
 ConvergenceInspector::ConvergenceInspector(const vision::ParameterSet &ps)
-    : ConvergenceInspector(ps["threshold"].as_float(0.01f),
+    : ConvergenceInspector(ps["threshold"].as_float(0.001f),
                            ps["start_index"].as_uint(128)) {}
 
 void ConvergenceInspector::prepare() noexcept {
@@ -41,7 +41,7 @@ bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void ConvergenceInspector::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    changed_ |= widgets->drag_float("threshold", addressof(threshold_.hv()), 0.01f, 0, 10);
+    changed_ |= widgets->drag_float("threshold", addressof(threshold_.hv()), 0.0001f, 0, 1, "%.5f");
     changed_ |=widgets->drag_uint("min frame index", addressof(start_index_.hv()), 1, 32, 1024);
 }
 
