@@ -44,9 +44,9 @@ public:
         HotfixSystem::replace_objects(constructor, tp);
     }
 
-    void add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
+    void add_sample(const Uint2 &pixel, Float3 val, const Uint &frame_index) noexcept {
+        val = film()->add_sample(pixel, val, frame_index);
         inspector_->add_sample(pixel, val, frame_index);
-        film()->add_sample(pixel, make_float4(val, 1.f), frame_index);
     }
 
     void compile() noexcept override {

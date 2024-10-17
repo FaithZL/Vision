@@ -48,9 +48,9 @@ public:
     [[nodiscard]] auto tone_mapper() const noexcept { return tone_mapper_; }
     [[nodiscard]] auto tone_mapper() noexcept { return tone_mapper_; }
     [[nodiscard]] uint2 resolution() const noexcept { return resolution_; }
-    virtual void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept = 0;
-    virtual void add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
-        add_sample(pixel, make_float4(val, 1.f), frame_index);
+    virtual Float3 add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept = 0;
+    virtual Float3 add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
+        return add_sample(pixel, make_float4(val, 1.f), frame_index);
     }
     [[nodiscard]] virtual CommandList accumulate(BufferView<float4> input,BufferView<float4> output,
                                                  uint frame_index) const noexcept = 0;

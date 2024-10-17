@@ -84,7 +84,7 @@ public:
         prepare(accumulation_buffer_, "RGBFilm::accumulation_buffer_");
         frame_buffer().prepare_screen_buffer(output_buffer_);
     }
-    void add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
+    Float3 add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {
         Float a = 1.f / (frame_index + 1);
         Uint index = dispatch_id(pixel);
         val = Env::instance().zero_if_nan_inf(val);
@@ -96,6 +96,7 @@ public:
         val = tone_mapper_->apply(val);
         val.w = 1.f;
         output_buffer_->write(index, val);
+        return val.xyz();
     }
     [[nodiscard]] CommandList accumulate(BufferView<float4> input, BufferView<float4> output,
                                          uint frame_index) const noexcept override {

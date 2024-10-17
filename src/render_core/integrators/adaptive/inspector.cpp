@@ -24,7 +24,9 @@ CommandList ConvergenceInspector::reset() noexcept {
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
                                       const Uint &frame_index) noexcept {
     VarianceStatsVar vs = variance_stats_.read(dispatch_id());
-    $condition_info("{}  {}", vs.N, vs.avg);
+    vs->add(luminance(value));
+//    $condition_info("{} avg {}  var {}   rv  {}", vs.N, vs.avg, vs.var, vs->relative_variance());
+    variance_stats_.write(dispatch_id(), vs);
 }
 
 Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcept {
