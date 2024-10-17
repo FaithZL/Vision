@@ -46,7 +46,7 @@ public:
 
     void add_sample(const Uint2 &pixel, Float3 val, const Uint &frame_index) noexcept {
         val = film()->add_sample(pixel, val, frame_index);
-        inspector_->add_sample(pixel, val, frame_index);
+//        inspector_->add_sample(pixel, val, frame_index);
     }
 
     void compile() noexcept override {
@@ -62,7 +62,7 @@ public:
 //            $if(inspector_->is_convergence(frame_index)) {
 //                return_();
 //            };
-            $condition_info("is convergence {}", inspector_->is_convergence(frame_index).cast<uint>());
+//            $condition_info("is convergence {}", inspector_->is_convergence(frame_index).cast<uint>());
             render_env.initial(sampler, frame_index, spectrum());
             sampler->start(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
