@@ -20,7 +20,7 @@ ScatterEval BxDF::evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEv
         ret.f = f(wo, wi, fresnel);
     }
     if (BxDF::match_PDF(mode)) {
-        ret.pdfs =PDF(wo, wi, fresnel);
+        ret.pdfs = PDF(wo, wi, fresnel);
     }
     ret.flags = flags();
     return ret;
@@ -37,7 +37,7 @@ ScatterEval BxDF::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, Mater
         ret.f = select(s, f(wo, wi, fresnel), 0.f);
     }
     if (BxDF::match_PDF(mode)) {
-        ret.pdfs =select(s, PDF(wo, wi, fresnel), 0.f);
+        ret.pdfs = select(s, PDF(wo, wi, fresnel), 0.f);
     }
     ret.flags = flags();
     return ret;
@@ -54,7 +54,7 @@ BSDFSample BxDF::sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
     ret.eval = evaluate(wo, wi, fresnel, MaterialEvalMode::All);
-    ret.eval.pdfs *=pdf;
+    ret.eval.pdfs *= pdf;
     return ret;
 }
 
@@ -107,6 +107,15 @@ Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) con
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     return select(same_hemisphere(wo, wi, wh), 0.f, microfacet_->PDF_wi_transmission(wo, wh, wi, eta));
+}
+
+DynamicArray<float> MicrofacetTransmission::PDF_array(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+    SampledSpectrum etas = fresnel->eta();
+    Float eta = etas[0];
+    Float3 wh = normalize(wo + wi * eta);
+    wh = face_forward(wh, make_float3(0, 0, 1));
+    return select(same_hemisphere(wo, wi, wh), DynamicArray<float>{etas.dimension(), 0.f},
+                  microfacet_->PDF_wi_transmission(wo, wh, wi, etas.values()));
 }
 
 SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
