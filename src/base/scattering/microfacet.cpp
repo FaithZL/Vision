@@ -9,7 +9,7 @@ namespace vision {
 namespace microfacet {
 [[nodiscard]] Float BTDF_div_ft(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                 const Float &eta, const Float &alpha_x,
-                                const Float &alpha_y, MicrofacetType type = GGX) {
+                                const Float &alpha_y, MicrofacetType type) {
     Float cos_theta_i = cos_theta(wi);
     Float cos_theta_o = cos_theta(wo);
     Float numerator = D_<D>(wh, alpha_x, alpha_y, type) * G_<D>(wo, wi, alpha_x, alpha_y, type) *
