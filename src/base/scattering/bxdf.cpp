@@ -92,7 +92,8 @@ Bool MicrofacetTransmission::safe(Float3 wo, Float3 wi) const noexcept {
 }
 
 SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    Float eta = fresnel->eta()[0];
+    SampledSpectrum etas = fresnel->eta();
+    Float eta = etas[0];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
@@ -101,7 +102,8 @@ SampledSpectrum MicrofacetTransmission::f(Float3 wo, Float3 wi, SP<Fresnel> fres
 }
 
 Float MicrofacetTransmission::PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
-    Float eta = fresnel->eta()[0];
+    SampledSpectrum etas = fresnel->eta();
+    Float eta = etas[0];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     return select(same_hemisphere(wo, wi, wh), 0.f, microfacet_->PDF_wi_transmission(wo, wh, wi, eta));
