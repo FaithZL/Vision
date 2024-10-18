@@ -191,9 +191,9 @@ template<EPort p = EPort::D>
                                       const oc_float<p> &eta, const oc_float<p> &alpha_x,
                                       const oc_float<p> &alpha_y, MicrofacetType type = GGX);
 
-[[nodiscard]] Float BTDF_div_ft(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                const Float &eta, const Float &alpha_x,
-                                const Float &alpha_y, MicrofacetType type = GGX);
+[[nodiscard]] SampledSpectrum BTDF_div_ft(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                          const SampledSpectrum &eta, const Float &alpha_x,
+                                          const Float &alpha_y, MicrofacetType type = GGX);
 
 /**
  *
@@ -278,6 +278,11 @@ public:
         return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, alpha_x_, alpha_y_, type_) * Ft;
     }
 
+    [[nodiscard]] virtual TSpectrum BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                         const TSpectrum &Ft, const TSpectrum &eta) const noexcept {
+        return microfacet::BTDF_div_ft(wo, wh, wi, eta, alpha_x_, alpha_y_, type_) * Ft;
+    }
+
     [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
         return this->BTDF(wo, wh, wi, Ft, eta);
@@ -305,8 +310,9 @@ public:
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
-    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh,
-                             Float3 wi, const Float &Ft,
+    [[nodiscard]] TSpectrum BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi, const TSpectrum &Ft,
+                                 const TSpectrum &eta) const noexcept override;
+    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh, Float3 wi, const Float &Ft,
                              Float eta) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
@@ -332,8 +338,9 @@ public:
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
-    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh,
-                             Float3 wi, const Float &Ft,
+    [[nodiscard]] TSpectrum BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi, const TSpectrum &Ft,
+                                 const TSpectrum &eta) const noexcept override;
+    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh, Float3 wi, const Float &Ft,
                              Float eta) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };

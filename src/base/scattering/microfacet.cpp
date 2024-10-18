@@ -122,22 +122,21 @@ template<EPort p>
     oc_float<p> factor = rcp(sqr(eta));
     return ft * factor;
 }
-
 template oc_float<D> BTDF_div_ft<D>(const oc_float3<D> &wo, const oc_float3<D> &wh, const oc_float3<D> &wi,
                                     const oc_float<D> &eta, const oc_float<D> &alpha_x,
                                     const oc_float<D> &alpha_y, MicrofacetType type);
 
-[[nodiscard]] Float BTDF_div_ft(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                const Float &eta, const Float &alpha_x,
-                                const Float &alpha_y, MicrofacetType type) {
+[[nodiscard]] SampledSpectrum BTDF_div_ft(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                          const SampledSpectrum &eta, const Float &alpha_x,
+                                          const Float &alpha_y, MicrofacetType type) {
     Float cos_theta_i = cos_theta(wi);
     Float cos_theta_o = cos_theta(wo);
     Float numerator = D_<D>(wh, alpha_x, alpha_y, type) * G_<D>(wo, wi, alpha_x, alpha_y, type) *
                       abs(dot(wi, wh) * dot(wo, wh));
-    Float denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
-    Float ft = numerator / denom;
-    Float factor = rcp(sqr(eta));
-    return ft * factor;
+    DynamicArray<float> denom = sqr(dot(wi, wh) * eta.values() + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
+    DynamicArray<float> ft = numerator / denom;
+    DynamicArray<float> factor = rcp(sqr(eta.values()));
+    return SampledSpectrum(ft * factor);
 }
 
 }// namespace microfacet
@@ -211,6 +210,14 @@ GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(Float3 wo, Float3 wh, Float3 wi,
     };
     impl.function()->set_description("GGXMicrofacet::BTDF_div_ft");
     return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
+}
+
+SampledSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                    const TSpectrum &Ft, const TSpectrum &eta) const noexcept {
+    auto func = [&] {
+        return microfacet::BTDF_div_ft(wo, wh, wi, eta, alpha_x_, alpha_y_, type) * Ft;
+    };
+    return outline(func, "GGXMicrofacet::BTDF_div_ft");
 }
 
 Float GGXMicrofacet::BTDF(Float3 wo, Float3 wh, Float3 wi, const Float &Ft, Float eta) const noexcept {
@@ -305,6 +312,14 @@ Float BeckmannMicrofacet::BTDF(Float3 wo, Float3 wh, Float3 wi, const Float &Ft,
     };
     impl.function()->set_description("BeckmannMicrofacet::BTDF_div_ft");
     return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
+}
+
+SampledSpectrum BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                         const TSpectrum &Ft, const TSpectrum &eta) const noexcept {
+    auto func = [&] {
+        return microfacet::BTDF_div_ft(wo, wh, wi, eta, alpha_x_, alpha_y_, type) * Ft;
+    };
+    return outline(func, "BeckmannMicrofacet::BTDF_div_ft");
 }
 
 BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept {
