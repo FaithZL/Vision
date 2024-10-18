@@ -307,6 +307,10 @@ public:
     [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] DynamicArray<float> PDF_wi_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                          const DynamicArray<float> &etas) const noexcept override;
+    [[nodiscard]] DynamicArray<float> PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
+                                                          const Float3 &wi, const DynamicArray<float> &etas) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
@@ -335,6 +339,10 @@ public:
     [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] DynamicArray<float> PDF_wi_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                          const DynamicArray<float> &etas) const noexcept override;
+    [[nodiscard]] DynamicArray<float> PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
+                                                          const Float3 &wi, const DynamicArray<float> &etas) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
     [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
