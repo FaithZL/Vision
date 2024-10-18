@@ -286,6 +286,10 @@ template<EPort p = EPort::D>
     return ft * factor;
 }
 
+[[nodiscard]] Float BTDF_div_ft(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                      const Float &eta, const Float &alpha_x,
+                                      const Float &alpha_y, MicrofacetType type = GGX);
+
 /**
  *
  * @param eta : eta_i / eta_o
