@@ -310,10 +310,10 @@ protected:
     MicrofacetType type_{GGX};
 
 public:
-    explicit Microfacet(oc_float2<p> alpha, MicrofacetType type = GGX)
+    explicit Microfacet(const oc_float2<p> &alpha, MicrofacetType type = GGX)
         : alpha_x_(alpha.x), alpha_y_(alpha.y), type_(type) {}
     Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
-        : alpha_x_(ax), alpha_y_(ay), type_(type) {}
+        : alpha_x_(std::move(ax)), alpha_y_(std::move(ay)), type_(type) {}
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(alpha_x_, alpha_y_); }
     [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept { return microfacet::D_<p>(wh, alpha_x_, alpha_y_, type_); }
     [[nodiscard]] virtual oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {
@@ -384,8 +384,8 @@ private:
     using Super = Microfacet<D>;
 
 public:
-    explicit GGXMicrofacet(Float2 alpha) : Super(alpha, type) {}
-    GGXMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
+    explicit GGXMicrofacet(const Float2 &alpha) : Super(alpha, type) {}
+    GGXMicrofacet(Float ax, Float ay) : Super(std::move(ax), std::move(ay), type) {}
     [[nodiscard]] Float D_(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
@@ -411,8 +411,8 @@ public:
     using Super = Microfacet<D>;
 
 public:
-    explicit BeckmannMicrofacet(Float2 alpha) : Super(alpha, type) {}
-    BeckmannMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
+    explicit BeckmannMicrofacet(const Float2 &alpha) : Super(alpha, type) {}
+    BeckmannMicrofacet(Float ax, Float ay) : Super(std::move(ax), std::move(ay), type) {}
     [[nodiscard]] Float D_(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
