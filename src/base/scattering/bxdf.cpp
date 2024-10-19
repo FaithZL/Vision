@@ -101,12 +101,16 @@ SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, const Float3 &wi, SP
     return select(same_hemisphere(wo, wi, wh), 0.f, tr * kt_);
 }
 
-Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
-    SampledSpectrum etas = fresnel->eta();
-    Float eta = etas[0];
+Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, const Float &eta) const noexcept {
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     return select(same_hemisphere(wo, wi, wh), 0.f, microfacet_->PDF_wi_transmission(wo, wh, wi, eta));
+}
+
+Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
+    SampledSpectrum etas = fresnel->eta();
+    Float eta = etas[0];
+    return PDF(wo, wi, etas[0]);
 }
 
 SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
@@ -117,14 +121,23 @@ SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, S
 }
 
 ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
-    return BxDF::safe_evaluate(wo, wi, fresnel, mode);
+    ScatterEval ret{swl().dimension()};
+    Bool s = safe(wo, wi);
+    if (BxDF::match_F(mode)) {
+        ret.f = select(s, f(wo, wi, fresnel), 0.f);
+    }
+    if (BxDF::match_PDF(mode)) {
+        ret.pdfs = select(s, PDF(wo, wi, fresnel), 0.f);
+    }
+    ret.flags = flags();
+    return ret;
 }
 
 BSDFSample MicrofacetTransmission::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
-    ret.eval.pdfs =select(valid, ret.eval.pdf(), 0.f);
+    ret.eval.pdfs = select(valid, ret.eval.pdf(), 0.f);
     ret.wi = wi;
     ret.eta = fresnel->eta()[0];
     return ret;

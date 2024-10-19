@@ -142,6 +142,8 @@ public:
                                     SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi,
                             SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi,
+                            const Float &eta) const noexcept;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u,
                                              SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler,
