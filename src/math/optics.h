@@ -20,7 +20,7 @@ requires ocarina::is_vector3_v<expr_value_t<T>>
 }
 
 template<EPort p = D>
-oc_bool<p> refract(oc_float3<p> wi, oc_float3<p> n, oc_float<p> eta, oc_float3<p> *wt) noexcept {
+oc_bool<p> refract(oc_float3<p> wi, oc_float3<p> n, const oc_float<p> &eta, oc_float3<p> *wt) noexcept {
     oc_float<p> cos_theta_i = dot(n, wi);
     oc_float<p> sin_theta_i_2 = max(0.f, 1 - sqr(cos_theta_i));
     oc_float<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
@@ -57,7 +57,7 @@ template<typename T>
 }
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> fresnel_dielectric_impl(oc_float<p> abs_cos_theta_i, oc_float<p> eta) noexcept {
+[[nodiscard]] oc_float<p> fresnel_dielectric_impl(oc_float<p> abs_cos_theta_i, const oc_float<p> &eta) noexcept {
     oc_float<p> sin_theta_i_2 = 1 - sqr(abs_cos_theta_i);
     oc_float<p> sin_theta_t_2 = sin_theta_i_2 / sqr(eta);
     oc_float<p> cos_theta_t = safe_sqrt(1 - sin_theta_t_2);
@@ -90,7 +90,7 @@ template<EPort p = D>
 }
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, oc_float<p> eta, oc_float<p> k) noexcept {
+[[nodiscard]] oc_float<p> fresnel_complex(oc_float<p> cos_theta_i, const oc_float<p> &eta, oc_float<p> k) noexcept {
     return fresnel_complex<p>(cos_theta_i, Complex<p>(eta, k));
 }
 

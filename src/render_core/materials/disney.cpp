@@ -218,7 +218,7 @@ private:
     Float eta_;
 
 public:
-    FresnelDisney(const SampledSpectrum &R0, Float metallic, Float eta,
+    FresnelDisney(const SampledSpectrum &R0, Float metallic, const Float &eta,
                   const SampledWavelengths &swl, const Pipeline *rp)
         : Fresnel(swl, rp), R0_(R0), metallic_(metallic), eta_(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
@@ -282,15 +282,15 @@ public:
     }
 
     [[nodiscard]] Float PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
-                                            const Float3 &wi, Float eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta) {
+                                            const Float3 &wi, const Float &eta) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo, const Float3 &wh, const Float3 &wi, const Float &eta) {
             return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_transmission");
         return impl(pdf_wh, wo, wh, wi, eta);
     }
 
-    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta) const noexcept override {
+    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const Float &eta) const noexcept override {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
@@ -308,15 +308,15 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                       const SampledSpectrum &Ft, Float eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta, Float ax, Float ay) {
+                                       const SampledSpectrum &Ft, const Float &eta) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi, const Float &eta, Float ax, Float ay) {
             return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::BTDF_div_ft");
         return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
     }
 
-    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi, const SampledSpectrum &Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi, const SampledSpectrum &Ft, const Float &eta) const noexcept override {
         Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
