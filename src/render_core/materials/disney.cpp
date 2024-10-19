@@ -269,8 +269,8 @@ public:
         return impl(wo, wh, alpha_x_, alpha_y_);
     }
 
-    [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, const Float3 &wo, const Float3 &wh) const noexcept override {
-        static CALLABLE_TYPE impl = [](Float pdf_wh, const Float3 &wo, const Float3 &wh) {
+    [[nodiscard]] Float PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo, const Float3 &wh) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo, const Float3 &wh) {
             return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_reflection");
@@ -281,9 +281,9 @@ public:
         return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
     }
 
-    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, const Float3 &wo, const Float3 &wh,
+    [[nodiscard]] Float PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
                                             const Float3 &wi, Float eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](Float pdf_wh, const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta) {
+        static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta) {
             return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_transmission");
