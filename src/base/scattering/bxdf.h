@@ -55,9 +55,9 @@ public:
     [[nodiscard]] virtual SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual Bool safe(Float3 wo, Float3 wi) const noexcept;
-    [[nodiscard]] ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
+    [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
                                        MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
+    [[nodiscard]] virtual ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel,
                                             MaterialEvalMode mode) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
@@ -129,6 +129,7 @@ public:
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] ScatterEval safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept override;
 };
 
 }// namespace vision

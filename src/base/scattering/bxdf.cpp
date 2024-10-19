@@ -116,6 +116,10 @@ SampledDirection MicrofacetTransmission::sample_wi(Float3 wo, Float2 u, SP<Fresn
     return {wi, valid && dot(wh, wo) > 0};
 }
 
+ScatterEval MicrofacetTransmission::safe_evaluate(Float3 wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
+    return BxDF::safe_evaluate(wo, wi, fresnel, mode);
+}
+
 BSDFSample MicrofacetTransmission::sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl().dimension()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
