@@ -127,7 +127,6 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return kt_; }
     [[nodiscard]] SampledSpectrum f(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] DynamicArray<float> PDF_array(Float3 wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] SampledDirection sample_wi(Float3 wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(Float3 wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept override;
 };
