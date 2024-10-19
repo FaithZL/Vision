@@ -22,32 +22,32 @@ public:
         // clang-format on
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Rd_; }
 
-    [[nodiscard]] SampledSpectrum f_diffuse(const Float3 &wo, Float3 wi) const noexcept {
+    [[nodiscard]] SampledSpectrum f_diffuse(const Float3 &wo, const Float3 &wi) const noexcept {
         SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd_ * (SampledSpectrum(swl().dimension(), 1.f) - Rs_) *
                                   (1 - Pow<5>(1 - .5f * abs_cos_theta(wi))) *
                                   (1 - Pow<5>(1 - .5f * abs_cos_theta(wo)));
         return diffuse;
     }
-    [[nodiscard]] Float PDF_diffuse(const Float3 &wo, Float3 wi) const noexcept {
+    [[nodiscard]] Float PDF_diffuse(const Float3 &wo, const Float3 &wi) const noexcept {
         return cosine_hemisphere_PDF(abs_cos_theta(wi));
     }
-    [[nodiscard]] SampledSpectrum f_specular(const Float3 &wo, Float3 wi) const noexcept {
+    [[nodiscard]] SampledSpectrum f_specular(const Float3 &wo, const Float3 &wi) const noexcept {
         Float3 wh = wi + wo;
         wh = normalize(wh);
         SampledSpectrum specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
                                    fresnel_schlick(Rs_, dot(wi, wh));
         return select(is_zero(wh), 0.f, 1.f) * specular;
     }
-    [[nodiscard]] Float PDF_specular(const Float3 &wo, Float3 wi) const noexcept {
+    [[nodiscard]] Float PDF_specular(const Float3 &wo, const Float3 &wi) const noexcept {
         Float3 wh = normalize(wo + wi);
         Float ret = _microfacet->PDF_wi_reflection(wo, wh);
         return ret;
     }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
         SampledSpectrum ret = f_specular(wo, wi) + f_diffuse(wo, wi);
         return ret;
     }
-    [[nodiscard]] Float PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         return lerp(fr, PDF_diffuse(wo, wi), PDF_specular(wo, wi));
     }

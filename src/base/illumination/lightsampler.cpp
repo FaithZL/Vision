@@ -285,7 +285,7 @@ LightEval LightSampler::evaluate_hit_point(const LightSampleContext &p_ref, cons
     return ret;
 }
 
-LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
+LightEval LightSampler::evaluate_miss_wi(const LightSampleContext &p_ref, const Float3 &wi,
                                          const SampledWavelengths &swl, LightEvalMode mode) const noexcept {
     LightEvalContext p_light{p_ref.pos + wi};
     LightEval ret{swl.dimension()};

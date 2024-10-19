@@ -137,12 +137,12 @@ public:
     virtual void init(Float g, const SampledWavelengths &swl) noexcept = 0;
     [[nodiscard]] virtual Bool valid() const noexcept = 0;
 
-    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, Float3 wi) const noexcept {
+    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi) const noexcept {
         Float val = f(wo, wi);
         return {{swl_->dimension(), val}, val, 0};
     }
     [[nodiscard]] virtual PhaseSample sample(const Float3 &wo, TSampler &sampler) const noexcept = 0;
-    [[nodiscard]] virtual Float f(const Float3 &wo, Float3 wi) const noexcept = 0;
+    [[nodiscard]] virtual Float f(const Float3 &wo, const Float3 &wi) const noexcept = 0;
 };
 
 class HenyeyGreenstein : public PhaseFunction {
@@ -156,7 +156,7 @@ public:
         g_ = g;
         swl_ = &swl;
     }
-    [[nodiscard]] Float f(const Float3 &wo, Float3 wi) const noexcept override;
+    [[nodiscard]] Float f(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] PhaseSample sample(const Float3 &wo, TSampler &sampler) const noexcept override;
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != g_; }
 };
@@ -214,7 +214,7 @@ private:
 
 public:
     explicit Interaction(bool has_medium);
-    Interaction(Float3 pos, Float3 wo, bool has_medium);
+    Interaction(Float3 pos, const Float3 &wo, bool has_medium);
     void init_volumetric_param(bool has_medium) noexcept;
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();

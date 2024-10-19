@@ -194,7 +194,7 @@ bool Material::has_changed() noexcept {
 
 namespace detail {
 
-[[nodiscard]] Float3 clamp_ns(Float3 ns, Float3 ng, Float3 w) {
+[[nodiscard]] Float3 clamp_ns(Float3 ns, Float3 ng, const Float3 &w) {
     Float3 w_refl = reflect(w, ns);
     Float3 w_refl_clip = select(same_hemisphere(w, w_refl, ng), w_refl,
                                 normalize(w_refl - ng * dot(w_refl, ng)));
@@ -247,7 +247,7 @@ void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *i
 }
 }// namespace detail
 
-Uint Material::combine_flag(const Float3 &wo, Float3 wi, Uint flag) noexcept {
+Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexcept {
     Bool reflect = same_hemisphere(wo, wi);
     Uint non_reflect = ~BxDFFlag::Reflection;
     Uint non_trans = ~BxDFFlag::Transmission;

@@ -71,7 +71,7 @@ public:
                                                const Float &pdf_wi,
                                                const SampledWavelengths &swl,
                                                Float *light_pdf_point = nullptr, LightEvalMode mode = LightEvalMode::All) const noexcept;
-    [[nodiscard]] LightEval evaluate_miss_wi(const LightSampleContext &p_ref, Float3 wi,
+    [[nodiscard]] LightEval evaluate_miss_wi(const LightSampleContext &p_ref, const Float3 &wi,
                                              const SampledWavelengths &swl, LightEvalMode mode = LightEvalMode::All) const noexcept;
     [[nodiscard]] LightEval evaluate_miss_point(const LightSampleContext &p_ref, const Float3 &wi,
                                                 const Float &pdf_wi,

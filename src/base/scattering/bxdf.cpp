@@ -10,11 +10,11 @@
 namespace vision {
 
 // BxDF
-Float BxDF::PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+Float BxDF::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     return cosine_hemisphere_PDF(abs_cos_theta(wi));
 }
 
-ScatterEval BxDF::evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
+ScatterEval BxDF::evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl().dimension()};
     if (BxDF::match_F(mode)) {
         ret.f = f(wo, wi, fresnel);
@@ -26,11 +26,11 @@ ScatterEval BxDF::evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel, Mat
     return ret;
 }
 
-Bool BxDF::safe(const Float3 &wo, Float3 wi) const noexcept {
+Bool BxDF::safe(const Float3 &wo, const Float3 &wi) const noexcept {
     return same_hemisphere(wo, wi);
 }
 
-ScatterEval BxDF::safe_evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
+ScatterEval BxDF::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl().dimension()};
     Bool s = safe(wo, wi);
     if (BxDF::match_F(mode)) {
@@ -59,7 +59,7 @@ BSDFSample BxDF::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel
 }
 
 // MicrofacetReflection
-SampledSpectrum MicrofacetReflection::f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+SampledSpectrum MicrofacetReflection::f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = normalize(wo + wi);
     wh = face_forward(wh, make_float3(0, 0, 1));
     SampledSpectrum F = fresnel->evaluate(abs_dot(wo, wh));
@@ -67,7 +67,7 @@ SampledSpectrum MicrofacetReflection::f(const Float3 &wo, Float3 wi, SP<Fresnel>
     return fr * kr_;
 }
 
-Float MicrofacetReflection::PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+Float MicrofacetReflection::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = normalize(wo + wi);
     return microfacet_->PDF_wi_reflection(wo, wh);
 }
@@ -87,11 +87,11 @@ BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<
 }
 
 // MicrofacetTransmission
-Bool MicrofacetTransmission::safe(const Float3 &wo, Float3 wi) const noexcept {
+Bool MicrofacetTransmission::safe(const Float3 &wo, const Float3 &wi) const noexcept {
     return !same_hemisphere(wo, wi);
 }
 
-SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     SampledSpectrum etas = fresnel->eta();
     Float eta = etas[0];
     Float3 wh = normalize(wo + wi * eta);
@@ -101,7 +101,7 @@ SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, Float3 wi, SP<Fresne
     return select(same_hemisphere(wo, wi, wh), 0.f, tr * kt_);
 }
 
-Float MicrofacetTransmission::PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept {
+Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     SampledSpectrum etas = fresnel->eta();
     Float eta = etas[0];
     Float3 wh = normalize(wo + wi * eta);
@@ -116,7 +116,7 @@ SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, S
     return {wi, valid && dot(wh, wo) > 0};
 }
 
-ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
+ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     return BxDF::safe_evaluate(wo, wi, fresnel, mode);
 }
 

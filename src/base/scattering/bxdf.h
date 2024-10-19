@@ -51,13 +51,13 @@ public:
     virtual BxDF &operator=(const BxDF &other) noexcept = default;
     virtual void regularize() noexcept {}
     [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *swl_; }
-    [[nodiscard]] virtual Float PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] virtual SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept = 0;
+    [[nodiscard]] virtual Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept;
+    [[nodiscard]] virtual SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
-    [[nodiscard]] virtual Bool safe(const Float3 &wo, Float3 wi) const noexcept;
-    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel,
+    [[nodiscard]] virtual Bool safe(const Float3 &wo, const Float3 &wi) const noexcept;
+    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,
                                        MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] virtual ScatterEval safe_evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel,
+    [[nodiscard]] virtual ScatterEval safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,
                                             MaterialEvalMode mode) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel) const noexcept;
@@ -90,7 +90,7 @@ public:
           Kr(kr) {}
     VS_MAKE_BxDF_ASSIGNMENT(LambertReflection)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return Kr; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
         return Kr * InvPi;
     }
 };
@@ -107,8 +107,8 @@ public:
         : BxDF(swl, BxDFFlag::GlossyRefl), kr_(color),
           microfacet_(m) {}
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return kr_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] Float PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept override;
 };
@@ -123,13 +123,13 @@ public:
         MicrofacetTransmission() = default;
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::GlossyTrans), kt_(color), microfacet_(m) {}
-    [[nodiscard]] Bool safe(const Float3 &wo, Float3 wi) const noexcept override;
+    [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return kt_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] Float PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] ScatterEval safe_evaluate(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept override;
+    [[nodiscard]] ScatterEval safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept override;
 };
 
 }// namespace vision

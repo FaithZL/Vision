@@ -24,7 +24,7 @@ public:
     }
     VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return R_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
         Float sin_theta_i = sin_theta(wi);
         Float sin_theta_o = sin_theta(wo);
 

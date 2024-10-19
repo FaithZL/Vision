@@ -9,7 +9,7 @@
 namespace vision {
 using namespace ocarina;
 
-Float HenyeyGreenstein::f(const Float3 &wo, Float3 wi) const noexcept {
+Float HenyeyGreenstein::f(const Float3 &wo, const Float3 &wi) const noexcept {
     return phase_HG(dot(wo, wi), g_);
 }
 
@@ -46,7 +46,7 @@ Interaction::Interaction(bool has_medium) {
     init_volumetric_param(has_medium);
 }
 
-Interaction::Interaction(Float3 pos, Float3 wo, bool has_medium)
+Interaction::Interaction(Float3 pos, const Float3 &wo, bool has_medium)
     : pos(pos), wo(wo) {
     init_volumetric_param(has_medium);
 }

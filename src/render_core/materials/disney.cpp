@@ -25,8 +25,8 @@ public:
     VS_MAKE_BxDF_ASSIGNMENT(Diffuse)
         // clang-format on
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wi) {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi) {
             Float Fo = schlick_weight(abs_cos_theta(wo));
             Float Fi = schlick_weight(abs_cos_theta(wi));
             return InvPi * (1 - 0.5f * Fo) * (1 - 0.5f * Fi);
@@ -51,8 +51,8 @@ public:
     VS_MAKE_BxDF_ASSIGNMENT(FakeSS)
         // clang-format on
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wi, Float roughness) {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi, Float roughness) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
             wh = normalize(wh);
@@ -83,8 +83,8 @@ public:
           color_(color),
           roughness_(r) {}
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wi, Float roughness) {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi, Float roughness) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
             wh = normalize(wh);
@@ -113,8 +113,8 @@ public:
         : BxDF(swl, BxDFFlag::DiffRefl),
           color_(kr) {}
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return color_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wi) {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
             wh = normalize(wh);
@@ -160,8 +160,8 @@ public:
           weight_(weight),
           alpha_(alpha) {}
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return {swl().dimension(), weight_}; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wi, Float weight, Float alpha) {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi, Float weight, Float alpha) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
             wh = normalize(wh);
@@ -174,8 +174,8 @@ public:
         impl.function()->set_description("disney::Clearcoat::f");
         return {swl().dimension(), impl(wo, wi, weight_, alpha_)};
     }
-    [[nodiscard]] Float PDF(const Float3 &wo, Float3 wi, SP<Fresnel> fresnel) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wi, Float alpha) {
+    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi, Float alpha) {
             Float3 wh = wi + wo;
             Bool valid = !is_zero(wh);
             wh = normalize(wh);
@@ -262,61 +262,61 @@ public:
         return impl(wo, u, alpha_x_, alpha_y_);
     }
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wh, Float ax, Float ay) {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, Float ax, Float ay) {
             return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wh");
         return impl(wo, wh, alpha_x_, alpha_y_);
     }
 
-    [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override {
-        static CALLABLE_TYPE impl = [](Float pdf_wh, Float3 wo, Float3 wh) {
+    [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, const Float3 &wo, const Float3 &wh) const noexcept override {
+        static CALLABLE_TYPE impl = [](Float pdf_wh, const Float3 &wo, const Float3 &wh) {
             return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_reflection");
         return impl(pdf_wh, wo, wh);
     }
 
-    [[nodiscard]] Float PDF_wi_reflection(const Float3 &wo, Float3 wh) const noexcept override {
+    [[nodiscard]] Float PDF_wi_reflection(const Float3 &wo, const Float3 &wh) const noexcept override {
         return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
     }
 
-    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh,
-                                            Float3 wi, Float eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) {
+    [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, const Float3 &wo, const Float3 &wh,
+                                            const Float3 &wi, Float eta) const noexcept override {
+        static CALLABLE_TYPE impl = [](Float pdf_wh, const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta) {
             return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_transmission");
         return impl(pdf_wh, wo, wh, wi, eta);
     }
 
-    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, Float3 wh, Float3 wi, Float eta) const noexcept override {
+    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta) const noexcept override {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] SampledSpectrum BRDF(const Float3 &wo, Float3 wh, Float3 wi, const SampledSpectrum &Fr) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wh, Float3 wi, Float ax, Float ay) {
+    [[nodiscard]] SampledSpectrum BRDF(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &Fr) const noexcept override {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi, Float ax, Float ay) {
             return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::BRDF_div_fr");
         return impl(wo, wh, wi, alpha_x_, alpha_y_) * Fr;
     }
 
-    [[nodiscard]] SampledSpectrum BRDF(const Float3 &wo, Float3 wi, const SampledSpectrum &Fr) const noexcept override {
+    [[nodiscard]] SampledSpectrum BRDF(const Float3 &wo, const Float3 &wi, const SampledSpectrum &Fr) const noexcept override {
         Float3 wh = normalize(wo + wi);
         return BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, Float3 wh, Float3 wi,
+    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                        const SampledSpectrum &Ft, Float eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float3 wh, Float3 wi, Float eta, Float ax, Float ay) {
+        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi, Float eta, Float ax, Float ay) {
             return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::BTDF_div_ft");
         return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
     }
 
-    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, Float3 wi, const SampledSpectrum &Ft, Float eta) const noexcept override {
+    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi, const SampledSpectrum &Ft, Float eta) const noexcept override {
         Float3 wh = normalize(wo + wi * eta);
         return BTDF(wo, wh, wi, Ft, eta);
     }
