@@ -100,7 +100,7 @@ template<EPort p = EPort::D>
         case GGX:
         case Beckmann: {
             ret = 1 / (1 + lambda<p>(wo, alpha_x, alpha_y, type) +
-                lambda<p>(wi, alpha_x, alpha_y, type));
+                       lambda<p>(wi, alpha_x, alpha_y, type));
             return ret;
         }
         default:
@@ -249,6 +249,25 @@ public:
     [[nodiscard]] virtual oc_float<p> PDF_wi_transmission(const oc_float3<p> &wo, const oc_float3<p> &wh,
                                                           const oc_float3<p> &wi, const oc_float<p> &eta) const noexcept {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
+    }
+
+    [[nodiscard]] virtual float_array PDF_wi_transmission(const float_array &pdf_wh, const oc_float3<p> &wo,
+                                                          const float3_array &wh, const oc_float3<p> &wi,
+                                                          const float_array &eta) const noexcept {
+        OC_ASSERT(wh.size() == eta.size());
+        float_array ret = eta.map([&](uint i, const Float &eta) {
+            return PDF_wi_transmission(pdf_wh[i], wo, wh[i], wi, eta);
+        });
+        return ret;
+    }
+
+    [[nodiscard]] virtual float_array PDF_wi_transmission(const oc_float3<p> &wo, const float3_array &wh,
+                                                          const oc_float3<p> &wi, const float_array &eta) const noexcept {
+        OC_ASSERT(wh.size() == eta.size());
+        float_array ret = eta.map([&](uint i, const Float &eta) {
+            return PDF_wi_transmission(wo, wh[i], wi, eta);
+        });
+        return ret;
     }
 
     [[nodiscard]] virtual TSpectrum BRDF(const oc_float3<p> &wo, const oc_float3<p> &wh,
