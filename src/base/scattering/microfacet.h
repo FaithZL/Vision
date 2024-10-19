@@ -224,7 +224,7 @@ public:
         return microfacet::PDF_wi_reflection<p>(pdf_wh, wo, wh);
     }
 
-    [[nodiscard]] virtual oc_float<p> PDF_wi_reflection(oc_float3<p> wo, oc_float3<p> wh) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wi_reflection(const oc_float3<p>&wo, oc_float3<p> wh) const noexcept {
         return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
     }
 
@@ -233,30 +233,30 @@ public:
         return microfacet::PDF_wi_transmission<p>(pdf_wh, wo, wh, wi, eta);
     }
 
-    [[nodiscard]] virtual oc_float<p> PDF_wi_transmission(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual oc_float<p> PDF_wi_transmission(const oc_float3<p>&wo, oc_float3<p> wh, oc_float3<p> wi, oc_float<p> eta) const noexcept {
         return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
     }
 
-    [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
+    [[nodiscard]] virtual TSpectrum BRDF(const oc_float3<p>&wo, oc_float3<p> wh, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
         return microfacet::BRDF_div_fr<p>(wo, wh, wi, alpha_x_, alpha_y_, type_) * Fr;
     }
 
-    [[nodiscard]] virtual TSpectrum BRDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
+    [[nodiscard]] virtual TSpectrum BRDF(const oc_float3<p>&wo, oc_float3<p> wi, const TSpectrum &Fr) const noexcept {
         oc_float3<p> wh = normalize(wo + wi);
         return this->BRDF(wo, wh, wi, Fr);
     }
 
-    [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
+    [[nodiscard]] virtual TSpectrum BTDF(const oc_float3<p>&wo, oc_float3<p> wh, oc_float3<p> wi,
                                          const TSpectrum &Ft, oc_float<p> eta) const noexcept {
         return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, alpha_x_, alpha_y_, type_) * Ft;
     }
 
-    [[nodiscard]] virtual oc_float<p> BTDF(oc_float3<p> wo, oc_float3<p> wh, oc_float3<p> wi,
+    [[nodiscard]] virtual oc_float<p> BTDF(const oc_float3<p>&wo, oc_float3<p> wh, oc_float3<p> wi,
                                            const oc_float<p> &Ft, oc_float<p> eta) const noexcept {
         return microfacet::BTDF_div_ft<p>(wo, wh, wi, eta, alpha_x_, alpha_y_, type_) * Ft;
     }
 
-    [[nodiscard]] virtual TSpectrum BTDF(oc_float3<p> wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {
+    [[nodiscard]] virtual TSpectrum BTDF(const oc_float3<p>&wo, oc_float3<p> wi, const TSpectrum &Ft, oc_float<p> eta) const noexcept {
         oc_float3<p> wh = normalize(wo + wi * eta);
         return this->BTDF(wo, wh, wi, Ft, eta);
     }
@@ -277,15 +277,15 @@ public:
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override;
-    [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
+    [[nodiscard]] Float PDF_wi_reflection(const Float3 &wo, Float3 wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
-    [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
-    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
-    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
-    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
-    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh, Float3 wi, const Float &Ft,
+    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(const Float3 &wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(const Float3 &wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(const Float3 &wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] Float BTDF(const Float3 &wo, Float3 wh, Float3 wi, const Float &Ft,
                              Float eta) const noexcept override;
-    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(const Float3 &wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
 
 class BeckmannMicrofacet : public Microfacet<D> {
@@ -303,15 +303,15 @@ public:
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(Float pdf_wh, Float3 wo, Float3 wh) const noexcept override;
-    [[nodiscard]] Float PDF_wi_reflection(Float3 wo, Float3 wh) const noexcept override;
+    [[nodiscard]] Float PDF_wi_reflection(const Float3 &wo, Float3 wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_transmission(Float pdf_wh, Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
-    [[nodiscard]] Float PDF_wi_transmission(Float3 wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
-    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
-    [[nodiscard]] TSpectrum BRDF(Float3 wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
-    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
-    [[nodiscard]] Float BTDF(Float3 wo, Float3 wh, Float3 wi, const Float &Ft,
+    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, Float3 wh, Float3 wi, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(const Float3 &wo, Float3 wh, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BRDF(const Float3 &wo, Float3 wi, const TSpectrum &Fr) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(const Float3 &wo, Float3 wh, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] Float BTDF(const Float3 &wo, Float3 wh, Float3 wi, const Float &Ft,
                              Float eta) const noexcept override;
-    [[nodiscard]] TSpectrum BTDF(Float3 wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
+    [[nodiscard]] TSpectrum BTDF(const Float3 &wo, Float3 wi, const TSpectrum &Ft, Float eta) const noexcept override;
 };
 
 }// namespace vision

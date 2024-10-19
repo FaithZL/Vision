@@ -9,11 +9,11 @@
 namespace vision {
 using namespace ocarina;
 
-Float HenyeyGreenstein::f(Float3 wo, Float3 wi) const noexcept {
+Float HenyeyGreenstein::f(const Float3 &wo, Float3 wi) const noexcept {
     return phase_HG(dot(wo, wi), g_);
 }
 
-PhaseSample HenyeyGreenstein::sample(Float3 wo, TSampler &sampler) const noexcept {
+PhaseSample HenyeyGreenstein::sample(const Float3 &wo, TSampler &sampler) const noexcept {
     Float2 u = sampler->next_2d();
     Float sqr_term = (1 - sqr(g_)) / (1 + g_ - 2 * g_ * u.x);
     Float cos_theta = -(1 + sqr(g_) - sqr(sqr_term)) / (2 * g_);

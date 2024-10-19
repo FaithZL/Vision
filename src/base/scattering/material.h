@@ -222,7 +222,7 @@ protected:
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
 
 public:
-    [[nodiscard]] static Uint combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept;
+    [[nodiscard]] static Uint combine_flag(const Float3 &wo, Float3 wi, Uint flag) noexcept;
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it, const SampledWavelengths &swl) const noexcept = 0;
     virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Evaluator create_evaluator(const Interaction &it, const SampledWavelengths &swl) const noexcept;

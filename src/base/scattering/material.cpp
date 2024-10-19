@@ -247,7 +247,7 @@ void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *i
 }
 }// namespace detail
 
-Uint Material::combine_flag(Float3 wo, Float3 wi, Uint flag) noexcept {
+Uint Material::combine_flag(const Float3 &wo, Float3 wi, Uint flag) noexcept {
     Bool reflect = same_hemisphere(wo, wi);
     Uint non_reflect = ~BxDFFlag::Reflection;
     Uint non_trans = ~BxDFFlag::Transmission;

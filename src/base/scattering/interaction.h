@@ -137,12 +137,12 @@ public:
     virtual void init(Float g, const SampledWavelengths &swl) noexcept = 0;
     [[nodiscard]] virtual Bool valid() const noexcept = 0;
 
-    [[nodiscard]] virtual ScatterEval evaluate(Float3 wo, Float3 wi) const noexcept {
+    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, Float3 wi) const noexcept {
         Float val = f(wo, wi);
         return {{swl_->dimension(), val}, val, 0};
     }
-    [[nodiscard]] virtual PhaseSample sample(Float3 wo, TSampler &sampler) const noexcept = 0;
-    [[nodiscard]] virtual Float f(Float3 wo, Float3 wi) const noexcept = 0;
+    [[nodiscard]] virtual PhaseSample sample(const Float3 &wo, TSampler &sampler) const noexcept = 0;
+    [[nodiscard]] virtual Float f(const Float3 &wo, Float3 wi) const noexcept = 0;
 };
 
 class HenyeyGreenstein : public PhaseFunction {
@@ -156,8 +156,8 @@ public:
         g_ = g;
         swl_ = &swl;
     }
-    [[nodiscard]] Float f(Float3 wo, Float3 wi) const noexcept override;
-    [[nodiscard]] PhaseSample sample(Float3 wo, TSampler &sampler) const noexcept override;
+    [[nodiscard]] Float f(const Float3 &wo, Float3 wi) const noexcept override;
+    [[nodiscard]] PhaseSample sample(const Float3 &wo, TSampler &sampler) const noexcept override;
     [[nodiscard]] Bool valid() const noexcept override { return InvalidG != g_; }
 };
 
