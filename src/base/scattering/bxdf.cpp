@@ -110,6 +110,11 @@ SampledSpectrum MicrofacetTransmission::BTDF(const Float3 &wo, const Float3 &wi,
     return ret;
 }
 
+SampledSpectrum MicrofacetTransmission::f_array(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
+    uint dim = fresnel->eta().dimension();
+    return BTDF(wo, wi, fresnel) * kt_;
+}
+
 SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     SampledSpectrum etas = fresnel->eta();
     Float eta = etas[0];
@@ -122,7 +127,7 @@ SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, const Float3 &wi, SP
 
 Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, uint channel) const noexcept {
     SampledSpectrum etas = fresnel->eta();
-    Float eta = etas[0];
+    Float eta = etas[channel];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
     return select(same_hemisphere(wo, wi, wh), 0.f, microfacet_->PDF_wi_transmission(wo, wh, wi, eta));
@@ -149,13 +154,14 @@ SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, S
 }
 
 ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
+//    return BxDF::safe_evaluate(wo, wi, fresnel, mode);
     ScatterEval ret{swl().dimension()};
     Bool s = safe(wo, wi);
     if (BxDF::match_F(mode)) {
-        ret.f = select(s, f(wo, wi, fresnel), 0.f);
+        ret.f = select(s, f_array(wo, wi, fresnel), 0.f);
     }
     if (BxDF::match_PDF(mode)) {
-        ret.pdfs = select(s, PDF(wo, wi, fresnel), 0.f);
+        ret.pdfs = select(s, PDF_array(wo, wi, fresnel), 0.f);
     }
     ret.flags = flags();
     return ret;
