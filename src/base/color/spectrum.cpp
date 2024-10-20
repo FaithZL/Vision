@@ -33,7 +33,6 @@ void SampledWavelengths::check_dispersive(const TSpectrum &spectrum,
                                           const MaterialEvaluator &bsdf) const noexcept {
     if (auto dispersive = spectrum->is_dispersive(&bsdf)) {
         $if(*dispersive) {
-            //todo spectrum debug
             invalidation_secondary();
         };
     }
