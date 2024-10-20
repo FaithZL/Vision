@@ -138,12 +138,18 @@ public:
         : BxDF(swl, BxDFFlag::GlossyTrans), kt_(std::move(color)), microfacet_(m) {}
     [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return kt_; }
+    [[nodiscard]] Float BTDF(const Float3 &wo, const Float3 &wi,
+                             SP<Fresnel> fresnel, uint channel) const noexcept;
+    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi,
+                                       SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                     SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi,
                             SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,
-                            int channel) const noexcept;
+                            uint channel) const noexcept;
+    [[nodiscard]] float_array PDF_array(const Float3 &wo, const Float3 &wi,
+                                        SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u,
                                              SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler,

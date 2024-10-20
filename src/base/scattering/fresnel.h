@@ -19,7 +19,7 @@ protected:
 public:
     explicit Fresnel(const SampledWavelengths &swl, const Pipeline *rp) : swl_(&swl), rp_(rp) {}
     [[nodiscard]] virtual SampledSpectrum evaluate(Float cos_theta) const noexcept = 0;
-    [[nodiscard]] virtual Float evaluate(Float cos_theta, Uint channel) const noexcept {
+    [[nodiscard]] virtual Float evaluate(const Float &cos_theta, uint channel) const noexcept {
         OC_ERROR("Fresnel evaluate by channel invalid !");
         return 0.f;
     }
@@ -50,7 +50,7 @@ public:
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
-    [[nodiscard]] Float evaluate(ocarina::Float cos_theta, ocarina::Uint channel) const noexcept override {
+    [[nodiscard]] Float evaluate(const Float &cos_theta, uint channel) const noexcept override {
         return fresnel_dielectric<D>(cos_theta, eta_[channel]);
     }
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {

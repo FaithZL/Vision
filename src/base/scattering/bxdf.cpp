@@ -91,6 +91,25 @@ Bool MicrofacetTransmission::safe(const Float3 &wo, const Float3 &wi) const noex
     return !same_hemisphere(wo, wi);
 }
 
+Float MicrofacetTransmission::BTDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, uint channel) const noexcept {
+    SampledSpectrum etas = fresnel->eta();
+    Float eta = etas[channel];
+    Float3 wh = normalize(wo + wi * eta);
+    wh = face_forward(wh, make_float3(0, 0, 1));
+    Float F = fresnel->evaluate(abs_dot(wo, wh), channel);
+    Float tr = microfacet_->BTDF(wo, wh, wi, 1 - F, eta);
+    return tr;
+}
+
+SampledSpectrum MicrofacetTransmission::BTDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
+    uint dim = fresnel->eta().dimension();
+    SampledSpectrum ret{dim};
+    for (uint i = 0; i < dim; ++i) {
+        ret[i] = BTDF(wo, wi, fresnel, i);
+    }
+    return ret;
+}
+
 SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     SampledSpectrum etas = fresnel->eta();
     Float eta = etas[0];
@@ -101,7 +120,7 @@ SampledSpectrum MicrofacetTransmission::f(const Float3 &wo, const Float3 &wi, SP
     return select(same_hemisphere(wo, wi, wh), 0.f, tr * kt_);
 }
 
-Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, int channel) const noexcept {
+Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, uint channel) const noexcept {
     SampledSpectrum etas = fresnel->eta();
     Float eta = etas[0];
     Float3 wh = normalize(wo + wi * eta);
@@ -111,6 +130,15 @@ Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel
 
 Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     return PDF(wo, wi, fresnel, 0);
+}
+
+float_array MicrofacetTransmission::PDF_array(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
+    uint dim = fresnel->eta().dimension();
+    float_array ret = float_array::zero(dim);
+    for (uint i = 0; i < dim; ++i) {
+        ret[i] = PDF(wo, wi, fresnel, i);
+    }
+    return ret;
 }
 
 SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
