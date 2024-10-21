@@ -66,9 +66,9 @@ public:
     DynamicArray<float> pdfs{1};
 
 public:
-    explicit ScatterEval(uint dim) : f(dim), pdfs(1, 0.f){};
-    ScatterEval(SampledSpectrum f, Float pdf, Uint flags)
-        : f(std::move(f)), pdfs(1, std::move(pdf)), flags(std::move(flags)) {}
+    explicit ScatterEval(uint dim) : f(dim), pdfs(dim, 0.f){};
+    ScatterEval(const SampledSpectrum &f, Float pdf, Uint flags)
+        : f(f), pdfs(f.dimension(), std::move(pdf)), flags(std::move(flags)) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdfs; }
     [[nodiscard]] SampledSpectrum safe_throughput() const noexcept {
         auto ret = throughput();
