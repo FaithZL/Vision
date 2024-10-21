@@ -124,6 +124,11 @@ public:
         }
         return s;
     }
+    void foreach_dimensions(const std::function<void(uint)> &func) const noexcept {
+        for (uint i = 0; i < dimension(); ++i) {
+            func(i);
+        }
+    }
     void sanitize() noexcept { values_.sanitize(); }
     [[nodiscard]] Float sum() const noexcept { return values().sum(); }
     [[nodiscard]] Float max() const noexcept { return values().max(); }

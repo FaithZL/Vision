@@ -104,9 +104,9 @@ Float MicrofacetTransmission::BTDF(const Float3 &wo, const Float3 &wi, SP<Fresne
 SampledSpectrum MicrofacetTransmission::BTDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     uint dim = fresnel->eta().dimension();
     SampledSpectrum ret{dim};
-    for (uint i = 0; i < dim; ++i) {
+    ret.foreach_dimensions([&](uint i) {
         ret[i] = BTDF(wo, wi, fresnel, i);
-    }
+    });
     return ret;
 }
 
@@ -140,9 +140,9 @@ Float MicrofacetTransmission::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel
 float_array MicrofacetTransmission::PDF_array(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept {
     uint dim = fresnel->eta().dimension();
     float_array ret = float_array::zero(dim);
-    for (uint i = 0; i < dim; ++i) {
+    ret.foreach ([&](uint i) {
         ret[i] = PDF(wo, wi, fresnel, i);
-    }
+    });
     return ret;
 }
 
