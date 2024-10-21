@@ -48,7 +48,7 @@ public:
     void invalidation_secondary() const noexcept;
     void check_dispersive(const TSpectrum &spectrum, const MaterialEvaluator &bsdf) const noexcept;
     template<typename Func>
-    void foreach_secondary_channel(const Func& func) const noexcept {
+    void foreach_secondary_channel(const Func &func) const noexcept {
         for (int i = 1; i < dimension(); ++i) {
             func(i);
         }
@@ -83,6 +83,12 @@ public:
     explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
     [[nodiscard]] uint dimension() const noexcept {
         return static_cast<uint>(values_.size());
+    }
+    [[nodiscard]] static SampledSpectrum zero(uint dim) noexcept {
+        return SampledSpectrum{float_array::zero(dim)};
+    }
+    [[nodiscard]] static SampledSpectrum one(uint dim) noexcept {
+        return SampledSpectrum{float_array::one(dim)};
     }
     [[nodiscard]] DynamicArray<float> &values() noexcept { return values_; }
     [[nodiscard]] const DynamicArray<float> &values() const noexcept { return values_; }
