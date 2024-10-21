@@ -69,8 +69,8 @@ public:
     explicit ScatterEval(const SampledWavelengths &swl)
         : ScatterEval(swl.dimension(), swl.scatter_pdf_dim()) {}
     explicit ScatterEval(uint dim, uint pdf_dim) : f(dim), pdfs(pdf_dim, 0.f){};
-    ScatterEval(const SampledSpectrum &f, Float pdf, Uint flags)
-        : f(f), pdfs(1, std::move(pdf)), flags(std::move(flags)) {}
+    ScatterEval(SampledSpectrum f, Float pdf, Uint flags)
+        : f(std::move(f)), pdfs(1, std::move(pdf)), flags(std::move(flags)) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdfs; }
     [[nodiscard]] SampledSpectrum safe_throughput() const noexcept {
         auto ret = throughput();
