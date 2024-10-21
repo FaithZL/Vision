@@ -184,7 +184,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         Bool occluded = geometry.occluded(it, light_sample.p_light, &shadow_ray);
         SampledSpectrum tr = geometry.Tr(scene(), swl, shadow_ray);
         comment("sample bsdf");
-        BSDFSample bsdf_sample{swl.dimension()};
+        BSDFSample bsdf_sample{swl};
         SampledSpectrum Ld = {swl.dimension(), 0.f};
 
         Float3 albedo = make_float3(0.f);

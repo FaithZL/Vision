@@ -51,7 +51,7 @@ public:
     }
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
         Float3 wi = make_float3(-wo.xy(), wo.z);
-        BSDFSample ret{refl_.swl().dimension()};
+        BSDFSample ret{refl_.swl()};
         ret.wi = wi;
         ret.eval = refl_.evaluate(wo, wi, fresnel_->clone(), All);
         return ret;

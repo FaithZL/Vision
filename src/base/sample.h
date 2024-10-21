@@ -66,9 +66,11 @@ public:
     DynamicArray<float> pdfs{1};
 
 public:
-    explicit ScatterEval(uint dim) : f(dim), pdfs(dim, 0.f){};
+    explicit ScatterEval(const SampledWavelengths &swl)
+        : ScatterEval(swl.dimension(), swl.scatter_pdf_dim()) {}
+    explicit ScatterEval(uint dim, uint pdf_dim) : f(dim), pdfs(pdf_dim, 0.f){};
     ScatterEval(const SampledSpectrum &f, Float pdf, Uint flags)
-        : f(f), pdfs(f.dimension(), std::move(pdf)), flags(std::move(flags)) {}
+        : f(f), pdfs(1, std::move(pdf)), flags(std::move(flags)) {}
     [[nodiscard]] SampledSpectrum throughput() const noexcept { return f / pdfs; }
     [[nodiscard]] SampledSpectrum safe_throughput() const noexcept {
         auto ret = throughput();
@@ -107,8 +109,10 @@ public:
     Float3 wi{make_float3(0.f)};
 
 public:
-    explicit ScatterSample(uint dim) noexcept
-        : eval(dim), wi(make_float3(0.f)) {}
+    explicit ScatterSample(const SampledWavelengths &swl)
+        : ScatterSample(swl.dimension(), swl.scatter_pdf_dim()) {}
+    explicit ScatterSample(uint dim, uint pdf_dim) noexcept
+        : eval(dim, pdf_dim), wi(make_float3(0.f)) {}
     [[nodiscard]] Bool valid() const noexcept { return eval.valid(); }
     void invalidation() noexcept { eval.invalidation(); }
     virtual ~ScatterSample() = default;
@@ -116,6 +120,8 @@ public:
 
 struct PhaseSample : public ScatterSample {
     using ScatterSample::ScatterSample;
+    explicit PhaseSample(uint dim) : ScatterSample(dim, 1){};
+    //    explicit PhaseSample(const SampledWavelengths &swl) : ScatterSample(swl) {}
 };
 
 struct BSDFSample : public ScatterSample {

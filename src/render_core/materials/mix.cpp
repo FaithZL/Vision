@@ -46,7 +46,7 @@ public:
                                              const Uint &flag) const noexcept override {
         ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag);
         ScatterEval eval1 = b1_->evaluate_local(wo, wi, mode, flag);
-        ScatterEval ret{eval0.f.dimension()};
+        ScatterEval ret{eval0.f.dimension(), eval0.pdfs.size()};
         ret.f = eval0.f * scale_ + eval1.f * (1 - scale_);
         ret.pdfs =eval0.pdf() * scale_ + eval1.pdf() * (1 - scale_);
         // todo review this
@@ -67,7 +67,7 @@ public:
     }
 
     BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        BSDFSample ret{b0_->albedo(wo).dimension()};
+        BSDFSample ret{b0_->albedo(wo).dimension(), 1u};
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
         ret.wi = sd.wi;

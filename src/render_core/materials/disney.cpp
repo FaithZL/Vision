@@ -204,7 +204,7 @@ public:
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept override {
         Float2 u = sampler->next_2d();
         auto [wi, pdf] = sample_wi(wo, u, fresnel);
-        BSDFSample ret{swl().dimension()};
+        BSDFSample ret{swl()};
         ret.eval = safe_evaluate(wo, wi, nullptr, MaterialEvalMode::All);
         ret.wi = wi;
         return ret;
@@ -484,7 +484,7 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return diffuse_->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return outline([&] {
-            ScatterEval ret{spec_refl_->swl().dimension()};
+            ScatterEval ret{spec_refl_->swl()};
             SampledSpectrum f = {spec_refl_->swl().dimension(), 0.f};
             Float pdf = 0.f;
             auto fresnel = fresnel_->clone();
@@ -584,7 +584,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        BSDFSample ret{spec_refl_->swl().dimension()};
+        BSDFSample ret{spec_refl_->swl()};
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, MaterialEvalMode::All, flag);
         ret.wi = sampled_direction.wi;

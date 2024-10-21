@@ -132,7 +132,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
         ls = light_sampler->evaluate_point(it, sample->lsp(), swl);
     };
     Float3 wi = normalize(ls.p_light - it.pos);
-    ScatterEval eval{swl.dimension()};
+    ScatterEval eval{swl.dimension(), 1};
     if (!bsdf) {
         outline([&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
@@ -193,7 +193,7 @@ DIReservoirVar ReSTIRDI::RIS(const Bool &hit, const Interaction &it, const Var<D
 
     auto sample_bsdf = [&](MaterialEvaluator *bsdf) {
         DISampleVar sample;
-        BSDFSample bs{swl.dimension()};
+        BSDFSample bs{swl.dimension(), 1};
         Float light_pdf_point = 0.f;
         Float p_hat = compute_p_hat(it, bsdf, &sample, &bs, &light_pdf_point, &hit_bsdf, flag);
         sample.p_hat = p_hat;
@@ -579,7 +579,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf)
     }
     $else {
         Interaction next_it{false};
-        BSDFSample bs{swl.dimension()};
+        BSDFSample bs{swl.dimension(), 1};
         scene().materials().dispatch(it.material_id(), [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, swl);
             bs = bsdf.sample(it.wo, sampler());

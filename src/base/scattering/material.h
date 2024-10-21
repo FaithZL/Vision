@@ -30,7 +30,7 @@ public:
         return {};
     }
     [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
-        return BSDFSample{1u};
+        return BSDFSample{1u, 1u};
     }
     [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;

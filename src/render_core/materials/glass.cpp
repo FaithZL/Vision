@@ -119,7 +119,7 @@ public:
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override {
-        ScatterEval ret{refl_.swl().dimension()};
+        ScatterEval ret{refl_.swl()};
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
         fresnel->correct_eta(cos_theta_o);
@@ -156,7 +156,7 @@ public:
     }
 
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
-        BSDFSample ret{refl_.swl().dimension()};
+        BSDFSample ret{refl_.swl()};
         Float uc = sampler->next_1d();
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);
@@ -182,7 +182,7 @@ public:
 
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
-        BSDFSample ret{refl_.swl().dimension()};
+        BSDFSample ret{refl_.swl()};
         Float uc = sampler->next_1d();
         auto fresnel = fresnel_->clone();
         Float cos_theta_o = cos_theta(wo);

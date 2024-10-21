@@ -258,18 +258,13 @@ public:
         cie_z_.prepare();
     }
     [[nodiscard]] uint dimension() const noexcept override { return dimension_; }
-    [[nodiscard]] uint scatter_pdf_dim() const noexcept override { return 1u; }
-
     [[nodiscard]] Float3 linear_srgb(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         return cie::xyz_to_linear_srgb(cie_xyz(sp, swl));
     }
-
     [[nodiscard]] optional<Bool> is_dispersive(const MaterialEvaluator *evaluator) const noexcept override {
         return evaluator->is_dispersive();
     }
-
     [[nodiscard]] bool is_complete() const noexcept override { return true; }
-
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         Float sum = 0.f;
 
@@ -298,7 +293,8 @@ public:
     }
     [[nodiscard]] SampledWavelengths sample_wavelength(TSampler &sampler) const noexcept override {
         uint n = dimension();
-        SampledWavelengths swl{n, scatter_pdf_dim()};
+        uint scatter_pdf_dim = MaterialRegistry::instance().has_dispersive() ? dimension() : 1;
+        SampledWavelengths swl{n, scatter_pdf_dim};
         Float u = sampler->next_1d();
         for (uint i = 0; i < n; ++i) {
             float offset = static_cast<float>(i * (1.f / n));

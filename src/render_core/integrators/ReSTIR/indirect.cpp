@@ -112,7 +112,7 @@ ScatterEval ReSTIRGI::eval_bsdf(const Interaction &it, const GISampleVar &sample
                                 MaterialEvalMode mode) const noexcept {
     return outline(
         [&] {
-            ScatterEval ret{spectrum()->dimension()};
+            ScatterEval ret{spectrum()->dimension(), 1};
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, sampled_wavelengths());
                 Float3 wi = normalize(sample.sp->position() - it.pos);

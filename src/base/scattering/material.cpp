@@ -10,7 +10,7 @@ namespace vision {
 
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode, const Uint &flag) const noexcept {
-    ScatterEval ret{swl_->dimension()};
+    ScatterEval ret{*swl_};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->evaluate_local(wo, wi, mode, flag);
     });
@@ -19,7 +19,7 @@ ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi
 
 BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
-    BSDFSample ret{swl_->dimension()};
+    BSDFSample ret{*swl_};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->sample_local(wo, flag, sampler);
     });
@@ -27,7 +27,7 @@ BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
 }
 
 BSDFSample MaterialEvaluator::sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
-    BSDFSample ret{swl_->dimension()};
+    BSDFSample ret{*swl_};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->sample_delta_local(wo, sampler);
     });

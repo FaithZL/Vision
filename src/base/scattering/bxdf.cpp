@@ -15,7 +15,7 @@ Float BxDF::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const n
 }
 
 ScatterEval BxDF::evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
-    ScatterEval ret{swl().dimension()};
+    ScatterEval ret{swl()};
     if (BxDF::match_F(mode)) {
         ret.f = f(wo, wi, fresnel);
     }
@@ -31,7 +31,7 @@ Bool BxDF::safe(const Float3 &wo, const Float3 &wi) const noexcept {
 }
 
 ScatterEval BxDF::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
-    ScatterEval ret{swl().dimension()};
+    ScatterEval ret{swl()};
     Bool s = safe(wo, wi);
     if (BxDF::match_F(mode)) {
         ret.f = select(s, f(wo, wi, fresnel), 0.f);
@@ -50,7 +50,7 @@ SampledDirection BxDF::sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel
 }
 
 BSDFSample BxDF::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
-    BSDFSample ret{swl().dimension()};
+    BSDFSample ret{swl()};
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
     ret.eval = evaluate(wo, wi, fresnel, MaterialEvalMode::All);
@@ -79,7 +79,7 @@ SampledDirection MicrofacetReflection::sample_wi(const Float3 &wo, Float2 u, SP<
 }
 
 BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
-    BSDFSample ret{swl().dimension()};
+    BSDFSample ret{swl()};
     auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
     ret.wi = wi;
@@ -154,8 +154,8 @@ SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, S
 }
 
 ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
-//    return BxDF::safe_evaluate(wo, wi, fresnel, mode);
-    ScatterEval ret{swl().dimension()};
+    //    return BxDF::safe_evaluate(wo, wi, fresnel, mode);
+    ScatterEval ret{swl()};
     Bool s = safe(wo, wi);
     if (BxDF::match_F(mode)) {
         ret.f = select(s, f_array(wo, wi, fresnel), 0.f);
@@ -168,7 +168,7 @@ ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3
 }
 
 BSDFSample MicrofacetTransmission::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
-    BSDFSample ret{swl().dimension()};
+    BSDFSample ret{swl()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
     ret.eval.pdfs = select(valid, ret.eval.pdf(), 0.f);

@@ -15,13 +15,13 @@ public:
     explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override {
-        ScatterEval ret{swl_->dimension()};
+        ScatterEval ret{*swl_};
         ret.f = {swl_->dimension(), 0.f};
         ret.pdfs =1.f;
         return ret;
     }
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        BSDFSample ret{swl_->dimension()};
+        BSDFSample ret{*swl_};
         ret.eval.pdfs =1.f;
         /// Avoid sample discarding due to hemispherical check
         ret.eval.flags = BxDFFlag::DiffRefl;
