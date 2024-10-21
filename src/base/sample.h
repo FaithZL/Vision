@@ -77,7 +77,11 @@ public:
         ret.sanitize();
         return ret;
     }
-    [[nodiscard]] Bool valid() const noexcept { return pdfs[0] > 0.f; }
+    [[nodiscard]] Bool valid() const noexcept {
+        return pdfs.all([&](const Float &v) -> Bool {
+            return v > 0.f;
+        });
+    }
     [[nodiscard]] Float &pdf() noexcept { return pdfs[0]; }
     [[nodiscard]] Float pdf() const noexcept { return pdfs[0]; }
     void invalidation() noexcept { pdfs[0] = 0; }
