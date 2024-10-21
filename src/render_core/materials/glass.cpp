@@ -127,11 +127,16 @@ public:
         Float fr = frs[0];
         $if(same_hemisphere(wo, wi)) {
             ret = refl_.evaluate(wo, wi, fresnel, mode);
-            ret.pdfs *= fr;
+            ret.pdfs *= frs.values();
         }
         $else {
             ret = trans_.evaluate(wo, wi, fresnel, mode);
-            ret.pdfs *= 1 - fr;
+            trans_.swl().foreach_secondary_channel([&](uint channel) {
+                $if(frs[channel] == 1) {
+                    trans_.swl().invalidation_channel(channel);
+                };
+            });
+            ret.pdfs *= 1 - frs.values();
         };
         return ret;
     }
@@ -191,11 +196,16 @@ public:
         Float fr = frs[0];
         $if(uc < fr) {
             ret = refl_.sample(wo, sampler, fresnel);
-            ret.eval.pdfs *= fr;
+            ret.eval.pdfs *= frs.values();
         }
         $else {
             ret = trans_.sample(wo, sampler, fresnel);
-            ret.eval.pdfs *= 1 - fr;
+            trans_.swl().foreach_secondary_channel([&](uint channel) {
+                $if(frs[channel] == 1) {
+                    trans_.swl().invalidation_channel(channel);
+                };
+            });
+            ret.eval.pdfs *= 1 - frs.values();
         };
         return ret;
     }
