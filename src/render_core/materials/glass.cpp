@@ -285,7 +285,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors},
                                                       swl, pipeline());
-        MicrofacetReflection refl(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
+        MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
 
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),

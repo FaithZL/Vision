@@ -245,8 +245,8 @@ public:
 public:
     Spectrum() = default;
     explicit Spectrum(const SpectrumDesc &desc) : Node(desc) {}
-    [[nodiscard]] SampledSpectrum zero() const noexcept { return SampledSpectrum{dimension(), 0.f}; }
-    [[nodiscard]] SampledSpectrum one() const noexcept { return SampledSpectrum{dimension(), 1.f}; }
+    [[nodiscard]] SampledSpectrum zero() const noexcept { return SampledSpectrum::zero(dimension()); }
+    [[nodiscard]] SampledSpectrum one() const noexcept { return SampledSpectrum::one(dimension()); }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual SampledWavelengths sample_wavelength(TSampler &sampler) const noexcept = 0;
     [[nodiscard]] virtual uint dimension() const noexcept { return 3; }
