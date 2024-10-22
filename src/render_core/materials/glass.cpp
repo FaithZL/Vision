@@ -131,11 +131,13 @@ public:
         }
         $else {
             ret = trans_.evaluate(wo, wi, fresnel, mode);
-            trans_.swl().foreach_secondary_channel([&](uint channel) {
-                $if(frs[channel] == 1) {
-                    trans_.swl().invalidation_channel(channel);
-                };
-            });
+            if (trans_.swl().scatter_pdf_dim() > 1) {
+                trans_.swl().foreach_secondary_channel([&](uint channel) {
+                    $if(frs[channel] == 1) {
+                        trans_.swl().invalidation_channel(channel);
+                    };
+                });
+            }
             ret.pdfs *= 1 - frs.values();
         };
         return ret;
@@ -200,11 +202,13 @@ public:
         }
         $else {
             ret = trans_.sample(wo, sampler, fresnel);
-            trans_.swl().foreach_secondary_channel([&](uint channel) {
-                $if(frs[channel] == 1) {
-                    trans_.swl().invalidation_channel(channel);
-                };
-            });
+            if (trans_.swl().scatter_pdf_dim() > 1) {
+                trans_.swl().foreach_secondary_channel([&](uint channel) {
+                    $if(frs[channel] == 1) {
+                        trans_.swl().invalidation_channel(channel);
+                    };
+                });
+            }
             ret.eval.pdfs *= 1 - frs.values();
         };
         return ret;
