@@ -291,7 +291,11 @@ public:
                                                       swl, pipeline());
         MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
-
+        if (is_dispersive()) {
+            $if (alpha_min < 0.008f) {
+                swl.invalidation_secondary();
+            };
+        }
         return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
                                               is_dispersive(), flag);
     }
