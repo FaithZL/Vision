@@ -45,6 +45,11 @@ public:
     [[nodiscard]] Box2f screen_window() const noexcept { return screen_window_; }
     [[nodiscard]] bool enable_accumulation() const noexcept { return accumulation_.hv(); }
     void set_resolution(uint2 res) noexcept { resolution_ = res; }
+    void update_resolution(uint2 res) noexcept {
+        set_resolution(res);
+        on_resize(res);
+    }
+    virtual void on_resize(uint2 res) noexcept {}
     [[nodiscard]] auto tone_mapper() const noexcept { return tone_mapper_; }
     [[nodiscard]] auto tone_mapper() noexcept { return tone_mapper_; }
     [[nodiscard]] uint2 resolution() const noexcept { return resolution_; }
@@ -52,7 +57,7 @@ public:
     virtual Float3 add_sample(const Uint2 &pixel, const Float3 &val, const Uint &frame_index) noexcept {
         return add_sample(pixel, make_float4(val, 1.f), frame_index);
     }
-    [[nodiscard]] virtual CommandList accumulate(BufferView<float4> input,BufferView<float4> output,
+    [[nodiscard]] virtual CommandList accumulate(BufferView<float4> input, BufferView<float4> output,
                                                  uint frame_index) const noexcept = 0;
     [[nodiscard]] virtual CommandList tone_mapping(BufferView<float4> input,
                                                    BufferView<float4> output) const noexcept = 0;

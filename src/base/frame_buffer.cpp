@@ -19,7 +19,6 @@ void FrameBuffer::prepare() noexcept {
 void FrameBuffer::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     std::tuple tp = {addressof(visualizer_)};
     HotfixSystem::replace_objects(constructor, tp);
-    int i = 0;
 }
 
 bool FrameBuffer::render_UI(ocarina::Widgets *widgets) noexcept {
@@ -110,6 +109,10 @@ void FrameBuffer::fill_window_buffer(const Buffer<ocarina::float4> &input) noexc
 
 void FrameBuffer::resize(ocarina::uint2 res) noexcept {
     window_buffer_.resize(res.x * res.y, make_float4(0.f));
+}
+
+void FrameBuffer::update_resolution(ocarina::uint2 res) noexcept {
+
 }
 
 uint FrameBuffer::pixel_num() const noexcept {

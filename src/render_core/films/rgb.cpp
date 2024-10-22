@@ -30,6 +30,11 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Film, rt_buffer_, accumulation_buffer_, output_buffer_,
                            accumulate_, tone_mapping_, gamma_correct_)
+
+    void on_resize(uint2 res) noexcept override {
+        prepare();
+    }
+
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         tone_mapper_->render_UI(widgets);
         return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&] {

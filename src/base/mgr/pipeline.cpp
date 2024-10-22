@@ -175,9 +175,10 @@ const Buffer<float4> &Pipeline::view_buffer() {
 }
 
 void Pipeline::change_resolution(uint2 res) noexcept {
+    if (all(res == resolution())) { return; }
     auto film = scene_.camera()->film();
-    film->set_resolution(res);
-    film->prepare();
+    film->update_resolution(res);
+    frame_buffer_->update_resolution(res);
 }
 
 void Pipeline::prepare_geometry() noexcept {

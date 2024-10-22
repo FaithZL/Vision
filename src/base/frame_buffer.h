@@ -125,6 +125,7 @@ public:
     OC_MAKE_MEMBER_GETTER(window_buffer, &)
     void fill_window_buffer(const Buffer<float4> &input) noexcept;
     void resize(uint2 res) noexcept;
+    virtual void update_resolution(uint2 res) noexcept;
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;

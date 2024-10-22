@@ -44,7 +44,7 @@ void App::init_pipeline() {
 void App::prepare() {
     init_pipeline();
     pipeline().prepare();
-    window = FileManager::instance().create_window("LajiRender", pipeline().resolution(), "imGui");
+    window = FileManager::instance().create_window("LajiRender", pipeline().resolution(), "imGui", true);
     register_event();
 }
 
@@ -67,7 +67,7 @@ void App::on_key_event(int key, int action) noexcept {
             if (action) {
                 pipeline().filp_show_fps();
             }
-            return ;
+            return;
         default:
             break;
     }
@@ -126,9 +126,9 @@ void App::on_scroll_event(float2 scroll) noexcept {
     invalidation = true;
     auto camera = pipeline().scene().camera();
     if (key_f_press) {
-//        camera->update_focal_distance(scroll.y * 0.1);
+        //        camera->update_focal_distance(scroll.y * 0.1);
     } else if (key_r_press) {
-//        camera->update_lens_radius(scroll.y * 0.01);
+        //        camera->update_lens_radius(scroll.y * 0.01);
     } else {
         camera->update_fov_y(scroll.y);
     }
@@ -162,9 +162,11 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
         case 0: {
             left_key_press = bool(action);
             switch (action) {
-                case 1: pipeline().on_touch(make_uint2(pos)); break;
-//                case 0: Env::debugger().set_upper(make_uint2(pos)); break;
-                default:break;
+                case 1:
+                    pipeline().on_touch(make_uint2(pos));
+                    break;
+                    //                case 0: Env::debugger().set_upper(make_uint2(pos)); break;
+                default: break;
             }
             break;
         }
@@ -205,7 +207,7 @@ void App::check_and_save() noexcept {
 void App::save_result() noexcept {
     OutputDesc desc = rp->output_desc;
     Image::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
-                        pipeline().resolution(), pipeline().final_picture(desc));
+                      pipeline().resolution(), pipeline().final_picture(desc));
     if (desc.save_exit) {
         exit(0);
     }
@@ -234,7 +236,7 @@ void App::register_event() noexcept {
     });
     //todo check resize bug
     window->set_window_size_callback([&]<typename... Args>(Args &&...args) {
-        //        on_window_size_change(OC_FORWARD(args)...);
+        on_window_size_change(OC_FORWARD(args)...);
     });
 }
 
