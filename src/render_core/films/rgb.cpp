@@ -32,6 +32,7 @@ public:
                            accumulate_, tone_mapping_, gamma_correct_)
 
     void on_resize(uint2 res) noexcept override {
+        frame_buffer().unregister(output_buffer_);
         prepare();
     }
 

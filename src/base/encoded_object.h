@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/stl.h"
-#include "dsl/serialize.h"
+#include "dsl/encode.h"
 #include "node.h"
 #include "mgr/global.h"
 

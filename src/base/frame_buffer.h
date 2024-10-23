@@ -174,10 +174,13 @@ public:
         register_(buffer);
     }
 
-#define VS_MAKE_ATTR_FUNC(buffer_name, count)                             \
-    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                 \
-    void prepare_##buffer_name() noexcept {                               \
-        init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
+#define VS_MAKE_ATTR_FUNC(buffer_name, count)                              \
+    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
+    void prepare_##buffer_name() noexcept {                                \
+        init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count);  \
+    }                                                                      \
+    void reset_##buffer_name() noexcept {                                  \
+        reset_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
     }
 
     VS_MAKE_ATTR_FUNC(surfaces, 2)
@@ -222,6 +225,23 @@ public:
     }
 
     template<typename T>
+    void reset_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
+        if (buffer.size() == 0) {
+            return;
+        }
+        uint element_num = count * pixel_num();
+        buffer.super() = device().create_buffer<T>(element_num, desc);
+        vector<T> vec{};
+        vec.assign(element_num, T{});
+        buffer.upload_immediately(vec.data());
+        buffer.set_bindless_array(bindless_array());
+        buffer.register_self();
+        for (int i = 1; i < count; ++i) {
+            buffer.register_view_index(i, pixel_num() * i, pixel_num());
+        }
+    }
+
+    template<typename T>
     void init_buffer(RegistrableManaged<T> &buffer, const string &desc, uint count = 1) noexcept {
         uint element_num = count * pixel_num();
         buffer.reset_all(device(), element_num, desc);
@@ -231,6 +251,22 @@ public:
         buffer.register_self();
         for (int i = 1; i < count; ++i) {
             buffer.register_view(pixel_num() * i, pixel_num());
+        }
+    }
+
+    template<typename T>
+    void reset_buffer(RegistrableManaged<T> &buffer, const string &desc, uint count = 1) noexcept {
+        if (buffer.device_buffer().size() == 0) {
+            return;
+        }
+        uint element_num = count * pixel_num();
+        buffer.reset_all(device(), element_num, desc);
+        vector<T> vec{};
+        vec.assign(element_num, T{});
+        buffer.set_bindless_array(bindless_array());
+        buffer.register_self();
+        for (int i = 1; i < count; ++i) {
+            buffer.register_view_index(i, pixel_num() * i, pixel_num());
         }
     }
 };

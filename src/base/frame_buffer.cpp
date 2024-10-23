@@ -112,7 +112,7 @@ void FrameBuffer::resize(ocarina::uint2 res) noexcept {
 }
 
 void FrameBuffer::update_resolution(ocarina::uint2 res) noexcept {
-
+    resize(res);
 }
 
 uint FrameBuffer::pixel_num() const noexcept {
