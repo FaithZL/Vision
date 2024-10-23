@@ -178,6 +178,7 @@ void Pipeline::change_resolution(uint2 res) noexcept {
     if (all(res == resolution())) { return; }
     scene_.camera()->update_resolution(res);
     frame_buffer_->update_resolution(res);
+    final_picture_.reset_all(device(), pixel_num(), "offline final picture");
 }
 
 void Pipeline::prepare_geometry() noexcept {

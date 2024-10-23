@@ -48,7 +48,9 @@ public:
     void update_resolution(uint2 res) noexcept {
         set_resolution(res);
         on_resize(res);
+        update_screen_window();
     }
+    void update_screen_window() noexcept;
     virtual void on_resize(uint2 res) noexcept {}
     [[nodiscard]] auto tone_mapper() const noexcept { return tone_mapper_; }
     [[nodiscard]] auto tone_mapper() noexcept { return tone_mapper_; }

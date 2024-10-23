@@ -120,6 +120,7 @@ void App::on_key_event(int key, int action) noexcept {
 
 void App::on_window_size_change(uint2 size) noexcept {
     pipeline().change_resolution(size);
+    invalidation = true;
 }
 
 void App::on_scroll_event(float2 scroll) noexcept {
