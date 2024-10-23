@@ -53,6 +53,7 @@ public:
     virtual void before_render() noexcept {}
     virtual void after_render() noexcept;
     void store_prev_data() noexcept;
+    void update_resolution(uint2 res) noexcept;
     void set_sensitivity(float v) noexcept { sensitivity_ = v; }
     [[nodiscard]] Float3 prev_raster_coord(Float3 pos) const noexcept;
     [[nodiscard]] Float3 raster_coord(Float3 pos) const noexcept;

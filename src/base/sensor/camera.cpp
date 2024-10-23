@@ -82,6 +82,11 @@ void Camera::set_mat(ocarina::float4x4 m) noexcept {
     position_ = make_float3(m[3]);
 }
 
+void Camera::update_resolution(ocarina::uint2 res) noexcept {
+    film()->update_resolution(res);
+    _update_resolution(res);
+}
+
 void Camera::after_render() noexcept {
     store_prev_data();
 }
