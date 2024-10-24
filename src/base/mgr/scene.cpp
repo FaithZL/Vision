@@ -34,6 +34,7 @@ void Scene::init(const SceneDesc &scene_desc) {
 
 void Scene::update_resolution(ocarina::uint2 res) noexcept {
     camera()->update_resolution(res);
+    integrator()->update_resolution(res);
 }
 
 void Scene::tidy_up() noexcept {
