@@ -119,6 +119,7 @@ void FrameBuffer::update_resolution(ocarina::uint2 res) noexcept {
     reset_hit_bsdfs();
     reset_motion_vectors();
     reset_hit_buffer();
+    reset_buffer(view_buffer_, "FrameBuffer::view_buffer_");
     pipeline()->upload_bindless_array();
 }
 
