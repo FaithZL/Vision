@@ -58,6 +58,7 @@ public:
         return make_float3(0.f);
     }
     [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
+    virtual void update_resolution(uint2 res) noexcept {}
     [[nodiscard]] uint frame_index() const noexcept { return frame_index_; }
     [[nodiscard]] double render_time() const noexcept { return render_time_; }
     OC_MAKE_MEMBER_GETTER(cur_render_time, )
@@ -122,11 +123,8 @@ public:
     OC_ENCODABLE_FUNC(Integrator, max_depth_, min_depth_, rr_threshold_)
     VS_MAKE_GUI_STATUS_FUNC(Integrator, denoiser_)
     OC_MAKE_MEMBER_GETTER(separate, )
-
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
-
     [[nodiscard]] bool has_denoiser() const noexcept override { return bool(denoiser_); }
-
     [[nodiscard]] Float correct_bsdf_weight(Float weight, Uint bounce) const noexcept {
         switch (mis_mode_) {
             case MISMode::EBSDF: {

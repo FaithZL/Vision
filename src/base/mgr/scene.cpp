@@ -32,6 +32,10 @@ void Scene::init(const SceneDesc &scene_desc) {
     Interaction::set_ray_offset_factor(scene_desc.render_setting.ray_offset_factor);
 }
 
+void Scene::update_resolution(ocarina::uint2 res) noexcept {
+    camera()->update_resolution(res);
+}
+
 void Scene::tidy_up() noexcept {
     light_sampler_->tidy_up();
     material_registry().tidy_up();

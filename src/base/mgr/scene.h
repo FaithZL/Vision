@@ -54,6 +54,7 @@ public:
     void prepare() noexcept;
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return render_setting_.polymorphic_mode; }
+    void update_resolution(uint2 res) noexcept;
     [[nodiscard]] Pipeline *pipeline() noexcept;
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
                          material_registry_, spectrum_, sampler_)
