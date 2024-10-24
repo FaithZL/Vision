@@ -97,6 +97,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_, max_age_, integrator_)
     OC_MAKE_MEMBER_SETTER(integrator)
     OC_MAKE_MEMBER_GETTER(open, )
+    virtual void update_resolution() noexcept {}
     [[nodiscard]] Uint checkerboard_value() const noexcept {
         return frame_buffer().checkerboard_value(dispatch_idx().xy());
     }
