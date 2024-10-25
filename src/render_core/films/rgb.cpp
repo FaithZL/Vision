@@ -32,8 +32,7 @@ public:
                            accumulate_, tone_mapping_, gamma_correct_)
 
     void on_resize(uint2 res) noexcept override {
-        frame_buffer().unregister(output_buffer_);
-        prepare();
+        prepare_buffers();
     }
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
@@ -79,7 +78,7 @@ public:
         compile_tone_mapping();
         compile_gamma_correction();
     }
-    void prepare() noexcept override {
+    void prepare_buffers() noexcept {
         auto prepare = [&](RegistrableManaged<float4> &managed, const string &desc = "") noexcept {
             managed.set_bindless_array(pipeline()->bindless_array());
             managed.reset_all(device(), pixel_num(), desc);
@@ -88,6 +87,9 @@ public:
         };
         prepare(rt_buffer_, "RGBFilm::rt_buffer_");
         prepare(accumulation_buffer_, "RGBFilm::accumulation_buffer_");
+    }
+    void prepare() noexcept override {
+        prepare_buffers();
         frame_buffer().prepare_screen_buffer(output_buffer_);
     }
     Float3 add_sample(const Uint2 &pixel, Float4 val, const Uint &frame_index) noexcept override {

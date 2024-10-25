@@ -80,6 +80,9 @@ public:
     explicit ScreenBuffer(string key) : Super() {
         name_ = std::move(key);
     }
+    [[nodiscard]] const Super &super() const { return *this; }
+    [[nodiscard]] Super &super() { return *this; }
+    void update_resolution(uint2 res, Device &device) noexcept;
 };
 
 class FrameBuffer : public Node, public Observer {

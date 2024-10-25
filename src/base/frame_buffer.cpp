@@ -7,6 +7,11 @@
 
 namespace vision {
 
+void ScreenBuffer::update_resolution(ocarina::uint2 res, Device &device) noexcept {
+    super().reset_all(device, res.x * res.y, name_);
+    register_self();
+}
+
 FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
     : Node(desc) {
     visualizer_->init();
@@ -120,6 +125,9 @@ void FrameBuffer::update_resolution(ocarina::uint2 res) noexcept {
     reset_motion_vectors();
     reset_hit_buffer();
     reset_buffer(view_buffer_, "FrameBuffer::view_buffer_");
+    for (auto &it : screen_buffers_) {
+        it.second->update_resolution(res, device());
+    }
     pipeline()->upload_bindless_array();
 }
 
