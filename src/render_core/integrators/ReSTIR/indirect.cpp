@@ -155,7 +155,7 @@ GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar
                                         const Var<GIParam> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
-    int2 res = make_int2(pipeline()->resolution());
+    Int2 res = make_int2(dispatch_dim().xy());
     TCamera &camera = scene().camera();
 
     Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
@@ -273,7 +273,7 @@ GIReservoirVar ReSTIRGI::combine_spatial(GIReservoirVar cur_rsv,
 GIReservoirVar ReSTIRGI::spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
                                        const Int2 &pixel, const Var<GIParam> &param) const noexcept {
     $if(param.spatial) {
-        int2 res = make_int2(pipeline()->resolution());
+        Int2 res = make_int2(dispatch_dim().xy());
         Container<uint> rsv_idx{spatial_.sample_num};
         $for(i, spatial_.sample_num) {
             Float2 offset = square_to_disk(sampler()->next_2d()) * param.s_radius;
