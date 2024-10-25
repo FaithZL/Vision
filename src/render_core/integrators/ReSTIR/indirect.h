@@ -79,6 +79,7 @@ public:
         compile_temporal_reuse();
         compile_spatial_shading();
     }
+    void update_resolution(ocarina::uint2 res) noexcept override;
     [[nodiscard]] HOTFIX_VIRTUAL Float Jacobian_det(Float3 cur_pos, Float3 neighbor_pos, Var<SurfacePoint> sample_point) const noexcept;
     [[nodiscard]] HOTFIX_VIRTUAL GISampleVar init_sample(const Interaction &it, const SensorSample &ss,
                                                          HitBSDFVar &hit_bsdf) noexcept;

@@ -656,6 +656,17 @@ void ReSTIRDI::prepare() noexcept {
     reservoirs_.upload_immediately(host.data());
 }
 
+void ReSTIRDI::update_resolution(ocarina::uint2 res) noexcept {
+    Pipeline *rp = pipeline();
+    reservoirs_.super() = device().create_buffer<DIReservoir>(rp->pixel_num() * 3,
+                                                              "ReSTIRDI::reservoirs_ x 3");
+    reservoirs_.register_self(0, rp->pixel_num());
+    reservoirs_.register_view_index(1, rp->pixel_num(), rp->pixel_num());
+    reservoirs_.register_view_index(2, rp->pixel_num() * 2, rp->pixel_num());
+    vector<DIReservoir> host{rp->pixel_num() * 3, DIReservoir{}};
+    reservoirs_.upload_immediately(host.data());
+}
+
 DIParam ReSTIRDI::construct_param() const noexcept {
     DIParam param;
     param.M_light = M_light_;

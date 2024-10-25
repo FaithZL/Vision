@@ -130,8 +130,8 @@ Float ReSTIRGI::compute_p_hat(const vision::Interaction &it,
 }
 
 GIReservoirVar ReSTIRGI::combine_temporal(const GIReservoirVar &cur_rsv, SurfaceDataVar cur_surf,
-                                       GIReservoirVar &other_rsv, SurfaceDataVar *neighbor_surf,
-                                       Float3 view_pos, Float3 prev_view_pos) const noexcept {
+                                          GIReservoirVar &other_rsv, SurfaceDataVar *neighbor_surf,
+                                          Float3 view_pos, Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
     TCamera &camera = scene().camera();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
@@ -151,8 +151,8 @@ GIReservoirVar ReSTIRGI::combine_temporal(const GIReservoirVar &cur_rsv, Surface
 }
 
 GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                     const Float2 &motion_vec, const SensorSample &ss,
-                                     const Var<GIParam> &param) const noexcept {
+                                        const Float2 &motion_vec, const SensorSample &ss,
+                                        const Var<GIParam> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     int2 res = make_int2(pipeline()->resolution());
@@ -236,7 +236,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
 }
 
 GIReservoirVar ReSTIRGI::constant_combine(const GIReservoirVar &canonical_rsv,
-                                       const Container<uint> &rsv_idx) const noexcept {
+                                          const Container<uint> &rsv_idx) const noexcept {
     TCamera &camera = scene().camera();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
@@ -263,7 +263,7 @@ GIReservoirVar ReSTIRGI::constant_combine(const GIReservoirVar &canonical_rsv,
 }
 
 GIReservoirVar ReSTIRGI::combine_spatial(GIReservoirVar cur_rsv,
-                                      const Container<uint> &rsv_idx) const noexcept {
+                                         const Container<uint> &rsv_idx) const noexcept {
 
     cur_rsv = constant_combine(cur_rsv, rsv_idx);
 
@@ -271,7 +271,7 @@ GIReservoirVar ReSTIRGI::combine_spatial(GIReservoirVar cur_rsv,
 }
 
 GIReservoirVar ReSTIRGI::spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar &cur_surf,
-                                    const Int2 &pixel, const Var<GIParam> &param) const noexcept {
+                                       const Int2 &pixel, const Var<GIParam> &param) const noexcept {
     $if(param.spatial) {
         int2 res = make_int2(pipeline()->resolution());
         Container<uint> rsv_idx{spatial_.sample_num};
@@ -360,13 +360,30 @@ CommandList ReSTIRGI::dispatch(uint frame_index) const noexcept {
     return ret;
 }
 
+void ReSTIRGI::update_resolution(ocarina::uint2 res) noexcept {
+    Pipeline *rp = pipeline();
+    reservoirs_.super() = device().create_buffer<GIReservoir>(rp->pixel_num() * 3,
+                                                              "ReSTIRGI::reservoirs_ x 3");
+    reservoirs_.register_self(0, rp->pixel_num());
+    reservoirs_.register_view_index(1, rp->pixel_num(), rp->pixel_num());
+    reservoirs_.register_view_index(2, rp->pixel_num() * 2, rp->pixel_num());
+    vector<GIReservoir> host{rp->pixel_num() * 3, GIReservoir{}};
+    reservoirs_.upload_immediately(host.data());
+
+    samples_.super() = device().create_buffer<GISample>(rp->pixel_num(),
+                                                        "ReSTIRGI::samples_");
+    samples_.register_self();
+    vector<GISample> vec{rp->pixel_num(), GISample{}};
+    samples_.upload_immediately(vec.data());
+}
+
 void ReSTIRGI::prepare() noexcept {
     Pipeline *rp = pipeline();
 
     frame_buffer().prepare_screen_buffer(radiance_);
 
     reservoirs_.super() = device().create_buffer<GIReservoir>(rp->pixel_num() * 3,
-                                                            "ReSTIRGI::reservoirs_ x 3");
+                                                              "ReSTIRGI::reservoirs_ x 3");
     reservoirs_.register_self(0, rp->pixel_num());
     reservoirs_.register_view(rp->pixel_num(), rp->pixel_num());
     reservoirs_.register_view(rp->pixel_num() * 2, rp->pixel_num());
@@ -374,7 +391,7 @@ void ReSTIRGI::prepare() noexcept {
     reservoirs_.upload_immediately(host.data());
 
     samples_.super() = device().create_buffer<GISample>(rp->pixel_num(),
-                                                         "ReSTIRGI::samples_");
+                                                        "ReSTIRGI::samples_");
     samples_.register_self();
     vector<GISample> vec{rp->pixel_num(), GISample{}};
     samples_.upload_immediately(vec.data());

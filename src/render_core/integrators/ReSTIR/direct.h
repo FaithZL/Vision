@@ -90,6 +90,7 @@ public:
                                    param.s_dot,
                                    param.s_depth);
     }
+    void update_resolution(uint2 res) noexcept override;
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
                                                 const SurfaceDataVar &prev_surface,
                                                 const Var<DIParam> &param,

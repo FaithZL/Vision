@@ -42,6 +42,11 @@ public:
         indirect_->set_integrator(this);
     }
 
+    void update_resolution(ocarina::uint2 res) noexcept override {
+        direct_->update_resolution(res);
+        indirect_->update_resolution(res);
+    }
+
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         std::tuple tp = {addressof(direct_), addressof(indirect_)};
         HotfixSystem::replace_objects(constructor, tp);
