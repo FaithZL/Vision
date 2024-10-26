@@ -25,7 +25,7 @@ public:
     };
 
 private:
-    State state_{ERay};
+    State state_{EOff};
     bool show_{false};
     float3 color_{make_float3(1, 0, 0)};
     int width_{0};
