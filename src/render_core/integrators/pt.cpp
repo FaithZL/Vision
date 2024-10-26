@@ -19,13 +19,11 @@ public:
     explicit PathTracingIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
           inspector_(make_shared<ConvergenceInspector>(desc.value("adaptive"))) {}
-
     VS_MAKE_PLUGIN_NAME_FUNC
-
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         inspector_->render_UI(widgets);
     }
-
+    
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
         inspector_->prepare();
@@ -38,17 +36,16 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, inspector_)
     [[nodiscard]] Film *film() noexcept { return scene().film(); }
     [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
-
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         std::tuple tp = {addressof(inspector_)};
         HotfixSystem::replace_objects(constructor, tp);
     }
-
     void add_sample(const Uint2 &pixel, Float3 val, const Uint &frame_index) noexcept {
         val = film()->add_sample(pixel, val, frame_index);
-//        inspector_->add_sample(pixel, val, frame_index);
+        if (inspector_->open()) {
+            inspector_->add_sample(pixel, val, frame_index);
+        }
     }
-
     void compile() noexcept override {
         TCamera &camera = scene().camera();
         TSampler &sampler = scene().sampler();
@@ -59,10 +56,12 @@ public:
             sampler->load_data();
             camera->load_data();
             load_data();
-//            $if(inspector_->is_convergence(frame_index)) {
-//                return_();
-//            };
-//            $condition_info("is convergence {}", inspector_->is_convergence(frame_index).cast<uint>());
+            if (inspector_->open()) {
+                $if(inspector_->is_convergence(frame_index)) {
+                    return_();
+                };
+                $condition_info("is convergence {}", inspector_->is_convergence(frame_index).cast<uint>());
+            }
             render_env.initial(sampler, frame_index, spectrum());
             sampler->start(pixel, frame_index, 0);
             SensorSample ss = sampler->sensor_sample(pixel, camera->filter());

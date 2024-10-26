@@ -24,19 +24,22 @@ CommandList ConvergenceInspector::reset() noexcept {
 void ConvergenceInspector::add_sample(const Uint2 &pixel, const Float3 &value,
                                       const Uint &frame_index) noexcept {
     VarianceStatsVar vs = variance_stats_.read(dispatch_id());
-    vs->add(luminance(value));
-        $condition_info("{} avg {}  var {}   rv  {}  {}", vs.N, vs.avg, vs.var, vs->relative_variance(), *min_sample_num_);
+    vs->add(value.x + value.y + value.z);
+//        $condition_info("{} avg {}  var {}   rv  {}  {}", vs.N, vs.avg, vs.var, vs->relative_variance(), *min_sample_num_);
     variance_stats_.write(dispatch_id(), vs);
 }
 
 Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcept {
     VarianceStatsVar vs = variance_stats_.read(dispatch_id());
-    return vs.N > *min_sample_num_ && vs.var < *threshold_;
+    return vs.N > *min_sample_num_ && vs->relative_variance() < *threshold_;
 }
 
 bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
     widgets->use_tree("adaptive sampling", [&] {
-        render_sub_UI(widgets);
+        widgets->check_box("open", &open_);
+        if (open_) {
+            render_sub_UI(widgets);
+        }
     });
     return true;
 }
