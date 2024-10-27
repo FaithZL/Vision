@@ -36,7 +36,7 @@ Bool ConvergenceInspector::is_convergence(const Uint &frame_index) const noexcep
 
 bool ConvergenceInspector::render_UI(ocarina::Widgets *widgets) noexcept {
     widgets->use_tree("adaptive sampling", [&] {
-        widgets->check_box("open", &open_);
+        widgets->check_box("switch", &open_);
         if (open_) {
             render_sub_UI(widgets);
         }
