@@ -8,9 +8,12 @@ def copy_file(src_file, dst_dir):
     dst_file = os.path.join(dst_dir, filename)
 
     src_time = os.path.getmtime(src_file)
-    dst_time = os.path.getmtime(dst_file)
-    
-    if src_time > dst_time:
+    if os.path.exists(dst_file):
+        dst_time = os.path.getmtime(dst_file)
+        if src_time > dst_time:
+            shutil.copy2(src_file, dst_file)
+            print(f"Copied {src_file} to {dst_file}")
+    else:
         shutil.copy2(src_file, dst_file)
         print(f"Copied {src_file} to {dst_file}")
     
