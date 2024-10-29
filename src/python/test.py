@@ -10,5 +10,8 @@ print(f2.xx)
 f2.xy = vision.ocapi.float2(5,6)
 print(f2.xx)
 print(f2.xy)
-print(f2.yx)
-# print(mc)
+print(f2.xyx)
+
+f3 = f2.xyx
+
+print(f3)
