@@ -14,4 +14,4 @@ print(f2.xyx)
 
 f3 = f2.xyx
 
-print(vision.ocapi.make_uint2(0,3) | vision.ocapi.make_uint2(1,2))
+print(vision.ocapi.rcp(f3))
