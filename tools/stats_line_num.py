@@ -57,6 +57,8 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src/ocarina/src")):
             continue
         if "stats_line_num.py" in fn:
             continue
+        if "python\\vision\\" in fn:
+            continue
         if "builtin\\optix\\" in fn:
             continue
         if "jitify" in fn:
