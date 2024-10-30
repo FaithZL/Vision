@@ -14,4 +14,4 @@ print(f2.xyx)
 
 f3 = f2.xyx
 
-print(vision.ocapi.pow(f3 , f3))
+print(vision.ocapi.lerp(f3 * 0 , f3 / 2 , f3))
