@@ -1,7 +1,7 @@
 import vision
+from vision import ocapi
+from vision.ocapi import *
 
-print(vision.ocapi.add(1,2))
-print(vision.ocapi.sub(1,2))
 f2 = vision.ocapi.float2(1,2)
 print(f2)
 f2[0] = 3.88999
@@ -16,3 +16,4 @@ f3 = f2.xyx
 
 print(vision.ocapi.lerp(f3 * 0 , f3 / 2 , f3))
 print(vision.ocapi.make_bool3(f3))
+print(as_float(ocapi.as_uint(f3.x)))
