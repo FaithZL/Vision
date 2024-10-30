@@ -16,4 +16,4 @@ f3 = f2.xyx
 
 print(vision.ocapi.lerp(f3 * 0 , f3 / 2 , f3))
 print(vision.ocapi.make_bool3(f3))
-print(as_float(ocapi.as_uint(f3.x)))
+print(as_float3(ocapi.as_uint3(f3)))
