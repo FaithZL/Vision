@@ -17,3 +17,11 @@ f3 = f2.xyx
 print(vision.ocapi.lerp(f3 * 0 , f3 / 2 , f3))
 print(vision.ocapi.make_bool3(f3))
 print(as_float3(ocapi.as_uint3(f3)))
+
+m = float2x2(5)
+m[0] = make_float2(1,6)
+
+print(m)
+print(float3([1,22,0]))
+print(float2x2([float2(1,2),float2(3,4)]))
+print(float2x2([(1,2),(3,5)]))
