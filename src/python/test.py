@@ -29,3 +29,6 @@ print(make_float2x2([(1,2),(3,5)]) * 2)
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)]))
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
 print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
+print(float4x4(5))
+
+print(Device.create("cuda", vision.package_path))
