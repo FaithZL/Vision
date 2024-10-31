@@ -2,6 +2,7 @@
 import os
 import shutil
 import glob
+import sys
 
 def copy_file(src_file, dst_dir):
     filename = os.path.basename(src_file)
@@ -27,9 +28,18 @@ def copy_files(src_dir, dst_dir):
     for src_file in glob.glob(os.path.join(src_dir, '*.dll')):
         copy_file(src_file, dst_dir)
 
+args = sys.argv
 
-src = os.path.join(os.getcwd(), "cmake-build-debug\\bin")
+
+# 第一个参数是脚本名称，后面的参数是传入的参数
+if len(args) > 1:
+    src = args[1]
+else:
+    src = "cmake-build-debug\\bin"
+
+src = os.path.join(os.getcwd(), src)
 dst = os.path.join(os.getcwd(), "src\\python\\vision")
-print(src)
-print(dst)
+
+print("from ", src)
+print("to ",dst)
 copy_files(src, dst)
