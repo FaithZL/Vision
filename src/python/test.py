@@ -55,9 +55,9 @@ else:  # Unix/Linux/Mac
 
 # dll = ctypes.CDLL("D:/work/engines/Vision/src/python/vision/ocarina-backend-cuda.dll")
 d = vision.create_device("cuda")
-accel = d.create_accel()
+acc = d.create_accel()
 
-print(d, accel)
+# print(d, accel)
 
 
 
@@ -79,7 +79,7 @@ print(d, accel)
 # load_lib("D:/work/engines/Vision/src/python/vision/ocarina-dsl.dll")
 # load_lib("D:/work/engines/Vision/src/python/vision/spdlogd.dll")
 # load_lib("D:/work/engines/Vision/src/python/vision/ocarina-generator.dll")
-load_lib("D:/work/engines/Vision/src/python/vision/ocarina-util.dll")
+# load_lib("D:/work/engines/Vision/src/python/vision/ocarina-util.dll")
 print("wic")
 # load_lib("D:/work/engines/Vision/src/python/vision/ocarina-backend-cuda.dll")
 # dll = ctypes.CDLL("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0/bin/cudart64_12.dll")
