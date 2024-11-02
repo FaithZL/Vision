@@ -39,8 +39,8 @@ def generate_pyi(module_name):
         )
         
         print('generate_pyi success Return Code:', result.returncode)
-        # print('Output:', result.stdout)
-        # print('Error:', result.stderr)
+        print('Output:', result.stdout)
+        print('Error:', result.stderr)
         
     except subprocess.CalledProcessError as e:
         print('An error occurred while generating .pyi file:')

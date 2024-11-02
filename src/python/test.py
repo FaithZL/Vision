@@ -30,7 +30,10 @@ print(make_float2x2([(1,2),(3,5)]) * 2)
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)]))
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
 print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
+d = vision.create_device("cuda")
+acc = d.create_accel()
 print(float4x4(5))
+print(float2x3())
 
 # d = Device.create("cuda", vision.package_path)
 # print("------------")
@@ -54,8 +57,8 @@ else:  # Unix/Linux/Mac
 #         os.add_dll_directory(path)
 
 # dll = ctypes.CDLL("D:/work/engines/Vision/src/python/vision/ocarina-backend-cuda.dll")
-d = vision.create_device("cuda")
-acc = d.create_accel()
+
+# del acc
 
 # print(d, accel)
 
@@ -80,7 +83,7 @@ acc = d.create_accel()
 # load_lib("D:/work/engines/Vision/src/python/vision/spdlogd.dll")
 # load_lib("D:/work/engines/Vision/src/python/vision/ocarina-generator.dll")
 # load_lib("D:/work/engines/Vision/src/python/vision/ocarina-util.dll")
-print("wic")
+# print(dir(ocapi))
 # load_lib("D:/work/engines/Vision/src/python/vision/ocarina-backend-cuda.dll")
 # dll = ctypes.CDLL("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0/bin/cudart64_12.dll")
 
