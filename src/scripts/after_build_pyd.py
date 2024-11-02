@@ -32,7 +32,7 @@ def copy_files(src_dir, dst_dir):
 def generate_pyi(module_name):
     try:
         result = subprocess.run(
-            [sys.executable, '-m', 'pybind11_stubgen', module_name],
+            [sys.executable, '-m', 'pybind11_stubgen', module_name, "-o", dst],
             capture_output=True,
             text=True,
             check=True
@@ -79,13 +79,10 @@ def move_pyi_file():
 
 
 def main():
-    
     copy_files(src, dst)
-
     os.environ['PYTHONPATH'] = dst
     module_name = "ocapi"
     generate_pyi(module_name)
-    move_pyi_file()
-# 
+
 if __name__ == "__main__":
     main()
