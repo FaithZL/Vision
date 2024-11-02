@@ -48,22 +48,44 @@ def generate_pyi(module_name):
         print('Output:', e.output)
         print('Error:', e.stderr)
 
-def main():
-    args = sys.argv
-    if len(args) > 1:
-        src = args[1]
-    else:
-        src = "cmake-build-debug\\bin"
-    src = os.path.join(os.getcwd(), src)
-    dst = os.path.join(os.getcwd(), "src\\python\\vision")
+args = sys.argv
+if len(args) > 1:
+    src = args[1]
+else:
+    src = "cmake-build-debug\\bin"
+src = os.path.join(os.getcwd(), src)
+dst = os.path.join(os.getcwd(), "src\\python\\vision")
 
-    print("from ", src)
-    print("to ",dst)
+os.chdir(dst)
+
+print("from ", src)
+print("to ",dst)
+
+def move_pyi_file():
+    # 获取当前工作目录
+    current_directory = dst
+    
+    # 定义源文件路径和目标文件路径
+    source_file = os.path.join(current_directory, 'stubs', 'ocapi.pyi')
+    destination_file = os.path.join(current_directory, 'ocapi.pyi')
+
+    # 检查源文件是否存在
+    if os.path.exists(source_file):
+        # 移动文件
+        shutil.move(source_file, destination_file)
+        print(f'Moved: {source_file} to {destination_file}')
+    else:
+        print(f'File not found: {source_file}')
+
+
+def main():
+    
     copy_files(src, dst)
 
     os.environ['PYTHONPATH'] = dst
     module_name = "ocapi"
     generate_pyi(module_name)
-
+    move_pyi_file()
+# 
 if __name__ == "__main__":
     main()
