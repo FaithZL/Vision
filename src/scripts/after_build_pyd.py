@@ -5,12 +5,12 @@ import glob
 import sys
 import subprocess
 
-def copy_file(src_file, dst_dir):
+def copy_file(src_file, dst_dir, force=False):
     filename = os.path.basename(src_file)
     dst_file = os.path.join(dst_dir, filename)
 
     src_time = os.path.getmtime(src_file)
-    if os.path.exists(dst_file):
+    if os.path.exists(dst_file) and not force:
         dst_time = os.path.getmtime(dst_file)
         if src_time > dst_time:
             shutil.copy2(src_file, dst_file)
@@ -20,14 +20,15 @@ def copy_file(src_file, dst_dir):
         print(f"Copied {src_file} to {dst_file}")
     
 
-def copy_files(src_dir, dst_dir):
+def copy_files(src_dir, dst_dir, force=False):
     os.makedirs(dst_dir, exist_ok=True)
 
     for src_file in glob.glob(os.path.join(src_dir, '*.pyd')):
-        copy_file(src_file, dst_dir)
+        copy_file(src_file, dst_dir, force)
         
     for src_file in glob.glob(os.path.join(src_dir, '*.dll')):
-        copy_file(src_file, dst_dir)
+        copy_file(src_file, dst_dir, force)
+        
 
 def generate_pyi(module_name):
     try:
@@ -61,25 +62,24 @@ os.chdir(dst)
 print("from ", src)
 print("to ",dst)
 
-def move_pyi_file():
-    # 获取当前工作目录
-    current_directory = dst
-    
-    # 定义源文件路径和目标文件路径
-    source_file = os.path.join(current_directory, 'stubs', 'ocapi.pyi')
-    destination_file = os.path.join(current_directory, 'ocapi.pyi')
+def read_config():
+    fn = "last_dst.txt"
+    force = True
+    with open(fn, "r") as f:
+        content = f.read()
+        if content == src:
+            force = False
+        else:
+            force = True
 
-    # 检查源文件是否存在
-    if os.path.exists(source_file):
-        # 移动文件
-        shutil.move(source_file, destination_file)
-        print(f'Moved: {source_file} to {destination_file}')
-    else:
-        print(f'File not found: {source_file}')
-
+    with open(fn , "w") as f:
+        f.write(src)
+    return force
+        
 
 def main():
-    copy_files(src, dst)
+    force = read_config()
+    copy_files(src, dst, force)
     os.environ['PYTHONPATH'] = dst
     module_name = "ocapi"
     generate_pyi(module_name)
