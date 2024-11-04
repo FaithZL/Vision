@@ -55,7 +55,7 @@ if len(args) > 1:
 else:
     src = "cmake-build-debug\\bin"
 src = os.path.join(os.getcwd(), src)
-dst = os.path.join(os.getcwd(), "src\\python\\vision")
+dst = os.path.join(os.getcwd(), "src\\pylibs\\vision")
 
 os.chdir(dst)
 
@@ -65,7 +65,7 @@ print("to ",dst)
 def read_config():
     fn = "last_dst.txt"
     force = True
-    with open(fn, "r") as f:
+    with open(fn, "w+") as f:
         content = f.read()
         if content == src:
             force = False
