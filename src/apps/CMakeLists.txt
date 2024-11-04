@@ -4,7 +4,7 @@ vision_add_application(vision-gui SOURCES ${SOURCE_FILES})
 
 if (CMAKE_GENERATOR MATCHES "Visual Studio")
     add_custom_target(export_to_python ALL
-            DEPENDS vision-gui
+            DEPENDS vision-gui ocapi
             COMMAND ${CMAKE_COMMAND} -E echo "export libraries after all targets are built..."
             COMMAND ${CMAKE_COMMAND} -E echo "start copy"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -14,7 +14,7 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     )
 else ()
     add_custom_target(export_to_python ALL
-            DEPENDS vision-gui
+            DEPENDS vision-gui ocapi
             COMMAND ${CMAKE_COMMAND} -E echo "export libraries after all targets are built..."
             COMMAND ${CMAKE_COMMAND} -E echo "start copy"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

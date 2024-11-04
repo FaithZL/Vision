@@ -31,12 +31,19 @@ print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)]))
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
 print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
 d = vision.create_device("cuda")
-d.create_accel()
+
+def main():
+    acc = d.create_accel()
+    print("wocao")
+    # del acc
+
+main()
+
 t = Type.from_desc(float2().desc())
 print(t.description())
 print(t.name())
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
-buffer = d.create_buffer_float2(2)
-print(buffer.size())
+# buffer = d.create_buffer_float2(2)
+# print(buffer.size())
