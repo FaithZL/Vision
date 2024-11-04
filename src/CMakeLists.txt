@@ -36,6 +36,7 @@ add_subdirectory(pipelines)
 add_subdirectory(render_core)
 add_subdirectory(hotfix)
 add_subdirectory(sdk)
+
 if (${OCARINA_BUILD_TESTS})
     add_subdirectory(tests)
 endif ()
@@ -54,3 +55,5 @@ add_library(vision-all_libs INTERFACE)
 target_link_libraries(vision-all_libs INTERFACE
         vision-main
         vision-plugins)
+
+add_subdirectory(python)
