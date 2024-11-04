@@ -63,17 +63,22 @@ print("from ", src)
 print("to ",dst)
 
 def read_config():
-    fn = "last_dst.txt"
+    fn = "last_src.txt"
     force = True
-    with open(fn, "w+") as f:
-        content = f.read()
-        if content == src:
-            force = False
-        else:
-            force = True
-
+    if os.path.exists(fn):
+        with open(fn, "r") as f:
+            content = f.read()
+            print("last src is", content)
+            print("current src is", src)
+            force = content != src
+            f.close()
+    else:
+        print(fn, " is not exist")
+            
+    print("Force is ", force)
     with open(fn , "w") as f:
         f.write(src)
+        f.close()
     return force
         
 
@@ -81,8 +86,8 @@ def main():
     force = read_config()
     copy_files(src, dst, force)
     os.environ['PYTHONPATH'] = dst
-    module_name = "ocapi"
-    generate_pyi(module_name)
+    generate_pyi("ocapi")
+    generate_pyi("vsapi")
 
 if __name__ == "__main__":
     main()

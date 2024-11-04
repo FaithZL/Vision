@@ -1,14 +1,9 @@
 file(GLOB_RECURSE HEADER_FILES *.h*)
 file(GLOB_RECURSE SOURCE_FILES *.c*)
 
-add_library(vsapi SHARED ${SOURCE_FILES})
+pybind11_add_module(vsapi ${SOURCE_FILES})
 target_link_libraries(vsapi PUBLIC
         vision-all_libs)
-
-set_target_properties(vsapi PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 
 if (CMAKE_GENERATOR MATCHES "Visual Studio")

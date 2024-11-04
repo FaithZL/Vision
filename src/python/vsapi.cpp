@@ -3,3 +3,9 @@
 //
 
 #include "vsapi.h"
+
+PYBIND11_MODULE(vsapi, m) {
+    m.def("test", [&](int a, int b) {
+        return a + b;
+    });
+}
