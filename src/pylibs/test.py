@@ -32,12 +32,22 @@ print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
 print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
 d = vision.create_device("cuda")
 
+
 def main():
     acc = d.create_accel()
     print("wocao")
+    ocapi.init_context("cuda", vision.package_path)
+
+    # d2 = ocapi.device()
     # del acc
 
 main()
+
+
+
+# print(id(d2))
+# print(id(d))
+
 
 t = Type.from_desc(float2().desc())
 print(t.description())
