@@ -49,5 +49,14 @@ print(t.name())
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
-# buffer = d.create_buffer_float2(2)
-# print(buffer.size())
+buffer = buffer_float2.create(2)
+print(buffer.size())
+buffer.upload([float2(1,2), float2(3,4)])
+
+lst = [float2(0,0), float2(0)]
+
+buffer.download(lst)
+
+print(lst)
+
+buffer = None
