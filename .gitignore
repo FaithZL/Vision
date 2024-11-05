@@ -16,5 +16,9 @@
 /cmake-build-minsizerel-llvm
 /build
 /vs2019
-/src/pylibs/vision/*
+*.pyd
+*.pyi
+*.pyc
+*.dll
+/src/pylibs/vision/*.txt
 /**/.cache/*

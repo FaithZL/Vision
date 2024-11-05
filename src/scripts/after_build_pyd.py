@@ -57,6 +57,8 @@ else:
 src = os.path.join(os.getcwd(), src)
 dst = os.path.join(os.getcwd(), "src\\pylibs\\vision")
 
+if not os.path.exists(dst):
+    os.makedirs(dst)
 os.chdir(dst)
 
 print("from ", src)
