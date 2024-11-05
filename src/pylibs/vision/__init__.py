@@ -4,5 +4,5 @@ import os
 package_path = os.path.dirname(__file__)
 
 
-def create_device(name : str):
-    return ocapi.Device.create(name, package_path)
+def init_context(backend):
+    ocapi.init_context(backend, package_path)
