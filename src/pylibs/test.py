@@ -2,6 +2,9 @@ import vision
 import os
 from vision import ocapi
 from vision.ocapi import *
+from vision import vsapi
+from vision.vsapi import *
+import numpy as np
 
 f2 = vision.ocapi.float2(1,2)
 print(f2)
@@ -49,14 +52,19 @@ print(t.name())
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
-buffer = buffer_float2.create(2)
+buffer = buffer_float.create(2)
 print(buffer.size())
-buffer.upload([float2(1,2), float2(3,4)])
+buffer.upload([3, 4])
 
-lst = [float2(0,0), float2(0)]
+# arr = np.array([1.0, 5.5], dtype=np.float32)
+arr = [1.0, 5.5]
 
-buffer.download(lst)
+buffer.download(arr)
+print(arr)
 
-print(lst)
+# lst = []
+# vsapi.test(lst)
+
+# print(lst)
 
 buffer = None

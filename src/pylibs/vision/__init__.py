@@ -1,4 +1,5 @@
 from . import ocapi
+from . import vsapi
 import os
 
 package_path = os.path.dirname(__file__)
