@@ -8,6 +8,7 @@
 #include "ext/pybind11/include/pybind11/stl.h"
 #include "core/stl.h"
 #include "rhi/device.h"
+#include "base/mgr/scene.h"
 
 namespace py = pybind11;
 using namespace ocarina;
@@ -16,6 +17,8 @@ struct VisionPyExporter {
     py::module module;
 };
 
+namespace vision::inline python {
+using namespace ocarina;
 struct Context {
     [[nodiscard]] static Context &instance() noexcept;
     Context() {
@@ -25,3 +28,4 @@ struct Context {
         OC_INFO("ocapi unload!");
     }
 };
+}// namespace vision::inline python
