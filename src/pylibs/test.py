@@ -52,9 +52,16 @@ print(t.name())
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
-buffer = buffer_float2.create(2)
+buffer = Bufferfloat2.create(2)
 print(buffer.size())
 buffer.upload([float2(3, 4), float2(10, 11)])
+
+af = Arrayfloat2()
+af.push_back(float2(5.5, 10000))
+af.push_back(float2(5.5, 999))
+print(af[0])
+print(af)
+# print(Arrayfloat())
 
 arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
 # arr = [1.0, 5.5]
