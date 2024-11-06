@@ -81,6 +81,7 @@ a = arr[1]
 # vsapi.test(lst)
 
 # print(lst)
-
-print(TriangleHit)
+th = TriangleHit()
+th.bary = float3(1,2,3).xz
+print(th)
 buffer = None
