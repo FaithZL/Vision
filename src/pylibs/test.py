@@ -52,15 +52,21 @@ print(t.name())
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
 print(as_float(as_uint(2.0)))
-buffer = buffer_float.create(2)
+buffer = buffer_float2.create(2)
 print(buffer.size())
-buffer.upload([3, 4])
+buffer.upload([float2(3, 4), float2(10, 11)])
 
-# arr = np.array([1.0, 5.5], dtype=np.float32)
-arr = [1.0, 5.5]
+arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
+# arr = [1.0, 5.5]
 
 buffer.download(arr)
 print(arr)
+
+a = arr[1]
+
+# buffer.download()
+
+# print(a2)
 
 # lst = []
 # vsapi.test(lst)
