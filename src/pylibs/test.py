@@ -61,6 +61,8 @@ af.push_back(float2(5.5, 10000))
 af.push_back(float2(5.5, 999))
 print(af[0])
 print(af)
+af.clear()
+print(af)
 # print(Arrayfloat())
 
 arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
@@ -80,5 +82,5 @@ a = arr[1]
 
 # print(lst)
 
-
+print(TriangleHit)
 buffer = None
