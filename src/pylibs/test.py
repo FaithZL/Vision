@@ -34,36 +34,30 @@ print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)]))
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
 print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
 vision.init_context("cuda")
-d = ocapi.device()
 
 
-def main():
-    acc = d.create_accel()
-    print("wocao")
-    
 
 
-main()
 
-
-t = Type.from_desc(float2().desc())
-print(t.description())
-print(t.name())
-print(as_float(as_uint(2.0)))
-print(as_float(as_uint(2.0)))
-print(as_float(as_uint(2.0)))
+print("wocao")
+# t = Type.from_desc(float2().desc())
+# print(t.description())
+# print(t.name())
+# print(as_float(as_uint(2.0)))
+# print(as_float(as_uint(2.0)))
+# print(as_float(as_uint(2.0)))
 buffer = Bufferfloat2.create(2)
-print(buffer.size())
+# print(buffer.size())
 buffer.upload([float2(3, 4), float2(10, 11)])
 
-af = Arrayfloat2()
-af.push_back(float2(5.5, 10000))
-af.push_back(float2(5.5, 999))
-print(af[0])
-print(af)
-af.clear()
-print(af)
-# print(Arrayfloat())
+# af = Arrayfloat2()
+# af.push_back(float2(5.5, 10000))
+# af.push_back(float2(5.5, 999))
+# print(af[0])
+# print(af)
+# af.clear()
+# print(af)
+# # print(Arrayfloat())
 
 arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
 # arr = [1.0, 5.5]
@@ -72,14 +66,14 @@ buffer.download(arr)
 print(arr)
 print(buffer.download())
 
-a = arr[1]
+# a = arr[1]
 
-# buffer.download()
+# # buffer.download()
 
-# print(a2)
+# # print(a2)
 
-# lst = []
-# vsapi.test(lst)
+# # lst = []
+# # vsapi.test(lst)
 
 # print(lst)
 # th = TriangleHit()
@@ -87,9 +81,10 @@ a = arr[1]
 # print(Ray(float3(1,2,3), float3(1,2,5)).origin)
 buffer = None
 
-print(ocapi.device())
-print(ocapi.bindless_array())
-print(ocapi.stream())
-print(uint3(7) % 5)
-# print(ocapi.stream())
-# print(ocapi.bindless_array())
+d = ocapi.device()
+
+
+w = Window.create(500, 500)
+
+
+ocapi.exit()
