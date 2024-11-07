@@ -86,3 +86,10 @@ a = arr[1]
 # th.bary = float3(1,2,3).xz
 # print(Ray(float3(1,2,3), float3(1,2,5)).origin)
 buffer = None
+
+print(ocapi.device())
+print(ocapi.bindless_array())
+print(ocapi.stream())
+print(uint3(7) % 5)
+# print(ocapi.stream())
+# print(ocapi.bindless_array())
