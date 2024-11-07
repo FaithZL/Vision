@@ -50,7 +50,10 @@ buffer = Bufferfloat2.create(2)
 # print(buffer.size())
 buffer.upload([float2(3, 4), float2(10, 11)])
 
-# af = Arrayfloat2()
+af = Arrayfloat2()
+af.resize(5)
+
+print(af)
 # af.push_back(float2(5.5, 10000))
 # af.push_back(float2(5.5, 999))
 # print(af[0])
@@ -81,10 +84,24 @@ print(buffer.download())
 # print(Ray(float3(1,2,3), float3(1,2,5)).origin)
 buffer = None
 
+import traceback
+
 d = ocapi.device()
+
+
+def on_mouse(*arg):
+    print(*arg)
+    
 
 
 w = Window.create(500, 500)
 
+w.set_mouse_callback(on_mouse)
+
+def func(t):
+    pass
+
+
+w.run(func)
 
 ocapi.exit()
