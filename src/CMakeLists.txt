@@ -56,4 +56,4 @@ target_link_libraries(vision-all_libs INTERFACE
         vision-main
         vision-plugins)
 
-add_subdirectory(python)
+add_subdirectory(pyexporter)
