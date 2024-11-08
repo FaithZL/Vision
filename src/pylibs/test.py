@@ -142,7 +142,14 @@ example_function(5)
 def on_mouse(*arg):
     print(*arg)
     
-res = 500
+fn = os.getcwd() + "/res/render_scene/cbox/dispersion-hero-2000.exr"
+
+image = Image.load(fn, ColorSpace.SRGB)
+
+iaar = image.as_float_array_t()
+
+print(iaar.shape)
+res = 1024
 
 w = Window.create(res, res)
 
@@ -159,7 +166,7 @@ w.set_clear_color(float4(1,0,0,1))
 w.set_mouse_callback(on_mouse)
 
 def func(t):
-    w.set_background(af)
+    w.set_background(iaar)
     # w.set_should_close()
     # w.set_background(arr)
     pass
