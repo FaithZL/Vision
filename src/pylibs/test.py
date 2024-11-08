@@ -1,25 +1,25 @@
-import vision
+import cpplibs
 import os
-from vision import ocapi
-from vision.ocapi import *
-from vision import vsapi
-from vision.vsapi import *
+from cpplibs import ocapi
+from cpplibs.ocapi import *
+from cpplibs import vsapi
+from cpplibs.vsapi import *
 import numpy as np
 
-f2 = vision.ocapi.float2(1,2)
+f2 = cpplibs.ocapi.float2(1,2)
 print(f2)
 f2[0] = 3.88999
 print(f2.x)
 print(f2.xx)
-f2.xy = vision.ocapi.float2(5,6)
+f2.xy = cpplibs.ocapi.float2(5,6)
 print(f2.xx)
 print(f2.xy)
 print(f2.xyx * f2.xyx)
 
 f3 = f2.xyx
 
-print(vision.ocapi.lerp(f3 * 0 , f3 / 2 , f3))
-print(vision.ocapi.make_bool3(f3))
+print(cpplibs.ocapi.lerp(f3 * 0 , f3 / 2 , f3))
+print(cpplibs.ocapi.make_bool3(f3))
 print(as_float3(ocapi.as_uint3(f3)))
 
 m = float2x2()
@@ -33,7 +33,7 @@ print(make_float2x2([(1,2),(3,5)]) * 2)
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)]))
 print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
 print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
-vision.init_context("cuda")
+cpplibs.init_context("cuda")
 
 
 

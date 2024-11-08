@@ -20,5 +20,5 @@
 *.pyi
 *.pyc
 *.dll
-/src/pylibs/vision/*.txt
+/src/pylibs/cpplibs/*.txt
 /**/.cache/*
