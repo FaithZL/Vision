@@ -142,11 +142,12 @@ example_function(5)
 def on_mouse(*arg):
     print(*arg)
     
-fn = os.getcwd() + "/res/render_scene/cbox/dispersion-hero-2000.exr"
+# fn = os.getcwd() + "/res/render_scene/cbox/dispersion-hero-2000.exr"
+fn = os.getcwd() + "/res/render_scene/cbox/dispersion-hero.png"
 
-image = Image.load(fn, ColorSpace.SRGB)
+image = Image.load(fn, ColorSpace.LINEAR)
 
-iaar = image.as_float_array_t()
+iaar = image.as_uchar_array_t()
 
 print(iaar.shape)
 res = 1024
