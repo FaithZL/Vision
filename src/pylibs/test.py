@@ -157,3 +157,5 @@ example_function(5)
 # w.run(func)
 
 # ocapi.exit()
+import typing
+print(type(PixelStorage.UNKNOWN))
