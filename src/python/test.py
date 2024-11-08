@@ -86,55 +86,7 @@ buffer = None
 
 import traceback
 
-print("------------------------")
-
-import ast
-import inspect
-
-class MyVisitor(ast.NodeVisitor):
-    def visit_FunctionDef(self, node):
-        print(f"Function name: {node.name}")
-        self.generic_visit(node)  # 继续遍历子节点
-
-    def visit_Return(self, node):
-        print("Return statement found")
-        self.generic_visit(node)  # 继续遍历子节点
-
-    def visit_BinOp(self, node):
-        print("Binary operation found")
-        self.generic_visit(node)  # 继续遍历子节点
-
-    def visit_For(self, node):
-        print(node.target.id)
-        self.generic_visit(node)
-
-    def visit_Name(self, node):
-        print(f"Variable name: {node.id}")
-        self.generic_visit(node)  # 继续遍历子节点
-
-    def visit_Constant(self, node):
-        print(f"Constant value: {node.value}")
-        self.generic_visit(node)  # 继续遍历子节点
-
-
-
-# 定义一个示例函数
-def example_function(x: int):
-    # x = v.xxyz
-    return x * 2
-
-example_function(5)
-# # 获取函数的源代码
-# source_code = inspect.getsource(example_function)
-
-# # 解析源代码为 AST
-# parsed_ast = ast.parse(source_code)
-
-# visitor = MyVisitor()
-# visitor.visit(parsed_ast)
-
-# # 打印 AST
-# print(ast.dump(parsed_ast, indent=4))
+# import ast_parser
 
 # d = ocapi.device()
 
@@ -150,26 +102,16 @@ image = Image.load(fn, ColorSpace.LINEAR)
 iaar = image.as_uchar_array_t()
 
 print(iaar.shape)
-res = 1024
+res = image.resolution
 
-w = Window.create(res, res)
-
-af = Arrayfloat4()
-
-af.resize(res * res, float4(0,0,1,1))
-
-arr = np.ones(res * res * 4, dtype=np.float32)
+w = Window.create(res)
 
 w.set_clear_color(float4(1,0,0,1))
-
-# print(arr)
 
 w.set_mouse_callback(on_mouse)
 
 def func(t):
     w.set_background(iaar)
-    # w.set_should_close()
-    # w.set_background(arr)
     pass
 
 w.run(func)
