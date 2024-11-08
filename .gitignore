@@ -20,5 +20,5 @@
 *.pyi
 *.pyc
 *.dll
-/src/pylibs/cpplibs/*.txt
+/src/python/cpplibs/*.txt
 /**/.cache/*
