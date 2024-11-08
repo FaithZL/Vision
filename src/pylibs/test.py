@@ -139,23 +139,31 @@ example_function(5)
 # d = ocapi.device()
 
 
-# def on_mouse(*arg):
-#     print(*arg)
+def on_mouse(*arg):
+    print(*arg)
     
+res = 500
 
+w = Window.create(res, res)
 
-# w = Window.create(500, 500)
+af = Arrayfloat4()
 
-# # w.set_clear_color(float4(1,1,1,1))
+af.resize(res * res, float4(0,0,1,1))
 
-# w.set_mouse_callback(on_mouse)
+arr = np.ones(res * res * 4, dtype=np.float32)
 
-# def func(t):
-#     pass
+w.set_clear_color(float4(1,0,0,1))
 
+# print(arr)
 
-# w.run(func)
+w.set_mouse_callback(on_mouse)
 
-# ocapi.exit()
-import typing
-print(type(PixelStorage.UNKNOWN))
+def func(t):
+    w.set_background(af)
+    # w.set_should_close()
+    # w.set_background(arr)
+    pass
+
+w.run(func)
+
+ocapi.exit()
