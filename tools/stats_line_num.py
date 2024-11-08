@@ -15,7 +15,7 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
             continue
         if "srgb2spec.h" in fn:
             continue
-        if "pylibs\\vision\\" in fn:
+        if "pylibs\\" in fn:
             continue
         if "stats_line_num.py" in fn:
             continue
