@@ -69,6 +69,7 @@ buffer.download(arr)
 print(arr)
 print(buffer.download())
 
+
 # a = arr[1]
 
 # # buffer.download()
@@ -104,7 +105,15 @@ image = Image.load(fn, ColorSpace.LINEAR)
 
 iaar = image.as_uchar_array_t()
 
-print(iaar.shape)
+tex = Texture.create(image.resolution, image.pixel_storage)
+
+tex.upload(iaar)
+
+tarr = np.ones(1024 **2 * 4, dtype=np.uint8)
+
+tex.download(tarr)
+
+print(tarr)
 res = image.resolution
 
 w = Window.create(res)
@@ -114,7 +123,7 @@ w.set_clear_color(float4(1,0,0,1))
 w.set_mouse_callback(on_mouse)
 
 def func(t):
-    w.set_background(iaar)
+    w.set_background(tarr)
     pass
 
 w.run(func)
