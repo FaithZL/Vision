@@ -13,7 +13,7 @@ def main():
     
     # v.push_back_(np.ones(2, dtype=np.float32))
     
-    v = cpplibs.PyArray(Ray)
+    v = cpplibs.StructArray(Ray)
     v.push_back(Ray(float3(1,2,8), float3(1,2,8)))
     v.push_back(Ray(float3(3,6,8),float3(7,2,8)))
     print(v[0])
@@ -28,7 +28,6 @@ def main():
     
     print(v[0])
     print(v[1])
-    print(v[2])
     return
 
     f2 = cpplibs.ocapi.float2(1,2)
