@@ -9,6 +9,8 @@ import numpy as np
 
 def main():
     
+    print(float4x4.from_floats(float4x4(2).to_floats()))
+    
     # v.push_back_(np.ones(2, dtype=np.float32))
     
     v = cpplibs.PyArray(Ray)
@@ -19,7 +21,9 @@ def main():
     v[0] = v[1]
     print(v.size())
     # v.pop_back()
-    v.resize(10)
+    v.resize(1000)
+    # print(v)
+    
     print(v.size())
     
     print(v[0])
@@ -87,7 +91,6 @@ def main():
     
     print(f3.to_floats())
     print(Ray.from_floats(f3.to_floats()))
-    return
 
     arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
     # arr = [1.0, 5.5]

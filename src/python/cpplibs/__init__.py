@@ -41,14 +41,16 @@ class PyArray:
         self.__impl.push_back_(arr)
         
     def at(self, index):
+        return self[index]
+    
+    def __getitem__(self, index):
+        assert (index < self.size())
         size = sizeof(self.__type)
         ofs = index * size
         return from_floats(self.__type, self.__impl.load(ofs, size))
     
-    def __getitem__(self, index):
-        return self.at(index)
-    
     def __setitem__(self, index, elm):
+        assert (index < self.size())
         size = sizeof(self.__type)
         ofs = index * size
         self.__impl.store(ofs, to_floats(elm))
@@ -64,8 +66,14 @@ class PyArray:
         self.__impl.resize_(num * sizeof(self.__type))
         
     def __repr__(self):
+        ret = "["
+        for i in range(self.size()):
+            ret += str(self[i]) + ","
+            if (i > 100):
+                ret += "......" + str(self[self.size() - 1])
+                break
         
-        return self.__impl.__repr__()
+        return ret + "]"
         
 
 def init_context(backend):
