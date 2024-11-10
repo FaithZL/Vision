@@ -14,9 +14,17 @@ def main():
     v = cpplibs.PyArray(Ray)
     v.push_back(Ray(float3(1,2,8), float3(1,2,8)))
     v.push_back(Ray(float3(3,6,8),float3(7,2,8)))
-    print(v.at(0))
-    print(v.at(1))
+    print(v[0])
+    print(v[1])
+    v[0] = v[1]
     print(v.size())
+    # v.pop_back()
+    v.resize(10)
+    print(v.size())
+    
+    print(v[0])
+    print(v[1])
+    print(v[2])
     return
 
     f2 = cpplibs.ocapi.float2(1,2)

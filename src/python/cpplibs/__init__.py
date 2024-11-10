@@ -44,9 +44,24 @@ class PyArray:
         size = sizeof(self.__type)
         ofs = index * size
         return from_floats(self.__type, self.__impl.load(ofs, size))
+    
+    def __getitem__(self, index):
+        return self.at(index)
+    
+    def __setitem__(self, index, elm):
+        size = sizeof(self.__type)
+        ofs = index * size
+        self.__impl.store(ofs, to_floats(elm))
+    
+    def pop_back(self):
+        size = int(sizeof(self.__type))
+        self.__impl.pop_back_(size)
         
     def size(self):
         return int(self.__impl.size_in_byte() / sizeof(self.__type))
+    
+    def resize(self, num):
+        self.__impl.resize_(num * sizeof(self.__type))
         
     def __repr__(self):
         
