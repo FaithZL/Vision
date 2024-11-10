@@ -67,13 +67,32 @@ class StructArray(ocapi.StructArrayImpl):
     def __repr__(self):
         ret = "["
         for i in range(self.size()):
-            ret += str(self[i]) + ","
+            ret += repr(self[i]) + ","
             if (i > 100):
-                ret += "......" + str(self[self.size() - 1])
+                ret += "......" + repr(self[self.size() - 1])
                 break
-        
         return ret + "]"
         
+class PyArray:
+    def __init__(self, type_):
+        if type_ == int:
+            self.__impl = ocapi.Arrayint()
+        elif type_ == float:
+            self.__impl = ocapi.Arrayfloat()
+        else:
+            self.__impl = StructArray(type_)
+
+    def __getitem__(self, index):
+        return self.__impl[index]
+    
+    def __setitem__(self, index, elm):
+        self.__impl[index] = elm
+
+    def __getattr__(self, name):
+        return getattr(self.__impl, name)
+    
+    def __repr__(self):
+        return repr(self.__impl)
 
 def init_context(backend):
     ocapi.init_context(backend, package_path)
