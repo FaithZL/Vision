@@ -8,28 +8,28 @@ from cpplibs.vsapi import *
 import numpy as np
 
 def main():
+    cpplibs.init_context("cuda")
     
-    print(float4x4.from_floats(float4x4(2).to_floats()))
-    
-    # v.push_back_(np.ones(2, dtype=np.float32))
-    
-    v = cpplibs.PyArray(float)
-    v.push_back(5)
-    v.push_back(6)
+    v = cpplibs.PyArray(Ray)
+    v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
+    v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
     print(v[0])
     print(v[1])
     print(v.size())
+    bb = ByteBuffer.create(2 * Ray.sizeof())
+    bb.upload(v.impl())
     # v.pop_back()
-    v.resize(1000)
     print(v)
-    
-    print(v.size())
-    
-    print(v[0])
-    print(v[1])
-    print(v[2])
-    return
+    db = cpplibs.PyArray(Ray)
+    db.resize(2)
+    print(db)
+    bb.download(db.impl())
 
+    print(db)
+    
+    # print(v[0])
+    # print(v[1])
+    return
     f2 = cpplibs.ocapi.float2(1,2)
     print(f2)
     f2[0] = 3.88999
@@ -57,7 +57,7 @@ def main():
     print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)]))
     print(make_float2x2([(1,2),(3,5)]) * make_float2x2([(1,2),(3,5)])[1])
     print(make_float2x2(make_float2x2([(1,2),(3,5)])).clone())
-    cpplibs.init_context("cuda")
+    
 
 
 

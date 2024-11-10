@@ -91,8 +91,29 @@ class PyArray:
     def __getattr__(self, name):
         return getattr(self.__impl, name)
     
+    def impl(self):
+        return self.__impl
+    
     def __repr__(self):
         return repr(self.__impl)
+    
+
+class StructBuffer(ocapi.ByteBuffer):
+    def __init__(self, type):
+        super().__init__()
+        self.__type = type
+        
+    def type(self):
+        return self.__type
+
+class PyBuffer:
+    def __init__(self, type_, size):
+        if type_ == int:
+            self.__impl = ocapi.Bufferint()
+        elif type_ == float:
+            self.__impl = ocapi.Bufferfloat()
+        else:
+            self.__impl = StructArray(type_)
 
 def init_context(backend):
     ocapi.init_context(backend, package_path)
