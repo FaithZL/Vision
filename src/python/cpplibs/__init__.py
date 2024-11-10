@@ -104,7 +104,7 @@ class StructBuffer(ocapi.ByteBuffer):
         super().__init__(size * sizeof(self.__type))
     
     def size(self):
-        return self.size_in_byte() / sizeof(self.__type)
+        return int(self.size_in_byte() / sizeof(self.__type))
     
     def type(self):
         return self.__type
@@ -112,11 +112,17 @@ class StructBuffer(ocapi.ByteBuffer):
 class PyBuffer:
     def __init__(self, type_, size):
         if type_ == int:
-            self.__impl = ocapi.Bufferint()
+            self.__impl = ocapi.Bufferint(size)
         elif type_ == float:
-            self.__impl = ocapi.Bufferfloat()
+            self.__impl = ocapi.Bufferfloat(size)
         else:
-            self.__impl = StructArray(type_)
+            self.__impl = StructBuffer(type_, size)
+    
+    def download(self, array):
+        self.__impl.download(array)
+        
+    def upload(self, array):
+        self.__impl.upload(array)
 
 def init_context(backend):
     ocapi.init_context(backend, package_path)

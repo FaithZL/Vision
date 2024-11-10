@@ -16,20 +16,19 @@ def main():
     print(v[0])
     print(v[1])
     print(v.size())
-    bb = cpplibs.StructBuffer(Ray, 2)
-    bb.upload(v.impl())
+    bb = cpplibs.PyBuffer(Ray, 2)
+    bb.upload(v.impl().as_float_array_t())
     # v.pop_back()
     print(v)
     db = cpplibs.PyArray(Ray)
     db.resize(2)
     print(db)
-    bb.download(db.impl())
+    bb.download(db.impl().as_float_array_t())
 
     print(db)
-    
+    # return
     # print(v[0])
     # print(v[1])
-    return
     f2 = cpplibs.ocapi.float2(1,2)
     print(f2)
     f2[0] = 3.88999
@@ -70,11 +69,11 @@ def main():
     # print(as_float(as_uint(2.0)))
     # print(as_float(as_uint(2.0)))
     # print(as_float(as_uint(2.0)))
-    buffer = Bufferfloat2.create(2)
+    buffer = cpplibs.PyBuffer(float, 4)
     # print(buffer.size())
-    buffer.upload([float2(3, 4), float2(10, 11)])
+    buffer.upload(np.array([3,4, 4,5], dtype=np.float32))
 
-    af = Arrayfloat2()
+    af = Arrayfloat()
     af.resize(5)
 
     print(af)
@@ -91,12 +90,12 @@ def main():
     print(f3.to_floats())
     print(Ray.from_floats(f3.to_floats()))
 
-    arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
+    arr = np.array([1.0, 5.5, 5,9], dtype=np.float32)
     # arr = [1.0, 5.5]
 
     buffer.download(arr)
     print(arr)
-    print(buffer.download())
+    return
 
 
     # a = arr[1]
