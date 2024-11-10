@@ -30,27 +30,27 @@ def sizeof(type_):
     else:
         return type_.sizeof()
 
-class PyArray(ocapi.StructArray):
+class PyArray:
     
     def __init__(self, type_):
-        super().__init__()
+        self.__impl = ocapi.StructArray()
         self.__type = type_
     
     def push_back(self, elm):
         arr = to_floats(elm)
-        super().push_back_(arr)
+        self.__impl.push_back_(arr)
         
     def at(self, index):
         size = sizeof(self.__type)
         ofs = index * size
-        return from_floats(self.__type, self.load(ofs, size))
+        return from_floats(self.__type, self.__impl.load(ofs, size))
         
     def size(self):
-        return int(self.size_in_byte() / sizeof(self.__type))
+        return int(self.__impl.size_in_byte() / sizeof(self.__type))
         
     def __repr__(self):
         
-        return super().__repr__()
+        return self.__impl.__repr__()
         
 
 def init_context(backend):
