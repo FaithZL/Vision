@@ -9,6 +9,15 @@ import numpy as np
 
 def main():
     
+    # v.push_back_(np.ones(2, dtype=np.float32))
+    
+    v = cpplibs.PyArray(Ray)
+    v.push_back(Ray(float3(1,2,8), float3(1,2,8)))
+    v.push_back(Ray(float3(3,6,8),float3(7,2,8)))
+    print(v.at(0))
+    print(v.at(1))
+    print(v.size())
+    return
 
     f2 = cpplibs.ocapi.float2(1,2)
     print(f2)
@@ -66,10 +75,10 @@ def main():
     # print(af)
     # # print(Arrayfloat())
     
-    f3 = TriangleHit()
+    f3 = Ray(float3(1), float3(6))
     
-    print(f3.to_bytes())
-    print(TriangleHit.from_bytes(f3.to_bytes()))
+    print(f3.to_floats())
+    print(Ray.from_floats(f3.to_floats()))
     return
 
     arr = np.array([[1.0, 5.5], [5,9]], dtype=np.float32)
