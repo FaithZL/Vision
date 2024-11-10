@@ -28,6 +28,7 @@ def main():
     
     print(v[0])
     print(v[1])
+    print(v[2])
     return
 
     f2 = cpplibs.ocapi.float2(1,2)

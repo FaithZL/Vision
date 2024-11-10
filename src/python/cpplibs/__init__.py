@@ -30,39 +30,39 @@ def sizeof(type_):
     else:
         return type_.sizeof()
 
-class StructArray:    
+class StructArray(ocapi.StructArrayImpl):    
     def __init__(self, type_):
+        super().__init__()
         self.__type = type_
-        self.__impl = ocapi.StructArrayImpl()
     
     def push_back(self, elm):
         arr = to_floats(elm)
-        self.__impl.push_back_(arr)
+        super().push_back_(arr)
         
     def at(self, index):
         return self[index]
     
     def pop_back(self):
         size = int(sizeof(self.__type))
-        self.__impl.pop_back_(size)
+        super().pop_back_(size)
         
     def size(self):
-        return int(self.__impl.size_in_byte() / sizeof(self.__type))
+        return int(super().size_in_byte() / sizeof(self.__type))
     
     def resize(self, num):
-        self.__impl.resize_(num * sizeof(self.__type))
+        super().resize_(num * sizeof(self.__type))
         
     def __getitem__(self, index):
         assert (index < self.size())
         size = sizeof(self.__type)
         ofs = index * size
-        return from_floats(self.__type, self.__impl.load(ofs, size))
+        return from_floats(self.__type, super().load(ofs, size))
     
     def __setitem__(self, index, elm):
         assert (index < self.size())
         size = sizeof(self.__type)
         ofs = index * size
-        self.__impl.store(ofs, to_floats(elm))
+        super().store(ofs, to_floats(elm))
         
     def __repr__(self):
         ret = "["
