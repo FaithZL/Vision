@@ -16,7 +16,7 @@ def main():
     print(v[0])
     print(v[1])
     print(v.size())
-    bb = ByteBuffer.create(2 * Ray.sizeof())
+    bb = cpplibs.StructBuffer(Ray, 2)
     bb.upload(v.impl())
     # v.pop_back()
     print(v)

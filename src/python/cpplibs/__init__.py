@@ -99,10 +99,13 @@ class PyArray:
     
 
 class StructBuffer(ocapi.ByteBuffer):
-    def __init__(self, type):
-        super().__init__()
+    def __init__(self, type, size):
         self.__type = type
-        
+        super().__init__(size * sizeof(self.__type))
+    
+    def size(self):
+        return self.size_in_byte() / sizeof(self.__type)
+    
     def type(self):
         return self.__type
 
