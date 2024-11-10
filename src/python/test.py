@@ -13,12 +13,11 @@ def main():
     
     # v.push_back_(np.ones(2, dtype=np.float32))
     
-    v = cpplibs.PyArray(Ray)
-    v.push_back(Ray(float3(1,2,8), float3(1,2,8)))
-    v.push_back(Ray(float3(3,6,8),float3(7,2,8)))
+    v = cpplibs.PyArray(float)
+    v.push_back(5)
+    v.push_back(6)
     print(v[0])
     print(v[1])
-    v[0] = v[1]
     print(v.size())
     # v.pop_back()
     v.resize(1000)
