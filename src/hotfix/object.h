@@ -10,10 +10,6 @@
 namespace vision::inline hotfix {
 using namespace ocarina;
 
-class Serializer;
-
-class ISerialized;
-
 #define HOTFIX_VIRTUAL virtual
 
 #define VS_HOTFIX_MOVE_ATTR(attr_name) \

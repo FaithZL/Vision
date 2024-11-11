@@ -120,5 +120,4 @@ vector<Target> FileTool::get_modified_targets() noexcept {
     }
     return ret;
 }
-
 }// namespace vision::inline hotfix

@@ -15,7 +15,6 @@ static constexpr const char *debug_dir = "hotfix_debug";
 
 namespace {
 using FileTime = std::chrono::time_point<std::chrono::file_clock>;
-
 inline FileTime modification_time(const fs::path &file_path) {
     if (!fs::exists(file_path) || !fs::is_regular_file(file_path)) {
         throw std::runtime_error("File does not exist or is not a regular file.");
@@ -23,19 +22,11 @@ inline FileTime modification_time(const fs::path &file_path) {
     FileTime f_time = fs::last_write_time(file_path);
     return f_time;
 }
-
 }// namespace
-
-enum Action {
-    Add = 1,
-    Delete = 1 << 1,
-    Modify = 1 << 2,
-};
 
 struct InspectedFile {
 public:
     fs::path path{};
-    Action action{Modify};
     FileTime write_time{};
     InspectedFile() = default;
     explicit InspectedFile(const fs::path &p)
@@ -121,5 +112,4 @@ public:
         return fs::current_path() / debug_dir;
     }
 };
-
 }// namespace vision::inline hotfix

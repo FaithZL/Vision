@@ -7,12 +7,10 @@
 #include "core/stl.h"
 
 namespace vision ::inline hotfix {
-
 template<typename T>
 [[nodiscard]] auto type_string() {
     return typeid(std::remove_cvref_t<T>).name();
 }
-
 }// namespace vision::inline hotfix
 
 #define VS_REGISTER_PATH(path, level, ...)                                        \
