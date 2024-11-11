@@ -15,7 +15,6 @@ def to_floats(arg):
 
 def from_floats(type_, arr):
     if type_ == int:
-        print("wocao", arr)
         return ocapi.as_uint(arr[0])
     elif type_ == float:
         return arr[0]
