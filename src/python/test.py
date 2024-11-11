@@ -12,7 +12,7 @@ def main():
     
     v = cpplibs.PyArray(Ray)
     v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
-    v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
+    v.push_back(Ray(make_float3(12,3,18),make_float3(12,3,4)))
     print(v[0])
     print(v[1])
     print(v.size())
@@ -23,9 +23,9 @@ def main():
     db = cpplibs.PyArray(Ray)
     db.resize(2)
     print(db)
-    bb.download(db.impl().as_float_array_t())
+    # bb.download(db.impl().as_float_array_t())
 
-    print(db)
+    print(bb.download())
     # return
     # print(v[0])
     # print(v[1])
@@ -95,6 +95,7 @@ def main():
 
     buffer.download(arr)
     print(arr)
+    print(buffer.download())
     # return
 
 

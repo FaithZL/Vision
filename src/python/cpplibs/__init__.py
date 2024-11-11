@@ -111,6 +111,7 @@ class StructBuffer(ocapi.ByteBuffer):
 
 class PyBuffer:
     def __init__(self, type_, size):
+        self.__type = type_
         if type_ == int:
             self.__impl = ocapi.Bufferint(size)
         elif type_ == float:
@@ -118,8 +119,14 @@ class PyBuffer:
         else:
             self.__impl = StructBuffer(type_, size)
     
-    def download(self, array):
-        self.__impl.download(array)
+    def download(self, *args):
+        if len(args) == 1:
+            self.__impl.download(*args)
+        elif len(args) == 0:
+            ret = PyArray(self.__type)
+            ret.resize(self.__impl.size())
+            self.download(ret.as_float_array_t())
+            return ret
         
     def upload(self, array):
         self.__impl.upload(array)
