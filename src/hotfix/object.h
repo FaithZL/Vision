@@ -32,8 +32,9 @@ class ISerialized;
 class RuntimeObject : public RTTI {
 public:
     RuntimeObject() = default;
-    [[nodiscard]] SP<ISerialized> serialized_data() const noexcept;
-    virtual void restore(RuntimeObject *old_obj) noexcept;
+    virtual void restore(RuntimeObject *old_obj) noexcept {
+        OC_ASSERT(false);
+    }
     virtual ~RuntimeObject() = default;
 };
 
