@@ -95,7 +95,7 @@ def main():
 
     buffer.download(arr)
     print(arr)
-    return
+    # return
 
 
     # a = arr[1]
