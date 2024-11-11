@@ -126,7 +126,10 @@ class PyBuffer:
             return ret
         else:
             self.__impl.download(array)
-        
+    
+    def __getattr__(self, name):
+        return getattr(self.__impl, name)
+    
     def upload(self, array):
         self.__impl.upload(array)
 
