@@ -6,7 +6,6 @@
 
 #include "macro.h"
 #include "core/hash.h"
-#include "serializer.h"
 #include "object.h"
 #include "build_system.h"
 #include "file_tool.h"
@@ -49,7 +48,6 @@ private:
     static HotfixSystem *s_mgr;
 
 private:
-    Serializer serializer_{};
     ocarina::vector<Observer *> observers_;
     ocarina::vector<SP<const Observer>> defer_delete_;
     FileTool file_tool_;
@@ -68,7 +66,6 @@ public:
     void deregister_observer(Observer *observer) noexcept;
     void defer_delete(SP<const Observer> observer) noexcept;
     OC_MAKE_MEMBER_GETTER(file_tool, &)
-    OC_MAKE_MEMBER_GETTER(serializer, &)
     template<typename... Args>
     void register_target(Args &&...args) {
         file_tool_.add_inspected(OC_FORWARD(args)...);

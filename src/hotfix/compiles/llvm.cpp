@@ -13,12 +13,7 @@ class LLVMCompiler : public Compiler,
 public:
     LLVMCompiler();
     void compile(const vision::CompileOptions &options) noexcept override;
-    void serialize(SP<vision::ISerialized> output) const noexcept override {
 
-    }
-    void deserialize(SP<vision::ISerialized> input) noexcept override {
-
-    }
     void link(const vision::LinkOptions &options, const Target &target,
               const string &extension_objs, const CmdProcess::callback_t &callback) noexcept override;
     

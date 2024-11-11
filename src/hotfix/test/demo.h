@@ -27,8 +27,6 @@ public:
     [[nodiscard]] virtual string get_string() const;
     virtual void fill() noexcept;
     virtual void print() noexcept;
-    void serialize(SP<ISerialized> output) const noexcept override;
-    void deserialize(SP<ISerialized> input) noexcept override;
 };
 
 

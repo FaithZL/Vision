@@ -19,7 +19,6 @@ void HotfixTest::update_runtime_object(const vision::IObjectConstructor *constru
     OC_INFO("HotfixTest::update_runtime_object");
     if (constructor->match(test)) {
         auto new_obj = constructor->construct_shared<Test>();
-        HotfixSystem::instance().serializer().erase_old_object(test.get());
         new_obj->restore(test.get());
         test = new_obj;
     } else if (constructor->match(demo)) {

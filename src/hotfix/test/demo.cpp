@@ -24,7 +24,6 @@ void Demo::update_runtime_object(const vision::IObjectConstructor *constructor) 
         return;
     }
     auto new_obj = constructor->construct_shared<Test>();
-    HotfixSystem::instance().serializer().erase_old_object(test.get());
     new_obj->restore(test.get());
     test = new_obj;
     for (int i = 0; i < tests.size(); ++i) {
@@ -80,20 +79,6 @@ void Demo::fill() noexcept {
 
 string Demo::get_string() const {
     return "Demo::string";
-}
-
-void Demo::serialize(SP<ISerialized> output) const noexcept {
-    std::cout << "Demo::serialize" << endl;
-    output->serialize("attr_int", attr_int);
-    output->serialize("attr_float", attr_float);
-    output->serialize("test", test.get());
-}
-
-void Demo::deserialize(SP<ISerialized> input) noexcept {
-    std::cout << "Demo::deserialize" << endl;
-    input->deserialize("attr_int", addressof(attr_int));
-    input->deserialize("attr_float", addressof(attr_float));
-    input->deserialize("test", test.get());
 }
 
 }// namespace vision::inline hotfix

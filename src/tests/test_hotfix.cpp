@@ -61,10 +61,6 @@ int main(int argc, char *argv[]) {
 
     auto &mi = vision::ModuleInterface::instance();
 
-    vision::Serializer &serializer = HotfixSystem::instance().serializer();
-
-    SP<ISerialized> serialized;
-
     window->run([&](double d) {
         widget->button_click("hotfix", [&] {
             vision::HotfixSystem::instance().check_and_build();
@@ -94,7 +90,6 @@ int main(int argc, char *argv[]) {
 
         widget->button_click("clear serializer", [&] {
             cout << "\nclear serializer ----------" << endl;
-            serializer.clear();
         });
 
         widget->button_click("fill", [&] {
@@ -105,14 +100,10 @@ int main(int argc, char *argv[]) {
 
         widget->button_click("serialize", [&] {
             cout << "\nserialize ----------" << endl;
-            serializer.serialize(hotfix_test.demo.get());
-            serializer.serialize(hotfix_test.test.get());
         });
 
         widget->button_click("deserialize", [&] {
             cout << "\ndeserialize ----------" << endl;
-            serializer.deserialize(hotfix_test.demo.get(), hotfix_test.demo.get());
-            serializer.deserialize(hotfix_test.test.get(), hotfix_test.test.get());
         });
 
         widget->button_click("print object", [&] {
@@ -125,7 +116,6 @@ int main(int argc, char *argv[]) {
 
         widget->button_click("print serializer", [&] {
             cout << "\nprint serializer ----------" << endl;
-            serializer.print();
         });
     });
 

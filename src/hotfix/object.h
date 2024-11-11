@@ -34,8 +34,6 @@ public:
     RuntimeObject() = default;
     [[nodiscard]] SP<ISerialized> serialized_data() const noexcept;
     virtual void restore(RuntimeObject *old_obj) noexcept;
-    virtual void serialize(SP<ISerialized> output) const noexcept {}
-    virtual void deserialize(SP<ISerialized> input) noexcept {}
     virtual ~RuntimeObject() = default;
 };
 

@@ -25,8 +25,6 @@ public:
     void restore(vision::RuntimeObject *old_obj) noexcept override;
     virtual void fill() noexcept;
     virtual void print() const noexcept;
-    void serialize(SP<ISerialized> output) const noexcept override;
-    void deserialize(SP<ISerialized> input) noexcept override;
 };
 
 }// namespace vision::inline hotfix
