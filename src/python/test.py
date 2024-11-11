@@ -10,6 +10,8 @@ import numpy as np
 def main():
     cpplibs.init_context("cuda")
     
+    mesh = RHIMesh(MeshParams())
+    
     v = cpplibs.PyArray(Ray)
     v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
     v.push_back(Ray(make_float3(12,3,18),make_float3(12,3,4)))
