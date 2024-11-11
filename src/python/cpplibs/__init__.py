@@ -118,14 +118,14 @@ class PyBuffer:
         else:
             self.__impl = StructBuffer(type_, size)
     
-    def download(self, *args):
-        if len(args) == 1:
-            self.__impl.download(*args)
-        elif len(args) == 0:
+    def download(self, array=None):
+        if array is None:
             ret = PyArray(self.__type)
             ret.resize(self.__impl.size())
             self.download(ret.as_float_array_t())
             return ret
+        else:
+            self.__impl.download(array)
         
     def upload(self, array):
         self.__impl.upload(array)
