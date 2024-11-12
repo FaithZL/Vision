@@ -20,16 +20,14 @@ def main():
     print(v[1])
     print(v.size())
     bb = cpplibs.PyBuffer(Ray, 2)
-    bb.upload_immediately(v.impl().as_float_array_t())
+    ocapi.stream().add(bb.upload(v.impl().as_float_array_t()))
     # v.pop_back()
     print(v)
     db = cpplibs.PyArray(Ray)
     db.resize(2)
-    print(db)
-    # bb.download_immediately(db.impl().as_float_array_t())
+    ocapi.stream().add(bb.download(db.impl().as_float_array_t())).sync().commit()
 
-    print(bb.download_immediately())
-    # return
+    print(db)
     # print(v[0])
     # print(v[1])
     f2 = cpplibs.ocapi.float2(1,2)
@@ -74,7 +72,9 @@ def main():
     # print(as_float(as_uint(2.0)))
     buffer = cpplibs.PyBuffer(float, 4)
     # print(buffer.size())
-    buffer.upload_immediately(np.array([3,4, 4,5], dtype=np.float32))
+    tmp = np.array([3,4, 4,5], dtype=np.float32)
+    # buffer.upload_immediately(tmp)
+    ocapi.stream().add(buffer.upload(tmp))
 
     af = Arrayfloat()
     af.resize(5)
@@ -96,10 +96,11 @@ def main():
     arr = np.array([1.0, 5.5, 5,9], dtype=np.float32)
     # arr = [1.0, 5.5]
 
-    buffer.download_immediately(arr)
+    # buffer.download_immediately(arr)
+    ocapi.stream().add(buffer.download(arr)).sync().commit()
     print(arr)
     print(buffer.download_immediately())
-    # return
+    return
 
 
     # a = arr[1]
