@@ -29,6 +29,9 @@ def copy_files(src_dir, dst_dir, force=False):
     for src_file in glob.glob(os.path.join(src_dir, '*.dll')):
         copy_file(src_file, dst_dir, force)
         
+    for src_file in glob.glob(os.path.join(src_dir, '*.py')):
+        copy_file(src_file, dst_dir, force)
+        
 
 def generate_pyi(module_name):
     try:
@@ -82,7 +85,11 @@ def read_config():
         f.write(src)
         f.close()
     return force
-        
+
+def parent_path(p, num=1):
+    for i in range(num):
+        p = os.path.dirname(p)
+    return p
 
 def main():
     force = read_config()

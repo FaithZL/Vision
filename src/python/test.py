@@ -7,6 +7,16 @@ from cpplibs import vsapi
 from cpplibs.vsapi import *
 import numpy as np
 
+
+class ArrayType:
+    def __init__(self, _type, num):
+        self._type = _type
+        self.num = num
+        
+    def __call__(self):
+        pass
+    
+
 def main():
     cpplibs.init_context("cuda")
     ocapi.device().init_rtx()
