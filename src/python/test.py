@@ -9,6 +9,7 @@ import numpy as np
 
 def main():
     cpplibs.init_context("cuda")
+    ocapi.device().init_rtx()
     
     f3b = cpplibs.PyBuffer(float3, 4)
     i3b = cpplibs.PyBuffer(uint3, 2)
@@ -16,7 +17,8 @@ def main():
     mesh = cpplibs.PyMesh(f3b, i3b)
     accel = Accel()
     accel.add_instance(mesh, float4x4())
-    # return
+    # print(accel.triangle_num())
+    # ocapi.stream().add(mesh.build_bvh()).add(accel.build_bvh()).sync().commit()
     
     v = cpplibs.PyArray(Ray)
     v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
