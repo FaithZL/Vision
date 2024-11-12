@@ -20,15 +20,15 @@ def main():
     print(v[1])
     print(v.size())
     bb = cpplibs.PyBuffer(Ray, 2)
-    bb.upload(v.impl().as_float_array_t())
+    bb.upload_immediately(v.impl().as_float_array_t())
     # v.pop_back()
     print(v)
     db = cpplibs.PyArray(Ray)
     db.resize(2)
     print(db)
-    # bb.download(db.impl().as_float_array_t())
+    # bb.download_immediately(db.impl().as_float_array_t())
 
-    print(bb.download())
+    print(bb.download_immediately())
     # return
     # print(v[0])
     # print(v[1])
@@ -74,7 +74,7 @@ def main():
     # print(as_float(as_uint(2.0)))
     buffer = cpplibs.PyBuffer(float, 4)
     # print(buffer.size())
-    buffer.upload(np.array([3,4, 4,5], dtype=np.float32))
+    buffer.upload_immediately(np.array([3,4, 4,5], dtype=np.float32))
 
     af = Arrayfloat()
     af.resize(5)
@@ -96,15 +96,15 @@ def main():
     arr = np.array([1.0, 5.5, 5,9], dtype=np.float32)
     # arr = [1.0, 5.5]
 
-    buffer.download(arr)
+    buffer.download_immediately(arr)
     print(arr)
-    print(buffer.download())
+    print(buffer.download_immediately())
     # return
 
 
     # a = arr[1]
 
-    # # buffer.download()
+    # # buffer.download_immediately()
 
     # # print(a2)
 
@@ -139,11 +139,11 @@ def main():
 
     tex = Texture.create(image.resolution, image.pixel_storage)
 
-    tex.upload(iaar)
+    tex.upload_immediately(iaar)
 
     tarr = np.ones(1024 **2 * 4, dtype=np.uint8)
 
-    tex.download(tarr)
+    tex.download_immediately(tarr)
 
     print(tarr)
     res = image.resolution

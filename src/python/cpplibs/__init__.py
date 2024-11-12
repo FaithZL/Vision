@@ -118,20 +118,20 @@ class PyBuffer:
         else:
             self.__impl = StructBuffer(type_, size)
     
-    def download(self, array=None):
+    def download_immediately(self, array=None):
         if array is None:
             ret = PyArray(self.__type)
             ret.resize(self.__impl.size())
-            self.download(ret.as_float_array_t())
+            self.download_immediately(ret.as_float_array_t())
             return ret
         else:
-            self.__impl.download(array)
+            self.__impl.download_immediately(array)
     
     def __getattr__(self, name):
         return getattr(self.__impl, name)
     
-    def upload(self, array):
-        self.__impl.upload(array)
+    def upload_immediately(self, array):
+        self.__impl.upload_immediately(array)
 
 def init_context(backend):
     ocapi.init_context(backend, package_path)
