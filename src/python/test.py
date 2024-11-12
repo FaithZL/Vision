@@ -10,8 +10,13 @@ import numpy as np
 def main():
     cpplibs.init_context("cuda")
     
-    mesh = RHIMesh(MeshParams())
+    f3b = cpplibs.PyBuffer(float3, 4)
+    i3b = cpplibs.PyBuffer(uint3, 2)
+    
+    mesh = cpplibs.PyMesh(f3b, i3b)
     accel = Accel()
+    accel.add_instance(mesh, float4x4())
+    # return
     
     v = cpplibs.PyArray(Ray)
     v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
@@ -100,7 +105,7 @@ def main():
     ocapi.stream().add(buffer.download(arr)).sync().commit()
     print(arr)
     print(buffer.download_immediately())
-    return
+    # return
 
 
     # a = arr[1]

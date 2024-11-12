@@ -117,6 +117,9 @@ class PyBuffer:
             self.__impl = ocapi.Bufferfloat(size)
         else:
             self.__impl = StructBuffer(type_, size)
+            
+    def type(self):
+        return self.__type
     
     def download_immediately(self, array=None):
         if array is None:
@@ -127,11 +130,34 @@ class PyBuffer:
         else:
             self.__impl.download_immediately(array)
     
+    def handle(self):
+        return self.__impl.handle()
+    
+    def size(self):
+        return self.__impl.size()
+    
+    def upload(self, data):
+        return self.__impl.upload(data)
+    
+    def download(self, data):
+        return self.__impl.download(data)
+    
     def __getattr__(self, name):
         return getattr(self.__impl, name)
     
     def upload_immediately(self, array):
         self.__impl.upload_immediately(array)
+
+class PyMesh(ocapi.RHIMesh):
+    def __init__(self, vert_buffer : PyBuffer, tri_buffer: PyBuffer):
+        params = ocapi.MeshParams()
+        params.vert_handle = vert_buffer.handle()
+        params.vert_stride = sizeof(vert_buffer.type())
+        params.vert_num = vert_buffer.size()
+        params.tri_handle = tri_buffer.handle()
+        params.vert_stride = sizeof(tri_buffer.type())
+        params.tri_num = tri_buffer.size()
+        super().__init__(params)
 
 def init_context(backend):
     ocapi.init_context(backend, package_path)
