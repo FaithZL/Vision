@@ -46,7 +46,7 @@ def desc(type_):
     else:
         return type_.desc()
 
-class StructArray(ocapi.StructArrayImpl):    
+class StructDynamicArray(ocapi.StructDynamicArrayImpl):    
     def __init__(self, type_):
         super().__init__()
         self.__type = type_
@@ -89,14 +89,14 @@ class StructArray(ocapi.StructArrayImpl):
                 break
         return ret + "]"
         
-class PyArray:
+class DynamicArray:
     def __init__(self, type_):
         if type_ == int:
-            self.__impl = ocapi.Arrayint()
+            self.__impl = ocapi.DynamicArrayint()
         elif type_ == float:
-            self.__impl = ocapi.Arrayfloat()
+            self.__impl = ocapi.DynamicArrayfloat()
         else:
-            self.__impl = StructArray(type_)
+            self.__impl = StructDynamicArray(type_)
 
     def __getitem__(self, index):
         return self.__impl[index]
@@ -140,7 +140,7 @@ class PyBuffer:
     
     def download_immediately(self, array=None):
         if array is None:
-            ret = PyArray(self.__type)
+            ret = DynamicArray(self.__type)
             ret.resize(self.__impl.size())
             self.download_immediately(ret.as_float_array_t())
             return ret

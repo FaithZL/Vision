@@ -30,7 +30,7 @@ def main():
     # print(accel.triangle_num())
     # ocapi.stream().add(mesh.build_bvh()).add(accel.build_bvh()).sync().commit()
     
-    v = cpplibs.PyArray(Ray)
+    v = cpplibs.DynamicArray(Ray)
     v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
     v.push_back(Ray(make_float3(12,3,18),make_float3(12,3,4)))
     print(v[0])
@@ -40,7 +40,7 @@ def main():
     ocapi.stream().add(bb.upload(v.impl().as_float_array_t()))
     # v.pop_back()
     print(v)
-    db = cpplibs.PyArray(Ray)
+    db = cpplibs.DynamicArray(Ray)
     db.resize(2)
     ocapi.stream().add(bb.download(db.impl().as_float_array_t())).sync().commit()
 
@@ -93,10 +93,6 @@ def main():
     # buffer.upload_immediately(tmp)
     ocapi.stream().add(buffer.upload(tmp))
 
-    af = Arrayfloat()
-    af.resize(5)
-
-    print(af)
     # af.push_back(float2(5.5, 10000))
     # af.push_back(float2(5.5, 999))
     # print(af[0])
