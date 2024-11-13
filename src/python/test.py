@@ -7,17 +7,31 @@ from cpplibs import vsapi
 from cpplibs.vsapi import *
 import numpy as np
 
-
-class ArrayType:
+class Array:
     def __init__(self, _type, num):
         self._type = _type
-        self.num = num
+        self.__lst = [_type() for i in range(num)]
         
-    def __call__(self):
-        pass
+    def __getitem__(self, index):
+        return self.__lst[index]
     
+    def __setitem__(self, index, value):
+        self.__lst[index] = value
+        
+    def __len__(self):
+        return len(self.__lst)
 
+    def __repr__(self):
+        return repr(self.__lst)
+    
+    def desc(self):
+        return f'array<{cpplibs.desc(self._type)},{len(self)}>'
+    
 def main():
+    f3 = Array(float2, 2)
+    f3[0] = make_float2(2,3)
+    print(f3.desc())
+    return
     cpplibs.init_context("cuda")
     ocapi.device().init_rtx()
     
@@ -27,6 +41,7 @@ def main():
     mesh = cpplibs.PyMesh(f3b, i3b)
     accel = Accel()
     accel.add_instance(mesh, float4x4())
+    
     # print(accel.triangle_num())
     # ocapi.stream().add(mesh.build_bvh()).add(accel.build_bvh()).sync().commit()
     
