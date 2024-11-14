@@ -28,10 +28,14 @@ class Array:
         return f'array<{cpplibs.desc(self._type)},{len(self)}>'
     
 def main():
+    hit = TriangleHit()
+    hit.inst_id = 1
+    print(hit.to_bytes())
+    print(TriangleHit.from_bytes(hit.to_bytes()))
     f3 = Array(float2, 2)
     f3[0] = make_float2(2,3)
-    print(f3.desc())
-    return
+    # print(f3.desc())
+    # return
     cpplibs.init_context("cuda")
     ocapi.device().init_rtx()
     
@@ -47,10 +51,13 @@ def main():
     
     v = cpplibs.DynamicArray(Ray)
     v.push_back(Ray(make_float3(12,3,4),make_float3(12,3,4)))
-    v.push_back(Ray(make_float3(12,3,18),make_float3(12,3,4)))
+    v.push_back(Ray(make_float3(12,3,18),float3(0)))
     print(v[0])
     print(v[1])
+    v[0] = v[1]
     print(v.size())
+    print(v)
+    # return
     bb = cpplibs.PyBuffer(Ray, 2)
     ocapi.stream().add(bb.upload(v.impl().as_float_array_t()))
     # v.pop_back()
