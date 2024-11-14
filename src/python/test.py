@@ -6,6 +6,7 @@ from cpplibs.ocapi import *
 from cpplibs import vsapi
 from cpplibs.vsapi import *
 import numpy as np
+import math
 
 class Array:
     def __init__(self, _type, num):
@@ -27,7 +28,51 @@ class Array:
     def desc(self):
         return f'array<{cpplibs.desc(self._type)},{len(self)}>'
     
+class Struct:
+    def __init__(self, alignment, member_dict):
+        self.alignment = alignment
+        for name, type_ in member_dict.items():
+            setattr(self, name, type_())
+    
+    def __repr__(self):
+        return repr(self.__dict__)
+    
+    def desc(self):
+        return f"struct<{self.alignment}>"
+    
+class StructType:
+    def __init__(self, alignment=1, **kwargs):
+        # for _, type_ in kwargs.items():
+        #     alignment = max(alignment, cpplibs.alignof(type_), 0)
+        self.alignment = alignment
+        self.member_dict = kwargs
+    
+    def __call__(self):
+        class S:
+            def __init__(self, alignment, member_dict):
+                self.alignment = alignment
+                for name, type_ in member_dict.items():
+                    setattr(self, name, type_())
+            
+            def __repr__(self):
+                return repr(self.__dict__)
+            
+            def desc(self):
+                return f"struct<{self.alignment}>"
+        return S
+    
+hit_t = StructType(inst_id=int,bary=float2)
+
+    
 def main():
+    # hit = hit_t()
+    # print(hit)
+    
+    
+    # hit.bary = float2(1)
+    # print(hit)
+    
+    # return
     cpplibs.init_context("cuda")
 
     hit = uint2(420000000)
@@ -44,7 +89,7 @@ def main():
     buffer.upload_immediately(lst)
     
     print(cpplibs.list_from_bytes(uint2,buffer.download_immediately()))
-    return
+    # return
 
     def on_mouse(*arg):
         print(*arg)

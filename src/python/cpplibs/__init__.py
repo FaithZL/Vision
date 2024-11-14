@@ -2,7 +2,6 @@ from . import ocapi
 from . import vsapi
 import os
 import numpy as np
-from . import _type
 
 package_path = os.path.dirname(__file__)
 
@@ -79,7 +78,7 @@ class Buffer(ocapi.ByteBuffer):
     
     def download_immediately(self, arg0=None):
         if arg0 == None:
-            arg0 = b'a' * self.size_in_byte()
+            arg0 = bytes(self.size_in_byte())
             super().download_immediately(arg0)
             return arg0
         else:
