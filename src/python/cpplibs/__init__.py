@@ -22,13 +22,46 @@ def alignof(type_):
     else:
         return type_.alignof()
     
-def desc(type_):
-    if type_ == float:
+def list_to_bytes(lst):
+    ret = b''
+    for elm in lst:
+        ret += to_bytes(elm)
+    return ret
+    
+def to_bytes(arg):
+    if type(arg) in [int, float]:
+        return ocapi.to_bytes(arg)
+    elif type(arg) == list:
+        return list_to_bytes(arg)
+    else:
+        return arg.to_bytes()
+    
+def from_bytes(type_, arg):
+    if type_ == int:
+        return ocapi.bytes2int(arg)
+    elif type_ == float:
+        return ocapi.bytes2float(arg)
+    else:
+        return type_.from_bytes(arg)
+    
+def list_from_bytes(type_, bytes):
+    lst = []
+    size = sizeof(type_)
+    count = len(bytes) / size
+    for index in range(int(count)):
+        offset = index * size
+        bt = bytes[offset : offset + size]
+        elm = from_bytes(type_, bt)
+        lst.append(elm)
+    return lst
+    
+def desc(arg):
+    if arg == float or type(arg) == float:
         return "float"
-    elif type_ == int:
+    elif arg == int or type(arg) == int:
         return "int"
     else:
-        return type_.desc()
+        return arg.desc()
     
 class Buffer(ocapi.ByteBuffer):
     def __init__(self, type, size):

@@ -29,9 +29,17 @@ class Array:
     
 def main():
     cpplibs.init_context("cuda")
-    b = to_bytes(2300000000)
-    print(bytes2uint(b))
 
+    hit = uint2(420000000)
+    h2 = uint2(420000000)
+    lst = [hit, h2]
+    print(lst)
+    b = cpplibs.to_bytes(lst)
+    print(b)
+    l = cpplibs.list_from_bytes(uint2, b)
+    print(l)
+
+    return 
 
     def on_mouse(*arg):
         print(*arg)
