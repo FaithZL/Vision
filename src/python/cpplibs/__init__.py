@@ -71,6 +71,20 @@ class Buffer(ocapi.ByteBuffer):
     def size(self):
         return int(self.size_in_byte() / sizeof(self.__type))
     
+    def upload_immediately(self, arg0):
+        if type(arg0) is bytes:
+            super().upload_immediately(arg0) 
+        else:
+            super().upload_immediately(to_bytes(arg0)) 
+    
+    def download_immediately(self, arg0=None):
+        if arg0 == None:
+            arg0 = b'a' * self.size_in_byte()
+            super().download_immediately(arg0)
+            return arg0
+        else:
+            super().download_immediately(arg0)
+    
     def type(self):
         return self.__type
 

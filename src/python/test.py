@@ -39,7 +39,12 @@ def main():
     l = cpplibs.list_from_bytes(uint2, b)
     print(l)
 
-    return 
+    buffer = cpplibs.Buffer(uint2, 2)
+    
+    buffer.upload_immediately(lst)
+    
+    print(cpplibs.list_from_bytes(uint2,buffer.download_immediately()))
+    return
 
     def on_mouse(*arg):
         print(*arg)
