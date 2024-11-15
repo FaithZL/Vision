@@ -105,7 +105,7 @@ def func(x : int):
 
 def example_function(x: int):
     x += 5;
-    a = x + x
+    a:int = x + x
     if x > 10:
         a = 9
     elif x < 6:

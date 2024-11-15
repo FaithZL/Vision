@@ -205,8 +205,10 @@ class StructType:
         Type = self
         class Struct:
             def __init__(self, member_dict):
+                md = {}
                 for name, type_ in member_dict.items():
-                    setattr(self, name, type_())
+                    md[name] = type_()
+                self.__dict__.update(md)
             
             def __repr__(self):
                 return repr(self.__dict__)
@@ -223,6 +225,10 @@ class StructType:
                     for k, b in enumerate(bt):
                         ret[ofs + k] = b
                 return bytes(ret)
+            
+            def __setattr__(self, name, value):
+                assert name in self.__dict__
+                self.__dict__[name] = value
             
             def __getattr__(self, name):
                 return getattr(Type, name)
