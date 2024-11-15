@@ -48,9 +48,9 @@ def to_bytes(arg):
         return arg.to_bytes()
     
 def from_bytes(type_, arg):
-    if type_ == int:
+    if type_ == int or type(type_) == int:
         return ocapi.bytes2int(arg)
-    elif type_ == float:
+    elif type_ == float or type(type_) == float:
         return ocapi.bytes2float(arg)
     else:
         return type_.from_bytes(arg)
@@ -127,6 +127,12 @@ class Array:
             bt += to_bytes(elm)
         return bt
     
+    def from_bytes(self, bts):
+        for i in range(len(self)):
+            ofs = sizeof(self._type()) * i
+            self.__lst[i] = from_bytes(self._type(), bts[ofs:])
+        return self
+    
     def sizeof(self):
         return sizeof(self._type()) * len(self)
     
@@ -163,7 +169,15 @@ class StructType:
         return lst
     
     def from_bytes(self, bts):
-        pass
+        ret = self()
+        size = 0
+        for name, type_ in self.member_dict.items():
+            size = mem_offset(size, alignof(type_()))
+            ofs = size
+            m_size = sizeof(type_())
+            size += m_size
+            setattr(ret, name, from_bytes(type_(), bts[ofs:size]))
+        return ret
     
     def sizeof(self):
         size = 0
@@ -207,7 +221,7 @@ class StructType:
                     ofs = ofs_array[i]
                     for k, b in enumerate(bt):
                         ret[ofs + k] = b
-                return ret
+                return bytes(ret)
             
             def __getattr__(self, name):
                 return getattr(Type, name)
@@ -215,16 +229,28 @@ class StructType:
         return Struct(self.member_dict)
 
 def test():
-    hit_t = StructType(inst=int,bary=ocapi.float2,a2=Array(int, 2))
-    # arr = Array(ocapi.float2, 10)
-    # arr.fill(ocapi.float2(1))
-    # print(arr)
-    # print(arr.to_bytes())
+    hit_t = StructType(inst=int,bary=ocapi.float2, a2=Array(int, 2))
+    arr = Array(ocapi.float2, 10)
+    arr.fill(ocapi.float2(1))
+    print(arr)
+    b = arr.to_bytes()
+    arr.fill(ocapi.float2(3))
+    print(arr)
+    print(arr.from_bytes(b))
+    # return
     hit = hit_t()
-    hit.bary.x = 9
+    hit.bary = ocapi.float2(3,6)
+    hit.inst = 150
+    hit.a2[0] = 5
+    hit.a2[1] = 9
+    bts = hit.to_byte()
     print(hit)
-    print(hit.offset_array())
-    print(len(hit.to_byte()))
+    print(hit_t.from_bytes(bts))
+    # print(hit.offset_array())
+    
+    
+    
+    # print(len(hit.to_byte()))
 
 if __name__ == "__main__":
     test()
