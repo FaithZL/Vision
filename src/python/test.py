@@ -21,6 +21,8 @@ def main():
     
     # return
     cpplibs.init_context("cuda")
+    
+    func = Function.push(FunctionTag.KERNEL)
 
     hit = uint2(420000000)
     h2 = uint2(420000000)
