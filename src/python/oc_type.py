@@ -118,21 +118,22 @@ class StructType:
             alignment = max(alignment, alignof(type_()), 0)
         self.alignment = alignment
         self.member_dict = kwargs
+        self.member_desc = ""
     
     def __call__(self):
+        Type = self
         class Struct:
             def __init__(self, alignment, member_dict):
-                self.member_desc = ""
                 self.alignment = alignment
                 for name, type_ in member_dict.items():
                     setattr(self, name, type_())
-                    self.member_desc += "," + desc(type_())
+                    Type.member_desc += "," + desc(type_())
             
             def __repr__(self):
                 return repr(self.__dict__)
             
             def desc(self):
-                return f"struct<{self.alignment},false,false" + self.member_desc + ">"
+                return f"struct<{self.alignment},false,false" + Type.member_desc + ">"
         return Struct(self.alignment, self.member_dict)
 
 def test():
@@ -140,7 +141,7 @@ def test():
     print(Array(ocapi.float2, 10).desc())
     hit = hit_t()
     print(hit)
-    # print(hit.desc())
+    print(hit.desc())
 
 if __name__ == "__main__":
     test()
