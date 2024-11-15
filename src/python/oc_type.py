@@ -66,8 +66,6 @@ def list_from_bytes(type_, bytes):
         lst.append(elm)
     return lst
 
-
-    
 class Buffer(ocapi.ByteBuffer):
     def __init__(self, type, size):
         self.__type = type
@@ -155,6 +153,18 @@ class StructType:
             size = max(size, sizeof(type_()))
         return size
     
+    def offset_array(self):
+        lst = []
+        size = 0
+        for name, type_ in self.member_dict.items():
+            size = mem_offset(size, alignof(type_()))
+            lst.append(size)
+            size += sizeof(type_())
+        return lst
+    
+    def from_bytes(self, bts):
+        pass
+    
     def sizeof(self):
         size = 0
         i_max_member_size = 0
@@ -190,7 +200,14 @@ class StructType:
                 return Type
 
             def to_byte(self):
-                return 0
+                ret = bytearray(Type.sizeof())
+                ofs_array = Type.offset_array()
+                for i, elm in enumerate(self.__dict__.values()):
+                    bt = to_bytes(elm)
+                    ofs = ofs_array[i]
+                    for k, b in enumerate(bt):
+                        ret[ofs + k] = b
+                return ret
             
             def __getattr__(self, name):
                 return getattr(Type, name)
@@ -198,15 +215,16 @@ class StructType:
         return Struct(self.member_dict)
 
 def test():
-    hit_t = StructType(bary=ocapi.float2,a2=Array(int, 2))
+    hit_t = StructType(inst=int,bary=ocapi.float2,a2=Array(int, 2))
     # arr = Array(ocapi.float2, 10)
     # arr.fill(ocapi.float2(1))
     # print(arr)
     # print(arr.to_bytes())
     hit = hit_t()
     hit.bary.x = 9
-    print(hit.sizeof())
-    print(hit.desc())
+    print(hit)
+    print(hit.offset_array())
+    print(len(hit.to_byte()))
 
 if __name__ == "__main__":
     test()
