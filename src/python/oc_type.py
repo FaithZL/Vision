@@ -17,6 +17,22 @@ def alignof(arg):
     else:
         return arg.alignof()
     
+def max_member_size(arg):
+    if arg == float or type(arg) == float:
+        return 4
+    elif arg == int or type(arg) == int:
+        return 4
+    else:
+        return arg.max_member_size()
+    
+def desc(arg):
+    if arg == float or type(arg) == float:
+        return "float"
+    elif arg == int or type(arg) == int:
+        return "int"
+    else:
+        return arg.desc()
+    
 def list_to_bytes(lst):
     ret = b''
     for elm in lst:
@@ -49,14 +65,8 @@ def list_from_bytes(type_, bytes):
         elm = from_bytes(type_, bt)
         lst.append(elm)
     return lst
-    
-def desc(arg):
-    if arg == float or type(arg) == float:
-        return "float"
-    elif arg == int or type(arg) == int:
-        return "int"
-    else:
-        return arg.desc()
+
+
     
 class Buffer(ocapi.ByteBuffer):
     def __init__(self, type, size):
@@ -99,18 +109,34 @@ class Array:
         
     def __len__(self):
         return len(self.__lst)
+    
+    def max_member_size(self):
+        return sizeof(self._type())
+    
+    def fill(self, elm):
+        for i in range(len(self)):
+            self.__lst[i] = elm
 
     def __repr__(self):
         return repr(self.__lst)
     
     def alignof(self):
-        return alignof(self._type)
+        return alignof(self._type())
+    
+    def to_bytes(self):
+        bt = bytes()
+        for elm in self.__lst:
+            bt += to_bytes(elm)
+        return bt
     
     def sizeof(self):
-        return sizeof(self._type) * len(self)
+        return sizeof(self._type()) * len(self)
     
     def desc(self):
         return f'array<{desc(self._type)},{len(self)}>'
+    
+def mem_offset(offset:int, alignment:int):
+    return (offset + alignment - 1) // alignment * alignment
     
 class StructType:
     def __init__(self, alignment=1, **kwargs):
@@ -118,28 +144,65 @@ class StructType:
             alignment = max(alignment, alignof(type_()), 0)
         self.alignment = alignment
         self.member_dict = kwargs
-        self.member_desc = ""
+        self.size = self.sizeof()
+    
+    def alignof(self):
+        return self.alignment
+    
+    def max_member_size(self):
+        size = 0
+        for name, type_ in self.member_dict.items():
+            size = max(size, sizeof(type_()))
+        return size
+    
+    def sizeof(self):
+        size = 0
+        i_max_member_size = 0
+        for name, type_ in self.member_dict.items():
+            size = mem_offset(size, alignof(type_()))
+            size += sizeof(type_())
+            # m_size = max_member_size(type_())
+            # if m_size > i_max_member_size:
+            #     i_max_member_size = m_size
+        return size
+    
+    def desc(self):
+        member_desc = ""
+        for name, type_ in self.member_dict.items():
+            setattr(self, name, type_())
+            member_desc += "," + desc(type_())
+        return f"struct<{self.alignment},false,false" + member_desc + ">"
     
     def __call__(self):
         Type = self
         class Struct:
-            def __init__(self, alignment, member_dict):
-                self.alignment = alignment
+            def __init__(self, member_dict):
                 for name, type_ in member_dict.items():
                     setattr(self, name, type_())
-                    Type.member_desc += "," + desc(type_())
             
             def __repr__(self):
                 return repr(self.__dict__)
             
-            def desc(self):
-                return f"struct<{self.alignment},false,false" + Type.member_desc + ">"
-        return Struct(self.alignment, self.member_dict)
+            def type(self):
+                return Type
+
+            def to_byte(self):
+                return 0
+            
+            def __getattr__(self, name):
+                return getattr(Type, name)
+            
+        return Struct(self.member_dict)
 
 def test():
     hit_t = StructType(inst_id=int,bary=ocapi.float2,a2=Array(int, 2))
-    print(Array(ocapi.float2, 10).desc())
+    print(3//2)
+    # arr = Array(ocapi.float2, 10)
+    # arr.fill(ocapi.float2(1))
+    # print(arr)
+    # print(arr.to_bytes())
     hit = hit_t()
+    hit.bary.x = 9
     print(hit)
     print(hit.desc())
 
