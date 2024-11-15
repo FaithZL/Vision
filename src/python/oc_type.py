@@ -161,10 +161,13 @@ class StructType:
         for name, type_ in self.member_dict.items():
             size = mem_offset(size, alignof(type_()))
             size += sizeof(type_())
-            # m_size = max_member_size(type_())
-            # if m_size > i_max_member_size:
-            #     i_max_member_size = m_size
-        return size
+            m_size = max_member_size(type_())
+            if m_size > i_max_member_size:
+                i_max_member_size = m_size
+        mod = size % i_max_member_size
+        if mod != 0:
+            size += i_max_member_size - mod
+        return int(size)
     
     def desc(self):
         member_desc = ""
@@ -195,15 +198,14 @@ class StructType:
         return Struct(self.member_dict)
 
 def test():
-    hit_t = StructType(inst_id=int,bary=ocapi.float2,a2=Array(int, 2))
-    print(3//2)
+    hit_t = StructType(bary=ocapi.float2,a2=Array(int, 2))
     # arr = Array(ocapi.float2, 10)
     # arr.fill(ocapi.float2(1))
     # print(arr)
     # print(arr.to_bytes())
     hit = hit_t()
     hit.bary.x = 9
-    print(hit)
+    print(hit.sizeof())
     print(hit.desc())
 
 if __name__ == "__main__":
