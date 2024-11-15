@@ -128,10 +128,11 @@ class Array:
         return bt
     
     def from_bytes(self, bts):
+        ret = Array(self._type, len(self))
         for i in range(len(self)):
             ofs = sizeof(self._type()) * i
-            self.__lst[i] = from_bytes(self._type(), bts[ofs:])
-        return self
+            ret[i] = from_bytes(self._type(), bts[ofs:])
+        return ret
     
     def sizeof(self):
         return sizeof(self._type()) * len(self)
