@@ -1,21 +1,21 @@
 import cpplibs
 from cpplibs import ocapi
 
-def sizeof(type_):
-    if type_ == float:
+def sizeof(arg):
+    if arg == float or type(arg) == float:
         return 4
-    elif type_ == int:
+    elif arg == int or type(arg) == int:
         return 4
     else:
-        return type_.sizeof()
+        return arg.sizeof()
     
-def alignof(type_):
-    if type_ == float:
+def alignof(arg):
+    if arg == float or type(arg) == float:
         return 4
-    elif type_ == int:
+    elif arg == int or type(arg) == int:
         return 4
     else:
-        return type_.alignof()
+        return arg.alignof()
     
 def list_to_bytes(lst):
     ret = b''
@@ -88,6 +88,9 @@ class Array:
         self._type = _type
         self.__lst = [_type() for i in range(num)]
         
+    def __call__(self):
+        return Array(self._type, len(self))
+        
     def __getitem__(self, index):
         return self.__lst[index]
     
@@ -100,45 +103,44 @@ class Array:
     def __repr__(self):
         return repr(self.__lst)
     
+    def alignof(self):
+        return alignof(self._type)
+    
+    def sizeof(self):
+        return sizeof(self._type) * len(self)
+    
     def desc(self):
         return f'array<{desc(self._type)},{len(self)}>'
-
-class Struct:
-    def __init__(self, alignment, member_dict):
-        self.alignment = alignment
-        for name, type_ in member_dict.items():
-            setattr(self, name, type_())
-    
-    def __repr__(self):
-        return repr(self.__dict__)
-    
-    def desc(self):
-        return f"struct<{self.alignment}>"
     
 class StructType:
     def __init__(self, alignment=1, **kwargs):
-        # for _, type_ in kwargs.items():
-        #     alignment = max(alignment, oc_type.alignof(type_), 0)
+        for _, type_ in kwargs.items():
+            alignment = max(alignment, alignof(type_()), 0)
         self.alignment = alignment
         self.member_dict = kwargs
     
     def __call__(self):
-        class S:
+        class Struct:
             def __init__(self, alignment, member_dict):
+                self.member_desc = ""
                 self.alignment = alignment
                 for name, type_ in member_dict.items():
                     setattr(self, name, type_())
+                    self.member_desc += "," + desc(type_())
             
             def __repr__(self):
                 return repr(self.__dict__)
             
             def desc(self):
-                return f"struct<{self.alignment}>"
-        return S
+                return f"struct<{self.alignment},false,false" + self.member_desc + ">"
+        return Struct(self.alignment, self.member_dict)
 
 def test():
-    hit_t = StructType(inst_id=int,bary=ocapi.float2)
+    hit_t = StructType(inst_id=int,bary=ocapi.float2,a2=Array(int, 2))
     print(Array(ocapi.float2, 10).desc())
+    hit = hit_t()
+    print(hit)
+    # print(hit.desc())
 
 if __name__ == "__main__":
     test()
