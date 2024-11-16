@@ -5,7 +5,7 @@ bl_info = {
     "blender": (3, 0, 0),
     "location": "View3D > Tool",
     "description": "A simple Blender addon example",
-    "category": "Window",
+    "category": "3D View",
 }
 
 import bpy
