@@ -1,11 +1,11 @@
 bl_info = {
-    "name": "My Blender Addon",
-    "author": "Your Name",
+    "name": "VisionExporter",
+    "author": "zhuling",
     "version": (1, 0),
     "blender": (3, 0, 0),
     "location": "View3D > Tool",
     "description": "A simple Blender addon example",
-    "category": "3D View",
+    "category": "Window",
 }
 
 import bpy
