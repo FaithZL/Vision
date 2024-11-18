@@ -25,11 +25,12 @@ class MyDropdownOperator(Operator):
     #     return {'FINISHED'}
 
 
-class FilterPanel(bpy.types.Panel):
-    bl_idname = "VISION_FILTER"
+class VISION_RENDER_PT_filter(bpy.types.Panel):
+    bl_idname = "VISION_RENDER_PT_filter"
     bl_label = "filter"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
+    COMPAT_ENGINES = {'CYCLES'}
     bl_context = "render"
 
     def draw(self, context):
@@ -42,12 +43,15 @@ class FilterPanel(bpy.types.Panel):
         # # 创建一个按钮来执行操作符
         # row = layout.row()
         # row.operator("object.my_dropdown_operator", text="Execute")
-        
+
+classes = (
+    VISION_RENDER_PT_filter,
+)        
 
 def register():
-    bpy.utils.register_class(FilterPanel)
-    bpy.utils.register_class(MyDropdownOperator)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     
 def unregister():
-    bpy.utils.unregister_class(FilterPanel)
-    bpy.utils.unregister_class(MyDropdownOperator)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
