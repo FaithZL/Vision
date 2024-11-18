@@ -1,10 +1,10 @@
 bl_info = {
-    "name": "VisionExporter",
+    "name": "VisionRenderer",
     "author": "Your Name",
     "version": (1, 0),
     "blender": (3, 0, 0),
     "location": "Render Engine Menu",
-    "description": "A custom render engine example",
+    "description": "vision renderer and exporter",
     "category": "Render",
 }
 
@@ -13,7 +13,7 @@ import bpy
 
 class VisionRender(bpy.types.RenderEngine):
     bl_idname = "VISION_RENDER_ENGINE"
-    bl_label = "VisionRender"
+    bl_label = "Vision"
     bl_use_preview = True  # 支持材质预览
 
     def render(self, context):
