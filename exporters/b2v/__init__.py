@@ -9,7 +9,7 @@ bl_info = {
 }
 
 import bpy
-
+from. import ui
 
 class VisionRender(bpy.types.RenderEngine):
     bl_idname = "VISION_RENDER_ENGINE"
@@ -26,18 +26,20 @@ class VisionRender(bpy.types.RenderEngine):
         self.end_result(result)
 
 
-def register():
-    print("wocao register")
-    bpy.utils.register_class(VisionRender)
-    # 将自定义渲染器注册到渲染器选择菜单
-    print(dir(bpy.types.Scene))
-    # bpy.types.Scene.render.engine = "MY_CUSTOM_RENDER"
 
+def register():
+    print("Registering VisionRender...")
+    bpy.utils.register_class(VisionRender)
+    bpy.utils.register_class(ui.FilterPanel)
+
+    # 确保我们的渲染引擎在注册时被添加到可用引擎列表中
+    # if not bpy.context.scene.render.engine in bpy.types.RenderEngine.bl_rna.properties['bl_idname'].enum_items.keys():
+    #     bpy.types.RenderEngine.bl_rna.properties['bl_idname'].enum_items.add(['VISION_RENDER_ENGINE', 'Vision', 'Vision render engine'])
 
 def unregister():
-    # pass
+    print("Unregistering VisionRender...")
     bpy.utils.unregister_class(VisionRender)
-
+    bpy.utils.unregister_class(ui.FilterPanel)
 
 if __name__ == "__main__":
     register()
