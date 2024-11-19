@@ -94,7 +94,8 @@ def parent_path(p, num=1):
 def main():
     force = read_config()
     copy_files(src, dst, force)
-    os.environ['PYTHONPATH'] = dst
+    # sys.path.append(dst)
+    # os.environ['PYTHONPATH'] = dst
     generate_pyi("ocapi")
     generate_pyi("vsapi")
 
