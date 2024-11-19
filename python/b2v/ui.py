@@ -30,8 +30,12 @@ class VISION_RENDER_PT_filter(bpy.types.Panel):
     bl_label = "filter"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    COMPAT_ENGINES = {'CYCLES'}
+    COMPAT_ENGINES = {'VISION_RENDER_ENGINE'}
     bl_context = "render"
+    
+    @classmethod
+    def poll(cls, context):
+        return context.engine in cls.COMPAT_ENGINES
 
     def draw(self, context):
         layout = self.layout
