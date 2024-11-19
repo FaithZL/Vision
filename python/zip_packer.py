@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import os
 import zipfile
@@ -16,7 +17,7 @@ def main():
     print(cur_path)
     os.chdir(cur_path)
     dirname_to_compress = os.path.join(cur_path, "b2v")
-    zip_filename = 'b2v.zip'  # 压缩文件的名称
+    zip_filename = 'b2v.zip'  
     zip_directory(dirname_to_compress, zip_filename)
 
 if __name__ == "__main__":

@@ -77,15 +77,31 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src/ocarina/src")):
         except :
             print(fn)
 
-        
-        
         num_file += 1
 
 
 print("frame work stats " , count, num_file)
-print("total stats: ", count + r_count, num_file + r_num_file)
 
-# t = 359315 + 150747 + 224500 + 72000 + 7000 + 100000 + 42500 + 200000
+py_count = 0
+py_file_num = 0
 
-# print(t)
+for root,dirs,files in os.walk(os.path.join(os.getcwd(), "python")):
+    for file in files:
+        fn = os.path.join(root,file)
+        if "cpplibs\\" in fn:
+            continue
+        if "__pycache__\\" in fn:
+            continue
+        try:
+            f = open(fn, "r")
+            py_count += len(f.readlines())
+        except :
+            print(fn)
 
+        py_file_num += 1
+
+
+print("python stats " , py_count, py_file_num)
+
+
+print("total stats: ", count + r_count + py_count, num_file + r_num_file + py_file_num)
