@@ -88,6 +88,8 @@ py_file_num = 0
 for root,dirs,files in os.walk(os.path.join(os.getcwd(), "python")):
     for file in files:
         fn = os.path.join(root,file)
+        if "toml" in fn:
+            continue
         if "cpplibs\\" in fn:
             continue
         if "__pycache__\\" in fn:

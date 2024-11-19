@@ -11,6 +11,11 @@ bl_info = {
 import bpy
 from. import ui
 
+from . import auto_load
+
+auto_load.init()
+
+
 class Vision(bpy.types.RenderEngine):
     bl_idname = "VISION_RENDER_ENGINE"
     bl_label = "Vision"
@@ -28,7 +33,9 @@ class Vision(bpy.types.RenderEngine):
 
 
 def register():
-    print("Registering Vision ---")
+    print("Registering Vision -000000000000--")
+    # auto_load.register()
+
     bpy.utils.register_class(Vision)
     ui.register()
 
@@ -36,6 +43,8 @@ def unregister():
     print("Unregistering Vision ---")
     bpy.utils.unregister_class(Vision)
     ui.unregister()
+    # auto_load.unregister()
+
 
 if __name__ == "__main__":
     register()
