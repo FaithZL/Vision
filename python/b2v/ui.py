@@ -1,28 +1,28 @@
 import bpy
-from bpy.types import Operator
-from bpy.props import EnumProperty
+# from bpy.types import Operator
+# from bpy.props import EnumProperty
 
-class MyDropdownOperator(Operator):
-    bl_idname = "object.my_dropdown_operator"
-    bl_label = "My Dropdown Operator"
-    bl_description = "An operator with a dropdown menu"
+# class MyDropdownOperator(Operator):
+#     bl_idname = "object.my_dropdown_operator"
+#     bl_label = "My Dropdown Operator"
+#     bl_description = "An operator with a dropdown menu"
     
-    # 定义下拉框的属性
-    my_dropdown = EnumProperty(
-        name="My Dropdown",
-        description="Choose an option",
-        items=[
-            ('OPTION_ONE', "Option One", "Description of Option One"),
-            ('OPTION_TWO', "Option Two", "Description of Option Two"),
-            ('OPTION_THREE', "Option Three", "Description of Option Three")
-        ],
-        default='OPTION_ONE'
-    )
+#     # 定义下拉框的属性
+#     my_dropdown = EnumProperty(
+#         name="My Dropdown",
+#         description="Choose an option",
+#         items=[
+#             ('OPTION_ONE', "Option One", "Description of Option One"),
+#             ('OPTION_TWO', "Option Two", "Description of Option Two"),
+#             ('OPTION_THREE', "Option Three", "Description of Option Three")
+#         ],
+#         default='OPTION_ONE'
+#     )
     
-    # # 定义操作符的执行逻辑
-    # def execute(self, context):
-    #     print(f"Selected option: {self.my_dropdown}")
-    #     return {'FINISHED'}
+#     # # 定义操作符的执行逻辑
+#     # def execute(self, context):
+#     #     print(f"Selected option: {self.my_dropdown}")
+#     #     return {'FINISHED'}
 
 
 class VISION_RENDER_PT_filter(bpy.types.Panel):
@@ -44,14 +44,16 @@ class VISION_RENDER_PT_filter(bpy.types.Panel):
         # row = layout.row()
         # row.operator("object.my_dropdown_operator", text="Execute")
 
-classes = (
-    VISION_RENDER_PT_filter,
-)        
+# classes = (
+#     VISION_RENDER_PT_filter,
+# )        
 
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
+# def register():
+#     pass
+    # for cls in classes:
+    #     bpy.utils.register_class(cls)
     
-def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+# def unregister():
+#     pass
+#     # for cls in classes:
+    #     bpy.utils.unregister_class(cls)
