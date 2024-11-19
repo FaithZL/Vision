@@ -43,17 +43,3 @@ class VISION_RENDER_PT_filter(bpy.types.Panel):
         # # 创建一个按钮来执行操作符
         # row = layout.row()
         # row.operator("object.my_dropdown_operator", text="Execute")
-
-# classes = (
-#     VISION_RENDER_PT_filter,
-# )        
-
-# def register():
-#     pass
-    # for cls in classes:
-    #     bpy.utils.register_class(cls)
-    
-# def unregister():
-#     pass
-#     # for cls in classes:
-    #     bpy.utils.unregister_class(cls)
