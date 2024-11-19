@@ -21,4 +21,5 @@
 *.pyc
 *.dll
 /src/python/cpplibs/*.txt
+/python/cpplibs/*.txt
 /**/.cache/*

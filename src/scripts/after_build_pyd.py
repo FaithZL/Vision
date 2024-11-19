@@ -58,7 +58,7 @@ if len(args) > 1:
 else:
     src = "cmake-build-debug\\bin"
 src = os.path.join(os.getcwd(), src)
-dst = os.path.join(os.getcwd(), "src\\python\\cpplibs")
+dst = os.path.join(os.getcwd(), "python\\cpplibs")
 
 if not os.path.exists(dst):
     os.makedirs(dst)
