@@ -6,9 +6,7 @@ from cpplibs.ocapi import *
 from cpplibs import vsapi
 from cpplibs.vsapi import *
 import numpy as np
-import oc_type
-
-
+from dsl import oc_type
 
     
 def main():
