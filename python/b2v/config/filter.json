@@ -1,0 +1,23 @@
+{
+    "Box" : {
+        "label" : "Box",
+        "description" : "Box reconstruction filter."
+    },
+    "Triangle" : {
+        "label" : "Triangle",
+        "description" : "Simple triangular reconstruction filter."
+    },
+    "Gaussian" : {
+        "label" : "Gaussian",
+        "description" : "Windowed gaussian reconstruction filter.",
+        "parameters" : {
+            "stddev" : {
+                "label" : "Standard Deviation",
+                "description" : "Standard deviation of the gaussian.",
+                "type" : "float",
+                "default" : 0.5,
+                "min" : 0.0
+            }
+        }
+    }
+}

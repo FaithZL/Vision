@@ -24,12 +24,7 @@ import bpy
 #     #     print(f"Selected option: {self.my_dropdown}")
 #     #     return {'FINISHED'}
 
-
-class VISION_RENDER_PT_filter(bpy.types.Panel):
-    bl_idname = "VISION_RENDER_PT_filter"
-    bl_label = "filter"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+class VisionWidget:
     COMPAT_ENGINES = {'VISION_RENDER_ENGINE'}
     bl_context = "render"
     
@@ -37,13 +32,57 @@ class VISION_RENDER_PT_filter(bpy.types.Panel):
     def poll(cls, context):
         return context.engine in cls.COMPAT_ENGINES
 
+
+class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Filter"
+    bl_label = "Filter"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+
     def draw(self, context):
         layout = self.layout
         
-        # # 创建一个下拉框
-        # row = layout.row()
-        # row.prop(context.window_manager, "my_dropdown_operator.my_dropdown", text="My Dropdown")
+class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_LightSampler"
+    bl_label = "LightSampler"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    
+    def draw(self, context):
+        layout = self.layout
+
+class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Spectrum"
+    bl_label = "Spectrum"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    
+    def draw(self, context):
+        layout = self.layout
+
+class VISION_RENDER_PT_Sampler(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Sampler"
+    bl_label = "Sampler"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    
+    def draw(self, context):
+        layout = self.layout
+
+class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Intergrator"
+    bl_label = "Intergrator"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    
+    def draw(self, context):
+        layout = self.layout
         
-        # # 创建一个按钮来执行操作符
-        # row = layout.row()
-        # row.operator("object.my_dropdown_operator", text="Execute")
+class VISION_RENDER_PT_Operator(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Operator"
+    bl_label = "Operator"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    
+    def draw(self, context):
+        layout = self.layout       
