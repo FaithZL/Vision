@@ -63,8 +63,6 @@ class MyPropertyGroup(bpy.types.PropertyGroup):
     custom_2: bpy.props.IntProperty(name="My Int")
     
 class SceneSettingItem(bpy.types.PropertyGroup):
-    # light_sampler_type
-
     filterTypes = [("GaussianFilter", "GaussianFilter", "", 1),
                    ("BoxFilter", "BoxFilter", "", 2),
                    ("TriangleFilter", "TriangleFilter", "", 3),
@@ -83,12 +81,12 @@ class VisionWidget:
     def poll(cls, context):
         return context.engine in cls.COMPAT_ENGINES
 
-
 class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
     bl_idname = "VISION_RENDER_PT_Filter"
     bl_label = "Filter"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
+
 
     def draw(self, context):
         scene = context.scene
