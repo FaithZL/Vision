@@ -1,9 +1,4 @@
 import bpy
-# from bpy.types import Operator
-# from bpy.props import EnumProperty
-
-
-import bpy
 from bpy.props import EnumProperty
 
 class SearchEnumOperator(bpy.types.Operator):
@@ -55,6 +50,8 @@ class CustomDrawOperator(bpy.types.Operator):
         row = col.row()
         row.prop(self, "my_float")
         row.prop(self, "my_bool")
+
+
 
         col.prop(self, "my_string")
 
