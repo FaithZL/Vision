@@ -1,0 +1,6 @@
+{
+    "PT" : {
+        "label" : "path tracing",
+        "description" : "Box reconstruction filter."
+    }
+}
