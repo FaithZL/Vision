@@ -1,37 +1,43 @@
 {
-    "box" : {
-        "label" : "box",
-        "description" : "box reconstruction filter.",
-        "parameters" : {
-            "radius" : {
-                "type" : "Float",
-                "default" : 0.5,
-                "max" : 5,
-                "min" : 0.1
+    "box": {
+        "label": "box",
+        "description": "box reconstruction filter.",
+        "parameters": {
+            "radius": {
+                "type": "Float",
+                "args": {
+                    "default": 1,
+                    "max": 5,
+                    "min": 0.1
+                }
             }
         }
     },
-    "triangle" : {
-        "label" : "triangle",
-        "description" : "Simple triangular reconstruction filter.",
-        "parameters" : {
-            "radius" : {
-                "type" : "Float",
-                "default" : 1,
-                "max" : 5,
-                "min" : 0.1
+    "triangle": {
+        "label": "triangle",
+        "description": "Simple triangular reconstruction filter.",
+        "parameters": {
+            "radius": {
+                "type": "Float",
+                "args": {
+                    "default": 1,
+                    "max": 5,
+                    "min": 0.1
+                }
             }
         }
     },
-    "gaussian" : {
-        "label" : "gaussian",
-        "description" : "Windowed gaussian reconstruction filter.",
-        "parameters" : {
-            "radius" : {
-                "type" : "Float",
-                "default" : 0.5,
-                "max" : 5,
-                "min" : 0.1
+    "gaussian": {
+        "label": "gaussian",
+        "description": "Windowed gaussian reconstruction filter.",
+        "parameters": {
+            "radius": {
+                "type": "Float",
+                "args": {
+                    "default": 1,
+                    "max": 5,
+                    "min": 0.1
+                }
             }
         }
     }
