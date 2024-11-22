@@ -1,5 +1,13 @@
 import bpy
-from bpy.props import EnumProperty
+from bpy.props import (
+    BoolProperty,
+    CollectionProperty,
+    EnumProperty,
+    FloatProperty,
+    IntProperty,
+    PointerProperty,
+    StringProperty
+)
 from . import config
     
 class VisionWidget:
@@ -22,7 +30,13 @@ class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
         layout = self.layout
         row = layout.row()
         vs = scene.vision_setting
-        row.prop(vs, "filterType")
+        row.prop(vs, "filter_type")
+        params = vs.filter_parameter(vs.filter_type)
+        # row.prop()
+        # for name, val in  params.items():
+            
+        
+        
         
 class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VisionWidget):
     bl_idname = "VISION_RENDER_PT_LightSampler"
