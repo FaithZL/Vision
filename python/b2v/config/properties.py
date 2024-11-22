@@ -24,14 +24,14 @@ class SceneSettingItem(bpy.types.PropertyGroup):
                    ("TriangleFilter", "TriangleFilter", "", 3),
                    ("LanczosSincFilter", "LanczosSincFilter", "", 4),
                    ("MitchellFilter", "MitchellFilter", "", 5)]
-
-    bpy.types.Scene.filterType = bpy.props.EnumProperty(
+    
+    filterType : bpy.props.EnumProperty(
         name="type", items=filterTab, default="GaussianFilter")
     
-# def register():
-    
-#     print("wocaonima ----------------------")
-
-
-# def unregister():
-#     print("wocaonima00000000000000 ----------------------")
+    @classmethod
+    def register(cls):
+        bpy.types.Scene.vision_setting = PointerProperty(
+            name="vision_setting Render Settings",
+            description="vision_setting render settings",
+            type=cls,
+        )
