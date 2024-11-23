@@ -24,17 +24,19 @@ class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
-
     def draw(self, context):
         scene = context.scene
         layout = self.layout
         row = layout.row()
         vs = scene.vision_filter_setting
         row.prop(vs, "filter_type")
-        print(dir(vs))
-        # row.prop()
-        # for name, val in  params.items():
-            
+        cur_filter = vs.filter_type
+        print(cur_filter)
+        for attr in dir(vs):
+            if attr.startswith(cur_filter):
+                attr_name = attr[len(cur_filter) + 1:]
+                layout.row().prop(vs, attr, text=attr_name)
+        
         
         
         

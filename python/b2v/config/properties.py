@@ -39,7 +39,3 @@ class VisionFilterSetting(bpy.types.PropertyGroup):
                 property_func = getattr(bpy.props, param["type"] + "Property")
                 ppt = property_func(**param["args"])
                 setattr(cls, key, ppt)
-        
-    @classmethod
-    def filter_parameter(cls, key):
-        return cls.__filter_dict[key]["parameters"]
