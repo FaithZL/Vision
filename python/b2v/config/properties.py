@@ -18,7 +18,7 @@ with open(os.path.join(dirname(__file__), "integrators.json")) as file:
 with open(os.path.join(dirname(__file__), "filters.json")) as file:
     filter_dict = json.load(file)
     
-class SceneSettingItem(bpy.types.PropertyGroup):
+class VisionSetting(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):   
         filter_tab = [
