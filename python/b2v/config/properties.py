@@ -18,7 +18,7 @@ with open(os.path.join(dirname(__file__), "integrators.json")) as file:
 with open(os.path.join(dirname(__file__), "filters.json")) as file:
     filter_dict = json.load(file)
     
-class VisionSetting(bpy.types.PropertyGroup):
+class VisionFilterSetting(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):   
         filter_tab = [
@@ -27,11 +27,18 @@ class VisionSetting(bpy.types.PropertyGroup):
         cls.__filter_dict = filter_dict
         cls.filter_type = bpy.props.EnumProperty(
             name="type", items=filter_tab)
-        bpy.types.Scene.vision_setting = PointerProperty(
-            name="vision_setting Render Settings",
-            description="vision_setting render settings",   
+        bpy.types.Scene.vision_filter_setting = PointerProperty(
+            name="vision_filter_setting",
+            description="vision_filter_setting",   
             type=cls,
         )
+        for val in filter_dict.values():
+            filter_name = val["label"]
+            for param_name, param in val["parameters"].items():
+                key = filter_name + "_" + param_name
+                property_func = getattr(bpy.props, param["type"] + "Property")
+                ppt = property_func(**param["args"])
+                setattr(cls, key, ppt)
         
     @classmethod
     def filter_parameter(cls, key):

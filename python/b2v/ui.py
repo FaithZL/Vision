@@ -29,9 +29,9 @@ class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
         scene = context.scene
         layout = self.layout
         row = layout.row()
-        vs = scene.vision_setting
+        vs = scene.vision_filter_setting
         row.prop(vs, "filter_type")
-        params = vs.filter_parameter(vs.filter_type)
+        print(dir(vs))
         # row.prop()
         # for name, val in  params.items():
             
