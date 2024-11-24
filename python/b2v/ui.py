@@ -12,19 +12,14 @@ from bpy.props import (
 import os
 from os.path import basename, dirname
 import json
+from . import config
 
 
 class VisionBaseSetting(bpy.types.PropertyGroup):
 
     @classmethod
-    def get_dict(cls, fn):
-        with open(os.path.join(dirname(__file__), "config/" + fn)) as file:
-            ret = json.load(file)
-        return ret
-
-    @classmethod
     def register_impl(cls):
-        dic = cls.get_dict(cls.fn)
+        dic = cls.dic
         tab = [
             (name, name, val["description"], i)
             for i, (name, val) in enumerate(dic.items())
@@ -44,10 +39,6 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
             for param_name, param in val["parameters"].items():
                 key = label + "_" + param_name
                 property_func = getattr(bpy.props, param["type"] + "Property")
-                for k, v in param["args"].items():
-                    if k == "items":
-                        for i, val in enumerate(param["args"]["items"]):
-                            param["args"]["items"][i] = tuple(val)
                 ppt = property_func(**param["args"])
                 setattr(cls, key, ppt)
 
@@ -88,7 +79,7 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
 class VisionFilterSetting(VisionBaseSetting):
     setting_name = "vision_filter_setting"
     attr_type = "filter_type"
-    fn = "filters.json"
+    dic = config.filters.dic
 
     @classmethod
     def register(cls):
@@ -104,7 +95,7 @@ class VISION_RENDER_PT_Filter(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel)
 class VisionIntegratorSetting(VisionBaseSetting):
     setting_name = "vision_integrator_setting"
     attr_type = "integrator_type"
-    fn = "integrators.json"
+    dic = config.integrators.dic
 
     @classmethod
     def register(cls):
@@ -120,7 +111,7 @@ class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBaseP
 class VisionLightSamplerSetting(VisionBaseSetting):
     setting_name = "vision_lightsampler_setting"
     attr_type = "lightsampler_type"
-    fn = "lightsamplers.json"
+    dic = config.lightsamplers.dic
 
     @classmethod
     def register(cls):
@@ -136,7 +127,7 @@ class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBase
 class VisionSpectrumSetting(VisionBaseSetting):
     setting_name = "vision_spectrum_setting"
     attr_type = "spectrum_type"
-    fn = "spectrums.json"
+    dic = config.spectrums.dic
 
     @classmethod
     def register(cls):
@@ -152,7 +143,7 @@ class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VISION_RENDER_PT_VisionBasePane
 class VisionSamplerSetting(VisionBaseSetting):
     setting_name = "vision_sampler_setting"
     attr_type = "sampler_type"
-    fn = "samplers.json"
+    dic = config.filters.dic
 
     @classmethod
     def register(cls):
@@ -168,7 +159,7 @@ class VISION_RENDER_PT_Sampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel
 class VisionEnvironmentSetting(VisionBaseSetting):
     setting_name = "vision_environment_setting"
     attr_type = "environment_type"
-    fn = "environments.json"
+    dic = config.environments.dic
 
     @classmethod
     def register(cls):

@@ -1,4 +1,4 @@
-{
+dic = {
     "uniform": {
         "label": "uniform",
         "description": "uniform light sampler",

@@ -1,4 +1,4 @@
-{
+dic = {
     "spherical": {
         "label": "spherical",
         "description": "spherical integrator",
@@ -16,8 +16,8 @@
                 "args" :{
                     "name" : "color_space",
                     "items" : [
-                        ["linear", "linear", "linear", 0],
-                        ["SRGB", "SRGB", "SRGB", 1]
+                        ("linear", "linear", "linear", 0),
+                        ("SRGB", "SRGB", "SRGB", 1)
                     ]
                 }
             },

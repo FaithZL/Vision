@@ -1,4 +1,4 @@
-{
+dic = {
     "box": {
         "label": "box",
         "description": "box reconstruction filter.",

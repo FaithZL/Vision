@@ -1,4 +1,4 @@
-{
+dic = {
     "SRGB": {
         "label": "SRGB",
         "description": "SRGB Spectrum",

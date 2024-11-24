@@ -1,4 +1,4 @@
-{
+dic = {
     "path tracing": {
         "label": "path tracing",
         "description": "path tracing integrator",

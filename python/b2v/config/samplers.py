@@ -1,4 +1,4 @@
-{
+dic = {
     "independent": {
         "label": "independent",
         "description": "independent sampler",
