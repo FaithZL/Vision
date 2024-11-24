@@ -13,14 +13,15 @@ import os
 from os.path import basename, dirname
 import json
 
+
 class VisionBaseSetting(bpy.types.PropertyGroup):
-    
+
     @classmethod
     def get_dict(cls, fn):
         with open(os.path.join(dirname(__file__), "config/" + fn)) as file:
             ret = json.load(file)
         return ret
-    
+
     @classmethod
     def register_impl(cls):
         dic = cls.get_dict(cls.fn)
@@ -47,29 +48,6 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
                 setattr(cls, key, ppt)
 
 
-class VisionFilterSetting(VisionBaseSetting):
-
-    setting_name = "vision_filter_setting"
-    attr_type = "filter_type"
-    fn = "filters.json"
-
-    @classmethod
-    def register(cls):
-        cls.register_impl()
-
-
-class VisionIntegratorSetting(VisionBaseSetting):
-
-    setting_name = "vision_integrator_setting"
-    attr_type = "integrator_type"
-    fn = "integrators.json"
-
-    @classmethod
-    def register(cls):
-        cls.register_impl()
-
-
-
 class VisionWidget:
     COMPAT_ENGINES = {"VISION_RENDER_ENGINE"}
     bl_context = "render"
@@ -82,7 +60,6 @@ class VisionWidget:
 
 
 class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
-
     def attr_type(self):
         return self.property_cls.attr_type
 
@@ -104,10 +81,30 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
                 layout.row().prop(vs, attr, text=attr_name)
 
 
+class VisionFilterSetting(VisionBaseSetting):
+    setting_name = "vision_filter_setting"
+    attr_type = "filter_type"
+    fn = "filters.json"
+
+    @classmethod
+    def register(cls):
+        cls.register_impl()
+
+
 class VISION_RENDER_PT_Filter(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Filter"
     bl_label = "Filter"
     property_cls = VisionFilterSetting
+
+
+class VisionIntegratorSetting(VisionBaseSetting):
+    setting_name = "vision_integrator_setting"
+    attr_type = "integrator_type"
+    fn = "integrators.json"
+
+    @classmethod
+    def register(cls):
+        cls.register_impl()
 
 
 class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
@@ -116,33 +113,57 @@ class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBaseP
     property_cls = VisionIntegratorSetting
 
 
-class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VisionWidget):
+class VisionLightSamplerSetting(VisionBaseSetting):
+    setting_name = "vision_lightsampler_setting"
+    attr_type = "lightsampler_type"
+    fn = "lightsamplers.json"
+
+    @classmethod
+    def register(cls):
+        cls.register_impl()
+
+
+class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_LightSampler"
     bl_label = "LightSampler"
-
-    def draw(self, context):
-        layout = self.layout
+    property_cls = VisionLightSamplerSetting
 
 
-class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VisionWidget):
+class VisionSpectrumSetting(VisionBaseSetting):
+    setting_name = "vision_spectrum_setting"
+    attr_type = "spectrum_type"
+    fn = "spectrums.json"
+
+    @classmethod
+    def register(cls):
+        cls.register_impl()
+
+
+class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Spectrum"
     bl_label = "Spectrum"
-
-    def draw(self, context):
-        layout = self.layout
+    property_cls = VisionSpectrumSetting
 
 
-class VISION_RENDER_PT_Sampler(bpy.types.Panel, VisionWidget):
+class VisionSamplerSetting(VisionBaseSetting):
+    setting_name = "vision_sampler_setting"
+    attr_type = "sampler_type"
+    fn = "samplers.json"
+
+    @classmethod
+    def register(cls):
+        cls.register_impl()
+
+
+class VISION_RENDER_PT_Sampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Sampler"
     bl_label = "Sampler"
-
-    def draw(self, context):
-        layout = self.layout
+    property_cls = VisionSamplerSetting
 
 
-class VISION_RENDER_PT_Operator(bpy.types.Panel, VisionWidget):
-    bl_idname = "VISION_RENDER_PT_Operator"
-    bl_label = "Operator"
+class VISION_RENDER_PT_Other(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Other"
+    bl_label = "Other"
 
     def draw(self, context):
         layout = self.layout
