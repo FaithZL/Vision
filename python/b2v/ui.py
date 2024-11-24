@@ -23,29 +23,27 @@ class VisionWidget:
         return context.engine in cls.COMPAT_ENGINES
 
 
-# class VISION_RENDER_PT_BasePanel(bpy.types.Panel, VisionWidget):
-
-#     property_cls = properties.VisionFilterSetting
+class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
     
-#     def attr_type(self):
-#         return self.property_cls.attr_type
+    def attr_type(self):
+        return self.property_cls.attr_type
     
-#     def setting_name(self):
-#         return self.property_cls.setting_name
+    def setting_name(self):
+        return self.property_cls.setting_name
 
-#     def draw(self, context):
-#         scene = context.scene
-#         layout = self.layout
-#         row = layout.row()
-#         layout.use_property_split = True
-#         layout.use_property_decorate = False
-#         vs = getattr(scene, self.setting_name())
-#         row.prop(vs, self.attr_type())
-#         cur_item = getattr(vs, self.attr_type())
-#         for attr in dir(vs):
-#             if attr.startswith(cur_item):
-#                 attr_name = attr[len(cur_item) + 1 :]
-#                 layout.row().prop(vs, attr, text=attr_name)
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+        row = layout.row()
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        vs = getattr(scene, self.setting_name())
+        row.prop(vs, self.attr_type())
+        cur_item = getattr(vs, self.attr_type())
+        for attr in dir(vs):
+            if attr.startswith(cur_item):
+                attr_name = attr[len(cur_item) + 1 :]
+                layout.row().prop(vs, attr, text=attr_name)
 
 
 class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
