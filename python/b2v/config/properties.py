@@ -13,22 +13,21 @@ import os
 from os.path import basename, dirname
 import json
 
-with open(os.path.join(dirname(__file__), "integrators.json")) as file:
-    integrator_dict = json.load(file)
-with open(os.path.join(dirname(__file__), "filters.json")) as file:
-    filter_dict = json.load(file)
-with open(os.path.join(dirname(__file__), "samplers.json")) as file:
-    sampler_dict = json.load(file)
-with open(os.path.join(dirname(__file__), "lightsamplers.json")) as file:
-    lightsampler_dict = json.load(file)
-
 
 class VisionBaseSetting(bpy.types.PropertyGroup):
+    
+    @classmethod
+    def get_dict(cls, fn):
+        with open(os.path.join(dirname(__file__), fn)) as file:
+            ret = json.load(file)
+        return ret
+    
     @classmethod
     def register_impl(cls):
+        dic = cls.get_dict(cls.fn)
         tab = [
             (name, name, val["description"], i)
-            for i, (name, val) in enumerate(cls.dic.items())
+            for i, (name, val) in enumerate(dic.items())
         ]
         setattr(cls, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
         setattr(
@@ -40,7 +39,7 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
                 type=cls,
             ),
         )
-        for val in cls.dic.values():
+        for val in dic.values():
             label = val["label"]
             for param_name, param in val["parameters"].items():
                 key = label + "_" + param_name
@@ -52,8 +51,8 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
 class VisionFilterSetting(VisionBaseSetting):
 
     setting_name = "vision_filter_setting"
-    dic = filter_dict
     attr_type = "filter_type"
+    fn = "filters.json"
 
     @classmethod
     def register(cls):
@@ -61,12 +60,11 @@ class VisionFilterSetting(VisionBaseSetting):
 
 
 class VisionIntegratorSetting(VisionBaseSetting):
-    
+
     setting_name = "vision_integrator_setting"
-    dic = integrator_dict
     attr_type = "integrator_type"
-    
+    fn = "integrators.json"
+
     @classmethod
     def register(cls):
         cls.register_impl()
-
