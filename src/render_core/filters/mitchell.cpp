@@ -9,8 +9,8 @@ namespace vision {
 
 class MitchellFilter : public FittedCurveFilter {
 private:
-    float b_;
-    float c_;
+    float b_{};
+    float c_{};
 
 public:
     MitchellFilter() = default;
