@@ -44,6 +44,10 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
             for param_name, param in val["parameters"].items():
                 key = label + "_" + param_name
                 property_func = getattr(bpy.props, param["type"] + "Property")
+                for k, v in param["args"].items():
+                    if k == "items":
+                        for i, val in enumerate(param["args"]["items"]):
+                            param["args"]["items"][i] = tuple(val)
                 ppt = property_func(**param["args"])
                 setattr(cls, key, ppt)
 
@@ -161,9 +165,17 @@ class VISION_RENDER_PT_Sampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel
     property_cls = VisionSamplerSetting
 
 
-class VISION_RENDER_PT_Other(bpy.types.Panel, VisionWidget):
-    bl_idname = "VISION_RENDER_PT_Other"
-    bl_label = "Other"
+class VisionEnvironmentSetting(VisionBaseSetting):
+    setting_name = "vision_environment_setting"
+    attr_type = "environment_type"
+    fn = "environments.json"
 
-    def draw(self, context):
-        layout = self.layout
+    @classmethod
+    def register(cls):
+        cls.register_impl()
+
+
+class VISION_RENDER_PT_Environment(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
+    bl_idname = "VISION_RENDER_PT_Environment"
+    bl_label = "Environment"
+    property_cls = VisionEnvironmentSetting
