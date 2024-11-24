@@ -6,7 +6,7 @@ from bpy.props import (
     FloatProperty,
     IntProperty,
     PointerProperty,
-    StringProperty
+    StringProperty,
 )
 
 import os
@@ -17,46 +17,96 @@ with open(os.path.join(dirname(__file__), "integrators.json")) as file:
     integrator_dict = json.load(file)
 with open(os.path.join(dirname(__file__), "filters.json")) as file:
     filter_dict = json.load(file)
-    
+with open(os.path.join(dirname(__file__), "samplers.json")) as file:
+    sampler_dict = json.load(file)
+with open(os.path.join(dirname(__file__), "lightsamplers.json")) as file:
+    lightsampler_dict = json.load(file)
+
+
+class VisionBaseSetting(bpy.types.PropertyGroup):
+    @classmethod
+    def register_impl(cls):
+        tab = [
+            (name, name, val["description"], i)
+            for i, (name, val) in enumerate(cls.dic.items())
+        ]
+        setattr(cls, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
+        setattr(
+            bpy.types.Scene,
+            cls.setting_name,
+            PointerProperty(
+                name=cls.setting_name,
+                description=cls.setting_name,
+                type=cls,
+            ),
+        )
+        for val in cls.dic.values():
+            label = val["label"]
+            for param_name, param in val["parameters"].items():
+                key = label + "_" + param_name
+                property_func = getattr(bpy.props, param["type"] + "Property")
+                ppt = property_func(**param["args"])
+                setattr(cls, key, ppt)
+
+
 class VisionFilterSetting(bpy.types.PropertyGroup):
+
+    setting_name = "vision_filter_setting"
+    dic = filter_dict
+    attr_type = "filter_type"
+
     @classmethod
-    def register(cls):   
+    def register(cls):
         tab = [
-            (name, name, val["description"],i) for i, (name, val) in enumerate(filter_dict.items())
+            (name, name, val["description"], i)
+            for i, (name, val) in enumerate(cls.dic.items())
         ]
-        cls.filter_type = bpy.props.EnumProperty(
-            name="type", items=tab)
-        bpy.types.Scene.vision_filter_setting = PointerProperty(
-            name="vision_filter_setting",
-            description="vision_filter_setting",   
-            type=cls,
+        setattr(cls, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
+        setattr(
+            bpy.types.Scene,
+            cls.setting_name,
+            PointerProperty(
+                name=cls.setting_name,
+                description=cls.setting_name,
+                type=cls,
+            ),
         )
-        for val in filter_dict.values():
-            filter_name = val["label"]
+        for val in cls.dic.values():
+            label = val["label"]
             for param_name, param in val["parameters"].items():
-                key = filter_name + "_" + param_name
+                key = label + "_" + param_name
                 property_func = getattr(bpy.props, param["type"] + "Property")
                 ppt = property_func(**param["args"])
                 setattr(cls, key, ppt)
-                
-                
+
+
 class VisionIntegratorSetting(bpy.types.PropertyGroup):
+    
+    setting_name = "vision_integrator_setting"
+    dic = integrator_dict
+    attr_type = "integrator_type"
+    
     @classmethod
-    def register(cls):   
+    def register(cls):
         tab = [
-            (name, name, val["description"],i) for i, (name, val) in enumerate(integrator_dict.items())
+            (name, name, val["description"], i)
+            for i, (name, val) in enumerate(cls.dic.items())
         ]
-        cls.integrator_type = bpy.props.EnumProperty(
-            name="type", items=tab)
-        bpy.types.Scene.vision_integrator_setting = PointerProperty(
-            name="vision_integrator_setting",
-            description="vision_integrator_setting",   
-            type=cls,
+        setattr(cls, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
+        setattr(
+            bpy.types.Scene,
+            cls.setting_name,
+            PointerProperty(
+                name=cls.setting_name,
+                description=cls.setting_name,
+                type=cls,
+            ),
         )
-        for val in integrator_dict.values():
-            integrator_name = val["label"]
+        for val in cls.dic.values():
+            label = val["label"]
             for param_name, param in val["parameters"].items():
-                key = integrator_name + "_" + param_name
+                key = label + "_" + param_name
                 property_func = getattr(bpy.props, param["type"] + "Property")
                 ppt = property_func(**param["args"])
                 setattr(cls, key, ppt)
+
