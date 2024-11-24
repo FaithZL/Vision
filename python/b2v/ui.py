@@ -24,10 +24,10 @@ class VisionWidget:
 
 
 class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
-    
+
     def attr_type(self):
         return self.property_cls.attr_type
-    
+
     def setting_name(self):
         return self.property_cls.setting_name
 
@@ -46,31 +46,16 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
                 layout.row().prop(vs, attr, text=attr_name)
 
 
-class VISION_RENDER_PT_Filter(bpy.types.Panel, VisionWidget):
+class VISION_RENDER_PT_Filter(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Filter"
     bl_label = "Filter"
     property_cls = properties.VisionFilterSetting
 
-    def attr_type(self):
-        return self.property_cls.attr_type
-    
-    def setting_name(self):
-        return self.property_cls.setting_name
 
-    def draw(self, context):
-        scene = context.scene
-        layout = self.layout
-        row = layout.row()
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-        vs = getattr(scene, self.setting_name())
-        row.prop(vs, self.attr_type())
-        cur_item = getattr(vs, self.attr_type())
-        for attr in dir(vs):
-            if attr.startswith(cur_item):
-                attr_name = attr[len(cur_item) + 1 :]
-                layout.row().prop(vs, attr, text=attr_name)
-
+class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
+    bl_idname = "VISION_RENDER_PT_Intergrator"
+    bl_label = "Intergrator"
+    property_cls = properties.VisionIntegratorSetting
 
 
 class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VisionWidget):
@@ -95,32 +80,6 @@ class VISION_RENDER_PT_Sampler(bpy.types.Panel, VisionWidget):
 
     def draw(self, context):
         layout = self.layout
-
-
-class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VisionWidget):
-    bl_idname = "VISION_RENDER_PT_Intergrator"
-    bl_label = "Intergrator"
-    property_cls = properties.VisionIntegratorSetting
-    
-    def attr_type(self):
-        return self.property_cls.attr_type
-    
-    def setting_name(self):
-        return self.property_cls.setting_name
-
-    def draw(self, context):
-        scene = context.scene
-        layout = self.layout
-        row = layout.row()
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-        vs = getattr(scene, self.setting_name())
-        row.prop(vs, self.attr_type())
-        cur_item = getattr(vs, self.attr_type())
-        for attr in dir(vs):
-            if attr.startswith(cur_item):
-                attr_name = attr[len(cur_item) + 1 :]
-                layout.row().prop(vs, attr, text=attr_name)
 
 
 class VISION_RENDER_PT_Operator(bpy.types.Panel, VisionWidget):
