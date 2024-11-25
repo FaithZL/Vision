@@ -9,8 +9,8 @@ dic = {
             "max_depth": {"type": "Int", "args": {"default": 8, "max": 50, "min": 1}},
             "min_depth": {"type": "Int", "args": {"default": 3, "max": 10, "min": 0}},
             "rr_threshold": {
-                "type": "Int",
-                "args": {"default": 3, "max": 10, "min": 0},
+                "type": "Float",
+                "args": {"default": 1, "max": 1, "min": 0},
             },
         },
     }
