@@ -9,7 +9,6 @@ bl_info = {
 }
 
 import bpy
-from. import ui
 
 from . import auto_load
 
@@ -33,14 +32,11 @@ class Vision(bpy.types.RenderEngine):
 def register():
     print("Registering Vision -000000000000--")
     auto_load.register()
-
     bpy.utils.register_class(Vision)
-    # ui.register()
 
 def unregister():
     print("Unregistering Vision ---")
     bpy.utils.unregister_class(Vision)
-    # ui.unregister()
     auto_load.unregister()
 
 

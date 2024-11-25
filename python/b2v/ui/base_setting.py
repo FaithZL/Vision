@@ -12,7 +12,7 @@ from bpy.props import (
 import os
 from os.path import basename, dirname
 import json
-from . import config
+from . import *
 
 
 class VisionBaseSetting(bpy.types.PropertyGroup):
@@ -79,7 +79,7 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
 class VisionFilterSetting(VisionBaseSetting):
     setting_name = "vision_filter_setting"
     attr_type = "filter_type"
-    dic = config.filters.dic
+    dic = filters.dic
 
     @classmethod
     def register(cls):
@@ -95,7 +95,7 @@ class VISION_RENDER_PT_Filter(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel)
 class VisionIntegratorSetting(VisionBaseSetting):
     setting_name = "vision_integrator_setting"
     attr_type = "integrator_type"
-    dic = config.integrators.dic
+    dic = integrators.dic
 
     @classmethod
     def register(cls):
@@ -111,7 +111,7 @@ class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBaseP
 class VisionLightSamplerSetting(VisionBaseSetting):
     setting_name = "vision_lightsampler_setting"
     attr_type = "lightsampler_type"
-    dic = config.lightsamplers.dic
+    dic = lightsamplers.dic
 
     @classmethod
     def register(cls):
@@ -127,7 +127,7 @@ class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBase
 class VisionSpectrumSetting(VisionBaseSetting):
     setting_name = "vision_spectrum_setting"
     attr_type = "spectrum_type"
-    dic = config.spectrums.dic
+    dic = spectrums.dic
 
     @classmethod
     def register(cls):
@@ -143,7 +143,7 @@ class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VISION_RENDER_PT_VisionBasePane
 class VisionSamplerSetting(VisionBaseSetting):
     setting_name = "vision_sampler_setting"
     attr_type = "sampler_type"
-    dic = config.filters.dic
+    dic = filters.dic
 
     @classmethod
     def register(cls):
@@ -159,7 +159,7 @@ class VISION_RENDER_PT_Sampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel
 class VisionEnvironmentSetting(VisionBaseSetting):
     setting_name = "vision_environment_setting"
     attr_type = "environment_type"
-    dic = config.environments.dic
+    dic = environments.dic
 
     @classmethod
     def register(cls):
