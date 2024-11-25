@@ -56,7 +56,9 @@ class ExportVision(bpy.types.Operator, ExportHelper):
 	        ).to_4x4()
         
         print(axis_mat)
-
+        deps_graph = context.evaluated_depsgraph_get()
+        print(deps_graph)
+        print(context)
         return {'FINISHED'}
 
 
