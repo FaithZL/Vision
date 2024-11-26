@@ -14,6 +14,8 @@ from . import auto_load
 
 auto_load.init()
 
+class VisionScene(bpy.types.bpy_struct):
+    pass
 
 class Vision(bpy.types.RenderEngine):
     bl_idname = "VISION_RENDER_ENGINE"
@@ -22,15 +24,12 @@ class Vision(bpy.types.RenderEngine):
 
     def render(self, context):
         self.report({'INFO'}, "Rendering with Vision...")
-        result = self.begin_result(0, 0, context.region.width, context.region.height)
-        layer = result.layers[0].passes["Combined"]
-        layer.rect = [[(0, 1, 0, 1)] * context.region.width] * context.region.height
-        self.end_result(result)
 
 
 
 def register():
-    print("Registering Vision -000000000000--")
+    print("Registering Vision ---")
+    setattr(bpy.types.Scene, "VisionScene", VisionScene)
     auto_load.register()
     bpy.utils.register_class(Vision)
 
@@ -38,6 +37,7 @@ def unregister():
     print("Unregistering Vision ---")
     bpy.utils.unregister_class(Vision)
     auto_load.unregister()
+    delattr(bpy.types.Scene, "VisionScene")
 
 
 if __name__ == "__main__":

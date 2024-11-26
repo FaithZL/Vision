@@ -11,7 +11,7 @@ from bpy_extras.io_utils import (
 
 
 
-@orientation_helper(axis_forward='-Z', axis_up='Y')
+@orientation_helper(axis_forward='Z', axis_up='Y')
 class ExportVision(bpy.types.Operator, ExportHelper):
     bl_idname = "export_scene.vision"
     bl_label = "Vision Export"

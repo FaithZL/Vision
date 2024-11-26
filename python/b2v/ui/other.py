@@ -8,7 +8,7 @@ class MyCustomButtonOperator(bpy.types.Operator):
     
     def execute(self, context):
         print("Button was clicked! Executing callback function.")
-        
+        print(context)
         return {'FINISHED'}  
 
 
