@@ -13,6 +13,20 @@ import os
 from os.path import basename, dirname
 import json
 
+class VisionProperties(bpy.types.PropertyGroup):
+    key = "vision_setting"
+    @classmethod
+    def register(cls):
+        setattr(
+            bpy.types.Scene,
+            cls.key,
+            PointerProperty(
+                name=cls.key,
+                description=cls.key,
+                type=cls,
+            ),
+        )
+    
 
 class VisionBaseSetting(bpy.types.PropertyGroup):
 
