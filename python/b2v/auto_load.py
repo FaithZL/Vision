@@ -23,25 +23,23 @@ def init():
 
     modules = get_all_submodules(Path(__file__).parent)
     ordered_classes = get_ordered_classes_to_register(modules)
-    
-
 
 def register():
-    for cls in ordered_classes:
-        bpy.utils.register_class(cls)
-
     for module in modules:
         if module.__name__ == __name__:
             continue
         if hasattr(module, "register"):
             module.register()
+            
+    for cls in ordered_classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
     for cls in reversed(ordered_classes):
         bpy.utils.unregister_class(cls)
 
-    for module in modules:
+    for module in reversed(modules):
         if module.__name__ == __name__:
             continue
         if hasattr(module, "unregister"):
