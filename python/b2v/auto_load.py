@@ -5,6 +5,8 @@ import pkgutil
 import importlib
 from pathlib import Path
 
+from collections import defaultdict, deque
+
 __all__ = (
     "init",
     "register",
@@ -17,12 +19,50 @@ modules = None
 ordered_classes = None
 
 
+def topological_sort_classes(classes):
+    graph = defaultdict(set)
+    in_degree = {cls: 0 for cls in classes}
+
+    for cls in classes:
+        for parent in cls.__bases__:
+            if parent in classes:
+                graph[parent].add(cls)
+                in_degree[cls] += 1
+
+    print("graph ", in_degree)
+    for k, v in in_degree.items():
+        print(k, v)
+
+    queue = deque([cls for cls in classes if in_degree[cls] == 0])
+    sorted_classes = []
+
+    while queue:
+        cls = queue.popleft()
+        sorted_classes.append(cls)
+        for child in graph[cls]:
+            in_degree[child] -= 1
+            if in_degree[child] == 0:
+                queue.append(child)
+
+    if len(sorted_classes) != len(classes):
+        raise ValueError("存在循环依赖，无法进行拓扑排序")
+
+    return sorted_classes
+
+
 def init():
     global modules
     global ordered_classes
 
     modules = get_all_submodules(Path(__file__).parent)
     ordered_classes = get_ordered_classes_to_register(modules)
+    # for cls in ordered_classes:
+    #     print(cls, "0000000000=-========")
+    # print("\n")
+    # mm = topological_sort_classes(ordered_classes)
+    # for cls in topological_sort_classes(ordered_classes):
+    #     print(cls, "")
+
 
 def register():
     for module in modules:
@@ -30,7 +70,7 @@ def register():
             continue
         if hasattr(module, "register"):
             module.register()
-            
+
     for cls in ordered_classes:
         bpy.utils.register_class(cls)
 
@@ -79,11 +119,15 @@ def get_ordered_classes_to_register(modules):
 
 def get_register_deps_dict(modules):
     my_classes = set(iter_my_classes(modules))
-    my_classes_by_idname = {cls.bl_idname: cls for cls in my_classes if hasattr(cls, "bl_idname")}
+    my_classes_by_idname = {
+        cls.bl_idname: cls for cls in my_classes if hasattr(cls, "bl_idname")
+    }
 
     deps_dict = {}
     for cls in my_classes:
-        deps_dict[cls] = set(iter_my_register_deps(cls, my_classes, my_classes_by_idname))
+        deps_dict[cls] = set(
+            iter_my_register_deps(cls, my_classes, my_classes_by_idname)
+        )
     return deps_dict
 
 
@@ -123,6 +167,7 @@ def iter_my_deps_from_parent_id(cls, my_classes_by_idname):
 def iter_my_classes(modules):
     base_types = get_register_base_types()
     for cls in get_classes_in_modules(modules):
+        print("cls,,,", cls)
         if any(issubclass(cls, base) for base in base_types):
             if not getattr(cls, "is_registered", False):
                 yield cls
