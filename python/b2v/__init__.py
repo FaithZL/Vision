@@ -14,9 +14,25 @@ from . import auto_load
 
 auto_load.init()
 
-class VisionScene(bpy.types.bpy_struct):
-    pass
 
+class VisionProperties(bpy.types.PropertyGroup):
+    key = "vision"
+    @classmethod
+    def register(cls):
+        setattr(
+            bpy.types.Scene,
+            cls.key,
+            bpy.props.PointerProperty(
+                name=cls.key,
+                description=cls.key,
+                type=cls,
+            ),
+        )
+            
+    @classmethod
+    def unregister(cls):
+        delattr(bpy.types.Scene, cls.key)
+    
 class Vision(bpy.types.RenderEngine):
     bl_idname = "VISION_RENDER_ENGINE"
     bl_label = "Vision"
@@ -29,15 +45,15 @@ class Vision(bpy.types.RenderEngine):
 
 def register():
     print("Registering Vision ---")
-    setattr(bpy.types.Scene, "VisionScene", VisionScene)
-    auto_load.register()
     bpy.utils.register_class(Vision)
+    bpy.utils.register_class(VisionProperties)
+    auto_load.register()
 
 def unregister():
     print("Unregistering Vision ---")
-    bpy.utils.unregister_class(Vision)
     auto_load.unregister()
-    delattr(bpy.types.Scene, "VisionScene")
+    bpy.utils.unregister_class(VisionProperties)
+    bpy.utils.unregister_class(Vision)
 
 
 if __name__ == "__main__":
