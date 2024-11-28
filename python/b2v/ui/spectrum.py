@@ -24,6 +24,7 @@ class VisionSpectrumSetting(VisionBaseSetting):
 
 
 class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
+    dic = dic
     bl_idname = "VISION_RENDER_PT_Spectrum"
     bl_label = "Spectrum"
     property_cls = VisionSpectrumSetting

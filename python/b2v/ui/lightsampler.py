@@ -23,6 +23,7 @@ class VisionLightSamplerSetting(VisionBaseSetting):
 
 
 class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
+    dic = dic
     bl_idname = "VISION_RENDER_PT_LightSampler"
     bl_label = "LightSampler"
     property_cls = VisionLightSamplerSetting

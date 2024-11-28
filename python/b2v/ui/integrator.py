@@ -28,6 +28,7 @@ class VisionIntegratorSetting(VisionBaseSetting):
 
 
 class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
+    dic = dic
     bl_idname = "VISION_RENDER_PT_Intergrator"
     bl_label = "Intergrator"
     property_cls = VisionIntegratorSetting
