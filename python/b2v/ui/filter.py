@@ -45,7 +45,6 @@ dic = {
 
 
 class VisionFilterSetting(VisionBaseSetting):
-    setting_name = "vision_filter_setting"
     attr_type = "filter_type"
     dic = dic
 

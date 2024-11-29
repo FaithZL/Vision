@@ -14,7 +14,6 @@ dic = {
 
 
 class VisionSpectrumSetting(VisionBaseSetting):
-    setting_name = "vision_spectrum_setting"
     attr_type = "spectrum_type"
     dic = dic
 

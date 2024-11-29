@@ -13,7 +13,6 @@ dic = {
 
 
 class VisionSamplerSetting(VisionBaseSetting):
-    setting_name = "vision_sampler_setting"
     attr_type = "sampler_type"
     dic = dic
 

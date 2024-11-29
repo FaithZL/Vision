@@ -18,7 +18,6 @@ dic = {
 
 
 class VisionIntegratorSetting(VisionBaseSetting):
-    setting_name = "vision_integrator_setting"
     attr_type = "integrator_type"
     dic = dic
 

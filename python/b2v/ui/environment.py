@@ -24,7 +24,6 @@ dic = {
 
 
 class VisionEnvironmentSetting(VisionBaseSetting):
-    setting_name = "vision_environment_setting"
     attr_type = "environment_type"
     dic = dic
 

@@ -71,9 +71,6 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
     def attr_type(self):
         return self.property_cls.attr_type
 
-    def setting_name(self):
-        return self.property_cls.setting_name
-
     def draw(self, context):
         scene = context.scene
         layout = self.layout
