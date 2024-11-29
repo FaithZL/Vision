@@ -46,24 +46,14 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
             (name, name, val["description"], i)
             for i, (name, val) in enumerate(dic.items())
         ]
-        # setattr(
-        #     bpy.types.Scene,
-        #     cls.setting_name,
-        #     PointerProperty(
-        #         name=cls.setting_name,
-        #         description=cls.setting_name,
-        #         type=cls,
-        #     ),
-        # )
-        # setattr(cls, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
         setattr(VisionProperties, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
-        # for val in dic.values():
-        #     label = val["label"]
-        #     for param_name, param in val["parameters"].items():
-        #         key = label + "_" + param_name
-        #         property_func = getattr(bpy.props, param["type"] + "Property")
-        #         ppt = property_func(**param["args"])
-        #         setattr(cls, key, ppt)
+        for val in dic.values():
+            label = val["label"]
+            for param_name, param in val["parameters"].items():
+                key = label + "_" + param_name
+                property_func = getattr(bpy.props, param["type"] + "Property")
+                ppt = property_func(**param["args"])
+                setattr(VisionProperties, key, ppt)
 
 
 class VisionWidget:
@@ -92,8 +82,8 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
         layout.use_property_decorate = False
         vs = getattr(scene, "vision")
         row.prop(vs, self.attr_type())
-        # cur_item = getattr(vs, self.attr_type())
-        # for attr in dir(vs):
-        #     if attr.startswith(cur_item):
-        #         attr_name = attr[len(cur_item) + 1 :]
-        #         layout.row().prop(vs, attr, text=attr_name)
+        cur_item = getattr(vs, self.attr_type())
+        for attr in dir(vs):
+            if attr.startswith(cur_item):
+                attr_name = attr[len(cur_item) + 1 :]
+                layout.row().prop(vs, attr, text=attr_name)
