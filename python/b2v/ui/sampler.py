@@ -11,17 +11,8 @@ dic = {
     }
 }
 
-
-class VisionSamplerSetting(VisionBaseSetting):
-    attr_type = "sampler_type"
-    dic = dic
-
-    @classmethod
-    def register(cls):
-        cls.register_impl()
-
-
 class VISION_RENDER_PT_Sampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Sampler"
     bl_label = "Sampler"
-    property_cls = VisionSamplerSetting
+    attr_type = "sampler_type"
+    dic = dic

@@ -37,10 +37,22 @@ def register():
 def unregister():
     bpy.utils.vision_unregister_class(VisionProperties)
 
-class VisionBaseSetting(bpy.types.PropertyGroup):
+
+class VisionWidget:
+    COMPAT_ENGINES = {"VISION_RENDER_ENGINE"}
+    bl_context = "render"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
 
     @classmethod
-    def register_impl(cls):
+    def poll(cls, context):
+        return context.engine in cls.COMPAT_ENGINES
+
+
+class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
+    
+    @classmethod
+    def register(cls):
         dic = cls.dic
         tab = [
             (name, name, val["description"], i)
@@ -55,22 +67,6 @@ class VisionBaseSetting(bpy.types.PropertyGroup):
                 ppt = property_func(**param["args"])
                 setattr(VisionProperties, key, ppt)
 
-
-class VisionWidget:
-    COMPAT_ENGINES = {"VISION_RENDER_ENGINE"}
-    bl_context = "render"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
-
-    @classmethod
-    def poll(cls, context):
-        return context.engine in cls.COMPAT_ENGINES
-
-
-class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
-    def attr_type(self):
-        return self.property_cls.attr_type
-
     def draw(self, context):
         scene = context.scene
         layout = self.layout
@@ -78,8 +74,8 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
         layout.use_property_split = True
         layout.use_property_decorate = False
         vs = getattr(scene, "vision")
-        row.prop(vs, self.attr_type())
-        cur_item = getattr(vs, self.attr_type())
+        row.prop(vs, self.attr_type)
+        cur_item = getattr(vs, self.attr_type)
         for attr in dir(vs):
             if attr.startswith(cur_item):
                 attr_name = attr[len(cur_item) + 1 :]

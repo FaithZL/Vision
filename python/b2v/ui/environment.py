@@ -22,17 +22,8 @@ dic = {
     }
 }
 
-
-class VisionEnvironmentSetting(VisionBaseSetting):
-    attr_type = "environment_type"
-    dic = dic
-
-    @classmethod
-    def register(cls):
-        cls.register_impl()
-
-
 class VISION_RENDER_PT_Environment(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Environment"
     bl_label = "Environment"
-    property_cls = VisionEnvironmentSetting
+    attr_type = "environment_type"
+    dic = dic

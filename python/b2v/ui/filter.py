@@ -44,16 +44,8 @@ dic = {
 }
 
 
-class VisionFilterSetting(VisionBaseSetting):
-    attr_type = "filter_type"
-    dic = dic
-
-    @classmethod
-    def register(cls):
-        cls.register_impl()
-
-
 class VISION_RENDER_PT_Filter(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Filter"
     bl_label = "Filter"
-    property_cls = VisionFilterSetting
+    attr_type = "filter_type"
+    dic = dic

@@ -16,17 +16,8 @@ dic = {
     }
 }
 
-
-class VisionIntegratorSetting(VisionBaseSetting):
-    attr_type = "integrator_type"
-    dic = dic
-
-    @classmethod
-    def register(cls):
-        cls.register_impl()
-
-
 class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Intergrator"
     bl_label = "Intergrator"
-    property_cls = VisionIntegratorSetting
+    attr_type = "integrator_type"
+    dic = dic
