@@ -33,7 +33,6 @@ class VisionEnvironmentSetting(VisionBaseSetting):
 
 
 class VISION_RENDER_PT_Environment(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
-    dic = dic
     bl_idname = "VISION_RENDER_PT_Environment"
     bl_label = "Environment"
     property_cls = VisionEnvironmentSetting
