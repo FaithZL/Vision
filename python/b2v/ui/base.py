@@ -73,7 +73,7 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
         row = layout.row()
         layout.use_property_split = True
         layout.use_property_decorate = False
-        vs = getattr(scene, "vision")
+        vs = getattr(scene, VisionProperties.key)
         row.prop(vs, self.attr_type)
         cur_item = getattr(vs, self.attr_type)
         for attr in dir(vs):
