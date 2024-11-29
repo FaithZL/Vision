@@ -14,6 +14,18 @@ from . import auto_load
 
 auto_load.init()
 
+
+def vision_register_class(cls):
+    if not getattr(cls, "is_registered", False): 
+        bpy.utils.register_class(cls)   
+
+def vision_unregister_class(cls):
+    if getattr(cls, "is_registered", False):
+        bpy.utils.unregister_class(cls)
+        
+    
+bpy.utils.vision_register_class = vision_register_class
+bpy.utils.vision_unregister_class = vision_unregister_class
     
 class Vision(bpy.types.RenderEngine):
     bl_idname = "VISION_RENDER_ENGINE"
@@ -27,13 +39,13 @@ class Vision(bpy.types.RenderEngine):
 
 def register():
     print("Registering Vision ---")
-    bpy.utils.register_class(Vision)
+    bpy.utils.vision_register_class(Vision)
     auto_load.register()
 
 def unregister():
     print("Unregistering Vision ---")
     auto_load.unregister()
-    bpy.utils.unregister_class(Vision)
+    bpy.utils.vision_unregister_class(Vision)
 
 
 if __name__ == "__main__":

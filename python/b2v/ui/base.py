@@ -31,9 +31,11 @@ class VisionProperties(bpy.types.PropertyGroup):
     def unregister(cls):
         delattr(bpy.types.Scene, cls.key)
         
-# def register():
-#     if getattr(VisionProperties, "is_registered", False): 
-#         bpy.utils.register_class(VisionProperties)
+def register():
+    bpy.utils.vision_register_class(VisionProperties)
+    
+def unregister():
+    bpy.utils.vision_unregister_class(VisionProperties)
 
 class VisionBaseSetting(bpy.types.PropertyGroup):
 

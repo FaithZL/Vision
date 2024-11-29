@@ -72,12 +72,12 @@ def register():
             module.register()
 
     for cls in ordered_classes:
-        bpy.utils.register_class(cls)
+        bpy.utils.vision_register_class(cls)   
 
 
 def unregister():
     for cls in reversed(ordered_classes):
-        bpy.utils.unregister_class(cls)
+        bpy.utils.vision_unregister_class(cls)
 
     for module in reversed(modules):
         if module.__name__ == __name__:
