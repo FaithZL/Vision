@@ -45,7 +45,7 @@ def topological_sort_classes(classes):
                 queue.append(child)
 
     if len(sorted_classes) != len(classes):
-        raise ValueError("存在循环依赖，无法进行拓扑排序")
+        raise ValueError("circulation")
 
     return sorted_classes
 
@@ -56,12 +56,6 @@ def init():
 
     modules = get_all_submodules(Path(__file__).parent)
     ordered_classes = get_ordered_classes_to_register(modules)
-    # for cls in ordered_classes:
-    #     print(cls, "0000000000=-========")
-    # print("\n")
-    # mm = topological_sort_classes(ordered_classes)
-    # for cls in topological_sort_classes(ordered_classes):
-    #     print(cls, "")
 
 
 def register():
