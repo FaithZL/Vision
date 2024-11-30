@@ -26,7 +26,22 @@ class VisionProperties(bpy.types.PropertyGroup):
                 type=cls,
             ),
         )
-            
+    
+    
+    def get_params(self, data_type):
+        print(dir(self))
+        cur_item = getattr(self, data_type)
+        params = {}
+        ret = {"type" : cur_item, "params" : params}
+        for attr_name in dir(self):
+            if attr_name.startswith(cur_item):
+                simple_attr_name = attr_name[len(cur_item) + 1 :]
+                attr = getattr(self, attr_name)
+                params[simple_attr_name] = attr
+        return ret
+
+
+    
     @classmethod
     def unregister(cls):
         delattr(bpy.types.Scene, cls.key)
