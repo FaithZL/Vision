@@ -57,8 +57,13 @@ class ExportVision(bpy.types.Operator, ExportHelper):
         
         print(axis_mat)
         deps_graph = context.evaluated_depsgraph_get()
-        print(deps_graph)
-        print(context)
+        for object_instance in deps_graph.object_instances:
+            print(object_instance)
+            evaluated_obj = object_instance.object
+            object_type = evaluated_obj.type
+            print(evaluated_obj)
+            print(object_type)
+            
         return {'FINISHED'}
 
 
