@@ -13,8 +13,10 @@ import os
 from os.path import basename, dirname
 import json
 
+
 class VisionProperties(bpy.types.PropertyGroup):
     key = "vision"
+
     @classmethod
     def register(cls):
         setattr(
@@ -26,13 +28,11 @@ class VisionProperties(bpy.types.PropertyGroup):
                 type=cls,
             ),
         )
-    
-    
+
     def get_params(self, data_type):
-        print(dir(self))
         cur_item = getattr(self, data_type)
         params = {}
-        ret = {"type" : cur_item, "params" : params}
+        ret = {"type": cur_item, "params": params}
         for attr_name in dir(self):
             if attr_name.startswith(cur_item):
                 simple_attr_name = attr_name[len(cur_item) + 1 :]
@@ -40,15 +40,15 @@ class VisionProperties(bpy.types.PropertyGroup):
                 params[simple_attr_name] = attr
         return ret
 
-
-    
     @classmethod
     def unregister(cls):
         delattr(bpy.types.Scene, cls.key)
-        
+
+
 def register():
     bpy.utils.vision_register_class(VisionProperties)
-    
+
+
 def unregister():
     bpy.utils.vision_unregister_class(VisionProperties)
 
@@ -65,7 +65,7 @@ class VisionWidget:
 
 
 class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
-    
+
     @classmethod
     def register(cls):
         dic = cls.dic
@@ -73,7 +73,11 @@ class VISION_RENDER_PT_VisionBasePanel(VisionWidget):
             (name, name, val["description"], i)
             for i, (name, val) in enumerate(dic.items())
         ]
-        setattr(VisionProperties, cls.attr_type, bpy.props.EnumProperty(name="type", items=tab))
+        setattr(
+            VisionProperties,
+            cls.attr_type,
+            bpy.props.EnumProperty(name="type", items=tab),
+        )
         for val in dic.values():
             label = val["label"]
             for param_name, param in val["parameters"].items():
