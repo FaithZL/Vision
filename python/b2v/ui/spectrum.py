@@ -15,5 +15,5 @@ dic = {
 class VISION_RENDER_PT_Spectrum(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Spectrum"
     bl_label = "Spectrum"
-    attr_type = "spectrum_type"
+    attr_type = "spectrum"
     dic = dic

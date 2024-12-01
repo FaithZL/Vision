@@ -2,7 +2,7 @@ from . import base
 from .base import *
 
 dic = {
-    "path tracing": {
+    "path_tracing": {
         "label": "path tracing",
         "description": "path tracing integrator",
         "parameters": {
@@ -19,5 +19,5 @@ dic = {
 class VISION_RENDER_PT_Intergrator(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Intergrator"
     bl_label = "Intergrator"
-    attr_type = "integrator_type"
+    attr_type = "integrator"
     dic = dic

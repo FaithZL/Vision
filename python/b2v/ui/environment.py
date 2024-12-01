@@ -25,5 +25,5 @@ dic = {
 class VISION_RENDER_PT_Environment(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Environment"
     bl_label = "Environment"
-    attr_type = "environment_type"
+    attr_type = "environment"
     dic = dic

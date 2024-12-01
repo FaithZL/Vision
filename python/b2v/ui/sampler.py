@@ -14,5 +14,5 @@ dic = {
 class VISION_RENDER_PT_Sampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_Sampler"
     bl_label = "Sampler"
-    attr_type = "sampler_type"
+    attr_type = "sampler"
     dic = dic
