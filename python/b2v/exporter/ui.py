@@ -117,8 +117,6 @@ class ExportVision(bpy.types.Operator, ExportHelper):
                 lit = light.export(context, object_instance)
                 lights.append(lit)
             window_manager.progress_update(i)
-            print(evaluated_obj)
-            print(object_type)
         window_manager.progress_end()        
         self.save_json(data)
         return {"FINISHED"}

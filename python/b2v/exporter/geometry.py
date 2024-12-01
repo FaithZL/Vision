@@ -12,6 +12,8 @@ from bpy.props import (
 )
 
 
-def export(context, object):
+def export(context, instance):
+    object = instance.object
     
-    return object
+    print(object.data.materials[0])
+    return instance
