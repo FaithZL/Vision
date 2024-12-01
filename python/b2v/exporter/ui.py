@@ -8,7 +8,11 @@ from bpy.props import (
 from bpy_extras.io_utils import ExportHelper, orientation_helper, axis_conversion
 import json
 import traceback
-
+from . import geometry
+from . import material
+from . import light
+from . import camera
+import time
 
 @orientation_helper(axis_forward="Z", axis_up="Y")
 class ExportVision(bpy.types.Operator, ExportHelper):
@@ -62,7 +66,7 @@ class ExportVision(bpy.types.Operator, ExportHelper):
     def json_path(self):
         return os.path.join(self.output_directory(), self.json_name())
 
-    def export(self, context):
+    def export_settings(self, context):
         vp = getattr(context.scene, "vision")
         ret = {
             "filter":{},
@@ -78,28 +82,45 @@ class ExportVision(bpy.types.Operator, ExportHelper):
     def save_json(self, data):
         with open(self.json_path(), "w") as outputfile:
             json.dump(data, outputfile, indent=4)
+            
 
-    def execute(self, context):
+    def correct_matrix(self):
         axis_mat = axis_conversion(
             to_forward=self.axis_forward,
             to_up=self.axis_up,
         ).to_4x4()
-        
-        data = self.export(context)
-        
-        self.save_json(data)
+        return axis_mat
 
-        deps_graph = context.evaluated_depsgraph_get()
-        # for object_instance in deps_graph.object_instances:
-        #     print(object_instance)
-        #     evaluated_obj = object_instance.object
-        #     object_type = evaluated_obj.type
-        #     print(evaluated_obj)
-        #     print(object_type)
-        
+    def execute(self, context):
         self.try_makedir()
         
+        data = self.export_settings(context)
 
+        deps_graph = context.evaluated_depsgraph_get()
+        window_manager = context.window_manager
+        window_manager.progress_begin(0, len(deps_graph.object_instances))
+        
+        shapes = []
+        cameras = []
+        lights = []
+        
+        for i, object_instance in enumerate(deps_graph.object_instances):
+            evaluated_obj = object_instance.object
+            object_type = evaluated_obj.type
+            if object_type in ('MESH', 'FONT', 'SURFACE', 'META'):
+                shape = geometry.export(context, object_instance)
+                shapes.append(shape)
+            elif object_type == 'CAMERA':
+                cam = camera.export(context, object_instance)
+                cameras.append(cam)
+            elif object_type == 'LIGHT':
+                lit = light.export(context, object_instance)
+                lights.append(lit)
+            window_manager.progress_update(i)
+            print(evaluated_obj)
+            print(object_type)
+        window_manager.progress_end()        
+        self.save_json(data)
         return {"FINISHED"}
 
 

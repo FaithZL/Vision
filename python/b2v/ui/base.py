@@ -1,4 +1,6 @@
 import bpy
+import os
+import json
 from bpy.props import (
     BoolProperty,
     CollectionProperty,
@@ -8,10 +10,6 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
-
-import os
-from os.path import basename, dirname
-import json
 
 
 class VisionProperties(bpy.types.PropertyGroup):
