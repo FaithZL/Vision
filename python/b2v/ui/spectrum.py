@@ -2,9 +2,9 @@ from . import base
 from .base import *
 
 dic = {
-    "SRGB": {"label": "SRGB", "description": "SRGB Spectrum", "parameters": {}},
-    "HeroWavelength": {
-        "label": "HeroWavelength",
+    "srgb": {"label": "srgb", "description": "SRGB Spectrum", "parameters": {}},
+    "hero": {
+        "label": "hero",
         "description": "HeroWavelength Spectrum",
         "parameters": {
             "dimension": {"type": "Int", "args": {"default": 3, "max": 20, "min": 1}}

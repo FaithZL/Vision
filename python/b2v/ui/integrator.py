@@ -2,9 +2,9 @@ from . import base
 from .base import *
 
 dic = {
-    "path_tracing": {
-        "label": "path_tracing",
-        "description": "path_tracing integrator",
+    "pt": {
+        "label": "pt",
+        "description": "path tracing integrator",
         "parameters": {
             "max_depth": {"type": "Int", "args": {"default": 8, "max": 50, "min": 1}},
             "min_depth": {"type": "Int", "args": {"default": 3, "max": 10, "min": 0}},
