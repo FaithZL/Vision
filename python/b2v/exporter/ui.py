@@ -103,12 +103,13 @@ class ExportVision(bpy.types.Operator, ExportHelper):
         shapes = []
         cameras = []
         lights = []
+        materials = {}
         
         for i, object_instance in enumerate(deps_graph.object_instances):
             evaluated_obj = object_instance.object
             object_type = evaluated_obj.type
             if object_type in ('MESH', 'FONT', 'SURFACE', 'META'):
-                shape = geometry.export(context, object_instance)
+                shape = geometry.export(context, object_instance, materials)
                 shapes.append(shape)
             elif object_type == 'CAMERA':
                 cam = camera.export(context, object_instance)

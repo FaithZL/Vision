@@ -10,10 +10,10 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
+from . import material
 
-
-def export(context, instance):
+def export(context, instance, materials):
     object = instance.object
+    material.export(context, object.data.materials[0], materials)
     
-    print(object.data.materials[0])
     return instance
