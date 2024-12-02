@@ -12,7 +12,7 @@ from bpy.props import (
 )
 
 
-def export(context, material, materials):
+def export(exporter, material, materials):
     output_node_id = 'Material Output'
     output = material.node_tree.nodes[output_node_id]
     bsdf = output.inputs['Surface'].links[0].from_node

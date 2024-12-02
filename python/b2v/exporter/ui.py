@@ -14,10 +14,11 @@ from . import light
 from . import camera
 import time
 
+
 @orientation_helper(axis_forward="Z", axis_up="Y")
-class ExportVision(bpy.types.Operator, ExportHelper):
+class VisionExporter(bpy.types.Operator, ExportHelper):
     bl_idname = "export_scene.vision"
-    bl_label = "Vision Export"
+    bl_label = "Vision Exporter"
 
     filename_ext = ".json"
     filter_glob: StringProperty(default="*.json", options={"HIDDEN"})
@@ -46,34 +47,50 @@ class ExportVision(bpy.types.Operator, ExportHelper):
         default=True,
     )
 
+    mesh_dir = "meshes"
+    tex_dir = "textures"
+
     def __init__(self):
+        context = None
         self.reset()
 
     def reset(self):
+        context = None
         pass
 
     def output_directory(self):
         return os.path.splitext(self.filepath)[0]
-    
-    def try_makedir(self):
+
+    def try_makedir(self, directory):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+    def try_make_output_dir(self):
         d = self.output_directory()
-        if not os.path.exists(d):
-            os.makedirs(d)
+        self.try_makedir(d)
+    
+    def try_make_mesh_dir(self):
+        d = os.path.join(self.output_directory(), self.mesh_dir)
+        self.try_makedir(d)
+
+    def try_make_tex_dir(self):
+        d = os.path.join(self.output_directory(), self.tex_dir)
+        self.try_makedir(d)
 
     def json_name(self):
         return os.path.basename(self.filepath)
-    
+
     def json_path(self):
         return os.path.join(self.output_directory(), self.json_name())
 
     def export_settings(self, context):
         vp = getattr(context.scene, "vision")
         ret = {
-            "filter":{},
-            "sampler":{},
-            "light_sampler":{},
-            "spectrum":{},
-            "integrator":{},
+            "filter": {},
+            "sampler": {},
+            "light_sampler": {},
+            "spectrum": {},
+            "integrator": {},
         }
         for k, v in ret.items():
             ret[k] = vp.get_params(k)
@@ -82,7 +99,6 @@ class ExportVision(bpy.types.Operator, ExportHelper):
     def save_json(self, data):
         with open(self.json_path(), "w") as outputfile:
             json.dump(data, outputfile, indent=4)
-            
 
     def correct_matrix(self):
         axis_mat = axis_conversion(
@@ -92,39 +108,38 @@ class ExportVision(bpy.types.Operator, ExportHelper):
         return axis_mat
 
     def execute(self, context):
-        self.try_makedir()
-        
+        self.try_make_output_dir()
+        self.context = context
         data = self.export_settings(context)
-
         deps_graph = context.evaluated_depsgraph_get()
         window_manager = context.window_manager
         window_manager.progress_begin(0, len(deps_graph.object_instances))
-        
+
         shapes = []
         cameras = []
         lights = []
         materials = {}
-        
+
         for i, object_instance in enumerate(deps_graph.object_instances):
             evaluated_obj = object_instance.object
             object_type = evaluated_obj.type
-            if object_type in ('MESH', 'FONT', 'SURFACE', 'META'):
-                shape = geometry.export(context, object_instance, materials)
+            if object_type in ("MESH", "FONT", "SURFACE", "META"):
+                shape = geometry.export(self, object_instance, materials)
                 shapes.append(shape)
-            elif object_type == 'CAMERA':
-                cam = camera.export(context, object_instance)
+            elif object_type == "CAMERA":
+                cam = camera.export(self, object_instance)
                 cameras.append(cam)
-            elif object_type == 'LIGHT':
-                lit = light.export(context, object_instance)
+            elif object_type == "LIGHT":
+                lit = light.export(self, object_instance)
                 lights.append(lit)
             window_manager.progress_update(i)
-        window_manager.progress_end()        
+        window_manager.progress_end()
         self.save_json(data)
         return {"FINISHED"}
 
 
 def menu_export_func(self, context):
-    self.layout.operator(ExportVision.bl_idname, text="vision (.json)")
+    self.layout.operator(VisionExporter.bl_idname, text="vision (.json)")
 
 
 def register():

@@ -12,6 +12,6 @@ from bpy.props import (
 )
 
 
-def export(context, object):
+def export(exporter, object):
     
     return object
