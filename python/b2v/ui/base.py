@@ -11,6 +11,22 @@ from bpy.props import (
     StringProperty,
 )
 
+def get_panels():
+    exclude_panels = {
+        'VIEWLAYER_PT_filter',
+        'VIEWLAYER_PT_layer_passes',
+        'RENDER_PT_simplify',
+        'RENDER_PT_color_management',
+        'RENDER_PT_freestyle'
+    }
+
+    panels = []
+    for panel in bpy.types.Panel.__subclasses__():
+        if hasattr(panel, 'COMPAT_ENGINES') and 'BLENDER_RENDER' in panel.COMPAT_ENGINES:
+            if panel.__name__ not in exclude_panels:
+                panels.append(panel)
+
+    return panels
 
 class VisionProperties(bpy.types.PropertyGroup):
     key = "vision"
@@ -45,10 +61,15 @@ class VisionProperties(bpy.types.PropertyGroup):
 
 def register():
     bpy.utils.vision_register_class(VisionProperties)
+    for panel in get_panels():
+        panel.COMPAT_ENGINES.add('VISION_RENDER_ENGINE')
 
 
 def unregister():
     bpy.utils.vision_unregister_class(VisionProperties)
+    for panel in get_panels():
+        if 'VISION_RENDER_ENGINE' in panel.COMPAT_ENGINES:
+            panel.COMPAT_ENGINES.remove('VISION_RENDER_ENGINE')
 
 
 class VisionWidget:
