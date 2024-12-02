@@ -14,7 +14,6 @@ from . import material
 
 def export_mesh(exporter, mesh, transform):
     exporter.try_make_mesh_dir()
-    pass
 
 def export(exporter, instance, materials):
     object = instance.object
