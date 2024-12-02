@@ -14,6 +14,7 @@ from bpy.props import (
 def get_panels():
     exclude_panels = {
         'VIEWLAYER_PT_filter',
+        'RENDER_PT_gpencil',
         'VIEWLAYER_PT_layer_passes',
         'RENDER_PT_simplify',
         'RENDER_PT_color_management',
