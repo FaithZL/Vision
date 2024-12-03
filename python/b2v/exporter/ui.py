@@ -70,12 +70,24 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         self.try_makedir(d)
     
     def try_make_mesh_dir(self):
-        d = os.path.join(self.output_directory(), self.mesh_dir)
+        d = self.mesh_path()
         self.try_makedir(d)
 
     def try_make_tex_dir(self):
-        d = os.path.join(self.output_directory(), self.tex_dir)
+        d = self.texture_path()
         self.try_makedir(d)
+        
+    def mesh_path(self, fn=None):
+        if fn is None:
+            return os.path.join(self.output_directory(), self.mesh_dir)
+        else:
+            return os.path.join(self.mesh_path(), fn)
+    
+    def texture_path(self, fn=None):
+        if fn is None:
+            return os.path.join(self.output_directory(), self.tex_dir)
+        else:
+            return os.path.join(self.texture_path(), fn)
 
     def json_name(self):
         return os.path.basename(self.filepath)
