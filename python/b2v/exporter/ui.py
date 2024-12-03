@@ -13,6 +13,7 @@ from . import material
 from . import light
 from . import camera
 import time
+import shutil
 
 
 @orientation_helper(axis_forward="Z", axis_up="Y")
@@ -65,9 +66,11 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-    def try_make_output_dir(self):
+    def make_output_dir(self):
         d = self.output_directory()
-        self.try_makedir(d)
+        if os.path.exists(d):
+            shutil.rmtree(d)
+        os.makedirs(d)
     
     def try_make_mesh_dir(self):
         d = self.mesh_path()
@@ -120,32 +123,34 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         return axis_mat
 
     def execute(self, context):
-        self.try_make_output_dir()
+        self.make_output_dir()
         self.context = context
         data = self.export_settings(context)
-        deps_graph = context.evaluated_depsgraph_get()
         window_manager = context.window_manager
-        window_manager.progress_begin(0, len(deps_graph.object_instances))
+        window_manager.progress_begin(0, len(context.scene.objects))
 
         shapes = []
         cameras = []
         lights = []
         materials = {}
+        
+        bpy.ops.object.select_all(action='DESELECT')
 
-        for i, object_instance in enumerate(deps_graph.object_instances):
-            evaluated_obj = object_instance.object
-            object_type = evaluated_obj.type
+        for i, object in enumerate(context.scene.objects):
+            object_type = object.type
             if object_type in ("MESH", "FONT", "SURFACE", "META"):
-                shape = geometry.export(self, object_instance, materials)
+                shape = geometry.export(self, object, materials)
                 shapes.append(shape)
             elif object_type == "CAMERA":
-                cam = camera.export(self, object_instance)
+                cam = camera.export(self, object)
                 cameras.append(cam)
             elif object_type == "LIGHT":
-                lit = light.export(self, object_instance)
+                lit = light.export(self, object)
                 lights.append(lit)
             window_manager.progress_update(i)
         window_manager.progress_end()
+        
+        bpy.ops.object.select_all(action='DESELECT')
         self.save_json(data)
         return {"FINISHED"}
 
