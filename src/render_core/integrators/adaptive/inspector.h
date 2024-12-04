@@ -51,7 +51,7 @@ private:
     EncodedData<float> threshold_;
     EncodedData<uint> min_sample_num_;
     RegistrableBuffer<VarianceStats> variance_stats_{};
-    bool open_{false};
+    bool on_{false};
 
 public:
     ConvergenceInspector() = default;
@@ -60,7 +60,7 @@ public:
         : threshold_(threshold), min_sample_num_(min_sample_num){};
     OC_ENCODABLE_FUNC(Encodable<>, threshold_, min_sample_num_)
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, threshold_, min_sample_num_, variance_stats_)
-    OC_MAKE_MEMBER_GETTER(open,)
+    OC_MAKE_MEMBER_GETTER(on,)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept;
     [[nodiscard]] CommandList reset() noexcept;

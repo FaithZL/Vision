@@ -42,7 +42,7 @@ public:
     }
     void add_sample(const Uint2 &pixel, Float3 val, const Uint &frame_index) noexcept {
         val = film()->add_sample(pixel, val, frame_index);
-        if (inspector_->open()) {
+        if (inspector_->on()) {
             inspector_->add_sample(pixel, val, frame_index);
         }
     }
@@ -56,7 +56,7 @@ public:
             sampler->load_data();
             camera->load_data();
             load_data();
-            if (inspector_->open()) {
+            if (inspector_->on()) {
                 $if(inspector_->is_convergence(frame_index)) {
                     return_();
                 };
