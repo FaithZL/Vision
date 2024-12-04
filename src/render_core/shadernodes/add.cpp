@@ -1,14 +1,13 @@
 //
-// Created by Zero on 2023/4/18.
+// Created by ling.zhu on 2024/12/4.
 //
 
 #include "base/shader_graph/shader_node.h"
-#include "base/mgr/scene.h"
+#include "base/mgr/pipeline.h"
 
-namespace vision {
-
+namespace vision::inline shader_node {
 //{
-//    "type" : "multiply",
+//    "type" : "add",
 //    "param" : {
 //        "lhs" : {
 //            "channels" : "xyz",
@@ -31,14 +30,14 @@ namespace vision {
 //        }
 //    }
 //}
-class Multiply : public ShaderNode {
+class Add : public ShaderNode {
 private:
     VS_MAKE_SLOT(lhs)
     VS_MAKE_SLOT(rhs)
 
 public:
-    Multiply() = default;
-    explicit Multiply(const ShaderNodeDesc &desc)
+    Add() = default;
+    explicit Add(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
         lhs_.set(Slot::create_slot(*desc.slot("lhs")));
         rhs_.set(Slot::create_slot(*desc.slot("rhs")));
@@ -71,14 +70,15 @@ public:
         return hash64(lhs_.type_hash(), rhs_.type_hash());
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
-        return lhs_.average() * rhs_.average();
+        return lhs_.average() + rhs_.average();
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
-        return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
+        return lhs_.evaluate(ctx, swl) + rhs_.evaluate(ctx, swl);
     }
 };
-}// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, Multiply)
-VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-multiply.dll")
+}// namespace vision::inline shader_node
+
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision::shader_node, Add)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-add.dll")
