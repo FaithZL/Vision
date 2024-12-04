@@ -5,15 +5,48 @@
 #include "base/shader_graph/shader_node.h"
 
 namespace vision {
-class Lerp : public ShaderNode {
+//{
+//    "type" : "lerp",
+//    "param" : {
+//        "t" : {
+//            "channels" : "x",
+//            "node" : {
+//                "type" : "number",
+//                "param" : {
+//                    "value": [0.5]
+//                }
+//            }
+//        },
+//        "A" : {
+//            "channels" : "xyz",
+//            "node" : {
+//                "type" : "image",
+//                "param" : {
+//                    "fn" : "checker.jpg",
+//                    "color_space" : "srgb"
+//                }
+//            }
+//        },
+//        "B" : {
+//            "channels" : "xyz",
+//            "node" : {
+//                "type": "number",
+//                "param": {
+//                    "value": [0.9,1,0.9]
+//                }
+//            }
+//        }
+//    }
+//}
+class LerpNode : public ShaderNode {
 private:
     VS_MAKE_SLOT(t)
     VS_MAKE_SLOT(A)
     VS_MAKE_SLOT(B)
 
 public:
-    Lerp() = default;
-    explicit Lerp(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
+    LerpNode() = default;
+    explicit LerpNode(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(ShaderNode, t_, A_, B_)
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, t_, A_, B_)
@@ -39,5 +72,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, Lerp)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, LerpNode)
 VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-lerp.dll")

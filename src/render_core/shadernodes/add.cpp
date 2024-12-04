@@ -5,7 +5,7 @@
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/pipeline.h"
 
-namespace vision::inline shader_node {
+namespace vision {
 //{
 //    "type" : "add",
 //    "param" : {
@@ -30,14 +30,14 @@ namespace vision::inline shader_node {
 //        }
 //    }
 //}
-class Add : public ShaderNode {
+class AddNode : public ShaderNode {
 private:
     VS_MAKE_SLOT(lhs)
     VS_MAKE_SLOT(rhs)
 
 public:
-    Add() = default;
-    explicit Add(const ShaderNodeDesc &desc)
+    AddNode() = default;
+    explicit AddNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
         lhs_.set(Slot::create_slot(*desc.slot("lhs")));
         rhs_.set(Slot::create_slot(*desc.slot("rhs")));
@@ -78,7 +78,7 @@ public:
     }
 };
 
-}// namespace vision::inline shader_node
+}// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision::shader_node, Add)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, AddNode)
 VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-add.dll")
