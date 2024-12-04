@@ -24,12 +24,6 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
     filename_ext = ".json"
     filter_glob: StringProperty(default="*.json", options={"HIDDEN"})
 
-    use_selection: BoolProperty(
-        name="Selection Only",
-        description="Export selected objects only",
-        default=False,
-    )
-
     split_files: BoolProperty(
         name="Split File",
         description="Split scene XML file in smaller fragments",
@@ -45,6 +39,12 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
     ignore_background: BoolProperty(
         name="Ignore Default Background",
         description="Ignore blender's default constant gray background when exporting to Mitsuba.",
+        default=True,
+    )
+    
+    visible_only : BoolProperty(
+        name="Visible Only",
+        description="Export visible objects only",
         default=True,
     )
 
@@ -127,16 +127,21 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         self.context = context
         data = self.export_settings(context)
         window_manager = context.window_manager
-        window_manager.progress_begin(0, len(context.scene.objects))
-
+        
+        if self.visible_only:
+            objects = [obj for obj in context.scene.objects if obj.visible_get()]
+        else:
+            objects = [obj for obj in context.scene.objects]
+            
+        window_manager.progress_begin(0, len(objects))
         shapes = []
         cameras = []
         lights = []
         materials = {}
         
         bpy.ops.object.select_all(action='DESELECT')
-
-        for i, object in enumerate(context.scene.objects):
+        viewlayer = bpy.context.view_layer
+        for i, object in enumerate(objects):
             object_type = object.type
             if object_type in ("MESH", "FONT", "SURFACE", "META"):
                 shape = geometry.export(self, object, materials)
@@ -149,6 +154,8 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
                 lights.append(lit)
             window_manager.progress_update(i)
         window_manager.progress_end()
+        
+        viewlayer.objects.active = None
         
         bpy.ops.object.select_all(action='DESELECT')
         self.save_json(data)
