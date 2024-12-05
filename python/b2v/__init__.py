@@ -39,6 +39,7 @@ class Vision(bpy.types.RenderEngine):
     bl_use_spherical_stereo = True
     bl_use_custom_freestyle = True
     bl_use_alembic_procedural = True
+    bl_use_shading_nodes_custom = False
 
     def render(self, context):
         self.report({"INFO"}, "Rendering with Vision...")
