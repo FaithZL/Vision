@@ -41,8 +41,8 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         description="Ignore blender's default constant gray background when exporting to Mitsuba.",
         default=True,
     )
-    
-    visible_only : BoolProperty(
+
+    visible_only: BoolProperty(
         name="Visible Only",
         description="Export visible objects only",
         default=True,
@@ -71,7 +71,7 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         if os.path.exists(d):
             shutil.rmtree(d)
         os.makedirs(d)
-    
+
     def try_make_mesh_dir(self):
         d = self.mesh_path()
         self.try_makedir(d)
@@ -79,13 +79,13 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
     def try_make_tex_dir(self):
         d = self.texture_path()
         self.try_makedir(d)
-        
+
     def mesh_path(self, fn=None):
         if fn is None:
             return os.path.join(self.output_directory(), self.mesh_dir)
         else:
             return os.path.join(self.mesh_path(), fn)
-    
+
     def texture_path(self, fn=None):
         if fn is None:
             return os.path.join(self.output_directory(), self.tex_dir)
@@ -122,24 +122,32 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         ).to_4x4()
         return axis_mat
 
+    def convert_materials(self, mat_dict):
+        ret = []
+        for k, v in mat_dict.items():
+            v["name"] = k
+            ret.append(v)
+        return ret
+
     def execute(self, context):
         self.make_output_dir()
         self.context = context
         data = self.export_settings(context)
         window_manager = context.window_manager
-        
+
         if self.visible_only:
             objects = [obj for obj in context.scene.objects if obj.visible_get()]
         else:
             objects = [obj for obj in context.scene.objects]
-            
+
         window_manager.progress_begin(0, len(objects))
         shapes = []
         cameras = []
         lights = []
         materials = {}
-        data["shapes"] = shapes        
-        bpy.ops.object.select_all(action='DESELECT')
+        data["shapes"] = shapes
+
+        bpy.ops.object.select_all(action="DESELECT")
         viewlayer = bpy.context.view_layer
         for i, object in enumerate(objects):
             object_type = object.type
@@ -154,10 +162,11 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
                 lights.append(lit)
             window_manager.progress_update(i)
         window_manager.progress_end()
-        
+
         viewlayer.objects.active = None
-        
-        bpy.ops.object.select_all(action='DESELECT')
+
+        bpy.ops.object.select_all(action="DESELECT")
+        data["materials"] = self.convert_materials(materials)
         self.save_json(data)
         return {"FINISHED"}
 

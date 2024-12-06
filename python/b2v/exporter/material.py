@@ -19,6 +19,9 @@ def export(exporter, material, materials):
     # socket = bsdf.inputs['Base Color']
     print("material export start")
     print(material.name)
+    materials[material.name] = {
+        "type" : "matte"
+    }
     # if socket.is_linked:
     #     print(socket.links[0].from_node)
     # else:
