@@ -10,15 +10,15 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
+from. import shadernode
 
 def export_matte(exporter, bsdf):
     socket = bsdf.inputs['Color']
-    print(list(socket.default_value))
-    print(dir(socket))
+    
     ret = {
         "type" : "matte",
         "param": {
-            # "color" : socket.default_value
+            "color" : shadernode.parse_node(exporter, socket, 3)
         }
     }
     return ret
@@ -67,7 +67,6 @@ def export(exporter, material, materials):
     if material.name in materials:
         return
     export_func = func_tab[bsdf.type]
-    print(bsdf.type)
     data = export_func(exporter, bsdf)
     materials[material.name] = data
     # materials[material.name] = 
