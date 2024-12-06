@@ -12,31 +12,49 @@ from bpy.props import (
 )
 
 def export_matte(exporter, bsdf):
-    pass
+    socket = bsdf.inputs['Color']
+    print(list(socket.default_value))
+    print(dir(socket))
+    ret = {
+        "type" : "matte",
+        "param": {
+            # "color" : socket.default_value
+        }
+    }
+    return ret
 
 def export_disney(exporter, bsdf):
-    pass
+    ret = {
+        "type" : "disney"
+    }
+    return ret
 
 def export_glass(exporter, bsdf):
-    pass
+    ret = {
+        "type" : "glass"
+    }
+    return ret
 
-def export_glossy(exporter, bsdf):
-    pass
+def export_mirror(exporter, bsdf):
+    ret = {
+        "type" : "mirror"
+    }
+    return ret
 
 def export_mix(exporter, bsdf):
-    pass
-
-def export_add(exporter, bsdf):
-    pass
+    ret = {
+        "type" : "mix"
+    }
+    return ret
 
 
 func_tab = {
     "Diffuse BSDF" : export_matte,
     "Principled BSDF" : export_disney,
     "Glass BSDF" : export_glass,
-    "Glossy BSDF" : export_glossy,
+    "Glossy BSDF" : export_mirror,
     "Mix Shader" : export_mix,
-    "Add BSDF" : export_add,
+    "Add Shader" : export_mix,
 }
 
 def export(exporter, material, materials):
@@ -45,11 +63,13 @@ def export(exporter, material, materials):
     bsdf = output.inputs['Surface'].links[0].from_node
     # socket = bsdf.inputs['Base Color']
     print("material export start")
-    print(material.name)
-    print(bsdf.name)
-    materials[material.name] = {
-        "type" : "matte"
-    }
+    
+    if material.name in materials:
+        return
+    export_func = func_tab[bsdf.name]
+    data = export_func(exporter, bsdf)
+    materials[material.name] = data
+    # materials[material.name] = 
     # if socket.is_linked:
     #     print(socket.links[0].from_node)
     # else:
