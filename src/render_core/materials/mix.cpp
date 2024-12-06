@@ -28,7 +28,7 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
-        return b0_->albedo(wo) * scale_ + b1_->albedo(wo) * (1 - scale_);
+        return b0_->albedo(wo) * (1 - scale_) + b1_->albedo(wo) * scale_;
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         optional<Bool> v0 = b0_->is_dispersive();
@@ -47,8 +47,8 @@ public:
         ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag);
         ScatterEval eval1 = b1_->evaluate_local(wo, wi, mode, flag);
         ScatterEval ret{eval0.f.dimension(), eval0.pdfs.size()};
-        ret.f = eval0.f * scale_ + eval1.f * (1 - scale_);
-        ret.pdfs =eval0.pdf() * scale_ + eval1.pdf() * (1 - scale_);
+        ret.f = eval0.f * (1 - scale_) + eval1.f * scale_;
+        ret.pdfs = eval0.pdf() * (1 - scale_) + eval1.pdf() * scale_;
         // todo review this
         ret.flags = select(eval0.pdf() > 0.f, eval0.flags, eval1.flags);
         return ret;
@@ -57,7 +57,7 @@ public:
     SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         SampledDirection sd;
         Float u = sampler->next_1d();
-        $if(u < scale_) {
+        $if(u > scale_) {
             sd = b0_->sample_wi(wo, flag, sampler);
         }
         $else {
@@ -71,16 +71,16 @@ public:
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
         ret.wi = sd.wi;
-        ret.eval.pdfs =select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+        ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
         return ret;
     }
 };
 
 class MixMaterial : public Material {
+    VS_MAKE_SLOT(scale)
 private:
     SP<Material> mat0_{};
     SP<Material> mat1_{};
-    VS_MAKE_SLOT(scale)
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -105,9 +105,9 @@ public:
     }
 
     void prepare() noexcept override {
+        scale_->prepare();
         mat0_->prepare();
         mat1_->prepare();
-        scale_->prepare();
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
