@@ -14,9 +14,8 @@ from . import material
 
 def export_mesh(exporter, object, transform):
     exporter.try_make_mesh_dir()
-    bpy.ops.export_scene.gltf(filepath=exporter.output_directory()+'/meshes/'+object.name+'.gltf',
-                              export_texture_dir='../textures',
-                              export_format='GLTF_SEPARATE',
+    bpy.ops.export_scene.gltf(filepath=exporter.mesh_path(object.name),
+                            #   export_format='GLTF_SEPARATE',
                               export_materials='PLACEHOLDER',
                               use_selection=True)
 
@@ -31,5 +30,6 @@ def export(exporter, object, materials):
     transform = object.matrix_world
     object.select_set(True)
     export_mesh(exporter, object, transform)
+    # print(transform)
     object.select_set(False)
     return object
