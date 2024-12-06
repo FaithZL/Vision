@@ -18,6 +18,7 @@ def export(exporter, material, materials):
     bsdf = output.inputs['Surface'].links[0].from_node
     # socket = bsdf.inputs['Base Color']
     print("material export start")
+    print(material.name)
     # if socket.is_linked:
     #     print(socket.links[0].from_node)
     # else:
