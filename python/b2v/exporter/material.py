@@ -11,6 +11,33 @@ from bpy.props import (
     StringProperty,
 )
 
+def export_matte(exporter, bsdf):
+    pass
+
+def export_disney(exporter, bsdf):
+    pass
+
+def export_glass(exporter, bsdf):
+    pass
+
+def export_glossy(exporter, bsdf):
+    pass
+
+def export_mix(exporter, bsdf):
+    pass
+
+def export_add(exporter, bsdf):
+    pass
+
+
+func_tab = {
+    "Diffuse BSDF" : export_matte,
+    "Principled BSDF" : export_disney,
+    "Glass BSDF" : export_glass,
+    "Glossy BSDF" : export_glossy,
+    "Mix Shader" : export_mix,
+    "Add BSDF" : export_add,
+}
 
 def export(exporter, material, materials):
     output_node_id = 'Material Output'
@@ -19,6 +46,7 @@ def export(exporter, material, materials):
     # socket = bsdf.inputs['Base Color']
     print("material export start")
     print(material.name)
+    print(bsdf.name)
     materials[material.name] = {
         "type" : "matte"
     }
