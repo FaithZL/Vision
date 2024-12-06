@@ -11,9 +11,9 @@ namespace vision {
 
 class MixBxDFSet : public BxDFSet {
 private:
+    Float frac_;
     DCUP<BxDFSet> b0_;
     DCUP<BxDFSet> b1_;
-    Float scale_;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
@@ -22,13 +22,13 @@ protected:
 
 public:
     VS_MAKE_BxDFSet_ASSIGNMENT(MixBxDFSet)
-        MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float scale)
-        : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)), scale_(scale) {
+        MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float frac)
+        : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)), frac_(frac) {
         flag_ = ocarina::min(b0_->flag(), b1_->flag());
     }
 
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
-        return b0_->albedo(wo) * (1 - scale_) + b1_->albedo(wo) * scale_;
+        return b0_->albedo(wo) * (1 - frac_) + b1_->albedo(wo) * frac_;
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         optional<Bool> v0 = b0_->is_dispersive();
@@ -47,8 +47,8 @@ public:
         ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag);
         ScatterEval eval1 = b1_->evaluate_local(wo, wi, mode, flag);
         ScatterEval ret{eval0.f.dimension(), eval0.pdfs.size()};
-        ret.f = eval0.f * (1 - scale_) + eval1.f * scale_;
-        ret.pdfs = eval0.pdf() * (1 - scale_) + eval1.pdf() * scale_;
+        ret.f = eval0.f * (1 - frac_) + eval1.f * frac_;
+        ret.pdfs = eval0.pdf() * (1 - frac_) + eval1.pdf() * frac_;
         // todo review this
         ret.flags = select(eval0.pdf() > 0.f, eval0.flags, eval1.flags);
         return ret;
@@ -57,7 +57,7 @@ public:
     SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
         SampledDirection sd;
         Float u = sampler->next_1d();
-        $if(u > scale_) {
+        $if(u > frac_) {
             sd = b0_->sample_wi(wo, flag, sampler);
         }
         $else {
@@ -77,8 +77,8 @@ public:
 };
 
 class MixMaterial : public Material {
-    VS_MAKE_SLOT(scale)
 private:
+    VS_MAKE_SLOT(frac)
     SP<Material> mat0_{};
     SP<Material> mat1_{};
 
@@ -93,26 +93,26 @@ public:
         : Material(desc),
           mat0_(Node::create_shared<Material>(*desc.mat0)),
           mat1_(Node::create_shared<Material>(*desc.mat1)) {
-        scale_.set(Slot::create_slot(desc.slot("scale", 0.5f, Number)));
+        frac_.set(Slot::create_slot(desc.slot("frac", 0.5f, Number)));
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_, *scale_.node())
+    OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_, *frac_.node())
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(mat0_->type_hash(), mat1_->type_hash(), scale_.type_hash());
+        return hash64(mat0_->type_hash(), mat1_->type_hash(), frac_.type_hash());
     }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(mat0_->hash(), mat1_->hash(), scale_.hash());
+        return hash64(mat0_->hash(), mat1_->hash(), frac_.hash());
     }
 
     void prepare() noexcept override {
-        scale_->prepare();
+        frac_->prepare();
         mat0_->prepare();
         mat1_->prepare();
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        Float scale = scale_.evaluate(it, swl)[0];
-        return make_unique<MixBxDFSet>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl), scale);
+        Float frac = frac_.evaluate(it, swl)[0];
+        return make_unique<MixBxDFSet>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl), frac);
     }
 };
 
