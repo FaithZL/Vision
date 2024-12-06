@@ -138,7 +138,7 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         cameras = []
         lights = []
         materials = {}
-        
+        data["shapes"] = shapes        
         bpy.ops.object.select_all(action='DESELECT')
         viewlayer = bpy.context.view_layer
         for i, object in enumerate(objects):
