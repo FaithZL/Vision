@@ -49,12 +49,12 @@ def export_mix(exporter, bsdf):
 
 
 func_tab = {
-    "Diffuse BSDF" : export_matte,
-    "Principled BSDF" : export_disney,
-    "Glass BSDF" : export_glass,
-    "Glossy BSDF" : export_mirror,
-    "Mix Shader" : export_mix,
-    "Add Shader" : export_mix,
+    "BSDF_DIFFUSE" : export_matte,
+    "BSDF_PRINCIPLED" : export_disney,
+    "BSDF_GLASS" : export_glass,
+    "BSDF_GLOSSY" : export_mirror,
+    "MIX_SHADER" : export_mix,
+    "ADD_SHADER" : export_mix,
 }
 
 def export(exporter, material, materials):
@@ -66,7 +66,8 @@ def export(exporter, material, materials):
     
     if material.name in materials:
         return
-    export_func = func_tab[bsdf.name]
+    export_func = func_tab[bsdf.type]
+    print(bsdf.type)
     data = export_func(exporter, bsdf)
     materials[material.name] = data
     # materials[material.name] = 
