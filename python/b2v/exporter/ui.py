@@ -167,6 +167,7 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
 
         bpy.ops.object.select_all(action="DESELECT")
         data["materials"] = self.convert_materials(materials)
+        data["camera"] = cameras[0]
         self.save_json(data)
         return {"FINISHED"}
 
