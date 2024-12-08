@@ -115,12 +115,15 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         with open(self.json_path(), "w") as outputfile:
             json.dump(data, outputfile, indent=4)
 
-    def correct_matrix(self):
+    def correct_matrix(self, mat=None):
         axis_mat = axis_conversion(
-            to_forward=self.axis_forward,
-            to_up=self.axis_up,
-        ).to_4x4()
-        return axis_mat
+                to_forward=self.axis_forward,
+                to_up=self.axis_up,
+            ).to_4x4()
+        if mat is None:
+            return axis_mat
+        else:
+            return axis_mat * mat
 
     def convert_materials(self, mat_dict):
         ret = []
