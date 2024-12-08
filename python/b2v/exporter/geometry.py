@@ -11,6 +11,7 @@ from bpy.props import (
     StringProperty,
 )
 from . import material
+from ..import utils
 
 
 def export_mesh(exporter, object, materials):
