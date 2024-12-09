@@ -21,7 +21,9 @@ def export(exporter, object):
     res_x = exporter.context.scene.render.resolution_x
     res_y = exporter.context.scene.render.resolution_y
     transform = exporter.correct_matrix(object.matrix_world)
+    print(object.matrix_world)
     print(transform)
+    print(utils.matrix_to_list(transform))
     ret = {
         "type" : "thin_lens",
         "param" : {

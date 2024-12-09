@@ -13,6 +13,7 @@ from bpy.props import (
 
 
 def matrix_to_list(matrix):
+    matrix = matrix.transposed()
     return [
         list(matrix[0]),
         list(matrix[1]),

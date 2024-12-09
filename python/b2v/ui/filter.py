@@ -48,4 +48,5 @@ class VISION_RENDER_PT_Filter(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel)
     bl_idname = "VISION_RENDER_PT_Filter"
     bl_label = "Filter"
     attr_type = "filter"
+    bl_parent_id = "VISION_RENDER_PT_Camera"
     dic = dic
