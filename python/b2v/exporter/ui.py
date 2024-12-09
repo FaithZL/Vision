@@ -123,7 +123,7 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         if mat is None:
             return axis_mat
         else:
-            return axis_mat * mat
+            return axis_mat @ mat
 
     def convert_materials(self, mat_dict):
         ret = []
