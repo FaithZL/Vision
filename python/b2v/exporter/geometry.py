@@ -27,8 +27,6 @@ def export_mesh(exporter, object, materials):
     mat = b_mesh.materials[0]
     material.export(exporter, mat, materials)
 
-    print(list(matrix))
-
     ret = {
         "type": "model",
         "names": object.name,
@@ -39,12 +37,7 @@ def export_mesh(exporter, object, materials):
             "transform": {
                 "type": "matrix4x4",
                 "param": {
-                    "matrix4x4": [
-                        list(matrix[0]),
-                        list(matrix[1]),
-                        list(matrix[2]),
-                        list(matrix[3]),
-                    ]
+                    "matrix4x4": utils.matrix_to_list(matrix)
                 },
             },
         },

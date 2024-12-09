@@ -11,6 +11,8 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
+from ..import utils
+import numpy as np
 
 def export_filter(exporter):
     pass
@@ -20,7 +22,19 @@ def export(exporter, object):
     res_x = exporter.context.scene.render.resolution_x
     res_y = exporter.context.scene.render.resolution_y
     print((object.matrix_world))
-    print(exporter.correct_matrix(object.matrix_world))
+    print(exporter.correct_matrix())
+    print(exporter.correct_matrix() * object.matrix_world)
+    print(object.matrix_world * exporter.correct_matrix())
+
+    m1 = np.array(utils.matrix_to_list(object.matrix_world))
+    m2 = np.array(utils.matrix_to_list(exporter.correct_matrix()))
+    
+    m3 = np.matmul(m1, m2)
+    print(m3)
+    
+    m3 = np.matmul(m2, m1)
+    print(m3)
+
     ret = {
         "type" : "thin_lens",
         "param" : {
@@ -30,7 +44,7 @@ def export(exporter, object):
             "transform" : {
                 "type" : "matrix4x4",
                 "param" : {
-                    
+                    "matrix4x4" : utils.matrix_to_list(object.matrix_world)
                 }
             }
         }

@@ -11,5 +11,11 @@ from bpy.props import (
     StringProperty,
 )
 
+
 def matrix_to_list(matrix):
-    pass
+    return [
+        list(matrix[0]),
+        list(matrix[1]),
+        list(matrix[2]),
+        list(matrix[3]),
+    ]
