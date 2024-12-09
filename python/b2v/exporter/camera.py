@@ -23,8 +23,8 @@ def export(exporter, object):
     res_y = exporter.context.scene.render.resolution_y
     print((object.matrix_world))
     print(exporter.correct_matrix())
-    print(exporter.correct_matrix() * object.matrix_world)
-    print(object.matrix_world * exporter.correct_matrix())
+    print(exporter.correct_matrix() @ object.matrix_world)
+    print(object.matrix_world @ exporter.correct_matrix())
 
     m1 = np.array(utils.matrix_to_list(object.matrix_world))
     m2 = np.array(utils.matrix_to_list(exporter.correct_matrix()))
