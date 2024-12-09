@@ -101,7 +101,6 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
     def export_settings(self, context):
         vp = getattr(context.scene, "vision")
         ret = {
-            "filter": {},
             "sampler": {},
             "light_sampler": {},
             "spectrum": {},
@@ -110,6 +109,10 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         for k, v in ret.items():
             ret[k] = vp.get_params(k)
         return ret
+    
+    def get_params(self, key):
+        vp = getattr(self.context.scene, "vision")
+        return vp.get_params(key)
 
     def save_json(self, data):
         with open(self.json_path(), "w") as outputfile:

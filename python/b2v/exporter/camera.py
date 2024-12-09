@@ -11,10 +11,7 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
-from ..import utils
-
-def export_filter(exporter):
-    pass
+from .. import utils
 
 def export(exporter, object):
     camera = object.data
@@ -24,18 +21,19 @@ def export(exporter, object):
     print(object.matrix_world)
     print(transform)
     print(utils.matrix_to_list(transform))
-    ret = {
-        "type" : "thin_lens",
-        "param" : {
-            "fov_y" : math.degrees(camera.angle_y),
-			"name" : object.name,
-			"velocity" : 15,
-            "transform" : {
-                "type" : "matrix4x4",
-                "param" : {
-                    "matrix4x4" : utils.matrix_to_list(transform)
-                }
-            }
-        }
+    ret = exporter.get_params("Camera")
+    params = {
+        "fov_y": math.degrees(camera.angle_y),
+        "name": object.name,
+        "filter": exporter.get_params("filter"),
+        "transform": {
+            "type": "matrix4x4",
+            "param": {"matrix4x4": utils.matrix_to_list(transform)},
+        },
+        "film": {
+            "resolution": [res_x, res_y],
+            "tone_mapper" : exporter.get_params("tone_mapper")
+        },
     }
+    ret["params"].update(params)
     return ret
