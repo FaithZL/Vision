@@ -35,8 +35,8 @@ public:
     }
 
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
-        return mitchell_1d(2 * p.x / radius_.hv()) *
-               mitchell_1d(2 * p.y / radius_.hv());
+        return mitchell_1d(2 * p.x / radius_.hv().x) *
+               mitchell_1d(2 * p.y / radius_.hv().y);
     }
 };
 

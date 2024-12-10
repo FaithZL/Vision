@@ -14,12 +14,12 @@ public:
     TriangleFilter() = default;
     explicit TriangleFilter(const FilterDesc &desc) : Filter(desc) {}
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
-        return {make_float2(sample_tent(u.x, radius()), sample_tent(u.y, radius())), 1.f};
+        return {make_float2(sample_tent(u.x, radius().x), sample_tent(u.y, radius().y)), 1.f};
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(float2 p) const noexcept override {
-        return std::max(0.f, radius_.hv() - std::abs(p.x)) *
-               std::max(0.f, radius_.hv() - std::abs(p.y));
+        return std::max(0.f, radius_.hv().x - std::abs(p.x)) *
+               std::max(0.f, radius_.hv().y - std::abs(p.y));
     }
 };
 }// namespace vision

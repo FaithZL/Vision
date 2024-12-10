@@ -20,8 +20,8 @@ public:
           tau_(desc["tau"].as_float(3.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
-        return windowed_sinc<H>(p.x, radius_.hv(), tau_) *
-               windowed_sinc<H>(p.y, radius_.hv(), tau_) * 4;
+        return windowed_sinc<H>(p.x, radius_.hv().x, tau_) *
+               windowed_sinc<H>(p.y, radius_.hv().y, tau_) * 4;
     }
 };
 
