@@ -31,13 +31,13 @@ public:
     using Desc = FilterDesc;
 
 protected:
-    EncodedData<float2> radius_;
+    EncodedData<float> radius_;
 
 public:
     Filter() = default;
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
-          radius_(desc["radius"].as_float2(make_float2(1.5f))) {}
+          radius_(desc["radius"].as_float(1.5f)) {}
     OC_ENCODABLE_FUNC(Encodable<float>, radius_)
     VS_HOTFIX_MAKE_RESTORE(Node, radius_)
 

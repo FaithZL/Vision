@@ -30,12 +30,12 @@ public:
         lut_.resize(len);
         vector<float> func;
         func.resize(len);
-        float2 r = filter->radius<H>();
+        float r = filter->radius<H>();
         for (int i = 0; i < len; ++i) {
             int x = i % table_size;
             int y = i / table_size;
-            float2 p = make_float2((x + 0.5f) / table_size * r.x,
-                                   (y + 0.5f) / table_size * r.y);
+            float2 p = make_float2((x + 0.5f) / table_size * r,
+                                   (y + 0.5f) / table_size * r);
             float val = filter->evaluate(p);
             func[i] = ocarina::abs(val);
             lut_.host_buffer().at(i) = val;
