@@ -13,6 +13,7 @@ from bpy.props import (
 )
 from .. import utils
 
+
 def export(exporter, object):
     camera = object.data
     res_x = exporter.context.scene.render.resolution_x
@@ -31,8 +32,11 @@ def export(exporter, object):
             "param": {"matrix4x4": utils.matrix_to_list(transform)},
         },
         "film": {
-            "resolution": [res_x, res_y],
-            "tone_mapper" : exporter.get_params("tone_mapper")
+            "type": "rgb",
+            "param": {
+                "resolution": [res_x, res_y],
+                "tone_mapper": exporter.get_params("tone_mapper"),
+            },
         },
     }
     ret["param"].update(param)
