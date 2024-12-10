@@ -46,7 +46,10 @@ def export_emission(exporter, bsdf):
     socket = bsdf.inputs["Color"]
     ret = {
         "type": "area",
-        "param": {"color": shadernode.parse_node(exporter, socket, 3)},
+        "param": {
+            "color": shadernode.parse_node(exporter, socket, 3),
+            "scale": bsdf.inputs["Strength"].default_value,
+        },
     }
     return ret
 
@@ -88,7 +91,7 @@ def export(exporter, material, materials):
         return
     export_func = func_tab[bsdf.type]
     data = export_func(exporter, bsdf)
-    
+
     if bsdf.type == "ADD_SHADER":
         materials[material.name] = data["param"]["material"]
     else:
