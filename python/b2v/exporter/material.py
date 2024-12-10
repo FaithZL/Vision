@@ -14,7 +14,6 @@ from. import shadernode
 
 def export_matte(exporter, bsdf):
     socket = bsdf.inputs['Color']
-    
     ret = {
         "type" : "matte",
         "param": {
@@ -47,6 +46,15 @@ def export_mix(exporter, bsdf):
     }
     return ret
 
+def export_add(exporter, bsdf):
+    ret = {
+        "type" : "add"
+    }
+    node0 = bsdf.inputs[0].links[0].from_node
+    node1 = bsdf.inputs[1].links[0].from_node
+    print(node0.type)
+    print(node1.type)
+    return ret
 
 func_tab = {
     "BSDF_DIFFUSE" : export_matte,
@@ -54,7 +62,7 @@ func_tab = {
     "BSDF_GLASS" : export_glass,
     "BSDF_GLOSSY" : export_mirror,
     "MIX_SHADER" : export_mix,
-    "ADD_SHADER" : export_mix,
+    "ADD_SHADER" : export_add,
 }
 
 def export(exporter, material, materials):
@@ -74,4 +82,4 @@ def export(exporter, material, materials):
     #     print(socket.links[0].from_node)
     # else:
     #     print(socket.default_value)
-    print("material export end")
+    return data
