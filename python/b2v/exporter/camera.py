@@ -22,7 +22,7 @@ def export(exporter, object):
     print(transform)
     print(utils.matrix_to_list(transform))
     ret = exporter.get_params("Camera")
-    params = {
+    param = {
         "fov_y": math.degrees(camera.angle_y),
         "name": object.name,
         "filter": exporter.get_params("filter"),
@@ -35,5 +35,5 @@ def export(exporter, object):
             "tone_mapper" : exporter.get_params("tone_mapper")
         },
     }
-    ret["params"].update(params)
+    ret["param"].update(param)
     return ret

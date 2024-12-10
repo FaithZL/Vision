@@ -34,7 +34,7 @@ class VisionProperties(bpy.types.PropertyGroup):
     def get_params(self, data_type):
         cur_item = getattr(self, data_type)
         params = {}
-        ret = {"type": cur_item, "params": params}
+        ret = {"type": cur_item, "param": params}
         for attr_name in dir(self):
             if attr_name.startswith(cur_item):
                 simple_attr_name = attr_name[len(cur_item) + 1 :]

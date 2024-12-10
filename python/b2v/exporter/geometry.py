@@ -25,8 +25,7 @@ def export_mesh(exporter, object, materials):
         b_mesh = object.to_mesh()
 
     mat = b_mesh.materials[0]
-    material.export(exporter, mat, materials)
-
+    mat_data = material.export(exporter, mat, materials)
     ret = {
         "type": "model",
         "names": object.name,
@@ -42,6 +41,9 @@ def export_mesh(exporter, object, materials):
             },
         },
     }
+    if mat_data["type"] == "add":
+        ret["param"]["emission"] = mat_data["param"]["emission"]
+        
     bpy.ops.export_scene.gltf(
         filepath=exporter.mesh_path(object.name),
         #   export_format='GLTF_SEPARATE',
