@@ -12,6 +12,7 @@ from bpy.props import (
 )
 from . import material
 from ..import utils
+from mathutils import Matrix
 
 
 def export_mesh(exporter, object, materials):
@@ -36,7 +37,7 @@ def export_mesh(exporter, object, materials):
             "transform": {
                 "type": "matrix4x4",
                 "param": {
-                    "matrix4x4": utils.matrix_to_list(matrix)
+                    "matrix4x4": utils.matrix_to_list(Matrix.Identity(4))
                 },
             },
         },
