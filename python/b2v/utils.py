@@ -10,7 +10,14 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
+import numpy as np
 
+def to_mat(matrix4x4):
+    items = []
+    for col in matrix4x4.col:
+        items.extend(col)
+    mat = np.array(items).reshape(4, 4)
+    return mat
 
 def matrix_to_list(matrix):
     matrix = matrix.transposed()

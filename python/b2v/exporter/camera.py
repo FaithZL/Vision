@@ -19,17 +19,25 @@ def export(exporter, object):
     res_x = exporter.context.scene.render.resolution_x
     res_y = exporter.context.scene.render.resolution_y
     transform = exporter.correct_matrix(object.matrix_world)
-    print(object.matrix_world)
-    print(transform)
-    print(utils.matrix_to_list(transform))
     ret = exporter.get_params("Camera")
+    
+    mat = utils.to_mat(object.matrix_world)
+    pos = mat[3][0:3]
+    euler = object.rotation_euler
+    pitch = math.degrees(euler.x) - 90
+    yaw = -math.degrees(euler.z)
+    
     param = {
-        "fov_y": math.degrees(camera.angle_y),
+        "fov_y": math.degrees(camera.angle_y) * 1.5,
         "name": object.name,
         "filter": exporter.get_params("filter"),
         "transform": {
-            "type": "matrix4x4",
-            "param": {"matrix4x4": utils.matrix_to_list(transform)},
+            "type": "Euler",
+            "param": {
+                "yaw": yaw,
+                "pitch": pitch,
+                "position": [pos[0], pos[2], -pos[1]]
+            }
         },
         "film": {
             "type": "rgb",
