@@ -1,6 +1,7 @@
 import bpy
 import os
 import json
+import math
 from bpy.props import (
     BoolProperty,
     CollectionProperty,
@@ -22,15 +23,34 @@ def export_area(exporter, object):
     elif light.shape == "RECTANGLE":
         width = light.size * object.scale.x
         height = light.size_y * object.scale.y
-    print(utils.matrix_to_list(object.matrix_world))
-    print(utils.matrix_to_list(exporter.correct_matrix(object.matrix_world)))
+    # print(utils.matrix_to_list(object.matrix_world))
+    # print(utils.matrix_to_list(exporter.correct_matrix(object.matrix_world)))
+    
+    mat = utils.to_mat(object.matrix_world)
+    pos = mat[3][0:3]
+    euler = object.rotation_euler
+    pitch = math.degrees(euler.x) + 180
+    roll = math.degrees(euler.y)
+    yaw = -math.degrees(euler.z)
+    
+    
+    mat = utils.matrix_to_list(exporter.correct_matrix(object.matrix_world))
     ret = {
         "type": "area",
-        "paran": {
+        "param": {
             "color": {"channels": "xyz", "node": list(light.color)},
             "scale": light.energy,
             "width": width,
             "height": height,
+            "o2w" : {
+                "type": "Euler",
+                "param": {
+                    "yaw": yaw,
+                    "roll": roll,
+                    "pitch": pitch,
+                    "position": [pos[0], pos[2], -pos[1]]
+                }
+            }
         },
     }
     return ret
