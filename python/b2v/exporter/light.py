@@ -12,6 +12,7 @@ from bpy.props import (
     StringProperty,
 )
 from ..import utils
+import numpy as np
 
 def export_area(exporter, object):
     light = object.data
@@ -27,14 +28,18 @@ def export_area(exporter, object):
     # print(utils.matrix_to_list(exporter.correct_matrix(object.matrix_world)))
     
     mat = utils.to_mat(object.matrix_world)
-    pos = mat[3][0:3]
-    euler = object.rotation_euler
-    pitch = math.degrees(euler.x) + 180
-    roll = math.degrees(euler.y)
-    yaw = -math.degrees(euler.z)
+    # pos = mat[3][0:3]
+    # euler = object.rotation_euler
+    # pitch = math.degrees(euler.x) + 180
+    # roll = math.degrees(euler.y)
+    # yaw = -math.degrees(euler.z)
     
     
-    mat = utils.matrix_to_list(exporter.correct_matrix(object.matrix_world))
+    # mat = utils.matrix_to_list(exporter.correct_matrix(object.matrix_world))
+    
+
+    mat = np.matmul(mat, utils.to_luminous())
+    
     ret = {
         "type": "area",
         "param": {
@@ -43,13 +48,11 @@ def export_area(exporter, object):
             "width": width,
             "height": height,
             "o2w" : {
-                "type": "Euler",
-                "param": {
-                    "yaw": yaw,
-                    "roll": roll,
-                    "pitch": pitch,
-                    "position": [pos[0], pos[2], -pos[1]]
-                }
+                'type': 'matrix4x4',
+                    'param': {
+                        'matrix4x4': mat.tolist()
+
+                    }
             }
         },
     }
