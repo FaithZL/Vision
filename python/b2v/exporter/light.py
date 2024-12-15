@@ -12,6 +12,7 @@ from bpy.props import (
     StringProperty,
 )
 from ..import utils
+from mathutils import Matrix
 import numpy as np
 
 def export_area(exporter, object):
@@ -24,19 +25,11 @@ def export_area(exporter, object):
     elif light.shape == "RECTANGLE":
         width = light.size * object.scale.x
         height = light.size_y * object.scale.y
-    
-    # mat = utils.to_mat(object.matrix_world)
-    # pos = mat[3][0:3]
-    # euler = object.rotation_euler
-    # pitch = math.degrees(euler.x) + 180
-    # roll = math.degrees(euler.y)
-    # yaw = -math.degrees(euler.z)
-    
-    
-    mat = utils.matrix_to_list(exporter.correct_matrix(object.matrix_world))
-    
 
-    # mat = np.matmul(mat, utils.to_luminous())
+    
+    rotation_matrix_x = Matrix.Rotation(math.radians(-90), 4, 'X')
+    mat = exporter.correct_matrix(object.matrix_world)
+    mat_list = utils.matrix_to_list(mat @ rotation_matrix_x)
     
     ret = {
         "type": "area",
@@ -47,10 +40,9 @@ def export_area(exporter, object):
             "height": height,
             "o2w" : {
                 'type': 'matrix4x4',
-                    'param': {
-                        'matrix4x4': mat
-
-                    }
+                'param': {
+                    'matrix4x4': mat_list
+                }
             }
         },
     }
