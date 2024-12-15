@@ -24,8 +24,6 @@ def export_area(exporter, object):
     elif light.shape == "RECTANGLE":
         width = light.size * object.scale.x
         height = light.size_y * object.scale.y
-    print(utils.matrix_to_list(object.matrix_world))
-    print(utils.matrix_to_list(exporter.correct_matrix(object.matrix_world)))
     
     # mat = utils.to_mat(object.matrix_world)
     # pos = mat[3][0:3]

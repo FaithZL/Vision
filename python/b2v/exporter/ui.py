@@ -16,7 +16,7 @@ import time
 import shutil
 
 
-@orientation_helper(axis_forward="Z", axis_up="Y")
+@orientation_helper(axis_forward="-Z", axis_up="Y")
 class VisionExporter(bpy.types.Operator, ExportHelper):
     bl_idname = "export_scene.vision"
     bl_label = "Vision Exporter"
