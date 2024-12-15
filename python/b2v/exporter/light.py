@@ -24,10 +24,10 @@ def export_area(exporter, object):
     elif light.shape == "RECTANGLE":
         width = light.size * object.scale.x
         height = light.size_y * object.scale.y
-    # print(utils.matrix_to_list(object.matrix_world))
-    # print(utils.matrix_to_list(exporter.correct_matrix(object.matrix_world)))
+    print(utils.matrix_to_list(object.matrix_world))
+    print(utils.matrix_to_list(exporter.correct_matrix(object.matrix_world)))
     
-    mat = utils.to_mat(object.matrix_world)
+    # mat = utils.to_mat(object.matrix_world)
     # pos = mat[3][0:3]
     # euler = object.rotation_euler
     # pitch = math.degrees(euler.x) + 180
@@ -35,10 +35,10 @@ def export_area(exporter, object):
     # yaw = -math.degrees(euler.z)
     
     
-    # mat = utils.matrix_to_list(exporter.correct_matrix(object.matrix_world))
+    mat = utils.matrix_to_list(exporter.correct_matrix(object.matrix_world))
     
 
-    mat = np.matmul(mat, utils.to_luminous())
+    # mat = np.matmul(mat, utils.to_luminous())
     
     ret = {
         "type": "area",
@@ -50,7 +50,7 @@ def export_area(exporter, object):
             "o2w" : {
                 'type': 'matrix4x4',
                     'param': {
-                        'matrix4x4': mat.tolist()
+                        'matrix4x4': mat
 
                     }
             }
@@ -75,5 +75,6 @@ func_tab = {
 
 
 def export(exporter, object):
+    print("------------------------", object.data.type)
     ret = func_tab[object.data.type](exporter, object)
     return ret
