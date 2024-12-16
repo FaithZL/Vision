@@ -152,7 +152,10 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         lights = []
         materials = {}
         data["shapes"] = shapes
-
+        data["render_setting"] = {
+            "min_world_radius": 10,
+            "polymorphic_mode" : 1
+        }
         bpy.ops.object.select_all(action="DESELECT")
         viewlayer = bpy.context.view_layer
         for i, object in enumerate(objects):

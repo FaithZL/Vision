@@ -51,11 +51,14 @@ def export_area(exporter, object):
 
 def export_point(exporter, object):
     light = object.data
-    
+    pos = object.location
+    p = exporter.correct_matrix(pos)
     ret = {
         "type": "point",
         "param" :{
             "color": {"channels": "xyz", "node": list(light.color)},
+            "scale": light.energy,
+            "position" : list(p)
         }
     }
     return ret
@@ -68,6 +71,7 @@ def export_spot(exporter, object):
         "type": "spot",
         "param" :{
             "color": {"channels": "xyz", "node": list(light.color)},
+            "scale": light.energy,
         }
     }
     return ret
