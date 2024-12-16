@@ -50,11 +50,27 @@ def export_area(exporter, object):
 
 
 def export_point(exporter, object):
-    pass
+    light = object.data
+    
+    ret = {
+        "type": "point",
+        "param" :{
+            "color": {"channels": "xyz", "node": list(light.color)},
+        }
+    }
+    return ret
 
 
 def export_spot(exporter, object):
-    pass
+    light = object.data
+    
+    ret = {
+        "type": "spot",
+        "param" :{
+            "color": {"channels": "xyz", "node": list(light.color)},
+        }
+    }
+    return ret
 
 
 func_tab = {
