@@ -14,6 +14,7 @@ from bpy.props import (
 from .. import utils
 from mathutils import Matrix, Vector
 import numpy as np
+from . import shadernode
 
 
 def export_area(exporter, object):
@@ -101,14 +102,13 @@ def export_environment(exporter):
         # 获取世界节点树
         world_nodes = scene.world.node_tree.nodes
         output = world_nodes["World Output"]
-        print(output)
         env_surface = output.inputs["Surface"].links[0].from_node
-        color = env_surface.inputs["Color"].links[0].from_node
-        print(color)
-    ret = {
-        "type" : "spherical",
-        "param" : {
-            
+        color = env_surface.inputs["Color"]
+        ret = {
+            "type" : "spherical",
+            "param" : {
+                "color" : shadernode.parse_node(exporter, color, 3),
+                "scale" : env_surface.inputs["Strength"].default_value
+            }
         }
-    }
-    # return ret
+        return ret

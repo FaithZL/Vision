@@ -19,15 +19,25 @@ def parse_image_node(exporter, from_node, dim):
     dst_path = exporter.texture_path(from_node.image.name)
     shutil.copyfile(src_path, dst_path)
     r_path = exporter.tex_dir + "/" + from_node.image.name
+    _, extension = os.path.splitext(r_path)
+    color_space = "linear" if extension in [".hdr", ".exr"] else "srgb"
     ret = {
         "channels": "xyz",
-        "node": {"type": "image", "param": {"fn": r_path, "color_space": "srgb"}},
+        "node": {
+            "type": "image",
+            "param": {
+                "fn": r_path, 
+                "color_space": color_space
+            }
+        },
     }
-
     return ret
 
 
-func_dict = {"TEX_IMAGE": parse_image_node}
+func_dict = {
+    "TEX_IMAGE": parse_image_node,
+    "TEX_ENVIRONMENT" : parse_image_node
+}
 
 
 def parse_node(exporter, socket, dim):
