@@ -92,6 +92,23 @@ func_tab = {
 
 
 def export(exporter, object):
-    print("------------------------", object.data.type)
     ret = func_tab[object.data.type](exporter, object)
     return ret
+
+def export_environment(exporter):
+    scene = bpy.context.scene
+    if scene.world and scene.world.use_nodes:
+        # 获取世界节点树
+        world_nodes = scene.world.node_tree.nodes
+        output = world_nodes["World Output"]
+        print(output)
+        env_surface = output.inputs["Surface"].links[0].from_node
+        color = env_surface.inputs["Color"].links[0].from_node
+        print(color)
+    ret = {
+        "type" : "spherical",
+        "param" : {
+            
+        }
+    }
+    # return ret

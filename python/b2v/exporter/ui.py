@@ -177,7 +177,9 @@ class VisionExporter(bpy.types.Operator, ExportHelper):
         bpy.ops.object.select_all(action="DESELECT")
         data["materials"] = self.convert_materials(materials)
         data["camera"] = cameras[0]
-        # 
+        env_data = light.export_environment(self)
+        if env_data:
+            lights.append(env_data)
         light_param = {
             "lights" : lights
         }
