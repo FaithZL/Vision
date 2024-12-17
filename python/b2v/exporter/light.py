@@ -12,7 +12,7 @@ from bpy.props import (
     StringProperty,
 )
 from ..import utils
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 import numpy as np
 
 def export_area(exporter, object):
@@ -57,7 +57,7 @@ def export_point(exporter, object):
         "type": "point",
         "param" :{
             "color": {"channels": "xyz", "node": list(light.color)},
-            "scale": light.energy,
+            "scale": light.energy / (4 * np.pi),
             "position" : list(p)
         }
     }
@@ -66,12 +66,17 @@ def export_point(exporter, object):
 
 def export_spot(exporter, object):
     light = object.data
-    
+    pos = object.location
+    p = exporter.correct_matrix(pos)
+    rotation_euler = object.rotation_euler
+    direction_vector = Vector((0.0, 0.0, -1.0))
+    direction_vector.rotate(rotation_euler)
     ret = {
         "type": "spot",
         "param" :{
             "color": {"channels": "xyz", "node": list(light.color)},
-            "scale": light.energy,
+            "scale": light.energy / (4 * np.pi),
+            "position" : list(p)
         }
     }
     return ret
