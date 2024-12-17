@@ -108,7 +108,13 @@ def export_environment(exporter):
             "type" : "spherical",
             "param" : {
                 "color" : shadernode.parse_node(exporter, color, 3),
-                "scale" : env_surface.inputs["Strength"].default_value
+                "scale" : env_surface.inputs["Strength"].default_value,
+                "o2w" : {
+                    "type":"Euler",
+                    "param": {
+                        "yaw" :180
+                    }
+                },
             }
         }
         return ret
