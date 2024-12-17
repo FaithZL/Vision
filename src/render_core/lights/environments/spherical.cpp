@@ -45,7 +45,7 @@ public:
         return Pi * ocarina::sqr(world_radius) * average();
     }
     [[nodiscard]] static Float2 UV(Float3 local_dir) {
-        return make_float2(spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
+        return make_float2(1 - spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
     }
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
