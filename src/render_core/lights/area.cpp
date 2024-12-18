@@ -47,6 +47,11 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(IAreaLight, two_sided_, *warper_)
     VS_HOTFIX_MAKE_RESTORE(IAreaLight, two_sided_, warper_)
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        IAreaLight::render_sub_UI(widgets);
+        changed_ |= widgets->check_box("two sided",
+                                       reinterpret_cast<bool *>(std::addressof(two_sided_.hv())));
+    }
     void init_geometry(const LightDesc &desc) {
         ShapeDesc sd;
         sd.sub_type = "quad";

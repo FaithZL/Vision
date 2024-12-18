@@ -29,7 +29,7 @@ class RuntimeObject : public RTTI {
 public:
     RuntimeObject() = default;
     virtual void restore(RuntimeObject *old_obj) noexcept {
-        OC_ASSERT(false);
+
     }
     virtual ~RuntimeObject() = default;
 };

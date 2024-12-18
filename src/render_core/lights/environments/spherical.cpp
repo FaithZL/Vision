@@ -27,25 +27,31 @@ class SphericalMap : public Environment {
 private:
     EncodedData<float4x4> w2o_;
     SP<Warper2D> warper_{};
+    bool flip_u_{false};
 
 public:
-    SphericalMap(): Environment(LightType::Infinite) {}
+    SphericalMap() : Environment(LightType::Infinite) {}
     explicit SphericalMap(const Desc &desc)
-        : Environment(desc, LightType::Infinite) {
+        : Environment(desc, LightType::Infinite), flip_u_(desc["flip_u"].as_bool(false)) {
         float4x4 o2w = desc.o2w.mat;
         float4x4 rx = rotation_x<H>(-90);
         w2o_ = inverse(o2w * rx);
     }
-
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        Environment::render_sub_UI(widgets);
+        changed_ |= widgets->check_box("flip u", addressof(flip_u_));
+    }
     OC_ENCODABLE_FUNC(Environment, w2o_, *warper_)
-    VS_HOTFIX_MAKE_RESTORE(Environment, w2o_, warper_)
+    VS_HOTFIX_MAKE_RESTORE(Environment, w2o_, warper_, flip_u_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;
         return Pi * ocarina::sqr(world_radius) * average();
     }
-    [[nodiscard]] static Float2 UV(Float3 local_dir) {
-        return make_float2(1 - spherical_phi(local_dir) * Inv2Pi, spherical_theta(local_dir) * InvPi);
+    [[nodiscard]] Float2 UV(Float3 local_dir) const noexcept {
+        Float org_u = spherical_phi(local_dir) * Inv2Pi;
+        Float u = flip_u_ ? org_u : 1 - org_u;
+        return make_float2(u, spherical_theta(local_dir) * InvPi);
     }
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
