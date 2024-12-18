@@ -44,11 +44,14 @@ public:
     OC_ENCODABLE_FUNC(Environment, w2o_, *warper_)
     VS_HOTFIX_MAKE_RESTORE(Environment, w2o_, warper_, flip_u_)
     VS_MAKE_PLUGIN_NAME_FUNC
+    [[nodiscard]] Float2 correct_uv(const Float2 &uv) const noexcept {
+        return flip_u_ ? uv : make_float2(1 - uv.x, uv.y);
+    }
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;
         return Pi * ocarina::sqr(world_radius) * average();
     }
-    [[nodiscard]] Float2 UV(Float3 local_dir) const noexcept {
+    [[nodiscard]] Float2 calculate_uv(Float3 local_dir) const noexcept {
         Float org_u = spherical_phi(local_dir) * Inv2Pi;
         Float u = flip_u_ ? org_u : 1 - org_u;
         // todo
@@ -56,13 +59,13 @@ public:
     }
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
-        Float2 uv = UV(local_dir);
+        Float2 uv = calculate_uv(local_dir);
         return color_.eval_illumination_spectrum(uv, swl).sample * scale();
     }
 
     [[nodiscard]] Float2 convert_to_bary(const Float3 &world_dir) const noexcept override {
         Float3 local_dir = normalize(transform_vector(*w2o_, world_dir));
-        return UV(local_dir);
+        return calculate_uv(local_dir);
     }
 
     [[nodiscard]] SampledSpectrum Le(const LightSampleContext &p_ref, const LightEvalContext &p_light,
