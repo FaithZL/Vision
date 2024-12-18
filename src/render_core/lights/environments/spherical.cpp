@@ -36,7 +36,7 @@ public:
           flip_u_(desc["flip_u"].as_bool(false)) {
         float4x4 o2w = desc.o2w.mat;
         float x = flip_u_ ? 1.f : -1.f;
-        float4x4 rx = rotation_x<H>(-90) * transform::scale(x,1.f,1.f);
+        float4x4 rx = rotation_x<H>(-90) * transform::scale(1.f, x, 1.f);
         w2o_ = inverse(o2w * rx);
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
