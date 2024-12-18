@@ -99,7 +99,6 @@ def export(exporter, object):
 def export_environment(exporter):
     scene = bpy.context.scene
     if scene.world and scene.world.use_nodes:
-        # 获取世界节点树
         world_nodes = scene.world.node_tree.nodes
         output = world_nodes["World Output"]
         env_surface = output.inputs["Surface"].links[0].from_node
