@@ -25,8 +25,10 @@ namespace vision {
 //    }
 class SphericalMap : public Environment {
 private:
+    float4x4 o2w_;
     EncodedData<float4x4> w2o_;
     SP<Warper2D> warper_{};
+    float yaw_{0};
     bool flip_u_{false};
 
 public:
@@ -37,14 +39,19 @@ public:
         float4x4 o2w = desc.o2w.mat;
         float x = flip_u_ ? 1.f : -1.f;
         float4x4 rx = rotation_x<H>(-90) * transform::scale(1.f, x, 1.f);
-        w2o_ = inverse(o2w * rx);
+        o2w_ = o2w * rx;
+        w2o_ = inverse(o2w_);
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Environment::render_sub_UI(widgets);
-        changed_ |= widgets->check_box("flip u", addressof(flip_u_));
+        changed_ |= widgets->drag_float("yaw", std::addressof(yaw_), 1, 0, 360);
+        if (changed_) {
+            float4x4 r = rotation_y<H>(yaw_);
+            w2o_ = inverse(r * o2w_);
+        }
     }
     OC_ENCODABLE_FUNC(Environment, w2o_, *warper_)
-    VS_HOTFIX_MAKE_RESTORE(Environment, w2o_, warper_, flip_u_)
+    VS_HOTFIX_MAKE_RESTORE(Environment, o2w_, w2o_, warper_, yaw_, flip_u_)
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float3 power() const noexcept override {
         float world_radius = scene().world_diameter() / 2.f;
