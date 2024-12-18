@@ -21,8 +21,9 @@ def parse_image_node(exporter, from_node, dim):
     r_path = exporter.tex_dir + "/" + from_node.image.name
     _, extension = os.path.splitext(r_path)
     color_space = "linear" if extension in [".hdr", ".exr"] else "srgb"
+    channels = "w" if dim == 1 else "xyz"
     ret = {
-        "channels": "xyz",
+        "channels": channels,
         "node": {
             "type": "image",
             "param": {
@@ -41,10 +42,13 @@ func_dict = {
 
 
 def parse_node(exporter, socket, dim):
-    # print("-----------------------", socket.links)
     if socket.is_linked:
         from_node = socket.links[0].from_node
         func = func_dict[from_node.type]
         return func(exporter, from_node, dim)
-    value = list(socket.default_value)[0:dim]
-    return {"channels": "xyz", "node": value}
+    if dim == 1:
+        value = socket.default_value
+        return value
+    else:
+        value = list(socket.default_value)[0:dim]
+        return {"channels": "xyz", "node": value}

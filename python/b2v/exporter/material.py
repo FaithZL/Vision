@@ -33,7 +33,14 @@ def export_glass(exporter, bsdf):
 
 
 def export_mirror(exporter, bsdf):
-    ret = {"type": "mirror"}
+    roughness = shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1)
+    ret = {
+        "type": "mirror",
+        "param" : {
+            "color" : shadernode.parse_node(exporter, bsdf.inputs["Color"], 3),
+            "roughness" : roughness
+        }
+    }
     return ret
 
 
