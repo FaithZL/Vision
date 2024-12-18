@@ -51,7 +51,8 @@ public:
     [[nodiscard]] Float2 UV(Float3 local_dir) const noexcept {
         Float org_u = spherical_phi(local_dir) * Inv2Pi;
         Float u = flip_u_ ? org_u : 1 - org_u;
-        return make_float2(u, spherical_theta(local_dir) * InvPi);
+        // todo
+        return make_float2(org_u, spherical_theta(local_dir) * InvPi);
     }
 
     [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
