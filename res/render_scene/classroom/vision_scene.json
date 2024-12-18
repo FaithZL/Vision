@@ -3900,6 +3900,7 @@
                 {
                     "type" : "spherical",
                     "param": {
+                        "flip_u" : true,
                         "color": {
                             "fn" : "textures/spaichingen_hill_2k.exr",
                             "color_space": "linear"
