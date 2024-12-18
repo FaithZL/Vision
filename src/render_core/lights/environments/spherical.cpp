@@ -57,12 +57,12 @@ public:
         float world_radius = scene().world_diameter() / 2.f;
         return Pi * ocarina::sqr(world_radius) * average();
     }
-    [[nodiscard]] Float2 calculate_uv(Float3 local_dir) const noexcept {
+    [[nodiscard]] static Float2 calculate_uv(const Float3& local_dir) noexcept {
         Float org_u = spherical_phi(local_dir) * Inv2Pi;
         return make_float2(org_u, spherical_theta(local_dir) * InvPi);
     }
 
-    [[nodiscard]] SampledSpectrum L(Float3 local_dir, const SampledWavelengths &swl) const {
+    [[nodiscard]] SampledSpectrum L(const Float3 &local_dir, const SampledWavelengths &swl) const {
         Float2 uv = calculate_uv(local_dir);
         return color_.eval_illumination_spectrum(uv, swl).sample * scale();
     }

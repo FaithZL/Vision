@@ -37,7 +37,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         IPointLight::render_sub_UI(widgets);
-        changed_ |= widgets->input_float3("direction", &direction_.hv());
+        changed_ |= widgets->drag_float3("direction", &direction_.hv(), 0.02, 0, 0);
         changed_ |= widgets->slider_float("angle", &angle_.hv(), radians(1.f), radians(89.f));
         changed_ |= widgets->slider_float("fall off", &falloff_.hv(), 0.001, angle_.hv());
     }
