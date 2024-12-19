@@ -12,6 +12,7 @@
 #include "math/constants.h"
 #include "render_core/spectra/srgb2spec.h"
 #include "base/color/spd.h"
+#include "core/util.h"
 
 using namespace vision;
 using namespace ocarina;
@@ -52,42 +53,101 @@ void test() {
     int i =0;
 }
 
+void foreach(int num, const std::function<void(int)> &f) {
+    for (int i = 0; i < num; ++i) {
+        f(i);
+    }
+}
+
+template<typename T>
+void TForeach(int num, const T &f) {
+    for (int i = 0; i < num; ++i) {
+        f(i);
+    }
+}
+
 int main(int argc, char *argv[]) {
+    Clock clk;
 
-    test();
-    return 0;
+    float4x4 mat{float(argc)};
+    int num = 100000000 * argc;
+    double elps = 0;
 
-    uint type_id = 0u;
-    uint inst_id = 0u;
-    vector<uint> func{1, 2, 5, 6, 3};
-    uint accum = 0u;
-    uint index = 13;
-    for (int i = 0; i < func.size(); ++i) {
-        type_id = select(index >= accum, i, type_id);
-        inst_id = select(index >= accum, index - accum, inst_id);
-        accum += func[i];
+
+    {
+        mat = make_float4x4(argc);
+        clk.start();
+        TForeach(num, [&](int i) {
+            mat = mat * mat;
+        });
+        clk.end();
+
+        elps = clk.elapse_ms();
+        cout << to_str(mat) << endl;
+        cout << "lambda " << elps << "ms" << endl;
     }
 
-    cout << "index = " << index << endl;
-    cout << "type_id = " << type_id << endl;
-    cout << "inst_id = " << inst_id << endl;
-
-    uint id = 0;
-    for (int i = 0; i < type_id; ++i) {
-        id += func[i];
+    {
+        clk.start();
+        for (int i = 0; i < num; ++i) {
+            mat = mat * mat;
+        }
+        clk.end();
+        elps = clk.elapse_ms();
+        cout << to_str(mat) << endl;
+        cout << "naive " << elps << "ms" << endl;
     }
-    index = id + inst_id;
-    cout << "index = " << index << endl;
 
-    auto tmp = encode_id<H>(1237, 113);
+    {
+        mat = make_float4x4(argc);
+        clk.start();
+        foreach (num, [&](int i) {
+            mat = mat * mat;
+        });
+        clk.end();
+
+        elps = clk.elapse_ms();
+        cout << to_str(mat) << endl;
+        cout << "std::function " << elps << "ms" << endl;
+    }
+
+    {
+        mat = make_float4x4(argc);
+        clk.start();
+        TForeach(num, [&](int i) {
+            mat = mat * mat;
+        });
+        clk.end();
+
+        elps = clk.elapse_ms();
+        cout << to_str(mat) << endl;
+        cout << "lambda " << elps << "ms" << endl;
+    }
+
+    {
+        clk.start();
+        for (int i = 0; i < num; ++i) {
+            mat = mat * mat;
+        }
+        clk.end();
+        elps = clk.elapse_ms();
+        cout << to_str(mat) << endl;
+        cout << "naive " << elps << "ms" << endl;
+    }
+
+    {
+        mat = make_float4x4(argc);
+        clk.start();
+        foreach (num, [&](int i) {
+            mat = mat * mat;
+        });
+        clk.end();
+
+        elps = clk.elapse_ms();
+        cout << to_str(mat) << endl;
+        cout << "std::function " << elps << "ms" << endl;
+    }
 
 
-
-    //    auto [inst, type] = decode_id<H>(tmp);
-    //    cout << tmp << endl;
-    //    cout << inst << endl << type << endl;
-    //    cout << std::hex << InvalidUI32;
-    //    float e = eta_LASF9(0.83);
-    //    float e2 = eta_LASF9(0.36);
     return 0;
 }
