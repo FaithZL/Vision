@@ -273,8 +273,8 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
         } else if (sub_type == "number") {
             DataWrap json = DataWrap::object();
             json["value"] = ps["value"].data();
-            json["max"] = ps["max"].data();
-            json["min"] = ps["min"].data();
+            json["max"] = ps.value("max", 1.f).data();
+            json["min"] = ps.value("min", 0.f).data();
             _parameter.set_json(json);
         }
     } else if (ps.data().is_number()) {

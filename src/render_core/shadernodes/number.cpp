@@ -10,13 +10,17 @@ class NumberInput : public ShaderNode {
 private:
     EncodedData<vector<float>> value_;
     EncodedData<float> intensity_{1.f};
+    float min_{0.f};
+    float max_{1.f};
     bool sync_{true};
 
 public:
     NumberInput() = default;
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_)
     explicit NumberInput(const ShaderNodeDesc &desc)
-        : ShaderNode(desc), value_(desc["value"].as_vector<float>()) {
+        : ShaderNode(desc),
+          value_(desc["value"].as_vector<float>()),
+          min_(desc["min"].as_float(0.f)),
+          max_(desc["max"].as_float(1.f)) {
         if (type_ == Illumination) {
             float max_v = *std::max_element(value_.hv().begin(), value_.hv().end());
             intensity_ = max_v;
@@ -25,6 +29,7 @@ public:
             });
         }
     }
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_)
     OC_ENCODABLE_FUNC(ShaderNode, value_, intensity_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = value_.hv();
@@ -34,12 +39,12 @@ public:
                     widgets->check_box(ocarina::format("{} sync", name_.c_str()), &sync_);
                 }
                 if (sync_) {
-                    changed_ |= widgets->drag_floatN(name_, values.data(), 1, 0.01);
+                    changed_ |= widgets->drag_floatN(name_, values.data(), 1, 0.01, min_, max_);
                     for (int i = 1; i < values.size(); ++i) {
                         values[i] = values[0];
                     }
                 } else {
-                    changed_ |= widgets->drag_floatN(name_, values.data(), values.size(),0.01);
+                    changed_ |= widgets->drag_floatN(name_, values.data(), values.size(),0.01, min_, max_);
                 }
                 break;
             }
