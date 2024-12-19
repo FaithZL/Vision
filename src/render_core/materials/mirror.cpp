@@ -51,6 +51,7 @@ class MirrorMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(roughness)
+    EncodedData<float> anisotropy_{};
     bool remapping_roughness_{true};
     float alpha_threshold_{0.022};
 
@@ -73,6 +74,8 @@ public:
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
+        changed_ |= widgets->drag_float("anisotropy", addressof(anisotropy_.hv()),
+                                        0.01f, -0.99f, 0.99f);
         Material::render_sub_UI(widgets);
     }
 
