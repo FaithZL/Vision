@@ -27,9 +27,9 @@ def parse_image_node(exporter, from_node, dim):
         "node": {
             "type": "image",
             "param": {
-                "fn": r_path, 
-                "color_space": color_space
-            }
+                "fn": r_path,
+                "color_space": color_space,
+            },
         },
     }
     return ret
@@ -37,11 +37,11 @@ def parse_image_node(exporter, from_node, dim):
 
 func_dict = {
     "TEX_IMAGE": parse_image_node,
-    "TEX_ENVIRONMENT" : parse_image_node
+    "TEX_ENVIRONMENT": parse_image_node,
 }
 
 
-def parse_node(exporter, socket, dim):
+def parse_node(exporter, socket, dim, min=0, max=1):
     if socket.is_linked:
         from_node = socket.links[0].from_node
         func = func_dict[from_node.type]
@@ -51,4 +51,14 @@ def parse_node(exporter, socket, dim):
         return value
     else:
         value = list(socket.default_value)[0:dim]
-        return {"channels": "xyz", "node": value}
+        return {
+            "channels": "xyz",
+            "node": {
+                "type": "number",
+                "param": {
+                    "value": value,
+                    "min": min,
+                    "max": max,
+                },
+            },
+        }
