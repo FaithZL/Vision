@@ -257,6 +257,7 @@ public:
         Material::render_sub_UI(widgets);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
+    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     void init_ior(const MaterialDesc &desc) noexcept {
         auto name = desc["material_name"].as_string();
         SlotDesc eta_slot;
