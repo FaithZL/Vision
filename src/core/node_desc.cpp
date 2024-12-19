@@ -264,11 +264,19 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
         sub_type = "number";
         _parameter.set_value("value", ps.data());
     } else if (ps.data().is_object() && !ps.contains("param")) {
-        sub_type = "image";
-        DataWrap json = DataWrap::object();
-        json["fn"] = ps["fn"].as_string();
-        json["color_space"] = ps["color_space"].data();
-        _parameter.set_json(json);
+        sub_type = ps.value("type", "image").as_string();
+        if (sub_type == "image") {
+            DataWrap json = DataWrap::object();
+            json["fn"] = ps["fn"].as_string();
+            json["color_space"] = ps["color_space"].data();
+            _parameter.set_json(json);
+        } else if (sub_type == "number") {
+            DataWrap json = DataWrap::object();
+            json["value"] = ps["value"].data();
+            json["max"] = ps["max"].data();
+            json["min"] = ps["min"].data();
+            _parameter.set_json(json);
+        }
     } else if (ps.data().is_number()) {
         _parameter.set_value("value", ps.as_float(1.f));
     } else {
