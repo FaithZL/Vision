@@ -48,7 +48,17 @@ def parse_node(exporter, socket, dim, min=0, max=1):
         return func(exporter, from_node, dim)
     if dim == 1:
         value = socket.default_value
-        return value
+        return {
+            "channels": "x",
+            "node": {
+                "type": "number",
+                "param": {
+                    "value": value,
+                    "min": min,
+                    "max": max,
+                },
+            },
+        }
     else:
         value = list(socket.default_value)[0:dim]
         return {

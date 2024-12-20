@@ -38,7 +38,8 @@ def export_mirror(exporter, bsdf):
         "type": "mirror",
         "param" : {
             "color" : shadernode.parse_node(exporter, bsdf.inputs["Color"], 3),
-            "roughness" : roughness
+            "roughness" : roughness,
+            "anisotropic" : shadernode.parse_node(exporter, bsdf.inputs["Anisotropy"], 1, -1, 1),
         }
     }
     return ret
