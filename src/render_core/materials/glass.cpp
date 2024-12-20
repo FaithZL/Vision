@@ -230,9 +230,10 @@ public:
 //    }
 class GlassMaterial : public Material {
 private:
-    VS_MAKE_SLOT(color);
-    VS_MAKE_SLOT(ior);
-    VS_MAKE_SLOT(roughness);
+    VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(ior)
+    VS_MAKE_SLOT(roughness)
+    VS_MAKE_SLOT(anisotropic)
     bool remapping_roughness_{true};
     float alpha_threshold_{0.022};
 
@@ -249,6 +250,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.01f))));
+
         init_ior(desc);
         init_slot_cursor(&color_, 3);
     }

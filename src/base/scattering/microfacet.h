@@ -22,12 +22,12 @@ enum MicrofacetType : uint8_t {
 inline namespace microfacet {
 
 template<EPort p = D>
-[[nodiscard]] oc_float<p> roughness_to_alpha(oc_float<p> roughness) {
+[[nodiscard]] oc_float<p> roughness_to_alpha(const oc_float<p> &roughness) {
     return sqr(roughness);
 }
 
 template<EPort p = D>
-[[nodiscard]] oc_float2<p> roughness_to_alpha(oc_float2<p> roughness) {
+[[nodiscard]] oc_float2<p> roughness_to_alpha(const oc_float2<p> &roughness) {
     return sqr(roughness);
 }
 
@@ -39,6 +39,23 @@ template<EPort p = D>
 template<EPort p = D>
 [[nodiscard]] oc_float2<p> alpha_to_roughness(oc_float2<p> alpha) {
     return sqrt(alpha);
+}
+
+template<EPort p = D>
+[[nodiscard]] oc_float2<p> calculate_alpha(const oc_float<p> &alpha,
+                                           const oc_float<p> &anisotropic) {
+    oc_float2<p> ret;
+    oc_float<p> alpha_x = select(anisotropic < 0,
+                                 alpha / (1.f + anisotropic),
+                                 alpha * (1.f - anisotropic));
+    oc_float<p> alpha_y = select(anisotropic < 0,
+                                 alpha * (1.f + anisotropic),
+                                 alpha / (1.f - anisotropic));
+
+    ret = select(abs(anisotropic) <= 1e-4,
+                 make_float2(alpha),
+                 make_float2(alpha_x, alpha_y));
+    return ret;
 }
 
 /**

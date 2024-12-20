@@ -51,7 +51,7 @@ class MirrorMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(roughness)
-    EncodedData<float> anisotropic_{};
+    VS_MAKE_SLOT(anisotropic)
     bool remapping_roughness_{true};
     float alpha_threshold_{0.022};
 
@@ -68,6 +68,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.0001f))));
+
         init_slot_cursor(&color_, 2);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
