@@ -67,8 +67,8 @@ public:
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.0001f))));
-
+        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
         init_slot_cursor(&color_, 2);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -81,7 +81,7 @@ public:
 protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
-        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
+        Float2 alpha = make_float2(roughness_.evaluate(it, swl).as_scalar());
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         Float alpha_min = min(alpha.x, alpha.y);
