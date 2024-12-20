@@ -172,6 +172,13 @@ public:
         data_[key] = data;
     }
 
+    void set_value_if_null(const std::string &key, const DataWrap &data) noexcept {
+        if (data_.contains(key)) {
+            return;
+        }
+        data_[key] = data;
+    }
+
     OC_NODISCARD ParameterSet value(const string &key,
                                     const DataWrap &data = DataWrap::object()) const {
         return ParameterSet(data_.value(key, data), key);
