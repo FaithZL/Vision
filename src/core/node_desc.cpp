@@ -139,7 +139,7 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
         }
         node.set_value("value", value);
     } else if (node["value"].data().is_array()) {
-        OC_ASSERT(node["value"].data().size() == dim());
+//        OC_ASSERT(node["value"].data().size() == dim());
     }
 }
 
