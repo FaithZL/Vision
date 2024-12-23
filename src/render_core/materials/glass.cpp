@@ -249,10 +249,10 @@ public:
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.01f))));
-
+        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.01f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
         init_ior(desc);
-        init_slot_cursor(&color_, 3);
+        init_slot_cursor(&color_, 4);
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
@@ -283,9 +283,12 @@ public:
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);
 
-        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
-        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
+
+        roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
+        Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
+
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
 

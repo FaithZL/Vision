@@ -209,11 +209,11 @@
 				"z" : 1,
 //				                                "material" : "ShortBox",
 				//				"material" : "substrate",
-								"material" : "Mirror",
+//								"material" : "Mirror",
 //				"material" : "Metal",
 				//				                "material" : "disney",
 				//								                "material" : "mix",
-//								                                "material" : "Glass",
+								                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -610,7 +610,18 @@
 						1
 					]
 				},
-				"roughness" : 0.001
+				"roughness" : 0.001,
+				"anisotropic" : {
+					"channels": "x",
+					"node": {
+						"type": "number",
+						"param": {
+							"value" : 0,
+							"min" : -1,
+							"max" : 1
+						}
+					}
+				}
 			}
 		},
 		{
