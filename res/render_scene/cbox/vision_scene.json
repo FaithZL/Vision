@@ -710,7 +710,18 @@
 						1
 					]
 				},
-				"roughness" : 0.3
+				"roughness" : 0.3,
+				"anisotropic" : {
+					"channels": "x",
+					"node": {
+						"type": "number",
+						"param": {
+							"value" : 0,
+							"min" : -1,
+							"max" : 1
+						}
+					}
+				}
 			}
 		},
 		{
