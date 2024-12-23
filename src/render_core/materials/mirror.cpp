@@ -81,11 +81,15 @@ public:
 protected:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
-        Float2 alpha = make_float2(roughness_.evaluate(it, swl).as_scalar());
-        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
+
+        roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
+        Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
+        
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelNoOp>(swl, pipeline());
         MicrofacetReflection bxdf(kr, swl, microfacet);

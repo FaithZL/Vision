@@ -52,7 +52,7 @@ template<EPort p = D>
                                  alpha * (1.f + anisotropic),
                                  alpha / (1.f - anisotropic));
 
-    ret = select(abs(anisotropic) <= 1e-4,
+    ret = select(abs(anisotropic) <= 1e-4f,
                  make_float2(alpha),
                  make_float2(alpha_x, alpha_y));
     return ret;
