@@ -86,7 +86,7 @@ protected:
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
-        
+
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
 
