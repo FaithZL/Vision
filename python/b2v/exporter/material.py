@@ -28,7 +28,17 @@ def export_disney(exporter, bsdf):
 
 
 def export_glass(exporter, bsdf):
-    ret = {"type": "glass"}
+    ret = {
+        "type": "glass",
+        "param": {
+            "color": shadernode.parse_node(exporter, bsdf.inputs["Color"], 3),
+            "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1),
+            "ior": shadernode.parse_node(exporter, bsdf.inputs["IOR"], 1),
+            "anisotropic": shadernode.parse_node(
+                exporter, bsdf.inputs["Anisotropy"], 1, -1, 1
+            ),
+        },
+    }
     return ret
 
 
@@ -36,11 +46,13 @@ def export_mirror(exporter, bsdf):
     roughness = shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1)
     ret = {
         "type": "mirror",
-        "param" : {
-            "color" : shadernode.parse_node(exporter, bsdf.inputs["Color"], 3),
-            "roughness" : roughness,
-            "anisotropic" : shadernode.parse_node(exporter, bsdf.inputs["Anisotropy"], 1, -1, 1),
-        }
+        "param": {
+            "color": shadernode.parse_node(exporter, bsdf.inputs["Color"], 3),
+            "roughness": roughness,
+            "anisotropic": shadernode.parse_node(
+                exporter, bsdf.inputs["Anisotropy"], 1, -1, 1
+            ),
+        },
     }
     return ret
 
