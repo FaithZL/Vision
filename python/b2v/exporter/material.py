@@ -34,9 +34,6 @@ def export_glass(exporter, bsdf):
             "color": shadernode.parse_node(exporter, bsdf.inputs["Color"], 3),
             "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1),
             "ior": shadernode.parse_node(exporter, bsdf.inputs["IOR"], 1),
-            "anisotropic": shadernode.parse_node(
-                exporter, bsdf.inputs["Anisotropy"], 1, -1, 1
-            ),
         },
     }
     return ret
