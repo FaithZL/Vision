@@ -54,7 +54,7 @@ struct MeshHandle {
     uint triangle_buffer;
 };
 
-class Mesh : public Hashable {
+class Mesh : public Hashable, public concepts::Noncopyable {
 protected:
     vector<Vertex> vertices_;
     vector<Triangle> triangles_;
@@ -75,10 +75,10 @@ public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
         : vertices_(std::move(vert)), triangles_(std::move(tri)) {}
     Mesh() = default;
-    void upload_vertices_immediately(const vector<Vertex> &vertices) noexcept;
-    void upload_triangles_immediately(const vector<Triangle> &triangles) noexcept;
-    [[nodiscard]] BufferUploadCommand *update_vertices(const vector<Vertex> &vertices) noexcept;
-    [[nodiscard]] BufferUploadCommand *update_triangles(const vector<Triangle> &triangles) noexcept;
+//    void upload_vertices_immediately(const vector<Vertex> &vertices) noexcept;
+//    void upload_triangles_immediately(const vector<Triangle> &triangles) noexcept;
+//    [[nodiscard]] BufferUploadCommand *update_vertices(const vector<Vertex> &vertices) noexcept;
+//    [[nodiscard]] BufferUploadCommand *update_triangles(const vector<Triangle> &triangles) noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
     OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)

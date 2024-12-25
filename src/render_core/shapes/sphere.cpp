@@ -84,7 +84,7 @@ public:
             mesh.triangles().push_back(tri);
         }
 
-        add_instance(ShapeInstance(mesh));
+        add_instance(ShapeInstance(std::move(mesh)));
     }
 };
 

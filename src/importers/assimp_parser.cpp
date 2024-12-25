@@ -299,7 +299,7 @@ vector<ShapeInstance> AssimpParser::parse_meshes(bool parse_material,
             }
         }
         Mesh mesh(std::move(vertices), std::move(triangle));
-        ShapeInstance instance(mesh);
+        ShapeInstance instance(move(mesh));
         instance.set_material(material);
         instances.push_back(instance);
     }
