@@ -80,21 +80,21 @@ void Mesh::setup_lightmap_uv(const UnwrapperResult &result) {
     has_lightmap_uv_ = true;
 }
 
-//void Mesh::upload_vertices_immediately(const vector<vision::Vertex> &vertices) noexcept {
-//    vertex_buffer_.upload_immediately(vertices.data());
-//}
-//
-//void Mesh::upload_triangles_immediately(const vector<vision::Triangle> &triangles) noexcept {
-//    triangle_buffer_.upload_immediately(triangles.data());
-//}
-//
-//BufferUploadCommand *Mesh::update_triangles(const vector<vision::Triangle> &triangles) noexcept {
-//    return triangle_buffer_.upload(triangles.data());
-//}
-//
-//BufferUploadCommand *Mesh::update_vertices(const vector<vision::Vertex> &vertices) noexcept {
-//    return vertex_buffer_.upload(vertices.data());
-//}
+void Mesh::upload_vertices_immediately(const vector<vision::Vertex> &vertices) noexcept {
+    vertex_buffer_.upload_immediately(vertices.data());
+}
+
+void Mesh::upload_triangles_immediately(const vector<vision::Triangle> &triangles) noexcept {
+    triangle_buffer_.upload_immediately(triangles.data());
+}
+
+BufferUploadCommand *Mesh::update_triangles(const vector<vision::Triangle> &triangles) noexcept {
+    return triangle_buffer_.upload(triangles.data());
+}
+
+BufferUploadCommand *Mesh::update_vertices(const vector<vision::Vertex> &vertices) noexcept {
+    return vertex_buffer_.upload(vertices.data());
+}
 
 void Mesh::normalize_lightmap_uv() noexcept {
     if (normalized_) {
