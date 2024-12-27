@@ -54,6 +54,23 @@ Box3f ShapeInstance::compute_aabb() const noexcept {
     return box;
 }
 
+void GPUMesh::upload_vertices_immediately(const vector<vision::Vertex> &vertices) noexcept {
+    vertex_buffer_.upload_immediately(vertices.data());
+}
+
+void GPUMesh::upload_triangles_immediately(const vector<vision::Triangle> &triangles) noexcept {
+    triangle_buffer_.upload_immediately(triangles.data());
+}
+
+BufferUploadCommand *GPUMesh::update_triangles(const vector<vision::Triangle> &triangles) noexcept {
+    return triangle_buffer_.upload(triangles.data());
+}
+
+BufferUploadCommand *GPUMesh::update_vertices(const vector<vision::Vertex> &vertices) noexcept {
+    return vertex_buffer_.upload(vertices.data());
+}
+
+
 uint64_t Mesh::_compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
     for (Vertex vertex : vertices_) {
@@ -78,22 +95,6 @@ void Mesh::setup_lightmap_uv(const UnwrapperResult &result) {
     set_vertices(ocarina::move(vertices));
     set_triangles(u_mesh.triangles);
     has_lightmap_uv_ = true;
-}
-
-void Mesh::upload_vertices_immediately(const vector<vision::Vertex> &vertices) noexcept {
-    vertex_buffer_.upload_immediately(vertices.data());
-}
-
-void Mesh::upload_triangles_immediately(const vector<vision::Triangle> &triangles) noexcept {
-    triangle_buffer_.upload_immediately(triangles.data());
-}
-
-BufferUploadCommand *Mesh::update_triangles(const vector<vision::Triangle> &triangles) noexcept {
-    return triangle_buffer_.upload(triangles.data());
-}
-
-BufferUploadCommand *Mesh::update_vertices(const vector<vision::Vertex> &vertices) noexcept {
-    return vertex_buffer_.upload(vertices.data());
 }
 
 void Mesh::normalize_lightmap_uv() noexcept {
@@ -194,5 +195,4 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
         });
     }
 }
-
 }// namespace vision
