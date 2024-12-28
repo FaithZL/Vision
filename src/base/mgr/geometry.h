@@ -55,6 +55,9 @@ public:
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
     [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
+    [[nodiscard]] TriangleVar get_triangle(const Uint &buffer_index, const Uint &index) const noexcept;
+    [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Uint &buffer_index,
+                                                     const Var<Triangle> &tri) const noexcept;
     [[nodiscard]] Interaction compute_surface_interaction(const TriangleHitVar &hit, bool is_complete) const noexcept;
     [[nodiscard]] Interaction compute_surface_interaction(const TriangleHitVar &hit, const Float3 &view_pos) const noexcept {
         auto ret = compute_surface_interaction(hit, true);

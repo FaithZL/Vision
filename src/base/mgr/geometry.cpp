@@ -45,20 +45,9 @@ void Geometry::build_accel() {
     for (const auto &inst : instances_) {
         uint mesh_id = inst.mesh_id;
         const auto &mesh_handle = mesh_handles_[mesh_id];
-        ocarina::RHIMesh mesh;
-        if (mesh_id == mesh_handles_.host_buffer().size() - 1) {
-            // last element
-            BufferView<Vertex> verts = vertices_.device_buffer().view(mesh_handle.vertex_offset, 0);
-            BufferView<Triangle> tris = triangles_.device_buffer().view(mesh_handle.triangle_offset, 0);
-            mesh = rp->device().create_mesh(verts, tris);
-        } else {
-            const auto &next_mesh_handle = mesh_handles_[mesh_id + 1];
-            uint vert_count = next_mesh_handle.vertex_offset - mesh_handle.vertex_offset;
-            uint tri_count = next_mesh_handle.triangle_offset - mesh_handle.triangle_offset;
-            BufferView<Vertex> verts = vertices_.device_buffer().view(mesh_handle.vertex_offset, vert_count);
-            BufferView<Triangle> tris = triangles_.device_buffer().view(mesh_handle.triangle_offset, tri_count);
-            mesh = rp->device().create_mesh(verts, tris);
-        }
+        BufferView<Vertex> vert_buffer = rp->bindless_array().buffer_view<Vertex>(mesh_handle.vertex_buffer);
+        BufferView<Triangle> tri_buffer = rp->bindless_array().buffer_view<Triangle>(mesh_handle.triangle_buffer);
+        ocarina::RHIMesh mesh = rp->device().create_mesh(vert_buffer, tri_buffer);
         stream << mesh.build_bvh();
         accel_.add_instance(ocarina::move(mesh), inst.o2w());
     }
@@ -105,8 +94,8 @@ Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, boo
     Var inst = instances_.read(hit.inst_id);
     Var mesh = mesh_handles_.read(inst.mesh_id);
     auto o2w = Transform(inst->o2w());
-    Var tri = triangles_.read(mesh.triangle_offset + hit.prim_id);
-    auto [v0, v1, v2] = get_vertices(tri, mesh.vertex_offset);
+    Var tri = get_triangle(mesh.triangle_buffer, hit.prim_id);
+    auto [v0, v1, v2] = get_vertices(mesh.vertex_buffer, tri);
     it.lightmap_id = inst.lightmap_id;
     it.set_light(inst.light_id);
     it.set_material(inst.mat_id);
@@ -191,6 +180,7 @@ Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, boo
 TriangleHitVar Geometry::trace_closest(const RayVar &ray) const noexcept {
     return accel_.trace_closest(ray);
 }
+
 Bool Geometry::trace_occlusion(const RayVar &ray) const noexcept {
     return accel_.trace_occlusion(ray);
 }
@@ -226,6 +216,19 @@ array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
             vertices_.read(offset + tri.j),
             vertices_.read(offset + tri.k)};
 }
+
+TriangleVar Geometry::get_triangle(const Uint &buffer_index, const Uint &index) const noexcept {
+    return rp->bindless_array().buffer_var<Triangle>(buffer_index).read(index);
+}
+
+array<Var<Vertex>, 3> Geometry::get_vertices(const Uint &buffer_index,
+                                             const Var<Triangle> &tri) const noexcept {
+    BindlessArrayBuffer<Vertex> buffer = rp->bindless_array().buffer_var<Vertex>(buffer_index);
+    return {buffer.read(tri.i),
+            buffer.read(tri.j),
+            buffer.read(tri.k)};
+}
+
 LightEvalContext Geometry::compute_light_eval_context(const Uint &inst_id,
                                                       const Uint &prim_id,
                                                       const Float2 &bary) const noexcept {
