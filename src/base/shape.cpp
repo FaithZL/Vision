@@ -148,6 +148,10 @@ CommandList Mesh::upload() noexcept {
     return ret;
 }
 
+void Mesh::update_data() noexcept {
+    GPUMesh::update_data(vertices_.size(), triangles_.size());
+}
+
 Box3f Mesh::compute_aabb() const noexcept {
     Box3f box;
     for (const Triangle &tri : triangles_) {

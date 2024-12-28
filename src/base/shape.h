@@ -97,9 +97,10 @@ protected:
 public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
         : vertices_(std::move(vert)), triangles_(std::move(tri)) {
-        update_data(vertices_.size(), triangles_.size());
+        GPUMesh::update_data(vertices_.size(), triangles_.size());
     }
     Mesh() = default;
+    void update_data() noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
     OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER_SETTER(has_lightmap_uv, )
