@@ -32,6 +32,7 @@ public:
     [[nodiscard]] bool contain(uint64_t hash) noexcept;
     [[nodiscard]] SP<Mesh> register_(Mesh mesh) noexcept;
     [[nodiscard]] SP<Mesh> register_(SP<Mesh> mesh) noexcept;
+    [[nodiscard]] CommandList upload_meshes() noexcept;
     void for_each(const std::function<void(Mesh *, uint)> &func) noexcept;
     void for_each(const std::function<void(const Mesh *, uint)> &func) const noexcept;
     void tidy_up() noexcept;

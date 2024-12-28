@@ -27,7 +27,9 @@ void Geometry::update_instances(const vector<SP<ShapeInstance>> &instances) {
 
     MeshRegistry::instance().for_each([&](const Mesh *mesh, uint i) {
         MeshHandle mesh_handle{.vertex_offset = (uint)vertices_.host_buffer().size(),
-                               .triangle_offset = (uint)triangles_.host_buffer().size()};
+                               .triangle_offset = (uint)triangles_.host_buffer().size(),
+                               .vertex_buffer = mesh->vertex_buffer().index().hv(),
+                               .triangle_buffer = mesh->triangle_buffer().index().hv()};
         vertices_.append(mesh->vertices());
         triangles_.append(mesh->triangles());
         mesh_handles_.push_back(mesh_handle);
@@ -82,6 +84,7 @@ void Geometry::upload() const {
     Stream &stream = rp->stream();
     stream << vertices_.upload()
            << triangles_.upload()
+           << MeshRegistry::instance().upload_meshes()
            << mesh_handles_.upload()
            << instances_.upload()
            << synchronize();

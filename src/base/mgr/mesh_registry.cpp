@@ -29,6 +29,14 @@ bool MeshRegistry::contain(const SP<const vision::Mesh> &mesh) noexcept {
     return contain(mesh.get());
 }
 
+CommandList MeshRegistry::upload_meshes() noexcept {
+    CommandList ret;
+    for_each([&](Mesh *mesh, uint i) {
+        ret << mesh->upload();
+    });
+    return ret;
+}
+
 SP<Mesh> MeshRegistry::register_(SP<vision::Mesh> mesh) noexcept {
     uint64_t hash = mesh->hash();
     if (!contain(hash)) {
