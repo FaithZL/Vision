@@ -62,11 +62,19 @@ protected:
 
 public:
     GPUMesh() = default;
+    GPUMesh(const vector<Vertex> &vert,
+            const vector<Triangle> &triangles) noexcept;
+    GPUMesh(uint vert_num, uint tri_num) noexcept;
+    GPUMesh(GPUMesh &&other) noexcept;
+    GPUMesh &operator=(GPUMesh &&other) noexcept;
+    void update_data(uint vert_num, uint tri_num) noexcept;
     void upload_vertices_immediately(const vector<Vertex> &vertices) noexcept;
     void upload_triangles_immediately(const vector<Triangle> &triangles) noexcept;
-    [[nodiscard]] BufferUploadCommand *update_vertices(const vector<Vertex> &vertices) noexcept;
-    [[nodiscard]] BufferUploadCommand *update_triangles(const vector<Triangle> &triangles) noexcept;
+    [[nodiscard]] BufferUploadCommand *upload_vertices(const vector<Vertex> &vertices) noexcept;
+    [[nodiscard]] BufferUploadCommand *upload_triangles(const vector<Triangle> &triangles) noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
+    OC_MAKE_MEMBER_GETTER_SETTER(vertex_buffer, &)
+    OC_MAKE_MEMBER_GETTER_SETTER(triangle_buffer, &)
 };
 
 class Mesh : public Hashable, public GPUMesh {
@@ -88,12 +96,16 @@ protected:
 
 public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)
-        : vertices_(std::move(vert)), triangles_(std::move(tri)) {}
+        : vertices_(std::move(vert)), triangles_(std::move(tri)) {
+        update_data(vertices_.size(), triangles_.size());
+    }
     Mesh() = default;
     OC_MAKE_MEMBER_GETTER_SETTER(vertices, &)
     OC_MAKE_MEMBER_GETTER_SETTER(triangles, &)
     OC_MAKE_MEMBER_GETTER_SETTER(has_lightmap_uv, )
     OC_MAKE_MEMBER_GETTER_SETTER(resolution, )
+    void upload_immediately() noexcept;
+    [[nodiscard]] CommandList upload() noexcept;
     void normalize_lightmap_uv() noexcept;
     void setup_lightmap_uv(const UnwrapperResult &result);
     [[nodiscard]] float2 lightmap_uv_unnormalized(uint index) const noexcept;

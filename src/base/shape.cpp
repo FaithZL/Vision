@@ -54,6 +54,36 @@ Box3f ShapeInstance::compute_aabb() const noexcept {
     return box;
 }
 
+GPUMesh::GPUMesh(ocarina::uint vert_num, ocarina::uint tri_num) noexcept {
+    update_data(vert_num, tri_num);
+}
+
+GPUMesh::GPUMesh(vision::GPUMesh &&other) noexcept
+    : triangle_buffer_(std::move(other.triangle_buffer_)),
+      vertex_buffer_(std::move(other.vertex_buffer_)),
+      index_(other.index_) {}
+
+GPUMesh &GPUMesh::operator=(vision::GPUMesh &&other) noexcept {
+    vertex_buffer_ = std::move(other.vertex_buffer_);
+    triangle_buffer_ = std::move(other.triangle_buffer_);
+    index_ = other.index_;
+    return *this;
+}
+
+GPUMesh::GPUMesh(const vector<Vertex> &vert,
+                 const vector<Triangle> &triangles) noexcept
+    : GPUMesh(vert.size(), triangles.size()) {}
+
+void GPUMesh::update_data(ocarina::uint vert_num, ocarina::uint tri_num) noexcept {
+    auto ppl = Global::instance().pipeline();
+    auto v_buffer = ppl->device().create_buffer<Vertex>(vert_num);
+    auto t_buffer = ppl->device().create_buffer<Triangle>(tri_num);
+    vertex_buffer_.set_bindless_array(ppl->bindless_array());
+    triangle_buffer_.set_bindless_array(ppl->bindless_array());
+    vertex_buffer_.update_buffer(std::move(v_buffer));
+    triangle_buffer_.update_buffer(std::move(t_buffer));
+}
+
 void GPUMesh::upload_vertices_immediately(const vector<vision::Vertex> &vertices) noexcept {
     vertex_buffer_.upload_immediately(vertices.data());
 }
@@ -62,14 +92,13 @@ void GPUMesh::upload_triangles_immediately(const vector<vision::Triangle> &trian
     triangle_buffer_.upload_immediately(triangles.data());
 }
 
-BufferUploadCommand *GPUMesh::update_triangles(const vector<vision::Triangle> &triangles) noexcept {
+BufferUploadCommand *GPUMesh::upload_triangles(const vector<vision::Triangle> &triangles) noexcept {
     return triangle_buffer_.upload(triangles.data());
 }
 
-BufferUploadCommand *GPUMesh::update_vertices(const vector<vision::Vertex> &vertices) noexcept {
+BufferUploadCommand *GPUMesh::upload_vertices(const vector<vision::Vertex> &vertices) noexcept {
     return vertex_buffer_.upload(vertices.data());
 }
-
 
 uint64_t Mesh::_compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
@@ -105,6 +134,18 @@ void Mesh::normalize_lightmap_uv() noexcept {
         vertex.set_lightmap_uv(vertex.lightmap_uv() / make_float2(resolution_));
     }
     normalized_ = true;
+}
+
+void Mesh::upload_immediately() noexcept {
+    upload_triangles_immediately(triangles_);
+    upload_vertices_immediately(vertices_);
+}
+
+CommandList Mesh::upload() noexcept {
+    CommandList ret;
+    ret << upload_triangles(triangles_);
+    ret << upload_vertices(vertices_);
+    return ret;
 }
 
 Box3f Mesh::compute_aabb() const noexcept {
