@@ -16,8 +16,6 @@ class Pipeline;
 class ShapeInstance;
 class Geometry {
 private:
-    RegistrableManaged<Vertex> vertices_;
-    RegistrableManaged<Triangle> triangles_;
     RegistrableManaged<InstanceData> instances_;
     RegistrableManaged<MeshHandle> mesh_handles_;
     ocarina::Accel accel_;
@@ -54,7 +52,6 @@ public:
     [[nodiscard]] LightEvalContext compute_light_eval_context(const Uint &inst_id,
                                                               const Uint &prim_id,
                                                               const Float2 &bary) const noexcept;
-    [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Var<Triangle> &tri, const Uint &offset) const noexcept;
     [[nodiscard]] TriangleVar get_triangle(const Uint &buffer_index, const Uint &index) const noexcept;
     [[nodiscard]] array<Var<Vertex>, 3> get_vertices(const Uint &buffer_index,
                                                      const Var<Triangle> &tri) const noexcept;

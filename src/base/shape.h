@@ -48,8 +48,6 @@ namespace vision {
 class UnwrapperResult;
 
 struct MeshHandle {
-    uint vertex_offset;
-    uint triangle_offset;
     uint vertex_buffer;
     uint triangle_buffer;
 };
@@ -117,8 +115,7 @@ public:
 
 }// namespace vision
 
-OC_STRUCT(vision, MeshHandle, vertex_offset, triangle_offset,
-          vertex_buffer, triangle_buffer){};
+OC_STRUCT(vision, MeshHandle, vertex_buffer, triangle_buffer){};
 
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
     void set_##attr(decltype(attr##_.impl()) val) noexcept { \

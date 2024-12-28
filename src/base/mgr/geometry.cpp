@@ -12,26 +12,19 @@
 namespace vision {
 
 Geometry::Geometry(Pipeline *rp)
-    : rp(rp), vertices_(rp->bindless_array()),
-      triangles_(rp->bindless_array()),
+    : rp(rp),
       instances_(rp->bindless_array()),
       mesh_handles_(rp->bindless_array()),
       accel_(rp->device().create_accel()) {}
 
 void Geometry::update_instances(const vector<SP<ShapeInstance>> &instances) {
 
-    vertices_.host_buffer().clear();
-    triangles_.host_buffer().clear();
     instances_.host_buffer().clear();
     mesh_handles_.host_buffer().clear();
 
     MeshRegistry::instance().for_each([&](const Mesh *mesh, uint i) {
-        MeshHandle mesh_handle{.vertex_offset = (uint)vertices_.host_buffer().size(),
-                               .triangle_offset = (uint)triangles_.host_buffer().size(),
-                               .vertex_buffer = mesh->vertex_buffer().index().hv(),
+        MeshHandle mesh_handle{.vertex_buffer = mesh->vertex_buffer().index().hv(),
                                .triangle_buffer = mesh->triangle_buffer().index().hv()};
-        vertices_.append(mesh->vertices());
-        triangles_.append(mesh->triangles());
         mesh_handles_.push_back(mesh_handle);
     });
 
@@ -63,17 +56,13 @@ void Geometry::reset_device_buffer() {
         buffer.reset_device_buffer_immediately(rp->device(), desc);
         buffer.register_self();
     };
-    init_buffer(vertices_, "Geometry::vertices_");
-    init_buffer(triangles_, "Geometry::triangles_");
     init_buffer(instances_, "Geometry::instances_");
     init_buffer(mesh_handles_, "Geometry::mesh_handles_");
 }
 
 void Geometry::upload() const {
     Stream &stream = rp->stream();
-    stream << vertices_.upload()
-           << triangles_.upload()
-           << MeshRegistry::instance().upload_meshes()
+    stream << MeshRegistry::instance().upload_meshes()
            << mesh_handles_.upload()
            << instances_.upload()
            << synchronize();
@@ -81,8 +70,6 @@ void Geometry::upload() const {
 }
 
 void Geometry::clear() noexcept {
-    vertices_.clear_all();
-    triangles_.clear_all();
     instances_.clear_all();
     mesh_handles_.clear_all();
     accel_.clear();
@@ -208,13 +195,6 @@ SampledSpectrum Geometry::Tr(Scene &scene, const SampledWavelengths &swl,
         };
     }
     return ret;
-}
-
-array<Var<Vertex>, 3> Geometry::get_vertices(const Var<Triangle> &tri,
-                                             const Uint &offset) const noexcept {
-    return {vertices_.read(offset + tri.i),
-            vertices_.read(offset + tri.j),
-            vertices_.read(offset + tri.k)};
 }
 
 TriangleVar Geometry::get_triangle(const Uint &buffer_index, const Uint &index) const noexcept {

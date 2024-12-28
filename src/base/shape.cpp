@@ -76,8 +76,8 @@ GPUMesh::GPUMesh(const vector<Vertex> &vert,
 
 void GPUMesh::update_data(ocarina::uint vert_num, ocarina::uint tri_num) noexcept {
     auto ppl = Global::instance().pipeline();
-    auto v_buffer = ppl->device().create_buffer<Vertex>(vert_num);
-    auto t_buffer = ppl->device().create_buffer<Triangle>(tri_num);
+    auto v_buffer = ppl->device().create_buffer<Vertex>(vert_num, "GPUMesh::vertex_buffer_");
+    auto t_buffer = ppl->device().create_buffer<Triangle>(tri_num, "GPUMesh::triangle_buffer_");
     vertex_buffer_.set_bindless_array(ppl->bindless_array());
     triangle_buffer_.set_bindless_array(ppl->bindless_array());
     vertex_buffer_.update_buffer(std::move(v_buffer));
