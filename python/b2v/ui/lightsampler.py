@@ -63,11 +63,9 @@ class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
         sub.active = not (light.type == 'AREA' and clamp.is_portal)
         sub.prop(light, "use_shadow", text="Cast Shadow")
         sub.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
-        # if use_mnee(context):
-        #     sub.prop(clamp, "is_caustics_light", text="Shadow Caustics")
 
-        # if light.type == 'AREA':
-        #     col.prop(clamp, "is_portal", text="Portal")
+        if light.type == 'AREA':
+            col.prop(clamp, "is_portal", text="Portal")
 
 
 class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
