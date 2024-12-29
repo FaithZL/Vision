@@ -55,23 +55,42 @@ def panel_node_draw(layout, id_data, output_type, input_name):
 
     return True
 
-class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
-    bl_label = "Nodes"
-    bl_context = "data"
+# class CYCLES_LIGHT_PT_preview(VisionWidget, bpy.types.Panel):
+#     bl_label = "Preview"
+#     bl_context = "data"
+#     bl_options = {'DEFAULT_CLOSED'}
 
-    @classmethod
-    def poll(cls, context):
-        return context.light and not (context.light.type == 'AREA' and
-                                      context.light.cycles.is_portal) and \
-            VisionWidget.poll(context)
+#     @classmethod
+#     def poll(cls, context):
+#         return (
+#             context.light and
+#             not (
+#                 context.light.type == 'AREA' and
+#                 context.light.cycles.is_portal
+#             ) and
+#             VisionWidget.poll(context)
+#         )
 
-    def draw(self, context):
-        layout = self.layout
+#     def draw(self, context):
+#         self.layout.template_preview(context.light)
 
-        layout.use_property_split = True
+# class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
+#     bl_label = "Nodes"
+#     bl_context = "data"
 
-        light = context.light
-        panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
+#     @classmethod
+#     def poll(cls, context):
+#         return context.light and not (context.light.type == 'AREA' and
+#                                       context.light.cycles.is_portal) and \
+#             VisionWidget.poll(context)
+
+#     def draw(self, context):
+#         layout = self.layout
+
+#         layout.use_property_split = True
+
+#         light = context.light
+#         panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
 
 class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
     bl_label = "Light"
