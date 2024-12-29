@@ -72,6 +72,7 @@ class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
         panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
 
 class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_LIGHT_PT_light"
     bl_label = "Light"
     bl_context = "data"
 

@@ -2,7 +2,7 @@ from . import base
 from .base import *
 
 
-class MyCustomButtonOperator(bpy.types.Operator):
+class VISION_RENDER_PT_Reload(bpy.types.Operator):
     bl_idname = "my.custom_button_operator"
     bl_label = "My Custom Button Operator"
     
@@ -12,11 +12,11 @@ class MyCustomButtonOperator(bpy.types.Operator):
         return {'FINISHED'}  
 
 
-class VISION_RENDER_PT_Other(bpy.types.Panel, VisionWidget):
-    bl_idname = "VISION_RENDER_PT_Other"
+class VISION_RENDER_PT_Hotfix(bpy.types.Panel, VisionWidget):
+    bl_idname = "VISION_RENDER_PT_Hotfix"
     bl_label = "Other Setting"
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.operator(MyCustomButtonOperator.bl_idname, text="My Button")
+        row.operator(VISION_RENDER_PT_Reload.bl_idname, text="reload")
         
