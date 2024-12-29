@@ -1,5 +1,6 @@
 from . import base
 from .base import *
+from bpy_extras.node_utils import find_node_input
 
 dic = {
     "uniform": {
@@ -35,6 +36,42 @@ class VISION_LIGHT_PT_beam_shape(VisionWidget, bpy.types.Panel):
         elif light.type == "AREA":
             col.prop(light, "spread", text="Spread")
 
+def panel_node_draw(layout, id_data, output_type, input_name):
+    if not id_data.use_nodes:
+        layout.operator("cycles.use_shading_nodes", icon='NODETREE')
+        return False
+
+    ntree = id_data.node_tree
+
+    node = ntree.get_output_node('CYCLES')
+    if node:
+        input = find_node_input(node, input_name)
+        if input:
+            layout.template_node_view(ntree, node, input)
+        else:
+            layout.label(text="Incompatible output node")
+    else:
+        layout.label(text="No output node")
+
+    return True
+
+class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
+    bl_label = "Nodes"
+    bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        return context.light and not (context.light.type == 'AREA' and
+                                      context.light.cycles.is_portal) and \
+            VisionWidget.poll(context)
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.use_property_split = True
+
+        light = context.light
+        panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
 
 class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
     bl_label = "Light"
