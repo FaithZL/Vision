@@ -49,8 +49,10 @@ def get_panels():
     exclude_panels = {
         "VIEWLAYER_PT_filter",
         "RENDER_PT_gpencil",
+        'DATA_PT_light',
         "VIEWLAYER_PT_layer_passes",
         "RENDER_PT_simplify",
+        "NODE_DATA_PT_light",
         "RENDER_PT_color_management",
         "RENDER_PT_freestyle",
     }
