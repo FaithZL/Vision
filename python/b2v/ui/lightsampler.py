@@ -13,28 +13,7 @@ dic = {
 }
 
 
-class VISION_LIGHT_PT_beam_shape(VisionWidget, bpy.types.Panel):
-    bl_label = "Beam Shape"
-    bl_parent_id = "VISION_LIGHT_PT_light"
-    bl_context = "data"
 
-    @classmethod
-    def poll(cls, context):
-        if context.light.type in {"SPOT", "AREA"}:
-            return context.light and VisionWidget.poll(context)
-
-    def draw(self, context):
-        layout = self.layout
-        light = context.light
-        layout.use_property_split = True
-
-        col = layout.column()
-        if light.type == "SPOT":
-            col.prop(light, "spot_size", text="Spot Size")
-            col.prop(light, "spot_blend", text="Blend", slider=True)
-            col.prop(light, "show_cone")
-        elif light.type == "AREA":
-            col.prop(light, "spread", text="Spread")
 
 def panel_node_draw(layout, id_data, output_type, input_name):
     if not id_data.use_nodes:
@@ -55,42 +34,42 @@ def panel_node_draw(layout, id_data, output_type, input_name):
 
     return True
 
-# class CYCLES_LIGHT_PT_preview(VisionWidget, bpy.types.Panel):
+# class VISION_LIGHT_PT_preview(VisionWidget, bpy.types.Panel):
 #     bl_label = "Preview"
 #     bl_context = "data"
 #     bl_options = {'DEFAULT_CLOSED'}
 
-#     @classmethod
-#     def poll(cls, context):
-#         return (
-#             context.light and
-#             not (
-#                 context.light.type == 'AREA' and
-#                 context.light.cycles.is_portal
-#             ) and
-#             VisionWidget.poll(context)
-#         )
+#     # @classmethod
+#     # def poll(cls, context):
+#     #     return (
+#     #         context.light and
+#     #         not (
+#     #             context.light.type == 'AREA' and
+#     #             context.light.cycles.is_portal
+#     #         ) and
+#     #         VisionWidget.poll(context)
+#     #     )
 
 #     def draw(self, context):
 #         self.layout.template_preview(context.light)
 
-# class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
-#     bl_label = "Nodes"
-#     bl_context = "data"
+class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
+    bl_label = "Nodes"
+    bl_context = "data"
 
-#     @classmethod
-#     def poll(cls, context):
-#         return context.light and not (context.light.type == 'AREA' and
-#                                       context.light.cycles.is_portal) and \
-#             VisionWidget.poll(context)
+    @classmethod
+    def poll(cls, context):
+        return context.light and not (context.light.type == 'AREA' and
+                                      context.light.cycles.is_portal) and \
+            VisionWidget.poll(context)
 
-#     def draw(self, context):
-#         layout = self.layout
+    def draw(self, context):
+        layout = self.layout
 
-#         layout.use_property_split = True
+        layout.use_property_split = True
 
-#         light = context.light
-#         panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
+        light = context.light
+        panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
 
 class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
     bl_label = "Light"
@@ -148,6 +127,28 @@ class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
         if light.type == "AREA":
             col.prop(clamp, "is_portal", text="Portal")
 
+class VISION_LIGHT_PT_beam_shape(VisionWidget, bpy.types.Panel):
+    bl_label = "Beam Shape"
+    bl_parent_id = "VISION_LIGHT_PT_light"
+    bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        if context.light.type in {"SPOT", "AREA"}:
+            return context.light and VisionWidget.poll(context)
+
+    def draw(self, context):
+        layout = self.layout
+        light = context.light
+        layout.use_property_split = True
+
+        col = layout.column()
+        if light.type == "SPOT":
+            col.prop(light, "spot_size", text="Spot Size")
+            col.prop(light, "spot_blend", text="Blend", slider=True)
+            col.prop(light, "show_cone")
+        elif light.type == "AREA":
+            col.prop(light, "spread", text="Spread")
 
 class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_LightSampler"
