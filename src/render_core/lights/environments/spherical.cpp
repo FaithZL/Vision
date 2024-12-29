@@ -44,7 +44,7 @@ public:
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Environment::render_sub_UI(widgets);
-        changed_ |= widgets->drag_float("yaw", std::addressof(yaw_), 1, 0, 360);
+        changed_ |= widgets->drag_float("yaw", std::addressof(yaw_), 1, -180, 180);
         if (changed_) {
             float4x4 r = rotation_y<H>(yaw_);
             w2o_ = inverse(r * o2w_);

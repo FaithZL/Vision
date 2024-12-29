@@ -23,10 +23,10 @@ public:
     VS_HOTFIX_MAKE_RESTORE(Camera, focal_distance_,lens_radius_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Camera::render_sub_UI(widgets);
-        changed_ |= widgets->input_float_limit("lens radius", &lens_radius_.hv(),
-                                               0, 0.5, 0.01, 0.01);
-        changed_ |= widgets->input_float_limit("focal distance", &focal_distance_.hv(),
-                                               0, 100, 0.1, 0.5);
+        changed_ |= widgets->drag_float("lens radius", addressof(lens_radius_.hv()),
+                                               0.005, 0,0.5);
+        changed_ |= widgets->drag_float("focal distance", addressof(focal_distance_.hv()),
+                                               0.05, 0, 10000);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     void update_focal_distance(float val) noexcept override {
