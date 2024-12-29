@@ -11,6 +11,31 @@ dic = {
     "bvh": {"label": "bvh", "description": "bvh light sampler", "parameters": {}},
 }
 
+
+class VISION_LIGHT_PT_beam_shape(VisionWidget, bpy.types.Panel):
+    bl_label = "Beam Shape"
+    bl_parent_id = "VISION_LIGHT_PT_light"
+    bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        if context.light.type in {"SPOT", "AREA"}:
+            return context.light and VisionWidget.poll(context)
+
+    def draw(self, context):
+        layout = self.layout
+        light = context.light
+        layout.use_property_split = True
+
+        col = layout.column()
+        if light.type == "SPOT":
+            col.prop(light, "spot_size", text="Spot Size")
+            col.prop(light, "spot_blend", text="Blend", slider=True)
+            col.prop(light, "show_cone")
+        elif light.type == "AREA":
+            col.prop(light, "spread", text="Spread")
+
+
 class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
     bl_label = "Light"
     bl_context = "data"
@@ -26,7 +51,7 @@ class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
         light = context.light
         clamp = light.cycles
 
-        if self.bl_space_type == 'PROPERTIES':
+        if self.bl_space_type == "PROPERTIES":
             layout.row().prop(light, "type", expand=True)
             layout.use_property_split = True
         else:
@@ -39,32 +64,32 @@ class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
         col.prop(light, "energy")
         col.separator()
 
-        if light.type in {'POINT', 'SPOT'}:
+        if light.type in {"POINT", "SPOT"}:
             col.prop(light, "use_soft_falloff")
             col.prop(light, "shadow_soft_size", text="Radius")
-        elif light.type == 'SUN':
+        elif light.type == "SUN":
             col.prop(light, "angle")
-        elif light.type == 'AREA':
+        elif light.type == "AREA":
             col.prop(light, "shape", text="Shape")
             sub = col.column(align=True)
 
-            if light.shape in {'SQUARE', 'DISK'}:
+            if light.shape in {"SQUARE", "DISK"}:
                 sub.prop(light, "size")
-            elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
+            elif light.shape in {"RECTANGLE", "ELLIPSE"}:
                 sub.prop(light, "size", text="Size X")
                 sub.prop(light, "size_y", text="Y")
 
-        if not (light.type == 'AREA' and clamp.is_portal):
+        if not (light.type == "AREA" and clamp.is_portal):
             col.separator()
             sub = col.column()
             sub.prop(clamp, "max_bounces")
 
         sub = col.column(align=True)
-        sub.active = not (light.type == 'AREA' and clamp.is_portal)
+        sub.active = not (light.type == "AREA" and clamp.is_portal)
         sub.prop(light, "use_shadow", text="Cast Shadow")
         sub.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
 
-        if light.type == 'AREA':
+        if light.type == "AREA":
             col.prop(clamp, "is_portal", text="Portal")
 
 
