@@ -20,9 +20,7 @@ public:
           tau_(desc["tau"].as_float(3.f)) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         bool changed = widgets->drag_float("tau", &tau_, 0.01, 0.01, 9);
-        if (changed) {
-            rebuild();
-        }
+        check_rebuild(changed);
         changed_ |= changed;
     }
     VS_MAKE_PLUGIN_NAME_FUNC

@@ -23,9 +23,7 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         bool changed = widgets->drag_float("b", &b_, 0.01, 0.01, 5);
         changed |= widgets->drag_float("c", &c_, 0.01, 0.01, 5);
-        if (changed) {
-            rebuild();
-        }
+        check_rebuild(changed);
         changed_ |= changed;
     }
     [[nodiscard]] float mitchell_1d(float x) const {

@@ -88,6 +88,16 @@ public:
         sampler_.prepare(this);
     }
 
+    void check_rebuild(bool changed) {
+        if (changed) {
+            rebuild();
+        }
+    }
+
+    void rebuild() noexcept override {
+        
+    }
+
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
         FilterSample fs = sampler_.sample(u);
         fs.p = fs.p * radius();

@@ -24,9 +24,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         bool changed = widgets->drag_float("sigma", &sigma_, 0.01, 0.01, 5);
-        if (changed) {
-            rebuild();
-        }
+        check_rebuild(changed);
         changed_ |= changed;
     }
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
