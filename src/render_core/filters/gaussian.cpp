@@ -22,6 +22,9 @@ public:
           exp_x_(gaussian<H>(radius_.hv().x, 0, sigma_)),
           exp_y_(gaussian<H>(radius_.hv().y, 0, sigma_)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        changed_ |= widgets->drag_float("sigma", &sigma_, 0.01, 0.01, 5);
+    }
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
         float vx = gaussian<H>(p.x, 0, sigma_) - exp_x_;
         float vy = gaussian<H>(p.y, 0, sigma_) - exp_y_;

@@ -20,6 +20,10 @@ public:
           b_(desc["b"].as_float(1.f / 3.f)),
           c_(desc["c"].as_float(1.f / 3.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        changed_ |= widgets->drag_float("b", &b_, 0.01, 0.01, 5);
+        changed_ |= widgets->drag_float("c", &c_, 0.01, 0.01, 5);
+    }
     [[nodiscard]] float mitchell_1d(float x) const {
         x = ocarina::abs(x);
         if (x <= 1)

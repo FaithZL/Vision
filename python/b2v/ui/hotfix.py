@@ -14,7 +14,7 @@ class VISION_RENDER_PT_Reload(bpy.types.Operator):
 
 class VISION_RENDER_PT_Hotfix(bpy.types.Panel, VisionWidget):
     bl_idname = "VISION_RENDER_PT_Hotfix"
-    bl_label = "Other Setting"
+    bl_label = "Hotfix"
     def draw(self, context):
         layout = self.layout
         row = layout.row()
