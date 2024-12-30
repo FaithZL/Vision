@@ -25,6 +25,11 @@ public:
     FilterSampler()
         : warper_(scene().load_warper2d()) {}
 
+    void reallocate() noexcept {
+        lut_.device_buffer() = pipeline()->device().create_buffer<float>(ocarina::sqr(table_size), "FilterSampler::lut_");
+        warper_->reallocate(make_uint2(table_size));
+    }
+
     void prepare(const Filter *filter) {
         int len = ocarina::sqr(table_size);
         lut_.resize(len);
