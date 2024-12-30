@@ -60,11 +60,18 @@ public:
         }
         resolution_ = res;
     }
+    void upload_immediately() noexcept override {
+        marginal_.upload_immediately();
+        conditional_v_tables_.upload_immediately();
+        conditional_v_weights_.upload_immediately();
+    }
     void allocate(uint2 res) noexcept override {
         marginal_.allocate(res.y);
         uint num = res.x * res.y;
         conditional_v_tables_.device_buffer() = pipeline()->device().create_buffer<AliasEntry>(num, "AliasTable2D::conditional_v_tables_");
         conditional_v_weights_.device_buffer() = pipeline()->device().create_buffer<float>(num, "AliasTable2D::conditional_v_weights_");
+        conditional_v_tables_.register_self();
+        conditional_v_tables_.register_self();
     }
     void prepare() noexcept override {
         marginal_.prepare();

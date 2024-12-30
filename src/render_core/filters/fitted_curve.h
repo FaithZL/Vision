@@ -27,10 +27,11 @@ public:
 
     void allocate() noexcept {
         lut_.device_buffer() = pipeline()->device().create_buffer<float>(ocarina::sqr(table_size), "FilterSampler::lut_");
+        lut_.register_self();
         warper_->allocate(make_uint2(table_size));
     }
 
-    void prepare(const Filter *filter) {
+    void build(const Filter *filter) {
         int len = ocarina::sqr(table_size);
         lut_.resize(len);
         vector<float> func;
@@ -50,11 +51,13 @@ public:
         std::transform(lut_.cbegin(), lut_.cend(), lut_.begin(), [&](float val) {
             return val / integral;
         });
-        lut_.reset_device_buffer_immediately(filter->device());
-        lut_.upload_immediately();
-        lut_.register_self();
         warper_->build(ocarina::move(func), make_uint2(table_size));
-        warper_->prepare();
+    }
+
+    void prepare(const Filter *filter) {
+        build(filter);
+        lut_.upload_immediately();
+        warper_->upload_immediately();
     }
 
     template<typename X, typename Y>
@@ -87,7 +90,9 @@ public:
     FittedCurveFilter() = default;
     VS_HOTFIX_MAKE_RESTORE(Filter, sampler_)
     explicit FittedCurveFilter(const FilterDesc &desc)
-        : Filter(desc) {}
+        : Filter(desc) {
+        sampler_.allocate();
+    }
 
     void prepare() noexcept override {
         sampler_.prepare(this);

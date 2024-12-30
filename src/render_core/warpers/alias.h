@@ -37,6 +37,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Warper, table_, func_)
     void prepare() noexcept override;
+    void upload_immediately() noexcept override;
     void build(vector<float> weights) noexcept override;
     void allocate(uint num) noexcept override;
     [[nodiscard]] Uint size() const noexcept override { return *func_.length(); }
@@ -60,6 +61,11 @@ void AliasTable::allocate(uint num) noexcept {
     func_.device_buffer() = pipeline()->device().create_buffer<float>(num, "AliasTable::func_");
     table_.register_self();
     func_.register_self();
+}
+
+void AliasTable::upload_immediately() noexcept {
+    table_.upload_immediately();
+    func_.upload_immediately();
 }
 
 void AliasTable::prepare() noexcept {

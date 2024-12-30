@@ -47,8 +47,9 @@ public:
                 weights.push_back(luminance(light->power()));
             });
         }
+        warper_->allocate(weights.size());
         warper_->build(std::move(weights));
-        warper_->prepare();
+        warper_->upload_immediately();
     }
 };
 }// namespace vision

@@ -205,8 +205,9 @@ public:
         } else {
             weights = calculate_weights();
         }
+        warper_->allocate(res);
         warper_->build(weights, res);
-        warper_->prepare();
+        warper_->upload_immediately();
     }
 };
 
