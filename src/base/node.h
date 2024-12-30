@@ -47,6 +47,7 @@ public:
     [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
     [[nodiscard]] static Device &device() noexcept;
     virtual void prepare() noexcept {}
+    virtual void upload_immediately() noexcept {}
     [[nodiscard]] virtual string to_string() noexcept { return "node"; }
     [[nodiscard]] virtual string_view impl_type() const noexcept = 0;
     [[nodiscard]] virtual string_view category() const noexcept = 0;

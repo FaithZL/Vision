@@ -58,6 +58,9 @@ public:
         return make_float3(0.f);
     }
     [[nodiscard]] virtual bool has_denoiser() const noexcept { return false; }
+    void upload_immediately() noexcept override {
+        EncodedObject::upload_immediately();
+    }
     virtual void update_resolution(uint2 res) noexcept {}
     [[nodiscard]] uint frame_index() const noexcept { return frame_index_; }
     [[nodiscard]] double render_time() const noexcept { return render_time_; }
