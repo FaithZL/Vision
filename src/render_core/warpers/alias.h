@@ -56,8 +56,8 @@ public:
 };
 
 void AliasTable::reallocate(ocarina::uint num) noexcept {
-    table_.device_buffer() = pipeline()->device().create_buffer<AliasEntry>(num);
-    func_.device_buffer() = pipeline()->device().create_buffer<float>(num);
+    table_.device_buffer() = pipeline()->device().create_buffer<AliasEntry>(num, "AliasTable::table_");
+    func_.device_buffer() = pipeline()->device().create_buffer<float>(num, "AliasTable::func_");
     table_.register_self();
     func_.register_self();
 }
