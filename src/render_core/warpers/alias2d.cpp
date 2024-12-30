@@ -100,7 +100,7 @@ public:
         Uint buffer_offset = resolution().x * iv;
         Float u_remapped;
         Uint iu = detail::offset(buffer_offset, u.x, pipeline(),
-                                 conditional_v_tables_.index().hv(), resolution_.hv().x, &u_remapped);
+                                 conditional_v_tables_.index().hv(), resolution().x, &u_remapped);
 
         Float fu = (iu + u_remapped) / resolution().x;
         Float integral_u = marginal_.func_.read(iv);

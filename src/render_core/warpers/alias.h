@@ -15,7 +15,7 @@ struct AliasEntry {
 };
 }// namespace vision
 
-OC_STRUCT(vision,AliasEntry, prob, alias){};
+OC_STRUCT(vision, AliasEntry, prob, alias){};
 
 namespace vision {
 
@@ -112,9 +112,9 @@ void AliasTable::build(vector<float> weights) noexcept {
 namespace detail {
 
 [[nodiscard]] Uint offset(const Uint &buffer_offset, Float u, const Pipeline *rp,
-                          const Uint &entry_id, size_t size, Float *u_remapped) noexcept {
-    u = u * float(size);
-    Uint idx = min(cast<uint>(u), uint(size - 1));
+                          const Uint &entry_id, const Uint &size, Float *u_remapped) noexcept {
+    u = u * cast<float>(size);
+    Uint idx = min(cast<uint>(u), size - 1);
     u = min(u - idx, OneMinusEpsilon);
     Var alias_entry = rp->buffer_var<AliasEntry>(entry_id).read(buffer_offset + idx);
     idx = select(u < alias_entry.prob, idx, alias_entry.alias);
