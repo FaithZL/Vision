@@ -22,8 +22,17 @@ public:
           exp_x_(gaussian<H>(radius_.hv().x, 0, sigma_)),
           exp_y_(gaussian<H>(radius_.hv().y, 0, sigma_)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
+
+    void check_rebuild(bool changed) override {
+        if (changed) {
+            exp_x_ = gaussian<H>(radius_.hv().x, 0, sigma_);
+            exp_y_ = gaussian<H>(radius_.hv().y, 0, sigma_);
+            FittedCurveFilter::check_rebuild(changed);
+        }
+    }
+
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        bool changed = widgets->drag_float("sigma", &sigma_, 0.01, 0.01, 5);
+        bool changed = widgets->drag_float("sigma", &sigma_, 0.01, 0.1, 20);
         check_rebuild(changed);
         changed_ |= changed;
     }

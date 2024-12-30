@@ -99,7 +99,7 @@ public:
         sampler_.prepare(this);
     }
 
-    void check_rebuild(bool changed) {
+    virtual void check_rebuild(bool changed) {
         if (changed) {
             prepare();
         }
