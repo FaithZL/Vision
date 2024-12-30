@@ -60,8 +60,8 @@ public:
         }
         resolution_ = res;
     }
-    void reallocate(ocarina::uint2 res) noexcept override {
-        marginal_.reallocate(res.y);
+    void allocate(uint2 res) noexcept override {
+        marginal_.allocate(res.y);
         uint num = res.x * res.y;
         conditional_v_tables_.device_buffer() = pipeline()->device().create_buffer<AliasEntry>(num, "AliasTable2D::conditional_v_tables_");
         conditional_v_weights_.device_buffer() = pipeline()->device().create_buffer<float>(num, "AliasTable2D::conditional_v_weights_");
