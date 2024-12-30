@@ -33,6 +33,7 @@ public:
 
     void build(const Filter *filter) {
         int len = ocarina::sqr(table_size);
+        lut_.clear();
         lut_.resize(len);
         vector<float> func;
         func.resize(len);
@@ -100,12 +101,8 @@ public:
 
     void check_rebuild(bool changed) {
         if (changed) {
-            rebuild();
+            prepare();
         }
-    }
-
-    void rebuild() noexcept override {
-        
     }
 
     [[nodiscard]] FilterSample sample(Float2 u) const noexcept override {
