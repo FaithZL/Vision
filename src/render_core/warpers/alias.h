@@ -38,6 +38,7 @@ public:
     OC_ENCODABLE_FUNC(Warper, table_, func_)
     void prepare() noexcept override;
     void build(vector<float> weights) noexcept override;
+    void reallocate(ocarina::uint num) noexcept override;
     [[nodiscard]] Uint size() const noexcept override { return *func_.length(); }
     [[nodiscard]] Float PDF(const Uint &i) const noexcept override {
         return select(*integral() > 0, func_at(i) / *integral(), 0.f);
@@ -53,6 +54,13 @@ public:
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override;
     [[nodiscard]] Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept override;
 };
+
+void AliasTable::reallocate(ocarina::uint num) noexcept {
+    table_.device_buffer() = pipeline()->device().create_buffer<AliasEntry>(num);
+    func_.device_buffer() = pipeline()->device().create_buffer<float>(num);
+    table_.register_self();
+    func_.register_self();
+}
 
 void AliasTable::prepare() noexcept {
     table_.reset_device_buffer_immediately(device(), "AliasTable::table_");
