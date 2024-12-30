@@ -11,7 +11,7 @@ private:
     AliasTable marginal_;
     RegistrableManaged<AliasEntry> conditional_v_tables_;
     RegistrableManaged<float> conditional_v_weights_;
-    uint2 resolution_;
+    EncodedData<uint2> resolution_;
 
 public:
     explicit AliasTable2D(const WarperDesc &desc)
@@ -22,7 +22,8 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Warper2D, marginal_, conditional_v_tables_,
-                      conditional_v_weights_)
+                      conditional_v_weights_, resolution_)
+    [[nodiscard]] Uint2 resolution() const noexcept { return *resolution_; }
     void build(vector<float> weights, uint2 res) noexcept override {
         // build conditional_v
         vector<AliasTable> conditional_v;
@@ -78,12 +79,12 @@ public:
         conditional_v_tables_.register_self();
     }
     [[nodiscard]] Float func_at(Uint2 coord) const noexcept override {
-        Uint idx = coord.y * resolution_.x + coord.x;
+        Uint idx = coord.y * resolution().x + coord.x;
         return conditional_v_weights_.read(idx);
     }
     [[nodiscard]] Float PDF(Float2 p) const noexcept override {
-        Uint iu = clamp(cast<uint>(p.x * resolution_.x), 0u, resolution_.x - 1);
-        Uint iv = clamp(cast<uint>(p.y * resolution_.y), 0u, resolution_.y - 1);
+        Uint iu = clamp(cast<uint>(p.x * resolution().x), 0u, resolution().x - 1);
+        Uint iv = clamp(cast<uint>(p.y * resolution().y), 0u, resolution().y - 1);
         return select(*integral() > 0, func_at(make_uint2(iu, iv)) / *integral(), 0.f);
     }
     [[nodiscard]] EncodedData<float> integral() const noexcept override {
@@ -96,12 +97,12 @@ public:
         Float fv = marginal_.sample_continuous(u.y, std::addressof(pdf_v), std::addressof(iv));
 
         // sample u
-        Uint buffer_offset = resolution_.x * iv;
+        Uint buffer_offset = resolution().x * iv;
         Float u_remapped;
         Uint iu = detail::offset(buffer_offset, u.x, pipeline(),
-                                 conditional_v_tables_.index().hv(), resolution_.x, &u_remapped);
+                                 conditional_v_tables_.index().hv(), resolution_.hv().x, &u_remapped);
 
-        Float fu = (iu + u_remapped) / resolution_.x;
+        Float fu = (iu + u_remapped) / resolution().x;
         Float integral_u = marginal_.func_.read(iv);
         Float func_u = conditional_v_weights_.read(buffer_offset + iu);
         Float pdf_u = select(integral_u > 0, func_u / integral_u, 0.f);
