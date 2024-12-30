@@ -21,10 +21,9 @@ public:
           c_(desc["c"].as_float(1.f / 3.f)) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        bool changed = widgets->drag_float("b", &b_, 0.01, 0.01, 5);
-        changed |= widgets->drag_float("c", &c_, 0.01, 0.01, 5);
-        check_rebuild(changed);
-        changed_ |= changed;
+        changed_ |= widgets->drag_float("b", &b_, 0.01, 0.01, 5);
+        changed_ |= widgets->drag_float("c", &c_, 0.01, 0.01, 5);
+        check_rebuild(changed_);
     }
     [[nodiscard]] float mitchell_1d(float x) const {
         x = ocarina::abs(x);

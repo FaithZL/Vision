@@ -37,6 +37,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Warper, table_, func_)
     void prepare() noexcept override;
+    void clear() noexcept;
     void upload_immediately() noexcept override;
     void build(vector<float> weights) noexcept override;
     void allocate(uint num) noexcept override;
@@ -55,6 +56,11 @@ public:
     [[nodiscard]] Uint sample_discrete(Float u, Float *pmf, Float *u_remapped) const noexcept override;
     [[nodiscard]] Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept override;
 };
+
+void AliasTable::clear() noexcept {
+    table_.clear();
+    func_.clear();
+}
 
 void AliasTable::allocate(uint num) noexcept {
     table_.device_buffer() = pipeline()->device().create_buffer<AliasEntry>(num, "AliasTable::table_");

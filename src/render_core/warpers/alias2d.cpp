@@ -24,7 +24,13 @@ public:
     OC_ENCODABLE_FUNC(Warper2D, marginal_, conditional_v_tables_,
                       conditional_v_weights_, resolution_)
     [[nodiscard]] Uint2 resolution() const noexcept { return *resolution_; }
+    void clear() noexcept {
+        marginal_.clear();
+        conditional_v_tables_.clear();
+        conditional_v_weights_.clear();
+    }
     void build(vector<float> weights, uint2 res) noexcept override {
+        clear();
         // build conditional_v
         vector<AliasTable> conditional_v;
         conditional_v.reserve(res.y);

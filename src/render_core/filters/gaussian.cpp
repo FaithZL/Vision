@@ -32,9 +32,8 @@ public:
     }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        bool changed = widgets->drag_float("sigma", &sigma_, 0.01, 0.1, 20);
-        check_rebuild(changed);
-        changed_ |= changed;
+        changed_ |= widgets->drag_float("sigma", &sigma_, 0.01, 0.1, 20);
+        check_rebuild(changed_);
     }
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
         float vx = gaussian<H>(p.x, 0, sigma_) - exp_x_;

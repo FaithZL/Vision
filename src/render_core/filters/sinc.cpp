@@ -19,9 +19,8 @@ public:
         : FittedCurveFilter(desc),
           tau_(desc["tau"].as_float(3.f)) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        bool changed = widgets->drag_float("tau", &tau_, 0.01, 0.01, 9);
-        check_rebuild(changed);
-        changed_ |= changed;
+        changed_ |= widgets->drag_float("tau", &tau_, 0.01, 0.01, 9);
+        check_rebuild(changed_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] float evaluate(ocarina::float2 p) const noexcept override {
