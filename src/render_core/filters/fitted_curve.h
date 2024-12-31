@@ -13,7 +13,7 @@
 
 namespace vision {
 using namespace ocarina;
-class FilterSampler : public Context {
+class FilterSampler : public Context, public Encodable<encoded_ty> {
 public:
     static constexpr int table_size = 20;
 
@@ -24,7 +24,7 @@ private:
 public:
     FilterSampler()
         : warper_(scene().load_warper2d()) {}
-
+    OC_ENCODABLE_FUNC(Encodable<float>, warper_, lut_)
     void allocate() noexcept {
         lut_.device_buffer() = pipeline()->device().create_buffer<float>(ocarina::sqr(table_size), "FilterSampler::lut_");
         lut_.register_self();
@@ -90,6 +90,7 @@ protected:
 public:
     FittedCurveFilter() = default;
     VS_HOTFIX_MAKE_RESTORE(Filter, sampler_)
+    OC_ENCODABLE_FUNC(Filter, sampler_)
     explicit FittedCurveFilter(const FilterDesc &desc)
         : Filter(desc) {
         sampler_.allocate();
