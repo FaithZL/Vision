@@ -103,11 +103,14 @@ def export_environment(exporter):
         output = world_nodes["World Output"]
         env_surface = output.inputs["Surface"].links[0].from_node
         color = env_surface.inputs["Color"]
+        scale = env_surface.inputs["Strength"].default_value
+        if scale == 0:
+            return None
         ret = {
             "type" : "spherical",
             "param" : {
                 "color" : shadernode.parse_node(exporter, color, 3),
-                "scale" : env_surface.inputs["Strength"].default_value,
+                "scale" : scale,
                 "o2w" : {
                     "type":"Euler",
                     "param": {
