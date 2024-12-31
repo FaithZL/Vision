@@ -2,27 +2,15 @@ from . import base
 from .base import *
 from bpy_extras.node_utils import find_node_input
 
-dic = {
-    "uniform": {
-        "label": "uniform",
-        "description": "uniform light sampler",
-        "parameters": {},
-    },
-    "power": {"label": "power", "description": "power light sampler", "parameters": {}},
-    "bvh": {"label": "bvh", "description": "bvh light sampler", "parameters": {}},
-}
-
-
-
 
 def panel_node_draw(layout, id_data, output_type, input_name):
     if not id_data.use_nodes:
-        layout.operator("cycles.use_shading_nodes", icon='NODETREE')
+        layout.operator("cycles.use_shading_nodes", icon="NODETREE")
         return False
 
     ntree = id_data.node_tree
 
-    node = ntree.get_output_node('CYCLES')
+    node = ntree.get_output_node("CYCLES")
     if node:
         input = find_node_input(node, input_name)
         if input:
@@ -33,6 +21,7 @@ def panel_node_draw(layout, id_data, output_type, input_name):
         layout.label(text="No output node")
 
     return True
+
 
 # class VISION_LIGHT_PT_preview(VisionWidget, bpy.types.Panel):
 #     bl_label = "Preview"
@@ -53,15 +42,18 @@ def panel_node_draw(layout, id_data, output_type, input_name):
 #     def draw(self, context):
 #         self.layout.template_preview(context.light)
 
+
 class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
     bl_label = "Nodes"
     bl_context = "data"
 
     @classmethod
     def poll(cls, context):
-        return context.light and not (context.light.type == 'AREA' and
-                                      context.light.cycles.is_portal) and \
-            VisionWidget.poll(context)
+        return (
+            context.light
+            and not (context.light.type == "AREA" and context.light.cycles.is_portal)
+            and VisionWidget.poll(context)
+        )
 
     def draw(self, context):
         layout = self.layout
@@ -69,7 +61,8 @@ class VISION_LIGHT_PT_nodes(VisionWidget, bpy.types.Panel):
         layout.use_property_split = True
 
         light = context.light
-        panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
+        panel_node_draw(layout, light, "OUTPUT_LIGHT", "Surface")
+
 
 class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
     bl_idname = "VISION_LIGHT_PT_light"
@@ -128,6 +121,7 @@ class VISION_LIGHT_PT_light(bpy.types.Panel, VisionWidget):
         if light.type == "AREA":
             col.prop(clamp, "is_portal", text="Portal")
 
+
 class VISION_LIGHT_PT_beam_shape(VisionWidget, bpy.types.Panel):
     bl_label = "Beam Shape"
     bl_parent_id = "VISION_LIGHT_PT_light"
@@ -150,6 +144,41 @@ class VISION_LIGHT_PT_beam_shape(VisionWidget, bpy.types.Panel):
             col.prop(light, "show_cone")
         elif light.type == "AREA":
             col.prop(light, "spread", text="Spread")
+
+
+dic = {
+    "uniform": {
+        "label": "uniform",
+        "description": "uniform light sampler",
+        "parameters": {
+            "env_prob": {
+                "type": "Float",
+                "args": {
+                    "default": 0.5,
+                    "max": 0.99,
+                    "min": 0.01,
+                },
+            },
+            "env_separate": {
+                "type": "Bool",
+                "args": {
+                    "default": False,
+                },
+            },
+        },
+    },
+    "power": {
+        "label": "power",
+        "description": "power light sampler",
+        "parameters": {},
+    },
+    "bvh": {
+        "label": "bvh",
+        "description": "bvh light sampler",
+        "parameters": {},
+    },
+}
+
 
 class VISION_RENDER_PT_LightSampler(bpy.types.Panel, VISION_RENDER_PT_VisionBasePanel):
     bl_idname = "VISION_RENDER_PT_LightSampler"

@@ -91,6 +91,7 @@ bool LightSampler::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} light sampler", impl_type().data()),
         [&] {
+            widgets->check_box("env_separate", &env_separate_);
             render_sub_UI(widgets);
             lights_.render_UI(widgets);
         });
