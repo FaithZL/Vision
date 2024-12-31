@@ -64,7 +64,7 @@ struct LightSurfacePoint {
     Float2 bary;
 };
 
-class Light : public Node, public Encodable<float> {
+class Light : public Coloured, public Encodable<float> {
 public:
     using Desc = LightDesc;
 
@@ -106,7 +106,7 @@ protected:
 public:
     Light(LightType type) noexcept : type_(type) {}
     explicit Light(const LightDesc &desc, LightType light_type);
-    VS_HOTFIX_MAKE_RESTORE(Node, scale_, switch_, color_, index_)
+    VS_HOTFIX_MAKE_RESTORE(Coloured, scale_, switch_, color_, index_)
     OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();

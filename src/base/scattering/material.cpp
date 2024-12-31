@@ -109,7 +109,7 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler, 
     return ret;
 }
 
-Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
+Material::Material(const vision::MaterialDesc &desc) : Coloured(desc) {
     if (desc.has_attr("bump")) {
         bump_.set(Slot::create_slot(desc.slot("bump", 1.f, Number)));
         bump_scale_.set(Slot::create_slot(desc.slot("bump_scale", 1.f, Number)));
@@ -131,7 +131,7 @@ void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void Material::restore(vision::RuntimeObject *old_obj) noexcept {
-    Node::restore(old_obj);
+    Coloured::restore(old_obj);
     VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
         Slot &slot = get_slot(i);

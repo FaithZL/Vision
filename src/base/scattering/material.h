@@ -5,8 +5,7 @@
 #pragma once
 
 #include <utility>
-
-#include "base/node.h"
+#include "base/coloured.h"
 #include "interaction.h"
 #include "core/stl.h"
 #include "base/scattering/bxdf.h"
@@ -83,7 +82,7 @@ public:
 class ShapeInstance;
 class ShapeGroup;
 
-class Material : public Node, public Encodable<float>, public enable_shared_from_this<Material> {
+class Material : public Coloured, public Encodable<float>, public enable_shared_from_this<Material> {
 public:
     using Desc = MaterialDesc;
 
