@@ -37,7 +37,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Warper, table_, func_)
     void prepare() noexcept override;
-    void clear() noexcept;
+    void clear() noexcept override;
     void upload_immediately() noexcept override;
     void build(vector<float> weights) noexcept override;
     void allocate(uint num) noexcept override;

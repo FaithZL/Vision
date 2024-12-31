@@ -22,6 +22,7 @@ public:
     OC_ENCODABLE_FUNC(Encodable<>, integral_)
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
+    virtual void clear() noexcept = 0;
     virtual void allocate(uint num) noexcept = 0;
     [[nodiscard]] virtual Uint size() const noexcept = 0;
     [[nodiscard]] virtual EncodedData<float> integral() const noexcept { return integral_; }
@@ -41,6 +42,7 @@ public:
     Warper2D() = default;
     explicit Warper2D(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights, uint2 res) noexcept = 0;
+    virtual void clear() noexcept = 0;
     virtual void allocate(uint2 res) noexcept = 0;
     [[nodiscard]] virtual Float func_at(Uint2 coord) const noexcept = 0;
     [[nodiscard]] virtual Float PDF(Float2 p) const noexcept = 0;
