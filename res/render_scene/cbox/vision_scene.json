@@ -349,7 +349,17 @@
 						//							}
 						//						},
 						"two_sided" : false,
-						"scale" : 1
+						"scale" : {
+							"channels" : "x",
+							"node": {
+								"type": "number",
+								"param": {
+									"value" : 1,
+									"min": 0,
+									"max": 100
+								}
+							}
+						}
 					}
 				}
 			}
