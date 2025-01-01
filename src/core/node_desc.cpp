@@ -140,6 +140,11 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
         node.set_value("value", value);
     } else if (node["value"].data().is_array()) {
 //        OC_ASSERT(node["value"].data().size() == dim());
+    } else if (data.is_number()) {
+        // process scalar
+        channels = "x";
+        node.sub_type = "number";
+        node.set_value("value", data);
     }
 }
 
@@ -184,6 +189,7 @@ void LightDesc::init(const ParameterSet &ps) noexcept {
     ParameterSet param = ps.value("param");
     set_parameter(ps.value("param"));
     color.init(param.value("color"));
+    strength.init(param.value("scale"));
     o2w.init(param.value("o2w", DataWrap()));
 }
 

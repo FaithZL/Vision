@@ -260,6 +260,7 @@ public:
 struct LightDesc : public NodeDesc {
 public:
     SlotDesc color{Illumination, 3};
+    SlotDesc strength{Number, 1};
     TransformDesc o2w;
 
     VISION_DESC_COMMON(Light)

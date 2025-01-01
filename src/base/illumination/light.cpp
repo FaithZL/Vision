@@ -10,6 +10,7 @@ namespace vision {
 Light::Light(const LightDesc &desc, LightType light_type)
     : Coloured(desc), type_(light_type),
       scale_(desc["scale"].as_float(1.f)) {
+    strength_.set(Slot::create_slot(desc.strength));
     color_.set(Slot::create_slot(desc.color));
 }
 
@@ -19,6 +20,7 @@ bool Light::render_UI(ocarina::Widgets *widgets) noexcept {
         changed_ |= widgets->check_box("turn on", reinterpret_cast<bool *>(addressof(switch_.hv())));
         changed_ |= widgets->drag_float("scale", &scale_.hv(), 0.05, 0, 1000);
         color_.render_UI(widgets);
+        strength_.render_UI(widgets);
         render_sub_UI(widgets);
     });
     return open;

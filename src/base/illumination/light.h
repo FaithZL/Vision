@@ -73,6 +73,7 @@ protected:
     EncodedData<float> scale_{1.f};
     EncodedData<uint> switch_{true};
     VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(strength);
     uint index_{InvalidUI32};
 
 protected:
@@ -106,13 +107,13 @@ protected:
 public:
     Light(LightType type) noexcept : type_(type) {}
     explicit Light(const LightDesc &desc, LightType light_type);
-    VS_HOTFIX_MAKE_RESTORE(Coloured, scale_, switch_, color_, index_)
-    OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, switch_)
+    VS_HOTFIX_MAKE_RESTORE(Coloured, scale_, switch_, color_, strength_, index_)
+    OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, strength_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();
     }
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    VS_MAKE_GUI_STATUS_FUNC(Node, color_)
+    VS_MAKE_GUI_STATUS_FUNC(Node, color_, strength_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual LightBound bound() const noexcept { return {}; }
     [[nodiscard]] virtual float3 power() const noexcept = 0;
