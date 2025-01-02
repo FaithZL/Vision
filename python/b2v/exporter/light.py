@@ -49,11 +49,23 @@ def export_point(exporter, object):
     light = object.data
     pos = object.location
     p = exporter.correct_matrix(pos)
+    value = light.energy / (4 * np.pi)
     ret = {
         "type": "point",
         "param": {
             "color": {"channels": "xyz", "node": list(light.color)},
-            "scale": light.energy / (4 * np.pi),
+            "scale": value,
+            "strength" :{
+                "channels":"x",
+                "node" : {
+                    "type" : "number",
+                    "param" : {
+                        "min" : 0,
+                        "max" : 1000,
+                        "value" : value,
+                    }
+                }
+            },
             "position": list(p),
         },
     }
@@ -71,15 +83,28 @@ def export_spot(exporter, object):
     direction = exporter.correct_matrix(direction_vector)
     b = light.spot_blend
     falloff = angle * b
+    
+    value = light.energy / (4 * np.pi)
     ret = {
         "type": "spot",
         "param": {
             "color": {"channels": "xyz", "node": list(light.color)},
-            "scale": light.energy / (4 * np.pi),
+            "scale": value,
             "position": list(p),
             "angle": angle,
             "falloff": falloff,
             "direction": list(direction),
+            "strength" :{
+                "channels":"x",
+                "node" : {
+                    "type" : "number",
+                    "param" : {
+                        "min" : 0,
+                        "max" : 1000,
+                        "value" : value,
+                    }
+                }
+            },
         },
     }
     return ret
