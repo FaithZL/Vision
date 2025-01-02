@@ -170,12 +170,42 @@ dic = {
     "power": {
         "label": "power",
         "description": "power light sampler",
-        "parameters": {},
+        "parameters": {
+            "env_prob": {
+                "type": "Float",
+                "args": {
+                    "default": 0.5,
+                    "max": 0.99,
+                    "min": 0.01,
+                },
+            },
+            "env_separate": {
+                "type": "Bool",
+                "args": {
+                    "default": False,
+                },
+            },
+        },
     },
     "bvh": {
         "label": "bvh",
         "description": "bvh light sampler",
-        "parameters": {},
+        "parameters": {
+            "env_prob": {
+                "type": "Float",
+                "args": {
+                    "default": 0.5,
+                    "max": 0.99,
+                    "min": 0.01,
+                },
+            },
+            "env_separate": {
+                "type": "Bool",
+                "args": {
+                    "default": False,
+                },
+            },
+        },
     },
 }
 
