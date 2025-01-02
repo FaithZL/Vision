@@ -5,7 +5,7 @@
 #pragma once
 
 #include <utility>
-#include "base/coloured.h"
+#include "base/node.h"
 #include "interaction.h"
 #include "core/stl.h"
 #include "base/scattering/bxdf.h"
@@ -47,6 +47,33 @@ public:
         return *this;                                                    \
     }
 
+class BlackBodyBxDFSet : public BxDFSet {
+private:
+    const SampledWavelengths *swl_{nullptr};
+
+public:
+    explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode, const Uint &flag) const noexcept override {
+        ScatterEval ret{*swl_};
+        ret.f = {swl_->dimension(), 0.f};
+        ret.pdfs = 1.f;
+        return ret;
+    }
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+        BSDFSample ret{*swl_};
+        ret.eval.pdfs = 1.f;
+        /// Avoid sample discarding due to hemispherical check
+        ret.eval.flags = BxDFFlag::DiffRefl;
+        ret.wi = wo;
+        return ret;
+    }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
+        return {swl_->dimension(), 0.f};
+    }
+    VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
+};
+
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
 public:
     using Super = PolyEvaluator<BxDFSet>;
@@ -82,11 +109,18 @@ public:
 class ShapeInstance;
 class ShapeGroup;
 
-class Material : public Coloured, public Encodable<float>, public enable_shared_from_this<Material> {
+class IMaterial {
+public:
+    using Evaluator = MaterialEvaluator;
+    virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
+                                  const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual UP<BxDFSet> create_lobe_set(Interaction it,
+                                                      const SampledWavelengths &swl) const noexcept = 0;
+};
+
+class Material : public Node, public IMaterial, public Encodable<float>, public enable_shared_from_this<Material> {
 public:
     using Desc = MaterialDesc;
-
-    using Evaluator = MaterialEvaluator;
 
 protected:
     uint index_{InvalidUI32};
@@ -222,8 +256,6 @@ protected:
 
 public:
     [[nodiscard]] static Uint combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexcept;
-    virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it, const SampledWavelengths &swl) const noexcept = 0;
-    virtual UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept = 0;
     [[nodiscard]] Evaluator create_evaluator(const Interaction &it, const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }

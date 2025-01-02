@@ -5,7 +5,7 @@
 #pragma once
 
 #include "base/scattering/interaction.h"
-#include "base/coloured.h"
+#include "base/node.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/sample.h"
 #include "base/encoded_object.h"
@@ -64,7 +64,7 @@ struct LightSurfacePoint {
     Float2 bary;
 };
 
-class Light : public Coloured, public Encodable<float> {
+class Light : public Node, public Encodable<float> {
 public:
     using Desc = LightDesc;
 
@@ -107,7 +107,7 @@ protected:
 public:
     Light(LightType type) noexcept : type_(type) {}
     explicit Light(const LightDesc &desc, LightType light_type);
-    VS_HOTFIX_MAKE_RESTORE(Coloured, scale_, switch_, color_, strength_, index_)
+    VS_HOTFIX_MAKE_RESTORE(Node, scale_, switch_, color_, strength_, index_)
     OC_ENCODABLE_FUNC(Encodable<float>, scale_, color_, strength_, switch_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return color_.type_hash();

@@ -8,7 +8,7 @@
 namespace vision {
 
 Light::Light(const LightDesc &desc, LightType light_type)
-    : Coloured(desc), type_(light_type),
+    : Node(desc), type_(light_type),
       scale_(desc["scale"].as_float(1.f)) {
     strength_.set(Slot::create_slot(desc.strength));
     color_.set(Slot::create_slot(desc.color));
