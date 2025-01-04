@@ -35,9 +35,19 @@ def parse_image_node(exporter, from_node, dim):
     return ret
 
 
+def parse_mix(exporter, from_node, dim):
+    pass
+
+
+def parse_add(exporter, from_node, dim):
+    pass
+
+
 func_dict = {
     "TEX_IMAGE": parse_image_node,
     "TEX_ENVIRONMENT": parse_image_node,
+    "MIX_SHADER": parse_mix,
+    "ADD_SHADER": parse_add,
 }
 
 
