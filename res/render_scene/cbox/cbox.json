@@ -621,7 +621,17 @@
 					0.71,
 					0.68
 				],
-				"ior" : 1.5,
+				"ior" : {
+					"channels": "x",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": 1.5
+						}
+					}
+				},
 				"roughness" : 0.1,
 				"metallic" : 0.8,
 				"spec_tint" : 0.0,
@@ -652,6 +662,17 @@
 				//					}
 				//				},
 				"bump_scale" : 0.1,
+				"ior" : {
+					"channels": "x",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": 1.5
+						}
+					}
+				},
 				"color" : {
 					"channels" : "xyz",
 					"node" : [
@@ -676,7 +697,17 @@
 						1
 					]
 				},
-				"ior" : 1.5,
+				"ior" : {
+					"channels": "x",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": 1.5
+						}
+					}
+				},
 				"roughness" : [0.0001, 0.0001]
 			}
 		},
@@ -689,7 +720,17 @@
 					1,
 					1
 				],
-				"ior" : 1.5,
+				"ior" : {
+					"channels": "x",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": 1.5
+						}
+					}
+				},
 				"roughness" : 0.1,
 				"metallic" : 0,
 				"spec_tint" : 0.0,
@@ -1091,7 +1132,7 @@
 					"filter": {
 						"type": "gaussian",
 						"param" : {
-							"radius": [2.5,2.5]
+							"radius": 2.5
 						}
 					}
 				}
@@ -1152,10 +1193,7 @@
 				//				"type" : "gaussian",
 				"name" : "boxFilter",
 				"param" : {
-					"radius" : [
-						0.5,
-						0.5
-					]
+					"radius" : 0.5
 				}
 			}
 		}
