@@ -211,9 +211,9 @@
 								// "material" : "substrate",
 //								"material" : "Mirror",
 //								"material" : "Ag",
-//												                "material" : "disney",
+												                "material" : "disney",
 //																                "material" : "mix",
-												                                "material" : "Glass",
+//												                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
