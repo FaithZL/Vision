@@ -252,7 +252,7 @@ public:
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.01f)));
         anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
         init_ior(desc);
-        init_slot_cursor(&color_, 4);
+        init_slot_cursor(&color_, &anisotropic_);
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
