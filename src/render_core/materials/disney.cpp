@@ -625,8 +625,11 @@ private:
     VS_MAKE_SLOT(sheen_roughness)
     VS_MAKE_SLOT(sheen_tint)
 
-    VS_MAKE_SLOT(clearcoat)
-    VS_MAKE_SLOT(clearcoat_alpha)
+    VS_MAKE_SLOT(clearcoat_weight)
+    VS_MAKE_SLOT(clearcoat_roughness)
+    VS_MAKE_SLOT(clearcoat_tint)
+
+
     VS_MAKE_SLOT(spec_trans)
     VS_MAKE_SLOT(flatness)
     VS_MAKE_SLOT(diff_trans)
@@ -653,8 +656,11 @@ public:
         sheen_roughness_.set(Slot::create_slot(desc.slot("sheen_roughness", 0.5f, Number)));
         sheen_tint_.set(Slot::create_slot(desc.slot("sheen_tint", 0.f, Number)));
 
-        clearcoat_.set(Slot::create_slot(desc.slot("clearcoat", 0.3f, Number)));
-        clearcoat_alpha_.set(Slot::create_slot(desc.slot("clearcoat_alpha", 0.2f, Number)));
+        clearcoat_weight_.set(Slot::create_slot(desc.slot("clearcoat_weight", 0.3f, Number)));
+        clearcoat_roughness_.set(Slot::create_slot(desc.slot("clearcoat_roughness_", 0.2f, Number)));
+        clearcoat_tint_.set(Slot::create_slot(desc.slot("clearcoat_tint", 0.2f, Number)));
+
+
         spec_trans_.set(Slot::create_slot(desc.slot("spec_trans", 0.f, Number)));
         flatness_.set(Slot::create_slot(desc.slot("flatness", 0.f, Number)));
         diff_trans_.set(Slot::create_slot(desc.slot("diff_trans", 0.f, Number)));
@@ -667,7 +673,7 @@ public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
                                               eta_, roughness_, spec_tint_, anisotropic_,
-                                              sheen_weight_, sheen_tint_, clearcoat_, clearcoat_alpha_,
+                                              sheen_weight_, sheen_tint_, clearcoat_weight_, clearcoat_roughness_,
                                               spec_trans_, flatness_, diff_trans_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
