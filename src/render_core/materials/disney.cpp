@@ -654,11 +654,11 @@ public:
 
         sheen_weight_.set(Slot::create_slot(desc.slot("sheen_weight", 0.f, Number)));
         sheen_roughness_.set(Slot::create_slot(desc.slot("sheen_roughness", 0.5f, Number)));
-        sheen_tint_.set(Slot::create_slot(desc.slot("sheen_tint", 0.f, Number)));
+        sheen_tint_.set(Slot::create_slot(desc.slot("sheen_tint", make_float3(1.f), Albedo)));
 
         clearcoat_weight_.set(Slot::create_slot(desc.slot("clearcoat_weight", 0.3f, Number)));
         clearcoat_roughness_.set(Slot::create_slot(desc.slot("clearcoat_roughness_", 0.2f, Number)));
-        clearcoat_tint_.set(Slot::create_slot(desc.slot("clearcoat_tint", 0.2f, Number)));
+        clearcoat_tint_.set(Slot::create_slot(desc.slot("clearcoat_tint", make_float3(1.f), Albedo)));
 
 
         spec_trans_.set(Slot::create_slot(desc.slot("spec_trans", 0.f, Number)));
