@@ -616,7 +616,7 @@ class DisneyMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(metallic)
-    VS_MAKE_SLOT(eta)
+    VS_MAKE_SLOT(ior)
     VS_MAKE_SLOT(roughness)
     VS_MAKE_SLOT(spec_tint)
     VS_MAKE_SLOT(anisotropic)
@@ -629,6 +629,9 @@ private:
     VS_MAKE_SLOT(clearcoat_roughness)
     VS_MAKE_SLOT(clearcoat_tint)
 
+    VS_MAKE_SLOT(subsurface_weight)
+    VS_MAKE_SLOT(subsurface_radius)
+    VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(spec_trans)
     VS_MAKE_SLOT(flatness)
@@ -645,25 +648,34 @@ public:
     DisneyMaterial() = default;
     explicit DisneyMaterial(const MaterialDesc &desc)
         : Material(desc) {
-        color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        metallic_.set(Slot::create_slot(desc.slot("metallic", 0.f, Number)));
-        eta_.set(Slot::create_slot(desc.slot("ior", 1.5f, Number)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.5f, Number)));
-        spec_tint_.set(Slot::create_slot(desc.slot("spec_tint", make_float3(0.f), Albedo)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, Number)));
 
-        sheen_weight_.set(Slot::create_slot(desc.slot("sheen_weight", 0.f, Number)));
-        sheen_roughness_.set(Slot::create_slot(desc.slot("sheen_roughness", 0.5f, Number)));
-        sheen_tint_.set(Slot::create_slot(desc.slot("sheen_tint", make_float3(1.f), Albedo)));
+#define INIT_SLOT(name, default_value, type) \
+    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)));
 
-        clearcoat_weight_.set(Slot::create_slot(desc.slot("clearcoat_weight", 0.3f, Number)));
-        clearcoat_roughness_.set(Slot::create_slot(desc.slot("clearcoat_roughness_", 0.2f, Number)));
-        clearcoat_tint_.set(Slot::create_slot(desc.slot("clearcoat_tint", make_float3(1.f), Albedo)));
+        INIT_SLOT(color, make_float3(1.f), Albedo);
+        INIT_SLOT(metallic, 0.f, Number);
+        INIT_SLOT(ior, 1.5f, Number);
+        INIT_SLOT(roughness, 0.5f, Number);
+        INIT_SLOT(spec_tint, make_float3(0.f), Albedo);
+        INIT_SLOT(anisotropic, 0.f, Number);
 
+        INIT_SLOT(sheen_weight, 0.f, Number);
+        INIT_SLOT(sheen_roughness, 0.5f, Number);
+        INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
 
-        spec_trans_.set(Slot::create_slot(desc.slot("spec_trans", 0.f, Number)));
-        flatness_.set(Slot::create_slot(desc.slot("flatness", 0.f, Number)));
-        diff_trans_.set(Slot::create_slot(desc.slot("diff_trans", 0.f, Number)));
+        INIT_SLOT(clearcoat_weight, 0.3f, Number);
+        INIT_SLOT(clearcoat_roughness, 0.2f, Number);
+        INIT_SLOT(clearcoat_tint, make_float3(1.f), Albedo);
+
+        INIT_SLOT(subsurface_weight, 0.3f, Number);
+        INIT_SLOT(subsurface_radius, make_float3(1.f), Number);
+        INIT_SLOT(subsurface_scale, 0.2f, Number);
+
+        INIT_SLOT(spec_trans, 0.f, Number);
+        INIT_SLOT(flatness, 0.f, Number);
+        INIT_SLOT(diff_trans, 0.f, Number);
+
+#undef INIT_SLOT
         init_slot_cursor(&color_, &diff_trans_);
     }
     void restore(RuntimeObject *old_obj) noexcept override {
@@ -672,7 +684,7 @@ public:
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
-                                              eta_, roughness_, spec_tint_, anisotropic_,
+                                              ior_, roughness_, spec_tint_, anisotropic_,
                                               sheen_weight_, sheen_tint_, clearcoat_weight_, clearcoat_roughness_,
                                               spec_trans_, flatness_, diff_trans_);
     }
