@@ -649,7 +649,7 @@ public:
         metallic_.set(Slot::create_slot(desc.slot("metallic", 0.f, Number)));
         eta_.set(Slot::create_slot(desc.slot("ior", 1.5f, Number)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.5f, Number)));
-        spec_tint_.set(Slot::create_slot(desc.slot("spec_tint", 0.f, Number)));
+        spec_tint_.set(Slot::create_slot(desc.slot("spec_tint", make_float3(0.f), Albedo)));
         anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, Number)));
 
         sheen_weight_.set(Slot::create_slot(desc.slot("sheen_weight", 0.f, Number)));
