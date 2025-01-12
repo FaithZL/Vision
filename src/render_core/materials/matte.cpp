@@ -100,7 +100,7 @@ public:
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         Material::render_UI(widgets);
-        return 1;
+        return true;
     }
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc) {
