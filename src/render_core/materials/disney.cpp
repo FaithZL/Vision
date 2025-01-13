@@ -385,8 +385,8 @@ private:
 public:
     PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
                       Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
-                      Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot,
-                      Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_alpha_slot,
+                      Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot, Slot sheen_roughness_slot,
+                      Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_roughness_slot, Slot clearcoat_tint_slot,
                       Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) : swl_(&swl) {
 
         auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
@@ -449,7 +449,7 @@ public:
 
         if (!clearcoat_slot->is_zero()) {
             Float cc = clearcoat_slot.evaluate(it, swl).as_scalar();
-            Float cc_alpha = lerp(clearcoat_alpha_slot.evaluate(it, swl).as_scalar(), 0.001f, 1.f);
+            Float cc_alpha = lerp(clearcoat_roughness_slot.evaluate(it, swl).as_scalar(), 0.001f, 1.f);
             clearcoat_ = Clearcoat(cc, cc_alpha, swl);
             clearcoat_index_ = sampling_strategy_num_++;
             sampling_weights_[clearcoat_index_] = saturate(cc * fresnel_schlick(0.04f, 1.f));
@@ -685,7 +685,8 @@ public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
                                               ior_, roughness_, spec_tint_, anisotropic_,
-                                              sheen_weight_, sheen_tint_, clearcoat_weight_, clearcoat_roughness_,
+                                              sheen_weight_,sheen_roughness_, sheen_tint_, clearcoat_weight_,
+                                              clearcoat_roughness_, clearcoat_tint_,
                                               spec_trans_, flatness_, diff_trans_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
