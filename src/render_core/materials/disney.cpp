@@ -149,14 +149,17 @@ public:
 
 class Clearcoat : public BxDF {
 private:
+    SampledSpectrum color_;
     Float weight_;
     Float alpha_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(Clearcoat)
         Clearcoat() = default;
-    Clearcoat(Float weight, Float alpha, const SampledWavelengths &swl)
+    Clearcoat(SampledSpectrum color, Float weight,
+              Float alpha, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::GlossyRefl),
+          color_(std::move(color)),
           weight_(weight),
           alpha_(alpha) {}
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return {swl().dimension(), weight_}; }
@@ -172,7 +175,7 @@ public:
             return select(valid, ret, 0.f);
         };
         impl.function()->set_description("disney::Clearcoat::f");
-        return {swl().dimension(), impl(wo, wi, weight_, alpha_)};
+        return impl(wo, wi, weight_, alpha_) * color_;
     }
     [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
         static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wi, Float alpha) {
@@ -448,11 +451,14 @@ public:
         sampling_weights_[spec_refl_index_] = saturate(Cspec0_lum);
 
         if (!clearcoat_slot->is_zero()) {
-            Float cc = clearcoat_slot.evaluate(it, swl).as_scalar();
+            Float cc_weight = clearcoat_slot.evaluate(it, swl).as_scalar();
+            auto cc_decode = clearcoat_tint_slot.eval_albedo_spectrum(it, swl);
+            SampledSpectrum cc_color = cc_decode.sample * cc_weight;
+            cc_weight = cc_decode.strength * cc_weight;
             Float cc_alpha = lerp(clearcoat_roughness_slot.evaluate(it, swl).as_scalar(), 0.001f, 1.f);
-            clearcoat_ = Clearcoat(cc, cc_alpha, swl);
+            clearcoat_ = Clearcoat(std::move(cc_color), cc_weight, cc_alpha, swl);
             clearcoat_index_ = sampling_strategy_num_++;
-            sampling_weights_[clearcoat_index_] = saturate(cc * fresnel_schlick(0.04f, 1.f));
+            sampling_weights_[clearcoat_index_] = saturate(cc_weight * fresnel_schlick(0.04f, 1.f));
         }
 
         if (!spec_trans_slot->is_zero()) {
