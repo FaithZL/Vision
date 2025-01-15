@@ -201,7 +201,7 @@
 			}
 		},
 		{
-			"type" : "cube",
+			"type" : "sphere",
 			"name" : "shape_5",
 			"param" : {
 				"x" : 1,
@@ -209,9 +209,9 @@
 				"z" : 1,
 //				 "material" : "ShortBox",
 								// "material" : "substrate",
-//								"material" : "Mirror",
+								"material" : "Mirror",
 //								"material" : "Ag",
-												                "material" : "disney",
+//												                "material" : "disney",
 //																                "material" : "mix",
 //												                                "material" : "Glass",
 				"transform" : {
@@ -801,7 +801,18 @@
 						1
 					]
 				},
-				"roughness" : 0.11
+				"roughness" : 0.11,
+				"anisotropic" : {
+					"channels" : "x",
+					"node" : {
+						"type": "number",
+						"param": {
+							"value": 0.0,
+							"min": -1,
+							"max": 1
+						}
+					}
+				}
 			}
 		},
 		{
