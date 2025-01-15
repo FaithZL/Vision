@@ -72,6 +72,7 @@ private:
     VS_MAKE_SLOT(eta);
     VS_MAKE_SLOT(k);
     VS_MAKE_SLOT(roughness);
+    VS_MAKE_SLOT(anisotropic);
     bool remapping_roughness_{false};
     float alpha_threshold_{0.022};
 
@@ -86,9 +87,10 @@ public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.01f))));
+        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
         init_ior(desc);
-        init_slot_cursor(&eta_, 3);
+        init_slot_cursor(&eta_, &anisotropic_);
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
@@ -124,11 +126,15 @@ public:
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
-        alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
-        alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
+
+        roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
+        Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
+
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+
         SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl)};
         SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
