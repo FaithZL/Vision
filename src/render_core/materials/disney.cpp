@@ -325,7 +325,7 @@ public:
     }
 };
 
-class PrincipledBxDFSet : public BxDFSet {
+class DisneyBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{};
     DCSP<Fresnel> fresnel_{};
@@ -386,7 +386,7 @@ private:
     }
 
 public:
-    PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
+    DisneyBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
                       Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
                       Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot, Slot sheen_roughness_slot,
                       Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_roughness_slot, Slot clearcoat_tint_slot,
@@ -479,7 +479,7 @@ public:
             sampling_weights_[i] *= inv_sum_weights;
         }
     }
-    VS_MAKE_BxDFSet_ASSIGNMENT(PrincipledBxDFSet)
+    VS_MAKE_BxDFSet_ASSIGNMENT(DisneyBxDFSet)
 
         [[nodiscard]] Bool splittable() const noexcept override {
         if (!spec_trans_) {
@@ -647,7 +647,7 @@ private:
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
                           const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<PrincipledBxDFSet>(create_lobe_set(it, swl)));
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<DisneyBxDFSet>(create_lobe_set(it, swl)));
     }
 
 public:
@@ -689,7 +689,7 @@ public:
         VS_HOTFIX_MOVE_ATTRS(thin_)
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
+        return make_unique<DisneyBxDFSet>(it, swl, pipeline(), color_, metallic_,
                                               ior_, roughness_, spec_tint_, anisotropic_,
                                               sheen_weight_,sheen_roughness_, sheen_tint_, clearcoat_weight_,
                                               clearcoat_roughness_, clearcoat_tint_,
