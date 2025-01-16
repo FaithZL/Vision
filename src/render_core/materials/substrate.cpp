@@ -117,7 +117,9 @@ private:
     VS_MAKE_SLOT(diff)
     VS_MAKE_SLOT(spec)
     VS_MAKE_SLOT(roughness)
+    VS_MAKE_SLOT(anisotropic)
     bool remapping_roughness_{true};
+    float alpha_threshold_{0.022};
 
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
@@ -132,15 +134,25 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         diff_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         spec_.set(Slot::create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", make_float2(0.001f))));
-        init_slot_cursor(&diff_, 3);
+        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
+        init_slot_cursor(&diff_, &anisotropic_);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = diff_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
-        Float2 alpha = roughness_.evaluate(it, swl).as_vec2();
+
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
+
+        roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
+        Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
+
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
