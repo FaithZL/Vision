@@ -15,6 +15,67 @@ private:
     const SampledWavelengths *swl_{};
     DCSP<Fresnel> fresnel_{};
     optional<LambertReflection> diffuse_;
+    optional<MicrofacetReflection> spec_refl_{};
+
+    // sampling strategy
+    static constexpr size_t max_sampling_strategy_num = 5u;
+    array<Float, max_sampling_strategy_num> sampling_weights_;
+    uint diffuse_index_{InvalidUI32};
+    uint spec_refl_index_{InvalidUI32};
+    uint clearcoat_index_{InvalidUI32};
+    uint sheen_index_{};
+    uint spec_trans_index_{InvalidUI32};
+    uint sampling_strategy_num_{0u};
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64( diffuse_.has_value(),
+                      spec_refl_.has_value(),
+                      diffuse_index_, spec_refl_index_,
+                      clearcoat_index_, spec_trans_index_,
+                      sampling_strategy_num_);
+    }
+
+private:
+    template<typename T, typename... Args>
+    [[nodiscard]] SampledSpectrum lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
+        if (lobe.has_value()) {
+            return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
+        }
+        return SampledSpectrum(swl_->dimension(), 0.f);
+    }
+
+    template<typename T, typename... Args>
+    [[nodiscard]] Float lobe_PDF(const optional<T> &lobe, Args &&...args) const noexcept {
+        if (lobe.has_value()) {
+            return OC_FORWARD(lobe)->PDF(OC_FORWARD(args)...);
+        }
+        return 0.f;
+    }
+
+public:
+    PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
+                      Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
+                      Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot, Slot sheen_roughness_slot,
+                      Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_roughness_slot, Slot clearcoat_tint_slot,
+                      Slot spec_trans_slot) : swl_(&swl) {
+        auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
+        Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
+        diffuse_ = LambertReflection(color, swl);
+        bool has_diffuse = false;
+    }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
+        return diffuse_->albedo(wo);
+    }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
+        return diffuse_->safe_evaluate(wo, wi, nullptr, mode);
+    }
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+        return diffuse_->sample(wo, sampler, nullptr);
+    }
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+        return diffuse_->sample_wi(wo, sampler->next_2d(), nullptr);
+    }
 };
 
 class PrincipledMaterial : public Material {
@@ -39,8 +100,12 @@ private:
     VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(spec_trans)
-    VS_MAKE_SLOT(flatness)
-    VS_MAKE_SLOT(diff_trans)
+
+protected:
+    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
+                          const SampledWavelengths &swl) const noexcept override {
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<PrincipledBxDFSet>(create_lobe_set(it, swl)));
+    }
 
 public:
     PrincipledMaterial() = default;
@@ -70,16 +135,24 @@ public:
         INIT_SLOT(subsurface_scale, 0.2f, Number);
 
         INIT_SLOT(spec_trans, 0.f, Number);
-        INIT_SLOT(flatness, 0.f, Number);
-        INIT_SLOT(diff_trans, 0.f, Number);
 
 #undef INIT_SLOT
-        init_slot_cursor(&color_, &diff_trans_);
+        init_slot_cursor(&color_, &spec_trans_);
     }
     void restore(RuntimeObject *old_obj) noexcept override {
         Material::restore(old_obj);
     }
-
+    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+        return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
+                                              ior_, roughness_, spec_tint_, anisotropic_,
+                                              sheen_weight_, sheen_roughness_, sheen_tint_,
+                                              clearcoat_weight_,clearcoat_roughness_,
+                                              clearcoat_tint_,spec_trans_);
+    }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 
-}
+}// namespace vision
+
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, PrincipledMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-principled.dll")

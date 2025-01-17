@@ -209,9 +209,10 @@
 				"z" : 1,
 //				 "material" : "ShortBox",
 								// "material" : "substrate",
-								"material" : "Mirror",
+//								"material" : "Mirror",
 //								"material" : "Ag",
-//												                "material" : "disney",
+				"material" : "principled",
+//				"material" : "disney",
 //																                "material" : "mix",
 //												                                "material" : "Glass",
 				"transform" : {
@@ -737,6 +738,40 @@
 				"anisotropic" : 0,
 				"sheen" : 0,
 //				"sheen_tint" : 0,
+				"clearcoat" : 0,
+				"clearcoat_alpha" : 0.1,
+				"spec_trans" : 0.95,
+				"flatness" : 0.98,
+				"scatter_distance" : [0, 0, 0],
+				"diff_trans" : 0.11
+			}
+		},
+		{
+			"type" : "principled",
+			"name" : "principled",
+			"param" : {
+				"color" : [
+					1,
+					1,
+					1
+				],
+				"ior" : {
+					"channels": "x",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": 1.5
+						}
+					}
+				},
+				"roughness" : 0.1,
+				"metallic" : 0,
+				"spec_tint" : 0.0,
+				"anisotropic" : 0,
+				"sheen" : 0,
+				//				"sheen_tint" : 0,
 				"clearcoat" : 0,
 				"clearcoat_alpha" : 0.1,
 				"spec_trans" : 0.95,
