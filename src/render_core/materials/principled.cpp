@@ -14,6 +14,7 @@ class PrincipledBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{};
     DCSP<Fresnel> fresnel_{};
+    optional<LambertReflection> diffuse_;
 };
 
 class PrincipledMaterial : public Material {
