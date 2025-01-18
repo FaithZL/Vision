@@ -10,6 +10,32 @@
 
 namespace vision {
 
+
+class FresnelPrincipled : public Fresnel {
+private:
+    SampledSpectrum R0_;
+    Float metallic_;
+    Float eta_;
+
+public:
+    FresnelPrincipled(const SampledSpectrum &R0, Float metallic, const Float &eta,
+                  const SampledWavelengths &swl, const Pipeline *rp)
+        : Fresnel(swl, rp), R0_(R0), metallic_(metallic), eta_(eta) {}
+    void correct_eta(Float cos_theta) noexcept override {
+        eta_ = select(cos_theta > 0, eta_, rcp(eta_));
+    }
+    [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override {
+        return lerp(metallic_,
+                    fresnel_dielectric(cos_theta, eta_),
+                    fresnel_schlick(R0_, cos_theta));
+    }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {swl_->dimension(), eta_}; }
+    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
+        return make_shared<FresnelPrincipled>(R0_, metallic_, eta_, *swl_, rp_);
+    }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelPrincipled)
+};
+
 class PrincipledBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{};
