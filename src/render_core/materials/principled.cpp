@@ -16,9 +16,9 @@ private:
     Float eta_;
 
 public:
-    FresnelGeneralizedSchlick(SampledSpectrum F0, const Float &eta,
+    FresnelGeneralizedSchlick(SampledSpectrum F0, Float eta,
                               const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), F0_(std::move(F0)), eta_(eta) {}
+        : Fresnel(swl, rp), F0_(std::move(F0)), eta_(std::move(eta)) {}
 
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
@@ -38,6 +38,15 @@ public:
         return make_shared<FresnelGeneralizedSchlick>(F0_, eta_, *swl_, rp_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelGeneralizedSchlick)
+};
+
+class FresnelF82Tint : public Fresnel {
+private:
+    SampledSpectrum F0_;
+    SampledSpectrum F82_tint_;
+
+public:
+
 };
 
 class PrincipledBxDFSet : public BxDFSet {
