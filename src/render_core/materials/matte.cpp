@@ -17,7 +17,6 @@ private:
 public:
     OrenNayar(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl), R_(R) {
-        sigma = radians(sigma);
         Float sigma2 = ocarina::sqr(sigma * sigma);
         A_ = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
         B_ = 0.45f * sigma2 / (sigma2 + 0.09f);
@@ -40,7 +39,6 @@ public:
         Float sin_alpha = select(cond, sin_theta_o, sin_theta_i);
         Float tan_beta = select(cond, sin_theta_i / abs_cos_theta(wi),
                                 sin_theta_o / abs_cos_theta(wo));
-
         return R_ * InvPi * (A_ + B_ * max_cos * sin_alpha * tan_beta);
     }
 };
