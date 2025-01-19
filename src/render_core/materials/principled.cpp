@@ -10,30 +10,34 @@
 
 namespace vision {
 
-
-class FresnelPrincipled : public Fresnel {
+class FresnelGeneralizedSchlick : public Fresnel {
 private:
-    SampledSpectrum R0_;
-    Float metallic_;
+    SampledSpectrum F0_;
     Float eta_;
 
 public:
-    FresnelPrincipled(const SampledSpectrum &R0, Float metallic, const Float &eta,
-                  const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), R0_(R0), metallic_(metallic), eta_(eta) {}
+    FresnelGeneralizedSchlick(SampledSpectrum F0, const Float &eta,
+                              const SampledWavelengths &swl, const Pipeline *rp)
+        : Fresnel(swl, rp), F0_(std::move(F0)), eta_(eta) {}
+
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
-    [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override {
-        return lerp(metallic_,
-                    fresnel_dielectric(cos_theta, eta_),
-                    fresnel_schlick(R0_, cos_theta));
+
+    [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
+        Float F_real = fresnel_dielectric(cos_theta, eta_);
+        Float F0_real = schlick_weight(eta_);
+        Float t = inverse_lerp(F_real, F0_real, 1.f);
+        t = ocarina::clamp(t, 0.f, 1.f);
+        return lerp(t, F0_, 1.f);
     }
-    [[nodiscard]] SampledSpectrum eta() const noexcept override { return {swl_->dimension(), eta_}; }
+    [[nodiscard]] SampledSpectrum eta() const noexcept override {
+        return {swl_->dimension(), eta_};
+    }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelPrincipled>(R0_, metallic_, eta_, *swl_, rp_);
+        return make_shared<FresnelGeneralizedSchlick>(F0_, eta_, *swl_, rp_);
     }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelPrincipled)
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelGeneralizedSchlick)
 };
 
 class PrincipledBxDFSet : public BxDFSet {
