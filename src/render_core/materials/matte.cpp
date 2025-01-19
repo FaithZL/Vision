@@ -17,6 +17,7 @@ private:
 public:
     OrenNayar(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
         : BxDF(swl, BxDFFlag::DiffRefl), R_(R) {
+        sigma = sigma * constants::PiOver2;
         Float sigma2 = ocarina::sqr(sigma * sigma);
         A_ = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
         B_ = 0.45f * sigma2 / (sigma2 + 0.09f);
