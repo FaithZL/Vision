@@ -747,7 +747,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "principled",
 			"name" : "principled",
 			"param" : {
 				"sigma": 1,

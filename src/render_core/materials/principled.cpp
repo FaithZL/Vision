@@ -82,11 +82,21 @@ class PrincipledBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{};
     DCSP<Fresnel> fresnel_{};
+
+    struct LobePair {
+        Float weight;
+        SP<BxDF> bxdf;
+        [[nodiscard]] BxDF *operator->() noexcept { return bxdf.get(); }
+        [[nodiscard]] const BxDF *operator->() const noexcept { return bxdf.get(); }
+    };
+
+    ocarina::vector<LobePair> lobes_;
+
     optional<LambertReflection> diffuse_;
     optional<MicrofacetReflection> spec_refl_{};
 
     // sampling strategy
-    static constexpr size_t max_sampling_strategy_num = 5u;
+    static constexpr size_t max_sampling_strategy_num = 6u;
     array<Float, max_sampling_strategy_num> sampling_weights_;
     uint diffuse_index_{InvalidUI32};
     uint spec_refl_index_{InvalidUI32};
@@ -129,6 +139,7 @@ public:
                       Slot spec_trans_slot) : swl_(&swl) {
         auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
+        SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         diffuse_ = LambertReflection(color, swl);
         bool has_diffuse = false;
     }
