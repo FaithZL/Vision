@@ -12,11 +12,11 @@ namespace vision {
 class FresnelBlend : public BxDF {
 private:
     SampledSpectrum Rd_, Rs_;
-    DCSP<Microfacet<D>> _microfacet;
+    DCSP<Microfacet<D>> microfacet_;
 
 public:
     FresnelBlend(SampledSpectrum Rd, SampledSpectrum Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::Reflection), Rd_(std::move(Rd)), Rs_(std::move(Rs)), _microfacet(m) {}
+        : BxDF(swl, BxDFFlag::Reflection), Rd_(std::move(Rd)), Rs_(std::move(Rs)), microfacet_(m) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FresnelBlend)
         // clang-format on
@@ -34,13 +34,13 @@ public:
     [[nodiscard]] SampledSpectrum f_specular(const Float3 &wo, const Float3 &wi) const noexcept {
         Float3 wh = wi + wo;
         wh = normalize(wh);
-        SampledSpectrum specular = _microfacet->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
+        SampledSpectrum specular = microfacet_->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
                                    fresnel_schlick(Rs_, dot(wi, wh));
         return select(is_zero(wh), 0.f, 1.f) * specular;
     }
     [[nodiscard]] Float PDF_specular(const Float3 &wo, const Float3 &wi) const noexcept {
         Float3 wh = normalize(wo + wi);
-        Float ret = _microfacet->PDF_wi_reflection(wo, wh);
+        Float ret = microfacet_->PDF_wi_reflection(wo, wh);
         return ret;
     }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
@@ -57,7 +57,7 @@ public:
         Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
         $if(u.x < fr) {
             u.x = remapping(u.x, 0.f, fr);
-            Float3 wh = _microfacet->sample_wh(wo, u);
+            Float3 wh = microfacet_->sample_wh(wo, u);
             ret.wi = reflect(wo, wh);
         }
         $else {
