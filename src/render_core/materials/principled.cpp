@@ -43,10 +43,39 @@ public:
 class FresnelF82Tint : public Fresnel {
 private:
     SampledSpectrum F0_;
-    SampledSpectrum F82_tint_;
+    SampledSpectrum B_;
 
 public:
+    using Fresnel::Fresnel;
 
+    FresnelF82Tint(SampledSpectrum F0, SampledSpectrum B,
+                   const SampledWavelengths &swl, const Pipeline *rp)
+        : Fresnel(swl, rp), F0_(std::move(F0)), B_(std::move(B)) {
+    }
+
+    FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl, const Pipeline *rp)
+        : Fresnel(swl, rp), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
+
+    void init_from_F82(SampledSpectrum F82) {
+        static constexpr float f = 6.f / 7.f;
+        static constexpr float f5 = Pow<5>(f);
+        SampledSpectrum one = SampledSpectrum::one(swl_->dimension());
+        SampledSpectrum f_schlick = lerp(f5, F0_, one);
+        B_ = f_schlick * (7.f / (f5 * f)) * (one - F82);
+    }
+
+    [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
+        Float mu = ocarina::saturate(1.f - cos_theta);
+        Float mu5 = Pow<5>(mu);
+        SampledSpectrum f_schlick = lerp(mu5, F0_, SampledSpectrum::one(swl_->dimension()));
+        SampledSpectrum ret = saturate(f_schlick - B_ * cos_theta * mu5 * mu);
+        return ret;
+    }
+
+    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
+        return make_shared<FresnelF82Tint>(F0_, B_, *swl_, rp_);
+    }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
 class PrincipledBxDFSet : public BxDFSet {
@@ -68,7 +97,7 @@ private:
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64( diffuse_.has_value(),
+        return hash64(diffuse_.has_value(),
                       spec_refl_.has_value(),
                       diffuse_index_, spec_refl_index_,
                       clearcoat_index_, spec_trans_index_,
@@ -185,8 +214,8 @@ public:
         return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
                                               ior_, roughness_, spec_tint_, anisotropic_,
                                               sheen_weight_, sheen_roughness_, sheen_tint_,
-                                              clearcoat_weight_,clearcoat_roughness_,
-                                              clearcoat_tint_,spec_trans_);
+                                              clearcoat_weight_, clearcoat_roughness_,
+                                              clearcoat_tint_, spec_trans_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 };
