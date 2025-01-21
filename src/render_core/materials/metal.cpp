@@ -26,42 +26,6 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
-class ConductorBxDFSet : public BxDFSet {
-private:
-    DCSP<Fresnel> fresnel_;
-    MicrofacetReflection refl_;
-
-protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(fresnel_->type_hash(), refl_.type_hash());
-    }
-
-public:
-    ConductorBxDFSet(const SP<Fresnel> &fresnel,
-                     MicrofacetReflection refl,
-                     const Uint &flag)
-        : BxDFSet(flag), fresnel_(fresnel), refl_(ocarina::move(refl)) {}
-    VS_MAKE_BxDFSet_ASSIGNMENT(ConductorBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
-        return refl_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
-    }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        return refl_.sample(wo, sampler, fresnel_->clone());
-    }
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
-        Float3 wi = make_float3(-wo.xy(), wo.z);
-        BSDFSample ret{refl_.swl()};
-        ret.wi = wi;
-        ret.eval = refl_.evaluate(wo, wi, fresnel_->clone(), All);
-        return ret;
-    }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override {
-        return refl_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
-    }
-};
-
 //    "type" : "metal",
 //    "param" : {
 //        "material_name" : "Cu",
@@ -79,7 +43,7 @@ private:
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
                           const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<ConductorBxDFSet>(create_lobe_set(it, swl)));
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<UniversalReflectBxDFSet>(create_lobe_set(it, swl)));
     }
 
 public:
@@ -139,8 +103,9 @@ public:
         SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
-        MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<ConductorBxDFSet>(fresnel, ocarina::move(bxdf), flag);
+
+        UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
+        return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));
     }
 };
 

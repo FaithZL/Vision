@@ -47,6 +47,42 @@ public:
         return *this;                                                    \
     }
 
+class UniversalReflectBxDFSet : public BxDFSet {
+protected:
+    DCSP<Fresnel> fresnel_;
+    DCUP<BxDF> refl_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return hash64(fresnel_->type_hash(), refl_->type_hash());
+    }
+
+public:
+    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<BxDF> refl,
+                            const Uint &flag = SurfaceData::Glossy)
+        : BxDFSet(flag), fresnel_(fresnel), refl_(std::move(refl)) {}
+    VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_->albedo(wo); }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
+        return refl_->safe_evaluate(wo, wi, fresnel_->clone(), mode);
+    }
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+        return refl_->sample(wo, sampler, fresnel_->clone());
+    }
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
+        Float3 wi = make_float3(-wo.xy(), wo.z);
+        BSDFSample ret{refl_->swl()};
+        ret.wi = wi;
+        ret.eval = refl_->evaluate(wo, wi, fresnel_->clone(), All);
+        return ret;
+    }
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override {
+        return refl_->sample_wi(wo, sampler->next_2d(), fresnel_->clone());
+    }
+};
+
 class BlackBodyBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{nullptr};
