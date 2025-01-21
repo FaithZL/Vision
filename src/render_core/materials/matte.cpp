@@ -55,16 +55,18 @@ protected:
 
 public:
     MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
+        : BxDFSet(SurfaceData::Diffuse),
+          bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
     MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
-        : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+        : BxDFSet(SurfaceData::Diffuse),
+          bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
 
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MatteBxDFSet)
         // clang-format on
 
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
     }
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
