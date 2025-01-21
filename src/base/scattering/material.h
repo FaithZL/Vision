@@ -57,15 +57,20 @@ public:
     UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<BxDF> refl)
         : fresnel_(fresnel), refl_(std::move(refl)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_->albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
+        return refl_->albedo(wo);
+    }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override {
         return refl_->safe_evaluate(wo, wi, fresnel_->clone(), mode);
     }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override {
         return refl_->sample(wo, sampler, fresnel_->clone());
     }
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
+                                                TSampler &sampler) const noexcept override {
         Float3 wi = make_float3(-wo.xy(), wo.z);
         BSDFSample ret{refl_->swl()};
         ret.wi = wi;
@@ -87,13 +92,15 @@ public:
     explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag) const noexcept override {
+                                             MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
         ScatterEval ret{*swl_};
         ret.f = {swl_->dimension(), 0.f};
         ret.pdfs = 1.f;
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override {
         BSDFSample ret{*swl_};
         ret.eval.pdfs = 1.f;
         /// Avoid sample discarding due to hemispherical check
@@ -117,9 +124,13 @@ protected:
     const SampledWavelengths *swl_{};
 
 protected:
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept;
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept;
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
+                                                TSampler &sampler) const noexcept;
 
 public:
     explicit MaterialEvaluator(const Interaction &it, const SampledWavelengths &swl)
