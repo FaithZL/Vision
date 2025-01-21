@@ -238,10 +238,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
-                          const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<DielectricBxDFSet>(create_lobe_set(it, swl)));
-    }
+    VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSet)
 
 public:
     GlassMaterial() = default;

@@ -9,10 +9,7 @@ namespace vision {
 
 class BlackBodyMaterial : public Material {
 protected:
-    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
-                          const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<BlackBodyBxDFSet>(create_lobe_set(it, swl)));
-    }
+    VS_MAKE_MATERIAL_EVALUATOR(BlackBodyBxDFSet)
 
 public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {

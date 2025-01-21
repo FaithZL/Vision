@@ -76,10 +76,7 @@ private:
     SP<Material> mat1_{};
 
 protected:
-    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
-                          const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<AddBxDFSet>(create_lobe_set(it, swl)));
-    }
+    VS_MAKE_MATERIAL_EVALUATOR(AddBxDFSet)
 
 public:
     AddMaterial() = default;
