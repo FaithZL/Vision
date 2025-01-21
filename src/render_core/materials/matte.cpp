@@ -24,7 +24,8 @@ public:
     }
     VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return R_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
+                                    SP<Fresnel> fresnel) const noexcept override {
         Float sin_theta_i = sin_theta(wi);
         Float sin_theta_o = sin_theta(wo);
 
@@ -55,22 +56,26 @@ protected:
 
 public:
     MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        :bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
+        : bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
     MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
-        :bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+        : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MatteBxDFSet)
         // clang-format on
 
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
+        [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                                 MaterialEvalMode mode,
+                                                 const Uint &flag) const noexcept override {
         return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
     }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override {
         return bxdf_->sample(wo, sampler, nullptr);
     }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override {
         return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
     }
 };
@@ -84,7 +89,8 @@ protected:
     VS_MAKE_MATERIAL_EVALUATOR(MatteBxDFSet)
 
 public:
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it,
+                                              const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         if (sigma_) {
             Float sigma = sigma_.evaluate(it, swl).as_scalar();
