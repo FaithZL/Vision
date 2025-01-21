@@ -18,9 +18,8 @@ public:
     VS_MAKE_BxDFSet_ASSIGNMENT(AddBxDFSet)
         AddBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1)
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)) {
-        flag_ = ocarina::min(b0_->flag(), b1_->flag());
     }
-
+    [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
         return b0_->albedo(wo) + b1_->albedo(wo);
     }

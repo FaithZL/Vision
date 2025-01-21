@@ -14,12 +14,8 @@
 namespace vision {
 
 struct BxDFSet : public ocarina::Hashable {
-protected:
-    Uint flag_{SurfaceData::Glossy};
-
 public:
-    explicit BxDFSet(Uint flag = SurfaceData::Glossy)
-        : flag_(std::move(flag)) {}
+    BxDFSet() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept = 0;
@@ -35,7 +31,7 @@ public:
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
-    OC_MAKE_MEMBER_GETTER(flag, &)
+    [[nodiscard]] virtual Uint flag() const noexcept = 0;
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -58,9 +54,8 @@ protected:
     }
 
 public:
-    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<BxDF> refl,
-                            const Uint &flag = SurfaceData::Glossy)
-        : BxDFSet(flag), fresnel_(fresnel), refl_(std::move(refl)) {}
+    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<BxDF> refl)
+        : fresnel_(fresnel), refl_(std::move(refl)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_->albedo(wo); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
@@ -77,6 +72,7 @@ public:
         ret.eval = refl_->evaluate(wo, wi, fresnel_->clone(), All);
         return ret;
     }
+    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         return refl_->sample_wi(wo, sampler->next_2d(), fresnel_->clone());
@@ -89,6 +85,7 @@ private:
 
 public:
     explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
+    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override {
         ScatterEval ret{*swl_};

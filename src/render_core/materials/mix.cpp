@@ -24,9 +24,8 @@ public:
     VS_MAKE_BxDFSet_ASSIGNMENT(MixBxDFSet)
         MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float frac)
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)), frac_(frac) {
-        flag_ = ocarina::min(b0_->flag(), b1_->flag());
     }
-
+    [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
         return b0_->albedo(wo) * (1 - frac_) + b1_->albedo(wo) * frac_;
     }

@@ -83,15 +83,6 @@ private:
     const SampledWavelengths *swl_{};
     DCSP<Fresnel> fresnel_{};
 
-    struct LobePair {
-        Float weight;
-        SP<BxDF> bxdf;
-        [[nodiscard]] BxDF *operator->() noexcept { return bxdf.get(); }
-        [[nodiscard]] const BxDF *operator->() const noexcept { return bxdf.get(); }
-    };
-
-    ocarina::vector<LobePair> lobes_;
-
     optional<LambertReflection> diffuse_;
     optional<MicrofacetReflection> spec_refl_{};
 
@@ -143,6 +134,7 @@ public:
         diffuse_ = LambertReflection(color, swl);
         bool has_diffuse = false;
     }
+    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
         return diffuse_->albedo(wo);
     }

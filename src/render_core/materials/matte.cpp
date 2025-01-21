@@ -55,12 +55,10 @@ protected:
 
 public:
     MatteBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : BxDFSet(SurfaceData::Diffuse),
-          bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
+        :bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
     MatteBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
-        : BxDFSet(SurfaceData::Diffuse),
-          bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
-
+        :bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+    [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MatteBxDFSet)
         // clang-format on

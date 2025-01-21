@@ -13,10 +13,10 @@ namespace vision {
 using namespace ocarina;
 struct SurfaceData {
 public:
-    static constexpr uint Miss = 0;
-    static constexpr uint NearSpec = 1;
-    static constexpr uint Glossy = 2;
-    static constexpr uint Diffuse = 3;
+    static constexpr uint Miss = BxDFFlag::Unset;
+    static constexpr uint NearSpec = BxDFFlag::NearSpec;
+    static constexpr uint Glossy = BxDFFlag::Glossy;
+    static constexpr uint Diffuse = BxDFFlag::Diffuse;
 
 public:
     TriangleHit hit{};

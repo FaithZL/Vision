@@ -109,8 +109,7 @@ public:
                       MicrofacetTransmission trans,
                       Bool dispersive,
                       const Uint &flag)
-        : BxDFSet(flag),
-          fresnel_(fresnel),
+        : fresnel_(fresnel),
           refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
           dispersive_(ocarina::move(dispersive)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
@@ -142,6 +141,7 @@ public:
         };
         return ret;
     }
+    [[nodiscard]] Uint flag() const noexcept override { return refl_.flags() | trans_.flags(); }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         Float uc = sampler->next_1d();
