@@ -17,14 +17,18 @@ struct BxDFSet : public ocarina::Hashable {
 public:
     BxDFSet() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                                     MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept = 0;
-    [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept = 0;
-    [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept {
+    [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                                  TSampler &sampler) const noexcept = 0;
+    [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                                     TSampler &sampler) const noexcept {
         OC_ASSERT(false);
         return {};
     }
-    [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
+    [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo,
+                                                        TSampler &sampler) const noexcept {
         return BSDFSample{1u, 1u};
     }
     [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
@@ -305,9 +309,12 @@ protected:
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
 
 public:
-    [[nodiscard]] static Uint combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexcept;
-    [[nodiscard]] Evaluator create_evaluator(const Interaction &it, const SampledWavelengths &swl) const noexcept;
-    void build_evaluator(Evaluator &evaluator, Interaction it, const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] static Uint combine_flag(const Float3 &wo, const Float3 &wi,
+                                           Uint flag) noexcept;
+    [[nodiscard]] Evaluator create_evaluator(const Interaction &it,
+                                             const SampledWavelengths &swl) const noexcept;
+    void build_evaluator(Evaluator &evaluator, Interaction it,
+                         const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }
 };
 }// namespace vision
