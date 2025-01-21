@@ -154,6 +154,12 @@ public:
                                                       const SampledWavelengths &swl) const noexcept = 0;
 };
 
+#define VS_MAKE_MATERIAL_EVALUATOR(BxDFSet)                                                      \
+    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,                 \
+                          const SampledWavelengths &swl) const noexcept override {               \
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<BxDFSet>(create_lobe_set(it, swl))); \
+    }
+
 class Material : public Node, public IMaterial, public Encodable<float>, public enable_shared_from_this<Material> {
 public:
     using Desc = MaterialDesc;
