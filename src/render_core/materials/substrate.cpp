@@ -70,34 +70,6 @@ public:
     }
 };
 
-class SubstrateBxDFSet : public BxDFSet {
-private:
-    SP<Fresnel> fresnel_;
-    FresnelBlend bxdf_;
-
-protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(bxdf_.type_hash(), fresnel_->type_hash());
-    }
-
-public:
-    SubstrateBxDFSet(const SP<Fresnel> &fresnel, FresnelBlend bxdf, const Uint &flag)
-        : BxDFSet(flag), fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
-    VS_MAKE_BxDFSet_ASSIGNMENT(SubstrateBxDFSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override {
-        return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
-    }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        return bxdf_.sample(wo, sampler, fresnel_->clone());
-    }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override {
-        return bxdf_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
-    }
-};
-
 //    "type" : "substrate",
 //    "param" : {
 //        "roughness" : 0.001,
@@ -124,7 +96,7 @@ private:
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
                           const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<SubstrateBxDFSet>(create_lobe_set(it, swl)));
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<UniversalReflectBxDFSet>(create_lobe_set(it, swl)));
     }
 
 public:
@@ -158,8 +130,8 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl, pipeline());
-        FresnelBlend bxdf(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBxDFSet>(fresnel, ocarina::move(bxdf), SurfaceData::Glossy);
+        UP<BxDF> refl = make_unique<FresnelBlend>(Rd, Rs, swl, microfacet);
+        return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));
     }
 };
 
