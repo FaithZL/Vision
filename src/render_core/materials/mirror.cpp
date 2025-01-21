@@ -8,45 +8,6 @@
 
 namespace vision {
 
-class MirrorBxDFSet : public BxDFSet {
-private:
-    DCSP<Fresnel> fresnel_;
-    MicrofacetReflection bxdf_;
-
-protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(fresnel_->type_hash(), bxdf_.type_hash());
-    }
-
-public:
-    MirrorBxDFSet(const SP<Fresnel> &fresnel, MicrofacetReflection bxdf, const Uint &flag)
-        : BxDFSet(flag), fresnel_(fresnel), bxdf_(std::move(bxdf)) {}
-    // clang-format off
-    VS_MAKE_BxDFSet_ASSIGNMENT(MirrorBxDFSet)
-        // clang-format on
-        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_.albedo(wo); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override {
-        return bxdf_.safe_evaluate(wo, wi, fresnel_->clone(), mode);
-    }
-
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override {
-        Float3 wi = make_float3(-wo.xy(), wo.z);
-        BSDFSample ret{bxdf_.swl()};
-        ret.wi = wi;
-        ret.eval = bxdf_.evaluate(wo, wi, fresnel_->clone(), All);
-        return ret;
-    }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        return bxdf_.sample(wo, sampler, fresnel_->clone());
-    }
-
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override {
-        return bxdf_.sample_wi(wo, sampler->next_2d(), fresnel_->clone());
-    }
-};
-
 class MirrorMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
@@ -58,7 +19,7 @@ private:
 protected:
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,
                           const SampledWavelengths &swl) const noexcept override {
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<MirrorBxDFSet>(create_lobe_set(it, swl)));
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<UniversalReflectBxDFSet>(create_lobe_set(it, swl)));
     }
 
 public:
@@ -90,10 +51,10 @@ protected:
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
 
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelNoOp>(swl, pipeline());
-        MicrofacetReflection bxdf(kr, swl, microfacet);
-        return make_unique<MirrorBxDFSet>(fresnel, ocarina::move(bxdf), flag);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+        SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl, pipeline());
+        UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
+        return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));
     }
 };
 
