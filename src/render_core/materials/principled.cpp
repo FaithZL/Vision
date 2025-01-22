@@ -78,6 +78,41 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
+class WeightedBxDFSet {
+private:
+    Float weight_;
+    DCSP<BxDFSet> bxdf_;
+
+public:
+    WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf)
+        : weight_(std::move(weight)), bxdf_(std::move(bxdf)) {}
+    [[nodiscard]] const BxDFSet &operator*() const noexcept { return *bxdf_; }
+    [[nodiscard]] BxDFSet &operator*() noexcept { return *bxdf_; }
+    [[nodiscard]] const BxDFSet *operator->() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] BxDFSet *operator->() noexcept { return bxdf_.get(); }
+    [[nodiscard]] const BxDFSet *get() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] BxDFSet *get() noexcept { return bxdf_.get(); }
+};
+
+class MultiBxDFSet : public BxDFSet {
+private:
+    using Lobes = ocarina::vector<WeightedBxDFSet>;
+    Lobes lobes_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        uint64_t ret = Hash64::default_seed;
+        for (const WeightedBxDFSet &lobe : lobes_) {
+            ret = hash64(ret, lobe->type_hash());
+        }
+        return ret;
+    }
+
+public:
+    MultiBxDFSet() = default;
+    MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {}
+};
+
 class PrincipledBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{};
