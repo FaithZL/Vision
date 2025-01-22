@@ -102,9 +102,9 @@ private:
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         uint64_t ret = Hash64::default_seed;
-        for (const WeightedBxDFSet &lobe : lobes_) {
+        foreach ([&](const WeightedBxDFSet &lobe) {
             ret = hash64(ret, lobe->type_hash());
-        }
+        });
         return ret;
     }
 
@@ -112,7 +112,6 @@ public:
     MultiBxDFSet() = default;
     explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
-
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode,
@@ -121,9 +120,15 @@ public:
                                           TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
-    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
+    [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
+    void foreach (const std::function<void(const WeightedBxDFSet &)> &func) const {
+        std::for_each(lobes_.begin(), lobes_.end(), func);
+    }
+    void foreach (std::function<void(WeightedBxDFSet &)> &func) {
+        std::for_each(lobes_.begin(), lobes_.end(), func);
+    }
 };
 
 class PrincipledBxDFSet : public BxDFSet {
