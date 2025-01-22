@@ -110,7 +110,20 @@ protected:
 
 public:
     MultiBxDFSet() = default;
-    MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {}
+    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {}
+    VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
+
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
+                                                TSampler &sampler) const noexcept override;
+    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
 };
 
 class PrincipledBxDFSet : public BxDFSet {
