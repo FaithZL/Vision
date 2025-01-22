@@ -47,7 +47,8 @@ SampledDirection UniversalReflectBxDFSet::sample_wi(const Float3 &wo,
 }
 
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                              MaterialEvalMode mode, const Uint &flag) const noexcept {
+                                              MaterialEvalMode mode,
+                                              const Uint &flag) const noexcept {
     ScatterEval ret{*swl_};
     dispatch([&](const BxDFSet *lobe_set) {
         ret = lobe_set->evaluate_local(wo, wi, mode, flag);
@@ -149,7 +150,8 @@ ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &wo
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo, TSampler &sampler) const noexcept {
+BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo,
+                                           TSampler &sampler) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
     BSDFSample ret = sample_delta_local(wo, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
@@ -157,7 +159,8 @@ BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo, TSampler &sam
     return ret;
 }
 
-BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler, const Uint &flag) const noexcept {
+BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
+                                     const Uint &flag) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
     BSDFSample ret = sample_local(wo, flag, sampler);
     ret.eval.f *= abs_cos_theta(ret.wi);
@@ -259,7 +262,9 @@ namespace detail {
     return normalize(w_refl_clip + w);
 }
 
-void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
+void compute_by_normal_map(const Slot &normal_map, const Slot &scale,
+                           Interaction *it,
+                           const SampledWavelengths &swl) noexcept {
     Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
     Float s = scale.evaluate(*it, swl).as_scalar();
     normal.x *= s;
@@ -271,7 +276,9 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale, Interactio
     it->shading.update(world_normal);
 }
 
-void compute_by_bump_map(const Slot &bump_map, const Slot &scale, Interaction *it, const SampledWavelengths &swl) noexcept {
+void compute_by_bump_map(const Slot &bump_map, const Slot &scale,
+                         Interaction *it,
+                         const SampledWavelengths &swl) noexcept {
     static constexpr float d = 0.0005f;
 
     Interaction it_eval = *it;
