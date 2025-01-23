@@ -102,7 +102,7 @@ private:
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         uint64_t ret = Hash64::default_seed;
-        foreach ([&](const WeightedBxDFSet &lobe) {
+        for_each([&](const WeightedBxDFSet &lobe) {
             ret = hash64(ret, lobe->type_hash());
         });
         return ret;
@@ -123,13 +123,18 @@ public:
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
-    void foreach (const std::function<void(const WeightedBxDFSet &)> &func) const {
-        std::for_each(lobes_.begin(), lobes_.end(), func);
-    }
-    void foreach (std::function<void(WeightedBxDFSet &)> &func) {
-        std::for_each(lobes_.begin(), lobes_.end(), func);
-    }
+    void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &)> &func);
 };
+
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const  {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &)> &func)  {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
 
 class PrincipledBxDFSet : public BxDFSet {
 private:
