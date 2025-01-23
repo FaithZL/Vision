@@ -479,6 +479,9 @@ public:
             sampling_weights_[i] *= inv_sum_weights;
         }
     }
+    [[nodiscard]] const SampledWavelengths *swl() const override {
+        return &spec_refl_->swl();
+    }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::All; }
     VS_MAKE_BxDFSet_ASSIGNMENT(DisneyBxDFSet)
 

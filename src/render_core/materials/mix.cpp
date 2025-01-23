@@ -29,6 +29,9 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
         return b0_->albedo(wo) * (1 - frac_) + b1_->albedo(wo) * frac_;
     }
+    [[nodiscard]] const SampledWavelengths *swl() const override {
+        return b0_->swl();
+    }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         optional<Bool> v0 = b0_->is_dispersive();
         optional<Bool> v1 = b1_->is_dispersive();

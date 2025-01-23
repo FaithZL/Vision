@@ -3,10 +3,10 @@
 //
 
 #include <utility>
-
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -193,6 +193,7 @@ public:
         bool has_diffuse = false;
     }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
+    [[nodiscard]] const SampledWavelengths *swl() const override { return &diffuse_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
         return diffuse_->albedo(wo);
     }

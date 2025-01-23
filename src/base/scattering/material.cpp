@@ -16,6 +16,10 @@ UniversalReflectBxDFSet::UniversalReflectBxDFSet(const SP<vision::Fresnel> &fres
                                                  UP<vision::BxDF> refl)
     : fresnel_(fresnel), refl_(std::move(refl)) {}
 
+const SampledWavelengths *UniversalReflectBxDFSet::swl() const {
+    return &refl_->swl();
+}
+
 SampledSpectrum UniversalReflectBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
     return refl_->albedo(wo);
 }
@@ -54,6 +58,10 @@ ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi
         ret = lobe_set->evaluate_local(wo, wi, mode, flag);
     });
     return ret;
+}
+
+const SampledWavelengths *BlackBodyBxDFSet::swl() const {
+    return swl_;
 }
 
 ScatterEval BlackBodyBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,

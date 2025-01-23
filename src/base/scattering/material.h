@@ -35,6 +35,7 @@ public:
     virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
+    [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
@@ -60,6 +61,7 @@ public:
 
     VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
@@ -82,6 +84,7 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {

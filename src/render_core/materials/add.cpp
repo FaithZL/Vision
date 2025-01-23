@@ -35,6 +35,9 @@ public:
         }
         return {};
     }
+    [[nodiscard]] const SampledWavelengths *swl() const override {
+        return b0_->swl();
+    }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override {
         ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag);

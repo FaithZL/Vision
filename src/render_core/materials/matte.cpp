@@ -61,6 +61,9 @@ public:
         : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
     [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
+    [[nodiscard]] const SampledWavelengths *swl() const override {
+        return &bxdf_->swl();
+    }
     // clang-format off
     VS_MAKE_BxDFSet_ASSIGNMENT(MatteBxDFSet)
         // clang-format on

@@ -114,6 +114,7 @@ public:
           dispersive_(ocarina::move(dispersive)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
+    [[nodiscard]] const SampledWavelengths *swl() const override { return &refl_.swl(); }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
@@ -295,7 +296,7 @@ public:
         MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
         if (is_dispersive()) {
-            $if (alpha_min < 0.008f) {
+            $if(alpha_min < 0.008f) {
                 swl.invalidation_secondary();
             };
         }
