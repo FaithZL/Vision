@@ -173,10 +173,37 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
     });
 
     $switch(sampling_strategy) {
-        
+        for_each([&](const WeightedBxDFSet &lobe, uint i) {
+            $case(i) {
+                sd = lobe->sample_wi(wo, flag, sampler);
+                $break;
+            };
+        });
+        $default {
+            unreachable();
+            $break;
+        };
     };
 
     return sd;
+}
+
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
+                                      TSampler &sampler) const noexcept {
+    BSDFSample ret{*swl()};
+    SampledDirection sd = sample_wi(wo, flag, sampler);
+    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+    ret.wi = sd.wi;
+    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+    return ret;
+}
+
+Uint MultiBxDFSet::flag() const noexcept {
+    Uint ret = BxDFFlag::Unset;
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret |= lobe->flag();
+    });
+    return ret;
 }
 
 ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
