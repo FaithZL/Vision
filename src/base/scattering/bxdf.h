@@ -160,4 +160,17 @@ public:
                                             MaterialEvalMode mode) const noexcept override;
 };
 
+class OrenNayar : public BxDF {
+private:
+    SampledSpectrum R_;
+    Float A_, B_;
+
+public:
+    OrenNayar(SampledSpectrum R, Float sigma, const SampledWavelengths &swl);
+    VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return R_; }
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
+                                    SP<Fresnel> fresnel) const noexcept override;
+};
+
 }// namespace vision
