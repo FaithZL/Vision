@@ -96,8 +96,10 @@ public:
 };
 
 class MultiBxDFSet : public BxDFSet {
-private:
+public:
     using Lobes = ocarina::vector<WeightedBxDFSet>;
+
+private:
     Lobes lobes_;
 
 protected:
@@ -169,20 +171,22 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.weight();
     });
-
-    $switch(sampling_strategy) {
-        for_each([&](const WeightedBxDFSet &lobe, uint i) {
-            $case(i) {
-                sd = lobe->sample_wi(wo, flag, sampler);
+    if (lobe_num() == 1) {
+        sd = lobes_[0]->sample_wi(wo, flag, sampler);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedBxDFSet &lobe, uint i) {
+                $case(i) {
+                    sd = lobe->sample_wi(wo, flag, sampler);
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
                 $break;
             };
-        });
-        $default {
-            unreachable();
-            $break;
         };
-    };
-
+    }
     return sd;
 }
 
@@ -216,78 +220,6 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
     return ret;
 }
 
-class PrincipledBxDFSet : public BxDFSet {
-private:
-    const SampledWavelengths *swl_{};
-    DCSP<Fresnel> fresnel_{};
-
-    optional<LambertReflection> diffuse_;
-    optional<MicrofacetReflection> spec_refl_{};
-
-    // sampling strategy
-    static constexpr size_t max_sampling_strategy_num = 6u;
-    array<Float, max_sampling_strategy_num> sampling_weights_;
-    uint diffuse_index_{InvalidUI32};
-    uint spec_refl_index_{InvalidUI32};
-    uint clearcoat_index_{InvalidUI32};
-    uint sheen_index_{};
-    uint spec_trans_index_{InvalidUI32};
-    uint sampling_strategy_num_{0u};
-
-protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(diffuse_.has_value(),
-                      spec_refl_.has_value(),
-                      diffuse_index_, spec_refl_index_,
-                      clearcoat_index_, spec_trans_index_,
-                      sampling_strategy_num_);
-    }
-
-private:
-    template<typename T, typename... Args>
-    [[nodiscard]] SampledSpectrum lobe_f(const optional<T> &lobe, Args &&...args) const noexcept {
-        if (lobe.has_value()) {
-            return OC_FORWARD(lobe)->f(OC_FORWARD(args)...);
-        }
-        return SampledSpectrum(swl_->dimension(), 0.f);
-    }
-
-    template<typename T, typename... Args>
-    [[nodiscard]] Float lobe_PDF(const optional<T> &lobe, Args &&...args) const noexcept {
-        if (lobe.has_value()) {
-            return OC_FORWARD(lobe)->PDF(OC_FORWARD(args)...);
-        }
-        return 0.f;
-    }
-
-public:
-    PrincipledBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
-                      Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
-                      Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot, Slot sheen_roughness_slot,
-                      Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_roughness_slot, Slot clearcoat_tint_slot,
-                      Slot spec_trans_slot) : swl_(&swl) {
-        auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
-        Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
-        SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
-        diffuse_ = LambertReflection(color, swl);
-        bool has_diffuse = false;
-    }
-    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
-    [[nodiscard]] const SampledWavelengths *swl() const override { return &diffuse_->swl(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
-        return diffuse_->albedo(wo);
-    }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
-        return diffuse_->safe_evaluate(wo, wi, nullptr, mode);
-    }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        return diffuse_->sample(wo, sampler, nullptr);
-    }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        return diffuse_->sample_wi(wo, sampler->next_2d(), nullptr);
-    }
-};
-
 class PrincipledMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
@@ -312,7 +244,7 @@ private:
     VS_MAKE_SLOT(spec_trans)
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(PrincipledBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MultiBxDFSet)
 
 public:
     PrincipledMaterial() = default;
@@ -353,12 +285,10 @@ public:
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_.evaluate(it, swl).as_scalar();
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
-
-        return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
-                                              ior_, roughness_, spec_tint_, anisotropic_,
-                                              sheen_weight_, sheen_roughness_, sheen_tint_,
-                                              clearcoat_weight_, clearcoat_roughness_,
-                                              clearcoat_tint_, spec_trans_);
+        WeightedBxDFSet diffuse_lobe{1.f, make_shared<DiffuseBxDFSet>(color, swl)};
+        MultiBxDFSet::Lobes lobes;
+        lobes.push_back(std::move(diffuse_lobe));
+        return make_unique<MultiBxDFSet>(std::move(lobes));
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 };
