@@ -5,7 +5,120 @@
 #pragma once
 
 #include "bxdf.h"
+#include "interaction.h"
 
 namespace vision {
 
-}
+#define VS_MAKE_BxDFSet_ASSIGNMENT(ClassName)                            \
+    ClassName &operator=(const BxDFSet &other) noexcept override {       \
+        OC_ASSERT(dynamic_cast<const ClassName *>(&other));              \
+        *this = dynamic_cast<ClassName &>(const_cast<BxDFSet &>(other)); \
+        return *this;                                                    \
+    }
+
+struct BxDFSet : public ocarina::Hashable {
+public:
+    BxDFSet() = default;
+    [[nodiscard]] virtual SampledSpectrum albedo(const Float3 &wo) const noexcept = 0;
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                                     MaterialEvalMode mode,
+                                                     const Uint &flag) const noexcept = 0;
+    [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                                  TSampler &sampler) const noexcept = 0;
+    [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                                     TSampler &sampler) const noexcept {
+        OC_ASSERT(false);
+        return {};
+    }
+    [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo,
+                                                        TSampler &sampler) const noexcept {
+        return BSDFSample{1u, 1u};
+    }
+    [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
+    virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
+    virtual void regularize() noexcept {}
+    virtual void mollify() noexcept {}
+    [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
+    [[nodiscard]] virtual Uint flag() const noexcept = 0;
+    [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
+    virtual ~BxDFSet() = default;
+};
+
+class UniversalReflectBxDFSet : public BxDFSet {
+protected:
+    DCSP<Fresnel> fresnel_;
+    DCUP<BxDF> refl_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
+
+public:
+    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<BxDF> refl);
+
+    VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
+                                                TSampler &sampler) const noexcept override;
+    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
+};
+
+class DiffuseBxDFSet : public BxDFSet {
+private:
+    DCUP<BxDF> bxdf_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return bxdf_->type_hash();
+    }
+
+public:
+    DiffuseBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
+        : bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
+    DiffuseBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+        : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+    [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
+    [[nodiscard]] const SampledWavelengths *swl() const override {
+        return &bxdf_->swl();
+    }
+    // clang-format off
+    VS_MAKE_BxDFSet_ASSIGNMENT(DiffuseBxDFSet)
+        // clang-format on
+
+        [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                                 MaterialEvalMode mode,
+                                                 const Uint &flag) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override ;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
+};
+
+class BlackBodyBxDFSet : public BxDFSet {
+private:
+    const SampledWavelengths *swl_{nullptr};
+
+public:
+    explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
+    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override;
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
+        return {swl_->dimension(), 0.f};
+    }
+    VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
+};
+
+}// namespace vision
