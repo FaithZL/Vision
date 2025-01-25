@@ -14,10 +14,9 @@ class Pipeline;
 class Fresnel : public ocarina::Hashable {
 protected:
     const SampledWavelengths *swl_{};
-    const Pipeline *rp_{};
 
 public:
-    explicit Fresnel(const SampledWavelengths &swl, const Pipeline *rp) : swl_(&swl), rp_(rp) {}
+    explicit Fresnel(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] virtual SampledSpectrum evaluate(Float cos_theta) const noexcept = 0;
     [[nodiscard]] virtual Float evaluate(const Float &cos_theta, uint channel) const noexcept {
         OC_ERROR("Fresnel evaluate by channel invalid !");
@@ -44,8 +43,8 @@ private:
     SampledSpectrum eta_;
 
 public:
-    explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp),
+    explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl)
+        : Fresnel(swl),
           eta_(ior) {}
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
@@ -59,17 +58,17 @@ public:
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override { return eta_; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDielectric>(eta_, *swl_, rp_);
+        return make_shared<FresnelDielectric>(eta_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
 };
 
 class FresnelNoOp : public Fresnel {
 public:
-    explicit FresnelNoOp(const SampledWavelengths &swl, const Pipeline *rp) : Fresnel(swl, rp) {}
+    explicit FresnelNoOp(const SampledWavelengths &swl) : Fresnel(swl) {}
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {swl_->dimension(), 1.f}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelNoOp>(*swl_, rp_);
+        return make_shared<FresnelNoOp>(*swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelNoOp)
 };

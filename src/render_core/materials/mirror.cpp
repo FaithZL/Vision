@@ -49,7 +49,7 @@ protected:
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
 
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl, pipeline());
+        SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
         UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));
     }

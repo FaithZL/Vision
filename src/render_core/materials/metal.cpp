@@ -15,13 +15,13 @@ private:
 
 public:
     FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k,
-                     const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), eta_(eta), k_(k) {}
+                     const SampledWavelengths &swl)
+        : Fresnel(swl), eta_(eta), k_(k) {}
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex(abs_cos_theta, eta_, k_);
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConductor>(eta_, k_, *swl_, rp_);
+        return make_shared<FresnelConductor>(eta_, k_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
@@ -99,7 +99,7 @@ public:
         SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl)};
         SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl)};
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        auto fresnel = make_shared<FresnelConductor>(eta, k, swl, pipeline());
+        auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));

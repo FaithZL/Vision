@@ -17,8 +17,8 @@ private:
 
 public:
     FresnelGeneralizedSchlick(SampledSpectrum F0, Float eta,
-                              const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), F0_(std::move(F0)), eta_(std::move(eta)) {}
+                              const SampledWavelengths &swl)
+        : Fresnel(swl), F0_(std::move(F0)), eta_(std::move(eta)) {}
 
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
@@ -35,7 +35,7 @@ public:
         return {swl_->dimension(), eta_};
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelGeneralizedSchlick>(F0_, eta_, *swl_, rp_);
+        return make_shared<FresnelGeneralizedSchlick>(F0_, eta_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelGeneralizedSchlick)
 };
@@ -49,12 +49,12 @@ public:
     using Fresnel::Fresnel;
 
     FresnelF82Tint(SampledSpectrum F0, SampledSpectrum B,
-                   const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), F0_(std::move(F0)), B_(std::move(B)) {
+                   const SampledWavelengths &swl)
+        : Fresnel(swl), F0_(std::move(F0)), B_(std::move(B)) {
     }
 
-    FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
+    FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl)
+        : Fresnel(swl), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
 
     void init_from_F82(SampledSpectrum F82) {
         static constexpr float f = 6.f / 7.f;
@@ -73,7 +73,7 @@ public:
     }
 
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelF82Tint>(F0_, B_, *swl_, rp_);
+        return make_shared<FresnelF82Tint>(F0_, B_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
@@ -245,6 +245,7 @@ private:
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(MultiBxDFSet)
+    static constexpr float CutoffThreshold = 1e-5f;
 
 public:
     PrincipledMaterial() = default;
@@ -282,12 +283,24 @@ public:
         Material::restore(old_obj);
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+        MultiBxDFSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_.evaluate(it, swl).as_scalar();
-        SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
-        WeightedBxDFSet diffuse_lobe{1.f, make_shared<DiffuseBxDFSet>(color, swl)};
-        MultiBxDFSet::Lobes lobes;
+
+        // diffuse
+        Float diff_weight = 1 - metallic;
+        WeightedBxDFSet diffuse_lobe{diff_weight, make_shared<DiffuseBxDFSet>(color * diff_weight, swl)};
         lobes.push_back(std::move(diffuse_lobe));
+
+        // metallic
+        SampledSpectrum specular_tint = spec_tint_.eval_albedo_spectrum(it, swl).sample;
+        SampledSpectrum f0 = color;
+        SampledSpectrum f82 = specular_tint;
+
+        SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(f0, swl);
+//        fresnel_f82->init_from_F82(f82);
+
+
         return make_unique<MultiBxDFSet>(std::move(lobes));
     }
     VS_MAKE_PLUGIN_NAME_FUNC

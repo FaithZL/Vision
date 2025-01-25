@@ -222,8 +222,8 @@ private:
 
 public:
     FresnelDisney(const SampledSpectrum &R0, Float metallic, const Float &eta,
-                  const SampledWavelengths &swl, const Pipeline *rp)
-        : Fresnel(swl, rp), R0_(R0), metallic_(metallic), eta_(eta) {}
+                  const SampledWavelengths &swl)
+        : Fresnel(swl), R0_(R0), metallic_(metallic), eta_(eta) {}
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
@@ -234,7 +234,7 @@ public:
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override { return {swl_->dimension(), eta_}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDisney>(R0_, metallic_, eta_, *swl_, rp_);
+        return make_shared<FresnelDisney>(R0_, metallic_, eta_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDisney)
 };
@@ -439,7 +439,7 @@ public:
         Float SchlickR0 = schlick_R0_from_eta(eta);
         SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
-        fresnel_ = make_deep_copy_shared<FresnelDisney>(Cspec0, metallic, eta, swl, rp);
+        fresnel_ = make_deep_copy_shared<FresnelDisney>(Cspec0, metallic, eta, swl);
         Float anisotropic = anisotropic_slot.evaluate(it, swl).as_scalar();
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
