@@ -120,8 +120,6 @@ public:
                                              const Uint &flag) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
-                                                TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
@@ -352,6 +350,10 @@ public:
         Material::restore(old_obj);
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+        auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
+        Float metallic = metallic_.evaluate(it, swl).as_scalar();
+        SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
+
         return make_unique<PrincipledBxDFSet>(it, swl, pipeline(), color_, metallic_,
                                               ior_, roughness_, spec_tint_, anisotropic_,
                                               sheen_weight_, sheen_roughness_, sheen_tint_,

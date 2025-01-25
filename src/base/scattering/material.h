@@ -74,6 +74,80 @@ public:
                                              TSampler &sampler) const noexcept override;
 };
 
+class OrenNayar : public BxDF {
+private:
+    SampledSpectrum R_;
+    Float A_, B_;
+
+public:
+    OrenNayar(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::DiffRefl), R_(R) {
+        sigma = sigma * constants::PiOver2;
+        Float sigma2 = ocarina::sqr(sigma * sigma);
+        A_ = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
+        B_ = 0.45f * sigma2 / (sigma2 + 0.09f);
+    }
+    VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return R_; }
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
+                                    SP<Fresnel> fresnel) const noexcept override {
+        Float sin_theta_i = sin_theta(wi);
+        Float sin_theta_o = sin_theta(wo);
+
+        Float sin_phi_i = sin_phi(wi);
+        Float cos_phi_i = cos_phi(wi);
+        Float sin_phi_o = sin_phi(wo);
+        Float cos_phi_o = cos_phi(wo);
+        Float d_cos = cos_phi_i * cos_phi_o + sin_phi_i * sin_phi_o;
+
+        Float max_cos = ocarina::max(0.f, d_cos);
+
+        Bool cond = abs_cos_theta(wi) > abs_cos_theta(wo);
+        Float sin_alpha = select(cond, sin_theta_o, sin_theta_i);
+        Float tan_beta = select(cond, sin_theta_i / abs_cos_theta(wi),
+                                sin_theta_o / abs_cos_theta(wo));
+        return R_ * InvPi * (A_ + B_ * max_cos * sin_alpha * tan_beta);
+    }
+};
+
+class DiffuseBxDFSet : public BxDFSet {
+private:
+    DCUP<BxDF> bxdf_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        return bxdf_->type_hash();
+    }
+
+public:
+    DiffuseBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
+        : bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
+    DiffuseBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+        : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+    [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return bxdf_->albedo(wo); }
+    [[nodiscard]] const SampledWavelengths *swl() const override {
+        return &bxdf_->swl();
+    }
+    // clang-format off
+    VS_MAKE_BxDFSet_ASSIGNMENT(DiffuseBxDFSet)
+        // clang-format on
+
+        [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                                 MaterialEvalMode mode,
+                                                 const Uint &flag) const noexcept override {
+        return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
+    }
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override {
+        return bxdf_->sample(wo, sampler, nullptr);
+    }
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override {
+        return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
+    }
+};
+
 class BlackBodyBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{nullptr};
