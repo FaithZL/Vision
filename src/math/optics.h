@@ -52,7 +52,7 @@ template<EPort p = D>
 }
 
 template<typename T>
-[[nodiscard]] scalar_t<T> schlick_R0_from_eta(const T &eta) {
+[[nodiscard]] scalar_t<T> schlick_F0_from_eta(const T &eta) {
     return sqr(eta - 1) / sqr(eta + 1);
 }
 
