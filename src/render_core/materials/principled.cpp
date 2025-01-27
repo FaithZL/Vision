@@ -287,7 +287,7 @@ public:
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_.evaluate(it, swl).as_scalar();
         Float ior = ior_.evaluate(it, swl).as_scalar();
-        Float roughness = roughness_.evaluate(it, swl).as_scalar();
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = anisotropic_.evaluate(it, swl).as_scalar();
         SampledSpectrum specular_tint = spec_tint_.eval_albedo_spectrum(it, swl).sample;
         Float aspect = sqrt(1 - anisotropic * 0.9f);
@@ -305,11 +305,14 @@ public:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         UP<BxDF> spec_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet);
         WeightedBxDFSet specular_lobe(1, make_unique<UniversalReflectBxDFSet>(fresnel_schlick, std::move(spec_refl)));
-        lobes.push_back(std::move(specular_lobe));
+//        lobes.push_back(std::move(specular_lobe));
 
         // metallic
         SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
+        fresnel_f82->init_from_F82(specular_tint);
         UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet);
+        WeightedBxDFSet metal_lobe(metallic, make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
+        lobes.push_back(std::move(metal_lobe));
 
         return make_unique<MultiBxDFSet>(std::move(lobes));
     }
