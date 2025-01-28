@@ -309,21 +309,23 @@ public:
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
-
-        // specular
-        Float f0 = schlick_F0_from_eta(ior);
-        SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
-        UP<BxDF> spec_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet);
-        WeightedBxDFSet specular_lobe(1, make_unique<UniversalReflectBxDFSet>(fresnel_schlick, std::move(spec_refl)));
-        lobes.push_back(std::move(specular_lobe));
+
+        SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
 
         // metallic
         SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
         fresnel_f82->init_from_F82(specular_tint);
-        UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * metallic, swl, microfacet);
+        UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
         WeightedBxDFSet metal_lobe(metallic, make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
         lobes.push_back(std::move(metal_lobe));
+
+        // specular
+        Float f0 = schlick_F0_from_eta(ior);
+        SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
+        UP<BxDF> spec_refl = make_unique<MicrofacetReflection>(weight * (1 - metallic), swl, microfacet);
+        WeightedBxDFSet specular_lobe(1 - metallic, make_unique<UniversalReflectBxDFSet>(fresnel_schlick, std::move(spec_refl)));
+        lobes.push_back(std::move(specular_lobe));
 
         // diffuse
         Float diff_weight = 1 - metallic;
