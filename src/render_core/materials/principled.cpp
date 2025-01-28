@@ -113,7 +113,10 @@ protected:
 
 public:
     MultiBxDFSet() = default;
-    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {}
+    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {
+        normalize_weights();
+    }
+    void normalize_weights() noexcept;
     VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
@@ -152,6 +155,16 @@ void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &, uint)> &
     }
 }
 
+void MultiBxDFSet::normalize_weights() noexcept {
+    Float weight_sum = 0;
+    for_each([&](WeightedBxDFSet &lobe) {
+        weight_sum += lobe.weight();
+    });
+    for_each([&](WeightedBxDFSet &lobe) {
+        lobe.weight() = lobe.weight() / weight_sum;
+    });
+}
+
 SampledSpectrum MultiBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
     for_each([&](const WeightedBxDFSet &lobe) {
@@ -167,9 +180,11 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
     SampledDirection sd;
     Uint sampling_strategy = 0u;
     Float sum_weights = 0.f;
+
     for_each([&](const WeightedBxDFSet &lobe, uint i) {
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.weight();
+        $condition_info("{} -----", lobe.weight());
     });
     if (lobe_num() == 1) {
         sd = lobes_[0]->sample_wi(wo, flag, sampler);
@@ -187,6 +202,7 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
             };
         };
     }
+    $condition_info(" {} ", sampling_strategy);
     return sd;
 }
 
