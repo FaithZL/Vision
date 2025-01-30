@@ -7,7 +7,6 @@
 #include "ltc_sheen_table.inl.h"
 #include "base/scattering/material.h"
 #include "base/scattering/bxdf_set.h"
-//#include "base/sample.h"
 
 namespace vision {
 
@@ -15,10 +14,13 @@ struct SheenLTCTable {
 private:
     Texture approx_;
     Texture volume_;
+    static constexpr auto res = 32;
 
 private:
     static SheenLTCTable *s_sheen_table;
     SheenLTCTable() = default;
+
+public:
     SheenLTCTable(const SheenLTCTable &) = delete;
     SheenLTCTable(SheenLTCTable &&) = delete;
     SheenLTCTable operator=(const SheenLTCTable &) = delete;

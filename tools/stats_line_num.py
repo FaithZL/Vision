@@ -19,6 +19,10 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
             continue
         if "__pycache__\\" in fn:
             continue
+        if "metal_ior.inl.h" in fn:
+            continue
+        if "ltc_sheen_table.inl.h" in fn:
+            continue
         if "stats_line_num.py" in fn:
             continue
         if "test.py" in fn:

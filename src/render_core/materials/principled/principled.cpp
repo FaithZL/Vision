@@ -299,6 +299,9 @@ public:
     void restore(RuntimeObject *old_obj) noexcept override {
         Material::restore(old_obj);
     }
+    void prepare() noexcept override {
+        SheenLTCTable::instance().init();
+    }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         MultiBxDFSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
