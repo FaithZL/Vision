@@ -77,6 +77,13 @@ requires is_vector3_expr_v<T>
     return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
 }
 
+template<typename T>
+requires is_vector3_expr_v<T>
+[[nodiscard]] Float phi(const T &v) {
+    Float p = atan2(v.y, v.x);
+    return ocarina::select(p < 0, p + 2 * Pi, p);
+}
+
 template<EPort p = D>
 [[nodiscard]] oc_float3<p> spherical_direction(oc_float<p> sin_theta, oc_float<p> cos_theta,
                                                oc_float<p> sin_phi, oc_float<p> cos_phi) {

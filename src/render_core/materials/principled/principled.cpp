@@ -310,12 +310,22 @@ public:
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = anisotropic_.evaluate(it, swl).as_scalar();
         SampledSpectrum specular_tint = spec_tint_.eval_albedo_spectrum(it, swl).sample;
+
+        SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
+        Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
+        Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
+
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
+
+        // sheen
+        Float cos_theta = dot(it.wo, it.ng);
+        UP<SheenLTC> sheen_lobe = make_unique<SheenLTC>(cos_theta, sheen_tint, sheen_roughness, swl);
+
 
         // metallic
         SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
