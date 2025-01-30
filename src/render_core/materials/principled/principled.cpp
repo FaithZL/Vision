@@ -7,6 +7,7 @@
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
+#include "ltc_sheen.h"
 
 namespace vision {
 
@@ -76,6 +77,10 @@ public:
         return make_shared<FresnelF82Tint>(F0_, B_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
+};
+
+class SheenLTC {
+private:
 };
 
 class WeightedBxDFSet {
