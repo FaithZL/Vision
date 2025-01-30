@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "math/vector_types.h"
+#include "math/basic_types.h"
 
 namespace vision {
 using namespace ocarina;

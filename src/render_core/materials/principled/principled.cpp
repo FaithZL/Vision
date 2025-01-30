@@ -79,10 +79,6 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
-class SheenLTC {
-private:
-};
-
 class WeightedBxDFSet {
 private:
     Float weight_;
