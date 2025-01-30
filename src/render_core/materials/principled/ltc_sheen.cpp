@@ -3,6 +3,7 @@
 //
 
 #include "ltc_sheen.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
@@ -21,6 +22,10 @@ void SheenLTCTable::destroy_instance() {
 }
 
 void SheenLTCTable::init() noexcept {
+    if (approx_.handle()) {
+        return;
+    }
+    
 }
 
 Float4 SheenLTCTable::sample_approx(const Float &alpha, const Float &cos_theta) noexcept {
