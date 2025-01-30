@@ -53,6 +53,8 @@ public:
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
     [[nodiscard]] Float3 sample_ltc(const Float2 &u) const noexcept;
     [[nodiscard]] Float eval_ltc(const Float3 &wi) const noexcept;
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }

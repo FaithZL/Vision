@@ -324,8 +324,9 @@ public:
 
         // sheen
         Float cos_theta = dot(it.wo, it.ng);
-        UP<SheenLTC> sheen_lobe = make_unique<SheenLTC>(cos_theta, sheen_tint, sheen_roughness, swl);
-
+        UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
+        WeightedBxDFSet sheen_lobe(sheen_weight, std::move(sheen_ltc));
+        lobes.push_back(std::move(sheen_lobe));
 
         // metallic
         SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
