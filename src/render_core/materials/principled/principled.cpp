@@ -151,9 +151,10 @@ protected:
     Float4 c_;
 
 public:
-    SheenLTC(const Float &cos_theta, SampledSpectrum tint, Float alpha, const SampledWavelengths &swl)
+    SheenLTC(const Float &cos_theta, SampledSpectrum tint,
+             Float alpha,const SampledWavelengths &swl)
         : tint_(std::move(tint)), alpha_(std::move(alpha)), swl_(&swl) {
-        c_ = SheenLTCTable::instance().sample_approx(cos_theta, alpha_);
+        c_ = SheenLTCTable::instance().sample_approx(alpha_, cos_theta);
     }
     [[nodiscard]] SampledSpectrum albedo(const ocarina::Float3 &wo) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
@@ -536,7 +537,7 @@ public:
         fresnel_f82->init_from_F82(specular_tint);
         UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * metallic, swl, microfacet);
         WeightedBxDFSet metal_lobe(metallic, make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
-        lobes.push_back(std::move(metal_lobe));
+//        lobes.push_back(std::move(metal_lobe));
 
         // specular
         Float f0 = schlick_F0_from_eta(ior);
@@ -544,12 +545,12 @@ public:
         SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
         UP<BxDF> spec_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * spec_weight, swl, microfacet);
         WeightedBxDFSet specular_lobe(1 - metallic, make_unique<UniversalReflectBxDFSet>(fresnel_schlick, std::move(spec_refl)));
-        lobes.push_back(std::move(specular_lobe));
+//        lobes.push_back(std::move(specular_lobe));
 
         // diffuse
         Float diff_weight = 1 - metallic;
         WeightedBxDFSet diffuse_lobe{diff_weight, make_shared<DiffuseBxDFSet>(color * diff_weight, swl)};
-        lobes.push_back(std::move(diffuse_lobe));
+//        lobes.push_back(std::move(diffuse_lobe));
 
         return make_unique<MultiBxDFSet>(std::move(lobes));
     }
