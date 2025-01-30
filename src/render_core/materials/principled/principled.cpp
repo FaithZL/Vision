@@ -185,7 +185,6 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
     for_each([&](const WeightedBxDFSet &lobe, uint i) {
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.weight();
-        $condition_info("{} -----", lobe.weight());
     });
     if (lobe_num() == 1) {
         sd = lobes_[0]->sample_wi(wo, flag, sampler);
@@ -203,7 +202,6 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
             };
         };
     }
-    $condition_info(" {} ", sampling_strategy);
     return sd;
 }
 
@@ -321,6 +319,7 @@ public:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
+
 
         // sheen
         Float cos_theta = dot(it.wo, it.ng);

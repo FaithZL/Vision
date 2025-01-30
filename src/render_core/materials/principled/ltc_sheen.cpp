@@ -106,6 +106,7 @@ ScatterEval SheenLTC::evaluate_local(const Float3 &wo, const Float3 &wi,
     ret.f = ltc_value * tint_ * c_.z / cos_theta_i;
     ret.pdfs = ltc_value;
     ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
+    $condition_info("{} {} {}   ------, {}  {},  ltc_value = {}, R = {}", ret.f.values().as_vec3(), cos_theta_i, cos_theta_o, ltc_value, c_.z);
     return ret;
 }
 
@@ -147,45 +148,10 @@ SampledDirection SheenLTC::sample_wi(const Float3 &wo, const Uint &flag,
     return sd;
 }
 
-Float3 SheenLTC::sample_ltc(const Float2 &u) const noexcept {
-    /*  The (inverse) transform matrix `M^{-1}` is given by:
-
-                     [[a    0    b   ]
-            M^{-1} =  [0    a    0   ]
-                      [0    0    1   ]]
-
-        with `a    = ltcCoeffs[0]`, `b    = ltcCoeffs[1]` fetched from the
-        table. The non-inverted matrix `M` is therefore:
-
-                [[1/a    0      -b/a   ]
-            M =  [0      1/a     0     ]
-                 [0      0       1     ]]
-
-        and the transformed direction wi is:
-
-                                  [[wi_origin.x/a    - wi_origin.z*b   /a   ]
-            wi = M * wi_origin =  [wi_origin.y/a                            ]
-                                   [wi_origin.z                             ]]
-
-        which is subsequently normalized.
-
-        See the original paper [Heitz et al. 2016] for details about the LTC
-        itself.
-    */
-    Float3 wi_origin = square_to_cosine_hemisphere(u);
-
-    Float a = c_[0],
-          b = c_[1];
-    Float3 wi = make_float3(wi_origin.x / a - wi_origin.z * b / a,
-                            wi_origin.y / a,
-                            wi_origin.z);
-    return normalize(wi);
-}
-
 BSDFSample SheenLTC::sample_local(const Float3 &wo, const Uint &flag,
                                   TSampler &sampler) const noexcept {
     Float cos_theta_o = cos_theta(wo);
-    Float3 wi_std = sample_ltc(sampler->next_2d());
+    Float3 wi_std = sample_wi(wo, flag, sampler).wi;
 
     Float phi_std = phi(wo);
 
