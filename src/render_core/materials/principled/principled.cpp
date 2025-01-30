@@ -135,12 +135,12 @@ void SheenLTCTable::init() noexcept {
     volume_.upload_immediately(addressof(SheenLTCTableVolume));
 }
 
-Float4 SheenLTCTable::sample_approx(const Float &alpha, const Float &cos_theta) noexcept {
-    return approx_.sample(4, make_float2(alpha, cos_theta)).as_vec4();
+Float4 SheenLTCTable::sample_approx(const Float &cos_theta, const Float &alpha) noexcept {
+    return approx_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
 }
 
-Float4 SheenLTCTable::sample_volume(const Float &alpha, const Float &cos_theta) noexcept {
-    return volume_.sample(4, make_float2(alpha, cos_theta)).as_vec4();
+Float4 SheenLTCTable::sample_volume(const Float &cos_theta, const Float &alpha) noexcept {
+    return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
 }
 
 class SheenLTC : public BxDFSet {
@@ -151,10 +151,21 @@ protected:
     Float4 c_;
 
 public:
-    SheenLTC(const Float &cos_theta, SampledSpectrum tint,
-             Float alpha,const SampledWavelengths &swl)
+    enum Mode : int {
+        Volume,
+        Approximate,
+    };
+
+public:
+    SheenLTC(Mode mode, const Float &cos_theta, SampledSpectrum tint,
+             Float alpha, const SampledWavelengths &swl)
         : tint_(std::move(tint)), alpha_(std::move(alpha)), swl_(&swl) {
-        c_ = SheenLTCTable::instance().sample_approx(alpha_, cos_theta);
+        c_ = fetch_ltc(mode, cos_theta);
+        tint_ *= c_.z;
+    }
+    [[nodiscard]] Float4 fetch_ltc(Mode mode, const Float &cos_theta) {
+        return mode == Volume ? SheenLTCTable::instance().sample_volume(cos_theta, alpha_) :
+                                SheenLTCTable::instance().sample_approx(cos_theta, alpha_);
     }
     [[nodiscard]] SampledSpectrum albedo(const ocarina::Float3 &wo) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
@@ -225,10 +236,9 @@ ScatterEval SheenLTC::evaluate_local(const Float3 &wo, const Float3 &wi,
     Float3 wi_std = rotate(wi, make_float3(0, 0, 1), -phi_std);
 
     Float ltc_value = eval_ltc(wi_std);
-    ret.f = ltc_value * tint_ * c_.z / cos_theta_i;
+    ret.f = ltc_value * tint_ / cos_theta_i;
     ret.pdfs = ltc_value;
     ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
-    $condition_info("{} {} {}   ------, {}  {},  ltc_value = {}, R = {}", ret.f.values().as_vec3(), cos_theta_i, cos_theta_o, ltc_value, c_.z);
     return ret;
 }
 
@@ -463,6 +473,7 @@ private:
     VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(spec_trans)
+    SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(MultiBxDFSet)
@@ -503,6 +514,11 @@ public:
     void restore(RuntimeObject *old_obj) noexcept override {
         Material::restore(old_obj);
     }
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        static vector<const char *> names = {"volume", "approximate"};
+        widgets->combo("sheen mode", reinterpret_cast<int *>(addressof(sheen_mode_)), names);
+        Material::render_sub_UI(widgets);
+    }
     void prepare() noexcept override {
         SheenLTCTable::instance().init();
     }
@@ -528,7 +544,7 @@ public:
 
         // sheen
         Float cos_theta = dot(it.wo, it.ng);
-        UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
+        UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
         WeightedBxDFSet sheen_lobe(sheen_weight, std::move(sheen_ltc));
         lobes.push_back(std::move(sheen_lobe));
 
@@ -537,7 +553,7 @@ public:
         fresnel_f82->init_from_F82(specular_tint);
         UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * metallic, swl, microfacet);
         WeightedBxDFSet metal_lobe(metallic, make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
-//        lobes.push_back(std::move(metal_lobe));
+        //        lobes.push_back(std::move(metal_lobe));
 
         // specular
         Float f0 = schlick_F0_from_eta(ior);
@@ -545,12 +561,12 @@ public:
         SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
         UP<BxDF> spec_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * spec_weight, swl, microfacet);
         WeightedBxDFSet specular_lobe(1 - metallic, make_unique<UniversalReflectBxDFSet>(fresnel_schlick, std::move(spec_refl)));
-//        lobes.push_back(std::move(specular_lobe));
+        //        lobes.push_back(std::move(specular_lobe));
 
         // diffuse
         Float diff_weight = 1 - metallic;
         WeightedBxDFSet diffuse_lobe{diff_weight, make_shared<DiffuseBxDFSet>(color * diff_weight, swl)};
-//        lobes.push_back(std::move(diffuse_lobe));
+        //        lobes.push_back(std::move(diffuse_lobe));
 
         return make_unique<MultiBxDFSet>(std::move(lobes));
     }
