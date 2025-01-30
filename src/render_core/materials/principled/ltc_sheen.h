@@ -17,7 +17,7 @@ private:
     Texture volume_;
 
 private:
-    static SheenLTCTable *s_mesh_registry;
+    static SheenLTCTable *s_sheen_table;
     SheenLTCTable() = default;
     SheenLTCTable(const SheenLTCTable &) = delete;
     SheenLTCTable(SheenLTCTable &&) = delete;
@@ -28,6 +28,8 @@ public:
     static SheenLTCTable &instance();
     static void destroy_instance();
     void init() noexcept;
+    [[nodiscard]] Float4 sample_approx(const Float &cos_theta, const Float &alpha) noexcept;
+    [[nodiscard]] Float4 sample_volume(const Float &cos_theta, const Float &alpha) noexcept;
 };
 
 class SheenLTC : public BxDFSet {
