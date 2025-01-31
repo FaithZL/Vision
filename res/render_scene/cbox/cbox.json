@@ -773,6 +773,17 @@
 				"spec_tint" : 0.0,
 				"anisotropic" : 0,
 				"sheen_weight" : 1,
+				"sheen_tint": {
+					"channels": "xyz",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": [0,0.5,1]
+						}
+					}
+				},
 				//				"sheen_tint" : 0,
 				"clearcoat" : 0,
 				"clearcoat_alpha" : 0.1,
