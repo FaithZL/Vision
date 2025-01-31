@@ -144,7 +144,7 @@ public:
           dispersive_(ocarina::move(dispersive)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
         [[nodiscard]] const SampledWavelengths *swl() const override { return &refl_.swl(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return refl_.albedo(wo); }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,

@@ -86,6 +86,11 @@ BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     return ret;
 }
 
+SampledSpectrum DielectricBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
+    SampledSpectrum F = fresnel_->evaluate(cos_theta(wo));
+    return F * refl_.albedo(wo) + (1 - F) * trans_.albedo(wo);
+}
+
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode, const Uint &flag) const noexcept {
     ScatterEval ret{refl_.swl()};
