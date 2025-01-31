@@ -364,17 +364,19 @@ public:
         {
             // specular
             Float f0 = schlick_F0_from_eta(ior);
-            Float spec_weight = 1 - metallic;
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
-            UP<BxDF> spec_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * spec_weight, swl, microfacet);
-            WeightedBxDFSet specular_lobe(1 - metallic, make_unique<UniversalReflectBxDFSet>(fresnel_schlick, std::move(spec_refl)));
-            //        lobes.push_back(std::move(specular_lobe));
+            UP<UniversalReflectBxDFSet> spec_refl = make_unique<UniversalReflectBxDFSet>(fresnel_schlick,
+                                                                                             make_unique<MicrofacetReflection>(weight, swl, microfacet));
+            SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
+            WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
+            lobes.push_back(std::move(specular_lobe));
+            weight = detail::layering_weight(spec_refl_albedo, weight);
         }
         {
             // diffuse
-            Float diff_weight = 1 - metallic;
-            WeightedBxDFSet diffuse_lobe{diff_weight, make_shared<DiffuseBxDFSet>(color * diff_weight, swl)};
-            //        lobes.push_back(std::move(diffuse_lobe));
+            SampledSpectrum diff_weight = color * weight;
+            WeightedBxDFSet diffuse_lobe{diff_weight.average(), make_shared<DiffuseBxDFSet>(diff_weight, swl)};
+            lobes.push_back(std::move(diffuse_lobe));
         }
         return make_unique<MultiBxDFSet>(std::move(lobes));
     }

@@ -770,7 +770,17 @@
 				},
 				"roughness" : 0.1,
 				"metallic" : 0,
-				"spec_tint" : 0.0,
+				"spec_tint" : {
+					"channels": "xyz",
+					"node" : {
+						"type" : "number",
+						"param": {
+							"min": 0,
+							"max" : 3,
+							"value": [1,0.5,0]
+						}
+					}
+				},
 				"anisotropic" : 0,
 				"sheen_weight" : 1,
 				"sheen_tint": {
@@ -779,7 +789,7 @@
 						"type" : "number",
 						"param": {
 							"min": 0,
-							"max" : 3,
+							"max" : 1,
 							"value": [0,0.5,1]
 						}
 					}
