@@ -8,7 +8,6 @@
 
 namespace vision {
 
-
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode,
                                               const Uint &flag) const noexcept {
@@ -18,7 +17,6 @@ ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi
     });
     return ret;
 }
-
 
 BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
@@ -52,9 +50,9 @@ void MaterialEvaluator::mollify() noexcept {
 
 SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept {
     SampledSpectrum ret{swl_->dimension()};
-    Float3 wo = shading_frame_.to_local(world_wo);
+    Float cos_theta = dot(shading_frame_.normal(), world_wo);
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->albedo(cos_theta(wo));
+        ret = lobe_set->albedo(cos_theta);
     });
     return ret;
 }
