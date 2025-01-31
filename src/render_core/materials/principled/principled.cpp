@@ -223,30 +223,7 @@ public:
 
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
-        /*  The (inverse) transform matrix `M^{-1}` is given by:
 
-                     [[a    0    b   ]
-            M^{-1} =  [0    a    0   ]
-                      [0    0    1   ]]
-
-        with `a    = ltcCoeffs[0]`, `b    = ltcCoeffs[1]` fetched from the
-        table. The non-inverted matrix `M` is therefore:
-
-                [[1/a    0      -b/a   ]
-            M =  [0      1/a     0     ]
-                 [0      0       1     ]]
-
-        and the transformed direction wi is:
-
-                                  [[wi_origin.x/a    - wi_origin.z*b   /a   ]
-            wi = M * wi_origin =  [wi_origin.y/a                            ]
-                                   [wi_origin.z                             ]]
-
-        which is subsequently normalized.
-
-        See the original paper [Heitz et al. 2016] for details about the LTC
-        itself.
-      */
         Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
         wi = M(wi);
         SampledDirection sd;
@@ -255,30 +232,6 @@ public:
         return sd;
     }
     [[nodiscard]] Float eval_ltc(Float3 wi) const noexcept {
-        /*
-        The (inverse) transform matrix `M^{-1}` is given by:
-
-                     [[a    0    b]
-            M^{-1} =  [0    a    0]
-                      [0    0    1]]
-
-        with `a = ltcCoeffs[0]`, `b = ltcCoeffs[1]` fetched from the
-        table. The transformed direction `wi_origin` is therefore:
-
-                                       [[a * wi.x + b * wi.z]
-                new_wi = M^{-1} * wi =  [a * wi.y           ]
-                                        [wi.z               ]]
-
-        which is subsequently normalized. The determinant of the matrix is
-
-            |M^{-1}| = a * a
-
-        which is used to compute the Jacobian determinant of the complete
-        mapping including the normalization.
-
-        See the original paper [Heitz et al. 2016] for details about the LTC
-        itself.
-        */
         wi = inv_M(wi);
         Float length = ocarina::length(wi);
         wi /= length;
