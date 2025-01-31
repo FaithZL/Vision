@@ -246,17 +246,15 @@ public:
 
         See the original paper [Heitz et al. 2016] for details about the LTC
         itself.
-    */
-        Float3 wi_origin = square_to_cosine_hemisphere(sampler->next_2d());
-        Float3 wi = make_float3(wi_origin.x - wi_origin.z * b_,
-                                wi_origin.y,
-                                wi_origin.z * a_);
+      */
+        Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
+        wi = M(wi);
         SampledDirection sd;
         sd.pdf = 1;
         sd.wi = normalize(wi);
         return sd;
     }
-    [[nodiscard]] Float eval_ltc(const Float3 &wi) const noexcept {
+    [[nodiscard]] Float eval_ltc(Float3 wi) const noexcept {
         /*
         The (inverse) transform matrix `M^{-1}` is given by:
 
@@ -268,8 +266,8 @@ public:
         table. The transformed direction `wi_origin` is therefore:
 
                                        [[a * wi.x + b * wi.z]
-            wi_origin = M^{-1} * wi =  [a * wi.y              ]
-                                        [wi.z                 ]]
+                new_wi = M^{-1} * wi =  [a * wi.y           ]
+                                        [wi.z               ]]
 
         which is subsequently normalized. The determinant of the matrix is
 
@@ -281,14 +279,12 @@ public:
         See the original paper [Heitz et al. 2016] for details about the LTC
         itself.
         */
-        Float3 wi_origin = make_float3(a_ * wi.x + b_ * wi.z,
-                                       a_ * wi.y,
-                                       wi.z);
-        Float length = ocarina::length(wi_origin);
-        wi_origin /= length;
+        wi = inv_M(wi);
+        Float length = ocarina::length(wi);
+        wi /= length;
         Float det = sqr(a_);
         Float jacobian = det / (length * length * length);
-        return cosine_hemisphere_PDF(cos_theta(wi_origin)) * jacobian;
+        return cosine_hemisphere_PDF(cos_theta(wi)) * jacobian;
     }
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
 };
