@@ -206,6 +206,7 @@ requires std::disjunction_v<
 
 [[nodiscard]] SampledSpectrum zero_if_any_nan(const SampledSpectrum &t) noexcept;
 [[nodiscard]] SampledSpectrum zero_if_any_nan_inf(const SampledSpectrum &t) noexcept;
+[[nodiscard]] SampledSpectrum safe_div(const SampledSpectrum &a, const SampledSpectrum &b) noexcept;
 
 #define VS_MAKE_SPECTRUM_MATH_FUNC(func_name)                                                        \
     template<typename... Args>                                                                       \

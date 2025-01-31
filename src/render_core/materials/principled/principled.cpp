@@ -143,6 +143,17 @@ Float4 SheenLTCTable::sample_volume(const Float &cos_theta, const Float &alpha) 
     return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
 }
 
+namespace detail {
+
+[[nodiscard]] SampledSpectrum layering_weight(const SampledSpectrum &layer_albedo,
+                                              const SampledSpectrum &weight) noexcept {
+    SampledSpectrum tmp = safe_div(layer_albedo, weight);
+    Float max_comp = tmp.max();
+    return weight * (1 - saturate(max_comp));
+}
+
+}// namespace detail
+
 class SheenLTC : public BxDFSet {
 protected:
     const SampledWavelengths *swl_{nullptr};

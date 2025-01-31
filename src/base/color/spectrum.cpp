@@ -101,4 +101,10 @@ SampledSpectrum zero_if_any_nan_inf(const SampledSpectrum &t) noexcept {
     return t.map([&any_nan_inf](const Float &x) noexcept { return select(any_nan_inf, 0.f, x); });
 }
 
+SampledSpectrum safe_div(const SampledSpectrum &lhs, const SampledSpectrum &rhs) noexcept {
+    return lhs.map([&](uint i, const Float &a) {
+        return safe_div(a, rhs[i]);
+    });
+}
+
 }// namespace vision

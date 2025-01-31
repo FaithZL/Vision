@@ -267,11 +267,6 @@ public:
     [[nodiscard]] bool is_complete() const noexcept override { return true; }
     [[nodiscard]] Float cie_y(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         Float sum = 0.f;
-
-        constexpr auto safe_div = [](const Float &a, const Float &b) noexcept {
-            return select(b == 0.0f, 0.0f, a / b);
-        };
-
         for (uint i = 0; i < sp.dimension(); ++i) {
             sum += safe_div(cie_y_.eval(swl.lambda(i)) * sp[i], swl.pdf(i));
         }
@@ -280,9 +275,6 @@ public:
     }
     [[nodiscard]] Float3 cie_xyz(const SampledSpectrum &sp, const SampledWavelengths &swl) const noexcept override {
         Float3 sum = make_float3(0.f);
-        constexpr auto safe_div = [](const Float &a, const Float &b) noexcept {
-            return select(b == 0.0f, 0.0f, a / b);
-        };
         for (uint i = 0; i < sp.dimension(); ++i) {
             sum += make_float3(safe_div(cie_x_.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
                                safe_div(cie_y_.eval(swl.lambda(i)) * sp[i], swl.pdf(i)),
