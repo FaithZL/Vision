@@ -768,7 +768,7 @@
 						}
 					}
 				},
-				"roughness" : 0.1,
+				"roughness" : 1,
 				"metallic" : 0,
 				"spec_tint" : {
 					"channels": "xyz",
@@ -782,7 +782,7 @@
 					}
 				},
 				"anisotropic" : 0,
-				"sheen_weight" : 1,
+				"sheen_weight" : 0,
 				"sheen_tint": {
 					"channels": "xyz",
 					"node" : {
@@ -794,7 +794,6 @@
 						}
 					}
 				},
-				//				"sheen_tint" : 0,
 				"clearcoat" : 0,
 				"clearcoat_alpha" : 0.1,
 				"spec_trans" : 0.95,
