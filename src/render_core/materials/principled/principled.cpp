@@ -346,7 +346,7 @@ public:
 
         {
             // sheen
-            Float cos_theta = dot(it.wo, it.ng);
+            Float cos_theta = dot(it.wo, it.shading.normal());
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
             WeightedBxDFSet sheen_lobe(sheen_weight, std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
