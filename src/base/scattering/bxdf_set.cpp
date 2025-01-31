@@ -18,7 +18,7 @@ const SampledWavelengths *UniversalReflectBxDFSet::swl() const {
     return &refl_->swl();
 }
 
-SampledSpectrum UniversalReflectBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
+SampledSpectrum UniversalReflectBxDFSet::albedo(const Float3 &wo) const noexcept {
     return refl_->albedo(wo) * fresnel_->evaluate(cos_theta(wo));
 }
 
@@ -86,7 +86,7 @@ BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     return ret;
 }
 
-SampledSpectrum DielectricBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
+SampledSpectrum DielectricBxDFSet::albedo(const Float3 &wo) const noexcept {
     SampledSpectrum F = fresnel_->evaluate(cos_theta(wo));
     return F * refl_.albedo(wo) + (1 - F) * trans_.albedo(wo);
 }
@@ -219,7 +219,7 @@ void MultiBxDFSet::normalize_weights() noexcept {
     });
 }
 
-SampledSpectrum MultiBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
+SampledSpectrum MultiBxDFSet::albedo(const Float3 &wo) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
     for_each([&](const WeightedBxDFSet &lobe) {
         ret += lobe->albedo(wo);

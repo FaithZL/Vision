@@ -181,7 +181,7 @@ public:
         return mode == Volume ? SheenLTCTable::instance().sample_volume(cos_theta, alpha_) :
                                 SheenLTCTable::instance().sample_approx(cos_theta, alpha_);
     }
-    [[nodiscard]] SampledSpectrum albedo(const ocarina::Float3 &wo) const noexcept override { return tint_; }
+    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
