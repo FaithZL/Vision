@@ -172,23 +172,14 @@ public:
     }
     [[nodiscard]] SampledSpectrum albedo(const ocarina::Float3 &wo) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
-    [[nodiscard]] static Float3 rotate(const Float3 &v, const Float3 &axis,
-                                       const Float &angle) noexcept {
-        Float s = sin(angle);
-        Float c = cos(angle);
-        return v * c + axis * dot(v, axis) * (1.f - c) + s * cross(axis, v);
-    }
+
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override {
         ScatterEval ret{*swl_};
         Float cos_theta_o = cos_theta(wo);
         Float cos_theta_i = cos_theta(wi);
 
-        Float phi_std = phi(wo);
-
-        Float3 wi_std = rotate(wi, make_float3(0, 0, 1), -phi_std);
-
-        Float ltc_value = eval_ltc(wi_std);
+        Float ltc_value = eval_ltc(wi);
         ret.f = ltc_value * tint_ / cos_theta_i;
         ret.pdfs = ltc_value;
         ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
@@ -230,12 +221,12 @@ public:
         itself.
     */
         Float3 wi_origin = square_to_cosine_hemisphere(sampler->next_2d());
-        Float3 wi = make_float3(wi_origin.x / a_ - wi_origin.z * b_ / a_,
-                                wi_origin.y / a_,
-                                wi_origin.z);
+        Float3 wi = make_float3(wi_origin.x - wi_origin.z * b_,
+                                wi_origin.y,
+                                wi_origin.z * a_);
         SampledDirection sd;
         sd.pdf = 1;
-        sd.wi = wi;
+        sd.wi = normalize(wi);
         return sd;
     }
     [[nodiscard]] Float eval_ltc(const Float3 &wi) const noexcept {
