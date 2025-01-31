@@ -22,8 +22,16 @@ def export_matte(exporter, bsdf):
     return ret
 
 
-def export_disney(exporter, bsdf):
-    ret = {"type": "disney"}
+def export_principled(exporter, bsdf):
+    ret = {
+        "type": "principled",
+        "param": {
+            "color": shadernode.parse_node(exporter, bsdf.inputs["Base Color"], 3),
+            "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1),
+            "ior": shadernode.parse_node(exporter, bsdf.inputs["IOR"], 1),
+            "metallic": shadernode.parse_node(exporter, bsdf.inputs["Metallic"], 1),
+        },
+    }
     return ret
 
 
@@ -89,7 +97,7 @@ def export_add(exporter, bsdf):
 
 func_tab = {
     "BSDF_DIFFUSE": export_matte,
-    "BSDF_PRINCIPLED": export_disney,
+    "BSDF_PRINCIPLED": export_principled,
     "BSDF_GLASS": export_glass,
     "BSDF_GLOSSY": export_mirror,
     "MIX_SHADER": export_mix,
