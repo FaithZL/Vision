@@ -217,7 +217,7 @@ void MultiBxDFSet::normalize_weights() noexcept {
 SampledSpectrum MultiBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
     for_each([&](const WeightedBxDFSet &lobe) {
-        ret += lobe->albedo(wo) * lobe.weight();
+        ret += lobe->albedo(wo);
     });
     return ret;
 }
