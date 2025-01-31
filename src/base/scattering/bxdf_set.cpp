@@ -184,4 +184,103 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     return ret;
 }
 
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &)> &func) {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const {
+    for (int i = 0; i < lobe_num(); ++i) {
+        func(lobes_[i], i);
+    }
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &, uint)> &func) {
+    for (int i = 0; i < lobe_num(); ++i) {
+        func(lobes_[i], i);
+    }
+}
+
+void MultiBxDFSet::normalize_weights() noexcept {
+    Float weight_sum = 0;
+    for_each([&](WeightedBxDFSet &lobe) {
+        weight_sum += lobe.weight();
+    });
+    for_each([&](WeightedBxDFSet &lobe) {
+        lobe.weight() = lobe.weight() / weight_sum;
+    });
+}
+
+SampledSpectrum MultiBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
+    SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret += lobe->albedo(wo) * lobe.weight();
+    });
+    return ret;
+}
+
+SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
+                                         TSampler &sampler) const noexcept {
+    Float uc = sampler->next_1d();
+    Float2 u = sampler->next_2d();
+    SampledDirection sd;
+    Uint sampling_strategy = 0u;
+    Float sum_weights = 0.f;
+
+    for_each([&](const WeightedBxDFSet &lobe, uint i) {
+        sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+        sum_weights += lobe.weight();
+    });
+    if (lobe_num() == 1) {
+        sd = lobes_[0]->sample_wi(wo, flag, sampler);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedBxDFSet &lobe, uint i) {
+                $case(i) {
+                    sd = lobe->sample_wi(wo, flag, sampler);
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+    }
+    return sd;
+}
+
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
+                                      TSampler &sampler) const noexcept {
+    BSDFSample ret{*swl()};
+    SampledDirection sd = sample_wi(wo, flag, sampler);
+    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+    ret.wi = sd.wi;
+    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+    return ret;
+}
+
+Uint MultiBxDFSet::flag() const noexcept {
+    Uint ret = BxDFFlag::Unset;
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret |= lobe->flag();
+    });
+    return ret;
+}
+
+ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag) const noexcept {
+    ScatterEval ret{*swl()};
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag);
+        ret.f += se.f;
+        ret.pdfs += se.pdfs * lobe.weight();
+        ret.flags = ret.flags | lobe->flag();
+    });
+    return ret;
+}
+
 }// namespace vision

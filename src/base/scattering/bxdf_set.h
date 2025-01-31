@@ -157,4 +157,61 @@ public:
                                           TSampler &sampler) const noexcept override;
 };
 
+class WeightedBxDFSet {
+private:
+    Float weight_;
+    DCSP<BxDFSet> bxdf_;
+
+public:
+    WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf)
+        : weight_(std::move(weight)), bxdf_(std::move(bxdf)) {}
+    [[nodiscard]] const BxDFSet &operator*() const noexcept { return *bxdf_; }
+    [[nodiscard]] BxDFSet &operator*() noexcept { return *bxdf_; }
+    [[nodiscard]] const BxDFSet *operator->() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] BxDFSet *operator->() noexcept { return bxdf_.get(); }
+    [[nodiscard]] const BxDFSet *get() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] BxDFSet *get() noexcept { return bxdf_.get(); }
+    OC_MAKE_MEMBER_GETTER(weight, &)
+};
+
+class MultiBxDFSet : public BxDFSet {
+public:
+    using Lobes = ocarina::vector<WeightedBxDFSet>;
+
+private:
+    Lobes lobes_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        uint64_t ret = Hash64::default_seed;
+        for_each([&](const WeightedBxDFSet &lobe) {
+            ret = hash64(ret, lobe->type_hash());
+        });
+        return ret;
+    }
+
+public:
+    MultiBxDFSet() = default;
+    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {
+        normalize_weights();
+    }
+    void normalize_weights() noexcept;
+    VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
+        [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override;
+    [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override;
+    [[nodiscard]] Uint flag() const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
+    void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &)> &func);
+    void for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &, uint)> &func);
+};
+
 }// namespace vision
