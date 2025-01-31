@@ -54,7 +54,7 @@ SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept
     SampledSpectrum ret{swl_->dimension()};
     Float3 wo = shading_frame_.to_local(world_wo);
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->albedo(wo);
+        ret = lobe_set->albedo(cos_theta(wo));
     });
     return ret;
 }

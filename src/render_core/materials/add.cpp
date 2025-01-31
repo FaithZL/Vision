@@ -20,8 +20,8 @@ public:
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)) {
     }
     [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float3 &wo) const noexcept override {
-        return b0_->albedo(wo) + b1_->albedo(wo);
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
+        return b0_->albedo(cos_theta) + b1_->albedo(cos_theta);
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         optional<Bool> v0 = b0_->is_dispersive();
@@ -63,7 +63,7 @@ public:
     }
 
     BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        BSDFSample ret{b0_->albedo(wo).dimension(), 1u};
+        BSDFSample ret{*b0_->swl()};
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
         ret.wi = sd.wi;
