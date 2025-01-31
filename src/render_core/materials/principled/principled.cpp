@@ -170,81 +170,44 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const ocarina::Float3 &wo) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
     [[nodiscard]] static Float3 rotate(const Float3 &v, const Float3 &axis,
-                                       const Float &angle) noexcept;
+                                       const Float &angle) noexcept {
+        Float s = sin(angle);
+        Float c = cos(angle);
+        return v * c + axis * dot(v, axis) * (1.f - c) + s * cross(axis, v);
+    }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag) const noexcept override;
+                                             MaterialEvalMode mode, const Uint &flag) const noexcept override {
+        ScatterEval ret{*swl_};
+        Float cos_theta_o = cos_theta(wo);
+        Float cos_theta_i = cos_theta(wi);
+
+        Float phi_std = phi(wo);
+
+        Float3 wi_std = rotate(wi, make_float3(0, 0, 1), -phi_std);
+
+        Float ltc_value = eval_ltc(wi_std);
+        ret.f = ltc_value * tint_ / cos_theta_i;
+        ret.pdfs = ltc_value;
+        ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
+        return ret;
+    }
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
+                                          TSampler &sampler) const noexcept override {
+        Float cos_theta_o = cos_theta(wo);
+        Float3 wi_std = sample_wi(wo, flag, sampler).wi;
+
+        Float phi_std = phi(wo);
+
+        Float3 wi_origin = rotate(wi_std, make_float3(0, 0, 1), phi_std);
+        BSDFSample ret{*swl_};
+        ret.eval = evaluate_local(wo, wi_origin, MaterialEvalMode::All, flag);
+        ret.wi = wi_origin;
+        ret.eval.f = select(cos_theta_o < 0.f, 0.f, ret.eval.f);
+        return ret;
+    }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override;
-    [[nodiscard]] Float eval_ltc(const Float3 &wi) const noexcept;
-    [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
-};
-
-Float3 SheenLTC::rotate(const Float3 &v, const Float3 &axis,
-                        const Float &angle) noexcept {
-    Float s = sin(angle);
-    Float c = cos(angle);
-    return v * c + axis * dot(v, axis) * (1.f - c) + s * cross(axis, v);
-}
-
-Float SheenLTC::eval_ltc(const Float3 &wi) const noexcept {
-    /*
-        The (inverse) transform matrix `M^{-1}` is given by:
-
-                     [[a    0    b]
-            M^{-1} =  [0    a    0]
-                      [0    0    1]]
-
-        with `a = ltcCoeffs[0]`, `b = ltcCoeffs[1]` fetched from the
-        table. The transformed direction `wi_origin` is therefore:
-
-                                       [[a * wi.x + b * wi.z]
-            wi_origin = M^{-1} * wi =  [a * wi.y              ]
-                                        [wi.z                 ]]
-
-        which is subsequently normalized. The determinant of the matrix is
-
-            |M^{-1}| = a * a
-
-        which is used to compute the Jacobian determinant of the complete
-        mapping including the normalization.
-
-        See the original paper [Heitz et al. 2016] for details about the LTC
-        itself.
-    */
-    Float a = c_.x;
-    Float b = c_.y;
-    Float3 wi_origin = make_float3(a * wi.x + b * wi.z,
-                                   a * wi.y,
-                                   wi.z);
-    Float length = ocarina::length(wi_origin);
-    wi_origin /= length;
-    Float det = sqr(a);
-    Float jacobian = det / (length * length * length);
-    return cosine_hemisphere_PDF(cos_theta(wi_origin)) * jacobian;
-}
-
-ScatterEval SheenLTC::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                     MaterialEvalMode mode, const Uint &flag) const noexcept {
-    ScatterEval ret{*swl_};
-    Float cos_theta_o = cos_theta(wo);
-    Float cos_theta_i = cos_theta(wi);
-
-    Float phi_std = phi(wo);
-
-    Float3 wi_std = rotate(wi, make_float3(0, 0, 1), -phi_std);
-
-    Float ltc_value = eval_ltc(wi_std);
-    ret.f = ltc_value * tint_ / cos_theta_i;
-    ret.pdfs = ltc_value;
-    ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
-    return ret;
-}
-
-SampledDirection SheenLTC::sample_wi(const Float3 &wo, const Uint &flag,
-                                     TSampler &sampler) const noexcept {
-    /*  The (inverse) transform matrix `M^{-1}` is given by:
+                                             TSampler &sampler) const noexcept override {
+        /*  The (inverse) transform matrix `M^{-1}` is given by:
 
                      [[a    0    b   ]
             M^{-1} =  [0    a    0   ]
@@ -268,32 +231,55 @@ SampledDirection SheenLTC::sample_wi(const Float3 &wo, const Uint &flag,
         See the original paper [Heitz et al. 2016] for details about the LTC
         itself.
     */
-    Float3 wi_origin = square_to_cosine_hemisphere(sampler->next_2d());
-    Float a = c_[0],
-          b = c_[1];
-    Float3 wi = make_float3(wi_origin.x / a - wi_origin.z * b / a,
-                            wi_origin.y / a,
-                            wi_origin.z);
-    SampledDirection sd;
-    sd.pdf = 1;
-    sd.wi = wi;
-    return sd;
-}
+        Float3 wi_origin = square_to_cosine_hemisphere(sampler->next_2d());
+        Float a = c_[0],
+              b = c_[1];
+        Float3 wi = make_float3(wi_origin.x / a - wi_origin.z * b / a,
+                                wi_origin.y / a,
+                                wi_origin.z);
+        SampledDirection sd;
+        sd.pdf = 1;
+        sd.wi = wi;
+        return sd;
+    }
+    [[nodiscard]] Float eval_ltc(const Float3 &wi) const noexcept {
+        /*
+        The (inverse) transform matrix `M^{-1}` is given by:
 
-BSDFSample SheenLTC::sample_local(const Float3 &wo, const Uint &flag,
-                                  TSampler &sampler) const noexcept {
-    Float cos_theta_o = cos_theta(wo);
-    Float3 wi_std = sample_wi(wo, flag, sampler).wi;
+                     [[a    0    b]
+            M^{-1} =  [0    a    0]
+                      [0    0    1]]
 
-    Float phi_std = phi(wo);
+        with `a = ltcCoeffs[0]`, `b = ltcCoeffs[1]` fetched from the
+        table. The transformed direction `wi_origin` is therefore:
 
-    Float3 wi_origin = rotate(wi_std, make_float3(0, 0, 1), phi_std);
-    BSDFSample ret{*swl_};
-    ret.eval = evaluate_local(wo, wi_origin, MaterialEvalMode::All, flag);
-    ret.wi = wi_origin;
-    ret.eval.f = select(cos_theta_o < 0.f, 0.f, ret.eval.f);
-    return ret;
-}
+                                       [[a * wi.x + b * wi.z]
+            wi_origin = M^{-1} * wi =  [a * wi.y              ]
+                                        [wi.z                 ]]
+
+        which is subsequently normalized. The determinant of the matrix is
+
+            |M^{-1}| = a * a
+
+        which is used to compute the Jacobian determinant of the complete
+        mapping including the normalization.
+
+        See the original paper [Heitz et al. 2016] for details about the LTC
+        itself.
+    */
+        Float a = c_.x;
+        Float b = c_.y;
+        Float3 wi_origin = make_float3(a * wi.x + b * wi.z,
+                                       a * wi.y,
+                                       wi.z);
+        Float length = ocarina::length(wi_origin);
+        wi_origin /= length;
+        Float det = sqr(a);
+        Float jacobian = det / (length * length * length);
+        return cosine_hemisphere_PDF(cos_theta(wi_origin)) * jacobian;
+    }
+    [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
+};
 
 class WeightedBxDFSet {
 private:

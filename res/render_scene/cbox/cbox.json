@@ -772,7 +772,7 @@
 				"metallic" : 0,
 				"spec_tint" : 0.0,
 				"anisotropic" : 0,
-				"sheen" : 0,
+				"sheen_weight" : 1,
 				//				"sheen_tint" : 0,
 				"clearcoat" : 0,
 				"clearcoat_alpha" : 0.1,
