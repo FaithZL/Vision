@@ -193,16 +193,11 @@ public:
     }
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
-        Float cos_theta_o = cos_theta(wo);
-        Float3 wi_std = sample_wi(wo, flag, sampler).wi;
-
-        Float phi_std = phi(wo);
-
-        Float3 wi_origin = rotate(wi_std, make_float3(0, 0, 1), phi_std);
-        BSDFSample ret{*swl_};
-        ret.eval = evaluate_local(wo, wi_origin, MaterialEvalMode::All, flag);
-        ret.wi = wi_origin;
-        ret.eval.f = select(cos_theta_o < 0.f, 0.f, ret.eval.f);
+        BSDFSample ret{*swl()};
+        SampledDirection sd = sample_wi(wo, flag, sampler);
+        ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+        ret.wi = sd.wi;
+        ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
         return ret;
     }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
