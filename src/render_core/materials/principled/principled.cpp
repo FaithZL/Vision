@@ -148,7 +148,8 @@ protected:
     const SampledWavelengths *swl_{nullptr};
     SampledSpectrum tint_;
     Float alpha_;
-    Float4 c_;
+    Float a_;
+    Float b_;
 
 public:
     enum Mode : int {
@@ -160,8 +161,10 @@ public:
     SheenLTC(Mode mode, const Float &cos_theta, SampledSpectrum tint,
              Float alpha, const SampledWavelengths &swl)
         : tint_(std::move(tint)), alpha_(std::move(alpha)), swl_(&swl) {
-        c_ = fetch_ltc(mode, cos_theta);
-        tint_ *= c_.z;
+        Float4 c = fetch_ltc(mode, cos_theta);
+        a_ = c.x;
+        b_ = c.y;
+        tint_ *= c.z;
     }
     [[nodiscard]] Float4 fetch_ltc(Mode mode, const Float &cos_theta) {
         return mode == Volume ? SheenLTCTable::instance().sample_volume(cos_theta, alpha_) :
@@ -227,10 +230,8 @@ public:
         itself.
     */
         Float3 wi_origin = square_to_cosine_hemisphere(sampler->next_2d());
-        Float a = c_[0],
-              b = c_[1];
-        Float3 wi = make_float3(wi_origin.x / a - wi_origin.z * b / a,
-                                wi_origin.y / a,
+        Float3 wi = make_float3(wi_origin.x / a_ - wi_origin.z * b_ / a_,
+                                wi_origin.y / a_,
                                 wi_origin.z);
         SampledDirection sd;
         sd.pdf = 1;
@@ -261,15 +262,13 @@ public:
 
         See the original paper [Heitz et al. 2016] for details about the LTC
         itself.
-    */
-        Float a = c_.x;
-        Float b = c_.y;
-        Float3 wi_origin = make_float3(a * wi.x + b * wi.z,
-                                       a * wi.y,
+        */
+        Float3 wi_origin = make_float3(a_ * wi.x + b_ * wi.z,
+                                       a_ * wi.y,
                                        wi.z);
         Float length = ocarina::length(wi_origin);
         wi_origin /= length;
-        Float det = sqr(a);
+        Float det = sqr(a_);
         Float jacobian = det / (length * length * length);
         return cosine_hemisphere_PDF(cos_theta(wi_origin)) * jacobian;
     }
