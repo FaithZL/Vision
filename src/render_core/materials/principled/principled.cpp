@@ -149,7 +149,7 @@ namespace detail {
                                               const SampledSpectrum &weight) noexcept {
     SampledSpectrum tmp = safe_div(layer_albedo, weight);
     Float max_comp = tmp.max();
-    return weight * (1 - saturate(max_comp));
+    return weight * saturate(1 - max_comp);
 }
 
 }// namespace detail
@@ -343,21 +343,23 @@ public:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
-
+        Float cos_theta = dot(it.wo, it.shading.normal());
         {
             // sheen
-            Float cos_theta = dot(it.wo, it.shading.normal());
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
-            WeightedBxDFSet sheen_lobe(sheen_weight, std::move(sheen_ltc));
+            SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
+            WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
+            weight = detail::layering_weight(sheen_albedo, weight);
         }
         {
             // metallic
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
-            UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()) * metallic, swl, microfacet);
-            WeightedBxDFSet metal_lobe(metallic, make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
-            //        lobes.push_back(std::move(metal_lobe));
+            UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
+            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
+            lobes.push_back(std::move(metal_lobe));
+            weight *= (1.0f - metallic);
         }
         {
             // specular
