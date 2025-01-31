@@ -19,7 +19,7 @@ const SampledWavelengths *UniversalReflectBxDFSet::swl() const {
 }
 
 SampledSpectrum UniversalReflectBxDFSet::albedo(const ocarina::Float3 &wo) const noexcept {
-    return refl_->albedo(wo);
+    return refl_->albedo(wo) * fresnel_->evaluate(cos_theta(wo));
 }
 
 ScatterEval UniversalReflectBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
