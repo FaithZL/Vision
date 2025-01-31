@@ -194,6 +194,33 @@ public:
         ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
         return ret;
     }
+
+    /**
+     *     [[1/a    0      -b/a   ]
+     * M =  [0      1/a     0     ]
+     *      [0      0       1     ]]
+     * @param v
+     * @return
+     */
+    [[nodiscard]] Float3 M(const Float3 &v) const noexcept {
+        return make_float3(v.x / a_ - v.z * b_ / a_,
+                           v.y / a_,
+                           v.z);
+    }
+
+    /**
+     *          [[a    0    b   ]
+     * M^{-1} =  [0    a    0   ]
+     *           [0    0    1   ]]
+     * @param v
+     * @return
+     */
+    [[nodiscard]] Float3 inv_M(const Float3 &v) const noexcept {
+        return make_float3(a_ * v.x + b_ * v.z,
+                           a_ * v.y,
+                           v.z);
+    }
+
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         /*  The (inverse) transform matrix `M^{-1}` is given by:
