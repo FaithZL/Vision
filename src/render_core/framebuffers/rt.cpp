@@ -57,7 +57,7 @@ public:
                 $if(it.has_material()) {
                     scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                         MaterialEvaluator bsdf = material->create_evaluator(it, swl);
-                        albedo = spectrum()->linear_srgb(bsdf.albedo(it.wo), swl);
+                        albedo = spectrum()->linear_srgb(bsdf.principled_albedo(it.wo), swl);
                     });
                 };
                 $if(it.has_emission()) {

@@ -48,7 +48,7 @@ void MaterialEvaluator::mollify() noexcept {
     });
 }
 
-SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept {
+SampledSpectrum MaterialEvaluator::principled_albedo(const Float3 &world_wo) const noexcept {
     SampledSpectrum ret{swl_->dimension()};
     Float cos_theta = dot(shading_frame_.normal(), world_wo);
     dispatch([&](const BxDFSet *lobe_set) {
