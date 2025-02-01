@@ -18,9 +18,9 @@ CLIParser::CLIParser(int argc, char **argv)
 void CLIParser::init(int argc, char **argv) {
     cli_options_.add_options(
         "Renderer",
-        {{"d, device", "Select compute device: cuda",
+        {{"d, device", "Select compute device:",
           cxxopts::value<std::string>()->default_value("cuda")},
-         {"p, pipeline", "Select render pipeline: offline",
+         {"p, pipeline", "Select render pipeline:",
           cxxopts::value<std::string>()->default_value("fixed")},
          {"r, runtime-dir", "Specify runtime directory",
           cxxopts::value<fs::path>()->default_value(

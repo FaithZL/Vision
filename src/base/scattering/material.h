@@ -209,6 +209,9 @@ public:
                                              const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it,
                          const SampledWavelengths &swl) const noexcept;
+    virtual void precompute() noexcept {
+        OC_ASSERT(false);
+    }
     [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }
 };
 }// namespace vision

@@ -2,11 +2,47 @@
 // Created by ling.zhu on 2025/1/31.
 //
 
-#include "application.h"
+#include <iostream>
+#include "core/cli_parser.h"
+#include "core/scene_desc.h"
+#include "core/stl.h"
+#include "base/mgr/pipeline.h"
+#include "util/file_manager.h"
+#include "util/image.h"
+#include "core/logging.h"
+#include "base/denoiser.h"
+#include "base/mgr/global.h"
+#include "GUI/window.h"
+#include "math/basic_types.h"
+#include "base/mgr/global.h"
+#include "base/importer.h"
+#include "rhi/stats.h"
 
 using namespace ocarina;
 using namespace vision;
 
+struct App {
+    Device device;
+    SP<Pipeline> rp{};
+    App() : device(FileManager::instance().create_device("cuda")) {
+        Global::instance().set_device(&device);
+        fs::path file_path = parent_path(__FILE__, 1) / "precompute.json";
+        rp = Importer::import_scene(file_path);
+        Global::instance().set_pipeline(rp.get());
+    }
+
+    int run() {
+        auto &mr = MaterialRegistry::instance();
+
+        mr.materials().for_each_instance([&](SP<Material> &material) -> void {
+            int i = 0;
+        });
+
+        return 0;
+    }
+};
+
 int main(int argc, char *argv[]) {
-    return 0;
+    App app;
+    return app.run();
 }
