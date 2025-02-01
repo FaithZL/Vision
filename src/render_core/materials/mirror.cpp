@@ -8,6 +8,11 @@
 
 namespace vision {
 
+class MirrorBxDFSet : public UniversalReflectBxDFSet {
+public:
+    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+};
+
 class MirrorMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
@@ -51,7 +56,7 @@ protected:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
         UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));
+        return make_unique<MirrorBxDFSet>(fresnel, std::move(refl));
     }
 };
 

@@ -26,6 +26,11 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
+class ConductorBxDFSet : public UniversalReflectBxDFSet {
+public:
+    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+};
+
 //    "type" : "metal",
 //    "param" : {
 //        "material_name" : "Cu",
@@ -102,7 +107,7 @@ public:
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<UniversalReflectBxDFSet>(fresnel, std::move(refl));
+        return make_unique<ConductorBxDFSet>(fresnel, std::move(refl));
     }
 };
 
