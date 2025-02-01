@@ -66,6 +66,10 @@ void MaterialRegistry::update_runtime_object(const IObjectConstructor *construct
     }
 }
 
+void MaterialRegistry::precompute_albedo() noexcept {
+
+}
+
 void MaterialRegistry::tidy_up() noexcept {
     materials_.for_each_instance([&](SP<Material> material, uint i) {
         material->set_index(i);

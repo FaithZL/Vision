@@ -253,6 +253,16 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
 };
 
+class MetallicBxDFSet : public UniversalReflectBxDFSet {
+public:
+    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+};
+
+class SpecularBxDFSet : public UniversalReflectBxDFSet {
+public:
+    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+};
+
 class PrincipledMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
@@ -357,7 +367,7 @@ public:
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
             UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
-            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<UniversalReflectBxDFSet>(fresnel_f82, std::move(metal_refl)));
+            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
             lobes.push_back(std::move(metal_lobe));
             weight *= (1.0f - metallic);
         }
@@ -365,8 +375,8 @@ public:
             // specular
             Float f0 = schlick_F0_from_eta(ior);
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
-            UP<UniversalReflectBxDFSet> spec_refl = make_unique<UniversalReflectBxDFSet>(fresnel_schlick,
-                                                                                             make_unique<MicrofacetReflection>(weight, swl, microfacet));
+            UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
+                                                                         make_unique<MicrofacetReflection>(weight, swl, microfacet));
             SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));

@@ -32,6 +32,7 @@ public:
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
     [[nodiscard]] bool has_dispersive() const noexcept;
     void push_back(SP<Material> material) noexcept;
+    void precompute_albedo() noexcept;
     void upload_device_data() noexcept;
     void remove_unused_materials() noexcept;
     void tidy_up() noexcept;

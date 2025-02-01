@@ -51,24 +51,23 @@ public:
 class ShapeInstance;
 class ShapeGroup;
 
-class IMaterial {
-public:
-    using Evaluator = MaterialEvaluator;
-    virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
-                                  const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual UP<BxDFSet> create_lobe_set(Interaction it,
-                                                      const SampledWavelengths &swl) const noexcept = 0;
-};
-
 #define VS_MAKE_MATERIAL_EVALUATOR(BxDFSet)                                                      \
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,                 \
                           const SampledWavelengths &swl) const noexcept override {               \
         evaluator.link(ocarina::dynamic_unique_pointer_cast<BxDFSet>(create_lobe_set(it, swl))); \
     }
 
-class Material : public Node, public IMaterial, public Encodable<float>, public enable_shared_from_this<Material> {
+class Material : public Node, public Encodable<float>, public enable_shared_from_this<Material> {
+public:
+    using Evaluator = MaterialEvaluator;
+    virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
+                                  const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual UP<BxDFSet> create_lobe_set(Interaction it,
+                                                      const SampledWavelengths &swl) const noexcept = 0;
+
 public:
     using Desc = MaterialDesc;
+    static constexpr uint albedo_res = 16;
 
 protected:
     uint index_{InvalidUI32};
@@ -209,9 +208,7 @@ public:
                                              const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it,
                          const SampledWavelengths &swl) const noexcept;
-    virtual void precompute() noexcept {
-        OC_ASSERT(false);
-    }
+    [[nodiscard]] virtual std::vector<SP<BxDFSet>> all_lobes() noexcept { return {}; }
     [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }
 };
 }// namespace vision
