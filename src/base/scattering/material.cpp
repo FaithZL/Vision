@@ -188,12 +188,13 @@ void Material::reset_status() noexcept {
     for_each_slot([&](Slot &slot) {
         slot.reset_status();
     });
+    Node::reset_status();
 }
 
 bool Material::has_changed() noexcept {
-    return reduce_slots(false, [&](bool b, Slot &slot) {
-        return b || slot->has_changed();
-    });
+    return Node::has_changed() || reduce_slots(false, [&](bool b, Slot &slot) {
+               return b || slot->has_changed();
+           });
 }
 
 namespace detail {

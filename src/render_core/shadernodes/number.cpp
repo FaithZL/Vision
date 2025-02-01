@@ -31,6 +31,9 @@ public:
     }
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_)
     OC_ENCODABLE_FUNC(ShaderNode, value_, intensity_)
+    void update_value(vector<float> values) noexcept override {
+        value_.hv() = std::move(values);
+    }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = value_.hv();
         switch (type_) {

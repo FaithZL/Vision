@@ -58,7 +58,19 @@ public:
         return &complex_ior_table;
     }
 
-    const ComplexIor &get_ior(string name) const noexcept {
+    [[nodiscard]] vector<const char *> all_keys() const noexcept {
+        static vector<const char *> ret = [this]() {
+            vector<const char *> keys;
+            for (const auto& pair : table_) {
+                keys.push_back(pair.first.c_str());
+            }
+            return keys;
+        }();
+
+        return ret;
+    }
+
+    [[nodiscard]] const ComplexIor &get_ior(const string& name) const noexcept {
         if (auto iter = table_.find(name); iter == table_.end()) {
             return table_.at("Ag");
         }

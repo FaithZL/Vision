@@ -44,6 +44,8 @@ private:
     VS_MAKE_SLOT(anisotropic);
     bool remapping_roughness_{false};
     float alpha_threshold_{0.022};
+    int metal_index_{0};
+    string metal_name_;
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(UniversalReflectBxDFSet)
@@ -60,11 +62,44 @@ public:
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
+        vector<const char *> names = all_metal_names();
+        changed_ |= widgets->combo("metal type", &metal_index_, names);
         Material::render_sub_UI(widgets);
+        check_metal_type();
     }
+
+    void check_metal_type() {
+        string new_metal = all_metal_names()[metal_index_];
+        if (new_metal == metal_name_) {
+            return;
+        }
+        metal_name_ = new_metal;
+        const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(metal_name_);
+        if (spectrum()->is_complete()) {
+
+        } else {
+            SPD spd_eta = SPD(complex_ior.eta, nullptr);
+            SPD spd_k = SPD(complex_ior.k, nullptr);
+            float3 eta = spd_eta.eval(rgb_spectrum_peak_wavelengths);
+            float3 k = spd_k.eval(rgb_spectrum_peak_wavelengths);
+            eta_->update_value({eta.x, eta.y, eta.z});
+            k_->update_value({k.x, k.y, k.z});
+        }
+    }
+
+    [[nodiscard]] static vector<const char *> all_metal_names() noexcept {
+        static vector<const char *> names = ComplexIorTable::instance()->all_keys();
+        return names;
+    }
+
     VS_MAKE_PLUGIN_NAME_FUNC
     void init_ior(const MaterialDesc &desc) noexcept {
-        const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(desc["material_name"].as_string());
+        metal_name_ = desc["material_name"].as_string();
+        const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(metal_name_);
+        auto names = all_metal_names();
+        metal_index_ = std::find(names.begin(), names.end(), metal_name_) - names.begin();
+        metal_index_ = metal_index_ >= names.size() ? 0 : metal_index_;
+        metal_name_ = names[metal_index_];
         SlotDesc eta_slot;
         SlotDesc k_slot;
         if (spectrum()->is_complete()) {

@@ -37,7 +37,9 @@ public:
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
     [[nodiscard]] virtual ocarina::vector<float> average() const noexcept = 0;
-    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept = 0;
+    virtual void update_value(vector<float> values) noexcept {}
+    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
+                                                       const SampledWavelengths &swl) const noexcept = 0;
     virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
