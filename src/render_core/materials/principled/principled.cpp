@@ -181,7 +181,7 @@ public:
         return mode == Volume ? SheenLTCTable::instance().sample_volume(cos_theta, alpha_) :
                                 SheenLTCTable::instance().sample_approx(cos_theta, alpha_);
     }
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return tint_; }
+    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
@@ -357,7 +357,7 @@ public:
         {
             // sheen
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
-            SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
+            SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
             WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
             weight = detail::layering_weight(sheen_albedo, weight);
@@ -377,7 +377,7 @@ public:
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(weight, swl, microfacet));
-            SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
+            SampledSpectrum spec_refl_albedo = spec_refl->principled_albedo(cos_theta);
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = detail::layering_weight(spec_refl_albedo, weight);

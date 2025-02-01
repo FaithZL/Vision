@@ -26,8 +26,8 @@ public:
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)), frac_(frac) {
     }
     [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
-        return b0_->albedo(cos_theta) * (1 - frac_) + b1_->albedo(cos_theta) * frac_;
+    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
+        return b0_->principled_albedo(cos_theta) * (1 - frac_) + b1_->principled_albedo(cos_theta) * frac_;
     }
     [[nodiscard]] const SampledWavelengths *swl() const override {
         return b0_->swl();

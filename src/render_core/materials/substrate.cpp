@@ -20,7 +20,7 @@ public:
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FresnelBlend)
         // clang-format on
-        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return Rd_; }
+        [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return Rd_; }
 
     [[nodiscard]] SampledSpectrum f_diffuse(const Float3 &wo, const Float3 &wi) const noexcept {
         SampledSpectrum diffuse = (28.f / (23.f * Pi)) * Rd_ * (SampledSpectrum(swl().dimension(), 1.f) - Rs_) *

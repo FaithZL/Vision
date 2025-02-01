@@ -20,8 +20,8 @@ public:
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)) {
     }
     [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
-        return b0_->albedo(cos_theta) + b1_->albedo(cos_theta);
+    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
+        return b0_->principled_albedo(cos_theta) + b1_->principled_albedo(cos_theta);
     }
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
         optional<Bool> v0 = b0_->is_dispersive();
