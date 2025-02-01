@@ -76,7 +76,8 @@ public:
         metal_name_ = new_metal;
         const ComplexIor &complex_ior = ComplexIorTable::instance()->get_ior(metal_name_);
         if (spectrum()->is_complete()) {
-
+            eta_->update_value(complex_ior.eta);
+            k_->update_value(complex_ior.k);
         } else {
             SPD spd_eta = SPD(complex_ior.eta, nullptr);
             SPD spd_k = SPD(complex_ior.k, nullptr);

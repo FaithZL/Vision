@@ -60,6 +60,10 @@ void SPD::prepare() noexcept {
     func_.upload_immediately();
 }
 
+void SPD::upload() noexcept {
+    func_.upload_immediately();
+}
+
 float SPD::eval(float lambda) const noexcept {
     using namespace cie;
     using namespace cie;

@@ -24,6 +24,10 @@ public:
         float3 color = spd_.eval(rgb_spectrum_peak_wavelengths);
         return vector<float>{color.x, color.y, color.z};
     }
+    void update_value(vector<float> values) noexcept override {
+        spd_.init(std::move(values));
+        spd_.upload();
+    }
     void prepare() noexcept override {
         spd_.prepare();
     }

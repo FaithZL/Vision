@@ -47,6 +47,7 @@ public:
     }
 
     void prepare() noexcept;
+    void upload() noexcept;
     [[nodiscard]] float eval(float lambda) const noexcept;
     template<size_t N>
     [[nodiscard]] Vector<float, N> eval(Vector<float, N> lambdas) const noexcept {
