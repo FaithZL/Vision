@@ -67,7 +67,6 @@ public:
 
 public:
     using Desc = MaterialDesc;
-    static constexpr uint albedo_res = 16;
 
 protected:
     uint index_{InvalidUI32};
