@@ -12,7 +12,7 @@ private:
     EncodedData<float> intensity_{1.f};
     float min_{0.f};
     float max_{1.f};
-    bool sync_{true};
+    bool sync_{false};
 
 public:
     NumberInput() = default;
