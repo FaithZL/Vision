@@ -207,7 +207,7 @@ public:
                                              const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it,
                          const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual std::vector<SP<BxDFSet>> all_lobes() noexcept { return {}; }
+    [[nodiscard]] virtual vector<float> precompute(uint *dim) const noexcept;
     [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }
 };
 }// namespace vision

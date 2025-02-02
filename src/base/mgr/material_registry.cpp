@@ -67,7 +67,10 @@ void MaterialRegistry::update_runtime_object(const IObjectConstructor *construct
 }
 
 void MaterialRegistry::precompute_albedo() noexcept {
-
+    materials_.for_each_instance([&](SP<Material> material, uint i) {
+        uint dim = 1;
+        vector<float> data = material->precompute(&dim);
+    });
 }
 
 void MaterialRegistry::tidy_up() noexcept {

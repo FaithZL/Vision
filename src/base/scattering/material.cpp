@@ -286,6 +286,10 @@ void Material::build_evaluator(Evaluator &evaluator, Interaction it,
     _build_evaluator(evaluator, it, swl);
 }
 
+vector<float> Material::precompute(uint *dim) const noexcept {
+    return {};
+}
+
 uint64_t Material::_compute_type_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
     reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {

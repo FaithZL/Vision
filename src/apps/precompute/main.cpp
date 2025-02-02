@@ -34,9 +34,7 @@ struct App {
     int run() {
         auto &mr = MaterialRegistry::instance();
 
-        mr.materials().for_each_instance([&](SP<Material> &material) -> void {
-            int i = 0;
-        });
+        mr.precompute_albedo();
 
         return 0;
     }

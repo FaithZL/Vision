@@ -293,6 +293,7 @@ protected:
 
 public:
     PrincipledMaterial() = default;
+    VS_MAKE_PLUGIN_NAME_FUNC
     explicit PrincipledMaterial(const MaterialDesc &desc)
         : Material(desc) {
 
@@ -333,6 +334,11 @@ public:
     }
     void prepare() noexcept override {
         SheenLTCTable::instance().init();
+    }
+    [[nodiscard]] vector<float> precompute(ocarina::uint *dim) const noexcept override {
+        vector<float> ret;
+
+        return ret;
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         MultiBxDFSet::Lobes lobes;
@@ -390,7 +396,6 @@ public:
         }
         return make_unique<MultiBxDFSet>(std::move(lobes));
     }
-    VS_MAKE_PLUGIN_NAME_FUNC
 };
 
 }// namespace vision
