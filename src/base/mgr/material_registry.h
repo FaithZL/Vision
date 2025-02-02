@@ -12,12 +12,7 @@ namespace vision {
 using namespace ocarina;
 class MaterialRegistry : public GUI, public Observer {
 private:
-    static MaterialRegistry *s_material_registry;
-    MaterialRegistry() = default;
-    MaterialRegistry(const MaterialRegistry &) = default;
-    MaterialRegistry(MaterialRegistry &&) noexcept = default;
-    MaterialRegistry operator=(const MaterialRegistry &) = delete;
-    MaterialRegistry operator=(MaterialRegistry &&) = delete;
+    OC_MAKE_INSTANCE_CONSTRUCTOR(MaterialRegistry, s_material_registry)
 
 private:
     PolymorphicGUI<SP<Material>> materials_;

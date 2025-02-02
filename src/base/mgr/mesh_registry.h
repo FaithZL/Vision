@@ -15,12 +15,7 @@ private:
     vector<Mesh *> meshes_;
 
 private:
-    static MeshRegistry *s_mesh_registry;
-    MeshRegistry() = default;
-    MeshRegistry(const MeshRegistry &) = delete;
-    MeshRegistry(MeshRegistry &&) = delete;
-    MeshRegistry operator=(const MeshRegistry &) = delete;
-    MeshRegistry operator=(MeshRegistry &&) = delete;
+    OC_MAKE_INSTANCE_CONSTRUCTOR(MeshRegistry, s_mesh_registry)
 
 public:
     static MeshRegistry &instance();

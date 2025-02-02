@@ -12,13 +12,7 @@ namespace vision {
 class Pipeline;
 class Spectrum;
 class Global {
-private:
-    Global() = default;
-    Global(const Global &) = delete;
-    Global(Global &&) = delete;
-    Global operator=(const Global &) = delete;
-    Global operator=(Global &&) = delete;
-    static Global *s_global;
+    OC_MAKE_INSTANCE_CONSTRUCTOR(Global, s_global)
     ~Global();
 
 private:

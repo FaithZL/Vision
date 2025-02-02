@@ -82,21 +82,34 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
+#define OC_MAKE_INSTANCE(ClassName, static_ptr)      \
+private:                                             \
+    static ClassName *static_ptr;                    \
+    ClassName() = default;                           \
+                                                     \
+public:                                              \
+    ClassName(const ClassName &) = delete;           \
+    ClassName(ClassName &&) = delete;                \
+    ClassName operator=(const ClassName &) = delete; \
+    ClassName operator=(ClassName &&) = delete;
+
 struct SheenLTCTable {
 private:
     Texture approx_;
     Texture volume_;
     static constexpr auto res = 32;
 
-private:
-    static SheenLTCTable *s_sheen_table;
-    SheenLTCTable() = default;
+    OC_MAKE_INSTANCE_CONSTRUCTOR(SheenLTCTable, s_sheen_table)
 
-public:
-    SheenLTCTable(const SheenLTCTable &) = delete;
-    SheenLTCTable(SheenLTCTable &&) = delete;
-    SheenLTCTable operator=(const SheenLTCTable &) = delete;
-    SheenLTCTable operator=(SheenLTCTable &&) = delete;
+//private:
+//    static SheenLTCTable *s_sheen_table;
+//    SheenLTCTable() = default;
+//
+//public:
+//    SheenLTCTable(const SheenLTCTable &) = delete;
+//    SheenLTCTable(SheenLTCTable &&) = delete;
+//    SheenLTCTable operator=(const SheenLTCTable &) = delete;
+//    SheenLTCTable operator=(SheenLTCTable &&) = delete;
 
 public:
     static SheenLTCTable &instance();
@@ -242,6 +255,21 @@ public:
 class MetallicBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
+};
+
+class SpecularBxDFSetTable {
+private:
+    static constexpr uint res = 32;
+
+private:
+    static SpecularBxDFSetTable *s_sheen_table;
+    SpecularBxDFSetTable() = default;
+
+public:
+    SpecularBxDFSetTable(const SpecularBxDFSetTable &) = delete;
+    SpecularBxDFSetTable(SpecularBxDFSetTable &&) = delete;
+    SpecularBxDFSetTable operator=(const SpecularBxDFSetTable &) = delete;
+    SpecularBxDFSetTable operator=(SpecularBxDFSetTable &&) = delete;
 };
 
 class SpecularBxDFSet : public MicrofacetBxDFSet {
