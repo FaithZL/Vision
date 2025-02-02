@@ -29,8 +29,12 @@ public:
             });
         }
     }
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_, min_, max_)
     OC_ENCODABLE_FUNC(ShaderNode, value_, intensity_)
+    void set_range(float lower, float upper) noexcept override {
+        min_ = lower;
+        max_ = upper;
+    }
     void update_value(vector<float> values) noexcept override {
         value_.hv() = std::move(values);
     }
