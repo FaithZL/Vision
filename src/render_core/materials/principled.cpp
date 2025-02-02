@@ -101,9 +101,26 @@ public:
 public:
     static SheenLTCTable &instance();
     static void destroy_instance();
-    void init() noexcept;
-    [[nodiscard]] Float4 sample_approx(const Float &cos_theta, const Float &alpha) noexcept;
-    [[nodiscard]] Float4 sample_volume(const Float &cos_theta, const Float &alpha) noexcept;
+    void init() noexcept {
+        if (approx_.handle()) {
+            return;
+        }
+        Pipeline *ppl = Global::instance().pipeline();
+        approx_ = ppl->device().create_texture(make_uint2(res),
+                                               PixelStorage::FLOAT4,
+                                               "SheenLTC approx_");
+        volume_ = ppl->device().create_texture(make_uint2(res),
+                                               PixelStorage::FLOAT4,
+                                               "SheenLTC volume_");
+        approx_.upload_immediately(addressof(SheenLTCTableApprox));
+        volume_.upload_immediately(addressof(SheenLTCTableVolume));
+    }
+    [[nodiscard]] Float4 sample_approx(const Float &cos_theta, const Float &alpha) noexcept {
+        return approx_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
+    }
+    [[nodiscard]] Float4 sample_volume(const Float &cos_theta, const Float &alpha) noexcept {
+        return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
+    }
 };
 
 SheenLTCTable *SheenLTCTable::s_sheen_table = nullptr;
@@ -122,40 +139,6 @@ void SheenLTCTable::destroy_instance() {
         s_sheen_table = nullptr;
     }
 }
-
-void SheenLTCTable::init() noexcept {
-    if (approx_.handle()) {
-        return;
-    }
-    Pipeline *ppl = Global::instance().pipeline();
-    approx_ = ppl->device().create_texture(make_uint2(res),
-                                           PixelStorage::FLOAT4,
-                                           "SheenLTC approx_");
-    volume_ = ppl->device().create_texture(make_uint2(res),
-                                           PixelStorage::FLOAT4,
-                                           "SheenLTC volume_");
-    approx_.upload_immediately(addressof(SheenLTCTableApprox));
-    volume_.upload_immediately(addressof(SheenLTCTableVolume));
-}
-
-Float4 SheenLTCTable::sample_approx(const Float &cos_theta, const Float &alpha) noexcept {
-    return approx_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
-}
-
-Float4 SheenLTCTable::sample_volume(const Float &cos_theta, const Float &alpha) noexcept {
-    return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
-}
-
-namespace detail {
-
-[[nodiscard]] SampledSpectrum layering_weight(const SampledSpectrum &layer_albedo,
-                                              const SampledSpectrum &weight) noexcept {
-    SampledSpectrum tmp = safe_div(layer_albedo, weight);
-    Float max_comp = tmp.max();
-    return weight * saturate(1 - max_comp);
-}
-
-}// namespace detail
 
 class SheenLTC : public BxDFSet {
 protected:
@@ -263,6 +246,9 @@ public:
 
 class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
+    static constexpr uint table_res = 32u;
+
+public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
     [[nodiscard]] SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
@@ -271,6 +257,10 @@ public:
         Float3 wo = from_ratio_y(ratio.y);
         from_ratio_z(ratio.z);
         return precompute_albedo(wo, sampler, sample_num);
+    }
+
+    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
+        return MicrofacetBxDFSet::principled_albedo(cos_theta);
     }
 };
 
@@ -300,7 +290,6 @@ private:
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(MultiBxDFSet)
-    static constexpr float CutoffThreshold = 1e-5f;
 
 public:
     PrincipledMaterial() = default;
@@ -358,7 +347,7 @@ public:
 
         float2 roughness = make_float2(0.2);
 
-        uint res = 32;
+        uint res = SpecularBxDFSet::table_res;
 
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
@@ -416,7 +405,7 @@ public:
             SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
             WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
-            weight = detail::layering_weight(sheen_albedo, weight);
+            weight = layering_weight(sheen_albedo, weight);
         }
         {
             // metallic
@@ -436,7 +425,7 @@ public:
             SampledSpectrum spec_refl_albedo = spec_refl->principled_albedo(cos_theta);
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
-            weight = detail::layering_weight(spec_refl_albedo, weight);
+            weight = layering_weight(spec_refl_albedo, weight);
         }
         {
             // diffuse
