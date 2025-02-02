@@ -55,6 +55,7 @@ struct PrecomputedLobeTable {
     string name;
     const Type *type{nullptr};
     vector<float> data;
+    [[nodiscard]] string to_string() const noexcept;
 };
 
 #define VS_MAKE_MATERIAL_EVALUATOR(BxDFSet)                                                      \

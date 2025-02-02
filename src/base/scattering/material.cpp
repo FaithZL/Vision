@@ -286,7 +286,11 @@ void Material::build_evaluator(Evaluator &evaluator, Interaction it,
     _build_evaluator(evaluator, it, swl);
 }
 
-vector<float> Material::precompute(uint *dim) const noexcept {
+string PrecomputedLobeTable::to_string() const noexcept {
+    return "//test \n";
+}
+
+vector<PrecomputedLobeTable> Material::precompute() const noexcept {
     return {};
 }
 

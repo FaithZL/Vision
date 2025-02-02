@@ -8,6 +8,7 @@
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
+#include "precomputed_table.inl.h"
 
 namespace vision {
 
@@ -335,7 +336,7 @@ public:
     void prepare() noexcept override {
         SheenLTCTable::instance().init();
     }
-    [[nodiscard]] vector<PrecomputedLobeTable> precompute(ocarina::uint *dim) const noexcept override {
+    [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
@@ -361,7 +362,7 @@ public:
         auto shader = device.compile(kernel);
         stream << shader(sample).dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
 
-
+        ret.push_back({});
 
         return ret;
     }
