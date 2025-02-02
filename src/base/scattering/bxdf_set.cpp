@@ -6,6 +6,20 @@
 
 namespace vision {
 
+SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
+                                           const Uint &sample_num) noexcept {
+    SampledSpectrum ret = SampledSpectrum::zero(3);
+    $for(i, sample_num) {
+        BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
+        ScatterEval se = bs.eval;
+        $if(se.pdf() > 0) {
+            auto r = se.throughput() * abs_cos_theta(bs.wi);
+            ret += r;
+        };
+    };
+    return ret;
+}
+
 uint64_t MicrofacetBxDFSet::_compute_type_hash() const noexcept {
     return hash64(fresnel_->type_hash(), refl_->type_hash());
 }

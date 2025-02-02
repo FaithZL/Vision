@@ -51,6 +51,12 @@ public:
 class ShapeInstance;
 class ShapeGroup;
 
+struct PrecomputedLobeTable {
+    string name;
+    const Type *type{nullptr};
+    vector<float> data;
+};
+
 #define VS_MAKE_MATERIAL_EVALUATOR(BxDFSet)                                                      \
     void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,                 \
                           const SampledWavelengths &swl) const noexcept override {               \
@@ -207,7 +213,7 @@ public:
                                              const SampledWavelengths &swl) const noexcept;
     void build_evaluator(Evaluator &evaluator, Interaction it,
                          const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual vector<float> precompute(uint *dim) const noexcept;
+    [[nodiscard]] virtual vector<PrecomputedLobeTable> precompute() const noexcept;
     [[nodiscard]] virtual bool enable_delta() const noexcept { return true; }
 };
 }// namespace vision

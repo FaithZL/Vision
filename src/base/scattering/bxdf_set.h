@@ -40,6 +40,8 @@ public:
     virtual void mollify() noexcept {}
     [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum precompute_albedo(const Float3 &wo, TSampler &sampler,
+                                                            const Uint& sample_num) noexcept;
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };

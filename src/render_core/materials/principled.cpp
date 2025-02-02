@@ -335,8 +335,8 @@ public:
     void prepare() noexcept override {
         SheenLTCTable::instance().init();
     }
-    [[nodiscard]] vector<float> precompute(ocarina::uint *dim) const noexcept override {
-        vector<float> ret;
+    [[nodiscard]] vector<PrecomputedLobeTable> precompute(ocarina::uint *dim) const noexcept override {
+        vector<PrecomputedLobeTable> ret;
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
         Pipeline *ppl = Global::instance().pipeline();
@@ -347,18 +347,19 @@ public:
 
         float2 roughness = make_float2(0.2);
 
-        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(32));
+        uint res = 32;
+
+        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
 
 
-        Kernel kernel = [&]() {
+        Kernel kernel = [&](Uint sample_num) {
             sampler->start(dispatch_idx().xy(), 0, 0);
-            $info("{},,,,a", sampler->next_1d());
-            $info("{},,,,", sampler->next_1d());
+
         };
 
         auto shader = device.compile(kernel);
-        stream << shader().dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
+        stream << shader(sample).dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
 
 
 
