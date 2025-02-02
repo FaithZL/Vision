@@ -9,14 +9,13 @@
 
 namespace vision {
 
-class FresnelBlend : public BxDF {
+class FresnelBlend : public MicrofacetBxDF {
 private:
     SampledSpectrum Rd_, Rs_;
-    DCSP<Microfacet<D>> microfacet_;
 
 public:
     FresnelBlend(SampledSpectrum Rd, SampledSpectrum Rs, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::Reflection), Rd_(std::move(Rd)), Rs_(std::move(Rs)), microfacet_(m) {}
+        : MicrofacetBxDF(m, BxDFFlag::Reflection, swl), Rd_(std::move(Rd)), Rs_(std::move(Rs)) {}
     // clang-format off
     VS_MAKE_BxDF_ASSIGNMENT(FresnelBlend)
         // clang-format on
@@ -75,7 +74,6 @@ public:
     using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
 };
 
-
 //    "type" : "substrate",
 //    "param" : {
 //        "roughness" : 0.001,
@@ -133,7 +131,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl);
-        UP<BxDF> refl = make_unique<FresnelBlend>(Rd, Rs, swl, microfacet);
+        UP<FresnelBlend> refl = make_unique<FresnelBlend>(Rd, Rs, swl, microfacet);
         return make_unique<SubstrateBxDFSet>(fresnel, std::move(refl));
     }
 };

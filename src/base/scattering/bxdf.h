@@ -109,10 +109,10 @@ protected:
     DCSP<Microfacet<D>> microfacet_;
 
 public:
-    MicrofacetBxDF(DCSP<Microfacet<D>> microfacet,
+    MicrofacetBxDF(const SP<Microfacet<D>> &microfacet, uint flag,
                    const SampledWavelengths &swl)
-        : BxDF(swl, BxDFFlag::GlossyRefl),
-          microfacet_(std::move(microfacet)) {}
+        : BxDF(swl, flag),
+          microfacet_(microfacet) {}
 
     void set_alpha(const Float2 &alpha) noexcept {
         microfacet_->set_alpha_x(alpha.x);
@@ -120,17 +120,15 @@ public:
     }
 };
 
-class MicrofacetReflection : public BxDF {
+class MicrofacetReflection : public MicrofacetBxDF {
 private:
     SampledSpectrum kr_;
-    DCSP<Microfacet<D>> microfacet_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(MicrofacetReflection)
         MicrofacetReflection() = default;
     MicrofacetReflection(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::GlossyRefl), kr_(std::move(color)),
-          microfacet_(m) {}
+        : MicrofacetBxDF(m, BxDFFlag::GlossyRefl, swl), kr_(std::move(color)) {}
     [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return kr_; }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                     SP<Fresnel> fresnel) const noexcept override;
@@ -142,21 +140,16 @@ public:
                                     SP<Fresnel> fresnel) const noexcept override;
 };
 
-class MicrofacetTransmission : public BxDF {
+class MicrofacetTransmission : public MicrofacetBxDF {
 private:
     SampledSpectrum kt_;
-    DCSP<Microfacet<D>> microfacet_;
 
 public:
     VS_MAKE_BxDF_ASSIGNMENT(MicrofacetTransmission)
         MicrofacetTransmission() = default;
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : BxDF(swl, BxDFFlag::GlossyTrans), kt_(std::move(color)), microfacet_(m) {}
+        : MicrofacetBxDF(m, BxDFFlag::GlossyTrans, swl), kt_(std::move(color)) {}
     [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi) const noexcept override;
-    void set_alpha(const Float2 &alpha) noexcept {
-        microfacet_->set_alpha_x(alpha.x);
-        microfacet_->set_alpha_y(alpha.y);
-    }
     [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return kt_; }
     [[nodiscard]] Float BTDF(const Float3 &wo, const Float3 &wi,
                              SP<Fresnel> fresnel, uint channel) const noexcept;

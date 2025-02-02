@@ -142,7 +142,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
-        UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
+        UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<ConductorBxDFSet>(fresnel, std::move(refl));
     }
 };

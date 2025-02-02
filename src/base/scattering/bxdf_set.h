@@ -47,13 +47,13 @@ public:
 class UniversalReflectBxDFSet : public BxDFSet {
 protected:
     DCSP<Fresnel> fresnel_;
-    DCUP<BxDF> refl_;
+    DCUP<MicrofacetBxDF> refl_;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<BxDF> refl);
+    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
 
     VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
         [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;

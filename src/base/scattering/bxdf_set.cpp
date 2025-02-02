@@ -10,8 +10,8 @@ uint64_t UniversalReflectBxDFSet::_compute_type_hash() const noexcept {
     return hash64(fresnel_->type_hash(), refl_->type_hash());
 }
 
-UniversalReflectBxDFSet::UniversalReflectBxDFSet(const SP<vision::Fresnel> &fresnel,
-                                                 UP<vision::BxDF> refl)
+UniversalReflectBxDFSet::UniversalReflectBxDFSet(const SP<Fresnel> &fresnel,
+                                                 UP<MicrofacetBxDF> refl)
     : fresnel_(fresnel), refl_(std::move(refl)) {}
 
 const SampledWavelengths *UniversalReflectBxDFSet::swl() const {
