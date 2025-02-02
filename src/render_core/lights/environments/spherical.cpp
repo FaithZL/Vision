@@ -79,7 +79,7 @@ public:
     }
 
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref, const LightEvalContext &p_light) const noexcept override {
-        OC_ERROR("Spherical PDF_wi can not be called")
+        OC_ERROR("Spherical PDF_wi can not be called");
         return 0;
     }
 

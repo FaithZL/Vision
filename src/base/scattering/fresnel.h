@@ -28,7 +28,7 @@ public:
         return {swl_->dimension(), 1.f};
     }
     virtual void set_eta(const SampledSpectrum &eta) noexcept {
-        OC_NOT_IMPLEMENT_ERROR;
+        OC_NOT_IMPLEMENT_ERROR(Fresnel::set_eta);
     }
     virtual void correct_eta(Float cos_theta) noexcept {
         OC_ERROR("correct_eta only dielectric material !");
