@@ -40,13 +40,22 @@ public:
     virtual void mollify() noexcept {}
     [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
-    // for precompute begin
+    /// for precompute the table begin
     [[nodiscard]] virtual SampledSpectrum precompute_albedo(const Float3 &wo, TSampler &sampler,
-                                                            const Uint& sample_num) noexcept;
-    [[nodiscard]] static Float3 wo_by_cos_theta(const Float &cos_theta) noexcept;
-    virtual SampledSpectrum precompute_with_radio(const Float3 &ratio,TSampler &sampler,
-                                                  const Uint& sample_num) noexcept;
-    // for precompute end
+                                                            const Uint &sample_num) noexcept;
+    virtual SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
+                                                  const Uint &sample_num) noexcept;
+    [[nodiscard]] virtual void from_ratio_x(const Float &x) noexcept;
+    [[nodiscard]] static Float3 from_ratio_y(Float cos_theta) noexcept;
+    [[nodiscard]] virtual void from_ratio_z(Float z) noexcept;
+    /// for precompute the table end
+
+    /// for look up the table begin
+    [[nodiscard]] virtual Float to_ratio_x() noexcept;
+    [[nodiscard]] static Float to_ratio_y(const Float3 &wo) noexcept;
+    [[nodiscard]] virtual Float to_ratio_z() noexcept;
+    /// for look up the table end
+
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
     virtual ~BxDFSet() = default;
 };
@@ -65,6 +74,7 @@ public:
     [[nodiscard]] Fresnel *fresnel() noexcept { return fresnel_.get(); }
     [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return refl_.get(); }
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return refl_.get(); }
+    [[nodiscard]] Float to_ratio_x() noexcept override;
     VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
         [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;

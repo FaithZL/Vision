@@ -25,11 +25,34 @@ SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sa
     return SampledSpectrum::zero(swl()->dimension());
 }
 
-Float3 BxDFSet::wo_by_cos_theta(const ocarina::Float &cos_theta) noexcept {
+void BxDFSet::from_ratio_x(const Float &x) noexcept {
+    OC_ASSERT(0);
+}
+
+Float BxDFSet::to_ratio_x() noexcept {
+    OC_ASSERT(0);
+    return 0;
+}
+
+Float3 BxDFSet::from_ratio_y(Float cos_theta) noexcept {
+    cos_theta = ocarina::clamp(cos_theta, 1e-4f, 1.0f);
     Float z = cos_theta;
     Float y = 0;
     Float x = ocarina::sqrt(1 - sqr(z));
     return make_float3(x, y, z);
+}
+
+Float BxDFSet::to_ratio_y(const ocarina::Float3 &wo) noexcept {
+    return abs_cos_theta(wo);
+}
+
+void BxDFSet::from_ratio_z(ocarina::Float z) noexcept {
+
+}
+
+Float BxDFSet::to_ratio_z() noexcept {
+    OC_ASSERT(0);
+    return 0;
 }
 
 uint64_t MicrofacetBxDFSet::_compute_type_hash() const noexcept {
@@ -39,6 +62,12 @@ uint64_t MicrofacetBxDFSet::_compute_type_hash() const noexcept {
 MicrofacetBxDFSet::MicrofacetBxDFSet(const SP<Fresnel> &fresnel,
                                      UP<MicrofacetBxDF> refl)
     : fresnel_(fresnel), refl_(std::move(refl)) {}
+
+Float MicrofacetBxDFSet::to_ratio_x() noexcept {
+    Float ax = bxdf()->alpha_x();
+    Float ay = bxdf()->alpha_y();
+    return ocarina::clamp(ocarina::sqrt(ax * ay), 1e-4f, 1.0f);
+}
 
 const SampledWavelengths *MicrofacetBxDFSet::swl() const {
     return &refl_->swl();

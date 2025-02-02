@@ -301,11 +301,11 @@ public:
         : Material(desc) {
 
 #define INIT_SLOT(name, default_value, type) \
-    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)));
+    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)))
 
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(metallic, 0.f, Number);
-        INIT_SLOT(ior, 1.5f, Number);
+        INIT_SLOT(ior, 1.5f, Number)->set_range(0.1, 5.0);
         INIT_SLOT(roughness, 0.5f, Number);
         INIT_SLOT(spec_tint, make_float3(0.f), Albedo);
         INIT_SLOT(anisotropic, 0.f, Number);
