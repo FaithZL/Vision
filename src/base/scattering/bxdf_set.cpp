@@ -20,12 +20,24 @@ SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
     return ret;
 }
 
+SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sampler,
+                                               const Uint &sample_num) noexcept {
+    return SampledSpectrum::zero(swl()->dimension());
+}
+
+Float3 BxDFSet::wo_by_cos_theta(const ocarina::Float &cos_theta) noexcept {
+    Float z = cos_theta;
+    Float y = 0;
+    Float x = ocarina::sqrt(1 - sqr(z));
+    return make_float3(x, y, z);
+}
+
 uint64_t MicrofacetBxDFSet::_compute_type_hash() const noexcept {
     return hash64(fresnel_->type_hash(), refl_->type_hash());
 }
 
 MicrofacetBxDFSet::MicrofacetBxDFSet(const SP<Fresnel> &fresnel,
-                                                 UP<MicrofacetBxDF> refl)
+                                     UP<MicrofacetBxDF> refl)
     : fresnel_(fresnel), refl_(std::move(refl)) {}
 
 const SampledWavelengths *MicrofacetBxDFSet::swl() const {
@@ -37,18 +49,18 @@ SampledSpectrum MicrofacetBxDFSet::principled_albedo(const Float &cos_theta) con
 }
 
 ScatterEval MicrofacetBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                                    vision::MaterialEvalMode mode,
-                                                    const Uint &flag) const noexcept {
+                                              vision::MaterialEvalMode mode,
+                                              const Uint &flag) const noexcept {
     return refl_->safe_evaluate(wo, wi, fresnel_->clone(), mode);
 }
 
 BSDFSample MicrofacetBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                                 vision::TSampler &sampler) const noexcept {
+                                           vision::TSampler &sampler) const noexcept {
     return refl_->sample(wo, sampler, fresnel_->clone());
 }
 
 BSDFSample MicrofacetBxDFSet::sample_delta_local(const Float3 &wo,
-                                                       TSampler &sampler) const noexcept {
+                                                 TSampler &sampler) const noexcept {
     Float3 wi = make_float3(-wo.xy(), wo.z);
     BSDFSample ret{refl_->swl()};
     ret.wi = wi;
@@ -57,8 +69,8 @@ BSDFSample MicrofacetBxDFSet::sample_delta_local(const Float3 &wo,
 }
 
 SampledDirection MicrofacetBxDFSet::sample_wi(const Float3 &wo,
-                                                    const Uint &flag,
-                                                    TSampler &sampler) const noexcept {
+                                              const Uint &flag,
+                                              TSampler &sampler) const noexcept {
     return refl_->sample_wi(wo, sampler->next_2d(), fresnel_->clone());
 }
 

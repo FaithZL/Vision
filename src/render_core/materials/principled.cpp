@@ -262,6 +262,8 @@ public:
 class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
+
+
 };
 
 class PrincipledMaterial : public Material {
@@ -338,59 +340,46 @@ public:
     }
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-//        Device &device = Global::instance().device();
-//        Stream stream = device.create_stream();
-//        Pipeline *ppl = Global::instance().pipeline();
-//        Scene &scene = ppl->scene();
-//        TSampler &sampler = scene.sampler();
-//
-//        uint sample = 2 << 20;
-//
-//        float2 roughness = make_float2(0.2);
-//
-//        uint res = 32;
-//
-//        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
-//
-//
-//
-//        Kernel kernel = [&](Uint sample_num) {
-//            sampler->start(dispatch_idx().xy(), 0, 0);
-//
-//        };
-//
-//        auto shader = device.compile(kernel);
-//        stream << shader(sample).dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
+        Device &device = Global::instance().device();
+        Stream stream = device.create_stream();
+        Pipeline *ppl = Global::instance().pipeline();
+        Scene &scene = ppl->scene();
+        TSampler &sampler = ppl->scene().sampler();
 
+        uint sample = 2 << 20;
+
+        float2 roughness = make_float2(0.2);
+
+        uint res = 8;
+
+        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
+
+        Kernel kernel = [&](Uint sample_num) {
+            sampler->start(dispatch_idx().xy(), 0, 0);
+            SampledWavelengths swl = scene.spectrum()->sample_wavelength(sampler);
+            Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
+            SampledSpectrum f0 = SampledSpectrum(make_float3(0, 1, 0));
+            SampledSpectrum f90 = SampledSpectrum(make_float3(1, 1, 0));
+            SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
+            SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.f, 0.f);
+            UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
+                                                                         make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet));
+            Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
+            buffer.write(dispatch_id(), result + 6);
+        };
         PrecomputedLobeTable elm;
         elm.name = "SpecularBxDFSet";
         elm.type = Type::of<float>();
+        elm.data.resize(buffer.size());
 
-        for (int i = 0; i < elm.type->dimension() * 50; ++i) {
-            elm.data.push_back(i);
-        }
+
+        auto shader = device.compile(kernel);
+        stream << shader(sample).dispatch(make_uint3(res))
+               << buffer.download(elm.data.data())
+               << Env::instance().printer().retrieve()
+               << synchronize() << commit();
 
         ret.push_back(elm);
-
-        PrecomputedLobeTable elm2;
-        elm2.name = "MetallicBxDFSet";
-        elm2.type = Type::of<float2>();
-
-        for (int i = 0; i < elm2.type->dimension() * 50; ++i) {
-            elm2.data.push_back(i);
-        }
-
-        ret.push_back(elm2);
-
-        PrecomputedLobeTable elm4;
-        elm4.name = "MetallicBxDFSet2";
-        elm4.type = Type::of<float4>();
-
-        for (int i = 0; i < elm4.type->dimension() * 50; ++i) {
-            elm4.data.push_back(i);
-        }
-
-        ret.push_back(elm4);
 
         return ret;
     }
