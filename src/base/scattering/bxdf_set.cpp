@@ -17,7 +17,7 @@ SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
             ret += r;
         };
     };
-    return ret;
+    return ret / sample_num;
 }
 
 SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sampler,
