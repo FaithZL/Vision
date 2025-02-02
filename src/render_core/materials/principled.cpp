@@ -8,7 +8,7 @@
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
-#include "precomputed_table.inl.h"
+//#include "precomputed_table.inl.h"
 
 namespace vision {
 
@@ -25,7 +25,9 @@ public:
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
-
+    void set_eta(const vision::SampledSpectrum &eta) noexcept override {
+        eta_ = eta[0];
+    }
     [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
         Float F_real = fresnel_dielectric(cos_theta, eta_);
         Float F0_real = schlick_weight(eta_);
@@ -263,7 +265,13 @@ class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
-
+    [[nodiscard]] SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
+                                                        const Uint &sample_num) noexcept override {
+        from_ratio_x(ratio.x);
+        Float3 wo = from_ratio_y(ratio.y);
+        from_ratio_z(ratio.z);
+        return precompute_albedo(wo, sampler, sample_num);
+    }
 };
 
 class PrincipledMaterial : public Material {
@@ -346,11 +354,11 @@ public:
         Scene &scene = ppl->scene();
         TSampler &sampler = ppl->scene().sampler();
 
-        uint sample = 2 << 20;
+        uint sample = precompute_sample_num;
 
         float2 roughness = make_float2(0.2);
 
-        uint res = 8;
+        uint res = 32;
 
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
@@ -365,13 +373,12 @@ public:
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet));
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
-            buffer.write(dispatch_id(), result + 6);
+            buffer.write(dispatch_id(), result);
         };
         PrecomputedLobeTable elm;
         elm.name = "SpecularBxDFSet";
         elm.type = Type::of<float>();
         elm.data.resize(buffer.size());
-
 
         auto shader = device.compile(kernel);
         stream << shader(sample).dispatch(make_uint3(res))

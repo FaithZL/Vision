@@ -73,6 +73,12 @@ Float MicrofacetBxDFSet::to_ratio_x() noexcept {
     return ocarina::clamp(ocarina::sqrt(ax * ay), 1e-4f, 1.0f);
 }
 
+namespace detail {
+[[nodiscard]] Float to_ratio_z(const Float &ior) {
+    return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
+}
+}// namespace detail
+
 void MicrofacetBxDFSet::from_ratio_z(ocarina::Float z) noexcept {
     Float ior = schlick_ior_from_F0(Pow<4>(z));
     fresnel_->set_eta(SampledSpectrum(bxdf()->swl().dimension(), ior));
@@ -80,7 +86,7 @@ void MicrofacetBxDFSet::from_ratio_z(ocarina::Float z) noexcept {
 
 Float MicrofacetBxDFSet::to_ratio_z() noexcept {
     Float ior = fresnel_->eta().average();
-    return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
+    return detail::to_ratio_z(ior);
 }
 
 const SampledWavelengths *MicrofacetBxDFSet::swl() const {

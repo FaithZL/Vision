@@ -74,6 +74,7 @@ public:
 
 public:
     using Desc = MaterialDesc;
+    static constexpr auto precompute_sample_num = 2 << 20;
 
 protected:
     uint index_{InvalidUI32};
