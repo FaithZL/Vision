@@ -51,9 +51,9 @@ public:
     /// for precompute the table end
 
     /// for look up the table begin
-    [[nodiscard]] virtual Float to_ratio_x() noexcept;
+    [[nodiscard]] virtual Float to_ratio_x() const noexcept;
     [[nodiscard]] static Float to_ratio_y(const Float3 &wo) noexcept;
-    [[nodiscard]] virtual Float to_ratio_z() noexcept;
+    [[nodiscard]] virtual Float to_ratio_z() const noexcept;
     /// for look up the table end
 
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
@@ -70,14 +70,16 @@ protected:
 
 public:
     MicrofacetBxDFSet(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
-    [[nodiscard]] const Fresnel *fresnel() const noexcept { return fresnel_.get(); }
-    [[nodiscard]] Fresnel *fresnel() noexcept { return fresnel_.get(); }
+    template<typename T = Fresnel>
+    [[nodiscard]] const T *fresnel() const noexcept { return static_cast<const T *>(fresnel_.get()); }
+    template<typename T = Fresnel>
+    [[nodiscard]] T *fresnel() noexcept { return static_cast<T *>(fresnel_.get()); }
     [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return refl_.get(); }
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return refl_.get(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
-    [[nodiscard]] Float to_ratio_x() noexcept override;
+    [[nodiscard]] Float to_ratio_x() const noexcept override;
     void from_ratio_z(ocarina::Float z) noexcept override;
-    [[nodiscard]] Float to_ratio_z() noexcept override;
+    [[nodiscard]] Float to_ratio_z() const noexcept override;
     VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
         [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
@@ -197,14 +199,12 @@ public:
     OC_MAKE_MEMBER_GETTER(weight, &)
 };
 
-
 [[nodiscard]] inline SampledSpectrum layering_weight(const SampledSpectrum &layer_albedo,
-                                              const SampledSpectrum &weight) noexcept {
+                                                     const SampledSpectrum &weight) noexcept {
     SampledSpectrum tmp = safe_div(layer_albedo, weight);
     Float max_comp = tmp.max();
     return weight * saturate(1 - max_comp);
 }
-
 
 class MultiBxDFSet : public BxDFSet {
 public:

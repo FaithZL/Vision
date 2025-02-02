@@ -8,7 +8,7 @@
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
-//#include "precomputed_table.inl.h"
+#include "precomputed_table.inl.h"
 
 namespace vision {
 
@@ -21,7 +21,7 @@ public:
     FresnelGeneralizedSchlick(SampledSpectrum F0, Float eta,
                               const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)), eta_(std::move(eta)) {}
-
+    OC_MAKE_MEMBER_GETTER(F0,)
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
@@ -82,17 +82,6 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
-#define OC_MAKE_INSTANCE(ClassName, static_ptr)      \
-private:                                             \
-    static ClassName *static_ptr;                    \
-    ClassName() = default;                           \
-                                                     \
-public:                                              \
-    ClassName(const ClassName &) = delete;           \
-    ClassName(ClassName &&) = delete;                \
-    ClassName operator=(const ClassName &) = delete; \
-    ClassName operator=(ClassName &&) = delete;
-
 struct SheenLTCTable {
 private:
     Texture approx_;
@@ -100,16 +89,6 @@ private:
     static constexpr auto res = 32;
 
     OC_MAKE_INSTANCE_CONSTRUCTOR(SheenLTCTable, s_sheen_table)
-
-//private:
-//    static SheenLTCTable *s_sheen_table;
-//    SheenLTCTable() = default;
-//
-//public:
-//    SheenLTCTable(const SheenLTCTable &) = delete;
-//    SheenLTCTable(SheenLTCTable &&) = delete;
-//    SheenLTCTable operator=(const SheenLTCTable &) = delete;
-//    SheenLTCTable operator=(SheenLTCTable &&) = delete;
 
 public:
     static SheenLTCTable &instance();
@@ -121,10 +100,10 @@ public:
         Pipeline *ppl = Global::instance().pipeline();
         approx_ = ppl->device().create_texture(make_uint2(res),
                                                PixelStorage::FLOAT4,
-                                               "SheenLTC approx_");
+                                               "SheenLTCTable::approx_");
         volume_ = ppl->device().create_texture(make_uint2(res),
                                                PixelStorage::FLOAT4,
-                                               "SheenLTC volume_");
+                                               "SheenLTCTable::volume_");
         approx_.upload_immediately(addressof(SheenLTCTableApprox));
         volume_.upload_immediately(addressof(SheenLTCTableVolume));
     }
@@ -259,18 +238,48 @@ public:
 
 class SpecularBxDFSetTable {
 private:
-    static constexpr uint res = 32;
-
-private:
-    static SpecularBxDFSetTable *s_sheen_table;
-    SpecularBxDFSetTable() = default;
+    Texture table_;
 
 public:
-    SpecularBxDFSetTable(const SpecularBxDFSetTable &) = delete;
-    SpecularBxDFSetTable(SpecularBxDFSetTable &&) = delete;
-    SpecularBxDFSetTable operator=(const SpecularBxDFSetTable &) = delete;
-    SpecularBxDFSetTable operator=(SpecularBxDFSetTable &&) = delete;
+    static constexpr uint res = 32;
+
+    OC_MAKE_INSTANCE_CONSTRUCTOR(SpecularBxDFSetTable, s_specular_table)
+
+public:
+    [[nodiscard]] static SpecularBxDFSetTable &instance();
+    static void destroy_instance();
+    void init() noexcept {
+        if (table_.handle()) {
+            return;
+        }
+        Pipeline *ppl = Global::instance().pipeline();
+        table_ = ppl->device().create_texture(make_uint3(res),
+                                               PixelStorage::FLOAT1,
+                                               "SpecularBxDFSetTable::table_");
+
+        table_.upload_immediately(addressof(SpecularBxDFSet_Table));
+    }
+    [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
+        return table_.sample(1, uvw).as_scalar();
+    }
 };
+
+SpecularBxDFSetTable *SpecularBxDFSetTable::s_specular_table = nullptr;
+
+SpecularBxDFSetTable &SpecularBxDFSetTable::instance() {
+    if (s_specular_table == nullptr) {
+        s_specular_table = new SpecularBxDFSetTable();
+        HotfixSystem::instance().register_static_var("SpecularBxDFSetTable", s_specular_table);
+    }
+    return *s_specular_table;
+}
+
+void SpecularBxDFSetTable::destroy_instance() {
+    if (s_specular_table) {
+        delete s_specular_table;
+        s_specular_table = nullptr;
+    }
+}
 
 class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
@@ -281,14 +290,20 @@ public:
 
     [[nodiscard]] SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                         const Uint &sample_num) noexcept override {
-        from_ratio_x(ratio.x);
+        MicrofacetBxDFSet::from_ratio_x(ratio.x);
         Float3 wo = from_ratio_y(ratio.y);
-        from_ratio_z(ratio.z);
+        MicrofacetBxDFSet::from_ratio_z(ratio.z);
         return precompute_albedo(wo, sampler, sample_num);
     }
 
     [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
-        return MicrofacetBxDFSet::principled_albedo(cos_theta);
+        Float x = MicrofacetBxDFSet::to_ratio_x();
+        Float z = MicrofacetBxDFSet::to_ratio_z();
+        Float3 uvw = make_float3(x, cos_theta, z);
+        Float s = SpecularBxDFSetTable::instance().sample(uvw);
+        SampledSpectrum f0 = fresnel<FresnelGeneralizedSchlick>()->F0();
+        SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(swl()->dimension())) * bxdf()->principled_albedo(cos_theta);
+        return ret;
     }
 };
 
@@ -362,6 +377,7 @@ public:
     }
     void prepare() noexcept override {
         SheenLTCTable::instance().init();
+        SpecularBxDFSetTable::instance().init();
     }
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
