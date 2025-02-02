@@ -123,7 +123,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.01f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
         init_ior(desc);
         init_slot_cursor(&color_, &anisotropic_);
     }
@@ -148,6 +148,7 @@ public:
             eta_slot = desc.slot("", ior);
         }
         ior_ = Slot::create_slot(eta_slot);
+        ior_->set_range(1.1, 5);
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }

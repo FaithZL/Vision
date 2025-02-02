@@ -56,7 +56,7 @@ public:
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
         init_ior(desc);
         init_slot_cursor(&eta_, &anisotropic_);
     }
@@ -86,6 +86,8 @@ public:
             eta_->update_value({eta.x, eta.y, eta.z});
             k_->update_value({k.x, k.y, k.z});
         }
+        eta_->set_range(0, 20);
+        k_->set_range(0, 20);
     }
 
     [[nodiscard]] static vector<const char *> all_metal_names() noexcept {
@@ -133,13 +135,10 @@ public:
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
-
-        Float alpha_min = min(alpha.x, alpha.y);
-        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
         SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl)};
         SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl)};
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);

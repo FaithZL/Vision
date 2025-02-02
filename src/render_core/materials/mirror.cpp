@@ -31,7 +31,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
@@ -49,9 +49,6 @@ protected:
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
-
-        Float alpha_min = min(alpha.x, alpha.y);
-        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
 
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);

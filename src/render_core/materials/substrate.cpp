@@ -108,7 +108,7 @@ public:
         diff_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         spec_.set(Slot::create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
         init_slot_cursor(&diff_, &anisotropic_);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
@@ -123,12 +123,10 @@ public:
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
 
-        Float alpha_min = min(alpha.x, alpha.y);
-        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
-
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl);
         UP<FresnelBlend> refl = make_unique<FresnelBlend>(Rd, Rs, swl, microfacet);
