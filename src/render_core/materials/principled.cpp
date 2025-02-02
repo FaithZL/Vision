@@ -338,31 +338,59 @@ public:
     }
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-        Device &device = Global::instance().device();
-        Stream stream = device.create_stream();
-        Pipeline *ppl = Global::instance().pipeline();
-        Scene &scene = ppl->scene();
-        TSampler &sampler = scene.sampler();
+//        Device &device = Global::instance().device();
+//        Stream stream = device.create_stream();
+//        Pipeline *ppl = Global::instance().pipeline();
+//        Scene &scene = ppl->scene();
+//        TSampler &sampler = scene.sampler();
+//
+//        uint sample = 2 << 20;
+//
+//        float2 roughness = make_float2(0.2);
+//
+//        uint res = 32;
+//
+//        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
+//
+//
+//
+//        Kernel kernel = [&](Uint sample_num) {
+//            sampler->start(dispatch_idx().xy(), 0, 0);
+//
+//        };
+//
+//        auto shader = device.compile(kernel);
+//        stream << shader(sample).dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
 
-        uint sample = 2 << 20;
+        PrecomputedLobeTable elm;
+        elm.name = "SpecularBxDFSet";
+        elm.type = Type::of<float>();
 
-        float2 roughness = make_float2(0.2);
+        for (int i = 0; i < elm.type->dimension() * 50; ++i) {
+            elm.data.push_back(i);
+        }
 
-        uint res = 32;
+        ret.push_back(elm);
 
-        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
+        PrecomputedLobeTable elm2;
+        elm2.name = "MetallicBxDFSet";
+        elm2.type = Type::of<float2>();
 
+        for (int i = 0; i < elm2.type->dimension() * 50; ++i) {
+            elm2.data.push_back(i);
+        }
 
+        ret.push_back(elm2);
 
-        Kernel kernel = [&](Uint sample_num) {
-            sampler->start(dispatch_idx().xy(), 0, 0);
+        PrecomputedLobeTable elm4;
+        elm4.name = "MetallicBxDFSet2";
+        elm4.type = Type::of<float4>();
 
-        };
+        for (int i = 0; i < elm4.type->dimension() * 50; ++i) {
+            elm4.data.push_back(i);
+        }
 
-        auto shader = device.compile(kernel);
-        stream << shader(sample).dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
-
-        ret.push_back({});
+        ret.push_back(elm4);
 
         return ret;
     }

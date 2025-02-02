@@ -112,9 +112,12 @@ void MaterialRegistry::precompute_albedo() noexcept {
     output << "#pragma once \n"
            << std::endl;
     output << "#include \"math/basic_types.h\" \n\n";
+    output << "namespace vision { \n";
+    output << "using namespace ocarina;\n";
     for (const PrecomputedLobeTable table : configs) {
         output << table.to_string() << std::endl;
     }
+    output << "} //namespace";
     output.close();
 }
 

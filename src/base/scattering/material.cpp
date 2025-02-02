@@ -287,7 +287,36 @@ void Material::build_evaluator(Evaluator &evaluator, Interaction it,
 }
 
 string PrecomputedLobeTable::to_string() const noexcept {
-    return "//test \n";
+    uint dim = type->dimension();
+    size_t count = data.size() / type->dimension();
+    std::ostringstream content;
+    uint line_len = 12 / dim;
+
+    auto func = [&]<typename T>(T t) {
+        for (uint i = 0; i < data.size(); i += dim) {
+            T elm = T(addressof(data[i]));
+            content << ((i / dim) % line_len == 0 ? "\n\t" : "");
+            content << to_str(elm) << (i / dim == data.size() / dim - 1 ? "\n" : ", ");
+        }
+    };
+
+    if (type->name() == "float") {
+        for (int i = 0; i < data.size(); ++i) {
+            content << (i % line_len == 0 ? "\n\t" : "");
+            content << data[i] << (i == data.size() - 1 ? "\n" : ", ");
+        }
+    } else if (type->name() == "float2") {
+        func(float2{});
+    } else if (type->name() == "float4") {
+        func(float4{});
+    } else {
+        OC_ASSERT(false);
+    }
+
+    string str = ocarina::format("const {} {}_Table[{}] = {{{}}};", type->name(),
+                                 name, count, content.str());
+
+    return "" + str + "";
 }
 
 vector<PrecomputedLobeTable> Material::precompute() const noexcept {
