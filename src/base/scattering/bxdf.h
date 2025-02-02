@@ -109,6 +109,7 @@ protected:
     DCSP<Microfacet<D>> microfacet_;
 
 public:
+    MicrofacetBxDF() = default;
     MicrofacetBxDF(const SP<Microfacet<D>> &microfacet, uint flag,
                    const SampledWavelengths &swl)
         : BxDF(swl, flag),
