@@ -104,6 +104,22 @@ public:
     }
 };
 
+class MicrofacetBxDF : public BxDF {
+protected:
+    DCSP<Microfacet<D>> microfacet_;
+
+public:
+    MicrofacetBxDF(DCSP<Microfacet<D>> microfacet,
+                   const SampledWavelengths &swl)
+        : BxDF(swl, BxDFFlag::GlossyRefl),
+          microfacet_(std::move(microfacet)) {}
+
+    void set_alpha(const Float2 &alpha) noexcept {
+        microfacet_->set_alpha_x(alpha.x);
+        microfacet_->set_alpha_y(alpha.y);
+    }
+};
+
 class MicrofacetReflection : public BxDF {
 private:
     SampledSpectrum kr_;
@@ -137,6 +153,10 @@ public:
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : BxDF(swl, BxDFFlag::GlossyTrans), kt_(std::move(color)), microfacet_(m) {}
     [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi) const noexcept override;
+    void set_alpha(const Float2 &alpha) noexcept {
+        microfacet_->set_alpha_x(alpha.x);
+        microfacet_->set_alpha_y(alpha.y);
+    }
     [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return kt_; }
     [[nodiscard]] Float BTDF(const Float3 &wo, const Float3 &wi,
                              SP<Fresnel> fresnel, uint channel) const noexcept;

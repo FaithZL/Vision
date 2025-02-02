@@ -238,6 +238,8 @@ public:
     Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
         : alpha_x_(std::move(ax)), alpha_y_(std::move(ay)), type_(type) {}
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(alpha_x_, alpha_y_); }
+    OC_MAKE_MEMBER_GETTER_SETTER(alpha_x,)
+    OC_MAKE_MEMBER_GETTER_SETTER(alpha_y,)
     [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept {
         return microfacet::D_<p>(wh, alpha_x_, alpha_y_, type_);
     }

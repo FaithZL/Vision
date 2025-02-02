@@ -337,6 +337,30 @@ public:
     }
     [[nodiscard]] vector<float> precompute(ocarina::uint *dim) const noexcept override {
         vector<float> ret;
+        Device &device = Global::instance().device();
+        Stream stream = device.create_stream();
+        Pipeline *ppl = Global::instance().pipeline();
+        Scene &scene = ppl->scene();
+        TSampler &sampler = scene.sampler();
+
+        uint sample = 2 << 20;
+
+        float2 roughness = make_float2(0.2);
+
+        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(32));
+
+
+
+        Kernel kernel = [&]() {
+            sampler->start(dispatch_idx().xy(), 0, 0);
+            $info("{},,,,a", sampler->next_1d());
+            $info("{},,,,", sampler->next_1d());
+        };
+
+        auto shader = device.compile(kernel);
+        stream << shader().dispatch(1) << Env::instance().printer().retrieve() << synchronize() << commit();
+
+
 
         return ret;
     }
@@ -372,7 +396,7 @@ public:
             // metallic
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
-            UP<BxDF> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
+            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
             WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
             lobes.push_back(std::move(metal_lobe));
             weight *= (1.0f - metallic);

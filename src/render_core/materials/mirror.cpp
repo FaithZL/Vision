@@ -35,7 +35,7 @@ public:
         init_slot_cursor(&color_, &anisotropic_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_HOTFIX_MAKE_RESTORE(Material, anisotropic_, remapping_roughness_, alpha_threshold_)
+    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
         Material::render_sub_UI(widgets);
@@ -55,7 +55,7 @@ protected:
 
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
-        UP<BxDF> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
+        UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<MirrorBxDFSet>(fresnel, std::move(refl));
     }
 };
