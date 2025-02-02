@@ -108,7 +108,7 @@ public:
         diff_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         spec_.set(Slot::create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
         init_slot_cursor(&diff_, &anisotropic_);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }

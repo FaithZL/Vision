@@ -123,7 +123,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.01f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
         init_ior(desc);
         init_slot_cursor(&color_, &anisotropic_);
     }

@@ -56,7 +56,7 @@ public:
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f, -1.f, 1.f)));
+        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)));
         init_ior(desc);
         init_slot_cursor(&eta_, &anisotropic_);
     }

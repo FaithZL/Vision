@@ -348,19 +348,7 @@ public:
         slot_desc.init(_parameter[key]);
         return slot_desc;
     }
-
-    template<typename T>
-    [[nodiscard]] SlotDesc slot(const string &key, T default_value, float min, float max,
-                                ShaderNodeType type = ShaderNodeType::Number) const noexcept {
-        ShaderNodeDesc node{default_value, type};
-        node.name = key;
-        SlotDesc slot_desc{node, type_dimension_v<T>};
-        _parameter[key].set_value_if_null("min", min);
-        _parameter[key].set_value_if_null("max", max);
-        slot_desc.init(_parameter[key]);
-        return slot_desc;
-    }
-
+    
     [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
                                 ShaderNodeType type = ShaderNodeType::Number) const noexcept {
         ShaderNodeDesc node{data, type};
