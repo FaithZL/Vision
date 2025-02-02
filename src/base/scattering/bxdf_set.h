@@ -198,7 +198,7 @@ public:
 };
 
 
-[[nodiscard]] SampledSpectrum layering_weight(const SampledSpectrum &layer_albedo,
+[[nodiscard]] inline SampledSpectrum layering_weight(const SampledSpectrum &layer_albedo,
                                               const SampledSpectrum &weight) noexcept {
     SampledSpectrum tmp = safe_div(layer_albedo, weight);
     Float max_comp = tmp.max();
