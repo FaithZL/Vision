@@ -52,8 +52,14 @@ template<EPort p = D>
 }
 
 template<typename T>
-[[nodiscard]] scalar_t<T> schlick_F0_from_eta(const T &eta) {
-    return sqr(eta - 1) / sqr(eta + 1);
+[[nodiscard]] scalar_t<T> schlick_F0_from_ior(const T &ior) {
+    return sqr((ior - 1.0f) / (ior + 1.0f));
+}
+
+template<typename T>
+[[nodiscard]] scalar_t<T> schlick_ior_from_F0(const T &f0) {
+    const T sqrt_f0 = ocarina::sqrt(ocarina::clamp(f0, 0.0f, 0.99f));
+    return (1.0f + sqrt_f0) / (1.0f - sqrt_f0);
 }
 
 template<EPort p = D>

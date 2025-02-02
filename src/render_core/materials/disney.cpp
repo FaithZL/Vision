@@ -436,7 +436,7 @@ public:
 
         Float spec_tint = spec_tint_slot.evaluate(it, swl).as_scalar();
         Float eta = eta_slot.evaluate(it, swl).as_scalar();
-        Float SchlickR0 = schlick_F0_from_eta(eta);
+        Float SchlickR0 = schlick_F0_from_ior(eta);
         SampledSpectrum Cspec0 = lerp(metallic, lerp(spec_tint, 1.f, tint) * SchlickR0, color);
 
         fresnel_ = make_deep_copy_shared<FresnelDisney>(Cspec0, metallic, eta, swl);

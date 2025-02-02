@@ -422,7 +422,7 @@ public:
         }
         {
             // specular
-            Float f0 = schlick_F0_from_eta(ior);
+            Float f0 = schlick_F0_from_ior(ior);
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(weight, swl, microfacet));

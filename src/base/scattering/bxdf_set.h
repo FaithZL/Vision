@@ -74,7 +74,10 @@ public:
     [[nodiscard]] Fresnel *fresnel() noexcept { return fresnel_.get(); }
     [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return refl_.get(); }
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return refl_.get(); }
+    void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() noexcept override;
+    void from_ratio_z(ocarina::Float z) noexcept override;
+    [[nodiscard]] Float to_ratio_z() noexcept override;
     VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
         [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;

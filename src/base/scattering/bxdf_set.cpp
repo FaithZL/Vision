@@ -47,7 +47,6 @@ Float BxDFSet::to_ratio_y(const ocarina::Float3 &wo) noexcept {
 }
 
 void BxDFSet::from_ratio_z(ocarina::Float z) noexcept {
-
 }
 
 Float BxDFSet::to_ratio_z() noexcept {
@@ -63,10 +62,24 @@ MicrofacetBxDFSet::MicrofacetBxDFSet(const SP<Fresnel> &fresnel,
                                      UP<MicrofacetBxDF> refl)
     : fresnel_(fresnel), refl_(std::move(refl)) {}
 
+void MicrofacetBxDFSet::from_ratio_x(const Float &roughness) noexcept {
+    bxdf()->set_alpha(roughness);
+}
+
 Float MicrofacetBxDFSet::to_ratio_x() noexcept {
     Float ax = bxdf()->alpha_x();
     Float ay = bxdf()->alpha_y();
     return ocarina::clamp(ocarina::sqrt(ax * ay), 1e-4f, 1.0f);
+}
+
+void MicrofacetBxDFSet::from_ratio_z(ocarina::Float z) noexcept {
+    Float ior = schlick_ior_from_F0(Pow<4>(z));
+    fresnel_->set_eta(SampledSpectrum(bxdf()->swl().dimension(), ior));
+}
+
+Float MicrofacetBxDFSet::to_ratio_z() noexcept {
+    Float ior = fresnel_->eta().average();
+    return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
 }
 
 const SampledWavelengths *MicrofacetBxDFSet::swl() const {
