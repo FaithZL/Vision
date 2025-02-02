@@ -44,7 +44,7 @@ public:
     virtual ~BxDFSet() = default;
 };
 
-class UniversalReflectBxDFSet : public BxDFSet {
+class MicrofacetBxDFSet : public BxDFSet {
 protected:
     DCSP<Fresnel> fresnel_;
     DCUP<MicrofacetBxDF> refl_;
@@ -53,9 +53,12 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    UniversalReflectBxDFSet(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
-
-    VS_MAKE_BxDFSet_ASSIGNMENT(UniversalReflectBxDFSet)
+    MicrofacetBxDFSet(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
+    [[nodiscard]] const Fresnel *fresnel() const noexcept { return fresnel_.get(); }
+    [[nodiscard]] Fresnel *fresnel() noexcept { return fresnel_.get(); }
+    [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return refl_.get(); }
+    [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return refl_.get(); }
+    VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
         [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,

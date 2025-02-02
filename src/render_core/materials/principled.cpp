@@ -253,14 +253,14 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
 };
 
-class MetallicBxDFSet : public UniversalReflectBxDFSet {
+class MetallicBxDFSet : public MicrofacetBxDFSet {
 public:
-    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
-class SpecularBxDFSet : public UniversalReflectBxDFSet {
+class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
-    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
 class PrincipledMaterial : public Material {

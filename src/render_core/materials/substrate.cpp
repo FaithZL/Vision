@@ -69,9 +69,9 @@ public:
     }
 };
 
-class SubstrateBxDFSet : public UniversalReflectBxDFSet {
+class SubstrateBxDFSet : public MicrofacetBxDFSet {
 public:
-    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
 //    "type" : "substrate",
@@ -98,7 +98,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(UniversalReflectBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
 
 public:
     SubstrateMaterial() = default;

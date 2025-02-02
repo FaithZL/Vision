@@ -8,9 +8,9 @@
 
 namespace vision {
 
-class MirrorBxDFSet : public UniversalReflectBxDFSet {
+class MirrorBxDFSet : public MicrofacetBxDFSet {
 public:
-    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
 class MirrorMaterial : public Material {
@@ -22,7 +22,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(UniversalReflectBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
 
 public:
     MirrorMaterial() = default;

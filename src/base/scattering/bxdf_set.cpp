@@ -6,34 +6,34 @@
 
 namespace vision {
 
-uint64_t UniversalReflectBxDFSet::_compute_type_hash() const noexcept {
+uint64_t MicrofacetBxDFSet::_compute_type_hash() const noexcept {
     return hash64(fresnel_->type_hash(), refl_->type_hash());
 }
 
-UniversalReflectBxDFSet::UniversalReflectBxDFSet(const SP<Fresnel> &fresnel,
+MicrofacetBxDFSet::MicrofacetBxDFSet(const SP<Fresnel> &fresnel,
                                                  UP<MicrofacetBxDF> refl)
     : fresnel_(fresnel), refl_(std::move(refl)) {}
 
-const SampledWavelengths *UniversalReflectBxDFSet::swl() const {
+const SampledWavelengths *MicrofacetBxDFSet::swl() const {
     return &refl_->swl();
 }
 
-SampledSpectrum UniversalReflectBxDFSet::principled_albedo(const Float &cos_theta) const noexcept {
+SampledSpectrum MicrofacetBxDFSet::principled_albedo(const Float &cos_theta) const noexcept {
     return refl_->principled_albedo(cos_theta) * fresnel_->evaluate(cos_theta);
 }
 
-ScatterEval UniversalReflectBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+ScatterEval MicrofacetBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                                     vision::MaterialEvalMode mode,
                                                     const Uint &flag) const noexcept {
     return refl_->safe_evaluate(wo, wi, fresnel_->clone(), mode);
 }
 
-BSDFSample UniversalReflectBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
+BSDFSample MicrofacetBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                                  vision::TSampler &sampler) const noexcept {
     return refl_->sample(wo, sampler, fresnel_->clone());
 }
 
-BSDFSample UniversalReflectBxDFSet::sample_delta_local(const Float3 &wo,
+BSDFSample MicrofacetBxDFSet::sample_delta_local(const Float3 &wo,
                                                        TSampler &sampler) const noexcept {
     Float3 wi = make_float3(-wo.xy(), wo.z);
     BSDFSample ret{refl_->swl()};
@@ -42,7 +42,7 @@ BSDFSample UniversalReflectBxDFSet::sample_delta_local(const Float3 &wo,
     return ret;
 }
 
-SampledDirection UniversalReflectBxDFSet::sample_wi(const Float3 &wo,
+SampledDirection MicrofacetBxDFSet::sample_wi(const Float3 &wo,
                                                     const Uint &flag,
                                                     TSampler &sampler) const noexcept {
     return refl_->sample_wi(wo, sampler->next_2d(), fresnel_->clone());

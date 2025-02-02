@@ -26,9 +26,9 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
-class ConductorBxDFSet : public UniversalReflectBxDFSet {
+class ConductorBxDFSet : public MicrofacetBxDFSet {
 public:
-    using UniversalReflectBxDFSet::UniversalReflectBxDFSet;
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
 //    "type" : "metal",
@@ -48,7 +48,7 @@ private:
     string metal_name_;
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(UniversalReflectBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
 
 public:
     MetalMaterial() = default;
