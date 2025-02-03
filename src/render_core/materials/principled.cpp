@@ -397,8 +397,8 @@ public:
             sampler->start(dispatch_idx().xy(), 0, 0);
             SampledWavelengths swl = scene.spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            SampledSpectrum f0 = SampledSpectrum(make_float3(0, 1, 0));
-            SampledSpectrum f90 = SampledSpectrum(make_float3(1, 1, 0));
+            SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
+            SampledSpectrum f90 = SampledSpectrum(make_float3(1, 1, 1));
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
             SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.f, 0.f);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
@@ -441,25 +441,23 @@ public:
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         Float cos_theta = dot(it.wo, it.shading.normal());
-//        {
-//            // sheen
-//            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
-//            SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
-//            WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
-//            lobes.push_back(std::move(sheen_lobe));
-//            weight = layering_weight(sheen_albedo, weight);
-//            $condition_info("{} {} {}---sheen-----", weight.vec3());
-//        }
-//        {
-//            // metallic
-//            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
-//            fresnel_f82->init_from_F82(specular_tint);
-//            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
-//            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
-//            lobes.push_back(std::move(metal_lobe));
-//            weight *= (1.0f - metallic);
-//            $condition_info("{} {} {}----metallic----", weight.vec3());
-//        }
+        {
+            // sheen
+            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
+            SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
+            WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
+            lobes.push_back(std::move(sheen_lobe));
+            weight = layering_weight(sheen_albedo, weight);
+        }
+        {
+            // metallic
+            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
+            fresnel_f82->init_from_F82(specular_tint);
+            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
+            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
+            lobes.push_back(std::move(metal_lobe));
+            weight *= (1.0f - metallic);
+        }
         {
             // specular
             Float f0 = schlick_F0_from_ior(ior);
@@ -470,7 +468,6 @@ public:
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);
-            $condition_info("{} {} {}----specular----", weight.vec3());
         }
         {
             // diffuse
