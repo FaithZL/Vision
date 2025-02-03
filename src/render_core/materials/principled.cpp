@@ -30,10 +30,11 @@ public:
     }
     [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
         Float F_real = fresnel_dielectric(cos_theta, eta_);
-        Float F0_real = schlick_weight(eta_);
+        Float F0_real = schlick_F0_from_ior(eta_);
         Float t = inverse_lerp(F_real, F0_real, 1.f);
         t = ocarina::clamp(t, 0.f, 1.f);
-        return lerp(t, F0_, 1.f);
+        SampledSpectrum ret = lerp(t, F0_, 1.f);
+        return ret;
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override {
         return {swl_->dimension(), eta_};
@@ -241,7 +242,7 @@ private:
     Texture table_;
 
 public:
-    static constexpr uint res = 32;
+    static constexpr uint res = 16;
 
     OC_MAKE_INSTANCE_CONSTRUCTOR(SpecularBxDFSetTable, s_specular_table)
 
@@ -282,9 +283,6 @@ void SpecularBxDFSetTable::destroy_instance() {
 }
 
 class SpecularBxDFSet : public MicrofacetBxDFSet {
-public:
-    static constexpr uint table_res = 32u;
-
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
@@ -391,7 +389,7 @@ public:
 
         float2 roughness = make_float2(0.2);
 
-        uint res = SpecularBxDFSet::table_res;
+        uint res = SpecularBxDFSetTable::res;
 
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
@@ -443,23 +441,25 @@ public:
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         Float cos_theta = dot(it.wo, it.shading.normal());
-        {
-            // sheen
-            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
-            SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
-            WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
-            lobes.push_back(std::move(sheen_lobe));
-            weight = layering_weight(sheen_albedo, weight);
-        }
-        {
-            // metallic
-            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
-            fresnel_f82->init_from_F82(specular_tint);
-            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
-            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
-            lobes.push_back(std::move(metal_lobe));
-            weight *= (1.0f - metallic);
-        }
+//        {
+//            // sheen
+//            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
+//            SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
+//            WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
+//            lobes.push_back(std::move(sheen_lobe));
+//            weight = layering_weight(sheen_albedo, weight);
+//            $condition_info("{} {} {}---sheen-----", weight.vec3());
+//        }
+//        {
+//            // metallic
+//            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
+//            fresnel_f82->init_from_F82(specular_tint);
+//            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
+//            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
+//            lobes.push_back(std::move(metal_lobe));
+//            weight *= (1.0f - metallic);
+//            $condition_info("{} {} {}----metallic----", weight.vec3());
+//        }
         {
             // specular
             Float f0 = schlick_F0_from_ior(ior);
@@ -470,6 +470,7 @@ public:
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);
+            $condition_info("{} {} {}----specular----", weight.vec3());
         }
         {
             // diffuse
