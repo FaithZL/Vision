@@ -291,7 +291,19 @@ public:
         MicrofacetBxDFSet::from_ratio_x(ratio.x);
         Float3 wo = from_ratio_y(ratio.y);
         MicrofacetBxDFSet::from_ratio_z(ratio.z);
-        return precompute_albedo(wo, sampler, sample_num);
+
+        SampledSpectrum ret = SampledSpectrum::zero(3);
+        $for(i, sample_num) {
+            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
+            ScatterEval se = bs.eval;
+            $if(se.pdf() > 0) {
+                auto r = saturate(se.f[0] / se.f[1]);
+                ret += r;
+            };
+        };
+        return ret / sample_num;
+//
+//        return precompute_albedo(wo, sampler, sample_num);
     }
 
     [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
@@ -304,6 +316,13 @@ public:
         return ret;
     }
 };
+
+[[nodiscard]] inline SampledSpectrum layering_weight(const SampledSpectrum &layer_albedo,
+                                                     const SampledSpectrum &weight) noexcept {
+    SampledSpectrum tmp = safe_div(layer_albedo, weight);
+    Float max_comp = tmp.max();
+    return weight * saturate(1 - max_comp);
+}
 
 class PrincipledMaterial : public Material {
 private:
@@ -397,8 +416,8 @@ public:
             sampler->start(dispatch_idx().xy(), 0, 0);
             SampledWavelengths swl = scene.spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
-            SampledSpectrum f90 = SampledSpectrum(make_float3(1, 1, 1));
+            SampledSpectrum f0 = SampledSpectrum(make_float3(0,1,0));
+            SampledSpectrum f90 = SampledSpectrum(make_float3(1, 1, 0));
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
             SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.f, 0.f);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
