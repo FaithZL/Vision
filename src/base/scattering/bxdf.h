@@ -57,7 +57,7 @@ public:
                                     SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] virtual SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                             SP<Fresnel> fresnel) const noexcept = 0;
-    [[nodiscard]] virtual SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual Bool safe(const Float3 &wo, const Float3 &wi) const noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi,
                                                SP<Fresnel> fresnel,
@@ -97,7 +97,7 @@ public:
         : BxDF(swl, BxDFFlag::DiffRefl),
           Kr(std::move(kr)) {}
     VS_MAKE_BxDF_ASSIGNMENT(LambertReflection)
-        [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return Kr; }
+        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return Kr; }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                     SP<Fresnel> fresnel) const noexcept override {
         return Kr * InvPi;
@@ -135,7 +135,7 @@ public:
         MicrofacetReflection() = default;
     MicrofacetReflection(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : MicrofacetBxDF(m, BxDFFlag::GlossyRefl, swl), kr_(std::move(color)) {}
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return kr_; }
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return kr_; }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                     SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi,
@@ -156,7 +156,7 @@ public:
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : MicrofacetBxDF(m, BxDFFlag::GlossyTrans, swl), kt_(std::move(color)) {}
     [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi) const noexcept override;
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return kt_; }
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return kt_; }
     [[nodiscard]] Float BTDF(const Float3 &wo, const Float3 &wi,
                              SP<Fresnel> fresnel, uint channel) const noexcept;
     [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi,
@@ -187,7 +187,7 @@ private:
 public:
     OrenNayar(SampledSpectrum R, Float sigma, const SampledWavelengths &swl);
     VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
-        [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return R_; }
+        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return R_; }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                     SP<Fresnel> fresnel) const noexcept override;
 };

@@ -160,7 +160,7 @@ public:
         return mode == Volume ? SheenLTCTable::instance().sample_volume(cos_theta, alpha_) :
                                 SheenLTCTable::instance().sample_approx(cos_theta, alpha_);
     }
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return tint_; }
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
@@ -306,13 +306,13 @@ public:
 //        return precompute_albedo(wo, sampler, sample_num);
     }
 
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
+    [[nodiscard]] SampledSpectrum principled_weight(const Float &cos_theta) const noexcept {
         Float x = MicrofacetBxDFSet::to_ratio_x();
         Float z = MicrofacetBxDFSet::to_ratio_z();
         Float3 uvw = make_float3(x, cos_theta, z);
         Float s = SpecularBxDFSetTable::instance().sample(uvw);
         SampledSpectrum f0 = fresnel<FresnelGeneralizedSchlick>()->F0();
-        SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(swl()->dimension())) * bxdf()->principled_albedo(cos_theta);
+        SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(swl()->dimension())) * bxdf()->albedo(cos_theta);
         return ret;
     }
 };
@@ -463,7 +463,7 @@ public:
         {
             // sheen
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
-            SampledSpectrum sheen_albedo = sheen_ltc->principled_albedo(cos_theta);
+            SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
             WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
             weight = layering_weight(sheen_albedo, weight);
@@ -483,7 +483,7 @@ public:
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(weight, swl, microfacet));
-            SampledSpectrum spec_refl_albedo = spec_refl->principled_albedo(cos_theta);
+            SampledSpectrum spec_refl_albedo = spec_refl->principled_weight(cos_theta);
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);

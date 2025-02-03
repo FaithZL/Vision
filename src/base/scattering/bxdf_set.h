@@ -19,7 +19,7 @@ namespace vision {
 struct BxDFSet : public ocarina::Hashable {
 public:
     BxDFSet() = default;
-    [[nodiscard]] virtual SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                                      MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept = 0;
@@ -81,7 +81,7 @@ public:
     void from_ratio_z(ocarina::Float z) noexcept override;
     [[nodiscard]] Float to_ratio_z() const noexcept override;
     VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
-        [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
+        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode,
@@ -110,7 +110,7 @@ public:
     DiffuseBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
         : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override { return bxdf_->principled_albedo(cos_theta); }
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return bxdf_->albedo(cos_theta); }
     [[nodiscard]] const SampledWavelengths *swl() const override {
         return &bxdf_->swl();
     }
@@ -140,7 +140,7 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override;
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override {
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
         return {swl_->dimension(), 0.f};
     }
     VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
@@ -169,7 +169,7 @@ public:
           dispersive_(ocarina::move(dispersive)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
         [[nodiscard]] const SampledWavelengths *swl() const override { return &refl_.swl(); }
-    [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
@@ -222,7 +222,7 @@ public:
     }
     void normalize_weights() noexcept;
     VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
-        [[nodiscard]] SampledSpectrum principled_albedo(const Float &cos_theta) const noexcept override;
+        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode,
