@@ -8,7 +8,8 @@
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
-#include "precomputed_table.inl.h"
+//#include "precomputed_table.inl.h"
+#include "specular_lut.inl.h"
 
 namespace vision {
 
@@ -291,19 +292,7 @@ public:
         MicrofacetBxDFSet::from_ratio_x(ratio.x);
         Float3 wo = from_ratio_y(ratio.y);
         MicrofacetBxDFSet::from_ratio_z(ratio.z);
-
-        SampledSpectrum ret = SampledSpectrum::zero(3);
-        $for(i, sample_num) {
-            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
-            ScatterEval se = bs.eval;
-            $if(se.pdf() > 0) {
-                auto r = saturate(se.f[0] / se.f[1]);
-                ret += r;
-            };
-        };
-        return ret / sample_num;
-//
-//        return precompute_albedo(wo, sampler, sample_num);
+        return precompute_albedo(wo, sampler, sample_num);
     }
 
     [[nodiscard]] SampledSpectrum principled_weight(const Float &cos_theta) const noexcept {
@@ -404,10 +393,6 @@ public:
         Scene &scene = ppl->scene();
         TSampler &sampler = ppl->scene().sampler();
 
-        uint sample = precompute_sample_num;
-
-        float2 roughness = make_float2(0.2);
-
         uint res = SpecularBxDFSetTable::res;
 
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
@@ -416,13 +401,15 @@ public:
             sampler->start(dispatch_idx().xy(), 0, 0);
             SampledWavelengths swl = scene.spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            SampledSpectrum f0 = SampledSpectrum(make_float3(0,1,0));
-            SampledSpectrum f90 = SampledSpectrum(make_float3(1, 1, 0));
+            SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
+            SampledSpectrum f90 = SampledSpectrum(make_float3(1));
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
             SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.f, 0.f);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet));
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
+            Uint3 idx = dispatch_idx();
+
             buffer.write(dispatch_id(), result);
         };
         PrecomputedLobeTable elm;
@@ -431,7 +418,7 @@ public:
         elm.data.resize(buffer.size());
 
         auto shader = device.compile(kernel);
-        stream << shader(sample).dispatch(make_uint3(res))
+        stream << shader(precompute_sample_num).dispatch(make_uint3(res))
                << buffer.download(elm.data.data())
                << Env::instance().printer().retrieve()
                << synchronize() << commit();
@@ -491,6 +478,7 @@ public:
         {
             // diffuse
             SampledSpectrum diff_weight = color * weight;
+            $condition_info("{} {} {}  weight", weight.vec3());
             WeightedBxDFSet diffuse_lobe{diff_weight.average(), make_shared<DiffuseBxDFSet>(diff_weight, swl)};
             lobes.push_back(std::move(diffuse_lobe));
         }
