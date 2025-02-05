@@ -303,7 +303,7 @@ string PrecomputedLobeTable::to_string() const noexcept {
     if (type->name() == "float") {
         for (int i = 0; i < data.size(); ++i) {
             content << (i % line_len == 0 ? "\n\t" : "");
-            content << data[i] << (i == data.size() - 1 ? "\n" : ", ");
+            content << std::to_string(data[i]) << (i == data.size() - 1 ? "\n" : ", ");
         }
     } else if (type->name() == "float2") {
         func(float2{});
