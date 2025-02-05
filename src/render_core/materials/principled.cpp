@@ -8,8 +8,8 @@
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
-//#include "precomputed_table.inl.h"
-#include "specular_lut.inl.h"
+#include "precomputed_table.inl.h"
+//#include "specular_lut.inl.h"
 
 namespace vision {
 
@@ -404,11 +404,14 @@ public:
             SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
             SampledSpectrum f90 = SampledSpectrum(make_float3(1));
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
-            SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.f, 0.f);
+            SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.01f, 0.01f);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet));
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
             Uint3 idx = dispatch_idx();
+            $if(all(idx.zy() == make_uint2(0))) {
+                $info("{}   ", microfacet->alpha_x());
+            };
 
             buffer.write(dispatch_id(), result);
         };
