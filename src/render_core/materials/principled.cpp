@@ -9,7 +9,6 @@
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
 #include "precomputed_table.inl.h"
-//#include "specular_lut.inl.h"
 
 namespace vision {
 
@@ -243,7 +242,7 @@ private:
     Texture table_;
 
 public:
-    static constexpr uint res = 16;
+    static constexpr uint res = 32;
 
     OC_MAKE_INSTANCE_CONSTRUCTOR(SpecularBxDFSetTable, s_specular_table)
 
@@ -283,21 +282,37 @@ void SpecularBxDFSetTable::destroy_instance() {
     }
 }
 
+namespace detail {
+[[nodiscard]] Float to_ratio_z(const Float &ior) {
+    return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
+}
+}// namespace detail
+
 class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
     [[nodiscard]] SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                         const Uint &sample_num) noexcept override {
-        MicrofacetBxDFSet::from_ratio_x(ratio.x);
+        from_ratio_x(ratio.x);
         Float3 wo = from_ratio_y(ratio.y);
-        MicrofacetBxDFSet::from_ratio_z(ratio.z);
+        from_ratio_z(ratio.z);
         return precompute_albedo(wo, sampler, sample_num);
     }
 
-    [[nodiscard]] SampledSpectrum principled_weight(const Float &cos_theta) const noexcept {
-        Float x = MicrofacetBxDFSet::to_ratio_x();
-        Float z = MicrofacetBxDFSet::to_ratio_z();
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        Float ior = schlick_ior_from_F0(Pow<4>(z));
+        fresnel_->set_eta(SampledSpectrum(bxdf()->swl().dimension(), ior));
+    }
+
+    [[nodiscard]] Float to_ratio_z() const noexcept override {
+        Float ior = fresnel_->eta().average();
+        return detail::to_ratio_z(ior);
+    }
+
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
+        Float x = to_ratio_x();
+        Float z = to_ratio_z();
         Float3 uvw = make_float3(x, cos_theta, z);
         Float s = SpecularBxDFSetTable::instance().sample(uvw);
         SampledSpectrum f0 = fresnel<FresnelGeneralizedSchlick>()->F0();
@@ -409,10 +424,6 @@ public:
                                                                          make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet));
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
             Uint3 idx = dispatch_idx();
-            $if(all(idx.zy() == make_uint2(0))) {
-                $info("{}   ", microfacet->alpha_x());
-            };
-
             buffer.write(dispatch_id(), result);
         };
         PrecomputedLobeTable elm;
@@ -473,7 +484,7 @@ public:
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                          make_unique<MicrofacetReflection>(weight, swl, microfacet));
-            SampledSpectrum spec_refl_albedo = spec_refl->principled_weight(cos_theta);
+            SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);

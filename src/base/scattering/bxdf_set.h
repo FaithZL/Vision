@@ -64,6 +64,8 @@ class MicrofacetBxDFSet : public BxDFSet {
 protected:
     DCSP<Fresnel> fresnel_;
     DCUP<MicrofacetBxDF> refl_;
+    static constexpr float alpha_lower = 0.001f;
+    static constexpr float alpha_upper = 1.f;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
@@ -78,8 +80,6 @@ public:
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return refl_.get(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() const noexcept override;
-    void from_ratio_z(ocarina::Float z) noexcept override;
-    [[nodiscard]] Float to_ratio_z() const noexcept override;
     VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
