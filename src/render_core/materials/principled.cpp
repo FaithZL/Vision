@@ -21,7 +21,7 @@ public:
     FresnelGeneralizedSchlick(SampledSpectrum F0, Float eta,
                               const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)), eta_(std::move(eta)) {}
-    OC_MAKE_MEMBER_GETTER(F0,)
+    OC_MAKE_MEMBER_GETTER(F0, )
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
@@ -232,6 +232,11 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
 };
 
+class ClearcoatBxDFSet : public MicrofacetBxDFSet {
+public:
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
+};
+
 class MetallicBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
@@ -255,8 +260,8 @@ public:
         }
         Pipeline *ppl = Global::instance().pipeline();
         table_ = ppl->device().create_texture(make_uint3(res),
-                                               PixelStorage::FLOAT1,
-                                               "SpecularBxDFSetTable::table_");
+                                              PixelStorage::FLOAT1,
+                                              "SpecularBxDFSetTable::table_");
 
         table_.upload_immediately(addressof(SpecularBxDFSet_Table));
     }
@@ -282,12 +287,6 @@ void SpecularBxDFSetTable::destroy_instance() {
     }
 }
 
-namespace detail {
-[[nodiscard]] Float to_ratio_z(const Float &ior) {
-    return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
-}
-}// namespace detail
-
 class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
@@ -302,12 +301,16 @@ public:
 
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = schlick_ior_from_F0(Pow<4>(z));
-        fresnel_->set_eta(SampledSpectrum(bxdf()->swl().dimension(), ior));
+        fresnel_->set_eta(SampledSpectrum(bxdf()->swl(), ior));
+    }
+
+    [[nodiscard]] static Float ior_to_ratio_z(const Float &ior) {
+        return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
     }
 
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
-        return detail::to_ratio_z(ior);
+        return ior_to_ratio_z(ior);
     }
 
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
@@ -343,6 +346,7 @@ private:
 
     VS_MAKE_SLOT(clearcoat_weight)
     VS_MAKE_SLOT(clearcoat_roughness)
+    VS_MAKE_SLOT(clearcoat_ior)
     VS_MAKE_SLOT(clearcoat_tint)
 
     VS_MAKE_SLOT(subsurface_weight)
@@ -367,7 +371,7 @@ public:
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(metallic, 0.f, Number);
         INIT_SLOT(ior, 1.5f, Number)->set_range(1.01, 20.f);
-        INIT_SLOT(roughness, 0.5f, Number);
+        INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
         INIT_SLOT(spec_tint, make_float3(0.f), Albedo);
         INIT_SLOT(anisotropic, 0.f, Number);
 
@@ -376,7 +380,8 @@ public:
         INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
 
         INIT_SLOT(clearcoat_weight, 0.3f, Number);
-        INIT_SLOT(clearcoat_roughness, 0.2f, Number);
+        INIT_SLOT(clearcoat_roughness, 0.2f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(clearcoat_ior, 1.5f, Number)->set_range(1.01, 20.f);
         INIT_SLOT(clearcoat_tint, make_float3(1.f), Albedo);
 
         INIT_SLOT(subsurface_weight, 0.3f, Number);
@@ -421,7 +426,7 @@ public:
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
             SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.01f, 0.01f);
             UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
-                                                                         make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet));
+                                                                         make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet));
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
             Uint3 idx = dispatch_idx();
             buffer.write(dispatch_id(), result);
@@ -450,10 +455,6 @@ public:
         Float anisotropic = anisotropic_.evaluate(it, swl).as_scalar();
         SampledSpectrum specular_tint = spec_tint_.eval_albedo_spectrum(it, swl).sample;
 
-        SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
-        Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
-        Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
-
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
@@ -463,6 +464,10 @@ public:
         Float cos_theta = dot(it.wo, it.shading.normal());
         {
             // sheen
+            SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
+            Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
+            Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
+
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta, sheen_tint * sheen_weight, sheen_roughness, swl);
             SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
             WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
@@ -470,11 +475,28 @@ public:
             weight = layering_weight(sheen_albedo, weight);
         }
         {
+            // clearcoat
+            Float cc_weight = clearcoat_weight_.evaluate(it, swl).as_scalar();
+            Float cc_roughness = clamp(clearcoat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+            cc_roughness = sqr(cc_roughness);
+            Float cc_ior = clearcoat_ior_.evaluate(it, swl).as_scalar();
+            SampledSpectrum cc_tint = clearcoat_tint_.eval_albedo_spectrum(it, swl).sample;
+            SP<FresnelDielectric> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
+            SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
+            UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(weight * cc_tint, swl, microfacet_cc);
+            UP<ClearcoatBxDFSet> cc_lobe = make_unique<ClearcoatBxDFSet>(fresnel_cc, std::move(cc_refl));
+            SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
+            WeightedBxDFSet w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
+            weight = layering_weight(cc_albedo, weight);
+            lobes.push_back(std::move(w_cc_lobe));
+        }
+        {
             // metallic
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
             UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic, swl, microfacet);
-            WeightedBxDFSet metal_lobe(metallic * weight.average(), make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
+            WeightedBxDFSet metal_lobe(metallic * weight.average(),
+                                       make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
             lobes.push_back(std::move(metal_lobe));
             weight *= (1.0f - metallic);
         }
@@ -482,8 +504,8 @@ public:
             // specular
             Float f0 = schlick_F0_from_ior(ior);
             SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
-            UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
-                                                                         make_unique<MicrofacetReflection>(weight, swl, microfacet));
+            UP<BxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
+                                                                 make_unique<MicrofacetReflection>(weight, swl, microfacet));
             SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
@@ -492,7 +514,6 @@ public:
         {
             // diffuse
             SampledSpectrum diff_weight = color * weight;
-            $condition_info("{} {} {}  weight", weight.vec3());
             WeightedBxDFSet diffuse_lobe{diff_weight.average(), make_shared<DiffuseBxDFSet>(diff_weight, swl)};
             lobes.push_back(std::move(diffuse_lobe));
         }

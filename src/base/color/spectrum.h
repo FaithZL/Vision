@@ -68,6 +68,8 @@ public:
             values_[i] = value;
         }
     }
+    SampledSpectrum(const SampledWavelengths &swl, const Float &value)
+        : SampledSpectrum(swl.dimension(), value) {}
     explicit SampledSpectrum(uint n = 1u) noexcept : SampledSpectrum{n, 0.f} {}
     explicit SampledSpectrum(const Float3 &value) noexcept : values_(3) {
         for (int i = 0; i < 3; ++i) {
@@ -87,8 +89,14 @@ public:
     [[nodiscard]] static SampledSpectrum zero(uint dim) noexcept {
         return SampledSpectrum{float_array::zero(dim)};
     }
+    [[nodiscard]] static SampledSpectrum zero(const SampledWavelengths &swl) noexcept {
+        return SampledSpectrum::zero(swl.dimension());
+    }
     [[nodiscard]] static SampledSpectrum one(uint dim) noexcept {
         return SampledSpectrum{float_array::one(dim)};
+    }
+    [[nodiscard]] static SampledSpectrum one(const SampledWavelengths &swl) noexcept {
+        return SampledSpectrum::one(swl.dimension());
     }
     [[nodiscard]] DynamicArray<float> &values() noexcept { return values_; }
     [[nodiscard]] const DynamicArray<float> &values() const noexcept { return values_; }
