@@ -89,13 +89,13 @@ namespace detail {
 
 
 void MicrofacetBxDFSet::from_ratio_z(ocarina::Float z) noexcept {
-    Float ior = lerp(z, ior_lower, ior_upper);
+    Float ior = schlick_ior_from_F0(Pow<4>(z));
     fresnel_->set_eta(SampledSpectrum(bxdf()->swl().dimension(), ior));
 }
 
 Float MicrofacetBxDFSet::to_ratio_z() const noexcept {
     Float ior = fresnel_->eta().average();
-    return ocarina::inverse_lerp(ior, ior_lower, ior_upper);
+    return detail::to_ratio_z(ior);
 }
 
 const SampledWavelengths *MicrofacetBxDFSet::swl() const {
