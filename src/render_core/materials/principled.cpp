@@ -133,6 +133,8 @@ void SheenLTCTable::destroy_instance() {
     }
 }
 
+/// reference https://tizianzeltner.com/projects/Zeltner2022Practical/
+/// reference https://github.com/tizian/ltc-sheen
 class SheenLTC : public BxDFSet {
 protected:
     const SampledWavelengths *swl_{nullptr};
