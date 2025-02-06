@@ -45,9 +45,9 @@ public:
                                                             const Uint &sample_num) noexcept;
     virtual SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                   const Uint &sample_num) noexcept;
-    [[nodiscard]] virtual void from_ratio_x(const Float &x) noexcept;
+    virtual void from_ratio_x(const Float &x) noexcept;
     [[nodiscard]] static Float3 from_ratio_y(Float cos_theta) noexcept;
-    [[nodiscard]] virtual void from_ratio_z(Float z) noexcept;
+    virtual void from_ratio_z(Float z) noexcept;
     /// for precompute the table end
 
     /// for look up the table begin
