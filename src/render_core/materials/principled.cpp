@@ -485,7 +485,7 @@ public:
             SampledSpectrum cc_tint = clearcoat_tint_.eval_albedo_spectrum(it, swl).sample;
             SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
             SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
-            UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(weight * cc_tint, swl,
+            UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
                                                                                  microfacet_cc);
             UP<ClearcoatBxDFSet> cc_lobe = make_unique<ClearcoatBxDFSet>(fresnel_cc, std::move(cc_refl));
             SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
