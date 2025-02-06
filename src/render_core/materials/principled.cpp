@@ -413,12 +413,9 @@ public:
 
     template<typename TLobe>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
-
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
-        Pipeline *ppl = Global::instance().pipeline();
-        Scene &scene = ppl->scene();
-        TSampler &sampler = ppl->scene().sampler();
+        TSampler &sampler = scene().sampler();
 
         uint res = TLobe::table_res;
 
@@ -426,11 +423,10 @@ public:
 
         Kernel kernel = [&](Uint sample_num) {
             sampler->start(dispatch_idx().xy(), 0, 0);
-            SampledWavelengths swl = scene.spectrum()->sample_wavelength(sampler);
+            SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            UP<SpecularBxDFSet> spec_refl = SpecularBxDFSet::create_for_precompute(swl);
+            UP<TLobe> spec_refl = TLobe::create_for_precompute(swl);
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
-            Uint3 idx = dispatch_idx();
             buffer.write(dispatch_id(), result);
         };
 
