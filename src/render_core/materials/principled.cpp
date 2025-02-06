@@ -253,7 +253,7 @@ public:
                                               PixelStorage::FLOAT1,
                                               "CoatBxDFSetTable::table_");
 
-        //        table_.upload_immediately(addressof(SpecularBxDFSet_Table));
+        table_.upload_immediately(addressof(CoatBxDFSet_Table));
     }
     [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
         return table_.sample(1, uvw).as_scalar();
@@ -277,9 +277,41 @@ void CoatBxDFSetTable::destroy_instance() {
     }
 }
 
-class ClearcoatBxDFSet : public MicrofacetBxDFSet {
+class CoatBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
+
+    static constexpr float ior_lower = 1.003;
+    static constexpr float ior_upper = 4.f;
+
+    /// for precompute begin
+    static constexpr uint table_res = CoatBxDFSetTable::res;
+    static constexpr const char *name = "CoatBxDFSet";
+    static UP<CoatBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(alpha_lower));
+        UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()),
+                                                                          swl, microfacet);
+        return make_unique<CoatBxDFSet>(fresnel, ocarina::move(refl));
+    }
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        Float ior = lerp(z, ior_lower, ior_upper);
+        fresnel_->set_eta(SampledSpectrum(bxdf()->swl(), ior));
+    }
+
+    [[nodiscard]] Float to_ratio_z() const noexcept override {
+        Float ior = fresnel_->eta().average();
+        return inverse_lerp(ior, ior_lower, ior_upper);
+    }
+    /// for precompute end
+
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
+        Float x = to_ratio_x();
+        Float z = to_ratio_z();
+        Float3 uvw = make_float3(x, cos_theta, z);
+        Float s = CoatBxDFSetTable::instance().sample(uvw);
+        return SampledSpectrum(bxdf()->swl(), s) * bxdf()->albedo(cos_theta);
+    }
 };
 
 class MetallicBxDFSet : public MicrofacetBxDFSet {
@@ -347,12 +379,11 @@ public:
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         return make_unique<SpecularBxDFSet>(fresnel_schlick, std::move(bxdf));
     }
-    /// for precompute end
-
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = schlick_ior_from_F0(Pow<4>(z));
         fresnel_->set_eta(SampledSpectrum(bxdf()->swl(), ior));
     }
+    /// for precompute end
 
     [[nodiscard]] static Float ior_to_ratio_z(const Float &ior) {
         return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
@@ -431,7 +462,7 @@ public:
 
         INIT_SLOT(coat_weight, 0.3f, Number);
         INIT_SLOT(coat_roughness, 0.2f, Number)->set_range(0.0001f, 1.f);
-        INIT_SLOT(coat_ior, 1.5f, Number)->set_range(1.01, 20.f);
+        INIT_SLOT(coat_ior, 1.5f, Number)->set_range(1.01, 4.f);
         INIT_SLOT(coat_tint, make_float3(1.f), Albedo);
 
         INIT_SLOT(subsurface_weight, 0.3f, Number);
@@ -454,6 +485,7 @@ public:
     void prepare() noexcept override {
         SheenLTCTable::instance().init();
         SpecularBxDFSetTable::instance().init();
+        CoatBxDFSetTable::instance().init();
     }
 
     template<typename TLobe>
@@ -467,6 +499,7 @@ public:
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
         Kernel kernel = [&](Uint sample_num) {
+            sampler->load_data();
             sampler->start(dispatch_idx().xy(), 0, 0);
             SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
@@ -479,12 +512,17 @@ public:
         ret.name = TLobe::name;
         ret.type = Type::of<float>();
         ret.data.resize(buffer.size());
-
+        Clock clk;
+        clk.start();
+        OC_INFO("start precompute albedo of {}", ret.name);
         auto shader = device.compile(kernel);
         stream << shader(precompute_sample_num).dispatch(make_uint3(res))
                << buffer.download(ret.data.data())
                << Env::printer().retrieve()
                << synchronize() << commit();
+        clk.end();
+        ret.elapsed_time = clk.elapse_s();
+        OC_INFO("precompute albedo of {} took {:.3f} s", ret.name, ret.elapsed_time);
 
         return ret;
     }
@@ -492,6 +530,7 @@ public:
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
         ret.push_back(precompute_lobe<SpecularBxDFSet>());
+        ret.push_back(precompute_lobe<CoatBxDFSet>());
         return ret;
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
@@ -535,7 +574,7 @@ public:
             SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
             UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
                                                                                  microfacet_cc);
-            UP<ClearcoatBxDFSet> cc_lobe = make_unique<ClearcoatBxDFSet>(fresnel_cc, std::move(cc_refl));
+            UP<CoatBxDFSet> cc_lobe = make_unique<CoatBxDFSet>(fresnel_cc, std::move(cc_refl));
             SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
             WeightedBxDFSet w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
             weight = layering_weight(cc_albedo, weight);

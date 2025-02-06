@@ -59,6 +59,9 @@ public:
         SampledSpectrum fr = eta_.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
         return fr;
     }
+    void set_eta(const vision::SampledSpectrum &eta) noexcept override {
+        eta_ = eta;
+    }
     [[nodiscard]] SampledSpectrum eta() const noexcept override { return eta_; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelDielectric>(eta_, *swl_);

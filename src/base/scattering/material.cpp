@@ -313,10 +313,11 @@ string PrecomputedLobeTable::to_string() const noexcept {
         OC_ASSERT(false);
     }
 
-    string str = ocarina::format("const {} {}_Table[{}] = {{{}}};", type->name(),
+    string str = ocarina::format("/// it took {:.3f} s \nconst {} {}_Table[{}] = {{{}}};",
+                                 elapsed_time, type->name(),
                                  name, count, content.str());
 
-    return "" + str + "";
+    return str;
 }
 
 vector<PrecomputedLobeTable> Material::precompute() const noexcept {

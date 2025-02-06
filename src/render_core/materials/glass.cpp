@@ -148,7 +148,7 @@ public:
             eta_slot = desc.slot("", ior);
         }
         ior_ = Slot::create_slot(eta_slot);
-        ior_->set_range(0.1, 5);
+        ior_->set_range(1.003, 3.f);
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }

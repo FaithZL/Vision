@@ -55,6 +55,7 @@ struct PrecomputedLobeTable {
     string name;
     const Type *type{nullptr};
     vector<float> data;
+    double elapsed_time{};
     [[nodiscard]] string to_string() const noexcept;
 };
 
