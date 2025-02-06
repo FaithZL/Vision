@@ -252,7 +252,6 @@ public:
         table_ = ppl->device().create_texture(make_uint3(res),
                                               PixelStorage::FLOAT1,
                                               "CoatBxDFSetTable::table_");
-
         table_.upload_immediately(addressof(CoatBxDFSet_Table));
     }
     [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
@@ -339,7 +338,6 @@ public:
         table_ = ppl->device().create_texture(make_uint3(res),
                                               PixelStorage::FLOAT1,
                                               "SpecularBxDFSetTable::table_");
-
         table_.upload_immediately(addressof(SpecularBxDFSet_Table));
     }
     [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
