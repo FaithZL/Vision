@@ -291,6 +291,19 @@ class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
+    /// for precompute begin
+    static constexpr uint table_res = SpecularBxDFSetTable::res;
+    static constexpr const char *name = "SpecularBxDFSet";
+    static UP<SpecularBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
+        SampledSpectrum f90 = SampledSpectrum(make_float3(1));
+        SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f);
+        UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
+        return make_unique<SpecularBxDFSet>(fresnel_schlick, std::move(bxdf));
+    }
+    /// for precompute end
+
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = schlick_ior_from_F0(Pow<4>(z));
         fresnel_->set_eta(SampledSpectrum(bxdf()->swl(), ior));
@@ -397,15 +410,17 @@ public:
         SheenLTCTable::instance().init();
         SpecularBxDFSetTable::instance().init();
     }
-    [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
-        vector<PrecomputedLobeTable> ret;
+
+    template<typename TLobe>
+    [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
+
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
         Pipeline *ppl = Global::instance().pipeline();
         Scene &scene = ppl->scene();
         TSampler &sampler = ppl->scene().sampler();
 
-        uint res = SpecularBxDFSetTable::res;
+        uint res = TLobe::table_res;
 
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
@@ -413,29 +428,29 @@ public:
             sampler->start(dispatch_idx().xy(), 0, 0);
             SampledWavelengths swl = scene.spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
-            SampledSpectrum f90 = SampledSpectrum(make_float3(1));
-            SP<FresnelGeneralizedSchlick> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
-            SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.01f, 0.01f);
-            UP<SpecularBxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
-                                                                         make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet));
+            UP<SpecularBxDFSet> spec_refl = SpecularBxDFSet::create_for_precompute(swl);
             Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
             Uint3 idx = dispatch_idx();
             buffer.write(dispatch_id(), result);
         };
-        PrecomputedLobeTable elm;
-        elm.name = "SpecularBxDFSet";
-        elm.type = Type::of<float>();
-        elm.data.resize(buffer.size());
+
+        PrecomputedLobeTable ret;
+        ret.name = TLobe::name;
+        ret.type = Type::of<float>();
+        ret.data.resize(buffer.size());
 
         auto shader = device.compile(kernel);
         stream << shader(precompute_sample_num).dispatch(make_uint3(res))
-               << buffer.download(elm.data.data())
+               << buffer.download(ret.data.data())
                << Env::instance().printer().retrieve()
                << synchronize() << commit();
 
-        ret.push_back(elm);
+        return ret;
+    }
 
+    [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
+        vector<PrecomputedLobeTable> ret;
+        ret.push_back(precompute_lobe<SpecularBxDFSet>());
         return ret;
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
