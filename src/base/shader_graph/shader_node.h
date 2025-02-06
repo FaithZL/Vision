@@ -37,7 +37,7 @@ public:
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
     [[nodiscard]] virtual ocarina::vector<float> average() const noexcept = 0;
-    [[nodiscard]] virtual void set_range(float lower, float upper) noexcept {}
+    virtual void set_range(float lower, float upper) noexcept {}
     virtual void update_value(vector<float> values) noexcept {}
     [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                        const SampledWavelengths &swl) const noexcept = 0;
