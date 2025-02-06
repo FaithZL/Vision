@@ -232,6 +232,51 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
 };
 
+class CoatBxDFSetTable {
+private:
+    Texture table_;
+
+public:
+    static constexpr uint res = 32;
+
+    OC_MAKE_INSTANCE_CONSTRUCTOR(CoatBxDFSetTable, s_coat_table)
+
+public:
+    [[nodiscard]] static CoatBxDFSetTable &instance();
+    static void destroy_instance();
+    void init() noexcept {
+        if (table_.handle()) {
+            return;
+        }
+        Pipeline *ppl = Global::instance().pipeline();
+        table_ = ppl->device().create_texture(make_uint3(res),
+                                              PixelStorage::FLOAT1,
+                                              "CoatBxDFSetTable::table_");
+
+        //        table_.upload_immediately(addressof(SpecularBxDFSet_Table));
+    }
+    [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
+        return table_.sample(1, uvw).as_scalar();
+    }
+};
+
+CoatBxDFSetTable *CoatBxDFSetTable::s_coat_table = nullptr;
+
+CoatBxDFSetTable &CoatBxDFSetTable::instance() {
+    if (s_coat_table == nullptr) {
+        s_coat_table = new CoatBxDFSetTable();
+        HotfixSystem::instance().register_static_var("CoatBxDFSetTable", s_coat_table);
+    }
+    return *s_coat_table;
+}
+
+void CoatBxDFSetTable::destroy_instance() {
+    if (s_coat_table) {
+        delete s_coat_table;
+        s_coat_table = nullptr;
+    }
+}
+
 class ClearcoatBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
@@ -349,10 +394,10 @@ private:
     VS_MAKE_SLOT(sheen_roughness)
     VS_MAKE_SLOT(sheen_tint)
 
-    VS_MAKE_SLOT(clearcoat_weight)
-    VS_MAKE_SLOT(clearcoat_roughness)
-    VS_MAKE_SLOT(clearcoat_ior)
-    VS_MAKE_SLOT(clearcoat_tint)
+    VS_MAKE_SLOT(coat_weight)
+    VS_MAKE_SLOT(coat_roughness)
+    VS_MAKE_SLOT(coat_ior)
+    VS_MAKE_SLOT(coat_tint)
 
     VS_MAKE_SLOT(subsurface_weight)
     VS_MAKE_SLOT(subsurface_radius)
@@ -384,10 +429,10 @@ public:
         INIT_SLOT(sheen_roughness, 0.5f, Number);
         INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
 
-        INIT_SLOT(clearcoat_weight, 0.3f, Number);
-        INIT_SLOT(clearcoat_roughness, 0.2f, Number)->set_range(0.0001f, 1.f);
-        INIT_SLOT(clearcoat_ior, 1.5f, Number)->set_range(1.01, 20.f);
-        INIT_SLOT(clearcoat_tint, make_float3(1.f), Albedo);
+        INIT_SLOT(coat_weight, 0.3f, Number);
+        INIT_SLOT(coat_roughness, 0.2f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(coat_ior, 1.5f, Number)->set_range(1.01, 20.f);
+        INIT_SLOT(coat_tint, make_float3(1.f), Albedo);
 
         INIT_SLOT(subsurface_weight, 0.3f, Number);
         INIT_SLOT(subsurface_radius, make_float3(1.f), Number);
@@ -438,7 +483,7 @@ public:
         auto shader = device.compile(kernel);
         stream << shader(precompute_sample_num).dispatch(make_uint3(res))
                << buffer.download(ret.data.data())
-               << Env::instance().printer().retrieve()
+               << Env::printer().retrieve()
                << synchronize() << commit();
 
         return ret;
@@ -480,12 +525,12 @@ public:
             weight = layering_weight(sheen_albedo, weight);
         }
         {
-            /// clearcoat
-            Float cc_weight = clearcoat_weight_.evaluate(it, swl).as_scalar();
-            Float cc_roughness = clamp(clearcoat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+            /// coat
+            Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar();
+            Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
             cc_roughness = sqr(cc_roughness);
-            Float cc_ior = clearcoat_ior_.evaluate(it, swl).as_scalar();
-            SampledSpectrum cc_tint = clearcoat_tint_.eval_albedo_spectrum(it, swl).sample;
+            Float cc_ior = coat_ior_.evaluate(it, swl).as_scalar();
+            SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
             SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
             SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
             UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
