@@ -358,7 +358,7 @@ private:
     VS_MAKE_SLOT(subsurface_radius)
     VS_MAKE_SLOT(subsurface_scale)
 
-    VS_MAKE_SLOT(spec_trans)
+    VS_MAKE_SLOT(transmission)
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
@@ -393,10 +393,10 @@ public:
         INIT_SLOT(subsurface_radius, make_float3(1.f), Number);
         INIT_SLOT(subsurface_scale, 0.2f, Number);
 
-        INIT_SLOT(spec_trans, 0.f, Number);
+        INIT_SLOT(transmission, 0.f, Number);
 
 #undef INIT_SLOT
-        init_slot_cursor(&color_, &spec_trans_);
+        init_slot_cursor(&color_, &transmission_);
     }
     void restore(RuntimeObject *old_obj) noexcept override {
         Material::restore(old_obj);
@@ -466,7 +466,7 @@ public:
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         Float cos_theta = dot(it.wo, it.shading.normal());
         {
-            // sheen
+            /// sheen
             SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
             Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
             Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
@@ -480,7 +480,7 @@ public:
             weight = layering_weight(sheen_albedo, weight);
         }
         {
-            // clearcoat
+            /// clearcoat
             Float cc_weight = clearcoat_weight_.evaluate(it, swl).as_scalar();
             Float cc_roughness = clamp(clearcoat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
             cc_roughness = sqr(cc_roughness);
@@ -497,7 +497,7 @@ public:
             lobes.push_back(std::move(w_cc_lobe));
         }
         {
-            // metallic
+            /// metallic
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
             UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
@@ -508,7 +508,7 @@ public:
             weight *= (1.0f - metallic);
         }
         {
-            // specular
+            /// specular
             Float f0 = schlick_F0_from_ior(ior);
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
             UP<BxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
@@ -519,7 +519,10 @@ public:
             weight = layering_weight(spec_refl_albedo, weight);
         }
         {
-            // diffuse
+            /// transmission
+        }
+        {
+            /// diffuse
             SampledSpectrum diff_weight = color * weight;
             WeightedBxDFSet diffuse_lobe{diff_weight.average(), make_shared<DiffuseBxDFSet>(diff_weight, swl)};
             lobes.push_back(std::move(diffuse_lobe));
