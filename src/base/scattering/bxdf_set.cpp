@@ -22,8 +22,10 @@ SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
 
 SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                const Uint &sample_num) noexcept {
-    OC_NOT_IMPLEMENT_ERROR(BxDFSet::precompute_with_radio);
-    return SampledSpectrum::zero(swl()->dimension());
+    from_ratio_x(ratio.x);
+    Float3 wo = from_ratio_y(ratio.y);
+    from_ratio_z(ratio.z);
+    return precompute_albedo(wo, sampler, sample_num);
 }
 
 void BxDFSet::from_ratio_x(const Float &x) noexcept {

@@ -291,14 +291,6 @@ class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
-    [[nodiscard]] SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
-                                                        const Uint &sample_num) noexcept override {
-        from_ratio_x(ratio.x);
-        Float3 wo = from_ratio_y(ratio.y);
-        from_ratio_z(ratio.z);
-        return precompute_albedo(wo, sampler, sample_num);
-    }
-
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = schlick_ior_from_F0(Pow<4>(z));
         fresnel_->set_eta(SampledSpectrum(bxdf()->swl(), ior));
@@ -319,7 +311,7 @@ public:
         Float3 uvw = make_float3(x, cos_theta, z);
         Float s = SpecularBxDFSetTable::instance().sample(uvw);
         SampledSpectrum f0 = fresnel<FresnelGeneralizedSchlick>()->F0();
-        SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(swl()->dimension())) * bxdf()->albedo(cos_theta);
+        SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(*swl())) * bxdf()->albedo(cos_theta);
         return ret;
     }
 };
