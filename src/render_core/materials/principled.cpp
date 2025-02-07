@@ -434,7 +434,7 @@ private:
     VS_MAKE_SLOT(subsurface_radius)
     VS_MAKE_SLOT(subsurface_scale)
 
-    VS_MAKE_SLOT(transmission)
+    VS_MAKE_SLOT(transmission_weight)
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
@@ -469,10 +469,10 @@ public:
         INIT_SLOT(subsurface_radius, make_float3(1.f), Number);
         INIT_SLOT(subsurface_scale, 0.2f, Number);
 
-        INIT_SLOT(transmission, 0.f, Number);
+        INIT_SLOT(transmission_weight, 0.f, Number);
 
 #undef INIT_SLOT
-        init_slot_cursor(&color_, &transmission_);
+        init_slot_cursor(&color_, &transmission_weight_);
     }
     void restore(RuntimeObject *old_obj) noexcept override {
         Material::restore(old_obj);
@@ -604,6 +604,16 @@ public:
         }
         {
             /// transmission
+            Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
+
+            MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
+            MicrofacetTransmission trans(color, swl, microfacet);
+            SP<Fresnel> fresnel_trans = make_shared<FresnelDielectric>(SampledSpectrum(swl, ior), swl);
+            auto trans_lobe = make_unique<DielectricBxDFSet>(fresnel_trans, ocarina::move(refl), ocarina::move(trans),
+                                           is_dispersive(), SurfaceData::Glossy);
+
+            weight *= (1.0f - trans_weight);
+
         }
         {
             /// diffuse
