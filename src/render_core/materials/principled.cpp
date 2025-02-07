@@ -320,6 +320,13 @@ public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
+class TransmissionBxDFSet : public DielectricBxDFSet {
+public:
+    using DielectricBxDFSet::DielectricBxDFSet;
+
+
+};
+
 class SpecularBxDFSetTable {
 private:
     Texture table_;
@@ -591,9 +598,22 @@ public:
             lobes.push_back(std::move(metal_lobe));
             weight *= (1.0f - metallic);
         }
+        Float f0 = schlick_F0_from_ior(ior);
+        {
+            /// transmission
+            Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
+            MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
+            MicrofacetTransmission trans((color), swl, microfacet);
+            SP<Fresnel> fresnel_trans = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
+            auto trans_lobe = make_unique<TransmissionBxDFSet>(fresnel_trans,
+                                                               ocarina::move(refl), ocarina::move(trans),
+                                                               is_dispersive(), SurfaceData::Glossy);
+//            auto w_lobe = WeightedBxDFSet(1.f, std::move(trans_lobe));
+//            lobes.push_back(w_lobe);
+//            weight *= (1.0f - trans_weight);
+        }
         {
             /// specular
-            Float f0 = schlick_F0_from_ior(ior);
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
             UP<BxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                  make_unique<MicrofacetReflection>(weight, swl, microfacet));
@@ -601,19 +621,6 @@ public:
             WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);
-        }
-        {
-            /// transmission
-            Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
-
-            MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
-            MicrofacetTransmission trans(color, swl, microfacet);
-            SP<Fresnel> fresnel_trans = make_shared<FresnelDielectric>(SampledSpectrum(swl, ior), swl);
-            auto trans_lobe = make_unique<DielectricBxDFSet>(fresnel_trans, ocarina::move(refl), ocarina::move(trans),
-                                           is_dispersive(), SurfaceData::Glossy);
-
-            weight *= (1.0f - trans_weight);
-
         }
         {
             /// diffuse
