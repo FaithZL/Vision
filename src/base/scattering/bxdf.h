@@ -144,6 +144,8 @@ public:
                                              SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler,
                                     SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] BSDFSample sample(const Float3 &wo, const Float2 &u,
+                                    SP<Fresnel> fresnel) const noexcept;
 };
 
 class MicrofacetTransmission : public MicrofacetBxDF {
@@ -173,6 +175,8 @@ public:
                                         SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u,
                                              SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] BSDFSample sample(const Float3 &wo, const Float2 &u,
+                                    SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler,
                                     SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] ScatterEval safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,

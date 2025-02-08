@@ -86,6 +86,15 @@ BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<
     return ret;
 }
 
+BSDFSample MicrofacetReflection::sample(const Float3 &wo, const Float2 &u,
+                                        SP<Fresnel> fresnel) const noexcept {
+    BSDFSample ret{swl()};
+    auto [wi, pdf] = sample_wi(wo, u, fresnel);
+    ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
+    ret.wi = wi;
+    return ret;
+}
+
 // MicrofacetTransmission
 Bool MicrofacetTransmission::safe(const Float3 &wo, const Float3 &wi) const noexcept {
     return !same_hemisphere(wo, wi);
@@ -170,6 +179,16 @@ ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3
 BSDFSample MicrofacetTransmission::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
     BSDFSample ret{swl()};
     auto [wi, valid] = sample_wi(wo, sampler->next_2d(), fresnel);
+    ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
+    ret.eval.pdfs = select(valid, ret.eval.pdf(), 0.f);
+    ret.wi = wi;
+    ret.eta = fresnel->eta()[0];
+    return ret;
+}
+
+BSDFSample MicrofacetTransmission::sample(const ocarina::Float3 &wo, const ocarina::Float2 &u, SP<vision::Fresnel> fresnel) const noexcept {
+    BSDFSample ret{swl()};
+    auto [wi, valid] = sample_wi(wo, u, fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All);
     ret.eval.pdfs = select(valid, ret.eval.pdf(), 0.f);
     ret.wi = wi;

@@ -242,19 +242,43 @@ BSDFSample DielectricBxDFSet::sample_delta_local(const Float3 &wo, TSampler &sam
 
 BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
-    BSDFSample ret{refl_.swl()};
+//    BSDFSample ret{*swl()};
+//    SampledDirection sd = sample_wi(wo, flag, sampler);
+//    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+//    ret.wi = sd.wi;
+//    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf(), 0.f);
+//    return ret;
+
     Float uc = sampler->next_1d();
     auto fresnel = fresnel_->clone();
     Float cos_theta_o = cos_theta(wo);
     fresnel->correct_eta(cos_theta_o);
     SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+    Float2  u = sampler->next_2d();
     Float fr = frs[0];
+    SampledDirection sd;
     $if(uc < fr) {
-        ret = refl_.sample(wo, sampler, fresnel);
+        sd = refl_.sample_wi(wo, u, fresnel);
+        sd.pdf = fr;
+    }
+    $else {
+        sd = trans_.sample_wi(wo, u, fresnel);
+        sd.pdf = 1 - fr;
+    };
+
+    BSDFSample ret{refl_.swl()};
+//    Float uc = sampler->next_1d();
+//    auto fresnel = fresnel_->clone();
+//    Float cos_theta_o = cos_theta(wo);
+//    fresnel->correct_eta(cos_theta_o);
+//    SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+//    Float fr = frs[0];
+    $if(uc < fr) {
+        ret = refl_.sample(wo, u, fresnel);
         ret.eval.pdfs *= frs.values()[0];
     }
     $else {
-        ret = trans_.sample(wo, sampler, fresnel);
+        ret = trans_.sample(wo, u, fresnel);
         if (trans_.swl().scatter_pdf_dim() > 1) {
             trans_.swl().foreach_secondary_channel([&](uint channel) {
                 $if(frs[channel] == 1) {
@@ -264,6 +288,12 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
         }
         ret.eval.pdfs *= 1 - frs.values()[0];
     };
+    auto se = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+//    $info_if(none(se.f.vec3() == ret.eval.f.vec3()), (uc < fr).cast<int>());
+//    $condition_info("{} {} {} +++ se {} {} {} pdf {} {} ", sd.wi, se.f.vec3(), se.pdfs.as_scalar(), frs.values()[0]);
+//    $condition_info("{} {} {} ---    {} {} {} pdf {} {} ", ret.wi, ret.eval.f.vec3(), ret.eval.pdfs.as_scalar(), frs.values()[0]);
+
+//    ret.eval = se;
     return ret;
 }
 
@@ -342,7 +372,7 @@ BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
     ret.wi = sd.wi;
-    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf(), 0.f);
     return ret;
 }
 
