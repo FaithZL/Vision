@@ -240,6 +240,33 @@ BSDFSample DielectricBxDFSet::sample_delta_local(const Float3 &wo, TSampler &sam
     return ret;
 }
 
+BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
+                                           TSampler &sampler) const noexcept {
+    BSDFSample ret{refl_.swl()};
+    Float uc = sampler->next_1d();
+    auto fresnel = fresnel_->clone();
+    Float cos_theta_o = cos_theta(wo);
+    fresnel->correct_eta(cos_theta_o);
+    SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+    Float fr = frs[0];
+    $if(uc < fr) {
+        ret = refl_.sample(wo, sampler, fresnel);
+        ret.eval.pdfs *= frs.values()[0];
+    }
+    $else {
+        ret = trans_.sample(wo, sampler, fresnel);
+        if (trans_.swl().scatter_pdf_dim() > 1) {
+            trans_.swl().foreach_secondary_channel([&](uint channel) {
+                $if(frs[channel] == 1) {
+                    trans_.swl().invalidation_channel(channel);
+                };
+            });
+        }
+        ret.eval.pdfs *= 1 - frs.values()[0];
+    };
+    return ret;
+}
+
 void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
@@ -307,6 +334,16 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
         };
     }
     return sd;
+}
+
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
+                                      TSampler &sampler) const noexcept {
+    BSDFSample ret{*swl()};
+    SampledDirection sd = sample_wi(wo, flag, sampler);
+    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+    ret.wi = sd.wi;
+    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+    return ret;
 }
 
 Uint MultiBxDFSet::flag() const noexcept {

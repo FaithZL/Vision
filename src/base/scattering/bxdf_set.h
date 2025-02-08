@@ -177,6 +177,8 @@ public:
     [[nodiscard]] Uint flag() const noexcept override { return refl_.flags() | trans_.flags(); }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override;
 };
 
@@ -228,6 +230,8 @@ public:
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
     void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
     void for_each(const std::function<void(WeightedBxDFSet &)> &func);
