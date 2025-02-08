@@ -60,7 +60,7 @@ private:
     DynamicArray<float> values_;
 
 public:
-    explicit SampledSpectrum(const DynamicArray<float> &value) noexcept
+    SampledSpectrum(const DynamicArray<float> &value) noexcept
         : values_(value) {}
     SampledSpectrum(uint n, const Float &value) noexcept
         : values_(n) {

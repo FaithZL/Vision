@@ -15,29 +15,34 @@ namespace vision {
 class FresnelGeneralizedSchlick : public Fresnel {
 private:
     SampledSpectrum F0_;
-    Float eta_;
+    SampledSpectrum eta_;
 
 public:
+    FresnelGeneralizedSchlick(SampledSpectrum F0, SampledSpectrum eta,
+                              const SampledWavelengths &swl)
+        : Fresnel(swl), F0_(std::move(F0)),
+          eta_(std::move(eta)) {}
     FresnelGeneralizedSchlick(SampledSpectrum F0, Float eta,
                               const SampledWavelengths &swl)
-        : Fresnel(swl), F0_(std::move(F0)), eta_(std::move(eta)) {}
+        : Fresnel(swl), F0_(std::move(F0)),
+          eta_(SampledSpectrum{1, std::move(eta)}) {}
     OC_MAKE_MEMBER_GETTER(F0, )
     void correct_eta(Float cos_theta) noexcept override {
         eta_ = select(cos_theta > 0, eta_, rcp(eta_));
     }
     void set_eta(const vision::SampledSpectrum &eta) noexcept override {
-        eta_ = eta[0];
+        eta_ = eta;
     }
     [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
-        Float F_real = fresnel_dielectric(cos_theta, eta_);
-        Float F0_real = schlick_F0_from_ior(eta_);
+        Float F_real = fresnel_dielectric(cos_theta, eta_[0]);
+        Float F0_real = schlick_F0_from_ior(eta_[0]);
         Float t = inverse_lerp(F_real, F0_real, 1.f);
         t = ocarina::clamp(t, 0.f, 1.f);
         SampledSpectrum ret = lerp(t, F0_, 1.f);
         return ret;
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override {
-        return {swl_->dimension(), eta_};
+        return eta_;
     }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
         return make_shared<FresnelGeneralizedSchlick>(F0_, eta_, *swl_);
@@ -323,8 +328,6 @@ public:
 class TransmissionBxDFSet : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
-
-
 };
 
 class SpecularBxDFSetTable {
@@ -467,7 +470,7 @@ public:
         INIT_SLOT(sheen_roughness, 0.5f, Number);
         INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
 
-        INIT_SLOT(coat_weight, 0.3f, Number);
+        INIT_SLOT(coat_weight, 0.f, Number);
         INIT_SLOT(coat_roughness, 0.2f, Number)->set_range(0.0001f, 1.f);
         INIT_SLOT(coat_ior, 1.5f, Number)->set_range(1.01, 4.f);
         INIT_SLOT(coat_tint, make_float3(1.f), Albedo);
@@ -544,7 +547,8 @@ public:
         MultiBxDFSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_.evaluate(it, swl).as_scalar();
-        Float ior = ior_.evaluate(it, swl).as_scalar();
+        DynamicArray<float> iors = ior_.evaluate(it, swl);
+        Float ior = iors.as_scalar();
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = anisotropic_.evaluate(it, swl).as_scalar();
         SampledSpectrum specular_tint = spec_tint_.eval_albedo_spectrum(it, swl).sample;
@@ -603,8 +607,8 @@ public:
             /// transmission
             Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
             MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
-            MicrofacetTransmission trans((color), swl, microfacet);
-            SP<Fresnel> fresnel_trans = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
+            MicrofacetTransmission trans((color) * trans_weight, swl, microfacet);
+            SP<Fresnel> fresnel_trans = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, iors, swl);
             auto trans_lobe = make_unique<TransmissionBxDFSet>(fresnel_trans,
                                                                ocarina::move(refl), ocarina::move(trans),
                                                                is_dispersive(), SurfaceData::Glossy);
@@ -614,7 +618,7 @@ public:
         }
         {
             /// specular
-            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, ior, swl);
+            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, iors, swl);
             UP<BxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                  make_unique<MicrofacetReflection>(weight, swl, microfacet));
             SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
