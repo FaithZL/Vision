@@ -288,12 +288,51 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
         }
         ret.eval.pdfs *= 1 - frs.values()[0];
     };
-    auto se = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+
+    auto eval = [&](const Float3 &wo, const Float3 &wi,
+                    MaterialEvalMode mode, const Uint &flag){
+        ScatterEval se{refl_.swl()};
+        auto fresnel = fresnel_->clone();
+        Float cos_theta_o = cos_theta(wo);
+        fresnel->correct_eta(cos_theta_o);
+        SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+        Float fr = frs[0];
+        $if(same_hemisphere(wo, wi)) {
+            se = refl_.safe_evaluate(wo, wi, fresnel, mode);
+            se.pdfs *= frs.values()[0];
+        }
+        $else {
+            se = trans_.safe_evaluate(wo, wi, fresnel, mode);
+            if (trans_.swl().scatter_pdf_dim() > 1) {
+                trans_.swl().foreach_secondary_channel([&](uint channel) {
+                    $if(frs[channel] == 1) {
+                        trans_.swl().invalidation_channel(channel);
+                    };
+                });
+            }
+            se.pdfs *= 1 - frs.values()[0];
+        };
+//        $if(any(se.f.vec3() != ret.eval.f.vec3())) {
+//            $condition_info("{} {} {} +++ se {} {} {} pdf {} {} {},,{}", sd.wi, se.f.vec3(), se.pdfs.as_scalar(), frs.values()[0], u);
+//            $condition_info("{} {} {} ---    {} {} {} pdf {} {}", ret.wi, ret.eval.f.vec3(), ret.eval.pdfs.as_scalar(), frs.values()[0]);
+//            se = trans_.safe_evaluate(wo, wi, fresnel, MaterialEvalMode::F);
+//            auto bs = trans_.sample(wo,u, fresnel, true);
+////
+////            $if (se.pdfs.as_scalar() == 0) {
+////    se.f *= 0.f;
+////            };
+////
+//        };
+        return se;
+    };
+
+    auto se = eval(wo, sd.wi, MaterialEvalMode::All, flag);
+
 //    $info_if(none(se.f.vec3() == ret.eval.f.vec3()), (uc < fr).cast<int>());
 //    $condition_info("{} {} {} +++ se {} {} {} pdf {} {} ", sd.wi, se.f.vec3(), se.pdfs.as_scalar(), frs.values()[0]);
 //    $condition_info("{} {} {} ---    {} {} {} pdf {} {} ", ret.wi, ret.eval.f.vec3(), ret.eval.pdfs.as_scalar(), frs.values()[0]);
 
-//    ret.eval = se;
+    ret.eval = se;
     return ret;
 }
 
