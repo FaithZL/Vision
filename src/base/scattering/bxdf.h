@@ -58,7 +58,7 @@ public:
     [[nodiscard]] virtual SampledSpectrum f(const Float3 &wo, const Float3 &wi,
                                             SP<Fresnel> fresnel) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
-    [[nodiscard]] virtual Bool safe(const Float3 &wo, const Float3 &wi) const noexcept;
+    [[nodiscard]] virtual Bool safe(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi,
                                                SP<Fresnel> fresnel,
                                                MaterialEvalMode mode) const noexcept;
@@ -155,7 +155,8 @@ public:
         MicrofacetTransmission() = default;
     MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
         : MicrofacetBxDF(m, BxDFFlag::GlossyTrans, swl), kt_(std::move(color)) {}
-    [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi) const noexcept override;
+    [[nodiscard]] Bool safe(const Float3 &wo, const Float3 &wi,
+                            const Float3 &wh) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return kt_; }
     [[nodiscard]] Float BTDF(const Float3 &wo, const Float3 &wi,
                              SP<Fresnel> fresnel, uint channel) const noexcept;

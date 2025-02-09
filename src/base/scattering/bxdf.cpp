@@ -26,13 +26,13 @@ ScatterEval BxDF::evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresn
     return ret;
 }
 
-Bool BxDF::safe(const Float3 &wo, const Float3 &wi) const noexcept {
+Bool BxDF::safe(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept {
     return same_hemisphere(wo, wi);
 }
 
 ScatterEval BxDF::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl()};
-    Bool s = safe(wo, wi);
+    Bool s = safe(wo, wi, make_float3(0, 0, 1));
     if (BxDF::match_F(mode)) {
         ret.f = select(s, f(wo, wi, fresnel), 0.f);
     }
@@ -87,7 +87,7 @@ BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<
 }
 
 // MicrofacetTransmission
-Bool MicrofacetTransmission::safe(const Float3 &wo, const Float3 &wi) const noexcept {
+Bool MicrofacetTransmission::safe(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept {
     return !same_hemisphere(wo, wi);
 }
 
@@ -154,9 +154,12 @@ SampledDirection MicrofacetTransmission::sample_wi(const Float3 &wo, Float2 u, S
 }
 
 ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
-    //    return BxDF::safe_evaluate(wo, wi, fresnel, mode);
     ScatterEval ret{swl()};
-    Bool s = safe(wo, wi);
+    SampledSpectrum etas = fresnel->eta();
+    Float eta = etas[0];
+    Float3 wh = normalize(wo + wi * eta);
+    wh = face_forward(wh, make_float3(0, 0, 1));
+    Bool s = safe(wo, wi, wh);
     if (BxDF::match_F(mode)) {
         ret.f = select(s, f_array(wo, wi, fresnel), 0.f);
     }
@@ -179,15 +182,15 @@ BSDFSample MicrofacetTransmission::sample(const Float3 &wo, TSampler &sampler, S
 
 OrenNayar::OrenNayar(SampledSpectrum R, Float sigma,
                      const SampledWavelengths &swl)
-: BxDF(swl, BxDFFlag::DiffRefl), R_(std::move(R)) {
-        sigma = sigma * constants::PiOver2;
-        Float sigma2 = ocarina::sqr(sigma * sigma);
-        A_ = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
-        B_ = 0.45f * sigma2 / (sigma2 + 0.09f);
-    }
+    : BxDF(swl, BxDFFlag::DiffRefl), R_(std::move(R)) {
+    sigma = sigma * constants::PiOver2;
+    Float sigma2 = ocarina::sqr(sigma * sigma);
+    A_ = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
+    B_ = 0.45f * sigma2 / (sigma2 + 0.09f);
+}
 
 SampledSpectrum OrenNayar::f(const Float3 &wo, const Float3 &wi,
-                             SP<Fresnel> fresnel) const noexcept  {
+                             SP<Fresnel> fresnel) const noexcept {
     Float sin_theta_i = sin_theta(wi);
     Float sin_theta_o = sin_theta(wo);
 
