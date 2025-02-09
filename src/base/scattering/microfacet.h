@@ -230,16 +230,20 @@ class Microfacet {
 protected:
     oc_float<p> alpha_x_{};
     oc_float<p> alpha_y_{};
+    bool sample_visible_{false};
     MicrofacetType type_{GGX};
 
 public:
-    explicit Microfacet(const oc_float2<p> &alpha, MicrofacetType type = GGX)
-        : alpha_x_(alpha.x), alpha_y_(alpha.y), type_(type) {}
-    Microfacet(oc_float<p> ax, oc_float<p> ay, MicrofacetType type = GGX)
-        : alpha_x_(std::move(ax)), alpha_y_(std::move(ay)), type_(type) {}
+    explicit Microfacet(const oc_float2<p> &alpha, bool sample_visible = false,
+                        MicrofacetType type = GGX)
+        : alpha_x_(alpha.x), alpha_y_(alpha.y),
+          sample_visible_(sample_visible), type_(type) {}
+    Microfacet(oc_float<p> ax, oc_float<p> ay, bool sample_visible = false, MicrofacetType type = GGX)
+        : alpha_x_(std::move(ax)), alpha_y_(std::move(ay)),
+          sample_visible_(sample_visible), type_(type) {}
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(alpha_x_, alpha_y_); }
-    OC_MAKE_MEMBER_GETTER_SETTER(alpha_x,)
-    OC_MAKE_MEMBER_GETTER_SETTER(alpha_y,)
+    OC_MAKE_MEMBER_GETTER_SETTER(alpha_x, )
+    OC_MAKE_MEMBER_GETTER_SETTER(alpha_y, )
     [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept {
         return microfacet::D_<p>(wh, alpha_x_, alpha_y_, type_);
     }
@@ -328,8 +332,10 @@ private:
     using Super = Microfacet<D>;
 
 public:
-    explicit GGXMicrofacet(const Float2 &alpha) : Super(alpha, type) {}
-    GGXMicrofacet(Float ax, Float ay) : Super(std::move(ax), std::move(ay), type) {}
+    explicit GGXMicrofacet(const Float2 &alpha, bool sample_visible = false)
+        : Super(alpha, sample_visible, type) {}
+    GGXMicrofacet(Float ax, Float ay, bool sample_visible = false)
+        : Super(std::move(ax), std::move(ay), sample_visible, type) {}
     [[nodiscard]] Float D_(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
@@ -361,8 +367,10 @@ public:
     using Super = Microfacet<D>;
 
 public:
-    explicit BeckmannMicrofacet(const Float2 &alpha) : Super(alpha, type) {}
-    BeckmannMicrofacet(Float ax, Float ay) : Super(std::move(ax), std::move(ay), type) {}
+    explicit BeckmannMicrofacet(const Float2 &alpha, bool sample_visible = false)
+        : Super(alpha, sample_visible, type) {}
+    BeckmannMicrofacet(Float ax, Float ay, bool sample_visible = false)
+        : Super(std::move(ax), std::move(ay), sample_visible, type) {}
     [[nodiscard]] Float D_(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
