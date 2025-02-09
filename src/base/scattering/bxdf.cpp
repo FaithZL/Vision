@@ -26,13 +26,13 @@ ScatterEval BxDF::evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresn
     return ret;
 }
 
-Bool BxDF::safe(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept {
+Bool BxDF::valid(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept {
     return same_hemisphere(wo, wi);
 }
 
 ScatterEval BxDF::safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, MaterialEvalMode mode) const noexcept {
     ScatterEval ret{swl()};
-    Bool s = safe(wo, wi, make_float3(0, 0, 1));
+    Bool s = valid(wo, wi, make_float3(0, 0, 1));
     if (BxDF::match_F(mode)) {
         ret.f = select(s, f(wo, wi, fresnel), 0.f);
     }
@@ -87,7 +87,7 @@ BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<
 }
 
 // MicrofacetTransmission
-Bool MicrofacetTransmission::safe(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept {
+Bool MicrofacetTransmission::valid(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept {
     return !same_hemisphere(wo, wi);
 }
 
@@ -159,7 +159,7 @@ ScatterEval MicrofacetTransmission::safe_evaluate(const Float3 &wo, const Float3
     Float eta = etas[0];
     Float3 wh = normalize(wo + wi * eta);
     wh = face_forward(wh, make_float3(0, 0, 1));
-    Bool s = safe(wo, wi, wh);
+    Bool s = valid(wo, wi, wh);
     if (BxDF::match_F(mode)) {
         ret.f = select(s, f_array(wo, wi, fresnel), 0.f);
     }
