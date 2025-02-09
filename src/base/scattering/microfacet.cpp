@@ -214,7 +214,7 @@ Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcep
     impl.function()->set_description("GGXMicrofacet::sample_wh");
     sample_visible_area_impl.function()->set_description("GGXMicrofacet::sample_wh_visible_area");
     if (sample_visible_) {
-        sample_visible_area_impl(wo, u, alpha_x_, alpha_y_);
+        return sample_visible_area_impl(wo, u, alpha_x_, alpha_y_);
     }
     return impl(wo, u, alpha_x_, alpha_y_);
 }
