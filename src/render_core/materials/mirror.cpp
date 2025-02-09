@@ -50,7 +50,7 @@ protected:
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
 
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y, MaterialRegistry::instance().sample_visible());
         SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<MirrorBxDFSet>(fresnel, std::move(refl));

@@ -70,7 +70,7 @@ template oc_float<D> lambda<D>(const oc_float3<D> &w, const oc_float<D> &alpha_x
                                const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
-[[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u,const oc_float<p> &alpha_x,
+[[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u, const oc_float<p> &alpha_x,
                                      const oc_float<p> &alpha_y, MicrofacetType type) {
     switch (type) {
         case Disney:
@@ -112,6 +112,72 @@ template oc_float3<D> sample_wh<D>(const oc_float3<D> &wo, const oc_float2<D> &u
                                    const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
+void sample_slope_GGX(const oc_float<p> &cos_theta, oc_float2<p> u,
+                  oc_float<p> *slope_x, oc_float<p> *slope_y) {
+
+    oc_float<p> r = ocarina::sqrt(u.x / (1 - u.x));
+    oc_float<p> phi = u.y * constants::_2Pi;
+
+    oc_float<p> sin_theta = ocarina::safe_sqrt(1 - sqr(cos_theta));
+    oc_float<p> tan_theta = sin_theta / cos_theta;
+    oc_float<p> a = 1.f / tan_theta;
+    oc_float<p> G1 = 2.f / (1 + ocarina::sqrt(1.f + 1.f / ocarina::sqr(a)));
+
+    // sample slope_x
+    oc_float<p> A = 2.f * u.x / G1 - 1.f;
+    oc_float<p> tmp = 1.f / (A * A - 1.f);
+    tmp = ocarina::min(tmp, 1e10f);
+    oc_float<p> B = tan_theta;
+    oc_float<p> D = ocarina::safe_sqrt(B * B * tmp * tmp - (A * A - B * B) * tmp);
+
+    oc_float<p> slope_x_1 = B * tmp - D;
+    oc_float<p> slope_x_2 = B * tmp + D;
+
+    *slope_x = ocarina::select(A < 0 || slope_x_2 > 1.f / tan_theta, slope_x_1, slope_x_2);
+
+    // sample slope_y
+    oc_float<p> S = ocarina::select(u.y > 0.5f, 1.f, -1.f);
+    u.y = ocarina::select(u.y > 0.5f, 2.f * (u.y - 0.5f), 2.f * (0.5f - u.y));
+
+    Float z = (u.y * (u.y * (u.y * 0.27385f - 0.73369f) + 0.46341f)) /
+              (u.y * (u.y * (u.y * 0.093073f + 0.309420f) - 1.f) + 0.597999f);
+
+    *slope_y = S * z * ocarina::sqrt(1.f + ocarina::sqr(*slope_x));
+
+    *slope_x = ocarina::select(cos_theta > 0.9999f, r * cos(phi), *slope_x);
+    *slope_y = ocarina::select(cos_theta > 0.9999f, r * sin(phi), *slope_y);
+}
+
+template<EPort p>
+[[nodiscard]] oc_float3<p> sample_wh_visible_area(const oc_float3<p> &wo, const oc_float2<p> &u,
+                                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
+                                                  MicrofacetType type) {
+//    switch (type) {
+//        case GGX: {
+            oc_float3<p> wi_stretched = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
+            oc_float<p> slope_x{};
+            oc_float<p> slope_y{};
+            sample_slope_GGX<p>(cos_theta(wi_stretched), u, addressof(slope_x), addressof(slope_y));
+
+            oc_float<p> tmp = cos_phi(wi_stretched) * slope_x - sin_phi(wi_stretched) * slope_y;
+            slope_y = sin_phi(wi_stretched) * slope_x + cos_phi(wi_stretched) * slope_y;
+            slope_x = tmp;
+
+            slope_x = alpha_x * slope_x;
+            slope_y = alpha_y * slope_y;
+
+            return normalize(make_float3(-slope_x, -slope_y, 1.f));
+//        }
+//        case Beckmann:
+//
+//        default:
+//            break;
+//    }
+}
+template oc_float3<D> sample_wh_visible_area<D>(const oc_float3<D> &wo, const oc_float2<D> &u, const oc_float<D> &alpha_x,
+                                                const oc_float<D> &alpha_y, MicrofacetType type);
+
+template<EPort p>
 [[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
                                       const oc_float<p> &eta, const oc_float<p> &alpha_x,
                                       const oc_float<p> &alpha_y, MicrofacetType type) {
@@ -142,7 +208,14 @@ Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcep
     static CALLABLE_TYPE impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
         return microfacet::sample_wh<D>(wo, u, ax, ay, type);
     };
+    static CALLABLE_TYPE sample_visible_area_impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
+        return microfacet::sample_wh_visible_area<D>(wo, u, ax, ay, type);
+    };
     impl.function()->set_description("GGXMicrofacet::sample_wh");
+    sample_visible_area_impl.function()->set_description("GGXMicrofacet::sample_wh_visible_area");
+    if (sample_visible_) {
+        sample_visible_area_impl(wo, u, alpha_x_, alpha_y_);
+    }
     return impl(wo, u, alpha_x_, alpha_y_);
 }
 Float GGXMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
