@@ -48,6 +48,7 @@ void MaterialRegistry::upload_device_data() noexcept {
 }
 
 bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->check_box("sample_visible", addressof(sample_visible_));
     bool open = widgets->use_folding_header("materials", [&] {
         materials_.render_UI(widgets);
     });

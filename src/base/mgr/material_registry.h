@@ -16,6 +16,7 @@ private:
 
 private:
     PolymorphicGUI<SP<Material>> materials_;
+    bool sample_visible_{false};
 
 public:
     static MaterialRegistry &instance();

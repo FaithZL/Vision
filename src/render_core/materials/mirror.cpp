@@ -18,7 +18,6 @@ private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(roughness)
     VS_MAKE_SLOT(anisotropic)
-    bool sample_visible_{false};
     bool remapping_roughness_{true};
     float alpha_threshold_{0.022};
 
@@ -36,10 +35,9 @@ public:
         init_slot_cursor(&color_, &anisotropic_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_HOTFIX_MAKE_RESTORE(Material, sample_visible_, remapping_roughness_, alpha_threshold_)
+    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
-        widgets->check_box("sample_visible", &sample_visible_);
         Material::render_sub_UI(widgets);
     }
 

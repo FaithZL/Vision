@@ -445,7 +445,6 @@ private:
     VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(transmission_weight)
-    bool sample_visible_{false};
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
@@ -485,7 +484,7 @@ public:
 #undef INIT_SLOT
         init_slot_cursor(&color_, &transmission_weight_);
     }
-    VS_HOTFIX_MAKE_RESTORE(Material, sample_visible_, sheen_mode_)
+    VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         static vector<const char *> names = {"volume", "approximate"};
         widgets->combo("sheen mode", reinterpret_cast<int *>(addressof(sheen_mode_)), names);

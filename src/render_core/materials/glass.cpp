@@ -111,7 +111,6 @@ private:
     VS_MAKE_SLOT(roughness)
     VS_MAKE_SLOT(anisotropic)
     bool remapping_roughness_{true};
-    bool sample_visible_{false};
     float alpha_threshold_{0.022};
 
 protected:
@@ -130,11 +129,10 @@ public:
     }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
-        widgets->check_box("sample_visible", &sample_visible_);
         Material::render_sub_UI(widgets);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, sample_visible_, alpha_threshold_)
+    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     void init_ior(const MaterialDesc &desc) noexcept {
         auto name = desc["material_name"].as_string();
         SlotDesc eta_slot;
