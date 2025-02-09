@@ -2,6 +2,8 @@
 // Created by Zero on 28/10/2022.
 //
 
+#include <utility>
+
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
@@ -14,9 +16,9 @@ private:
     SampledSpectrum eta_, k_;
 
 public:
-    FresnelConductor(const SampledSpectrum &eta, const SampledSpectrum &k,
+    FresnelConductor(SampledSpectrum eta, SampledSpectrum k,
                      const SampledWavelengths &swl)
-        : Fresnel(swl), eta_(eta), k_(k) {}
+        : Fresnel(swl), eta_(std::move(eta)), k_(std::move(k)) {}
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex(abs_cos_theta, eta_, k_);
     }
@@ -42,6 +44,7 @@ private:
     VS_MAKE_SLOT(k);
     VS_MAKE_SLOT(roughness);
     VS_MAKE_SLOT(anisotropic);
+    bool sample_visible_{false};
     bool remapping_roughness_{false};
     float alpha_threshold_{0.022};
     int metal_index_{0};
@@ -60,10 +63,12 @@ public:
         init_ior(desc);
         init_slot_cursor(&eta_, &anisotropic_);
     }
+    VS_HOTFIX_MAKE_RESTORE(Material, sample_visible_, remapping_roughness_, alpha_threshold_, metal_index_, metal_name_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
         vector<const char *> names = all_metal_names();
         changed_ |= widgets->combo("metal type", &metal_index_, names);
+        widgets->check_box("sample_visible", &sample_visible_);
         Material::render_sub_UI(widgets);
         check_metal_type();
     }

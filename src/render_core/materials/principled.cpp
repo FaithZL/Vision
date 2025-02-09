@@ -445,6 +445,7 @@ private:
     VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(transmission_weight)
+    bool sample_visible_{false};
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
@@ -484,9 +485,7 @@ public:
 #undef INIT_SLOT
         init_slot_cursor(&color_, &transmission_weight_);
     }
-    void restore(RuntimeObject *old_obj) noexcept override {
-        Material::restore(old_obj);
-    }
+    VS_HOTFIX_MAKE_RESTORE(Material, sample_visible_, sheen_mode_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         static vector<const char *> names = {"volume", "approximate"};
         widgets->combo("sheen mode", reinterpret_cast<int *>(addressof(sheen_mode_)), names);
@@ -607,14 +606,14 @@ public:
             /// transmission
             Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
             MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
-            MicrofacetTransmission trans((color) * trans_weight, swl, microfacet);
+            MicrofacetTransmission trans((color)*trans_weight, swl, microfacet);
             SP<Fresnel> fresnel_trans = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, iors, swl);
             auto trans_lobe = make_unique<TransmissionBxDFSet>(fresnel_trans,
                                                                ocarina::move(refl), ocarina::move(trans),
                                                                is_dispersive(), SurfaceData::Glossy);
-//            auto w_lobe = WeightedBxDFSet(1.f, std::move(trans_lobe));
-//            lobes.push_back(w_lobe);
-//            weight *= (1.0f - trans_weight);
+            //            auto w_lobe = WeightedBxDFSet(1.f, std::move(trans_lobe));
+            //            lobes.push_back(w_lobe);
+            //            weight *= (1.0f - trans_weight);
         }
         {
             /// specular
