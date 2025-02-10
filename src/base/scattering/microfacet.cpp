@@ -208,8 +208,10 @@ Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcep
     static CALLABLE_TYPE impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
         return microfacet::sample_wh<D>(wo, u, ax, ay, type);
     };
-    static CALLABLE_TYPE sample_visible_area_impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
-        return microfacet::sample_wh_visible_area<D>(wo, u, ax, ay, type);
+    static CALLABLE_TYPE sample_visible_area_impl = [](Float3 wo, Float2 u, Float ax, Float ay) {
+        Bool flip = wo.z < 0;
+        Float3 wh = microfacet::sample_wh_visible_area<D>(select(flip, -wo, wo), u, ax, ay, type);
+        return select(flip, wh, -wh);
     };
     impl.function()->set_description("GGXMicrofacet::sample_wh");
     sample_visible_area_impl.function()->set_description("GGXMicrofacet::sample_wh_visible_area");
