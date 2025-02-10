@@ -113,7 +113,7 @@ template oc_float3<D> sample_wh<D>(const oc_float3<D> &wo, const oc_float2<D> &u
 
 template<EPort p>
 void sample_slope_GGX(const oc_float<p> &cos_theta, oc_float2<p> u,
-                  oc_float<p> *slope_x, oc_float<p> *slope_y) {
+                      oc_float<p> *slope_x, oc_float<p> *slope_y) {
 
     oc_float<p> r = ocarina::sqrt(u.x / (1 - u.x));
     oc_float<p> phi = u.y * constants::_2Pi;
@@ -152,27 +152,27 @@ template<EPort p>
 [[nodiscard]] oc_float3<p> sample_wh_visible_area(const oc_float3<p> &wo, const oc_float2<p> &u,
                                                   const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
                                                   MicrofacetType type) {
-//    switch (type) {
-//        case GGX: {
-            oc_float3<p> wi_stretched = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
-            oc_float<p> slope_x{};
-            oc_float<p> slope_y{};
-            sample_slope_GGX<p>(cos_theta(wi_stretched), u, addressof(slope_x), addressof(slope_y));
+    //    switch (type) {
+    //        case GGX: {
+    oc_float3<p> wi_stretched = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
+    oc_float<p> slope_x{};
+    oc_float<p> slope_y{};
+    sample_slope_GGX<p>(cos_theta(wi_stretched), u, addressof(slope_x), addressof(slope_y));
 
-            oc_float<p> tmp = cos_phi(wi_stretched) * slope_x - sin_phi(wi_stretched) * slope_y;
-            slope_y = sin_phi(wi_stretched) * slope_x + cos_phi(wi_stretched) * slope_y;
-            slope_x = tmp;
+    oc_float<p> tmp = cos_phi(wi_stretched) * slope_x - sin_phi(wi_stretched) * slope_y;
+    slope_y = sin_phi(wi_stretched) * slope_x + cos_phi(wi_stretched) * slope_y;
+    slope_x = tmp;
 
-            slope_x = alpha_x * slope_x;
-            slope_y = alpha_y * slope_y;
+    slope_x = alpha_x * slope_x;
+    slope_y = alpha_y * slope_y;
 
-            return normalize(make_float3(-slope_x, -slope_y, 1.f));
-//        }
-//        case Beckmann:
-//
-//        default:
-//            break;
-//    }
+    return normalize(make_float3(-slope_x, -slope_y, 1.f));
+    //        }
+    //        case Beckmann:
+    //
+    //        default:
+    //            break;
+    //    }
 }
 template oc_float3<D> sample_wh_visible_area<D>(const oc_float3<D> &wo, const oc_float2<D> &u, const oc_float<D> &alpha_x,
                                                 const oc_float<D> &alpha_y, MicrofacetType type);
@@ -221,9 +221,18 @@ Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcep
 Float GGXMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
     static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh,
                                    Float ax, Float ay) {
-        return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
+        return microfacet::PDF_wh<D>(wo, wh, ax, ay, false, type);
     };
+    static CALLABLE_TYPE impl_sample_visible = [](const Float3 &wo, const Float3 &wh,
+                                                  Float ax, Float ay) {
+        return microfacet::PDF_wh<D>(wo, wh, ax, ay, true, type);
+    };
+
     impl.function()->set_description("GGXMicrofacet::PDF_wh");
+    impl_sample_visible.function()->set_description("GGXMicrofacet::PDF_wh_sample_visible");
+    if (sample_visible_) {
+        return impl_sample_visible(wo, wh, alpha_x_, alpha_y_);
+    }
     return impl(wo, wh, alpha_x_, alpha_y_);
 }
 
@@ -314,10 +323,20 @@ Float3 BeckmannMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const no
     return impl(wo, u, alpha_x_, alpha_y_);
 }
 Float BeckmannMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, Float ax, Float ay) {
-        return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
+    static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh,
+                                   Float ax, Float ay) {
+        return microfacet::PDF_wh<D>(wo, wh, ax, ay, false, type);
     };
+    static CALLABLE_TYPE impl_sample_visible = [](const Float3 &wo, const Float3 &wh,
+                                                  Float ax, Float ay) {
+        return microfacet::PDF_wh<D>(wo, wh, ax, ay, true, type);
+    };
+
     impl.function()->set_description("BeckmannMicrofacet::PDF_wh");
+    impl_sample_visible.function()->set_description("BeckmannMicrofacet::PDF_wh_sample_visible");
+    if (sample_visible_) {
+        return impl_sample_visible(wo, wh, alpha_x_, alpha_y_);
+    }
     return impl(wo, wh, alpha_x_, alpha_y_);
 }
 

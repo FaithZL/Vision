@@ -139,7 +139,11 @@ template<EPort p = EPort::D>
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh,
                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
-                                 MicrofacetType type = GGX) {
+                                 bool sample_visible, MicrofacetType type) {
+    if (sample_visible) {
+        return D_<p>(wh, alpha_x, alpha_y, type) * G1<p>(wo, alpha_x, alpha_y, type) *
+               abs_dot(wo, wh) / abs_cos_theta(wh);
+    }
     return D_<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
 }
 
@@ -256,7 +260,7 @@ public:
         return microfacet::sample_wh<p>(wo, u, alpha_x_, alpha_y_, type_);
     }
     [[nodiscard]] virtual oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh) const noexcept {
-        return microfacet::PDF_wh<p>(wo, wh, alpha_x_, alpha_y_, type_);
+        return microfacet::PDF_wh<p>(wo, wh, alpha_x_, alpha_y_, sample_visible_, type_);
     }
 
     [[nodiscard]] virtual oc_float<p> PDF_wi_reflection(const oc_float<p> &pdf_wh, const oc_float3<p> &wo,

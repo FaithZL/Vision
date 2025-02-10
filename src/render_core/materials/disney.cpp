@@ -266,7 +266,7 @@ public:
     }
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override {
         static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, Float ax, Float ay) {
-            return microfacet::PDF_wh<D>(wo, wh, ax, ay, type);
+            return microfacet::PDF_wh<D>(wo, wh, ax, ay, false, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::PDF_wh");
         return impl(wo, wh, alpha_x_, alpha_y_);
