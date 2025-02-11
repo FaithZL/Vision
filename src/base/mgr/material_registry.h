@@ -19,8 +19,7 @@ private:
     bool sample_visible_{false};
 
 public:
-    static MaterialRegistry &instance();
-    static void destroy_instance();
+    OC_MAKE_INSTANCE_FUNC_DECL(MaterialRegistry)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     VS_MAKE_GUI_STATUS_FUNC(GUI, materials_)

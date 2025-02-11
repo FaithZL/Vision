@@ -8,7 +8,16 @@
 
 namespace vision {
 
-OC_MAKE_INSTANCE_FUNC_DEF(MaterialLut, s_material_lut)
+OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialLut, s_material_lut)
+
+void MaterialLut::load_lut(const string &name, uint3 res,
+                           PixelStorage storage) noexcept {
+
+}
+
+void MaterialLut::unload_lut(const std::string &name) noexcept {
+
+}
 
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode,

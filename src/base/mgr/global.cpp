@@ -8,15 +8,7 @@
 
 namespace vision {
 
-Global *Global::s_global = nullptr;
-
-Global &Global::instance() {
-    if (s_global == nullptr) {
-        s_global = new Global();
-        HotfixSystem::instance().register_static_var("Global", *s_global);
-    }
-    return *s_global;
-}
+OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(Global, s_global)
 
 Global::~Global() {
     FileManager::destroy_instance();
@@ -44,13 +36,6 @@ fs::path Global::scene_path() const noexcept {
 
 fs::path Global::scene_cache_path() const noexcept {
     return scene_path_ / ".cache";
-}
-
-void Global::destroy_instance() {
-    if (s_global) {
-        delete s_global;
-        s_global = nullptr;
-    }
 }
 
 Pipeline *Context::pipeline() noexcept {

@@ -95,10 +95,8 @@ private:
     static constexpr auto res = 32;
 
     OC_MAKE_INSTANCE_CONSTRUCTOR(SheenLTCTable, s_sheen_table)
+    OC_MAKE_INSTANCE_FUNC_DECL(SheenLTCTable)
 
-public:
-    static SheenLTCTable &instance();
-    static void destroy_instance();
     void init() noexcept {
         if (approx_.handle()) {
             return;

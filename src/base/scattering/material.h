@@ -19,8 +19,7 @@ private:
     OC_MAKE_INSTANCE_CONSTRUCTOR(MaterialLut, s_material_lut)
 
 public:
-    [[nodiscard]] static MaterialLut &instance();
-    static void destroy_instance();
+    OC_MAKE_INSTANCE_FUNC_DECL(MaterialLut)
     void load_lut(const string &name, uint3 res, PixelStorage storage) noexcept;
     void unload_lut(const string &name) noexcept;
 };

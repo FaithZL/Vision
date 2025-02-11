@@ -6,7 +6,7 @@
 
 namespace vision {
 
-MaterialRegistry *MaterialRegistry::s_material_registry = nullptr;
+OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialRegistry, s_material_registry)
 
 SP<Material> MaterialRegistry::register_(SP<vision::Material> material) noexcept {
     uint64_t hash = material->hash();
@@ -141,19 +141,5 @@ void MaterialRegistry::remove_unused_materials() noexcept {
     tidy_up();
 }
 
-MaterialRegistry &MaterialRegistry::instance() {
-    if (s_material_registry == nullptr) {
-        s_material_registry = new MaterialRegistry();
-        HotfixSystem::instance().register_static_var("MaterialRegistry", *s_material_registry);
-    }
-    return *s_material_registry;
-}
-
-void MaterialRegistry::destroy_instance() {
-    if (s_material_registry) {
-        delete s_material_registry;
-        s_material_registry = nullptr;
-    }
-}
 
 }// namespace vision

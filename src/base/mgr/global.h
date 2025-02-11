@@ -21,8 +21,7 @@ private:
     fs::path scene_path_;
 
 public:
-    [[nodiscard]] static Global &instance();
-    static void destroy_instance();
+    OC_MAKE_INSTANCE_FUNC_DECL(Global)
     void set_pipeline(Pipeline *pipeline);
     [[nodiscard]] Pipeline *pipeline();
     [[nodiscard]] ImagePool &image_pool() {

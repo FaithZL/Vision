@@ -152,8 +152,6 @@ template<EPort p>
 [[nodiscard]] oc_float3<p> sample_wh_visible_area(const oc_float3<p> &wo, const oc_float2<p> &u,
                                                   const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
                                                   MicrofacetType type) {
-    //    switch (type) {
-    //        case GGX: {
     oc_float3<p> wi_stretched = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
     oc_float<p> slope_x{};
     oc_float<p> slope_y{};
@@ -167,12 +165,6 @@ template<EPort p>
     slope_y = alpha_y * slope_y;
 
     return normalize(make_float3(-slope_x, -slope_y, 1.f));
-    //        }
-    //        case Beckmann:
-    //
-    //        default:
-    //            break;
-    //    }
 }
 template oc_float3<D> sample_wh_visible_area<D>(const oc_float3<D> &wo, const oc_float2<D> &u, const oc_float<D> &alpha_x,
                                                 const oc_float<D> &alpha_y, MicrofacetType type);
