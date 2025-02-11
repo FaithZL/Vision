@@ -382,45 +382,8 @@ public:
     }
 
     template<typename TLobe>
-    [[nodiscard]] PrecomputedLobeTable precompute_lobe(uint3 res) const noexcept {
-        Device &device = Global::instance().device();
-        Stream stream = device.create_stream();
-        TSampler &sampler = scene().sampler();
-
-        Buffer<float> buffer = device.create_buffer<float>(res.x * res.y * res.z);
-
-        Kernel kernel = [&](Uint sample_num) {
-            sampler->load_data();
-            sampler->start(dispatch_idx().xy(), 0, 0);
-            SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
-            Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            UP<TLobe> spec_refl = TLobe::create_for_precompute(swl);
-            Float result = spec_refl->precompute_with_radio(ratio, sampler, sample_num).average();
-            buffer.write(dispatch_id(), result);
-        };
-
-        PrecomputedLobeTable ret;
-        ret.name = TLobe::name;
-        ret.type = Type::of<float>();
-        ret.data.resize(buffer.size());
-        Clock clk;
-        clk.start();
-        OC_INFO("start precompute albedo of {}", ret.name);
-        auto shader = device.compile(kernel);
-        stream << shader(precompute_sample_num).dispatch(res)
-               << buffer.download(ret.data.data())
-               << Env::printer().retrieve()
-               << synchronize() << commit();
-        clk.end();
-        ret.elapsed_time = clk.elapse_s();
-        OC_INFO("precompute albedo of {} took {:.3f} s", ret.name, ret.elapsed_time);
-
-        return ret;
-    }
-
-    template<typename TLobe>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
-        return precompute_lobe<TLobe>(make_uint3(TLobe::lut_res));
+        return Material::precompute_lobe<TLobe>(make_uint3(TLobe::lut_res));
     }
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {

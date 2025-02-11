@@ -149,6 +149,10 @@ Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     }
 }
 
+TSampler &Material::get_sampler() noexcept {
+    return scene().sampler();
+}
+
 bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = format("{} {} material: {}", index_, impl_type().data(), name_.c_str());
     bool open = widgets->use_tree(label, [&] {
