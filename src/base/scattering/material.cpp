@@ -18,7 +18,7 @@ void MaterialLut::load_lut(const string &name, uint3 res,
     }
     Pipeline *ppl = Global::instance().pipeline();
     RegistrableTexture texture{ppl->bindless_array()};
-    texture.device_tex() = ppl->device().create_texture(make_uint2(res),
+    texture.device_tex() = ppl->device().create_texture(res,
                                                         storage,
                                                         name);
     texture.device_tex().upload_immediately(data);

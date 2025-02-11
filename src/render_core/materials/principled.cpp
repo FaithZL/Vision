@@ -88,54 +88,6 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
-//struct SheenLTCTable {
-//private:
-//    Texture approx_;
-//    Texture volume_;
-//    static constexpr auto res = 32;
-//
-//    OC_MAKE_INSTANCE_CONSTRUCTOR(SheenLTCTable, s_sheen_table)
-//    OC_MAKE_INSTANCE_FUNC_DECL(SheenLTCTable)
-//
-//    void init() noexcept {
-//        if (approx_.handle()) {
-//            return;
-//        }
-//        Pipeline *ppl = Global::instance().pipeline();
-//        approx_ = ppl->device().create_texture(make_uint2(res),
-//                                               PixelStorage::FLOAT4,
-//                                               "SheenLTCTable::approx_");
-//        volume_ = ppl->device().create_texture(make_uint2(res),
-//                                               PixelStorage::FLOAT4,
-//                                               "SheenLTCTable::volume_");
-//        approx_.upload_immediately(addressof(SheenLTCTableApprox));
-//        volume_.upload_immediately(addressof(SheenLTCTableVolume));
-//    }
-//    [[nodiscard]] Float4 sample_approx(const Float &cos_theta, const Float &alpha) noexcept {
-//        return approx_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
-//    }
-//    [[nodiscard]] Float4 sample_volume(const Float &cos_theta, const Float &alpha) noexcept {
-//        return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
-//    }
-//};
-//
-//SheenLTCTable *SheenLTCTable::s_sheen_table = nullptr;
-//
-//SheenLTCTable &SheenLTCTable::instance() {
-//    if (s_sheen_table == nullptr) {
-//        s_sheen_table = new SheenLTCTable();
-//        HotfixSystem::instance().register_static_var("SheenLTCTable", s_sheen_table);
-//    }
-//    return *s_sheen_table;
-//}
-//
-//void SheenLTCTable::destroy_instance() {
-//    if (s_sheen_table) {
-//        delete s_sheen_table;
-//        s_sheen_table = nullptr;
-//    }
-//}
-
 /// reference https://tizianzeltner.com/projects/Zeltner2022Practical/
 /// reference https://github.com/tizian/ltc-sheen
 class SheenLTC : public BxDFSet {
@@ -296,9 +248,9 @@ public:
 
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 4.f;
+    static constexpr uint lut_res = CoatBxDFSetTable::res;
 
     /// for precompute begin
-    static constexpr uint table_res = CoatBxDFSetTable::res;
     static constexpr const char *name = "CoatBxDFSet";
     static UP<CoatBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
@@ -337,56 +289,20 @@ public:
     using DielectricBxDFSet::DielectricBxDFSet;
 };
 
-class SpecularBxDFSetTable {
-private:
-    Texture table_;
-
-public:
-    static constexpr uint res = 32;
-
-    OC_MAKE_INSTANCE_CONSTRUCTOR(SpecularBxDFSetTable, s_specular_table)
-
-public:
-    [[nodiscard]] static SpecularBxDFSetTable &instance();
-    static void destroy_instance();
-    void init() noexcept {
-        if (table_.handle()) {
-            return;
-        }
-        Pipeline *ppl = Global::instance().pipeline();
-        table_ = ppl->device().create_texture(make_uint3(res),
-                                              PixelStorage::FLOAT1,
-                                              "SpecularBxDFSetTable::table_");
-        table_.upload_immediately(addressof(SpecularBxDFSet_Table));
-    }
-    [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
-        return table_.sample(1, uvw).as_scalar();
-    }
-};
-
-SpecularBxDFSetTable *SpecularBxDFSetTable::s_specular_table = nullptr;
-
-SpecularBxDFSetTable &SpecularBxDFSetTable::instance() {
-    if (s_specular_table == nullptr) {
-        s_specular_table = new SpecularBxDFSetTable();
-        HotfixSystem::instance().register_static_var("SpecularBxDFSetTable", s_specular_table);
-    }
-    return *s_specular_table;
-}
-
-void SpecularBxDFSetTable::destroy_instance() {
-    if (s_specular_table) {
-        delete s_specular_table;
-        s_specular_table = nullptr;
-    }
-}
-
 class SpecularBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
+    static constexpr const char *lut_name = "SpecularBxDFSet::lut";
+    static constexpr uint lut_res = 32;
+
+    static void prepare() {
+        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+                                         PixelStorage::FLOAT1,
+                                         addressof(SpecularBxDFSet_Table));
+    }
+
     /// for precompute begin
-    static constexpr uint table_res = SpecularBxDFSetTable::res;
     static constexpr const char *name = "SpecularBxDFSet";
     static UP<SpecularBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
@@ -415,7 +331,7 @@ public:
         Float x = to_ratio_x();
         Float z = to_ratio_z();
         Float3 uvw = make_float3(x, cos_theta, z);
-        Float s = SpecularBxDFSetTable::instance().sample(uvw);
+        Float s = MaterialLut::instance().sample(lut_name, 1, uvw).as_scalar();
         SampledSpectrum f0 = fresnel<FresnelGeneralizedSchlick>()->F0();
         SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(*swl())) * bxdf()->albedo(cos_theta);
         return ret;
@@ -498,9 +414,9 @@ public:
         Material::render_sub_UI(widgets);
     }
     void prepare() noexcept override {
-        SpecularBxDFSetTable::instance().init();
         CoatBxDFSetTable::instance().init();
         SheenLTC::prepare();
+        SpecularBxDFSet::prepare();
     }
 
     template<typename TLobe>
@@ -509,7 +425,7 @@ public:
         Stream stream = device.create_stream();
         TSampler &sampler = scene().sampler();
 
-        uint res = TLobe::table_res;
+        uint res = TLobe::lut_res;
 
         Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
 
