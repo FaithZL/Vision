@@ -8,6 +8,8 @@
 
 namespace vision {
 
+OC_MAKE_INSTANCE_FUNC_DEF(MaterialLut, s_material_lut)
+
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode,
                                               const Uint &flag) const noexcept {

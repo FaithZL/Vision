@@ -12,6 +12,19 @@
 
 namespace vision {
 
+
+class MaterialLut {
+private:
+    std::map<string, RegistrableTexture> texture_map_;
+    OC_MAKE_INSTANCE_CONSTRUCTOR(MaterialLut, s_material_lut)
+
+public:
+    [[nodiscard]] static MaterialLut &instance();
+    static void destroy_instance();
+    void load_lut(const string &name, uint3 res, PixelStorage storage) noexcept;
+    void unload_lut(const string &name) noexcept;
+};
+
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
 public:
     using Super = PolyEvaluator<BxDFSet>;

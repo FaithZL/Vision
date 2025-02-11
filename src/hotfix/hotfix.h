@@ -89,6 +89,11 @@ public:
             static_map_.insert(make_pair(key, new_block));
         }
     }
+    void unregister_static_var(const string &key) noexcept {
+        if (static_map_.contains(key)) {
+            static_map_.erase(key);
+        }
+    }
     [[nodiscard]] bool is_working() const noexcept { return build_system_.is_working(); }
     void enqueue_function(std::function<void()> fn) noexcept;
     void on_build_finish(bool success, const Target &target) noexcept;
