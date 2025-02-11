@@ -382,14 +382,12 @@ public:
     }
 
     template<typename TLobe>
-    [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
+    [[nodiscard]] PrecomputedLobeTable precompute_lobe(uint3 res) const noexcept {
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
         TSampler &sampler = scene().sampler();
 
-        uint res = TLobe::lut_res;
-
-        Buffer<float> buffer = device.create_buffer<float>(Pow<3>(res));
+        Buffer<float> buffer = device.create_buffer<float>(res.x * res.y * res.z);
 
         Kernel kernel = [&](Uint sample_num) {
             sampler->load_data();
@@ -409,7 +407,7 @@ public:
         clk.start();
         OC_INFO("start precompute albedo of {}", ret.name);
         auto shader = device.compile(kernel);
-        stream << shader(precompute_sample_num).dispatch(make_uint3(res))
+        stream << shader(precompute_sample_num).dispatch(res)
                << buffer.download(ret.data.data())
                << Env::printer().retrieve()
                << synchronize() << commit();
@@ -418,6 +416,11 @@ public:
         OC_INFO("precompute albedo of {} took {:.3f} s", ret.name, ret.elapsed_time);
 
         return ret;
+    }
+
+    template<typename TLobe>
+    [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
+        return precompute_lobe<TLobe>(make_uint3(TLobe::lut_res));
     }
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {

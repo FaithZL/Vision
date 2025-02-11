@@ -11,6 +11,26 @@ namespace vision {
 class MirrorBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
+
+    static constexpr const char *lut_name = "MirrorBxDFSet::lut";
+    static constexpr uint lut_res = 32;
+
+    static void prepare() {
+//        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+//                                         PixelStorage::FLOAT1,
+//                                         addressof(SpecularBxDFSet_Table));
+    }
+
+    /// for precompute begin
+    static constexpr const char *name = "MirrorBxDFSet";
+    static UP<MirrorBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f);
+        UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
+        return make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
+    }
+    /// for precompute end
+
 };
 
 class MirrorMaterial : public Material {
@@ -39,6 +59,12 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->input_float("alpha_threshold", &alpha_threshold_, 0.001, 0.002);
         Material::render_sub_UI(widgets);
+    }
+
+    [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
+        vector<PrecomputedLobeTable> ret;
+
+        return ret;
     }
 
 protected:
