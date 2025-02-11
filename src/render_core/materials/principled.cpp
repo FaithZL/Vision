@@ -88,53 +88,53 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
-struct SheenLTCTable {
-private:
-    Texture approx_;
-    Texture volume_;
-    static constexpr auto res = 32;
-
-    OC_MAKE_INSTANCE_CONSTRUCTOR(SheenLTCTable, s_sheen_table)
-    OC_MAKE_INSTANCE_FUNC_DECL(SheenLTCTable)
-
-    void init() noexcept {
-        if (approx_.handle()) {
-            return;
-        }
-        Pipeline *ppl = Global::instance().pipeline();
-        approx_ = ppl->device().create_texture(make_uint2(res),
-                                               PixelStorage::FLOAT4,
-                                               "SheenLTCTable::approx_");
-        volume_ = ppl->device().create_texture(make_uint2(res),
-                                               PixelStorage::FLOAT4,
-                                               "SheenLTCTable::volume_");
-        approx_.upload_immediately(addressof(SheenLTCTableApprox));
-        volume_.upload_immediately(addressof(SheenLTCTableVolume));
-    }
-    [[nodiscard]] Float4 sample_approx(const Float &cos_theta, const Float &alpha) noexcept {
-        return approx_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
-    }
-    [[nodiscard]] Float4 sample_volume(const Float &cos_theta, const Float &alpha) noexcept {
-        return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
-    }
-};
-
-SheenLTCTable *SheenLTCTable::s_sheen_table = nullptr;
-
-SheenLTCTable &SheenLTCTable::instance() {
-    if (s_sheen_table == nullptr) {
-        s_sheen_table = new SheenLTCTable();
-        HotfixSystem::instance().register_static_var("SheenLTCTable", s_sheen_table);
-    }
-    return *s_sheen_table;
-}
-
-void SheenLTCTable::destroy_instance() {
-    if (s_sheen_table) {
-        delete s_sheen_table;
-        s_sheen_table = nullptr;
-    }
-}
+//struct SheenLTCTable {
+//private:
+//    Texture approx_;
+//    Texture volume_;
+//    static constexpr auto res = 32;
+//
+//    OC_MAKE_INSTANCE_CONSTRUCTOR(SheenLTCTable, s_sheen_table)
+//    OC_MAKE_INSTANCE_FUNC_DECL(SheenLTCTable)
+//
+//    void init() noexcept {
+//        if (approx_.handle()) {
+//            return;
+//        }
+//        Pipeline *ppl = Global::instance().pipeline();
+//        approx_ = ppl->device().create_texture(make_uint2(res),
+//                                               PixelStorage::FLOAT4,
+//                                               "SheenLTCTable::approx_");
+//        volume_ = ppl->device().create_texture(make_uint2(res),
+//                                               PixelStorage::FLOAT4,
+//                                               "SheenLTCTable::volume_");
+//        approx_.upload_immediately(addressof(SheenLTCTableApprox));
+//        volume_.upload_immediately(addressof(SheenLTCTableVolume));
+//    }
+//    [[nodiscard]] Float4 sample_approx(const Float &cos_theta, const Float &alpha) noexcept {
+//        return approx_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
+//    }
+//    [[nodiscard]] Float4 sample_volume(const Float &cos_theta, const Float &alpha) noexcept {
+//        return volume_.sample(4, make_float2(cos_theta, alpha)).as_vec4();
+//    }
+//};
+//
+//SheenLTCTable *SheenLTCTable::s_sheen_table = nullptr;
+//
+//SheenLTCTable &SheenLTCTable::instance() {
+//    if (s_sheen_table == nullptr) {
+//        s_sheen_table = new SheenLTCTable();
+//        HotfixSystem::instance().register_static_var("SheenLTCTable", s_sheen_table);
+//    }
+//    return *s_sheen_table;
+//}
+//
+//void SheenLTCTable::destroy_instance() {
+//    if (s_sheen_table) {
+//        delete s_sheen_table;
+//        s_sheen_table = nullptr;
+//    }
+//}
 
 /// reference https://tizianzeltner.com/projects/Zeltner2022Practical/
 /// reference https://github.com/tizian/ltc-sheen
@@ -148,9 +148,12 @@ protected:
 
 public:
     enum Mode : int {
-        Volume,
+        Volumetric,
         Approximate,
     };
+    static constexpr const char *Volume = "SheenLTC::Volume";
+    static constexpr const char *Approx = "SheenLTC::Approximate";
+    static constexpr auto lut_res = 32;
 
 public:
     SheenLTC(Mode mode, const Float &cos_theta, SampledSpectrum tint,
@@ -161,9 +164,15 @@ public:
         b_ = c.y;
         tint_ *= c.z;
     }
+    static void prepare() {
+        MaterialLut::instance().load_lut(Volume, make_uint2(lut_res), PixelStorage::FLOAT4,
+                                         addressof(SheenLTCTableVolume));
+        MaterialLut::instance().load_lut(Approx, make_uint2(lut_res), PixelStorage::FLOAT4,
+                                         addressof(SheenLTCTableApprox));
+    }
     [[nodiscard]] Float4 fetch_ltc(Mode mode, const Float &cos_theta) {
-        return mode == Volume ? SheenLTCTable::instance().sample_volume(cos_theta, alpha_) :
-                                SheenLTCTable::instance().sample_approx(cos_theta, alpha_);
+        const char *name = mode == Volumetric ? Volume : Approx;
+        return MaterialLut::instance().sample(name, 4, make_float2(cos_theta, alpha_)).as_vec4();
     }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return tint_; }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
@@ -489,9 +498,9 @@ public:
         Material::render_sub_UI(widgets);
     }
     void prepare() noexcept override {
-        SheenLTCTable::instance().init();
         SpecularBxDFSetTable::instance().init();
         CoatBxDFSetTable::instance().init();
+        SheenLTC::prepare();
     }
 
     template<typename TLobe>

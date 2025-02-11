@@ -12,16 +12,23 @@
 
 namespace vision {
 
-
 class MaterialLut {
 private:
-    std::map<string, RegistrableTexture> texture_map_;
+    std::map<string, RegistrableTexture> lut_map_;
     OC_MAKE_INSTANCE_CONSTRUCTOR(MaterialLut, s_material_lut)
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MaterialLut)
-    void load_lut(const string &name, uint3 res, PixelStorage storage) noexcept;
+    void load_lut(const string &name, uint2 res, PixelStorage storage, const void *data) noexcept {
+        load_lut(name, make_uint3(res, 1u), storage, data);
+    }
+    void load_lut(const string &name, uint3 res, PixelStorage storage, const void *data) noexcept;
     void unload_lut(const string &name) noexcept;
+    template<typename... Args>
+    [[nodiscard]] float_array sample(const string &name, Args &&...args) const noexcept {
+        return lut_map_.at(name).sample(OC_FORWARD(args)...);
+    }
+    [[nodiscard]] const RegistrableTexture &get_lut(const string &name) const noexcept;
 };
 
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {

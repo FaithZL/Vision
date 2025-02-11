@@ -5,18 +5,36 @@
 #include "material.h"
 #include "base/sampler.h"
 #include "base/mgr/scene.h"
+#include "base/mgr/pipeline.h"
 
 namespace vision {
 
 OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialLut, s_material_lut)
 
 void MaterialLut::load_lut(const string &name, uint3 res,
-                           PixelStorage storage) noexcept {
-
+                           PixelStorage storage, const void *data) noexcept {
+    if (lut_map_.contains(name)) {
+        return;
+    }
+    Pipeline *ppl = Global::instance().pipeline();
+    RegistrableTexture texture{ppl->bindless_array()};
+    texture.device_tex() = ppl->device().create_texture(make_uint2(res),
+                                                        storage,
+                                                        name);
+    texture.device_tex().upload_immediately(data);
+    texture.register_self();
+    lut_map_.insert(std::make_pair(name, std::move(texture)));
 }
 
 void MaterialLut::unload_lut(const std::string &name) noexcept {
+    if (lut_map_.contains(name)) {
+        lut_map_.erase(name);
+    }
+}
 
+const RegistrableTexture &MaterialLut::get_lut(const std::string &name) const noexcept {
+    OC_ASSERT(lut_map_.contains(name));
+    return lut_map_.at(name);
 }
 
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,

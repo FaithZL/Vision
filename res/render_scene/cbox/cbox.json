@@ -201,7 +201,7 @@
 			}
 		},
 		{
-			"type" : "cube",
+			"type" : "sphere",
 			"name" : "shape_5",
 			"param" : {
 				"radius": 0.7,
@@ -210,9 +210,9 @@
 				"z" : 1,
 //				 "material" : "ShortBox",
 //								 "material" : "substrate",
-								"material" : "Mirror",
+//								"material" : "Mirror",
 //								"material" : "Metal",
-//				"material" : "principled",
+				"material" : "principled",
 //				"material" : "disney",
 //																                "material" : "mix",
 //												                                "material" : "Glass",
