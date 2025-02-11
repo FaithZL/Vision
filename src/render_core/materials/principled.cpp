@@ -276,7 +276,7 @@ public:
     }
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = schlick_ior_from_F0(Pow<4>(z));
-        fresnel_->set_eta(SampledSpectrum(bxdf()->swl(), ior));
+        fresnel_->set_eta(SampledSpectrum(1, ior));
     }
     /// for precompute end
 
