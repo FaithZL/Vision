@@ -16,9 +16,9 @@ public:
     static constexpr uint lut_res = 32;
 
     static void prepare() {
-//        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
-//                                         PixelStorage::FLOAT1,
-//                                         addressof(SpecularBxDFSet_Table));
+        //        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+        //                                         PixelStorage::FLOAT1,
+        //                                         addressof(SpecularBxDFSet_Table));
     }
 
     /// for precompute begin
@@ -29,8 +29,10 @@ public:
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         return make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
     }
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        // empty
+    }
     /// for precompute end
-
 };
 
 class MirrorMaterial : public Material {
@@ -63,7 +65,7 @@ public:
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-
+        ret.push_back(precompute_lobe<MirrorBxDFSet>(make_uint3(uint2(MirrorBxDFSet::lut_res), 1u)));
         return ret;
     }
 
