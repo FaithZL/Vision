@@ -198,57 +198,19 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override { return swl_; }
 };
 
-class CoatBxDFSetTable {
-private:
-    Texture table_;
-
-public:
-    static constexpr uint res = 32;
-
-    OC_MAKE_INSTANCE_CONSTRUCTOR(CoatBxDFSetTable, s_coat_table)
-
-public:
-    [[nodiscard]] static CoatBxDFSetTable &instance();
-    static void destroy_instance();
-    void init() noexcept {
-        if (table_.handle()) {
-            return;
-        }
-        Pipeline *ppl = Global::instance().pipeline();
-        table_ = ppl->device().create_texture(make_uint3(res),
-                                              PixelStorage::FLOAT1,
-                                              "CoatBxDFSetTable::table_");
-        table_.upload_immediately(addressof(CoatBxDFSet_Table));
-    }
-    [[nodiscard]] Float sample(const Float3 &uvw) const noexcept {
-        return table_.sample(1, uvw).as_scalar();
-    }
-};
-
-CoatBxDFSetTable *CoatBxDFSetTable::s_coat_table = nullptr;
-
-CoatBxDFSetTable &CoatBxDFSetTable::instance() {
-    if (s_coat_table == nullptr) {
-        s_coat_table = new CoatBxDFSetTable();
-        HotfixSystem::instance().register_static_var("CoatBxDFSetTable", s_coat_table);
-    }
-    return *s_coat_table;
-}
-
-void CoatBxDFSetTable::destroy_instance() {
-    if (s_coat_table) {
-        delete s_coat_table;
-        s_coat_table = nullptr;
-    }
-}
-
 class CoatBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 4.f;
-    static constexpr uint lut_res = CoatBxDFSetTable::res;
+    static constexpr const char *lut_name = "CoatBxDFSet::lut";
+    static constexpr uint lut_res = 32;
+    static void prepare() {
+        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+                                         PixelStorage::FLOAT1,
+                                         addressof(SpecularBxDFSet_Table));
+    }
 
     /// for precompute begin
     static constexpr const char *name = "CoatBxDFSet";
@@ -274,7 +236,7 @@ public:
         Float x = to_ratio_x();
         Float z = to_ratio_z();
         Float3 uvw = make_float3(x, cos_theta, z);
-        Float s = CoatBxDFSetTable::instance().sample(uvw);
+        Float s = MaterialLut::instance().sample(lut_name, 1, uvw).as_scalar();
         return SampledSpectrum(bxdf()->swl(), s) * bxdf()->albedo(cos_theta);
     }
 };
@@ -414,7 +376,7 @@ public:
         Material::render_sub_UI(widgets);
     }
     void prepare() noexcept override {
-        CoatBxDFSetTable::instance().init();
+        CoatBxDFSet::prepare();
         SheenLTC::prepare();
         SpecularBxDFSet::prepare();
     }
