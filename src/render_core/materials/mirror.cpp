@@ -5,6 +5,7 @@
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
+#include "precomputed_table.inl.h"
 
 namespace vision {
 
@@ -15,10 +16,20 @@ public:
     static constexpr const char *lut_name = "MirrorBxDFSet::lut";
     static constexpr uint lut_res = 32;
 
+    [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept {
+        Float alpha = bxdf()->alpha_average();
+        Float ret = MaterialLut::instance().sample(lut_name, 1, make_float2(alpha, cos_theta(wo))).as_scalar();
+        return ret;
+    }
+
     static void prepare() {
-        //        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
-        //                                         PixelStorage::FLOAT1,
-        //                                         addressof(SpecularBxDFSet_Table));
+        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+                                         PixelStorage::FLOAT1,
+                                         addressof(MirrorBxDFSet_Table));
+    }
+
+    SampledSpectrum albedo(const ocarina::Float &cos_theta) const noexcept override {
+        return bxdf()->albedo(cos_theta);
     }
 
     /// for precompute begin
@@ -55,6 +66,9 @@ public:
         roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
         anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
+    }
+    void prepare() noexcept override {
+        MirrorBxDFSet::prepare();
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)

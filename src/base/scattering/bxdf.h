@@ -116,6 +116,9 @@ public:
           microfacet_(microfacet) {}
     [[nodiscard]] Float alpha_x() const noexcept { return microfacet_->alpha_x(); }
     [[nodiscard]] Float alpha_y() const noexcept { return microfacet_->alpha_y(); }
+    [[nodiscard]] Float alpha_average() const noexcept {
+        return sqrt(alpha_x() * alpha_y());
+    }
     void set_alpha(const Float2 &alpha) noexcept {
         microfacet_->set_alpha_x(alpha.x);
         microfacet_->set_alpha_y(alpha.y);
