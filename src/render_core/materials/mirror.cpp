@@ -19,7 +19,7 @@ public:
     [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept {
         Float alpha = bxdf()->alpha_average();
         Float ret = MaterialLut::instance().sample(lut_name, 1, make_float2(alpha, cos_theta(wo))).as_scalar();
-        return ret;
+        return 1.f / ret;
     }
 
     static void prepare() {
@@ -32,11 +32,25 @@ public:
         return bxdf()->albedo(cos_theta);
     }
 
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override {
+        BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler);
+        bs.eval.f *= compensate_factor(wo);
+        return bs;
+    }
+
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
+        ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag);
+        se.f *= compensate_factor(wo);
+        return se;
+    }
+
     /// for precompute begin
     static constexpr const char *name = "MirrorBxDFSet";
     static UP<MirrorBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, false);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         return make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
     }
