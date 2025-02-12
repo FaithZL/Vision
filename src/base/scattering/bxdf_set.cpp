@@ -240,16 +240,6 @@ BSDFSample DielectricBxDFSet::sample_delta_local(const Float3 &wo, TSampler &sam
     return ret;
 }
 
-BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                           TSampler &sampler) const noexcept {
-    BSDFSample ret{*swl()};
-    SampledDirection sd = sample_wi(wo, flag, sampler);
-    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
-    ret.wi = sd.wi;
-    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf(), 0.f);
-    return ret;
-}
-
 void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }

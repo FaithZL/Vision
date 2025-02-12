@@ -177,9 +177,8 @@ public:
     [[nodiscard]] Uint flag() const noexcept override { return refl_.flags() | trans_.flags(); }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
+                                                TSampler &sampler) const noexcept override;
 };
 
 class WeightedBxDFSet {
