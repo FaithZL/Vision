@@ -323,12 +323,14 @@ string PrecomputedLobeTable::to_string() const noexcept {
     uint dim = type->dimension();
     size_t count = data.size() / type->dimension();
     std::ostringstream content;
-    uint line_len = 12 / dim;
+    uint line_len = res.x;
+
+    uint area = res.x * res.y;
 
     auto func = [&]<typename T>(T t) {
         for (uint i = 0; i < data.size(); i += dim) {
             T elm = T(addressof(data[i]));
-            content << ((i / dim) % line_len == 0 ? "\n\t" : "");
+            content << (i % line_len == 0 ? "\n\t" : "");
             content << to_str(elm) << (i / dim == data.size() / dim - 1 ? "\n" : ", ");
         }
     };
@@ -337,6 +339,9 @@ string PrecomputedLobeTable::to_string() const noexcept {
         for (int i = 0; i < data.size(); ++i) {
             content << (i % line_len == 0 ? "\n\t" : "");
             content << std::to_string(data[i]) << (i == data.size() - 1 ? "\n" : ", ");
+            if ((i + 1) % area == 0) {
+                content << endl;
+            }
         }
     } else if (type->name() == "float2") {
         func(float2{});

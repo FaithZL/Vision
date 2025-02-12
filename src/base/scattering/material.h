@@ -145,6 +145,7 @@ protected:
         ret.name = TLobe::name;
         ret.type = Type::of<float>();
         ret.data.resize(buffer.size());
+        ret.res = res;
         Clock clk;
         clk.start();
         OC_INFO_FORMAT("start precompute albedo of {}", ret.name);
