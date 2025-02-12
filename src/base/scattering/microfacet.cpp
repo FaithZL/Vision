@@ -41,10 +41,10 @@ template<EPort p>
         case Disney:
         case GGX: {
             oc_float<p> abs_tan_theta = abs(geometry::tan_theta(w));
-            oc_float<p> cos_theta2 = geometry::cos_theta_2(w);
-            oc_float<p> sin_theta2 = geometry::sin_theta_2(w);
-            oc_float<p> alpha = sqrt(cos_theta2 * sqr(alpha_x) +
-                                     sin_theta2 * sqr(alpha_y));
+            oc_float<p> cos_phi_2 = geometry::cos_phi_2(w);
+            oc_float<p> sin_phi_2 = geometry::sin_phi_2(w);
+            oc_float<p> alpha = sqrt(cos_phi_2 * sqr(alpha_x) +
+                                     sin_phi_2 * sqr(alpha_y));
             oc_float<p> ret = (-1 + sqrt(1.f + sqr(alpha * abs_tan_theta))) / 2;
             return select(ocarina::isinf(abs_tan_theta), 0.f, ret);
         }
