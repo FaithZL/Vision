@@ -75,7 +75,7 @@ Float MicrofacetReflection::PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> 
 SampledDirection MicrofacetReflection::sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel) const noexcept {
     Float3 wh = microfacet_->sample_wh(wo, u);
     Float3 wi = reflect(wo, wh);
-    return {wi, 1.f};
+    return {wi, select(valid(wo, wi, wh), 1.f, 0.f)};
 }
 
 BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel) const noexcept {
