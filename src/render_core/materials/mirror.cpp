@@ -10,11 +10,14 @@
 namespace vision {
 
 class MirrorBxDFSet : public MicrofacetBxDFSet {
+private:
+    bool compensate_{true};
+
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
     static constexpr const char *lut_name = "MirrorBxDFSet::lut";
-    static constexpr uint lut_res = 32;
+    static constexpr uint lut_res = 64;
 
     [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept {
         Float alpha = bxdf()->alpha_average();
@@ -35,14 +38,18 @@ public:
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
         BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler);
-        bs.eval.f *= compensate_factor(wo);
+        if (compensate_) {
+            bs.eval.f *= compensate_factor(wo);
+        }
         return bs;
     }
 
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override {
         ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag);
-        se.f *= compensate_factor(wo);
+        if(compensate_) {
+            se.f *= compensate_factor(wo);
+        }
         return se;
     }
 
@@ -52,7 +59,9 @@ public:
         SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, false);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
-        return make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
+        auto ret = make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
+        ret->compensate_ = false;
+        return ret;
     }
     void from_ratio_z(ocarina::Float z) noexcept override {
         // empty
