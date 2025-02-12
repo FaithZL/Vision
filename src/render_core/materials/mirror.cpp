@@ -17,7 +17,7 @@ public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 
     static constexpr const char *lut_name = "MirrorBxDFSet::lut";
-    static constexpr uint lut_res = 64;
+    static constexpr uint lut_res = 32;
 
     [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept {
         Float alpha = bxdf()->alpha_average();
@@ -26,7 +26,7 @@ public:
     }
 
     static void prepare() {
-        MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+        MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
                                          PixelStorage::FLOAT1,
                                          addressof(MirrorBxDFSet_Table));
     }
