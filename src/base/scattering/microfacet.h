@@ -142,7 +142,7 @@ template<EPort p = EPort::D>
                                  bool sample_visible, MicrofacetType type) {
     if (sample_visible) {
         return D_<p>(wh, alpha_x, alpha_y, type) * G1<p>(wo, alpha_x, alpha_y, type) *
-               abs_dot(wo, wh) / abs_cos_theta(wh);
+               abs_dot(wo, wh) / abs_cos_theta(wo);
     }
     return D_<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
 }
