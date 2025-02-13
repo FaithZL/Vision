@@ -69,14 +69,14 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
 };
 
-class FresnelNoOp : public Fresnel {
+class FresnelConstant : public Fresnel {
 public:
-    explicit FresnelNoOp(const SampledWavelengths &swl) : Fresnel(swl) {}
+    explicit FresnelConstant(const SampledWavelengths &swl) : Fresnel(swl) {}
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {swl_->dimension(), 1.f}; }
     [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelNoOp>(*swl_);
+        return make_shared<FresnelConstant>(*swl_);
     }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelNoOp)
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelConstant)
 };
 
 }// namespace vision

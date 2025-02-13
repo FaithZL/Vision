@@ -56,7 +56,7 @@ public:
     /// for precompute begin
     static constexpr const char *name = "MirrorBxDFSet";
     static UP<MirrorBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
-        SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
+        SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, false);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         auto ret = make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
@@ -116,7 +116,7 @@ protected:
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
 
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y, MaterialRegistry::instance().sample_visible());
-        SP<Fresnel> fresnel = make_shared<FresnelNoOp>(swl);
+        SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<MirrorBxDFSet>(fresnel, std::move(refl));
     }
