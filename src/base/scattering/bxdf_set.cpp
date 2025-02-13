@@ -6,6 +6,7 @@
 
 namespace vision {
 
+/// BxDFSet
 SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
                                            const Uint &sample_num) noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(3);
@@ -68,6 +69,7 @@ Float BxDFSet::to_ratio_z() const noexcept {
     return 0;
 }
 
+/// MicrofacetBxDFSet
 uint64_t MicrofacetBxDFSet::_compute_type_hash() const noexcept {
     return hash64(fresnel_->type_hash(), bxdf_->type_hash());
 }
@@ -126,6 +128,7 @@ SampledDirection MicrofacetBxDFSet::sample_wi(const Float3 &wo,
     return bxdf_->sample_wi(wo, sampler->next_2d(), fresnel_->clone());
 }
 
+/// DiffuseBxDFSet
 ScatterEval DiffuseBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                            MaterialEvalMode mode, const Uint &flag) const noexcept {
     return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
@@ -141,6 +144,7 @@ SampledDirection DiffuseBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
 }
 
+/// BlackBodyBxDFSet
 const SampledWavelengths *BlackBodyBxDFSet::swl() const {
     return swl_;
 }
@@ -164,6 +168,7 @@ BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     return ret;
 }
 
+/// DielectricBxDFSet
 SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
     SampledSpectrum F = fresnel_->evaluate(cos_theta);
     return F * refl_.albedo(cos_theta) + (1 - F) * trans_.albedo(cos_theta);
@@ -238,6 +243,7 @@ BSDFSample DielectricBxDFSet::sample_delta_local(const Float3 &wo, TSampler &sam
     return ret;
 }
 
+/// MultiBxDFSet
 void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
