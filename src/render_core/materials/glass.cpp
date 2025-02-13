@@ -152,6 +152,15 @@ public:
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }
+
+    [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
+        vector<PrecomputedLobeTable> ret;
+        using namespace precompute;
+        ret.push_back(precompute_lobe<DielectricReflectionBxDFSet>(make_uint3(DielectricReflectionBxDFSet::lut_res)));
+        ret.push_back(precompute_lobe<DielectricReflectionInvEtaBxDFSet>(make_uint3(DielectricReflectionInvEtaBxDFSet::lut_res)));
+        return ret;
+    }
+
     void prepare() noexcept override { ior_->prepare(); }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;

@@ -146,6 +146,60 @@ public:
     VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
 };
 
+[[nodiscard]] inline Float ior_to_ratio_z(const Float &ior) {
+    return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
+}
+
+[[nodiscard]] inline Float ior_from_ratio_z(const Float &z) {
+    Float ior = schlick_ior_from_F0(Pow<4>(ocarina::clamp(z, 0.0001f, 1.f)));
+    return ior;
+}
+
+namespace precompute {
+/// for precompute begin
+class DielectricReflectionBxDFSet : public MicrofacetBxDFSet {
+public:
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
+
+    static constexpr const char *lut_name = "DielectricReflection::lut";
+    static constexpr uint lut_res = 32;
+
+    static constexpr const char *name = "DielectricReflectionBxDFSet";
+    static UP<DielectricReflectionBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum{1u, 1.f}, swl);
+        auto microfacet = make_shared<GGXMicrofacet>(1.f, 1.f);
+        auto refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet);
+        return make_unique<DielectricReflectionBxDFSet>(fresnel, std::move(refl));
+    }
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        Float ior = ior_from_ratio_z(z);
+        fresnel_->set_eta(SampledSpectrum(1, ior));
+    }
+};
+
+class DielectricReflectionInvEtaBxDFSet : public MicrofacetBxDFSet {
+public:
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
+
+    static constexpr const char *lut_name = "DielectricReflectionInvEtaBxDFSet::lut";
+    static constexpr uint lut_res = 32;
+
+    static constexpr const char *name = "DielectricReflectionInvEtaBxDFSet";
+    static UP<DielectricReflectionInvEtaBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum{1u, 1.f}, swl);
+        auto microfacet = make_shared<GGXMicrofacet>(1.f, 1.f);
+        auto refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()), swl, microfacet);
+        return make_unique<DielectricReflectionInvEtaBxDFSet>(fresnel, std::move(refl));
+    }
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        Float ior = ior_from_ratio_z(z);
+        ior = rcp(ior);
+        fresnel_->set_eta(SampledSpectrum(1, ior));
+    }
+};
+/// for precompute end
+}// namespace precompute
+
 class DielectricBxDFSet : public BxDFSet {
 private:
     DCSP<Fresnel> fresnel_;

@@ -125,7 +125,6 @@ public:
 struct PhaseSample : public ScatterSample {
     using ScatterSample::ScatterSample;
     explicit PhaseSample(uint dim) : ScatterSample(dim, 1){};
-    //    explicit PhaseSample(const SampledWavelengths &swl) : ScatterSample(swl) {}
 };
 
 struct BSDFSample : public ScatterSample {

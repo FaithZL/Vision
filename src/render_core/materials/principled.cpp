@@ -279,10 +279,6 @@ public:
     }
     /// for precompute end
 
-    [[nodiscard]] static Float ior_to_ratio_z(const Float &ior) {
-        return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
-    }
-
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
         return ior_to_ratio_z(ior);

@@ -49,7 +49,7 @@ Float BxDFSet::to_ratio_x() const noexcept {
 }
 
 Float3 BxDFSet::from_ratio_y(Float cos_theta) noexcept {
-    cos_theta = ocarina::clamp(cos_theta, 1e-4f, 1.0f);
+    cos_theta = ocarina::clamp(cos_theta, 1e-3f, 1.0f);
     Float z = cos_theta;
     Float y = 0;
     Float x = ocarina::sqrt(1 - sqr(z));
