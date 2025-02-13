@@ -63,7 +63,7 @@ public:
 class MicrofacetBxDFSet : public BxDFSet {
 protected:
     DCSP<Fresnel> fresnel_;
-    DCUP<MicrofacetBxDF> refl_;
+    DCUP<MicrofacetBxDF> bxdf_;
     static constexpr float alpha_lower = 0.001f;
     static constexpr float alpha_upper = 1.f;
 
@@ -76,8 +76,8 @@ public:
     [[nodiscard]] const T *fresnel() const noexcept { return static_cast<const T *>(fresnel_.get()); }
     template<typename T = Fresnel>
     [[nodiscard]] T *fresnel() noexcept { return static_cast<T *>(fresnel_.get()); }
-    [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return refl_.get(); }
-    [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return refl_.get(); }
+    [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return bxdf_.get(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() const noexcept override;
     VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
