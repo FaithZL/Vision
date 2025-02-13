@@ -147,7 +147,7 @@ public:
         SampledDirection sd = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
         ret.wi = sd.wi;
-        ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+        ret.eval.pdfs *= sd.factor();
         return ret;
     }
 
@@ -183,7 +183,6 @@ public:
         Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
         wi = M(wi);
         SampledDirection sd;
-        sd.pdf = 1;
         sd.wi = normalize(wi);
         return sd;
     }

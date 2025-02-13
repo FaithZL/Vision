@@ -34,7 +34,7 @@ BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
     ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
-    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf(), 0.f);
+    ret.eval.pdfs = ret.eval.pdf() * sd.factor();
     return ret;
 }
 
@@ -206,11 +206,9 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     SampledDirection ret;
     $if(uc < fr) {
         ret = refl_.sample_wi(wo, sampler->next_2d(), fresnel);
-        ret.pdf *= fr;
     }
     $else {
         ret = trans_.sample_wi(wo, sampler->next_2d(), fresnel);
-        ret.pdf *= 1 - fr;
     };
     return ret;
 }
@@ -315,7 +313,7 @@ BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
     ret.wi = sd.wi;
-    ret.eval.pdfs = select(sd.valid(), ret.eval.pdf() * sd.pdf, 0.f);
+    ret.eval.pdfs = ret.eval.pdfs * sd.factor();
     return ret;
 }
 

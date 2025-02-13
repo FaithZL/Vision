@@ -64,7 +64,7 @@ public:
             ret.wi = square_to_cosine_hemisphere(u);
             ret.wi.z = select(wo.z < 0, -ret.wi.z, ret.wi.z);
         };
-        ret.pdf = 1.f;
+        ret.valid = true;
         return ret;
     }
 };

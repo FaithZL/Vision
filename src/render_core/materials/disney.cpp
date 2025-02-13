@@ -598,7 +598,7 @@ public:
         SampledDirection sampled_direction = sample_wi(wo, flag, sampler);
         ret.eval = evaluate_local(wo, sampled_direction.wi, MaterialEvalMode::All, flag);
         ret.wi = sampled_direction.wi;
-        ret.eval.pdfs =select(sampled_direction.valid(), ret.eval.pdf() * sampled_direction.pdf, 0.f);
+        ret.eval.pdfs *= sampled_direction.factor();
         return ret;
     }
 };
