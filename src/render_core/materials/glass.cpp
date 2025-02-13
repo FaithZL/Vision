@@ -166,7 +166,8 @@ public:
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
 
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y,
+                                                     MaterialRegistry::instance().sample_visible());
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
         MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
         MicrofacetTransmission trans(color, swl, microfacet);
