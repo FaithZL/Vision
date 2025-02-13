@@ -157,7 +157,9 @@ public:
         vector<PrecomputedLobeTable> ret;
         using namespace precompute;
         ret.push_back(precompute_lobe<DielectricReflectionBxDFSet>(make_uint3(DielectricReflectionBxDFSet::lut_res)));
+        ret.push_back(precompute_lobe<DielectricRefractionBxDFSet>(make_uint3(DielectricReflectionBxDFSet::lut_res)));
         ret.push_back(precompute_lobe<DielectricReflectionInvEtaBxDFSet>(make_uint3(DielectricReflectionInvEtaBxDFSet::lut_res)));
+        ret.push_back(precompute_lobe<DielectricRefractionInvEtaBxDFSet>(make_uint3(DielectricReflectionInvEtaBxDFSet::lut_res)));
         return ret;
     }
 
