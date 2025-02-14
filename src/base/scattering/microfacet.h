@@ -116,6 +116,7 @@ template<EPort p = EPort::D>
             return ret;
         }
         case GGX:
+        case HeitzGGX:
         case Beckmann: {
             ret = 1 / (1 + bsdf_lambda<p>(wo, alpha_x, alpha_y, type) +
                        bsdf_lambda<p>(wi, alpha_x, alpha_y, type));
@@ -338,7 +339,7 @@ public:
     using TSpectrum = SampledSpectrum;
 
 private:
-    static constexpr MicrofacetType type = MicrofacetType::GGX;
+    static constexpr MicrofacetType type = MicrofacetType::HeitzGGX;
     using Super = Microfacet<D>;
 
 public:
