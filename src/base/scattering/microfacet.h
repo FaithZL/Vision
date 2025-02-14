@@ -334,19 +334,18 @@ public:
     }
 };
 
-template<MicrofacetType m_type= MicrofacetType::GGX>
-class GGXMicrofacetImpl : public Microfacet<D, SampledSpectrum> {
+class GGXMicrofacet : public Microfacet<D, SampledSpectrum> {
 public:
     using TSpectrum = SampledSpectrum;
 
 private:
-    static constexpr MicrofacetType type = m_type;
+    static constexpr MicrofacetType type = MicrofacetType::GGX;
     using Super = Microfacet<D>;
 
 public:
-    explicit GGXMicrofacetImpl(const Float2 &alpha, bool sample_visible = false)
+    explicit GGXMicrofacet(const Float2 &alpha, bool sample_visible = false)
         : Super(alpha, sample_visible, type) {}
-    GGXMicrofacetImpl(Float ax, Float ay, bool sample_visible = false)
+    GGXMicrofacet(Float ax, Float ay, bool sample_visible = false)
         : Super(std::move(ax), std::move(ay), sample_visible, type) {}
     [[nodiscard]] Float bsdf_D(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
@@ -369,9 +368,6 @@ public:
     [[nodiscard]] TSpectrum BTDF(const Float3 &wo, const Float3 &wi,
                                  const TSpectrum &Ft, const Float &eta) const noexcept override;
 };
-
-using GGXMicrofacet = GGXMicrofacetImpl<GGX>;
-using HeitzGGXMicrofacet = GGXMicrofacetImpl<HeitzGGX>;
 
 class BeckmannMicrofacet : public Microfacet<D> {
 public:
