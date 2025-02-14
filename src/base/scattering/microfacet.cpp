@@ -10,7 +10,7 @@ namespace vision {
 inline namespace microfacet {
 template<EPort p>
 [[nodiscard]] oc_float<p> bsdf_D(const oc_float3<p> &wh, const oc_float<p> &alpha_x,
-                             const oc_float<p> &alpha_y, MicrofacetType type) {
+                                 const oc_float<p> &alpha_y, MicrofacetType type) {
     // When theta is close to 90, tan theta is infinity
     oc_float<p> tan_theta_2 = geometry::tan_theta_2(wh);
     oc_float<p> cos_theta_4 = sqr(geometry::cos_theta_2(wh));
@@ -33,7 +33,7 @@ template<EPort p>
     return 0;
 }
 template oc_float<D> bsdf_D<D>(const oc_float3<D> &wh, const oc_float<D> &alpha_x,
-                           const oc_float<D> &alpha_y, MicrofacetType type);
+                               const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
 [[nodiscard]] oc_float<p> bsdf_lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
@@ -71,19 +71,31 @@ template oc_float<D> bsdf_lambda<D>(const oc_float3<D> &w, const oc_float<D> &al
                                     const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
+[[nodiscard]] oc_float3<p> sample_vndf(const oc_float3<p> &wo, const oc_float2<p> &u,
+                                       const oc_float<p> &alpha_x,
+                                       const oc_float<p> &alpha_y) {
+    oc_float3<p> wi_ = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
+    oc_float<p> lenSq = length_squared(wi_.xy());
+    oc_float3<p> T1 = select(lenSq > 1e-7f, make_float3(-wi_.y, wi_.x, 0.0f) * rcp(sqrt(lenSq)), make_float3(1, 0, 0));
+    oc_float3<p> T2 = select(lenSq > 1e-7f, cross(wi_, T1), make_float3(0.0f, 1.0f, 0.0f));
+    oc_float2<p> t = square_to_disk(u);
+    t.y = lerp(0.5f * (1.0f + wi_.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
+    oc_float3<p> H_ = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * wi_;
+    return normalize(make_float3(alpha_x * H_.x, alpha_y * H_.y, max(0.0f, H_.z)));
+}
+
+template<EPort p>
 [[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u, const oc_float<p> &alpha_x,
                                      const oc_float<p> &alpha_y, MicrofacetType type) {
     switch (type) {
         case HeitzGGX: {
             /// https://jcgt.org/published/0007/04/01/
-            oc_float3<p> wi_ = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
-            oc_float<p> lenSq = length_squared(wi_.xy());
-            oc_float3<p> T1 = select(lenSq > 1e-7f, make_float3(-wi_.y, wi_.x, 0.0f) * rcp(sqrt(lenSq)), make_float3(1, 0, 0));
-            oc_float3<p> T2 = select(lenSq > 1e-7f, cross(wi_, T1), make_float3(0.0f, 1.0f, 0.0f));
-            oc_float2<p> t = square_to_disk(u);
-            t.y = lerp(0.5f * (1.0f + wi_.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
-            oc_float3<p> H_ = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * wi_;
-            return normalize(make_float3(alpha_x * H_.x, alpha_y * H_.y, max(0.0f, H_.z)));
+            oc_float3<p> N = make_float3(0, 0, 1);
+            oc_float3<p> T = make_float3(1, 0, 0);
+            oc_float3<p> X, Y;
+            make_normal_tangent(N, T, X, Y);
+            oc_float3<p> new_wo = make_float3(dot(X, wo), dot(Y, wo), wo.z);
+            return sample_vndf<p>(new_wo, u, alpha_x, alpha_y);
         }
         case Disney:
         case GGX: {
