@@ -15,6 +15,12 @@ template<EPort p>
     oc_float<p> tan_theta_2 = geometry::tan_theta_2(wh);
     oc_float<p> cos_theta_4 = sqr(geometry::cos_theta_2(wh));
     switch (type) {
+        case HeitzGGX: {
+            oc_float3<p> H = wh / make_float3(alpha_x, alpha_y, 1.f);
+            oc_float<p> cos_NH2 = sqr(H.z);
+            oc_float<p> alpha2 = alpha_x * alpha_y;
+            return InvPi / (alpha2 * sqr(length_squared(H)));
+        }
         case Disney:
         case GGX: {
             oc_float<p> e = tan_theta_2 * (sqr(geometry::cos_phi(wh) / alpha_x) + sqr(geometry::sin_phi(wh) / alpha_y));
@@ -39,6 +45,10 @@ template<EPort p>
 [[nodiscard]] oc_float<p> bsdf_lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
                                       const oc_float<p> &alpha_y, MicrofacetType type) {
     switch (type) {
+        case HeitzGGX: {
+            oc_float<p> sqr_alpha_tan_n = (sqr(alpha_x * w.x) + sqr(alpha_y * w.y)) / sqr(w.z);
+            return 0.5f * (sqrt(1.0f + sqr_alpha_tan_n) - 1.0f);
+        }
         case Disney:
         case GGX: {
             oc_float<p> abs_tan_theta = abs(geometry::tan_theta(w));
