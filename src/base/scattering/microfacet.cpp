@@ -83,13 +83,21 @@ template<EPort p>
 [[nodiscard]] oc_float3<p> sample_vndf(const oc_float3<p> &wo, const oc_float2<p> &u,
                                        const oc_float<p> &alpha_x,
                                        const oc_float<p> &alpha_y) {
-    oc_float3<p> wi_ = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
-    oc_float<p> lenSq = length_squared(wi_.xy());
-    oc_float3<p> T1 = select(lenSq > 1e-7f, make_float3(-wi_.y, wi_.x, 0.0f) * rcp(sqrt(lenSq)), make_float3(1, 0, 0));
-    oc_float3<p> T2 = select(lenSq > 1e-7f, cross(wi_, T1), make_float3(0.0f, 1.0f, 0.0f));
+    /// transform ellipsoid to sphere
+    oc_float3<p> Vh = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
+    oc_float<p> lenSq = length_squared(Vh.xy());
+
+    /// build new frame with T1, T2, Vh
+    /// T1 = cross(Z, Vh) / length(cross(Z, Vh))
+    /// T2 = cross(Vh, T1)
+    float3 Z = make_float3(1, 0, 0);
+    oc_float3<p> T1 = select(lenSq > 1e-7f, make_float3(-Vh.y, Vh.x, 0.0f) / sqrt(lenSq), Z);
+    oc_float3<p> T2 = select(lenSq > 1e-7f, cross(Vh, T1), make_float3(0.0f, 1.0f, 0.0f));
     oc_float2<p> t = square_to_disk(u);
-    t.y = lerp(0.5f * (1.0f + wi_.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
-    oc_float3<p> H_ = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * wi_;
+
+    /// transform the point on disk to projection on plane consist from T1, T2
+    t.y = lerp(0.5f * (1.0f + Vh.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
+    oc_float3<p> H_ = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * Vh;
     return normalize(make_float3(alpha_x * H_.x, alpha_y * H_.y, max(0.0f, H_.z)));
 }
 
