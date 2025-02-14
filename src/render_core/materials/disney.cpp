@@ -250,9 +250,9 @@ public:
     explicit DisneyMicrofacet(Float2 alpha) : Super(alpha, type) {}
     DisneyMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
 
-    [[nodiscard]] Float D_(Float3 wh) const noexcept override {
+    [[nodiscard]] Float bsdf_D(Float3 wh) const noexcept override {
         static CALLABLE_TYPE impl = [](Float3 wh, Float ax, Float ay) {
-            return microfacet::D_<D>(wh, ax, ay, type);
+            return microfacet::bsdf_D<D>(wh, ax, ay, type);
         };
         impl.function()->set_description("disney::DisneyMicrofacet::D");
         return impl(wh, alpha_x_, alpha_y_);

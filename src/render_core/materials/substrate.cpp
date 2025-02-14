@@ -33,7 +33,7 @@ public:
     [[nodiscard]] SampledSpectrum f_specular(const Float3 &wo, const Float3 &wi) const noexcept {
         Float3 wh = wi + wo;
         wh = normalize(wh);
-        SampledSpectrum specular = microfacet_->D_(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
+        SampledSpectrum specular = microfacet_->bsdf_D(wh) / (4 * abs_dot(wi, wh) * max(abs_cos_theta(wi), abs_cos_theta(wo))) *
                                    fresnel_schlick(Rs_, dot(wi, wh));
         return select(is_zero(wh), 0.f, 1.f) * specular;
     }

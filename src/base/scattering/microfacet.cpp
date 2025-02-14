@@ -9,7 +9,7 @@ namespace vision {
 
 inline namespace microfacet {
 template<EPort p>
-[[nodiscard]] oc_float<p> D_(const oc_float3<p> &wh, const oc_float<p> &alpha_x,
+[[nodiscard]] oc_float<p> bsdf_D(const oc_float3<p> &wh, const oc_float<p> &alpha_x,
                              const oc_float<p> &alpha_y, MicrofacetType type) {
     // When theta is close to 90, tan theta is infinity
     oc_float<p> tan_theta_2 = geometry::tan_theta_2(wh);
@@ -32,12 +32,12 @@ template<EPort p>
     }
     return 0;
 }
-template oc_float<D> D_<D>(const oc_float3<D> &wh, const oc_float<D> &alpha_x,
+template oc_float<D> bsdf_D<D>(const oc_float3<D> &wh, const oc_float<D> &alpha_x,
                            const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
-[[nodiscard]] oc_float<p> lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
-                                 const oc_float<p> &alpha_y, MicrofacetType type) {
+[[nodiscard]] oc_float<p> bsdf_lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
+                                      const oc_float<p> &alpha_y, MicrofacetType type) {
     switch (type) {
         case Disney:
         case GGX: {
@@ -67,8 +67,8 @@ template<EPort p>
     }
     return 0;
 }
-template oc_float<D> lambda<D>(const oc_float3<D> &w, const oc_float<D> &alpha_x,
-                               const oc_float<D> &alpha_y, MicrofacetType type);
+template oc_float<D> bsdf_lambda<D>(const oc_float3<D> &w, const oc_float<D> &alpha_x,
+                                    const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
 [[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u, const oc_float<p> &alpha_x,
@@ -187,7 +187,7 @@ template<EPort p>
                                       const oc_float<p> &alpha_y, MicrofacetType type) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
-    oc_float<p> numerator = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) *
+    oc_float<p> numerator = bsdf_D<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) *
                             abs(dot(wi, wh) * dot(wo, wh));
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
@@ -200,9 +200,9 @@ template oc_float<D> BTDF_div_ft<D>(const oc_float3<D> &wo, const oc_float3<D> &
 
 }// namespace microfacet
 
-Float GGXMicrofacet::D_(Float3 wh) const noexcept {
+Float GGXMicrofacet::bsdf_D(Float3 wh) const noexcept {
     static CALLABLE_TYPE impl = [](Float3 wh, Float ax, Float ay) {
-        return microfacet::D_<D>(wh, ax, ay, type);
+        return microfacet::bsdf_D<D>(wh, ax, ay, type);
     };
     impl.function()->set_description("GGXMicrofacet::D");
     return impl(wh, alpha_x_, alpha_y_);
@@ -313,9 +313,9 @@ GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wi,
     return BTDF(wo, wh, wi, Ft, eta);
 }
 
-Float BeckmannMicrofacet::D_(Float3 wh) const noexcept {
+Float BeckmannMicrofacet::bsdf_D(Float3 wh) const noexcept {
     static CALLABLE_TYPE impl = [](Float3 wh, Float ax, Float ay) {
-        return microfacet::D_<D>(wh, ax, ay, type);
+        return microfacet::bsdf_D<D>(wh, ax, ay, type);
     };
     impl.function()->set_description("BeckmannMicrofacet::D");
     return impl(wh, alpha_x_, alpha_y_);

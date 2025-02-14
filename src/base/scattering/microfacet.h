@@ -77,7 +77,7 @@ template<EPort p = D>
  * @return
  */
 template<EPort p = D>
-[[nodiscard]] oc_float<p> D_(const oc_float3<p> &wh, const oc_float<p> &alpha_x,
+[[nodiscard]] oc_float<p> bsdf_D(const oc_float3<p> &wh, const oc_float<p> &alpha_x,
                              const oc_float<p> &alpha_y, MicrofacetType type = GGX);
 
 /**
@@ -86,8 +86,8 @@ template<EPort p = D>
  * @return   [description]
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
-                                 const oc_float<p> &alpha_y, MicrofacetType type = GGX);
+[[nodiscard]] oc_float<p> bsdf_lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
+                                      const oc_float<p> &alpha_y, MicrofacetType type = GGX);
 
 /**
  * smith occlusion function
@@ -98,12 +98,12 @@ template<EPort p = EPort::D>
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> G1(const oc_float3<p> &w, oc_float<p> alpha_x, oc_float<p> alpha_y,
                              MicrofacetType type = GGX) {
-    oc_float<p> ret = 1 / (1 + lambda<p>(w, alpha_x, alpha_y, type));
+    oc_float<p> ret = 1 / (1 + bsdf_lambda<p>(w, alpha_x, alpha_y, type));
     return ret;
 }
 
 /**
- * G(wo, wi) = 1 / (lambda(wo) + lambda(wi) + 1)
+ * G(wo, wi) = 1 / (bsdf_lambda(wo) + bsdf_lambda(wi) + 1)
  * @return   [description]
  */
 template<EPort p = EPort::D>
@@ -117,8 +117,8 @@ template<EPort p = EPort::D>
         }
         case GGX:
         case Beckmann: {
-            ret = 1 / (1 + lambda<p>(wo, alpha_x, alpha_y, type) +
-                       lambda<p>(wi, alpha_x, alpha_y, type));
+            ret = 1 / (1 + bsdf_lambda<p>(wo, alpha_x, alpha_y, type) +
+                       bsdf_lambda<p>(wi, alpha_x, alpha_y, type));
             return ret;
         }
         default:
@@ -142,10 +142,10 @@ template<EPort p = EPort::D>
                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
                                  bool sample_visible, MicrofacetType type) {
     if (sample_visible) {
-        return D_<p>(wh, alpha_x, alpha_y, type) * G1<p>(wo, alpha_x, alpha_y, type) *
+        return bsdf_D<p>(wh, alpha_x, alpha_y, type) * G1<p>(wo, alpha_x, alpha_y, type) *
                abs_dot(wo, wh) / abs_cos_theta(wo);
     }
-    return D_<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
+    return bsdf_D<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
 }
 
 /**
@@ -195,7 +195,7 @@ template<EPort p = EPort::D>
                                       MicrofacetType type = GGX) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
-    oc_float<p> ret = D_<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
+    oc_float<p> ret = bsdf_D<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
     return ret;
 }
 
@@ -254,8 +254,8 @@ public:
     [[nodiscard]] oc_float<p> max_alpha() const noexcept { return max(alpha_x_, alpha_y_); }
     OC_MAKE_MEMBER_GETTER_SETTER(alpha_x, )
     OC_MAKE_MEMBER_GETTER_SETTER(alpha_y, )
-    [[nodiscard]] virtual oc_float<p> D_(oc_float3<p> wh) const noexcept {
-        return microfacet::D_<p>(wh, alpha_x_, alpha_y_, type_);
+    [[nodiscard]] virtual oc_float<p> bsdf_D(oc_float3<p> wh) const noexcept {
+        return microfacet::bsdf_D<p>(wh, alpha_x_, alpha_y_, type_);
     }
     [[nodiscard]] virtual oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {
         return microfacet::sample_wh<p>(wo, u, alpha_x_, alpha_y_, type_);
@@ -346,7 +346,7 @@ public:
         : Super(alpha, sample_visible, type) {}
     GGXMicrofacet(Float ax, Float ay, bool sample_visible = false)
         : Super(std::move(ax), std::move(ay), sample_visible, type) {}
-    [[nodiscard]] Float D_(Float3 wh) const noexcept override;
+    [[nodiscard]] Float bsdf_D(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo,
@@ -381,7 +381,7 @@ public:
         : Super(alpha, sample_visible, type) {}
     BeckmannMicrofacet(Float ax, Float ay, bool sample_visible = false)
         : Super(std::move(ax), std::move(ay), sample_visible, type) {}
-    [[nodiscard]] Float D_(Float3 wh) const noexcept override;
+    [[nodiscard]] Float bsdf_D(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
     [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override;
     [[nodiscard]] Float PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo,
