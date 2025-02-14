@@ -15,7 +15,7 @@ namespace vision {
 using namespace ocarina;
 enum MicrofacetType : uint8_t {
     GGX,
-    NewGGX,
+    HeitzGGX,
     Disney,
     Beckmann,
 };
