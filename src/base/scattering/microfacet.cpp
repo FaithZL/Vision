@@ -95,7 +95,7 @@ template<EPort p>
     oc_float3<p> T2 = select(lenSq > 1e-7f, cross(Vh, T1), make_float3(0.0f, 1.0f, 0.0f));
     oc_float2<p> t = square_to_disk(u);
 
-    /// transform the point on disk to projection on plane consist from T1, T2
+    /// remapping the point on disk to projection on plane consist from T1, T2
     t.y = lerp(0.5f * (1.0f + Vh.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
     oc_float3<p> H_ = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * Vh;
     return normalize(make_float3(alpha_x * H_.x, alpha_y * H_.y, max(0.0f, H_.z)));
