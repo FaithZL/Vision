@@ -96,7 +96,7 @@ template<EPort p = EPort::D>
  * @return   [description]
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> G1(const oc_float3<p> &w, oc_float<p> alpha_x, oc_float<p> alpha_y,
+[[nodiscard]] oc_float<p> bsdf_G1(const oc_float3<p> &w, oc_float<p> alpha_x, oc_float<p> alpha_y,
                              MicrofacetType type = GGX) {
     oc_float<p> ret = 1 / (1 + bsdf_lambda<p>(w, alpha_x, alpha_y, type));
     return ret;
@@ -107,12 +107,12 @@ template<EPort p = EPort::D>
  * @return   [description]
  */
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float<p> G_(const oc_float3<p> &wo, const oc_float3<p> &wi, const oc_float<p> &alpha_x,
+[[nodiscard]] oc_float<p> bsdf_G(const oc_float3<p> &wo, const oc_float3<p> &wi, const oc_float<p> &alpha_x,
                              const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float<p> ret = 0.f;
     switch (type) {
         case Disney: {
-            ret = G1<p>(wi, alpha_x, alpha_y, type) * G1<p>(wo, alpha_x, alpha_y, type);
+            ret = bsdf_G1<p>(wi, alpha_x, alpha_y, type) * bsdf_G1<p>(wo, alpha_x, alpha_y, type);
             return ret;
         }
         case GGX:
@@ -143,7 +143,7 @@ template<EPort p = EPort::D>
                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
                                  bool sample_visible, MicrofacetType type) {
     if (sample_visible) {
-        return bsdf_D<p>(wh, alpha_x, alpha_y, type) * G1<p>(wo, alpha_x, alpha_y, type) *
+        return bsdf_D<p>(wh, alpha_x, alpha_y, type) * bsdf_G1<p>(wo, alpha_x, alpha_y, type) *
                abs_dot(wo, wh) / abs_cos_theta(wo);
     }
     return bsdf_D<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
@@ -196,7 +196,7 @@ template<EPort p = EPort::D>
                                       MicrofacetType type = GGX) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
-    oc_float<p> ret = bsdf_D<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
+    oc_float<p> ret = bsdf_D<p>(wh, alpha_x, alpha_y, type) * bsdf_G<p>(wo, wi, alpha_x, alpha_y, type) / abs(4 * cos_theta_o * cos_theta_i);
     return ret;
 }
 

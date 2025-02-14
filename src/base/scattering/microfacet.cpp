@@ -17,7 +17,6 @@ template<EPort p>
     switch (type) {
         case HeitzGGX: {
             oc_float3<p> H = wh / make_float3(alpha_x, alpha_y, 1.f);
-            oc_float<p> cos_NH2 = sqr(H.z);
             oc_float<p> alpha2 = alpha_x * alpha_y;
             return InvPi / (alpha2 * sqr(length_squared(H)));
         }
@@ -212,7 +211,7 @@ template<EPort p>
                                       const oc_float<p> &alpha_y, MicrofacetType type) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
-    oc_float<p> numerator = bsdf_D<p>(wh, alpha_x, alpha_y, type) * G_<p>(wo, wi, alpha_x, alpha_y, type) *
+    oc_float<p> numerator = bsdf_D<p>(wh, alpha_x, alpha_y, type) * bsdf_G<p>(wo, wi, alpha_x, alpha_y, type) *
                             abs(dot(wi, wh) * dot(wo, wh));
     oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
