@@ -62,16 +62,6 @@ int main(int argc, char *argv[]) {
     cout << clk.elapse_ms() << endl;
     cout << to_str(wh) << endl;
 
-    ret = 0;
-    wh = make_float3(0);
-    clk.start();
-    std::mt19937 gen3(12345);
-    for (int i = 1; i < num; ++i) {
-        float2 u = make_float2(distrib(gen3));
-        float3 wo = make_float3(distrib(gen3));
-        wh += sample_wh_visible_area<H>(wo, u, 0.5f, 0.7f, GGX);
-    }
-
     cout << clk.elapse_ms() << endl;
     cout << to_str(wh) << endl;
     return 0;

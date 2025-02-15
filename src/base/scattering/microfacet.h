@@ -119,11 +119,6 @@ template<EPort p = EPort::D>
                                      bool sample_visible, MicrofacetType type);
 
 template<EPort p = EPort::D>
-[[nodiscard]] oc_float3<p> sample_wh_visible_area(const oc_float3<p> &wo, const oc_float2<p> &u,
-                                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
-                                                  MicrofacetType type);
-
-template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh,
                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
                                  bool sample_visible, MicrofacetType type);
