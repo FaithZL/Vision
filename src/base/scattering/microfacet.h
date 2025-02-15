@@ -141,13 +141,7 @@ template<EPort p = EPort::D>
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh,
                                  const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
-                                 bool sample_visible, MicrofacetType type) {
-    if (sample_visible) {
-        return bsdf_D<p>(wh, alpha_x, alpha_y, type) * bsdf_G1<p>(wo, alpha_x, alpha_y, type) *
-               abs_dot(wo, wh) / abs_cos_theta(wo);
-    }
-    return bsdf_D<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
-}
+                                 bool sample_visible, MicrofacetType type);
 
 /**
  * pwi(wi) = dwh / dwi * pwh(wh) = pwh(wh) / 4cos_theta_h
