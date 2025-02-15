@@ -243,7 +243,7 @@ public:
 
 class DisneyMicrofacet : public Microfacet<D> {
 private:
-    static constexpr MicrofacetType type = MicrofacetType::Disney;
+    static constexpr MicrofacetType type = MicrofacetType::GGX;
     using Super = Microfacet<D>;
 
 public:

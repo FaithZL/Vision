@@ -15,12 +15,6 @@ template<EPort p>
     oc_float<p> tan_theta_2 = geometry::tan_theta_2(wh);
     oc_float<p> cos_theta_4 = ocarina::sqr(geometry::cos_theta_2(wh));
     switch (type) {
-        case HeitzGGX: {
-            oc_float3<p> H = wh / make_float3(alpha_x, alpha_y, 1.f);
-            oc_float<p> alpha2 = alpha_x * alpha_y;
-            return InvPi / (alpha2 * ocarina::sqr(length_squared(H)));
-        }
-        case Disney:
         case GGX: {
             oc_float3<p> H = wh / make_float3(alpha_x, alpha_y, 1.f);
             oc_float<p> alpha2 = alpha_x * alpha_y;
@@ -49,20 +43,17 @@ template<EPort p>
 [[nodiscard]] oc_float<p> bsdf_lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
                                       const oc_float<p> &alpha_y, MicrofacetType type) {
     switch (type) {
-        case HeitzGGX: {
+        case GGX: {
             oc_float<p> sqr_alpha_tan_n = (ocarina::sqr(alpha_x * w.x) + ocarina::sqr(alpha_y * w.y)) / ocarina::sqr(w.z);
             oc_float<p> ret = 0.5f * (ocarina::sqrt(1.0f + sqr_alpha_tan_n) - 1.0f);
             return ocarina::select(w.z == 0, 0.f, ret);
-        }
-        case Disney:
-        case GGX: {
-            oc_float<p> abs_tan_theta = ocarina::abs(geometry::tan_theta(w));
-            oc_float<p> cos_phi_2 = geometry::cos_phi_2(w);
-            oc_float<p> sin_phi_2 = geometry::sin_phi_2(w);
-            oc_float<p> alpha = ocarina::sqrt(cos_phi_2 * ocarina::sqr(alpha_x) +
-                                     sin_phi_2 * ocarina::sqr(alpha_y));
-            oc_float<p> ret = (-1 + ocarina::sqrt(1.f + ocarina::sqr(alpha * abs_tan_theta))) / 2;
-            return ocarina::select(ocarina::isinf(abs_tan_theta), 0.f, ret);
+//            oc_float<p> abs_tan_theta = ocarina::abs(geometry::tan_theta(w));
+//            oc_float<p> cos_phi_2 = geometry::cos_phi_2(w);
+//            oc_float<p> sin_phi_2 = geometry::sin_phi_2(w);
+//            oc_float<p> alpha = ocarina::sqrt(cos_phi_2 * ocarina::sqr(alpha_x) +
+//                                     sin_phi_2 * ocarina::sqr(alpha_y));
+//            oc_float<p> ret = (-1 + ocarina::sqrt(1.f + ocarina::sqr(alpha * abs_tan_theta))) / 2;
+//            return ocarina::select(ocarina::isinf(abs_tan_theta), 0.f, ret);
         }
         case Beckmann: {
             oc_float<p> abs_tan_theta = ocarina::abs(geometry::tan_theta(w));
@@ -114,16 +105,15 @@ template<EPort p>
 [[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u, const oc_float<p> &alpha_x,
                                      const oc_float<p> &alpha_y, MicrofacetType type) {
     switch (type) {
-        case HeitzGGX: {
-            /// https://jcgt.org/published/0007/04/01/
-            oc_bool<p> flip = wo.z < 0;
-            oc_float3<p> new_wo = wo;
-            new_wo.z = select(flip, -wo.z, wo.z);
-            oc_float3<p> wh = sample_vndf<p>(new_wo, u, alpha_x, alpha_y);
-            wh.z = select(flip, -wh.z, wh.z);
-            return wh;
-        }
-        case Disney:
+//        case HeitzGGX: {
+//            /// https://jcgt.org/published/0007/04/01/
+//            oc_bool<p> flip = wo.z < 0;
+//            oc_float3<p> new_wo = wo;
+//            new_wo.z = select(flip, -wo.z, wo.z);
+//            oc_float3<p> wh = sample_vndf<p>(new_wo, u, alpha_x, alpha_y);
+//            wh.z = select(flip, -wh.z, wh.z);
+//            return wh;
+//        }
         case GGX: {
             oc_float<p> cos_theta = 0, phi = _2Pi * u[1];
             phi = atan(alpha_y / alpha_x * tan(_2Pi * u[1] + PiOver2));

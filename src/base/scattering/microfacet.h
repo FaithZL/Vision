@@ -15,8 +15,6 @@ namespace vision {
 using namespace ocarina;
 enum MicrofacetType : uint8_t {
     GGX,
-    HeitzGGX,
-    Disney,
     Beckmann,
 };
 
@@ -110,21 +108,8 @@ template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> bsdf_G(const oc_float3<p> &wo, const oc_float3<p> &wi, const oc_float<p> &alpha_x,
                              const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
     oc_float<p> ret = 0.f;
-    switch (type) {
-        case Disney: {
-            ret = bsdf_G1<p>(wi, alpha_x, alpha_y, type) * bsdf_G1<p>(wo, alpha_x, alpha_y, type);
-            return ret;
-        }
-        case GGX:
-        case HeitzGGX:
-        case Beckmann: {
-            ret = 1 / (1 + bsdf_lambda<p>(wo, alpha_x, alpha_y, type) +
-                       bsdf_lambda<p>(wi, alpha_x, alpha_y, type));
-            return ret;
-        }
-        default:
-            break;
-    }
+    ret = 1 / (1 + bsdf_lambda<p>(wo, alpha_x, alpha_y, type) +
+               bsdf_lambda<p>(wi, alpha_x, alpha_y, type));
     return ret;
 }
 
