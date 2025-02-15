@@ -22,9 +22,12 @@ template<EPort p>
         }
         case Disney:
         case GGX: {
-            oc_float<p> e = tan_theta_2 * (ocarina::sqr(geometry::cos_phi(wh) / alpha_x) + ocarina::sqr(geometry::sin_phi(wh) / alpha_y));
-            oc_float<p> ret = 1.f / (Pi * alpha_x * alpha_y * cos_theta_4 * ocarina::sqr(1 + e));
-            return ocarina::select(cos_theta_4 < 1e-16f || ocarina::isinf(tan_theta_2), 0.f, ret);
+            oc_float3<p> H = wh / make_float3(alpha_x, alpha_y, 1.f);
+            oc_float<p> alpha2 = alpha_x * alpha_y;
+            return InvPi / (alpha2 * ocarina::sqr(length_squared(H)));
+//            oc_float<p> e = tan_theta_2 * (ocarina::sqr(geometry::cos_phi(wh) / alpha_x) + ocarina::sqr(geometry::sin_phi(wh) / alpha_y));
+//            oc_float<p> ret = 1.f / (Pi * alpha_x * alpha_y * cos_theta_4 * ocarina::sqr(1 + e));
+//            return ocarina::select(cos_theta_4 < 1e-16f || ocarina::isinf(tan_theta_2), 0.f, ret);
         }
         case Beckmann: {
             oc_float<p> ret = ocarina::exp(-tan_theta_2 * (geometry::cos_phi_2(wh) / ocarina::sqr(alpha_x) +
