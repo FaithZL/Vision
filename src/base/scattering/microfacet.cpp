@@ -48,7 +48,8 @@ template<EPort p>
     switch (type) {
         case HeitzGGX: {
             oc_float<p> sqr_alpha_tan_n = (ocarina::sqr(alpha_x * w.x) + ocarina::sqr(alpha_y * w.y)) / ocarina::sqr(w.z);
-            return 0.5f * (ocarina::sqrt(1.0f + sqr_alpha_tan_n) - 1.0f);
+            oc_float<p> ret = 0.5f * (ocarina::sqrt(1.0f + sqr_alpha_tan_n) - 1.0f);
+            return ocarina::select(w.z == 0, 0.f, ret);
         }
         case Disney:
         case GGX: {
