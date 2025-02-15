@@ -108,12 +108,9 @@ template<EPort p>
     switch (type) {
         case HeitzGGX: {
             /// https://jcgt.org/published/0007/04/01/
-            oc_float3<p> N = make_float3(0, 0, 1);
-            oc_float3<p> T = make_float3(1, 0, 0);
-            oc_float3<p> X, Y;
-            make_normal_tangent(N, T, X, Y);
             oc_bool<p> flip = wo.z < 0;
-            oc_float3<p> new_wo = make_float3(dot(X, wo), dot(Y, wo), abs(wo.z));
+            oc_float3<p> new_wo = wo;
+            new_wo.z = select(flip, -wo.z, wo.z);
             oc_float3<p> wh = sample_vndf<p>(new_wo, u, alpha_x, alpha_y);
             wh = select(flip, -wh, wh);
             return wh;
