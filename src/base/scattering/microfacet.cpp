@@ -19,9 +19,6 @@ template<EPort p>
             oc_float3<p> H = wh / make_float3(alpha_x, alpha_y, 1.f);
             oc_float<p> alpha2 = alpha_x * alpha_y;
             return InvPi / (alpha2 * ocarina::sqr(length_squared(H)));
-//            oc_float<p> e = tan_theta_2 * (ocarina::sqr(geometry::cos_phi(wh) / alpha_x) + ocarina::sqr(geometry::sin_phi(wh) / alpha_y));
-//            oc_float<p> ret = 1.f / (Pi * alpha_x * alpha_y * cos_theta_4 * ocarina::sqr(1 + e));
-//            return ocarina::select(cos_theta_4 < 1e-16f || ocarina::isinf(tan_theta_2), 0.f, ret);
         }
         case Beckmann: {
             oc_float<p> ret = ocarina::exp(-tan_theta_2 * (geometry::cos_phi_2(wh) / ocarina::sqr(alpha_x) +
@@ -47,13 +44,6 @@ template<EPort p>
             oc_float<p> sqr_alpha_tan_n = (ocarina::sqr(alpha_x * w.x) + ocarina::sqr(alpha_y * w.y)) / ocarina::sqr(w.z);
             oc_float<p> ret = 0.5f * (ocarina::sqrt(1.0f + sqr_alpha_tan_n) - 1.0f);
             return ocarina::select(w.z == 0, 0.f, ret);
-//            oc_float<p> abs_tan_theta = ocarina::abs(geometry::tan_theta(w));
-//            oc_float<p> cos_phi_2 = geometry::cos_phi_2(w);
-//            oc_float<p> sin_phi_2 = geometry::sin_phi_2(w);
-//            oc_float<p> alpha = ocarina::sqrt(cos_phi_2 * ocarina::sqr(alpha_x) +
-//                                     sin_phi_2 * ocarina::sqr(alpha_y));
-//            oc_float<p> ret = (-1 + ocarina::sqrt(1.f + ocarina::sqr(alpha * abs_tan_theta))) / 2;
-//            return ocarina::select(ocarina::isinf(abs_tan_theta), 0.f, ret);
         }
         case Beckmann: {
             oc_float<p> abs_tan_theta = ocarina::abs(geometry::tan_theta(w));
