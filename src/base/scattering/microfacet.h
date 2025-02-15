@@ -76,7 +76,7 @@ template<EPort p = D>
  */
 template<EPort p = D>
 [[nodiscard]] oc_float<p> bsdf_D(const oc_float3<p> &wh, const oc_float<p> &alpha_x,
-                             const oc_float<p> &alpha_y, MicrofacetType type = GGX);
+                                 const oc_float<p> &alpha_y, MicrofacetType type);
 
 /**
  * lambda(w) = A-(w) / (A+(w) - A-(w))
@@ -85,7 +85,7 @@ template<EPort p = D>
  */
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> bsdf_lambda(const oc_float3<p> &w, const oc_float<p> &alpha_x,
-                                      const oc_float<p> &alpha_y, MicrofacetType type = GGX);
+                                      const oc_float<p> &alpha_y, MicrofacetType type);
 
 /**
  * smith occlusion function
@@ -95,7 +95,7 @@ template<EPort p = EPort::D>
  */
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> bsdf_G1(const oc_float3<p> &w, oc_float<p> alpha_x, oc_float<p> alpha_y,
-                             MicrofacetType type = GGX) {
+                                  MicrofacetType type) {
     oc_float<p> ret = 1 / (1 + bsdf_lambda<p>(w, alpha_x, alpha_y, type));
     return ret;
 }
@@ -106,7 +106,7 @@ template<EPort p = EPort::D>
  */
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> bsdf_G(const oc_float3<p> &wo, const oc_float3<p> &wi, const oc_float<p> &alpha_x,
-                             const oc_float<p> &alpha_y, MicrofacetType type = GGX) {
+                                 const oc_float<p> &alpha_y, MicrofacetType type) {
     oc_float<p> ret = 0.f;
     ret = 1 / (1 + bsdf_lambda<p>(wo, alpha_x, alpha_y, type) +
                bsdf_lambda<p>(wi, alpha_x, alpha_y, type));
@@ -116,12 +116,12 @@ template<EPort p = EPort::D>
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u,
                                      const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
-                                     MicrofacetType type = GGX);
+                                     bool sample_visible, MicrofacetType type);
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float3<p> sample_wh_visible_area(const oc_float3<p> &wo, const oc_float2<p> &u,
                                                   const oc_float<p> &alpha_x, const oc_float<p> &alpha_y,
-                                                  MicrofacetType type = GGX);
+                                                  MicrofacetType type);
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh,
@@ -238,7 +238,7 @@ public:
         return microfacet::bsdf_D<p>(wh, alpha_x_, alpha_y_, type_);
     }
     [[nodiscard]] virtual oc_float3<p> sample_wh(const oc_float3<p> &wo, const oc_float2<p> &u) const noexcept {
-        return microfacet::sample_wh<p>(wo, u, alpha_x_, alpha_y_, type_);
+        return microfacet::sample_wh<p>(wo, u, alpha_x_, alpha_y_, sample_visible_, type_);
     }
     [[nodiscard]] virtual oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh) const noexcept {
         return microfacet::PDF_wh<p>(wo, wh, alpha_x_, alpha_y_, sample_visible_, type_);

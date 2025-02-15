@@ -241,90 +241,6 @@ public:
 
 }// namespace disney
 
-class DisneyMicrofacet : public Microfacet<D> {
-private:
-    static constexpr MicrofacetType type = MicrofacetType::GGX;
-    using Super = Microfacet<D>;
-
-public:
-    explicit DisneyMicrofacet(Float2 alpha) : Super(alpha, type) {}
-    DisneyMicrofacet(Float ax, Float ay) : Super(ax, ay, type) {}
-
-    [[nodiscard]] Float bsdf_D(Float3 wh) const noexcept override {
-        static CALLABLE_TYPE impl = [](Float3 wh, Float ax, Float ay) {
-            return microfacet::bsdf_D<D>(wh, ax, ay, type);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::D");
-        return impl(wh, alpha_x_, alpha_y_);
-    }
-    [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
-            return microfacet::sample_wh<D>(wo, u, ax, ay, type);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::sample_wh");
-        return impl(wo, u, alpha_x_, alpha_y_);
-    }
-    [[nodiscard]] Float PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, Float ax, Float ay) {
-            return microfacet::PDF_wh<D>(wo, wh, ax, ay, false, type);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::PDF_wh");
-        return impl(wo, wh, alpha_x_, alpha_y_);
-    }
-
-    [[nodiscard]] Float PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo, const Float3 &wh) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo, const Float3 &wh) {
-            return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_reflection");
-        return impl(pdf_wh, wo, wh);
-    }
-
-    [[nodiscard]] Float PDF_wi_reflection(const Float3 &wo, const Float3 &wh) const noexcept override {
-        return PDF_wi_reflection(PDF_wh(wo, wh), wo, wh);
-    }
-
-    [[nodiscard]] Float PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
-                                            const Float3 &wi, const Float &eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo, const Float3 &wh, const Float3 &wi, const Float &eta) {
-            return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::PDF_wi_transmission");
-        return impl(pdf_wh, wo, wh, wi, eta);
-    }
-
-    [[nodiscard]] Float PDF_wi_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const Float &eta) const noexcept override {
-        return PDF_wi_transmission(PDF_wh(wo, wh), wo, wh, wi, eta);
-    }
-
-    [[nodiscard]] SampledSpectrum BRDF(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &Fr) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi, Float ax, Float ay) {
-            return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::BRDF_div_fr");
-        return impl(wo, wh, wi, alpha_x_, alpha_y_) * Fr;
-    }
-
-    [[nodiscard]] SampledSpectrum BRDF(const Float3 &wo, const Float3 &wi, const SampledSpectrum &Fr) const noexcept override {
-        Float3 wh = normalize(wo + wi);
-        return BRDF(wo, wh, wi, Fr);
-    }
-
-    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                       const SampledSpectrum &Ft, const Float &eta) const noexcept override {
-        static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi, const Float &eta, Float ax, Float ay) {
-            return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
-        };
-        impl.function()->set_description("disney::DisneyMicrofacet::BTDF_div_ft");
-        return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
-    }
-
-    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi, const SampledSpectrum &Ft, const Float &eta) const noexcept override {
-        Float3 wh = normalize(wo + wi * eta);
-        return BTDF(wo, wh, wi, Ft, eta);
-    }
-};
-
 class DisneyBxDFSet : public BxDFSet {
 private:
     const SampledWavelengths *swl_{};
@@ -387,10 +303,10 @@ private:
 
 public:
     DisneyBxDFSet(const Interaction &it, const SampledWavelengths &swl, const Pipeline *rp, Slot color_slot,
-                      Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
-                      Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot, Slot sheen_roughness_slot,
-                      Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_roughness_slot, Slot clearcoat_tint_slot,
-                      Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) : swl_(&swl) {
+                  Slot metallic_slot, Slot eta_slot, Slot roughness_slot,
+                  Slot spec_tint_slot, Slot anisotropic_slot, Slot sheen_slot, Slot sheen_roughness_slot,
+                  Slot sheen_tint_slot, Slot clearcoat_slot, Slot clearcoat_roughness_slot, Slot clearcoat_tint_slot,
+                  Slot spec_trans_slot, Slot flatness_slot, Slot diff_trans_slot) : swl_(&swl) {
 
         auto [color, color_lum] = color_slot.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_slot.evaluate(it, swl).as_scalar();
@@ -444,7 +360,7 @@ public:
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
-        auto microfacet = make_shared<DisneyMicrofacet>(alpha);
+        auto microfacet = make_shared<GGXMicrofacet>(alpha);
         spec_refl_ = MicrofacetReflection(SampledSpectrum(swl.dimension(), 1.f), swl, microfacet);
         Float Cspec0_lum = lerp(metallic, lerp(spec_tint, 1.f, tint_lum) * SchlickR0, color_lum);
         spec_refl_index_ = sampling_strategy_num_++;
@@ -492,7 +408,7 @@ public:
         return true;
     }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return diffuse_->albedo(cos_theta); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3& wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag) const noexcept override {
         return outline([&] {
             ScatterEval ret{spec_refl_->swl()};
             SampledSpectrum f = {spec_refl_->swl().dimension(), 0.f};
@@ -538,7 +454,7 @@ public:
                 }
             };
             ret.f = f;
-            ret.pdfs =pdf;
+            ret.pdfs = pdf;
             return ret;
         },
                        "PrincipledBxDFSet::evaluate_local");
@@ -691,10 +607,10 @@ public:
     }
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<DisneyBxDFSet>(it, swl, pipeline(), color_, metallic_,
-                                              ior_, roughness_, spec_tint_, anisotropic_,
-                                              sheen_weight_,sheen_roughness_, sheen_tint_, clearcoat_weight_,
-                                              clearcoat_roughness_, clearcoat_tint_,
-                                              spec_trans_, flatness_, diff_trans_);
+                                          ior_, roughness_, spec_tint_, anisotropic_,
+                                          sheen_weight_, sheen_roughness_, sheen_tint_, clearcoat_weight_,
+                                          clearcoat_roughness_, clearcoat_tint_,
+                                          spec_trans_, flatness_, diff_trans_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
 };
