@@ -163,9 +163,9 @@ template<EPort p>
     }
     return bsdf_D<p>(wh, alpha_x, alpha_y, type) * abs_cos_theta(wh);
 }
-template oc_float<D> PDF_wh(const oc_float3<D> &wo, const oc_float3<D> &wh,
-                            const oc_float<D> &alpha_x, const oc_float<D> &alpha_y,
-                            bool sample_visible, MicrofacetType type);
+template oc_float<D> PDF_wh<D>(const oc_float3<D> &wo, const oc_float3<D> &wh,
+                               const oc_float<D> &alpha_x, const oc_float<D> &alpha_y,
+                               bool sample_visible, MicrofacetType type);
 
 template<EPort p>
 void sample_slope_GGX(const oc_float<p> &cos_theta, oc_float2<p> u,
