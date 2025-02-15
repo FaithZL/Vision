@@ -39,7 +39,7 @@ public:
                                           TSampler &sampler) const noexcept override {
         BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler);
         if (compensate_) {
-//            bs.eval.f *= compensate_factor(wo);
+            bs.eval.f *= compensate_factor(wo);
         }
         return bs;
     }
@@ -48,7 +48,7 @@ public:
                                              const Uint &flag) const noexcept override {
         ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag);
         if(compensate_) {
-//            se.f *= compensate_factor(wo);
+            se.f *= compensate_factor(wo);
         }
         return se;
     }
