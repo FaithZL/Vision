@@ -112,7 +112,7 @@ template<EPort p>
             oc_float3<p> new_wo = wo;
             new_wo.z = select(flip, -wo.z, wo.z);
             oc_float3<p> wh = sample_vndf<p>(new_wo, u, alpha_x, alpha_y);
-            wh = select(flip, -wh, wh);
+            wh.z = select(flip, -wh.z, wh.z);
             return wh;
         }
         case Disney:
