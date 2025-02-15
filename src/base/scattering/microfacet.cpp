@@ -80,11 +80,11 @@ template oc_float<D> bsdf_lambda<D>(const oc_float3<D> &w, const oc_float<D> &al
                                     const oc_float<D> &alpha_y, MicrofacetType type);
 
 template<EPort p>
-[[nodiscard]] oc_float3<p> sample_vndf(const oc_float3<p> &wo, const oc_float2<p> &u,
+[[nodiscard]] oc_float3<p> sample_vndf(const oc_float3<p> &Ve, const oc_float2<p> &u,
                                        const oc_float<p> &alpha_x,
                                        const oc_float<p> &alpha_y) {
     /// transform ellipsoid to sphere
-    oc_float3<p> Vh = normalize(make_float3(alpha_x * wo.x, alpha_y * wo.y, wo.z));
+    oc_float3<p> Vh = normalize(make_float3(alpha_x * Ve.x, alpha_y * Ve.y, Ve.z));
     oc_float<p> lenSq = length_squared(Vh.xy());
 
     /// build new frame with T1, T2, Vh
@@ -97,8 +97,9 @@ template<EPort p>
 
     /// remapping the point on disk to projection on plane consist from T1, T2
     t.y = lerp(0.5f * (1.0f + Vh.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
-    oc_float3<p> H_ = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * Vh;
-    return normalize(make_float3(alpha_x * H_.x, alpha_y * H_.y, max(0.0f, H_.z)));
+    oc_float3<p> Nh = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * Vh;
+    oc_float3<p> Ne = normalize(make_float3(alpha_x * Nh.x, alpha_y * Nh.y, max(0.0f, Nh.z)));
+    return Ne;
 }
 
 template<EPort p>
