@@ -74,19 +74,19 @@ template<EPort p>
                                            const oc_float<p> &alpha_y) {
     /// transform ellipsoid to sphere
     oc_float3<p> Vh = normalize(make_float3(alpha_x * Ve.x, alpha_y * Ve.y, Ve.z));
-    oc_float<p> lenSq = length_squared(Vh.xy());
+    oc_float<p> lenSq = ocarina::length_squared(Vh.xy().decay());
 
     /// build new frame with T1, T2, Vh
     /// T1 = cross(Z, Vh) / length(cross(Z, Vh))
     /// T2 = cross(Vh, T1)
     float3 Z = make_float3(1, 0, 0);
-    oc_float3<p> T1 = select(lenSq > 1e-7f, make_float3(-Vh.y, Vh.x, 0.0f) / sqrt(lenSq), Z);
+    oc_float3<p> T1 = select(lenSq > 1e-7f, make_float3(-Vh.y, Vh.x, 0.0f) / ocarina::sqrt(lenSq), Z);
     oc_float3<p> T2 = select(lenSq > 1e-7f, cross(Vh, T1), make_float3(0.0f, 1.0f, 0.0f));
-    oc_float2<p> t = square_to_disk(u);
+    oc_float2<p> t = square_to_disk<p>(u);
 
     /// remapping the point on disk to projection on plane consist from T1, T2
-    t.y = lerp(0.5f * (1.0f + Vh.z), safe_sqrt(1.0f - sqr(t.x)), t.y);
-    oc_float3<p> Nh = t.x * T1 + t.y * T2 + safe_sqrt(1.0f - length_squared(t)) * Vh;
+    t.y = ocarina::lerp(0.5f * (1.0f + Vh.z), ocarina::safe_sqrt(1.0f - ocarina::sqr(t.x)), t.y);
+    oc_float3<p> Nh = t.x * T1 + t.y * T2 + ocarina::safe_sqrt(1.0f - length_squared(t)) * Vh;
     oc_float3<p> Ne = normalize(make_float3(alpha_x * Nh.x, alpha_y * Nh.y, max(0.0f, Nh.z)));
     return Ne;
 }
@@ -100,19 +100,19 @@ template<EPort p>
                 /// https://jcgt.org/published/0007/04/01/
                 oc_bool<p> flip = wo.z < 0;
                 oc_float3<p> new_wo = wo;
-                new_wo.z = select(flip, -wo.z, wo.z);
+                new_wo.z = ocarina::select(flip, -wo.z, wo.z);
                 oc_float3<p> wh = sample_GGX_VNDF<p>(new_wo, u, alpha_x, alpha_y);
-                wh.z = select(flip, -wh.z, wh.z);
+                wh.z = ocarina::select(flip, -wh.z, wh.z);
                 return wh;
             } else {
                 oc_float<p> cos_theta = 0, phi = _2Pi * u[1];
                 phi = atan(alpha_y / alpha_x * tan(_2Pi * u[1] + PiOver2));
-                phi = select(u[1] > .5f, phi + Pi, phi);
+                phi = ocarina::select(u[1] > .5f, phi + Pi, phi);
                 oc_float<p> sin_phi = sin(phi), cos_phi = cos(phi);
-                oc_float<p> alpha2 = 1.f / (sqr(cos_phi / alpha_x) + sqr(sin_phi / alpha_y));
+                oc_float<p> alpha2 = 1.f / (ocarina::sqr(cos_phi / alpha_x) + ocarina::sqr(sin_phi / alpha_y));
                 oc_float<p> tan_theta_2 = alpha2 * u[0] / (1 - u[0]);
-                cos_theta = 1 / sqrt(1 + tan_theta_2);
-                oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
+                cos_theta = 1 / ocarina::sqrt(1 + tan_theta_2);
+                oc_float<p> sin_theta = ocarina::safe_sqrt(1 - ocarina::sqr(cos_theta));
                 oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
                 wh = select(same_hemisphere(wo, wh), wh, -wh);
                 return wh;
@@ -123,11 +123,11 @@ template<EPort p>
             oc_float<p> log_sample = log(1 - u[0]);
             phi = atan(alpha_y / alpha_x *
                        tan(_2Pi * u[1] + PiOver2));
-            phi = select(u[1] > .5f, phi + Pi, phi);
+            phi = ocarina::select(u[1] > .5f, phi + Pi, phi);
             oc_float<p> sin_phi = sin(phi), cos_phi = cos(phi);
-            tan_theta_2 = -log_sample / (sqr(cos_phi / alpha_x) + sqr(sin_phi / alpha_y));
-            oc_float<p> cos_theta = 1 / sqrt(1 + tan_theta_2);
-            oc_float<p> sin_theta = safe_sqrt(1 - sqr(cos_theta));
+            tan_theta_2 = -log_sample / (ocarina::sqr(cos_phi / alpha_x) + ocarina::sqr(sin_phi / alpha_y));
+            oc_float<p> cos_theta = 1 / ocarina::sqrt(1 + tan_theta_2);
+            oc_float<p> sin_theta = ocarina::safe_sqrt(1 - ocarina::sqr(cos_theta));
             oc_float3<p> wh = spherical_direction<p>(sin_theta, cos_theta, phi);
             wh = select(same_hemisphere(wo, wh), wh, -wh);
             //            CHECK_UNIT_VEC(wh)
@@ -140,6 +140,8 @@ template<EPort p>
 }
 template oc_float3<D> sample_wh<D>(const oc_float3<D> &wo, const oc_float2<D> &u, const oc_float<D> &alpha_x,
                                    const oc_float<D> &alpha_y, bool sample_visible, MicrofacetType type);
+template oc_float3<H> sample_wh<H>(const oc_float3<H> &wo, const oc_float2<H> &u, const oc_float<H> &alpha_x,
+                                   const oc_float<H> &alpha_y, bool sample_visible, MicrofacetType type);
 
 template<EPort p>
 [[nodiscard]] oc_float<p> PDF_wh(const oc_float3<p> &wo, const oc_float3<p> &wh,
@@ -162,7 +164,7 @@ void sample_slope_GGX(const oc_float<p> &cos_theta, oc_float2<p> u,
     oc_float<p> r = ocarina::sqrt(u.x / (1 - u.x));
     oc_float<p> phi = u.y * constants::_2Pi;
 
-    oc_float<p> sin_theta = ocarina::safe_sqrt(1 - sqr(cos_theta));
+    oc_float<p> sin_theta = ocarina::safe_sqrt(1 - ocarina::sqr(cos_theta));
     oc_float<p> tan_theta = sin_theta / cos_theta;
     oc_float<p> a = 1.f / tan_theta;
     oc_float<p> G1 = 2.f / (1 + ocarina::sqrt(1.f + 1.f / ocarina::sqr(a)));
@@ -183,7 +185,7 @@ void sample_slope_GGX(const oc_float<p> &cos_theta, oc_float2<p> u,
     oc_float<p> S = ocarina::select(u.y > 0.5f, 1.f, -1.f);
     u.y = ocarina::select(u.y > 0.5f, 2.f * (u.y - 0.5f), 2.f * (0.5f - u.y));
 
-    Float z = (u.y * (u.y * (u.y * 0.27385f - 0.73369f) + 0.46341f)) /
+    oc_float<p> z = (u.y * (u.y * (u.y * 0.27385f - 0.73369f) + 0.46341f)) /
               (u.y * (u.y * (u.y * 0.093073f + 0.309420f) - 1.f) + 0.597999f);
 
     *slope_y = S * z * ocarina::sqrt(1.f + ocarina::sqr(*slope_x));
@@ -212,6 +214,8 @@ template<EPort p>
 }
 template oc_float3<D> sample_wh_visible_area<D>(const oc_float3<D> &wo, const oc_float2<D> &u, const oc_float<D> &alpha_x,
                                                 const oc_float<D> &alpha_y, MicrofacetType type);
+template oc_float3<H> sample_wh_visible_area<H>(const oc_float3<H> &wo, const oc_float2<H> &u, const oc_float<H> &alpha_x,
+                                                const oc_float<H> &alpha_y, MicrofacetType type);
 
 template<EPort p>
 [[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,

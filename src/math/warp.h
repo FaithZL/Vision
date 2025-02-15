@@ -22,7 +22,7 @@ template<EPort p = D>
 
 template<EPort p = EPort::D>
 [[nodiscard]] oc_float2<p> square_to_disk_impl(const oc_float2<p> &u) {
-    oc_float<p> r = sqrt(u.x);
+    oc_float<p> r = ocarina::sqrt(u.x);
     oc_float<p> theta = ocarina::_2Pi * u.y;
     return make_float2(r * cos(theta), r * sin(theta));
 }

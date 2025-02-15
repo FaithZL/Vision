@@ -9,6 +9,7 @@
 #include "math/transform.h"
 #include "math/geometry.h"
 #include "base/scattering/microfacet.h"
+#include <random>
 
 using namespace vision;
 using namespace ocarina;
@@ -24,11 +25,56 @@ using namespace ocarina;
 
 int main(int argc, char *argv[]) {
 
-    float2 u = make_float2(0.28, 0.28);
+    float3 wo = normalize(make_float3(argc, argc * 2, argc * 3));
+    std::uniform_real_distribution<> distrib(0.0, 1.0);
+    float ax = 0.5f * argc;
+    float ay = 0.16f * argc;
 
-    float ax = 0.01;
-    float ay = 0.01;
+    uint num = 1000000 * argc;
 
+    float ret = 0;
+
+    Clock clk;
+
+    float3 wh = make_float3(0);
+
+    std::mt19937 gen(12345);
+    for (int i = 1; i < num; ++i) {
+        float2 u = make_float2(distrib(gen));
+        float3 wo = make_float3(distrib(gen));
+        wh += sample_wh<H>(wo, u, 0.5f, 0.7f, true, GGX);
+    }
+
+    cout << clk.elapse_ms() << endl;
+    cout << to_str(wh) << endl;
+
+
+    ret = 0;
+    wh = make_float3(0);
+    clk.start();
+    std::mt19937 gen2(12345);
+    for (int i = 1; i < num; ++i) {
+        float2 u = make_float2(distrib(gen));
+        float3 wo = make_float3(distrib(gen));
+        wh += sample_wh<H>(wo, u, 0.5f, 0.7f, false, GGX);
+    }
+
+    cout << clk.elapse_ms() << endl;
+    cout << to_str(wh) << endl;
+
+    ret = 0;
+    wh = make_float3(0);
+    clk.start();
+    std::mt19937 gen3(12345);
+    for (int i = 1; i < num; ++i) {
+        float2 u = make_float2(distrib(gen3));
+        float3 wo = make_float3(distrib(gen3));
+        wh += sample_wh_visible_area<H>(wo, u, 0.5f, 0.7f, GGX);
+    }
+
+    cout << clk.elapse_ms() << endl;
+    cout << to_str(wh) << endl;
+    return 0;
 
     string s = "SDaf";
 //    cout << 'x' - 'a';
