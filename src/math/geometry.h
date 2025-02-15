@@ -13,7 +13,7 @@ inline namespace geometry {
 
 template<typename T>
 requires is_vector3_expr_v<T>
-[[nodiscard]] auto cos_theta_2(const T &v) noexcept { return sqr(v.z); }
+[[nodiscard]] auto cos_theta_2(const T &v) noexcept { return ocarina::sqr(v.z); }
 
 template<typename T>
 requires is_vector3_expr_v<T>
@@ -31,14 +31,14 @@ template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> sin_theta(const T &v) noexcept {
     scalar_t<T> temp = sin_theta_2(v);
-    return select(temp <= 0.f, 0.f, sqrt(temp));
+    return ocarina::select(temp <= 0.f, 0.f, ocarina::sqrt(temp));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> tan_theta(const T &v) noexcept {
     scalar_t<T> sin_theta2 = 1 - cos_theta_2(v);
-    return select(sin_theta2 <= 0.f, 0.f, sqrt(sin_theta2) / cos_theta(v));
+    return ocarina::select(sin_theta2 <= 0.f, 0.f, ocarina::sqrt(sin_theta2) / cos_theta(v));
 }
 
 template<typename T>
@@ -46,35 +46,35 @@ requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> tan_theta_2(const T &v) noexcept {
     scalar_t<T> cos_theta2 = cos_theta_2(v);
     scalar_t<T> sin_theta2 = 1.f - cos_theta2;
-    return select(sin_theta2 <= 0.f, 0.f, sin_theta2 / cos_theta2);
+    return ocarina::select(sin_theta2 <= 0.f, 0.f, sin_theta2 / cos_theta2);
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> sin_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    return select(sinTheta == 0, 1.f, clamp(v.y / sinTheta, -1.f, 1.f));
+    return ocarina::select(sinTheta == 0, 1.f, ocarina::clamp(v.y / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> cos_phi(const T &v) noexcept {
     scalar_t<T> sinTheta = sin_theta(v);
-    return select(sinTheta == 0.f, 1.f, clamp(v.x / sinTheta, -1.f, 1.f));
+    return ocarina::select(sinTheta == 0.f, 1.f, ocarina::clamp(v.x / sinTheta, -1.f, 1.f));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> sin_phi_2(const T &v) {
     scalar_t<T> sinTheta2 = sin_theta_2(v);
-    return select(sinTheta2 == 0.f, 0.f, clamp(sqr(v.y) / sinTheta2, 0.f, 1.f));
+    return ocarina::select(sinTheta2 == 0.f, 0.f, ocarina::clamp(ocarina::sqr(v.y) / sinTheta2, 0.f, 1.f));
 }
 
 template<typename T>
 requires is_vector3_expr_v<T>
 [[nodiscard]] scalar_t<T> cos_phi_2(const T &v) {
     scalar_t<T> sinTheta2 = sin_theta_2(v);
-    return select(sinTheta2 == 0.f, 1.f, clamp(sqr(v.x) / sinTheta2, 0.f, 1.f));
+    return ocarina::select(sinTheta2 == 0.f, 1.f, ocarina::clamp(ocarina::sqr(v.x) / sinTheta2, 0.f, 1.f));
 }
 
 template<typename T>
