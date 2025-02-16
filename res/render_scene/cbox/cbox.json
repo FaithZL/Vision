@@ -212,10 +212,10 @@
 //								 "material" : "substrate",
 //								"material" : "Mirror",
 //								"material" : "Metal",
-//				"material" : "principled",
+				"material" : "principled",
 //				"material" : "disney",
 //																                "material" : "mix",
-												                                "material" : "Glass",
+//												                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
