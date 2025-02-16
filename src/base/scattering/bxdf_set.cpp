@@ -207,6 +207,13 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     Float cos_theta_o = cos_theta(wo);
     fresnel->correct_eta(cos_theta_o);
     SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
+
+    Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
+
+    $condition_info("wo {} {} {}, wh {} {} {}", wo, wh);
+
+
+
     Float fr = frs[0];
     SampledDirection ret;
     $if(uc < fr) {

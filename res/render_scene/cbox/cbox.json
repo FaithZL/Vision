@@ -210,12 +210,12 @@
 				"z" : 1,
 //				 "material" : "ShortBox",
 //								 "material" : "substrate",
-								"material" : "Mirror",
+//								"material" : "Mirror",
 //								"material" : "Metal",
 //				"material" : "principled",
 //				"material" : "disney",
 //																                "material" : "mix",
-//												                                "material" : "Glass",
+												                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -256,9 +256,9 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-//				"material": "TallBox",
+				"material": "TallBox",
 //				"material" : "mix2",
-				"material" : "Mirror",
+//				"material" : "Mirror",
 				//                "material": "Mirror2",
 //								                "material": "Glass2",
 //												"material" : "Metal",
@@ -683,7 +683,7 @@
 						1
 					]
 				},
-				"roughness" : 0.001
+				"roughness" : 0.4
 			}
 		},
 		{
@@ -1138,9 +1138,9 @@
 		}
 	},
 	"output" : {
-//				"spp" : 1024,
+				"spp" : 256,
 		//		"save_exit" : true,
-		"fn" : "rt-new.exr"
+		"fn" : "glass-old.exr"
 	},
 	"integrator" : {
 //		"type" : "rt",
