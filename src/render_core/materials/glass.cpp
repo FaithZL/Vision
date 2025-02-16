@@ -187,8 +187,9 @@ public:
                 swl.invalidation_secondary();
             };
         }
+        auto new_bxdf = make_unique<DielectricBxDFSet>(fresnel, microfacet, color, is_dispersive(), flag);
         return make_unique<DielectricBxDFSetOld>(fresnel, ocarina::move(refl), ocarina::move(trans),
-                                              is_dispersive(), flag);
+                                                 is_dispersive(), flag);
     }
 };
 }// namespace vision

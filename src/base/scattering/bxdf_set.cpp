@@ -168,7 +168,7 @@ BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     return ret;
 }
 
-/// DielectricBxDFSet
+/// DielectricBxDFSetOld
 SampledSpectrum DielectricBxDFSetOld::albedo(const Float &cos_theta) const noexcept {
     SampledSpectrum F = fresnel_->evaluate(cos_theta);
     return F * refl_.albedo(cos_theta) + (1 - F) * trans_.albedo(cos_theta);
@@ -249,6 +249,22 @@ BSDFSample DielectricBxDFSetOld::sample_delta_local(const Float3 &wo, TSampler &
     };
     return ret;
 }
+
+/// DielectricBxDFSet
+SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
+    return kt_;
+}
+
+ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                              MaterialEvalMode mode, const Uint &flag) const noexcept {
+    return ScatterEval{*swl()};
+}
+
+SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
+                                              TSampler &sampler) const noexcept {
+    return {};
+}
+
 
 /// MultiBxDFSet
 void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {

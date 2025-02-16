@@ -100,9 +100,9 @@ template<EPort p>
                 /// https://jcgt.org/published/0007/04/01/
                 oc_bool<p> flip = wo.z < 0;
                 oc_float3<p> new_wo = wo;
-                new_wo.z = ocarina::select(flip, -wo.z, wo.z);
+                new_wo = ocarina::select(flip, wo, -wo);
                 oc_float3<p> wh = sample_GGX_VNDF<p>(new_wo, u, alpha_x, alpha_y);
-                wh.z = ocarina::select(flip, -wh.z, wh.z);
+//                wh.z = ocarina::select(flip, -wh.z, wh.z);
                 return wh;
             } else {
                 oc_float<p> cos_theta = 0, phi = _2Pi * u[1];

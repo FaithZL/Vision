@@ -22,6 +22,7 @@ public:
         OC_ERROR("Fresnel evaluate by channel invalid !");
         return 0.f;
     }
+    OC_MAKE_MEMBER_GETTER(swl,)
     virtual Fresnel &operator=(const Fresnel &other) noexcept = default;
     [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
