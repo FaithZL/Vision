@@ -126,17 +126,11 @@ void App::on_window_size_change(uint2 size) noexcept {
 void App::on_scroll_event(float2 scroll) noexcept {
     invalidation = true;
     auto camera = pipeline().scene().camera();
-    if (key_f_press) {
-        //        camera->update_focal_distance(scroll.y * 0.1);
-    } else if (key_r_press) {
-        //        camera->update_lens_radius(scroll.y * 0.01);
-    } else {
-        camera->update_fov_y(scroll.y);
-    }
+    camera->update_fov_y(scroll.y);
     invalidation = true;
 }
 
-void App::update_camera_view(float d_yaw, float d_pitch) noexcept {
+void App::update_camera_view(float d_yaw, float d_pitch) const noexcept {
     auto camera = pipeline().scene().camera();
     float sensitivity = camera->sensitivity();
     camera->update_yaw(d_yaw * sensitivity);

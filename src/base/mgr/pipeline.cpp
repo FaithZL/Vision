@@ -66,6 +66,7 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
         widgets->check_box("framebuffer", &show_framebuffer_data_);
         widgets->check_box("stats", &show_stats_);
         widgets->check_box("hotfix", &show_hotfix_);
+        widgets->check_box("output setting", &show_output_);
     });
     if (show_scene_data_) {
         scene_.render_UI(widgets);
@@ -92,7 +93,13 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void Pipeline::render_output(ocarina::Widgets *widgets) noexcept {
     widgets->use_window("output setting", [&] {
-
+        widgets->drag_uint("frame num", &output_desc.spp, 10, 1, InvalidUI32);
+        widgets->check_box("exit after save", &output_desc.save_exit);
+        fs::path scene_path = Global::instance().scene_path();
+        widgets->button_click("save", [&] {
+            need_save_ = true;
+        });
+        
     });
 }
 

@@ -74,7 +74,7 @@ public:
     void init_pipeline();
     [[nodiscard]] Pipeline &pipeline() const { return *rp; }
     void register_event() noexcept;
-    void update_camera_view(float d_yaw, float d_pitch) noexcept;
+    void update_camera_view(float d_yaw, float d_pitch) const noexcept;
     void on_key_event(int key, int action) noexcept;
     void on_window_size_change(uint2 size) noexcept;
     void on_mouse_event(int button, int action, float2 pos) noexcept;
