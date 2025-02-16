@@ -57,7 +57,7 @@ public:
     static constexpr const char *name = "MirrorBxDFSet";
     static UP<MirrorBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, false);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         auto ret = make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
         ret->compensate_ = false;

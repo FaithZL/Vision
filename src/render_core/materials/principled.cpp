@@ -215,7 +215,7 @@ public:
     static constexpr const char *name = "CoatBxDFSet";
     static UP<CoatBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(alpha_lower));
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(alpha_lower), true);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()),
                                                                           swl, microfacet);
         return make_unique<CoatBxDFSet>(fresnel, ocarina::move(refl));
@@ -269,7 +269,7 @@ public:
         SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
         SampledSpectrum f90 = SampledSpectrum(make_float3(1));
         SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         return make_unique<SpecularBxDFSet>(fresnel_schlick, std::move(bxdf));
     }
