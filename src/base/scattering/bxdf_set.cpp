@@ -175,7 +175,7 @@ SampledSpectrum DielectricBxDFSetOld::albedo(const Float &cos_theta) const noexc
 }
 
 ScatterEval DielectricBxDFSetOld::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                              MaterialEvalMode mode, const Uint &flag) const noexcept {
+                                                 MaterialEvalMode mode, const Uint &flag) const noexcept {
     ScatterEval ret{refl_.swl()};
     auto fresnel = fresnel_->clone();
     Float cos_theta_o = cos_theta(wo);
@@ -201,19 +201,12 @@ ScatterEval DielectricBxDFSetOld::evaluate_local(const Float3 &wo, const Float3 
 }
 
 SampledDirection DielectricBxDFSetOld::sample_wi(const Float3 &wo, const Uint &flag,
-                                              TSampler &sampler) const noexcept {
+                                                 TSampler &sampler) const noexcept {
     Float uc = sampler->next_1d();
     auto fresnel = fresnel_->clone();
     Float cos_theta_o = cos_theta(wo);
     fresnel->correct_eta(cos_theta_o);
     SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
-
-    Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
-
-    $condition_info("wo {} {} {}, wh {} {} {}", wo, wh);
-
-
-
     Float fr = frs[0];
     SampledDirection ret;
     $if(uc < fr) {
@@ -257,14 +250,61 @@ SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode, const Uint &flag) const noexcept {
-    return ScatterEval{*swl()};
+    ScatterEval ret{*swl()};
+    Float cos_theta_o = cos_theta(wo);
+    Float cos_theta_i = cos_theta(wi);
+    auto fresnel = fresnel_->clone();
+    fresnel->correct_eta(cos_theta_o);
+    Bool reflect = cos_theta_i * cos_theta_o;
+//    $condition_info("{} {}", cos_theta_i, cos_theta_o);
+    $if(reflect) {
+        Float3 wh = normalize(wo + wi);
+        SampledSpectrum F = fresnel->evaluate(dot(wo, wh));
+        SampledSpectrum fr = microfacet_->BRDF(wo, wh, wi, F);
+        ret.f = fr;
+        ret.pdfs = microfacet_->PDF_wi_reflection(wo, wh);
+        ret.flags = BxDFFlag::GlossyRefl;
+    }
+    $else{
+        Float eta = fresnel->eta()[0];
+        Float3 wh = normalize(wo + wi * eta);
+        wh = face_forward(wh, make_float3(0, 0, 1));
+        Float F = fresnel->evaluate(abs_dot(wo, wh), 0);
+        Float tr = microfacet_->BTDF(wo, wh, wi, 1 - F, eta);
+        ret.f = tr * kt_;
+        ret.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta);
+        ret.flags = BxDFFlag::GlossyTrans;
+//        $condition_info("{} {} {} --- {}", wo, tr);
+
+    };
+    return ret;
 }
 
 SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
                                               TSampler &sampler) const noexcept {
-    return {};
-}
+    Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
+    Float d = dot(wo, wh);
+    auto fresnel = fresnel_->clone();
+    fresnel->correct_eta(d);
+    SampledSpectrum frs = fresnel->evaluate(abs(d));
 
+    SampledDirection sd;
+    $condition_info("wo {} {} {},   wh {} {} {} ", wo, wh);
+
+    Float uc = sampler->next_1d();
+    $if(uc < frs[0]) {
+        wh = ocarina::select(d < 0.f, -wh, wh);
+        sd.wi = reflect(wo, wh);
+        sd.valid = same_hemisphere(wo, sd.wi);
+    }
+    $else {
+//        wh = ocarina::select(d > 0.f, -wh, wh);
+        Float eta = fresnel->eta()[0];
+        sd.valid = refract(wo, wh, eta, &sd.wi);
+        $condition_info(" refract  {} {} {} --- {} {} {}", wo, sd.wi);
+    };
+    return sd;
+}
 
 /// MultiBxDFSet
 void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
