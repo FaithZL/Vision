@@ -202,6 +202,7 @@
 		},
 		{
 			"type" : "sphere",
+//			"type" : "cube",
 			"name" : "shape_5",
 			"param" : {
 				"radius": 0.7,
@@ -683,7 +684,7 @@
 						1
 					]
 				},
-				"roughness" : 0.4
+				"roughness" : 0.001
 			}
 		},
 		{
@@ -1138,7 +1139,7 @@
 		}
 	},
 	"output" : {
-				"spp" : 256,
+//				"spp" : 256,
 		//		"save_exit" : true,
 		"fn" : "glass-old.exr"
 	},

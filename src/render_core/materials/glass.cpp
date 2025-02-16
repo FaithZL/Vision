@@ -114,6 +114,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
+//    VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSet)
     VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSetOld)
 
 public:
@@ -188,6 +189,7 @@ public:
             };
         }
         auto new_bxdf = make_unique<DielectricBxDFSet>(fresnel, microfacet, color, is_dispersive(), flag);
+//        return new_bxdf;
         return make_unique<DielectricBxDFSetOld>(fresnel, ocarina::move(refl), ocarina::move(trans),
                                                  is_dispersive(), flag);
     }
