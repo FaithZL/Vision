@@ -91,15 +91,37 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
     return true;
 }
 
+struct FileNameOption {
+    static constexpr auto len = 256;
+    char data[len] = {};
+    int ext_index{0};
+    vector<const char *> exts = {".exr", ".png", ".jpg", ".hdr"};
+    explicit FileNameOption(const fs::path &fn) {
+        auto stem = fn.stem().string();
+        for (int i = 0; i < stem.size(); ++i) {
+            data[i] = stem[i];
+        }
+    }
+    void render_UI(Widgets *widgets,
+                   OutputDesc &output_desc) noexcept {
+        widgets->input_text("fn", data, len);
+        widgets->combo("ext", &ext_index, exts);
+        string ext = exts[ext_index];
+        string stem = data;
+        output_desc.fn = stem + ext;
+    }
+};
+
 void Pipeline::render_output(ocarina::Widgets *widgets) noexcept {
     widgets->use_window("output setting", [&] {
         widgets->drag_uint("frame num", &output_desc.spp, 10, 1, InvalidUI32);
         widgets->check_box("exit after save", &output_desc.save_exit);
         fs::path scene_path = Global::instance().scene_path();
+        static FileNameOption fnp{output_desc.fn};
+        fnp.render_UI(widgets, output_desc);
         widgets->button_click("save", [&] {
             need_save_ = true;
         });
-        
     });
 }
 
