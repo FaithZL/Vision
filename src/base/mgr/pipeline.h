@@ -36,6 +36,8 @@ protected:
     bool show_detail_{true};
     bool show_stats_{true};
     bool show_hotfix_{true};
+    bool show_output_{false};
+    bool need_save_{false};
 
     /// node for show detail
     mutable GUI *cur_node_{nullptr};
@@ -64,10 +66,13 @@ public:
     void render_detail(Widgets *widgets) noexcept;
     void render_stats(Widgets *widgets) noexcept;
     void render_hotfix(Widgets *widgets) noexcept;
-    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
+    void render_output(Widgets *widgets) noexcept;
+    void save_result() noexcept;
+    void check_and_save() noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(cur_node, )
 
     /// virtual function start
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     virtual void init_scene(const SceneDesc &scene_desc) = 0;
     virtual void init_postprocessor(const DenoiserDesc &desc) = 0;
     [[nodiscard]] virtual const Buffer<float4> &view_buffer();

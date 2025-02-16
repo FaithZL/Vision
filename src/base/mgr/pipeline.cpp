@@ -84,7 +84,16 @@ bool Pipeline::render_UI(ocarina::Widgets *widgets) noexcept {
     if (show_hotfix_) {
         render_hotfix(widgets);
     }
+    if (show_output_) {
+        render_output(widgets);
+    }
     return true;
+}
+
+void Pipeline::render_output(ocarina::Widgets *widgets) noexcept {
+    widgets->use_window("output setting", [&] {
+
+    });
 }
 
 void Pipeline::render_detail(ocarina::Widgets *widgets) noexcept {
@@ -124,10 +133,25 @@ void hotfix_window(ocarina::Widgets *widgets) noexcept {
 }// namespace
 
 void Pipeline::render_hotfix(ocarina::Widgets *widgets) noexcept {
-
     widgets->use_window("hotfix system", [&] {
         hotfix_window(widgets);
     });
+}
+
+void Pipeline::save_result() noexcept {
+    OutputDesc desc = output_desc;
+    Image::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
+                      resolution(), final_picture(desc));
+    if (desc.save_exit) {
+        exit(0);
+    }
+    need_save_ = false;
+}
+
+void Pipeline::check_and_save() noexcept {
+    if ((frame_index() == output_desc.spp && output_desc.spp != 0) || need_save_) {
+        save_result();
+    }
 }
 
 void Pipeline::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {

@@ -172,7 +172,6 @@ void App::on_mouse_event(int button, int action, float2 pos) noexcept {
             break;
         }
         case 1: right_key_press = bool(action); break;
-        case 2: need_save = bool(action); break;
         default: break;
     }
 }
@@ -195,24 +194,7 @@ void App::update(double dt) noexcept {
     pipeline().reset_status();
     render_UI(window->widgets());
     window->set_background(pipeline().frame_buffer()->window_buffer().data());
-    check_and_save();
-}
-
-void App::check_and_save() noexcept {
-    OutputDesc desc = rp->output_desc;
-    if ((pipeline().frame_index() == desc.spp && desc.spp != 0) || need_save) {
-        save_result();
-    }
-}
-
-void App::save_result() noexcept {
-    OutputDesc desc = rp->output_desc;
-    Image::save_image(Global::instance().scene_path() / desc.fn, PixelStorage::FLOAT4,
-                      pipeline().resolution(), pipeline().final_picture(desc));
-    if (desc.save_exit) {
-        exit(0);
-    }
-    need_save = false;
+    rp->check_and_save();
 }
 
 int App::run() noexcept {

@@ -51,7 +51,6 @@ public:
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};
-    bool need_save{false};
     bool invalidation{false};
 
     bool key_r_press{false};
@@ -74,8 +73,6 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void init_pipeline();
     [[nodiscard]] Pipeline &pipeline() const { return *rp; }
-    void check_and_save() noexcept;
-    void save_result() noexcept;
     void register_event() noexcept;
     void update_camera_view(float d_yaw, float d_pitch) noexcept;
     void on_key_event(int key, int action) noexcept;
