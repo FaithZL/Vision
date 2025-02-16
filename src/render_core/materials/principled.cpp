@@ -245,9 +245,9 @@ public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
 };
 
-class TransmissionBxDFSet : public DielectricBxDFSet {
+class TransmissionBxDFSet : public DielectricBxDFSetOld {
 public:
-    using DielectricBxDFSet::DielectricBxDFSet;
+    using DielectricBxDFSetOld::DielectricBxDFSetOld;
 };
 
 class SpecularBxDFSet : public MicrofacetBxDFSet {

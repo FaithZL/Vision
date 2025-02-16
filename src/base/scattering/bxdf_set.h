@@ -242,7 +242,7 @@ public:
 /// for precompute end
 }// namespace precompute
 
-class DielectricBxDFSet : public BxDFSet {
+class DielectricBxDFSetOld : public BxDFSet {
 private:
     DCSP<Fresnel> fresnel_;
     MicrofacetReflection refl_;
@@ -255,7 +255,7 @@ protected:
     }
 
 public:
-    DielectricBxDFSet(const SP<Fresnel> &fresnel,
+    DielectricBxDFSetOld(const SP<Fresnel> &fresnel,
                       MicrofacetReflection refl,
                       MicrofacetTransmission trans,
                       Bool dispersive,
@@ -263,7 +263,7 @@ public:
         : fresnel_(fresnel),
           refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
           dispersive_(ocarina::move(dispersive)) {}
-    VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
+    VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSetOld)
         [[nodiscard]] const SampledWavelengths *swl() const override { return &refl_.swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }

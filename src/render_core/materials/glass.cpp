@@ -114,7 +114,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSetOld)
 
 public:
     GlassMaterial() = default;
@@ -187,7 +187,7 @@ public:
                 swl.invalidation_secondary();
             };
         }
-        return make_unique<DielectricBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
+        return make_unique<DielectricBxDFSetOld>(fresnel, ocarina::move(refl), ocarina::move(trans),
                                               is_dispersive(), flag);
     }
 };
