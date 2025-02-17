@@ -46,12 +46,12 @@ public:
                                                 TSampler &sampler) const noexcept override;
 };
 
-SampledSpectrum DielectricBxDFSetOld::albedo(const Float &cos_theta) const noexcept {
+SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
     SampledSpectrum F = fresnel_->evaluate(cos_theta);
     return F * refl_.albedo(cos_theta) + (1 - F) * trans_.albedo(cos_theta);
 }
 
-ScatterEval DielectricBxDFSetOld::evaluate_local(const Float3 &wo, const Float3 &wi,
+ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                                  MaterialEvalMode mode, const Uint &flag) const noexcept {
     ScatterEval ret{refl_.swl()};
     auto fresnel = fresnel_->clone();
@@ -77,7 +77,7 @@ ScatterEval DielectricBxDFSetOld::evaluate_local(const Float3 &wo, const Float3 
     return ret;
 }
 
-SampledDirection DielectricBxDFSetOld::sample_wi(const Float3 &wo, const Uint &flag,
+SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
                                                  TSampler &sampler) const noexcept {
     //    Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
     //    Float d = dot(wo, wh);
@@ -115,7 +115,7 @@ SampledDirection DielectricBxDFSetOld::sample_wi(const Float3 &wo, const Uint &f
     return ret;
 }
 
-BSDFSample DielectricBxDFSetOld::sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
+BSDFSample DielectricBxDFSet::sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
     BSDFSample ret{refl_.swl()};
     Float uc = sampler->next_1d();
     auto fresnel = fresnel_->clone();
