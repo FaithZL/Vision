@@ -16,7 +16,7 @@ private:
 
 private:
     PolymorphicGUI<SP<Material>> materials_;
-    bool sample_visible_{false};
+    bool sample_visible_{true};
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MaterialRegistry)

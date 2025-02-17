@@ -29,14 +29,20 @@ int main(int argc, char *argv[]) {
 
     float3 wi;
     float eta = 1.5f;
-    refract<H>(wo, make_float3(0,0,-1), 1.5f , &wi);
+    refract<H>(wo, make_float3(0,0,1), 1.5f , &wi);
 
-    cout << to_str(wo) << endl;
+    float3 wr = reflect(wo, make_float3(0,0,-1));
+
+//    cout << to_str(wr) << endl;
+//    cout << to_str(wo) << endl;
+    cout << to_str(wi) << endl;
+
+    refract<H>(wo, make_float3(0,0,-1), 1.5f , &wi);
     cout << to_str(wi) << endl;
 
     float3 wh = wo + eta * wi;
 //
-    cout << to_str(wh) << endl;
+//    cout << to_str(wh) << endl;
 
     return 0;
 }
