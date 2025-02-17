@@ -102,7 +102,6 @@ template<EPort p>
                 oc_float3<p> new_wo = wo;
                 new_wo = ocarina::select(flip, -wo, wo);
                 oc_float3<p> wh = sample_GGX_VNDF<p>(new_wo, u, alpha_x, alpha_y);
-//                wh.z = ocarina::select(flip, -wh.z, wh.z);
                 wh = ocarina::select(flip, -wh, wh);
                 return wh;
             } else {
