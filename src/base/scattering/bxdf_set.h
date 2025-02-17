@@ -247,41 +247,6 @@ public:
 /// for precompute end
 }// namespace precompute
 
-class DielectricBxDFSetOld : public BxDFSet {
-private:
-    DCSP<Fresnel> fresnel_;
-    MicrofacetReflection refl_;
-    MicrofacetTransmission trans_;
-    Bool dispersive_{};
-
-protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(fresnel_->type_hash(), refl_.type_hash(), trans_.type_hash());
-    }
-
-public:
-    DielectricBxDFSetOld(const SP<Fresnel> &fresnel,
-                      MicrofacetReflection refl,
-                      MicrofacetTransmission trans,
-                      Bool dispersive,
-                      const Uint &flag)
-        : fresnel_(fresnel),
-          refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
-          dispersive_(ocarina::move(dispersive)) {}
-    VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSetOld)
-        [[nodiscard]] const SampledWavelengths *swl() const override { return &refl_.swl(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
-    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
-    [[nodiscard]] Bool splittable() const noexcept override { return true; }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override;
-    [[nodiscard]] Uint flag() const noexcept override { return refl_.flags() | trans_.flags(); }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
-                                                TSampler &sampler) const noexcept override;
-};
-
 class WeightedBxDFSet {
 private:
     Float weight_;
