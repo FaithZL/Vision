@@ -109,6 +109,7 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
         ret.eval.f = fr;
         ret.eval.pdfs = pdf * cast<uint>(valid);
         ret.wi = wi;
+        ret.eval.flags = BxDFFlag::GlossyRefl;
     }
     $else {
         Float3 wi;
@@ -121,7 +122,7 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
         ret.eval.f = tr;
         ret.eval.pdfs = pdf * cast<uint>(valid);
         ret.wi = wi;
-        $condition_info("wi {} {} {}  tp {} {} {}  ", wi, ret.eval.throughput().vec3());
+        ret.eval.flags = BxDFFlag::GlossyTrans;
     };
     return ret;
 }
