@@ -55,6 +55,36 @@ SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                                  MaterialEvalMode mode, const Uint &flag) const noexcept {
+//    ScatterEval ret{refl_.swl()};
+//    auto fresnel = fresnel_->clone();
+//
+//    Bool reflect = same_hemisphere(wo, wi);
+//
+//    fresnel->correct_eta(cos_theta(wo));
+//
+//    Float eta = fresnel->eta()[0];
+//
+//    Float3 wh = normalize(wo + eta * wi);
+//
+//    SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
+//    $if(same_hemisphere(wo, wi)) {
+//        wh = face_forward(wh, make_float3(0, 0, 1));
+//        SampledSpectrum fr = refl_.microfacet()->BRDF(wo, wh, wi, frs);
+////        ret = refl_.evaluate(wo, wi, fresnel, mode);
+////        ret.pdfs *= frs.values()[0];
+//    }
+//    $else {
+//        ret = trans_.evaluate(wo, wi, fresnel, mode);
+//        if (trans_.swl().scatter_pdf_dim() > 1) {
+//            trans_.swl().foreach_secondary_channel([&](uint channel) {
+//                $if(frs[channel] == 1) {
+//                    trans_.swl().invalidation_channel(channel);
+//                };
+//            });
+//        }
+//        ret.pdfs *= 1 - frs.values()[0];
+//    };
+//    return ret;
     ScatterEval ret{refl_.swl()};
     auto fresnel = fresnel_->clone();
     Float cos_theta_o = cos_theta(wo);
@@ -81,26 +111,25 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
 
 SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
                                                  TSampler &sampler) const noexcept {
-//        Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
-//        Float d = dot(wo, wh);
-//        auto fresnel = fresnel_->clone();
-//        fresnel->correct_eta(wo.z);
-//        SampledSpectrum frs = fresnel->evaluate(abs(d));
-//
-//        SampledDirection sd;
-//
-//        Float uc = sampler->next_1d();
-//        $if(uc < frs[0]) {
-//            wh = ocarina::select(d < 0.f, -wh, wh);
-//            sd.wi = reflect(wo, wh);
-//            sd.valid = same_hemisphere(wo, sd.wi);
-//        }
-//        $else {
-//    //        wh = ocarina::select(d < 0.f, -wh, wh);
-//            Float eta = fresnel->eta()[0];
-//            sd.valid = refract(wo, wh, eta, &sd.wi);
-//        };
-//        return sd;
+//    Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
+//    Float d = dot(wo, wh);
+//    auto fresnel = fresnel_->clone();
+//    fresnel->correct_eta(wo.z);
+//    SampledDirection sd;
+//    SampledSpectrum frs = fresnel->evaluate(abs(d));
+//    Float uc = sampler->next_1d();
+//    $info_if(d < 0, "{} {} {} | {} {} {}", wo, wh);
+//    $if(uc < frs[0]) {
+////        wh = ocarina::select(d < 0.f, -wh, wh);
+//        sd.wi = reflect(wo, wh);
+//        sd.valid = same_hemisphere(wo, sd.wi);
+//    }
+//    $else {
+//        Float eta = fresnel->eta()[0];
+//        Bool valid = refract(wo, wh, eta, &sd.wi);
+//        sd.valid = valid && !same_hemisphere(wo, sd.wi);
+//    };
+//    return sd;
     Float uc = sampler->next_1d();
     auto fresnel = fresnel_->clone();
     Float cos_theta_o = cos_theta(wo);
