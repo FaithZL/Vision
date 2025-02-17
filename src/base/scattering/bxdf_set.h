@@ -23,6 +23,11 @@ public:
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                                      MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept = 0;
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                                     const Float3 &wh, MaterialEvalMode mode,
+                                                     const Uint &flag) const noexcept {
+        return evaluate_local(wo, wi, mode, flag);
+    }
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag,

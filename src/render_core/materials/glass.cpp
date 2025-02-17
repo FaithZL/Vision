@@ -14,49 +14,48 @@ namespace vision {
 class DielectricBxDFSet : public BxDFSet {
 private:
     DCSP<Fresnel> fresnel_;
-    MicrofacetReflection refl_;
-    MicrofacetTransmission trans_;
     Bool dispersive_{};
+    DCSP<Microfacet<D>> microfacet_;
+    SampledSpectrum kt_{};
+    Uint flag_{};
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(fresnel_->type_hash(), refl_.type_hash(), trans_.type_hash());
+        return hash64(fresnel_->type_hash());
     }
 
 public:
     DielectricBxDFSet(const SP<Fresnel> &fresnel,
-                         MicrofacetReflection refl,
-                         MicrofacetTransmission trans,
-                         Bool dispersive,
-                         const Uint &flag)
+                      const SP<Microfacet<D>> &microfacet,
+                      SampledSpectrum color,
+                      Bool dispersive,
+                      const Uint &flag)
         : fresnel_(fresnel),
-          refl_(ocarina::move(refl)), trans_(ocarina::move(trans)),
-          dispersive_(ocarina::move(dispersive)) {}
+          microfacet_(microfacet),
+          kt_(color),
+          dispersive_(ocarina::move(dispersive)),
+          flag_(flag) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
-        [[nodiscard]] const SampledWavelengths *swl() const override { return &refl_.swl(); }
+        [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
-    [[nodiscard]] Uint flag() const noexcept override { return refl_.flags() | trans_.flags(); }
+    [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
-                                                TSampler &sampler) const noexcept override;
 };
 
 SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
-    SampledSpectrum F = fresnel_->evaluate(cos_theta);
-    return F * refl_.albedo(cos_theta) + (1 - F) * trans_.albedo(cos_theta);
+    return kt_;
 }
 
-
 SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
-                                                 TSampler &sampler) const noexcept {
-    Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
+                                              TSampler &sampler) const noexcept {
+    Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
     Float d = dot(wo, wh);
     auto fresnel = fresnel_->clone();
     fresnel->correct_eta(wo.z);
@@ -64,7 +63,6 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     SampledSpectrum frs = fresnel->evaluate(abs(d));
     Float uc = sampler->next_1d();
     $if(uc < frs[0]) {
-//        wh = ocarina::select(d < 0.f, -wh, wh);
         sd.wi = reflect(wo, wh);
         sd.valid = same_hemisphere(wo, sd.wi);
     }
@@ -74,26 +72,12 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
         sd.valid = valid && !same_hemisphere(wo, sd.wi);
     };
     return sd;
-//    Float uc = sampler->next_1d();
-//    auto fresnel = fresnel_->clone();
-//    Float cos_theta_o = cos_theta(wo);
-//    fresnel->correct_eta(cos_theta_o);
-//    SampledSpectrum frs = fresnel->evaluate(abs_cos_theta(wo));
-//    Float fr = frs[0];
-//    SampledDirection ret;
-//    $if(uc < fr) {
-//        ret = refl_.sample_wi(wo, sampler->next_2d(), fresnel);
-//    }
-//    $else {
-//        ret = trans_.sample_wi(wo, sampler->next_2d(), fresnel);
-//    };
-//    return ret;
 }
 
 BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
     BSDFSample ret{*swl()};
-    Float3 wh = refl_.microfacet()->sample_wh(wo, sampler->next_2d());
+    Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
     Float d = dot(wo, wh);
     auto fresnel = fresnel_->clone();
     fresnel->correct_eta(wo.z);
@@ -104,8 +88,8 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     $if(uc < frs[0]) {
         Float3 wi = reflect(wo, wh);
         Bool valid = same_hemisphere(wi, wo);
-        SampledSpectrum fr = refl_.microfacet()->BRDF(wo, wh, wi, frs);
-        Float pdf = refl_.microfacet()->PDF_wi_reflection(wo, wh) * frs[0];
+        SampledSpectrum fr = microfacet_->BRDF(wo, wh, wi, frs);
+        Float pdf = microfacet_->PDF_wi_reflection(wo, wh) * frs[0];
         ret.eval.f = fr;
         ret.eval.pdfs = pdf * cast<uint>(valid);
         ret.wi = wi;
@@ -115,9 +99,9 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
         Float3 wi;
         wh = face_forward(wh, wo);
 
-      Bool valid = refract(wo, wh, ret.eta, &wi);
-        SampledSpectrum tr = refl_.microfacet()->BTDF(wo, wh, wi, (1- frs[0]), ret.eta) * trans_.albedo(0);
-        Float pdf = refl_.microfacet()->PDF_wi_transmission(wo, wh, wi, ret.eta) * (1 - frs[0]);
+        Bool valid = refract(wo, wh, ret.eta, &wi);
+        SampledSpectrum tr = microfacet_->BTDF(wo, wh, wi, (1 - frs[0]), ret.eta) * kt_;
+        Float pdf = microfacet_->PDF_wi_transmission(wo, wh, wi, ret.eta) * (1 - frs[0]);
         valid = valid && !same_hemisphere(wi, wo);
         ret.eval.f = tr;
         ret.eval.pdfs = pdf * cast<uint>(valid);
@@ -129,7 +113,7 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode, const Uint &flag) const noexcept {
-    ScatterEval ret{refl_.swl()};
+    ScatterEval ret{*swl()};
     auto fresnel = fresnel_->clone();
 
     Bool reflect = same_hemisphere(wo, wi);
@@ -142,43 +126,17 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
         Float3 wh = normalize(wo + wi);
         SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
         wh = face_forward(wh, make_float3(0, 0, 1));
-        SampledSpectrum fr = refl_.microfacet()->BRDF(wo, wh, wi, frs);
-        Float pdf = refl_.microfacet()->PDF_wi_reflection(wo, wh) * fr[0];
+        SampledSpectrum fr = microfacet_->BRDF(wo, wh, wi, frs);
+        Float pdf = microfacet_->PDF_wi_reflection(wo, wh) * fr[0];
         ret.f = fr;
         ret.pdfs = pdf;
     }
     $else {
         Float3 wh = normalize(wo + eta * wi);
         SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
-        SampledSpectrum tr = refl_.microfacet()->BTDF(wo, wi, (1 - frs), eta);
-        ret.f = tr * trans_.albedo(0);
-        ret.pdfs = refl_.microfacet()->PDF_wi_transmission(wo, wh, wi, eta) * (1 - frs[0]);
-    };
-    return ret;
-}
-
-
-BSDFSample DielectricBxDFSet::sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
-    BSDFSample ret{refl_.swl()};
-    Float uc = sampler->next_1d();
-    auto fresnel = fresnel_->clone();
-    Float cos_theta_o = cos_theta(wo);
-    fresnel->correct_eta(cos_theta_o);
-    Float fr = fresnel->evaluate(abs_cos_theta(wo))[0];
-    $if(uc < fr) {
-        Float3 wi = wo;
-        wi.xy() = -wi.xy();
-        ret.wi = wi;
-        ret.eval = refl_.evaluate(wo, wi, fresnel, All);
-        ret.eval.pdfs *= fr;
-    }
-    $else {
-        Float3 wi;
-        Float3 n = face_forward(make_float3(0, 0, 1), wo);
-        refract(wo, n, fresnel->eta()[0], &wi);
-        ret.eval = trans_.evaluate(wo, wi, fresnel, All);
-        ret.wi = wi;
-        ret.eval.pdfs *= 1 - fr;
+        SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - frs), eta);
+        ret.f = tr * kt_;
+        ret.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta) * (1 - frs[0]);
     };
     return ret;
 }
@@ -285,7 +243,6 @@ private:
     bool remapping_roughness_{true};
     float alpha_threshold_{0.022};
 
-//    using GlassBxDFSet = DielectricBxDFSetOld;
     using GlassBxDFSet = DielectricBxDFSet;
 
 protected:
@@ -362,8 +319,7 @@ public:
                 swl.invalidation_secondary();
             };
         }
-        return make_unique<GlassBxDFSet>(fresnel, ocarina::move(refl), ocarina::move(trans),
-                                                 is_dispersive(), flag);
+        return make_unique<DielectricBxDFSet>(fresnel, microfacet, color, is_dispersive(), flag);
     }
 };
 }// namespace vision
