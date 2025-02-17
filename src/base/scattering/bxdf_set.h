@@ -23,8 +23,8 @@ public:
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                                      MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                                     const Float3 &wh, MaterialEvalMode mode,
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh,
+                                                     const Float3 &wi, MaterialEvalMode mode,
                                                      const Uint &flag) const noexcept {
         return evaluate_local(wo, wi, mode, flag);
     }
