@@ -277,31 +277,6 @@ public:
                                                 TSampler &sampler) const noexcept override;
 };
 
-class DielectricBxDFSet : public BxDFSet {
-private:
-    DCSP<Fresnel> fresnel_;
-    DCSP<Microfacet<D>> microfacet_;
-    SampledSpectrum kt_;
-    Bool dispersive_{};
-    Uint flag_{};
-
-public:
-    DielectricBxDFSet(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &m,
-                      SampledSpectrum kt, Bool dispersive, const Uint &flag)
-        : fresnel_(fresnel), microfacet_(m), kt_(std::move(kt)),
-          dispersive_(std::move(dispersive)) {}
-    VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
-        [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
-    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
-    [[nodiscard]] Bool splittable() const noexcept override { return true; }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override;
-    [[nodiscard]] Uint flag() const noexcept override { return flag_; }
-};
-
 class WeightedBxDFSet {
 private:
     Float weight_;
