@@ -26,7 +26,7 @@ oc_bool<p> refract(oc_float3<p> wi, oc_float3<p> n, const oc_float<p> &eta, oc_f
     oc_float<p> sin_theta_t_2 = sin_theta_i_2 / ocarina::sqr(eta);
     oc_bool<p> valid = sin_theta_t_2 < 1;
 
-    oc_float<p> cos_theta_t = safe_sqrt(1 - sin_theta_t_2);
+    oc_float<p> cos_theta_t = ocarina::safe_sqrt(1 - sin_theta_t_2);
     if (wt) {
         *wt = -wi / eta + (cos_theta_i / eta - cos_theta_t) * n;
     }
