@@ -8,7 +8,7 @@
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
 #include "ltc_sheen_table.inl.h"
-#include "precomputed_table.inl.h"
+#include "base/scattering/precomputed_table.inl.h"
 
 namespace vision {
 

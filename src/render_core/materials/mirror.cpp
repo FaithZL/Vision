@@ -5,7 +5,7 @@
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
-#include "precomputed_table.inl.h"
+#include "base/scattering/precomputed_table.inl.h"
 
 namespace vision {
 
@@ -13,11 +13,7 @@ class MirrorBxDFSet : public PureReflectionBxDFSet {
 public:
     using PureReflectionBxDFSet::PureReflectionBxDFSet;
     bool compensate() const noexcept override { return true; }
-    static void prepare() {
-        MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
-                                         PixelStorage::FLOAT1,
-                                         addressof(PureReflectionBxDFSet_Table));
-    }
+
 };
 
 class MirrorMaterial : public Material {

@@ -4,6 +4,7 @@
 
 #include "bxdf_set.h"
 #include "material.h"
+#include "precomputed_table.inl.h"
 
 namespace vision {
 
@@ -282,12 +283,16 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
     return ret;
 }
 
-inline namespace precompute {
 Float PureReflectionBxDFSet::compensate_factor(const ocarina::Float3 &wo) const noexcept {
     Float alpha = bxdf()->alpha_average();
     Float ret = MaterialLut::instance().sample(lut_name, 1, make_float2(alpha, cos_theta(wo))).as_scalar();
     return 1.f / ret;
 }
-}// namespace precompute
+
+void PureReflectionBxDFSet::prepare() {
+    MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
+                                     PixelStorage::FLOAT1,
+                                     addressof(PureReflectionBxDFSet_Table));
+}
 
 }// namespace vision

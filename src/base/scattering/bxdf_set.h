@@ -220,8 +220,6 @@ public:
     void for_each(const std::function<void(WeightedBxDFSet &, uint)> &func);
 };
 
-inline namespace precompute {
-
 class PureReflectionBxDFSet : public MicrofacetBxDFSet {
 public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
@@ -229,6 +227,7 @@ public:
     static constexpr uint lut_res = 32;
     [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept;
     [[nodiscard]] virtual bool compensate() const noexcept { return false; }
+    static void prepare();
 
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
@@ -262,6 +261,5 @@ public:
     }
     /// for precompute end
 };
-}// namespace precompute
 
 }// namespace vision
