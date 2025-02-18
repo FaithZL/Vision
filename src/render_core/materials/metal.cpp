@@ -31,7 +31,7 @@ public:
 class ConductorBxDFSet : public PureReflectionBxDFSet {
 public:
     using PureReflectionBxDFSet::PureReflectionBxDFSet;
-    bool compensate() const noexcept override { return false; }
+    bool compensate() const noexcept override { return true; }
 };
 
 //    "type" : "metal",
