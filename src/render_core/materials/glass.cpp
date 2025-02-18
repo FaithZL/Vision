@@ -23,6 +23,22 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(fresnel_->type_hash());
     }
+    [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                  const SampledSpectrum &fr, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                    const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                    MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                            const SP<const Fresnel> &fresnel, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept{
+        SampledSpectrum T = 1 - F;
+        SampledSpectrum total = T * kt_ + F;
+        return F.average() / total.average();
+    }
+
+    [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept{
+        return 1 - refl_prob(F);
+    }
 
 public:
     DielectricBxDFSet(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
@@ -39,13 +55,6 @@ public:
                                              const Uint &flag) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag, Float *eta) const noexcept override;
-    [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                  const SampledSpectrum &fr, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                    const SampledSpectrum &F, const SampledSpectrum &eta,
-                                                    MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] ScatterEval evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                            const SP<const Fresnel> &fresnel, MaterialEvalMode mode) const noexcept;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
@@ -82,7 +91,7 @@ ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float
         se.f = microfacet_->BRDF(wo, wh, wi, F);
     }
     if (BxDF::match_PDF(mode)) {
-        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * F[0];
+        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * refl_prob(F);
     }
     se.flags = BxDFFlag::GlossyRefl;
     return se;
@@ -98,7 +107,7 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
         se.f = tr * kt_;
     }
     if (BxDF::match_PDF(mode)) {
-        se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * (1 - F[0]);
+        se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * trans_prob(F);
     }
     se.flags = BxDFFlag::GlossyTrans;
     return se;
@@ -130,9 +139,9 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     auto fresnel = fresnel_->clone();
     fresnel->correct_eta(wo.z);
     SampledDirection sd;
-    SampledSpectrum frs = fresnel->evaluate(abs(d));
+    SampledSpectrum F = fresnel->evaluate(abs(d));
     Float uc = sampler->next_1d();
-    $if(uc < frs[0]) {
+    $if(uc < refl_prob(F)) {
         sd.wi = reflect(wo, wh);
         sd.wh = wh;
         sd.valid = same_hemisphere(wo, sd.wi);
