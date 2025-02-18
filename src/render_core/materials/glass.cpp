@@ -41,8 +41,11 @@ public:
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                   const SampledSpectrum &fr, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &F,
-                                                    const SampledSpectrum &eta, MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                    const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                    MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                            const SP<const Fresnel> &fresnel, MaterialEvalMode mode) const noexcept;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
@@ -51,7 +54,25 @@ public:
 };
 
 SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
-    return kt_;
+    SP<Fresnel> fresnel = fresnel_->clone();
+    fresnel->correct_eta(cos_theta);
+    SampledSpectrum eta = fresnel->eta();
+    SampledSpectrum F = fresnel->evaluate(abs(cos_theta));
+    return kt_ * (1 - F) + F;
+}
+
+ScatterEval DielectricBxDFSet::evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                             const SP<const Fresnel> &fresnel, MaterialEvalMode mode) const noexcept {
+    ScatterEval ret{*swl()};
+    Bool reflect = same_hemisphere(wo, wi);
+    SampledSpectrum F = fresnel->evaluate(abs_dot(wh, wo));
+    $if(reflect) {
+        ret = evaluate_reflection(wo, wh, wi, F, mode);
+    }
+    $else {
+        ret = evaluate_transmission(wo, wh, wi, F, fresnel->eta(), mode);
+    };
+    return ret;
 }
 
 ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
@@ -67,8 +88,9 @@ ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float
     return se;
 }
 
-ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &F,
-                                                     const SampledSpectrum &eta, MaterialEvalMode mode) const noexcept {
+ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                     MaterialEvalMode mode) const noexcept {
     ScatterEval se{*swl()};
     Float3 new_wh = face_forward(wh, wo);
     if (BxDF::match_F(mode)) {
@@ -84,37 +106,20 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode, const Uint &flag) const noexcept {
-    ScatterEval ret{*swl()};
-    auto fresnel = fresnel_->clone();
-    Bool reflect = same_hemisphere(wo, wi);
+    SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta(wo));
+    Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
     Float3 wh = normalize(wo + eta_p * wi);
-    SampledSpectrum F = fresnel->evaluate(abs_dot(wh, wo));
-    $if(reflect) {
-        ret = evaluate_reflection(wo, wh, wi, F, mode);
-    }
-    $else {
-        ret = evaluate_transmission(wo, wh, wi, F, fresnel->eta(), mode);
-    };
-    return ret;
+    return evaluate_impl(wo, wh, wi, fresnel, mode);
 }
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh,
                                               const Float3 &wi, MaterialEvalMode mode,
                                               const Uint &flag) const noexcept {
-    ScatterEval ret{*swl()};
-    auto fresnel = fresnel_->clone();
-    Bool reflect = same_hemisphere(wo, wi);
+    SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta(wo));
-    SampledSpectrum F = fresnel->evaluate(abs_dot(wh, wo));
-    $if(reflect) {
-        ret = evaluate_reflection(wo, wh, wi, F, mode);
-    }
-    $else {
-        ret = evaluate_transmission(wo, wh, wi, F, fresnel->eta(), mode);
-    };
-    return ret;
+    return evaluate_impl(wo, wh, wi, fresnel, mode);
 }
 
 SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
