@@ -66,9 +66,10 @@ ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float
 ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &F,
                                                      const SampledSpectrum &eta, MaterialEvalMode mode) const noexcept {
     ScatterEval se{*swl()};
+    Float3 new_wh = face_forward(wh, wo);
     SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - F), eta[0]);
     se.f = tr * kt_;
-    se.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta[0]) * (1 - F[0]);
+    se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * (1 - F[0]);
     se.flags = BxDFFlag::GlossyTrans;
     return se;
 }
@@ -115,6 +116,10 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
 BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
     BSDFSample ret{*swl()};
+//    auto sd = sample_wi(wo, flag, sampler);
+//    ret.wi = sd.wi;
+//    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag);
+//    return ret;
     Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
     Float d = dot(wo, wh);
     auto fresnel = fresnel_->clone();
