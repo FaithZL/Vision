@@ -99,16 +99,16 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     fresnel->correct_eta(wo.z);
     SampledDirection sd;
     SampledSpectrum frs = fresnel->evaluate(abs(d));
-    wh = face_forward(wh, wo);
     Float uc = sampler->next_1d();
     $if(uc < frs[0]) {
         sd.wi = reflect(wo, wh);
         sd.wh = wh;
+        sd.valid = same_hemisphere(wo, sd.wi);
     }
     $else {
         Float eta = fresnel->eta()[0];
         Bool valid = refract(wo, wh, eta, &sd.wi);
-        sd.valid = valid;
+        sd.valid = valid && !same_hemisphere(wo, sd.wi);;
         sd.wh = wh;
     };
     return sd;
@@ -117,17 +117,26 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
 BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
     BSDFSample ret{*swl()};
-    Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
+    SampledDirection sd = sample_wi(wo, flag, sampler);
+    Float3 wh = sd.wh;
     Float d = dot(wo, wh);
     auto fresnel = fresnel_->clone();
     fresnel->correct_eta(wo.z);
     SampledSpectrum frs = fresnel->evaluate(abs(d));
     Float uc = sampler->next_1d();
+//    Float3 wi = sd.wi;
+    Bool refl = uc < frs[0];
+    refl = same_hemisphere(sd.wi, wo);
+
     ret.eta = fresnel->eta()[0];
-    $if(uc < frs[0]) {
+
+
+    $if(refl) {
         Float3 wi = reflect(wo, wh);
+//        $info_if(any(sd.wi != wi), "sd {} {} {}, ret {} {} {}, wo {} {} {}", sd.wi, wi, wo);
         ret.eval = evaluate_reflection(wo, wh, wi, frs, MaterialEvalMode::All);
         ret.wi = wi;
+
     }
     $else {
         Float3 wi;
@@ -135,6 +144,8 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
         ret.eval = evaluate_transmission(wo, wh, wi, frs, fresnel->eta(), MaterialEvalMode::All);
         ret.wi = wi;
     };
+
+
     return ret;
 }
 
