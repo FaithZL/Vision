@@ -202,9 +202,10 @@ public:
     VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode,
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                             MaterialEvalMode mode, const Uint &flag) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
