@@ -30,13 +30,13 @@ protected:
                                                     MaterialEvalMode mode) const noexcept;
     [[nodiscard]] ScatterEval evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                             const SP<const Fresnel> &fresnel, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept{
+    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept {
         SampledSpectrum T = 1 - F;
         SampledSpectrum total = T * kt_ + F;
         return F.average() / total.average();
     }
 
-    [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept{
+    [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept {
         return 1 - refl_prob(F);
     }
 
@@ -262,10 +262,8 @@ private:
     bool remapping_roughness_{true};
     float alpha_threshold_{0.022};
 
-    using GlassBxDFSet = DielectricBxDFSet;
-
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(GlassBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSet)
 
 public:
     GlassMaterial() = default;
@@ -303,8 +301,8 @@ public:
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }
-
     void prepare() noexcept override { ior_->prepare(); }
+    
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);
@@ -321,13 +319,6 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y,
                                                      MaterialRegistry::instance().sample_visible());
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
-        MicrofacetReflection refl(SampledSpectrum::one(swl.dimension()), swl, microfacet);
-        MicrofacetTransmission trans(color, swl, microfacet);
-        if (is_dispersive()) {
-            $if(alpha_min < 0.008f) {
-                swl.invalidation_secondary();
-            };
-        }
         return make_unique<DielectricBxDFSet>(fresnel, microfacet, color, is_dispersive(), flag);
     }
 };

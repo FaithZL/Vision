@@ -263,8 +263,9 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, con
         ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, eta);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.weight();
-        ret.flags = ret.flags | lobe->flag();
+        ret.flags = ret.flags | se.flags;
     });
+
     return ret;
 }
 
@@ -275,7 +276,7 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
         ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.weight();
-        ret.flags = ret.flags | lobe->flag();
+        ret.flags = ret.flags | se.flags;
     });
     return ret;
 }
