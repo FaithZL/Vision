@@ -148,13 +148,12 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
 
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
     Float3 wh = normalize(wo + eta_p * wi);
+    SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
     $if(reflect) {
-        SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
         ret = evaluate_reflection(wo, wh, wi, frs, mode);
     }
     $else {
-        SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
-        ret.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta_p) * (1 - frs[0]);
+        ret = evaluate_transmission(wo, wh, wi, frs, fresnel->eta(), mode);
     };
     return ret;
 }
