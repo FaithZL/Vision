@@ -32,11 +32,6 @@ class ConductorBxDFSet : public PureReflectionBxDFSet {
 public:
     using PureReflectionBxDFSet::PureReflectionBxDFSet;
     bool compensate() const noexcept override { return false; }
-    static void prepare() {
-        MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
-                                         PixelStorage::FLOAT1,
-                                         addressof(PureReflectionBxDFSet_Table));
-    }
 };
 
 //    "type" : "metal",
@@ -135,6 +130,7 @@ public:
     void prepare() noexcept override {
         eta_->prepare();
         k_->prepare();
+        ConductorBxDFSet::prepare();
     }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
