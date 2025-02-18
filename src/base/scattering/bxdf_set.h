@@ -25,7 +25,8 @@ public:
                                                      const Uint &flag) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh,
                                                      const Float3 &wi, MaterialEvalMode mode,
-                                                     const Uint &flag) const noexcept {
+                                                     const Uint &flag,
+                                                     Float *eta) const noexcept {
         return evaluate_local(wo, wi, mode, flag);
     }
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
@@ -205,7 +206,8 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag) const noexcept override;
+                                             MaterialEvalMode mode, const Uint &flag,
+                                             Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;

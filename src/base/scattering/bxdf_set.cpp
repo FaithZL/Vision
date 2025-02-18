@@ -34,8 +34,8 @@ BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
-    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
-    ret.eval.pdfs = ret.eval.pdf() * sd.factor();
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta));
+    ret.eval.pdfs *= sd.factor();
     return ret;
 }
 
@@ -242,7 +242,7 @@ BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                       TSampler &sampler) const noexcept {
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag);
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta));
     ret.wi = sd.wi;
     ret.eval.pdfs = ret.eval.pdfs * sd.factor();
     return ret;
@@ -257,10 +257,10 @@ Uint MultiBxDFSet::flag() const noexcept {
 }
 
 ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                         MaterialEvalMode mode, const Uint &flag) const noexcept {
+                                         MaterialEvalMode mode, const Uint &flag, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
     for_each([&](const WeightedBxDFSet &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag);
+        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, eta);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.weight();
         ret.flags = ret.flags | lobe->flag();

@@ -38,7 +38,7 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag) const noexcept override;
+                                             MaterialEvalMode mode, const Uint &flag, Float *eta) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                   const SampledSpectrum &fr, MaterialEvalMode mode) const noexcept;
     [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
@@ -116,9 +116,10 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh,
                                               const Float3 &wi, MaterialEvalMode mode,
-                                              const Uint &flag) const noexcept {
+                                              const Uint &flag, Float *eta) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta(wo));
+    if (eta) { *eta = fresnel->eta()[0]; }
     return evaluate_impl(wo, wh, wi, fresnel, mode);
 }
 
@@ -147,15 +148,7 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
 
 BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
-    BSDFSample ret{*swl()};
-    SampledDirection sd = sample_wi(wo, flag, sampler);
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag);
-    ret.eval.pdfs *= sd.factor();
-    auto fresnel = fresnel_->clone();
-    fresnel->correct_eta(wo.z);
-    ret.eta = fresnel->eta()[0];
-    ret.wi = sd.wi;
-    return ret;
+    return BxDFSet::sample_local(wo, flag, sampler);
 }
 
 class IORCurve {
