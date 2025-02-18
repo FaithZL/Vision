@@ -182,7 +182,7 @@
             }
         },
         {
-            "type": "null",
+            "type": "black_body",
             "name": "Black",
             "param": { }
         }

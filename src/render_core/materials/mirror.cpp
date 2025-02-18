@@ -9,64 +9,29 @@
 
 namespace vision {
 
-class MirrorBxDFSet : public MicrofacetBxDFSet {
-private:
-    bool compensate_{true};
-
+class MirrorBxDFSet : public PureReflectionBxDFSet {
 public:
-    using MicrofacetBxDFSet::MicrofacetBxDFSet;
-
-    static constexpr const char *lut_name = "MirrorBxDFSet::lut";
-    static constexpr uint lut_res = 32;
-
-    [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept {
-        Float alpha = bxdf()->alpha_average();
-        Float ret = MaterialLut::instance().sample(lut_name, 1, make_float2(alpha, cos_theta(wo))).as_scalar();
-        return 1.f / ret;
-    }
-
+    using PureReflectionBxDFSet::PureReflectionBxDFSet;
+    
     static void prepare() {
         MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
                                          PixelStorage::FLOAT1,
-                                         addressof(MirrorBxDFSet_Table));
-    }
-
-    SampledSpectrum albedo(const ocarina::Float &cos_theta) const noexcept override {
-        return bxdf()->albedo(cos_theta);
+                                         addressof(PureReflectionBxDFSet_Table));
     }
 
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler) const noexcept override {
-        BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler);
-        if (compensate_) {
-            bs.eval.f *= compensate_factor(wo);
-        }
+        BSDFSample bs = PureReflectionBxDFSet::sample_local(wo, flag, sampler);
+        bs.eval.f *= compensate_factor(wo);
         return bs;
     }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override {
-        ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag);
-        if(compensate_) {
-            se.f *= compensate_factor(wo);
-        }
+        ScatterEval se = PureReflectionBxDFSet::evaluate_local(wo, wi, mode, flag);
+        se.f *= compensate_factor(wo);
         return se;
     }
-
-    /// for precompute begin
-    static constexpr const char *name = "MirrorBxDFSet";
-    static UP<MirrorBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
-        SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
-        UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
-        auto ret = make_unique<MirrorBxDFSet>(fresnel, std::move(bxdf));
-        ret->compensate_ = false;
-        return ret;
-    }
-    void from_ratio_z(ocarina::Float z) noexcept override {
-        // empty
-    }
-    /// for precompute end
 };
 
 class MirrorMaterial : public Material {
@@ -102,7 +67,7 @@ public:
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-        ret.push_back(precompute_lobe<MirrorBxDFSet>(make_uint3(uint2(MirrorBxDFSet::lut_res), 1u)));
+        ret.push_back(precompute_lobe<PureReflectionBxDFSet>(make_uint3(uint2(PureReflectionBxDFSet::lut_res), 1u)));
         return ret;
     }
 

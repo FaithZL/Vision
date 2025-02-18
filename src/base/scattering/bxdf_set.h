@@ -203,7 +203,7 @@ public:
     VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
@@ -219,5 +219,30 @@ public:
     void for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const;
     void for_each(const std::function<void(WeightedBxDFSet &, uint)> &func);
 };
+
+inline namespace precompute {
+
+class PureReflectionBxDFSet : public MicrofacetBxDFSet {
+public:
+    using MicrofacetBxDFSet::MicrofacetBxDFSet;
+    static constexpr const char *lut_name = "PureReflectionBxDFSet::lut";
+    static constexpr uint lut_res = 32;
+    [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept;
+
+    /// for precompute begin
+    static constexpr const char *name = "PureReflectionBxDFSet";
+    static UP<PureReflectionBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
+        UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
+        auto ret = make_unique<PureReflectionBxDFSet>(fresnel, std::move(bxdf));
+        return ret;
+    }
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        // empty
+    }
+    /// for precompute end
+};
+}// namespace precompute
 
 }// namespace vision
