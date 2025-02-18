@@ -118,34 +118,12 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler) const noexcept {
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
-    Float3 wh = sd.wh;
-    Float d = dot(wo, wh);
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag);
+    ret.eval.pdfs *= sd.factor();
     auto fresnel = fresnel_->clone();
     fresnel->correct_eta(wo.z);
-    SampledSpectrum frs = fresnel->evaluate(abs(d));
-    Float uc = sampler->next_1d();
-//    Float3 wi = sd.wi;
-    Bool refl = uc < frs[0];
-    refl = same_hemisphere(sd.wi, wo);
-
     ret.eta = fresnel->eta()[0];
-
-
-    $if(refl) {
-        Float3 wi = reflect(wo, wh);
-//        $info_if(any(sd.wi != wi), "sd {} {} {}, ret {} {} {}, wo {} {} {}", sd.wi, wi, wo);
-        ret.eval = evaluate_reflection(wo, wh, wi, frs, MaterialEvalMode::All);
-        ret.wi = wi;
-
-    }
-    $else {
-        Float3 wi;
-        Bool valid = refract(wo, wh, ret.eta, &wi);
-        ret.eval = evaluate_transmission(wo, wh, wi, frs, fresnel->eta(), MaterialEvalMode::All);
-        ret.wi = wi;
-    };
-
-
+    ret.wi = sd.wi;
     return ret;
 }
 
