@@ -3,7 +3,7 @@
 //
 
 #include <utility>
-
+#include "precomputed_table.inl.h"
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
@@ -28,9 +28,15 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
-class ConductorBxDFSet : public MicrofacetBxDFSet {
+class ConductorBxDFSet : public PureReflectionBxDFSet {
 public:
-    using MicrofacetBxDFSet::MicrofacetBxDFSet;
+    using PureReflectionBxDFSet::PureReflectionBxDFSet;
+    bool compensate() const noexcept override { return false; }
+    static void prepare() {
+        MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
+                                         PixelStorage::FLOAT1,
+                                         addressof(PureReflectionBxDFSet_Table));
+    }
 };
 
 //    "type" : "metal",

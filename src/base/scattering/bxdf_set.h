@@ -228,6 +228,25 @@ public:
     static constexpr const char *lut_name = "PureReflectionBxDFSet::lut";
     static constexpr uint lut_res = 32;
     [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept;
+    [[nodiscard]] virtual bool compensate() const noexcept { return false; }
+
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler) const noexcept override {
+        BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler);
+        if (compensate()) {
+            bs.eval.f *= compensate_factor(wo);
+        }
+        return bs;
+    }
+
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag) const noexcept override {
+        ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag);
+        if (compensate()) {
+            se.f *= compensate_factor(wo);
+        }
+        return se;
+    }
 
     /// for precompute begin
     static constexpr const char *name = "PureReflectionBxDFSet";

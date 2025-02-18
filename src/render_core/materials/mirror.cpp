@@ -12,25 +12,11 @@ namespace vision {
 class MirrorBxDFSet : public PureReflectionBxDFSet {
 public:
     using PureReflectionBxDFSet::PureReflectionBxDFSet;
-    
+    bool compensate() const noexcept override { return true; }
     static void prepare() {
         MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
                                          PixelStorage::FLOAT1,
                                          addressof(PureReflectionBxDFSet_Table));
-    }
-
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override {
-        BSDFSample bs = PureReflectionBxDFSet::sample_local(wo, flag, sampler);
-        bs.eval.f *= compensate_factor(wo);
-        return bs;
-    }
-
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override {
-        ScatterEval se = PureReflectionBxDFSet::evaluate_local(wo, wi, mode, flag);
-        se.f *= compensate_factor(wo);
-        return se;
     }
 };
 
