@@ -57,8 +57,12 @@ SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept
 ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                    const SampledSpectrum &F, MaterialEvalMode mode) const noexcept {
     ScatterEval se{*swl()};
-    se.f = microfacet_->BRDF(wo, wh, wi, F);
-    se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * F[0];
+    if (BxDF::match_F(mode)) {
+        se.f = microfacet_->BRDF(wo, wh, wi, F);
+    }
+    if (BxDF::match_PDF(mode)) {
+        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * F[0];
+    }
     se.flags = BxDFFlag::GlossyRefl;
     return se;
 }
@@ -67,9 +71,13 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
                                                      const SampledSpectrum &eta, MaterialEvalMode mode) const noexcept {
     ScatterEval se{*swl()};
     Float3 new_wh = face_forward(wh, wo);
-    SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - F), eta[0]);
-    se.f = tr * kt_;
-    se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * (1 - F[0]);
+    if (BxDF::match_F(mode)) {
+        SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - F), eta[0]);
+        se.f = tr * kt_;
+    }
+    if (BxDF::match_PDF(mode)) {
+        se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * (1 - F[0]);
+    }
     se.flags = BxDFFlag::GlossyTrans;
     return se;
 }
@@ -127,7 +135,6 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
         Float eta = fresnel->eta()[0];
         Bool valid = refract(wo, wh, eta, &sd.wi);
         sd.valid = valid && !same_hemisphere(wo, sd.wi);
-        ;
         sd.wh = wh;
     };
     return sd;
