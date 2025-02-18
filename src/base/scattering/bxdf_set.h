@@ -18,6 +18,10 @@ namespace vision {
 
 struct BxDFSet : public ocarina::Hashable {
 public:
+    static constexpr float alpha_lower = 0.001f;
+    static constexpr float alpha_upper = 1.f;
+
+public:
     BxDFSet() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
@@ -70,8 +74,6 @@ class MicrofacetBxDFSet : public BxDFSet {
 protected:
     DCSP<Fresnel> fresnel_;
     DCUP<MicrofacetBxDF> bxdf_;
-    static constexpr float alpha_lower = 0.001f;
-    static constexpr float alpha_upper = 1.f;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
