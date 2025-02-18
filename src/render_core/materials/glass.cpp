@@ -41,7 +41,7 @@ public:
                                              MaterialEvalMode mode, const Uint &flag) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                   const SampledSpectrum &fr, MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+    [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &F,
                                                     const SampledSpectrum &eta, MaterialEvalMode mode) const noexcept;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
@@ -63,6 +63,16 @@ ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float
     return se;
 }
 
+ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi, const SampledSpectrum &F,
+                                                     const SampledSpectrum &eta, MaterialEvalMode mode) const noexcept {
+    ScatterEval se{*swl()};
+    SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - F), eta[0]);
+    se.f = tr * kt_;
+    se.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta[0]) * (1 - F[0]);
+    se.flags = BxDFFlag::GlossyTrans;
+    return se;
+}
+
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh,
                                               const Float3 &wi, MaterialEvalMode mode,
                                               const Uint &flag) const noexcept {
@@ -70,17 +80,12 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh
     auto fresnel = fresnel_->clone();
     Bool reflect = same_hemisphere(wo, wi);
     fresnel->correct_eta(cos_theta(wo));
-    Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
+    SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
     $if(reflect) {
-        SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
         ret = evaluate_reflection(wo, wh, wi, frs, mode);
     }
     $else {
-        SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
-        SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - frs), eta_p);
-        ret.f = tr * kt_;
-        ret.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta_p) * (1 - frs[0]);
-        ret.flags = BxDFFlag::GlossyTrans;
+        ret = evaluate_transmission(wo, wh, wi, frs, fresnel->eta(), mode);
     };
     return ret;
 }
@@ -125,14 +130,9 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     $else {
         Float3 wi;
         wh = face_forward(wh, wo);
-
         Bool valid = refract(wo, wh, ret.eta, &wi);
-        SampledSpectrum tr = microfacet_->BTDF(wo, wh, wi, (1 - frs[0]), ret.eta) * kt_;
-        Float pdf = microfacet_->PDF_wi_transmission(wo, wh, wi, ret.eta) * (1 - frs[0]);
-        ret.eval.f = tr;
-        ret.eval.pdfs = pdf * cast<uint>(valid);
+        ret.eval = evaluate_transmission(wo, wh, wi, frs, fresnel->eta(), MaterialEvalMode::All);
         ret.wi = wi;
-        ret.eval.flags = BxDFFlag::GlossyTrans;
     };
     return ret;
 }
@@ -154,8 +154,6 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
     }
     $else {
         SampledSpectrum frs = fresnel->evaluate(abs_dot(wh, wo));
-        SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - frs), eta_p);
-        ret.f = tr * kt_;
         ret.pdfs = microfacet_->PDF_wi_transmission(wo, wh, wi, eta_p) * (1 - frs[0]);
     };
     return ret;
@@ -310,7 +308,7 @@ public:
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);
 
-        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.01f, 1.f);
         Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
