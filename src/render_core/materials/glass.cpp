@@ -12,6 +12,10 @@
 namespace vision {
 
 class DielectricBxDFSet : public BxDFSet {
+public:
+    static constexpr float ior_lower = 1.003;
+    static constexpr float ior_upper = 5.f;
+
 private:
     DCSP<Fresnel> fresnel_;
     Bool dispersive_{};
@@ -297,12 +301,12 @@ public:
             eta_slot = desc.slot("", ior);
         }
         ior_ = Slot::create_slot(eta_slot);
-        ior_->set_range(1.003, 3.f);
+        ior_->set_range(DielectricBxDFSet::ior_lower, DielectricBxDFSet::ior_upper);
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }
     void prepare() noexcept override { ior_->prepare(); }
-    
+
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);
