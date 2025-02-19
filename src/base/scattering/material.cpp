@@ -330,8 +330,11 @@ string PrecomputedLobeTable::to_string() const noexcept {
     auto func = [&]<typename T>(T t) {
         for (uint i = 0; i < data.size(); i += dim) {
             T elm = T(addressof(data[i]));
-            content << (i % line_len == 0 ? "\n\t" : "");
-            content << to_str(elm) << (i / dim == data.size() / dim - 1 ? "\n" : ", ");
+            content << (i %( line_len * dim) == 0 ? "\n\t" : "");
+            content << to_str(elm) << ((i / dim) == (data.size() / dim - 1) ? "\n" : ", ");
+            if ((i / dim+ 1) % (area) == 0) {
+                content << endl;
+            }
         }
     };
 

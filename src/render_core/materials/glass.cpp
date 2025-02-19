@@ -79,32 +79,32 @@ public:
         fresnel_->set_eta(SampledSpectrum(*swl(), ior));
     }
 
-   void from_ratio_x(const ocarina::Float &x) noexcept override {
-       microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
-       microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
-   }
+    void from_ratio_x(const ocarina::Float &x) noexcept override {
+        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
+        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
+    }
 
-   SampledSpectrum precompute_albedo(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept override {
-       SampledSpectrum ret = SampledSpectrum::zero(3);
-       Uint count = 0;
-       $for(i, sample_num) {
-           BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
-           ScatterEval se = bs.eval;
-           $if(se.pdf() > 0) {
-               auto r = se.throughput() * abs_cos_theta(bs.wi);
-               ret += r;
-               count += 1;
-           };
-       };
-       return ret / count;
-   }
+    SampledSpectrum precompute_albedo(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept override {
+        SampledSpectrum ret = SampledSpectrum::zero(3);
+        Uint count = 0;
+        $for(i, sample_num) {
+            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
+            ScatterEval se = bs.eval;
+            $if(se.pdf() > 0) {
+                auto r = se.throughput() * abs_cos_theta(bs.wi);
+                ret += r;
+                count += 1;
+            };
+        };
+        return ret / count;
+    }
     /// for precompute end
 
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
         return inverse_lerp(ior, ior_lower, ior_upper);
     }
-    Float to_ratio_x() const noexcept override{
+    Float to_ratio_x() const noexcept override {
         Float ax = microfacet_->alpha_x();
         Float ay = microfacet_->alpha_y();
         return ocarina::clamp(ocarina::sqrt(ax * ay), alpha_lower, alpha_upper);
