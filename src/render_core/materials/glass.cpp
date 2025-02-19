@@ -76,12 +76,12 @@ public:
     static constexpr const char *name = "DielectricBxDFSet";
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = lerp(z, ior_lower, ior_upper);
-        fresnel_->set_eta(SampledSpectrum(*swl(), 1.5f));
+        fresnel_->set_eta(SampledSpectrum(*swl(), ior));
     }
 
    void from_ratio_x(const ocarina::Float &x) noexcept override {
-       microfacet_->set_alpha_x(0.001f);
-       microfacet_->set_alpha_y(0.001f);
+       microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
+       microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
    }
 
    SampledSpectrum precompute_albedo(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept override {
@@ -96,7 +96,7 @@ public:
                count += 1;
            };
        };
-       return ret / sample_num;
+       return ret / count;
    }
     /// for precompute end
 
@@ -153,7 +153,7 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
     Float3 new_wh = face_forward(wh, wo);
     if (BxDF::match_F(mode)) {
         SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - F), eta[0]);
-        se.f = tr * kt_;
+        se.f = tr * kt_ * sqr(eta);
     }
     if (BxDF::match_PDF(mode)) {
         se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * trans_prob(F);
@@ -338,7 +338,6 @@ public:
             sampler->start(dispatch_idx().xy(), 0, 0);
             SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-//            ratio.y = 0.5f;
             UP<TLobe> lobe = TLobe::create_for_precompute(swl);
             Float result = lobe->precompute_with_radio(ratio, sampler, sample_num).average();
             buffer.write(dispatch_id(), result);
@@ -346,7 +345,7 @@ public:
 
         PrecomputedLobeTable ret;
         ret.name = TLobe::name;
-        ret.type = Type::of<float>();
+        ret.type = Type::of<float2>();
         ret.data.resize(buffer.size());
         ret.res = res;
         Clock clk;
