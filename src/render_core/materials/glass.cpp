@@ -84,19 +84,41 @@ public:
         microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
     }
 
-    SampledSpectrum precompute_albedo(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept override {
-        SampledSpectrum ret = SampledSpectrum::zero(3);
+    Float4 precompute_with_radio2(const ocarina::Float3 &ratio, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept {
+        from_ratio_x(ratio.x);
+        Float3 wo = from_ratio_y(ratio.y);
+        from_ratio_z(ratio.z);
+        return precompute_albedo1(wo, sampler, sample_num);
+    }
+
+    Float4 precompute_albedo1(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept {
+//        SampledSpectrum ret = SampledSpectrum::zero(3);
+        Float4 ret;
         Uint count = 0;
+        Float reflection = 0;
+        Float trans = 0;
+        Float total = 0;
+
         $for(i, sample_num) {
             BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
             ScatterEval se = bs.eval;
             $if(se.pdf() > 0) {
                 auto r = se.throughput() * abs_cos_theta(bs.wi);
-                ret += r;
                 count += 1;
+                total += r.average();
+
+                $if(same_hemisphere(wo, bs.wi)) {
+                    reflection += r.average();
+                } $else {
+                    trans += r.average();
+                };
             };
         };
-        return ret / count;
+        Float fr = fresnel_->evaluate(cos_theta(wo), 0);
+        ret = make_float4(total, reflection, trans, 0.f);
+        ret = ret / sample_num;
+        ret.w = fr;
+        return ret;
     }
     /// for precompute end
 
@@ -331,7 +353,7 @@ public:
         Stream stream = device.create_stream();
         TSampler &sampler = get_sampler();
 
-        Buffer<float> buffer = device.create_buffer<float>(res.x * res.y * res.z);
+        Buffer<float4> buffer = device.create_buffer<float4>(res.x * res.y * res.z);
 
         Kernel kernel = [&](Uint sample_num) {
             sampler->load_data();
@@ -339,14 +361,14 @@ public:
             SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
             UP<TLobe> lobe = TLobe::create_for_precompute(swl);
-            Float result = lobe->precompute_with_radio(ratio, sampler, sample_num).average();
+            Float4 result = lobe->precompute_with_radio2(ratio, sampler, sample_num);
             buffer.write(dispatch_id(), result);
         };
 
         PrecomputedLobeTable ret;
         ret.name = TLobe::name;
-        ret.type = Type::of<float2>();
-        ret.data.resize(buffer.size());
+        ret.type = Type::of<float4>();
+        ret.data.resize(buffer.size() * ret.type->dimension());
         ret.res = res;
         Clock clk;
         clk.start();
