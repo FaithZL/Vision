@@ -115,9 +115,10 @@ public:
             };
         };
         Float fr = fresnel_->evaluate(cos_theta(wo), 0);
-        ret = make_float4(total, reflection, trans, 0.f);
-        ret = ret / sample_num;
-        ret.w = fr;
+        total /= count;
+        reflection /= count;
+        trans /= count;
+        ret = make_float4(total, reflection, reflection / total, fr);
         return ret;
     }
     /// for precompute end
