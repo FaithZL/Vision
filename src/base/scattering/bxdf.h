@@ -151,40 +151,6 @@ public:
                                     SP<Fresnel> fresnel) const noexcept override;
 };
 
-class MicrofacetTransmission : public MicrofacetBxDF {
-private:
-    SampledSpectrum kt_;
-
-public:
-    VS_MAKE_BxDF_ASSIGNMENT(MicrofacetTransmission)
-        MicrofacetTransmission() = default;
-    MicrofacetTransmission(SampledSpectrum color, const SampledWavelengths &swl, const SP<Microfacet<D>> &m)
-        : MicrofacetBxDF(m, BxDFFlag::GlossyTrans, swl), kt_(std::move(color)) {}
-    [[nodiscard]] Bool valid(const Float3 &wo, const Float3 &wi,
-                             const Float3 &wh) const noexcept override;
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return kt_; }
-    [[nodiscard]] Float BTDF(const Float3 &wo, const Float3 &wi,
-                             SP<Fresnel> fresnel, uint channel) const noexcept;
-    [[nodiscard]] SampledSpectrum BTDF(const Float3 &wo, const Float3 &wi,
-                                       SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
-                                    SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] SampledSpectrum f_array(const Float3 &wo, const Float3 &wi,
-                                          SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi,
-                            SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,
-                            uint channel) const noexcept;
-    [[nodiscard]] float_array PDF_array(const Float3 &wo, const Float3 &wi,
-                                        SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u,
-                                             SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler,
-                                    SP<Fresnel> fresnel) const noexcept override;
-    [[nodiscard]] ScatterEval safe_evaluate(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,
-                                            MaterialEvalMode mode) const noexcept override;
-};
-
 class OrenNayar : public BxDF {
 private:
     SampledSpectrum R_;
