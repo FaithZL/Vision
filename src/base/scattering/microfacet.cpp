@@ -164,15 +164,18 @@ template<EPort p>
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
     oc_float<p> numerator = bsdf_D<p>(wh, alpha_x, alpha_y, type) * bsdf_G<p>(wo, wi, alpha_x, alpha_y, type) *
-                            abs(dot(wi, wh) * dot(wo, wh));
-    oc_float<p> denom = sqr(dot(wi, wh) * eta + dot(wo, wh)) * abs(cos_theta_i * cos_theta_o);
+                            ocarina::abs(dot(wi, wh) * dot(wo, wh));
+    oc_float<p> denom = ocarina::sqr(dot(wi, wh) * eta + dot(wo, wh)) * ocarina::abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
-    oc_float<p> factor = rcp(sqr(eta));
+    oc_float<p> factor = ocarina::rcp(ocarina::sqr(eta));
     return ft * factor;
 }
 template oc_float<D> BTDF_div_ft<D>(const oc_float3<D> &wo, const oc_float3<D> &wh, const oc_float3<D> &wi,
                                     const oc_float<D> &eta, const oc_float<D> &alpha_x,
                                     const oc_float<D> &alpha_y, MicrofacetType type);
+template oc_float<H> BTDF_div_ft<H>(const oc_float3<H> &wo, const oc_float3<H> &wh, const oc_float3<H> &wi,
+                                    const oc_float<H> &eta, const oc_float<H> &alpha_x,
+                                    const oc_float<H> &alpha_y, MicrofacetType type);
 
 }// namespace microfacet
 
@@ -204,7 +207,7 @@ Float GGXMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
         return microfacet::PDF_wh<D>(wo, wh, ax, ay, false, type);
     };
     static CALLABLE_TYPE impl_visible = [](const Float3 &wo, const Float3 &wh,
-                                                  Float ax, Float ay) {
+                                           Float ax, Float ay) {
         return microfacet::PDF_wh<D>(wo, wh, ax, ay, true, type);
     };
 
