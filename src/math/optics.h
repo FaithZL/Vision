@@ -12,6 +12,11 @@
 namespace vision {
 using namespace ocarina;
 
+enum TransportMode {
+    Radiance,
+    Importance
+};
+
 inline namespace optics {
 template<typename T>
 requires ocarina::is_vector3_v<expr_value_t<T>>
