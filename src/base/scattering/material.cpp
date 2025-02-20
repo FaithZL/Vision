@@ -39,19 +39,21 @@ const RegistrableTexture &MaterialLut::get_lut(const std::string &name) const no
 
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode,
-                                              const Uint &flag) const noexcept {
+                                              const Uint &flag,
+                                              TransportMode tm) const noexcept {
     ScatterEval ret{*swl_};
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->evaluate_local(wo, wi, mode, flag);
+        ret = lobe_set->evaluate_local(wo, wi, mode, flag, tm);
     });
     return ret;
 }
 
 BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
-                                           TSampler &sampler) const noexcept {
+                                           TSampler &sampler,
+                                           TransportMode tm) const noexcept {
     BSDFSample ret{*swl_};
     dispatch([&](const BxDFSet *lobe_set) {
-        ret = lobe_set->sample_local(wo, flag, sampler);
+        ret = lobe_set->sample_local(wo, flag, sampler, tm);
     });
     return ret;
 }
@@ -111,11 +113,11 @@ Uint MaterialEvaluator::flag() const noexcept {
 }
 
 ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
-                                        MaterialEvalMode mode,
-                                        const Uint &flag) const noexcept {
+                                        MaterialEvalMode mode, const Uint &flag,
+                                        TransportMode tm) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
     Float3 wi = shading_frame_.to_local(world_wi);
-    ScatterEval ret = evaluate_local(wo, wi, mode, flag);
+    ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
     Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
     ret.pdfs = select(discard, 0.f, ret.pdfs);
     ret.f *= abs_cos_theta(wi);
@@ -132,9 +134,10 @@ BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo,
 }
 
 BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
-                                     const Uint &flag) const noexcept {
+                                     const Uint &flag,
+                                     TransportMode tm) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
-    BSDFSample ret = sample_local(wo, flag, sampler);
+    BSDFSample ret = sample_local(wo, flag, sampler, tm);
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame_.to_world(ret.wi);
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
@@ -330,9 +333,9 @@ string PrecomputedLobeTable::to_string() const noexcept {
     auto func = [&]<typename T>(T t) {
         for (uint i = 0; i < data.size(); i += dim) {
             T elm = T(addressof(data[i]));
-            content << (i %( line_len * dim) == 0 ? "\n\t" : "");
+            content << (i % (line_len * dim) == 0 ? "\n\t" : "");
             content << to_str(elm) << ((i / dim) == (data.size() / dim - 1) ? "\n" : ", ");
-            if ((i / dim+ 1) % (area) == 0) {
+            if ((i / dim + 1) % (area) == 0) {
                 content << endl;
             }
         }

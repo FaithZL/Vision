@@ -43,9 +43,11 @@ protected:
 protected:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept;
+                                             const Uint &flag,
+                                             TransportMode tm) const noexcept;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept;
+                                          TSampler &sampler,
+                                          TransportMode tm ) const noexcept;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept;
 
@@ -60,10 +62,12 @@ public:
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;
     [[nodiscard]] ScatterEval evaluate(const Float3 &world_wo, const Float3 &world_wi,
                                        MaterialEvalMode mode = All,
-                                       const Uint &flag = BxDFFlag::All) const noexcept;
+                                       const Uint &flag = BxDFFlag::All,
+                                       TransportMode tm = Radiance) const noexcept;
     [[nodiscard]] BSDFSample sample_delta(const Float3 &world_wo, TSampler &sampler) const noexcept;
     [[nodiscard]] BSDFSample sample(const Float3 &world_wo, TSampler &sampler,
-                                    const Uint &flag = BxDFFlag::All) const noexcept;
+                                    const Uint &flag = BxDFFlag::All,
+                                    TransportMode tm = Radiance) const noexcept;
     [[nodiscard]] Uint flag() const noexcept;
 };
 

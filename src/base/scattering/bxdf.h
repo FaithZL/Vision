@@ -14,15 +14,6 @@
 #include "base/sampler.h"
 #include "base/color/spectrum.h"
 
-namespace vision {
-enum MaterialEvalMode {
-    F = 1 << 0,
-    PDF = 1 << 1,
-    All = F | PDF
-};
-}
-
-OC_MAKE_ENUM_BIT_OPS(vision::MaterialEvalMode, |, &, <<, >>)
 
 namespace vision {
 using namespace ocarina;

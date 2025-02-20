@@ -177,7 +177,8 @@ public:
                                            Bool occluded, TSampler &sampler,
                                            const SampledWavelengths &swl, SS &ss, bool mis = true) {
         Float3 wi = normalize(ls.p_light - it.pos);
-        ScatterEval scatter_eval = sf.evaluate(it.wo, wi);
+        ScatterEval scatter_eval = sf.evaluate(it.wo, wi, MaterialEvalMode::All,
+                                               BxDFFlag::All, TransportMode::Radiance);
         ss = sf.sample(it.wo, sampler);
         Bool is_delta_light = ls.eval.pdf < 0;
         Float weight = mis ? (select(is_delta_light, 1.f, vision::MIS_weight<D>(ls.eval.pdf, scatter_eval.pdf()))) : 1.f;

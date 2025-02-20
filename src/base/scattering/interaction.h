@@ -8,6 +8,7 @@
 #include "dsl/dsl.h"
 #include "math/geometry.h"
 #include "base/sample.h"
+#include "math/optics.h"
 
 namespace vision {
 using namespace ocarina;
@@ -137,7 +138,8 @@ public:
     virtual void init(Float g, const SampledWavelengths &swl) noexcept = 0;
     [[nodiscard]] virtual Bool valid() const noexcept = 0;
 
-    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi) const noexcept {
+    [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                               const Uint &, TransportMode) const noexcept {
         Float val = f(wo, wi);
         return {{swl_->dimension(), val}, val, 0};
     }

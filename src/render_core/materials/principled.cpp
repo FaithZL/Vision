@@ -142,7 +142,7 @@ public:
         ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                           TransportMode tm) const noexcept override {
         BSDFSample ret{*swl()};
         SampledDirection sd = sample_wi(wo, flag, sampler);
