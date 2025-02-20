@@ -55,18 +55,18 @@ public:
     [[nodiscard]] const SampledWavelengths &swl() const noexcept { return *swl_; }
     [[nodiscard]] virtual Float PDF(const Float3 &wo, const Float3 &wi,
                                     SP<Fresnel> fresnel) const noexcept;
-    [[nodiscard]] virtual SampledSpectrum f(const Float3 &wo, const Float3 &wi,
-                                            SP<Fresnel> fresnel) const noexcept = 0;
+    [[nodiscard]] virtual SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel,
+                                            TransportMode tm = TransportMode::Radiance) const noexcept = 0;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual Bool valid(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi,
-                                               SP<Fresnel> fresnel,
-                                               MaterialEvalMode mode) const noexcept;
+                                               SP<Fresnel> fresnel, MaterialEvalMode mode,
+                                               TransportMode tm = TransportMode::Radiance) const noexcept;
     [[nodiscard]] virtual ScatterEval safe_evaluate(const Float3 &wo, const Float3 &wi,
-                                                    SP<Fresnel> fresnel,
-                                                    MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] virtual BSDFSample sample(const Float3 &wo, TSampler &sampler,
-                                            SP<Fresnel> fresnel) const noexcept;
+                                                    SP<Fresnel> fresnel,MaterialEvalMode mode,
+                                                    TransportMode tm = TransportMode::Radiance) const noexcept;
+    [[nodiscard]] virtual BSDFSample sample(const Float3 &wo, TSampler &sampler,SP<Fresnel> fresnel,
+                                            TransportMode tm = TransportMode::Radiance) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, Float2 u,
                                                      SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return flags_; }
@@ -99,7 +99,7 @@ public:
     VS_MAKE_BxDF_ASSIGNMENT(LambertReflection)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return Kr; }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
-                                    SP<Fresnel> fresnel) const noexcept override {
+                                    SP<Fresnel> fresnel,TransportMode tm) const noexcept override {
         return Kr * InvPi;
     }
 };
@@ -142,13 +142,13 @@ public:
         : MicrofacetBxDF(m, BxDFFlag::GlossyRefl, swl), kr_(std::move(color)) {}
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return kr_; }
     [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
-                                    SP<Fresnel> fresnel) const noexcept override;
+                                    SP<Fresnel> fresnel,TransportMode tm) const noexcept override;
     [[nodiscard]] Float PDF(const Float3 &wo, const Float3 &wi,
                             SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, Float2 u,
                                              SP<Fresnel> fresnel) const noexcept override;
     [[nodiscard]] BSDFSample sample(const Float3 &wo, TSampler &sampler,
-                                    SP<Fresnel> fresnel) const noexcept override;
+                                    SP<Fresnel> fresnel,TransportMode tm) const noexcept override;
 };
 
 class OrenNayar : public BxDF {
@@ -160,8 +160,8 @@ public:
     OrenNayar(SampledSpectrum R, Float sigma, const SampledWavelengths &swl);
     VS_MAKE_BxDF_ASSIGNMENT(OrenNayar)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return R_; }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,
-                                    SP<Fresnel> fresnel) const noexcept override;
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi,SP<Fresnel> fresnel,
+                                    TransportMode tm) const noexcept override;
 };
 
 }// namespace vision

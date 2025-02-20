@@ -42,7 +42,7 @@ public:
         Float ret = microfacet_->PDF_wi_reflection(wo, wh);
         return ret;
     }
-    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel) const noexcept override {
+    [[nodiscard]] SampledSpectrum f(const Float3 &wo, const Float3 &wi, SP<Fresnel> fresnel, TransportMode tm) const noexcept override {
         SampledSpectrum ret = f_specular(wo, wi) + f_diffuse(wo, wi);
         return ret;
     }
