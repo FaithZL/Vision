@@ -176,7 +176,7 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
     Float3 new_wh = face_forward(wh, wo);
     if (BxDF::match_F(mode)) {
         SampledSpectrum tr = microfacet_->BTDF(wo, wi, (1 - F), eta[0]);
-        se.f = tr * kt_ * sqr(eta);
+        se.f = tr * kt_;
     }
     if (BxDF::match_PDF(mode)) {
         se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * trans_prob(F);

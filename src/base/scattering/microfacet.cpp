@@ -180,53 +180,33 @@ template oc_float<H> BTDF_div_ft<H>(const oc_float3<H> &wo, const oc_float3<H> &
 }// namespace microfacet
 
 Float GGXMicrofacet::bsdf_D(Float3 wh) const noexcept {
-    static CALLABLE_TYPE impl = [](Float3 wh, Float ax, Float ay) {
-        return microfacet::bsdf_D<D>(wh, ax, ay, type);
+    auto func = [&] {
+        return microfacet::bsdf_D<D>(wh, alpha_x_, alpha_y_, type);
     };
-    impl.function()->set_description("GGXMicrofacet::D");
-    return impl(wh, alpha_x_, alpha_y_);
+    return outline(func, "GGXMicrofacet::D");
 }
 
 Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
-        return microfacet::sample_wh<D>(wo, u, ax, ay, false, type);
+    auto func = [&] {
+        return microfacet::sample_wh<D>(wo, u, alpha_x_, alpha_y_, sample_visible_, type);
     };
-    impl.function()->set_description("GGXMicrofacet::sample_wh");
-    static CALLABLE_TYPE sample_visible_impl = [](const Float3 &wo, Float2 u, Float ax, Float ay) {
-        return microfacet::sample_wh<D>(wo, u, ax, ay, true, type);
-    };
-    impl.function()->set_description("GGXMicrofacet::sample_wh_visible");
-    if (sample_visible_) {
-        return sample_visible_impl(wo, u, alpha_x_, alpha_y_);
-    }
-    return impl(wo, u, alpha_x_, alpha_y_);
+    return outline(func, "GGXMicrofacet::sample_wh");
+
 }
 Float GGXMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh,
-                                   Float ax, Float ay) {
-        return microfacet::PDF_wh<D>(wo, wh, ax, ay, false, type);
+    auto func = [&] {
+        return microfacet::PDF_wh<D>(wo, wh, alpha_x_, alpha_y_,
+                                     sample_visible_, type);
     };
-    static CALLABLE_TYPE impl_visible = [](const Float3 &wo, const Float3 &wh,
-                                           Float ax, Float ay) {
-        return microfacet::PDF_wh<D>(wo, wh, ax, ay, true, type);
-    };
-
-    impl.function()->set_description("GGXMicrofacet::PDF_wh");
-    impl_visible.function()->set_description("GGXMicrofacet::PDF_wh_visible");
-    if (sample_visible_) {
-        return impl_visible(wo, wh, alpha_x_, alpha_y_);
-    }
-    return impl(wo, wh, alpha_x_, alpha_y_);
+    return outline(func, "GGXMicrofacet::PDF_wh");
 }
 
 Float GGXMicrofacet::PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo,
                                        const Float3 &wh) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo,
-                                   const Float3 &wh) {
+    auto func = [&] {
         return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
     };
-    impl.function()->set_description("GGXMicrofacet::PDF_wi_reflection");
-    return impl(pdf_wh, wo, wh);
+    return outline(func, "GGXMicrofacet::PDF_wi_reflection");
 }
 
 Float GGXMicrofacet::PDF_wi_reflection(const Float3 &wo, const Float3 &wh) const noexcept {
@@ -235,12 +215,10 @@ Float GGXMicrofacet::PDF_wi_reflection(const Float3 &wo, const Float3 &wh) const
 
 Float GGXMicrofacet::PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, const Float3 &wh,
                                          const Float3 &wi, const Float &eta) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float &pdf_wh, const Float3 &wo,
-                                   const Float3 &wh, const Float3 &wi, const Float &eta) {
+    auto func = [&] {
         return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
     };
-    impl.function()->set_description("GGXMicrofacet::PDF_wi_transmission");
-    return impl(pdf_wh, wo, wh, wi, eta);
+    return outline(func, "GGXMicrofacet::PDF_wi_transmission");
 }
 
 Float GGXMicrofacet::PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
@@ -250,12 +228,10 @@ Float GGXMicrofacet::PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BRDF(const Float3 &wo, const Float3 &wh,
                                              const Float3 &wi, const TSpectrum &Fr) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh,
-                                   const Float3 &wi, Float ax, Float ay) {
-        return microfacet::BRDF_div_fr<D>(wo, wh, wi, ax, ay, type);
+    auto func = [&] {
+        return microfacet::BRDF_div_fr<D>(wo, wh, wi, alpha_x_, alpha_y_, type);
     };
-    impl.function()->set_description("GGXMicrofacet::BRDF_div_fr");
-    return impl(wo, wh, wi, alpha_x_, alpha_y_) * Fr;
+    return outline(func, "GGXMicrofacet::BRDF_div_fr") * Fr;
 }
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BRDF(const Float3 &wo, const Float3 &wi,
@@ -266,22 +242,18 @@ GGXMicrofacet::TSpectrum GGXMicrofacet::BRDF(const Float3 &wo, const Float3 &wi,
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                              const TSpectrum &Ft, const Float &eta) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                   Float eta, Float ax, Float ay) {
-        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
+    auto func = [&] {
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type);
     };
-    impl.function()->set_description("GGXMicrofacet::BTDF_div_ft");
-    return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
+    return outline(func, "GGXMicrofacet::BTDF_div_ft") * Ft;
 }
 
 Float GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                           const Float &Ft, const Float &eta) const noexcept {
-    static CALLABLE_TYPE impl = [](const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                   Float eta, Float ax, Float ay) {
-        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, ax, ay, type);
+    auto func = [&] {
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type);
     };
-    impl.function()->set_description("GGXMicrofacet::BTDF_div_ft");
-    return impl(wo, wh, wi, eta, alpha_x_, alpha_y_) * Ft;
+    return outline(func, "GGXMicrofacet::BTDF_div_ft") * Ft;
 }
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wi,
