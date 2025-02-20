@@ -58,14 +58,15 @@ public:
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override;
+                                             const Uint &flag,TransportMode tm) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag, Float *eta) const noexcept override;
+                                             MaterialEvalMode mode, const Uint &flag, Float *eta,
+                                             TransportMode tm) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                          TransportMode tm) const noexcept override;
 
     /// for precompute begin
     static UP<DielectricBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
@@ -100,7 +101,7 @@ public:
         Float total = 0;
 
         $for(i, sample_num) {
-            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
+            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Radiance);
             ScatterEval se = bs.eval;
             $if(se.pdf() > 0) {
                 auto r = se.throughput() * abs_cos_theta(bs.wi);
@@ -186,7 +187,8 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
 }
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                              MaterialEvalMode mode, const Uint &flag) const noexcept {
+                                              MaterialEvalMode mode, const Uint &flag,
+                                              TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta(wo));
     Bool reflect = same_hemisphere(wo, wi);
@@ -197,7 +199,8 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh,
                                               const Float3 &wi, MaterialEvalMode mode,
-                                              const Uint &flag, Float *eta) const noexcept {
+                                              const Uint &flag, Float *eta,
+                                              TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta(wo));
     if (eta) { *eta = fresnel->eta()[0]; }
@@ -228,8 +231,9 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
 }
 
 BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                           TSampler &sampler) const noexcept {
-    return BxDFSet::sample_local(wo, flag, sampler);
+                                           TSampler &sampler,
+                                           TransportMode tm) const noexcept {
+    return BxDFSet::sample_local(wo, flag, sampler, tm);
 }
 
 class IORCurve {

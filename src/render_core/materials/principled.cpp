@@ -130,7 +130,8 @@ public:
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag) const noexcept override {
+                                             MaterialEvalMode mode, const Uint &flag,
+                                             TransportMode tm) const noexcept override {
         ScatterEval ret{*swl_};
         Float cos_theta_o = cos_theta(wo);
         Float cos_theta_i = cos_theta(wi);
@@ -141,11 +142,11 @@ public:
         ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override {
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                          TransportMode tm) const noexcept override {
         BSDFSample ret{*swl()};
         SampledDirection sd = sample_wi(wo, flag, sampler);
-        ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag);
+        ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag, tm);
         ret.wi = sd.wi;
         ret.eval.pdfs *= sd.factor();
         return ret;

@@ -31,8 +31,8 @@ SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sa
     return precompute_albedo(wo, sampler, sample_num);
 }
 
-BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                 TSampler &sampler) const noexcept {
+BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                 TransportMode tm) const noexcept {
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
@@ -106,12 +106,14 @@ SampledSpectrum MicrofacetBxDFSet::albedo(const Float &cos_theta) const noexcept
 
 ScatterEval MicrofacetBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               vision::MaterialEvalMode mode,
-                                              const Uint &flag) const noexcept {
+                                              const Uint &flag,
+                                              TransportMode tm) const noexcept {
     return bxdf_->safe_evaluate(wo, wi, fresnel_->clone(), mode);
 }
 
 BSDFSample MicrofacetBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                           vision::TSampler &sampler) const noexcept {
+                                           vision::TSampler &sampler,
+                                           TransportMode tm) const noexcept {
     return bxdf_->sample(wo, sampler, fresnel_->clone());
 }
 
@@ -132,17 +134,17 @@ SampledDirection MicrofacetBxDFSet::sample_wi(const Float3 &wo,
 
 /// DiffuseBxDFSet
 ScatterEval DiffuseBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                           MaterialEvalMode mode, const Uint &flag) const noexcept {
+                                           MaterialEvalMode mode, const Uint &flag,
+                                           TransportMode tm) const noexcept {
     return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
 }
 
-BSDFSample DiffuseBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                        TSampler &sampler) const noexcept {
+BSDFSample DiffuseBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                        TransportMode tm) const noexcept {
     return bxdf_->sample(wo, sampler, nullptr);
 }
 
-SampledDirection DiffuseBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
-                                           TSampler &sampler) const noexcept {
+SampledDirection DiffuseBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
 }
 
@@ -152,16 +154,16 @@ const SampledWavelengths *BlackBodyBxDFSet::swl() const {
 }
 
 ScatterEval BlackBodyBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept {
+                                             MaterialEvalMode mode,const Uint &flag,
+                                             TransportMode tm) const noexcept {
     ScatterEval ret{*swl_};
     ret.f = {swl_->dimension(), 0.f};
     ret.pdfs = 1.f;
     return ret;
 }
 
-BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept {
+BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                          TransportMode tm) const noexcept {
     BSDFSample ret{*swl_};
     ret.eval.pdfs = 1.f;
     /// Avoid sample discarding due to hemispherical check
@@ -240,11 +242,11 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
     return sd;
 }
 
-BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
-                                      TSampler &sampler) const noexcept {
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                      TransportMode tm) const noexcept {
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta));
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta), tm);
     ret.wi = sd.wi;
     ret.eval.pdfs = ret.eval.pdfs * sd.factor();
     return ret;
@@ -259,10 +261,11 @@ Uint MultiBxDFSet::flag() const noexcept {
 }
 
 ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                         MaterialEvalMode mode, const Uint &flag, Float *eta) const noexcept {
+                                         MaterialEvalMode mode, const Uint &flag, Float *eta,
+                                         TransportMode tm) const noexcept {
     ScatterEval ret{*swl()};
     for_each([&](const WeightedBxDFSet &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, eta);
+        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, eta, tm);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.weight();
         ret.flags = ret.flags | se.flags;
@@ -272,10 +275,11 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, con
 }
 
 ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                         MaterialEvalMode mode, const Uint &flag) const noexcept {
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm) const noexcept {
     ScatterEval ret{*swl()};
     for_each([&](const WeightedBxDFSet &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag);
+        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.weight();
         ret.flags = ret.flags | se.flags;

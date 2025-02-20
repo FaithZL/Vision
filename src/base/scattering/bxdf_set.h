@@ -24,17 +24,17 @@ public:
 public:
     BxDFSet() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                                     MaterialEvalMode mode,
-                                                     const Uint &flag) const noexcept = 0;
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,const Uint &flag,
+                                                     TransportMode tm = TransportMode::Radiance) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh,
                                                      const Float3 &wi, MaterialEvalMode mode,
-                                                     const Uint &flag,
-                                                     Float *eta) const noexcept {
+                                                     const Uint &flag,Float *eta,
+                                                     TransportMode tm = TransportMode::Radiance) const noexcept {
         return evaluate_local(wo, wi, mode, flag);
     }
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept;
+                                                  TSampler &sampler,
+                                                  TransportMode tm = TransportMode::Radiance) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                                      TSampler &sampler) const noexcept {
         OC_ASSERT(false);
@@ -92,10 +92,11 @@ public:
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override;
+                                             MaterialEvalMode mode,const Uint &flag,
+                                             TransportMode tm) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
+                                          TSampler &sampler,
+                                          TransportMode tm) const noexcept override;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
@@ -128,9 +129,11 @@ public:
 
         [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                                  MaterialEvalMode mode,
-                                                 const Uint &flag) const noexcept override;
+                                                 const Uint &flag,
+                                                 TransportMode tm) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
+                                          TSampler &sampler,
+                                          TransportMode tm) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
 };
@@ -143,11 +146,11 @@ public:
     explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override;
+                                             MaterialEvalMode mode,const Uint &flag,
+                                             TransportMode tm) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                          TransportMode tm) const noexcept override;
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
         return {swl_->dimension(), 0.f};
     }
@@ -206,15 +209,15 @@ public:
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override;
+                                             const Uint &flag,TransportMode tm) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
-                                             Float *eta) const noexcept override;
+                                             Float *eta,TransportMode tm) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override;
+                                          TSampler &sampler,TransportMode tm) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
     void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
     void for_each(const std::function<void(WeightedBxDFSet &)> &func);
@@ -231,9 +234,9 @@ public:
     [[nodiscard]] virtual bool compensate() const noexcept { return false; }
     static void prepare();
 
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler) const noexcept override {
-        BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler);
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+                                          TransportMode tm) const noexcept override {
+        BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler, tm);
         if (compensate()) {
             bs.eval.f *= compensate_factor(wo);
         }
@@ -241,8 +244,8 @@ public:
     }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag) const noexcept override {
-        ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag);
+                                             const Uint &flag,TransportMode tm) const noexcept override {
+        ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag, tm);
         if (compensate()) {
             se.f *= compensate_factor(wo);
         }
