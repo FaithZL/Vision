@@ -217,7 +217,7 @@
 //				//				"material" : "substrate",
 //				//				"material" : "Mirror",
 //				//				"material" : "Metal",
-//				//				                "material" : "disney",
+//				//				                "material" : "principled",
 //				//								                "material" : "mix",
 //				//				                                "material" : "Glass",
 //				"transform" : {
@@ -267,7 +267,7 @@
 ////								"material" : "substrate",
 ////								"material" : "Mirror",
 ////								"material" : "Metal",
-////								                "material" : "disney",
+////								                "material" : "principled",
 ////												                "material" : "mix",
 //								                                "material" : "Glass",
 //				"medium": {
@@ -318,7 +318,7 @@
 //						//				"material" : "substrate",
 //						//				"material" : "Mirror",
 //						//				"material" : "Metal",
-//						//				                "material" : "disney",
+//						//				                "material" : "principled",
 //						//								                "material" : "mix",
 //						//				                                "material" : "Glass",
 //						"transform" : {
@@ -749,8 +749,8 @@
 			}
 		},
 		{
-			"type" : "disney",
-			"name" : "disney",
+			"type" : "principled",
+			"name" : "principled",
 			"param" : {
 				"color" : [
 					1,

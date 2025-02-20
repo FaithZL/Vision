@@ -513,8 +513,8 @@
             }
         },
         {
-            "type": "disney",
-            "name": "disney",
+            "type": "principled",
+            "name": "principled",
             "param": {
                 "color": [
                     0.725,

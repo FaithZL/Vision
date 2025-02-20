@@ -12119,7 +12119,7 @@
             }
         },
         {
-            "type": "disney",
+            "type": "principled",
             "name": "RadioGlass",
             "param": {
                 "color": [
@@ -12850,7 +12850,7 @@
             }
         },
         {
-            "type": "disney",
+            "type": "principled",
             "name": "Blinds",
             "param": {
                 "color": [

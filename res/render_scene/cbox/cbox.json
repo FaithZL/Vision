@@ -214,7 +214,7 @@
 //								"material" : "Mirror",
 //								"material" : "Metal",
 //				"material" : "principled",
-//				"material" : "disney",
+//				"material" : "principled",
 //																                "material" : "mix",
 												                                "material" : "Glass",
 				"transform" : {
@@ -263,7 +263,7 @@
 //				                "material": "Mirror2",
 //								                "material": "Glass",
 //												"material" : "Metal",
-				//				"material" : "disney",
+				//				"material" : "principled",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -715,8 +715,8 @@
 			}
 		},
 		{
-			"type" : "disney",
-			"name" : "disney",
+			"type" : "principled",
+			"name" : "principled",
 			"param" : {
 				"color" : [
 					1,
