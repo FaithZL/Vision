@@ -16,7 +16,7 @@ public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
     static constexpr const char *lut_name = "DielectricBxDFSet::lut";
-    static constexpr uint lut_res = 16;
+    static constexpr uint lut_res = 32;
 
 private:
     DCSP<Fresnel> fresnel_;
@@ -118,10 +118,10 @@ public:
             };
         };
         Float fr = fresnel_->evaluate(cos_theta(wo), 0);
-        total /= count;
-        reflection /= count;
-        trans /= count;
-        ret = make_float4(total, reflection, reflection / total, fr);
+        total /= sample_num;
+        reflection /= sample_num;
+        trans /= sample_num;
+        ret = make_float4(total, reflection, trans, fr);
         return ret;
     }
     /// for precompute end
@@ -356,13 +356,15 @@ public:
         init_ior(desc);
         init_slot_cursor(&color_, &anisotropic_);
     }
-    template<typename TLobe>
+    template<typename TLobe, size_t N>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe(uint3 res) const noexcept {
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
         TSampler &sampler = get_sampler();
 
-        Buffer<float4> buffer = device.create_buffer<float4>(res.x * res.y * res.z);
+        using vec_type = Vector<float, N>;
+
+        Buffer<vec_type> buffer = device.create_buffer<vec_type>(res.x * res.y * res.z);
 
         Kernel kernel = [&](Uint sample_num) {
             sampler->load_data();
@@ -371,12 +373,12 @@ public:
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
             UP<TLobe> lobe = TLobe::create_for_precompute(swl);
             Float4 result = lobe->precompute_with_radio2(ratio, sampler, sample_num);
-            buffer.write(dispatch_id(), result);
+//            buffer.write(dispatch_id(), result);
         };
 
         PrecomputedLobeTable ret;
         ret.name = TLobe::name;
-        ret.type = Type::of<float4>();
+        ret.type = Type::of<vec_type>();
         ret.data.resize(buffer.size() * ret.type->dimension());
         ret.res = res;
         Clock clk;
@@ -395,7 +397,7 @@ public:
     }
     template<typename TLobe>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
-        return precompute_lobe<TLobe>(make_uint3(TLobe::lut_res));
+        return precompute_lobe<TLobe, 4>(make_uint3(TLobe::lut_res));
     }
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
