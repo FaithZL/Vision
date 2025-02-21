@@ -298,7 +298,7 @@ public:
     return weight * saturate(1 - max_comp);
 }
 
-class PrincipledMaterial : public Material {
+class PrincipledBSDF : public Material {
 private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(metallic)
@@ -327,9 +327,9 @@ protected:
     VS_MAKE_MATERIAL_EVALUATOR(MultiBxDFSet)
 
 public:
-    PrincipledMaterial() = default;
+    PrincipledBSDF() = default;
     VS_MAKE_PLUGIN_NAME_FUNC
-    explicit PrincipledMaterial(const MaterialDesc &desc)
+    explicit PrincipledBSDF(const MaterialDesc &desc)
         : Material(desc) {
 
 #define INIT_SLOT(name, default_value, type) \
@@ -469,5 +469,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, PrincipledMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, PrincipledBSDF)
 VS_REGISTER_CURRENT_PATH(0, "vision-material-principled.dll")
