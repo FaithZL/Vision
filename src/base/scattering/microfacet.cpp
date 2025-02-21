@@ -160,22 +160,22 @@ template oc_float<D> PDF_wh<D>(const oc_float3<D> &wo, const oc_float3<D> &wh,
 template<EPort p>
 [[nodiscard]] oc_float<p> BTDF_div_ft(const oc_float3<p> &wo, const oc_float3<p> &wh, const oc_float3<p> &wi,
                                       const oc_float<p> &eta, const oc_float<p> &alpha_x,
-                                      const oc_float<p> &alpha_y, MicrofacetType type) {
+                                      const oc_float<p> &alpha_y, MicrofacetType type, TransportMode tm) {
     oc_float<p> cos_theta_i = cos_theta(wi);
     oc_float<p> cos_theta_o = cos_theta(wo);
     oc_float<p> numerator = bsdf_D<p>(wh, alpha_x, alpha_y, type) * bsdf_G<p>(wo, wi, alpha_x, alpha_y, type) *
                             ocarina::abs(dot(wi, wh) * dot(wo, wh));
     oc_float<p> denom = ocarina::sqr(dot(wi, wh) * eta + dot(wo, wh)) * ocarina::abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
-    oc_float<p> factor = ocarina::rcp(ocarina::sqr(eta));
+    oc_float<p> factor = tm == Radiance ? ocarina::rcp(ocarina::sqr(eta)) : 1.f;
     return ft * factor;
 }
 template oc_float<D> BTDF_div_ft<D>(const oc_float3<D> &wo, const oc_float3<D> &wh, const oc_float3<D> &wi,
                                     const oc_float<D> &eta, const oc_float<D> &alpha_x,
-                                    const oc_float<D> &alpha_y, MicrofacetType type);
+                                    const oc_float<D> &alpha_y, MicrofacetType type, TransportMode tm);
 template oc_float<H> BTDF_div_ft<H>(const oc_float3<H> &wo, const oc_float3<H> &wh, const oc_float3<H> &wi,
                                     const oc_float<H> &eta, const oc_float<H> &alpha_x,
-                                    const oc_float<H> &alpha_y, MicrofacetType type);
+                                    const oc_float<H> &alpha_y, MicrofacetType type, TransportMode tm);
 
 }// namespace microfacet
 
@@ -240,25 +240,28 @@ GGXMicrofacet::TSpectrum GGXMicrofacet::BRDF(const Float3 &wo, const Float3 &wi,
 }
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                             const TSpectrum &Ft, const Float &eta) const noexcept {
+                                             const TSpectrum &Ft, const Float &eta,
+                                             TransportMode tm) const noexcept {
     auto func = [&] {
-        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type);
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
     return outline(func, "GGXMicrofacet::BTDF_div_ft") * Ft;
 }
 
 Float GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                          const Float &Ft, const Float &eta) const noexcept {
+                          const Float &Ft, const Float &eta,
+                          TransportMode tm) const noexcept {
     auto func = [&] {
-        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type);
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
     return outline(func, "GGXMicrofacet::BTDF_div_ft") * Ft;
 }
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wi,
-                                             const TSpectrum &Ft, const Float &eta) const noexcept {
+                                             const TSpectrum &Ft, const Float &eta,
+                                             TransportMode tm) const noexcept {
     Float3 wh = normalize(wo + wi * eta);
-    return BTDF(wo, wh, wi, Ft, eta);
+    return BTDF(wo, wh, wi, Ft, eta, tm);
 }
 
 Float BeckmannMicrofacet::bsdf_D(Float3 wh) const noexcept {
@@ -322,24 +325,27 @@ BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BRDF(const Float3 &wo, const F
 }
 
 BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                       const TSpectrum &Ft, const Float &eta) const noexcept {
+                                                       const TSpectrum &Ft, const Float &eta,
+                                                       TransportMode tm) const noexcept {
     auto func = [&] {
-        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type);
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
     return outline(func, "BeckmannMicrofacet::BTDF_div_ft") * Ft;
 }
 
 Float BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                               const Float &Ft, const Float &eta) const noexcept {
+                               const Float &Ft, const Float &eta,
+                               TransportMode tm) const noexcept {
     auto func = [&] {
-        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type);
+        return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
     return outline(func, "BeckmannMicrofacet::BTDF_div_ft") * Ft;
 }
 
 BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wi,
-                                                       const TSpectrum &Ft, const Float &eta) const noexcept {
+                                                       const TSpectrum &Ft, const Float &eta,
+                                                       TransportMode tm) const noexcept {
     Float3 wh = normalize(wo + wi * eta);
-    return BTDF(wo, wh, wi, Ft, eta);
+    return BTDF(wo, wh, wi, Ft, eta, tm);
 }
 }// namespace vision
