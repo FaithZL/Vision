@@ -13,7 +13,7 @@ SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
                                            const Uint &sample_num) noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(3);
     $for(i, sample_num) {
-        BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler);
+        BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);
         ScatterEval se = bs.eval;
         $if(se.pdf() > 0) {
             auto r = se.throughput() * abs_cos_theta(bs.wi);
@@ -36,7 +36,7 @@ BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sa
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta));
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta),tm);
     ret.eval.pdfs *= sd.factor();
     return ret;
 }
@@ -108,13 +108,13 @@ ScatterEval MicrofacetBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
                                               vision::MaterialEvalMode mode,
                                               const Uint &flag,
                                               TransportMode tm) const noexcept {
-    return bxdf_->safe_evaluate(wo, wi, fresnel_->clone(), mode);
+    return bxdf_->safe_evaluate(wo, wi, fresnel_->clone(), mode, tm);
 }
 
 BSDFSample MicrofacetBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            vision::TSampler &sampler,
                                            TransportMode tm) const noexcept {
-    return bxdf_->sample(wo, sampler, fresnel_->clone());
+    return bxdf_->sample(wo, sampler, fresnel_->clone(), tm);
 }
 
 BSDFSample MicrofacetBxDFSet::sample_delta_local(const Float3 &wo,
@@ -122,7 +122,7 @@ BSDFSample MicrofacetBxDFSet::sample_delta_local(const Float3 &wo,
     Float3 wi = make_float3(-wo.xy(), wo.z);
     BSDFSample ret{bxdf_->swl()};
     ret.wi = wi;
-    ret.eval = bxdf_->evaluate(wo, wi, fresnel_->clone(), All);
+    ret.eval = bxdf_->evaluate(wo, wi, fresnel_->clone(), All, Radiance);
     return ret;
 }
 
@@ -136,12 +136,12 @@ SampledDirection MicrofacetBxDFSet::sample_wi(const Float3 &wo,
 ScatterEval DiffuseBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                            MaterialEvalMode mode, const Uint &flag,
                                            TransportMode tm) const noexcept {
-    return bxdf_->safe_evaluate(wo, wi, nullptr, mode);
+    return bxdf_->safe_evaluate(wo, wi, nullptr, mode, tm);
 }
 
 BSDFSample DiffuseBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
                                         TransportMode tm) const noexcept {
-    return bxdf_->sample(wo, sampler, nullptr);
+    return bxdf_->sample(wo, sampler, nullptr, tm);
 }
 
 SampledDirection DiffuseBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,TSampler &sampler) const noexcept {

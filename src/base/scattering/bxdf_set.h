@@ -25,16 +25,16 @@ public:
     BxDFSet() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,const Uint &flag,
-                                                     TransportMode tm = TransportMode::Radiance) const noexcept = 0;
+                                                     TransportMode tm) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh,
                                                      const Float3 &wi, MaterialEvalMode mode,
                                                      const Uint &flag,Float *eta,
-                                                     TransportMode tm = TransportMode::Radiance) const noexcept {
-        return evaluate_local(wo, wi, mode, flag);
+                                                     TransportMode tm) const noexcept {
+        return evaluate_local(wo, wi, mode, flag, tm);
     }
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler,
-                                                  TransportMode tm = TransportMode::Radiance) const noexcept;
+                                                  TransportMode tm) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                                      TSampler &sampler) const noexcept {
         OC_ASSERT(false);

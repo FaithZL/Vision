@@ -52,12 +52,12 @@ public:
     [[nodiscard]] virtual Bool valid(const Float3 &wo, const Float3 &wi, const Float3 &wh) const noexcept;
     [[nodiscard]] virtual ScatterEval evaluate(const Float3 &wo, const Float3 &wi,
                                                SP<Fresnel> fresnel, MaterialEvalMode mode,
-                                               TransportMode tm = TransportMode::Radiance) const noexcept;
+                                               TransportMode tm) const noexcept;
     [[nodiscard]] virtual ScatterEval safe_evaluate(const Float3 &wo, const Float3 &wi,
                                                     SP<Fresnel> fresnel,MaterialEvalMode mode,
-                                                    TransportMode tm = TransportMode::Radiance) const noexcept;
+                                                    TransportMode tm) const noexcept;
     [[nodiscard]] virtual BSDFSample sample(const Float3 &wo, TSampler &sampler,SP<Fresnel> fresnel,
-                                            TransportMode tm = TransportMode::Radiance) const noexcept;
+                                            TransportMode tm) const noexcept;
     [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, Float2 u,
                                                      SP<Fresnel> fresnel) const noexcept;
     [[nodiscard]] Uint flags() const noexcept { return flags_; }

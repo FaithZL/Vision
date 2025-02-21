@@ -103,7 +103,7 @@ public:
         Float total = 0;
 
         $for(i, sample_num) {
-            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Radiance);
+            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);
             ScatterEval se = bs.eval;
             $if(se.pdf() > 0) {
                 auto r = se.throughput() * abs_cos_theta(bs.wi);

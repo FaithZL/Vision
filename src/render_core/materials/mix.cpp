@@ -46,8 +46,8 @@ public:
     }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag,TransportMode tm) const noexcept override {
-        ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag);
-        ScatterEval eval1 = b1_->evaluate_local(wo, wi, mode, flag);
+        ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag, tm);
+        ScatterEval eval1 = b1_->evaluate_local(wo, wi, mode, flag, tm);
         ScatterEval ret{eval0.f.dimension(), eval0.pdfs.size()};
         ret.f = eval0.f * (1 - frac_) + eval1.f * frac_;
         ret.pdfs = eval0.pdf() * (1 - frac_) + eval1.pdf() * frac_;
