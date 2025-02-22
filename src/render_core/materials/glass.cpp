@@ -86,44 +86,6 @@ public:
         microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
         microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
     }
-
-    Float4 precompute_with_radio2(const ocarina::Float3 &ratio, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept {
-        from_ratio_x(ratio.x);
-        Float3 wo = from_ratio_y(ratio.y);
-        from_ratio_z(ratio.z);
-        return precompute_albedo1(wo, sampler, sample_num);
-    }
-
-    Float4 precompute_albedo1(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept {
-//        SampledSpectrum ret = SampledSpectrum::zero(3);
-        Float4 ret;
-        Uint count = 0;
-        Float reflection = 0;
-        Float trans = 0;
-        Float total = 0;
-
-        $for(i, sample_num) {
-            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);
-            ScatterEval se = bs.eval;
-            $if(se.pdf() > 0) {
-                auto r = se.throughput() * abs_cos_theta(bs.wi);
-                count += 1;
-                total += r.average();
-
-                $if(same_hemisphere(wo, bs.wi)) {
-                    reflection += r.average();
-                } $else {
-                    trans += r.average();
-                };
-            };
-        };
-        Float fr = fresnel_->evaluate(cos_theta(wo), 0);
-        total /= sample_num;
-        reflection /= sample_num;
-        trans /= sample_num;
-        ret = make_float4(total, reflection, trans, fr);
-        return ret;
-    }
     /// for precompute end
 
     [[nodiscard]] Float to_ratio_z() const noexcept override {
@@ -362,9 +324,9 @@ public:
         Stream stream = device.create_stream();
         TSampler &sampler = get_sampler();
 
-        using vec_type = Vector<float, N>;
+        using data_type = basic_t<float, N>;
 
-        Buffer<vec_type> buffer = device.create_buffer<vec_type>(res.x * res.y * res.z);
+        Buffer<data_type> buffer = device.create_buffer<data_type>(res.x * res.y * res.z);
 
         Kernel kernel = [&](Uint sample_num) {
             sampler->load_data();
@@ -372,13 +334,17 @@ public:
             SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
             UP<TLobe> lobe = TLobe::create_for_precompute(swl);
-            Float4 result = lobe->precompute_with_radio2(ratio, sampler, sample_num);
-//            buffer.write(dispatch_id(), result);
+            SampledSpectrum result = lobe->precompute_with_radio(ratio, sampler, sample_num);
+            if constexpr (N == 1) {
+                buffer.write(dispatch_id(), result[0]);
+            } else {
+                buffer.write(dispatch_id(), result.values().as_vec<N>());
+            }
         };
 
         PrecomputedLobeTable ret;
         ret.name = TLobe::name;
-        ret.type = Type::of<vec_type>();
+        ret.type = Type::of<data_type>();
         ret.data.resize(buffer.size() * ret.type->dimension());
         ret.res = res;
         Clock clk;
@@ -397,7 +363,7 @@ public:
     }
     template<typename TLobe>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
-        return precompute_lobe<TLobe, 4>(make_uint3(TLobe::lut_res));
+        return precompute_lobe<TLobe, 2>(make_uint3(TLobe::lut_res));
     }
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
