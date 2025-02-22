@@ -318,52 +318,10 @@ public:
         init_ior(desc);
         init_slot_cursor(&color_, &anisotropic_);
     }
-    template<typename TLobe, size_t N>
-    [[nodiscard]] PrecomputedLobeTable precompute_lobe(uint3 res) const noexcept {
-        Device &device = Global::instance().device();
-        Stream stream = device.create_stream();
-        TSampler &sampler = get_sampler();
 
-        using data_type = basic_t<float, N>;
-
-        Buffer<data_type> buffer = device.create_buffer<data_type>(res.x * res.y * res.z);
-
-        Kernel kernel = [&](Uint sample_num) {
-            sampler->load_data();
-            sampler->start(dispatch_idx().xy(), 0, 0);
-            SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
-            Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
-            UP<TLobe> lobe = TLobe::create_for_precompute(swl);
-            SampledSpectrum result = lobe->precompute_with_radio(ratio, sampler, sample_num);
-            if constexpr (N == 1) {
-                buffer.write(dispatch_id(), result[0]);
-            } else {
-                buffer.write(dispatch_id(), result.values().as_vec<N>());
-            }
-        };
-
-        PrecomputedLobeTable ret;
-        ret.name = TLobe::name;
-        ret.type = Type::of<data_type>();
-        ret.data.resize(buffer.size() * ret.type->dimension());
-        ret.res = res;
-        Clock clk;
-        clk.start();
-        OC_INFO_FORMAT("start precompute albedo of {}", ret.name);
-        auto shader = device.compile(kernel);
-        stream << shader(precompute_sample_num).dispatch(res)
-               << buffer.download(ret.data.data())
-               << Env::printer().retrieve()
-               << synchronize() << commit();
-        clk.end();
-        ret.elapsed_time = clk.elapse_s();
-        OC_INFO_FORMAT("precompute albedo of {} took {:.3f} s", ret.name, ret.elapsed_time);
-
-        return ret;
-    }
     template<typename TLobe>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe() const noexcept {
-        return precompute_lobe<TLobe, 2>(make_uint3(TLobe::lut_res));
+        return Material::precompute_lobe<TLobe, 2>(make_uint3(TLobe::lut_res));
     }
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {

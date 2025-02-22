@@ -127,13 +127,15 @@ protected:
     }
     static TSampler &get_sampler() noexcept;
 
-    template<typename TLobe>
+    template<typename TLobe, size_t N = 1>
     [[nodiscard]] PrecomputedLobeTable precompute_lobe(uint3 res) const noexcept {
         Device &device = Global::instance().device();
         Stream stream = device.create_stream();
         TSampler &sampler = get_sampler();
 
-        Buffer<float> buffer = device.create_buffer<float>(res.x * res.y * res.z);
+        using data_type = basic_t<float, N>;
+
+        Buffer<data_type> buffer = device.create_buffer<data_type>(res.x * res.y * res.z);
 
         Kernel kernel = [&](Uint sample_num) {
             sampler->load_data();
@@ -141,14 +143,18 @@ protected:
             SampledWavelengths swl = spectrum()->sample_wavelength(sampler);
             Float3 ratio = make_float3(dispatch_idx()) / make_float3(dispatch_dim() - 1);
             UP<TLobe> lobe = TLobe::create_for_precompute(swl);
-            Float result = lobe->precompute_with_radio(ratio, sampler, sample_num).average();
-            buffer.write(dispatch_id(), result);
+            SampledSpectrum result = lobe->precompute_with_radio(ratio, sampler, sample_num);
+            if constexpr (N == 1) {
+                buffer.write(dispatch_id(), result[0]);
+            } else {
+                buffer.write(dispatch_id(), result.values().as_vec<N>());
+            }
         };
 
         PrecomputedLobeTable ret;
         ret.name = TLobe::name;
-        ret.type = Type::of<float>();
-        ret.data.resize(buffer.size());
+        ret.type = Type::of<data_type>();
+        ret.data.resize(buffer.size() * ret.type->dimension());
         ret.res = res;
         Clock clk;
         clk.start();
