@@ -31,12 +31,12 @@ SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sa
     return precompute_albedo(wo, sampler, sample_num);
 }
 
-BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                  TransportMode tm) const noexcept {
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta),tm);
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta), tm);
     ret.eval.pdfs *= sd.factor();
     return ret;
 }
@@ -139,12 +139,12 @@ ScatterEval DiffuseBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
     return bxdf_->safe_evaluate(wo, wi, nullptr, mode, tm);
 }
 
-BSDFSample DiffuseBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+BSDFSample DiffuseBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                         TransportMode tm) const noexcept {
     return bxdf_->sample(wo, sampler, nullptr, tm);
 }
 
-SampledDirection DiffuseBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,TSampler &sampler) const noexcept {
+SampledDirection DiffuseBxDFSet::sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
 }
 
@@ -154,7 +154,7 @@ const SampledWavelengths *BlackBodyBxDFSet::swl() const {
 }
 
 ScatterEval BlackBodyBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode,const Uint &flag,
+                                             MaterialEvalMode mode, const Uint &flag,
                                              TransportMode tm) const noexcept {
     ScatterEval ret{*swl_};
     ret.f = {swl_->dimension(), 0.f};
@@ -162,7 +162,7 @@ ScatterEval BlackBodyBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
     return ret;
 }
 
-BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                           TransportMode tm) const noexcept {
     BSDFSample ret{*swl_};
     ret.eval.pdfs = 1.f;
@@ -242,7 +242,7 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
     return sd;
 }
 
-BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                       TransportMode tm) const noexcept {
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
@@ -305,8 +305,10 @@ Uint DielectricBxDFSet::select_lut(const vision::SampledSpectrum &eta) noexcept 
     return index;
 }
 
-Float DielectricBxDFSet::eta_to_ratio_z(const Float &eta) const noexcept {
-    return 0;
+Float DielectricBxDFSet::eta_to_ratio_z(const Float &eta) noexcept {
+    Float ret = ocarina::select(eta > 1.f, inverse_lerp(eta, ior_lower, ior_upper),
+                                inverse_lerp(rcp(eta), ior_lower, ior_upper));
+    return ret;
 }
 
 Float2 DielectricBxDFSet::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
@@ -314,17 +316,32 @@ Float2 DielectricBxDFSet::sample_lut(const Float3 &wo, const SampledSpectrum &et
     const BindlessArray &ba = Global::instance().bindless_array();
     Float x = to_ratio_x();
     Float y = abs_cos_theta(wo);
-    
-//    Float z = ior_to_ratio_z(eta);
+    Float z = eta_to_ratio_z(eta[0]);
+    Float3 uvw = make_float3(x,y,z);
+    return ba.tex_var(idx).sample(2, uvw).as_vec2();
 }
 
-Float DielectricBxDFSet::refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
-
-    return 0;
+Float DielectricBxDFSet::refl_compensate(const Float3 &wo,
+                                         const SampledSpectrum &eta) const noexcept {
+    if (!compensate()) {
+        return 1;
+    }
+    Float2 val = sample_lut(wo, eta);
+    Float factor = val.x;
+    Float refl = val.y;
+    $condition_info("refl {} {}, eta {} factor {}", val, eta[0], factor);
+    return rcp(factor);
 }
 
-Float DielectricBxDFSet::trans_compensate(const ocarina::Float3 &wo, const vision::SampledSpectrum &eta) const noexcept {
-    return 0;
+Float DielectricBxDFSet::trans_compensate(const ocarina::Float3 &wo,
+                                          const SampledSpectrum &eta) const noexcept {
+    if (!compensate()) {
+        return 1;
+    }
+    Float2 val = sample_lut(wo, eta);
+    Float factor = val.x;
+    $condition_info("trans {} {}, eta {} factor {}", val, eta[0], factor);
+    return rcp(factor);
 }
 
 SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
@@ -361,6 +378,7 @@ ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float
         se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * refl_prob(F);
     }
     se.flags = BxDFFlag::GlossyRefl;
+    se.f *= refl_compensate(wo, eta);
     return se;
 }
 
@@ -378,6 +396,7 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
         se.pdfs = microfacet_->PDF_wi_transmission(wo, new_wh, wi, eta[0]) * trans_prob(F);
     }
     se.flags = BxDFFlag::GlossyTrans;
+    se.f *= trans_compensate(wo, eta);
     return se;
 }
 
