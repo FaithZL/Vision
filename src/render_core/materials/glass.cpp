@@ -14,7 +14,7 @@ namespace vision {
 class DielectricBxDFSetPrecompute : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
-    
+
     [[nodiscard]] bool compensate() const noexcept override { return false; }
     /// for precompute begin
     static UP<DielectricBxDFSetPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
@@ -212,7 +212,10 @@ public:
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }
-    void prepare() noexcept override { ior_->prepare(); }
+    void prepare() noexcept override {
+        ior_->prepare();
+        DielectricBxDFSet::prepare();
+    }
 
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
