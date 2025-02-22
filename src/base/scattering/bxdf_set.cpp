@@ -318,7 +318,8 @@ Float2 DielectricBxDFSet::sample_lut(const Float3 &wo, const SampledSpectrum &et
     Float y = abs_cos_theta(wo);
     Float z = eta_to_ratio_z(eta[0]);
     Float3 uvw = make_float3(x,y,z);
-    return ba.tex_var(idx).sample(2, uvw).as_vec2();
+    Float2 ret = ba.tex_var(idx).sample(2, uvw).as_vec2();
+    return ret;
 }
 
 Float DielectricBxDFSet::refl_compensate(const Float3 &wo,
@@ -329,7 +330,6 @@ Float DielectricBxDFSet::refl_compensate(const Float3 &wo,
     Float2 val = sample_lut(wo, eta);
     Float factor = val.x;
     Float refl = val.y;
-    $condition_info("refl {} {}, eta {} factor {}", val, eta[0], factor);
     return rcp(factor);
 }
 
@@ -340,7 +340,6 @@ Float DielectricBxDFSet::trans_compensate(const ocarina::Float3 &wo,
     }
     Float2 val = sample_lut(wo, eta);
     Float factor = val.x;
-    $condition_info("trans {} {}, eta {} factor {}", val, eta[0], factor);
     return rcp(factor);
 }
 
