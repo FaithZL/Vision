@@ -289,11 +289,11 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
 
 /// DielectricBxDFSet
 void DielectricBxDFSet::prepare() noexcept {
-    MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
+    MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
                                      PixelStorage::FLOAT2,
                                      addressof(DielectricBxDFSet_Table));
 
-    MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
+    MaterialLut::instance().load_lut(lut_inv_name, make_uint3(lut_res),
                                      PixelStorage::FLOAT2,
                                      addressof(DielectricInvBxDFSet_Table));
 }
