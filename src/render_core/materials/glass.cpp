@@ -14,7 +14,8 @@ namespace vision {
 class DielectricBxDFSetPrecompute : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
-
+    
+    [[nodiscard]] bool compensate() const noexcept override { return false; }
     /// for precompute begin
     static UP<DielectricBxDFSetPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
@@ -37,7 +38,7 @@ public:
 class DielectricBxDFSetInvPrecompute : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
-
+    [[nodiscard]] bool compensate() const noexcept override { return false; }
     /// for precompute begin
     static UP<DielectricBxDFSetInvPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
