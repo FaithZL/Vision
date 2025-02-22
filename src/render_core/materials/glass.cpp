@@ -11,11 +11,37 @@
 
 namespace vision {
 
-class DielectricBxDFSetPrecompute : public DielectricBxDFSet {
+class DielectricPrecompute : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
-
     [[nodiscard]] bool compensate() const noexcept override { return false; }
+    [[nodiscard]] SampledSpectrum precompute_albedo(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept override {
+        SampledSpectrum ret = SampledSpectrum::zero(3);
+
+        $for(i, sample_num) {
+            BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);
+            ScatterEval se = bs.eval;
+            $if(se.pdf() > 0) {
+                SampledSpectrum r = se.throughput() * abs_cos_theta(bs.wi);
+                ret[0] += r[0];
+                $if (same_hemisphere(bs.wi, wo)) {
+                    ret[1] += r[0];
+                };
+            };
+        };
+        return ret / sample_num;
+    }
+
+    void from_ratio_x(const ocarina::Float &x) noexcept override {
+        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
+        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
+    }
+};
+
+class DielectricBxDFSetPrecompute : public DielectricPrecompute {
+public:
+    using DielectricPrecompute::DielectricPrecompute;
+
     /// for precompute begin
     static UP<DielectricBxDFSetPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
@@ -27,18 +53,12 @@ public:
         Float ior = lerp(z, ior_lower, ior_upper);
         fresnel_->set_eta(SampledSpectrum(*swl(), ior));
     }
-
-    void from_ratio_x(const ocarina::Float &x) noexcept override {
-        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
-        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
-    }
     /// for precompute end
 };
 
-class DielectricBxDFSetInvPrecompute : public DielectricBxDFSet {
+class DielectricBxDFSetInvPrecompute : public DielectricPrecompute {
 public:
-    using DielectricBxDFSet::DielectricBxDFSet;
-    [[nodiscard]] bool compensate() const noexcept override { return false; }
+    using DielectricPrecompute::DielectricPrecompute;
     /// for precompute begin
     static UP<DielectricBxDFSetInvPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
@@ -49,11 +69,6 @@ public:
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = lerp(z, ior_lower, ior_upper);
         fresnel_->set_eta(SampledSpectrum(*swl(), rcp(ior)));
-    }
-
-    void from_ratio_x(const ocarina::Float &x) noexcept override {
-        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
-        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
     }
     /// for precompute end
 };
