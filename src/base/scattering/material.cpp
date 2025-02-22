@@ -37,6 +37,10 @@ const RegistrableTexture &MaterialLut::get_lut(const std::string &name) const no
     return lut_map_.at(name);
 }
 
+const EncodedData<uint>& MaterialLut::get_index(const std::string &name) const noexcept {
+    return lut_map_.at(name).index();
+}
+
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode,
                                               const Uint &flag,

@@ -26,9 +26,10 @@ public:
     void unload_lut(const string &name) noexcept;
     template<typename... Args>
     [[nodiscard]] float_array sample(const string &name, Args &&...args) const noexcept {
-        return lut_map_.at(name).sample(OC_FORWARD(args)...);
+        return get_lut(name).sample(OC_FORWARD(args)...);
     }
     [[nodiscard]] const RegistrableTexture &get_lut(const string &name) const noexcept;
+    [[nodiscard]] const EncodedData<uint> &get_index(const string &name) const noexcept;
 };
 
 class MaterialEvaluator : public PolyEvaluator<BxDFSet> {

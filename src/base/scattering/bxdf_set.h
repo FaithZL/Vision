@@ -244,8 +244,14 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(fresnel_->type_hash());
     }
+    [[nodiscard]] static Uint select_lut(const SampledSpectrum &eta) noexcept;
+    static Float eta_to_ratio_z(const Float &eta) noexcept;
+    [[nodiscard]] Float2 sample_lut(const Float3 &wo,const SampledSpectrum &eta) const noexcept;
+    [[nodiscard]] Float refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
+    [[nodiscard]] Float trans_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                  const SampledSpectrum &fr, MaterialEvalMode mode) const noexcept;
+                                                  const SampledSpectrum &F,const SampledSpectrum &eta,
+                                                  MaterialEvalMode mode) const noexcept;
     [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
                                                     MaterialEvalMode mode,
@@ -271,6 +277,7 @@ public:
           flag_(std::move(flag)) {}
     VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
         [[nodiscard]] virtual bool compensate() const noexcept { return true; }
+
     static void prepare() noexcept;
     [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
@@ -286,7 +293,6 @@ public:
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                           TransportMode tm) const noexcept override;
-
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
         return inverse_lerp(ior, ior_lower, ior_upper);
@@ -303,7 +309,7 @@ public:
     using MicrofacetBxDFSet::MicrofacetBxDFSet;
     static constexpr const char *lut_name = "PureReflectionBxDFSet::lut";
     static constexpr uint lut_res = 32;
-    [[nodiscard]] Float compensate_factor(const Float3 &wo) const noexcept;
+    [[nodiscard]] virtual Float compensate_factor(const Float3 &wo) const noexcept;
     [[nodiscard]] virtual bool compensate() const noexcept { return false; }
     static void prepare();
 

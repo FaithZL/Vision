@@ -298,6 +298,35 @@ void DielectricBxDFSet::prepare() noexcept {
                                      addressof(DielectricInvBxDFSet_Table));
 }
 
+Uint DielectricBxDFSet::select_lut(const vision::SampledSpectrum &eta) noexcept {
+    Uint idx = MaterialLut::instance().get_index(lut_name).hv();
+    Uint inv_idx = MaterialLut::instance().get_index(lut_inv_name).hv();
+    Uint index = ocarina::select(eta[0] > 1, idx, inv_idx);
+    return index;
+}
+
+Float DielectricBxDFSet::eta_to_ratio_z(const Float &eta) const noexcept {
+    return 0;
+}
+
+Float2 DielectricBxDFSet::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
+    Uint idx = select_lut(eta);
+    const BindlessArray &ba = Global::instance().bindless_array();
+    Float x = to_ratio_x();
+    Float y = abs_cos_theta(wo);
+    
+//    Float z = ior_to_ratio_z(eta);
+}
+
+Float DielectricBxDFSet::refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
+
+    return 0;
+}
+
+Float DielectricBxDFSet::trans_compensate(const ocarina::Float3 &wo, const vision::SampledSpectrum &eta) const noexcept {
+    return 0;
+}
+
 SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta);
@@ -313,7 +342,7 @@ ScatterEval DielectricBxDFSet::evaluate_impl(const Float3 &wo, const Float3 &wh,
     Bool reflect = same_hemisphere(wo, wi);
     SampledSpectrum F = fresnel->evaluate(abs_dot(wh, wo));
     $if(reflect) {
-        ret = evaluate_reflection(wo, wh, wi, F, mode);
+        ret = evaluate_reflection(wo, wh, wi, F, fresnel->eta(), mode);
     }
     $else {
         ret = evaluate_transmission(wo, wh, wi, F, fresnel->eta(), mode, tm);
@@ -322,7 +351,8 @@ ScatterEval DielectricBxDFSet::evaluate_impl(const Float3 &wo, const Float3 &wh,
 }
 
 ScatterEval DielectricBxDFSet::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                   const SampledSpectrum &F, MaterialEvalMode mode) const noexcept {
+                                                   const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                   MaterialEvalMode mode) const noexcept {
     ScatterEval se{*swl()};
     if (BxDF::match_F(mode)) {
         se.f = microfacet_->BRDF(wo, wh, wi, F);
