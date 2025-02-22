@@ -29,6 +29,7 @@ struct App {
         fs::path file_path = parent_path(__FILE__, 1) / "precompute.json";
         rp = Importer::import_scene(file_path);
         Global::instance().set_pipeline(rp.get());
+        rp->upload_bindless_array();
     }
 
     int run() {
