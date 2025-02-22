@@ -16,9 +16,10 @@ public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
     static constexpr const char *lut_name = "DielectricBxDFSet::lut";
+    static constexpr const char *lut_inv_name = "DielectricBxDFSetInv::lut";
     static constexpr uint lut_res = 32;
 
-private:
+protected:
     DCSP<Fresnel> fresnel_;
     Bool dispersive_{};
     DCSP<Microfacet<D>> microfacet_;
@@ -69,24 +70,6 @@ public:
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,TSampler &sampler,
                                           TransportMode tm) const noexcept override;
-
-    /// for precompute begin
-    static UP<DielectricBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
-        SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(0.001f), true);
-        return make_unique<DielectricBxDFSet>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
-    }
-    static constexpr const char *name = "DielectricBxDFSet";
-    void from_ratio_z(ocarina::Float z) noexcept override {
-        Float ior = lerp(z, ior_lower, ior_upper);
-        fresnel_->set_eta(SampledSpectrum(*swl(), ior));
-    }
-
-    void from_ratio_x(const ocarina::Float &x) noexcept override {
-        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
-        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
-    }
-    /// for precompute end
 
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
@@ -201,6 +184,29 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
                                            TransportMode tm) const noexcept {
     return BxDFSet::sample_local(wo, flag, sampler, tm);
 }
+
+class DielectricBxDFSetPrecompute : public DielectricBxDFSet {
+public:
+    using DielectricBxDFSet::DielectricBxDFSet;
+
+    /// for precompute begin
+    static UP<DielectricBxDFSetPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
+        SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(0.001f), true);
+        return make_unique<DielectricBxDFSetPrecompute>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
+    }
+    static constexpr const char *name = "DielectricBxDFSet";
+    void from_ratio_z(ocarina::Float z) noexcept override {
+        Float ior = lerp(z, ior_lower, ior_upper);
+        fresnel_->set_eta(SampledSpectrum(*swl(), ior));
+    }
+
+    void from_ratio_x(const ocarina::Float &x) noexcept override {
+        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
+        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
+    }
+    /// for precompute end
+};
 
 class IORCurve {
 public:
@@ -326,7 +332,7 @@ public:
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-        ret.push_back(precompute_lobe<DielectricBxDFSet>());
+        ret.push_back(precompute_lobe<DielectricBxDFSetPrecompute>());
         return ret;
     }
 
