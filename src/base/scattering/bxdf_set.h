@@ -300,7 +300,8 @@ public:
     Float to_ratio_x() const noexcept override {
         Float ax = microfacet_->alpha_x();
         Float ay = microfacet_->alpha_y();
-        return ocarina::clamp(ocarina::sqrt(ax * ay), alpha_lower, alpha_upper);
+        Float a = sqrt(ax * ay);
+        return ocarina::sqrt(a);
     }
 };
 

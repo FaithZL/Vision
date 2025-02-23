@@ -33,8 +33,9 @@ public:
     }
 
     void from_ratio_x(const ocarina::Float &x) noexcept override {
-        microfacet_->set_alpha_x(ocarina::clamp(x, alpha_lower, alpha_upper));
-        microfacet_->set_alpha_y(ocarina::clamp(x, alpha_lower, alpha_upper));
+        Float a = ocarina::clamp(sqr(x), alpha_lower, alpha_upper);
+        microfacet_->set_alpha_x(a);
+        microfacet_->set_alpha_y(a);
     }
 };
 

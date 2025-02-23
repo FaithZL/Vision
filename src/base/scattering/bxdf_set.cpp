@@ -81,13 +81,14 @@ MicrofacetBxDFSet::MicrofacetBxDFSet(const SP<Fresnel> &fresnel,
     : fresnel_(fresnel), bxdf_(std::move(refl)) {}
 
 void MicrofacetBxDFSet::from_ratio_x(const Float &roughness) noexcept {
-    bxdf()->set_alpha(clamp(roughness, alpha_lower, alpha_upper));
+    bxdf()->set_alpha(clamp(sqr(roughness), alpha_lower, alpha_upper));
 }
 
 Float MicrofacetBxDFSet::to_ratio_x() const noexcept {
     Float ax = bxdf()->alpha_x();
     Float ay = bxdf()->alpha_y();
-    return ocarina::clamp(ocarina::sqrt(ax * ay), alpha_lower, alpha_upper);
+    Float a = sqrt(ax * ay);
+    return sqrt(a);
 }
 
 namespace detail {
