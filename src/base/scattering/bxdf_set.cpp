@@ -411,13 +411,17 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
-ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh,
+ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh_,
                                               const Float3 &wi, MaterialEvalMode mode,
                                               const Uint &flag, Float *eta,
                                               TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
     fresnel->correct_eta(cos_theta(wo));
     if (eta) { *eta = fresnel->eta()[0]; }
+    Bool reflect = same_hemisphere(wo, wi);
+    Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
+    Float3 wh = normalize(wo + eta_p * wi);
+    wh = face_forward(wh ,wo);
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
