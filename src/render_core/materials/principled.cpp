@@ -370,6 +370,7 @@ public:
         CoatBxDFSet::prepare();
         SheenLTC::prepare();
         SpecularBxDFSet::prepare();
+        DielectricBxDFSet::prepare();
     }
 
     template<typename TLobe>
@@ -446,6 +447,12 @@ public:
         {
             /// transmission
             Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
+            SampledSpectrum t_weight = trans_weight * weight;
+            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(ior) * specular_tint * trans_weight, iors, swl);
+            UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel_schlick, microfacet, weight * color, false, SurfaceData::Glossy);
+            WeightedBxDFSet trans_lobe(t_weight.average(), std::move(dielectric));
+//            lobes.push_back(std::move(trans_lobe));
+            weight *= (1.0f - trans_weight);
         }
         {
             /// specular
