@@ -379,6 +379,7 @@ public:
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         Float metallic = metallic_.evaluate(it, swl).as_scalar();
         DynamicArray<float> iors = ior_.evaluate(it, swl);
+        iors = it.correct_eta(iors);
         Float ior = iors.as_scalar();
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = anisotropic_.evaluate(it, swl).as_scalar();
