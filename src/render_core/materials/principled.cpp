@@ -27,9 +27,6 @@ public:
         : Fresnel(swl), F0_(std::move(F0)),
           eta_(SampledSpectrum{1, std::move(eta)}) {}
     OC_MAKE_MEMBER_GETTER(F0, )
-    void correct_eta(Float cos_theta) noexcept override {
-        eta_ = select(cos_theta > 0, eta_, rcp(eta_));
-    }
     void set_eta(const vision::SampledSpectrum &eta) noexcept override {
         eta_ = eta;
     }

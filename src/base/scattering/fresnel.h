@@ -31,9 +31,6 @@ public:
     virtual void set_eta(const SampledSpectrum &eta) noexcept {
         OC_NOT_IMPLEMENT_ERROR(Fresnel::set_eta);
     }
-    virtual void correct_eta(Float cos_theta) noexcept {
-        OC_ERROR("correct_eta only dielectric material !");
-    }
     [[nodiscard]] virtual SP<Fresnel> clone() const noexcept = 0;
 };
 
@@ -50,9 +47,6 @@ public:
     explicit FresnelDielectric(const SampledSpectrum &ior, const SampledWavelengths &swl)
         : Fresnel(swl),
           eta_(ior) {}
-    void correct_eta(Float cos_theta) noexcept override {
-        eta_ = select(cos_theta > 0, eta_, rcp(eta_));
-    }
     [[nodiscard]] Float evaluate(const Float &cos_theta, uint channel) const noexcept override {
         return fresnel_dielectric<D>(cos_theta, eta_[channel]);
     }
