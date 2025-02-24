@@ -220,6 +220,8 @@ public:
     void init_volumetric_param(bool has_medium) noexcept;
     void init_phase(Float g, const SampledWavelengths &swl);
     [[nodiscard]] Bool has_phase();
+    [[nodiscard]] float_array correct_eta(const float_array &ior) const noexcept;
+    [[nodiscard]] Float correct_eta(const Float &ior) const noexcept;
     void update_wo(const Float3 &view_pos) noexcept { wo = normalize(view_pos - pos); }
     void set_medium(const Uint &inside, const Uint &outside);
     void set_material(const Uint &mat) noexcept { mat_id_ = mat; }

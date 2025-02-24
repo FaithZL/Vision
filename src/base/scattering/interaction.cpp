@@ -73,6 +73,16 @@ Bool Interaction::has_phase() {
     return false;
 }
 
+Float Interaction::correct_eta(const Float &ior) const noexcept {
+    Float cos_theta = dot(wo, ng);
+    return ocarina::select(cos_theta > 0.f, ior, rcp(ior));
+}
+
+float_array Interaction::correct_eta(const float_array &ior) const noexcept {
+    Float cos_theta = dot(wo, ng);
+    return ocarina::select(cos_theta > 0.f, ior, rcp(ior));
+}
+
 Uint Interaction::material_inst_id() const noexcept {
     return decode_id<D>(mat_id_).first;
 }

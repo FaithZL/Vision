@@ -346,7 +346,6 @@ Float DielectricBxDFSet::trans_compensate(const ocarina::Float3 &wo,
 
 SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
-    fresnel->correct_eta(cos_theta);
     SampledSpectrum eta = fresnel->eta();
     SampledSpectrum F = fresnel->evaluate(abs(cos_theta));
     return kt_ * (1 - F) + F;
@@ -404,7 +403,6 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
                                               MaterialEvalMode mode, const Uint &flag,
                                               TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
-    fresnel->correct_eta(cos_theta(wo));
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
     Float3 wh = normalize(wo + eta_p * wi);
@@ -416,7 +414,6 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh
                                               const Uint &flag, Float *eta,
                                               TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_->clone();
-    fresnel->correct_eta(cos_theta(wo));
     if (eta) { *eta = fresnel->eta()[0]; }
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
@@ -430,7 +427,6 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
     Float d = dot(wo, wh);
     auto fresnel = fresnel_->clone();
-    fresnel->correct_eta(wo.z);
     SampledDirection sd;
     SampledSpectrum F = fresnel->evaluate(abs(d));
     Float uc = sampler->next_1d();

@@ -236,7 +236,7 @@ public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);
-
+        iors = it.correct_eta(iors);
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.01f, 1.f);
         Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
 
