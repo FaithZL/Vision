@@ -31,7 +31,6 @@ public:
     virtual void set_eta(const SampledSpectrum &eta) noexcept {
         OC_NOT_IMPLEMENT_ERROR(Fresnel::set_eta);
     }
-    [[nodiscard]] virtual SP<Fresnel> clone() const noexcept = 0;
 };
 
 #define VS_MAKE_Fresnel_ASSIGNMENT(ClassName)                              \
@@ -58,9 +57,6 @@ public:
         eta_ = eta;
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override { return eta_; }
-    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelDielectric>(eta_, *swl_);
-    }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
 };
 
@@ -68,9 +64,6 @@ class FresnelConstant : public Fresnel {
 public:
     explicit FresnelConstant(const SampledWavelengths &swl) : Fresnel(swl) {}
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {swl_->dimension(), 1.f}; }
-    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConstant>(*swl_);
-    }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConstant)
 };
 

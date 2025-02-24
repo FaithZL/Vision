@@ -41,9 +41,6 @@ public:
     [[nodiscard]] SampledSpectrum eta() const noexcept override {
         return eta_;
     }
-    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelGeneralizedSchlick>(F0_, eta_, *swl_);
-    }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelGeneralizedSchlick)
 };
 
@@ -77,10 +74,6 @@ public:
         SampledSpectrum f_schlick = lerp(mu5, F0_, SampledSpectrum::one(swl_->dimension()));
         SampledSpectrum ret = saturate(f_schlick - B_ * cos_theta * mu5 * mu);
         return ret;
-    }
-
-    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelF82Tint>(F0_, B_, *swl_);
     }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };

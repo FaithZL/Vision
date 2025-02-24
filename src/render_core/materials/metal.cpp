@@ -22,9 +22,6 @@ public:
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex(abs_cos_theta, eta_, k_);
     }
-    [[nodiscard]] SP<Fresnel> clone() const noexcept override {
-        return make_shared<FresnelConductor>(eta_, k_, *swl_);
-    }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
