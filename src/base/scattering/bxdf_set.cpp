@@ -36,7 +36,7 @@ BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &s
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta), tm);
+    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
     ret.eval.pdfs *= sd.factor();
     return ret;
 }
@@ -254,12 +254,7 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
 
 BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                       TransportMode tm) const noexcept {
-    BSDFSample ret{*swl()};
-    SampledDirection sd = sample_wi(wo, flag, sampler);
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, addressof(ret.eta), tm);
-    ret.wi = sd.wi;
-    ret.eval.pdfs = ret.eval.pdfs * sd.factor();
-    return ret;
+    return BxDFSet::sample_local(wo, flag, sampler, tm);
 }
 
 Uint MultiBxDFSet::flag() const noexcept {
@@ -271,11 +266,11 @@ Uint MultiBxDFSet::flag() const noexcept {
 }
 
 ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                         MaterialEvalMode mode, const Uint &flag, Float *eta,
-                                         TransportMode tm) const noexcept {
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
     for_each([&](const WeightedBxDFSet &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, eta, tm);
+        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, tm,eta);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.sample_weight();
         ret.flags = ret.flags | se.flags;
@@ -420,8 +415,7 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh_,
                                               const Float3 &wi, MaterialEvalMode mode,
-                                              const Uint &flag, Float *eta,
-                                              TransportMode tm) const noexcept {
+                                              const Uint &flag,TransportMode tm, Float *eta) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     if (eta) { *eta = fresnel->eta()[0]; }
     Bool reflect = same_hemisphere(wo, wi);
