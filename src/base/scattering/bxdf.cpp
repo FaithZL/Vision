@@ -54,7 +54,7 @@ SampledDirection BxDF::sample_wi(const Float3 &wo, Float2 u, SP<Fresnel> fresnel
 BSDFSample BxDF::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel,
                         TransportMode tm) const noexcept {
     BSDFSample ret{swl()};
-    auto [wi, _, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
+    auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.wi = wi;
     ret.eval = evaluate(wo, wi, fresnel, MaterialEvalMode::All, tm);
     ret.eval.pdfs *= pdf;
@@ -85,7 +85,7 @@ SampledDirection MicrofacetReflection::sample_wi(const Float3 &wo, Float2 u, SP<
 BSDFSample MicrofacetReflection::sample(const Float3 &wo, TSampler &sampler, SP<Fresnel> fresnel,
                                         TransportMode tm) const noexcept {
     BSDFSample ret{swl()};
-    auto [wi, _, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
+    auto [wi, pdf] = sample_wi(wo, sampler->next_2d(), fresnel);
     ret.eval = safe_evaluate(wo, wi, fresnel, MaterialEvalMode::All, tm);
     ret.wi = wi;
     return ret;

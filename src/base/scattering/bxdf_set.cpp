@@ -434,14 +434,12 @@ SampledDirection DielectricBxDFSet::sample_wi(const Float3 &wo, const Uint &flag
     Float uc = sampler->next_1d();
     $if(uc < refl_prob(F)) {
         sd.wi = reflect(wo, wh);
-        sd.wh = wh;
         sd.valid = same_hemisphere(wo, sd.wi);
     }
     $else {
         Float eta = fresnel->eta()[0];
         Bool valid = refract(wo, wh, eta, &sd.wi);
         sd.valid = valid && !same_hemisphere(wo, sd.wi);
-        sd.wh = wh;
     };
     return sd;
 }

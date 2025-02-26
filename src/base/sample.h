@@ -112,13 +112,7 @@ public:
 
 struct SampledDirection {
     Float3 wi;
-    Float3 wh;
     Bool valid{true};
-    SampledDirection() = default;
-    SampledDirection(Float3 wi, Float3 wh, Bool v)
-        : wi(std::move(wi)), wh(std::move(wh)), valid(std::move(v)) {}
-    SampledDirection(Float3 wi, Bool v)
-        : wi(std::move(wi)), valid(std::move(v)) {}
     [[nodiscard]] Float factor() const noexcept { return cast<float>(valid); }
 };
 
