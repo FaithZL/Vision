@@ -194,9 +194,14 @@ void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &, uint)> &
     }
 }
 
-WeightedBxDFSet::WeightedBxDFSet(ocarina::Float weight, SP<vision::BxDFSet> bxdf)
+WeightedBxDFSet::WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf)
     : bxdf_(bxdf), sample_weight_(std::move(weight)),
       weight_(SampledSpectrum::one(bxdf->swl()->dimension())) {}
+
+WeightedBxDFSet::WeightedBxDFSet(Float sample_weight, SampledSpectrum weight, SP<BxDFSet> bxdf)
+    : bxdf_(bxdf), sample_weight_(std::move(sample_weight)),
+      weight_(std::move(weight)) {
+}
 
 void MultiBxDFSet::normalize_weights() noexcept {
     Float weight_sum = 0;

@@ -174,6 +174,7 @@ private:
 
 public:
     WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf);
+    WeightedBxDFSet(Float sample_weight, SampledSpectrum weight, SP<BxDFSet> bxdf);
     [[nodiscard]] const BxDFSet &operator*() const noexcept { return *bxdf_; }
     [[nodiscard]] BxDFSet &operator*() noexcept { return *bxdf_; }
     [[nodiscard]] const BxDFSet *operator->() const noexcept { return bxdf_.get(); }
