@@ -180,6 +180,7 @@ public:
     [[nodiscard]] const BxDFSet *get() const noexcept { return bxdf_.get(); }
     [[nodiscard]] BxDFSet *get() noexcept { return bxdf_.get(); }
     OC_MAKE_MEMBER_GETTER(sample_weight, &)
+    OC_MAKE_MEMBER_GETTER(weight, &)
 };
 
 class MultiBxDFSet : public BxDFSet {
