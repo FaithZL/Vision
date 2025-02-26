@@ -402,7 +402,7 @@ public:
                                                            sheen_tint * sheen_weight,
                                                            sheen_roughness, swl);
             SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
-            WeightedBxDFSet sheen_lobe((sheen_weight * weight).average(), std::move(sheen_ltc));
+            WeightedBxDFSet sheen_lobe(sheen_weight * sheen_albedo.average(), std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
             weight = layering_weight(sheen_albedo, weight);
         }
@@ -419,7 +419,7 @@ public:
                                                                                  microfacet_cc);
             UP<CoatBxDFSet> cc_lobe = make_unique<CoatBxDFSet>(fresnel_cc, std::move(cc_refl));
             SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
-            WeightedBxDFSet w_cc_lobe((cc_weight * weight).average(), std::move(cc_lobe));
+            WeightedBxDFSet w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
             weight = layering_weight(cc_albedo, weight);
             lobes.push_back(std::move(w_cc_lobe));
         }
