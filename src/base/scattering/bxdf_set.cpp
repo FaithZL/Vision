@@ -194,14 +194,17 @@ void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &, uint)> &
     }
 }
 
+WeightedBxDFSet::WeightedBxDFSet(ocarina::Float weight, SP<vision::BxDFSet> bxdf)
+    : bxdf_(bxdf), sample_weight_(std::move(weight)),
+      weight_(SampledSpectrum::one(bxdf->swl()->dimension())) {}
+
 void MultiBxDFSet::normalize_weights() noexcept {
     Float weight_sum = 0;
     for_each([&](WeightedBxDFSet &lobe) {
-        weight_sum += lobe.weight();
+        weight_sum += lobe.sample_weight();
     });
     for_each([&](WeightedBxDFSet &lobe) {
-        lobe.weight() = lobe.weight() / weight_sum;
-        $condition_info("{} ----", lobe.weight());
+        lobe.sample_weight() = lobe.sample_weight() / weight_sum;
     });
 }
 
@@ -223,7 +226,7 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
 
     for_each([&](const WeightedBxDFSet &lobe, uint i) {
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
-        sum_weights += lobe.weight();
+        sum_weights += lobe.sample_weight();
     });
     if (lobe_num() == 1) {
         sd = lobes_[0]->sample_wi(wo, flag, sampler);
@@ -269,7 +272,7 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, con
     for_each([&](const WeightedBxDFSet &lobe) {
         ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, eta, tm);
         ret.f += se.f;
-        ret.pdfs += se.pdfs * lobe.weight();
+        ret.pdfs += se.pdfs * lobe.sample_weight();
         ret.flags = ret.flags | se.flags;
     });
 
@@ -283,7 +286,7 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
     for_each([&](const WeightedBxDFSet &lobe) {
         ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm);
         ret.f += se.f;
-        ret.pdfs += se.pdfs * lobe.weight();
+        ret.pdfs += se.pdfs * lobe.sample_weight();
         ret.flags = ret.flags | se.flags;
     });
     return ret;
@@ -319,7 +322,7 @@ Float2 DielectricBxDFSet::sample_lut(const Float3 &wo, const SampledSpectrum &et
     Float x = to_ratio_x();
     Float y = abs_cos_theta(wo);
     Float z = eta_to_ratio_z(eta[0]);
-    Float3 uvw = make_float3(x,y,z);
+    Float3 uvw = make_float3(x, y, z);
     Float2 ret = ba.tex_var(idx).sample(2, uvw).as_vec2();
     return ret;
 }
@@ -419,7 +422,7 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
     Float3 wh = normalize(wo + eta_p * wi);
-    wh = face_forward(wh ,wo);
+    wh = face_forward(wh, wo);
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 

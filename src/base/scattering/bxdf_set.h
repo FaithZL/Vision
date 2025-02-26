@@ -168,19 +168,19 @@ public:
 
 class WeightedBxDFSet {
 private:
-    Float weight_;
     DCSP<BxDFSet> bxdf_;
+    Float sample_weight_;
+    SampledSpectrum weight_;
 
 public:
-    WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf)
-        : weight_(std::move(weight)), bxdf_(std::move(bxdf)) {}
+    WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf);
     [[nodiscard]] const BxDFSet &operator*() const noexcept { return *bxdf_; }
     [[nodiscard]] BxDFSet &operator*() noexcept { return *bxdf_; }
     [[nodiscard]] const BxDFSet *operator->() const noexcept { return bxdf_.get(); }
     [[nodiscard]] BxDFSet *operator->() noexcept { return bxdf_.get(); }
     [[nodiscard]] const BxDFSet *get() const noexcept { return bxdf_.get(); }
     [[nodiscard]] BxDFSet *get() noexcept { return bxdf_.get(); }
-    OC_MAKE_MEMBER_GETTER(weight, &)
+    OC_MAKE_MEMBER_GETTER(sample_weight, &)
 };
 
 class MultiBxDFSet : public BxDFSet {
