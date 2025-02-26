@@ -36,7 +36,7 @@ BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &s
     BSDFSample ret{*swl()};
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
-    ret.eval = evaluate_local(wo, sd.wh, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
+    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
     ret.eval.pdfs *= sd.factor();
     return ret;
 }
@@ -265,12 +265,12 @@ Uint MultiBxDFSet::flag() const noexcept {
     return ret;
 }
 
-ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                          MaterialEvalMode mode, const Uint &flag,
                                          TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
     for_each([&](const WeightedBxDFSet &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wh, wi, mode, flag, tm,eta);
+        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
         ret.f += se.f;
         ret.pdfs += se.pdfs * lobe.sample_weight();
         ret.flags = ret.flags | se.flags;
@@ -413,9 +413,8 @@ ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
-ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wh_,
-                                              const Float3 &wi, MaterialEvalMode mode,
-                                              const Uint &flag,TransportMode tm, Float *eta) const noexcept {
+ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                              const Uint &flag, TransportMode tm, Float *eta) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     if (eta) { *eta = fresnel->eta()[0]; }
     Bool reflect = same_hemisphere(wo, wi);

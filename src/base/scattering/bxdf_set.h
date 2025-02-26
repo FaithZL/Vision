@@ -26,8 +26,7 @@ public:
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag,
                                                      TransportMode tm) const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh,
-                                                     const Float3 &wi, MaterialEvalMode mode,
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo,const Float3 &wi, MaterialEvalMode mode,
                                                      const Uint &flag,TransportMode tm,Float *eta) const noexcept {
         return evaluate_local(wo, wi, mode, flag, tm);
     }
@@ -210,9 +209,8 @@ public:
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override;
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag, TransportMode tm,
-                                             Float *eta) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
+                                             const Uint &flag, TransportMode tm,Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
@@ -285,9 +283,8 @@ public:
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override;
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag,
-                                             TransportMode tm, Float *eta) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo,  const Float3 &wi,MaterialEvalMode mode,
+                                             const Uint &flag,TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
