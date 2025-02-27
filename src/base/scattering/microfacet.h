@@ -322,9 +322,9 @@ private:
     using Super = Microfacet<D>;
 
 public:
-    explicit GGXMicrofacet(const Float2 &alpha, bool sample_visible = false)
+    explicit GGXMicrofacet(const Float2 &alpha, bool sample_visible = true)
         : Super(alpha, sample_visible, type) {}
-    GGXMicrofacet(Float ax, Float ay, bool sample_visible = false)
+    GGXMicrofacet(Float ax, Float ay, bool sample_visible = true)
         : Super(std::move(ax), std::move(ay), sample_visible, type) {}
     [[nodiscard]] Float bsdf_D(Float3 wh) const noexcept override;
     [[nodiscard]] Float3 sample_wh(const Float3 &wo, const Float2 &u) const noexcept override;
