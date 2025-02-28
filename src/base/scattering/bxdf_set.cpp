@@ -210,6 +210,7 @@ void MultiBxDFSet::normalize_weights() noexcept {
     });
     for_each([&](WeightedBxDFSet &lobe) {
         lobe.sample_weight() = lobe.sample_weight() / weight_sum;
+        $condition_info("{} --", lobe.sample_weight());
     });
 }
 
