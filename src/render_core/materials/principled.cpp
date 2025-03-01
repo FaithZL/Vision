@@ -288,6 +288,192 @@ public:
     return weight * saturate(1 - max_comp);
 }
 
+
+class MultiBxDFSet : public BxDFSet {
+public:
+    using Lobes = ocarina::vector<WeightedBxDFSet>;
+
+private:
+    Lobes lobes_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        uint64_t ret = Hash64::default_seed;
+        for_each([&](const WeightedBxDFSet &lobe) {
+            ret = hash64(ret, lobe->type_hash());
+        });
+        return ret;
+    }
+
+public:
+    MultiBxDFSet() = default;
+    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {
+        normalize_weights();
+    }
+    void normalize_weights() noexcept;
+    VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
+        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
+    [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag, TransportMode tm) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,MaterialEvalMode mode,
+                                             const Uint &flag, TransportMode tm,Float *eta) const noexcept override;
+    [[nodiscard]] Uint flag() const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler, TransportMode tm) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
+    void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &)> &func);
+    void for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &, uint)> &func);
+};
+
+
+/// MultiBxDFSet
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &)> &func) {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const {
+    for (int i = 0; i < lobe_num(); ++i) {
+        func(lobes_[i], i);
+    }
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &, uint)> &func) {
+    for (int i = 0; i < lobe_num(); ++i) {
+        func(lobes_[i], i);
+    }
+}
+
+WeightedBxDFSet::WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf)
+    : bxdf_(bxdf), sample_weight_(std::move(weight)),
+      weight_(SampledSpectrum::one(bxdf->swl()->dimension())) {}
+
+WeightedBxDFSet::WeightedBxDFSet(Float sample_weight, SampledSpectrum weight, SP<BxDFSet> bxdf)
+    : bxdf_(bxdf), sample_weight_(std::move(sample_weight)),
+      weight_(std::move(weight)) {
+}
+
+void MultiBxDFSet::normalize_weights() noexcept {
+    Float weight_sum = 0;
+    for_each([&](WeightedBxDFSet &lobe) {
+        weight_sum += lobe.sample_weight();
+    });
+    for_each([&](WeightedBxDFSet &lobe) {
+        lobe.sample_weight() = lobe.sample_weight() / weight_sum;
+        //                $condition_info("{} --", lobe.sample_weight());
+    });
+}
+
+SampledSpectrum MultiBxDFSet::albedo(const Float &cos_theta) const noexcept {
+    SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret += lobe->albedo(cos_theta);
+    });
+    return ret;
+}
+
+SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
+                                         TSampler &sampler) const noexcept {
+    Float uc = sampler->next_1d();
+    Float2 u = sampler->next_2d();
+    SampledDirection sd;
+    Uint sampling_strategy = 0u;
+    Float sum_weights = 0.f;
+
+    for_each([&](const WeightedBxDFSet &lobe, uint i) {
+        sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+        sum_weights += lobe.sample_weight();
+    });
+    if (lobe_num() == 1) {
+        sd = lobes_[0]->sample_wi(wo, flag, sampler);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedBxDFSet &lobe, uint i) {
+                $case(i) {
+                    sd = lobe->sample_wi(wo, flag, sampler);
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+    }
+    return sd;
+}
+
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
+                                      TransportMode tm) const noexcept {
+    //    return BxDFSet::sample_local(wo, flag, sampler, tm);
+    Float uc = sampler->next_1d();
+    Float2 u = sampler->next_2d();
+    BSDFSample bs{*swl()};
+    Uint sampling_strategy = 0u;
+    Float sum_weights = 0.f;
+
+    for_each([&](const WeightedBxDFSet &lobe, uint i) {
+        sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+        sum_weights += lobe.sample_weight();
+    });
+    if (lobe_num() == 1) {
+        bs = lobes_[0]->sample_local(wo, flag, sampler, tm);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedBxDFSet &lobe, uint i) {
+                $case(i) {
+                    bs = lobe->sample_local(wo, flag, sampler, tm);
+                    $if(!same_hemisphere(wo, bs.wi)) {
+                        bs.eval.pdfs *= lobe.sample_weight();
+                    };
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+    }
+
+    return bs;
+}
+
+Uint MultiBxDFSet::flag() const noexcept {
+    Uint ret = BxDFFlag::Unset;
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret |= lobe->flag();
+    });
+    return ret;
+}
+
+ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm, Float *eta) const noexcept {
+    ScatterEval ret{*swl()};
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
+        ret.f += se.f * lobe.weight();
+        ret.pdfs += se.pdfs * lobe.sample_weight();
+        ret.flags = ret.flags | se.flags;
+    });
+    return ret;
+}
+
+ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm) const noexcept {
+    return evaluate_local(wo, wi, mode, flag, tm, nullptr);
+}
+
 class PrincipledBSDF : public Material {
 private:
     VS_MAKE_SLOT(color)
@@ -392,48 +578,48 @@ public:
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         Float cos_theta = dot(it.wo, it.shading.normal());
-        {
-            /// sheen
-            SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
-            Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
-            Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
-
-            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
-                                                           sheen_tint * sheen_weight,
-                                                           sheen_roughness, swl);
-            SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
-            WeightedBxDFSet sheen_lobe(sheen_albedo.average(), std::move(sheen_ltc));
-            lobes.push_back(std::move(sheen_lobe));
-            weight = layering_weight(sheen_albedo, weight);
-        }
-        {
-            /// coat
-            Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar();
-            Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
-            cc_roughness = sqr(cc_roughness);
-            Float cc_ior = coat_ior_.evaluate(it, swl).as_scalar();
-            SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
-            SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
-            SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
-            UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
-                                                                                 microfacet_cc);
-            UP<CoatBxDFSet> cc_lobe = make_unique<CoatBxDFSet>(fresnel_cc, std::move(cc_refl));
-            SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
-            WeightedBxDFSet w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
-            weight = layering_weight(cc_albedo, weight);
-            lobes.push_back(std::move(w_cc_lobe));
-        }
-        {
-            /// metallic
-            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
-            fresnel_f82->init_from_F82(specular_tint);
-            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
-                                                                                    swl, microfacet);
-            WeightedBxDFSet metal_lobe(metallic * weight.average(),
-                                       make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
-            lobes.push_back(std::move(metal_lobe));
-            weight *= (1.0f - metallic);
-        }
+//        {
+//            /// sheen
+//            SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
+//            Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
+//            Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
+//
+//            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
+//                                                           sheen_tint * sheen_weight,
+//                                                           sheen_roughness, swl);
+//            SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
+//            WeightedBxDFSet sheen_lobe(sheen_albedo.average(), std::move(sheen_ltc));
+//            lobes.push_back(std::move(sheen_lobe));
+//            weight = layering_weight(sheen_albedo, weight);
+//        }
+//        {
+//            /// coat
+//            Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar();
+//            Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+//            cc_roughness = sqr(cc_roughness);
+//            Float cc_ior = coat_ior_.evaluate(it, swl).as_scalar();
+//            SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
+//            SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
+//            SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
+//            UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
+//                                                                                 microfacet_cc);
+//            UP<CoatBxDFSet> cc_lobe = make_unique<CoatBxDFSet>(fresnel_cc, std::move(cc_refl));
+//            SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
+//            WeightedBxDFSet w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
+//            weight = layering_weight(cc_albedo, weight);
+//            lobes.push_back(std::move(w_cc_lobe));
+//        }
+//        {
+//            /// metallic
+//            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
+//            fresnel_f82->init_from_F82(specular_tint);
+//            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
+//                                                                                    swl, microfacet);
+//            WeightedBxDFSet metal_lobe(metallic * weight.average(),
+//                                       make_unique<MetallicBxDFSet>(fresnel_f82, std::move(metal_refl)));
+//            lobes.push_back(std::move(metal_lobe));
+//            weight *= (1.0f - metallic);
+//        }
         Float f0 = schlick_F0_from_ior(ior);
         {
             /// transmission
@@ -443,8 +629,8 @@ public:
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(ior) * specular_tint * trans_weight, iors, swl);
             UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel, microfacet, t_weight * color, false, SurfaceData::Glossy);
             WeightedBxDFSet trans_lobe(t_weight.average(), SampledSpectrum{swl, trans_weight},std::move(dielectric));
-//            lobes.push_back(std::move(trans_lobe));
-//            weight *= (1.0f - trans_weight);
+            lobes.push_back(std::move(trans_lobe));
+            weight *= (1.0f - trans_weight);
         }
         {
             /// specular
@@ -452,7 +638,7 @@ public:
             UP<BxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                  make_unique<MicrofacetReflection>(weight, swl, microfacet));
             SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
-            WeightedBxDFSet specular_lobe(weight.average(), std::move(spec_refl));
+            WeightedBxDFSet specular_lobe(spec_refl_albedo.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);
         }
