@@ -287,14 +287,7 @@ ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
 ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                          MaterialEvalMode mode, const Uint &flag,
                                          TransportMode tm) const noexcept {
-    ScatterEval ret{*swl()};
-    for_each([&](const WeightedBxDFSet &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm);
-        ret.f += se.f * lobe.weight();
-        ret.pdfs += se.pdfs * lobe.sample_weight();
-        ret.flags = ret.flags | se.flags;
-    });
-    return ret;
+    return evaluate_local(wo, wi, mode, flag, tm, nullptr);
 }
 
 /// DielectricBxDFSet
