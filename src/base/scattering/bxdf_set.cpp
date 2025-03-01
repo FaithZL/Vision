@@ -31,6 +31,11 @@ SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sa
     return precompute_albedo(wo, sampler, sample_num);
 }
 
+Float BxDFSet::PDF_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+    Bool valid = same_hemisphere(wo, wi);
+    return cast<float>(valid);
+}
+
 BSDFSample BxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                  TransportMode tm) const noexcept {
     BSDFSample ret{*swl()};
@@ -210,7 +215,7 @@ void MultiBxDFSet::normalize_weights() noexcept {
     });
     for_each([&](WeightedBxDFSet &lobe) {
         lobe.sample_weight() = lobe.sample_weight() / weight_sum;
-        $condition_info("{} --", lobe.sample_weight());
+        //        $condition_info("{} --", lobe.sample_weight());
     });
 }
 
@@ -401,6 +406,10 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
     se.flags = BxDFFlag::GlossyTrans;
     se.f *= trans_compensate(wo, eta);
     return se;
+}
+
+Float DielectricBxDFSet::PDF_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+    return 1.f;
 }
 
 ScatterEval DielectricBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
