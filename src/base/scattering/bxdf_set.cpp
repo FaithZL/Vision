@@ -215,7 +215,7 @@ void MultiBxDFSet::normalize_weights() noexcept {
     });
     for_each([&](WeightedBxDFSet &lobe) {
         lobe.sample_weight() = lobe.sample_weight() / weight_sum;
-        //        $condition_info("{} --", lobe.sample_weight());
+        //                $condition_info("{} --", lobe.sample_weight());
     });
 }
 
@@ -260,7 +260,38 @@ SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
 
 BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                       TransportMode tm) const noexcept {
-    return BxDFSet::sample_local(wo, flag, sampler, tm);
+    //    return BxDFSet::sample_local(wo, flag, sampler, tm);
+    Float uc = sampler->next_1d();
+    Float2 u = sampler->next_2d();
+    BSDFSample bs{*swl()};
+    Uint sampling_strategy = 0u;
+    Float sum_weights = 0.f;
+
+    for_each([&](const WeightedBxDFSet &lobe, uint i) {
+        sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+        sum_weights += lobe.sample_weight();
+    });
+    if (lobe_num() == 1) {
+        bs = lobes_[0]->sample_local(wo, flag, sampler, tm);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedBxDFSet &lobe, uint i) {
+                $case(i) {
+                    bs = lobe->sample_local(wo, flag, sampler, tm);
+                    $if(!same_hemisphere(wo, bs.wi)) {
+                        bs.eval.pdfs *= lobe.sample_weight();
+                    };
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+    }
+
+    return bs;
 }
 
 Uint MultiBxDFSet::flag() const noexcept {
