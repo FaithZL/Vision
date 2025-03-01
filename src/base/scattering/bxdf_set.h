@@ -30,7 +30,7 @@ public:
                                                      const Uint &flag,TransportMode tm,Float *eta) const noexcept {
         return evaluate_local(wo, wi, mode, flag, tm);
     }
-    [[nodiscard]] virtual Float PDF_factor(const Float3 &wo, const Float3 &wi) const noexcept;
+    [[nodiscard]] virtual Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept;
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler,
                                                   TransportMode tm) const noexcept;
@@ -279,7 +279,7 @@ public:
         [[nodiscard]] virtual bool compensate() const noexcept { return true; }
 
     static void prepare() noexcept;
-    [[nodiscard]] Float PDF_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept override;
+    [[nodiscard]] Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }

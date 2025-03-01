@@ -31,7 +31,7 @@ SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sa
     return precompute_albedo(wo, sampler, sample_num);
 }
 
-Float BxDFSet::PDF_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+Float BxDFSet::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     Bool valid = same_hemisphere(wo, wi);
     return cast<float>(valid);
 }
@@ -408,7 +408,7 @@ ScatterEval DielectricBxDFSet::evaluate_transmission(const Float3 &wo, const Flo
     return se;
 }
 
-Float DielectricBxDFSet::PDF_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+Float DielectricBxDFSet::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return 1.f;
 }
 
