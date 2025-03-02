@@ -201,8 +201,8 @@
 			}
 		},
 		{
-			"type" : "sphere",
-//			"type" : "cube",
+//			"type" : "sphere",
+			"type" : "cube",
 			"name" : "shape_5",
 			"param" : {
 				"radius": 0.7,
@@ -257,11 +257,11 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-//				"material": "TallBox",
+				"material": "TallBox",
 //				"material" : "mix2",
 //				"material" : "Mirror",
 //				                "material": "Mirror2",
-								                "material": "Glass",
+//								                "material": "Glass",
 //												"material" : "Metal",
 //								"material" : "principled",
 				"transform" : {
