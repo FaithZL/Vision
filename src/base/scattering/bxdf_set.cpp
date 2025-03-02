@@ -178,7 +178,6 @@ BSDFSample BlackBodyBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TS
     return ret;
 }
 
-
 /// DielectricBxDFSet
 void DielectricBxDFSet::prepare() noexcept {
     MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
@@ -240,6 +239,16 @@ SampledSpectrum DielectricBxDFSet::albedo(const Float &cos_theta) const noexcept
     SampledSpectrum eta = fresnel->eta();
     SampledSpectrum F = fresnel->evaluate(abs(cos_theta));
     return kt_ * (1 - F) + F;
+}
+
+Float DielectricBxDFSet::refl_prob(const vision::SampledSpectrum &F) const noexcept {
+    SampledSpectrum T = 1 - F;
+    SampledSpectrum total = T * kt_ + F;
+    return F.average() / total.average();
+}
+
+Float DielectricBxDFSet::trans_prob(const vision::SampledSpectrum &F) const noexcept {
+    return 1 - refl_prob(F);
 }
 
 ScatterEval DielectricBxDFSet::evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,

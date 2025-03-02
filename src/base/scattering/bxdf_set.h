@@ -219,15 +219,8 @@ protected:
     [[nodiscard]] ScatterEval evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                             const SP<const Fresnel> &fresnel, MaterialEvalMode mode,
                                             TransportMode tm) const noexcept;
-    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept {
-        SampledSpectrum T = 1 - F;
-        SampledSpectrum total = T * kt_ + F;
-        return F.average() / total.average();
-    }
-
-    [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept {
-        return 1 - refl_prob(F);
-    }
+    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept;
+    [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept;
 
 public:
     DielectricBxDFSet(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
