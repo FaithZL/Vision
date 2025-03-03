@@ -592,10 +592,11 @@ public:
         {
             /// transmission
             Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
-            Float eta = it.correct_eta(iors[0]);
+            float_array etas = it.correct_eta(iors);
+            Float eta = etas[0];
             auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
             SampledSpectrum t_weight = trans_weight * weight;
-            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(eta) * specular_tint * trans_weight, iors, swl);
+            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
             UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel, microfacet, color, false, SurfaceData::Glossy);
             WeightedBxDFSet trans_lobe(t_weight.average(), SampledSpectrum{swl, trans_weight}, std::move(dielectric));
             lobes.push_back(std::move(trans_lobe));
