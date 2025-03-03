@@ -312,6 +312,12 @@ void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const
     }
 }
 
+SampledSpectrum Material::integral_albedo(const Float3 &wo, const BxDFSet *lobe_set) const noexcept {
+    TSampler &sampler = scene().sampler();
+    uint sample_num = 2 << exp_of_two_;
+    return lobe_set->integral_albedo(wo, sampler, sample_num);
+}
+
 MaterialEvaluator Material::create_evaluator(const Interaction &it,
                                              const SampledWavelengths &swl) const noexcept {
     MaterialEvaluator evaluator{it, swl};

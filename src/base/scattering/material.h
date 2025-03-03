@@ -280,6 +280,7 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, const BxDFSet *lobe_set) const noexcept;
 
 public:
     [[nodiscard]] static Uint combine_flag(const Float3 &wo, const Float3 &wi,

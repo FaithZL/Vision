@@ -10,7 +10,7 @@ namespace vision {
 
 /// BxDFSet
 SampledSpectrum BxDFSet::integral_albedo(const Float3 &wo, TSampler &sampler,
-                                           const Uint &sample_num) noexcept {
+                                         const Uint &sample_num) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(*swl());
     $for(i, sample_num) {
         BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);

@@ -15,7 +15,8 @@ class DielectricPrecompute : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
     [[nodiscard]] bool compensate() const noexcept override { return false; }
-    [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler, const Uint &sample_num) noexcept override {
+    [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler,
+                                                  const Uint &sample_num) const noexcept override {
         SampledSpectrum ret = SampledSpectrum::zero(*swl());
 
         $for(i, sample_num) {

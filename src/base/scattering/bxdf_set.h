@@ -51,7 +51,7 @@ public:
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
     /// for precompute the table begin
     [[nodiscard]] virtual SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler,
-                                                            const Uint &sample_num) noexcept;
+                                                            const Uint &sample_num) const noexcept;
     virtual SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                   const Uint &sample_num) noexcept;
     virtual void from_ratio_x(const Float &x) noexcept;
