@@ -176,7 +176,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     Float eta_scale = 1.f;
     $for(&bounces, 0, max_depth) {
         mis_bsdf(bounces, true);
-
+        Env::instance().set("bounces", bounces);
         comment("estimate direct lighting");
         comment("sample light");
         LightSample light_sample = light_sampler->sample_wi(it, sampler, swl);

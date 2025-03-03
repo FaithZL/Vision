@@ -37,7 +37,7 @@ const RegistrableTexture &MaterialLut::get_lut(const std::string &name) const no
     return lut_map_.at(name);
 }
 
-const EncodedData<uint>& MaterialLut::get_index(const std::string &name) const noexcept {
+const EncodedData<uint> &MaterialLut::get_index(const std::string &name) const noexcept {
     return lut_map_.at(name).index();
 }
 
@@ -169,6 +169,7 @@ bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->drag_uint("exp of 2", addressof(exp_of_two_), 1, 1, 20);
     for_each_slot([&](Slot &slot) {
         slot.render_UI(widgets);
     });
@@ -176,7 +177,7 @@ void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 
 void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     Node::restore(old_obj);
-    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_)
+    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_, exp_of_two_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
         Slot &slot = get_slot(i);
         Slot &old_slot = old_obj_->get_slot(i);

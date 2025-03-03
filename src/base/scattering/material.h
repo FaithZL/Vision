@@ -106,6 +106,8 @@ protected:
     uint index_{InvalidUI32};
     VS_MAKE_SLOT(bump);
     VS_MAKE_SLOT(bump_scale);
+    /// use for integral albedo
+    uint exp_of_two_{10};
     vector<weak_ptr<ShapeInstance>> shape_instances;
     vector<weak_ptr<ShapeGroup>> shape_groups;
 
