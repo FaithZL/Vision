@@ -201,8 +201,8 @@
 			}
 		},
 		{
-//			"type" : "sphere",
-			"type" : "cube",
+			"type" : "sphere",
+//			"type" : "cube",
 			"name" : "shape_5",
 			"param" : {
 				"radius": 0.7,

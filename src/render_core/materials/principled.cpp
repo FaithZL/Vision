@@ -554,10 +554,10 @@ public:
             Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
 
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
-                                                           sheen_tint * sheen_weight,
+                                                           sheen_tint * sheen_weight * weight,
                                                            sheen_roughness, swl);
             SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
-            WeightedBxDFSet sheen_lobe(sheen_albedo.average(), std::move(sheen_ltc));
+            WeightedBxDFSet sheen_lobe(sheen_albedo.average(), sheen_albedo, std::move(sheen_ltc));
             lobes.push_back(std::move(sheen_lobe));
             weight = layering_weight(sheen_albedo, weight);
         }
@@ -597,8 +597,8 @@ public:
             auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
             SampledSpectrum t_weight = trans_weight * weight;
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
-            UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel, microfacet, color, false, SurfaceData::Glossy);
-            WeightedBxDFSet trans_lobe(t_weight.average(), SampledSpectrum{swl, trans_weight}, std::move(dielectric));
+            UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
+            WeightedBxDFSet trans_lobe(t_weight.average(), t_weight, std::move(dielectric));
             lobes.push_back(std::move(trans_lobe));
             weight *= (1.0f - trans_weight);
         }
