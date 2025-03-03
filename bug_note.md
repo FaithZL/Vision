@@ -1,0 +1,10 @@
+2025.3.3
+
+这几天在查一个关于principled BSDF材质的一个bug，把transmission分量加入材质之后，会出现无法收敛的噪声
+认真检查了各个lobe的PDF，没发现问题，后来发现反弹次数提高之后会变亮，立刻怀疑能量守恒出了问题，
+计算了albedo积分大于一，能量不守恒，打印了每个lobe的albedo之后，发现specular分量的albedo异常，
+查证之后发现构建specular lobe时，折射率翻转了，但不应该翻转，该问题已解决
+
+正常的加入transmission之后，发现打开transmission与sheen之后，roughness提高之后，又会有无法收敛的噪声
+打印了sheen的albedo之后发现，在物体内部时，albedo不为零，显然不对，在这里我加了个hit front判断，
+在物体内部计算着色时，不考虑coat与sheen
