@@ -226,6 +226,7 @@ public:
     void set_medium(const Uint &inside, const Uint &outside);
     void set_material(const Uint &mat) noexcept { mat_id_ = mat; }
     void set_light(const Uint &light) noexcept { light_id_ = light; }
+    [[nodiscard]] Float3 local_wo() const noexcept;
     [[nodiscard]] HenyeyGreenstein phase() const noexcept { return *phase_; }
     [[nodiscard]] MediumInterface mi() const noexcept { return *mi_; }
     [[nodiscard]] Bool has_emission() const noexcept { return light_id_ != InvalidUI32; }

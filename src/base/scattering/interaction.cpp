@@ -73,6 +73,10 @@ Bool Interaction::has_phase() {
     return false;
 }
 
+Float3 Interaction::local_wo() const noexcept {
+    return shading.to_local(wo);
+}
+
 Float Interaction::correct_eta(const Float &ior) const noexcept {
     Float cos_theta = dot(wo, ng);
     return ocarina::select(cos_theta > 0.f, ior, rcp(ior));
