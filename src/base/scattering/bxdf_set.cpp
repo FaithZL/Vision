@@ -9,9 +9,9 @@
 namespace vision {
 
 /// BxDFSet
-SampledSpectrum BxDFSet::precompute_albedo(const Float3 &wo, TSampler &sampler,
+SampledSpectrum BxDFSet::integral_albedo(const Float3 &wo, TSampler &sampler,
                                            const Uint &sample_num) noexcept {
-    SampledSpectrum ret = SampledSpectrum::zero(3);
+    SampledSpectrum ret = SampledSpectrum::zero(*swl());
     $for(i, sample_num) {
         BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);
         ScatterEval se = bs.eval;
@@ -28,7 +28,7 @@ SampledSpectrum BxDFSet::precompute_with_radio(const Float3 &ratio, TSampler &sa
     from_ratio_x(ratio.x);
     Float3 wo = from_ratio_y(ratio.y);
     from_ratio_z(ratio.z);
-    return precompute_albedo(wo, sampler, sample_num);
+    return integral_albedo(wo, sampler, sample_num);
 }
 
 Float BxDFSet::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {

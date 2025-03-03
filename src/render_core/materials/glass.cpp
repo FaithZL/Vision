@@ -15,8 +15,8 @@ class DielectricPrecompute : public DielectricBxDFSet {
 public:
     using DielectricBxDFSet::DielectricBxDFSet;
     [[nodiscard]] bool compensate() const noexcept override { return false; }
-    [[nodiscard]] SampledSpectrum precompute_albedo(const ocarina::Float3 &wo, vision::TSampler &sampler, const ocarina::Uint &sample_num) noexcept override {
-        SampledSpectrum ret = SampledSpectrum::zero(3);
+    [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler, const Uint &sample_num) noexcept override {
+        SampledSpectrum ret = SampledSpectrum::zero(*swl());
 
         $for(i, sample_num) {
             BSDFSample bs = sample_local(wo, BxDFFlag::All, sampler, Importance);

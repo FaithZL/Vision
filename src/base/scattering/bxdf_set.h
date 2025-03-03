@@ -50,7 +50,7 @@ public:
     [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
     /// for precompute the table begin
-    [[nodiscard]] virtual SampledSpectrum precompute_albedo(const Float3 &wo, TSampler &sampler,
+    [[nodiscard]] virtual SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler,
                                                             const Uint &sample_num) noexcept;
     virtual SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                   const Uint &sample_num) noexcept;
