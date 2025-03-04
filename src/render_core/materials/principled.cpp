@@ -201,7 +201,7 @@ public:
     static void prepare() {
         MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
                                          PixelStorage::FLOAT1,
-                                         addressof(SpecularBxDFSet_Table));
+                                         addressof(CoatBxDFSet_Table));
     }
 
     /// for precompute begin
