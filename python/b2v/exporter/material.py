@@ -30,6 +30,23 @@ def export_principled(exporter, bsdf):
             "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1),
             "ior": shadernode.parse_node(exporter, bsdf.inputs["IOR"], 1),
             "metallic": shadernode.parse_node(exporter, bsdf.inputs["Metallic"], 1),
+            "spec_tint" : shadernode.parse_node(exporter, bsdf.inputs["Specular Tint"], 3),
+            "anisotropic" : shadernode.parse_node(exporter, bsdf.inputs["Anisotropic"], 1),
+            
+            "sheen_weight" : shadernode.parse_node(exporter, bsdf.inputs["Sheen Weight"], 1),
+            "sheen_roughness" : shadernode.parse_node(exporter, bsdf.inputs["Sheen Roughness"], 1),
+            "sheen_tint" : shadernode.parse_node(exporter, bsdf.inputs["Sheen Tint"], 3),
+            
+            "coat_weight" : shadernode.parse_node(exporter, bsdf.inputs["Coat Weight"], 1),
+            "coat_roughness" : shadernode.parse_node(exporter, bsdf.inputs["Coat Roughness"], 1),
+            "coat_ior" : shadernode.parse_node(exporter, bsdf.inputs["Coat IOR"], 1),
+            "coat_tint" : shadernode.parse_node(exporter, bsdf.inputs["Coat Tint"], 3),
+            
+            "subsurface_weight" : shadernode.parse_node(exporter, bsdf.inputs["Subsurface Weight"], 1),
+            "subsurface_radius" : shadernode.parse_node(exporter, bsdf.inputs["Subsurface Radius"], 3),
+            "subsurface_scale" : shadernode.parse_node(exporter, bsdf.inputs["Subsurface Scale"], 1),
+            
+            "transmission_weight" : shadernode.parse_node(exporter, bsdf.inputs["Transmission Weight"], 1),
         },
     }
     return ret

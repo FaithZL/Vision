@@ -64,8 +64,6 @@ def parse_node(exporter, socket, dim, min=0, max=1):
                 "type": "number",
                 "param": {
                     "value": value,
-                    "min": min,
-                    "max": max,
                 },
             },
         }
@@ -77,8 +75,6 @@ def parse_node(exporter, socket, dim, min=0, max=1):
                 "type": "number",
                 "param": {
                     "value": value,
-                    "min": min,
-                    "max": max,
                 },
             },
         }
