@@ -445,14 +445,14 @@ public:
             auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
             SampledSpectrum t_weight = trans_weight * weight;
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
-            UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel, microfacet, color, false, SurfaceData::Glossy);
+            UP<BxDFSet> dielectric = make_unique<DielectricBxDFSet>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
             WeightedBxDFSet trans_lobe(t_weight.average(), t_weight, std::move(dielectric));
             lobes.push_back(std::move(trans_lobe));
             weight *= (1.0f - trans_weight);
         }
-        Float f0 = schlick_F0_from_ior(ior);
         {
             /// specular
+            Float f0 = schlick_F0_from_ior(ior);
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, iors, swl);
             UP<BxDFSet> spec_refl = make_unique<SpecularBxDFSet>(fresnel_schlick,
                                                                  make_unique<MicrofacetReflection>(weight, swl, microfacet));
