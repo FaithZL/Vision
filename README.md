@@ -127,7 +127,7 @@ compute https://github.com/LuisaGroup/LuisaCompute, which is a great invention!
 
 | Feature | Progress |
 |---------|----------|
-| Blender | Planned  |
+| Blender | Doing    |
 | 3DS Max | Planned  |
 | USD     | Planned  |
 
