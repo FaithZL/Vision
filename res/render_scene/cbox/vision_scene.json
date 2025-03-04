@@ -211,7 +211,7 @@
 				//				"material" : "substrate",
 //								"material" : "Mirror",
 //				"material" : "Metal",
-				//				                "material" : "principled",
+				//				                "material" : "principled_bsdf",
 				//								                "material" : "mix",
 								                                "material" : "Glass",
 				"transform" : {
@@ -652,8 +652,8 @@
 			}
 		},
 		{
-			"type" : "principled",
-			"name" : "principled",
+			"type" : "principled_bsdf",
+			"name" : "principled_bsdf",
 			"param" : {
 				"color" : [
 					1,

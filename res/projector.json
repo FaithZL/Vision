@@ -1,7 +1,7 @@
 {
     "materials": [
         {
-            "type" : "principled",
+            "type" : "principled_bsdf",
             "name" : "mix",
             "param" : {
                 "color" : [
@@ -25,7 +25,7 @@
             }
         },
         {
-            "type" : "principled",
+            "type" : "principled_bsdf",
             "name" : "LeftWall",
             "param" : {
                 "color" : [
@@ -36,7 +36,7 @@
             }
         },
         // {
-        //     "type" : "principled",
+        //     "type" : "principled_bsdf",
         //     "name" : "image",
         //     "param" : {
         //         "color" : {
@@ -79,7 +79,7 @@
         //     }
         // },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "RightWall",
             "param": {
                 "color": [
@@ -90,7 +90,7 @@
             }
         },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "Floor",
             "param": {
                 "color": [
@@ -118,7 +118,7 @@
         //     }
         // },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "Ceiling",
             "param": {
                 "color": [
@@ -129,7 +129,7 @@
             }
         },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "BackWall",
             "param": {
                 "color": [
@@ -170,7 +170,7 @@
             }
         },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "TallBox",
             "param": {
                 // "roughness" : [0.002]
@@ -456,7 +456,7 @@
                 "z": 1,
                "material": "ShortBox",
 //                "material" : "substrate",
-                // "material" : "principled",
+                // "material" : "principled_bsdf",
 //                "material": "Mirror",
 //                "material": "Glass",
                 "transform": {

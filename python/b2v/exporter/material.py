@@ -24,7 +24,7 @@ def export_matte(exporter, bsdf):
 
 def export_principled(exporter, bsdf):
     ret = {
-        "type": "principled",
+        "type": "principled_bsdf",
         "param": {
             "color": shadernode.parse_node(exporter, bsdf.inputs["Base Color"], 3),
             "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1),

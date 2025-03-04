@@ -12119,7 +12119,7 @@
             }
         },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "RadioGlass",
             "param": {
                 "color": [
@@ -12850,7 +12850,7 @@
             }
         },
         {
-            "type": "principled",
+            "type": "principled_bsdf",
             "name": "Blinds",
             "param": {
                 "color": [

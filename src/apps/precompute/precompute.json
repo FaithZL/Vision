@@ -40,8 +40,8 @@
 			}
 		},
 		{
-			"type" : "principled",
-			"name" : "principled",
+			"type" : "principled_bsdf",
+			"name" : "principled_bsdf",
 			"param" : {
 				"sigma": 1,
 				"color" : [
@@ -366,7 +366,7 @@
 				//								 "material" : "substrate",
 				//								"material" : "Mirror",
 				//								"material" : "Metal",
-				"material" : "principled",
+				"material" : "principled_bsdf",
 				//				"material" : "disney",
 				//																                "material" : "mix",
 				//												                                "material" : "Glass",

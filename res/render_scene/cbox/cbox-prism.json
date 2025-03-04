@@ -513,8 +513,8 @@
             }
         },
         {
-            "type": "principled",
-            "name": "principled",
+            "type": "principled_bsdf",
+            "name": "principled_bsdf",
             "param": {
                 "color": [
                     0.725,
