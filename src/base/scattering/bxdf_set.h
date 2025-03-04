@@ -26,8 +26,8 @@ public:
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag,
                                                      TransportMode tm) const noexcept = 0;
-    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo,const Float3 &wi, MaterialEvalMode mode,
-                                                     const Uint &flag,TransportMode tm,Float *eta) const noexcept {
+    [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                     const Uint &flag, TransportMode tm, Float *eta) const noexcept {
         return evaluate_local(wo, wi, mode, flag, tm);
     }
     [[nodiscard]] virtual Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept;
@@ -51,7 +51,7 @@ public:
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
     /// for precompute the table begin
     [[nodiscard]] virtual SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler,
-                                                            const Uint &sample_num) const noexcept;
+                                                          const Uint &sample_num) const noexcept;
     virtual SampledSpectrum precompute_with_radio(const Float3 &ratio, TSampler &sampler,
                                                   const Uint &sample_num) noexcept;
     virtual void from_ratio_x(const Float &x) noexcept;
@@ -184,7 +184,6 @@ public:
     OC_MAKE_MEMBER_GETTER(weight, &)
 };
 
-
 class DielectricBxDFSet : public BxDFSet {
 public:
     static constexpr float ior_lower = 1.003;
@@ -206,11 +205,11 @@ protected:
     }
     [[nodiscard]] static Uint select_lut(const SampledSpectrum &eta) noexcept;
     static Float eta_to_ratio_z(const Float &eta) noexcept;
-    [[nodiscard]] Float2 sample_lut(const Float3 &wo,const SampledSpectrum &eta) const noexcept;
+    [[nodiscard]] Float2 sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] Float refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] Float trans_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                  const SampledSpectrum &F,const SampledSpectrum &eta,
+                                                  const SampledSpectrum &F, const SampledSpectrum &eta,
                                                   MaterialEvalMode mode) const noexcept;
     [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
@@ -239,8 +238,8 @@ public:
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override;
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo,  const Float3 &wi,MaterialEvalMode mode,
-                                             const Uint &flag,TransportMode tm, Float *eta) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
@@ -256,6 +255,47 @@ public:
         Float a = sqrt(ax * ay);
         return ocarina::sqrt(a);
     }
+};
+
+class MultiBxDFSet : public BxDFSet {
+public:
+    using Lobes = ocarina::vector<WeightedBxDFSet>;
+
+private:
+    Lobes lobes_;
+
+protected:
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+        uint64_t ret = Hash64::default_seed;
+        for_each([&](const WeightedBxDFSet &lobe) {
+            ret = hash64(ret, lobe->type_hash());
+        });
+        return ret;
+    }
+
+public:
+    MultiBxDFSet() = default;
+    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {
+        normalize_weights();
+    }
+    void normalize_weights() noexcept;
+    VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
+        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
+    [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag, TransportMode tm) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
+    [[nodiscard]] Uint flag() const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler, TransportMode tm) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
+    void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &)> &func);
+    void for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const;
+    void for_each(const std::function<void(WeightedBxDFSet &, uint)> &func);
 };
 
 class PureReflectionBxDFSet : public MicrofacetBxDFSet {

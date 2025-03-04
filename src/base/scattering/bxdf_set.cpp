@@ -352,7 +352,121 @@ BSDFSample DielectricBxDFSet::sample_local(const Float3 &wo, const Uint &flag,
     return BxDFSet::sample_local(wo, flag, sampler, tm);
 }
 
-// PureReflectionBxDFSet
+/// MultiBxDFSet
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &)> &func) const {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &)> &func) {
+    std::for_each(lobes_.begin(), lobes_.end(), func);
+}
+
+void MultiBxDFSet::for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const {
+    for (int i = 0; i < lobe_num(); ++i) {
+        func(lobes_[i], i);
+    }
+}
+
+void MultiBxDFSet::for_each(const std::function<void(WeightedBxDFSet &, uint)> &func) {
+    for (int i = 0; i < lobe_num(); ++i) {
+        func(lobes_[i], i);
+    }
+}
+
+WeightedBxDFSet::WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf)
+    : bxdf_(bxdf), sample_weight_(std::move(weight)),
+      weight_(SampledSpectrum::one(bxdf->swl()->dimension())) {}
+
+WeightedBxDFSet::WeightedBxDFSet(Float sample_weight, SampledSpectrum weight, SP<BxDFSet> bxdf)
+    : bxdf_(bxdf), sample_weight_(std::move(sample_weight)),
+      weight_(std::move(weight)) {
+}
+
+void MultiBxDFSet::normalize_weights() noexcept {
+    Float weight_sum = 0;
+    for_each([&](WeightedBxDFSet &lobe) {
+        weight_sum += lobe.sample_weight();
+    });
+    for_each([&](WeightedBxDFSet &lobe) {
+        lobe.sample_weight() = lobe.sample_weight() / weight_sum;
+    });
+}
+
+SampledSpectrum MultiBxDFSet::albedo(const Float &cos_theta) const noexcept {
+    SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret += lobe->albedo(cos_theta);
+    });
+    return ret;
+}
+
+SampledDirection MultiBxDFSet::sample_wi(const Float3 &wo, const Uint &flag,
+                                         TSampler &sampler) const noexcept {
+    Float uc = sampler->next_1d();
+    Float2 u = sampler->next_2d();
+    SampledDirection sd;
+    Uint sampling_strategy = 0u;
+    Float sum_weights = 0.f;
+
+    for_each([&](const WeightedBxDFSet &lobe, uint i) {
+        sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+        sum_weights += lobe.sample_weight();
+    });
+    if (lobe_num() == 1) {
+        sd = lobes_[0]->sample_wi(wo, flag, sampler);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedBxDFSet &lobe, uint i) {
+                $case(i) {
+                    sd = lobe->sample_wi(wo, flag, sampler);
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+    }
+    return sd;
+}
+
+BSDFSample MultiBxDFSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
+                                      TransportMode tm) const noexcept {
+    return BxDFSet::sample_local(wo, flag, sampler, tm);
+}
+
+Uint MultiBxDFSet::flag() const noexcept {
+    Uint ret = BxDFFlag::Unset;
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ret |= lobe->flag();
+    });
+    return ret;
+}
+
+ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm, Float *eta) const noexcept {
+    ScatterEval ret{*swl()};
+    for_each([&](const WeightedBxDFSet &lobe) {
+        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
+        se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
+        se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
+
+        ret.f += se.f;
+        ret.pdfs += se.pdfs;
+        ret.flags = ret.flags | se.flags;
+    });
+    return ret;
+}
+
+ScatterEval MultiBxDFSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm) const noexcept {
+    return evaluate_local(wo, wi, mode, flag, tm, nullptr);
+}
+
+/// PureReflectionBxDFSet
 Float PureReflectionBxDFSet::compensate_factor(const ocarina::Float3 &wo) const noexcept {
     Float alpha = bxdf()->alpha_average();
     Float ret = MaterialLut::instance().sample(lut_name, 1, make_float2(alpha, cos_theta(wo))).as_scalar();
