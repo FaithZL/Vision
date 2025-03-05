@@ -1,0 +1,711 @@
+{
+    "sampler": {
+        "type": "independent",
+        "param": {
+            "spp": 128
+        }
+    },
+    "light_sampler": {
+        "type": "uniform",
+        "param": {
+            "env_prob": 0.5,
+            "env_separate": false,
+            "lights": []
+        }
+    },
+    "spectrum": {
+        "type": "srgb",
+        "param": {}
+    },
+    "integrator": {
+        "type": "pt",
+        "param": {
+            "max_depth": 8,
+            "min_depth": 3,
+            "rr_threshold": 1.0
+        }
+    },
+    "shapes": [
+        {
+            "type": "model",
+            "names": "Floor",
+            "param": {
+                "fn": "meshes/Floor.glb",
+                "smooth": true,
+                "material": "FloorBSDF",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "Ceiling",
+            "param": {
+                "fn": "meshes/Ceiling.glb",
+                "smooth": true,
+                "material": "CeilingBSDF",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "BackWall",
+            "param": {
+                "fn": "meshes/BackWall.glb",
+                "smooth": true,
+                "material": "BackWallBSDF",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "RightWall",
+            "param": {
+                "fn": "meshes/RightWall.glb",
+                "smooth": true,
+                "material": "RightWallBSDF",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "LeftWall",
+            "param": {
+                "fn": "meshes/LeftWall.glb",
+                "smooth": true,
+                "material": "LeftWallBSDF",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "TallBox",
+            "param": {
+                "fn": "meshes/TallBox.glb",
+                "smooth": true,
+                "material": "Material",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "Light",
+            "param": {
+                "fn": "meshes/Light.glb",
+                "smooth": true,
+                "material": "LightBSDF.001",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                },
+                "emission": {
+                    "type": "area",
+                    "param": {
+                        "color": {
+                            "channels": "xyz",
+                            "node": {
+                                "type": "number",
+                                "param": {
+                                    "value": [
+                                        1.0,
+                                        0.7058823704719543,
+                                        0.23529411852359772
+                                    ]
+                                }
+                            }
+                        },
+                        "scale": 17.0
+                    }
+                }
+            }
+        },
+        {
+            "type": "model",
+            "names": "sphere",
+            "param": {
+                "fn": "meshes/sphere.glb",
+                "smooth": true,
+                "material": "Material",
+                "transform": {
+                    "type": "matrix4x4",
+                    "param": {
+                        "matrix4x4": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "render_setting": {
+        "min_world_radius": 10,
+        "polymorphic_mode": 1
+    },
+    "materials": [
+        {
+            "type": "matte",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.7250000238418579,
+                                0.7099999785423279,
+                                0.6800000071525574
+                            ]
+                        }
+                    }
+                }
+            },
+            "name": "FloorBSDF"
+        },
+        {
+            "type": "matte",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.7250000238418579,
+                                0.7099999785423279,
+                                0.6800000071525574
+                            ]
+                        }
+                    }
+                }
+            },
+            "name": "CeilingBSDF"
+        },
+        {
+            "type": "matte",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.7250000238418579,
+                                0.7099999785423279,
+                                0.6800000071525574
+                            ]
+                        }
+                    }
+                }
+            },
+            "name": "BackWallBSDF"
+        },
+        {
+            "type": "matte",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.14000000059604645,
+                                0.44999998807907104,
+                                0.09099999815225601
+                            ]
+                        }
+                    }
+                }
+            },
+            "name": "RightWallBSDF"
+        },
+        {
+            "type": "matte",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.6299999952316284,
+                                0.06499999761581421,
+                                0.05000000074505806
+                            ]
+                        }
+                    }
+                }
+            },
+            "name": "LeftWallBSDF"
+        },
+        {
+            "type": "principled_bsdf",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.9766784906387329,
+                                1.0,
+                                0.9824820756912231
+                            ]
+                        }
+                    }
+                },
+                "roughness": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "ior": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 3.700000286102295
+                        }
+                    }
+                },
+                "metallic": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "spec_tint": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                1.0,
+                                0.969482421875,
+                                0.02134285867214203
+                            ]
+                        }
+                    }
+                },
+                "anisotropic": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "sheen_weight": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "sheen_roughness": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.4036363363265991
+                        }
+                    }
+                },
+                "sheen_tint": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.0,
+                                0.0005049455212429166,
+                                1.0
+                            ]
+                        }
+                    }
+                },
+                "coat_weight": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "coat_roughness": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "coat_ior": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 1.5
+                        }
+                    }
+                },
+                "coat_tint": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    }
+                },
+                "subsurface_weight": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                },
+                "subsurface_radius": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                1.0,
+                                0.20000000298023224,
+                                0.10000000149011612
+                            ]
+                        }
+                    }
+                },
+                "subsurface_scale": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.05000000074505806
+                        }
+                    }
+                },
+                "transmission_weight": {
+                    "channels": "x",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": 0.0
+                        }
+                    }
+                }
+            },
+            "name": "Material"
+        },
+        {
+            "type": "matte",
+            "param": {
+                "color": {
+                    "channels": "xyz",
+                    "node": {
+                        "type": "number",
+                        "param": {
+                            "value": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                }
+            },
+            "name": "LightBSDF.001"
+        }
+    ],
+    "camera": {
+        "type": "thin_lens",
+        "param": {
+            "focal_distance": 5.0,
+            "lens_radius": 0.0,
+            "sensitivity": 0.5,
+            "velocity": 10.0,
+            "fov_y": 18.88979571105623,
+            "name": "_unnamed_2",
+            "filter": {
+                "type": "gaussian",
+                "param": {
+                    "radius": 2.0,
+                    "sigma": 1.0
+                }
+            },
+            "transform": {
+                "type": "Euler",
+                "param": {
+                    "yaw": 5.008956130975331e-06,
+                    "pitch": -4.325711003616561e-06,
+                    "position": [
+                        0.0,
+                        1.0,
+                        6.800000190734863
+                    ]
+                }
+            },
+            "film": {
+                "type": "rgb",
+                "param": {
+                    "resolution": [
+                        1024,
+                        1024
+                    ],
+                    "tone_mapper": {
+                        "type": "aces",
+                        "param": {}
+                    }
+                }
+            }
+        }
+    }
+}

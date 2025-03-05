@@ -130,7 +130,7 @@ def export(exporter, material, materials):
     print("material export start")
 
     if material.name in materials:
-        return
+        return materials[material.name]
     export_func = func_tab[bsdf.type]
     data = export_func(exporter, bsdf)
 

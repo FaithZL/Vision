@@ -42,6 +42,10 @@ def export_mesh(exporter, object, materials):
             },
         },
     }
+    
+    if mat_data is None:
+        print("wocaonima   ", object.name)
+    
     if mat_data["type"] == "add":
         ret["param"]["emission"] = mat_data["param"]["emission"]
         
