@@ -334,9 +334,7 @@ private:
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
     std::array<bool, LobeType::Count> switches_{[] {
         std::array<bool, LobeType::Count> ret{};
-        for (bool &elm : ret) {
-            elm = true;
-        }
+        for (bool &elm : ret) { elm = true; }
         return ret;
     }()};
 
@@ -386,7 +384,7 @@ public:
         int colNum = 3;
         for (int i = 0; i < LobeName.size(); ++i) {
             widgets->check_box(LobeName[i], addressof(switches_[i]));
-            if ((i+1) % 3 != 0) {
+            if ((i + 1) % 3 != 0) {
                 widgets->same_line();
             }
         }
@@ -432,7 +430,6 @@ public:
             SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
             Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
             Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
-
             UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
                                                            sheen_tint * sheen_weight * weight,
                                                            sheen_roughness, swl);
