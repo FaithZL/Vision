@@ -22,10 +22,10 @@ public:
                               const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)),
           eta_(std::move(eta)) {}
-    FresnelGeneralizedSchlick(SampledSpectrum F0, Float eta,
+    FresnelGeneralizedSchlick(SampledSpectrum F0, const Float& eta,
                               const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)),
-          eta_(SampledSpectrum{1, std::move(eta)}) {}
+          eta_(SampledSpectrum{1, eta}) {}
     OC_MAKE_MEMBER_GETTER(F0, )
     void set_eta(const vision::SampledSpectrum &eta) noexcept override {
         eta_ = eta;
@@ -60,7 +60,7 @@ public:
     FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
 
-    void init_from_F82(SampledSpectrum F82) {
+    void init_from_F82(const SampledSpectrum& F82) {
         static constexpr float f = 6.f / 7.f;
         static constexpr float f5 = Pow<5>(f);
         SampledSpectrum one = SampledSpectrum::one(swl_->dimension());
