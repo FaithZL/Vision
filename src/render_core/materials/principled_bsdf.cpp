@@ -314,6 +314,7 @@ private:
     VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(transmission_weight)
+    VS_MAKE_SLOT(opcacity)
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
@@ -349,9 +350,10 @@ public:
         INIT_SLOT(subsurface_scale, 0.2f, Number);
 
         INIT_SLOT(transmission_weight, 0.f, Number);
+        INIT_SLOT(opcacity, 1.f, Number)->set_range(0.f, 1.f);
 
 #undef INIT_SLOT
-        init_slot_cursor(&color_, &transmission_weight_);
+        init_slot_cursor(&color_, &opcacity_);
     }
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
