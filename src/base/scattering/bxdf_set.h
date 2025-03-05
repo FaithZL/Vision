@@ -9,20 +9,20 @@
 
 namespace vision {
 
-#define VS_MAKE_BxDFSet_ASSIGNMENT(ClassName)                            \
-    ClassName &operator=(const BxDFSet &other) noexcept override {       \
-        OC_ASSERT(dynamic_cast<const ClassName *>(&other));              \
-        *this = dynamic_cast<ClassName &>(const_cast<BxDFSet &>(other)); \
-        return *this;                                                    \
+#define VS_MAKE_Lobe_ASSIGNMENT(ClassName)                            \
+    ClassName &operator=(const Lobe &other) noexcept override {       \
+        OC_ASSERT(dynamic_cast<const ClassName *>(&other));           \
+        *this = dynamic_cast<ClassName &>(const_cast<Lobe &>(other)); \
+        return *this;                                                 \
     }
 
-struct BxDFSet : public ocarina::Hashable {
+struct Lobe : public ocarina::Hashable {
 public:
     static constexpr float alpha_lower = 0.001f;
     static constexpr float alpha_upper = 1.f;
 
 public:
-    BxDFSet() = default;
+    Lobe() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode, const Uint &flag,
                                                      TransportMode tm) const noexcept = 0;
@@ -44,7 +44,7 @@ public:
         return BSDFSample{1u, 1u};
     }
     [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
-    virtual BxDFSet &operator=(const BxDFSet &other) noexcept = default;
+    virtual Lobe &operator=(const Lobe &other) noexcept = default;
     virtual void regularize() noexcept {}
     virtual void mollify() noexcept {}
     [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
@@ -66,10 +66,10 @@ public:
     /// for look up the table end
 
     [[nodiscard]] virtual optional<Bool> is_dispersive() const noexcept { return {}; }
-    virtual ~BxDFSet() = default;
+    virtual ~Lobe() = default;
 };
 
-class MicrofacetBxDFSet : public BxDFSet {
+class MicrofacetLobe : public Lobe {
 protected:
     DCSP<Fresnel> fresnel_;
     DCUP<MicrofacetBxDF> bxdf_;
@@ -78,7 +78,7 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    MicrofacetBxDFSet(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
+    MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
     template<typename T = Fresnel>
     [[nodiscard]] const T *fresnel() const noexcept { return static_cast<const T *>(fresnel_.get()); }
     template<typename T = Fresnel>
@@ -87,7 +87,7 @@ public:
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return bxdf_.get(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() const noexcept override;
-    VS_MAKE_BxDFSet_ASSIGNMENT(MicrofacetBxDFSet)
+    VS_MAKE_Lobe_ASSIGNMENT(MicrofacetLobe)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
@@ -103,7 +103,7 @@ public:
                                              TSampler &sampler) const noexcept override;
 };
 
-class DiffuseBxDFSet : public BxDFSet {
+class DiffuseLobe : public Lobe {
 private:
     DCUP<BxDF> bxdf_;
 
@@ -113,9 +113,9 @@ protected:
     }
 
 public:
-    DiffuseBxDFSet(const SampledSpectrum &kr, const SampledWavelengths &swl)
+    DiffuseLobe(const SampledSpectrum &kr, const SampledWavelengths &swl)
         : bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
-    DiffuseBxDFSet(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+    DiffuseLobe(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
         : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return bxdf_->albedo(cos_theta); }
@@ -123,7 +123,7 @@ public:
         return &bxdf_->swl();
     }
     // clang-format off
-    VS_MAKE_BxDFSet_ASSIGNMENT(DiffuseBxDFSet)
+    VS_MAKE_Lobe_ASSIGNMENT(DiffuseLobe)
         // clang-format on
 
         [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
@@ -137,12 +137,12 @@ public:
                                              TSampler &sampler) const noexcept override;
 };
 
-class BlackBodyBxDFSet : public BxDFSet {
+class BlackBodyLobe : public Lobe {
 private:
     const SampledWavelengths *swl_{nullptr};
 
 public:
-    explicit BlackBodyBxDFSet(const SampledWavelengths &swl) : swl_(&swl) {}
+    explicit BlackBodyLobe(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
@@ -153,7 +153,7 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
         return {swl_->dimension(), 0.f};
     }
-    VS_MAKE_BxDFSet_ASSIGNMENT(BlackBodyBxDFSet)
+    VS_MAKE_Lobe_ASSIGNMENT(BlackBodyLobe)
 };
 
 [[nodiscard]] inline Float ior_to_ratio_z(const Float &ior) {
@@ -165,31 +165,31 @@ public:
     return ior;
 }
 
-class WeightedBxDFSet {
+class WeightedLobe {
 private:
-    DCSP<BxDFSet> bxdf_;
+    DCSP<Lobe> bxdf_;
     Float sample_weight_;
     SampledSpectrum weight_;
 
 public:
-    WeightedBxDFSet(Float weight, SP<BxDFSet> bxdf);
-    WeightedBxDFSet(Float sample_weight, SampledSpectrum weight, SP<BxDFSet> bxdf);
-    [[nodiscard]] const BxDFSet &operator*() const noexcept { return *bxdf_; }
-    [[nodiscard]] BxDFSet &operator*() noexcept { return *bxdf_; }
-    [[nodiscard]] const BxDFSet *operator->() const noexcept { return bxdf_.get(); }
-    [[nodiscard]] BxDFSet *operator->() noexcept { return bxdf_.get(); }
-    [[nodiscard]] const BxDFSet *get() const noexcept { return bxdf_.get(); }
-    [[nodiscard]] BxDFSet *get() noexcept { return bxdf_.get(); }
+    WeightedLobe(Float weight, SP<Lobe> bxdf);
+    WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe> bxdf);
+    [[nodiscard]] const Lobe &operator*() const noexcept { return *bxdf_; }
+    [[nodiscard]] Lobe &operator*() noexcept { return *bxdf_; }
+    [[nodiscard]] const Lobe *operator->() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] Lobe *operator->() noexcept { return bxdf_.get(); }
+    [[nodiscard]] const Lobe *get() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] Lobe *get() noexcept { return bxdf_.get(); }
     OC_MAKE_MEMBER_GETTER(sample_weight, &)
     OC_MAKE_MEMBER_GETTER(weight, &)
 };
 
-class DielectricBxDFSet : public BxDFSet {
+class DielectricLobe : public Lobe {
 public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
-    static constexpr const char *lut_name = "DielectricBxDFSet::lut";
-    static constexpr const char *lut_inv_name = "DielectricBxDFSetInv::lut";
+    static constexpr const char *lut_name = "DielectricLobe::lut";
+    static constexpr const char *lut_inv_name = "DielectricLobeInv::lut";
     static constexpr uint lut_res = 32;
 
 protected:
@@ -222,12 +222,12 @@ protected:
     [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept;
 
 public:
-    DielectricBxDFSet(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
-                      SampledSpectrum color, Bool dispersive, Uint flag)
+    DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
+                   SampledSpectrum color, Bool dispersive, Uint flag)
         : fresnel_(fresnel), microfacet_(microfacet),
           kt_(std::move(color)), dispersive_(ocarina::move(dispersive)),
           flag_(std::move(flag)) {}
-    VS_MAKE_BxDFSet_ASSIGNMENT(DielectricBxDFSet)
+    VS_MAKE_Lobe_ASSIGNMENT(DielectricLobe)
         [[nodiscard]] virtual bool compensate() const noexcept { return true; }
 
     static void prepare() noexcept;
@@ -257,9 +257,9 @@ public:
     }
 };
 
-class MultiBxDFSet : public BxDFSet {
+class MultiLobe : public Lobe {
 public:
-    using Lobes = ocarina::vector<WeightedBxDFSet>;
+    using Lobes = ocarina::vector<WeightedLobe>;
 
 private:
     Lobes lobes_;
@@ -267,19 +267,19 @@ private:
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         uint64_t ret = Hash64::default_seed;
-        for_each([&](const WeightedBxDFSet &lobe) {
+        for_each([&](const WeightedLobe &lobe) {
             ret = hash64(ret, lobe->type_hash());
         });
         return ret;
     }
 
 public:
-    MultiBxDFSet() = default;
-    explicit MultiBxDFSet(Lobes lobes) : lobes_(std::move(lobes)) {
+    MultiLobe() = default;
+    explicit MultiLobe(Lobes lobes) : lobes_(std::move(lobes)) {
         normalize_weights();
     }
     void normalize_weights() noexcept;
-    VS_MAKE_BxDFSet_ASSIGNMENT(MultiBxDFSet)
+    VS_MAKE_Lobe_ASSIGNMENT(MultiLobe)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
@@ -292,16 +292,16 @@ public:
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler, TransportMode tm) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
-    void for_each(const std::function<void(const WeightedBxDFSet &)> &func) const;
-    void for_each(const std::function<void(WeightedBxDFSet &)> &func);
-    void for_each(const std::function<void(const WeightedBxDFSet &, uint)> &func) const;
-    void for_each(const std::function<void(WeightedBxDFSet &, uint)> &func);
+    void for_each(const std::function<void(const WeightedLobe &)> &func) const;
+    void for_each(const std::function<void(WeightedLobe &)> &func);
+    void for_each(const std::function<void(const WeightedLobe &, uint)> &func) const;
+    void for_each(const std::function<void(WeightedLobe &, uint)> &func);
 };
 
-class PureReflectionBxDFSet : public MicrofacetBxDFSet {
+class PureReflectionLobe : public MicrofacetLobe {
 public:
-    using MicrofacetBxDFSet::MicrofacetBxDFSet;
-    static constexpr const char *lut_name = "PureReflectionBxDFSet::lut";
+    using MicrofacetLobe::MicrofacetLobe;
+    static constexpr const char *lut_name = "PureReflectionLobe::lut";
     static constexpr uint lut_res = 32;
     [[nodiscard]] virtual Float compensate_factor(const Float3 &wo) const noexcept;
     [[nodiscard]] virtual bool compensate() const noexcept { return false; }
@@ -309,7 +309,7 @@ public:
 
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                           TransportMode tm) const noexcept override {
-        BSDFSample bs = MicrofacetBxDFSet::sample_local(wo, flag, sampler, tm);
+        BSDFSample bs = MicrofacetLobe::sample_local(wo, flag, sampler, tm);
         if (compensate()) {
             bs.eval.f *= compensate_factor(wo);
         }
@@ -318,7 +318,7 @@ public:
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override {
-        ScatterEval se = MicrofacetBxDFSet::evaluate_local(wo, wi, mode, flag, tm);
+        ScatterEval se = MicrofacetLobe::evaluate_local(wo, wi, mode, flag, tm);
         if (compensate()) {
             se.f *= compensate_factor(wo);
         }
@@ -326,12 +326,12 @@ public:
     }
 
     /// for precompute begin
-    static constexpr const char *name = "PureReflectionBxDFSet";
-    static UP<PureReflectionBxDFSet> create_for_precompute(const SampledWavelengths &swl) noexcept {
+    static constexpr const char *name = "PureReflectionLobe";
+    static UP<PureReflectionLobe> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
-        auto ret = make_unique<PureReflectionBxDFSet>(fresnel, std::move(bxdf));
+        auto ret = make_unique<PureReflectionLobe>(fresnel, std::move(bxdf));
         return ret;
     }
     void from_ratio_z(ocarina::Float z) noexcept override {

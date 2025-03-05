@@ -9,9 +9,9 @@
 
 namespace vision {
 
-class MirrorBxDFSet : public PureReflectionBxDFSet {
+class MirrorLobe : public PureReflectionLobe {
 public:
-    using PureReflectionBxDFSet::PureReflectionBxDFSet;
+    using PureReflectionLobe::PureReflectionLobe;
     bool compensate() const noexcept override { return true; }
 
 };
@@ -25,7 +25,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetLobe)
 
 public:
     MirrorMaterial() = default;
@@ -38,7 +38,7 @@ public:
         init_slot_cursor(&color_, &anisotropic_);
     }
     void prepare() noexcept override {
-        MirrorBxDFSet::prepare();
+        MirrorLobe::prepare();
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
@@ -49,12 +49,12 @@ public:
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-        ret.push_back(precompute_lobe<PureReflectionBxDFSet>(make_uint3(uint2(PureReflectionBxDFSet::lut_res), 1u)));
+        ret.push_back(precompute_lobe<PureReflectionLobe>(make_uint3(uint2(PureReflectionLobe::lut_res), 1u)));
         return ret;
     }
 
 protected:
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
@@ -65,7 +65,7 @@ protected:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y, MaterialRegistry::instance().sample_visible());
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<MirrorBxDFSet>(fresnel, std::move(refl));
+        return make_unique<MirrorLobe>(fresnel, std::move(refl));
     }
 };
 

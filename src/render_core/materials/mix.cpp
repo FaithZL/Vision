@@ -9,11 +9,11 @@
 
 namespace vision {
 
-class MixBxDFSet : public BxDFSet {
+class MixLobe : public Lobe {
 private:
     Float frac_;
-    DCUP<BxDFSet> b0_;
-    DCUP<BxDFSet> b1_;
+    DCUP<Lobe> b0_;
+    DCUP<Lobe> b1_;
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
@@ -21,8 +21,8 @@ protected:
     }
 
 public:
-    VS_MAKE_BxDFSet_ASSIGNMENT(MixBxDFSet)
-        MixBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1, Float frac)
+    VS_MAKE_Lobe_ASSIGNMENT(MixLobe)
+        MixLobe(UP<Lobe> &&b0, UP<Lobe> &&b1, Float frac)
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)), frac_(frac) {
     }
     [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
@@ -86,7 +86,7 @@ private:
     SP<Material> mat1_{};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MixBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MixLobe)
 
 public:
     explicit MixMaterial(const MaterialDesc &desc)
@@ -110,9 +110,9 @@ public:
         mat1_->prepare();
     }
 
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         Float frac = frac_.evaluate(it, swl)[0];
-        return make_unique<MixBxDFSet>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl), frac);
+        return make_unique<MixLobe>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl), frac);
     }
 };
 

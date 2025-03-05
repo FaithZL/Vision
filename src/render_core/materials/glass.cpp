@@ -11,9 +11,9 @@
 
 namespace vision {
 
-class DielectricPrecompute : public DielectricBxDFSet {
+class DielectricPrecompute : public DielectricLobe {
 public:
-    using DielectricBxDFSet::DielectricBxDFSet;
+    using DielectricLobe::DielectricLobe;
     [[nodiscard]] bool compensate() const noexcept override { return false; }
     [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler,
                                                   const Uint &sample_num) const noexcept override {
@@ -40,17 +40,17 @@ public:
     }
 };
 
-class DielectricBxDFSetPrecompute : public DielectricPrecompute {
+class DielectricLobePrecompute : public DielectricPrecompute {
 public:
     using DielectricPrecompute::DielectricPrecompute;
 
     /// for precompute begin
-    static UP<DielectricBxDFSetPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
+    static UP<DielectricLobePrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(0.001f), true);
-        return make_unique<DielectricBxDFSetPrecompute>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
+        return make_unique<DielectricLobePrecompute>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
     }
-    static constexpr const char *name = "DielectricBxDFSet";
+    static constexpr const char *name = "DielectricLobe";
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = lerp(z, ior_lower, ior_upper);
         fresnel_->set_eta(SampledSpectrum(*swl(), ior));
@@ -58,16 +58,16 @@ public:
     /// for precompute end
 };
 
-class DielectricBxDFSetInvPrecompute : public DielectricPrecompute {
+class DielectricLobeInvPrecompute : public DielectricPrecompute {
 public:
     using DielectricPrecompute::DielectricPrecompute;
     /// for precompute begin
-    static UP<DielectricBxDFSetInvPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
+    static UP<DielectricLobeInvPrecompute> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SP<Fresnel> fresnel = make_shared<FresnelDielectric>(SampledSpectrum(swl, 1.5f), swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(0.001f), true);
-        return make_unique<DielectricBxDFSetInvPrecompute>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
+        return make_unique<DielectricLobeInvPrecompute>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
     }
-    static constexpr const char *name = "DielectricInvBxDFSet";
+    static constexpr const char *name = "DielectricInvLobe";
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = lerp(z, ior_lower, ior_upper);
         fresnel_->set_eta(SampledSpectrum(*swl(), rcp(ior)));
@@ -178,7 +178,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(DielectricBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(DielectricLobe)
 
 public:
     GlassMaterial() = default;
@@ -199,8 +199,8 @@ public:
 
     [[nodiscard]] vector<PrecomputedLobeTable> precompute() const noexcept override {
         vector<PrecomputedLobeTable> ret;
-        ret.push_back(precompute_lobe<DielectricBxDFSetPrecompute>());
-        ret.push_back(precompute_lobe<DielectricBxDFSetInvPrecompute>());
+        ret.push_back(precompute_lobe<DielectricLobePrecompute>());
+        ret.push_back(precompute_lobe<DielectricLobeInvPrecompute>());
         return ret;
     }
 
@@ -225,16 +225,16 @@ public:
             eta_slot = desc.slot("", ior);
         }
         ior_ = Slot::create_slot(eta_slot);
-        ior_->set_range(DielectricBxDFSet::ior_lower, DielectricBxDFSet::ior_upper);
+        ior_->set_range(DielectricLobe::ior_lower, DielectricLobe::ior_upper);
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }
     void prepare() noexcept override {
         ior_->prepare();
-        DielectricBxDFSet::prepare();
+        DielectricLobe::prepare();
     }
 
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl);
         iors = it.correct_eta(iors);
@@ -250,7 +250,7 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y,
                                                      MaterialRegistry::instance().sample_visible());
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
-        return make_unique<DielectricBxDFSet>(fresnel, microfacet, color, is_dispersive(), flag);
+        return make_unique<DielectricLobe>(fresnel, microfacet, color, is_dispersive(), flag);
     }
 };
 }// namespace vision

@@ -32,9 +32,9 @@ public:
     [[nodiscard]] const EncodedData<uint> &get_index(const string &name) const noexcept;
 };
 
-class MaterialEvaluator : public PolyEvaluator<BxDFSet> {
+class MaterialEvaluator : public PolyEvaluator<Lobe> {
 public:
-    using Super = PolyEvaluator<BxDFSet>;
+    using Super = PolyEvaluator<Lobe>;
 
 protected:
     PartialDerivative<Float3> shading_frame_;
@@ -48,7 +48,7 @@ protected:
                                              TransportMode tm) const noexcept;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler,
-                                          TransportMode tm ) const noexcept;
+                                          TransportMode tm) const noexcept;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept;
 
@@ -84,10 +84,10 @@ struct PrecomputedLobeTable {
     [[nodiscard]] string to_string() const noexcept;
 };
 
-#define VS_MAKE_MATERIAL_EVALUATOR(BxDFSet)                                                      \
-    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,                 \
-                          const SampledWavelengths &swl) const noexcept override {               \
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<BxDFSet>(create_lobe_set(it, swl))); \
+#define VS_MAKE_MATERIAL_EVALUATOR(Lobe)                                                      \
+    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,              \
+                          const SampledWavelengths &swl) const noexcept override {            \
+        evaluator.link(ocarina::dynamic_unique_pointer_cast<Lobe>(create_lobe_set(it, swl))); \
     }
 
 class Material : public Node, public Encodable<float>, public enable_shared_from_this<Material> {
@@ -95,8 +95,8 @@ public:
     using Evaluator = MaterialEvaluator;
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
                                   const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual UP<BxDFSet> create_lobe_set(Interaction it,
-                                                      const SampledWavelengths &swl) const noexcept = 0;
+    [[nodiscard]] virtual UP<Lobe> create_lobe_set(Interaction it,
+                                                   const SampledWavelengths &swl) const noexcept = 0;
 
 public:
     using Desc = MaterialDesc;
@@ -280,7 +280,7 @@ protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, const BxDFSet *lobe_set) const noexcept;
+    [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept;
 
 public:
     [[nodiscard]] static Uint combine_flag(const Float3 &wo, const Float3 &wi,

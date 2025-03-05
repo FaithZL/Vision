@@ -13,7 +13,7 @@ class PlasticMaterial : public Material {
 private:
     
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetLobe)
 public:
     PlasticMaterial() = default;
     explicit PlasticMaterial(const MaterialDesc &desc)
@@ -21,7 +21,7 @@ public:
 
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return nullptr;
     }
 };

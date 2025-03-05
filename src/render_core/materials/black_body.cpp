@@ -9,11 +9,11 @@ namespace vision {
 
 class BlackBodyMaterial : public Material {
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(BlackBodyBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(BlackBodyLobe)
 
 public:
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<BlackBodyBxDFSet>(swl);
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+        return make_unique<BlackBodyLobe>(swl);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     explicit BlackBodyMaterial(const MaterialDesc &desc)

@@ -46,7 +46,7 @@ ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi
                                               const Uint &flag,
                                               TransportMode tm) const noexcept {
     ScatterEval ret{*swl_};
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->evaluate_local(wo, wi, mode, flag, tm);
     });
     return ret;
@@ -56,7 +56,7 @@ BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
                                            TSampler &sampler,
                                            TransportMode tm) const noexcept {
     BSDFSample ret{*swl_};
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->sample_local(wo, flag, sampler, tm);
     });
     return ret;
@@ -65,20 +65,20 @@ BSDFSample MaterialEvaluator::sample_local(const Float3 &wo, const Uint &flag,
 BSDFSample MaterialEvaluator::sample_delta_local(const Float3 &wo,
                                                  TSampler &sampler) const noexcept {
     BSDFSample ret{*swl_};
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->sample_delta_local(wo, sampler);
     });
     return ret;
 }
 
 void MaterialEvaluator::regularize() noexcept {
-    dispatch([&](BxDFSet *lobe_set) {
+    dispatch([&](Lobe *lobe_set) {
         lobe_set->regularize();
     });
 }
 
 void MaterialEvaluator::mollify() noexcept {
-    dispatch([&](BxDFSet *lobe_set) {
+    dispatch([&](Lobe *lobe_set) {
         lobe_set->mollify();
     });
 }
@@ -86,7 +86,7 @@ void MaterialEvaluator::mollify() noexcept {
 SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept {
     SampledSpectrum ret{swl_->dimension()};
     Float cos_theta = dot(shading_frame_.normal(), world_wo);
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->albedo(cos_theta);
     });
     return ret;
@@ -94,7 +94,7 @@ SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept
 
 Bool MaterialEvaluator::splittable() const noexcept {
     Bool ret = false;
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->splittable();
     });
     return ret;
@@ -102,7 +102,7 @@ Bool MaterialEvaluator::splittable() const noexcept {
 
 optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
     optional<Bool> ret;
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->is_dispersive();
     });
     return ret;
@@ -110,7 +110,7 @@ optional<Bool> MaterialEvaluator::is_dispersive() const noexcept {
 
 Uint MaterialEvaluator::flag() const noexcept {
     Uint ret;
-    dispatch([&](const BxDFSet *lobe_set) {
+    dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->flag();
     });
     return ret;
@@ -312,7 +312,7 @@ void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const
     }
 }
 
-SampledSpectrum Material::integral_albedo(const Float3 &wo, const BxDFSet *lobe_set) const noexcept {
+SampledSpectrum Material::integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept {
     TSampler &sampler = scene().sampler();
     uint sample_num = 2 << exp_of_two_;
     return lobe_set->integral_albedo(wo, sampler, sample_num);

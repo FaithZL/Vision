@@ -25,9 +25,9 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
 };
 
-class ConductorBxDFSet : public PureReflectionBxDFSet {
+class ConductorLobe : public PureReflectionLobe {
 public:
-    using PureReflectionBxDFSet::PureReflectionBxDFSet;
+    using PureReflectionLobe::PureReflectionLobe;
     bool compensate() const noexcept override { return true; }
 };
 
@@ -48,7 +48,7 @@ private:
     string metal_name_;
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetLobe)
 
 public:
     MetalMaterial() = default;
@@ -127,10 +127,10 @@ public:
     void prepare() noexcept override {
         eta_->prepare();
         k_->prepare();
-        ConductorBxDFSet::prepare();
+        ConductorLobe::prepare();
     }
 
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
@@ -145,7 +145,7 @@ public:
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<ConductorBxDFSet>(fresnel, std::move(refl));
+        return make_unique<ConductorLobe>(fresnel, std::move(refl));
     }
 };
 

@@ -69,9 +69,9 @@ public:
     }
 };
 
-class SubstrateBxDFSet : public MicrofacetBxDFSet {
+class SubstrateLobe : public MicrofacetLobe {
 public:
-    using MicrofacetBxDFSet::MicrofacetBxDFSet;
+    using MicrofacetLobe::MicrofacetLobe;
 };
 
 //    "type" : "substrate",
@@ -98,7 +98,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(MicrofacetLobe)
 
 public:
     SubstrateMaterial() = default;
@@ -113,7 +113,7 @@ public:
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = diff_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
 
@@ -131,7 +131,7 @@ public:
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl);
         UP<FresnelBlend> refl = make_unique<FresnelBlend>(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateBxDFSet>(fresnel, std::move(refl));
+        return make_unique<SubstrateLobe>(fresnel, std::move(refl));
     }
 };
 

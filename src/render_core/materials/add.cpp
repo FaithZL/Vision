@@ -9,14 +9,14 @@
 
 namespace vision {
 
-class AddBxDFSet : public BxDFSet {
+class AddLobe : public Lobe {
 private:
-    DCUP<BxDFSet> b0_;
-    DCUP<BxDFSet> b1_;
+    DCUP<Lobe> b0_;
+    DCUP<Lobe> b1_;
 
 public:
-    VS_MAKE_BxDFSet_ASSIGNMENT(AddBxDFSet)
-        AddBxDFSet(UP<BxDFSet> &&b0, UP<BxDFSet> &&b1)
+    VS_MAKE_Lobe_ASSIGNMENT(AddLobe)
+        AddLobe(UP<Lobe> &&b0, UP<Lobe> &&b1)
         : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)) {
     }
     [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
@@ -79,7 +79,7 @@ private:
     SP<Material> mat1_{};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(AddBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(AddLobe)
 
 public:
     AddMaterial() = default;
@@ -89,8 +89,8 @@ public:
           mat0_(Node::create_shared<Material>(*desc.mat0)),
           mat1_(Node::create_shared<Material>(*desc.mat1)) {
     }
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<AddBxDFSet>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl));
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+        return make_unique<AddLobe>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl));
     }
 };
 

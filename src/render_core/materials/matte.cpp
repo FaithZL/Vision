@@ -16,17 +16,17 @@ private:
     VS_MAKE_SLOT(sigma);
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(DiffuseBxDFSet)
+    VS_MAKE_MATERIAL_EVALUATOR(DiffuseLobe)
 
 public:
-    [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it,
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it,
                                               const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         if (sigma_) {
             Float sigma = sigma_.evaluate(it, swl).as_scalar();
-            return make_unique<DiffuseBxDFSet>(kr, sigma, swl);
+            return make_unique<DiffuseLobe>(kr, sigma, swl);
         }
-        return make_unique<DiffuseBxDFSet>(kr, swl);
+        return make_unique<DiffuseLobe>(kr, swl);
     }
     MatteMaterial() = default;
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
