@@ -318,7 +318,7 @@ private:
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MultiLobe)
+    VS_MAKE_MATERIAL_EVALUATOR(LobeStack)
 
 public:
     PrincipledBSDF() = default;
@@ -380,7 +380,7 @@ public:
         return ret;
     }
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        MultiLobe::Lobes lobes;
+        LobeStack::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         DynamicArray<float> iors = ior_.evaluate(it, swl);
         Float ior = iors.as_scalar();
@@ -469,7 +469,7 @@ public:
             WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
             lobes.push_back(std::move(diffuse_lobe));
         }
-        UP<MultiLobe> ret = make_unique<MultiLobe>(std::move(lobes));
+        UP<LobeStack> ret = make_unique<LobeStack>(std::move(lobes));
         return ret;
     }
 };

@@ -257,7 +257,7 @@ public:
     }
 };
 
-class MultiLobe : public Lobe {
+class LobeStack : public Lobe {
 public:
     using Lobes = ocarina::vector<WeightedLobe>;
 
@@ -274,12 +274,12 @@ protected:
     }
 
 public:
-    MultiLobe() = default;
-    explicit MultiLobe(Lobes lobes) : lobes_(std::move(lobes)) {
+    LobeStack() = default;
+    explicit LobeStack(Lobes lobes) : lobes_(std::move(lobes)) {
         normalize_weights();
     }
     void normalize_weights() noexcept;
-    VS_MAKE_Lobe_ASSIGNMENT(MultiLobe)
+    VS_MAKE_Lobe_ASSIGNMENT(LobeStack)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,

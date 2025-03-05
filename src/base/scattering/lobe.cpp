@@ -2,7 +2,7 @@
 // Created by ling.zhu on 2025/1/25.
 //
 
-#include "bxdf_set.h"
+#include "lobe.h"
 #include "material.h"
 #include "precomputed_table.inl.h"
 
@@ -352,22 +352,22 @@ BSDFSample DielectricLobe::sample_local(const Float3 &wo, const Uint &flag,
     return Lobe::sample_local(wo, flag, sampler, tm);
 }
 
-/// MultiLobe
-void MultiLobe::for_each(const std::function<void(const WeightedLobe &)> &func) const {
+/// LobeStack
+void LobeStack::for_each(const std::function<void(const WeightedLobe &)> &func) const {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
 
-void MultiLobe::for_each(const std::function<void(WeightedLobe &)> &func) {
+void LobeStack::for_each(const std::function<void(WeightedLobe &)> &func) {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
 
-void MultiLobe::for_each(const std::function<void(const WeightedLobe &, uint)> &func) const {
+void LobeStack::for_each(const std::function<void(const WeightedLobe &, uint)> &func) const {
     for (int i = 0; i < lobe_num(); ++i) {
         func(lobes_[i], i);
     }
 }
 
-void MultiLobe::for_each(const std::function<void(WeightedLobe &, uint)> &func) {
+void LobeStack::for_each(const std::function<void(WeightedLobe &, uint)> &func) {
     for (int i = 0; i < lobe_num(); ++i) {
         func(lobes_[i], i);
     }
@@ -382,7 +382,7 @@ WeightedLobe::WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe>
       weight_(std::move(weight)) {
 }
 
-void MultiLobe::normalize_weights() noexcept {
+void LobeStack::normalize_weights() noexcept {
     Float weight_sum = 0;
     for_each([&](WeightedLobe &lobe) {
         weight_sum += lobe.sample_weight();
@@ -392,7 +392,7 @@ void MultiLobe::normalize_weights() noexcept {
     });
 }
 
-SampledSpectrum MultiLobe::albedo(const Float &cos_theta) const noexcept {
+SampledSpectrum LobeStack::albedo(const Float &cos_theta) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
     for_each([&](const WeightedLobe &lobe) {
         ret += lobe->albedo(cos_theta);
@@ -400,7 +400,7 @@ SampledSpectrum MultiLobe::albedo(const Float &cos_theta) const noexcept {
     return ret;
 }
 
-SampledDirection MultiLobe::sample_wi(const Float3 &wo, const Uint &flag,
+SampledDirection LobeStack::sample_wi(const Float3 &wo, const Uint &flag,
                                       TSampler &sampler) const noexcept {
     Float uc = sampler->next_1d();
     Float2 u = sampler->next_2d();
@@ -431,12 +431,12 @@ SampledDirection MultiLobe::sample_wi(const Float3 &wo, const Uint &flag,
     return sd;
 }
 
-BSDFSample MultiLobe::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
+BSDFSample LobeStack::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                    TransportMode tm) const noexcept {
     return Lobe::sample_local(wo, flag, sampler, tm);
 }
 
-Uint MultiLobe::flag() const noexcept {
+Uint LobeStack::flag() const noexcept {
     Uint ret = BxDFFlag::Unset;
     for_each([&](const WeightedLobe &lobe) {
         ret |= lobe->flag();
@@ -444,7 +444,7 @@ Uint MultiLobe::flag() const noexcept {
     return ret;
 }
 
-ScatterEval MultiLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
+ScatterEval LobeStack::evaluate_local(const Float3 &wo, const Float3 &wi,
                                       MaterialEvalMode mode, const Uint &flag,
                                       TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
@@ -460,7 +460,7 @@ ScatterEval MultiLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
     return ret;
 }
 
-ScatterEval MultiLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
+ScatterEval LobeStack::evaluate_local(const Float3 &wo, const Float3 &wi,
                                       MaterialEvalMode mode, const Uint &flag,
                                       TransportMode tm) const noexcept {
     return evaluate_local(wo, wi, mode, flag, tm, nullptr);

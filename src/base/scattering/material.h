@@ -7,7 +7,7 @@
 #include <utility>
 #include "base/node.h"
 #include "core/stl.h"
-#include "base/scattering/bxdf_set.h"
+#include "base/scattering/lobe.h"
 #include "base/shader_graph/shader_node.h"
 
 namespace vision {
