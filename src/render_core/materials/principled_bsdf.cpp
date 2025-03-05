@@ -293,15 +293,21 @@ public:
 
 class PrincipledBSDF : public Material {
 public:
-    enum LobeType : uint8_t {
-        ESheen,
-        ECoat,
-        EMetallic,
-        ETrans,
-        ESpec,
-        EDiffuse,
-        Count
+#define VS_MAKE_LOBE_TYPE(Type) E##Type,
+#define VS_MAKE_LOBE_TYPES(...)               \
+    enum LobeType : uint8_t {                 \
+        MAP(VS_MAKE_LOBE_TYPE, ##__VA_ARGS__) \
+            Count                             \
     };
+
+    VS_MAKE_LOBE_TYPES(Sheen, Coat, Metallic, Trans, Spec, Diffuse)
+
+    static constexpr std::array<const char *, LobeType::Count> LobeName = {
+
+    };
+
+#undef VS_MAKE_LOBE_TYPE
+#undef VS_MAKE_LOBE_TYPES
 
 private:
     VS_MAKE_SLOT(color)
