@@ -382,7 +382,6 @@ public:
     [[nodiscard]] UP<BxDFSet> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         MultiBxDFSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
-        Float metallic = metallic_.evaluate(it, swl).as_scalar();
         DynamicArray<float> iors = ior_.evaluate(it, swl);
         Float ior = iors.as_scalar();
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
@@ -430,6 +429,7 @@ public:
         }
         {
             /// metallic
+            Float metallic = metallic_.evaluate(it, swl).as_scalar();
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
             UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
