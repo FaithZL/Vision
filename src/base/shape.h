@@ -171,6 +171,7 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(handle, &)
     void fill_mesh_id() noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Box3f compute_aabb() const noexcept;
     void init_aabb() noexcept { aabb = compute_aabb(); }
     VS_MAKE_ATTR_SETTER_GETTER(inside)

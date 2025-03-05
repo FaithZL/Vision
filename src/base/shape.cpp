@@ -27,7 +27,12 @@ bool ShapeInstance::render_UI(ocarina::Widgets *widgets) noexcept {
     if (has_emission()) {
         emission()->render_UI(widgets);
     }
+    render_sub_UI(widgets);
     return true;
+}
+
+void ShapeInstance::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    
 }
 
 vector<float> ShapeInstance::surface_areas() const noexcept {
