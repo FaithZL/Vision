@@ -469,7 +469,7 @@ public:
             WeightedBxDFSet diffuse_lobe{diff_weight.average(), make_shared<DiffuseBxDFSet>(diff_weight, swl)};
             lobes.push_back(std::move(diffuse_lobe));
         }
-        auto ret = make_unique<MultiBxDFSet>(std::move(lobes));
+        UP<MultiBxDFSet> ret = make_unique<MultiBxDFSet>(std::move(lobes));
         return ret;
     }
 };
