@@ -22,7 +22,7 @@ public:
                               const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)),
           eta_(std::move(eta)) {}
-    FresnelGeneralizedSchlick(SampledSpectrum F0, const Float& eta,
+    FresnelGeneralizedSchlick(SampledSpectrum F0, const Float &eta,
                               const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)),
           eta_(SampledSpectrum{1, eta}) {}
@@ -60,7 +60,7 @@ public:
     FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
 
-    void init_from_F82(const SampledSpectrum& F82) {
+    void init_from_F82(const SampledSpectrum &F82) {
         static constexpr float f = 6.f / 7.f;
         static constexpr float f5 = Pow<5>(f);
         SampledSpectrum one = SampledSpectrum::one(swl_->dimension());
@@ -292,6 +292,17 @@ public:
 }
 
 class PrincipledBSDF : public Material {
+public:
+    enum LobeType : uint8_t {
+        ESheen,
+        ECoat,
+        EMetallic,
+        ETrans,
+        ESpec,
+        EDiffuse,
+        Count
+    };
+
 private:
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(metallic)
@@ -316,6 +327,13 @@ private:
     VS_MAKE_SLOT(transmission_weight)
     VS_MAKE_SLOT(opcacity)
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
+    std::array<bool, LobeType::Count> switches_{[] {
+        std::array<bool, LobeType::Count> ret{};
+        for (bool &elm : ret) {
+            elm = true;
+        }
+        return ret;
+    }()};
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(LobeStack)
@@ -355,7 +373,7 @@ public:
 #undef INIT_SLOT
         init_slot_cursor(&color_, &opcacity_);
     }
-    VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_)
+    VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         static vector<const char *> names = {"volume", "approximate"};
         widgets->combo("sheen mode", reinterpret_cast<int *>(addressof(sheen_mode_)), names);
@@ -396,7 +414,7 @@ public:
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         Float cos_theta = dot(it.wo, it.shading.normal());
         Float front_factor = cast<float>(cos_theta > 0.f);
-        {
+        if (switches_[ESheen]) {
             /// sheen
             SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
             Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar();
@@ -410,7 +428,7 @@ public:
             lobes.push_back(std::move(sheen_lobe));
             weight = layering_weight(sheen_albedo, weight);
         }
-        {
+        if (switches_[ECoat]) {
             /// coat
             Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar();
             Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
@@ -427,7 +445,7 @@ public:
             weight = layering_weight(cc_albedo, weight);
             lobes.push_back(std::move(w_cc_lobe));
         }
-        {
+        if (switches_[EMetallic]) {
             /// metallic
             Float metallic = metallic_.evaluate(it, swl).as_scalar();
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
@@ -435,11 +453,11 @@ public:
             UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
                                                                                     swl, microfacet);
             WeightedLobe metal_lobe(metallic * weight.average(),
-                                       make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl)));
+                                    make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl)));
             lobes.push_back(std::move(metal_lobe));
             weight *= (1.0f - metallic);
         }
-        {
+        if (switches_[ETrans]) {
             /// transmission
             Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
             float_array etas = it.correct_eta(iors);
@@ -452,18 +470,18 @@ public:
             lobes.push_back(std::move(trans_lobe));
             weight *= (1.0f - trans_weight);
         }
-        {
+        if (switches_[ESpec]) {
             /// specular
             Float f0 = schlick_F0_from_ior(ior);
             SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, iors, swl);
             UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
-                                                                 make_unique<MicrofacetReflection>(weight, swl, microfacet));
+                                                           make_unique<MicrofacetReflection>(weight, swl, microfacet));
             SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
             WeightedLobe specular_lobe(spec_refl_albedo.average(), std::move(spec_refl));
             lobes.push_back(std::move(specular_lobe));
             weight = layering_weight(spec_refl_albedo, weight);
         }
-        {
+        if (switches_[EDiffuse]) {
             /// diffuse
             SampledSpectrum diff_weight = color * weight;
             WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
