@@ -293,20 +293,19 @@ public:
 
 class PrincipledBSDF : public Material {
 public:
-#define VS_MAKE_LOBE_TYPE(Type) E##Type,
-#define VS_MAKE_LOBE_TYPES(...)               \
-    enum LobeType : uint8_t {                 \
-        MAP(VS_MAKE_LOBE_TYPE, ##__VA_ARGS__) \
-            Count                             \
-    };
+#define VS_MAKE_LOBE_TYPE(Type) E##Type
+#define VS_MAKE_LOBE_NAME(Type) #Type
+#define VS_MAKE_LOBE_TYPES(...)                                             \
+    enum LobeType : uint8_t {                                               \
+        MAP_LIST(VS_MAKE_LOBE_TYPE, ##__VA_ARGS__),                         \
+        Count                                                               \
+    };                                                                      \
+    static constexpr std::array<const char *, LobeType::Count> LobeName = { \
+        MAP_LIST(VS_MAKE_LOBE_NAME, ##__VA_ARGS__)};
 
     VS_MAKE_LOBE_TYPES(Sheen, Coat, Metallic, Trans, Spec, Diffuse)
-
-    static constexpr std::array<const char *, LobeType::Count> LobeName = {
-
-    };
-
 #undef VS_MAKE_LOBE_TYPE
+#undef VS_MAKE_LOBE_NAME
 #undef VS_MAKE_LOBE_TYPES
 
 private:
@@ -380,9 +379,17 @@ public:
         init_slot_cursor(&color_, &opcacity_);
     }
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
+
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         static vector<const char *> names = {"volume", "approximate"};
         widgets->combo("sheen mode", reinterpret_cast<int *>(addressof(sheen_mode_)), names);
+        int colNum = 3;
+        for (int i = 0; i < LobeName.size(); ++i) {
+            widgets->check_box(LobeName[i], addressof(switches_[i]));
+            if ((i+1) % 3 != 0) {
+                widgets->same_line();
+            }
+        }
         Material::render_sub_UI(widgets);
     }
     void prepare() noexcept override {
