@@ -145,37 +145,14 @@ ScatterEval DiffuseLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
     return bxdf_->safe_evaluate(wo, wi, nullptr, mode, tm);
 }
 
-BSDFSample DiffuseLobe::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                     TransportMode tm) const noexcept {
+BSDFSample DiffuseLobe::sample_local(const Float3 &wo, const Uint &flag,
+                                     TSampler &sampler, TransportMode tm) const noexcept {
     return bxdf_->sample(wo, sampler, nullptr, tm);
 }
 
-SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept {
+SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
+                                        TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
-}
-
-/// BlackBodyLobe
-const SampledWavelengths *BlackBodyLobe::swl() const {
-    return swl_;
-}
-
-ScatterEval BlackBodyLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                          MaterialEvalMode mode, const Uint &flag,
-                                          TransportMode tm) const noexcept {
-    ScatterEval ret{*swl_};
-    ret.f = {swl_->dimension(), 0.f};
-    ret.pdfs = 1.f;
-    return ret;
-}
-
-BSDFSample BlackBodyLobe::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                       TransportMode tm) const noexcept {
-    BSDFSample ret{*swl_};
-    ret.eval.pdfs = 1.f;
-    /// Avoid sample discarding due to hemispherical check
-    ret.eval.flags = BxDFFlag::DiffRefl;
-    ret.wi = wo;
-    return ret;
 }
 
 /// DielectricLobe

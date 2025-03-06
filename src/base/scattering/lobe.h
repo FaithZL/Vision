@@ -137,25 +137,6 @@ public:
                                              TSampler &sampler) const noexcept override;
 };
 
-class BlackBodyLobe : public Lobe {
-private:
-    const SampledWavelengths *swl_{nullptr};
-
-public:
-    explicit BlackBodyLobe(const SampledWavelengths &swl) : swl_(&swl) {}
-    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag,
-                                             TransportMode tm) const noexcept override;
-    [[nodiscard]] const SampledWavelengths *swl() const override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                          TransportMode tm) const noexcept override;
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
-        return {swl_->dimension(), 0.f};
-    }
-    VS_MAKE_Lobe_ASSIGNMENT(BlackBodyLobe)
-};
-
 [[nodiscard]] inline Float ior_to_ratio_z(const Float &ior) {
     return ocarina::sqrt(ocarina::abs((ior - 1.0f) / (ior + 1.0f)));
 }
