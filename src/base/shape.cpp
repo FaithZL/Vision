@@ -6,6 +6,7 @@
 #include "bake_utlis.h"
 #include <utility>
 #include "base/scattering/material.h"
+#include "math/transform.h"
 #include "base/mgr/mesh_registry.h"
 
 namespace vision {
@@ -40,6 +41,8 @@ void ShapeInstance::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     float3 s;
     decompose(o2w, addressof(t), addressof(r), addressof(s));
     widgets->drag_float3("position", addressof(t), 0.1f);
+    widgets->drag_float3("scale", addressof(s), 0.1f);
+    float4x4 new_o2w = translation(t) * make_float4x4(r.to_float3x3()) * scale(s);
 }
 
 vector<float> ShapeInstance::surface_areas() const noexcept {
