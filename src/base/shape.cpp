@@ -33,7 +33,14 @@ bool ShapeInstance::render_UI(ocarina::Widgets *widgets) noexcept {
     return true;
 }
 
-void ShapeInstance::render_sub_UI(ocarina::Widgets *widgets) noexcept {}
+void ShapeInstance::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    float4x4 o2w = handle_.o2w();
+    float3 t;
+    quaternion r;
+    float3 s;
+    decompose(o2w, addressof(t), addressof(r), addressof(s));
+    widgets->drag_float3("position", addressof(t), 0.1f);
+}
 
 vector<float> ShapeInstance::surface_areas() const noexcept {
     vector<float> ret;
