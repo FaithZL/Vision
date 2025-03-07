@@ -79,8 +79,6 @@ class Mesh : public Hashable, public GPUMesh {
 protected:
     vector<Vertex> vertices_;
     vector<Triangle> triangles_;
-    RegistrableBuffer<Vertex> vertex_buffer_;
-    RegistrableBuffer<Triangle> triangle_buffer_;
     uint index_{};
 
     bool has_lightmap_uv_{false};
