@@ -16,14 +16,12 @@ private:
 
 private:
     PolymorphicGUI<SP<Material>> materials_;
-    bool sample_visible_{true};
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MaterialRegistry)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     VS_MAKE_GUI_STATUS_FUNC(GUI, materials_)
-    OC_MAKE_MEMBER_GETTER(sample_visible, )
     [[nodiscard]] SP<Material> register_(SP<Material> material) noexcept;
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
     [[nodiscard]] bool has_dispersive() const noexcept;
