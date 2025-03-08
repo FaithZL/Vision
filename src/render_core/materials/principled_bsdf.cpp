@@ -12,18 +12,18 @@
 
 namespace vision {
 
-class FresnelGeneralizedSchlick : public Fresnel {
+class FresnelSchlick : public Fresnel {
 private:
     SampledSpectrum F0_;
     SampledSpectrum eta_;
 
 public:
-    FresnelGeneralizedSchlick(SampledSpectrum F0, SampledSpectrum eta,
-                              const SampledWavelengths &swl)
+    FresnelSchlick(SampledSpectrum F0, SampledSpectrum eta,
+                   const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)),
           eta_(std::move(eta)) {}
-    FresnelGeneralizedSchlick(SampledSpectrum F0, const Float &eta,
-                              const SampledWavelengths &swl)
+    FresnelSchlick(SampledSpectrum F0, const Float &eta,
+                   const SampledWavelengths &swl)
         : Fresnel(swl), F0_(std::move(F0)),
           eta_(SampledSpectrum{1, eta}) {}
     OC_MAKE_MEMBER_GETTER(F0, )
@@ -41,7 +41,7 @@ public:
     [[nodiscard]] SampledSpectrum eta() const noexcept override {
         return eta_;
     }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelGeneralizedSchlick)
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelSchlick)
 };
 
 class FresnelF82Tint : public Fresnel {
@@ -257,7 +257,7 @@ public:
     static UP<SpecularLobe> create_for_precompute(const SampledWavelengths &swl) noexcept {
         SampledSpectrum f0 = SampledSpectrum(make_float3(0.04));
         SampledSpectrum f90 = SampledSpectrum(make_float3(1));
-        SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0, 1.5f, swl);
+        SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0, 1.5f, swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
         return make_unique<SpecularLobe>(fresnel_schlick, std::move(bxdf));
@@ -278,7 +278,7 @@ public:
         Float z = to_ratio_z();
         Float3 uvw = make_float3(x, cos_theta, z);
         Float s = MaterialLut::instance().sample(lut_name, 1, uvw).as_scalar();
-        SampledSpectrum f0 = fresnel<FresnelGeneralizedSchlick>()->F0();
+        SampledSpectrum f0 = fresnel<FresnelSchlick>()->F0();
         SampledSpectrum ret = lerp(s, f0, SampledSpectrum::one(*swl())) * bxdf()->albedo(cos_theta);
         return ret;
     }
@@ -474,7 +474,7 @@ public:
             Float eta = etas[0];
             auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
             SampledSpectrum t_weight = trans_weight * weight;
-            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
+            SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
             UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
             WeightedLobe trans_lobe(t_weight.average(), t_weight, std::move(dielectric));
             lobes.push_back(std::move(trans_lobe));
@@ -483,7 +483,7 @@ public:
         if (switches_[ESpec]) {
             /// specular
             Float f0 = schlick_F0_from_ior(ior);
-            SP<Fresnel> fresnel_schlick = make_shared<FresnelGeneralizedSchlick>(f0 * specular_tint, iors, swl);
+            SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
             UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
                                                            make_unique<MicrofacetReflection>(weight, swl, microfacet));
             SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
