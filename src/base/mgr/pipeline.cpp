@@ -191,7 +191,10 @@ void Pipeline::update_runtime_object(const vision::IObjectConstructor *construct
 void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
     auto tex_size = MemoryStats::instance().tex_size();
     auto buffer_size = MemoryStats::instance().buffer_size();
-    auto label = ocarina::format("memory stats total is {}", bytes_string(tex_size + buffer_size).c_str());
+    size_t tex_slot_mem_size = bindless_array()->tex_slots_size();
+    size_t buffer_slot_mem_size = bindless_array()->buffer_slots_size();
+    auto label = ocarina::format("memory stats total is {}", bytes_string(tex_size + buffer_size +
+                                                                          tex_slot_mem_size + buffer_slot_mem_size));
     widgets->use_window(label, [&] {
         widgets->use_folding_header("texture stats", [&] {
             widgets->text("total texture size is %s", bytes_string(tex_size).c_str());
@@ -219,6 +222,17 @@ void Pipeline::render_stats(ocarina::Widgets *widgets) noexcept {
             auto string = ocarina::format("vertex num is {}\ntriangle num is {}\nmesh num is {}",
                                           triangle_num, vert_num, mesh_num);
             widgets->text(string);
+        });
+
+        widgets->use_folding_header("bindless_array stats", [&] {
+            uint bindless_buffer_num = bindless_array().buffer_num();
+            uint bindless_tex_num = bindless_array().texture_num();
+            size_t max_slot_num = BindlessArray::max_slot_num();
+
+            widgets->text(ocarina::format("bindless buffer num is {}", bindless_buffer_num));
+            widgets->text(ocarina::format("bindless tex num is {}", bindless_tex_num));
+            widgets->text(ocarina::format("max slot num is {}", max_slot_num));
+            widgets->text(ocarina::format("bindless slot men size is {}", bytes_string(tex_slot_mem_size + buffer_slot_mem_size)));
         });
     });
 }
