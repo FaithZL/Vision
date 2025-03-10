@@ -18,6 +18,7 @@ protected:
 
 public:
     using Desc = ShaderNodeDesc;
+    static constexpr float s_cutoff = 1e-3f;
 
 public:
     ShaderNode() = default;
@@ -25,7 +26,8 @@ public:
     VS_HOTFIX_MAKE_RESTORE(Node, type_)
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     [[nodiscard]] ShaderNodeType type() const noexcept { return type_; }
-    [[nodiscard]] virtual bool is_zero() const noexcept { return false; }
+    [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
+    [[nodiscard]] virtual bool near_one() const noexcept { return false; }
     /**
      * if shader node is constant, the result will be inlined
      * @return
@@ -71,7 +73,7 @@ public:
     }
 
     explicit Slot(string attr_name = "") : attr_name_(std::move(attr_name)) {}
-    Slot& set(const Slot &other) noexcept {
+    Slot &set(const Slot &other) noexcept {
         string old_name = attr_name_;
         *this = other;
         if (other.attr_name_.empty()) {

@@ -16,8 +16,11 @@ public:
         : ShaderNode(desc), value_(desc["value"].as_vector<float>()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_)
-    [[nodiscard]] bool is_zero() const noexcept override {
-        return std::all_of(value_.begin(), value_.end(), [](float elm) { return elm == 0; });
+    [[nodiscard]] bool near_zero() const noexcept override {
+        return std::all_of(value_.begin(), value_.end(), [](float elm) { return ocarina::abs(elm - 0.f) < s_cutoff; });
+    }
+    [[nodiscard]] bool near_one() const noexcept override {
+        return std::all_of(value_.begin(), value_.end(), [](float elm) { return ocarina::abs(elm - 1.f) < s_cutoff; });
     }
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64_list(value_);

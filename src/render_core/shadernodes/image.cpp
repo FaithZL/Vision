@@ -56,8 +56,6 @@ public:
         return true;
     }
 
-    [[nodiscard]] bool is_zero() const noexcept override { return false; }
-
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept override {
         return pipeline()->tex_var(*tex_id_).sample(texture_->host_tex().channel_num(), ctx.uv);
