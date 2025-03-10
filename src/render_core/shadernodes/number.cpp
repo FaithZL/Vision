@@ -71,10 +71,12 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool near_zero() const noexcept override {
-        return std::all_of(value_.hv().begin(), value_.hv().end(), [](float elm) { return ocarina::abs(elm - 0.f) < s_cutoff; });
+        auto lst = value_.hv();
+        return std::all_of(lst.begin(), lst.end(), [](float elm) { return ocarina::abs(elm - 0.f) < s_cutoff; });
     }
     [[nodiscard]] bool near_one() const noexcept override {
-        return std::all_of(value_.hv().begin(), value_.hv().end(), [](float elm) { return ocarina::abs(elm - 1.f) < s_cutoff; });
+        auto lst = value_.hv();
+        return std::all_of(lst.begin(), lst.end(), [](float elm) { return ocarina::abs(elm - 1.f) < s_cutoff; });
     }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
     [[nodiscard]] uint dim() const noexcept override { return value_.element_num(); }

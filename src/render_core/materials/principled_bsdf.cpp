@@ -389,12 +389,22 @@ public:
             }
         }
         Material::render_sub_UI(widgets);
+        update_switches();
     }
     void prepare() noexcept override {
         CoatLobe::prepare();
         SheenLTC::prepare();
         SpecularLobe::prepare();
         DielectricLobe::prepare();
+    }
+
+    void update_switches() noexcept {
+        switches_[ESheen] = !sheen_weight_->near_zero();
+        switches_[ECoat] = !coat_weight_->near_zero();
+        switches_[EMetallic] = !metallic_->near_zero();
+        switches_[ETrans] = (!metallic_->near_one()) && (!transmission_weight_->near_zero());
+        switches_[ESpec] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
+        switches_[EDiffuse] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
     }
 
     template<typename TLobe>
