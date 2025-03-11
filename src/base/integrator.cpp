@@ -57,6 +57,9 @@ bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
         ocarina::format("{} integrator", impl_type().data()),
         [&] {
             changed_ |= widgets->button_click("recompile", [&] {
+//                MaterialRegistry::instance().remedy();
+//                scene().fill_instances();
+//                pipeline()->update_geometry();
                 compile();
             });
             changed_ |= widgets->input_uint_limit("max depth", &max_depth_.hv(), 0, 30, 1, 1);
