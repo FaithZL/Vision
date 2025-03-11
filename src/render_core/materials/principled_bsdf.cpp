@@ -443,6 +443,7 @@ public:
         Float front_factor = cast<float>(cos_theta > 0.f);
         if (switches_[ESheen]) {
             /// sheen
+            comment("principled sheen");
             SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
             Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar() * front_factor;
             Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
@@ -456,6 +457,7 @@ public:
         }
         if (switches_[ECoat]) {
             /// coat
+            comment("principled coat");
             Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar() * front_factor;
             Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
             cc_roughness = sqr(cc_roughness);
@@ -473,6 +475,7 @@ public:
         }
         if (switches_[EMetallic]) {
             /// metallic
+            comment("principled metallic");
             Float metallic = metallic_.evaluate(it, swl).as_scalar() * front_factor;
             SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
             fresnel_f82->init_from_F82(specular_tint);
@@ -485,6 +488,7 @@ public:
         }
         if (switches_[ETrans]) {
             /// transmission
+            comment("principled transmission");
             Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
             float_array etas = it.correct_eta(iors);
             Float eta = etas[0];
@@ -498,6 +502,7 @@ public:
         }
         if (switches_[ESpec]) {
             /// specular
+            comment("principled specular");
             Float f0 = schlick_F0_from_ior(ior);
             SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
             UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
@@ -509,6 +514,7 @@ public:
         }
         if (switches_[EDiffuse]) {
             /// diffuse
+            comment("principled diffuse");
             SampledSpectrum diff_weight = color * weight * front_factor;
             WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
             lobes.push_back(std::move(diffuse_lobe));
