@@ -28,6 +28,8 @@ public:
     void push_back(SP<Material> material) noexcept;
     void precompute_albedo() noexcept;
     void upload_device_data() noexcept;
+    void prepare() noexcept;
+    void remedy() noexcept;
     void remove_unused_materials() noexcept;
     void tidy_up() noexcept;
     OC_MAKE_MEMBER_GETTER(materials, &)

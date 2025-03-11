@@ -208,11 +208,7 @@ void Scene::load_mediums(const MediumsDesc &md) {
 }
 
 void Scene::prepare_materials() {
-    materials().for_each_instance([&](const SP<Material> &material) noexcept {
-        material->prepare();
-    });
-    auto rp = pipeline();
-    materials().prepare(rp->bindless_array(), rp->device());
+    material_registry().prepare();
 }
 
 void Scene::upload_data() noexcept {

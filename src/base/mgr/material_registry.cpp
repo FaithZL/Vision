@@ -3,6 +3,7 @@
 //
 
 #include "material_registry.h"
+#include "pipeline.h"
 
 namespace vision {
 
@@ -45,6 +46,20 @@ void MaterialRegistry::upload_device_data() noexcept {
     if (has_changed()) {
         materials_.update();
     }
+}
+
+void MaterialRegistry::prepare() noexcept {
+    materials().for_each_instance([&](const SP<Material> &material) noexcept {
+        material->prepare();
+    });
+    auto rp = Global::instance().pipeline();
+    materials().prepare(rp->bindless_array(), rp->device());
+}
+
+void MaterialRegistry::remedy() noexcept {
+    materials().remedy();
+    auto rp = Global::instance().pipeline();
+    materials().prepare(rp->bindless_array(), rp->device());
 }
 
 bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
