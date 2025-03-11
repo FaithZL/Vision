@@ -257,13 +257,13 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material": "TallBox",
+//				"material": "TallBox",
 //				"material" : "mix2",
 //				"material" : "Mirror",
 //				                "material": "Mirror2",
 //								                "material": "Glass",
 //												"material" : "Metal",
-//								"material" : "principled_bsdf",
+								"material" : "principled_bsdf2",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -716,7 +716,7 @@
 		},
 		{
 			"type" : "principled_bsdf",
-			"name" : "principled_bsdf",
+			"name" : "principled_bsdf2",
 			"param" : {
 				"color" : [
 					1,

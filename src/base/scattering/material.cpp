@@ -215,6 +215,12 @@ void Material::reset_device_value() const noexcept {
     });
 }
 
+void Material::invalidate() const noexcept {
+    for_each_slot([&](const Slot &slot) {
+        slot->invalidate();
+    });
+}
+
 void Material::encode(RegistrableManaged<float> &data) const noexcept {
     for_each_slot([&](const Slot &slot) {
         slot->encode(data);
