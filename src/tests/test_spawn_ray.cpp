@@ -50,37 +50,20 @@ int main(int argc, char *argv[]) {
     Device device = file_manager.create_device("cuda");
     device.init_rtx();
     Stream stream = device.create_stream();
-//    file_manager.clear_cache();
-    float3 vec = make_float3(2);
-    float4x4 mat = scale(2);
-    Transform tsf = Transform(mat);
-
-    auto [vertices, triangle] = get_cube();
-
-    Buffer v_buffer = device.create_buffer<float3>(vertices.size());
-    Buffer t_buffer = device.create_buffer<Triangle>(triangle.size());
-
-    ocarina::RHIMesh cube = device.create_mesh(v_buffer.view(), t_buffer.view());
-
-    stream << v_buffer.upload_sync(vertices.data());
-    stream << t_buffer.upload_sync(triangle.data());
-
-    Accel accel = device.create_accel();
-//    accel.add_mesh(cube, make_float4x4(1.f));
-    stream << accel.build_bvh();
-    stream << synchronize() << commit();
-
-
-    Kernel kernel = [&]() {
-        DynamicArray<float> arr = DynamicArray<float>::create(10.f, 9.f);
-//        arr[0] = 9.6f;
-        arr = arr.map([&](Float a) {
-            return a * 2;
-        });
-        prints("----- {}", arr[0]);
+    Env::printer().init(device);
+    uint count = 2;
+    Kernel kernel = [&](Uint _) {
+        auto arr = DynamicArray<float>{count};
+//        auto arr = SampledSpectrum{count};;
+        Float a = 0;
+        RayVar r;
+        $outline {
+            auto a2 = arr.map([&](uint i, const Float& elm) {
+                return arr[i] + elm;
+            });
+        };
     };
     auto shader = device.compile(kernel);
-//    Stream stream = device.create_stream();
-    stream << shader().dispatch(1) << synchronize() << commit();
+    stream << shader(1u).dispatch(1) << Env::printer().retrieve()<< synchronize() << commit();
     return 0;
 }
