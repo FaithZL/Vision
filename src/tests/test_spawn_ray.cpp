@@ -53,12 +53,12 @@ int main(int argc, char *argv[]) {
     Env::printer().init(device);
     uint count = 2;
     Kernel kernel = [&](Uint _) {
-        auto arr = DynamicArray<float>{count};
-//        auto arr = SampledSpectrum{count};;
+//        auto arr = DynamicArray<float>{count};
+        auto arr = SampledSpectrum{count};;
         Float a = 0;
         RayVar r;
         $outline {
-            auto a2 = arr.map([&](uint i, const Float& elm) {
+            arr.map([&](uint i, const Float& elm) {
                 return arr[i] + elm;
             });
         };

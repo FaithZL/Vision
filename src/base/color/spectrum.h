@@ -62,27 +62,30 @@ private:
 public:
     SampledSpectrum(const DynamicArray<float> &value) noexcept
         : values_(value) {}
-    SampledSpectrum(uint n, const Float &value) noexcept
-        : values_(n) {
+    SampledSpectrum(uint n, const Float &value, OC_APPEND_SRC_LOCATION) noexcept
+        : values_(n, nullptr, src_location) {
         for (int i = 0; i < n; ++i) {
             values_[i] = value;
         }
     }
-    SampledSpectrum(const SampledWavelengths &swl, const Float &value)
-        : SampledSpectrum(swl.dimension(), value) {}
-    explicit SampledSpectrum(uint n = 1u) noexcept : SampledSpectrum{n, 0.f} {}
-    explicit SampledSpectrum(const Float3 &value) noexcept : values_(3) {
+    SampledSpectrum(const SampledWavelengths &swl, const Float &value,OC_APPEND_SRC_LOCATION)
+        : SampledSpectrum(swl.dimension(), value, src_location) {}
+    explicit SampledSpectrum(uint n = 1u,OC_APPEND_SRC_LOCATION) noexcept
+        : SampledSpectrum{n, Float(0.f, src_location), src_location} {}
+    explicit SampledSpectrum(const Float3 &value,OC_APPEND_SRC_LOCATION) noexcept
+        : values_(3, nullptr, src_location) {
         for (int i = 0; i < 3; ++i) {
             values_[i] = value[i];
         }
     }
-    explicit SampledSpectrum(const Float4 &value) noexcept : values_(4) {
+    explicit SampledSpectrum(const Float4 &value,OC_APPEND_SRC_LOCATION) noexcept
+        : values_(4, nullptr, src_location) {
         for (int i = 0; i < 4; ++i) {
             values_[i] = value[i];
         }
     }
-    explicit SampledSpectrum(const Float &value) noexcept : SampledSpectrum{1u, value} {}
-    explicit SampledSpectrum(float value) noexcept : SampledSpectrum{1u, value} {}
+    explicit SampledSpectrum(const Float &value,OC_APPEND_SRC_LOCATION) noexcept : SampledSpectrum{1u, value, src_location} {}
+    explicit SampledSpectrum(float value,OC_APPEND_SRC_LOCATION) noexcept : SampledSpectrum{1u, value,src_location} {}
     [[nodiscard]] uint dimension() const noexcept {
         return static_cast<uint>(values_.size());
     }
