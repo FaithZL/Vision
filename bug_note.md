@@ -8,3 +8,10 @@
 正常的加入transmission之后，发现打开transmission与sheen之后，roughness提高之后，又会有无法收敛的噪声
 打印了sheen的albedo之后发现，在物体内部时，albedo不为零，显然不对，在这里我加了个hit front判断，
 在物体内部计算着色时，不考虑coat与sheen
+
+2025.3.13
+
+ocarina中有一个bug是由于CallExpr中arguments的结构为vector，pushback之后可能会导致扩容，扩容会导致
+之前元素的地址失效，就导致了function corrector中的无效指针的问题
+
+ocarina中function corrector第二个问题，主要是由于处理subscript expr时，漏了处理range
