@@ -51,17 +51,23 @@ int main(int argc, char *argv[]) {
     device.init_rtx();
     Stream stream = device.create_stream();
     Env::printer().init(device);
-    uint count = 2;
+    uint count = 1;
     Kernel kernel = [&](Uint _) {
-//        auto arr = DynamicArray<float>{count};
-        auto arr = SampledSpectrum{count};;
-        Float a = 0;
-        RayVar r;
-        $outline {
-            arr.map([&](uint i, const Float& elm) {
-                return arr[i] + elm;
-            });
-        };
+        auto arr = DynamicArray<float>{count};
+//        auto arr = SampledSpectrum{count};;
+//        Float a = 0;
+//        RayVar r;
+        outline("principled transmission", [&] {
+            rcp(arr);
+
+        });
+//        $outline {
+//            rcp(arr);
+//
+////            arr.map([&](uint i, const Float& elm) {
+////                return arr[i] + elm;
+////            });
+//        };
     };
     auto shader = device.compile(kernel);
     stream << shader(1u).dispatch(1) << Env::printer().retrieve()<< synchronize() << commit();
