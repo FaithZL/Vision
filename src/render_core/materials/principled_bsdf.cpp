@@ -443,81 +443,86 @@ public:
         Float front_factor = cast<float>(cos_theta > 0.f);
         if (switches_[ESheen]) {
             /// sheen
-            comment("principled sheen");
-            SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
-            Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar() * front_factor;
-            Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
-            UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
-                                                           sheen_tint * sheen_weight * weight,
-                                                           sheen_roughness, swl);
-            SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
-            WeightedLobe sheen_lobe(sheen_albedo.average(), std::move(sheen_ltc));
-            lobes.push_back(std::move(sheen_lobe));
-            weight = layering_weight(sheen_albedo, weight);
+            outline("principled sheen", [&] {
+                SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
+                Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar() * front_factor;
+                Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
+                UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
+                                                               sheen_tint * sheen_weight * weight,
+                                                               sheen_roughness, swl);
+                SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
+                WeightedLobe sheen_lobe(sheen_albedo.average(), std::move(sheen_ltc));
+                lobes.push_back(std::move(sheen_lobe));
+                weight = layering_weight(sheen_albedo, weight);
+            });
         }
         if (switches_[ECoat]) {
             /// coat
-            comment("principled coat");
-            Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar() * front_factor;
-            Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
-            cc_roughness = sqr(cc_roughness);
-            Float cc_ior = coat_ior_.evaluate(it, swl).as_scalar();
-            SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
-            SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
-            SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
-            UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
-                                                                                 microfacet_cc);
-            UP<CoatLobe> cc_lobe = make_unique<CoatLobe>(fresnel_cc, std::move(cc_refl));
-            SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
-            WeightedLobe w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
-            weight = layering_weight(cc_albedo, weight);
-            lobes.push_back(std::move(w_cc_lobe));
+            outline("principled coat", [&] {
+                Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar() * front_factor;
+                Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+                cc_roughness = sqr(cc_roughness);
+                Float cc_ior = coat_ior_.evaluate(it, swl).as_scalar();
+                SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
+                SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
+                SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
+                UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
+                                                                                     microfacet_cc);
+                UP<CoatLobe> cc_lobe = make_unique<CoatLobe>(fresnel_cc, std::move(cc_refl));
+                SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
+                WeightedLobe w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
+                weight = layering_weight(cc_albedo, weight);
+                lobes.push_back(std::move(w_cc_lobe));
+            });
         }
         if (switches_[EMetallic]) {
             /// metallic
-            comment("principled metallic");
-            Float metallic = metallic_.evaluate(it, swl).as_scalar() * front_factor;
-            SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
-            fresnel_f82->init_from_F82(specular_tint);
-            UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
-                                                                                    swl, microfacet);
-            WeightedLobe metal_lobe(metallic * weight.average(),
-                                    make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl)));
-            lobes.push_back(std::move(metal_lobe));
-            weight *= (1.0f - metallic);
+            outline("principled metallic", [&] {
+                Float metallic = metallic_.evaluate(it, swl).as_scalar() * front_factor;
+                SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
+                fresnel_f82->init_from_F82(specular_tint);
+                UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
+                                                                                        swl, microfacet);
+                WeightedLobe metal_lobe(metallic * weight.average(),
+                                        make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl)));
+                lobes.push_back(std::move(metal_lobe));
+                weight *= (1.0f - metallic);
+            });
         }
         if (switches_[ETrans]) {
-            /// transmission
-            comment("principled transmission");
-            Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
-            float_array etas = it.correct_eta(iors);
-            Float eta = etas[0];
-            auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
-            SampledSpectrum t_weight = trans_weight * weight;
-            SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
-            UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
-            WeightedLobe trans_lobe(t_weight.average(), t_weight, std::move(dielectric));
-            lobes.push_back(std::move(trans_lobe));
-            weight *= (1.0f - trans_weight);
+            outline("principled transmission", [&] {
+                Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
+                float_array etas = it.correct_eta(iors);
+                Float eta = etas[0];
+                auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
+                SampledSpectrum t_weight = trans_weight * weight;
+                SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
+                UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
+                WeightedLobe trans_lobe(t_weight.average(), t_weight, std::move(dielectric));
+                lobes.push_back(std::move(trans_lobe));
+                weight *= (1.0f - trans_weight);
+            });
         }
         if (switches_[ESpec]) {
             /// specular
-            comment("principled specular");
-            Float f0 = schlick_F0_from_ior(ior);
-            SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
-            UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
-                                                           make_unique<MicrofacetReflection>(weight, swl, microfacet));
-            SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
-            WeightedLobe specular_lobe(spec_refl_albedo.average(), std::move(spec_refl));
-            lobes.push_back(std::move(specular_lobe));
-            weight = layering_weight(spec_refl_albedo, weight);
+            outline("principled specular", [&] {
+                Float f0 = schlick_F0_from_ior(ior);
+                SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
+                UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
+                                                               make_unique<MicrofacetReflection>(weight, swl, microfacet));
+                SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
+                WeightedLobe specular_lobe(spec_refl_albedo.average(), std::move(spec_refl));
+                lobes.push_back(std::move(specular_lobe));
+                weight = layering_weight(spec_refl_albedo, weight);
+            });
         }
         if (switches_[EDiffuse]) {
             /// diffuse
-            comment("principled diffuse");
-            SampledSpectrum diff_weight = color * weight * front_factor;
-            WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
-            lobes.push_back(std::move(diffuse_lobe));
+            outline("principled diffuse", [&] {
+                SampledSpectrum diff_weight = color * weight * front_factor;
+                WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
+                lobes.push_back(std::move(diffuse_lobe));
+            });
         }
         UP<LobeStack> ret = make_unique<LobeStack>(std::move(lobes));
         return ret;
