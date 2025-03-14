@@ -389,22 +389,24 @@ SampledDirection LobeStack::sample_wi(const Float3 &wo, const Uint &flag,
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.sample_weight();
     });
-    if (lobe_num() == 1) {
-        sd = lobes_[0]->sample_wi(wo, flag, sampler);
-    } else {
-        $switch(sampling_strategy) {
-            for_each([&](const WeightedLobe &lobe, uint i) {
-                $case(i) {
-                    sd = lobe->sample_wi(wo, flag, sampler);
+    outline("LobeStack::sample_wi", [&] {
+        if (lobe_num() == 1) {
+            sd = lobes_[0]->sample_wi(wo, flag, sampler);
+        } else {
+            $switch(sampling_strategy) {
+                for_each([&](const WeightedLobe &lobe, uint i) {
+                    $case(i) {
+                        sd = lobe->sample_wi(wo, flag, sampler);
+                        $break;
+                    };
+                });
+                $default {
+                    unreachable();
                     $break;
                 };
-            });
-            $default {
-                unreachable();
-                $break;
             };
-        };
-    }
+        }
+    });
     return sd;
 }
 
@@ -425,14 +427,16 @@ ScatterEval LobeStack::evaluate_local(const Float3 &wo, const Float3 &wi,
                                       MaterialEvalMode mode, const Uint &flag,
                                       TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
-    for_each([&](const WeightedLobe &lobe) {
-        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
-        se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
-        se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
+    outline("LobeStack::evaluate_local", [&]{
+        for_each([&](const WeightedLobe &lobe) {
+            ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
+            se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
+            se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
 
-        ret.f += se.f;
-        ret.pdfs += se.pdfs;
-        ret.flags = ret.flags | se.flags;
+            ret.f += se.f;
+            ret.pdfs += se.pdfs;
+            ret.flags = ret.flags | se.flags;
+        });
     });
     return ret;
 }
