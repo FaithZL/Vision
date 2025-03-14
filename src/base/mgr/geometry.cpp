@@ -87,8 +87,9 @@ Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, boo
     it.set_light(inst.light_id);
     it.set_material(inst.mat_id);
     it.set_medium(inst.inside_medium, inst.outside_medium);
-    comment("compute pos");
-    outline([&] {
+    
+    outline("Geometry::compute_surface_interaction", [&] {
+        comment("compute pos");
         Var p0 = o2w.apply_point(v0->position());
         Var p1 = o2w.apply_point(v1->position());
         Var p2 = o2w.apply_point(v2->position());
@@ -159,8 +160,7 @@ Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, boo
         Float2 uv = hit->triangle_lerp(v0->tex_coord(), v1->tex_coord(), v2->tex_coord());
         it.uv = uv;
         it.ng = frame.z;
-    },
-            "Geometry::compute_surface_interaction");
+    });
     return it;
 }
 
