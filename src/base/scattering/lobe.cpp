@@ -372,7 +372,7 @@ void LobeStack::normalize_weights() noexcept {
 SampledSpectrum LobeStack::albedo(const Float &cos_theta) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
     for_each([&](const WeightedLobe &lobe) {
-        ret += lobe->albedo(cos_theta);
+        ret += lobe->albedo(cos_theta) * lobe.weight();
     });
     return ret;
 }
