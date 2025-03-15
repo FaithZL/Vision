@@ -213,8 +213,8 @@
 //								 "material" : "substrate",
 //								"material" : "Mirror",
 //								"material" : "Metal",
-//				"material" : "principled_bsdf",
 				"material" : "principled_bsdf",
+//				"material" : "metallic",
 //																                "material" : "mix",
 //												                                "material" : "Glass",
 				"transform" : {
@@ -263,7 +263,8 @@
 //				                "material": "Mirror2",
 //								                "material": "Glass",
 //												"material" : "Metal",
-								"material" : "principled_bsdf2",
+				"material" : "principled_bsdf2",
+//				"material" : "metallic",
 				"transform" : {
 					"type" : "matrix4x4",
 					"param" : {
@@ -712,6 +713,21 @@
 					}
 				},
 				"roughness" : [0.0001, 0.0001]
+			}
+		},
+		{
+			"type" : "metallic",
+			"name" : "metallic",
+			"param" : {
+				"color" : {
+					"channels" : "xyz",
+					"node" : [
+						1,
+						1,
+						1
+					]
+				},
+				"roughness" : 0.1
 			}
 		},
 		{
