@@ -51,6 +51,9 @@ public:
 
 #define VS_MAKE_SLOT(attr_name) Slot attr_name##_{#attr_name};
 
+#define INIT_SLOT(name, default_value, type) \
+    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)))
+
 class Slot : public ocarina::Hashable, public GUI, public Observer {
 private:
     SP<ShaderNode> node_{};

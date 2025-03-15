@@ -11,6 +11,12 @@ namespace vision {
 
 class MetallicMaterial : public Material {
 private:
+    VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(edge_tint)
+    VS_MAKE_SLOT(roughness)
+    VS_MAKE_SLOT(anisotropic)
+    bool remapping_roughness_{true};
+    float alpha_threshold_{0.022};
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(MicrofacetLobe)
@@ -18,11 +24,14 @@ public:
     MetallicMaterial() = default;
     explicit MetallicMaterial(const MaterialDesc &desc)
         : Material(desc) {
-
+        INIT_SLOT(color, make_float3(1.f), Albedo);
+        INIT_SLOT(edge_tint, make_float3(0.f), Albedo);
+        INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(anisotropic, 0.f, Number);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it,
-                                           const SampledWavelengths &swl) const noexcept override {
+    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it,const SampledWavelengths &swl) const noexcept override {
         return nullptr;
     }
 };

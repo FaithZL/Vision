@@ -313,9 +313,6 @@ public:
     explicit PrincipledBSDF(const MaterialDesc &desc)
         : Material(desc) {
 
-#define INIT_SLOT(name, default_value, type) \
-    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)))
-
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(metallic, 0.f, Number);
         INIT_SLOT(ior, 1.5f, Number)->set_range(1.01, 20.f);
@@ -339,7 +336,6 @@ public:
         INIT_SLOT(transmission_weight, 0.f, Number);
         INIT_SLOT(opcacity, 1.f, Number)->set_range(0.f, 1.f);
 
-#undef INIT_SLOT
         init_slot_cursor(&color_, &opcacity_);
     }
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
