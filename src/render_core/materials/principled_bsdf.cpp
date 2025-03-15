@@ -44,40 +44,6 @@ public:
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelSchlick)
 };
 
-class FresnelF82Tint : public Fresnel {
-private:
-    SampledSpectrum F0_;
-    SampledSpectrum B_;
-
-public:
-    using Fresnel::Fresnel;
-
-    FresnelF82Tint(SampledSpectrum F0, SampledSpectrum B,
-                   const SampledWavelengths &swl)
-        : Fresnel(swl), F0_(std::move(F0)), B_(std::move(B)) {
-    }
-
-    FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl)
-        : Fresnel(swl), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
-
-    void init_from_F82(const SampledSpectrum &F82) {
-        static constexpr float f = 6.f / 7.f;
-        static constexpr float f5 = Pow<5>(f);
-        SampledSpectrum one = SampledSpectrum::one(swl_->dimension());
-        SampledSpectrum f_schlick = lerp(f5, F0_, one);
-        B_ = f_schlick * (7.f / (f5 * f)) * (one - F82);
-    }
-
-    [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
-        Float mu = ocarina::saturate(1.f - cos_theta);
-        Float mu5 = Pow<5>(mu);
-        SampledSpectrum f_schlick = lerp(mu5, F0_, SampledSpectrum::one(swl_->dimension()));
-        SampledSpectrum ret = saturate(f_schlick - B_ * cos_theta * mu5 * mu);
-        return ret;
-    }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
-};
-
 /// reference https://tizianzeltner.com/projects/Zeltner2022Practical/
 /// reference https://github.com/tizian/ltc-sheen
 class SheenLTC : public Lobe {

@@ -22,7 +22,7 @@ public:
         OC_ERROR("Fresnel evaluate by channel invalid !");
         return 0.f;
     }
-    OC_MAKE_MEMBER_GETTER(swl,)
+    OC_MAKE_MEMBER_GETTER(swl, )
     virtual Fresnel &operator=(const Fresnel &other) noexcept = default;
     [[nodiscard]] virtual SampledSpectrum eta() const noexcept {
         OC_ERROR("ior only dielectric material !");
@@ -50,7 +50,9 @@ public:
         return fresnel_dielectric<D>(cos_theta, eta_[channel]);
     }
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
-        SampledSpectrum fr = eta_.map([&](const Float &eta) { return fresnel_dielectric<D>(abs_cos_theta, eta); });
+        SampledSpectrum fr = eta_.map([&](const Float &eta) {
+            return fresnel_dielectric<D>(abs_cos_theta, eta);
+        });
         return fr;
     }
     void set_eta(const vision::SampledSpectrum &eta) noexcept override {
@@ -58,6 +60,40 @@ public:
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override { return eta_; }
     VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
+};
+
+class FresnelF82Tint : public Fresnel {
+private:
+    SampledSpectrum F0_;
+    SampledSpectrum B_;
+
+public:
+    using Fresnel::Fresnel;
+
+    FresnelF82Tint(SampledSpectrum F0, SampledSpectrum B,
+                   const SampledWavelengths &swl)
+        : Fresnel(swl), F0_(std::move(F0)), B_(std::move(B)) {
+    }
+
+    FresnelF82Tint(SampledSpectrum F0, const SampledWavelengths &swl)
+        : Fresnel(swl), F0_(std::move(F0)), B_(SampledSpectrum::one(swl.dimension())) {}
+
+    void init_from_F82(const SampledSpectrum &F82) {
+        static constexpr float f = 6.f / 7.f;
+        static constexpr float f5 = Pow<5>(f);
+        SampledSpectrum one = SampledSpectrum::one(swl_->dimension());
+        SampledSpectrum f_schlick = lerp(f5, F0_, one);
+        B_ = f_schlick * (7.f / (f5 * f)) * (one - F82);
+    }
+
+    [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
+        Float mu = ocarina::saturate(1.f - cos_theta);
+        Float mu5 = Pow<5>(mu);
+        SampledSpectrum f_schlick = lerp(mu5, F0_, SampledSpectrum::one(swl_->dimension()));
+        SampledSpectrum ret = saturate(f_schlick - B_ * cos_theta * mu5 * mu);
+        return ret;
+    }
+    VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
 };
 
 class FresnelConstant : public Fresnel {
