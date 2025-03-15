@@ -404,7 +404,6 @@ public:
         Float cos_theta = dot(it.wo, it.shading.normal());
         Float front_factor = cast<float>(cos_theta > 0.f);
         if (switches_[ESheen]) {
-            /// sheen
             outline("principled sheen", [&] {
                 SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
                 Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar() * front_factor;
@@ -419,7 +418,6 @@ public:
             });
         }
         if (switches_[ECoat]) {
-            /// coat
             outline("principled coat", [&] {
                 Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar() * front_factor;
                 Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
@@ -438,7 +436,6 @@ public:
             });
         }
         if (switches_[EMetallic]) {
-            /// metallic
             outline("principled metallic", [&] {
                 Float metallic = metallic_.evaluate(it, swl).as_scalar() * front_factor;
                 SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
@@ -466,7 +463,6 @@ public:
             });
         }
         if (switches_[ESpec]) {
-            /// specular
             outline("principled specular", [&] {
                 Float f0 = schlick_F0_from_ior(ior);
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
@@ -479,7 +475,6 @@ public:
             });
         }
         if (switches_[EDiffuse]) {
-            /// diffuse
             outline("principled diffuse", [&] {
                 SampledSpectrum diff_weight = color * weight * front_factor;
                 WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
