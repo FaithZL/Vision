@@ -9,7 +9,6 @@
 
 namespace vision {
 
-
 class MatteMaterial : public Material {
 private:
     VS_MAKE_SLOT(color);
@@ -20,7 +19,7 @@ protected:
 
 public:
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it,
-                                              const SampledWavelengths &swl) const noexcept override {
+                                           const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         if (sigma_) {
             Float sigma = sigma_.evaluate(it, swl).as_scalar();
@@ -36,10 +35,10 @@ public:
     }
     explicit MatteMaterial(const MaterialDesc &desc)
         : Material(desc) {
-        color_.set(Slot::create_slot(desc.slot("color", make_float3(0.5f), Albedo)));
+        INIT_SLOT(color, make_float3(0.5f), Albedo);
         init_slot_cursor(&color_, 2);
         if (desc.has_attr("sigma")) {
-            sigma_.set(Slot::create_slot(desc.slot("sigma", 1.f, Number)));
+            INIT_SLOT(sigma, 0.5f, Number)->set_range(0.f, 1.f);
         }
     }
     VS_MAKE_PLUGIN_NAME_FUNC

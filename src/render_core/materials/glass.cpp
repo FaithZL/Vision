@@ -25,7 +25,7 @@ public:
             $if(se.pdf() > 0) {
                 SampledSpectrum r = se.throughput() * abs_cos_theta(bs.wi);
                 ret[0] += r[0];
-                $if (same_hemisphere(bs.wi, wo)) {
+                $if(same_hemisphere(bs.wi, wo)) {
                     ret[1] += r[0];
                 };
             };
@@ -185,9 +185,9 @@ public:
     explicit GlassMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.01f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
+        INIT_SLOT(color, make_float3(1.f), Albedo);
+        INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1, 1);
         init_ior(desc);
         init_slot_cursor(&color_, &anisotropic_);
     }

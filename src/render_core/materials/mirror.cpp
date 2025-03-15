@@ -32,9 +32,9 @@ public:
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        color_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
+        INIT_SLOT(color, make_float3(1.f), Albedo);
+        INIT_SLOT(roughness, 0.001f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
     void prepare() noexcept override {

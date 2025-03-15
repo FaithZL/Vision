@@ -27,7 +27,8 @@ public:
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(edge_tint, make_float3(0.f), Albedo);
         INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
-        INIT_SLOT(anisotropic, 0.f, Number);
+        INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1,1);
+        init_slot_cursor(&color_, &anisotropic_);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
