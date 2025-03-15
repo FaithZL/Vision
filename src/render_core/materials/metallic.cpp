@@ -8,7 +8,7 @@
 #include "math/warp.h"
 
 namespace vision {
-
+// todo compute energy compensate
 class MetallicMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
