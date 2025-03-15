@@ -30,6 +30,11 @@ public:
         INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1,1);
         init_slot_cursor(&color_, &anisotropic_);
     }
+
+    void prepare() noexcept override {
+        MetallicLobe::prepare();
+    }
+
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it,const SampledWavelengths &swl) const noexcept override {
@@ -48,7 +53,7 @@ public:
         fresnel_f82->init_from_F82(edge_tint);
 
         UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(color,swl, microfacet);
-        return make_unique<MicrofacetLobe>(fresnel_f82, std::move(metal_refl));
+        return make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl));
     }
 };
 }// namespace vision

@@ -321,4 +321,10 @@ public:
     /// for precompute end
 };
 
+class MetallicLobe : public PureReflectionLobe {
+public:
+    using PureReflectionLobe::PureReflectionLobe;
+    bool compensate() const noexcept override { return true; }
+};
+
 }// namespace vision

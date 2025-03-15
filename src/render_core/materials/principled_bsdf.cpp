@@ -200,11 +200,6 @@ public:
     }
 };
 
-class MetallicLobe : public MicrofacetLobe {
-public:
-    using MicrofacetLobe::MicrofacetLobe;
-};
-
 class SpecularLobe : public MicrofacetLobe {
 public:
     using MicrofacetLobe::MicrofacetLobe;
@@ -364,6 +359,7 @@ public:
         SheenLTC::prepare();
         SpecularLobe::prepare();
         DielectricLobe::prepare();
+        MetallicLobe::prepare();
     }
 
     void update_switches() noexcept {
