@@ -24,6 +24,7 @@ public:
           mat0_(Node::create_shared<Material>(*desc.mat0)),
           mat1_(Node::create_shared<Material>(*desc.mat1)) {
         frac_.set(Slot::create_slot(desc.slot("frac", 0.5f, Number)));
+        init_slot_cursor(addressof(frac_), 1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Material, *frac_.node(), *mat0_, *mat1_)
