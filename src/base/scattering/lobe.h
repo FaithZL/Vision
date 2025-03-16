@@ -242,7 +242,7 @@ class LobeSet : public Lobe {
 public:
     using Lobes = ocarina::vector<WeightedLobe>;
 
-private:
+protected:
     Lobes lobes_;
 
 protected:
@@ -277,6 +277,21 @@ public:
     void for_each(const std::function<void(WeightedLobe &)> &func);
     void for_each(const std::function<void(const WeightedLobe &, uint)> &func) const;
     void for_each(const std::function<void(WeightedLobe &, uint)> &func);
+};
+
+class MixLobe : public LobeSet {
+public:
+    using LobeSet::LobeSet;
+    MixLobe() = default;
+    MixLobe(const Float &frac, SP<Lobe> b0, SP<Lobe> b1) {
+        Float w0 = 1 - frac;
+        Float w1 = frac;
+        WeightedLobe wb0{w0, w0, std::move(b0)};
+        WeightedLobe wb1{w1, w1, std::move(b1)};
+        lobes_.push_back(std::move(wb0));
+        lobes_.push_back(std::move(wb1));
+        OC_ERROR_IF(lobes_.size() >= 2, "MixLobe lobe must be");
+    }
 };
 
 class PureReflectionLobe : public MicrofacetLobe {

@@ -9,76 +9,6 @@
 
 namespace vision {
 
-class MixLobe : public Lobe {
-private:
-    Float frac_;
-    DCUP<Lobe> b0_;
-    DCUP<Lobe> b1_;
-
-protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(b0_->type_hash(), b1_->type_hash());
-    }
-
-public:
-    VS_MAKE_Lobe_ASSIGNMENT(MixLobe)
-        MixLobe(UP<Lobe> &&b0, UP<Lobe> &&b1, Float frac)
-        : b0_(ocarina::move(b0)), b1_(ocarina::move(b1)), frac_(frac) {
-    }
-    [[nodiscard]] Uint flag() const noexcept override { return b0_->flag() | b1_->flag(); }
-    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
-        return b0_->albedo(cos_theta) * (1 - frac_) + b1_->albedo(cos_theta) * frac_;
-    }
-    [[nodiscard]] const SampledWavelengths *swl() const override {
-        return b0_->swl();
-    }
-    [[nodiscard]] optional<Bool> is_dispersive() const noexcept override {
-        optional<Bool> v0 = b0_->is_dispersive();
-        optional<Bool> v1 = b1_->is_dispersive();
-        if (v0 && v1) {
-            return (*v0) || (*v1);
-        } else if (v0) {
-            return v0;
-        } else if (v1) {
-            return v1;
-        }
-        return {};
-    }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag,TransportMode tm) const noexcept override {
-        ScatterEval eval0 = b0_->evaluate_local(wo, wi, mode, flag, tm);
-        ScatterEval eval1 = b1_->evaluate_local(wo, wi, mode, flag, tm);
-        ScatterEval ret{eval0.f.dimension(), eval0.pdfs.size()};
-        ret.f = eval0.f * (1 - frac_) + eval1.f * frac_;
-        ret.pdfs = eval0.pdf() * (1 - frac_) + eval1.pdf() * frac_;
-        // todo review this
-        ret.flags = select(eval0.pdf() > 0.f, eval0.flags, eval1.flags);
-        return ret;
-    }
-
-    SampledDirection sample_wi(const Float3 &wo, const Uint &flag, TSampler &sampler) const noexcept override {
-        SampledDirection sd;
-        Float u = sampler->next_1d();
-        $if(u > frac_) {
-            sd = b0_->sample_wi(wo, flag, sampler);
-        }
-        $else {
-            sd = b1_->sample_wi(wo, flag, sampler);
-        };
-        return sd;
-    }
-
-    BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                            TransportMode tm) const noexcept override {
-        BSDFSample ret{*b0_->swl()};
-        SampledDirection sd = sample_wi(wo, flag, sampler);
-        ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag ,tm);
-        ret.wi = sd.wi;
-        ret.eval.pdfs *= sd.factor();
-        return ret;
-    }
-};
-
 class MixMaterial : public Material {
 private:
     VS_MAKE_SLOT(frac)
@@ -112,7 +42,8 @@ public:
 
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         Float frac = frac_.evaluate(it, swl)[0];
-        return make_unique<MixLobe>(mat0_->create_lobe_set(it, swl), mat1_->create_lobe_set(it, swl), frac);
+        return make_unique<MixLobe>(frac, mat0_->create_lobe_set(it, swl),
+                                    mat1_->create_lobe_set(it, swl));
     }
 };
 
