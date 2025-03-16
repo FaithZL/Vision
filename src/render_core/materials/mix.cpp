@@ -31,13 +31,13 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(mat0_->type_hash(), mat1_->type_hash(), frac_.type_hash());
     }
-
+    VS_MAKE_GUI_STATUS_FUNC(Material, frac_, mat0_, mat1_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Material::render_sub_UI(widgets);
-        widgets->use_tree("material 0", [&] {
+        widgets->use_tree(ocarina::format("{}", mat0_->impl_type()), [&] {
             mat0_->render_sub_UI(widgets);
         });
-        widgets->use_tree("material 1", [&] {
+        widgets->use_tree(ocarina::format("{}", mat1_->impl_type()), [&] {
             mat1_->render_sub_UI(widgets);
         });
     }
