@@ -27,7 +27,7 @@ public:
         init_slot_cursor(addressof(frac_), 1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_ENCODABLE_FUNC(Material, *frac_.node(), *mat0_, *mat1_)
+    OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(mat0_->type_hash(), mat1_->type_hash(), frac_.type_hash());
     }
