@@ -223,11 +223,11 @@ class WeightedLobe {
 private:
     DCSP<Lobe> bxdf_;
     Float sample_weight_;
-    SampledSpectrum weight_;
+    Float weight_;
 
 public:
     WeightedLobe(Float weight, SP<Lobe> bxdf);
-    WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe> bxdf);
+    WeightedLobe(Float sample_weight, Float weight, SP<Lobe> bxdf);
     [[nodiscard]] const Lobe &operator*() const noexcept { return *bxdf_; }
     [[nodiscard]] Lobe &operator*() noexcept { return *bxdf_; }
     [[nodiscard]] const Lobe *operator->() const noexcept { return bxdf_.get(); }

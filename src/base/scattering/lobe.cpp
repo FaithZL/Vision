@@ -352,9 +352,9 @@ void LobeSet::for_each(const std::function<void(WeightedLobe &, uint)> &func) {
 
 WeightedLobe::WeightedLobe(Float weight, SP<Lobe> bxdf)
     : bxdf_(bxdf), sample_weight_(std::move(weight)),
-      weight_(SampledSpectrum::one(bxdf->swl()->dimension())) {}
+      weight_(1.f) {}
 
-WeightedLobe::WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe> bxdf)
+WeightedLobe::WeightedLobe(Float sample_weight, Float weight, SP<Lobe> bxdf)
     : bxdf_(bxdf), sample_weight_(std::move(sample_weight)),
       weight_(std::move(weight)) {
 }

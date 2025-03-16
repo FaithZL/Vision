@@ -363,12 +363,12 @@ public:
     }
 
     void update_switches() noexcept {
-        switches_[ESheen] = !sheen_weight_->near_zero();
-        switches_[ECoat] = !coat_weight_->near_zero();
-        switches_[EMetallic] = !metallic_->near_zero();
-        switches_[ETrans] = (!metallic_->near_one()) && (!transmission_weight_->near_zero());
-        switches_[ESpec] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
-        switches_[EDiffuse] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
+//        switches_[ESheen] = !sheen_weight_->near_zero();
+//        switches_[ECoat] = !coat_weight_->near_zero();
+//        switches_[EMetallic] = !metallic_->near_zero();
+//        switches_[ETrans] = (!metallic_->near_one()) && (!transmission_weight_->near_zero());
+//        switches_[ESpec] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
+//        switches_[EDiffuse] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
     }
 
     template<typename TLobe>
@@ -453,7 +453,7 @@ public:
                 SampledSpectrum t_weight = trans_weight * weight;
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
                 UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
-                WeightedLobe trans_lobe(t_weight.average(), t_weight, std::move(dielectric));
+                WeightedLobe trans_lobe(t_weight.average(), t_weight.average(), std::move(dielectric));
                 lobes.push_back(std::move(trans_lobe));
                 weight *= (1.0f - trans_weight);
             });
