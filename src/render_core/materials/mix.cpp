@@ -30,6 +30,15 @@ public:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(mat0_->type_hash(), mat1_->type_hash(), frac_.type_hash());
     }
+    
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        widgets->use_tree("material 0", [&] {
+            mat0_->render_sub_UI(widgets);
+        });
+        widgets->use_tree("material 1", [&] {
+            mat1_->render_sub_UI(widgets);
+        });
+    }
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
         return hash64(mat0_->hash(), mat1_->hash(), frac_.hash());
     }
