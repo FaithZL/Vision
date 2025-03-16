@@ -26,12 +26,13 @@ public:
         frac_.set(Slot::create_slot(desc.slot("frac", 0.5f, Number)));
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_, *frac_.node())
+    OC_ENCODABLE_FUNC(Material, *frac_.node(), *mat0_, *mat1_)
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
         return hash64(mat0_->type_hash(), mat1_->type_hash(), frac_.type_hash());
     }
-    
+
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        Material::render_sub_UI(widgets);
         widgets->use_tree("material 0", [&] {
             mat0_->render_sub_UI(widgets);
         });
