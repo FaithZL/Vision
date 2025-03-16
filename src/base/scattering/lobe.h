@@ -290,7 +290,7 @@ public:
         WeightedLobe wb1{w1, w1, std::move(b1)};
         lobes_.push_back(std::move(wb0));
         lobes_.push_back(std::move(wb1));
-        OC_ERROR_IF(lobes_.size() >= 2, "MixLobe lobe must be");
+        OC_ERROR_IF(lobes_.size() != 2, "MixLobe lobe must be");
     }
 };
 
