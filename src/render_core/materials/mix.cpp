@@ -46,6 +46,7 @@ public:
     }
 
     void prepare() noexcept override {
+        Material::prepare();
         frac_->prepare();
         mat0_->prepare();
         mat1_->prepare();

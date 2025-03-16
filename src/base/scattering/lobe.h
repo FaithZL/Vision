@@ -257,9 +257,9 @@ protected:
 public:
     LobeSet() = default;
     explicit LobeSet(Lobes lobes) : lobes_(std::move(lobes)) {
-        normalize_weights();
+        normalize_sampled_weights();
     }
-    void normalize_weights() noexcept;
+    void normalize_sampled_weights() noexcept;
     VS_MAKE_Lobe_ASSIGNMENT(LobeSet)
         [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
@@ -290,6 +290,20 @@ public:
         WeightedLobe wb1{w1, w1, std::move(b1)};
         lobes_.push_back(std::move(wb0));
         lobes_.push_back(std::move(wb1));
+        OC_ERROR_IF(lobes_.size() != 2, "MixLobe lobe must be");
+    }
+};
+
+class AddLobe : public LobeSet {
+public:
+    using LobeSet::LobeSet;
+    AddLobe() = default;
+    AddLobe(SP<Lobe> b0, SP<Lobe> b1) {
+        WeightedLobe wb0{1.f, 1.f, std::move(b0)};
+        WeightedLobe wb1{1.f, 1.f, std::move(b1)};
+        lobes_.push_back(std::move(wb0));
+        lobes_.push_back(std::move(wb1));
+        normalize_sampled_weights();
         OC_ERROR_IF(lobes_.size() != 2, "MixLobe lobe must be");
     }
 };

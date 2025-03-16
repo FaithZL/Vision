@@ -359,7 +359,7 @@ WeightedLobe::WeightedLobe(Float sample_weight, Float weight, SP<Lobe> bxdf)
       weight_(std::move(weight)) {
 }
 
-void LobeSet::normalize_weights() noexcept {
+void LobeSet::normalize_sampled_weights() noexcept {
     Float weight_sum = 0;
     for_each([&](WeightedLobe &lobe) {
         weight_sum += lobe.sample_weight();
