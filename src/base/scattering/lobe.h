@@ -146,25 +146,6 @@ public:
     return ior;
 }
 
-class WeightedLobe {
-private:
-    DCSP<Lobe> bxdf_;
-    Float sample_weight_;
-    SampledSpectrum weight_;
-
-public:
-    WeightedLobe(Float weight, SP<Lobe> bxdf);
-    WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe> bxdf);
-    [[nodiscard]] const Lobe &operator*() const noexcept { return *bxdf_; }
-    [[nodiscard]] Lobe &operator*() noexcept { return *bxdf_; }
-    [[nodiscard]] const Lobe *operator->() const noexcept { return bxdf_.get(); }
-    [[nodiscard]] Lobe *operator->() noexcept { return bxdf_.get(); }
-    [[nodiscard]] const Lobe *get() const noexcept { return bxdf_.get(); }
-    [[nodiscard]] Lobe *get() noexcept { return bxdf_.get(); }
-    OC_MAKE_MEMBER_GETTER(sample_weight, &)
-    OC_MAKE_MEMBER_GETTER(weight, &)
-};
-
 class DielectricLobe : public Lobe {
 public:
     static constexpr float ior_lower = 1.003;
@@ -236,6 +217,25 @@ public:
         Float a = sqrt(ax * ay);
         return ocarina::sqrt(a);
     }
+};
+
+class WeightedLobe {
+private:
+    DCSP<Lobe> bxdf_;
+    Float sample_weight_;
+    SampledSpectrum weight_;
+
+public:
+    WeightedLobe(Float weight, SP<Lobe> bxdf);
+    WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe> bxdf);
+    [[nodiscard]] const Lobe &operator*() const noexcept { return *bxdf_; }
+    [[nodiscard]] Lobe &operator*() noexcept { return *bxdf_; }
+    [[nodiscard]] const Lobe *operator->() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] Lobe *operator->() noexcept { return bxdf_.get(); }
+    [[nodiscard]] const Lobe *get() const noexcept { return bxdf_.get(); }
+    [[nodiscard]] Lobe *get() noexcept { return bxdf_.get(); }
+    OC_MAKE_MEMBER_GETTER(sample_weight, &)
+    OC_MAKE_MEMBER_GETTER(weight, &)
 };
 
 class LobeSet : public Lobe {
