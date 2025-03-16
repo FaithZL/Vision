@@ -300,7 +300,7 @@ private:
     }()};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(LobeStack)
+    VS_MAKE_MATERIAL_EVALUATOR(LobeSet)
 
 public:
     PrincipledBSDF() = default;
@@ -383,7 +383,7 @@ public:
         return ret;
     }
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        LobeStack::Lobes lobes;
+        LobeSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         DynamicArray<float> iors = ior_.evaluate(it, swl);
         Float ior = iors.as_scalar();
@@ -477,7 +477,7 @@ public:
                 lobes.push_back(std::move(diffuse_lobe));
             });
         }
-        UP<LobeStack> ret = make_unique<LobeStack>(std::move(lobes));
+        UP<LobeSet> ret = make_unique<LobeSet>(std::move(lobes));
         return ret;
     }
 };

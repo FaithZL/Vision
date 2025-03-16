@@ -329,22 +329,22 @@ BSDFSample DielectricLobe::sample_local(const Float3 &wo, const Uint &flag,
     return Lobe::sample_local(wo, flag, sampler, tm);
 }
 
-/// LobeStack
-void LobeStack::for_each(const std::function<void(const WeightedLobe &)> &func) const {
+/// LobeSet
+void LobeSet::for_each(const std::function<void(const WeightedLobe &)> &func) const {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
 
-void LobeStack::for_each(const std::function<void(WeightedLobe &)> &func) {
+void LobeSet::for_each(const std::function<void(WeightedLobe &)> &func) {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
 
-void LobeStack::for_each(const std::function<void(const WeightedLobe &, uint)> &func) const {
+void LobeSet::for_each(const std::function<void(const WeightedLobe &, uint)> &func) const {
     for (int i = 0; i < lobe_num(); ++i) {
         func(lobes_[i], i);
     }
 }
 
-void LobeStack::for_each(const std::function<void(WeightedLobe &, uint)> &func) {
+void LobeSet::for_each(const std::function<void(WeightedLobe &, uint)> &func) {
     for (int i = 0; i < lobe_num(); ++i) {
         func(lobes_[i], i);
     }
@@ -359,7 +359,7 @@ WeightedLobe::WeightedLobe(Float sample_weight, SampledSpectrum weight, SP<Lobe>
       weight_(std::move(weight)) {
 }
 
-void LobeStack::normalize_weights() noexcept {
+void LobeSet::normalize_weights() noexcept {
     Float weight_sum = 0;
     for_each([&](WeightedLobe &lobe) {
         weight_sum += lobe.sample_weight();
@@ -369,7 +369,7 @@ void LobeStack::normalize_weights() noexcept {
     });
 }
 
-SampledSpectrum LobeStack::albedo(const Float &cos_theta) const noexcept {
+SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(swl()->dimension());
     for_each([&](const WeightedLobe &lobe) {
         ret += lobe->albedo(cos_theta) * lobe.weight();
@@ -377,8 +377,8 @@ SampledSpectrum LobeStack::albedo(const Float &cos_theta) const noexcept {
     return ret;
 }
 
-SampledDirection LobeStack::sample_wi(const Float3 &wo, const Uint &flag,
-                                      TSampler &sampler) const noexcept {
+SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
+                                    TSampler &sampler) const noexcept {
     Float uc = sampler->next_1d();
     Float2 u = sampler->next_2d();
     SampledDirection sd;
@@ -389,7 +389,7 @@ SampledDirection LobeStack::sample_wi(const Float3 &wo, const Uint &flag,
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.sample_weight();
     });
-    outline("LobeStack::sample_wi", [&] {
+    outline("LobeSet::sample_wi", [&] {
         if (lobe_num() == 1) {
             sd = lobes_[0]->sample_wi(wo, flag, sampler);
         } else {
@@ -410,12 +410,12 @@ SampledDirection LobeStack::sample_wi(const Float3 &wo, const Uint &flag,
     return sd;
 }
 
-BSDFSample LobeStack::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                   TransportMode tm) const noexcept {
+BSDFSample LobeSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
+                                 TransportMode tm) const noexcept {
     return Lobe::sample_local(wo, flag, sampler, tm);
 }
 
-Uint LobeStack::flag() const noexcept {
+Uint LobeSet::flag() const noexcept {
     Uint ret = BxDFFlag::Unset;
     for_each([&](const WeightedLobe &lobe) {
         ret |= lobe->flag();
@@ -423,11 +423,11 @@ Uint LobeStack::flag() const noexcept {
     return ret;
 }
 
-ScatterEval LobeStack::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                      MaterialEvalMode mode, const Uint &flag,
-                                      TransportMode tm, Float *eta) const noexcept {
+ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                    MaterialEvalMode mode, const Uint &flag,
+                                    TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
-    outline("LobeStack::evaluate_local", [&]{
+    outline("LobeSet::evaluate_local", [&] {
         for_each([&](const WeightedLobe &lobe) {
             ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
             se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
@@ -441,9 +441,9 @@ ScatterEval LobeStack::evaluate_local(const Float3 &wo, const Float3 &wi,
     return ret;
 }
 
-ScatterEval LobeStack::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                      MaterialEvalMode mode, const Uint &flag,
-                                      TransportMode tm) const noexcept {
+ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                    MaterialEvalMode mode, const Uint &flag,
+                                    TransportMode tm) const noexcept {
     return evaluate_local(wo, wi, mode, flag, tm, nullptr);
 }
 
