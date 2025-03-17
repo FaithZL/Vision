@@ -29,10 +29,10 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(Material, mat0_, mat1_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Material::render_sub_UI(widgets);
-        widgets->use_tree(ocarina::format("{}", mat0_->impl_type()), [&] {
+        widgets->use_tree(ocarina::format("mat0 {}", mat0_->impl_type()), [&] {
             mat0_->render_sub_UI(widgets);
         });
-        widgets->use_tree(ocarina::format("{}", mat1_->impl_type()), [&] {
+        widgets->use_tree(ocarina::format("mat1 {}", mat1_->impl_type()), [&] {
             mat1_->render_sub_UI(widgets);
         });
     }
