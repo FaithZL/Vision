@@ -14,6 +14,10 @@ private:
     float max_{1.f};
     bool sync_{false};
 
+protected:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return hash64_list(value_.hv()); }
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(value_.hv().size()); }
+
 public:
     NumberInput() = default;
     explicit NumberInput(const ShaderNodeDesc &desc)
@@ -51,7 +55,7 @@ public:
                         values[i] = values[0];
                     }
                 } else {
-                    changed_ |= widgets->drag_floatN(name_, values.data(), values.size(),0.01, min_, max_);
+                    changed_ |= widgets->drag_floatN(name_, values.data(), values.size(), 0.01, min_, max_);
                 }
                 break;
             }
@@ -83,9 +87,6 @@ public:
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return value_.hv();
-    }
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64_list(value_.hv());
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
