@@ -276,6 +276,7 @@ private:
     VS_MAKE_SLOT(roughness)
     VS_MAKE_SLOT(spec_tint)
     VS_MAKE_SLOT(anisotropic)
+    VS_MAKE_SLOT(opcacity)
 
     VS_MAKE_SLOT(sheen_weight)
     VS_MAKE_SLOT(sheen_roughness)
@@ -291,7 +292,7 @@ private:
     VS_MAKE_SLOT(subsurface_scale)
 
     VS_MAKE_SLOT(transmission_weight)
-    VS_MAKE_SLOT(opcacity)
+
     SheenLTC::Mode sheen_mode_{SheenLTC::Approximate};
     std::array<bool, LobeType::Count> switches_{[] {
         std::array<bool, LobeType::Count> ret{};
@@ -314,6 +315,7 @@ public:
         INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
         INIT_SLOT(spec_tint, make_float3(0.f), Albedo);
         INIT_SLOT(anisotropic, 0.f, Number);
+        INIT_SLOT(opcacity, 1.f, Number)->set_range(0.f, 1.f);
 
         INIT_SLOT(sheen_weight, 0.f, Number);
         INIT_SLOT(sheen_roughness, 0.5f, Number);
@@ -329,9 +331,8 @@ public:
         INIT_SLOT(subsurface_scale, 0.2f, Number);
 
         INIT_SLOT(transmission_weight, 0.f, Number);
-        INIT_SLOT(opcacity, 1.f, Number)->set_range(0.f, 1.f);
 
-        init_slot_cursor(&color_, &opcacity_);
+        init_slot_cursor(&color_, &transmission_weight_);
     }
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
 
