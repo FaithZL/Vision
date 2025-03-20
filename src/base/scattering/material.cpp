@@ -197,9 +197,9 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     }
 }
 
-uint Material::element_num() const noexcept {
+uint Material::encoded_size() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
-        return size + slot->element_num();
+        return size + slot->encoded_size();
     });
 }
 

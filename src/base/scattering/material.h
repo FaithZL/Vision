@@ -268,7 +268,7 @@ public:
         }
     }
 
-    [[nodiscard]] uint element_num() const noexcept override;
+    [[nodiscard]] uint encoded_size() const noexcept override;
     [[nodiscard]] bool has_device_value() const noexcept override;
     void reset_device_value() const noexcept override;
     void invalidate() const noexcept override;

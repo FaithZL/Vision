@@ -83,7 +83,7 @@ public:
         return std::all_of(lst.begin(), lst.end(), [](float elm) { return ocarina::abs(elm - 1.f) < s_cutoff; });
     }
     [[nodiscard]] bool is_constant() const noexcept override { return false; }
-    [[nodiscard]] uint dim() const noexcept override { return value_.element_num(); }
+    [[nodiscard]] uint dim() const noexcept override { return value_.hv().size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return value_.hv();
