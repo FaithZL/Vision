@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/stl.h"
-#include "dsl/encode.h"
+#include "dsl/encodable.h"
 #include "node.h"
 #include "mgr/global.h"
 
