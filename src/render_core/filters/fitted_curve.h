@@ -24,7 +24,7 @@ private:
 public:
     FilterSampler()
         : warper_(scene().load_warper2d()) {}
-    OC_ENCODABLE_FUNC(Encodable<float>, warper_, lut_)
+    OC_ENCODABLE_FUNC(Encodable<encoded_ty>, warper_, lut_)
     void allocate() noexcept {
         lut_.device_buffer() = pipeline()->device().create_buffer<float>(ocarina::sqr(table_size), "FilterSampler::lut_");
         lut_.register_self();

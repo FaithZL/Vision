@@ -12,7 +12,7 @@
 
 namespace vision {
 
-class ShaderNode : public Node, public Encodable<float>, public enable_shared_from_this<ShaderNode> {
+class ShaderNode : public Node, public Encodable<encoded_ty>, public enable_shared_from_this<ShaderNode> {
 protected:
     ShaderNodeType type_{};
     vector<weak_ptr<Node>> outputs_{};
