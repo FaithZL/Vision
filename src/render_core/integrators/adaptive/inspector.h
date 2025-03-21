@@ -46,7 +46,7 @@ OC_STRUCT(vision, VarianceStats, avg, var, N) {
 
 namespace vision {
 
-class ConvergenceInspector : public GUI, public RuntimeObject, Encodable<>, Context {
+class ConvergenceInspector : public GUI, public RuntimeObject, Encodable, Context {
 private:
     EncodedData<float> threshold_;
     EncodedData<uint> min_sample_num_;
@@ -58,7 +58,7 @@ public:
     explicit ConvergenceInspector(const ParameterSet &ps);
     ConvergenceInspector(float threshold, uint min_sample_num)
         : threshold_(threshold), min_sample_num_(min_sample_num){};
-    OC_ENCODABLE_FUNC(Encodable<>, threshold_, min_sample_num_)
+    OC_ENCODABLE_FUNC(Encodable, threshold_, min_sample_num_)
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, threshold_, min_sample_num_, variance_stats_)
     OC_MAKE_MEMBER_GETTER(on,)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

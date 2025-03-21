@@ -18,7 +18,7 @@ using namespace ocarina;
  * cameras and other monolithic objects
  * that do not need to be added to polymorphic lists
  */
-class EncodedObject : public Encodable<buffer_ty> {
+class EncodedObject : public Encodable {
 protected:
     RegistrableManaged<buffer_ty> datas_{Global::instance().bindless_array()};
 

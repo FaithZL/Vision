@@ -26,7 +26,7 @@ struct FilterSample {
 //        ]
 //    }
 //}
-class Filter : public Node, public Encodable<buffer_ty> {
+class Filter : public Node, public Encodable {
 public:
     using Desc = FilterDesc;
 
@@ -38,7 +38,7 @@ public:
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
           radius_(make_float2(desc["radius"].as_float(1.5f))) {}
-    OC_ENCODABLE_FUNC(Encodable<buffer_ty>, radius_)
+    OC_ENCODABLE_FUNC(Encodable, radius_)
     VS_HOTFIX_MAKE_RESTORE(Node, radius_)
 
     //todo rebuild function for FittedCurveFilter

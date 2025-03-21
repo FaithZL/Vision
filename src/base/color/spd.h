@@ -14,7 +14,7 @@ namespace vision {
 
 using namespace ocarina;
 
-class SPD : public Encodable<buffer_ty>{
+class SPD : public Encodable {
 private:
     static constexpr auto spd_lut_interval = 5u;
     RegistrableManaged<float> func_;
@@ -25,7 +25,7 @@ public:
     SPD() = default;
     explicit SPD(Pipeline *rp);
     SPD(vector<float> func, Pipeline *rp);
-    OC_ENCODABLE_FUNC(Encodable<buffer_ty>, func_, sample_interval_)
+    OC_ENCODABLE_FUNC(Encodable, func_, sample_interval_)
 
     void init(vector<float> func) noexcept;
     template<typename T>
@@ -57,7 +57,7 @@ public:
         }
         return ret;
     }
-    [[nodiscard]] Float eval(const Float& lambdas) const noexcept;
+    [[nodiscard]] Float eval(const Float &lambdas) const noexcept;
     [[nodiscard]] DynamicArray<float> eval(const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] static SPD create_cie_x(Pipeline *rp) noexcept;
     [[nodiscard]] static SPD create_cie_y(Pipeline *rp) noexcept;

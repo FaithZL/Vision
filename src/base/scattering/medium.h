@@ -20,7 +20,7 @@ using TSampler = TObject<Sampler, SamplerDesc>;
 
 class SampledWavelengths;
 class ShapeInstance;
-class Medium : public Node, public Encodable<buffer_ty> {
+class Medium : public Node, public Encodable {
 protected:
     uint index_{InvalidUI32};
     float scale_{};

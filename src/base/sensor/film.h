@@ -24,7 +24,7 @@ using namespace ocarina;
 //         "fb_state": 0
 //    }
 //}
-class Film : public Node, public Encodable<buffer_ty> {
+class Film : public Node, public Encodable {
 public:
     using Desc = FilmDesc;
 
@@ -37,7 +37,7 @@ protected:
 public:
     Film() = default;
     explicit Film(const FilmDesc &desc);
-    OC_ENCODABLE_FUNC(Encodable<buffer_ty>, accumulation_, tone_mapper_)
+    OC_ENCODABLE_FUNC(Encodable, accumulation_, tone_mapper_)
     VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, accumulation_, tone_mapper_)
     VS_MAKE_GUI_STATUS_FUNC(Node, tone_mapper_)
     virtual void compile() noexcept = 0;

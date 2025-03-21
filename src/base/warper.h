@@ -10,7 +10,7 @@
 
 namespace vision {
 
-class Warper : public Node, public Encodable<> {
+class Warper : public Node, public Encodable {
 public:
     using Desc = WarperDesc;
 
@@ -19,7 +19,7 @@ protected:
 
 public:
     Warper() = default;
-    OC_ENCODABLE_FUNC(Encodable<>, integral_)
+    OC_ENCODABLE_FUNC(Encodable, integral_)
     explicit Warper(const WarperDesc &desc) : Node(desc) {}
     virtual void build(vector<float> weights) noexcept = 0;
     virtual void clear() noexcept = 0;
@@ -34,7 +34,7 @@ public:
     [[nodiscard]] virtual Float sample_continuous(Float u, Float *pdf, Uint *offset) const noexcept = 0;
 };
 
-class Warper2D : public Node, public Encodable<> {
+class Warper2D : public Node, public Encodable {
 public:
     using Desc = WarperDesc;
 
