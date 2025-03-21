@@ -18,16 +18,16 @@ using namespace ocarina;
  * cameras and other monolithic objects
  * that do not need to be added to polymorphic lists
  */
-class EncodedObject : public Encodable<encoded_ty> {
+class EncodedObject : public Encodable<buffer_ty> {
 protected:
-    RegistrableManaged<encoded_ty> datas_{Global::instance().bindless_array()};
+    RegistrableManaged<buffer_ty> datas_{Global::instance().bindless_array()};
 
 protected:
     EncodedObject() = default;
 
 public:
-    [[nodiscard]] RegistrableManaged<encoded_ty> &datas() noexcept { return datas_; }
-    [[nodiscard]] const RegistrableManaged<encoded_ty> &datas() const noexcept { return datas_; }
+    [[nodiscard]] RegistrableManaged<buffer_ty> &datas() noexcept { return datas_; }
+    [[nodiscard]] const RegistrableManaged<buffer_ty> &datas() const noexcept { return datas_; }
 
     /**
      * Serialize the data to managed memory
@@ -60,7 +60,7 @@ public:
      * tips: Called on the device side code
      */
     virtual void load_data() noexcept {
-        DataAccessor<encoded_ty> da = {0, datas_};
+        DataAccessor<buffer_ty> da = {0, datas_};
         decode(&da);
     }
 

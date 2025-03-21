@@ -221,13 +221,13 @@ void Material::invalidate() const noexcept {
     });
 }
 
-void Material::encode(RegistrableManaged<encoded_ty> &data) const noexcept {
+void Material::encode(RegistrableManaged<buffer_ty> &data) const noexcept {
     for_each_slot([&](const Slot &slot) {
         slot->encode(data);
     });
 }
 
-void Material::decode(const DataAccessor<encoded_ty> *da) const noexcept {
+void Material::decode(const DataAccessor<buffer_ty> *da) const noexcept {
     for_each_slot([&](const Slot &slot) {
         slot->decode(da);
     });

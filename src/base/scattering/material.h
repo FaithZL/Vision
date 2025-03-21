@@ -90,7 +90,7 @@ struct PrecomputedLobeTable {
         evaluator.link(ocarina::dynamic_unique_pointer_cast<Lobe>(create_lobe_set(it, swl))); \
     }
 
-class Material : public Node, public Encodable<encoded_ty>, public enable_shared_from_this<Material> {
+class Material : public Node, public Encodable<buffer_ty>, public enable_shared_from_this<Material> {
 public:
     using Evaluator = MaterialEvaluator;
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
@@ -272,8 +272,8 @@ public:
     [[nodiscard]] bool has_device_value() const noexcept override;
     void reset_device_value() const noexcept override;
     void invalidate() const noexcept override;
-    void encode(RegistrableManaged<encoded_ty> &data) const noexcept override;
-    void decode(const DataAccessor<encoded_ty> *da) const noexcept override;
+    void encode(RegistrableManaged<buffer_ty> &data) const noexcept override;
+    void decode(const DataAccessor<buffer_ty> *da) const noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
 
