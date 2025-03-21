@@ -273,7 +273,7 @@ public:
     void reset_device_value() const noexcept override;
     void invalidate() const noexcept override;
     void encode(RegistrableManaged<buffer_ty> &data) const noexcept override;
-    void decode(const DataAccessor<buffer_ty> *da) const noexcept override;
+    void decode(const DataAccessor *da) const noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
 

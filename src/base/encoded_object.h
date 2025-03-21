@@ -60,7 +60,7 @@ public:
      * tips: Called on the device side code
      */
     virtual void load_data() noexcept {
-        DataAccessor<buffer_ty> da = {0, datas_};
+        DataAccessor da = {0, datas_};
         decode(&da);
     }
 
