@@ -8,7 +8,7 @@
 
 namespace vision {
 
-/// Lobe
+///#region Lobe
 SampledSpectrum Lobe::integral_albedo(const Float3 &wo, TSampler &sampler,
                                       const Uint &sample_num) const noexcept {
     SampledSpectrum ret = SampledSpectrum::zero(*swl());
@@ -75,8 +75,9 @@ Float Lobe::to_ratio_z() const noexcept {
     OC_ASSERT(0);
     return 0;
 }
+///#endregion
 
-/// MicrofacetLobe
+///#region MicrofacetLobe
 uint64_t MicrofacetLobe::_compute_type_hash() const noexcept {
     return hash64(fresnel_->type_hash(), bxdf_->type_hash());
 }
@@ -137,8 +138,9 @@ SampledDirection MicrofacetLobe::sample_wi(const Float3 &wo,
                                            TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), fresnel_.ptr());
 }
+///#endregion
 
-/// DiffuseLobe
+///#region DiffuseLobe
 ScatterEval DiffuseLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
                                         MaterialEvalMode mode, const Uint &flag,
                                         TransportMode tm) const noexcept {
@@ -154,8 +156,9 @@ SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
                                         TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
 }
+///#endregion
 
-/// DielectricLobe
+///#region DielectricLobe
 void DielectricLobe::prepare() noexcept {
     MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
                                      PixelStorage::FLOAT2,
@@ -328,8 +331,9 @@ BSDFSample DielectricLobe::sample_local(const Float3 &wo, const Uint &flag,
                                         TransportMode tm) const noexcept {
     return Lobe::sample_local(wo, flag, sampler, tm);
 }
+///#endregion
 
-/// LobeSet
+///#region LobeSet
 void LobeSet::for_each(const std::function<void(const WeightedLobe &)> &func) const {
     std::for_each(lobes_.begin(), lobes_.end(), func);
 }
@@ -446,8 +450,9 @@ ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
                                     TransportMode tm) const noexcept {
     return evaluate_local(wo, wi, mode, flag, tm, nullptr);
 }
+///#endregion
 
-/// PureReflectionLobe
+///#region PureReflectionLobe
 Float PureReflectionLobe::compensate_factor(const ocarina::Float3 &wo) const noexcept {
     Float alpha = bxdf()->alpha_average();
     Float ret = MaterialLut::instance().sample(lut_name, 1, make_float2(alpha, cos_theta(wo))).as_scalar();
@@ -459,5 +464,5 @@ void PureReflectionLobe::prepare() {
                                      PixelStorage::FLOAT1,
                                      addressof(PureReflectionLobe_Table));
 }
-
+///#endregion
 }// namespace vision
