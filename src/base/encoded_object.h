@@ -33,51 +33,27 @@ public:
      * Serialize the data to managed memory
      * for upload to device memory
      */
-    virtual void encode_data() noexcept {
-        encode(datas_);
-    }
+    virtual void encode_data() noexcept;
 
     /**
      * encode data, initialize device buffer and register buffer to resource array
      */
-    virtual void prepare_data() noexcept {
-        encode_data();
-        datas().reset_device_buffer_immediately(Global::instance().device(),
-                                                ocarina::format("EncodedObject: {}::data_", typeid(*this).name()));
-        datas().register_self();
-    }
+    virtual void prepare_data() noexcept;
 
     /**
      * update data to managed memory
      * tips: Called on the host side code
      */
-    virtual void update_data() noexcept {
-        update(datas_);
-    }
+    virtual void update_data() noexcept;
 
     /**
      * load data from device memory
      * tips: Called on the device side code
      */
-    virtual void load_data() noexcept {
-        DataAccessor da = {0, datas_};
-        decode(&da);
-    }
-
-    virtual void upload_immediately() noexcept {
-        if (datas().host_buffer().empty()) {
-            return;
-        }
-        datas().upload_immediately();
-    }
-
-    [[nodiscard]] virtual BufferUploadCommand *upload_sync() noexcept {
-        return datas().upload_sync();
-    }
-
-    [[nodiscard]] virtual BufferUploadCommand *upload() noexcept {
-        return datas().upload();
-    }
+    virtual void load_data() noexcept;
+    virtual void upload_immediately() noexcept;
+    [[nodiscard]] virtual BufferUploadCommand *upload_sync() noexcept;
+    [[nodiscard]] virtual BufferUploadCommand *upload() noexcept;
 };
 
 }// namespace vision
