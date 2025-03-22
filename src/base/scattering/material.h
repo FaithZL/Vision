@@ -198,6 +198,7 @@ public:
         slot_cursor_.num = (back - head) + 1;
     }
 
+    ///region general for each
     template<typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
@@ -250,8 +251,6 @@ public:
         }
     }
 
-    void restore(vision::RuntimeObject *old_obj) noexcept override;
-
     template<typename F>
     void for_each_slot(F &&func) noexcept {
         if (bump_) {
@@ -267,15 +266,25 @@ public:
             }
         }
     }
+    ///endregion
 
+    void restore(vision::RuntimeObject *old_obj) noexcept override;
+
+    ///#region encodable
     [[nodiscard]] uint encoded_size() const noexcept override;
     [[nodiscard]] bool has_device_value() const noexcept override;
     void reset_device_value() const noexcept override;
     void invalidate() const noexcept override;
     void encode(RegistrableManaged<buffer_ty> &data) const noexcept override;
     void decode(const DataAccessor *da) const noexcept override;
+    [[nodiscard]] uint alignment() const noexcept override;
+    [[nodiscard]] uint cal_offset(ocarina::uint prev_size) const noexcept override;
+    ///#endregion
+
+    ///#region GUI
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
+    ///#endregion
 
 protected:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;

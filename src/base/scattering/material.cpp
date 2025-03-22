@@ -41,6 +41,7 @@ const EncodedData<uint> &MaterialLut::get_index(const std::string &name) const n
     return lut_map_.at(name).index();
 }
 
+///#region MaterialEvaluator
 ScatterEval MaterialEvaluator::evaluate_local(const Float3 &wo, const Float3 &wi,
                                               MaterialEvalMode mode,
                                               const Uint &flag,
@@ -148,6 +149,7 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
     ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
     return ret;
 }
+///#endregion
 
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     if (desc.has_attr("bump")) {
@@ -197,9 +199,22 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     }
 }
 
+///#region encodable
 uint Material::encoded_size() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
         return size + slot->encoded_size();
+    });
+}
+
+uint Material::cal_offset(ocarina::uint prev_size) const noexcept {
+    return reduce_slots(prev_size, [&](uint size, const Slot &slot) {
+        return slot->cal_offset(size);
+    });
+}
+
+uint Material::alignment() const noexcept {
+    return reduce_slots(0u, [&](uint align, const Slot &slot) {
+        return ocarina::max(align, slot->alignment());
     });
 }
 
@@ -232,6 +247,7 @@ void Material::decode(const DataAccessor *da) const noexcept {
         slot->decode(da);
     });
 }
+///#endregion
 
 void Material::reset_status() noexcept {
     for_each_slot([&](Slot &slot) {
