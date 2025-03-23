@@ -20,7 +20,7 @@ void EncodedObject::prepare_data() noexcept {
 }
 
 void EncodedObject::update_data() noexcept {
-    update(datas_);
+    encode(datas_);
 }
 
 void EncodedObject::load_data() noexcept {
