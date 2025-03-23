@@ -7,7 +7,7 @@
 namespace vision {
 
 void EncodedObject::encode_data() noexcept {
-    auto size = cal_offset(0);
+    auto size = aligned_size();
     datas_.host_buffer().resize(size / sizeof(buffer_ty));
     encode(datas_);
 }
