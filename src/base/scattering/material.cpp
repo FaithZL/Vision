@@ -200,9 +200,9 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
 }
 
 ///#region encodable
-uint Material::encoded_size() const noexcept {
+uint Material::compacted_size() const noexcept {
     return reduce_slots(0u, [&](uint size, const Slot &slot) {
-        return size + slot->encoded_size();
+        return size + slot->compacted_size();
     });
 }
 

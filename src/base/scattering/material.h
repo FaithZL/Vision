@@ -271,7 +271,7 @@ public:
     void restore(vision::RuntimeObject *old_obj) noexcept override;
 
     ///#region encodable
-    [[nodiscard]] uint encoded_size() const noexcept override;
+    [[nodiscard]] uint compacted_size() const noexcept override;
     [[nodiscard]] bool has_device_value() const noexcept override;
     void reset_device_value() const noexcept override;
     void invalidate() const noexcept override;
