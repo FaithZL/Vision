@@ -21,11 +21,10 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        changed_ |= widgets->input_float("exposure", addressof(exposure_.hv()), 0.1, 0.5);
+        changed_ |= widgets->drag_float("exposure", addressof(exposure_.hv()), 0.01, 0, 5);
     }
 
     [[nodiscard]] Float4 apply(const ocarina::Float4 &input) const noexcept override {
-        exposure_.decode();
         return 1.f - exp(-input * *exposure_);
     }
 };

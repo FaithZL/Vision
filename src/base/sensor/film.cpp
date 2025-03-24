@@ -16,6 +16,11 @@ Film::Film(const vision::FilmDesc &desc)
     update_screen_window();
 }
 
+void Film::update_runtime_object(const IObjectConstructor *constructor) noexcept {
+    std::tuple tp = {addressof(tone_mapper_.impl())};
+    HotfixSystem::replace_objects(constructor, tp);
+}
+
 void Film::update_screen_window() noexcept {
     float ratio = resolution_.x * 1.f / resolution_.y;
     if (ratio > 1.f) {

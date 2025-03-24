@@ -24,7 +24,7 @@ using namespace ocarina;
 //         "fb_state": 0
 //    }
 //}
-class Film : public Node, public Encodable {
+class Film : public Node, public Encodable, public Observer {
 public:
     using Desc = FilmDesc;
 
@@ -50,6 +50,7 @@ public:
         on_resize(res);
         update_screen_window();
     }
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void update_screen_window() noexcept;
     virtual void on_resize(uint2 res) noexcept {}
     [[nodiscard]] auto tone_mapper() const noexcept { return tone_mapper_; }
