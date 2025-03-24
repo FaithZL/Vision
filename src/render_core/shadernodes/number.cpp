@@ -32,12 +32,23 @@ public:
                 return v / max_v;
             });
         }
+//        update_encode_type();
     }
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_, min_, max_)
     OC_ENCODABLE_FUNC(ShaderNode, value_, intensity_)
+
+    void update_encode_type() noexcept {
+        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo) {
+            value_.set_encode_type(Uint8);
+        } else {
+            value_.set_encode_type(Original);
+        }
+    }
+
     void set_range(float lower, float upper) noexcept override {
         min_ = lower;
         max_ = upper;
+//        update_encode_type();
     }
     void update_value(vector<float> values) noexcept override {
         value_.hv() = std::move(values);
