@@ -25,7 +25,10 @@ void EncodedObject::update_data() noexcept {
 
 void EncodedObject::load_data() noexcept {
     DataAccessor da = {0, datas_};
-    decode(&da);
+//    decode(&da);
+
+    auto array = da.load_dynamic_array<buffer_ty>(aligned_size() / 4);
+    decode(array);
 }
 
 void EncodedObject::upload_immediately() noexcept {

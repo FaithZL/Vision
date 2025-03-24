@@ -247,6 +247,13 @@ void Material::decode(const DataAccessor *da) const noexcept {
         slot->decode(da);
     });
 }
+
+void Material::decode(const DynamicArray<ocarina::buffer_ty> &array) const noexcept {
+    for_each_slot([&](const Slot &slot) {
+        slot->decode(array);
+    });
+}
+
 ///#endregion
 
 void Material::reset_status() noexcept {

@@ -277,6 +277,7 @@ public:
     void invalidate() const noexcept override;
     void encode(RegistrableManaged<buffer_ty> &data) const noexcept override;
     void decode(const DataAccessor *da) const noexcept override;
+    void decode(const DynamicArray<ocarina::buffer_ty> &array) const noexcept override;
     [[nodiscard]] uint alignment() const noexcept override;
     [[nodiscard]] uint cal_offset(ocarina::uint prev_size) const noexcept override;
     ///#endregion
