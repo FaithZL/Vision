@@ -25,9 +25,7 @@ void EncodedObject::update_data() noexcept {
 
 void EncodedObject::load_data() noexcept {
     DataAccessor da = {0, datas_};
-//    decode(&da);
-
-    auto array = da.load_dynamic_array<buffer_ty>(aligned_size() / 4);
+    DynamicArray<buffer_ty> array = da.load_dynamic_array<buffer_ty>(aligned_size() / 4);
     decode(array);
 }
 
