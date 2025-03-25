@@ -24,17 +24,17 @@ public:
           value_(desc["value"].as_vector<float>()),
           min_(desc["min"].as_float(0.f)),
           max_(desc["max"].as_float(1.f)) {
-//        update_encode_type();
+        update_encode_type();
     }
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, sync_, min_, max_)
     OC_ENCODABLE_FUNC(ShaderNode, value_)
 
     void update_encode_type() noexcept {
-        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo || type_ == Illumination) {
-            value_.set_encode_type(Uint8);
-        } else {
-            value_.set_encode_type(Original);
-        }
+//        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo || type_ == Illumination) {
+//            value_.set_encode_type(Uint8);
+//        } else {
+//            value_.set_encode_type(Original);
+//        }
     }
 
     [[nodiscard]] float normalize() noexcept override {
@@ -51,7 +51,7 @@ public:
     void set_range(float lower, float upper) noexcept override {
         min_ = lower;
         max_ = upper;
-//        update_encode_type();
+        update_encode_type();
     }
     void update_value(vector<float> values) noexcept override {
         value_.hv() = std::move(values);
