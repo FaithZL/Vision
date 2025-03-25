@@ -40,8 +40,13 @@ public:
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
     [[nodiscard]] virtual ocarina::vector<float> average() const noexcept = 0;
+
+    ///#region for NumberInput
     virtual void set_range(float lower, float upper) noexcept {}
     virtual void update_value(vector<float> values) noexcept {}
+    virtual float normalize() noexcept { return 1.f; }
+    ///#endregion
+
     [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                        const SampledWavelengths &swl) const noexcept = 0;
     virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {

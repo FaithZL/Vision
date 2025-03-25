@@ -12,6 +12,8 @@ Light::Light(const LightDesc &desc, LightType light_type)
       scale_(desc["scale"].as_float(1.f)) {
     strength_.set(Slot::create_slot(desc.strength));
     color_.set(Slot::create_slot(desc.color));
+    float factor = color_->normalize();
+    scale_ = scale_.hv() * factor;
 }
 
 bool Light::render_UI(ocarina::Widgets *widgets) noexcept {

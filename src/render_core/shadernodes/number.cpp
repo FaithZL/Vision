@@ -9,7 +9,6 @@ namespace vision {
 class NumberInput : public ShaderNode {
 private:
     EncodedData<vector<float>> value_;
-    EncodedData<float> intensity_{1.f};
     float min_{0.f};
     float max_{1.f};
     bool sync_{false};
@@ -25,24 +24,28 @@ public:
           value_(desc["value"].as_vector<float>()),
           min_(desc["min"].as_float(0.f)),
           max_(desc["max"].as_float(1.f)) {
-        if (type_ == Illumination) {
-            float max_v = *std::max_element(value_.hv().begin(), value_.hv().end());
-            intensity_ = max_v;
-            std::transform(value_.hv().begin(), value_.hv().end(), value_.hv().begin(), [&](auto v) {
-                return v / max_v;
-            });
-        }
 //        update_encode_type();
     }
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, intensity_, sync_, min_, max_)
-    OC_ENCODABLE_FUNC(ShaderNode, value_, intensity_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, value_, sync_, min_, max_)
+    OC_ENCODABLE_FUNC(ShaderNode, value_)
 
     void update_encode_type() noexcept {
-        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo) {
+        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo || type_ == Illumination) {
             value_.set_encode_type(Uint8);
         } else {
             value_.set_encode_type(Original);
         }
+    }
+
+    [[nodiscard]] float normalize() noexcept override {
+        float max_v = *std::max_element(value_.hv().begin(), value_.hv().end());
+        if (max_v < 1.f) {
+            return 1.f;
+        }
+        std::transform(value_.hv().begin(), value_.hv().end(), value_.hv().begin(), [&](auto v) {
+            return v / max_v;
+        });
+        return max_v;
     }
 
     void set_range(float lower, float upper) noexcept override {
@@ -70,13 +73,9 @@ public:
                 }
                 break;
             }
-            case ShaderNodeType::Albedo: {
-                changed_ |= widgets->colorN_edit(name_, values.data(), values.size());
-                break;
-            }
+            case ShaderNodeType::Albedo:
             case ShaderNodeType::Illumination: {
-                changed_ |= widgets->colorN_edit(ocarina::format("intensity:{} {}", intensity_.hv(), name_.c_str()),
-                                                 values.data(), values.size());
+                changed_ |= widgets->colorN_edit(name_, values.data(), values.size());
                 break;
             }
             default:
@@ -101,7 +100,7 @@ public:
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
-        return *value_ * *intensity_;
+        return *value_;
     }
 };
 }// namespace vision
