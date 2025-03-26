@@ -90,7 +90,7 @@ public:
 //    }
 class SubstrateMaterial : public Material {
 private:
-    VS_MAKE_SLOT(diff)
+    VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(spec)
     VS_MAKE_SLOT(roughness)
     VS_MAKE_SLOT(anisotropic)
@@ -105,16 +105,16 @@ public:
     explicit SubstrateMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        diff_.set(Slot::create_slot(desc.slot("color", make_float3(1.f), Albedo)));
-        spec_.set(Slot::create_slot(desc.slot("spec", make_float3(0.05f), Albedo)));
-        roughness_.set(Slot::create_slot(desc.slot("roughness", 0.0001f)));
-        anisotropic_.set(Slot::create_slot(desc.slot("anisotropic", 0.f)))->set_range(-1, 1);
-        init_slot_cursor(&diff_, &anisotropic_);
+        INIT_SLOT(color, make_float3(1.f), Albedo);
+        INIT_SLOT(spec, make_float3(0.05f), Albedo);
+        INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1, 1);
+        init_slot_cursor(&color_, &anisotropic_);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        SampledSpectrum Rd = diff_.eval_albedo_spectrum(it, swl).sample;
+        SampledSpectrum Rd = color_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
 
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
