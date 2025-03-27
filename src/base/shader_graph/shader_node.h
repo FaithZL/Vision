@@ -66,7 +66,7 @@ using Slot = TSlot;
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
-    ShaderNodeType type_{};
+    ShaderNodeTag node_tag_{};
     vector<weak_ptr<Node>> outputs_{};
 
 public:
@@ -75,10 +75,10 @@ public:
 
 public:
     ShaderNode() = default;
-    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), type_(desc.type) {}
-    VS_HOTFIX_MAKE_RESTORE(Node, type_)
+    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), node_tag_(desc.type) {}
+    VS_HOTFIX_MAKE_RESTORE(Node, node_tag_)
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
-    [[nodiscard]] ShaderNodeType type() const noexcept { return type_; }
+    OC_MAKE_MEMBER_GETTER(node_tag, )
     [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
     [[nodiscard]] virtual bool near_one() const noexcept { return false; }
     /**

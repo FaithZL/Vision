@@ -58,8 +58,8 @@ public:
     }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = value_.hv();
-        switch (type_) {
-            case ShaderNodeType::Number: {
+        switch (node_tag_) {
+            case ShaderNodeTag::Number: {
                 if (values.size() > 1) {
                     widgets->check_box(ocarina::format("{} sync", name_.c_str()), &sync_);
                 }
@@ -73,8 +73,8 @@ public:
                 }
                 break;
             }
-            case ShaderNodeType::Albedo:
-            case ShaderNodeType::Illumination: {
+            case ShaderNodeTag::Albedo:
+            case ShaderNodeTag::Illumination: {
                 changed_ |= widgets->colorN_edit(name_, values.data(), values.size());
                 break;
             }

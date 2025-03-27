@@ -216,7 +216,7 @@ public:
         if (name.empty()) {
             eta_slot = desc.slot("ior", 1.5f);
         } else if (spectrum()->is_complete()) {
-            eta_slot = SlotDesc(ShaderNodeDesc{ShaderNodeType::ESPD, "spd"}, 0);
+            eta_slot = SlotDesc(ShaderNodeDesc{ShaderNodeTag::ESPD, "spd"}, 0);
             auto lst = SPD::to_list(*ior_curve(name));
             eta_slot.node.set_value("value", lst);
         } else {
@@ -228,7 +228,7 @@ public:
         ior_->set_range(DielectricLobe::ior_lower, DielectricLobe::ior_upper);
         ior_->set_name("ior");
     }
-    [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->type() == ESPD; }
+    [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->node_tag() == ESPD; }
     void prepare() noexcept override {
         ior_->prepare();
         DielectricLobe::prepare();

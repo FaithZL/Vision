@@ -84,11 +84,11 @@ bool TSlot::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 uint64_t TSlot::_compute_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node_->hash());
+    return hash64(channel_mask_, dim_, node_->hash(), node_->node_tag());
 }
 
 uint64_t TSlot::_compute_type_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node_->type_hash());
+    return hash64(channel_mask_, dim_, node_->type_hash(), node_->node_tag());
 }
 
 DynamicArray<float> TSlot::evaluate(const AttrEvalContext &ctx,
