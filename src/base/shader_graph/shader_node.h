@@ -75,7 +75,7 @@ public:
 
 public:
     ShaderNode() = default;
-    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), node_tag_(desc.type) {}
+    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), node_tag_(desc.node_tag) {}
     VS_HOTFIX_MAKE_RESTORE(Node, node_tag_)
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     OC_MAKE_MEMBER_GETTER(node_tag, )

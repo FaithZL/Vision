@@ -112,7 +112,7 @@ struct SlotDesc;
 
 struct ShaderNodeDesc : public NodeDesc {
 public:
-    ShaderNodeTag type{};
+    ShaderNodeTag node_tag{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -121,27 +121,27 @@ protected:
 
 public:
     ShaderNodeDesc() = default;
-    explicit ShaderNodeDesc(ShaderNodeTag type, const string &s_type = "constant")
-        : NodeDesc("ShaderNode"), type(type) {
+    explicit ShaderNodeDesc(ShaderNodeTag tag, const string &s_type = "constant")
+        : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = s_type;
         _parameter.set_json(DataWrap::object());
     }
-    ShaderNodeDesc(string name, ShaderNodeTag type)
-        : NodeDesc("ShaderNode", std::move(name)), type(type) {
+    ShaderNodeDesc(string name, ShaderNodeTag tag)
+        : NodeDesc("ShaderNode", std::move(name)), node_tag(tag) {
         sub_type = "constant";
         _parameter.set_json(DataWrap::object());
     }
     template<typename Arg>
     requires is_scalar_v<Arg>
-    ShaderNodeDesc(Arg v, ShaderNodeTag type)
-        : NodeDesc("ShaderNode"), type(type) {
+    ShaderNodeDesc(Arg v, ShaderNodeTag tag)
+        : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", v);
     }
     template<typename T, size_t N>
-    ShaderNodeDesc(Vector<T, N> v, ShaderNodeTag type)
-        : NodeDesc("ShaderNode"), type(type) {
+    ShaderNodeDesc(Vector<T, N> v, ShaderNodeTag tag)
+        : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         _parameter.set_json(DataWrap::object());
         if constexpr (N == 2) {
@@ -152,8 +152,8 @@ public:
             _parameter.set_value("value", {v.x, v.y, v.z, v.w});
         }
     }
-    ShaderNodeDesc(const DataWrap &data, ShaderNodeTag type)
-        : NodeDesc("ShaderNode"), type(type) {
+    ShaderNodeDesc(const DataWrap &data, ShaderNodeTag tag)
+        : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         _parameter.set_json(DataWrap::object());
         _parameter.set_value("value", data);
