@@ -8,7 +8,7 @@
 
 namespace vision {
 
-uint Slot::_calculate_mask(string channels) noexcept {
+uint Slot::calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
     static map<char, uint> dict{
@@ -27,9 +27,55 @@ uint Slot::_calculate_mask(string channels) noexcept {
     return ret;
 }
 
-bool Slot::render_UI(ocarina::Widgets *widgets) noexcept  {
+Slot::Slot(SP<vision::ShaderNode> input, std::string channels)
+    : node_(std::move(input)),
+      dim_(channels.size()),
+#ifndef NDEBUG
+      channels_(channels),
+#endif
+      channel_mask_(calculate_mask(ocarina::move(channels))) {
+    OC_ASSERT(dim_ <= 4);
+}
+
+Slot Slot::create_slot(const vision::SlotDesc &desc) {
+    SP<ShaderNode> shader_node = Node::create_shared<ShaderNode>(desc.node);
+    return Slot(shader_node, desc.channels);
+}
+
+Slot &Slot::set(const vision::Slot &other) noexcept {
+    string old_name = attr_name_;
+    *this = other;
+    if (other.attr_name_.empty()) {
+        attr_name_ = old_name;
+    }
+    return *this;
+}
+
+void Slot::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     if (node_) {
-        if(!attr_name_.empty()) {
+        HotfixSystem::replace_objects(constructor, std::tuple{addressof(node_)});
+    }
+}
+void Slot::reset_status() noexcept {
+    if (node_) {
+        node_->reset_status();
+    }
+}
+bool Slot::has_changed() noexcept {
+    if (node_) {
+        return node_->has_changed();
+    }
+    return false;
+}
+void Slot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    if (node_) {
+        node_->render_sub_UI(widgets);
+    }
+}
+
+bool Slot::render_UI(ocarina::Widgets *widgets) noexcept {
+    if (node_) {
+        if (!attr_name_.empty()) {
             node_->set_name(attr_name_);
         }
         return node_->render_UI(widgets);
@@ -46,7 +92,7 @@ uint64_t Slot::_compute_type_hash() const noexcept {
 }
 
 DynamicArray<float> Slot::evaluate(const AttrEvalContext &ctx,
-                            const SampledWavelengths &swl) const noexcept {
+                                   const SampledWavelengths &swl) const noexcept {
     switch (dim_) {
         case 1: {
             switch (channel_mask_) {
@@ -131,4 +177,5 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_illumination(val, swl);
 }
+
 }// namespace vision
