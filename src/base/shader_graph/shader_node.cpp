@@ -8,7 +8,7 @@
 
 namespace vision {
 
-uint TSlot::calculate_mask(string channels) noexcept {
+uint Slot::calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
     static map<char, uint> dict{
@@ -27,7 +27,7 @@ uint TSlot::calculate_mask(string channels) noexcept {
     return ret;
 }
 
-TSlot::TSlot(SP<vision::ShaderNode> input, std::string channels)
+Slot::Slot(SP<vision::ShaderNode> input, std::string channels)
     : node_(std::move(input)),
       dim_(channels.size()),
 #ifndef NDEBUG
@@ -37,12 +37,12 @@ TSlot::TSlot(SP<vision::ShaderNode> input, std::string channels)
     OC_ASSERT(dim_ <= 4);
 }
 
-TSlot TSlot::create_slot(const vision::SlotDesc &desc) {
+Slot Slot::create_slot(const vision::SlotDesc &desc) {
     SP<ShaderNode> shader_node = Node::create_shared<ShaderNode>(desc.node);
-    return TSlot(shader_node, desc.channels);
+    return Slot(shader_node, desc.channels);
 }
 
-TSlot &TSlot::set(const vision::TSlot &other) noexcept {
+Slot &Slot::set(const vision::Slot &other) noexcept {
     string old_name = attr_name_;
     *this = other;
     if (other.attr_name_.empty()) {
@@ -51,29 +51,29 @@ TSlot &TSlot::set(const vision::TSlot &other) noexcept {
     return *this;
 }
 
-void TSlot::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
+void Slot::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     if (node_) {
         HotfixSystem::replace_objects(constructor, std::tuple{addressof(node_)});
     }
 }
-void TSlot::reset_status() noexcept {
+void Slot::reset_status() noexcept {
     if (node_) {
         node_->reset_status();
     }
 }
-bool TSlot::has_changed() noexcept {
+bool Slot::has_changed() noexcept {
     if (node_) {
         return node_->has_changed();
     }
     return false;
 }
-void TSlot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+void Slot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     if (node_) {
         node_->render_sub_UI(widgets);
     }
 }
 
-bool TSlot::render_UI(ocarina::Widgets *widgets) noexcept {
+bool Slot::render_UI(ocarina::Widgets *widgets) noexcept {
     if (node_) {
         if (!attr_name_.empty()) {
             node_->set_name(attr_name_);
@@ -83,15 +83,15 @@ bool TSlot::render_UI(ocarina::Widgets *widgets) noexcept {
     return false;
 }
 
-uint64_t TSlot::_compute_hash() const noexcept {
+uint64_t Slot::_compute_hash() const noexcept {
     return hash64(channel_mask_, dim_, node_->hash(), node_->node_tag());
 }
 
-uint64_t TSlot::_compute_type_hash() const noexcept {
+uint64_t Slot::_compute_type_hash() const noexcept {
     return hash64(channel_mask_, dim_, node_->type_hash(), node_->node_tag());
 }
 
-DynamicArray<float> TSlot::evaluate(const AttrEvalContext &ctx,
+DynamicArray<float> Slot::evaluate(const AttrEvalContext &ctx,
                                    const SampledWavelengths &swl) const noexcept {
     switch (dim_) {
         case 1: {
@@ -118,7 +118,7 @@ DynamicArray<float> TSlot::evaluate(const AttrEvalContext &ctx,
     return node_->evaluate(ctx, swl);
 }
 
-vector<float> TSlot::average() const noexcept {
+vector<float> Slot::average() const noexcept {
     switch (dim_) {
         case 1: {
             switch (channel_mask_) {
@@ -145,7 +145,7 @@ vector<float> TSlot::average() const noexcept {
     return {};
 }
 
-float TSlot::luminance() const noexcept {
+float Slot::luminance() const noexcept {
     switch (dim_) {
         case 1: return average()[0];
         case 2:
@@ -160,19 +160,19 @@ float TSlot::luminance() const noexcept {
     return 0;
 }
 
-ColorDecode TSlot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_albedo(val, swl);
 }
 
-ColorDecode TSlot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_unbound_spectrum(val, swl);
 }
 
-ColorDecode TSlot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_illumination(val, swl);
