@@ -17,7 +17,7 @@ class ShaderNode;
 #define INIT_SLOT(name, default_value, type) \
     name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)))
 
-class Slot : public ocarina::Hashable, public GUI, public Observer {
+class TSlot : public ocarina::Hashable, public GUI, public Observer {
 private:
     SP<ShaderNode> node_{};
     uint dim_{4};
@@ -33,11 +33,11 @@ private:
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
-    [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
+    [[nodiscard]] static TSlot create_slot(const SlotDesc &desc);
 
-    explicit Slot(string attr_name = "") : attr_name_(std::move(attr_name)) {}
-    Slot &set(const Slot &other) noexcept;
-    explicit Slot(SP<ShaderNode> input, string channels);
+    explicit TSlot(string attr_name = "") : attr_name_(std::move(attr_name)) {}
+    TSlot &set(const TSlot &other) noexcept;
+    explicit TSlot(SP<ShaderNode> input, string channels);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
@@ -61,6 +61,8 @@ public:
     [[nodiscard]] ShaderNode *node() noexcept { return node_.get(); }
     [[nodiscard]] ShaderNode *operator->() noexcept { return node_.get(); }
 };
+
+using Slot = TSlot;
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
