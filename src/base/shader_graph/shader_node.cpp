@@ -8,7 +8,15 @@
 
 namespace vision {
 
-uint Slot::calculate_mask(string channels) noexcept {
+SlotBase::SlotBase(int, std::string channels)
+    : dim_(channels.size()),
+#ifndef NDEBUG
+      channels_(channels),
+#endif
+      channel_mask_(calculate_mask(ocarina::move(channels))) {
+}
+
+uint SlotBase::calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
     static map<char, uint> dict{
@@ -28,12 +36,7 @@ uint Slot::calculate_mask(string channels) noexcept {
 }
 
 Slot::Slot(SP<vision::ShaderNode> input, std::string channels)
-    : node_(std::move(input)),
-      dim_(channels.size()),
-#ifndef NDEBUG
-      channels_(channels),
-#endif
-      channel_mask_(calculate_mask(ocarina::move(channels))) {
+    : SlotBase(0, channels), node_(std::move(input)) {
     OC_ASSERT(dim_ <= 4);
 }
 

@@ -17,25 +17,34 @@ class ShaderNode;
 #define INIT_SLOT(name, default_value, type) \
     name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)))
 
-class Slot : public ocarina::Hashable, public GUI, public Observer {
-private:
-    SP<ShaderNode> node_{};
+class SlotBase {
+protected:
     uint dim_{4};
+    uint channel_mask_{};
 #ifndef NDEBUG
     string channels_;
 #endif
-    uint channel_mask_{};
     string attr_name_{};
+public:
+    explicit SlotBase(string attr_name = "") : attr_name_(std::move(attr_name)) {}
+    SlotBase(int, string channels);
+    [[nodiscard]] static uint calculate_mask(string channels) noexcept;
+    OC_MAKE_MEMBER_GETTER(dim, )
+    OC_MAKE_MEMBER_GETTER(channel_mask, )
+    OC_MAKE_MEMBER_GETTER(attr_name, )
+};
+
+class Slot : public ocarina::Hashable, public GUI, public Observer, public SlotBase {
+private:
+    SP<ShaderNode> node_{};
 
 private:
-    [[nodiscard]] static uint calculate_mask(string channels) noexcept;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
     [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
-
-    explicit Slot(string attr_name = "") : attr_name_(std::move(attr_name)) {}
+    explicit Slot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
     Slot &set(const Slot &other) noexcept;
     explicit Slot(SP<ShaderNode> input, string channels);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
