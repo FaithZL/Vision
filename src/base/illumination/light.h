@@ -64,7 +64,7 @@ struct LightSurfacePoint {
     Float2 bary;
 };
 
-class Light : public Node, public Encodable {
+class Light : public Node, public Encodable, public ShaderGraph {
 public:
     using Desc = LightDesc;
 
