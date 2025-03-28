@@ -6,7 +6,7 @@
 
 #include "base/scattering/interaction.h"
 #include "base/node.h"
-#include "base/shader_graph/shader_node.h"
+#include "base/shader_graph/shader_graph.h"
 #include "base/sample.h"
 #include "base/encoded_object.h"
 #include "base/color/spectrum.h"

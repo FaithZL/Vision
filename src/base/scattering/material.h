@@ -8,7 +8,7 @@
 #include "base/node.h"
 #include "core/stl.h"
 #include "base/scattering/lobe.h"
-#include "base/shader_graph/shader_node.h"
+#include "base/shader_graph/shader_graph.h"
 
 namespace vision {
 
@@ -90,7 +90,7 @@ struct PrecomputedLobeTable {
         evaluator.link(ocarina::dynamic_unique_pointer_cast<Lobe>(create_lobe_set(it, swl))); \
     }
 
-class Material : public Node, public Encodable, public enable_shared_from_this<Material> {
+class Material : public Node, public Encodable, public ShaderGraph {
 public:
     using Evaluator = MaterialEvaluator;
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,

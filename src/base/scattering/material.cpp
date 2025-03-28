@@ -189,12 +189,12 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     }
     for (const auto &item : old_obj_->shape_instances) {
         auto sp = item.lock();
-        sp->set_material(shared_from_this());
+        sp->set_material(std::static_pointer_cast<Material>(shared_from_this()));
         sp->set_material_name(name());
     }
     for (const auto &item : old_obj_->shape_groups) {
         auto sp = item.lock();
-        sp->set_material(shared_from_this());
+        sp->set_material(std::static_pointer_cast<Material>(shared_from_this()));
         sp->set_material_name(name());
     }
 }
