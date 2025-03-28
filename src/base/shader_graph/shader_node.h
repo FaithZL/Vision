@@ -62,8 +62,6 @@ public:
     [[nodiscard]] ShaderNode *operator->() noexcept { return node_.get(); }
 };
 
-using Slot = Slot;
-
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
     ShaderNodeTag node_tag_{};
