@@ -15,7 +15,7 @@ private:
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override { return hash64_list(value_.hv()); }
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(value_.hv().size()); }
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override { return hash64(value_.hv().size(), min_, max_); }
 
 public:
     NumberInput() = default;
