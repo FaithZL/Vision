@@ -43,9 +43,12 @@ public:
     [[nodiscard]] ShaderNode *operator->() noexcept { return node(); }
 };
 
+class SlotWeakRef;
+
 class Slot : public GUI, public Observer, public SlotBase {
 private:
     SP<ShaderNode> node_{};
+    friend class SlotWeakRef;
 
 public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
@@ -78,6 +81,7 @@ private:
     weak_ptr<ShaderNode> node_{};
 
 public:
+    explicit SlotWeakRef(const Slot &slot);
     [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.lock().get(); }
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.lock().get(); }
 };
@@ -85,7 +89,7 @@ public:
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
     ShaderNodeTag node_tag_{};
-    vector<weak_ptr<Node>> outputs_{};
+    vector<SlotWeakRef> outputs_{};
 
 public:
     using Desc = ShaderNodeDesc;
@@ -94,6 +98,10 @@ public:
 public:
     ShaderNode() = default;
     explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), node_tag_(desc.node_tag) {}
+    ShaderNode &add_output(const Slot &slot) noexcept {
+        outputs_.emplace_back(slot);
+        return *this;
+    }
     VS_HOTFIX_MAKE_RESTORE(Node, node_tag_)
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     OC_MAKE_MEMBER_GETTER(node_tag, )
@@ -112,8 +120,8 @@ public:
     [[nodiscard]] virtual ocarina::vector<float> average() const noexcept = 0;
 
     ///#region for NumberInput
-    virtual void set_range(float lower, float upper) noexcept {}
-    virtual void update_value(vector<float> values) noexcept {}
+    virtual ShaderNode &set_range(float lower, float upper) noexcept { return *this; }
+    virtual ShaderNode &update_value(vector<float> values) noexcept { return *this; }
     virtual float normalize() noexcept { return 1.f; }
     ///#endregion
 

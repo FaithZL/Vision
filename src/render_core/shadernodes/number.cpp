@@ -30,11 +30,11 @@ public:
     OC_ENCODABLE_FUNC(ShaderNode, value_)
 
     void update_encode_type() noexcept {
-//        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo || type_ == Illumination) {
-//            value_.set_encode_type(Uint8);
-//        } else {
-//            value_.set_encode_type(Original);
-//        }
+        //        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo || type_ == Illumination) {
+        //            value_.set_encode_type(Uint8);
+        //        } else {
+        //            value_.set_encode_type(Original);
+        //        }
     }
 
     [[nodiscard]] float normalize() noexcept override {
@@ -48,14 +48,18 @@ public:
         return max_v;
     }
 
-    void set_range(float lower, float upper) noexcept override {
+    ShaderNode &set_range(float lower, float upper) noexcept override {
         min_ = lower;
         max_ = upper;
         update_encode_type();
+        return *this;
     }
-    void update_value(vector<float> values) noexcept override {
+
+    ShaderNode &update_value(vector<float> values) noexcept override {
         value_.hv() = std::move(values);
+        return *this;
     }
+
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = value_.hv();
         switch (node_tag_) {
@@ -83,6 +87,7 @@ public:
         }
         return true;
     }
+    
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool near_zero() const noexcept override {
         auto lst = value_.hv();

@@ -8,6 +8,7 @@
 
 namespace vision {
 
+///#region SlotBase
 SlotBase::SlotBase(int, std::string channels)
     : dim_(channels.size()),
 #ifndef NDEBUG
@@ -42,7 +43,14 @@ uint SlotBase::calculate_mask(string channels) noexcept {
     }
     return ret;
 }
+///#endregion
 
+///#region SlotWeakRef
+SlotWeakRef::SlotWeakRef(const vision::Slot &slot)
+    : SlotBase(slot), node_(slot.node_) {}
+///#endregion
+
+///#region Slot
 Slot::Slot(SP<vision::ShaderNode> input, std::string channels)
     : SlotBase(0, channels), node_(std::move(input)) {
     OC_ASSERT(dim_ <= 4);
@@ -183,5 +191,6 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_illumination(val, swl);
 }
+///#endregion
 
 }// namespace vision

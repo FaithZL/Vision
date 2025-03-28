@@ -24,15 +24,16 @@ public:
         float3 color = spd_.eval(rgb_spectrum_peak_wavelengths);
         return vector<float>{color.x, color.y, color.z};
     }
-    void update_value(vector<float> values) noexcept override {
+    ShaderNode &update_value(vector<float> values) noexcept override {
         spd_.init(std::move(values));
         spd_.upload();
+        return *this;
     }
     void prepare() noexcept override {
         spd_.prepare();
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl) const noexcept override {
+                                               const SampledWavelengths &swl) const noexcept override {
         return spd_.eval(swl);
     }
 };
