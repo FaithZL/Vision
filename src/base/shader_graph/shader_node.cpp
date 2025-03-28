@@ -16,6 +16,14 @@ SlotBase::SlotBase(int, std::string channels)
       channel_mask_(calculate_mask(ocarina::move(channels))) {
 }
 
+uint64_t SlotBase::_compute_hash() const noexcept {
+    return hash64(channel_mask_, dim_, node()->hash(), node()->node_tag());
+}
+
+uint64_t SlotBase::_compute_type_hash() const noexcept {
+    return hash64(channel_mask_, dim_, node()->type_hash(), node()->node_tag());
+}
+
 uint SlotBase::calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
@@ -59,17 +67,20 @@ void Slot::update_runtime_object(const vision::IObjectConstructor *constructor) 
         HotfixSystem::replace_objects(constructor, std::tuple{addressof(node_)});
     }
 }
+
 void Slot::reset_status() noexcept {
     if (node_) {
         node_->reset_status();
     }
 }
+
 bool Slot::has_changed() noexcept {
     if (node_) {
         return node_->has_changed();
     }
     return false;
 }
+
 void Slot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     if (node_) {
         node_->render_sub_UI(widgets);
@@ -84,14 +95,6 @@ bool Slot::render_UI(ocarina::Widgets *widgets) noexcept {
         return node_->render_UI(widgets);
     }
     return false;
-}
-
-uint64_t Slot::_compute_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node_->hash(), node_->node_tag());
-}
-
-uint64_t Slot::_compute_type_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node_->type_hash(), node_->node_tag());
 }
 
 DynamicArray<float> Slot::evaluate(const AttrEvalContext &ctx,

@@ -17,7 +17,7 @@ class ShaderNode;
 #define INIT_SLOT(name, default_value, type) \
     name##_.set(Slot::create_slot(desc.slot(#name, default_value, type)))
 
-class SlotBase {
+class SlotBase : public ocarina::Hashable {
 protected:
     uint dim_{4};
     uint channel_mask_{};
@@ -25,6 +25,11 @@ protected:
     string channels_;
 #endif
     string attr_name_{};
+
+private:
+    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
+
 public:
     explicit SlotBase(string attr_name = "") : attr_name_(std::move(attr_name)) {}
     SlotBase(int, string channels);
@@ -32,15 +37,15 @@ public:
     OC_MAKE_MEMBER_GETTER(dim, )
     OC_MAKE_MEMBER_GETTER(channel_mask, )
     OC_MAKE_MEMBER_GETTER(attr_name, )
+    [[nodiscard]] virtual const ShaderNode *node() const noexcept = 0;
+    [[nodiscard]] virtual ShaderNode *node() noexcept = 0;
+    [[nodiscard]] const ShaderNode *operator->() const noexcept { return node(); }
+    [[nodiscard]] ShaderNode *operator->() noexcept { return node(); }
 };
 
-class Slot : public ocarina::Hashable, public GUI, public Observer, public SlotBase {
+class Slot : public GUI, public Observer, public SlotBase {
 private:
     SP<ShaderNode> node_{};
-
-private:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
 
 public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
@@ -52,7 +57,6 @@ public:
     bool has_changed() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] uint dim() const noexcept { return dim_; }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
@@ -65,10 +69,17 @@ public:
                                                     const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                          const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] const ShaderNode *node() const noexcept { return node_.get(); }
-    [[nodiscard]] const ShaderNode *operator->() const noexcept { return node_.get(); }
-    [[nodiscard]] ShaderNode *node() noexcept { return node_.get(); }
-    [[nodiscard]] ShaderNode *operator->() noexcept { return node_.get(); }
+    [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.get(); }
+    [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
+};
+
+class SlotWeakRef : public SlotBase {
+private:
+    weak_ptr<ShaderNode> node_{};
+
+public:
+    [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.lock().get(); }
+    [[nodiscard]] ShaderNode *node() noexcept override { return node_.lock().get(); }
 };
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
