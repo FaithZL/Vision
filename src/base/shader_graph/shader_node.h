@@ -110,6 +110,7 @@ public:
     OC_MAKE_MEMBER_GETTER(node_tag, )
     [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
     [[nodiscard]] virtual bool near_one() const noexcept { return false; }
+    ShaderNode &add_to(ShaderGraph &graph) noexcept;
     /**
      * if shader node is constant, the result will be inlined
      * @return

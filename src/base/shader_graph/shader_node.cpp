@@ -197,4 +197,9 @@ void ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
     graph_ = graph;
 }
 
+ShaderNode &ShaderNode::add_to(ShaderGraph &graph) noexcept {
+    graph.add_node(shared_from_this());
+    return *this;
+}
+
 }// namespace vision
