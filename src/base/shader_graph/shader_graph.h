@@ -10,7 +10,7 @@ namespace vision {
 
 class ShaderGraph : public enable_shared_from_this<ShaderGraph> {
 protected:
-    map<string,SP<ShaderNode>> nodes_;
+    map<string, SP<ShaderNode>> nodes_;
 
 public:
     void add_node(SP<ShaderNode> node) noexcept {
@@ -25,6 +25,9 @@ public:
             it.second->set_graph(nullptr);
         }
         nodes_.clear();
+    }
+    [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {
+        return nodes_.at(name);
     }
 };
 
