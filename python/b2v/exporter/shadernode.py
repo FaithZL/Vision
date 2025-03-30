@@ -13,7 +13,8 @@ from bpy.props import (
 )
 
 
-def parse_image_node(exporter, from_node, dim):
+def parse_image_node(exporter, link, dim, node_tab):
+    from_node = link.from_node
     exporter.try_make_tex_dir()
     src_path = bpy.path.abspath(from_node.image.filepath)
     dst_path = exporter.texture_path(from_node.image.name)
@@ -35,11 +36,11 @@ def parse_image_node(exporter, from_node, dim):
     return ret
 
 
-def parse_mix(exporter, from_node, dim):
+def parse_mix(exporter, link, dim, node_tab):
     pass
 
 
-def parse_add(exporter, from_node, dim):
+def parse_add(exporter, link, dim, node_tab):
     pass
 
 
@@ -53,9 +54,9 @@ func_dict = {
 
 def parse_node(exporter, socket, dim, node_tab):
     if socket.is_linked:
-        from_node = socket.links[0].from_node
-        func = func_dict[from_node.type]
-        return func(exporter, from_node, dim)
+        link = socket.links[0]
+        func = func_dict[link.from_node.type]
+        return func(exporter, link, dim, node_tab)
     if dim == 1:
         value = socket.default_value
         return {
