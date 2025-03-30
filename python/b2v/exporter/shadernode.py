@@ -51,7 +51,7 @@ func_dict = {
 }
 
 
-def parse_node(exporter, socket, dim, min=0, max=1):
+def parse_node(exporter, socket, dim, node_tab):
     if socket.is_linked:
         from_node = socket.links[0].from_node
         func = func_dict[from_node.type]
