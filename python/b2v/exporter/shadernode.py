@@ -22,7 +22,11 @@ def parse_image_node(exporter, link, dim, node_tab):
     r_path = exporter.tex_dir + "/" + from_node.image.name
     _, extension = os.path.splitext(r_path)
     color_space = "linear" if extension in [".hdr", ".exr"] else "srgb"
-    channels = "w" if dim == 1 else "xyz"
+    fs = link.from_socket
+    if fs.name == "Color":
+        channels = "xyz" if dim == 3 else "x"
+    elif fs.name == "Alpha":
+        channels = "w" if dim == 1 else "www"
     ret = {
         "channels": channels,
         "node": {
