@@ -40,7 +40,7 @@ def parse_image_node(exporter, link, dim, node_tab):
         
     ret = {
         "channels": channels,
-        "node": val,
+        "node": key,
     }
     if not (key in node_tab):
         node_tab[key] = val
