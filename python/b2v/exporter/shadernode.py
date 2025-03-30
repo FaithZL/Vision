@@ -27,16 +27,23 @@ def parse_image_node(exporter, link, dim, node_tab):
         channels = "xyz" if dim == 3 else "x"
     elif fs.name == "Alpha":
         channels = "w" if dim == 1 else "www"
-    ret = {
-        "channels": channels,
-        "node": {
+        
+    key = str(link.from_node)
+    
+    val = {
             "type": "image",
             "param": {
                 "fn": r_path,
                 "color_space": color_space,
             },
-        },
+        }
+        
+    ret = {
+        "channels": channels,
+        "node": val,
     }
+    if not (key in node_tab):
+        node_tab[key] = val
     return ret
 
 
