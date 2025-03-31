@@ -26,6 +26,7 @@ public:
         }
         nodes_.clear();
     }
+    [[nodiscard]] ShaderGraph &graph() noexcept { return *this; }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {
         return nodes_.at(name);
     }

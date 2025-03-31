@@ -106,6 +106,7 @@ public:
     }
     VS_HOTFIX_MAKE_RESTORE(Node, node_tag_)
     void set_graph(const SP<ShaderGraph> &graph) noexcept;
+    [[nodiscard]] ShaderGraph &graph() const noexcept;
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     OC_MAKE_MEMBER_GETTER(node_tag, )
     [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
