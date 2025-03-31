@@ -311,19 +311,19 @@ public:
 
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(metallic, 0.f, Number);
-        INIT_SLOT(ior, 1.5f, Number)->set_range(1.01, 20.f);
-        INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
+        INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);
+        INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(spec_tint, make_float3(0.f), Albedo);
         INIT_SLOT(anisotropic, 0.f, Number);
-        INIT_SLOT(opcacity, 1.f, Number)->set_range(0.f, 1.f);
+        INIT_SLOT(opcacity, 1.f, Number).set_range(0.f, 1.f);
 
         INIT_SLOT(sheen_weight, 0.f, Number);
         INIT_SLOT(sheen_roughness, 0.5f, Number);
         INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
 
         INIT_SLOT(coat_weight, 0.f, Number);
-        INIT_SLOT(coat_roughness, 0.2f, Number)->set_range(0.0001f, 1.f);
-        INIT_SLOT(coat_ior, 1.5f, Number)->set_range(1.01, 4.f);
+        INIT_SLOT(coat_roughness, 0.2f, Number).set_range(0.0001f, 1.f);
+        INIT_SLOT(coat_ior, 1.5f, Number).set_range(1.01, 4.f);
         INIT_SLOT(coat_tint, make_float3(1.f), Albedo);
 
         INIT_SLOT(subsurface_weight, 0.3f, Number);

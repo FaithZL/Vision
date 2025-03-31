@@ -61,13 +61,13 @@ Slot Slot::create_slot(const vision::SlotDesc &desc) {
     return Slot(shader_node, desc.channels);
 }
 
-Slot &Slot::set(const vision::Slot &other) noexcept {
+ShaderNode &Slot::set(const vision::Slot &other) noexcept {
     string old_name = attr_name_;
     *this = other;
     if (other.attr_name_.empty()) {
         attr_name_ = old_name;
     }
-    return *this;
+    return *node_;
 }
 
 void Slot::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {

@@ -55,8 +55,8 @@ public:
     explicit MetalMaterial(const MaterialDesc &desc)
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
-        INIT_SLOT(roughness, 0.01f, Number)->set_range(0.0001f, 1.f);
-        INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1, 1);
+        INIT_SLOT(roughness, 0.01f, Number).set_range(0.0001f, 1.f);
+        INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_ior(desc);
         init_slot_cursor(&eta_, &anisotropic_);
     }

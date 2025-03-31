@@ -107,8 +107,8 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(spec, make_float3(0.05f), Albedo);
-        INIT_SLOT(roughness, 0.5f, Number)->set_range(0.0001f, 1.f);
-        INIT_SLOT(anisotropic, 0.f, Number)->set_range(-1, 1);
+        INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
+        INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }

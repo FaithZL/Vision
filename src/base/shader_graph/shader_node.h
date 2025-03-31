@@ -54,7 +54,7 @@ private:
 public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
     explicit Slot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
-    Slot &set(const Slot &other) noexcept;
+    ShaderNode &set(const Slot &other) noexcept;
     explicit Slot(SP<ShaderNode> input, string channels);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void reset_status() noexcept override;

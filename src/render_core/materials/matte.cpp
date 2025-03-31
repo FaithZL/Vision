@@ -37,7 +37,7 @@ public:
         : Material(desc) {
         INIT_SLOT(color, make_float3(0.5f), Albedo);
         if (desc.has_attr("sigma")) {
-            INIT_SLOT(sigma, 0.5f, Number)->set_range(0.f, 1.f);
+            INIT_SLOT(sigma, 0.5f, Number).set_range(0.f, 1.f);
         }
         init_slot_cursor(&color_, 2);
     }
