@@ -304,11 +304,13 @@ protected:
     VS_MAKE_MATERIAL_EVALUATOR(LobeSet)
 
 public:
-    PrincipledBSDF() = default;
     VS_MAKE_PLUGIN_NAME_FUNC
+    PrincipledBSDF() = default;
     explicit PrincipledBSDF(const MaterialDesc &desc)
-        : Material(desc) {
-
+        : Material(desc) {}
+    
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+        const Desc &desc = static_cast<const Desc &>(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(metallic, 0.f, Number);
         INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);
@@ -364,12 +366,12 @@ public:
     }
 
     void update_switches() noexcept {
-//        switches_[ESheen] = !sheen_weight_->near_zero();
-//        switches_[ECoat] = !coat_weight_->near_zero();
-//        switches_[EMetallic] = !metallic_->near_zero();
-//        switches_[ETrans] = (!metallic_->near_one()) && (!transmission_weight_->near_zero());
-//        switches_[ESpec] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
-//        switches_[EDiffuse] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
+        //        switches_[ESheen] = !sheen_weight_->near_zero();
+        //        switches_[ECoat] = !coat_weight_->near_zero();
+        //        switches_[EMetallic] = !metallic_->near_zero();
+        //        switches_[ETrans] = (!metallic_->near_one()) && (!transmission_weight_->near_zero());
+        //        switches_[ESpec] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
+        //        switches_[EDiffuse] = (!metallic_->near_one()) && (!transmission_weight_->near_one());
     }
 
     template<typename TLobe>
