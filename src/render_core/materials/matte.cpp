@@ -27,14 +27,16 @@ public:
         }
         return make_unique<DiffuseLobe>(kr, swl);
     }
-    MatteMaterial() = default;
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         Material::render_UI(widgets);
         return true;
     }
+    MatteMaterial() = default;
     explicit MatteMaterial(const MaterialDesc &desc)
-        : Material(desc) {
+        : Material(desc) {}
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+        const MaterialDesc &desc = static_cast<const MaterialDesc &>(node_desc);
         INIT_SLOT(color, make_float3(0.5f), Albedo);
         if (desc.has_attr("sigma")) {
             INIT_SLOT(sigma, 0.5f, Number).set_range(0.f, 1.f);
