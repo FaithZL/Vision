@@ -13,7 +13,6 @@ class MirrorLobe : public PureReflectionLobe {
 public:
     using PureReflectionLobe::PureReflectionLobe;
     bool compensate() const noexcept override { return true; }
-
 };
 
 class MirrorMaterial : public Material {
@@ -31,7 +30,9 @@ public:
     MirrorMaterial() = default;
     explicit MirrorMaterial(const MaterialDesc &desc)
         : Material(desc),
-          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
+          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+        VS_CAST_DESC
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(roughness, 0.001f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
@@ -62,7 +63,7 @@ protected:
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
 
-        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y );
+        SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
         return make_unique<MirrorLobe>(fresnel, std::move(refl));

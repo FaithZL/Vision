@@ -22,21 +22,22 @@ protected:
 public:
     MetallicMaterial() = default;
     explicit MetallicMaterial(const MaterialDesc &desc)
-        : Material(desc) {
+        : Material(desc) {}
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+        VS_CAST_DESC
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(edge_tint, make_float3(1.f), Albedo);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
-        INIT_SLOT(anisotropic, 0.f, Number).set_range(-1,1);
+        INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
-
     void prepare() noexcept override {
         MetallicLobe::prepare();
     }
 
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
-    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it,const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum edge_tint = edge_tint_.eval_albedo_spectrum(it, swl).sample;
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.01f, 1.f);
@@ -51,7 +52,7 @@ public:
         SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
         fresnel_f82->init_from_F82(edge_tint);
 
-        UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(color,swl, microfacet);
+        UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(color, swl, microfacet);
         return make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl));
     }
 };

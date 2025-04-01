@@ -22,7 +22,11 @@ public:
     explicit AddMaterial(const MaterialDesc &desc)
         : Material(desc),
           mat0_(Node::create_shared<Material>(*desc.mat0)),
-          mat1_(Node::create_shared<Material>(*desc.mat1)) {
+          mat1_(Node::create_shared<Material>(*desc.mat1)) {}
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+        VS_CAST_DESC
+        mat0_->initialize_(*desc.mat0);
+        mat1_->initialize_(*desc.mat1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_)
