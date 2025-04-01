@@ -343,9 +343,9 @@ public:
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
                                 ShaderNodeTag type = ShaderNodeTag::Number) const noexcept {
         ShaderNodeDesc node{default_value, type};
-        node.name = key;
         SlotDesc slot_desc{node, type_dimension_v<T>};
         slot_desc.init(_parameter[key]);
+        slot_desc.node.name = key;
         return slot_desc;
     }
     
