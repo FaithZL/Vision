@@ -104,15 +104,17 @@ public:
     SubstrateMaterial() = default;
     explicit SubstrateMaterial(const MaterialDesc &desc)
         : Material(desc),
-          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {
+          remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
+    [[nodiscard]] bool enable_delta() const noexcept override { return false; }
+    VS_MAKE_PLUGIN_NAME_FUNC
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+        const Desc &desc = static_cast<const Desc &>(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(spec, make_float3(0.05f), Albedo);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
-    [[nodiscard]] bool enable_delta() const noexcept override { return false; }
-    VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = color_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
