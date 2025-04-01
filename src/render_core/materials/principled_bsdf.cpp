@@ -308,9 +308,9 @@ public:
     PrincipledBSDF() = default;
     explicit PrincipledBSDF(const MaterialDesc &desc)
         : Material(desc) {}
-    
+
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        const Desc &desc = static_cast<const Desc &>(node_desc);
+        VS_CAST_DESC
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(metallic, 0.f, Number);
         INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);

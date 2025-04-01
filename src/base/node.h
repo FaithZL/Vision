@@ -63,6 +63,8 @@ public:
     ~Node() override = default;
 };
 
+#define VS_CAST_DESC const Desc &desc = static_cast<const Desc &>(node_desc);
+
 class INodeConstructor {
 public:
     using Deleter = void(Node *);

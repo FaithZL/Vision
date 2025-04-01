@@ -108,7 +108,7 @@ public:
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     VS_MAKE_PLUGIN_NAME_FUNC
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        const Desc &desc = static_cast<const Desc &>(node_desc);
+        VS_CAST_DESC
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(spec, make_float3(0.05f), Albedo);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
