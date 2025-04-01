@@ -45,7 +45,7 @@ public:
     [[nodiscard]] static FrameBuffer &frame_buffer() noexcept;
     [[nodiscard]] static Device &device() noexcept;
     virtual void prepare() noexcept {}
-    virtual void construct(const NodeDesc &desc) noexcept {}
+    virtual void initialize_(const NodeDesc &desc) noexcept {}
     virtual void upload_immediately() noexcept {}
     [[nodiscard]] virtual string to_string() noexcept { return "node"; }
     [[nodiscard]] virtual string_view impl_type() const noexcept = 0;
@@ -110,7 +110,7 @@ SP<impl_t> Node::create_shared(const Desc &desc) {
     using Constructor = INodeConstructor *();
     Constructor *constructor = module->function<Constructor *>("constructor");
     SP<impl_t> ret = constructor()->construct_shared<impl_t>(&desc);
-    ret->construct(desc);
+    ret->initialize_(desc);
     OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);
     return ret;
 }
