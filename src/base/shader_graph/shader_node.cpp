@@ -202,7 +202,12 @@ ShaderGraph &ShaderNode::graph() const noexcept {
 }
 
 ShaderNode &ShaderNode::add_to(ShaderGraph &graph) noexcept {
-    graph.add_node(shared_from_this());
+    return add_to(name(), graph);
+}
+
+ShaderNode &ShaderNode::add_to(const std::string &name, vision::ShaderGraph &graph) noexcept {
+    graph.add_node(name, shared_from_this());
     return *this;
 }
+
 }// namespace vision

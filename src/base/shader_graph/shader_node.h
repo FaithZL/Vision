@@ -112,6 +112,7 @@ public:
     [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
     [[nodiscard]] virtual bool near_one() const noexcept { return false; }
     ShaderNode &add_to(ShaderGraph &graph) noexcept;
+    ShaderNode &add_to(const string &name, ShaderGraph &graph) noexcept;
     /**
      * if shader node is constant, the result will be inlined
      * @return

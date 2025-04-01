@@ -14,11 +14,14 @@ protected:
 
 public:
     void add_node(SP<ShaderNode> node) noexcept {
-        if (nodes_.contains(node->name())) {
+        add_node(node->name(), node);
+    }
+    void add_node(const string &name, SP<ShaderNode> node) {
+        if (nodes_.contains(name)) {
             return;
         }
         node->set_graph(shared_from_this());
-        nodes_.insert(make_pair(node->name(), node));
+        nodes_.insert(make_pair(name, node));
     }
     void clear() noexcept {
         for (auto &it : nodes_) {
