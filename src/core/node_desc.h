@@ -331,6 +331,7 @@ public:
 
 struct MaterialDesc : public NodeDesc {
 public:
+    std::map<std::string, ShaderNodeDesc> node_map;
     SP<MaterialDesc> mat0;
     SP<MaterialDesc> mat1;
 

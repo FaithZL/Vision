@@ -16,7 +16,7 @@ class ShaderNode;
 class ShaderGraph;
 #define VS_MAKE_SLOT(attr_name) Slot attr_name##_{#attr_name};
 #define INIT_SLOT(name, default_value, type) \
-    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type))).add_to(graph())
+    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type))).set_graph(shared_from_this())
 
 class SlotBase : public ocarina::Hashable {
 protected:
@@ -105,7 +105,7 @@ public:
         return *this;
     }
     VS_HOTFIX_MAKE_RESTORE(Node, node_tag_)
-    void set_graph(const SP<ShaderGraph> &graph) noexcept;
+    ShaderNode& set_graph(const SP<ShaderGraph> &graph) noexcept;
     [[nodiscard]] ShaderGraph &graph() const noexcept;
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     OC_MAKE_MEMBER_GETTER(node_tag, )

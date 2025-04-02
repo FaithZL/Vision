@@ -193,8 +193,9 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
 }
 ///#endregion
 
-void ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
+ShaderNode& ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
     graph_ = graph;
+    return *this;
 }
 
 ShaderGraph &ShaderNode::graph() const noexcept {
