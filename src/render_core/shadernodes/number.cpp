@@ -30,11 +30,11 @@ public:
     OC_ENCODABLE_FUNC(ShaderNode, value_)
 
     void update_encode_type() noexcept {
-        //        if ((min_ >= 0.f && max_ <= 1.f) || type_ == Albedo || type_ == Illumination) {
-        //            value_.set_encode_type(Uint8);
-        //        } else {
-        //            value_.set_encode_type(Original);
-        //        }
+//        if ((min_ >= 0.f && max_ <= 1.f) || node_tag() == Albedo || node_tag() == Illumination) {
+//            value_.set_encode_type(Uint8);
+//        } else {
+//            value_.set_encode_type(Original);
+//        }
     }
 
     [[nodiscard]] float normalize() noexcept override {
