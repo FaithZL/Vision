@@ -39,6 +39,7 @@ public:
     RealisticCamera() = default;
     explicit RealisticCamera(const SensorDesc &desc)
         : Camera(desc) {}
+    OC_ENCODABLE_FUNC(Camera, lenses_)
     [[nodiscard]] LensElementVar lens(const Uint &index) const noexcept {
         Uint i = index * 4;
         Float curvature_radius = (*lenses_)[i];
