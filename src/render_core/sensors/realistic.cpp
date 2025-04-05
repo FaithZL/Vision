@@ -15,10 +15,17 @@ struct LensElement {
 };
 }// namespace vision
 
+// clang-format off
 OC_STRUCT(vision, LensElement, curvature_radius,
           thickness, ior, aperture_radius){
-
+    void init(const Float &c, const Float &t, const Float &i, const Float &a) noexcept {
+        curvature_radius = c;
+        thickness = t;
+        ior = i;
+        aperture_radius = a;
+    }
 };
+// clang-format on
 
 namespace vision {
 
@@ -30,11 +37,18 @@ private:
 
 public:
     RealisticCamera() = default;
-    RealisticCamera(const SensorDesc &desc)
+    explicit RealisticCamera(const SensorDesc &desc)
         : Camera(desc) {}
-//    [[nodiscard]] LensElementVar lens(const Uint &index) const noexcept {
-//
-//    }
+    [[nodiscard]] LensElementVar lens(const Uint &index) const noexcept {
+        Uint i = index * 4;
+        Float curvature_radius = (*lenses_)[i];
+        Float thickness = (*lenses_)[i + 1];
+        Float ior = (*lenses_)[i + 2];
+        Float aperture_radius = (*lenses_)[i + 3];
+        LensElementVar ret;
+        ret->init(curvature_radius, thickness, ior, aperture_radius);
+        return ret;
+    }
     VS_MAKE_PLUGIN_NAME_FUNC
 };
 
