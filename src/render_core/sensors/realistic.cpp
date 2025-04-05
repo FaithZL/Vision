@@ -24,7 +24,21 @@ namespace vision {
 
 class RealisticCamera : public Camera {
 private:
+    ///
     EncodedData<vector<float>> lenses_;
+    bool simple_weighting_{};
+
+public:
+    RealisticCamera() = default;
+    RealisticCamera(const SensorDesc &desc)
+        : Camera(desc) {}
+//    [[nodiscard]] LensElementVar lens(const Uint &index) const noexcept {
+//
+//    }
+    VS_MAKE_PLUGIN_NAME_FUNC
 };
 
 }// namespace vision
+
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RealisticCamera)
+VS_REGISTER_CURRENT_PATH(0, "vision-sensor-realistic.dll")
