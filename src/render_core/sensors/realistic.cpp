@@ -39,13 +39,13 @@ public:
     RealisticCamera() = default;
     explicit RealisticCamera(const SensorDesc &desc)
         : Camera(desc) {}
-    OC_ENCODABLE_FUNC(Camera, lenses_)
+    OC_ENCODABLE_FUNC(Camera, lens_elements_)
     [[nodiscard]] LensElementVar lens_element(const Uint &index) const noexcept {
         Uint i = index * 4;
-        Float curvature_radius = (*lenses_)[i];
-        Float thickness = (*lenses_)[i + 1];
-        Float eta = (*lenses_)[i + 2];
-        Float aperture_radius = (*lenses_)[i + 3];
+        Float curvature_radius = (*lens_elements_)[i];
+        Float thickness = (*lens_elements_)[i + 1];
+        Float eta = (*lens_elements_)[i + 2];
+        Float aperture_radius = (*lens_elements_)[i + 3];
         LensElementVar ret;
         ret->init(curvature_radius, thickness, eta, aperture_radius);
         return ret;
