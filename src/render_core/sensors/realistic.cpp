@@ -32,7 +32,7 @@ namespace vision {
 class RealisticCamera : public Camera {
 private:
     ///
-    EncodedData<vector<float>> lenses_;
+    EncodedData<vector<float>> lens_elements_;
     bool simple_weighting_{};
 
 public:
@@ -40,7 +40,7 @@ public:
     explicit RealisticCamera(const SensorDesc &desc)
         : Camera(desc) {}
     OC_ENCODABLE_FUNC(Camera, lenses_)
-    [[nodiscard]] LensElementVar lens(const Uint &index) const noexcept {
+    [[nodiscard]] LensElementVar lens_element(const Uint &index) const noexcept {
         Uint i = index * 4;
         Float curvature_radius = (*lenses_)[i];
         Float thickness = (*lenses_)[i + 1];
