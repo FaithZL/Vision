@@ -10,7 +10,7 @@ namespace vision {
 struct LensElement {
     float curvature_radius{};
     float thickness{};
-    float ior{};
+    float eta{};
     float aperture_radius{};
 };
 }// namespace vision
@@ -18,10 +18,10 @@ struct LensElement {
 // clang-format off
 OC_STRUCT(vision, LensElement, curvature_radius,
           thickness, ior, aperture_radius){
-    void init(const Float &c, const Float &t, const Float &i, const Float &a) noexcept {
+    void init(const Float &c, const Float &t, const Float &e, const Float &a) noexcept {
         curvature_radius = c;
         thickness = t;
-        ior = i;
+        eta = e;
         aperture_radius = a;
     }
 };
@@ -44,10 +44,10 @@ public:
         Uint i = index * 4;
         Float curvature_radius = (*lenses_)[i];
         Float thickness = (*lenses_)[i + 1];
-        Float ior = (*lenses_)[i + 2];
+        Float eta = (*lenses_)[i + 2];
         Float aperture_radius = (*lenses_)[i + 3];
         LensElementVar ret;
-        ret->init(curvature_radius, thickness, ior, aperture_radius);
+        ret->init(curvature_radius, thickness, eta, aperture_radius);
         return ret;
     }
     VS_MAKE_PLUGIN_NAME_FUNC
