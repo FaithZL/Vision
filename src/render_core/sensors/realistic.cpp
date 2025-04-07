@@ -17,7 +17,7 @@ struct LensElement {
 
 // clang-format off
 OC_STRUCT(vision, LensElement, curvature_radius,
-          thickness, ior, aperture_radius){
+          thickness, eta, aperture_radius){
     void init(const Float &c, const Float &t, const Float &e, const Float &a) noexcept {
         curvature_radius = c;
         thickness = t;
