@@ -337,6 +337,7 @@ public:
 
 public:
     VISION_DESC_COMMON(Material)
+    void init_node_map(const ParameterSet &ps) noexcept;
     void init(const ParameterSet &ps) noexcept override;
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
 
