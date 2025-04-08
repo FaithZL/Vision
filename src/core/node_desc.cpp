@@ -149,7 +149,9 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
+    for (const auto &[key, value] : ps.data().items()) {
 
+    }
 }
 
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
