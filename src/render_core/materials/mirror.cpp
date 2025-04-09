@@ -33,6 +33,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
+        Material::initialize_(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(roughness, 0.001f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);

@@ -197,6 +197,7 @@ public:
         slot_cursor_.offset = offset;
         slot_cursor_.num = (back - head) + 1;
     }
+    void initialize_(const vision::NodeDesc &node_desc) noexcept override;
 
     ///region general for each
     template<typename T, typename F>

@@ -25,6 +25,7 @@ public:
         : Material(desc) {}
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
+        Material::initialize_(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
         INIT_SLOT(edge_tint, make_float3(1.f), Albedo);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
