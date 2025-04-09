@@ -150,7 +150,9 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
 
 void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
     for (const auto &[key, value] : ps.data().items()) {
-
+        ShaderNodeDesc snd;
+        snd.init(value);
+        node_map.insert(make_pair(key, snd));
     }
 }
 
