@@ -149,10 +149,16 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
-    if (ps.data().is_null()) {
+    if (!ps.data().is_object()) {
         return;
     }
-    for (const auto &[key, value] : ps.data().items()) {
+    auto i = ps.data().size();
+    int a = 0;
+    if (i == 0) {
+        return;
+    }
+    auto item = ps.data()["dasfa"];
+    for (const auto& [key, value] : ps.data().items()) {
         ShaderNodeDesc snd;
         snd.init(value);
         node_map.insert(make_pair(key, snd));
