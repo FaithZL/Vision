@@ -10,28 +10,18 @@ namespace vision {
 
 class ShaderGraph : public enable_shared_from_this<ShaderGraph> {
 protected:
-    map<string, SP<ShaderNode>> nodes_;
+    map<string, SP<ShaderNode>> node_map_;
 
 public:
     void add_node(SP<ShaderNode> node) noexcept {
         add_node(node->name(), node);
     }
-    void add_node(const string &name, SP<ShaderNode> node) {
-        if (nodes_.contains(name)) {
-            return;
-        }
-        node->set_graph(shared_from_this());
-        nodes_.insert(make_pair(name, node));
-    }
-    void clear() noexcept {
-        for (auto &it : nodes_) {
-            it.second->set_graph(nullptr);
-        }
-        nodes_.clear();
-    }
+    void add_node(const string &name, SP<ShaderNode> node);
+    void clear() noexcept;
+    void init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept;
     [[nodiscard]] ShaderGraph &graph() noexcept { return *this; }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {
-        return nodes_.at(name);
+        return node_map_.at(name);
     }
 };
 

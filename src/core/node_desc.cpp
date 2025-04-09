@@ -153,6 +153,7 @@ void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
     for (const auto& [key, value] : data.items()) {
         ShaderNodeDesc snd;
         snd.init(value);
+        auto str = to_string(value);
         node_map.insert(make_pair(key, snd));
     }
 }

@@ -120,7 +120,7 @@ protected:
     }
 
 public:
-    ShaderNodeDesc() = default;
+    ShaderNodeDesc() : NodeDesc("ShaderNode") {}
     explicit ShaderNodeDesc(ShaderNodeTag tag, const string &s_type = "constant")
         : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = s_type;
@@ -350,7 +350,7 @@ public:
         slot_desc.node.name = key;
         return slot_desc;
     }
-    
+
     [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
                                 ShaderNodeTag type = ShaderNodeTag::Number) const noexcept {
         ShaderNodeDesc node{data, type};

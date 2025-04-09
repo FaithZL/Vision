@@ -182,7 +182,8 @@ void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void Material::initialize_(const NodeDesc &node_desc) noexcept {
-
+    VS_CAST_DESC
+    init_node_map(desc.node_map);
 }
 
 void Material::restore(vision::RuntimeObject *old_obj) noexcept {
