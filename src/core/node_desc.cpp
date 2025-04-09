@@ -149,6 +149,9 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
 }
 
 void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
+    if (ps.data().is_null()) {
+        return;
+    }
     for (const auto &[key, value] : ps.data().items()) {
         ShaderNodeDesc snd;
         snd.init(value);
