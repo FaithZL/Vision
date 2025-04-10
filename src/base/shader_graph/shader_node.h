@@ -89,7 +89,7 @@ public:
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
-    ShaderNodeTag node_tag_{};
+    SlotTag node_tag_{};
     vector<SlotWeakRef> outputs_{};
     weak_ptr<ShaderGraph> graph_;
 

@@ -112,9 +112,9 @@ public:
         SlotDesc eta_slot;
         SlotDesc k_slot;
         if (spectrum()->is_complete()) {
-            eta_slot = SlotDesc(ShaderNodeDesc{ShaderNodeTag::ESPD, "spd"}, 0);
+            eta_slot = SlotDesc(ShaderNodeDesc{SlotTag::ESPD, "spd"}, 0);
             eta_slot.node.set_value("value", complex_ior.eta);
-            k_slot = SlotDesc(ShaderNodeDesc{ShaderNodeTag::ESPD, "spd"}, 0);
+            k_slot = SlotDesc(ShaderNodeDesc{SlotTag::ESPD, "spd"}, 0);
             k_slot.node.set_value("value", complex_ior.k);
         } else {
             SPD spd_eta = SPD(complex_ior.eta, nullptr);

@@ -13,7 +13,7 @@
 namespace vision {
 
 string NodeDesc::parameter_string() const noexcept {
-    return _parameter.data().dump();
+    return parameter_.data().dump();
 }
 
 string NodeDesc::file_name() const noexcept {
@@ -24,7 +24,7 @@ void NodeDesc::set_parameter(const ParameterSet &ps) noexcept {
     OC_ASSERT(ps.data().is_object());
     DataWrap data = ps.data();
     for (auto iter = data.begin(); iter != data.end(); ++iter) {
-        _parameter.set_value(iter.key(), iter.value());
+        parameter_.set_value(iter.key(), iter.value());
     }
 }
 
@@ -62,10 +62,10 @@ void ShapeDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string();
     name = ps["name"].as_string();
     set_parameter(ps["param"]);
-    ParameterSet param = _parameter;
-    o2w.init(_parameter.data().value("transform", DataWrap::object()));
-    if (_parameter.contains("emission")) {
-        emission.init(_parameter["emission"]);
+    ParameterSet param = parameter_;
+    o2w.init(parameter_.data().value("transform", DataWrap::object()));
+    if (parameter_.contains("emission")) {
+        emission.init(parameter_["emission"]);
     }
 }
 
@@ -91,11 +91,11 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("thin_lens");
     set_parameter(ps.value("param"));
-    transform_desc.init(_parameter.value("transform"));
-    filter_desc.init(_parameter.value("filter"));
-    film_desc.init(_parameter.value("film"));
-    if (_parameter.contains("medium")) {
-        medium.name = _parameter["medium"].as_string();
+    transform_desc.init(parameter_.value("transform"));
+    filter_desc.init(parameter_.value("filter"));
+    film_desc.init(parameter_.value("film"));
+    if (parameter_.contains("medium")) {
+        medium.name = parameter_["medium"].as_string();
     }
 }
 
@@ -103,7 +103,7 @@ void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
     set_parameter(ps.value("param"));
-    ParameterSet denoiser_param = _parameter.value("denoiser");
+    ParameterSet denoiser_param = parameter_.value("denoiser");
     if (!denoiser_param.contains("type")) {
         denoiser_param.set_value("type", "svgf");
     }
@@ -181,17 +181,17 @@ void MediumDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("homogeneous");
     set_parameter(ps["param"]);
-    string medium_name = _parameter["medium_name"].as_string();
+    string medium_name = parameter_["medium_name"].as_string();
     if (!medium_name.empty()) {
         auto [ss, sa] = detail::get_sigma(medium_name);
         sigma_s.init(DataWrap({ss.x, ss.y, ss.z}));
         sigma_a.init(DataWrap({sa.x, sa.y, sa.z}));
     } else {
-        sigma_a.init(_parameter.value("sigma_a"));
-        sigma_s.init(_parameter.value("sigma_s"));
+        sigma_a.init(parameter_.value("sigma_a"));
+        sigma_s.init(parameter_.value("sigma_s"));
     }
-    scale.init(_parameter.value("scale"));
-    g.init(_parameter.value("g"));
+    scale.init(parameter_.value("scale"));
+    g.init(parameter_.value("g"));
 }
 
 void LightDesc::init(const ParameterSet &ps) noexcept {
@@ -262,13 +262,13 @@ void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     set_parameter(param);
 }
 
-SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, ShaderNodeTag type) const noexcept {
-    auto data = _parameter[key].data();
+SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, SlotTag type) const noexcept {
+    auto data = parameter_[key].data();
     auto str = data.dump();
     ShaderNodeDesc node{data, type};
     uint size = data.is_number() ? 1 : data.size();
     SP<SlotDesc> slot_desc = make_shared<SlotDesc>(node, size);
-    slot_desc->init(_parameter[key]);
+    slot_desc->init(parameter_[key]);
     return slot_desc;
 }
 
@@ -279,23 +279,23 @@ void ShaderNodeDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     if (ps.data().is_array()) {
         sub_type = "number";
-        _parameter.set_value("value", ps.data());
+        parameter_.set_value("value", ps.data());
     } else if (ps.data().is_object() && !ps.contains("param")) {
         sub_type = ps.value("type", "image").as_string();
         if (sub_type == "image") {
             DataWrap json = DataWrap::object();
             json["fn"] = ps["fn"].as_string();
             json["color_space"] = ps["color_space"].data();
-            _parameter.set_json(json);
+            parameter_.set_json(json);
         } else if (sub_type == "number") {
             DataWrap json = DataWrap::object();
             json["value"] = ps["value"].data();
             json["max"] = ps.value("max", 1.f).data();
             json["min"] = ps.value("min", 0.f).data();
-            _parameter.set_json(json);
+            parameter_.set_json(json);
         }
     } else if (ps.data().is_number()) {
-        _parameter.set_value("value", ps.as_float(1.f));
+        parameter_.set_value("value", ps.as_float(1.f));
     } else {
         sub_type = ps["type"].as_string();
         set_parameter(ps["param"]);
@@ -319,7 +319,7 @@ void FilmDesc::init(const ParameterSet &ps) noexcept {
     sub_type = ps["type"].as_string("rgb");
     ParameterSet param = ps.value("param", DataWrap::object());
     set_parameter(param);
-    tone_mapper.init(_parameter.value("tone_mapper", DataWrap::object()));
+    tone_mapper.init(parameter_.value("tone_mapper", DataWrap::object()));
 }
 
 void WarperDesc::init(const ParameterSet &ps) noexcept {
