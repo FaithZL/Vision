@@ -34,7 +34,7 @@ private:
 
 public:
     explicit SlotBase(string attr_name = "") : attr_name_(std::move(attr_name)) {}
-    SlotBase(int, string channels);
+    SlotBase(int, string channels, AttrTag attr_tag);
     [[nodiscard]] static uint calculate_mask(string channels) noexcept;
     OC_MAKE_MEMBER_GETTER(dim, )
     OC_MAKE_MEMBER_GETTER(channel_mask, )
@@ -57,7 +57,7 @@ public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
     explicit Slot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
     ShaderNode &set(const Slot &other) noexcept;
-    explicit Slot(SP<ShaderNode> input, string channels);
+    explicit Slot(SP<ShaderNode> input, string channels, AttrTag attr_tag);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;

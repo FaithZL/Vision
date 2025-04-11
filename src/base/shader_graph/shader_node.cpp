@@ -11,12 +11,13 @@
 namespace vision {
 
 ///#region SlotBase
-SlotBase::SlotBase(int, std::string channels)
+SlotBase::SlotBase(int, std::string channels, AttrTag attr_tag)
     : dim_(channels.size()),
 #ifndef NDEBUG
       channels_(channels),
 #endif
-      channel_mask_(calculate_mask(ocarina::move(channels))) {
+      channel_mask_(calculate_mask(ocarina::move(channels))),
+      attr_tag_(attr_tag) {
 }
 
 uint64_t SlotBase::_compute_hash() const noexcept {
@@ -53,14 +54,14 @@ SlotWeakRef::SlotWeakRef(const vision::Slot &slot)
 ///#endregion
 
 ///#region Slot
-Slot::Slot(SP<vision::ShaderNode> input, std::string channels)
-    : SlotBase(0, std::move(channels)), node_(std::move(input)) {
+Slot::Slot(SP<vision::ShaderNode> input, std::string channels, AttrTag attr_tag)
+    : SlotBase(0, std::move(channels),attr_tag), node_(std::move(input)) {
     OC_ASSERT(dim_ <= 4);
 }
 
 Slot Slot::create_slot(const vision::SlotDesc &desc) {
     SP<ShaderNode> shader_node = Node::create_shared<ShaderNode>(desc.node);
-    return Slot(shader_node, desc.channels);
+    return Slot(shader_node, desc.channels, desc.attr_tag);
 }
 
 ShaderNode &Slot::set(const vision::Slot &other) noexcept {
@@ -195,7 +196,7 @@ ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const S
 }
 ///#endregion
 
-ShaderNode& ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
+ShaderNode &ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
     graph_ = graph;
     return *this;
 }
