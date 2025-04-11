@@ -3,6 +3,8 @@
 //
 
 #include "shader_node.h"
+
+#include <utility>
 #include "base/mgr/pipeline.h"
 #include "GUI/widgets.h"
 
@@ -52,7 +54,7 @@ SlotWeakRef::SlotWeakRef(const vision::Slot &slot)
 
 ///#region Slot
 Slot::Slot(SP<vision::ShaderNode> input, std::string channels)
-    : SlotBase(0, channels), node_(std::move(input)) {
+    : SlotBase(0, std::move(channels)), node_(std::move(input)) {
     OC_ASSERT(dim_ <= 4);
 }
 

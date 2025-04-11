@@ -34,18 +34,16 @@ public:
     }
 };
 
-enum SlotTag {
+enum AttrTag {
     Number,
     Albedo,
     Unbound,
-    Illumination,
-    Calculate,
-    ESPD
+    Illumination
 };
 
 struct NodeDesc : public Hashable {
 protected:
-    string_view _type;
+    string_view type_;
     ParameterSet parameter_{DataWrap::object()};
 
 public:
@@ -54,14 +52,14 @@ public:
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(_type, hash64(sub_type));
+        return hash64(type_, hash64(sub_type));
     }
 
 public:
     NodeDesc() = default;
     NodeDesc(string_view type, string name)
-        : _type(type), sub_type(std::move(name)) {}
-    explicit NodeDesc(string_view type) : _type(type) {}
+        : type_(type), sub_type(std::move(name)) {}
+    explicit NodeDesc(string_view type) : type_(type) {}
     [[nodiscard]] string parameter_string() const noexcept;
     [[nodiscard]] ParameterSet operator[](const string &key) const noexcept { return parameter_[key]; }
     [[nodiscard]] ParameterSet value(const string &key) const noexcept { return parameter_.value(key); }
@@ -89,9 +87,9 @@ public:
     }
     [[nodiscard]] string file_name() const noexcept;
     [[nodiscard]] string plugin_name() const noexcept {
-        return "vision-" + to_lower(string(_type)) + "-" + to_lower(sub_type);
+        return "vision-" + to_lower(string(type_)) + "-" + to_lower(sub_type);
     }
-    void set_type(string_view type) noexcept { _type = type; }
+    void set_type(string_view type) noexcept { type_ = type; }
     [[nodiscard]] virtual bool operator==(const NodeDesc &other) const noexcept {
         return hash() == other.hash();
     }
@@ -112,7 +110,7 @@ struct SlotDesc;
 
 struct ShaderNodeDesc : public NodeDesc {
 public:
-    SlotTag node_tag{};
+    AttrTag node_tag{};
 
 protected:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override {
@@ -121,26 +119,26 @@ protected:
 
 public:
     ShaderNodeDesc() : NodeDesc("ShaderNode") {}
-    explicit ShaderNodeDesc(SlotTag tag, const string &s_type = "constant")
+    explicit ShaderNodeDesc(AttrTag tag, const string &s_type = "constant")
         : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = s_type;
         parameter_.set_json(DataWrap::object());
     }
-    ShaderNodeDesc(string name, SlotTag tag)
+    ShaderNodeDesc(string name, AttrTag tag)
         : NodeDesc("ShaderNode", std::move(name)), node_tag(tag) {
         sub_type = "constant";
         parameter_.set_json(DataWrap::object());
     }
     template<typename Arg>
     requires is_scalar_v<Arg>
-    ShaderNodeDesc(Arg v, SlotTag tag)
+    ShaderNodeDesc(Arg v, AttrTag tag)
         : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         parameter_.set_json(DataWrap::object());
         parameter_.set_value("value", v);
     }
     template<typename T, size_t N>
-    ShaderNodeDesc(Vector<T, N> v, SlotTag tag)
+    ShaderNodeDesc(Vector<T, N> v, AttrTag tag)
         : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         parameter_.set_json(DataWrap::object());
@@ -152,7 +150,7 @@ public:
             parameter_.set_value("value", {v.x, v.y, v.z, v.w});
         }
     }
-    ShaderNodeDesc(const DataWrap &data, SlotTag tag)
+    ShaderNodeDesc(const DataWrap &data, AttrTag tag)
         : NodeDesc("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         parameter_.set_json(DataWrap::object());
@@ -160,7 +158,7 @@ public:
     }
 
     [[nodiscard]] SP<SlotDesc> slot(const string &key,
-                                    SlotTag type = SlotTag::Number) const noexcept;
+                                    AttrTag type = AttrTag::Number) const noexcept;
 
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
@@ -181,14 +179,17 @@ public:
         return "";
     }
     string channels;
+    AttrTag attr_tag{};
     ShaderNodeDesc node;
     [[nodiscard]] uint dim() const noexcept { return channels.size(); }
     VISION_DESC_COMMON(Slot)
-    SlotDesc(ShaderNodeDesc node, uint dim)
-        : node(node), channels(default_channels(dim)) {}
+    SlotDesc(ShaderNodeDesc node, uint dim, AttrTag tag)
+        : node(node), channels(default_channels(dim)),
+          attr_tag(tag) {}
 
-    SlotDesc(SlotTag type, uint dim)
-        : node(type), channels(default_channels(dim)) {}
+    SlotDesc(AttrTag tag, uint dim)
+        : node(tag), channels(default_channels(dim)),
+          attr_tag(tag) {}
 
     void init(const ParameterSet &ps) noexcept override;
     void init(const ParameterSet &ps, fs::path scene_path) noexcept {
@@ -343,20 +344,20 @@ public:
 
     template<typename T>
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
-                                SlotTag type = SlotTag::Number) const noexcept {
-        ShaderNodeDesc node{default_value, type};
-        SlotDesc slot_desc{node, type_dimension_v<T>};
+                                AttrTag tag = AttrTag::Number) const noexcept {
+        ShaderNodeDesc node{default_value, tag};
+        SlotDesc slot_desc{node, type_dimension_v<T>, tag};
         slot_desc.init(parameter_[key]);
         slot_desc.node.name = key;
         return slot_desc;
     }
 
     [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
-                                SlotTag type = SlotTag::Number) const noexcept {
-        ShaderNodeDesc node{data, type};
+                                AttrTag tag = AttrTag::Number) const noexcept {
+        ShaderNodeDesc node{data, tag};
         node.name = key;
         uint size = data.is_number() ? 1 : data.size();
-        SlotDesc slot_desc{node, size};
+        SlotDesc slot_desc{node, size, tag};
         slot_desc.init(parameter_[key]);
         return slot_desc;
     }

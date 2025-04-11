@@ -63,7 +63,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         auto &values = value_.hv();
         switch (node_tag_) {
-            case SlotTag::Number: {
+            case AttrTag::Number: {
                 if (values.size() > 1) {
                     widgets->check_box(ocarina::format("{} sync", name_.c_str()), &sync_);
                 }
@@ -77,8 +77,8 @@ public:
                 }
                 break;
             }
-            case SlotTag::Albedo:
-            case SlotTag::Illumination: {
+            case AttrTag::Albedo:
+            case AttrTag::Illumination: {
                 changed_ |= widgets->colorN_edit(name_, values.data(), values.size());
                 break;
             }

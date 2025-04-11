@@ -26,6 +26,7 @@ protected:
     string channels_;
 #endif
     string attr_name_{};
+    AttrTag attr_tag_{};
 
 private:
     [[nodiscard]] uint64_t _compute_hash() const noexcept override;
@@ -38,6 +39,7 @@ public:
     OC_MAKE_MEMBER_GETTER(dim, )
     OC_MAKE_MEMBER_GETTER(channel_mask, )
     OC_MAKE_MEMBER_GETTER(attr_name, )
+    OC_MAKE_MEMBER_GETTER_SETTER(attr_tag,)
     [[nodiscard]] virtual const ShaderNode *node() const noexcept = 0;
     [[nodiscard]] virtual ShaderNode *node() noexcept = 0;
     [[nodiscard]] const ShaderNode *operator->() const noexcept { return node(); }
@@ -89,7 +91,7 @@ public:
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
-    SlotTag node_tag_{};
+    AttrTag node_tag_{};
     vector<SlotWeakRef> outputs_{};
     weak_ptr<ShaderGraph> graph_;
 
