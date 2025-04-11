@@ -91,7 +91,6 @@ public:
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
-    AttrTag node_tag_{};
     vector<SlotWeakRef> outputs_{};
     weak_ptr<ShaderGraph> graph_;
 
@@ -101,16 +100,19 @@ public:
 
 public:
     ShaderNode() = default;
-    explicit ShaderNode(const ShaderNodeDesc &desc) : Node(desc), node_tag_(desc.node_tag) {}
+    explicit ShaderNode(const ShaderNodeDesc &desc)
+        : Node(desc) {}
     ShaderNode &add_output(const Slot &slot) noexcept {
         outputs_.emplace_back(slot);
         return *this;
     }
-    VS_HOTFIX_MAKE_RESTORE(Node, node_tag_)
+    VS_HOTFIX_MAKE_RESTORE(Node, outputs_, graph_)
+    virtual bool render_UI_by_tag(Widgets *widgets, AttrTag attr_tag) noexcept {
+        return render_UI(widgets);
+    }
     ShaderNode& set_graph(const SP<ShaderGraph> &graph) noexcept;
     [[nodiscard]] ShaderGraph &graph() const noexcept;
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
-    OC_MAKE_MEMBER_GETTER(node_tag, )
     [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
     [[nodiscard]] virtual bool near_one() const noexcept { return false; }
     ShaderNode &add_to(ShaderGraph &graph) noexcept;

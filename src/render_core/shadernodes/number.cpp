@@ -60,9 +60,9 @@ public:
         return *this;
     }
 
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+    bool render_UI_by_tag(ocarina::Widgets *widgets, vision::AttrTag attr_tag) noexcept override {
         auto &values = value_.hv();
-        switch (node_tag_) {
+        switch (attr_tag) {
             case AttrTag::Number: {
                 if (values.size() > 1) {
                     widgets->check_box(ocarina::format("{} sync", name_.c_str()), &sync_);

@@ -20,11 +20,11 @@ SlotBase::SlotBase(int, std::string channels)
 }
 
 uint64_t SlotBase::_compute_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node()->hash(), node()->node_tag());
+    return hash64(channel_mask_, dim_, node()->hash(), attr_tag_);
 }
 
 uint64_t SlotBase::_compute_type_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node()->type_hash(), node()->node_tag());
+    return hash64(channel_mask_, dim_, node()->type_hash(), attr_tag_);
 }
 
 uint SlotBase::calculate_mask(string channels) noexcept {
@@ -102,7 +102,7 @@ bool Slot::render_UI(ocarina::Widgets *widgets) noexcept {
         if (!attr_name_.empty()) {
             node_->set_name(attr_name_);
         }
-        return node_->render_UI(widgets);
+        return node_->render_UI_by_tag(widgets, attr_tag_);
     }
     return false;
 }
