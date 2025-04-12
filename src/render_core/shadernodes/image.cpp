@@ -12,7 +12,7 @@ namespace vision {
 using namespace ocarina;
 class ImageNode : public ShaderNode {
 private:
-    RegistrableTexture *texture_;
+    RegistrableTexture *texture_{};
     EncodedData<uint> tex_id_{};
     ShaderNodeDesc desc_;
     mutable optional<float_array> cache_;
