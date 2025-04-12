@@ -20,12 +20,8 @@ public:
     void clear() noexcept;
     void init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept;
     template<typename T>
-    [[nodiscard]] Slot construct_slot(const MaterialDesc &desc, string_view attr_name,
-                                      T val, AttrTag tag) noexcept {
-        Slot slot = Slot::create_slot(desc.slot(attr_name.data(), val, tag));
-        slot->set_graph(shared_from_this());
-        return slot;
-    }
+    [[nodiscard]] Slot construct_slot(const MaterialDesc &desc, const string &attr_name,
+                                      T val, AttrTag tag) noexcept;
     [[nodiscard]] ShaderGraph &graph() noexcept { return *this; }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {
         return node_map_.at(name);

@@ -28,4 +28,24 @@ void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept
     }
 }
 
+template<typename T>
+[[nodiscard]] Slot ShaderGraph::construct_slot(const MaterialDesc &desc, const string &attr_name,
+                                               T val, AttrTag tag) noexcept {
+    ParameterSet ps = desc.value(attr_name);
+    Slot slot = Slot::create_slot(desc.slot(attr_name, val, tag));
+    slot->set_graph(shared_from_this());
+    return slot;
+}
+
+#define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                               \
+    template Slot ShaderGraph::construct_slot<type>(const MaterialDesc &desc, const string &attr_name, \
+                                                    type val, AttrTag tag) noexcept;
+
+VS_INSTANCE_CONSTRUCT_SLOT(float)
+VS_INSTANCE_CONSTRUCT_SLOT(float2)
+VS_INSTANCE_CONSTRUCT_SLOT(float3)
+VS_INSTANCE_CONSTRUCT_SLOT(float4)
+
+#undef VS_INSTANCE_CONSTRUCT_SLOT
+
 }// namespace vision
