@@ -16,7 +16,7 @@ class ShaderNode;
 class ShaderGraph;
 #define VS_MAKE_SLOT(attr_name) Slot attr_name##_{#attr_name};
 #define INIT_SLOT(name, default_value, type) \
-    name##_.set(Slot::create_slot(desc.slot(#name, default_value, type))).set_graph(shared_from_this())
+    name##_.set(construct_slot(desc, #name, default_value, type))
 
 class SlotBase : public ocarina::Hashable {
 protected:
