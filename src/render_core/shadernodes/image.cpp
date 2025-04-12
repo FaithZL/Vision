@@ -15,6 +15,7 @@ private:
     RegistrableTexture *texture_;
     EncodedData<uint> tex_id_{};
     ShaderNodeDesc desc_;
+    mutable optional<float_array> cache_;
 
 public:
     ImageNode() = default;
@@ -50,16 +51,26 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->text(name_.c_str());
         widgets->same_line();
-        widgets->use_tree("open",[&] {
+        widgets->use_tree("open", [&] {
             render_sub_UI(widgets);
         });
         return true;
     }
 
-    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl) const noexcept override {
-        return pipeline()->tex_var(*tex_id_).sample(texture_->host_tex().channel_num(), ctx.uv);
+    [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
+                                       const SampledWavelengths &swl) const noexcept override {
+        if (!cache_) {
+            float_array value = pipeline()->tex_var(*tex_id_).sample(texture_->host_tex().channel_num(), ctx.uv);
+            cache_.emplace(value);
+        }
+        return *cache_;
     }
+
+    void after_decode() const noexcept override {
+        ShaderNode::after_decode();
+        cache_.reset();
+    }
+
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return texture_->host_tex().average_vector();
     }
