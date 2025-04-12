@@ -740,23 +740,11 @@
             "param": {
                 "color": {
                     "channels": "xyz",
-                    "node": {
-                        "type": "image",
-                        "param": {
-                            "fn": "textures/cbox-sss.png",
-                            "color_space": "srgb"
-                        }
-                    }
+                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000002BB63D62420>"
                 },
                 "roughness": {
                     "channels": "w",
-                    "node": {
-                        "type": "image",
-                        "param": {
-                            "fn": "textures/cbox-sss.png",
-                            "color_space": "srgb"
-                        }
-                    }
+                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000002BB63D62420>"
                 },
                 "anisotropic": {
                     "channels": "x",

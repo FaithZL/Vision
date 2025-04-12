@@ -32,7 +32,16 @@ template<typename T>
 [[nodiscard]] Slot ShaderGraph::construct_slot(const MaterialDesc &desc, const string &attr_name,
                                                T val, AttrTag tag) noexcept {
     ParameterSet ps = desc.value(attr_name);
-    Slot slot = Slot::create_slot(desc.slot(attr_name, val, tag));
+    DataWrap data = ps.data();
+    string str = to_string(data);
+    Slot slot;
+    if (data.contains("node") && data["node"].is_string()) {
+        SP<ShaderNode> shader_node = get_node(data["node"]);
+        slot = Slot(shader_node, data["channels"], tag);
+    } else {
+        SlotDesc slot_desc = desc.slot(attr_name, val, tag);
+        slot = Slot::create_slot(slot_desc);
+    }
     slot->set_graph(shared_from_this());
     return slot;
 }
