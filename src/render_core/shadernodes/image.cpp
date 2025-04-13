@@ -59,10 +59,10 @@ public:
 
     [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
-        if (!cache_) {
+//        if (!cache_) {
             float_array value = pipeline()->tex_var(*tex_id_).sample(texture_->host_tex().channel_num(), ctx.uv);
             cache_.emplace(value);
-        }
+//        }
         return *cache_;
     }
 
