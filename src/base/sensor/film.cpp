@@ -12,8 +12,17 @@ Film::Film(const vision::FilmDesc &desc)
       tone_mapper_(desc.tone_mapper),
       resolution_(desc["resolution"].as_uint2(make_uint2(1280, 720))),
       screen_window_(make_float2(-1.f), make_float2(1.f)),
-      accumulation_(desc["accumulation"].as_uint(1)){
+      exposure_(desc["exposure"].as_float(1.f)),
+      accumulation_(desc["accumulation"].as_uint(1)) {
     update_screen_window();
+}
+
+void Film::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    changed_ |= widgets->drag_float("exposure", addressof(exposure_.hv()), 0.01, 0.f);
+}
+
+Float4 Film::apply_exposure(const ocarina::Float4 &input) const noexcept {
+    return 1.f - exp(-input * *exposure_);
 }
 
 void Film::update_runtime_object(const IObjectConstructor *constructor) noexcept {

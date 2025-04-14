@@ -33,12 +33,13 @@ protected:
     Box2f screen_window_;
     EncodedData<uint> accumulation_;
     TToneMapper tone_mapper_{};
+    EncodedData<float> exposure_{};
 
 public:
     Film() = default;
     explicit Film(const FilmDesc &desc);
-    OC_ENCODABLE_FUNC(Encodable, accumulation_, tone_mapper_)
-    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, accumulation_, tone_mapper_)
+    OC_ENCODABLE_FUNC(Encodable, accumulation_, tone_mapper_, exposure_)
+    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, accumulation_, tone_mapper_, exposure_)
     VS_MAKE_GUI_STATUS_FUNC(Node, tone_mapper_)
     virtual void compile() noexcept = 0;
     [[nodiscard]] uint pixel_num() const noexcept { return resolution_.x * resolution_.y; }
@@ -52,6 +53,8 @@ public:
     }
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void update_screen_window() noexcept;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
+    [[nodiscard]] Float4 apply_exposure(const Float4 &input) const noexcept ;
     virtual void on_resize(uint2 res) noexcept {}
     [[nodiscard]] auto tone_mapper() const noexcept { return tone_mapper_; }
     [[nodiscard]] auto tone_mapper() noexcept { return tone_mapper_; }

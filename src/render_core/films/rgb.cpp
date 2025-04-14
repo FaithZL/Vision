@@ -15,7 +15,6 @@ private:
     RegistrableManaged<float4> rt_buffer_;
     RegistrableManaged<float4> accumulation_buffer_;
     SP<ScreenBuffer> output_buffer_{make_shared<ScreenBuffer>(FrameBuffer::final_result)};
-    EncodedData<float> exposure_{};
 
     Shader<void(Buffer<float4>, Buffer<float4>, uint)> accumulate_;
     Shader<void(Buffer<float4>, Buffer<float4>)> tone_mapping_;
@@ -25,12 +24,11 @@ public:
     RGBFilm() = default;
     explicit RGBFilm(const FilmDesc &desc)
         : Film(desc),
-          rt_buffer_(pipeline()->bindless_array()),
-          exposure_(desc["exposure"].as_float(1.f)) {}
+          rt_buffer_(pipeline()->bindless_array()) {}
 
-    OC_ENCODABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_, exposure_)
+    OC_ENCODABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_HOTFIX_MAKE_RESTORE(Film, rt_buffer_, accumulation_buffer_, output_buffer_, exposure_,
+    VS_HOTFIX_MAKE_RESTORE(Film, rt_buffer_, accumulation_buffer_, output_buffer_,
                            accumulate_, tone_mapping_, gamma_correct_)
 
     void on_resize(uint2 res) noexcept override {
@@ -45,12 +43,8 @@ public:
     }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        Film::render_sub_UI(widgets);
         changed_ |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
-        changed_ |= widgets->drag_float("exposure", addressof(exposure_.hv()), 0.01, 0.f);
-    }
-
-    [[nodiscard]] Float4 apply_exposure(const Float4 &input) const noexcept {
-        return 1.f - exp(-input * *exposure_);
     }
 
     void compile_accumulation() noexcept {
