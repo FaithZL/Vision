@@ -18,6 +18,34 @@ void Integrator::invalidation() const noexcept {
     }
 }
 
+template<typename SF, typename SS>
+SampledSpectrum IlluminationIntegrator::direct_lighting(const Interaction &it, const SF &sf, LightSample ls,
+                                                        Bool occluded, TSampler &sampler,
+                                                        const SampledWavelengths &swl, SS &ss, bool mis) {
+    Float3 wi = normalize(ls.p_light - it.pos);
+    ScatterEval scatter_eval = sf.evaluate(it.wo, wi, MaterialEvalMode::All,
+                                           BxDFFlag::All, TransportMode::Radiance);
+    ss = sf.sample(it.wo, sampler);
+    Bool is_delta_light = ls.eval.pdf < 0;
+    Float weight = mis ? (select(is_delta_light, 1.f, vision::MIS_weight<D>(ls.eval.pdf, scatter_eval.pdf()))) : 1.f;
+    ls.eval.pdf = select(is_delta_light, -ls.eval.pdf, ls.eval.pdf);
+    SampledSpectrum Ld = {swl.dimension(), 0.f};
+    $if(!occluded && scatter_eval.valid() && ls.valid()) {
+        Ld = ls.eval.L * scatter_eval.f * weight / ls.eval.pdf;
+        frame_buffer().visualizer()->condition_add_line_segment(it.pos, ls.p_light);
+    };
+    return Ld;
+}
+
+#define VS_MAKE_DIRECT_LIGHTING_INSTANCE(T, U)                                                                                 \
+    template SampledSpectrum IlluminationIntegrator::direct_lighting<T, U>(const Interaction &it, const T &sf, LightSample ls, \
+                                                                           Bool occluded, TSampler &sampler,                   \
+                                                                           const SampledWavelengths &swl, U &ss, bool mis);
+VS_MAKE_DIRECT_LIGHTING_INSTANCE(PhaseFunction, PhaseSample)
+VS_MAKE_DIRECT_LIGHTING_INSTANCE(MaterialEvaluator, BSDFSample)
+
+#undef VS_MAKE_DIRECT_LIGHTING_INSTANCE
+
 void RenderEnv::initial(TSampler &sampler, const Uint &frame_index, const TSpectrum &spectrum) noexcept {
     Uint2 pixel = dispatch_idx().xy();
     frame_index_.emplace(frame_index);
@@ -57,9 +85,9 @@ bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
         ocarina::format("{} integrator", impl_type().data()),
         [&] {
             changed_ |= widgets->button_click("recompile", [&] {
-//                MaterialRegistry::instance().remedy();
-//                scene().fill_instances();
-//                pipeline()->update_geometry();
+                //                MaterialRegistry::instance().remedy();
+                //                scene().fill_instances();
+                //                pipeline()->update_geometry();
                 compile();
             });
             changed_ |= widgets->input_uint_limit("max depth", &max_depth_.hv(), 0, 30, 1, 1);
@@ -136,9 +164,9 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         };
 
         it = geometry.compute_surface_interaction(hit, rs.ray);
-//        $if(bounces == 0) {
-            frame_buffer().visualizer()->condition_add_line_segment(rs.origin(), it.pos);
-//        };
+        //        $if(bounces == 0) {
+        frame_buffer().visualizer()->condition_add_line_segment(rs.origin(), it.pos);
+        //        };
 
         if (scene().has_medium()) {
             $if(rs.in_medium()) {
