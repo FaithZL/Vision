@@ -231,12 +231,6 @@ bool Material::has_device_value() const noexcept {
     });
 }
 
-void Material::reset_device_value() const noexcept {
-    for_each_slot([&](const Slot &slot) {
-        slot->reset_device_value();
-    });
-}
-
 void Material::invalidate() const noexcept {
     for_each_slot([&](const Slot &slot) {
         slot->invalidate();
