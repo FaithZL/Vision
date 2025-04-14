@@ -7,8 +7,8 @@
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"
 #include "base/mgr/pipeline.h"
-#include "ltc_sheen_table.inl.h"
-#include "base/scattering/precomputed_table.inl.h"
+#include "ltc_sheen_table.h"
+#include "base/scattering/precomputed_table.h"
 
 namespace vision {
 

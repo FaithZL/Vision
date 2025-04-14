@@ -4,7 +4,7 @@
 
 #include "lobe.h"
 #include "material.h"
-#include "precomputed_table.inl.h"
+#include "precomputed_table.h"
 
 namespace vision {
 

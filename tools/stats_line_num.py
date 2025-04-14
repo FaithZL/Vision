@@ -23,9 +23,9 @@ for root,dirs,files in os.walk(os.path.join(os.getcwd(), "src")):
             continue
         if "metal_ior.inl.h" in fn:
             continue
-        if "ltc_sheen_table.inl.h" in fn:
+        if "ltc_sheen_table.h" in fn:
             continue
-        if "precomputed_table.inl.h" in fn:
+        if "precomputed_table.h" in fn:
             continue
         if "stats_line_num.py" in fn:
             continue

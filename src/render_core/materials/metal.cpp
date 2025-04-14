@@ -3,7 +3,7 @@
 //
 
 #include <utility>
-#include "base/scattering/precomputed_table.inl.h"
+#include "base/scattering/precomputed_table.h"
 #include "base/scattering/material.h"
 #include "base/shader_graph/shader_node.h"
 #include "base/mgr/scene.h"

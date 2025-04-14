@@ -118,7 +118,7 @@ void MaterialRegistry::precompute_albedo() noexcept {
     });
     clock.end();
 
-    string fn = "precomputed_table.inl.h";
+    string fn = "precomputed_table.h";
     fs::path target_path = FileTool::project_src_path() / "base" / "scattering" / fn;
     std::ofstream output(target_path);
 
