@@ -1753,8 +1753,8 @@
                 "type": "rgb",
                 "param": {
                     "resolution": [
-                        1024,
-                        1024
+                        1366,
+                        968
                     ],
                     "fb_state": 0
                 }
@@ -1808,6 +1808,8 @@
 //        "type": "bake",
 //            "type": "customized",
         "param": {
+//            			"obfuscation" : false,
+//            			"valid_check" : true,
             "rasterizer" : {
                 				"type": "CPU"
             },
