@@ -41,7 +41,7 @@ public:
     [[nodiscard]] SampledSpectrum eta() const noexcept override {
         return eta_;
     }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelSchlick)
+    VS_MAKE_FRESNEL_ASSIGNMENT(FresnelSchlick)
 };
 
 /// reference https://tizianzeltner.com/projects/Zeltner2022Practical/

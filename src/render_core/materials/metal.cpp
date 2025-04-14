@@ -22,7 +22,7 @@ public:
     [[nodiscard]] SampledSpectrum evaluate(Float abs_cos_theta) const noexcept override {
         return fresnel_complex(abs_cos_theta, eta_, k_);
     }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelConductor)
+    VS_MAKE_FRESNEL_ASSIGNMENT(FresnelConductor)
 };
 
 class ConductorLobe : public PureReflectionLobe {

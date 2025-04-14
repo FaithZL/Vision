@@ -9,7 +9,7 @@
 
 namespace vision {
 
-#define VS_MAKE_Lobe_ASSIGNMENT(ClassName)                            \
+#define VS_MAKE_LOBE_ASSIGNMENT(ClassName)                            \
     ClassName &operator=(const Lobe &other) noexcept override {       \
         OC_ASSERT(dynamic_cast<const ClassName *>(&other));           \
         *this = dynamic_cast<ClassName &>(const_cast<Lobe &>(other)); \
@@ -87,8 +87,8 @@ public:
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return bxdf_.get(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() const noexcept override;
-    VS_MAKE_Lobe_ASSIGNMENT(MicrofacetLobe)
-        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
+    VS_MAKE_LOBE_ASSIGNMENT(MicrofacetLobe)
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
@@ -123,13 +123,13 @@ public:
         return &bxdf_->swl();
     }
     // clang-format off
-    VS_MAKE_Lobe_ASSIGNMENT(DiffuseLobe)
-        // clang-format on
+    VS_MAKE_LOBE_ASSIGNMENT(DiffuseLobe)
+    // clang-format on
 
-        [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
-                                                 MaterialEvalMode mode,
-                                                 const Uint &flag,
-                                                 TransportMode tm) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode,
+                                             const Uint &flag,
+                                             TransportMode tm) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                           TSampler &sampler,
                                           TransportMode tm) const noexcept override;
@@ -189,8 +189,8 @@ public:
         : fresnel_(fresnel), microfacet_(microfacet),
           kt_(std::move(color)), dispersive_(ocarina::move(dispersive)),
           flag_(std::move(flag)) {}
-    VS_MAKE_Lobe_ASSIGNMENT(DielectricLobe)
-        [[nodiscard]] virtual bool compensate() const noexcept { return true; }
+    VS_MAKE_LOBE_ASSIGNMENT(DielectricLobe)
+    [[nodiscard]] virtual bool compensate() const noexcept { return true; }
 
     static void prepare() noexcept;
     [[nodiscard]] Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
@@ -260,8 +260,8 @@ public:
         normalize_sampled_weights();
     }
     void normalize_sampled_weights() noexcept;
-    VS_MAKE_Lobe_ASSIGNMENT(LobeSet)
-        [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
+    VS_MAKE_LOBE_ASSIGNMENT(LobeSet)
+    [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override;

@@ -23,7 +23,7 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override {
         return {swl_->dimension(), 0.f};
     }
-    VS_MAKE_Lobe_ASSIGNMENT(BlackBodyLobe)
+    VS_MAKE_LOBE_ASSIGNMENT(BlackBodyLobe)
 };
 
 const SampledWavelengths *BlackBodyLobe::swl() const {

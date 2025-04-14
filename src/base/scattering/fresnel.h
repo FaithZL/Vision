@@ -33,7 +33,7 @@ public:
     }
 };
 
-#define VS_MAKE_Fresnel_ASSIGNMENT(ClassName)                              \
+#define VS_MAKE_FRESNEL_ASSIGNMENT(ClassName)                              \
     ClassName &operator=(const Fresnel &other) noexcept override {         \
         *this = *dynamic_cast<ClassName *>(const_cast<Fresnel *>(&other)); \
         return *this;                                                      \
@@ -59,7 +59,7 @@ public:
         eta_ = eta;
     }
     [[nodiscard]] SampledSpectrum eta() const noexcept override { return eta_; }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelDielectric)
+    VS_MAKE_FRESNEL_ASSIGNMENT(FresnelDielectric)
 };
 
 class FresnelF82Tint : public Fresnel {
@@ -93,14 +93,14 @@ public:
         SampledSpectrum ret = saturate(f_schlick - B_ * cos_theta * mu5 * mu);
         return ret;
     }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelF82Tint)
+    VS_MAKE_FRESNEL_ASSIGNMENT(FresnelF82Tint)
 };
 
 class FresnelConstant : public Fresnel {
 public:
     explicit FresnelConstant(const SampledWavelengths &swl) : Fresnel(swl) {}
     [[nodiscard]] SampledSpectrum evaluate(Float cos_theta) const noexcept override { return {swl_->dimension(), 1.f}; }
-    VS_MAKE_Fresnel_ASSIGNMENT(FresnelConstant)
+    VS_MAKE_FRESNEL_ASSIGNMENT(FresnelConstant)
 };
 
 }// namespace vision
