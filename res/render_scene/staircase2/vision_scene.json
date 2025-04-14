@@ -1756,6 +1756,15 @@
                         1366,
                         968
                     ],
+                    "tone_mapper" : {
+                        //												"type": "reinhard",
+                        //												"type": "linear",
+                        "type": "aces",
+                        //						"type" : "exposure",
+                        "param" : {
+                            "exposure" : 1.0
+                        }
+                    },
                     "fb_state": 0
                 }
             },
