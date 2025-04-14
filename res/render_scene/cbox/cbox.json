@@ -1261,6 +1261,7 @@
 						1024,
 						1024
 					],
+					"exposure" : 1.0,
 					"fb_state" : 0,
 					"tone_mapper" : {
 						//												"type": "reinhard",
