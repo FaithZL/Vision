@@ -313,13 +313,19 @@ LightEval LightSampler::evaluate_miss_point(const LightSampleContext &p_ref, con
 }
 
 void LightSampler::dispatch_environment(const std::function<void(const Environment *)> &func) const noexcept {
-    uint type_index = lights_.type_index(env_light());
-    dispatch_light(type_index, 0, [&](const Light *light) {
+    auto lambda = [&](const Light *light) {
         auto env = dynamic_cast<const Environment *>(light);
         if (env) {
             func(env);
         }
-    });
+    };
+
+    if (lights_.mode() == PolymorphicMode::EInstance) {
+        lights_.dispatch_instance(env_index(),lambda);
+    } else {
+        uint type_index = lights_.type_index(env_light());
+        dispatch_light(type_index, 0, lambda);
+    }
 }
 
 void LightSampler::dispatch_light(const Uint &id, const std::function<void(const Light *)> &func) const noexcept {
