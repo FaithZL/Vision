@@ -168,6 +168,8 @@ template<EPort p>
     oc_float<p> denom = ocarina::sqr(dot(wi, wh) * eta + dot(wo, wh)) * ocarina::abs(cos_theta_i * cos_theta_o);
     oc_float<p> ft = numerator / denom;
     oc_float<p> factor = tm == Radiance ? ocarina::rcp(ocarina::sqr(eta)) : 1.f;
+    /// consider that the result of cos_theta_i * cos_theta_o could be zero
+    ft = ocarina::select(ocarina::isinf(ft), 0.f, ft);
     return ft * factor;
 }
 template oc_float<D> BTDF_div_ft<D>(const oc_float3<D> &wo, const oc_float3<D> &wh, const oc_float3<D> &wi,

@@ -319,7 +319,6 @@ void LightSampler::dispatch_environment(const std::function<void(const Environme
             func(env);
         }
     };
-
     if (lights_.mode() == PolymorphicMode::EInstance) {
         lights_.dispatch_instance(env_index(),lambda);
     } else {
