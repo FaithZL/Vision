@@ -33,9 +33,8 @@ struct App {
     }
 
     int run() {
-        auto &mr = MaterialRegistry::instance();
 
-        mr.precompute_albedo();
+        vision::precompute_albedo();
 
         return 0;
     }

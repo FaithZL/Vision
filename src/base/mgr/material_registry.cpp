@@ -107,12 +107,12 @@ namespace detail {
 }
 }// namespace detail
 
-void MaterialRegistry::precompute_albedo() noexcept {
+void precompute_albedo() noexcept {
     vector<PrecomputedLobeTable> configs;
 
     Clock clock;
     clock.start();
-    materials_.for_each_instance([&](SP<Material> material, uint i) {
+    MaterialRegistry::instance().materials().for_each_instance([&](SP<Material> material, uint i) {
         auto lst = material->precompute();
         configs.insert(configs.end(), lst.begin(), lst.end());
     });
@@ -156,6 +156,5 @@ void MaterialRegistry::remove_unused_materials() noexcept {
     }
     tidy_up();
 }
-
 
 }// namespace vision

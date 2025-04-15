@@ -26,7 +26,6 @@ public:
     [[nodiscard]] SP<Material> get_material(uint64_t hash) noexcept;
     [[nodiscard]] bool has_dispersive() const noexcept;
     void push_back(SP<Material> material) noexcept;
-    void precompute_albedo() noexcept;
     void upload_device_data() noexcept;
     void prepare() noexcept;
     void remedy() noexcept;
@@ -34,5 +33,7 @@ public:
     void tidy_up() noexcept;
     OC_MAKE_MEMBER_GETTER(materials, &)
 };
+
+void precompute_albedo() noexcept;
 
 }// namespace vision
