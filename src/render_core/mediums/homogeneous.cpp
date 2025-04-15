@@ -23,7 +23,8 @@ public:
           sigma_t_(sigma_a_ + sigma_s_),
           g_(desc.g["value"].as_float()) {}
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] SampledSpectrum Tr(Float t, const SampledWavelengths &swl) const noexcept {
+
+    [[nodiscard]] SampledSpectrum Tr(const Float& t, const SampledWavelengths &swl) const noexcept {
         SampledSpectrum sigma_t = spectrum()->decode_to_unbound_spectrum(sigma_t_, swl).sample;
         return exp(-sigma_t * min(RayTMax, t));
     }
@@ -57,4 +58,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::HomogeneousMedium)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, HomogeneousMedium)
+VS_REGISTER_CURRENT_PATH(0, "vision-medium-homogeneous.dll")
