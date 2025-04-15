@@ -16,6 +16,7 @@ private:
     float g_;
 
 public:
+    HomogeneousMedium() = default;
     explicit HomogeneousMedium(const MediumDesc &desc)
         : Medium(desc),
           sigma_a_(desc.sigma_a["value"].as_float3() * scale_),

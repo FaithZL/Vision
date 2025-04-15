@@ -29,6 +29,7 @@ public:
     using Desc = MediumDesc;
 
 public:
+    Medium() = default;
     explicit Medium(const MediumDesc &desc)
         : Node(desc),
           scale_(desc.scale["value"].as_float()) {}
