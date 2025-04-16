@@ -188,6 +188,7 @@ void Scene::load_mediums(const MediumsDesc &md) {
     for (uint i = 0; i < md.mediums.size(); ++i) {
         const MediumDesc &desc = md.mediums[i];
         auto medium = Node::create_shared<Medium>(desc);
+        medium->set_index(i);
         medium_registry().push_back(medium);
     }
     uint index = mediums().get_index([&](const SP<Medium> &medium) {
