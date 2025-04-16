@@ -26,9 +26,9 @@ public:
     OC_ENCODABLE_FUNC(Medium, sigma_a_, sigma_s_, g_)
     VS_HOTFIX_MAKE_RESTORE(Medium, sigma_a_, sigma_s_, g_)
 
-    [[nodiscard]] Float3 sigma_t() const noexcept {return sigma_s() + sigma_a();}
-    [[nodiscard]] Float3 sigma_s() const noexcept {return *sigma_s_ * *scale_;}
-    [[nodiscard]] Float3 sigma_a() const noexcept {return *sigma_a_ * *scale_;}
+    [[nodiscard]] Float3 sigma_t() const noexcept { return sigma_s() + sigma_a(); }
+    [[nodiscard]] Float3 sigma_s() const noexcept { return *sigma_s_ * *scale_; }
+    [[nodiscard]] Float3 sigma_a() const noexcept { return *sigma_a_ * *scale_; }
 
     [[nodiscard]] SampledSpectrum Tr(const Float &t, const SampledWavelengths &swl) const noexcept {
         SampledSpectrum sigma_t_sp = spectrum()->decode_to_unbound_spectrum(sigma_t(), swl).sample;
@@ -47,9 +47,10 @@ public:
         return Tr(length(ray->direction()) * ray->t_max(), swl);
     }
 
-    [[nodiscard]] SampledSpectrum sample(const RayVar &ray, Interaction &it,
-                                         const SampledWavelengths &swl,
-                                         TSampler &sampler) const noexcept override {
+    [[nodiscard]] SampledSpectrum sample(const RayState &rs, Interaction &it, TSampler &sampler,
+                                         const SampledWavelengths &swl) const noexcept override {
+        RayVar ray = rs.ray;
+        Uint medium_id = rs.medium;
         SampledSpectrum sigma_t_sp = spectrum()->decode_to_unbound_spectrum(sigma_t(), swl).sample;
         SampledSpectrum sigma_s_sp = spectrum()->decode_to_unbound_spectrum(sigma_s(), swl).sample;
         Uint channel = min(cast<uint>(sampler->next_1d() * swl.dimension()), swl.dimension() - 1);
@@ -59,7 +60,7 @@ public:
         $if(sampled_medium) {
             it = Interaction(ray->at(t), -ray->direction(), true);
             it.init_phase(*g_, swl);
-            it.set_medium(index_, index_);
+            it.set_medium(medium_id, medium_id);
         };
         SampledSpectrum tr = Tr(t, swl);
         SampledSpectrum density = select(sampled_medium, sigma_t_sp * tr, tr);

@@ -38,13 +38,13 @@ public:
     ~Medium() override = default;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    OC_MAKE_MEMBER_GETTER_SETTER(index,)
+    OC_MAKE_MEMBER_GETTER_SETTER(index, )
     template<typename T>
     void add_reference(T shape_instance) noexcept {}
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
                                TSampler &sampler) const noexcept = 0;
-    virtual SampledSpectrum sample(const RayVar &ray, Interaction &it,
-                                   const SampledWavelengths &swl, TSampler &sampler) const noexcept = 0;
+    virtual SampledSpectrum sample(const RayState &rs, Interaction &it, TSampler &sampler,
+                                   const SampledWavelengths &swl) const noexcept = 0;
 };
 
 }// namespace vision

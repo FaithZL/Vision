@@ -171,7 +171,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         if (scene().has_medium()) {
             $if(rs.in_medium()) {
                 scene().mediums().dispatch_instance(rs.medium, [&](const Medium *medium) {
-                    SampledSpectrum medium_throughput = medium->sample(rs.ray, it, swl, sampler);
+                    SampledSpectrum medium_throughput = medium->sample(rs, it, sampler, swl);
                     throughput *= medium_throughput;
                 });
             };
