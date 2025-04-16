@@ -13,6 +13,7 @@ private:
     EncodedData<float3> sigma_a_;
     EncodedData<float3> sigma_s_;
     EncodedData<float> g_;
+    static constexpr float g_clamp = 0.99f;
 
 public:
     HomogeneousMedium() = default;
@@ -20,7 +21,7 @@ public:
         : Medium(desc),
           sigma_a_(desc.sigma_a["value"].as_float3()),
           sigma_s_(desc.sigma_s["value"].as_float3()),
-          g_(desc.g["value"].as_float()) {}
+          g_(ocarina::clamp(desc.g["value"].as_float(), -g_clamp, g_clamp)) {}
 
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Medium, sigma_a_, sigma_s_, g_)
@@ -39,7 +40,7 @@ public:
         Medium::render_sub_UI(widgets);
         changed_ |= widgets->drag_float3("sigma_a", addressof(sigma_a_.hv()), 0.1, 0);
         changed_ |= widgets->drag_float3("sigma_s", addressof(sigma_s_.hv()), 0.1, 0);
-        changed_ |= widgets->drag_float("g", addressof(g_.hv()), 0.01, -1, 1);
+        changed_ |= widgets->drag_float("g", addressof(g_.hv()), 0.01, -g_clamp, g_clamp);
     }
 
     [[nodiscard]] SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
