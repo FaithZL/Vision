@@ -77,81 +77,41 @@ void TRegistry<T>::remove_unused_materials() noexcept {
     tidy_up();
 }
 
-OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialRegistry, s_material_registry)
-
-SP<Material> MaterialRegistry::register_(SP<vision::Material> material) noexcept {
+template<typename T>
+SP<T> TRegistry<T>::register_(SP<T> material) noexcept {
     uint64_t hash = material->hash();
-    auto iter = std::find_if(materials_.begin(), materials_.end(), [&](SP<Material> mat) {
+    auto iter = std::find_if(elements_.begin(), elements_.end(), [&](SP<T> mat) {
         return mat->hash() == hash;
     });
-    if (iter == materials_.cend()) {
-        materials_.push_back(material);
+    if (iter == elements_.cend()) {
+        elements_.push_back(material);
         return material;
     }
     return *iter;
 }
 
-SP<Material> MaterialRegistry::get_material(uint64_t hash) noexcept {
-    auto iter = std::find_if(materials_.begin(), materials_.end(), [&](SP<Material> mat) {
+template<typename T>
+SP<T> TRegistry<T>::get_material(uint64_t hash) noexcept {
+    auto iter = std::find_if(elements_.begin(), elements_.end(), [&](SP<Material> mat) {
         return mat->hash() == hash;
     });
-    if (iter == materials_.cend()) {
+    if (iter == elements_.cend()) {
         return nullptr;
     }
     return *iter;
 }
 
-void MaterialRegistry::push_back(SP<vision::Material> material) noexcept {
-    materials_.push_back(ocarina::move(material));
-}
+template class TRegistry<Material>;
+
+OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialRegistry, s_material_registry)
 
 bool MaterialRegistry::has_dispersive() const noexcept {
-    return std::any_of(materials_.begin(), materials_.end(),
+    return std::any_of(elements_.begin(), elements_.end(),
                        [&](const SP<Material> &mat) {
                            return mat->is_dispersive();
                        });
 }
 
-void MaterialRegistry::upload_device_data() noexcept {
-    if (has_changed()) {
-        materials_.update();
-    }
-}
-
-void MaterialRegistry::prepare() noexcept {
-    materials().for_each_instance([&](const SP<Material> &material) noexcept {
-        material->prepare();
-    });
-    auto rp = Global::instance().pipeline();
-    materials().prepare(rp->bindless_array(), rp->device());
-}
-
-void MaterialRegistry::remedy() noexcept {
-    materials().remedy();
-    auto rp = Global::instance().pipeline();
-    materials().prepare(rp->bindless_array(), rp->device());
-}
-
-bool MaterialRegistry::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool open = widgets->use_folding_header("materials", [&] {
-        uint type_num = materials_.type_num();
-        widgets->text(ocarina::format("type num is {}", type_num));
-        materials_.render_UI(widgets);
-    });
-    return open;
-}
-
-void MaterialRegistry::update_runtime_object(const IObjectConstructor *constructor) noexcept {
-    for (int i = 0; i < materials_.size(); ++i) {
-        SP<Material> material = materials_[i];
-        if (!constructor->match(material.get())) {
-            continue;
-        }
-        SP<Material> new_material = constructor->construct_shared<Material>();
-        new_material->restore(material.get());
-        materials_.replace(i, new_material);
-    }
-}
 
 namespace detail {
 [[nodiscard]] std::string second_to_time(double f_total_seconds) {
@@ -182,7 +142,7 @@ void precompute_albedo() noexcept {
 
     Clock clock;
     clock.start();
-    MaterialRegistry::instance().materials().for_each_instance([&](SP<Material> material, uint i) {
+    MaterialRegistry::instance().elements().for_each_instance([&](SP<Material> material, uint i) {
         auto lst = material->precompute();
         configs.insert(configs.end(), lst.begin(), lst.end());
     });
@@ -208,23 +168,6 @@ void precompute_albedo() noexcept {
     }
     output << "} //namespace";
     output.close();
-}
-
-void MaterialRegistry::tidy_up() noexcept {
-    materials_.for_each_instance([&](SP<Material> material, uint i) {
-        material->set_index(i);
-    });
-}
-
-void MaterialRegistry::remove_unused_materials() noexcept {
-    for (auto iter = materials_.begin(); iter != materials_.end();) {
-        if (iter->use_count() == 1) {
-            iter = materials_.erase(iter);
-        } else {
-            ++iter;
-        }
-    }
-    tidy_up();
 }
 
 }// namespace vision

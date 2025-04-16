@@ -167,7 +167,7 @@ TSampler &Material::get_sampler() noexcept {
 bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = format("{} {} material: {}, type_index: {}",
                           index_, impl_type().data(),
-                          name_.c_str(), MaterialRegistry::instance().materials().type_index(this));
+                          name_.c_str(), MaterialRegistry::instance().elements().type_index(this));
     bool open = widgets->use_tree(label, [&] {
         render_sub_UI(widgets);
     });
